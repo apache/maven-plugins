@@ -71,18 +71,18 @@ public abstract class AbstractDeployMojo
 
         ArtifactRepository deploymentRepository = RepositoryUtils.mavenRepositoryToWagonRepository( repository );
 
-        if ( isPom() )
-        {
-            Artifact artifact = new DefaultArtifact( project.getGroupId(),
-                                                     project.getArtifactId(),
-                                                     project.getVersion(),
-                                                     "pom" );
+        // Deplou the POM
+        Artifact pomArtifact = new DefaultArtifact( project.getGroupId(),
+                                                 project.getArtifactId(),
+                                                 project.getVersion(),
+                                                 "pom" );
 
-            File pom = new File( project.getFile().getParentFile(), "pom.xml" );
+        File pom = new File( project.getFile().getParentFile(), "pom.xml" );
 
-            artifactDeployer.deploy( pom, artifact, deploymentRepository );
-        }
-        else
+        artifactDeployer.deploy( pom, pomArtifact, deploymentRepository );
+
+        //Deploy artifact
+        if ( ! isPom() )
         {
             Artifact artifact = new DefaultArtifact( project.getGroupId(),
                                                      project.getArtifactId(),
