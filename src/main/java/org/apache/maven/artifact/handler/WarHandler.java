@@ -32,9 +32,4 @@ public class WarHandler
     {
         return "wars";
     }
-
-    public String packageGoal()
-    {
-        return "war:war";
-    }
 }
