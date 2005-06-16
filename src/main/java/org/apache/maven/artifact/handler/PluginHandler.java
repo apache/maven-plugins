@@ -23,6 +23,8 @@ package org.apache.maven.artifact.handler;
 public class PluginHandler
     extends AbstractArtifactHandler
 {
+    
+    public static final String PLUGIN_TYPE = "maven-plugin";
 
     public String directory()
     {
