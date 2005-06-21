@@ -1,6 +1,4 @@
-package org.apache.maven.artifact.metadata;
-
-/*
+package org.apache.maven.artifact.resolver;/*
  * Copyright 2001-2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,19 +14,24 @@ package org.apache.maven.artifact.metadata;
  * limitations under the License.
  */
 
-import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 
 import java.util.List;
 import java.util.Set;
 
 /**
- * @author <a href="mailto:jason@maven.org">Jason van Zyl </a>
+ * TODO: describe
+ *
+ * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
  */
-public interface ArtifactMetadataSource
+public interface ArtifactCollector
 {
-    Set retrieve( Artifact artifact, ArtifactRepository localRepository, List remoteRepositories )
-        throws ArtifactMetadataRetrievalException, ArtifactResolutionException;
+    ArtifactResolutionResult collect( Set artifacts, ArtifactRepository localRepository, List remoteRepositories,
+                                      ArtifactMetadataSource source, ArtifactFilter filter,
+                                      ArtifactFactory artifactFactory )
+        throws ArtifactResolutionException;
 }
