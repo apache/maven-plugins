@@ -16,15 +16,8 @@ package org.apache.maven.artifact.repository.metadata;
  * limitations under the License.
  */
 
-import java.io.File;
-
 public interface RepositoryMetadata
 {
-
     String getRepositoryPath();
-
-    File getFile();
-
-    void setFile( File file );
 
 }

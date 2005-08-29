@@ -18,6 +18,7 @@ package org.apache.maven.artifact.repository.layout;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
+import org.apache.maven.artifact.repository.metadata.RepositoryMetadata;
 
 /**
  * @author jdcasey
@@ -29,9 +30,7 @@ public interface ArtifactRepositoryLayout
 
     String pathOf( Artifact artifact );
 
-    String pathOfMetadata( ArtifactMetadata metadata );
+    String pathOfArtifactMetadata( ArtifactMetadata metadata );
 
-    String formatAsDirectory( String directory );
-    
-    String formatAsFile( String file );
+    String pathOfRepositoryMetadata( RepositoryMetadata metadata );
 }
