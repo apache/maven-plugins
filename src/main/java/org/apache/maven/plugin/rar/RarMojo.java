@@ -58,7 +58,7 @@ public class RarMojo
      *
      * @parameter expression="${basedir}/src/rar/META-INF/ra.xml"
      */
-    private String raXmlLocation;
+    private String raXmlFile;
 
     /**
      * Specify if the generated jar file of this project should be
@@ -72,9 +72,8 @@ public class RarMojo
      * The location of the manifest file to be used within the rar file.
      *
      * @parameter expression="${basedir}/src/rar/META-INF/MANIFEST.MF"
-     * @TODO handle this field
      */
-    private String manifestLocation;
+    private String manifestFile;
 
     /**
      * Directory that resources are copied to during the build.
@@ -127,8 +126,8 @@ public class RarMojo
     {
         getLog().debug( " ======= RarMojo settings =======" );
         getLog().debug( "rarSourceDirectory[" + rarSourceDirectory + "]" );
-        getLog().debug( "manifestLocation[" + manifestLocation + "]" );
-        getLog().debug( "raXmlLocation[" + raXmlLocation + "]" );
+        getLog().debug( "manifestFile[" + manifestFile + "]" );
+        getLog().debug( "raXmlFile[" + raXmlFile + "]" );
         getLog().debug( "workDirectory[" + workDirectory + "]" );
         getLog().debug( "outputDirectory[" + outputDirectory + "]" );
         getLog().debug( "finalName[" + finalName + "]" );
@@ -185,6 +184,16 @@ public class RarMojo
             throw new MojoExecutionException( "Error copying RAR resources", e );
         }
 
+        // Include custom manifest if necessary
+        try
+        {
+            includeCustomRaXmlFile();
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Error copying ra.xml file", e );
+        }
+
         // Check if connector deployment descriptor is there
         File ddFile = new File( getBuildDir(), RA_XML_URI );
         if ( !ddFile.exists() )
@@ -199,6 +208,9 @@ public class RarMojo
             MavenArchiver archiver = new MavenArchiver();
             archiver.setOutputFile( rarFile );
 
+            // Include custom manifest if necessary
+            includeCustomManifestFile();
+
             archiver.getArchiver().addDirectory( getBuildDir() );
             archiver.createArchive( project, archive );
         }
@@ -206,8 +218,6 @@ public class RarMojo
         {
             throw new MojoExecutionException( "Error assembling RAR", e );
         }
-
-
     }
 
     protected File getBuildDir()
@@ -217,5 +227,33 @@ public class RarMojo
             buildDir = new File( workDirectory );
         }
         return buildDir;
+    }
+
+    private void includeCustomManifestFile()
+    {
+        File customManifestFile = new File( manifestFile );
+        if ( !customManifestFile.exists() )
+        {
+            getLog().info( "Could not find manifest file: " + manifestFile +" - Generating one");
+        }
+        else
+        {
+            getLog().info( "Including custom manifest file[" + customManifestFile + "]" );
+            archive.setManifestFile( customManifestFile );
+        }
+    }
+
+    private void includeCustomRaXmlFile()
+        throws IOException
+    {
+        if (raXmlFile == null || raXmlFile.trim().length() == 0) {
+
+        }
+        File raXml = new File(raXmlFile );
+        if (raXml.exists()) {
+            getLog().info( "Using ra.xml "+ raXmlFile);
+            File metaInfDir = new File(getBuildDir(), "META-INF");
+            FileUtils.copyFileToDirectory( raXml, metaInfDir);
+        }
     }
 }
