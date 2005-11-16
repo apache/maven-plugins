@@ -157,16 +157,19 @@ public class EclipseProjectWriter
 
         writer.endElement();
 
-        writer.startElement( "projects" ); //$NON-NLS-1$
-
-        for ( Iterator it = reactorArtifacts.iterator(); it.hasNext(); )
+        if ( reactorArtifacts != null && !reactorArtifacts.isEmpty() )
         {
-            writer.startElement( "project" ); //$NON-NLS-1$
-            writer.writeText( ( (Artifact) it.next() ).getArtifactId() );
-            writer.endElement();
-        }
+            writer.startElement( "projects" ); //$NON-NLS-1$
 
-        writer.endElement(); // projects
+            for ( Iterator it = reactorArtifacts.iterator(); it.hasNext(); )
+            {
+                writer.startElement( "project" ); //$NON-NLS-1$
+                writer.writeText( ( (Artifact) it.next() ).getArtifactId() );
+                writer.endElement();
+            }
+
+            writer.endElement(); // projects
+        }
 
         writer.startElement( "buildSpec" ); //$NON-NLS-1$
 
