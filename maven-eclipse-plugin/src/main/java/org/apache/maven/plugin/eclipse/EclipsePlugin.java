@@ -26,6 +26,7 @@ import org.apache.maven.project.MavenProject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -159,6 +160,15 @@ public class EclipsePlugin
      * @parameter expression="${eclipse.workspace}"
      */
     private File outputDir;
+    
+    /**
+     * When set to false, the plugin will not create sub-projects and instead reference those sub-projects 
+     * using the installed package in the local repository
+     *
+     * @parameter expression="${eclipse.useProjectReferences}" default-value="true"
+     * @required
+     */
+    private boolean useProjectReferences;
 
     /**
      * The default output directory
@@ -335,7 +345,11 @@ public class EclipsePlugin
         File projectBaseDir = executedProject.getFile().getParentFile();
 
         // build the list of referenced ARTIFACTS produced by reactor projects
-        List reactorArtifacts = EclipseUtils.resolveReactorArtifacts( project, reactorProjects );
+        List reactorArtifacts;
+        if ( useProjectReferences )
+            reactorArtifacts = EclipseUtils.resolveReactorArtifacts( project, reactorProjects );
+        else
+            reactorArtifacts = Collections.EMPTY_LIST;
 
         // build a list of UNIQUE source dirs (both src and resources) to be used in classpath and wtpmodules
         EclipseSourceDir[] sourceDirs =
