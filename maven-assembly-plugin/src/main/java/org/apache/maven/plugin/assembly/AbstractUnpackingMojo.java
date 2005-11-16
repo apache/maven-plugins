@@ -88,36 +88,12 @@ public abstract class AbstractUnpackingMojo
     private List reactorProjects;
 
     /**
-     * Creates a Map of artifacts within the reactor using the groupId:artifactId:version as key
-     *
-     * @return a HashMap of all artifacts available in the reactor
-     */
-    protected Map getMappedReactorArtifacts()
-    {
-        Map mappedReactorArtifacts = new HashMap();
-
-        for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
-        {
-            MavenProject reactorProject = (MavenProject) i.next();
-
-            String key = reactorProject.getGroupId() + ":" + reactorProject.getArtifactId() + ":"
-                + reactorProject.getVersion();
-
-            mappedReactorArtifacts.put( key, reactorProject.getArtifact() );
-        }
-
-        return mappedReactorArtifacts;
-    }
-
-    /**
      * Retrieves all artifact dependencies within the reactor
      *
      * @return A HashSet of artifacts
      */
     protected Set getDependencies()
     {
-        Map reactorArtifacts = getMappedReactorArtifacts();
-
         Map dependencies = new HashMap();
 
         for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
@@ -128,9 +104,10 @@ public abstract class AbstractUnpackingMojo
             {
                 Artifact artifact = (Artifact) j.next();
 
+                // TODO: [jc; 16-nov-05] Why doesn't this use artifact.getId()?
                 String key = artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getVersion();
 
-                if ( !reactorArtifacts.containsKey( key ) && !dependencies.containsKey( key ) )
+                if ( !dependencies.containsKey( key ) )
                 {
                     dependencies.put( key, artifact );
                 }
