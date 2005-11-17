@@ -1,19 +1,16 @@
-<?xml version="1.0"?>
+ ----
+Usage
+ ----
+Kenney Westerhof
+ ----
+10 August 2005
+ ----
 
-<document>
-  <properties>
-    <author email="kenney@apache.org">Kenney Westerhof</author>
-    <title>Introduction</title>
-  </properties>
-  <head/>
-  <body>
-    <section name="Usage">
-      <p>
-        For those of you unfamiliar with configuring a plugin see the example
-        below:
+Usage
 
-        <source>
-<![CDATA[
+  For those of you unfamiliar with configuring a plugin see the example below:
+
+------
 <project>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>my-test-app</artifactId>
@@ -49,17 +46,9 @@
     </plugins>
   </build>
 </project>
-]]>
-        </source>
-      </p>
+------
 
-      <p>
-        The example above illustrates how to bind an ant script to a
-        lifecycle phase. You can add a script to each lifecycle phase,
-        by duplicating the <![CDATA[<execution/>]]> section and specifying
-        a new phase.
-      </p>
-    </section>
-
-  </body>
-</document>
+  The example above illustrates how to bind an ant script to a
+  lifecycle phase. You can add a script to each lifecycle phase,
+  by duplicating the <<<\<execution/\>>>> section and specifying
+  a new phase.
