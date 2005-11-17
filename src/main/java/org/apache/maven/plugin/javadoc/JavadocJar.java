@@ -69,6 +69,7 @@ public class JavadocJar
         if ( !"java".equals( artifactHandler.getLanguage() ) )
         {
             getLog().info( "Not executing Javadoc as the project is not a Java classpath-capable package" );
+            return;
         }
 
         try
