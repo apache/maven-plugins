@@ -16,34 +16,38 @@ package org.apache.maven.plugin.jar;
  * limitations under the License.
  */
 
+import org.apache.maven.plugin.logging.Log;
 import org.apache.commons.lang.SystemUtils;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
-import org.codehaus.plexus.util.StringUtils;
+
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
+import org.codehaus.plexus.util.cli.DefaultConsumer;
 import org.codehaus.plexus.util.cli.StreamConsumer;
+
+import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Iterator;
 import java.util.StringTokenizer;
+import java.util.ArrayList;
 
 /**
- * Signs a JAR using jarsigner.
+ * Checks the signature of a signed jar using jarsigner.
  *
  * @author <a href="jerome@coffeebreaks.org">Jerome Lacoste</a>
  * @version $Id$
- * @goal sign
+ * @goal sign-verify
  * @phase package
  * @requiresProject
  * @todo refactor the common code with javadoc plugin
  */
-public class JarSignMojo
+public class JarSignVerifyMojo
     extends AbstractMojo
 {
     /**
@@ -72,72 +76,17 @@ public class JarSignMojo
     /**
      * Path of the jar to sign. When specified, the finalName is ignored.
      *
-     * @parameter alias="jarpath"
-     * @required
+     * @parameter expression="${jarpath}"
      */
     private File jarPath;
 
     /**
+     * Check certificates. Requires {@link #setVerbose()}.
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
      *
-     * @parameter expression="${keystore}"
+     * @parameter expression="${checkcerts}" default-value="false"
      */
-    private String keystore;
-
-    /**
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
-     *
-     * @parameter expression="${storepass}"
-     */
-    private String storepass;
-
-    /**
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
-     *
-     * @parameter expression="${keypass}"
-     */
-    private String keypass;
-
-    /**
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
-     *
-     * @parameter expression="${sigfile}"
-     * @todo make a File?
-     */
-    private String sigfile;
-
-    /**
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
-     *
-     * @parameter expression="${signedjar}" default-value="${project.build.directory}/signed/${project.build.finalName}.jar"
-     * @required
-     * @todo make a File?
-     */
-    private String signedjar;
-
-    /**
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
-     *
-     * @parameter expression="${type}"
-     */
-    private String type;
-
-    /**
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
-     *
-     * @parameter expression="${alias}"
-     * @required
-     */
-    private String alias;
-
-    /**
-     * Automatically verify a jar after signing it.
-     *
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
-     *
-     * @parameter expression="${verify}" default-value="false"
-     */
-    private boolean verify;
+    private boolean checkCerts;
 
     /**
      * Enable verbose
@@ -147,22 +96,6 @@ public class JarSignMojo
      */
     private boolean verbose;
 
-    public void execute()
-        throws MojoExecutionException
-    {
-
-        signJar();
-
-        if ( verify ) {
-             JarSignVerifyMojo verify = new JarSignVerifyMojo();
-             verify.setWorkingDir( workingDirectory );
-             verify.setBasedir( basedir );
-             verify.setJarPath( getJarFile() );
-             verify.setVerbose( verbose );
-             verify.execute();
-        }
-    }
-
     File getJarFile() {
         if ( jarPath != null ) {
             return jarPath;
@@ -171,73 +104,53 @@ public class JarSignMojo
         }
     }
 
-    void signJar() throws MojoExecutionException {
+    public void execute() throws MojoExecutionException {
+
         List arguments = new ArrayList();
 
         Commandline commandLine = new Commandline();
 
         commandLine.setExecutable( getJarsignerPath() );
 
-        addArgIf( arguments, verbose, "-verbose" );
+        arguments.add( "-verify" );
 
-        // I believe Commandline to add quotes where appropriate, although I haven't tested it enough.
-        // FIXME addArgIfNotEmpty will break those parameters containing a space.
-        // Look at webapp:gen-keystore for a way to fix that
-        addArgIfNotEmpty( arguments, "-keystore", this.keystore );
-        addArgIfNotEmpty( arguments, "-storepass", this.storepass );
-        addArgIfNotEmpty( arguments, "-keypass", this.keypass );
-        addArgIfNotEmpty( arguments, "-signedjar", this.signedjar );
-        addArgIfNotEmpty( arguments, "-storetype", this.type );
-        addArgIfNotEmpty( arguments, "-sigfile", this.sigfile );
+        addArgIf( arguments, this.verbose, "-verbose" );
+        addArgIf( arguments, this.checkCerts, "-certs" );
 
         arguments.add( getJarFile() );
 
-        addArgIf( arguments, alias != null, this.alias );
-
-        for ( Iterator it = arguments.iterator(); it.hasNext(); )
-        {
+        for ( Iterator it = arguments.iterator() ; it.hasNext() ; ) {
             commandLine.createArgument().setValue( it.next().toString() );
         }
 
         commandLine.setWorkingDirectory( workingDirectory.getAbsolutePath() );
 
-        createParentDirIfNecessary( signedjar );
+        getLog().debug("Executing: " + commandLine );
 
-        getLog().debug( "Executing: " + commandLine );
+        LineMatcherStreamConsumer outConsumer = new LineMatcherStreamConsumer( "jar verified." );
 
-        // jarsigner may ask for some input if the parameters are missing or incorrect. 
-        // This should take care of it and make it fail gracefully
-        final InputStream inputStream = new InputStream()
-        {
-            public int read()
-            {
-                return -1;
-            }
-        };
-        StreamConsumer outConsumer = new StreamConsumer()
-        {
-            public void consumeLine( String line )
-            {
-                getLog().info( line );
-            }
-        };
         final StringBuffer errBuffer = new StringBuffer();
-        StreamConsumer errConsumer = new StreamConsumer()
-        {
-            public void consumeLine( String line )
+        StreamConsumer errConsumer = new StreamConsumer() {
+            public void consumeLine(String line)
             {
-                errBuffer.append( line );
-                getLog().warn( line );
+                 errBuffer.append( line );
+                 getLog().warn( line );
             }
         };
+
 
         try
         {
-            int result = executeCommandLine( commandLine, inputStream, outConsumer, errConsumer );
-
+            int result = executeCommandLine( commandLine, null, outConsumer, errConsumer );
+            
             if ( result != 0 )
             {
-                throw new MojoExecutionException( "Result of " + commandLine + " execution is: \'" + result + "\'." );
+                throw new MojoExecutionException("Result of " + commandLine
+                    + " execution is: \'" + result + "\'." );
+            }
+
+            if (! outConsumer.matched ) {
+                throw new MojoExecutionException( "Verify failed: " + outConsumer.firstOutLine );
             }
         }
         catch ( CommandLineException e )
@@ -246,21 +159,43 @@ public class JarSignMojo
         }
     }
 
-    private void createParentDirIfNecessary( final String file )
-    {
-        if ( file != null )
+    private void createParentDirIfNecessary(final String file) {
+        if ( file != null)
         {
             final File fileDir = new File( file ).getParentFile();
 
-            if ( fileDir != null )
-            { // not a relative path
+            if ( fileDir != null) { // not a relative path
                 boolean mkdirs = fileDir.mkdirs();
-                getLog().debug( "mdkirs: " + mkdirs + " " + fileDir );
+                getLog().debug("mdkirs: " + mkdirs + " " + fileDir);
             }
         }
     }
 
-    // taken from JavadocReport then slightly refactored
+    // checks if a consumed line matches
+    // also keeps track of the first consumed line.
+    class LineMatcherStreamConsumer implements StreamConsumer
+    {
+        private String toMatch;
+        private boolean matched;
+        private String firstOutLine;
+        // private String lastOutLine = "";
+
+        LineMatcherStreamConsumer( String toMatch ) {
+             this.toMatch = toMatch;
+        }
+
+        public void consumeLine(String line)
+        {
+            if ( firstOutLine == null ) {
+                 firstOutLine = line;
+            }
+            matched = matched || toMatch.equals( line );
+            // lastOutLine = line;
+            getLog().info( line );
+        }
+    }
+ 
+  // taken from JavadocReport then slightly refactored
     // should probably share with other plugins that use $JAVA_HOME/bin tools
 
     /**
@@ -273,9 +208,8 @@ public class JarSignMojo
         return getJDKCommandPath( "jarsigner", getLog() );
     }
 
-    private static String getJDKCommandPath( String command, Log logger )
-    {
-        String path = getJDKCommandExe( command ).getAbsolutePath();
+    private static String getJDKCommandPath( String command, Log logger ) {
+        String path = getJDKCommandExe(command).getAbsolutePath();
         logger.debug( command + " executable=[" + path + "]" );
         return path;
     }
@@ -302,6 +236,7 @@ public class JarSignMojo
 
         return exe;
     }
+
 
     // Helper methods. Could/should be shared e.g. with JavadocReport
 
@@ -376,76 +311,36 @@ public class JarSignMojo
     // methods used for tests purposes - allow mocking and simulate automatic setters
     //
 
-    protected int executeCommandLine( Commandline commandLine, InputStream inputStream, StreamConsumer stream1,
-                                     StreamConsumer stream2 )
-        throws CommandLineException
-    {
-        return CommandLineUtils.executeCommandLine( commandLine, inputStream, stream1, stream2 );
+    protected int executeCommandLine( Commandline commandLine, InputStream inputStream,
+                                      StreamConsumer systemOut, StreamConsumer systemErr ) 
+             throws CommandLineException {
+        return CommandLineUtils.executeCommandLine( commandLine, inputStream, systemOut, systemErr );
     }
 
-    public void setWorkingDir( File workingDir )
-    {
+    public void setWorkingDir( File workingDir ) {
         this.workingDirectory = workingDir;
     }
 
-    public void setBasedir( File basedir )
-    {
+    public void setBasedir( File basedir ) {
         this.basedir = basedir;
-    }
-
-    public void setKeystore( String keystore )
-    {
-        this.keystore = keystore;
-    }
-
-    public void setKeypass( String keypass )
-    {
-        this.keypass = keypass;
-    }
-
-    public void setSignedJar( String signedjar )
-    {
-        this.signedjar = signedjar;
-    }
-
-    public void setAlias( String alias )
-    {
-        this.alias = alias;
     }
 
     // hiding for now - I don't think this is required to be seen
     /*
-     public void setFinalName( String finalName ) {
-     this.finalName = finalName;
-     }
-     */
+    public void setFinalName( String finalName ) {
+        this.finalName = finalName;
+    }
+    */
 
-    public void setJarPath( File jarPath )
-    {
+    public void setJarPath( File jarPath ) {
         this.jarPath = jarPath;
     }
 
-    public void setStorepass( String storepass )
-    {
-        this.storepass = storepass;
+    public void setCheckCerts( boolean checkCerts) {
+        this.checkCerts = checkCerts;
     }
 
-    public void setSigFile( String sigfile )
-    {
-        this.sigfile = sigfile;
-    }
-
-    public void setType( String type )
-    {
-        this.type = type;
-    }
-
-    public void setVerbose( boolean verbose )
-    {
+    public void setVerbose( boolean verbose ) {
         this.verbose = verbose;
-    }
-
-    public void setVerify( boolean verify ) {
-        this.verify = verify;
     }
 }
