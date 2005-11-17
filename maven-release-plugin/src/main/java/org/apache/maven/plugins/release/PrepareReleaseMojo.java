@@ -47,7 +47,6 @@ import org.apache.maven.project.ModelUtils;
 import org.apache.maven.project.path.PathTranslator;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFile;
-import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -119,12 +118,6 @@ public class PrepareReleaseMojo
      */
     private ArtifactRepository localRepository;
 
-    /**
-     * @parameter expression="${settings}"
-     * @required
-     * @readonly
-     */
-    private Settings settings;
 
     /**
      * @parameter expression="${reactorProjects}"
@@ -972,7 +965,7 @@ public class PrepareReleaseMojo
                         {
                             version = pluginVersionManager.resolvePluginVersion( plugin.getGroupId(),
                                                                                  plugin.getArtifactId(), releaseProject,
-                                                                                 settings, localRepository );
+                                                                                 getSettings(), localRepository );
                         }
                         catch ( PluginVersionResolutionException e )
                         {
@@ -1016,7 +1009,7 @@ public class PrepareReleaseMojo
                         {
                             version = pluginVersionManager.resolveReportPluginVersion( plugin.getGroupId(),
                                                                                        plugin.getArtifactId(),
-                                                                                       releaseProject, settings,
+                                                                                       releaseProject, getSettings(),
                                                                                        localRepository );
                         }
                         catch ( PluginVersionResolutionException e )
