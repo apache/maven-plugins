@@ -25,7 +25,7 @@
     <dependency>
       <groupId>surefire</groupId>
       <artifactId>surefire</artifactId>
-      <version>1.4</version>
+      <version>1.5-SNAPSHOT</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
