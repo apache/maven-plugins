@@ -16,21 +16,22 @@ package org.apache.maven.plugins.release.helpers;
  * limitations under the License.
  */
 
-import org.apache.maven.artifact.ArtifactUtils;
-import org.apache.maven.model.Model;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
-import org.codehaus.plexus.components.interactivity.InputHandler;
-import org.codehaus.plexus.util.StringUtils;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.maven.artifact.ArtifactUtils;
+import org.apache.maven.model.Model;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.release.versions.DefaultVersionInfo;
+import org.apache.maven.plugins.release.versions.VersionInfo;
+import org.apache.maven.plugins.release.versions.VersionParseException;
+import org.codehaus.plexus.components.interactivity.InputHandler;
+import org.codehaus.plexus.util.StringUtils;
+
 public class ProjectVersionResolver
 {
-    private static final String SNAPSHOT_CLASSIFIER = "-SNAPSHOT";
-
     private Map resolvedVersions = new HashMap();
 
     private final Log log;
@@ -56,39 +57,46 @@ public class ProjectVersionResolver
         }
 
         //Rewrite project version
-        String projectVersion = model.getVersion();
+        VersionInfo version = getVersionInfo( model.getVersion() );
 
-        if ( !projectVersion.endsWith( SNAPSHOT_CLASSIFIER ) )
-        {
-            throw new IllegalArgumentException( "Project version isn't a snapshot, it must ends with '" + SNAPSHOT_CLASSIFIER + "'." );
-        }
-
-        projectVersion = projectVersion.substring( 0, projectVersion.length() - SNAPSHOT_CLASSIFIER.length() );
+        String projectVersion = ( version != null ) ? version.getReleaseVersionString() : null;
 
         if ( interactive )
         {
-            try
-            {
-                log.info( "What is the release version for \'" + projectId + "\'? [" + projectVersion + "]" );
-
-                String inputVersion = inputHandler.readLine();
-
-                if ( !StringUtils.isEmpty( inputVersion ) )
-                {
-                    projectVersion = inputVersion;
-                }
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Can't read release version from user input.", e );
-            }
+            projectVersion = getVersionFromUser("What is the release version for \'" + projectId + "\'?", projectVersion);
+        } 
+        else if ( StringUtils.isEmpty( projectVersion ) ) 
+        {
+            throw new MojoExecutionException("Unable to determine release project version");
         }
-
+        
         model.setVersion( projectVersion );
 
         resolvedVersions.put( projectId, projectVersion );
     }
 
+    private String getVersionFromUser(String promptText, String defaultVersionStr )
+        throws MojoExecutionException
+    {
+        if ( defaultVersionStr != null )
+        {
+            promptText = promptText + "[" + defaultVersionStr + "]";
+        }
+        
+        try
+        {
+            log.info( promptText );
+
+            String inputVersion = inputHandler.readLine();
+
+            return ( StringUtils.isEmpty( inputVersion ) ) ? defaultVersionStr : inputVersion;
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Can't read version from user input.", e );
+        }        
+    }
+    
     public String getResolvedVersion( String groupId, String artifactId )
     {
         String projectId = ArtifactUtils.versionlessKey( groupId, artifactId );
@@ -96,92 +104,45 @@ public class ProjectVersionResolver
         return (String) resolvedVersions.get( projectId );
     }
 
+    private VersionInfo getVersionInfo(String version) {
+        // TODO: Provide a way to override the implementation of VersionInfo
+        try 
+        {
+            return new DefaultVersionInfo( version );
+        } 
+        catch (VersionParseException e)
+        {
+            return null;
+        }
+        
+    }
+    
     public void incrementVersion( Model model, String projectId )
         throws MojoExecutionException
     {
-        String projectVersion = model.getVersion();
-
-        if ( ArtifactUtils.isSnapshot( projectVersion ) )
+        VersionInfo version = getVersionInfo( model.getVersion() );
+        
+        if ( version != null && version.isSnapshot() )
         {
-            throw new MojoExecutionException( "The project " + projectId + " is a snapshot (" + projectVersion +
-                "). It appears that the release version has not been committed." );
+            throw new MojoExecutionException( "The project " + projectId + " is a snapshot ("
+                + version.getVersionString() + "). It appears that the release version has not been committed." );
         }
 
-        // TODO: we will need to incorporate versioning strategies here because it is unlikely
-        // that everyone will be able to agree on a standard. This is extremely limited right
-        // now and really only works for the way maven is versioned.
-
-        // releaseVersion = 1.0-beta-4
-        // snapshotVersion = 1.0-beta-5-SNAPSHOT
-        // or
-        // releaseVersion = 1.0.4
-        // snapshotVersion = 1.0.5-SNAPSHOT
-
-        String staticVersionPart;
-        String nextVersionString;
-
-        int rcIdx = projectVersion.toLowerCase().lastIndexOf( "-rc" );
-        int dashIdx = projectVersion.lastIndexOf( "-" );
-        int dotIdx = projectVersion.lastIndexOf( "." );
-
-        if ( rcIdx >= dashIdx )
-        {
-            staticVersionPart = projectVersion.substring( 0, rcIdx + 3 );
-            nextVersionString = projectVersion.substring( rcIdx + 3 );
-        }
-        else if ( dashIdx > 0 )
-        {
-            staticVersionPart = projectVersion.substring( 0, dashIdx + 1 );
-            nextVersionString = projectVersion.substring( dashIdx + 1 );
-        }
-        else if ( dotIdx > 0 )
-        {
-            staticVersionPart = projectVersion.substring( 0, dotIdx + 1 );
-            nextVersionString = projectVersion.substring( dotIdx + 1 );
-        }
-        else
-        {
-            staticVersionPart = "";
-            nextVersionString = projectVersion;
-        }
-
-        try
-        {
-            nextVersionString = Integer.toString( Integer.parseInt( nextVersionString ) + 1 );
-
-            projectVersion = staticVersionPart + nextVersionString + SNAPSHOT_CLASSIFIER;
-        }
-        catch ( NumberFormatException e )
-        {
-            projectVersion = "";
-        }
-
+        VersionInfo nextVersionInfo = ( version != null ) ? version.getNextVersion() : null;
+        
+        String nextVersion = (nextVersionInfo != null) ? nextVersionInfo.getSnapshotVersionString() : null;
+        
         if ( interactive )
         {
-            try
-            {
-                log.info( "What is the new development version for \'" + projectId + "\'? [" + projectVersion + "]" );
-
-                String inputVersion = inputHandler.readLine();
-
-                if ( !StringUtils.isEmpty( inputVersion ) )
-                {
-                    projectVersion = inputVersion;
-                }
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Can't read next development version from user input.", e );
-            }
+            nextVersion = getVersionFromUser("What is the new development version for \'" + projectId + "\'?", nextVersion );            
         }
-        else if ( "".equals( projectVersion ) )
+        else if ( nextVersion == null )
         {
             throw new MojoExecutionException( "Cannot determine incremented development version for: " + projectId );
         }
 
-        model.setVersion( projectVersion );
+        model.setVersion( nextVersion );
 
-        resolvedVersions.put( projectId, projectVersion );
+        resolvedVersions.put( projectId, nextVersion );
     }
-
 }

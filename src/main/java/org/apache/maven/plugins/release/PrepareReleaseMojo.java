@@ -156,7 +156,7 @@ public class PrepareReleaseMojo
     private String tag;
 
     /**
-     * @parameter expression="${tagBase}" default-value="../tags"
+     * @parameter expression="${tagBase}"
      */
     private String tagBase;
 
@@ -464,7 +464,7 @@ public class PrepareReleaseMojo
             }
 
             if ( releaseProgress.getUsername() == null || releaseProgress.getScmTag() == null ||
-                releaseProgress.getScmTagBase() == null || releaseProgress.getScmUrl() == null )
+                 releaseProgress.getScmUrl() == null )
             {
                 throw new MojoExecutionException( "Missing release preparation information." );
             }
