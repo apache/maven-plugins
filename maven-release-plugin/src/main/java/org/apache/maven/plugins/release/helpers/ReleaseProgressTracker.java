@@ -2,6 +2,7 @@ package org.apache.maven.plugins.release.helpers;
 
 import org.apache.maven.model.Scm;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -104,6 +105,14 @@ public class ReleaseProgressTracker
 
         return new ReleaseProgressTracker( rp );
     }
+    
+    protected void setReleaseProperty( String key, String value )
+    {
+        if ( StringUtils.isNotEmpty( value ) )
+        {
+            releaseProperties.setProperty( key, value );
+        }
+    }
 
     public static String getReleaseProgressFilename()
     {
@@ -112,7 +121,7 @@ public class ReleaseProgressTracker
 
     public void setUsername( String username )
     {
-        releaseProperties.setProperty( USERNAME, username );
+        setReleaseProperty( USERNAME, username );
     }
 
     public String getUsername()
@@ -122,7 +131,7 @@ public class ReleaseProgressTracker
 
     public void setScmTag( String scmTag )
     {
-        releaseProperties.setProperty( SCM_TAG, scmTag );
+        setReleaseProperty( SCM_TAG, scmTag );
     }
 
     public String getScmTag()
@@ -132,7 +141,7 @@ public class ReleaseProgressTracker
 
     public void setScmUrl( String scmUrl )
     {
-        releaseProperties.setProperty( SCM_URL, scmUrl );
+        setReleaseProperty( SCM_URL, scmUrl );
     }
 
     public String getScmUrl()
@@ -142,7 +151,7 @@ public class ReleaseProgressTracker
 
     public void setScmTagBase( String tagBase )
     {
-        releaseProperties.setProperty( SCM_TAG_BASE, tagBase );
+        setReleaseProperty( SCM_TAG_BASE, tagBase );
     }
 
     public String getScmTagBase()
@@ -152,7 +161,7 @@ public class ReleaseProgressTracker
 
     public void setPassword( String password )
     {
-        releaseProperties.setProperty( SCM_PASSWORD, password );
+        setReleaseProperty( SCM_PASSWORD, password );
     }
 
     public String getPassword()
@@ -183,7 +192,7 @@ public class ReleaseProgressTracker
 
     private void setCheckpoint( String pointName )
     {
-        releaseProperties.setProperty( CHECKPOINT_PREFIX + pointName, "OK" );
+        setReleaseProperty( CHECKPOINT_PREFIX + pointName, "OK" );
     }
 
     public boolean verifyCheckpoint( String pointName )
@@ -201,25 +210,25 @@ public class ReleaseProgressTracker
         String connection = scm.getConnection();
         if ( connection != null )
         {
-            releaseProperties.setProperty( SCM_INFO_PREFIX + projectId + ".connection", connection );
+            setReleaseProperty( SCM_INFO_PREFIX + projectId + ".connection", connection );
         }
 
         String devConnection = scm.getDeveloperConnection();
         if ( devConnection != null )
         {
-            releaseProperties.setProperty( SCM_INFO_PREFIX + projectId + ".developerConnection", devConnection );
+            setReleaseProperty( SCM_INFO_PREFIX + projectId + ".developerConnection", devConnection );
         }
 
         String url = scm.getUrl();
         if ( url != null )
         {
-            releaseProperties.setProperty( SCM_INFO_PREFIX + projectId + ".url", url );
+            setReleaseProperty( SCM_INFO_PREFIX + projectId + ".url", url );
         }
 
         String tag = scm.getTag();
         if ( tag != null )
         {
-            releaseProperties.setProperty( SCM_INFO_PREFIX + projectId + ".tag", tag );
+            setReleaseProperty( SCM_INFO_PREFIX + projectId + ".tag", tag );
         }
     }
 
