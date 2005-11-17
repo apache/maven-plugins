@@ -25,6 +25,7 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * Build an EJB (and optional client) from the current project.
@@ -44,6 +45,8 @@ public class EjbMojo
     private static final String[] DEFAULT_EXCLUDES = new String[]{"**/*Bean.class", "**/*CMP.class",
         "**/*Session.class", "**/package.html"};
 
+    private static final String[] EMPTY_STRING_ARRAY = new String[0];
+    
     /**
      * The directory for the generated EJB.
      *
@@ -78,6 +81,37 @@ public class EjbMojo
      * @todo boolean instead
      */
     private String generateClient = Boolean.FALSE.toString();
+    
+    /**
+     * Excludes.
+     * 
+     * <br/>Usage:
+     * <pre>
+     * &lt;clientExcludes>
+     *   &lt;clientExclude>**&#47;*Ejb.class&lt/clientExclude>
+     *   &lt;clientExclude>**&#47;*Bean.class&lt;/clientExclude>
+     * &lt;/clientExcludes>
+     * </pre>
+     * <br/>Attribute is used only if client jar is generated.
+     * <br/>Default exclusions: **&#47;*Bean.class, **&#47;*CMP.class, **&#47;*Session.class, **&#47;package.html
+     * @parameter
+     */
+    private List clientExcludes;
+    
+    /**
+     * Includes.
+     * 
+     * <br/>Usage:
+     * <pre>
+     * &lt;clientIncludes>
+     *   &lt;clientInclude>**&#47;*&lt/clientInclude>
+     * &lt;/clientIncludes>
+     * </pre>
+     * <br/>Attribute is used only if client jar is generated.
+     * <br/>Default value: **&#47**
+     * @parameter
+     */
+    private List clientIncludes;
 
     /**
      * The maven project.
@@ -156,6 +190,20 @@ public class EjbMojo
             {
                 getLog().info( "Building ejb client " + jarName + "-client" );
 
+                String[] excludes = DEFAULT_EXCLUDES;
+                String[] includes = DEFAULT_INCLUDES;
+                
+                if ( clientIncludes != null && !clientIncludes.isEmpty() )
+                {
+                    includes = (String[]) clientIncludes.toArray( EMPTY_STRING_ARRAY );
+                }
+                
+                if ( clientExcludes != null && !clientExcludes.isEmpty() )
+                {
+                    excludes = (String[]) clientExcludes.toArray( EMPTY_STRING_ARRAY );
+                }
+                
+                
                 File clientJarFile = new File( basedir, jarName + "-client.jar" );
 
                 MavenArchiver clientArchiver = new MavenArchiver();
@@ -164,8 +212,8 @@ public class EjbMojo
 
                 clientArchiver.setOutputFile( clientJarFile );
 
-                clientArchiver.getArchiver().addDirectory( new File( outputDirectory ), DEFAULT_INCLUDES,
-                                                           DEFAULT_EXCLUDES );
+                clientArchiver.getArchiver().addDirectory(
+                        new File( outputDirectory ), includes, excludes );
 
                 // create archive
                 clientArchiver.createArchive( project, archive );
@@ -180,5 +228,4 @@ public class EjbMojo
             throw new MojoExecutionException( "Error assembling EJB", e );
         }
     }
-
 }
