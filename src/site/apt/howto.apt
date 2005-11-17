@@ -4,7 +4,7 @@
 
 How to use
 
- Brief examples on how to use the jar:jar and jar:sign goals.
+ Brief examples on how to use the jar:jar, jar:sign and jar:sign-verify goals.
  
 * How to use jar:jar
 
@@ -23,6 +23,8 @@ How to use
 
   If you need to sign a jar, when using the 'jar' packaging, you just need to configure
   the sign goal appropriately for the signing to occur automatically during the package phase.
+
+  Note that you can automatically verify a jar after signing it.
 
 -------------------
 <project>
@@ -46,6 +48,7 @@ How to use
            <alias>youralias</alias>
            <storepass>yourstorepassword</storepass>
            <!--signedjar>${project.build.directory}/signed/${project.build.finalName}.jar</signedjar-->
+           <verify>true</verify>
         </configuration>
       </plugin>
     </plugins>
@@ -57,6 +60,12 @@ How to use
 
 -------------------
   m2 jar:sign -Dkeystore=/path/to/your/keystore -Dstorepass=yourstorepassword -Dalias=youralias
+-------------------
+
+* How to use jar:sign-verify specifying parameters on the command line
+
+-------------------
+  m2 jar:sign-verify [-Djarpath=/path/to/your/signedjar] [-Dverbose=true [-Dcheckcerts=true] ]
 -------------------
 
   For full documentation, click {{{index.html}here}}.
