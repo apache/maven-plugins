@@ -53,6 +53,7 @@ public class PerformReleaseMojo
     private File basedir;
 
     /**
+     * Comma or space separated goals 
      * @parameter expression="${goals}"
      */
     private String goals = "deploy";
@@ -122,8 +123,17 @@ public class PerformReleaseMojo
 
         cl.setWorkingDirectory( workingDirectory );
 
-        cl.createArgument().setLine( goals );
-
+        if ( this.goals != null )
+        {
+            // accept both space and comma, so the old way still work
+            String [] tokens = StringUtils.split( this.goals, ", " );
+            
+            for ( int i = 0 ; i < tokens.length ; ++i )
+            {
+                cl.createArgument().setValue( tokens[i] );
+            }
+        }
+        
         cl.createArgument().setLine( "-DperformRelease=true" );
 
         cl.createArgument().setLine( "--no-plugin-updates" );
@@ -201,6 +211,8 @@ public class PerformReleaseMojo
 
         try
         {
+            this.getLog().info( cl.toString() );
+            
             int result = CommandLineUtils.executeCommandLine( cl, consumer, consumer );
 
             if ( result != 0 )

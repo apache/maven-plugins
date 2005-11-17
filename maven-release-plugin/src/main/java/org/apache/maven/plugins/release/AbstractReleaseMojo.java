@@ -21,6 +21,10 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.release.helpers.ReleaseProgressTracker;
 import org.apache.maven.plugins.release.helpers.ScmHelper;
 import org.apache.maven.scm.manager.ScmManager;
+import org.apache.maven.scm.provider.starteam.repository.StarteamScmProviderRepository;
+import org.apache.maven.scm.repository.ScmRepository;
+import org.apache.maven.settings.Server;
+import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.components.interactivity.InputHandler;
 
 /**
@@ -41,6 +45,14 @@ public abstract class AbstractReleaseMojo
      */
     private InputHandler inputHandler;
 
+    /**
+     * @parameter expression="${settings}"
+     * @required
+     * @readonly
+     */
+    private Settings settings;
+
+    
     private ScmHelper scmHelper;
 
     protected abstract ReleaseProgressTracker getReleaseProgress()
@@ -51,6 +63,11 @@ public abstract class AbstractReleaseMojo
         return inputHandler;
     }
 
+    protected Settings getSettings()
+    {
+        return settings;
+    }
+    
     protected ScmHelper getScm( String directory )
         throws MojoExecutionException
     {
@@ -74,7 +91,67 @@ public abstract class AbstractReleaseMojo
         }
 
         scmHelper.setWorkingDirectory( directory );
+        
+        loadStarteamUsernamePassword( scmHelper );
 
         return scmHelper;
+    }
+    
+    private ScmManager getScmManager()
+    {
+        return this.scmManager;
+    }
+    
+    /**
+     * Load starteam username/password from settings if needed
+     * @param scmHelper
+     * @throws MojoExecutionException
+     */
+    private void loadStarteamUsernamePassword( ScmHelper scmHelper )
+        throws MojoExecutionException
+    {
+        if ( scmHelper.getUsername() == null || scmHelper.getPassword() == null )
+        {
+            ScmRepository repository = null;
+     
+            try
+            {
+                repository = getScmManager().makeScmRepository( scmHelper.getUrl() );
+            }
+            catch ( Exception e )
+            {
+                throw new MojoExecutionException ( "Can't load the scm provider.", e );
+            }
+
+            if ( repository.getProvider().equals( "starteam" ) )
+            {
+                StarteamScmProviderRepository starteamRepo = (StarteamScmProviderRepository) repository.getProviderRepository();
+                    
+                String starteamAddress = starteamRepo.getHost();
+                    
+                int starteamPort = starteamRepo.getPort();
+                    
+                if ( starteamPort != 0 )
+                {
+                    starteamAddress += ":" + starteamPort;
+                }
+                    
+                Server server = this.settings.getServer( starteamAddress );
+                    
+                if ( server != null )
+                {
+                    if ( scmHelper.getUsername() == null )
+                    {
+                        scmHelper.setUsername( server.getUsername() );
+                    }
+                
+                    if ( scmHelper.getPassword() == null )
+                    {
+                        scmHelper.setPassword( server.getPassword() );
+                    }
+                 }
+              }
+        }
+        
     }
 }
