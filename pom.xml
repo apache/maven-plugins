@@ -91,6 +91,16 @@
       </roles>
       <timezone>+1</timezone>
     </developer>
+    <developer>
+      <id>epunzalan</id>
+      <name>Edwin Punzalan</name>
+      <email>epunzalan@mergere.com</email>
+      <organization>Mergere</organization>
+      <roles>
+        <role>Committer</role>
+      </roles>
+      <timezone>+8</timezone>
+    </developer>
   </developers>
   <dependencies>
     <dependency>
