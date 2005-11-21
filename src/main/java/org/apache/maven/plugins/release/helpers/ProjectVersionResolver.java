@@ -63,7 +63,7 @@ public class ProjectVersionResolver
 
         if ( interactive )
         {
-            projectVersion = getVersionFromUser("What is the release version for \'" + projectId + "\'?", projectVersion);
+            projectVersion = getVersionFromUser("What is the release version for \"" + projectId + "\"?", projectVersion);
         } 
         else if ( StringUtils.isEmpty( projectVersion ) ) 
         {
@@ -80,7 +80,7 @@ public class ProjectVersionResolver
     {
         if ( defaultVersionStr != null )
         {
-            promptText = promptText + "[" + defaultVersionStr + "]";
+            promptText = promptText + " [" + defaultVersionStr + "]";
         }
         
         try
@@ -104,13 +104,13 @@ public class ProjectVersionResolver
         return (String) resolvedVersions.get( projectId );
     }
 
-    private VersionInfo getVersionInfo(String version) {
+    public VersionInfo getVersionInfo( String version ) {
         // TODO: Provide a way to override the implementation of VersionInfo
         try 
         {
             return new DefaultVersionInfo( version );
         } 
-        catch (VersionParseException e)
+        catch ( VersionParseException e )
         {
             return null;
         }
@@ -134,7 +134,7 @@ public class ProjectVersionResolver
         
         if ( interactive )
         {
-            nextVersion = getVersionFromUser("What is the new development version for \'" + projectId + "\'?", nextVersion );            
+            nextVersion = getVersionFromUser("What is the new development version for \"" + projectId + "\"?", nextVersion );            
         }
         else if ( nextVersion == null )
         {
