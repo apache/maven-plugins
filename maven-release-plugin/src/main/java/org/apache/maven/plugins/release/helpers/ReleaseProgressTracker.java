@@ -53,40 +53,48 @@ public class ReleaseProgressTracker
 
     private Properties releaseProperties;
 
+    private File releasePropertiesFile;
+
     private boolean resumeAtCheckpoint = false;
 
-    private ReleaseProgressTracker( Properties properties )
+    private ReleaseProgressTracker( File propertiesFile, Properties properties )
     {
+        this.releasePropertiesFile = propertiesFile;
         this.releaseProperties = properties;
     }
 
-    public static ReleaseProgressTracker loadOrCreate( String basedir )
+    public static ReleaseProgressTracker loadOrCreate( File basedir )
         throws IOException
     {
         ReleaseProgressTracker tracker;
 
-        if ( new File( basedir, RELEASE_PROPERTIES ).exists() )
+        File releasePropertiesFile = new File( basedir, RELEASE_PROPERTIES );
+        if ( releasePropertiesFile.exists() )
         {
-            tracker = load( basedir );
+            tracker = doLoad( releasePropertiesFile );
         }
         else
         {
-            tracker = create();
+            tracker = create( releasePropertiesFile );
         }
 
         return tracker;
     }
 
-    public static ReleaseProgressTracker create()
+    public static ReleaseProgressTracker create( File releasePropertiesFile )
     {
-        return new ReleaseProgressTracker( new Properties() );
+        return new ReleaseProgressTracker( releasePropertiesFile, new Properties() );
     }
 
-    public static ReleaseProgressTracker load( String basedir )
+    public static ReleaseProgressTracker load( File basedir )
         throws IOException
     {
-        File releasePropertiesFile = new File( basedir, RELEASE_PROPERTIES );
+        return doLoad( new File( basedir, RELEASE_PROPERTIES ) );
+    }
 
+    private static ReleaseProgressTracker doLoad( File releasePropertiesFile )
+        throws IOException
+    {
         InputStream inStream = null;
 
         Properties rp;
@@ -103,9 +111,9 @@ public class ReleaseProgressTracker
             IOUtil.close( inStream );
         }
 
-        return new ReleaseProgressTracker( rp );
+        return new ReleaseProgressTracker( releasePropertiesFile, rp );
     }
-    
+
     protected void setReleaseProperty( String key, String value )
     {
         if ( StringUtils.isNotEmpty( value ) )
@@ -169,13 +177,17 @@ public class ReleaseProgressTracker
         return releaseProperties.getProperty( SCM_PASSWORD );
     }
 
-    public void checkpoint( String basedir, String pointName )
+    public void checkpoint( String pointName )
         throws IOException
     {
         setCheckpoint( pointName );
 
-        File releasePropertiesFile = new File( basedir, RELEASE_PROPERTIES );
+        store();
+    }
 
+    public void store()
+        throws IOException
+    {
         FileOutputStream outStream = null;
 
         try
