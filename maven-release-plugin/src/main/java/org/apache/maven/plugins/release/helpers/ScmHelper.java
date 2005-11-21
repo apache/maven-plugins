@@ -29,10 +29,11 @@ import org.apache.maven.scm.command.tag.TagScmResult;
 import org.apache.maven.scm.command.unedit.UnEditScmResult;
 import org.apache.maven.scm.command.update.UpdateScmResult;
 import org.apache.maven.scm.manager.ScmManager;
-import org.apache.maven.scm.provider.starteam.repository.StarteamScmProviderRepository;
+import org.apache.maven.scm.provider.ScmProviderRepository;
 import org.apache.maven.scm.provider.svn.repository.SvnScmProviderRepository;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -84,38 +85,26 @@ public class ScmHelper
         {
             repository = getScmManager().makeScmRepository( url );
 
+            ScmProviderRepository scmRepo = repository.getProviderRepository();
+
+            if ( !StringUtils.isEmpty( username ) )
+            {
+                scmRepo.setUser( username );
+            }
+            if ( !StringUtils.isEmpty( password ) )
+            {
+                scmRepo.setPassword( password );
+            }
+
             if ( repository.getProvider().equals( "svn" ) )
             {
                 SvnScmProviderRepository svnRepo = (SvnScmProviderRepository) repository.getProviderRepository();
 
-                if ( username != null && username.length() > 0 )
-                {
-                    svnRepo.setUser( username );
-                }
-                if ( password != null && password.length() > 0 )
-                {
-                    svnRepo.setPassword( password );
-                }
                 if ( tagBase != null && tagBase.length() > 0 )
                 {
                     svnRepo.setTagBase( tagBase );
                 }
             }
-            
-            if ( repository.getProvider().equals( "starteam" ) )
-            {
-                StarteamScmProviderRepository starteamRepo = (StarteamScmProviderRepository) repository.getProviderRepository();
-
-                if ( username != null && username.length() > 0 )
-                {
-                    starteamRepo.setUser( username );
-                }
-                if ( password != null && password.length() > 0 )
-                {
-                    starteamRepo.setPassword( password );
-                }
-            }
-            
         }
         catch ( Exception e )
         {
@@ -123,6 +112,22 @@ public class ScmHelper
         }
 
         return repository;
+    }
+
+    public String getProvider()
+        throws ScmException
+    {
+        ScmRepository repository;
+        try
+        {
+            repository = getScmManager().makeScmRepository( url );
+
+            return repository.getProvider();
+        }
+        catch ( Exception e )
+        {
+            throw new ScmException( "Can't load the scm provider.", e );
+        }
     }
 
     private void checkResult( ScmResult result )

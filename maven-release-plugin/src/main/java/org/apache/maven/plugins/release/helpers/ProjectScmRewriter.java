@@ -20,6 +20,7 @@ import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Scm;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.scm.provider.svn.SvnTagBranchUtils;
 
 public class ProjectScmRewriter
 {
@@ -43,12 +44,24 @@ public class ProjectScmRewriter
         }
     }
 
-    public void restoreScmInfo( Model model )
+    public void restoreScmInfo( Model model ) 
+        throws MojoExecutionException
     {
         Scm scm = model.getScm();
         if ( scm != null )
         {
-            String projectId = ArtifactUtils.versionlessKey( model.getGroupId(), model.getArtifactId() );
+            String groupId = model.getGroupId();
+            if ( groupId == null && model.getParent() != null )
+            {
+                groupId = model.getParent().getGroupId();
+            }
+            
+            if ( groupId == null ) 
+            {
+                throw new MojoExecutionException("Unable to determine groupId for artifact: " + model.getArtifactId() );
+            }
+            
+            String projectId = ArtifactUtils.versionlessKey( groupId, model.getArtifactId() );
 
             releaseProgress.restoreScmInfo( projectId, scm );
         }
@@ -62,56 +75,21 @@ public class ProjectScmRewriter
             String scmConnection = scm.getConnection();
             if ( scmConnection != null && scmConnection.startsWith( "scm:svn" ) )
             {
-                scm.setConnection( convertSvnConnectionString( scmConnection, tag ) );
+                scm.setConnection( SvnTagBranchUtils.resolveTagUrl( scmConnection, tag ) );
 
                 String devConnection = scm.getDeveloperConnection();
                 if ( devConnection != null )
                 {
-                    scm.setDeveloperConnection( convertSvnConnectionString( devConnection, tag ) );
+                    scm.setDeveloperConnection( SvnTagBranchUtils.resolveTagUrl( devConnection, tag ) );
                 }
 
                 String url = scm.getUrl();
                 if ( url != null )
                 {
-                    scm.setUrl( convertSvnConnectionString( url, tag ) );
+                    scm.setUrl( SvnTagBranchUtils.resolveTagUrl( url, tag ) );
                 }
             }
         }
     }
 
-    private String convertSvnConnectionString( String scmConnection, String tag )
-    {
-        int trunkBegin = scmConnection.indexOf( "/trunk" );
-
-        if ( trunkBegin >= 0 )
-        {
-            String tail = "";
-
-            if ( scmConnection.length() > trunkBegin + "/trunk".length() )
-            {
-                tail = scmConnection.substring( trunkBegin + "/trunk".length() );
-
-                if ( !tail.startsWith( "/" ) )
-                {
-                    tail += "/";
-                }
-            }
-
-            scmConnection = scmConnection.substring( 0, trunkBegin ) + "/tags/" + tag + tail;
-        }
-        else
-        {
-            int begin = scmConnection.indexOf( "/branches/" );
-            if ( begin >= 0 )
-            {
-                int end = scmConnection.indexOf( '/', begin + "/branches/".length() );
-                scmConnection = scmConnection.substring( 0, begin ) + "/tags/" + tag;
-                if ( end >= 0 && end < scmConnection.length() - 1 )
-                {
-                    scmConnection += scmConnection.substring( end );
-                }
-            }
-        }
-        return scmConnection;
-    }
 }

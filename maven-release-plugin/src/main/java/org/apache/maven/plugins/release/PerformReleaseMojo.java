@@ -84,6 +84,8 @@ public class PerformReleaseMojo
     private String releasePom;
 
     private ReleaseProgressTracker releaseProgress;
+    
+    private final static String MAVEN_TEST_SKIP = "maven.test.skip";
 
     public void execute()
         throws MojoExecutionException
@@ -141,6 +143,11 @@ public class PerformReleaseMojo
         if ( !interactive )
         {
             cl.createArgument().setLine( "--batch-mode" );
+        }
+        
+        if ( StringUtils.isNotEmpty( System.getProperty( MAVEN_TEST_SKIP ) ) )
+        {
+            cl.createArgument().setLine( "-D" + MAVEN_TEST_SKIP + "=" + System.getProperty( MAVEN_TEST_SKIP ) );
         }
 
         if ( StringUtils.isEmpty( releasePom ) )
@@ -233,7 +240,7 @@ public class PerformReleaseMojo
         {
             try
             {
-                releaseProgress = ReleaseProgressTracker.load( basedir.getAbsolutePath() );
+                releaseProgress = ReleaseProgressTracker.load( basedir );
             }
             catch ( IOException e )
             {

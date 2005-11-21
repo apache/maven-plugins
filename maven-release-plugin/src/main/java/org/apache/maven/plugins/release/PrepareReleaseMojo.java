@@ -2,13 +2,13 @@ package org.apache.maven.plugins.release;
 
 /*
  * Copyright 2001-2005 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,6 +42,7 @@ import org.apache.maven.plugins.release.helpers.ProjectScmRewriter;
 import org.apache.maven.plugins.release.helpers.ProjectVersionResolver;
 import org.apache.maven.plugins.release.helpers.ReleaseProgressTracker;
 import org.apache.maven.plugins.release.helpers.ScmHelper;
+import org.apache.maven.plugins.release.versions.VersionInfo;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ModelUtils;
 import org.apache.maven.project.path.PathTranslator;
@@ -128,7 +129,6 @@ public class PrepareReleaseMojo
 
     /**
      * @parameter expression="${project.scm.developerConnection}"
-     * @required
      * @readonly
      */
     private String urlScm;
@@ -181,17 +181,42 @@ public class PrepareReleaseMojo
 
     private ProjectScmRewriter scmRewriter;
 
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
+    private void validateConfiguration()
+        throws MojoExecutionException
+    {
+        if ( StringUtils.isEmpty( urlScm ) )
+        {
+            Model model = ((MavenProject) reactorProjects.get(0)).getModel();
+            if ( model.getScm() != null )
+            {
+                urlScm = model.getScm().getConnection();
+                if ( StringUtils.isEmpty( urlScm ) )
+                {
+                    throw new MojoExecutionException("Missing required setting: scm connection or developerConnection must be specified.");
+                }
+            }
+        }
+    }
+
+    private void checkpoint( String pointName )
+        throws MojoExecutionException
     {
         try
         {
-            getReleaseProgress().checkpoint( basedir.getAbsolutePath(), ReleaseProgressTracker.CP_INITIALIZED );
+            getReleaseProgress().checkpoint( pointName );
         }
         catch ( IOException e )
         {
             getLog().warn( "Error writing checkpoint.", e );
         }
+    }
+
+    public void execute()
+        throws MojoExecutionException, MojoFailureException
+    {
+        validateConfiguration();
+  
+        checkpoint( ReleaseProgressTracker.CP_INITIALIZED );
 
         if ( !getReleaseProgress().verifyCheckpoint( ReleaseProgressTracker.CP_PREPARED_RELEASE ) )
         {
@@ -209,8 +234,8 @@ public class PrepareReleaseMojo
 
                     if ( !ArtifactUtils.isSnapshot( project.getVersion() ) )
                     {
-                        throw new MojoExecutionException( "The project " + project.getGroupId() + ":" +
-                            project.getArtifactId() + " isn't a snapshot (" + project.getVersion() + ")." );
+                        throw new MojoExecutionException( "The project " + projectId + " isn't a snapshot ("
+                            + project.getVersion() + ")." );
                     }
 
                     getVersionResolver().resolveVersion( project.getOriginalModel(), projectId );
@@ -221,16 +246,7 @@ public class PrepareReleaseMojo
                                                      project.getPluginArtifactRepositories() );
                 }
 
-                try
-                {
-                    getReleaseProgress().checkpoint( basedir.getAbsolutePath(),
-                                                     ReleaseProgressTracker.CP_POM_TRANSFORMED_FOR_RELEASE );
-                }
-                catch ( IOException e )
-                {
-                    getLog().warn( "Error writing checkpoint.", e );
-                }
-
+                checkpoint( ReleaseProgressTracker.CP_POM_TRANSFORMED_FOR_RELEASE );
             }
 
             if ( generateReleasePoms )
@@ -258,15 +274,7 @@ public class PrepareReleaseMojo
                     transformPomToSnapshotVersionPom( model, project.getFile() );
                 }
 
-                try
-                {
-                    getReleaseProgress().checkpoint( basedir.getAbsolutePath(),
-                                                     ReleaseProgressTracker.CP_POM_TRANSORMED_FOR_DEVELOPMENT );
-                }
-                catch ( IOException e )
-                {
-                    getLog().warn( "Error writing checkpoint.", e );
-                }
+                checkpoint( ReleaseProgressTracker.CP_POM_TRANSORMED_FOR_DEVELOPMENT );
             }
 
             if ( generateReleasePoms )
@@ -276,15 +284,7 @@ public class PrepareReleaseMojo
 
             checkInNextSnapshot();
 
-            try
-            {
-                getReleaseProgress().checkpoint( basedir.getAbsolutePath(),
-                                                 ReleaseProgressTracker.CP_PREPARED_RELEASE );
-            }
-            catch ( IOException e )
-            {
-                getLog().warn( "Error writing checkpoint.", e );
-            }
+            checkpoint( ReleaseProgressTracker.CP_PREPARED_RELEASE );
         }
     }
 
@@ -400,7 +400,7 @@ public class PrepareReleaseMojo
         {
             try
             {
-                releaseProgress = ReleaseProgressTracker.loadOrCreate( basedir.getAbsolutePath() );
+                releaseProgress = ReleaseProgressTracker.loadOrCreate( basedir );
             }
             catch ( IOException e )
             {
@@ -408,12 +408,17 @@ public class PrepareReleaseMojo
                     "Cannot read existing release progress file from directory: " + basedir.getAbsolutePath() + "." );
                 getLog().debug( "Cause", e );
 
-                releaseProgress = ReleaseProgressTracker.create();
+                releaseProgress = ReleaseProgressTracker.create( basedir );
             }
 
             if ( resume )
             {
                 releaseProgress.setResumeAtCheckpoint( true );
+            }
+
+            if ( releaseProgress.getScmUrl() == null )
+            {
+                releaseProgress.setScmUrl( urlScm );
             }
 
             if ( releaseProgress.getUsername() == null )
@@ -430,23 +435,12 @@ public class PrepareReleaseMojo
                 releaseProgress.setPassword( password );
             }
 
-            if ( releaseProgress.getScmTag() == null )
-            {
-                releaseProgress.setScmTag( getTagLabel() );
-            }
-
             if ( releaseProgress.getScmTagBase() == null )
             {
                 releaseProgress.setScmTagBase( tagBase );
             }
 
-            if ( releaseProgress.getScmUrl() == null )
-            {
-                releaseProgress.setScmUrl( urlScm );
-            }
-
-            if ( releaseProgress.getUsername() == null || releaseProgress.getScmTag() == null ||
-                 releaseProgress.getScmUrl() == null )
+            if ( releaseProgress.getUsername() == null || releaseProgress.getScmUrl() == null )
             {
                 throw new MojoExecutionException( "Missing release preparation information." );
             }
@@ -523,15 +517,7 @@ public class PrepareReleaseMojo
                     "Cannot prepare the release because you have local modifications : \n" + message );
             }
 
-            try
-            {
-                getReleaseProgress().checkpoint( basedir.getAbsolutePath(),
-                                                 ReleaseProgressTracker.CP_LOCAL_MODIFICATIONS_CHECKED );
-            }
-            catch ( IOException e )
-            {
-                getLog().warn( "Error writing checkpoint.", e );
-            }
+            checkpoint( ReleaseProgressTracker.CP_LOCAL_MODIFICATIONS_CHECKED );
         }
     }
 
@@ -859,21 +845,21 @@ public class PrepareReleaseMojo
                 releaseModel.setParent( null );
 
                 Set artifacts = releaseProject.getArtifacts();
-                
+
                 if ( artifacts != null )
                 {
                     //Rewrite dependencies section
                     List newdeps = new ArrayList();
 
                     Map oldDeps = new HashMap();
-                    
+
                     List deps = releaseProject.getDependencies();
                     if ( deps != null )
                     {
                         for ( Iterator depIterator = deps.iterator(); depIterator.hasNext(); )
                         {
                             Dependency dep = (Dependency) depIterator.next();
-                            
+
                             oldDeps.put( ArtifactUtils.artifactId( dep.getGroupId(), dep.getArtifactId(), dep.getType(), dep.getVersion() ), dep );
                         }
                     }
@@ -881,7 +867,7 @@ public class PrepareReleaseMojo
                     for ( Iterator i = releaseProject.getArtifacts().iterator(); i.hasNext(); )
                     {
                         Artifact artifact = (Artifact) i.next();
-                        
+
                         String key = artifact.getId();
 
                         Dependency newdep = new Dependency();
@@ -906,9 +892,9 @@ public class PrepareReleaseMojo
                         newdep.setType( artifact.getType() );
                         newdep.setScope( artifact.getScope() );
                         newdep.setClassifier( artifact.getClassifier() );
-                        
+
                         Dependency old = (Dependency) oldDeps.get( key );
-                        
+
                         if ( old != null )
                         {
                             newdep.setSystemPath( old.getSystemPath() );
@@ -1074,15 +1060,7 @@ public class PrepareReleaseMojo
                     throw new MojoExecutionException( "Error adding the release-pom.xml: " + releasePomFile, e );
                 }
 
-                try
-                {
-                    getReleaseProgress().checkpoint( basedir.getAbsolutePath(),
-                                                     ReleaseProgressTracker.CP_GENERATED_RELEASE_POM );
-                }
-                catch ( IOException e )
-                {
-                    getLog().warn( "Error writing checkpoint.", e );
-                }
+                checkpoint( ReleaseProgressTracker.CP_GENERATED_RELEASE_POM );
             }
         }
     }
@@ -1205,15 +1183,7 @@ public class PrepareReleaseMojo
 
             checkIn( "[maven-release-plugin] prepare release " + getTagLabel() );
 
-            try
-            {
-                getReleaseProgress().checkpoint( basedir.getAbsolutePath(),
-                                                 ReleaseProgressTracker.CP_CHECKED_IN_RELEASE_VERSION );
-            }
-            catch ( IOException e )
-            {
-                getLog().warn( "Error writing checkpoint.", e );
-            }
+            checkpoint( ReleaseProgressTracker.CP_CHECKED_IN_RELEASE_VERSION );
         }
     }
 
@@ -1258,15 +1228,7 @@ public class PrepareReleaseMojo
                                                   e );
             }
 
-            try
-            {
-                getReleaseProgress().checkpoint( basedir.getAbsolutePath(),
-                                                 ReleaseProgressTracker.CP_REMOVED_RELEASE_POM );
-            }
-            catch ( IOException e )
-            {
-                getLog().warn( "Error writing checkpoint.", e );
-            }
+            checkpoint( ReleaseProgressTracker.CP_REMOVED_RELEASE_POM );
         }
     }
 
@@ -1294,15 +1256,7 @@ public class PrepareReleaseMojo
 
             checkIn( "[maven-release-plugin] prepare for next development iteration" );
 
-            try
-            {
-                getReleaseProgress().checkpoint( basedir.getAbsolutePath(),
-                                                 ReleaseProgressTracker.CP_CHECKED_IN_DEVELOPMENT_VERSION );
-            }
-            catch ( IOException e )
-            {
-                getLog().warn( "Error writing checkpoint.", e );
-            }
+            checkpoint( ReleaseProgressTracker.CP_CHECKED_IN_DEVELOPMENT_VERSION );
         }
     }
 
@@ -1328,43 +1282,137 @@ public class PrepareReleaseMojo
         scm.setTag( tag );
     }
 
+    /** Creates a default tag name to suggest when prompting the user for a release tag name.
+     * The tag name returned is the artifactId-resolvedVersion from the first project
+     * in the reactorProjects list.
+     * 
+     * Returns null if unable to determine a default tag name.
+     * 
+     * @return
+     * @throws MojoExecutionException
+     */
+    private String getDefaultReleaseTag()
+        throws MojoExecutionException
+    {
+        MavenProject project = null;
+        if ( reactorProjects.size() == 0 ) {
+            return null;
+        }
+
+        project = (MavenProject) reactorProjects.get(0);
+        for (int i = 1; i < reactorProjects.size(); i++ )
+        {
+            if (! ((MavenProject) reactorProjects.get( i ) ).getParent().equals( project ))
+            {
+                // We have multiple projects, some of which are not descendants of the 0th project in the list.
+                // rather than guess which one we should use for a default tag name, just return null
+                return null;
+            }
+        }
+
+        try {
+            String version =
+                getVersionResolver().getResolvedVersion( project.getGroupId(), project.getArtifactId() );
+
+            if ( version == null )
+            {
+                VersionInfo info = getVersionResolver().getVersionInfo( project.getVersion() );
+                if ( info != null )
+                {
+                    version = info.getReleaseVersionString();
+                }
+            }
+
+            String defaultTag = project.getArtifactId() + "-" + version;
+
+            ScmHelper scm = getScm( basedir.getAbsolutePath() );
+            String provider = scm.getProvider();
+
+            // Really each of the scm providers should support something which returns the supported
+            // characters & lengths supported in tag names.  For now, we'll just assume that CVS is the
+            // only one with the problem with periods.
+            if ( "cvs".equals(provider) ) {
+                defaultTag = defaultTag.replace('.', '_');
+            }
+
+            return defaultTag;
+        }
+        catch ( ScmException e )
+        {
+            throw new MojoExecutionException("Unable to determine scm repository provider", e);
+        }
+    }
+
+    /** Returns the tag name to be used when tagging the release in the scm repository.
+     * <p>
+     * If the userTag is already assigned, that value is returned.
+     * Else if the releaseProperties already has the value, then use that value.
+     * Else if we are interactive then prompt the user for a tag name.
+     * 
+     * @return
+     * @throws MojoExecutionException
+     */
     private String getTagLabel()
         throws MojoExecutionException
     {
         if ( userTag == null )
         {
-            try
+            if ( StringUtils.isNotEmpty( releaseProgress.getScmTag() ) )
             {
-                if ( tag == null && interactive )
+                userTag = releaseProgress.getScmTag();
+            }
+            else
+            {
+                try
                 {
-                    getLog().info( "What tag name should be used? " );
-
-                    String inputTag = getInputHandler().readLine();
-
-                    if ( !StringUtils.isEmpty( inputTag ) )
+                    if ( tag == null && interactive )
                     {
-                        userTag = inputTag;
+                        String prompt = "What tag name should be used? ";
+
+                        String defaultTag = getDefaultReleaseTag();
+
+                        if ( defaultTag != null )
+                        {
+                            prompt = prompt + "[" + defaultTag + "]";
+                        }
+
+                        getLog().info( prompt );
+
+                        String inputTag = getInputHandler().readLine();
+
+                        userTag = ( StringUtils.isEmpty( inputTag ) ) ? defaultTag : inputTag;
+                    }
+                    else
+                    {
+                        userTag = tag;
                     }
                 }
-                else
+                catch ( IOException e )
                 {
-                    userTag = tag;
+                    throw new MojoExecutionException( "An error has occurred while reading user input.", e );
+                }
+
+                // If we were able to get a userTag from the user, save it to our release.properties file
+                if ( userTag != null )
+                {
+                    ReleaseProgressTracker releaseProgress = getReleaseProgress();
+                    releaseProgress.setScmTag( userTag );
+                    try
+                    {
+                        releaseProgress.store();
+                    }
+                    catch ( IOException e )
+                    {
+                        getLog().warn( "An error occurred while saving the release progress file", e );
+                    }
+
                 }
             }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "An error has occurred in the tag process.", e );
-            }
         }
 
         if ( userTag == null )
         {
-            userTag = releaseProgress.getScmTag();
-        }
-
-        if ( userTag == null )
-        {
-            throw new MojoExecutionException( "A tag must be specified" );
+            throw new MojoExecutionException( "A release tag must be specified" );
         }
 
         return userTag;
@@ -1403,14 +1451,7 @@ public class PrepareReleaseMojo
                 throw new MojoExecutionException( "An error is occurred in the tag process.", e );
             }
 
-            try
-            {
-                getReleaseProgress().checkpoint( basedir.getAbsolutePath(), ReleaseProgressTracker.CP_TAGGED_RELEASE );
-            }
-            catch ( IOException e )
-            {
-                getLog().warn( "Error writing checkpoint.", e );
-            }
+            checkpoint( ReleaseProgressTracker.CP_TAGGED_RELEASE );
         }
     }
 
