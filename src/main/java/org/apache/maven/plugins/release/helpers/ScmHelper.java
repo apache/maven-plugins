@@ -22,9 +22,11 @@ import org.apache.maven.scm.ScmResult;
 import org.apache.maven.scm.command.add.AddScmResult;
 import org.apache.maven.scm.command.checkin.CheckInScmResult;
 import org.apache.maven.scm.command.checkout.CheckOutScmResult;
+import org.apache.maven.scm.command.edit.EditScmResult;
 import org.apache.maven.scm.command.remove.RemoveScmResult;
 import org.apache.maven.scm.command.status.StatusScmResult;
 import org.apache.maven.scm.command.tag.TagScmResult;
+import org.apache.maven.scm.command.unedit.UnEditScmResult;
 import org.apache.maven.scm.command.update.UpdateScmResult;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.provider.starteam.repository.StarteamScmProviderRepository;
@@ -227,6 +229,28 @@ public class ScmHelper
 
         CheckInScmResult result = getScmManager().getProviderByRepository( repository )
             .checkIn( repository, new ScmFileSet( new File( workingDirectory ) ), tag, message );
+        checkResult( result );
+    }
+
+    public void edit( File file )
+        throws ScmException
+    {
+        ScmRepository repository = getScmRepository();
+
+        EditScmResult result = getScmManager().getProviderByRepository( repository )
+            .edit( repository, new ScmFileSet( file ) );
+
+        checkResult( result );
+    }
+
+    public void unedit( File file )
+        throws ScmException
+    {
+        ScmRepository repository = getScmRepository();
+
+        UnEditScmResult result = getScmManager().getProviderByRepository( repository )
+            .unedit( repository, new ScmFileSet( file ) );
+
         checkResult( result );
     }
 

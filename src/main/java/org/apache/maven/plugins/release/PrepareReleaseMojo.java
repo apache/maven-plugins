@@ -164,6 +164,11 @@ public class PrepareReleaseMojo
     private boolean generateReleasePoms;
 
     /**
+     * @parameter expression="${useEditMode}" default-value="false"
+     */
+    private boolean useEditMode;
+
+    /**
      * @component
      */
     private PathTranslator pathTranslator;
@@ -384,24 +389,8 @@ public class PrepareReleaseMojo
         }
 
         File pomFile = new File( file.getParentFile(), POM );
-        Writer writer = null;
 
-        try
-        {
-            writer = new FileWriter( pomFile );
-
-            MavenXpp3Writer pomWriter = new MavenXpp3Writer();
-
-            pomWriter.write( writer, model );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Cannot write development version of pom to: " + pomFile, e );
-        }
-        finally
-        {
-            IOUtil.close( writer );
-        }
+        writePom( pomFile, model, "development" );
     }
 
     protected ReleaseProgressTracker getReleaseProgress()
@@ -802,25 +791,9 @@ public class PrepareReleaseMojo
             }
         }
 
-        Writer writer = null;
-
         File pomFile = new File( file.getParentFile(), POM );
-        try
-        {
-            writer = new FileWriter( pomFile );
 
-            MavenXpp3Writer pomWriter = new MavenXpp3Writer();
-
-            pomWriter.write( writer, model );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Cannot write released version of pom to: " + pomFile, e );
-        }
-        finally
-        {
-            IOUtil.close( writer );
-        }
+        writePom( pomFile, model, "released" );
     }
 
     private void generateReleasePoms()
@@ -1441,4 +1414,52 @@ public class PrepareReleaseMojo
         }
     }
 
+    private void writePom( File pomFile, Model model, String versionName )
+        throws MojoExecutionException
+    {
+        ScmHelper scm = getScm( basedir.getAbsolutePath() );
+
+        if ( useEditMode )
+        {
+            try
+            {
+                scm.edit( pomFile );
+            }
+            catch ( ScmException e )
+            {
+                throw new MojoExecutionException( "An error is occurred in the edit process.", e );
+            }
+        }
+        
+        Writer writer = null;
+
+        try
+        {
+            writer = new FileWriter( pomFile );
+
+            MavenXpp3Writer pomWriter = new MavenXpp3Writer();
+
+            pomWriter.write( writer, model );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Cannot write " + versionName + " version of pom to: " + pomFile, e );
+        }
+        finally
+        {
+            IOUtil.close( writer );
+
+            if ( useEditMode )
+            {
+                try
+                {
+                    scm.unedit( pomFile );
+                }
+                catch ( ScmException e )
+                {
+                    throw new MojoExecutionException( "An error is occurred in the unedit process.", e );
+                }
+            }
+        }
+    }
 }
