@@ -32,10 +32,10 @@ import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.doxia.site.renderer.SiteRenderer;
+import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.util.Locale;
-import java.util.ResourceBundle;
 
 /**
  * Generates the Project Source Code Management report.
@@ -83,11 +83,18 @@ public class ScmReport
     protected ScmManager scmManager;
 
     /**
+     * Internationalization.
+     *
+     * @component
+     */
+    private I18N i18n;
+
+    /**
      * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
      */
     public String getName( Locale locale )
     {
-        return getBundle( locale ).getString( "report.scm.name" );
+        return i18n.getString( "project-info-report", locale, "report.scm.name" );
     }
 
     /**
@@ -103,7 +110,7 @@ public class ScmReport
      */
     public String getDescription( Locale locale )
     {
-        return getBundle( locale ).getString( "report.scm.description" );
+        return i18n.getString( "project-info-report", locale, "report.scm.description" );
     }
 
     /**
@@ -135,7 +142,7 @@ public class ScmReport
      */
     public void executeReport( Locale locale )
     {
-        ScmRenderer r = new ScmRenderer( scmManager, getSink(), getProject().getModel(), locale );
+        ScmRenderer r = new ScmRenderer( scmManager, getSink(), getProject().getModel(), i18n, locale );
 
         r.render();
     }
@@ -153,6 +160,8 @@ public class ScmReport
     {
         private Model model;
 
+        private I18N i18n;
+
         private Locale locale;
 
         private ScmManager scmManager;
@@ -164,13 +173,15 @@ public class ScmReport
 
         private String devConnection;
 
-        public ScmRenderer( ScmManager scmManager, Sink sink, Model model, Locale locale )
+        public ScmRenderer( ScmManager scmManager, Sink sink, Model model, I18N i18n, Locale locale )
         {
             super( sink );
 
             this.scmManager = scmManager;
 
             this.model = model;
+
+            this.i18n = i18n;
 
             this.locale = locale;
         }
@@ -180,7 +191,7 @@ public class ScmReport
          */
         public String getTitle()
         {
-            return getBundle( locale ).getString( "report.scm.title" );
+            return i18n.getString( "project-info-report", locale, "report.scm.title" );
         }
 
         /**
@@ -193,7 +204,7 @@ public class ScmReport
             {
                 startSection( getTitle() );
 
-                paragraph( getBundle( locale ).getString( "report.scm.noscm" ) );
+                paragraph( i18n.getString( "project-info-report", locale, "report.scm.noscm" ) );
 
                 endSection();
 
@@ -208,7 +219,7 @@ public class ScmReport
             {
                 startSection( getTitle() );
 
-                paragraph( getBundle( locale ).getString( "report.scm.noscm" ) );
+                paragraph( i18n.getString( "project-info-report", locale, "report.scm.noscm" ) );
 
                 endSection();
 
@@ -244,31 +255,31 @@ public class ScmReport
          */
         private void renderOverViewSection( ScmRepository anonymousRepository )
         {
-            startSection( getBundle( locale ).getString( "report.scm.overview.title" ) );
+            startSection( i18n.getString( "project-info-report", locale, "report.scm.overview.title" ) );
 
             if ( isScmSystem( anonymousRepository, "clearcase" ) )
             {
-                linkPatternedText( getBundle( locale ).getString( "report.scm.clearcase.intro" ) );
+                linkPatternedText( i18n.getString( "project-info-report", locale, "report.scm.clearcase.intro" ) );
             }
             else if ( isScmSystem( anonymousRepository, "cvs" ) )
             {
-                linkPatternedText( getBundle( locale ).getString( "report.scm.cvs.intro" ) );
+                linkPatternedText( i18n.getString( "project-info-report", locale, "report.scm.cvs.intro" ) );
             }
             else if ( isScmSystem( anonymousRepository, "perforce" ) )
             {
-                linkPatternedText( getBundle( locale ).getString( "report.scm.perforce.intro" ) );
+                linkPatternedText( i18n.getString( "project-info-report", locale, "report.scm.perforce.intro" ) );
             }
             else if ( isScmSystem( anonymousRepository, "starteam" ) )
             {
-                linkPatternedText( getBundle( locale ).getString( "report.scm.starteam.intro" ) );
+                linkPatternedText( i18n.getString( "project-info-report", locale, "report.scm.starteam.intro" ) );
             }
             else if ( isScmSystem( anonymousRepository, "svn" ) )
             {
-                linkPatternedText( getBundle( locale ).getString( "report.scm.svn.intro" ) );
+                linkPatternedText( i18n.getString( "project-info-report", locale, "report.scm.svn.intro" ) );
             }
             else
             {
-                paragraph( getBundle( locale ).getString( "report.scm.general.intro" ) );
+                paragraph( i18n.getString( "project-info-report", locale, "report.scm.general.intro" ) );
             }
 
             endSection();
@@ -281,15 +292,15 @@ public class ScmReport
          */
         private void renderWebAccesSection( String scmUrl )
         {
-            startSection( getBundle( locale ).getString( "report.scm.webaccess.title" ) );
+            startSection( i18n.getString( "project-info-report", locale, "report.scm.webaccess.title" ) );
 
             if ( StringUtils.isEmpty( scmUrl ) )
             {
-                paragraph( getBundle( locale ).getString( "report.scm.webaccess.nourl" ) );
+                paragraph( i18n.getString( "project-info-report", locale, "report.scm.webaccess.nourl" ) );
             }
             else
             {
-                paragraph( getBundle( locale ).getString( "report.scm.webaccess.url" ) );
+                paragraph( i18n.getString( "project-info-report", locale, "report.scm.webaccess.url" ) );
 
                 verbatimLink( scmUrl, scmUrl );
             }
@@ -312,7 +323,7 @@ public class ScmReport
                 return;
             }
 
-            startSection( getBundle( locale ).getString( "report.scm.anonymousaccess.title" ) );
+            startSection( i18n.getString( "project-info-report", locale, "report.scm.anonymousaccess.title" ) );
 
             if ( ( anonymousRepository != null ) && ( isScmSystem( anonymousRepository, "cvs" ) ) )
             {
@@ -330,7 +341,7 @@ public class ScmReport
             }
             else
             {
-                paragraph( getBundle( locale ).getString( "report.scm.anonymousaccess.general.intro" ) );
+                paragraph( i18n.getString( "project-info-report", locale, "report.scm.anonymousaccess.general.intro" ) );
 
                 if ( anonymousConnection.length() < 4 )
                 {
@@ -355,7 +366,7 @@ public class ScmReport
                 return;
             }
 
-            startSection( getBundle( locale ).getString( "report.scm.devaccess.title" ) );
+            startSection( i18n.getString( "project-info-report", locale, "report.scm.devaccess.title" ) );
 
             if ( ( devRepository != null ) && ( isScmSystem( devRepository, "clearcase" ) ) )
             {
@@ -392,7 +403,7 @@ public class ScmReport
             }
             else
             {
-                paragraph( getBundle( locale ).getString( "report.scm.devaccess.general.intro" ) );
+                paragraph( i18n.getString( "project-info-report", locale, "report.scm.devaccess.general.intro" ) );
 
                 if ( devConnection.length() < 4 )
                 {
@@ -412,13 +423,13 @@ public class ScmReport
          */
         private void renderAccessBehindFirewallSection( ScmRepository devRepository )
         {
-            startSection( getBundle( locale ).getString( "report.scm.accessbehindfirewall.title" ) );
+            startSection( i18n.getString( "project-info-report", locale, "report.scm.accessbehindfirewall.title" ) );
 
             if ( ( devRepository != null ) && ( isScmSystem( devRepository, "svn" ) ) )
             {
                 SvnScmProviderRepository svnRepo = (SvnScmProviderRepository) devRepository.getProviderRepository();
 
-                paragraph( getBundle( locale ).getString( "report.scm.accessbehindfirewall.svn.intro" ) );
+                paragraph( i18n.getString( "project-info-report", locale, "report.scm.accessbehindfirewall.svn.intro" ) );
 
                 StringBuffer sb = new StringBuffer();
                 sb.append( "$ svn checkout " ).append( svnRepo.getUrl() ).append( " " ).append( model.getArtifactId() );
@@ -426,11 +437,11 @@ public class ScmReport
             }
             else if ( ( devRepository != null ) && ( isScmSystem( devRepository, "cvs" ) ) )
             {
-                linkPatternedText( getBundle( locale ).getString( "report.scm.accessbehindfirewall.cvs.intro" ) );
+                linkPatternedText( i18n.getString( "project-info-report", locale, "report.scm.accessbehindfirewall.cvs.intro" ) );
             }
             else
             {
-                paragraph( getBundle( locale ).getString( "report.scm.accessbehindfirewall.general.intro" ) );
+                paragraph( i18n.getString( "project-info-report", locale, "report.scm.accessbehindfirewall.general.intro" ) );
             }
 
             endSection();
@@ -446,11 +457,11 @@ public class ScmReport
         {
             if ( ( isScmSystem( anonymousRepository, "svn" ) ) || ( isScmSystem( devRepository, "svn" ) ) )
             {
-                startSection( getBundle( locale ).getString( "report.scm.accessthroughtproxy.title" ) );
+                startSection( i18n.getString( "project-info-report", locale, "report.scm.accessthroughtproxy.title" ) );
 
-                paragraph( getBundle( locale ).getString( "report.scm.accessthroughtproxy.svn.intro1" ) );
-                paragraph( getBundle( locale ).getString( "report.scm.accessthroughtproxy.svn.intro2" ) );
-                paragraph( getBundle( locale ).getString( "report.scm.accessthroughtproxy.svn.intro3" ) );
+                paragraph( i18n.getString( "project-info-report", locale, "report.scm.accessthroughtproxy.svn.intro1" ) );
+                paragraph( i18n.getString( "project-info-report", locale, "report.scm.accessthroughtproxy.svn.intro2" ) );
+                paragraph( i18n.getString( "project-info-report", locale, "report.scm.accessthroughtproxy.svn.intro3" ) );
 
                 StringBuffer sb = new StringBuffer();
                 sb.append( "[global]" );
@@ -474,7 +485,7 @@ public class ScmReport
          */
         private void developerAccessClearCase( ClearCaseScmProviderRepository clearCaseRepo )
         {
-            paragraph( getBundle( locale ).getString( "report.scm.devaccess.clearcase.intro" ) );
+            paragraph( i18n.getString( "project-info-report", locale, "report.scm.devaccess.clearcase.intro" ) );
 
             StringBuffer command = new StringBuffer();
             command.append( "$ cleartool checkout " ).append( clearCaseRepo.getModule() );
@@ -495,7 +506,7 @@ public class ScmReport
          */
         private void anonymousAccessCVS( CvsScmProviderRepository cvsRepo )
         {
-            paragraph( getBundle( locale ).getString( "report.scm.anonymousaccess.cvs.intro" ) );
+            paragraph( i18n.getString( "project-info-report", locale, "report.scm.anonymousaccess.cvs.intro" ) );
 
             StringBuffer command = new StringBuffer();
             command.append( "$ cvs -d " ).append( cvsRepo.getCvsRoot() ).append( " login" );
@@ -517,7 +528,7 @@ public class ScmReport
          */
         private void developerAccessCVS( CvsScmProviderRepository cvsRepo )
         {
-            paragraph( getBundle( locale ).getString( "report.scm.devaccess.cvs.intro" ) );
+            paragraph( i18n.getString( "project-info-report", locale, "report.scm.devaccess.cvs.intro" ) );
 
             // Safety: remove the username if present
             String cvsRoot = StringUtils.replace( cvsRepo.getCvsRoot(), cvsRepo.getUser(), "username" );
@@ -543,7 +554,7 @@ public class ScmReport
          */
         private void developerAccessPerforce( PerforceScmProviderRepository perforceRepo )
         {
-            paragraph( getBundle( locale ).getString( "report.scm.devaccess.perforce.intro" ) );
+            paragraph( i18n.getString( "project-info-report", locale, "report.scm.devaccess.perforce.intro" ) );
 
             StringBuffer command = new StringBuffer();
             command.append( "$ p4" );
@@ -577,7 +588,7 @@ public class ScmReport
          */
         private void developerAccessStarteam( StarteamScmProviderRepository starteamRepo )
         {
-            paragraph( getBundle( locale ).getString( "report.scm.devaccess.starteam.intro" ) );
+            paragraph( i18n.getString( "project-info-report", locale, "report.scm.devaccess.starteam.intro" ) );
 
             StringBuffer command = new StringBuffer();
 
@@ -608,7 +619,7 @@ public class ScmReport
          */
         private void anonymousAccessSVN( SvnScmProviderRepository svnRepo )
         {
-            paragraph( getBundle( locale ).getString( "report.scm.anonymousaccess.svn.intro" ) );
+            paragraph( i18n.getString( "project-info-report", locale, "report.scm.anonymousaccess.svn.intro" ) );
 
             StringBuffer sb = new StringBuffer();
             sb.append( "$ svn checkout " ).append( svnRepo.getUrl() ).append( " " ).append( model.getArtifactId() );
@@ -627,7 +638,7 @@ public class ScmReport
          */
         private void developerAccessSVN( SvnScmProviderRepository svnRepo )
         {
-            paragraph( getBundle( locale ).getString( "report.scm.devaccess.svn.intro1" ) );
+            paragraph( i18n.getString( "project-info-report", locale, "report.scm.devaccess.svn.intro1" ) );
 
             StringBuffer sb = new StringBuffer();
 
@@ -635,7 +646,7 @@ public class ScmReport
 
             verbatimText( sb.toString() );
 
-            paragraph( getBundle( locale ).getString( "report.scm.devaccess.svn.intro2" ) );
+            paragraph( i18n.getString( "project-info-report", locale, "report.scm.devaccess.svn.intro2" ) );
 
             sb = new StringBuffer();
             sb.append( "$ svn commit --username your-username -m \"A message\"" );
@@ -693,10 +704,5 @@ public class ScmReport
 
             return false;
         }
-    }
-
-    private static ResourceBundle getBundle( Locale locale )
-    {
-        return ResourceBundle.getBundle( "project-info-report", locale, ScmReport.class.getClassLoader() );
     }
 }
