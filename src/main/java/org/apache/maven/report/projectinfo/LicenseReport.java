@@ -36,7 +36,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -325,11 +324,6 @@ public class LicenseReport
 
             endSection();
         }
-    }
-
-    private static ResourceBundle getBundle( Locale locale )
-    {
-        return ResourceBundle.getBundle( "project-info-report", locale, LicenseReport.class.getClassLoader() );
     }
 
     private static URL baseURL( URL aUrl )
