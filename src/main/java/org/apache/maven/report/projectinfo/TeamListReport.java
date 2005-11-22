@@ -24,13 +24,13 @@ import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.doxia.site.renderer.SiteRenderer;
+import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
-import java.util.ResourceBundle;
 
 /**
  * Generates the Project Team report.
@@ -69,11 +69,18 @@ public class TeamListReport
     private MavenProject project;
 
     /**
+     * Internationalization.
+     *
+     * @component
+     */
+    private I18N i18n;
+
+    /**
      * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
      */
     public String getName( Locale locale )
     {
-        return getBundle( locale ).getString( "report.team-list.name" );
+        return i18n.getString( "project-info-report", locale, "report.team-list.name" );
     }
 
     /**
@@ -89,7 +96,7 @@ public class TeamListReport
      */
     public String getDescription( Locale locale )
     {
-        return getBundle( locale ).getString( "report.team-list.description" );
+        return i18n.getString( "project-info-report", locale, "report.team-list.description" );
     }
 
     /**
@@ -121,7 +128,7 @@ public class TeamListReport
      */
     public void executeReport( Locale locale )
     {
-        TeamListRenderer r = new TeamListRenderer( getSink(), getProject().getModel(), locale );
+        TeamListRenderer r = new TeamListRenderer( getSink(), getProject().getModel(), i18n, locale );
 
         r.render();
     }
@@ -139,13 +146,17 @@ public class TeamListReport
     {
         private Model model;
 
+        private I18N i18n;
+
         private Locale locale;
 
-        public TeamListRenderer( Sink sink, Model model, Locale locale )
+        public TeamListRenderer( Sink sink, Model model, I18N i18n, Locale locale )
         {
             super( sink );
 
             this.model = model;
+
+            this.i18n = i18n;
 
             this.locale = locale;
         }
@@ -155,7 +166,7 @@ public class TeamListReport
          */
         public String getTitle()
         {
-            return getBundle( locale ).getString( "report.team-list.title" );
+            return i18n.getString( "project-info-report", locale, "report.team-list.title" );
         }
 
         /**
@@ -163,7 +174,7 @@ public class TeamListReport
          */
         public void renderBody()
         {
-            startSection( getBundle( locale ).getString( "report.team-list.intro.title" ) );
+            startSection( i18n.getString( "project-info-report", locale, "report.team-list.intro.title" ) );
 
             // To handle JS
             StringBuffer javascript = new StringBuffer( "function offsetDate(id, offset) {\n" )
@@ -178,34 +189,34 @@ public class TeamListReport
                 .append( "function init(){\n" );
 
             // Intoduction
-            paragraph( getBundle( locale ).getString( "report.team-list.intro.description1" ) );
-            paragraph( getBundle( locale ).getString( "report.team-list.intro.description2" ) );
+            paragraph( i18n.getString( "project-info-report", locale, "report.team-list.intro.description1" ) );
+            paragraph( i18n.getString( "project-info-report", locale, "report.team-list.intro.description2" ) );
 
             // Developer section
             List developers = model.getDevelopers();
 
-            startSection( getBundle( locale ).getString( "report.team-list.developers.title" ) );
+            startSection( i18n.getString( "project-info-report", locale, "report.team-list.developers.title" ) );
 
             if ( ( developers == null ) || ( developers.isEmpty() ) )
             {
-                paragraph( getBundle( locale ).getString( "report.team-list.nodeveloper" ) );
+                paragraph( i18n.getString( "project-info-report", locale, "report.team-list.nodeveloper" ) );
             }
             else
             {
-                paragraph( getBundle( locale ).getString( "report.team-list.developers.intro" ) );
+                paragraph( i18n.getString( "project-info-report", locale, "report.team-list.developers.intro" ) );
 
                 startTable();
 
-                String id = getBundle( locale ).getString( "report.team-list.developers.id" );
-                String name = getBundle( locale ).getString( "report.team-list.developers.name" );
-                String email = getBundle( locale ).getString( "report.team-list.developers.email" );
-                String url = getBundle( locale ).getString( "report.team-list.developers.url" );
-                String organization = getBundle( locale ).getString( "report.team-list.developers.organization" );
-                String organizationUrl = getBundle( locale ).getString( "report.team-list.developers.organizationurl" );
-                String roles = getBundle( locale ).getString( "report.team-list.developers.roles" );
-                String timeZone = getBundle( locale ).getString( "report.team-list.developers.timezone" );
-                String actualTime = getBundle( locale ).getString( "report.team-list.developers.actualtime" );
-                String properties = getBundle( locale ).getString( "report.team-list.developers.properties" );
+                String id = i18n.getString( "project-info-report", locale, "report.team-list.developers.id" );
+                String name = i18n.getString( "project-info-report", locale, "report.team-list.developers.name" );
+                String email = i18n.getString( "project-info-report", locale, "report.team-list.developers.email" );
+                String url = i18n.getString( "project-info-report", locale, "report.team-list.developers.url" );
+                String organization = i18n.getString( "project-info-report", locale, "report.team-list.developers.organization" );
+                String organizationUrl = i18n.getString( "project-info-report", locale, "report.team-list.developers.organizationurl" );
+                String roles = i18n.getString( "project-info-report", locale, "report.team-list.developers.roles" );
+                String timeZone = i18n.getString( "project-info-report", locale, "report.team-list.developers.timezone" );
+                String actualTime = i18n.getString( "project-info-report", locale, "report.team-list.developers.actualtime" );
+                String properties = i18n.getString( "project-info-report", locale, "report.team-list.developers.properties" );
 
                 tableHeader( new String[]{id, name, email, url, organization, organizationUrl, roles, timeZone,
                     actualTime, properties} );
@@ -280,28 +291,27 @@ public class TeamListReport
             // contributors section
             List contributors = model.getContributors();
 
-            startSection( getBundle( locale ).getString( "report.team-list.contributors.title" ) );
+            startSection( i18n.getString( "project-info-report", locale, "report.team-list.contributors.title" ) );
 
             if ( ( contributors == null ) || ( contributors.isEmpty() ) )
             {
-                paragraph( getBundle( locale ).getString( "report.team-list.nocontributor" ) );
+                paragraph( i18n.getString( "project-info-report", locale, "report.team-list.nocontributor" ) );
             }
             else
             {
-                paragraph( getBundle( locale ).getString( "report.team-list.contributors.intro" ) );
+                paragraph( i18n.getString( "project-info-report", locale, "report.team-list.contributors.intro" ) );
 
                 startTable();
 
-                String name = getBundle( locale ).getString( "report.team-list.contributors.name" );
-                String email = getBundle( locale ).getString( "report.team-list.contributors.email" );
-                String url = getBundle( locale ).getString( "report.team-list.contributors.url" );
-                String organization = getBundle( locale ).getString( "report.team-list.contributors.organization" );
-                String organizationUrl = getBundle( locale )
-                    .getString( "report.team-list.contributors.organizationurl" );
-                String roles = getBundle( locale ).getString( "report.team-list.contributors.roles" );
-                String timeZone = getBundle( locale ).getString( "report.team-list.contributors.timezone" );
-                String actualTime = getBundle( locale ).getString( "report.team-list.contributors.actualtime" );
-                String properties = getBundle( locale ).getString( "report.team-list.contributors.properties" );
+                String name = i18n.getString( "project-info-report", locale, "report.team-list.contributors.name" );
+                String email = i18n.getString( "project-info-report", locale, "report.team-list.contributors.email" );
+                String url = i18n.getString( "project-info-report", locale, "report.team-list.contributors.url" );
+                String organization = i18n.getString( "project-info-report", locale, "report.team-list.contributors.organization" );
+                String organizationUrl = i18n.getString( "project-info-report", locale, "report.team-list.contributors.organizationurl" );
+                String roles = i18n.getString( "project-info-report", locale, "report.team-list.contributors.roles" );
+                String timeZone = i18n.getString( "project-info-report", locale, "report.team-list.contributors.timezone" );
+                String actualTime = i18n.getString( "project-info-report", locale, "report.team-list.contributors.actualtime" );
+                String properties = i18n.getString( "project-info-report", locale, "report.team-list.contributors.properties" );
 
                 tableHeader( new String[]{name, email, url, organization, organizationUrl, roles, timeZone, actualTime,
                     properties} );
@@ -376,10 +386,5 @@ public class TeamListReport
             javascript.append( "}\n" ).append( "\n" ).append( "window.onLoad = init();\n" );
             javaScript( javascript.toString() );
         }
-    }
-
-    private static ResourceBundle getBundle( Locale locale )
-    {
-        return ResourceBundle.getBundle( "project-info-report", locale, TeamListReport.class.getClassLoader() );
     }
 }
