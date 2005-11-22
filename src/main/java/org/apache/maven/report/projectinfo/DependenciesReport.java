@@ -26,11 +26,11 @@ import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.doxia.site.renderer.SiteRenderer;
+import org.codehaus.plexus.i18n.I18N;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.ResourceBundle;
 import java.util.Set;
 
 /**
@@ -99,11 +99,18 @@ public class DependenciesReport
     private ArtifactRepository localRepository;
 
     /**
+     * Internationalization.
+     *
+     * @component
+     */
+    private I18N i18n;
+
+    /**
      * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
      */
     public String getName( Locale locale )
     {
-        return getBundle( locale ).getString( "report.dependencies.name" );
+        return i18n.getString( "project-info-report", locale, "report.dependencies.name" );
     }
 
     /**
@@ -119,7 +126,7 @@ public class DependenciesReport
      */
     public String getDescription( Locale locale )
     {
-        return getBundle( locale ).getString( "report.dependencies.description" );
+        return i18n.getString( "project-info-report", locale, "report.dependencies.description" );
     }
 
     /**
@@ -151,7 +158,7 @@ public class DependenciesReport
      */
     public void executeReport( Locale locale )
     {
-        DependenciesRenderer r = new DependenciesRenderer( getSink(), getProject(), locale, mavenProjectBuilder,
+        DependenciesRenderer r = new DependenciesRenderer( getSink(), getProject(), i18n, locale, mavenProjectBuilder,
                                                            artifactFactory, localRepository );
 
         r.render();
@@ -178,13 +185,17 @@ public class DependenciesReport
 
         private ArtifactRepository localRepository;
 
-        public DependenciesRenderer( Sink sink, MavenProject project, Locale locale,
+        private I18N i18n;
+
+        public DependenciesRenderer( Sink sink, MavenProject project, I18N i18n, Locale locale,
                                      MavenProjectBuilder mavenProjectBuilder, ArtifactFactory artifactFactory,
                                      ArtifactRepository localRepository )
         {
             super( sink );
 
             this.project = project;
+
+            this.i18n = i18n;
 
             this.locale = locale;
 
@@ -197,7 +208,7 @@ public class DependenciesReport
 
         public String getTitle()
         {
-            return getBundle( locale ).getString( "report.dependencies.title" );
+            return i18n.getString( "project-info-report", locale, "report.dependencies.title" );
         }
 
         public void renderBody()
@@ -210,7 +221,7 @@ public class DependenciesReport
                 startSection( getTitle() );
 
                 // TODO: should the report just be excluded?
-                paragraph( getBundle( locale ).getString( "report.dependencies.nolist" ) );
+                paragraph( i18n.getString( "project-info-report", locale, "report.dependencies.nolist" ) );
 
                 endSection();
 
@@ -221,13 +232,13 @@ public class DependenciesReport
 
             startTable();
 
-            tableCaption( getBundle( locale ).getString( "report.dependencies.intro" ) );
+            tableCaption( i18n.getString( "project-info-report", locale, "report.dependencies.intro" ) );
 
-            String groupId = getBundle( locale ).getString( "report.dependencies.column.groupId" );
-            String artifactId = getBundle( locale ).getString( "report.dependencies.column.artifactId" );
-            String version = getBundle( locale ).getString( "report.dependencies.column.version" );
-            String description = getBundle( locale ).getString( "report.dependencies.column.description" );
-            String url = getBundle( locale ).getString( "report.dependencies.column.url" );
+            String groupId = i18n.getString( "project-info-report", locale, "report.dependencies.column.groupId" );
+            String artifactId = i18n.getString( "project-info-report", locale, "report.dependencies.column.artifactId" );
+            String version = i18n.getString( "project-info-report", locale, "report.dependencies.column.version" );
+            String description = i18n.getString( "project-info-report", locale, "report.dependencies.column.description" );
+            String url = i18n.getString( "project-info-report", locale, "report.dependencies.column.url" );
 
             tableHeader( new String[]{groupId, artifactId, version, description, url} );
 
@@ -261,17 +272,17 @@ public class DependenciesReport
             // Transitive dependencies
             Set artifacts = getTransitiveDependencies( project );
 
-            startSection( getBundle( locale ).getString( "report.transitivedependencies.title" ) );
+            startSection( i18n.getString( "project-info-report", locale, "report.transitivedependencies.title" ) );
 
             if ( artifacts.isEmpty() )
             {
-                paragraph( getBundle( locale ).getString( "report.transitivedependencies.nolist" ) );
+                paragraph( i18n.getString( "project-info-report", locale, "report.transitivedependencies.nolist" ) );
             }
             else
             {
                 startTable();
 
-                tableCaption( getBundle( locale ).getString( "report.transitivedependencies.intro" ) );
+                tableCaption( i18n.getString( "project-info-report", locale, "report.transitivedependencies.intro" ) );
 
                 tableHeader( new String[]{groupId, artifactId, version, description, url} );
 
@@ -362,10 +373,5 @@ public class DependenciesReport
             return mavenProjectBuilder.buildFromRepository( projectArtifact, project.getRemoteArtifactRepositories(),
                                                             localRepository, allowStubModel );
         }
-    }
-
-    private static ResourceBundle getBundle( Locale locale )
-    {
-        return ResourceBundle.getBundle( "project-info-report", locale, DependenciesReport.class.getClassLoader() );
     }
 }

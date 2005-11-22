@@ -23,10 +23,10 @@ import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.doxia.site.renderer.SiteRenderer;
+import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.util.Locale;
-import java.util.ResourceBundle;
 
 /**
  * Generates the Project Issue Tracking report.
@@ -65,11 +65,18 @@ public class IssueTrackingReport
     private MavenProject project;
 
     /**
+     * Internationalization.
+     *
+     * @component
+     */
+    private I18N i18n;
+
+    /**
      * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
      */
     public String getName( Locale locale )
     {
-        return getBundle( locale ).getString( "report.issuetracking.name" );
+        return i18n.getString( "project-info-report", locale, "report.issuetracking.name" );
     }
 
     /**
@@ -85,7 +92,7 @@ public class IssueTrackingReport
      */
     public String getDescription( Locale locale )
     {
-        return getBundle( locale ).getString( "report.issuetracking.description" );
+        return i18n.getString( "project-info-report", locale, "report.issuetracking.description" );
     }
 
     /**
@@ -117,7 +124,7 @@ public class IssueTrackingReport
      */
     public void executeReport( Locale locale )
     {
-        IssueTrackingRenderer r = new IssueTrackingRenderer( getSink(), getProject().getModel(), locale );
+        IssueTrackingRenderer r = new IssueTrackingRenderer( getSink(), getProject().getModel(), i18n, locale );
 
         r.render();
     }
@@ -135,13 +142,17 @@ public class IssueTrackingReport
     {
         private Model model;
 
+        private I18N i18n;
+
         private Locale locale;
 
-        public IssueTrackingRenderer( Sink sink, Model model, Locale locale )
+        public IssueTrackingRenderer( Sink sink, Model model, I18N i18n, Locale locale )
         {
             super( sink );
 
             this.model = model;
+
+            this.i18n = i18n;
 
             this.locale = locale;
         }
@@ -151,7 +162,7 @@ public class IssueTrackingReport
          */
         public String getTitle()
         {
-            return getBundle( locale ).getString( "report.issuetracking.title" );
+            return i18n.getString( "project-info-report", locale, "report.issuetracking.title" );
         }
 
         /**
@@ -164,7 +175,7 @@ public class IssueTrackingReport
             {
                 startSection( getTitle() );
 
-                paragraph( getBundle( locale ).getString( "report.issuetracking.noissueManagement" ) );
+                paragraph( i18n.getString( "project-info-report", locale, "report.issuetracking.noissueManagement" ) );
 
                 endSection();
 
@@ -175,23 +186,23 @@ public class IssueTrackingReport
             String url = issueManagement.getUrl();
 
             // Overview
-            startSection( getBundle( locale ).getString( "report.issuetracking.overview.title" ) );
+            startSection( i18n.getString( "project-info-report", locale, "report.issuetracking.overview.title" ) );
 
             if ( isIssueManagementSystem( system, "jira" ) )
             {
-                linkPatternedText( getBundle( locale ).getString( "report.issuetracking.jira.intro" ) );
+                linkPatternedText( i18n.getString( "project-info-report", locale, "report.issuetracking.jira.intro" ) );
             }
             else if ( isIssueManagementSystem( system, "bugzilla" ) )
             {
-                linkPatternedText( getBundle( locale ).getString( "report.issuetracking.bugzilla.intro" ) );
+                linkPatternedText( i18n.getString( "project-info-report", locale, "report.issuetracking.bugzilla.intro" ) );
             }
             else if ( isIssueManagementSystem( system, "scarab" ) )
             {
-                linkPatternedText( getBundle( locale ).getString( "report.issuetracking.scarab.intro" ) );
+                linkPatternedText( i18n.getString( "project-info-report", locale, "report.issuetracking.scarab.intro" ) );
             }
             else
             {
-                paragraph( getBundle( locale ).getString( "report.issuetracking.general.intro" ) );
+                paragraph( i18n.getString( "project-info-report", locale, "report.issuetracking.general.intro" ) );
             }
 
             endSection();
@@ -199,7 +210,7 @@ public class IssueTrackingReport
             // Connection
             startSection( getTitle() );
 
-            paragraph( getBundle( locale ).getString( "report.issuetracking.intro" ) );
+            paragraph( i18n.getString( "project-info-report", locale, "report.issuetracking.intro" ) );
 
             verbatimLink( url, url );
 
@@ -231,10 +242,5 @@ public class IssueTrackingReport
 
             return false;
         }
-    }
-
-    private static ResourceBundle getBundle( Locale locale )
-    {
-        return ResourceBundle.getBundle( "project-info-report", locale, IssueTrackingReport.class.getClassLoader() );
     }
 }

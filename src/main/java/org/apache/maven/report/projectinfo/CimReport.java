@@ -24,12 +24,12 @@ import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.doxia.site.renderer.SiteRenderer;
+import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.ResourceBundle;
 
 /**
  * Generates the Project Continuous Integration System report.
@@ -71,13 +71,20 @@ public class CimReport
      */
     private MavenProject project;
 
+    /**
+     * Internationalization.
+     *
+     * @component
+     */
+    private I18N i18n;
+
     // ----------------------------------------------------------------------
     // MavenReport Implementation
     // ----------------------------------------------------------------------
 
     public String getName( Locale locale )
     {
-        return getBundle( locale ).getString( "report.cim.name" );
+        return i18n.getString( "project-info-report", locale, "report.cim.name" );
     }
 
     public String getCategoryName()
@@ -87,7 +94,7 @@ public class CimReport
 
     public String getDescription( Locale locale )
     {
-        return getBundle( locale ).getString( "report.cim.description" );
+        return i18n.getString( "project-info-report", locale, "report.cim.description" );
     }
 
     protected String getOutputDirectory()
@@ -107,7 +114,7 @@ public class CimReport
 
     public void executeReport( Locale locale )
     {
-        CimRenderer r = new CimRenderer( getSink(), getProject().getModel(), locale );
+        CimRenderer r = new CimRenderer( getSink(), getProject().getModel(), i18n, locale );
 
         r.render();
     }
@@ -126,20 +133,24 @@ public class CimReport
     {
         private Model model;
 
+        private I18N i18n;
+
         private Locale locale;
 
-        public CimRenderer( Sink sink, Model model, Locale locale )
+        public CimRenderer( Sink sink, Model model, I18N i18n, Locale locale )
         {
             super( sink );
 
             this.model = model;
+
+            this.i18n = i18n;
 
             this.locale = locale;
         }
 
         public String getTitle()
         {
-            return getBundle( locale ).getString( "report.cim.title" );
+            return i18n.getString( "project-info-report", locale, "report.cim.title" );
         }
 
         public void renderBody()
@@ -149,7 +160,7 @@ public class CimReport
             {
                 startSection( getTitle() );
 
-                paragraph( getBundle( locale ).getString( "report.cim.nocim" ) );
+                paragraph( i18n.getString( "project-info-report", locale, "report.cim.nocim" ) );
 
                 endSection();
 
@@ -161,55 +172,55 @@ public class CimReport
             List notifiers = cim.getNotifiers();
 
             // Overview
-            startSection( getBundle( locale ).getString( "report.cim.overview.title" ) );
+            startSection( i18n.getString( "project-info-report", locale, "report.cim.overview.title" ) );
 
             if ( isCimSystem( system, "continuum" ) )
             {
-                linkPatternedText( getBundle( locale ).getString( "report.cim.continuum.intro" ) );
+                linkPatternedText( i18n.getString( "project-info-report", locale, "report.cim.continuum.intro" ) );
             }
             else if ( isCimSystem( system, "bugzilla" ) )
             {
-                linkPatternedText( getBundle( locale ).getString( "report.cim.bugzilla.intro" ) );
+                linkPatternedText( i18n.getString( "project-info-report", locale, "report.cim.bugzilla.intro" ) );
             }
             else
             {
-                linkPatternedText( getBundle( locale ).getString( "report.cim.general.intro" ) );
+                linkPatternedText( i18n.getString( "project-info-report", locale, "report.cim.general.intro" ) );
             }
 
             endSection();
 
             // Access
-            startSection( getBundle( locale ).getString( "report.cim.access" ) );
+            startSection( i18n.getString( "project-info-report", locale, "report.cim.access" ) );
 
             if ( !StringUtils.isEmpty( url ) )
             {
-                paragraph( getBundle( locale ).getString( "report.cim.url" ) );
+                paragraph( i18n.getString( "project-info-report", locale, "report.cim.url" ) );
 
                 verbatimLink( url, url );
             }
             else
             {
-                paragraph( getBundle( locale ).getString( "report.cim.nourl" ) );
+                paragraph( i18n.getString( "project-info-report", locale, "report.cim.nourl" ) );
             }
 
             endSection();
 
             // Notifiers
-            startSection( getBundle( locale ).getString( "report.cim.notifiers.title" ) );
+            startSection( i18n.getString( "project-info-report", locale, "report.cim.notifiers.title" ) );
 
             if ( ( notifiers == null ) || ( notifiers.isEmpty() ) )
             {
-                paragraph( getBundle( locale ).getString( "report.cim.notifiers.nolist" ) );
+                paragraph( i18n.getString( "project-info-report", locale, "report.cim.notifiers.nolist" ) );
             }
             else
             {
                 startTable();
 
-                tableCaption( getBundle( locale ).getString( "report.cim.notifiers.intro" ) );
+                tableCaption( i18n.getString( "project-info-report", locale, "report.cim.notifiers.intro" ) );
 
-                String type = getBundle( locale ).getString( "report.cim.notifiers.column.type" );
-                String address = getBundle( locale ).getString( "report.cim.notifiers.column.address" );
-                String configuration = getBundle( locale ).getString( "report.cim.notifiers.column.configuration" );
+                String type = i18n.getString( "project-info-report", locale, "report.cim.notifiers.column.type" );
+                String address = i18n.getString( "project-info-report", locale, "report.cim.notifiers.column.address" );
+                String configuration = i18n.getString( "project-info-report", locale, "report.cim.notifiers.column.configuration" );
 
                 tableHeader( new String[]{type, address, configuration} );
 
@@ -253,10 +264,5 @@ public class CimReport
 
             return false;
         }
-    }
-
-    private static ResourceBundle getBundle( Locale locale )
-    {
-        return ResourceBundle.getBundle( "project-info-report", locale, CimReport.class.getClassLoader() );
     }
 }
