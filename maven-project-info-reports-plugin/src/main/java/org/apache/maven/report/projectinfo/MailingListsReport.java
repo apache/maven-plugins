@@ -23,13 +23,13 @@ import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.doxia.site.renderer.SiteRenderer;
+import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.ResourceBundle;
 
 /**
  * Generates the Mailing List report.
@@ -69,11 +69,18 @@ public class MailingListsReport
     private MavenProject project;
 
     /**
+     * Internationalization.
+     *
+     * @component
+     */
+    private I18N i18n;
+
+    /**
      * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
      */
     public String getName( Locale locale )
     {
-        return getBundle( locale ).getString( "report.mailing-lists.name" );
+        return i18n.getString( "project-info-report", locale, "report.mailing-lists.name" );
     }
 
     /**
@@ -89,7 +96,7 @@ public class MailingListsReport
      */
     public String getDescription( Locale locale )
     {
-        return getBundle( locale ).getString( "report.mailing-lists.description" );
+        return i18n.getString( "project-info-report", locale, "report.mailing-lists.description" );
     }
 
     /**
@@ -121,7 +128,7 @@ public class MailingListsReport
      */
     public void executeReport( Locale locale )
     {
-        MailingListsRenderer r = new MailingListsRenderer( getSink(), getProject().getModel(), locale );
+        MailingListsRenderer r = new MailingListsRenderer( getSink(), getProject().getModel(), i18n, locale );
 
         r.render();
     }
@@ -139,13 +146,17 @@ public class MailingListsReport
     {
         private Model model;
 
+        private I18N i18n;
+
         private Locale locale;
 
-        public MailingListsRenderer( Sink sink, Model model, Locale locale )
+        public MailingListsRenderer( Sink sink, Model model, I18N i18n, Locale locale )
         {
             super( sink );
 
             this.model = model;
+
+            this.i18n = i18n;
 
             this.locale = locale;
         }
@@ -155,7 +166,7 @@ public class MailingListsReport
          */
         public String getTitle()
         {
-            return getBundle( locale ).getString( "report.mailing-lists.title" );
+            return i18n.getString( "project-info-report", locale, "report.mailing-lists.title" );
         }
 
         /**
@@ -170,7 +181,7 @@ public class MailingListsReport
                 startSection( getTitle() );
 
                 // TODO: should the report just be excluded?
-                paragraph( getBundle( locale ).getString( "report.mailing-lists.nolist" ) );
+                paragraph( i18n.getString( "project-info-report", locale, "report.mailing-lists.nolist" ) );
 
                 endSection();
 
@@ -179,7 +190,7 @@ public class MailingListsReport
 
             startSection( getTitle() );
 
-            paragraph( getBundle( locale ).getString( "report.mailing-lists.intro" ) );
+            paragraph( i18n.getString( "project-info-report", locale, "report.mailing-lists.intro" ) );
 
             startTable();
 
@@ -195,12 +206,12 @@ public class MailingListsReport
                 }
             }
 
-            String name = getBundle( locale ).getString( "report.mailing-lists.column.name" );
-            String subscribe = getBundle( locale ).getString( "report.mailing-lists.column.subscribe" );
-            String unsubscribe = getBundle( locale ).getString( "report.mailing-lists.column.unsubscribe" );
-            String post = getBundle( locale ).getString( "report.mailing-lists.column.post" );
-            String archive = getBundle( locale ).getString( "report.mailing-lists.column.archive" );
-            String archivesOther = getBundle( locale ).getString( "report.mailing-lists.column.otherArchives" );
+            String name = i18n.getString( "project-info-report", locale, "report.mailing-lists.column.name" );
+            String subscribe = i18n.getString( "project-info-report", locale, "report.mailing-lists.column.subscribe" );
+            String unsubscribe = i18n.getString( "project-info-report", locale, "report.mailing-lists.column.unsubscribe" );
+            String post = i18n.getString( "project-info-report", locale, "report.mailing-lists.column.post" );
+            String archive = i18n.getString( "project-info-report", locale, "report.mailing-lists.column.archive" );
+            String archivesOther = i18n.getString( "project-info-report", locale, "report.mailing-lists.column.otherArchives" );
 
             if ( otherArchives )
             {
@@ -296,11 +307,6 @@ public class MailingListsReport
 
             endSection();
         }
-    }
-
-    private static ResourceBundle getBundle( Locale locale )
-    {
-        return ResourceBundle.getBundle( "project-info-report", locale, MailingListsReport.class.getClassLoader() );
     }
 
     /**
