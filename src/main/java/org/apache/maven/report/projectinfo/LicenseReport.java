@@ -23,6 +23,7 @@ import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.doxia.site.renderer.SiteRenderer;
+import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -83,11 +84,18 @@ public class LicenseReport
     private boolean offline;
 
     /**
+     * Internationalization.
+     *
+     * @component
+     */
+    private I18N i18n;
+
+    /**
      * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
      */
     public String getName( Locale locale )
     {
-        return getBundle( locale ).getString( "report.license.name" );
+        return i18n.getString( "project-info-report", locale, "report.license.name" );
     }
 
     /**
@@ -103,7 +111,7 @@ public class LicenseReport
      */
     public String getDescription( Locale locale )
     {
-        return getBundle( locale ).getString( "report.license.description" );
+        return i18n.getString( "project-info-report", locale, "report.license.description" );
     }
 
     /**
@@ -137,7 +145,7 @@ public class LicenseReport
     {
         if ( !offline )
         {
-            LicenseRenderer r = new LicenseRenderer( getSink(), getProject(), locale );
+            LicenseRenderer r = new LicenseRenderer( getSink(), getProject(), i18n, locale );
 
             r.render();
         }
@@ -160,13 +168,17 @@ public class LicenseReport
     {
         private MavenProject project;
 
+        private I18N i18n;
+
         private Locale locale;
 
-        public LicenseRenderer( Sink sink, MavenProject project, Locale locale )
+        public LicenseRenderer( Sink sink, MavenProject project, I18N i18n, Locale locale )
         {
             super( sink );
 
             this.project = project;
+
+            this.i18n = i18n;
 
             this.locale = locale;
         }
@@ -176,7 +188,7 @@ public class LicenseReport
          */
         public String getTitle()
         {
-            return getBundle( locale ).getString( "report.license.title" );
+            return i18n.getString( "project-info-report", locale, "report.license.title" );
         }
 
         /**
@@ -190,7 +202,7 @@ public class LicenseReport
             {
                 startSection( getTitle() );
 
-                paragraph( getBundle( locale ).getString( "report.license.nolicense" ) );
+                paragraph( i18n.getString( "project-info-report", locale, "report.license.nolicense" ) );
 
                 endSection();
 
@@ -198,14 +210,14 @@ public class LicenseReport
             }
 
             // Overview
-            startSection( getBundle( locale ).getString( "report.license.overview.title" ) );
+            startSection( i18n.getString( "project-info-report", locale, "report.license.overview.title" ) );
 
-            paragraph( getBundle( locale ).getString( "report.license.overview.intro" ) );
+            paragraph( i18n.getString( "project-info-report", locale, "report.license.overview.intro" ) );
 
             endSection();
 
             // License
-            startSection( getBundle( locale ).getString( "report.license.title" ) );
+            startSection( i18n.getString( "project-info-report", locale, "report.license.title" ) );
 
             for ( Iterator i = licenses.iterator(); i.hasNext(); )
             {
@@ -230,7 +242,7 @@ public class LicenseReport
                     UrlValidator urlValidator = new UrlValidator( UrlValidator.ALLOW_ALL_SCHEMES );
                     // UrlValidator does not accept file URLs because the file
                     // URLs do not contain a valid authority (no hostname).
-                    // As a workaround accept license URLs that start with the 
+                    // As a workaround accept license URLs that start with the
                     // file scheme.
                     if ( urlValidator.isValid( url ) || url.startsWith( "file://" ) )
                     {
