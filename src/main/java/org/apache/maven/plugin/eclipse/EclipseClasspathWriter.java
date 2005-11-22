@@ -186,16 +186,7 @@ public class EclipseClasspathWriter
 
             if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
             {
-                try
-                {
-                    path = StringUtils.replace( artifactPath.getCanonicalPath(), "\\", "/" );
-                }
-                catch ( IOException e )
-                {
-                    String message = Messages.getString( "EclipsePlugin.cantcanonicalize", artifactPath );
-
-                    throw new MojoExecutionException( message, e );
-                }
+                path = StringUtils.replace( artifactPath.getAbsolutePath(), "\\", "/" );
 
                 if ( log.isDebugEnabled() )
                 {
