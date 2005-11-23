@@ -47,7 +47,7 @@
     <dependency>
       <groupId>surefire</groupId>
       <artifactId>surefire-booter</artifactId>
-      <version>1.4</version>
+      <version>1.5-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>plexus-utils</artifactId>
