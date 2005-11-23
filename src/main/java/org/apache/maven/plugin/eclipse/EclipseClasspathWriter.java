@@ -50,6 +50,10 @@ public class EclipseClasspathWriter
 
     private Log log;
 
+    private boolean downloadSources;
+
+    private List missingSourceArtifacts = new ArrayList();
+
     public EclipseClasspathWriter( Log log )
     {
         this.log = log;
@@ -65,6 +69,8 @@ public class EclipseClasspathWriter
                          List remoteArtifactRepositories, boolean downloadSources, String outputDirectory )
         throws MojoExecutionException
     {
+
+        this.downloadSources = downloadSources;
 
         FileWriter w;
 
@@ -138,7 +144,7 @@ public class EclipseClasspathWriter
             if ( artifact.getArtifactHandler().isAddedToClasspath() )
             {
                 addDependency( writer, artifact, referencedReactorArtifacts, localRepository, artifactResolver,
-                               artifactFactory, remoteArtifactRepositories, downloadSources );
+                               artifactFactory, remoteArtifactRepositories );
             }
         }
 
@@ -157,11 +163,42 @@ public class EclipseClasspathWriter
         writer.endElement();
 
         IOUtil.close( w );
+
+        reportMissingSources();
+    }
+
+    private void reportMissingSources()
+    {
+        if ( missingSourceArtifacts.isEmpty() )
+        {
+            return;
+        }
+
+        StringBuffer msg = new StringBuffer();
+
+        if ( downloadSources )
+        {
+            msg.append( Messages.getString( "EclipseClasspathWriter.sourcesnotavailable" ) ); //$NON-NLS-1$
+        }
+        else
+        {
+            msg.append( Messages.getString( "EclipseClasspathWriter.sourcesnotdownloaded" ) ); //$NON-NLS-1$
+        }
+
+        for ( Iterator it = missingSourceArtifacts.iterator(); it.hasNext(); )
+        {
+            Artifact art = (Artifact) it.next();
+            msg.append( Messages.getString( "EclipseClasspathWriter.sourcesmissingitem", art.getId() ) );
+        }
+        msg.append( "\n" );
+
+        log.info( msg ); //$NON-NLS-1$
+
     }
 
     private void addDependency( XMLWriter writer, Artifact artifact, List referencedReactorArtifacts,
                                ArtifactRepository localRepository, ArtifactResolver artifactResolver,
-                               ArtifactFactory artifactFactory, List remoteArtifactRepositories, boolean downloadSources )
+                               ArtifactFactory artifactFactory, List remoteArtifactRepositories )
         throws MojoExecutionException
     {
 
@@ -202,8 +239,11 @@ public class EclipseClasspathWriter
                     log.debug( Messages.getString( "EclipsePlugin.artifactissystemscoped", //$NON-NLS-1$
                                                    new Object[] { artifact.getArtifactId(), path } ) );
                 }
-                log.info( Messages.getString( "EclipseClasspathWriter.sourcesnotavailable", //$NON-NLS-1$
-                                              artifact.getArtifactId() ) );
+
+                missingSourceArtifacts.add( artifact );
+
+                //                log.info( Messages.getString( "EclipseClasspathWriter.sourcesnotavailable", //$NON-NLS-1$
+                //                                              artifact.getArtifactId() ) );
 
                 kind = "lib"; //$NON-NLS-1$
             }
@@ -222,23 +262,29 @@ public class EclipseClasspathWriter
 
                 if ( !sourceArtifact.isResolved() )
                 {
-                    if ( downloadSources )
-                    {
-                        log.info( Messages.getString( "EclipseClasspathWriter.sourcesnotavailable", //$NON-NLS-1$
-                                                      sourceArtifact.getId() ) );
-                    }
-                    else
-                    {
-                        log.info( Messages.getString( "EclipseClasspathWriter.sourcesnotdownloaded", //$NON-NLS-1$
-                                                      sourceArtifact.getId() ) );
-                    }
+
+                    missingSourceArtifacts.add( artifact );
+
+                    //                    if ( downloadSources )
+                    //                    {
+                    //                        log.info( Messages.getString( "EclipseClasspathWriter.sourcesnotavailable", //$NON-NLS-1$
+                    //                                                      sourceArtifact.getId() ) );
+                    //                    }
+                    //                    else
+                    //                    {
+                    //                        log.info( Messages.getString( "EclipseClasspathWriter.sourcesnotdownloaded", //$NON-NLS-1$
+                    //                                                      sourceArtifact.getId() ) );
+                    //                    }
                 }
                 else
                 {
-                    log.debug( Messages.getString( "EclipseClasspathWriter.sourcesavailable", //$NON-NLS-1$
-                                                   new Object[] {
-                                                       sourceArtifact.getId(),
-                                                       sourceArtifact.getFile().getAbsolutePath() } ) );
+                    if ( log.isDebugEnabled() )
+                    {
+                        log.debug( Messages.getString( "EclipseClasspathWriter.sourcesavailable", //$NON-NLS-1$
+                                                       new Object[] {
+                                                           sourceArtifact.getId(),
+                                                           sourceArtifact.getFile().getAbsolutePath() } ) );
+                    }
 
                     sourcepath = "M2_REPO/" //$NON-NLS-1$
                         + EclipseUtils.toRelativeAndFixSeparator( localRepositoryFile, sourceArtifact.getFile()
@@ -248,6 +294,7 @@ public class EclipseClasspathWriter
 
                 kind = "var"; //$NON-NLS-1$
             }
+
         }
 
         writer.startElement( "classpathentry" ); //$NON-NLS-1$
