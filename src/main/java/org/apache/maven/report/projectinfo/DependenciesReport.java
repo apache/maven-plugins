@@ -289,6 +289,12 @@ public class DependenciesReport
                 for ( Iterator i = artifacts.iterator(); i.hasNext(); )
                 {
                     Artifact artifact = (Artifact) i.next();
+                    
+                    /* MNG-1663, ignore system dependencies */
+                    if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
+                    {
+                        continue;
+                    }
 
                     MavenProject artifactProject;
                     try
