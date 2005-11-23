@@ -77,6 +77,11 @@ public class InstallFileMojo
      * @readonly
      */
     private File file;
+    
+    /**
+     * @parameter expression="${pomFile}"
+     */
+    private File pomFile;
 
     /**
      * @parameter expression="${generatePom}"
@@ -96,6 +101,13 @@ public class InstallFileMojo
     {
         Artifact artifact = artifactFactory.createArtifact( groupId, artifactId, version, null, packaging );
 
+        Artifact pomArtifact = null;
+        
+        if( pomFile != null && pomFile.exists() )
+        {
+        	pomArtifact = artifactFactory.createArtifact( groupId, artifactId, version, null, "pom" );
+        }
+        
         // TODO: check if it exists first, and default to true if not
         if ( generatePom )
         {
@@ -139,7 +151,12 @@ public class InstallFileMojo
             if( !file.getPath().equals( destination.getPath() ) )
             {
                 installer.install( file, artifact, localRepository );
-            }
+                
+                if( pomFile != null && pomFile.exists() )
+                {
+                	installer.install( pomFile, pomArtifact, localRepository );
+                }
+            } 
             else
             {
                 throw new MojoFailureException( "Cannot install artifact. Artifact is already in the local repository.\n\nFile in question is: " + file + "\n" );
