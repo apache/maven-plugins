@@ -247,22 +247,30 @@ public class DependenciesReport
                 Artifact artifact = (Artifact) i.next();
 
                 MavenProject artifactProject;
-                try
+                if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
                 {
-                    // TODO: can we use @requiresDependencyResolution instead, and capture the depth of artifacts in the artifact itself?
-                    artifactProject = getMavenProjectFromRepository( artifact, localRepository );
+                    tableRow( new String[]{artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
+                        null, null } );
                 }
-                catch ( ProjectBuildingException e )
+                else
                 {
-                    throw new IllegalArgumentException(
-                        "Can't find a valid Maven project in the repository for the artifact [" +
-                            artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getVersion() +
-                            "]." );
-                }
+                    try
+                    {
+                        // TODO: can we use @requiresDependencyResolution instead, and capture the depth of artifacts in the artifact itself?
+                        artifactProject = getMavenProjectFromRepository( artifact, localRepository );
+                    }
+                    catch ( ProjectBuildingException e )
+                    {
+                        throw new IllegalArgumentException(
+                            "Can't find a valid Maven project in the repository for the artifact [" +
+                                artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getVersion() +
+                                "]." );
+                    }
 
-                tableRow( new String[]{artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
-                    artifactProject.getDescription(),
-                    createLinkPatternedText( artifactProject.getUrl(), artifactProject.getUrl() )} );
+                    tableRow( new String[]{artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
+                        artifactProject.getDescription(),
+                        createLinkPatternedText( artifactProject.getUrl(), artifactProject.getUrl() )} );
+                }
             }
 
             endTable();
@@ -289,30 +297,32 @@ public class DependenciesReport
                 for ( Iterator i = artifacts.iterator(); i.hasNext(); )
                 {
                     Artifact artifact = (Artifact) i.next();
-                    
-                    /* MNG-1663, ignore system dependencies */
-                    if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
-                    {
-                        continue;
-                    }
 
                     MavenProject artifactProject;
-                    try
+                    if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
                     {
-                        // TODO: can we use @requiresDependencyResolution instead, and capture the depth of artifacts in the artifact itself?
-                        artifactProject = getMavenProjectFromRepository( artifact, localRepository );
+                        tableRow( new String[]{artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
+                            null, null } );
                     }
-                    catch ( ProjectBuildingException e )
+                    else
                     {
-                        // TODO: better exception handling needed - log PBE
-                        throw new IllegalArgumentException(
-                            "Can't find a valid Maven project in the repository for the artifact [" +
-                                artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getVersion() +
-                                "]." );
+                        try
+                        {
+                            // TODO: can we use @requiresDependencyResolution instead, and capture the depth of artifacts in the artifact itself?
+                            artifactProject = getMavenProjectFromRepository( artifact, localRepository );
+                        }
+                        catch ( ProjectBuildingException e )
+                        {
+                            // TODO: better exception handling needed - log PBE
+                            throw new IllegalArgumentException(
+                                "Can't find a valid Maven project in the repository for the artifact [" +
+                                    artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getVersion() +
+                                    "]." );
+                        }
+                        tableRow( new String[]{artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
+                            artifactProject.getDescription(),
+                            createLinkPatternedText( artifactProject.getUrl(), artifactProject.getUrl() )} );
                     }
-                    tableRow( new String[]{artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
-                        artifactProject.getDescription(),
-                        createLinkPatternedText( artifactProject.getUrl(), artifactProject.getUrl() )} );
                 }
 
                 endTable();
