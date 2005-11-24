@@ -180,6 +180,10 @@
       <meta name="author" content="$author" />
     #end
     <meta http-equiv="Content-Type" content="text/html; charset=${outputEncoding}" />
+    #set ( $head = $siteDescriptor.getChild( "body" ).getChild( "head" ) )
+    #if ( $head )
+    $head
+    #end
   </head>
   <body class="composite">
     <div id="banner">
