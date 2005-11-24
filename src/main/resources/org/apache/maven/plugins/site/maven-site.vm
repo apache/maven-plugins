@@ -182,7 +182,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=${outputEncoding}" />
     #set ( $head = $siteDescriptor.getChild( "body" ).getChild( "head" ) )
     #if ( $head )
-    $head
+      #foreach( $item in $head.getChildren() )
+        $item
+      #end
     #end
   </head>
   <body class="composite">
