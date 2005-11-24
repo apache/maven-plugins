@@ -34,6 +34,7 @@ import java.util.List;
  * @version $Id$
  * @goal jar
  * @phase package
+ * @execute phase="generate-sources"
  */
 public class JarSourceMojo
     extends AbstractMojo
@@ -83,10 +84,10 @@ public class JarSourceMojo
     private boolean attach = true;
 
     /**
-     * @parameter expression="${project.compileSourceRoots}"
+     * @parameter expression="${executedProject}"
      * @required
      */
-    private List compileSourceRoots;
+    private MavenProject executedProject;
 
     /**
      * @parameter expression="${project.build.directory}"
@@ -110,6 +111,8 @@ public class JarSourceMojo
         SourceBundler sourceBundler = new SourceBundler();
 
         File outputFile = new File( outputDirectory, finalName + "-sources.jar" );
+
+        List compileSourceRoots = executedProject.getCompileSourceRoots();
 
         File[] sourceDirectories = new File[compileSourceRoots.size()];
         int count = 0;
