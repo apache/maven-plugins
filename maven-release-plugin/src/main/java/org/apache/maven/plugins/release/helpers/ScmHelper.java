@@ -227,13 +227,15 @@ public class ScmHelper
         checkResult( result );
     }
 
-    public void checkin( String message )
+    public void checkin( List pomFiles, String message )
         throws ScmException
     {
+        File[] files = (File[])pomFiles.toArray( new File[pomFiles.size()] );
+
         ScmRepository repository = getScmRepository();
 
         CheckInScmResult result = getScmManager().getProviderByRepository( repository )
-            .checkIn( repository, new ScmFileSet( new File( workingDirectory ) ), tag, message );
+            .checkIn( repository, new ScmFileSet( new File( workingDirectory ), files ), tag, message );
         checkResult( result );
     }
 
@@ -243,7 +245,7 @@ public class ScmHelper
         ScmRepository repository = getScmRepository();
 
         EditScmResult result = getScmManager().getProviderByRepository( repository )
-            .edit( repository, new ScmFileSet( file ) );
+            .edit( repository, new ScmFileSet( new File( workingDirectory ), file ) );
 
         checkResult( result );
     }
@@ -254,7 +256,7 @@ public class ScmHelper
         ScmRepository repository = getScmRepository();
 
         UnEditScmResult result = getScmManager().getProviderByRepository( repository )
-            .unedit( repository, new ScmFileSet( file ) );
+            .unedit( repository, new ScmFileSet( new File( workingDirectory ), file ) );
 
         checkResult( result );
     }
