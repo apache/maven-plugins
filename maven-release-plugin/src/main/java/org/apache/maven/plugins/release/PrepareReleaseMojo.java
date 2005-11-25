@@ -181,6 +181,8 @@ public class PrepareReleaseMojo
 
     private ProjectScmRewriter scmRewriter;
 
+    private List pomFiles;
+
     private void validateConfiguration()
         throws MojoExecutionException
     {
@@ -1181,7 +1183,7 @@ public class PrepareReleaseMojo
         {
             getLog().info( "Checking in modified POMs" );
 
-            checkIn( "[maven-release-plugin] prepare release " + getTagLabel() );
+            checkIn( pomFiles, "[maven-release-plugin] prepare release " + getTagLabel() );
 
             checkpoint( ReleaseProgressTracker.CP_CHECKED_IN_RELEASE_VERSION );
         }
@@ -1254,13 +1256,13 @@ public class PrepareReleaseMojo
         {
             getLog().info( "Checking in development POMs" );
 
-            checkIn( "[maven-release-plugin] prepare for next development iteration" );
+            checkIn( pomFiles, "[maven-release-plugin] prepare for next development iteration" );
 
             checkpoint( ReleaseProgressTracker.CP_CHECKED_IN_DEVELOPMENT_VERSION );
         }
     }
 
-    private void checkIn( String message )
+    private void checkIn( List pomFiles, String message )
         throws MojoExecutionException
     {
         ScmHelper scm = getScm( basedir.getAbsolutePath() );
@@ -1272,7 +1274,7 @@ public class PrepareReleaseMojo
 
         try
         {
-            scm.checkin( message );
+            scm.checkin( pomFiles, message );
         }
         catch ( ScmException e )
         {
@@ -1458,6 +1460,8 @@ public class PrepareReleaseMojo
     private void writePom( File pomFile, Model model, String versionName )
         throws MojoExecutionException
     {
+        pomFiles.add( pomFile );
+
         ScmHelper scm = getScm( basedir.getAbsolutePath() );
 
         if ( useEditMode )
@@ -1489,18 +1493,6 @@ public class PrepareReleaseMojo
         finally
         {
             IOUtil.close( writer );
-
-            if ( useEditMode )
-            {
-                try
-                {
-                    scm.unedit( pomFile );
-                }
-                catch ( ScmException e )
-                {
-                    throw new MojoExecutionException( "An error is occurred in the unedit process.", e );
-                }
-            }
         }
     }
 }
