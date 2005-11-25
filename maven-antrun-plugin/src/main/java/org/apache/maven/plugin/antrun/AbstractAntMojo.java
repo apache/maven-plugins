@@ -56,8 +56,9 @@ public abstract class AbstractAntMojo
             antTasks.getProject().setBaseDir( mavenProject.getBasedir() );
 
             Path p = new Path( antTasks.getProject() );
-            p.setPath( StringUtils.join( mavenProject.getCompileClasspathElements().iterator(), File.pathSeparator ) );
+            p.setPath( StringUtils.join( mavenProject.getArtifacts().iterator(), File.pathSeparator ) );
             antTasks.getProject().addReference( "maven.dependency.classpath", p );
+            p.setPath( StringUtils.join( mavenProject.getCompileClasspathElements().iterator(), File.pathSeparator ) );
             antTasks.getProject().addReference( "maven.compile.classpath", p );
             p = new Path( antTasks.getProject() );
             p.setPath( StringUtils.join( mavenProject.getRuntimeClasspathElements().iterator(), File.pathSeparator ) );
