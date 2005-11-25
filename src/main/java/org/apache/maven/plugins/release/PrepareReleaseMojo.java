@@ -1460,6 +1460,11 @@ public class PrepareReleaseMojo
     private void writePom( File pomFile, Model model, String versionName )
         throws MojoExecutionException
     {
+        if ( pomFiles == null )
+        {
+            pomFiles = new ArrayList();
+        }
+
         pomFiles.add( pomFile );
 
         ScmHelper scm = getScm( basedir.getAbsolutePath() );
