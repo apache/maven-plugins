@@ -117,7 +117,7 @@ public abstract class AbstractEclipsePluginTestCase
 
         plugin.setDownloadSources( true );
 
-        // @todo how to test injected parameters?
+        plugin.setWtpversion( "R7" );
 
         plugin.execute();
 
@@ -143,7 +143,7 @@ public abstract class AbstractEclipsePluginTestCase
         List expectedLines = getLines( mavenRepo, expectedFile );
 
         List actualLines = getLines( mavenRepo, actualFile );
-        
+
         String basedir = getBasedir().replace( '\\', '/' );
 
         for ( int i = 0; i < expectedLines.size(); i++ )
@@ -153,7 +153,7 @@ public abstract class AbstractEclipsePluginTestCase
             // replace some vars in the expected line, to account
             // for absolute paths that are different on each installation.
 
-            expected = StringUtils.replace(expected, "${basedir}", basedir);
+            expected = StringUtils.replace( expected, "${basedir}", basedir );
 
             if ( actualLines.size() <= i )
             {
