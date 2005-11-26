@@ -118,13 +118,16 @@ public class EclipseClasspathWriter
         writer.endElement();
 
         // ----------------------------------------------------------------------
-        // The JRE reference
+        // Container classpath entries
         // ----------------------------------------------------------------------
 
-        writer.startElement( "classpathentry" ); //$NON-NLS-1$
-        writer.addAttribute( "kind", "con" ); //$NON-NLS-1$ //$NON-NLS-2$
-        writer.addAttribute( "path", "org.eclipse.jdt.launching.JRE_CONTAINER" ); //$NON-NLS-1$ //$NON-NLS-2$
-        writer.endElement();
+        for ( Iterator it = classpathContainers.iterator(); it.hasNext(); )
+        {
+            writer.startElement( "classpathentry" ); //$NON-NLS-1$
+            writer.addAttribute( "kind", "con" ); //$NON-NLS-1$ //$NON-NLS-2$
+            writer.addAttribute( "path", (String) it.next() ); //$NON-NLS-1$
+            writer.endElement(); // name
+        }
 
         // ----------------------------------------------------------------------
         // The dependencies
@@ -145,18 +148,6 @@ public class EclipseClasspathWriter
                 addDependency( writer, artifact, referencedReactorArtifacts, localRepository, artifactResolver,
                                artifactFactory, remoteArtifactRepositories, projectBaseDir );
             }
-        }
-
-        // ----------------------------------------------------------------------
-        // Additional container classpath entries
-        // ----------------------------------------------------------------------
-
-        for ( Iterator it = classpathContainers.iterator(); it.hasNext(); )
-        {
-            writer.startElement( "classpathentry" ); //$NON-NLS-1$
-            writer.addAttribute( "kind", "con" ); //$NON-NLS-1$ //$NON-NLS-2$
-            writer.addAttribute( "path", (String) it.next() ); //$NON-NLS-1$
-            writer.endElement(); // name
         }
 
         writer.endElement();
