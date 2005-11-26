@@ -94,7 +94,10 @@ public class EclipseWtpmodulesWriter
             writer.startElement( "wb-resource" ); //$NON-NLS-1$
             writer.addAttribute( "deploy-path", "/" ); //$NON-NLS-1$ //$NON-NLS-2$
             writer.addAttribute( "source-path", //$NON-NLS-1$
-                                 EclipseUtils.toRelativeAndFixSeparator( basedir, warSourceDirectory, false ) );
+                                 "/"
+                                     + EclipseUtils.toRelativeAndFixSeparator( basedir, new File( basedir,
+                                                                                                  warSourceDirectory ),
+                                                                               false ) );
             writer.endElement();
 
             writeWarOrEarResources( writer, project, referencedReactorArtifacts, localRepository, artifactResolver,
@@ -106,8 +109,7 @@ public class EclipseWtpmodulesWriter
         {
             writer.startElement( "wb-resource" ); //$NON-NLS-1$
             writer.addAttribute( "deploy-path", "/" ); //$NON-NLS-1$ //$NON-NLS-2$
-            writer.addAttribute( "source-path", //$NON-NLS-1$
-                                 EclipseUtils.toRelativeAndFixSeparator( basedir, "/", false ) );
+            writer.addAttribute( "source-path", "/" ); //$NON-NLS-1$ //$NON-NLS-2$
             writer.endElement();
 
             writeWarOrEarResources( writer, project, referencedReactorArtifacts, localRepository, artifactResolver,
@@ -138,8 +140,10 @@ public class EclipseWtpmodulesWriter
      * @param project
      * @param writer
      * @param packaging
+     * @throws MojoExecutionException 
      */
     private void writeModuleTypeAccordingToPackaging( MavenProject project, XMLWriter writer, String packaging )
+        throws MojoExecutionException
     {
         if ( "war".equals( packaging ) ) //$NON-NLS-1$
         {
@@ -186,8 +190,8 @@ public class EclipseWtpmodulesWriter
             writer.startElement( "property" ); //$NON-NLS-1$
             writer.addAttribute( "name", "java-output-path" ); //$NON-NLS-1$ //$NON-NLS-2$
             writer.addAttribute( "value", "/" + //$NON-NLS-1$ //$NON-NLS-2$
-                EclipseUtils.toRelativeAndFixSeparator( project.getBasedir(), project.getBuild().getOutputDirectory(),
-                                                        false ) );
+                EclipseUtils.toRelativeAndFixSeparator( project.getBasedir(), new File( project.getBuild()
+                    .getOutputDirectory() ), false ) );
             writer.endElement();
         }
         else if ( "ear".equals( packaging ) )
@@ -207,8 +211,8 @@ public class EclipseWtpmodulesWriter
             writer.startElement( "property" ); //$NON-NLS-1$
             writer.addAttribute( "name", "java-output-path" ); //$NON-NLS-1$ //$NON-NLS-2$
             writer.addAttribute( "value", "/" + //$NON-NLS-1$ //$NON-NLS-2$
-                EclipseUtils.toRelativeAndFixSeparator( project.getBasedir(), project.getBuild().getOutputDirectory(),
-                                                        false ) );
+                EclipseUtils.toRelativeAndFixSeparator( project.getBasedir(), new File( project.getBuild()
+                    .getOutputDirectory() ), false ) );
             writer.endElement();
         }
     }
@@ -216,6 +220,7 @@ public class EclipseWtpmodulesWriter
     private void writeWarOrEarResources( XMLWriter writer, MavenProject project, List referencedReactorArtifacts,
                                         ArtifactRepository localRepository, ArtifactResolver artifactResolver,
                                         List remoteArtifactRepositories )
+        throws MojoExecutionException
     {
         Set artifacts = project.getArtifacts();
 
@@ -236,13 +241,14 @@ public class EclipseWtpmodulesWriter
             if ( ( scopeFilter.include( artifact ) || Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
                 && ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type ) || "war".equals( type ) ) )
             {
-                addDependency( writer, artifact, referencedReactorArtifacts, localRepository );
+                addDependency( writer, artifact, referencedReactorArtifacts, localRepository, project.getBasedir() );
             }
         }
     }
 
     private void addDependency( XMLWriter writer, Artifact artifact, List referencedReactorProjects,
-                               ArtifactRepository localRepository )
+                               ArtifactRepository localRepository, File basedir )
+        throws MojoExecutionException
     {
         String handle;
 
@@ -269,18 +275,19 @@ public class EclipseWtpmodulesWriter
             }
 
             String fullPath = artifactPath.getPath();
+            File repoFile = new File( fullPath );
 
             if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
             {
                 handle = "module:/classpath/lib/" //$NON-NLS-1$
-                    + StringUtils.replace( fullPath, "\\", "/" );
+                    + EclipseUtils.toRelativeAndFixSeparator( basedir, repoFile, true );
             }
             else
             {
                 File localRepositoryFile = new File( localRepository.getBasedir() );
 
                 handle = "module:/classpath/var/M2_REPO/" //$NON-NLS-1$
-                    + EclipseUtils.toRelativeAndFixSeparator( localRepositoryFile, fullPath, false );
+                    + EclipseUtils.toRelativeAndFixSeparator( localRepositoryFile, repoFile, false );
             }
         }
 

@@ -144,7 +144,7 @@ public class EclipsePluginMasterProjectTest
 
         // direct dependencies, include all
         assertContains( "Invalid classpath", classpath, "/refproject-compile" );
-        assertContains( "Invalid classpath", classpath, "/refproject-sysdep" );
+        assertContains( "Invalid classpath", classpath, "refproject-sysdep" );
         assertContains( "Invalid classpath", classpath, "/refproject-test" );
         assertContains( "Invalid classpath", classpath, "/refproject-optional" );
         assertContains( "Invalid classpath", classpath, "/refproject-provided" );
@@ -179,7 +179,7 @@ public class EclipsePluginMasterProjectTest
         // direct dependencies: include all
         assertContains( "Invalid classpath", classpath, "/direct-compile" );
         assertContains( "Invalid classpath", classpath, "/direct-test" );
-        assertContains( "Invalid classpath", classpath, "/direct-sysdep" );
+        assertContains( "Invalid classpath", classpath, "direct-sysdep" );
         assertContains( "Invalid classpath", classpath, "/direct-optional" );
         assertContains( "Invalid classpath", classpath, "/direct-provided" );
 
@@ -222,7 +222,7 @@ public class EclipsePluginMasterProjectTest
         // referenced project: only runtime deps
         assertContains( "Invalid wtpmodules", wtpmodules, "/module-1" );
         assertContains( "Invalid wtpmodules", wtpmodules, "/refproject-compile" );
-        assertContains( "Invalid wtpmodules", wtpmodules, "/refproject-sysdep" );
+        assertContains( "Invalid wtpmodules", wtpmodules, "refproject-sysdep" );
         assertDoesNotContain( "Invalid wtpmodules", wtpmodules, "/refproject-test" );
         assertDoesNotContain( "Invalid wtpmodules", wtpmodules, "/refproject-optional" );
         assertDoesNotContain( "Invalid wtpmodules", wtpmodules, "/refproject-provided" );
@@ -280,7 +280,7 @@ public class EclipsePluginMasterProjectTest
 
         Commandline cmd = new Commandline();
 
-        cmd.setWorkingDirectory( workingDir.getAbsolutePath() );
+        cmd.setWorkingDirectory( workingDir.getCanonicalPath() );
 
         cmd.setExecutable( "mvn" );
         cmd.createArgument().setValue( "-s" + settingsPath );
@@ -332,7 +332,7 @@ public class EclipsePluginMasterProjectTest
         IOUtil.close( w );
         settings.deleteOnExit();
 
-        return settings.getAbsolutePath();
+        return settings.getCanonicalPath();
     }
 
 }
