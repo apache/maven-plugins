@@ -99,7 +99,7 @@ public class EclipseSettingsWriter
                     coreSettings.store( new FileOutputStream( coreSettingsFile ), null );
 
                     log.info( Messages.getString( "EclipseSettingsWriter.wrotesettings", //$NON-NLS-1$
-                                                  coreSettingsFile.getAbsolutePath() ) );
+                                                  coreSettingsFile.getCanonicalPath() ) );
                 }
             }
             catch ( FileNotFoundException e )
