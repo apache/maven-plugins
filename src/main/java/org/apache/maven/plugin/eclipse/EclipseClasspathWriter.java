@@ -33,7 +33,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
 
@@ -115,7 +114,7 @@ public class EclipseClasspathWriter
         writer.startElement( "classpathentry" ); //$NON-NLS-1$
         writer.addAttribute( "kind", "output" ); //$NON-NLS-1$ //$NON-NLS-2$
         writer.addAttribute( "path", EclipseUtils.toRelativeAndFixSeparator( projectBaseDir, //$NON-NLS-1$  
-                                                                             outputDirectory, false ) );
+                                                                             new File( outputDirectory ), false ) );
         writer.endElement();
 
         // ----------------------------------------------------------------------
@@ -144,7 +143,7 @@ public class EclipseClasspathWriter
             if ( artifact.getArtifactHandler().isAddedToClasspath() )
             {
                 addDependency( writer, artifact, referencedReactorArtifacts, localRepository, artifactResolver,
-                               artifactFactory, remoteArtifactRepositories );
+                               artifactFactory, remoteArtifactRepositories, projectBaseDir );
             }
         }
 
@@ -198,7 +197,7 @@ public class EclipseClasspathWriter
 
     private void addDependency( XMLWriter writer, Artifact artifact, List referencedReactorArtifacts,
                                ArtifactRepository localRepository, ArtifactResolver artifactResolver,
-                               ArtifactFactory artifactFactory, List remoteArtifactRepositories )
+                               ArtifactFactory artifactFactory, List remoteArtifactRepositories, File projectBaseDir )
         throws MojoExecutionException
     {
 
@@ -223,16 +222,7 @@ public class EclipseClasspathWriter
 
             if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
             {
-                try
-                {
-                    path = StringUtils.replace( artifactPath.getCanonicalPath(), "\\", "/" );
-                }
-                catch ( IOException e )
-                {
-                    String message = Messages.getString( "EclipsePlugin.cantcanonicalize", artifactPath );
-
-                    throw new MojoExecutionException( message, e );
-                }
+                path = EclipseUtils.toRelativeAndFixSeparator( projectBaseDir, artifactPath, true );
 
                 if ( log.isDebugEnabled() )
                 {
@@ -241,9 +231,6 @@ public class EclipseClasspathWriter
                 }
 
                 missingSourceArtifacts.add( artifact );
-
-                //                log.info( Messages.getString( "EclipseClasspathWriter.sourcesnotavailable", //$NON-NLS-1$
-                //                                              artifact.getArtifactId() ) );
 
                 kind = "lib"; //$NON-NLS-1$
             }
@@ -254,7 +241,7 @@ public class EclipseClasspathWriter
                 String fullPath = artifactPath.getPath();
 
                 path = "M2_REPO/" //$NON-NLS-1$
-                    + EclipseUtils.toRelativeAndFixSeparator( localRepositoryFile, fullPath, false );
+                    + EclipseUtils.toRelativeAndFixSeparator( localRepositoryFile, new File( fullPath ), false );
 
                 Artifact sourceArtifact = retrieveSourceArtifact( artifact, remoteArtifactRepositories,
                                                                   localRepository, artifactResolver, artifactFactory,
@@ -262,19 +249,7 @@ public class EclipseClasspathWriter
 
                 if ( !sourceArtifact.isResolved() )
                 {
-
                     missingSourceArtifacts.add( artifact );
-
-                    //                    if ( downloadSources )
-                    //                    {
-                    //                        log.info( Messages.getString( "EclipseClasspathWriter.sourcesnotavailable", //$NON-NLS-1$
-                    //                                                      sourceArtifact.getId() ) );
-                    //                    }
-                    //                    else
-                    //                    {
-                    //                        log.info( Messages.getString( "EclipseClasspathWriter.sourcesnotdownloaded", //$NON-NLS-1$
-                    //                                                      sourceArtifact.getId() ) );
-                    //                    }
                 }
                 else
                 {
@@ -287,8 +262,7 @@ public class EclipseClasspathWriter
                     }
 
                     sourcepath = "M2_REPO/" //$NON-NLS-1$
-                        + EclipseUtils.toRelativeAndFixSeparator( localRepositoryFile, sourceArtifact.getFile()
-                            .getAbsolutePath(), false );
+                        + EclipseUtils.toRelativeAndFixSeparator( localRepositoryFile, sourceArtifact.getFile(), false );
 
                 }
 

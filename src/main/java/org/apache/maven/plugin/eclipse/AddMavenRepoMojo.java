@@ -66,7 +66,7 @@ public class AddMavenRepoMojo
 
         Properties props = new Properties();
 
-        File f = new File( workDir.getAbsolutePath(), "org.eclipse.jdt.core.prefs" ); //$NON-NLS-1$
+        File f = new File( workDir, "org.eclipse.jdt.core.prefs" ); //$NON-NLS-1$
 
         // preserve old settings
         if ( f.exists() )

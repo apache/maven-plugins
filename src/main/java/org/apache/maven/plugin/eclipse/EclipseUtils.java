@@ -17,6 +17,7 @@ package org.apache.maven.plugin.eclipse;
  */
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -32,6 +33,7 @@ import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.Resource;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
@@ -50,17 +52,41 @@ public class EclipseUtils
         // don't instantiate
     }
 
-    public static String toRelativeAndFixSeparator( File basedir, String absolutePath, boolean replaceSlashes )
+    public static String toRelativeAndFixSeparator( File basedir, File fileToAdd, boolean replaceSlashes )
+        throws MojoExecutionException
     {
+        String basedirpath;
+        String absolutePath;
+
+        try
+        {
+            basedirpath = basedir.getCanonicalPath();
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcanonicalize", basedir
+                .getAbsolutePath() ), e );
+        }
+
+        try
+        {
+            absolutePath = fileToAdd.getCanonicalPath();
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcanonicalize", fileToAdd
+                .getAbsolutePath() ), e );
+        }
+
         String relative;
 
-        if ( absolutePath.equals( basedir.getAbsolutePath() ) )
+        if ( absolutePath.equals( basedirpath ) )
         {
             relative = ".";
         }
-        else if ( absolutePath.startsWith( basedir.getAbsolutePath() ) )
+        else if ( absolutePath.startsWith( basedirpath ) )
         {
-            relative = absolutePath.substring( basedir.getAbsolutePath().length() + 1 );
+            relative = absolutePath.substring( basedirpath.length() + 1 );
         }
         else
         {
@@ -103,6 +129,7 @@ public class EclipseUtils
 
     public static EclipseSourceDir[] buildDirectoryList( MavenProject project, File basedir, Log log,
                                                         String outputDirectory )
+        throws MojoExecutionException
     {
         File projectBaseDir = project.getFile().getParentFile();
 
@@ -117,7 +144,8 @@ public class EclipseUtils
 
         // If using the standard output location, don't mix the test output into it.
         String testOutput = outputDirectory.equals( project.getBuild().getOutputDirectory() ) ? EclipseUtils
-            .toRelativeAndFixSeparator( projectBaseDir, project.getBuild().getTestOutputDirectory(), false ) : null;
+            .toRelativeAndFixSeparator( projectBaseDir, new File( project.getBuild().getTestOutputDirectory() ), false )
+                                                                                             : null;
 
         EclipseUtils.extractSourceDirs( directories, project.getTestCompileSourceRoots(), basedir, projectBaseDir,
                                         true, testOutput );
@@ -130,15 +158,17 @@ public class EclipseUtils
 
     private static void extractSourceDirs( Set directories, List sourceRoots, File basedir, File projectBaseDir,
                                           boolean test, String output )
+        throws MojoExecutionException
     {
         for ( Iterator it = sourceRoots.iterator(); it.hasNext(); )
         {
-            String sourceRoot = (String) it.next();
 
-            if ( new File( sourceRoot ).isDirectory() )
+            File sourceRootFile = new File( (String) it.next() );
+
+            if ( sourceRootFile.isDirectory() )
             {
-                sourceRoot = EclipseUtils.toRelativeAndFixSeparator( projectBaseDir, sourceRoot, !projectBaseDir
-                    .equals( basedir ) );
+                String sourceRoot = EclipseUtils.toRelativeAndFixSeparator( projectBaseDir, sourceRootFile,
+                                                                            !projectBaseDir.equals( basedir ) );
 
                 directories.add( new EclipseSourceDir( sourceRoot, output, test, null, null ) );
             }
@@ -147,10 +177,10 @@ public class EclipseUtils
 
     private static void extractResourceDirs( Set directories, List resources, MavenProject project, File basedir,
                                             File projectBaseDir, boolean test, String output, Log log )
+        throws MojoExecutionException
     {
         for ( Iterator it = resources.iterator(); it.hasNext(); )
         {
-
             Resource resource = (Resource) it.next();
             String includePattern = null;
             String excludePattern = null;
@@ -199,13 +229,15 @@ public class EclipseUtils
                 continue;
             }
 
-            String resourceDir = resource.getDirectory();
-            resourceDir = EclipseUtils.toRelativeAndFixSeparator( projectBaseDir, resourceDir, !projectBaseDir
-                .equals( basedir ) );
+            String resourceDir = EclipseUtils.toRelativeAndFixSeparator( projectBaseDir, resourceDirectory,
+                                                                         !projectBaseDir.equals( basedir ) );
 
             if ( output != null )
             {
-                output = EclipseUtils.toRelativeAndFixSeparator( projectBaseDir, output, false );
+                File outputFile = new File( projectBaseDir, output );
+                // create output dir if it doesn't exist
+                outputFile.mkdirs();
+                output = EclipseUtils.toRelativeAndFixSeparator( projectBaseDir, outputFile, false );
             }
 
             directories.add( new EclipseSourceDir( resourceDir, output, test, includePattern, excludePattern ) );
