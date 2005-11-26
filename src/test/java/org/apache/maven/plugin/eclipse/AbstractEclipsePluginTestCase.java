@@ -63,9 +63,8 @@ public abstract class AbstractEclipsePluginTestCase
                                                                                             ArtifactRepositoryLayout.ROLE,
                                                                                             "legacy" );
 
-        ArtifactRepository localRepository = new DefaultArtifactRepository( "local",
-                                                                            "file://" + repo.getAbsolutePath(),
-                                                                            localRepositoryLayout );
+        ArtifactRepository localRepository = new DefaultArtifactRepository( "local", "file://"
+            + repo.getCanonicalPath(), localRepositoryLayout );
 
         MavenProject project = builder.buildWithDependencies( new File( basedir, "pom.xml" ), localRepository, null );
 
@@ -141,10 +140,10 @@ public abstract class AbstractEclipsePluginTestCase
         throws IOException
     {
         List expectedLines = getLines( mavenRepo, expectedFile );
-
         List actualLines = getLines( mavenRepo, actualFile );
+        String filename = actualFile.getName();
 
-        String basedir = getBasedir().replace( '\\', '/' );
+        String basedir = new File( getBasedir() ).getCanonicalPath().replace( '\\', '/' );
 
         for ( int i = 0; i < expectedLines.size(); i++ )
         {
@@ -152,7 +151,6 @@ public abstract class AbstractEclipsePluginTestCase
 
             // replace some vars in the expected line, to account
             // for absolute paths that are different on each installation.
-
             expected = StringUtils.replace( expected, "${basedir}", basedir );
 
             if ( actualLines.size() <= i )
@@ -169,7 +167,7 @@ public abstract class AbstractEclipsePluginTestCase
                 continue;
             }
 
-            assertEquals( "Checking line #" + ( i + 1 ), expected, actual );
+            assertEquals( "Checking " + filename + ", line #" + ( i + 1 ), expected, actual );
         }
 
         assertTrue( "Unequal number of lines.", expectedLines.size() == actualLines.size() );

@@ -170,7 +170,7 @@ public class EclipseProjectWriter
         }
 
         writer.endElement(); // projects
-        
+
         writer.startElement( "buildSpec" ); //$NON-NLS-1$
 
         for ( Iterator it = buildCommands.iterator(); it.hasNext(); )
@@ -218,13 +218,14 @@ public class EclipseProjectWriter
     }
 
     private void addFileLink( XMLWriter writer, File projectBaseDir, File basedir, File file )
+        throws MojoExecutionException
     {
         if ( file.isFile() )
         {
             writer.startElement( "link" ); //$NON-NLS-1$
 
             writer.startElement( "name" ); //$NON-NLS-1$
-            writer.writeText( EclipseUtils.toRelativeAndFixSeparator( projectBaseDir, file.toString(), true ) );
+            writer.writeText( EclipseUtils.toRelativeAndFixSeparator( projectBaseDir, file, true ) );
             writer.endElement(); // name
 
             writer.startElement( "type" ); //$NON-NLS-1$
@@ -232,7 +233,15 @@ public class EclipseProjectWriter
             writer.endElement(); // type
 
             writer.startElement( "location" ); //$NON-NLS-1$
-            writer.writeText( file.toString().replaceAll( "\\\\", "/" ) ); //$NON-NLS-1$ //$NON-NLS-2$
+            try
+            {
+                writer.writeText( file.getCanonicalPath().replaceAll( "\\\\", "/" ) ); //$NON-NLS-1$ //$NON-NLS-2$
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcanonicalize", file
+                    .getAbsolutePath() ), e );
+            }
             writer.endElement(); // location
 
             writer.endElement(); // link
@@ -244,12 +253,14 @@ public class EclipseProjectWriter
     }
 
     private void addSourceLinks( XMLWriter writer, File projectBaseDir, File basedir, List sourceRoots )
+        throws MojoExecutionException
     {
         for ( Iterator it = sourceRoots.iterator(); it.hasNext(); )
         {
-            String sourceRoot = (String) it.next();
+            String sourceRootString = (String) it.next();
+            File sourceRoot = new File( sourceRootString );
 
-            if ( new File( sourceRoot ).isDirectory() )
+            if ( sourceRoot.isDirectory() )
             {
                 writer.startElement( "link" ); //$NON-NLS-1$
 
@@ -262,7 +273,16 @@ public class EclipseProjectWriter
                 writer.endElement(); // type
 
                 writer.startElement( "location" ); //$NON-NLS-1$
-                writer.writeText( sourceRoot.replaceAll( "\\\\", "/" ) ); //$NON-NLS-1$ //$NON-NLS-2$
+                try
+                {
+                    writer.writeText( sourceRoot.getCanonicalPath().replaceAll( "\\\\", "/" ) ); //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                catch ( IOException e )
+                {
+                    throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcanonicalize", sourceRoot
+                        .getAbsolutePath() ), e );
+                }
+
                 writer.endElement(); // location
 
                 writer.endElement(); // link
@@ -271,12 +291,14 @@ public class EclipseProjectWriter
     }
 
     private void addResourceLinks( XMLWriter writer, File projectBaseDir, File basedir, List sourceRoots )
+        throws MojoExecutionException
     {
         for ( Iterator it = sourceRoots.iterator(); it.hasNext(); )
         {
-            String resourceDir = ( (Resource) it.next() ).getDirectory();
+            String resourceDirString = ( (Resource) it.next() ).getDirectory();
+            File resourceDir = new File( resourceDirString );
 
-            if ( new File( resourceDir ).isDirectory() )
+            if ( resourceDir.isDirectory() )
             {
                 writer.startElement( "link" ); //$NON-NLS-1$
 
@@ -289,7 +311,15 @@ public class EclipseProjectWriter
                 writer.endElement(); // type
 
                 writer.startElement( "location" ); //$NON-NLS-1$
-                writer.writeText( resourceDir.replaceAll( "\\\\", "/" ) ); //$NON-NLS-1$ //$NON-NLS-2$
+                try
+                {
+                    writer.writeText( resourceDir.getCanonicalPath().replaceAll( "\\\\", "/" ) ); //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                catch ( IOException e )
+                {
+                    throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcanonicalize", resourceDir
+                        .getAbsolutePath() ), e );
+                }
                 writer.endElement(); // location
 
                 writer.endElement(); // link
