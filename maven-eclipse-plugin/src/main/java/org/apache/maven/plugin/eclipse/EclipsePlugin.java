@@ -16,6 +16,11 @@ package org.apache.maven.plugin.eclipse;
  * limitations under the License.
  */
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
@@ -24,15 +29,11 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 /**
  * A Maven2 plugin which integrates the use of Maven2 with Eclipse.
  *
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
+ * @author <a href="mailto:fgiust@apache.org">Fabrizio Giustina</a>
  * @version $Id$
  * @goal eclipse
  * @requiresDependencyResolution test
@@ -102,8 +103,8 @@ public class EclipsePlugin
     private List remoteArtifactRepositories;
 
     /**
-     * List of eclipse project natures. By default the <code>org.eclipse.jdt.core.javanature</code> nature is added.
-     * Configuration example:
+     * List of eclipse project natures. By default the <code>org.eclipse.jdt.core.javanature</code> nature plus the
+     * needed WTP natures are added.
      * <pre>
      *    &lt;projectnatures>
      *      &lt;java.lang.String>org.eclipse.jdt.core.javanature&lt;/java.lang.String>
@@ -112,12 +113,12 @@ public class EclipsePlugin
      * </pre>
      *
      * @parameter
-     * @todo default-value="<java.lang.String>org.eclipse.jdt.core.javanature</java.lang.String>"
      */
     private List projectnatures;
 
     /**
-     * List of eclipse build commands. By default the <code>org.eclipse.jdt.core.javabuilder</code> nature is added.
+     * List of eclipse build commands. By default the <code>org.eclipse.jdt.core.javabuilder</code> builder plus the
+     * needed WTP builders are added.
      * Configuration example:
      * <pre>
      *    &lt;buildcommands>
@@ -128,7 +129,6 @@ public class EclipsePlugin
      * </pre>
      *
      * @parameter
-     * @todo default-value="org.eclipse.jdt.core.javabuilder"
      */
     private List buildcommands;
 
@@ -143,7 +143,6 @@ public class EclipsePlugin
      * </pre>
      *
      * @parameter
-     * @todo default-value=empty list
      */
     private List classpathContainers;
 
@@ -152,7 +151,7 @@ public class EclipsePlugin
      *
      * @parameter expression="${eclipse.downloadSources}"
      */
-    private boolean downloadSources = false;
+    private boolean downloadSources;
 
     /**
      * Eclipse workspace directory.
@@ -160,7 +159,7 @@ public class EclipsePlugin
      * @parameter expression="${eclipse.workspace}"
      */
     private File outputDir;
-    
+
     /**
      * When set to false, the plugin will not create sub-projects and instead reference those sub-projects 
      * using the installed package in the local repository
@@ -176,6 +175,15 @@ public class EclipsePlugin
      * @parameter expression="${project.build.outputDirectory}"
      */
     String outputDirectory;
+
+    /**
+     * The version of WTP for which configuration files will be generated. At the moment the only supported version is "R7",
+     * and generated files will not be compatible with the upcoming 1.0 release and with WTP milestones &gt; M8.
+     * As soon as WTP 1.0 will be released the default will be switched to 1.0.
+     *
+     * @parameter expression="${wtpversion}" default-value="R7"
+     */
+    String wtpversion;
 
     /**
      * Setter for <code>project</code>. Needed for tests.
@@ -268,11 +276,45 @@ public class EclipsePlugin
     }
 
     /**
+     * Setter for <code>downloadSources</code>.
+     * @param downloadSources The downloadSources to set.
+     */
+    public void setDownloadSources( boolean downloadSources )
+    {
+        this.downloadSources = downloadSources;
+    }
+
+    /**
+     * Setter for <code>outputDirectory</code>.
+     * @param outputDirectory The outputDirectory to set.
+     */
+    public void setOutputDirectory( String outputDirectory )
+    {
+        this.outputDirectory = outputDirectory;
+    }
+
+    /**
+     * Setter for <code>wtpversion</code>.
+     * @param wtpversion The wtpversion to set.
+     */
+    public void setWtpversion( String wtpversion )
+    {
+        this.wtpversion = wtpversion;
+    }
+
+    /**
      * @see org.apache.maven.plugin.Mojo#execute()
      */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+
+        if ( !"R7".equalsIgnoreCase( wtpversion ) )
+        {
+            throw new MojoExecutionException( Messages
+                .getString( "EclipsePlugin.unsupportedwtp", new Object[] { wtpversion, "R7" } ) ); //$NON-NLS-1$
+        }
+
         if ( executedProject == null )
         {
             // backwards compat with alpha-2 only
@@ -283,17 +325,15 @@ public class EclipsePlugin
         assertNotEmpty( executedProject.getArtifactId(), "artifactId" ); //$NON-NLS-1$
 
         // defaults
-        // @todo how set List values in @default-value??
+        String packaging = executedProject.getPackaging();
         if ( projectnatures == null )
         {
-            projectnatures = new ArrayList();
-            projectnatures.add( "org.eclipse.jdt.core.javanature" );
+            fillDefaultNatures( packaging );
         }
 
         if ( buildcommands == null )
         {
-            buildcommands = new ArrayList();
-            buildcommands.add( "org.eclipse.jdt.core.javabuilder" );
+            fillDefaultBuilders( packaging );
         }
 
         if ( classpathContainers == null )
@@ -321,22 +361,19 @@ public class EclipsePlugin
         {
             if ( !outputDir.isDirectory() )
             {
-                throw new MojoExecutionException(
-                    Messages.getString( "EclipsePlugin.notadir", outputDir ) ); //$NON-NLS-1$
+                throw new MojoExecutionException( Messages.getString( "EclipsePlugin.notadir", outputDir ) ); //$NON-NLS-1$
             }
 
             outputDir = new File( outputDir, executedProject.getArtifactId() );
 
             if ( !outputDir.isDirectory() && !outputDir.mkdir() )
             {
-                throw new MojoExecutionException(
-                    Messages.getString( "EclipsePlugin.cantcreatedir", outputDir ) ); //$NON-NLS-1$
+                throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcreatedir", outputDir ) ); //$NON-NLS-1$
             }
         }
 
         // ready to start
         write();
-
     }
 
     public void write()
@@ -352,8 +389,8 @@ public class EclipsePlugin
             reactorArtifacts = Collections.EMPTY_LIST;
 
         // build a list of UNIQUE source dirs (both src and resources) to be used in classpath and wtpmodules
-        EclipseSourceDir[] sourceDirs =
-            EclipseUtils.buildDirectoryList( executedProject, outputDir, getLog(), outputDirectory );
+        EclipseSourceDir[] sourceDirs = EclipseUtils.buildDirectoryList( executedProject, outputDir, getLog(),
+                                                                         outputDirectory );
 
         // use project since that one has all artifacts resolved.
         new EclipseClasspathWriter( getLog() ).write( projectBaseDir, outputDir, project, reactorArtifacts, sourceDirs,
@@ -367,11 +404,10 @@ public class EclipsePlugin
         new EclipseSettingsWriter( getLog() ).write( projectBaseDir, outputDir, project );
 
         new EclipseWtpmodulesWriter( getLog() ).write( outputDir, project, reactorArtifacts, sourceDirs,
-                                                       localRepository,artifactResolver,
-                                                       remoteArtifactRepositories );
+                                                       localRepository, artifactResolver, remoteArtifactRepositories );
 
         getLog().info( Messages.getString( "EclipsePlugin.wrote", //$NON-NLS-1$
-                                           new Object[]{project.getArtifactId(), outputDir.getAbsolutePath()} ) );
+                                           new Object[] { project.getArtifactId(), outputDir.getAbsolutePath() } ) );
     }
 
     private void assertNotEmpty( String string, String elementName )
@@ -379,18 +415,27 @@ public class EclipsePlugin
     {
         if ( string == null )
         {
-            throw new MojoFailureException(
-                Messages.getString( "EclipsePlugin.missingelement", elementName ) ); //$NON-NLS-1$
+            throw new MojoFailureException( Messages.getString( "EclipsePlugin.missingelement", elementName ) ); //$NON-NLS-1$
         }
     }
 
-    public void setDownloadSources( boolean downloadSources )
+    private void fillDefaultBuilders( String packaging )
     {
-        this.downloadSources = downloadSources;
+        buildcommands = new ArrayList();
+        // default builders for WTP R7, 1.0 may change
+        buildcommands.add( "org.eclipse.wst.common.modulecore.ComponentStructuralBuilder" );
+        buildcommands.add( "org.eclipse.jdt.core.javabuilder" );
+        buildcommands.add( "org.eclipse.wst.validation.validationbuilder" );
+        buildcommands.add( "org.eclipse.wst.common.modulecore.ComponentStructuralBuilderDependencyResolver" );
     }
 
-    public void setOutputDirectory( String outputDirectory )
+    private void fillDefaultNatures( String packaging )
     {
-        this.outputDirectory = outputDirectory;
+        projectnatures = new ArrayList();
+        // default natures for WTP R7, 1.0 may change
+        projectnatures.add( "org.eclipse.jem.workbench.JavaEMFNature" );
+        projectnatures.add( "org.eclipse.jdt.core.javanature" );
+        projectnatures.add( "org.eclipse.wst.common.modulecore.ModuleCoreNature" );
     }
+
 }
