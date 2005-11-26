@@ -225,6 +225,8 @@ public class RarMojo
 
             archiver.getArchiver().addDirectory( getBuildDir() );
             archiver.createArchive( project, archive );
+	    
+            project.getArtifact().setFile( rarFile );
         }
         catch ( Exception e )
         {
