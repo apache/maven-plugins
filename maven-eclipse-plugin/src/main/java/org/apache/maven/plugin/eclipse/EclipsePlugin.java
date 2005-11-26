@@ -133,10 +133,12 @@ public class EclipsePlugin
     private List buildcommands;
 
     /**
-     * List of container classpath entries. No classpath container is added by default.
+     * List of container classpath entries. By default the <code>org.eclipse.jdt.launching.JRE_CONTAINER</code> classpath
+     * container is added.
      * Configuration example:
      * <pre>
      *    &lt;classpathContainers>
+     *      &lt;java.lang.String>org.eclipse.jdt.launching.JRE_CONTAINER&lt;/java.lang.String>
      *      &lt;java.lang.String>org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v5.5&lt;/java.lang.String>
      *      &lt;java.lang.String>org.eclipse.jst.j2ee.internal.web.container/artifact&lt;/java.lang.String>
      *    &lt;/classpathContainers>
@@ -338,8 +340,17 @@ public class EclipsePlugin
 
         if ( classpathContainers == null )
         {
-            classpathContainers = new ArrayList();
+            fillDefaultClasspathContainers( packaging );
         }
+        else if ( !classpathContainers.contains( "org.eclipse.jdt.launching.JRE_CONTAINER" ) )
+        {
+            getLog()
+                .warn(
+                       "You did specify a list of classpath containers without the base org.eclipse.jdt.launching.JRE_CONTAINER.\n"
+                           + "If you specify custom classpath containers you should also add org.eclipse.jdt.launching.JRE_CONTAINER to the list" );
+            classpathContainers.add( 0, "org.eclipse.jdt.launching.JRE_CONTAINER" );
+        }
+
         // end defaults
 
         if ( executedProject.getFile() == null || !executedProject.getFile().exists() )
@@ -436,6 +447,12 @@ public class EclipsePlugin
         projectnatures.add( "org.eclipse.jem.workbench.JavaEMFNature" );
         projectnatures.add( "org.eclipse.jdt.core.javanature" );
         projectnatures.add( "org.eclipse.wst.common.modulecore.ModuleCoreNature" );
+    }
+
+    private void fillDefaultClasspathContainers( String packaging )
+    {
+        classpathContainers = new ArrayList();
+        classpathContainers.add( "org.eclipse.jdt.launching.JRE_CONTAINER" );
     }
 
 }
