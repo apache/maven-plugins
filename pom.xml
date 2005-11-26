@@ -207,7 +207,7 @@
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/</developerConnection>
-    <url>http://svn.apache.org/viewcvs.cgi/maven/components/trunk/maven-plugins/</url>
+    <url>http://svn.apache.org/viewcvs.cgi/maven/plugins/trunk/</url>
   </scm>
   <build>
     <pluginManagement>
