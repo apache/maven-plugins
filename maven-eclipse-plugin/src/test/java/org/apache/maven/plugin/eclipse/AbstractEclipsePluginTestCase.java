@@ -115,7 +115,7 @@ public abstract class AbstractEclipsePluginTestCase
         if ( new File( basedir, "settings" ).exists() )
         {
             assertFileEquals( localRepositoryDir.getCanonicalPath(), new File( basedir, "settings" ),
-                              new File( basedir, ".settings/org.eclipse.jdt.core.prefs" ) );
+                              new File( projectOutputDir, ".settings/org.eclipse.jdt.core.prefs" ) );
         }
     }
 

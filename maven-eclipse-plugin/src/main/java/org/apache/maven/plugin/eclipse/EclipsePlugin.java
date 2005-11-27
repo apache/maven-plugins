@@ -160,7 +160,7 @@ public class EclipsePlugin
      *
      * @parameter expression="${eclipse.workspace}" alias="outputDir"
      */
-    private File eclipseWorkspaceDir;
+    private File eclipseProjectDir;
 
     /**
      * When set to false, the plugin will not create sub-projects and instead reference those sub-projects 
@@ -272,18 +272,18 @@ public class EclipsePlugin
      *
      * @param outputDir The outputDir to set.
      */
-    public void setEclipseWorkspaceDir( File outputDir )
+    public void setEclipseProjectDir( File outputDir )
     {
-        this.eclipseWorkspaceDir = outputDir;
+        this.eclipseProjectDir = outputDir;
     }
 
     /**
      * Getter for <code>outputDir</code>. Needed for tests.
      * @return Returns the outputDir.
      */
-    public File getEclipseWorkspaceDir()
+    public File getEclipseProjectDir()
     {
-        return this.eclipseWorkspaceDir;
+        return this.eclipseProjectDir;
     }
 
     /**
@@ -376,29 +376,28 @@ public class EclipsePlugin
             throw new MojoExecutionException( Messages.getString( "EclipsePlugin.missingpom" ) ); //$NON-NLS-1$
         }
 
-        if ( "pom".equals( executedProject.getPackaging() ) && eclipseWorkspaceDir == null ) //$NON-NLS-1$
+        if ( "pom".equals( executedProject.getPackaging() ) && eclipseProjectDir == null ) //$NON-NLS-1$
         {
             getLog().info( Messages.getString( "EclipsePlugin.pompackaging" ) ); //$NON-NLS-1$
             return;
         }
 
-        if ( eclipseWorkspaceDir == null )
+        if ( eclipseProjectDir == null )
         {
-            eclipseWorkspaceDir = executedProject.getFile().getParentFile();
+            eclipseProjectDir = executedProject.getFile().getParentFile();
         }
-        else if ( !eclipseWorkspaceDir.equals( executedProject.getFile().getParentFile() ) )
+        else if ( !eclipseProjectDir.equals( executedProject.getFile().getParentFile() ) )
         {
-            if ( !eclipseWorkspaceDir.isDirectory() )
+            if ( !eclipseProjectDir.isDirectory() )
             {
-                throw new MojoExecutionException( Messages.getString( "EclipsePlugin.notadir", eclipseWorkspaceDir ) ); //$NON-NLS-1$
+                throw new MojoExecutionException( Messages.getString( "EclipsePlugin.notadir", eclipseProjectDir ) ); //$NON-NLS-1$
             }
 
-            eclipseWorkspaceDir = new File( eclipseWorkspaceDir, executedProject.getArtifactId() );
+            eclipseProjectDir = new File( eclipseProjectDir, executedProject.getArtifactId() );
 
-            if ( !eclipseWorkspaceDir.isDirectory() && !eclipseWorkspaceDir.mkdir() )
+            if ( !eclipseProjectDir.isDirectory() && !eclipseProjectDir.mkdirs() )
             {
-                throw new MojoExecutionException( Messages
-                    .getString( "EclipsePlugin.cantcreatedir", eclipseWorkspaceDir ) ); //$NON-NLS-1$
+                throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcreatedir", eclipseProjectDir ) ); //$NON-NLS-1$
             }
         }
 
@@ -419,28 +418,29 @@ public class EclipsePlugin
             reactorArtifacts = Collections.EMPTY_LIST;
 
         // build a list of UNIQUE source dirs (both src and resources) to be used in classpath and wtpmodules
-        EclipseSourceDir[] sourceDirs = EclipseUtils.buildDirectoryList( executedProject, eclipseWorkspaceDir,
-                                                                         getLog(), buildOutputDirectory );
+        EclipseSourceDir[] sourceDirs = EclipseUtils.buildDirectoryList( executedProject, eclipseProjectDir, getLog(),
+                                                                         buildOutputDirectory );
 
         // use project since that one has all artifacts resolved.
-        new EclipseClasspathWriter( getLog() ).write( projectBaseDir, eclipseWorkspaceDir, project, reactorArtifacts,
-                                                      sourceDirs, classpathContainers, localRepository,
-                                                      artifactResolver, artifactFactory, remoteArtifactRepositories,
-                                                      downloadSources, buildOutputDirectory );
+        new EclipseClasspathWriter( getLog(), eclipseProjectDir, project )
+            .write( projectBaseDir, reactorArtifacts, sourceDirs, classpathContainers, localRepository,
+                    artifactResolver, artifactFactory, remoteArtifactRepositories, downloadSources,
+                    buildOutputDirectory );
 
-        new EclipseProjectWriter( getLog() ).write( projectBaseDir, eclipseWorkspaceDir, project, executedProject,
-                                                    reactorArtifacts, projectnatures, buildcommands );
+        new EclipseProjectWriter( getLog(), eclipseProjectDir, project ).write( projectBaseDir, executedProject,
+                                                                                reactorArtifacts, projectnatures,
+                                                                                buildcommands );
 
-        new EclipseSettingsWriter( getLog() ).write( projectBaseDir, eclipseWorkspaceDir, project );
+        new EclipseSettingsWriter( getLog(), eclipseProjectDir, project ).write();
 
-        new EclipseWtpmodulesWriter( getLog() ).write( eclipseWorkspaceDir, project, reactorArtifacts, sourceDirs,
-                                                       localRepository, artifactResolver, remoteArtifactRepositories );
+        new EclipseWtpmodulesWriter( getLog(), eclipseProjectDir, project ).write( reactorArtifacts, sourceDirs,
+                                                                                   localRepository, artifactResolver,
+                                                                                   remoteArtifactRepositories );
 
         getLog().info(
-                       Messages.getString( "EclipsePlugin.wrote", //$NON-NLS-1$
-                                           new Object[] {
-                                               project.getArtifactId(),
-                                               eclipseWorkspaceDir.getAbsolutePath() } ) );
+                       Messages
+                           .getString( "EclipsePlugin.wrote", //$NON-NLS-1$
+                                       new Object[] { project.getArtifactId(), eclipseProjectDir.getAbsolutePath() } ) );
     }
 
     private void assertNotEmpty( String string, String elementName )
