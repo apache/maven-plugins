@@ -328,7 +328,8 @@ public class EclipsePlugin
 
         new EclipseWtpmodulesWriter( getLog(), eclipseProjectDir, project, artifacts ).write( reactorArtifacts,
                                                                                               sourceDirs,
-                                                                                              localRepository );
+                                                                                              localRepository,
+                                                                                              buildOutputDirectory );
 
         reportMissingSources();
 
