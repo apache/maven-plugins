@@ -72,4 +72,10 @@ public class EclipsePluginTest
         testProject( "project-8" );
     }
 
+    //    public void testProject9()
+    //        throws Exception
+    //    {
+    //        testProject( "project-9" );
+    //    }
+
 }

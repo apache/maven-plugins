@@ -16,16 +16,16 @@ package org.apache.maven.plugin.eclipse;
  * limitations under the License.
  */
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
-
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
+
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
 
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
@@ -38,22 +38,26 @@ public class EclipseSettingsWriter
 
     private Log log;
 
-    public EclipseSettingsWriter( Log log )
+    private File eclipseProjectDir;
+
+    private MavenProject project;
+
+    public EclipseSettingsWriter( Log log, File eclipseProjectDir, MavenProject project )
     {
         this.log = log;
+        this.eclipseProjectDir = eclipseProjectDir;
+        this.project = project;
     }
 
-    protected void write( File projectBaseDir, File outputDir, MavenProject project )
+    protected void write()
         throws MojoExecutionException
     {
 
         // check if it's necessary to create project specific settings
         Properties coreSettings = new Properties();
 
-        String source = EclipseUtils.getPluginSetting( project, "maven-compiler-plugin", "source",
-                                                       null ); //$NON-NLS-1$ //$NON-NLS-2$
-        String target = EclipseUtils.getPluginSetting( project, "maven-compiler-plugin", "target",
-                                                       null ); //$NON-NLS-1$ //$NON-NLS-2$
+        String source = EclipseUtils.getPluginSetting( project, "maven-compiler-plugin", "source", null ); //$NON-NLS-1$ //$NON-NLS-2$
+        String target = EclipseUtils.getPluginSetting( project, "maven-compiler-plugin", "target", null ); //$NON-NLS-1$ //$NON-NLS-2$
 
         if ( source != null && !"1.3".equals( source ) ) //$NON-NLS-1$
         {
@@ -65,12 +69,12 @@ public class EclipseSettingsWriter
         {
             coreSettings.put( "org.eclipse.jdt.core.compiler.codegen.targetPlatform", target ); //$NON-NLS-1$
         }
-              
+
         // write the settings, if needed
         if ( !coreSettings.isEmpty() )
         {
-            File settingsDir = new File( outputDir, "/.settings" ); //$NON-NLS-1$
-                                  
+            File settingsDir = new File( eclipseProjectDir, "/.settings" ); //$NON-NLS-1$
+
             settingsDir.mkdirs();
 
             coreSettings.put( "eclipse.preferences.version", "1" ); //$NON-NLS-1$ //$NON-NLS-2$
@@ -78,18 +82,18 @@ public class EclipseSettingsWriter
             try
             {
                 File oldCoreSettingsFile;
-                
+
                 File coreSettingsFile = new File( settingsDir, "org.eclipse.jdt.core.prefs" ); //$NON-NLS-1$
-                
-                if( coreSettingsFile.exists() )
+
+                if ( coreSettingsFile.exists() )
                 {
                     oldCoreSettingsFile = coreSettingsFile;
-                    
+
                     Properties props = new Properties();
-                    
+
                     props.load( new FileInputStream( oldCoreSettingsFile ) );
-                    
-                    if( !props.equals( coreSettings ) )
+
+                    if ( !props.equals( coreSettings ) )
                     {
                         coreSettings.store( new FileOutputStream( coreSettingsFile ), null );
                     }
@@ -104,13 +108,11 @@ public class EclipseSettingsWriter
             }
             catch ( FileNotFoundException e )
             {
-                throw new MojoExecutionException( Messages.getString( "EclipseSettingsWriter.cannotcreatesettings" ),
-                                                  e ); //$NON-NLS-1$
+                throw new MojoExecutionException( Messages.getString( "EclipseSettingsWriter.cannotcreatesettings" ), e ); //$NON-NLS-1$
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException( Messages.getString( "EclipseSettingsWriter.errorwritingsettings" ),
-                                                  e ); //$NON-NLS-1$
+                throw new MojoExecutionException( Messages.getString( "EclipseSettingsWriter.errorwritingsettings" ), e ); //$NON-NLS-1$
             }
         }
         else

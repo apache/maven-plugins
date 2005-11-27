@@ -50,20 +50,26 @@ public class EclipseProjectWriter
 
     private Log log;
 
-    public EclipseProjectWriter( Log log )
+    private File eclipseProjectDir;
+
+    private MavenProject project;
+
+    public EclipseProjectWriter( Log log, File eclipseProjectDir, MavenProject project )
     {
         this.log = log;
+        this.eclipseProjectDir = eclipseProjectDir;
+        this.project = project;
     }
 
-    protected void write( File projectBaseDir, File basedir, MavenProject project, MavenProject executedProject,
-                         List reactorArtifacts, List addedProjectnatures, List addedBuildCommands )
+    protected void write( File projectBaseDir, MavenProject executedProject, List reactorArtifacts,
+                         List addedProjectnatures, List addedBuildCommands )
         throws MojoExecutionException
     {
 
         Set projectnatures = new LinkedHashSet();
         Set buildCommands = new LinkedHashSet();
 
-        File dotProject = new File( basedir, ".project" );
+        File dotProject = new File( eclipseProjectDir, ".project" );
 
         if ( dotProject.exists() )
         {
@@ -197,17 +203,17 @@ public class EclipseProjectWriter
 
         writer.endElement(); // natures
 
-        if ( !projectBaseDir.equals( basedir ) )
+        if ( !projectBaseDir.equals( eclipseProjectDir ) )
         {
             writer.startElement( "linkedResources" ); //$NON-NLS-1$
 
-            addFileLink( writer, projectBaseDir, basedir, project.getFile() );
+            addFileLink( writer, projectBaseDir, eclipseProjectDir, project.getFile() );
 
-            addSourceLinks( writer, projectBaseDir, basedir, executedProject.getCompileSourceRoots() );
-            addResourceLinks( writer, projectBaseDir, basedir, executedProject.getBuild().getResources() );
+            addSourceLinks( writer, projectBaseDir, eclipseProjectDir, executedProject.getCompileSourceRoots() );
+            addResourceLinks( writer, projectBaseDir, eclipseProjectDir, executedProject.getBuild().getResources() );
 
-            addSourceLinks( writer, projectBaseDir, basedir, executedProject.getTestCompileSourceRoots() );
-            addResourceLinks( writer, projectBaseDir, basedir, executedProject.getBuild().getTestResources() );
+            addSourceLinks( writer, projectBaseDir, eclipseProjectDir, executedProject.getTestCompileSourceRoots() );
+            addResourceLinks( writer, projectBaseDir, eclipseProjectDir, executedProject.getBuild().getTestResources() );
 
             writer.endElement(); // linedResources
         }
