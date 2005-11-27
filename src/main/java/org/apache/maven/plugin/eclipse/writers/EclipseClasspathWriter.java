@@ -66,7 +66,7 @@ public class EclipseClasspathWriter
 
     public void write( File projectBaseDir, List referencedReactorArtifacts, EclipseSourceDir[] sourceDirs,
                       List classpathContainers, ArtifactRepository localRepository, ArtifactResolver artifactResolver,
-                      ArtifactFactory artifactFactory, String buildOutputDirectory )
+                      ArtifactFactory artifactFactory, File buildOutputDirectory )
         throws MojoExecutionException
     {
 
@@ -112,8 +112,8 @@ public class EclipseClasspathWriter
 
         writer.startElement( "classpathentry" ); //$NON-NLS-1$
         writer.addAttribute( "kind", "output" ); //$NON-NLS-1$ //$NON-NLS-2$
-        writer.addAttribute( "path", EclipseUtils.toRelativeAndFixSeparator( projectBaseDir, //$NON-NLS-1$  
-                                                                             new File( buildOutputDirectory ), false ) );
+        writer.addAttribute( "path", //$NON-NLS-1$ 
+                             EclipseUtils.toRelativeAndFixSeparator( projectBaseDir, buildOutputDirectory, false ) );
         writer.endElement();
 
         // ----------------------------------------------------------------------

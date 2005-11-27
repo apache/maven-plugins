@@ -129,7 +129,7 @@ public class EclipseUtils
     }
 
     public static EclipseSourceDir[] buildDirectoryList( MavenProject project, File basedir, Log log,
-                                                        String outputDirectory )
+                                                        File buildOutputDirectory )
         throws MojoExecutionException
     {
         File projectBaseDir = project.getFile().getParentFile();
@@ -144,9 +144,13 @@ public class EclipseUtils
                                           projectBaseDir, false, null, log );
 
         // If using the standard output location, don't mix the test output into it.
-        String testOutput = outputDirectory.equals( project.getBuild().getOutputDirectory() ) ? EclipseUtils
-            .toRelativeAndFixSeparator( projectBaseDir, new File( project.getBuild().getTestOutputDirectory() ), false )
-                                                                                             : null;
+        String testOutput = null;
+        boolean useFixedOutputDir = !buildOutputDirectory.equals( new File( project.getBuild().getOutputDirectory() ) );
+        if ( !useFixedOutputDir )
+        {
+            testOutput = EclipseUtils.toRelativeAndFixSeparator( projectBaseDir, new File( project.getBuild()
+                .getTestOutputDirectory() ), false );
+        }
 
         EclipseUtils.extractSourceDirs( directories, project.getTestCompileSourceRoots(), basedir, projectBaseDir,
                                         true, testOutput );

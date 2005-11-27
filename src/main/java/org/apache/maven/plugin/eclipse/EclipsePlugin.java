@@ -185,7 +185,7 @@ public class EclipsePlugin
      *
      * @parameter expression="${project.build.outputDirectory}" alias="outputDirectory"
      */
-    private String buildOutputDirectory;
+    private File buildOutputDirectory;
 
     /**
      * The version of WTP for which configuration files will be generated. At the moment the only supported version is "R7",
