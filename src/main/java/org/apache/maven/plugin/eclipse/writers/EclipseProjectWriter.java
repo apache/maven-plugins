@@ -44,7 +44,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  *
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
  * @author <a href="mailto:kenney@neonics.com">Kenney Westerhof</a>
- * @author <a href="mailto:fgiust@users.sourceforge.net">Fabrizio Giustina</a>
+ * @author <a href="mailto:fgiust@apache.org">Fabrizio Giustina</a>
  * @version $Id$
  */
 public class EclipseProjectWriter
