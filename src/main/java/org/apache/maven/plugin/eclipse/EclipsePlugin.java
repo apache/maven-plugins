@@ -18,11 +18,16 @@ package org.apache.maven.plugin.eclipse;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -192,139 +197,9 @@ public class EclipsePlugin
     private String wtpversion;
 
     /**
-     * Setter for <code>project</code>. Needed for tests.
-     *
-     * @param project The MavenProject to set.
+     * Not a plugin parameter. Collect missing source artifact for the final report.
      */
-    protected void setProject( MavenProject project )
-    {
-        this.project = project;
-    }
-
-    /**
-     * Setter for <code>localRepository</code>. Needed for tests.
-     *
-     * @param localRepository The ArtifactRepository to set.
-     */
-    protected void setLocalRepository( ArtifactRepository localRepository )
-    {
-        this.localRepository = localRepository;
-    }
-
-    /**
-     * Setter for <code>artifactFactory</code>. Needed for tests.
-     *
-     * @param artifactFactory The artifactFactory to set.
-     */
-    protected void setArtifactFactory( ArtifactFactory artifactFactory )
-    {
-        this.artifactFactory = artifactFactory;
-    }
-
-    /**
-     * Setter for <code>artifactResolver</code>. Needed for tests.
-     *
-     * @param artifactResolver The artifactResolver to set.
-     */
-    protected void setArtifactResolver( ArtifactResolver artifactResolver )
-    {
-        this.artifactResolver = artifactResolver;
-    }
-
-    /**
-     * Setter for <code>remoteArtifactRepositories</code>. Needed for tests.
-     *
-     * @param remoteArtifactRepositories The remoteArtifactRepositories to set.
-     */
-    protected void setRemoteArtifactRepositories( List remoteArtifactRepositories )
-    {
-        this.remoteArtifactRepositories = remoteArtifactRepositories;
-    }
-
-    /**
-     * Setter for <code>buildcommands</code>. Needed for tests.
-     *
-     * @param buildcommands The buildcommands to set.
-     */
-    protected void setBuildcommands( List buildcommands )
-    {
-        this.buildcommands = buildcommands;
-    }
-
-    /**
-     * Setter for <code>classpathContainers</code>. Needed for tests.
-     *
-     * @param classpathContainers The classpathContainers to set.
-     */
-    protected void setClasspathContainers( List classpathContainers )
-    {
-        this.classpathContainers = classpathContainers;
-    }
-
-    /**
-     * Setter for <code>projectnatures</code>. Needed for tests.
-     *
-     * @param projectnatures The projectnatures to set.
-     */
-    protected void setProjectnatures( List projectnatures )
-    {
-        this.projectnatures = projectnatures;
-    }
-
-    /**
-     * Setter for <code>outputDir</code>. Needed for tests.
-     *
-     * @param outputDir The outputDir to set.
-     */
-    public void setEclipseProjectDir( File outputDir )
-    {
-        this.eclipseProjectDir = outputDir;
-    }
-
-    /**
-     * Getter for <code>outputDir</code>. Needed for tests.
-     * @return Returns the outputDir.
-     */
-    public File getEclipseProjectDir()
-    {
-        return this.eclipseProjectDir;
-    }
-
-    /**
-     * Setter for <code>downloadSources</code>.
-     * @param downloadSources The downloadSources to set.
-     */
-    public void setDownloadSources( boolean downloadSources )
-    {
-        this.downloadSources = downloadSources;
-    }
-
-    /**
-     * Setter for <code>outputDirectory</code>.
-     * @param outputDirectory The outputDirectory to set.
-     */
-    public void setBuildOutputDirectory( String outputDirectory )
-    {
-        this.buildOutputDirectory = outputDirectory;
-    }
-
-    /**
-     * Getter for <code>buildOutputDirectory</code>.
-     * @return Returns the buildOutputDirectory.
-     */
-    public String getBuildOutputDirectory()
-    {
-        return this.buildOutputDirectory;
-    }
-
-    /**
-     * Setter for <code>wtpversion</code>.
-     * @param wtpversion The wtpversion to set.
-     */
-    public void setWtpversion( String wtpversion )
-    {
-        this.wtpversion = wtpversion;
-    }
+    private List missingSourceArtifacts = new ArrayList();
 
     /**
      * @see org.apache.maven.plugin.Mojo#execute()
@@ -417,19 +292,24 @@ public class EclipsePlugin
         // build the list of referenced ARTIFACTS produced by reactor projects
         List reactorArtifacts;
         if ( useProjectReferences )
+        {
             reactorArtifacts = EclipseUtils.resolveReactorArtifacts( project, reactorProjects );
+        }
         else
+        {
             reactorArtifacts = Collections.EMPTY_LIST;
+        }
 
         // build a list of UNIQUE source dirs (both src and resources) to be used in classpath and wtpmodules
         EclipseSourceDir[] sourceDirs = EclipseUtils.buildDirectoryList( executedProject, eclipseProjectDir, getLog(),
                                                                          buildOutputDirectory );
 
-        // use project since that one has all artifacts resolved.
-        new EclipseClasspathWriter( getLog(), eclipseProjectDir, project )
-            .write( projectBaseDir, reactorArtifacts, sourceDirs, classpathContainers, localRepository,
-                    artifactResolver, artifactFactory, remoteArtifactRepositories, downloadSources,
-                    buildOutputDirectory );
+        Collection artifacts = prepareArtifacts();
+
+        if ( downloadSources )
+        {
+            downloadSourceArtifacts( artifacts, reactorArtifacts );
+        }
 
         new EclipseProjectWriter( getLog(), eclipseProjectDir, project ).write( projectBaseDir, executedProject,
                                                                                 reactorArtifacts, projectnatures,
@@ -437,14 +317,34 @@ public class EclipsePlugin
 
         new EclipseSettingsWriter( getLog(), eclipseProjectDir, project ).write();
 
-        new EclipseWtpmodulesWriter( getLog(), eclipseProjectDir, project ).write( reactorArtifacts, sourceDirs,
-                                                                                   localRepository, artifactResolver,
-                                                                                   remoteArtifactRepositories );
+        new EclipseClasspathWriter( getLog(), eclipseProjectDir, project, artifacts ).write( projectBaseDir,
+                                                                                             reactorArtifacts,
+                                                                                             sourceDirs,
+                                                                                             classpathContainers,
+                                                                                             localRepository,
+                                                                                             artifactResolver,
+                                                                                             artifactFactory,
+                                                                                             buildOutputDirectory );
+
+        new EclipseWtpmodulesWriter( getLog(), eclipseProjectDir, project, artifacts ).write( reactorArtifacts,
+                                                                                              sourceDirs,
+                                                                                              localRepository );
+
+        reportMissingSources();
 
         getLog().info(
                        Messages
                            .getString( "EclipsePlugin.wrote", //$NON-NLS-1$
                                        new Object[] { project.getArtifactId(), eclipseProjectDir.getAbsolutePath() } ) );
+    }
+
+    private Collection prepareArtifacts()
+    {
+        Collection artifacts = project.getTestArtifacts();
+        EclipseUtils.fixMissingOptionalArtifacts( artifacts, project.getDependencyArtifacts(), localRepository,
+                                                  artifactResolver, remoteArtifactRepositories, getLog() );
+        EclipseUtils.fixSystemScopeArtifacts( artifacts, project.getDependencies() );
+        return artifacts;
     }
 
     private void assertNotEmpty( String string, String elementName )
@@ -454,16 +354,6 @@ public class EclipsePlugin
         {
             throw new MojoFailureException( Messages.getString( "EclipsePlugin.missingelement", elementName ) ); //$NON-NLS-1$
         }
-    }
-
-    private void fillDefaultBuilders( String packaging )
-    {
-        buildcommands = new ArrayList();
-        // default builders for WTP R7, 1.0 may change
-        buildcommands.add( "org.eclipse.wst.common.modulecore.ComponentStructuralBuilder" );
-        buildcommands.add( "org.eclipse.jdt.core.javabuilder" );
-        buildcommands.add( "org.eclipse.wst.validation.validationbuilder" );
-        buildcommands.add( "org.eclipse.wst.common.modulecore.ComponentStructuralBuilderDependencyResolver" );
     }
 
     private void fillDefaultNatures( String packaging )
@@ -479,6 +369,91 @@ public class EclipsePlugin
     {
         classpathContainers = new ArrayList();
         classpathContainers.add( "org.eclipse.jdt.launching.JRE_CONTAINER" );
+    }
+
+    private void fillDefaultBuilders( String packaging )
+    {
+        buildcommands = new ArrayList();
+        // default builders for WTP R7, 1.0 may change
+        buildcommands.add( "org.eclipse.wst.common.modulecore.ComponentStructuralBuilder" );
+        buildcommands.add( "org.eclipse.jdt.core.javabuilder" );
+        buildcommands.add( "org.eclipse.wst.validation.validationbuilder" );
+        buildcommands.add( "org.eclipse.wst.common.modulecore.ComponentStructuralBuilderDependencyResolver" );
+    }
+
+    private void downloadSourceArtifacts( Collection artifacts, Collection reactorArtifacts )
+        throws MojoExecutionException
+    {
+
+        for ( Iterator it = artifacts.iterator(); it.hasNext(); )
+        {
+            Artifact artifact = (Artifact) it.next();
+
+            if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
+            {
+                missingSourceArtifacts.add( artifact );
+                continue;
+            }
+            else if ( reactorArtifacts.contains( artifact ) )
+            {
+                // source artifact not needed
+                continue;
+            }
+
+            // source artifact: use the "sources" classifier added by the source plugin
+            Artifact sourceArtifact = artifactFactory.createArtifactWithClassifier( artifact.getGroupId(), artifact
+                .getArtifactId(), artifact.getVersion(), "java-source", "sources" ); //$NON-NLS-1$ //$NON-NLS-2$
+
+            try
+            {
+                artifactResolver.resolve( sourceArtifact, remoteArtifactRepositories, localRepository );
+            }
+            catch ( ArtifactNotFoundException e )
+            {
+                // ignore, the jar has not been found
+            }
+            catch ( ArtifactResolutionException e )
+            {
+                String message = Messages.getString( "EclipseClasspathWriter.errorresolvingsources", //$NON-NLS-1$
+                                                     new Object[] { sourceArtifact.getId(), e.getMessage() } );
+
+                throw new MojoExecutionException( message, e );
+            }
+
+            if ( !sourceArtifact.isResolved() )
+            {
+                missingSourceArtifacts.add( artifact );
+            }
+        }
+    }
+
+    private void reportMissingSources()
+    {
+        if ( missingSourceArtifacts.isEmpty() )
+        {
+            return;
+        }
+
+        StringBuffer msg = new StringBuffer();
+
+        if ( downloadSources )
+        {
+            msg.append( Messages.getString( "EclipseClasspathWriter.sourcesnotavailable" ) ); //$NON-NLS-1$
+        }
+        else
+        {
+            msg.append( Messages.getString( "EclipseClasspathWriter.sourcesnotdownloaded" ) ); //$NON-NLS-1$
+        }
+
+        for ( Iterator it = missingSourceArtifacts.iterator(); it.hasNext(); )
+        {
+            Artifact art = (Artifact) it.next();
+            msg.append( Messages.getString( "EclipseClasspathWriter.sourcesmissingitem", art.getId() ) );
+        }
+        msg.append( "\n" );
+
+        getLog().info( msg ); //$NON-NLS-1$
+
     }
 
 }
