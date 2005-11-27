@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
@@ -361,4 +362,33 @@ public class EclipseUtils
             }
         }
     }
+
+    public static Artifact resolveSourceArtifact( Artifact artifact, ArtifactRepository localRepository,
+                                                 ArtifactResolver artifactResolver, ArtifactFactory artifactFactory )
+        throws MojoExecutionException
+    {
+        // source artifact: use the "sources" classifier added by the source plugin
+        Artifact sourceArtifact = artifactFactory.createArtifactWithClassifier( artifact.getGroupId(), artifact
+            .getArtifactId(), artifact.getVersion(), "java-source", "sources" ); //$NON-NLS-1$ //$NON-NLS-2$
+
+        try
+        {
+
+            artifactResolver.resolve( sourceArtifact, new ArrayList(), localRepository );
+        }
+        catch ( ArtifactNotFoundException e )
+        {
+            // ignore, the jar has not been found
+        }
+        catch ( ArtifactResolutionException e )
+        {
+            String message = Messages.getString( "EclipseClasspathWriter.errorresolvingsources", //$NON-NLS-1$
+                                                 new Object[] { sourceArtifact.getId(), e.getMessage() } );
+
+            throw new MojoExecutionException( message, e );
+        }
+
+        return sourceArtifact;
+    }
+
 }

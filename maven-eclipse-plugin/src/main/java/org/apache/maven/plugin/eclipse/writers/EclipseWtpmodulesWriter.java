@@ -19,13 +19,12 @@ package org.apache.maven.plugin.eclipse.writers;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.EclipseSourceDir;
@@ -53,16 +52,18 @@ public class EclipseWtpmodulesWriter
 
     private MavenProject project;
 
-    public EclipseWtpmodulesWriter( Log log, File eclipseProjectDir, MavenProject project )
+    private Collection artifacts;
+
+    public EclipseWtpmodulesWriter( Log log, File eclipseProjectDir, MavenProject project, Collection artifacts )
     {
         this.log = log;
         this.eclipseProjectDir = eclipseProjectDir;
         this.project = project;
+        this.artifacts = artifacts;
     }
 
     public void write( List referencedReactorArtifacts, EclipseSourceDir[] sourceDirs,
-                      ArtifactRepository localRepository, ArtifactResolver artifactResolver,
-                      List remoteArtifactRepositories )
+                      ArtifactRepository localRepository )
         throws MojoExecutionException
     {
         FileWriter w;
@@ -109,8 +110,7 @@ public class EclipseWtpmodulesWriter
                                                                                          warSourceDirectory ), false ) );
             writer.endElement();
 
-            writeWarOrEarResources( writer, project, referencedReactorArtifacts, localRepository, artifactResolver,
-                                    remoteArtifactRepositories );
+            writeWarOrEarResources( writer, project, referencedReactorArtifacts, localRepository );
 
             target = "/WEB-INF/classes"; //$NON-NLS-1$
         }
@@ -121,8 +121,7 @@ public class EclipseWtpmodulesWriter
             writer.addAttribute( "source-path", "/" ); //$NON-NLS-1$ //$NON-NLS-2$
             writer.endElement();
 
-            writeWarOrEarResources( writer, project, referencedReactorArtifacts, localRepository, artifactResolver,
-                                    remoteArtifactRepositories );
+            writeWarOrEarResources( writer, project, referencedReactorArtifacts, localRepository );
         }
 
         for ( int j = 0; j < sourceDirs.length; j++ )
@@ -227,16 +226,9 @@ public class EclipseWtpmodulesWriter
     }
 
     private void writeWarOrEarResources( XMLWriter writer, MavenProject project, List referencedReactorArtifacts,
-                                        ArtifactRepository localRepository, ArtifactResolver artifactResolver,
-                                        List remoteArtifactRepositories )
+                                        ArtifactRepository localRepository )
         throws MojoExecutionException
     {
-        Set artifacts = project.getArtifacts();
-
-        EclipseUtils.fixMissingOptionalArtifacts( artifacts, project.getDependencyArtifacts(), localRepository,
-                                                  artifactResolver, remoteArtifactRepositories, log );
-
-        EclipseUtils.fixSystemScopeArtifacts( artifacts, project.getDependencies() );
 
         ScopeArtifactFilter scopeFilter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
 
