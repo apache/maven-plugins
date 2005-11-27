@@ -52,7 +52,7 @@ public class EclipseUtils
         // don't instantiate
     }
 
-    public static String toRelativeAndFixSeparator( File basedir, File fileToAdd, boolean replaceSlashes )
+    public static String toRelativeAndFixSeparator( File basedir, File fileToAdd, boolean replaceSlashesWithDashes )
         throws MojoExecutionException
     {
         String basedirpath;
@@ -95,7 +95,7 @@ public class EclipseUtils
 
         relative = StringUtils.replace( relative, "\\", "/" ); //$NON-NLS-1$ //$NON-NLS-2$
 
-        if ( replaceSlashes )
+        if ( replaceSlashesWithDashes )
         {
             relative = StringUtils.replace( relative, "/", "-" ); //$NON-NLS-1$ //$NON-NLS-2$
         }

@@ -29,15 +29,12 @@
         <artifactId>maven-eclipse-plugin</artifactId>
         <configuration>
           <projectnatures>
-            <java.lang.String>org.eclipse.jdt.core.javanature</java.lang.String>
-            <java.lang.String>org.eclipse.wst.common.modulecore.ModuleCoreNature</java.lang.String>
+            <projectnature>org.eclipse.jdt.core.javanature</projectnature>
+            <projectnature>org.eclipse.wst.common.modulecore.ModuleCoreNature</projectnature>
           </projectnatures>
           <buildcommands>
-            <java.lang.String>org.eclipse.wst.common.modulecore.ComponentStructuralBuilder</java.lang.String>
-            <java.lang.String>org.eclipse.jdt.core.javabuilder</java.lang.String>
-            <java.lang.String>
-              org.eclipse.wst.common.modulecore.ComponentStructuralBuilderDependencyResolver
-            </java.lang.String>
+            <buildcommand>org.eclipse.wst.common.modulecore.ComponentStructuralBuilder</buildcommand>
+            <buildcommand>org.eclipse.jdt.core.javabuilder</buildcommand>
           </buildcommands>
           <classpathContainers>
             <java.lang.String>
