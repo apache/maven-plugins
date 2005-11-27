@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.eclipse;
+package org.apache.maven.plugin.eclipse.writers;
 
 /*
  * Copyright 2001-2005 The Apache Software Foundation.
@@ -30,6 +30,9 @@ import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.eclipse.EclipseSourceDir;
+import org.apache.maven.plugin.eclipse.EclipseUtils;
+import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
@@ -64,7 +67,7 @@ public class EclipseClasspathWriter
         this.project = project;
     }
 
-    protected void write( File projectBaseDir, List referencedReactorArtifacts, EclipseSourceDir[] sourceDirs,
+    public void write( File projectBaseDir, List referencedReactorArtifacts, EclipseSourceDir[] sourceDirs,
                          List classpathContainers, ArtifactRepository localRepository,
                          ArtifactResolver artifactResolver, ArtifactFactory artifactFactory,
                          List remoteArtifactRepositories, boolean downloadSources, String buildOutputDirectory )

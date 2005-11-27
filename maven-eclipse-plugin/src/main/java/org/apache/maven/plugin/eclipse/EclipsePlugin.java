@@ -27,6 +27,10 @@ import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.eclipse.writers.EclipseClasspathWriter;
+import org.apache.maven.plugin.eclipse.writers.EclipseProjectWriter;
+import org.apache.maven.plugin.eclipse.writers.EclipseSettingsWriter;
+import org.apache.maven.plugin.eclipse.writers.EclipseWtpmodulesWriter;
 import org.apache.maven.project.MavenProject;
 
 /**

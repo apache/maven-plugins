@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.eclipse;
+package org.apache.maven.plugin.eclipse.writers;
 
 /*
  * Copyright 2001-2005 The Apache Software Foundation.
@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.eclipse.EclipseUtils;
+import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 
@@ -49,7 +51,7 @@ public class EclipseSettingsWriter
         this.project = project;
     }
 
-    protected void write()
+    public void write()
         throws MojoExecutionException
     {
 
