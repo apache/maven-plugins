@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.eclipse;
+package org.apache.maven.plugin.eclipse.writers;
 
 /*
  * Copyright 2001-2005 The Apache Software Foundation.
@@ -28,6 +28,8 @@ import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.eclipse.EclipseUtils;
+import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
@@ -61,8 +63,8 @@ public class EclipseProjectWriter
         this.project = project;
     }
 
-    protected void write( File projectBaseDir, MavenProject executedProject, List reactorArtifacts,
-                         List addedProjectnatures, List addedBuildCommands )
+    public void write( File projectBaseDir, MavenProject executedProject, List reactorArtifacts,
+                      List addedProjectnatures, List addedBuildCommands )
         throws MojoExecutionException
     {
 

@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.eclipse;
+package org.apache.maven.plugin.eclipse.writers;
 
 /*
  * Copyright 2001-2005 The Apache Software Foundation.
@@ -28,6 +28,9 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.eclipse.EclipseSourceDir;
+import org.apache.maven.plugin.eclipse.EclipseUtils;
+import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
@@ -57,9 +60,9 @@ public class EclipseWtpmodulesWriter
         this.project = project;
     }
 
-    protected void write( List referencedReactorArtifacts, EclipseSourceDir[] sourceDirs,
-                         ArtifactRepository localRepository, ArtifactResolver artifactResolver,
-                         List remoteArtifactRepositories )
+    public void write( List referencedReactorArtifacts, EclipseSourceDir[] sourceDirs,
+                      ArtifactRepository localRepository, ArtifactResolver artifactResolver,
+                      List remoteArtifactRepositories )
         throws MojoExecutionException
     {
         FileWriter w;
