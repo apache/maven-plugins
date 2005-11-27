@@ -41,31 +41,33 @@ import org.codehaus.plexus.util.xml.XMLWriter;
  *
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
  * @author <a href="mailto:kenney@neonics.com">Kenney Westerhof</a>
- * @author <a href="mailto:fgiust@users.sourceforge.net">Fabrizio Giustina</a>
+ * @author <a href="mailto:fgiust@apache.org">Fabrizio Giustina</a>
  * @version $Id$
  */
 public class EclipseClasspathWriter
 {
 
-    private Log log;
-
     private boolean downloadSources;
 
     private List missingSourceArtifacts = new ArrayList();
 
-    public EclipseClasspathWriter( Log log )
+    private Log log;
+
+    private File eclipseProjectDir;
+
+    private MavenProject project;
+
+    public EclipseClasspathWriter( Log log, File eclipseProjectDir, MavenProject project )
     {
         this.log = log;
+        this.eclipseProjectDir = eclipseProjectDir;
+        this.project = project;
     }
 
-    /**
-     * @param outputDirectory TODO
-     * @todo the list of needed parameters is really long, maybe this should become a Plexus component
-     */
-    protected void write( File projectBaseDir, File basedir, MavenProject project, List referencedReactorArtifacts,
-                         EclipseSourceDir[] sourceDirs, List classpathContainers, ArtifactRepository localRepository,
+    protected void write( File projectBaseDir, List referencedReactorArtifacts, EclipseSourceDir[] sourceDirs,
+                         List classpathContainers, ArtifactRepository localRepository,
                          ArtifactResolver artifactResolver, ArtifactFactory artifactFactory,
-                         List remoteArtifactRepositories, boolean downloadSources, String outputDirectory )
+                         List remoteArtifactRepositories, boolean downloadSources, String buildOutputDirectory )
         throws MojoExecutionException
     {
 
@@ -75,7 +77,7 @@ public class EclipseClasspathWriter
 
         try
         {
-            w = new FileWriter( new File( basedir, ".classpath" ) ); //$NON-NLS-1$
+            w = new FileWriter( new File( eclipseProjectDir, ".classpath" ) ); //$NON-NLS-1$
         }
         catch ( IOException ex )
         {
@@ -114,7 +116,7 @@ public class EclipseClasspathWriter
         writer.startElement( "classpathentry" ); //$NON-NLS-1$
         writer.addAttribute( "kind", "output" ); //$NON-NLS-1$ //$NON-NLS-2$
         writer.addAttribute( "path", EclipseUtils.toRelativeAndFixSeparator( projectBaseDir, //$NON-NLS-1$  
-                                                                             new File( outputDirectory ), false ) );
+                                                                             new File( buildOutputDirectory ), false ) );
         writer.endElement();
 
         // ----------------------------------------------------------------------
