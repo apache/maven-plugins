@@ -63,7 +63,7 @@ public class EclipseWtpmodulesWriter
     }
 
     public void write( List referencedReactorArtifacts, EclipseSourceDir[] sourceDirs,
-                      ArtifactRepository localRepository )
+                      ArtifactRepository localRepository, File buildOutputDirectory )
         throws MojoExecutionException
     {
         FileWriter w;
@@ -88,7 +88,7 @@ public class EclipseWtpmodulesWriter
         String packaging = project.getPackaging();
 
         writer.startElement( "module-type" ); //$NON-NLS-1$
-        writeModuleTypeAccordingToPackaging( project, writer, packaging );
+        writeModuleTypeAccordingToPackaging( project, writer, packaging, buildOutputDirectory );
         writer.endElement(); // module-type
 
         // source and resource paths.
@@ -150,7 +150,8 @@ public class EclipseWtpmodulesWriter
      * @param packaging
      * @throws MojoExecutionException 
      */
-    private void writeModuleTypeAccordingToPackaging( MavenProject project, XMLWriter writer, String packaging )
+    private void writeModuleTypeAccordingToPackaging( MavenProject project, XMLWriter writer, String packaging,
+                                                     File buildOutputDirectory )
         throws MojoExecutionException
     {
         if ( "war".equals( packaging ) ) //$NON-NLS-1$
@@ -198,8 +199,7 @@ public class EclipseWtpmodulesWriter
             writer.startElement( "property" ); //$NON-NLS-1$
             writer.addAttribute( "name", "java-output-path" ); //$NON-NLS-1$ //$NON-NLS-2$
             writer.addAttribute( "value", "/" + //$NON-NLS-1$ //$NON-NLS-2$
-                EclipseUtils.toRelativeAndFixSeparator( project.getBasedir(), new File( project.getBuild()
-                    .getOutputDirectory() ), false ) );
+                EclipseUtils.toRelativeAndFixSeparator( project.getBasedir(), buildOutputDirectory, false ) );
             writer.endElement();
         }
         else if ( "ear".equals( packaging ) )
@@ -219,8 +219,7 @@ public class EclipseWtpmodulesWriter
             writer.startElement( "property" ); //$NON-NLS-1$
             writer.addAttribute( "name", "java-output-path" ); //$NON-NLS-1$ //$NON-NLS-2$
             writer.addAttribute( "value", "/" + //$NON-NLS-1$ //$NON-NLS-2$
-                EclipseUtils.toRelativeAndFixSeparator( project.getBasedir(), new File( project.getBuild()
-                    .getOutputDirectory() ), false ) );
+                EclipseUtils.toRelativeAndFixSeparator( project.getBasedir(), buildOutputDirectory, false ) );
             writer.endElement();
         }
     }
