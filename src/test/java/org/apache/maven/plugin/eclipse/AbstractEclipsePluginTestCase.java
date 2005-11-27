@@ -20,27 +20,52 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.DefaultArtifactRepository;
-import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.cli.ConsoleDownloadMonitor;
+import org.apache.maven.embedder.MavenEmbedder;
+import org.apache.maven.embedder.MavenEmbedderConsoleLogger;
+import org.apache.maven.embedder.PlexusLoggerAdapter;
+import org.apache.maven.monitor.event.DefaultEventMonitor;
+import org.apache.maven.monitor.event.EventMonitor;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectBuilder;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
+ * @author <a href="mailto:fgiust@apache.org">Fabrizio Giustina</a>
  * @version $Id$
  */
 public abstract class AbstractEclipsePluginTestCase
     extends PlexusTestCase
 {
+
+    protected MavenEmbedder maven;
+
+    protected File localRepositoryDir = getTestFile( "src/test/m2repo" );
+
+    protected void setUp()
+        throws Exception
+    {
+
+        this.maven = new MavenEmbedder();
+        this.maven.setClassLoader( Thread.currentThread().getContextClassLoader() );
+        this.maven.setLogger( new MavenEmbedderConsoleLogger() );
+        this.maven.setLocalRepositoryDirectory( localRepositoryDir );
+        this.maven.start();
+
+        super.setUp();
+    }
+
+    protected void tearDown()
+        throws Exception
+    {
+        maven.stop();
+        super.tearDown();
+    }
 
     /**
      * Execute the eclipse:eclipse goal on a test project and verify generated files.
@@ -48,90 +73,48 @@ public abstract class AbstractEclipsePluginTestCase
      * @param outputDir output dir (if null it's the same as the project)
      * @throws Exception any exception generated during test
      */
-    protected void testProject( String projectName, File outputDir )
+    protected void testProject( String projectName )
         throws Exception
     {
+
         File basedir = getTestFile( "src/test/projects/" + projectName );
 
-        MavenProjectBuilder builder = (MavenProjectBuilder) lookup( MavenProjectBuilder.ROLE );
+        MavenProject project = maven.readProjectWithDependencies( new File( basedir, "pom.xml" ) );
 
-        EclipsePlugin plugin = new EclipsePlugin();
+        EventMonitor eventMonitor = new DefaultEventMonitor( new PlexusLoggerAdapter( new MavenEmbedderConsoleLogger() ) );
 
-        File repo = getTestFile( "src/test/repository" );
-
-        ArtifactRepositoryLayout localRepositoryLayout = (ArtifactRepositoryLayout) lookup(
-                                                                                            ArtifactRepositoryLayout.ROLE,
-                                                                                            "legacy" );
-
-        ArtifactRepository localRepository = new DefaultArtifactRepository( "local", "file://"
-            + repo.getCanonicalPath(), localRepositoryLayout );
-
-        MavenProject project = builder.buildWithDependencies( new File( basedir, "pom.xml" ), localRepository, null );
-
+        String outputDirPath = EclipseUtils.getPluginSetting( project, "maven-eclipse-plugin", "outputDir", null );
+        File outputDir;
         File projectOutputDir = basedir;
 
-        if ( outputDir == null )
+        if ( outputDirPath == null )
         {
             outputDir = basedir;
         }
         else
         {
+            outputDir = new File( basedir, outputDirPath );
             outputDir.mkdirs();
-
             projectOutputDir = new File( outputDir, project.getArtifactId() );
         }
 
-        // Shouldn't PlexusTestCase at least offer a predefined log instance?
-        //  if ( log.isDebugEnabled() )
-        //  {
-        //    log.debug( "basedir: " + basedir + "\noutputdir: " + outputDir + "\nprojectOutputDir: " + projectOutputDir );
-        //  }
+        this.maven.execute( project, Arrays.asList( new String[] {
+            "org.apache.maven.plugins:maven-eclipse-plugin:clean",
+            "org.apache.maven.plugins:maven-eclipse-plugin:eclipse" } ), eventMonitor, new ConsoleDownloadMonitor(),
+                            new Properties(), basedir );
 
-        plugin.setOutputDir( outputDir );
+        assertFileEquals( localRepositoryDir.getCanonicalPath(), new File( basedir, "project" ),
+                          new File( projectOutputDir, ".project" ) );
 
-        for ( Iterator it = project.getArtifacts().iterator(); it.hasNext(); )
-        {
-            Artifact artifact = (Artifact) it.next();
-            artifact.setFile( new File( localRepository.getBasedir(), localRepository.pathOf( artifact ) ) );
-        }
+        assertFileEquals( localRepositoryDir.getCanonicalPath(), new File( basedir, "classpath" ),
+                          new File( projectOutputDir, ".classpath" ) );
 
-        plugin.setProject( project );
-        plugin.setOutputDirectory( project.getBuild().getOutputDirectory() );
-
-        plugin.setLocalRepository( localRepository );
-
-        plugin.setArtifactFactory( (ArtifactFactory) lookup( ArtifactFactory.ROLE ) );
-        plugin.setArtifactResolver( (ArtifactResolver) lookup( ArtifactResolver.ROLE ) );
-        plugin.setRemoteArtifactRepositories( new ArrayList( 0 ) );
-
-        List projectNatures = new ArrayList();
-        projectNatures.add( "org.eclipse.jdt.core.javanature" );
-        plugin.setProjectnatures( projectNatures );
-
-        List buildcommands = new ArrayList();
-        buildcommands.add( "org.eclipse.jdt.core.javabuilder" );
-        plugin.setBuildcommands( buildcommands );
-
-        plugin.setClasspathContainers( new ArrayList() );
-
-        plugin.setDownloadSources( true );
-
-        plugin.setWtpversion( "R7" );
-
-        plugin.execute();
-
-        assertFileEquals( localRepository.getBasedir(), new File( basedir, "project" ), new File( projectOutputDir,
-                                                                                                  ".project" ) );
-
-        assertFileEquals( localRepository.getBasedir(), new File( basedir, "classpath" ), new File( projectOutputDir,
-                                                                                                    ".classpath" ) );
-
-        assertFileEquals( localRepository.getBasedir(), new File( basedir, "wtpmodules" ), new File( projectOutputDir,
-                                                                                                     ".wtpmodules" ) );
+        assertFileEquals( localRepositoryDir.getCanonicalPath(), new File( basedir, "wtpmodules" ),
+                          new File( projectOutputDir, ".wtpmodules" ) );
 
         if ( new File( basedir, "settings" ).exists() )
         {
-            assertFileEquals( localRepository.getBasedir(), new File( basedir, "settings" ),
+            assertFileEquals( localRepositoryDir.getCanonicalPath(), new File( basedir, "settings" ),
                               new File( basedir, ".settings/org.eclipse.jdt.core.prefs" ) );
         }
     }
@@ -218,7 +201,7 @@ public abstract class AbstractEclipsePluginTestCase
 
         while ( ( line = reader.readLine() ) != null )
         {
-            lines.add( line );//StringUtils.replace( line, "#ArtifactRepositoryPath#", mavenRepo.replace( '\\', '/' ) ) );
+            lines.add( line );
         }
 
         return lines;
