@@ -46,21 +46,27 @@ public class EclipseWtpmodulesWriter
 
     private Log log;
 
-    public EclipseWtpmodulesWriter( Log log )
+    private File eclipseProjectDir;
+
+    private MavenProject project;
+
+    public EclipseWtpmodulesWriter( Log log, File eclipseProjectDir, MavenProject project )
     {
         this.log = log;
+        this.eclipseProjectDir = eclipseProjectDir;
+        this.project = project;
     }
 
-    protected void write( File basedir, MavenProject project, List referencedReactorArtifacts,
-                         EclipseSourceDir[] sourceDirs, ArtifactRepository localRepository,
-                         ArtifactResolver artifactResolver, List remoteArtifactRepositories )
+    protected void write( List referencedReactorArtifacts, EclipseSourceDir[] sourceDirs,
+                         ArtifactRepository localRepository, ArtifactResolver artifactResolver,
+                         List remoteArtifactRepositories )
         throws MojoExecutionException
     {
         FileWriter w;
 
         try
         {
-            w = new FileWriter( new File( basedir, ".wtpmodules" ) ); //$NON-NLS-1$
+            w = new FileWriter( new File( eclipseProjectDir, ".wtpmodules" ) ); //$NON-NLS-1$
         }
         catch ( IOException ex )
         {
@@ -95,9 +101,9 @@ public class EclipseWtpmodulesWriter
             writer.addAttribute( "deploy-path", "/" ); //$NON-NLS-1$ //$NON-NLS-2$
             writer.addAttribute( "source-path", //$NON-NLS-1$
                                  "/"
-                                     + EclipseUtils.toRelativeAndFixSeparator( basedir, new File( basedir,
-                                                                                                  warSourceDirectory ),
-                                                                               false ) );
+                                     + EclipseUtils.toRelativeAndFixSeparator( eclipseProjectDir,
+                                                                               new File( eclipseProjectDir,
+                                                                                         warSourceDirectory ), false ) );
             writer.endElement();
 
             writeWarOrEarResources( writer, project, referencedReactorArtifacts, localRepository, artifactResolver,
