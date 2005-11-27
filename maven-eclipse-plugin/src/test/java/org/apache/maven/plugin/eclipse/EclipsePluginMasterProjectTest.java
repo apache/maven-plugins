@@ -22,17 +22,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Properties;
 
 import org.apache.maven.cli.ConsoleDownloadMonitor;
-import org.apache.maven.embedder.MavenEmbedder;
 import org.apache.maven.embedder.MavenEmbedderConsoleLogger;
 import org.apache.maven.embedder.PlexusLoggerAdapter;
 import org.apache.maven.monitor.event.DefaultEventMonitor;
 import org.apache.maven.monitor.event.EventMonitor;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.MavenSettingsBuilder;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.util.IOUtil;
@@ -81,63 +79,52 @@ public class EclipsePluginMasterProjectTest
 
     protected File basedir;
 
-    protected MavenEmbedder maven;
-
-    protected List projectList = new ArrayList();
-
+    /**
+     * @see org.apache.maven.plugin.eclipse.AbstractEclipsePluginTestCase#setUp()
+     */
     protected void setUp()
         throws Exception
     {
-        this.basedir = getTestFile( "src/test/projects/master-test" );
-
-        this.maven = new MavenEmbedder();
-        this.maven.setClassLoader( Thread.currentThread().getContextClassLoader() );
-        this.maven.setLogger( new MavenEmbedderConsoleLogger() );
-        this.maven.start();
-
-        projectList.add( maven.readProjectWithDependencies( new File( basedir, "pom.xml" ) ) );
-
+        basedir = getTestFile( "src/test/projects/master-test" );
         super.setUp();
-
-        executeMaven2CommandLine( basedir );
-    }
-
-    protected void tearDown()
-        throws Exception
-    {
-        maven.stop();
-        super.tearDown();
     }
 
     /**
      * Currently disabled because:
      * <ul>
      *   <li>the reactor build is not run by the embedder</li>
-     *   <li>the embedder doesn't support custom settings</li>
      * </ul>
      * @throws Exception
      */
     public void executeMaven2WithEmbedder()
         throws Exception
     {
+        MavenProject project = maven.readProjectWithDependencies( new File( basedir, "pom.xml" ) );
         EventMonitor eventMonitor = new DefaultEventMonitor( new PlexusLoggerAdapter( new MavenEmbedderConsoleLogger() ) );
-
-        this.maven.execute( projectList, Arrays.asList( new String[] {
+        this.maven.execute( project, Arrays.asList( new String[] {
             "org.apache.maven.plugins:maven-eclipse-plugin:clean",
             "org.apache.maven.plugins:maven-eclipse-plugin:eclipse" } ), eventMonitor, new ConsoleDownloadMonitor(),
                             new Properties(), this.basedir );
     }
 
+    protected void executeMaven2()
+        throws Exception
+    {
+        executeMaven2CommandLine();
+        // executeMaven2WithEmbedder();
+    }
+
     public void testModule1Project()
         throws Exception
     {
+        executeMaven2();
         assertFileEquals( null, new File( basedir, "module-1/project" ), new File( basedir, "module-1/.project" ) );
     }
 
     public void testModule1Classpath()
         throws Exception
     {
-
+        executeMaven2();
         InputStream fis = new FileInputStream( new File( basedir, "module-1/.classpath" ) );
         String classpath = IOUtil.toString( fis );
         IOUtil.close( fis );
@@ -160,18 +147,21 @@ public class EclipsePluginMasterProjectTest
     public void testModule1Wtpmodules()
         throws Exception
     {
+        executeMaven2();
         assertFileEquals( null, new File( basedir, "module-1/wtpmodules" ), new File( basedir, "module-1/.wtpmodules" ) );
     }
 
     public void testModule2Project()
         throws Exception
     {
+        executeMaven2();
         assertFileEquals( null, new File( basedir, "module-2/project" ), new File( basedir, "module-2/.project" ) );
     }
 
     public void testModule2Classpath()
         throws Exception
     {
+        executeMaven2();
         InputStream fis = new FileInputStream( new File( basedir, "module-2/.classpath" ) );
         String classpath = IOUtil.toString( fis );
         IOUtil.close( fis );
@@ -208,6 +198,7 @@ public class EclipsePluginMasterProjectTest
     public void testModule2Wtpmodules()
         throws Exception
     {
+        executeMaven2();
         InputStream fis = new FileInputStream( new File( basedir, "module-2/.wtpmodules" ) );
         String wtpmodules = IOUtil.toString( fis );
         IOUtil.close( fis );
@@ -244,11 +235,11 @@ public class EclipsePluginMasterProjectTest
      * Execute mvn from command line.
      * @throws Exception any exception caught is thrown during tests
      */
-    protected void executeMaven2CommandLine( File workingDir )
+    protected void executeMaven2CommandLine()
         throws Exception
     {
 
-        Commandline cmd = createMaven2CommandLine( workingDir );
+        Commandline cmd = createMaven2CommandLine( this.basedir );
 
         int exitCode = CommandLineUtils.executeCommandLine( cmd, new DefaultConsumer(), new DefaultConsumer() );
 
@@ -268,7 +259,6 @@ public class EclipsePluginMasterProjectTest
     protected Commandline createMaven2CommandLine( File workingDir )
         throws Exception
     {
-
         assertNotNull( "workingDir can't be null", workingDir );
         assertTrue( "workingDir must exist", workingDir.exists() );
 

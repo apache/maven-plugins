@@ -18,6 +18,7 @@ package org.apache.maven.plugin.eclipse;
 
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
+ * @author <a href="mailto:fgiust@apache.org">Fabrizio Giustina</a>
  * @version $Id$
  */
 public class EclipsePluginTest
@@ -26,49 +27,49 @@ public class EclipsePluginTest
     public void testProject1()
         throws Exception
     {
-        testProject( "project-1", null );
+        testProject( "project-1" );
     }
 
     public void testProject2()
         throws Exception
     {
-        testProject( "project-2", null );
+        testProject( "project-2" );
     }
 
     public void testProject3()
         throws Exception
     {
-        testProject( "project-3", null );
+        testProject( "project-3" );
     }
 
     public void testProject4()
         throws Exception
     {
-        testProject( "project-4", getTestFile( "target/project-4-test/" ) );
+        testProject( "project-4" );
     }
 
     public void testProject5()
         throws Exception
     {
-        testProject( "project-5", null );
+        testProject( "project-5" );
     }
 
     public void testProject6()
         throws Exception
     {
-        testProject( "project-6", null );
+        testProject( "project-6" );
     }
 
     public void testProject7()
         throws Exception
     {
-        testProject( "project-7", null );
+        testProject( "project-7" );
     }
 
     public void testProject8()
         throws Exception
     {
-        testProject( "project-8", null );
+        testProject( "project-8" );
     }
 
 }

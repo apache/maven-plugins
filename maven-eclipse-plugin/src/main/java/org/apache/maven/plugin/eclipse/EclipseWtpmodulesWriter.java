@@ -280,7 +280,7 @@ public class EclipseWtpmodulesWriter
             if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
             {
                 handle = "module:/classpath/lib/" //$NON-NLS-1$
-                    + EclipseUtils.toRelativeAndFixSeparator( basedir, repoFile, true );
+                    + EclipseUtils.toRelativeAndFixSeparator( basedir, repoFile, false );
             }
             else
             {

@@ -213,7 +213,7 @@ public class EclipseClasspathWriter
 
             if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
             {
-                path = EclipseUtils.toRelativeAndFixSeparator( projectBaseDir, artifactPath, true );
+                path = EclipseUtils.toRelativeAndFixSeparator( projectBaseDir, artifactPath, false );
 
                 if ( log.isDebugEnabled() )
                 {
