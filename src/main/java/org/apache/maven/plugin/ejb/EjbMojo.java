@@ -46,7 +46,7 @@ public class EjbMojo
         "**/*Session.class", "**/package.html"};
 
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
-    
+
     /**
      * The directory for the generated EJB.
      *
@@ -81,34 +81,34 @@ public class EjbMojo
      * @todo boolean instead
      */
     private String generateClient = Boolean.FALSE.toString();
-    
+
     /**
      * Excludes.
-     * 
+     *
      * <br/>Usage:
      * <pre>
-     * &lt;clientExcludes>
-     *   &lt;clientExclude>**&#47;*Ejb.class&lt/clientExclude>
-     *   &lt;clientExclude>**&#47;*Bean.class&lt;/clientExclude>
-     * &lt;/clientExcludes>
+     * &lt;clientIncludes&gt;
+     *   &lt;clientInclude&gt;**&#47;*Ejb.class&lt;&#47;clientInclude&gt;
+     *   &lt;clientInclude&gt;**&#47;*Bean.class&lt;&#47;clientInclude&gt;
+     * &lt;&#47;clientIncludes&gt;
      * </pre>
      * <br/>Attribute is used only if client jar is generated.
      * <br/>Default exclusions: **&#47;*Bean.class, **&#47;*CMP.class, **&#47;*Session.class, **&#47;package.html
      * @parameter
      */
     private List clientExcludes;
-    
+
     /**
      * Includes.
-     * 
+     *
      * <br/>Usage:
      * <pre>
-     * &lt;clientIncludes>
-     *   &lt;clientInclude>**&#47;*&lt/clientInclude>
-     * &lt;/clientIncludes>
+     * &lt;clientIncludes&gt;
+     *   &lt;clientInclude&gt;**&#47;*&lt;&#47;clientInclude&gt;
+     * &lt;&#47;clientIncludes&gt;
      * </pre>
      * <br/>Attribute is used only if client jar is generated.
-     * <br/>Default value: **&#47**
+     * <br/>Default value: **&#47;**
      * @parameter
      */
     private List clientIncludes;
@@ -192,18 +192,17 @@ public class EjbMojo
 
                 String[] excludes = DEFAULT_EXCLUDES;
                 String[] includes = DEFAULT_INCLUDES;
-                
+
                 if ( clientIncludes != null && !clientIncludes.isEmpty() )
                 {
                     includes = (String[]) clientIncludes.toArray( EMPTY_STRING_ARRAY );
                 }
-                
+
                 if ( clientExcludes != null && !clientExcludes.isEmpty() )
                 {
                     excludes = (String[]) clientExcludes.toArray( EMPTY_STRING_ARRAY );
                 }
-                
-                
+
                 File clientJarFile = new File( basedir, jarName + "-client.jar" );
 
                 MavenArchiver clientArchiver = new MavenArchiver();
