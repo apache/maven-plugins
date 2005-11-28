@@ -306,10 +306,7 @@ public class EclipsePlugin
 
         Collection artifacts = prepareArtifacts();
 
-        if ( downloadSources )
-        {
-            downloadSourceArtifacts( artifacts, reactorArtifacts );
-        }
+        downloadSourceArtifacts( artifacts, reactorArtifacts );
 
         new EclipseProjectWriter( getLog(), eclipseProjectDir, project ).write( projectBaseDir, executedProject,
                                                                                 reactorArtifacts, projectnatures,
@@ -385,7 +382,8 @@ public class EclipsePlugin
     private void downloadSourceArtifacts( Collection artifacts, Collection reactorArtifacts )
         throws MojoExecutionException
     {
-
+        // if downloadSources is off, just check local repository for reporting missing jars
+        List remoteRepos = downloadSources ? remoteArtifactRepositories : new ArrayList( 0 );
         for ( Iterator it = artifacts.iterator(); it.hasNext(); )
         {
             Artifact artifact = (Artifact) it.next();
@@ -407,7 +405,7 @@ public class EclipsePlugin
 
             try
             {
-                artifactResolver.resolve( sourceArtifact, remoteArtifactRepositories, localRepository );
+                artifactResolver.resolve( sourceArtifact, remoteRepos, localRepository );
             }
             catch ( ArtifactNotFoundException e )
             {
