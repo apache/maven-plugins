@@ -444,7 +444,7 @@ public class PrepareReleaseMojo
 
             if ( releaseProgress.getUsername() == null || releaseProgress.getScmUrl() == null )
             {
-                throw new MojoExecutionException( "Missing release preparation information." );
+                throw new MojoExecutionException( "Missing release preparation information (Scm url)." );
             }
         }
         return releaseProgress;
@@ -1304,7 +1304,8 @@ public class PrepareReleaseMojo
         project = (MavenProject) reactorProjects.get(0);
         for (int i = 1; i < reactorProjects.size(); i++ )
         {
-            if (! ((MavenProject) reactorProjects.get( i ) ).getParent().equals( project ))
+            MavenProject parent = ( (MavenProject) reactorProjects.get( i ) ).getParent();
+            if (parent != null && !parent.equals( project ))
             {
                 // We have multiple projects, some of which are not descendants of the 0th project in the list.
                 // rather than guess which one we should use for a default tag name, just return null
