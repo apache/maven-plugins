@@ -51,16 +51,19 @@ public class AntRunMojo
     private MavenProject project;
 
     /**
+     * Any ant task. You can add anything you can add between &lt;target> and &lt;/target> in a build.xml.
      * @parameter expression="${tasks}"
      */
     private Target tasks;
 
     /**
+     * If you generate sources set this property to the target dir so they are available for compilation
      * @parameter expression="${sourceRoot}"
      */
     private File sourceRoot;
 
     /**
+     * If you generate test sources set this property to the target dir so they are available for compilation
      * @parameter expression="${testSourceRoot}"
      */
     private File testSourceRoot;
