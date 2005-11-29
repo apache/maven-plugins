@@ -52,3 +52,58 @@ Usage
   lifecycle phase. You can add a script to each lifecycle phase,
   by duplicating the <<<\<execution/\>>>> section and specifying
   a new phase.
+  
+  
+  Below you can see how to indicate that ant has generated some more java
+  source that needs to be included in the compilation phase. Note that the
+  compile phase follows the generate-sources phase in the lifecycle.
+
+------
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>my-test-app</artifactId>
+  <groupId>my-test-group</groupId>
+  <version>1.0-SNAPSHOT</version>
+
+  <build>
+    <plugins>
+
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <configuration>
+              <tasks>
+
+                <!--
+                  Place any ant task here. You can add anything
+                  you can add between <target> and </target> in a
+                  build.xml.
+                -->
+
+              </tasks>
+              <sourceRoot>${project.build.directory}/generated-sources/main/java</sourceRoot>
+              <testSourceRoot>${project.build.directory}/generated-sources/test/java</testSourceRoot>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+  </build>
+</project>
+------
+
+  Of course, you can put whatever folder you prefer. The folders in the example above are
+  handy because they are deleted when you "clean" since they are in the build directory
+  (which is, by default, "target"). 
+
+  <<<\<sourceRoot/\>>>> adds a single folder to the
+  list of folders that get compiled with the program source code (compile).
+
+  <<<\<testSourceRoot/\>>>> adds a single folder to the
+  list of folders that get compiled with the test source code (test-compile).
