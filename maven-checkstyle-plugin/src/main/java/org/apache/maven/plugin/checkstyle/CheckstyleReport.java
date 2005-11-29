@@ -28,6 +28,7 @@ import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
 import com.puppycrawl.tools.checkstyle.api.Configuration;
 import com.puppycrawl.tools.checkstyle.api.FilterSet;
 import com.puppycrawl.tools.checkstyle.filters.SuppressionsLoader;
+
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
@@ -46,6 +47,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
@@ -198,7 +200,7 @@ public class CheckstyleReport
      */
     public String getName( Locale locale )
     {
-        return getBundle( locale ).getString( "report.checkstyle.name" );
+        return getBundleWithDefaultLocale( locale ).getString( "report.checkstyle.name" );
     }
 
     /**
@@ -206,7 +208,7 @@ public class CheckstyleReport
      */
     public String getDescription( Locale locale )
     {
-        return getBundle( locale ).getString( "report.checkstyle.description" );
+        return getBundleWithDefaultLocale( locale ).getString( "report.checkstyle.description" );
     }
 
     /**
@@ -247,9 +249,29 @@ public class CheckstyleReport
 
         Map files = executeCheckstyle();
 
-        CheckstyleReportGenerator generator = new CheckstyleReportGenerator( getSink(), getBundle( locale ) );
+        CheckstyleReportGenerator generator = new CheckstyleReportGenerator( getSink(), getBundleWithDefaultLocale( locale ) );
 
         generator.generateReport( files );
+    }
+
+    private ResourceBundle getBundleWithDefaultLocale( Locale locale )
+    {
+        ResourceBundle bundle;
+        try
+        {
+            bundle = getBundle( locale );
+        }
+        catch ( MissingResourceException e )
+        {
+            Locale defaultLocale = Locale.ENGLISH;
+            
+            getLog().warn( "Cannot find checkstyle message bundle for locale: " + locale.getDisplayName() + ". Using default: " + defaultLocale.getDisplayName() + " instead." );
+            getLog().debug( "Error locating message bundle.", e );
+            
+            bundle = getBundle( defaultLocale );
+        }
+        
+        return bundle;
     }
 
     private Map executeCheckstyle()
