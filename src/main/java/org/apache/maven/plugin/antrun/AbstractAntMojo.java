@@ -37,35 +37,34 @@ public abstract class AbstractAntMojo
     protected void executeTasks( Target antTasks, MavenProject mavenProject )
         throws MojoExecutionException
     {
-    	try
+        try
         {
-            PropertyHelper propertyHelper = PropertyHelper.getPropertyHelper(
-                antTasks.getProject()
-            );
+            Project antProject = antTasks.getProject();
 
-            propertyHelper.setNext(
-                new AntPropertyHelper( mavenProject, getLog() )
-            );
+            PropertyHelper propertyHelper = PropertyHelper.getPropertyHelper( antProject );
+
+            propertyHelper.setNext( new AntPropertyHelper( mavenProject, getLog() ) );
 
             DefaultLogger antLogger = new DefaultLogger();
             antLogger.setOutputPrintStream( System.out );
             antLogger.setErrorPrintStream( System.err );
             antLogger.setMessageOutputLevel( Project.MSG_INFO );
 
-            antTasks.getProject().addBuildListener( antLogger );
-            antTasks.getProject().setBaseDir( mavenProject.getBasedir() );
+            antProject.addBuildListener( antLogger );
+            antProject.setBaseDir( mavenProject.getBasedir() );
 
-            Path p = new Path( antTasks.getProject() );
+            Path p = new Path( antProject );
             p.setPath( StringUtils.join( mavenProject.getArtifacts().iterator(), File.pathSeparator ) );
-            antTasks.getProject().addReference( "maven.dependency.classpath", p );
+            antProject.addReference( "maven.dependency.classpath", p );
+            p = new Path( antProject );
             p.setPath( StringUtils.join( mavenProject.getCompileClasspathElements().iterator(), File.pathSeparator ) );
-            antTasks.getProject().addReference( "maven.compile.classpath", p );
-            p = new Path( antTasks.getProject() );
+            antProject.addReference( "maven.compile.classpath", p );
+            p = new Path( antProject );
             p.setPath( StringUtils.join( mavenProject.getRuntimeClasspathElements().iterator(), File.pathSeparator ) );
-            antTasks.getProject().addReference( "maven.runtime.classpath", p );
-            p = new Path( antTasks.getProject() );
+            antProject.addReference( "maven.runtime.classpath", p );
+            p = new Path( antProject );
             p.setPath( StringUtils.join( mavenProject.getTestClasspathElements().iterator(), File.pathSeparator ) );
-            antTasks.getProject().addReference( "maven.test.classpath", p );
+            antProject.addReference( "maven.test.classpath", p );
 
             getLog().info( "Executing tasks" );
 
