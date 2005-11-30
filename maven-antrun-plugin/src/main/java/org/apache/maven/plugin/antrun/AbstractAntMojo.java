@@ -16,6 +16,13 @@ package org.apache.maven.plugin.antrun;
  * limitations under the License.
  */
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
@@ -26,14 +33,22 @@ import org.apache.tools.ant.Target;
 import org.apache.tools.ant.types.Path;
 import org.codehaus.plexus.util.StringUtils;
 
-import java.io.File;
-
 /**
  * @author <a href="mailto:kenney@apache.org">Kenney Westerhof</a>
  */
 public abstract class AbstractAntMojo
     extends AbstractMojo
 {
+    
+    /**
+     * The plugin dependencies.
+     *
+     * @parameter expression="${plugin.artifacts}"
+     * @required
+     * @readonly
+     */
+    private List artifacts;
+    
     protected void executeTasks( Target antTasks, MavenProject mavenProject )
         throws MojoExecutionException
     {
@@ -65,6 +80,23 @@ public abstract class AbstractAntMojo
             p = new Path( antProject );
             p.setPath( StringUtils.join( mavenProject.getTestClasspathElements().iterator(), File.pathSeparator ) );
             antProject.addReference( "maven.test.classpath", p );
+
+            /* set maven.plugin.classpath with plugin dependencies */
+            List list = new ArrayList( artifacts.size() );
+
+            for ( Iterator i = artifacts.iterator(); i.hasNext(); )
+            {
+                Artifact a = (Artifact) i.next();
+                File file = a.getFile();
+                if ( file == null )
+                {
+                    throw new DependencyResolutionRequiredException( a );
+                }
+                list.add( file.getPath() );
+            }
+            p = new Path( antProject );
+            p.setPath( StringUtils.join( list.iterator(), File.pathSeparator ) );
+            antProject.addReference( "maven.plugin.classpath", p );
 
             getLog().info( "Executing tasks" );
 
