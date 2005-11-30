@@ -34,6 +34,7 @@ import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.doxia.site.renderer.SiteRenderer;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.StringInputStream;
 import org.codehaus.plexus.util.StringOutputStream;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -44,22 +45,42 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
 /**
+ * TODO: add report generation for ruleset/configuration. 
+ * 
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
- * @version $Id: DependenciesReport.java,v 1.2 2005/02/23 00:08:02 brett Exp $
+ * @author <a href="mailto:joakim@erdfelt.com">Joakim Erdfelt</a>
  * @goal checkstyle
  */
 public class CheckstyleReport
     extends AbstractMavenReport
 {
+    /**
+     * @deprecated Remove with format parameter.
+     */
+    private static final Map FORMAT_TO_CONFIG_LOCATION;
+    
+    static
+    {
+        Map fmt2Cfg = new HashMap();
+        
+        fmt2Cfg.put( "sun", "config/sun_checks.xml" );
+        fmt2Cfg.put( "turbine", "config/turbine_checks.xml" );
+        fmt2Cfg.put( "avalon", "config/avalon_checks.xml" );
+        fmt2Cfg.put( "maven", "config/maven_checks.xml" );
+        
+        FORMAT_TO_CONFIG_LOCATION = Collections.unmodifiableMap( fmt2Cfg );
+    }
+    
     /**
      * Specifies the directory where the report will be generated
      *
@@ -84,18 +105,81 @@ public class CheckstyleReport
     private String excludes;
 
     /**
+     * <p>
+     * Specifies the location of the XML configuration to use.
+     * </p>
+     * 
+     * <p>
+     * Potential values are a filesystem path, a URL, or a classpath
+     * resource.  This parameter expects that the contents of the location
+     * conform to the xml format (Checkstyle 
+     * <a href="http://checkstyle.sourceforge.net/config.html#Modules">Checker 
+     * module</a>) configuration of rulesets.
+     * </p>
+     * 
+     * <p>
+     * This parameter is resolved as resource, URL, then file.  
+     * If resolved to a resource, or a URL, the contents of the configuration
+     * is copied into the 
+     * <code>${project.build.directory}/checkstyle-configuration.xml</code>
+     * file before being passed to checkstyle as a configuration.
+     * </p>
+     * 
+     * <p>
+     * There are 4 predefined rulesets.
+     * </p>
+     * 
+     * <ul>
+     * <li><code>config/sun_checks.xml</code>: Sun Checks.</li>
+     * <li><code>config/turbine_checks.xml</code>: Turbine Checks.</li>
+     * <li><code>config/avalon_checks.xml</code>: Avalon Checks.</li>
+     * <li><code>config/maven_checks.xml</code>: Maven Source Checks.</li>
+     * </ul>
+     * 
+     * @parameter default-value="config/sun_checks.xml"
+     */
+    private String configLocation;
+    
+    /**
      * Specifies what predefined check set to use. Available sets are
      * "sun" (for the Sun coding conventions), "turbine", and "avalon".
      * Default is sun.
      *
      * @parameter default-value="sun"
+     * @deprecated Use configLocation instead.
      */
     private String format;
 
     /**
+     * <p>
+     * Specifies the location of the properties file.
+     * </p>
+     * 
+     * <p>
+     * This parameter is resolved as URL, File, then resource.  
+     * If successfully resolved, the contents of the properties location is 
+     * copied into the 
+     * <code>${project.build.directory}/checkstyle-checker.properties</code>
+     * file before being passed to checkstyle for loading.
+     * </p>
+     * 
+     * <p>
+     * The contents of the <code>propertiesLocation</code> will be made 
+     * available to checkstyle for specifying values for parameters within 
+     * the xml configuration (specified in the <code>configLocation</code> 
+     * parameter).
+     * </p> 
+     * 
+     * @parameter 
+     * @since 2.0-beta-2
+     */
+    private String propertiesLocation;
+    
+    /**
      * Specifies the location of the checkstyle properties that will be used to check the source.
      *
      * @parameter
+     * @deprecated Use propertiesLocation instead.
      */
     private File propertiesFile;
 
@@ -103,21 +187,51 @@ public class CheckstyleReport
      * Specifies the URL of the checkstyle properties that will be used to check the source.
      *
      * @parameter
+     * @deprecated Use propertiesLocation instead.
      */
     private URL propertiesURL;
+
+    /**
+     * Allows for specifying raw property expansion information.
+     * 
+     * @parameter
+     */
+    private String propertyExpansion;
+
+    /**
+     * Specifies the location of the License file (a.k.a. the header file) 
+     * that is used by Checkstyle to verify that source code has the 
+     * correct copyright.
+     *
+     * @parameter default-value="LICENSE.txt"
+     * @since 2.0-beta-2
+     */
+    private String headerLocation;
 
     /**
      * Specifies the location of the License file (a.k.a. the header file) that is used by Checkstyle
      * to verify that source code has the correct copyright.
      *
      * @parameter expression="${basedir}/LICENSE.txt"
+     * @deprecated Use headerLocation instead.
      */
     private File headerFile;
+    
+    /**
+     * Specifies the DEFAULT location of the License file (a.k.a. the header file) in order to check whether
+     * the headerFile parameter is defaulted.
+     *
+     * @parameter expression="${basedir}/LICENSE.txt"
+     * @readonly
+     * @required
+     * @deprecated Remove with headerFile.
+     */
+    private File defaultHeaderFile;
 
     /**
      * Specifies the cache file used to speed up Checkstyle on successive runs.
      *
-     * @parameter expression="${project.build.directory}/checkstyle-cachefile"
+     * @parameter default-value="${project.build.directory}/checkstyle-cachefile"
      */
     private String cacheFile;
 
@@ -130,12 +244,31 @@ public class CheckstyleReport
     private File useFile;
 
     /**
+     * <p>
+     * Specifies the location of the suppressions XML file to use.
+     * </p>
+     * 
+     * <p>
+     * This parameter is resolved as resource, URL, then file.  
+     * If resolved to a resource, or a URL, the contents of the suppressions
+     * XML is copied into the 
+     * <code>${project.build.directory}/checkstyle-supressions.xml</code>
+     * file before being passed to checkstyle for loading.
+     * </p>
+     *
+     * @parameter
+     * @since 2.0-beta-2
+     */
+    private String suppressionsLocation;
+
+    /**
      * Specifies the location of the supperssions XML file to use. The plugin defines a Checkstyle
      * property named <code>checkstyle.suppressions.file</code> with the value of this
      * property. This allows using the Checkstyle property your own custom checkstyle
      * configuration file when specifying a suppressions file.
      *
      * @parameter
+     * @deprecated Use suppressionsLocation instead.
      */
     private String suppressionsFile;
 
@@ -143,7 +276,7 @@ public class CheckstyleReport
      * Specifies the path and filename to save the checkstyle output.  The format of the output file is
      * determined by the <code>outputFileFormat</code>
      *
-     * @parameter expression="${project.build.directory}/checkstyle-result.txt"
+     * @parameter default-value="${project.build.directory}/checkstyle-result.txt"
      */
     private String outputFile;
 
@@ -156,9 +289,29 @@ public class CheckstyleReport
     private String outputFileFormat;
 
     /**
+     * <p>
+     * Specifies the location of the package names XML to be used to configure 
+     * the Checkstyle <a href="http://checkstyle.sourceforge.net/config.html#Packages">Packages</a>.
+     * </p>
+     * 
+     * <p>
+     * This parameter is resolved as resource, URL, then file.  
+     * If resolved to a resource, or a URL, the contents of the package names
+     * XML is copied into the 
+     * <code>${project.build.directory}/checkstyle-packagenames.xml</code>
+     * file before being passed to checkstyle for loading.
+     * </p>
+     *
+     * @parameter
+     * @since 2.0-beta-2
+     */
+    private String packageNamesLocation;
+
+    /**
      * Specifies the location of the package names XML to be used to configure Checkstyle
      *
      * @parameter
+     * @deprecated Use packageNamesLocation instead.
      */
     private String packageNamesFile;
 
@@ -172,20 +325,20 @@ public class CheckstyleReport
     /**
      * Specifies the location of the source files to be used for Checkstyle
      *
-     * @parameter expression="${project.build.sourceDirectory}"
+     * @parameter default-value="${project.build.sourceDirectory}"
      * @required
      */
     private File sourceDirectory;
 
     /**
-     * @parameter expression="${project}"
+     * @parameter default-value="${project}"
      * @required
      * @readonly
      */
     private MavenProject project;
 
     /**
-     * @parameter expression="${component.org.codehaus.doxia.site.renderer.SiteRenderer}"
+     * @component
      * @required
      * @readonly
      */
@@ -194,13 +347,14 @@ public class CheckstyleReport
     private static final File[] EMPTY_FILE_ARRAY = new File[0];
 
     private StringOutputStream stringOutputStream;
+    private Locator locator;
 
     /**
      * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
      */
     public String getName( Locale locale )
     {
-        return getBundleWithDefaultLocale( locale ).getString( "report.checkstyle.name" );
+        return getBundle( locale ).getString( "report.checkstyle.name" );
     }
 
     /**
@@ -208,7 +362,7 @@ public class CheckstyleReport
      */
     public String getDescription( Locale locale )
     {
-        return getBundleWithDefaultLocale( locale ).getString( "report.checkstyle.description" );
+        return getBundle( locale ).getString( "report.checkstyle.description" );
     }
 
     /**
@@ -241,37 +395,64 @@ public class CheckstyleReport
     public void executeReport( Locale locale )
         throws MavenReportException
     {
+        mergeDeprecatedInfo();
+        
         if ( !canGenerateReport() )
         {
             // TODO: failure if not a report
             throw new MavenReportException( "No source directory to process for checkstyle" );
         }
+        
+//        for when we start using maven-shared-io and maven-shared-monitor...
+//        locator = new Locator( new MojoLogMonitorAdaptor( getLog() ) );
+        
+        locator = new Locator( getLog() );
 
         Map files = executeCheckstyle();
 
-        CheckstyleReportGenerator generator = new CheckstyleReportGenerator( getSink(), getBundleWithDefaultLocale( locale ) );
+        CheckstyleReportGenerator generator = new CheckstyleReportGenerator( getSink(), getBundle( locale ) );
 
         generator.generateReport( files );
     }
 
-    private ResourceBundle getBundleWithDefaultLocale( Locale locale )
+    /**
+     * Merge in the deprecated parameters to the new ones, unless the new parameters have values.
+     * 
+     * @deprecated Remove when deprecated params are removed.
+     */
+    private void mergeDeprecatedInfo()
     {
-        ResourceBundle bundle;
-        try
+        if ( "config/sun_checks.xml".equals( configLocation ) && !"sun".equals( format ) )
         {
-            bundle = getBundle( locale );
-        }
-        catch ( MissingResourceException e )
-        {
-            Locale defaultLocale = Locale.ENGLISH;
-            
-            getLog().warn( "Cannot find checkstyle message bundle for locale: " + locale.getDisplayName() + ". Using default: " + defaultLocale.getDisplayName() + " instead." );
-            getLog().debug( "Error locating message bundle.", e );
-            
-            bundle = getBundle( defaultLocale );
+            configLocation = (String) FORMAT_TO_CONFIG_LOCATION.get( format );
         }
         
-        return bundle;
+        if ( StringUtils.isEmpty( propertiesLocation ) )
+        {
+            if ( propertiesFile != null )
+            {
+                propertiesLocation = propertiesFile.getPath();
+            }
+            else if ( propertiesURL != null )
+            {
+                propertiesLocation = propertiesURL.toExternalForm();
+            }
+        }
+        
+        if ( "LICENSE.txt".equals( headerLocation ) && !defaultHeaderFile.equals( headerFile ) )
+        {
+            headerLocation = headerFile.getPath();
+        }
+        
+        if ( StringUtils.isEmpty( suppressionsLocation ) )
+        {
+            suppressionsLocation = suppressionsFile;
+        }
+        
+        if ( StringUtils.isEmpty( packageNamesLocation ) )
+        {
+            packageNamesLocation = packageNamesFile;
+        }
     }
 
     private Map executeCheckstyle()
@@ -288,7 +469,7 @@ public class CheckstyleReport
         }
 
         String configFile = getConfigFile();
-
+        
         Properties overridingProperties = getOverridingProperties();
 
         Checker checker;
@@ -353,7 +534,7 @@ public class CheckstyleReport
         return sinkListener.getFiles();
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.apache.maven.reporting.MavenReport#getOutputName()
      */
     public String getOutputName()
@@ -438,6 +619,10 @@ public class CheckstyleReport
 
         return (File[]) files.toArray( EMPTY_FILE_ARRAY );
     }
+    
+    private String getLocationTemp(String name) {
+        return project.getBuild().getDirectory() + File.separator + name;
+    }
 
     private Properties getOverridingProperties()
         throws MavenReportException
@@ -446,25 +631,34 @@ public class CheckstyleReport
 
         try
         {
+            File propertiesFile = locator.resolveLocation( propertiesLocation,
+                                                           getLocationTemp( "checkstyle-checker.properties" ) );
+            
             if ( propertiesFile != null )
             {
-                if ( propertiesFile.exists() )
-                {
-                    p.load( new FileInputStream( propertiesFile ) );
-                }
-                else
-                {
-                    getLog().warn( "File '" + propertiesFile + "' not found - skipping" );
-                }
+                p.load( new FileInputStream( propertiesFile ) );
             }
-            else if ( propertiesURL != null )
+            
+            if ( StringUtils.isNotEmpty( propertyExpansion ) )
             {
-                p.load( propertiesURL.openStream() );
+                p.load( new StringInputStream( propertyExpansion ) );
             }
 
-            if ( headerFile != null )
+            if ( StringUtils.isNotEmpty( headerLocation ) )
             {
-                p.setProperty( "checkstyle.header.file", headerFile.getAbsolutePath() );
+                try
+                {
+                    File headerFile = locator.resolveLocation( headerLocation,
+                                                               getLocationTemp( "checkstyle-header.txt" ) );
+                    if ( headerFile != null )
+                    {
+                        p.setProperty( "checkstyle.header.file", headerFile.getAbsolutePath() );
+                    }
+                }
+                catch ( IOException e )
+                {
+                    throw new MavenReportException( "Unable to process header location.", e );
+                }
             }
 
             if ( cacheFile != null )
@@ -479,60 +673,70 @@ public class CheckstyleReport
 
         return p;
     }
-
+    
     private String getConfigFile()
         throws MavenReportException
     {
-        URL configFile;
-
-        if ( StringUtils.isEmpty( format ) || "sun".equalsIgnoreCase( format.trim() ) )
+        try
         {
-            // By default
-            configFile = getClass().getResource( "/config/sun_checks.xml" );
+            File configFile = locator.resolveLocation( configLocation, getLocationTemp( "checkstyle-checker.xml" ) );
+            if ( configFile == null )
+            {
+                throw new MavenReportException( "Unable to process null config location." );
+            }
+            return configFile.getAbsolutePath();
         }
-        else if ( "turbine".equalsIgnoreCase( format.trim() ) )
+        catch ( IOException e )
         {
-            configFile = getClass().getResource( "/config/turbine_checks.xml" );
-        }
-        else if ( "avalon".equalsIgnoreCase( format.trim() ) )
-        {
-            configFile = getClass().getResource( "/config/avalon_checks.xml" );
-        }
-        else
-        {
-            // TODO: failure if not a report
-            throw new MavenReportException( "Invalid configuration file format: " + format );
+            throw new MavenReportException( "Unable to find configuration file location.", e );
         }
 
-        return configFile.toString();
     }
 
     private ModuleFactory getModuleFactory()
         throws CheckstyleException
     {
-        if ( StringUtils.isEmpty( packageNamesFile ) )
+        try
         {
+            File packageNamesFile = locator.resolveLocation( packageNamesLocation,
+                                                             getLocationTemp( "checkstyle-packages.xml" ) );
+
+            if ( packageNamesFile == null )
+            {
+                return null;
+            }
+
+            return PackageNamesLoader.loadModuleFactory( packageNamesFile.getAbsolutePath() );
+        }
+        catch ( IOException e )
+        {
+            getLog().error( "Unable to process package names location: " + packageNamesLocation, e );
             return null;
         }
-
-        return PackageNamesLoader.loadModuleFactory( packageNamesFile );
     }
 
     private FilterSet getSuppressions()
         throws MavenReportException
     {
-        if ( StringUtils.isEmpty( suppressionsFile ) )
-        {
-            return null;
-        }
-
         try
         {
-            return SuppressionsLoader.loadSuppressions( suppressionsFile );
+            File suppressionsFile = locator.resolveLocation( suppressionsLocation,
+                                                             getLocationTemp( "checkstyle-suppressions.xml" ) );
+
+            if ( suppressionsFile == null )
+            {
+                return null;
+            }
+
+            return SuppressionsLoader.loadSuppressions( suppressionsFile.getAbsolutePath() );
         }
         catch ( CheckstyleException ce )
         {
-            throw new MavenReportException( "failed to load suppressions XML: " + suppressionsFile, ce );
+            throw new MavenReportException( "failed to load suppressions location: " + suppressionsLocation, ce );
+        }
+        catch ( IOException e )
+        {
+            throw new MavenReportException( "Failed to process supressions location: " + suppressionsLocation, e );
         }
     }
 

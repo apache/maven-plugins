@@ -1,4 +1,5 @@
-<project>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>maven-plugin-parent</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
@@ -22,12 +23,29 @@
       <timezone>-5</timezone>
     </developer>
   </developers>
+  <contributors>
+    <contributor>
+      <name>Joakim Erdfelt</name>
+      <email>joakim@erdfelt.com</email>
+    </contributor>
+  </contributors>
   <dependencies>
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-impl</artifactId>
       <version>2.0</version>
     </dependency>
+    <!-- Eventually, use the shared libs to keep it consistent with other plugins... -->
+    <!-- dependency>
+      <groupId>org.apache.maven.shared</groupId>
+      <artifactId>maven-shared-io</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.shared</groupId>
+      <artifactId>maven-shared-monitor</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency -->
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
