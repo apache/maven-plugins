@@ -14,7 +14,9 @@
 
     <menu name="Checkstyle Quickstart">
       <item name="Overview" href="howto.html"/>
-	  <item name="Sample Checkstyle Report" href="sample-checkstyle.html"/>
+      <item name="Customization" href="customize.html"/>
+      <item name="Tips" href="tips.html"/>
+      <item name="Sample Checkstyle Report" href="sample-checkstyle.html"/>
     </menu>
     ${reports}
   </body>
