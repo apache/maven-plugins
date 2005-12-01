@@ -36,6 +36,13 @@
         <role>German translator</role>
       </roles>
     </contributor>
+    <contributor>
+      <name>Piotr Bzdyl</name>
+      <email>piotr@bzdyl.net</email>
+      <roles>
+        <role>Polish translator</role>
+      </roles>
+    </contributor>
   </contributors>
   <dependencies>
     <dependency>
