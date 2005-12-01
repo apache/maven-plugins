@@ -180,7 +180,7 @@
       <meta name="author" content="$author" />
     #end
     <meta http-equiv="Content-Type" content="text/html; charset=${outputEncoding}" />
-    #if ( $siteDescriptor.getChild( "body" ).getChild( "head" ) )
+    #if ( !$siteDescriptor.getChild( "body" ).getChild( "head" ) )
       #foreach( $item in $siteDescriptor.getChild( "body" ).getChild( "head" ).getChildren() )
         $item
       #end
