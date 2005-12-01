@@ -41,7 +41,7 @@
                             <tr>
                                 <td>English (Default)</td>
                                 <td>
-                                    <a href="http://svn.apache.org/repos/asf/maven/components/trunk/maven-plugins/maven-site-plugin/src/main/resources/site-plugin.properties">
+                                    <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin.properties">
                                         See
                                     </a>
                                 </td>
@@ -49,7 +49,7 @@
                             <tr>
                                 <td>French</td>
                                 <td>
-                                    <a href="http://svn.apache.org/repos/asf/maven/components/trunk/maven-plugins/maven-site-plugin/src/main/resources/site-plugin_fr.properties">
+                                    <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_fr.properties">
                                         See
                                     </a>
                                 </td>
@@ -57,7 +57,7 @@
                             <tr>
                                 <td>Japanese</td>
                                 <td>
-                                    <a href="http://svn.apache.org/repos/asf/maven/components/trunk/maven-plugins/maven-site-plugin/src/main/resources/site-plugin_ja.properties">
+                                    <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_ja.properties">
                                         See
                                     </a>
                                 </td>
@@ -65,7 +65,15 @@
                             <tr>
                                 <td>German</td>
                                 <td>
-                                    <a href="http://svn.apache.org/repos/asf/maven/components/trunk/maven-plugins/maven-site-plugin/src/main/resources/site-plugin_de.properties">
+                                    <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_de.properties">
+                                        See
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Polish</td>
+                                <td>
+                                    <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_pl.properties">
                                         See
                                     </a>
                                 </td>
@@ -87,7 +95,7 @@
                             <tr>
                                 <td>English (Default)</td>
                                 <td>
-                                    <a href="http://svn.apache.org/repos/asf/maven/components/trunk/maven-plugins/maven-project-info-reports-plugin/src/main/resources/project-info-report.properties">
+                                    <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report.properties">
                                         See
                                     </a>
                                 </td>
@@ -95,7 +103,7 @@
                             <tr>
                                 <td>French</td>
                                 <td>
-                                    <a href="http://svn.apache.org/repos/asf/maven/components/trunk/maven-plugins/maven-project-info-reports-plugin/src/main/resources/project-info-report_fr.properties">
+                                    <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_fr.properties">
                                         See
                                     </a>
                                 </td>
@@ -103,7 +111,7 @@
                             <tr>
                                 <td>Japanese</td>
                                 <td>
-                                    <a href="http://svn.apache.org/repos/asf/maven/components/trunk/maven-plugins/maven-project-info-reports-plugin/src/main/resources/project-info-report_ja.properties">
+                                    <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_ja.properties">
                                         See
                                     </a>
                                 </td>
@@ -111,7 +119,15 @@
                             <tr>
                                 <td>German</td>
                                 <td>
-                                    <a href="http://svn.apache.org/repos/asf/maven/components/trunk/maven-plugins/maven-project-info-reports-plugin/src/main/resources/project-info-report_de.properties">
+                                    <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_de.properties">
+                                        See
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Polish</td>
+                                <td>
+                                    <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_pl.properties">
                                         See
                                     </a>
                                 </td>
@@ -149,13 +165,13 @@
                         UTF-8 encoding</b>.
                     </li>
                     <li>
-                    	To test the translation, checkout the site plugin, include it in <code>src/main/resources</code>, 
-                    	and run <code>mvn install</code> on the plugin, then <code>mvn site</code> on a project to test
-                    	it.
+                        To test the translation, checkout the site plugin, include it in <code>src/main/resources</code>,
+                        and run <code>mvn install</code> on the plugin, then <code>mvn site</code> on a project to test
+                      it.
                     </li>
                     <li>
-						When happy with it, create a new issue in <a href="http://jira.codehaus.org/browse/MNG">JIRA</a> 
-						and attach the file there.
+                        When happy with it, create a new issue in <a href="http://jira.codehaus.org/browse/MNG">JIRA</a>
+                        and attach the file there.
                     </li>
                 </ol>
             </p>

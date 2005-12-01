@@ -1,21 +1,35 @@
  ------
  Maven 2 Site Plugin
  ------
+ Vincent Siveton
+ <vincent.siveton@gmail.com>
+ ------
+ September 20, 2005
+ ------
 
 Maven 2 Site Plugin
 
- Generate the project's site and report distributions.
+  Generate the project's site and report distributions.
+  You could also have a look at this mini-guide {{{http://maven.apache.org/guides/mini/guide-site.html}http://maven.apache.org/guides/mini/guide-site.html}}.
 
 *How to Use Site plugin
 
   Using the site plugin is very easy, just execute the site goal from your project
 
 -------------------
-  m2 site:site
+  mvn site
 -------------------
 
   and it would generate its default reports.
 
-*Deploying site & Site Descriptor
+*How to Deploy Site plugin
 
-  For more references of deploying the site and site descriptor here's a link {{{http://maven.apache.org/maven2/site.html}http://maven.apache.org/maven2/site.html}}.
+  To deploy the generated site, just execute the site:deploy goal from your project.
+
+-------------------
+  mvn site:deploy
+-------------------
+
+*Site Descriptor
+
+  For more references of site descriptor, here's a link {{{http://maven.apache.org/site.html}http://maven.apache.org/site.html}}.
