@@ -48,11 +48,11 @@ public final class EarModuleFactory
         }
         else if ( "ejb3".equals( artifact.getType() ) )
         {
-            return new EjbModule( artifact );
+            return new Ejb3Module( artifact );
         }
         else if ( "par".equals( artifact.getType() ) )
         {
-            return new EjbModule( artifact );
+            return new ParModule( artifact );
         }
         else if ( "ejb-client".equals( artifact.getType() ) )
         {
