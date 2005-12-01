@@ -21,6 +21,8 @@ import org.apache.maven.model.License;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
+import org.apache.maven.settings.Proxy;
+import org.apache.maven.settings.Settings;
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.doxia.site.renderer.SiteRenderer;
 import org.codehaus.plexus.i18n.I18N;
@@ -30,12 +32,15 @@ import org.codehaus.plexus.util.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.Authenticator;
 import java.net.MalformedURLException;
+import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -74,6 +79,15 @@ public class LicenseReport
      * @readonly
      */
     private MavenProject project;
+
+    /**
+     * The Maven Settings.
+     *
+     * @parameter default-value="${settings}"
+     * @required
+     * @readonly
+     */
+    private Settings settings;
 
     /**
      * Whether the system is currently offline.
@@ -144,7 +158,7 @@ public class LicenseReport
     {
         if ( !offline )
         {
-            LicenseRenderer r = new LicenseRenderer( getSink(), getProject(), i18n, locale );
+            LicenseRenderer r = new LicenseRenderer( getSink(), getProject(), i18n, locale, settings );
 
             r.render();
         }
@@ -167,15 +181,19 @@ public class LicenseReport
     {
         private MavenProject project;
 
+        private Settings settings;
+
         private I18N i18n;
 
         private Locale locale;
 
-        public LicenseRenderer( Sink sink, MavenProject project, I18N i18n, Locale locale )
+        public LicenseRenderer( Sink sink, MavenProject project, I18N i18n, Locale locale, Settings settings )
         {
             super( sink );
 
             this.project = project;
+
+            this.settings = settings;
 
             this.i18n = i18n;
 
@@ -280,22 +298,7 @@ public class LicenseReport
                         }
                     }
 
-                    InputStream in = null;
-                    try
-                    {
-                        in = licenseUrl.openStream();
-                        // All licenses are supposed in English...
-                        licenseContent = IOUtil.toString( in, "ISO-8859-1" );
-                    }
-                    catch ( IOException e )
-                    {
-                        throw new MissingResourceException( "Can't read the url [" + url + "] : " + e.getMessage(),
-                                                            null, null );
-                    }
-                    finally
-                    {
-                        IOUtil.close( in );
-                    }
+                    licenseContent = getLicenseInputStream( licenseUrl );
 
                     // TODO: we should check for a text/html mime type instead, and possibly use a html parser to do this a bit more cleanly/reliably.
                     String licenseContentLC = licenseContent.toLowerCase();
@@ -324,6 +327,78 @@ public class LicenseReport
 
             endSection();
         }
+
+        /**
+         * Get the content of the license Url
+         *
+         * @param licenseUrl
+         * @return the content of the licenseUrl
+         */
+        private String getLicenseInputStream( URL licenseUrl )
+        {
+            String scheme = licenseUrl.getProtocol();
+            if ( !"file".equals( scheme ) )
+            {
+                Proxy proxy = settings.getActiveProxy();
+                if ( proxy != null )
+                {
+                    if ( "http".equals( scheme ) || "https".equals( scheme ) )
+                    {
+                        scheme = "http.";
+                    }
+                    else if ( "ftp".equals( scheme ) )
+                    {
+                        scheme = "ftp.";
+                    }
+                    else
+                    {
+                        scheme = "";
+                    }
+
+                    String host = proxy.getHost();
+                    if ( !StringUtils.isEmpty( host ) )
+                    {
+                        Properties p = System.getProperties();
+                        p.put( scheme + "proxySet", "true" );
+                        p.put( scheme + "proxyHost", host );
+                        p.put( scheme + "proxyPort", String.valueOf( proxy.getPort() ) );
+                        if ( !StringUtils.isEmpty( proxy.getNonProxyHosts() ) )
+                        {
+                            p.put( scheme + "nonProxyHosts", proxy.getNonProxyHosts() );
+                        }
+
+                        final String userName = proxy.getUsername();
+                        if ( !StringUtils.isEmpty( userName ) )
+                        {
+                            final String pwd = StringUtils.isEmpty( proxy.getPassword() ) ? "" : proxy.getPassword();
+                            Authenticator.setDefault( new Authenticator()
+                            {
+                                protected PasswordAuthentication getPasswordAuthentication()
+                                {
+                                    return new PasswordAuthentication( userName, pwd.toCharArray() );
+                                }
+                            } );
+                        }
+                    }
+                }
+            }
+
+            InputStream in = null;
+            try
+            {
+                in = licenseUrl.openStream();
+                // All licenses are supposed in English...
+                return IOUtil.toString( in, "ISO-8859-1" );
+            }
+            catch ( IOException e )
+            {
+                throw new MissingResourceException( "Can't read the url [" + licenseUrl + "] : " + e.getMessage(), null, null );
+            }
+            finally
+            {
+                IOUtil.close( in );
+            }
+        }
     }
 
     private static URL baseURL( URL aUrl )
@@ -341,10 +416,8 @@ public class LicenseReport
                 throw new AssertionError( e );
             }
         }
-        else
-        {
-            return aUrl;
-        }
+
+        return aUrl;
     }
 
     private static String replaceRelativeLinks( String html, String baseURL )
