@@ -218,17 +218,6 @@ public class CheckstyleReport
     private File headerFile;
     
     /**
-     * Specifies the DEFAULT location of the License file (a.k.a. the header file) in order to check whether
-     * the headerFile parameter is defaulted.
-     *
-     * @parameter expression="${basedir}/LICENSE.txt"
-     * @readonly
-     * @required
-     * @deprecated Remove with headerFile.
-     */
-    private File defaultHeaderFile;
-
-    /**
      * Specifies the cache file used to speed up Checkstyle on successive runs.
      *
      * @parameter default-value="${project.build.directory}/checkstyle-cachefile"
@@ -439,9 +428,13 @@ public class CheckstyleReport
             }
         }
         
-        if ( "LICENSE.txt".equals( headerLocation ) && !defaultHeaderFile.equals( headerFile ) )
+        if ( "LICENSE.txt".equals( headerLocation ) )
         {
-            headerLocation = headerFile.getPath();
+            File defaultHeaderFile = new File( project.getBasedir(), "LICENSE.txt" );
+            if ( !defaultHeaderFile.equals( headerFile ) )
+            {
+                headerLocation = headerFile.getPath();
+            }
         }
         
         if ( StringUtils.isEmpty( suppressionsLocation ) )
