@@ -200,9 +200,13 @@ public class IssueTrackingReport
             {
                 linkPatternedText( i18n.getString( "project-info-report", locale, "report.issuetracking.scarab.intro" ) );
             }
-            else
+            else if ( ( system == null ) || ( system.trim().equals( "" ) ) )
             {
                 paragraph( i18n.getString( "project-info-report", locale, "report.issuetracking.general.intro" ) );
+            }
+            else 
+            {
+                paragraph( i18n.getString( "project-info-report", locale,"report.issuetracking.custom.intro").replaceFirst("%issueManagementSystem%", system) );
             }
 
             endSection();
