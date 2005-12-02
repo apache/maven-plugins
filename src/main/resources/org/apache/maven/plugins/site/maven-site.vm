@@ -165,6 +165,45 @@
   #end                
 #end
 
+#macro ( poweredByLogo )
+                
+    #if( $siteDescriptor.getChild( "powered-by" ) )
+        #foreach ($item in $siteDescriptor.getChild( "powered-by" ).getChildren() )
+            #if( $item.getAttribute( "href" ) )
+                #set ( $href = $item.getAttribute( "href" ) )
+            #else
+                #set ( $href="http://maven.apache.org/" )
+            #end
+            
+            #if( $item.getAttribute( "name" ) )
+                #set ( $name = $item.getAttribute( "name" ) )
+            #else
+                #set ( $name = $i18n.getString( "site-plugin", $locale, "template.builtby" )  )
+                #set ( $name = "${name} Maven"  )
+            #end   
+            
+            #if( $item.getAttribute( "img" ) )
+                #set ( $img = $item.getAttribute( "img" ) )
+            #else
+                #set ( $img = "maven-feather.png" )
+            #end 
+            
+            <a href="$href" title="$name" id="poweredBy">
+              <img alt="$name" src="$relativePath/images/logos/$img"></img>
+            </a>
+        #end
+        #if( $siteDescriptor.getChild( "powered-by" ).getChildCount() == 0 )
+          <a href="http://maven.apache.org/" title="$i18n.getString( "site-plugin", $locale, "template.builtby" ) Maven" id="poweredBy">
+            <img alt="$i18n.getString( "site-plugin", $locale, "template.builtby" ) Maven" src="$relativePath/images/logos/maven-feather.png"></img>
+          </a>
+        #end
+    #else
+        <a href="http://maven.apache.org/" title="$i18n.getString( "site-plugin", $locale, "template.builtby" ) Maven" id="poweredBy">
+          <img alt="$i18n.getString( "site-plugin", $locale, "template.builtby" ) Maven" src="$relativePath/images/logos/maven-feather.png"></img>
+        </a>
+    #end
+#end
+
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
@@ -207,10 +246,8 @@
       <div id="navcolumn">
        #publishDate( "navigation-top" )   
        #mainMenu()
-        <a href="http://maven.apache.org/" title="$i18n.getString( "site-plugin", $locale, "template.builtby" ) Maven" id="poweredBy">
-          <img alt="$i18n.getString( "site-plugin", $locale, "template.builtby" ) Maven" src="$relativePath/images/logos/maven-feather.png"></img>
-        </a>
-        #publishDate( "navigation-bottom" )
+       #poweredByLogo()
+       #publishDate( "navigation-bottom" )
       </div>
     </div>
     <div id="bodyColumn">
