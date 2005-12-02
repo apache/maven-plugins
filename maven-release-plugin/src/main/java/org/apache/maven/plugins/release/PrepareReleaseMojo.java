@@ -16,6 +16,20 @@ package org.apache.maven.plugins.release;
  * limitations under the License.
  */
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.metadata.ArtifactMetadataRetrievalException;
@@ -23,7 +37,6 @@ import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Dependency;
-import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.Extension;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
@@ -50,20 +63,6 @@ import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFile;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
 
 /**
  * Prepare for a release in SCM.
@@ -118,7 +117,6 @@ public class PrepareReleaseMojo
      * @readonly
      */
     private ArtifactRepository localRepository;
-
 
     /**
      * @parameter expression="${reactorProjects}"
@@ -188,13 +186,14 @@ public class PrepareReleaseMojo
     {
         if ( StringUtils.isEmpty( urlScm ) )
         {
-            Model model = ((MavenProject) reactorProjects.get(0)).getModel();
+            Model model = ( (MavenProject) reactorProjects.get( 0 ) ).getModel();
             if ( model.getScm() != null )
             {
                 urlScm = model.getScm().getConnection();
                 if ( StringUtils.isEmpty( urlScm ) )
                 {
-                    throw new MojoExecutionException("Missing required setting: scm connection or developerConnection must be specified.");
+                    throw new MojoExecutionException(
+                                                      "Missing required setting: scm connection or developerConnection must be specified." );
                 }
             }
         }
@@ -217,7 +216,7 @@ public class PrepareReleaseMojo
         throws MojoExecutionException, MojoFailureException
     {
         validateConfiguration();
-  
+
         checkpoint( ReleaseProgressTracker.CP_INITIALIZED );
 
         if ( !getReleaseProgress().verifyCheckpoint( ReleaseProgressTracker.CP_PREPARED_RELEASE ) )
@@ -226,6 +225,8 @@ public class PrepareReleaseMojo
 
             if ( !getReleaseProgress().verifyCheckpoint( ReleaseProgressTracker.CP_POM_TRANSFORMED_FOR_RELEASE ) )
             {
+                Map releasedProjects = new HashMap();
+
                 for ( Iterator it = reactorProjects.iterator(); it.hasNext(); )
                 {
                     MavenProject project = (MavenProject) it.next();
@@ -246,6 +247,18 @@ public class PrepareReleaseMojo
 
                     transformPomToReleaseVersionPom( model, projectId, project.getFile(), project.getParentArtifact(),
                                                      project.getPluginArtifactRepositories() );
+                    releasedProjects.put( projectId, model );
+                }
+
+                // We want to pick up the version changes in the child projects so we defer
+                // the update of the dependencyManagement section until after we have
+                // transformed all the projects and know their updated version numbers.
+                for ( Iterator it = reactorProjects.iterator(); it.hasNext(); )
+                {
+                    MavenProject project = (MavenProject) it.next();
+                    String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
+                    Model model = (Model) releasedProjects.get( projectId );
+                    updateDependencyManagement( model, project.getFile(), "release" );
                 }
 
                 checkpoint( ReleaseProgressTracker.CP_POM_TRANSFORMED_FOR_RELEASE );
@@ -266,9 +279,10 @@ public class PrepareReleaseMojo
                 {
                     MavenProject project = (MavenProject) it.next();
 
+                    String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
+
                     Model model = ModelUtils.cloneModel( project.getOriginalModel() );
 
-                    String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
                     getVersionResolver().incrementVersion( model, projectId );
 
                     getScmRewriter().restoreScmInfo( model );
@@ -290,9 +304,41 @@ public class PrepareReleaseMojo
         }
     }
 
+    private void updateDependencyManagement( Model model, File file, String type )
+        throws MojoExecutionException
+    {
+        //Rewrite dependencyManagement section
+        List dependencies = model.getDependencyManagement() != null ? model.getDependencyManagement().getDependencies()
+                                                                   : null;
+
+        if ( dependencies != null )
+        {
+            for ( Iterator i = dependencies.iterator(); i.hasNext(); )
+            {
+                Dependency dep = (Dependency) i.next();
+
+                if ( dep.getVersion() != null )
+                {
+                    String version = versionResolver.getResolvedVersion( dep.getGroupId(), dep.getArtifactId() );
+
+                    if ( version != null )
+                    {
+                        getLog().info( "Updating DM " + dep.getArtifactId() + " to " + version );
+                        dep.setVersion( version );
+                    }
+                }
+            }
+        }
+
+        File pomFile = new File( file.getParentFile(), POM );
+
+        writePom( pomFile, model, type );
+    }
+
     private void transformPomToSnapshotVersionPom( Model model, File file )
         throws MojoExecutionException
     {
+        getLog().info( "Transforming " + model.getArtifactId() + " to snapshot" );
         ProjectVersionResolver versionResolver = getVersionResolver();
 
         Parent parent = model.getParent();
@@ -300,8 +346,8 @@ public class PrepareReleaseMojo
         //Rewrite parent version
         if ( parent != null )
         {
-            String incrementedVersion = versionResolver.getResolvedVersion( parent.getGroupId(), parent
-                .getArtifactId() );
+            String incrementedVersion = versionResolver
+                .getResolvedVersion( parent.getGroupId(), parent.getArtifactId() );
 
             if ( incrementedVersion != null )
             {
@@ -318,11 +364,15 @@ public class PrepareReleaseMojo
             {
                 Dependency dep = (Dependency) i.next();
 
-                String version = versionResolver.getResolvedVersion( dep.getGroupId(), dep.getArtifactId() );
-
-                if ( version != null )
+                if ( dep.getVersion() != null )
                 {
-                    dep.setVersion( version );
+                    String version = versionResolver.getResolvedVersion( dep.getGroupId(), dep.getArtifactId() );
+
+                    if ( version != null )
+                    {
+                        getLog().info( "Updating " + dep.getArtifactId() + " to " + version );
+                        dep.setVersion( version );
+                    }
                 }
             }
         }
@@ -340,8 +390,7 @@ public class PrepareReleaseMojo
                 {
                     Plugin plugin = (Plugin) i.next();
 
-                    String version = versionResolver.getResolvedVersion( plugin.getGroupId(), plugin
-                        .getArtifactId() );
+                    String version = versionResolver.getResolvedVersion( plugin.getGroupId(), plugin.getArtifactId() );
 
                     if ( version != null )
                     {
@@ -379,8 +428,7 @@ public class PrepareReleaseMojo
                 {
                     ReportPlugin plugin = (ReportPlugin) i.next();
 
-                    String version = versionResolver.getResolvedVersion( plugin.getGroupId(), plugin
-                        .getArtifactId() );
+                    String version = versionResolver.getResolvedVersion( plugin.getGroupId(), plugin.getArtifactId() );
 
                     if ( version != null )
                     {
@@ -407,7 +455,8 @@ public class PrepareReleaseMojo
             catch ( IOException e )
             {
                 getLog().warn(
-                    "Cannot read existing release progress file from directory: " + basedir.getAbsolutePath() + "." );
+                               "Cannot read existing release progress file from directory: "
+                                   + basedir.getAbsolutePath() + "." );
                 getLog().debug( "Cause", e );
 
                 releaseProgress = ReleaseProgressTracker.create( basedir );
@@ -516,7 +565,8 @@ public class PrepareReleaseMojo
                 }
 
                 throw new MojoExecutionException(
-                    "Cannot prepare the release because you have local modifications : \n" + message );
+                                                  "Cannot prepare the release because you have local modifications : \n"
+                                                      + message );
             }
 
             checkpoint( ReleaseProgressTracker.CP_LOCAL_MODIFICATIONS_CHECKED );
@@ -557,8 +607,8 @@ public class PrepareReleaseMojo
 
                 if ( ArtifactUtils.isSnapshot( parentVersion ) )
                 {
-                    throw new MojoExecutionException( "Can't release project due to non released parent (" +
-                        parentProject.getGroupId() + ":" + parentProject.getArtifactId() + parentVersion + "." );
+                    throw new MojoExecutionException( "Can't release project due to non released parent ("
+                        + parentProject.getGroupId() + ":" + parentProject.getArtifactId() + parentVersion + "." );
                 }
             }
 
@@ -573,8 +623,8 @@ public class PrepareReleaseMojo
         {
             Artifact artifact = (Artifact) i.next();
 
-            String artifactVersion =
-                getVersionResolver().getResolvedVersion( artifact.getGroupId(), artifact.getArtifactId() );
+            String artifactVersion = getVersionResolver().getResolvedVersion( artifact.getGroupId(),
+                                                                              artifact.getArtifactId() );
 
             if ( artifactVersion == null )
             {
@@ -593,8 +643,8 @@ public class PrepareReleaseMojo
         {
             Artifact artifact = (Artifact) i.next();
 
-            String artifactVersion =
-                getVersionResolver().getResolvedVersion( artifact.getGroupId(), artifact.getArtifactId() );
+            String artifactVersion = getVersionResolver().getResolvedVersion( artifact.getGroupId(),
+                                                                              artifact.getArtifactId() );
 
             if ( artifactVersion == null )
             {
@@ -631,9 +681,10 @@ public class PrepareReleaseMojo
     }
 
     private void transformPomToReleaseVersionPom( Model model, String projectId, File file, Artifact parentArtifact,
-                                                  List pluginArtifactRepositories )
+                                                 List pluginArtifactRepositories )
         throws MojoExecutionException
     {
+        getLog().info( "Transforming " + projectId + " to release" );
         getScmRewriter().rewriteScmInfo( model, projectId, getTagLabel() );
 
         //Rewrite parent version
@@ -655,37 +706,15 @@ public class PrepareReleaseMojo
             for ( Iterator i = dependencies.iterator(); i.hasNext(); )
             {
                 Dependency dep = (Dependency) i.next();
-
                 // Avoid in dep mgmt
                 if ( dep.getVersion() != null )
                 {
-                    String resolvedVersion =
-                        getVersionResolver().getResolvedVersion( dep.getGroupId(), dep.getArtifactId() );
+                    String resolvedVersion = getVersionResolver().getResolvedVersion( dep.getGroupId(),
+                                                                                      dep.getArtifactId() );
 
                     if ( resolvedVersion != null )
                     {
-                        dep.setVersion( resolvedVersion );
-                    }
-                }
-            }
-        }
-
-        DependencyManagement dependencyManagement = model.getDependencyManagement();
-        dependencies = dependencyManagement != null ? dependencyManagement.getDependencies() : null;
-
-        if ( dependencies != null )
-        {
-            for ( Iterator i = dependencies.iterator(); i.hasNext(); )
-            {
-                Dependency dep = (Dependency) i.next();
-
-                if ( dep.getVersion() != null )
-                {
-                    String resolvedVersion =
-                        getVersionResolver().getResolvedVersion( dep.getGroupId(), dep.getArtifactId() );
-
-                    if ( resolvedVersion != null )
-                    {
+                        getLog().info( "Updating " + dep.getArtifactId() + " to " + resolvedVersion );
                         dep.setVersion( resolvedVersion );
                     }
                 }
@@ -708,8 +737,8 @@ public class PrepareReleaseMojo
                     // Avoid in plugin mgmt
                     if ( plugin.getVersion() != null )
                     {
-                        String resolvedVersion =
-                            getVersionResolver().getResolvedVersion( plugin.getGroupId(), plugin.getArtifactId() );
+                        String resolvedVersion = getVersionResolver().getResolvedVersion( plugin.getGroupId(),
+                                                                                          plugin.getArtifactId() );
 
                         if ( resolvedVersion != null )
                         {
@@ -730,8 +759,8 @@ public class PrepareReleaseMojo
 
                     if ( plugin.getVersion() != null )
                     {
-                        String resolvedVersion =
-                            getVersionResolver().getResolvedVersion( plugin.getGroupId(), plugin.getArtifactId() );
+                        String resolvedVersion = getVersionResolver().getResolvedVersion( plugin.getGroupId(),
+                                                                                          plugin.getArtifactId() );
 
                         if ( resolvedVersion != null )
                         {
@@ -748,8 +777,8 @@ public class PrepareReleaseMojo
             {
                 Extension ext = (Extension) i.next();
 
-                String resolvedVersion =
-                    getVersionResolver().getResolvedVersion( ext.getGroupId(), ext.getArtifactId() );
+                String resolvedVersion = getVersionResolver()
+                    .getResolvedVersion( ext.getGroupId(), ext.getArtifactId() );
 
                 if ( resolvedVersion != null )
                 {
@@ -769,8 +798,8 @@ public class PrepareReleaseMojo
             {
                 ReportPlugin plugin = (ReportPlugin) i.next();
 
-                String resolvedVersion =
-                    getVersionResolver().getResolvedVersion( plugin.getGroupId(), plugin.getArtifactId() );
+                String resolvedVersion = getVersionResolver().getResolvedVersion( plugin.getGroupId(),
+                                                                                  plugin.getArtifactId() );
 
                 if ( resolvedVersion != null )
                 {
@@ -779,9 +808,6 @@ public class PrepareReleaseMojo
             }
         }
 
-        File pomFile = new File( file.getParentFile(), POM );
-
-        writePom( pomFile, model, "released" );
     }
 
     private void generateReleasePoms()
@@ -819,14 +845,14 @@ public class PrepareReleaseMojo
                 {
                     String snapshotVersion = projectVersion;
 
-                    projectVersion =
-                        getVersionResolver().getResolvedVersion( project.getGroupId(), project.getArtifactId() );
+                    projectVersion = getVersionResolver().getResolvedVersion( project.getGroupId(),
+                                                                              project.getArtifactId() );
 
                     if ( ArtifactUtils.isSnapshot( projectVersion ) )
                     {
                         throw new MojoExecutionException(
-                            "MAJOR PROBLEM!!! Cannot find resolved version to be used in releasing project: " +
-                                releaseProject.getId() );
+                                                          "MAJOR PROBLEM!!! Cannot find resolved version to be used in releasing project: "
+                                                              + releaseProject.getId() );
                     }
 
                     releaseModel.setVersion( projectVersion );
@@ -839,8 +865,8 @@ public class PrepareReleaseMojo
                     }
                     else if ( finalName.indexOf( "SNAPSHOT" ) > -1 )
                     {
-                        throw new MojoExecutionException(
-                            "Cannot reliably adjust the finalName of project: " + releaseProject.getId() );
+                        throw new MojoExecutionException( "Cannot reliably adjust the finalName of project: "
+                            + releaseProject.getId() );
                     }
                 }
 
@@ -862,7 +888,8 @@ public class PrepareReleaseMojo
                         {
                             Dependency dep = (Dependency) depIterator.next();
 
-                            oldDeps.put( ArtifactUtils.artifactId( dep.getGroupId(), dep.getArtifactId(), dep.getType(), dep.getVersion() ), dep );
+                            oldDeps.put( ArtifactUtils.artifactId( dep.getGroupId(), dep.getArtifactId(),
+                                                                   dep.getType(), dep.getVersion() ), dep );
                         }
                     }
 
@@ -885,8 +912,8 @@ public class PrepareReleaseMojo
 
                             if ( ArtifactUtils.isSnapshot( version ) )
                             {
-                                throw new MojoExecutionException(
-                                    "Unresolved SNAPSHOT version of: " + artifact + ". Cannot proceed with release." );
+                                throw new MojoExecutionException( "Unresolved SNAPSHOT version of: " + artifact
+                                    + ". Cannot proceed with release." );
                             }
                         }
 
@@ -924,19 +951,18 @@ public class PrepareReleaseMojo
                         String version;
                         try
                         {
-                            version = pluginVersionManager.resolvePluginVersion( plugin.getGroupId(),
-                                                                                 plugin.getArtifactId(), releaseProject,
-                                                                                 getSettings(), localRepository );
+                            version = pluginVersionManager.resolvePluginVersion( plugin.getGroupId(), plugin
+                                .getArtifactId(), releaseProject, getSettings(), localRepository );
                         }
                         catch ( PluginVersionResolutionException e )
                         {
-                            throw new MojoExecutionException(
-                                "Cannot resolve version for plugin '" + plugin.getKey() + "': " + e.getMessage(), e );
+                            throw new MojoExecutionException( "Cannot resolve version for plugin '" + plugin.getKey()
+                                + "': " + e.getMessage(), e );
                         }
                         catch ( InvalidPluginException e )
                         {
-                            throw new MojoExecutionException(
-                                "Cannot resolve version for plugin '" + plugin.getKey() + "': " + e.getMessage(), e );
+                            throw new MojoExecutionException( "Cannot resolve version for plugin '" + plugin.getKey()
+                                + "': " + e.getMessage(), e );
                         }
                         catch ( PluginVersionNotFoundException e )
                         {
@@ -946,9 +972,10 @@ public class PrepareReleaseMojo
                         if ( ArtifactUtils.isSnapshot( version ) )
                         {
                             throw new MojoFailureException(
-                                "Resolved version of plugin is a snapshot. Please release this plugin before releasing this project.\n\nGroupId: " +
-                                    plugin.getGroupId() + "\nArtifactId: " + plugin.getArtifactId() +
-                                    "\nResolved Version: " + version + "\n\n" );
+                                                            "Resolved version of plugin is a snapshot. Please release this plugin before releasing this project.\n\nGroupId: "
+                                                                + plugin.getGroupId() + "\nArtifactId: "
+                                                                + plugin.getArtifactId() + "\nResolved Version: "
+                                                                + version + "\n\n" );
                         }
 
                         plugin.setVersion( version );
@@ -968,20 +995,18 @@ public class PrepareReleaseMojo
                         String version;
                         try
                         {
-                            version = pluginVersionManager.resolveReportPluginVersion( plugin.getGroupId(),
-                                                                                       plugin.getArtifactId(),
-                                                                                       releaseProject, getSettings(),
-                                                                                       localRepository );
+                            version = pluginVersionManager.resolveReportPluginVersion( plugin.getGroupId(), plugin
+                                .getArtifactId(), releaseProject, getSettings(), localRepository );
                         }
                         catch ( PluginVersionResolutionException e )
                         {
-                            throw new MojoExecutionException(
-                                "Cannot resolve version for report '" + plugin.getKey() + "': " + e.getMessage(), e );
+                            throw new MojoExecutionException( "Cannot resolve version for report '" + plugin.getKey()
+                                + "': " + e.getMessage(), e );
                         }
                         catch ( InvalidPluginException e )
                         {
-                            throw new MojoExecutionException(
-                                "Cannot resolve version for plugin '" + plugin.getKey() + "': " + e.getMessage(), e );
+                            throw new MojoExecutionException( "Cannot resolve version for plugin '" + plugin.getKey()
+                                + "': " + e.getMessage(), e );
                         }
                         catch ( PluginVersionNotFoundException e )
                         {
@@ -991,9 +1016,12 @@ public class PrepareReleaseMojo
                         if ( ArtifactUtils.isSnapshot( version ) )
                         {
                             throw new MojoFailureException(
-                                "Resolved version of report is a snapshot. Please release this report plugin before releasing this project.\n\nGroupId: " +
-                                    plugin.getGroupId() + "\nArtifactId: " + plugin.getArtifactId() +
-                                    "\nResolved Version: " + version + "\n\n" );
+                                                            "Resolved version of report is a snapshot. Please release this report plugin before releasing this project.\n\nGroupId: "
+                                                                + plugin.getGroupId()
+                                                                + "\nArtifactId: "
+                                                                + plugin.getArtifactId()
+                                                                + "\nResolved Version: "
+                                                                + version + "\n\n" );
                         }
 
                         plugin.setVersion( version );
@@ -1015,8 +1043,8 @@ public class PrepareReleaseMojo
 
                         Artifact artifact = (Artifact) extensionArtifacts.get( extensionId );
 
-                        String version =
-                            resolveVersion( artifact, "extension", releaseProject.getPluginArtifactRepositories() );
+                        String version = resolveVersion( artifact, "extension", releaseProject
+                            .getPluginArtifactRepositories() );
 
                         ext.setVersion( version );
                     }
@@ -1147,8 +1175,8 @@ public class PrepareReleaseMojo
     private String resolveVersion( Artifact artifact, String artifactUsage, List pluginArtifactRepositories )
         throws MojoExecutionException
     {
-        String resolvedVersion =
-            getVersionResolver().getResolvedVersion( artifact.getGroupId(), artifact.getArtifactId() );
+        String resolvedVersion = getVersionResolver().getResolvedVersion( artifact.getGroupId(),
+                                                                          artifact.getArtifactId() );
 
         if ( resolvedVersion == null )
         {
@@ -1297,15 +1325,16 @@ public class PrepareReleaseMojo
         throws MojoExecutionException
     {
         MavenProject project = null;
-        if ( reactorProjects.size() == 0 ) {
+        if ( reactorProjects.size() == 0 )
+        {
             return null;
         }
 
-        project = (MavenProject) reactorProjects.get(0);
-        for (int i = 1; i < reactorProjects.size(); i++ )
+        project = (MavenProject) reactorProjects.get( 0 );
+        for ( int i = 1; i < reactorProjects.size(); i++ )
         {
             MavenProject parent = ( (MavenProject) reactorProjects.get( i ) ).getParent();
-            if (parent != null && !parent.equals( project ))
+            if ( parent != null && !parent.equals( project ) )
             {
                 // We have multiple projects, some of which are not descendants of the 0th project in the list.
                 // rather than guess which one we should use for a default tag name, just return null
@@ -1313,9 +1342,9 @@ public class PrepareReleaseMojo
             }
         }
 
-        try {
-            String version =
-                getVersionResolver().getResolvedVersion( project.getGroupId(), project.getArtifactId() );
+        try
+        {
+            String version = getVersionResolver().getResolvedVersion( project.getGroupId(), project.getArtifactId() );
 
             if ( version == null )
             {
@@ -1334,15 +1363,16 @@ public class PrepareReleaseMojo
             // Really each of the scm providers should support something which returns the supported
             // characters & lengths supported in tag names.  For now, we'll just assume that CVS is the
             // only one with the problem with periods.
-            if ( "cvs".equals(provider) ) {
-                defaultTag = defaultTag.replace('.', '_');
+            if ( "cvs".equals( provider ) )
+            {
+                defaultTag = defaultTag.replace( '.', '_' );
             }
 
             return defaultTag;
         }
         catch ( ScmException e )
         {
-            throw new MojoExecutionException("Unable to determine scm repository provider", e);
+            throw new MojoExecutionException( "Unable to determine scm repository provider", e );
         }
     }
 
@@ -1481,7 +1511,7 @@ public class PrepareReleaseMojo
         {
             throw new MojoExecutionException( "An error occurred in the edit process.", e );
         }
-        
+
         Writer writer = null;
 
         try
