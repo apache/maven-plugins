@@ -1470,16 +1470,16 @@ public class PrepareReleaseMojo
 
         ScmHelper scm = getScm( basedir.getAbsolutePath() );
 
-        if ( useEditMode )
+        try
         {
-            try
+            if ( useEditMode || scm.requiresEditMode() )
             {
                 scm.edit( pomFile );
             }
-            catch ( ScmException e )
-            {
-                throw new MojoExecutionException( "An error is occurred in the edit process.", e );
-            }
+        }
+        catch ( ScmException e )
+        {
+            throw new MojoExecutionException( "An error occurred in the edit process.", e );
         }
         
         Writer writer = null;
