@@ -344,4 +344,11 @@ public class ScmHelper
     {
         this.password = password;
     }
+
+    public boolean requiresEditMode() 
+        throws ScmException
+    {
+        ScmRepository repository = getScmRepository();
+        return getScmManager().getProviderByRepository( repository ).requiresEditMode();
+    }
 }
