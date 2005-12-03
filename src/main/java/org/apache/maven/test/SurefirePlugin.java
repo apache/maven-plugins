@@ -172,6 +172,14 @@ public class SurefirePlugin
      */
     private boolean useFile;
 
+    /**
+     * Option to generate a file test report or just output the test report to the console.
+     *
+     * @parameter expression="${forkMode}"
+     * default-value="none" 
+     */
+    private String forkMode;
+    
     public void execute()
         throws MojoExecutionException
     {
@@ -195,6 +203,18 @@ public class SurefirePlugin
 
         SurefireBooter surefireBooter = new SurefireBooter();
 
+        // ----------------------------------------------------------------------
+        // Forking
+        // ----------------------------------------------------------------------        
+        
+        getLog().info( "forkMode: " + forkMode ); 
+        
+        surefireBooter.setForkMode( forkMode );
+        
+        // ----------------------------------------------------------------------
+        // Reporting
+        // ----------------------------------------------------------------------                
+        
         getLog().info( "Setting reports dir: " + reportsDirectory );
 
         surefireBooter.setReportsDirectory( reportsDirectory );
@@ -219,8 +239,7 @@ public class SurefirePlugin
                 includes.add( "**/" + testRegexes[i] + ".java" );
             }
 
-            surefireBooter.addBattery( "org.codehaus.surefire.battery.DirectoryBattery",
-                                       new Object[]{testClassesDirectory, includes, excludes} );
+            surefireBooter.addBattery( "org.codehaus.surefire.battery.DirectoryBattery", new Object[]{testClassesDirectory, includes, excludes} );
         }
         else
         {
@@ -228,17 +247,14 @@ public class SurefirePlugin
             // Have to wrap in an ArrayList as surefire expects an ArrayList instead of a List for some reason
             if ( includes == null || includes.size() == 0 )
             {
-                includes = new ArrayList(
-                    Arrays.asList( new String[]{"**/Test*.java", "**/*Test.java", "**/*TestCase.java"} ) );
+                includes = new ArrayList( Arrays.asList( new String[]{"**/Test*.java", "**/*Test.java", "**/*TestCase.java"} ) );
             }
             if ( excludes == null || excludes.size() == 0 )
             {
-                excludes = new ArrayList(
-                    Arrays.asList( new String[]{"**/Abstract*Test.java", "**/Abstract*TestCase.java"} ) );
+                excludes = new ArrayList( Arrays.asList( new String[]{"**/Abstract*Test.java", "**/Abstract*TestCase.java"} ) );
             }
 
-            surefireBooter.addBattery( "org.codehaus.surefire.battery.DirectoryBattery",
-                                       new Object[]{testClassesDirectory, includes, excludes} );
+            surefireBooter.addBattery( "org.codehaus.surefire.battery.DirectoryBattery", new Object[]{testClassesDirectory, includes, excludes} );
         }
 
         // ----------------------------------------------------------------------
@@ -397,7 +413,6 @@ public class SurefirePlugin
      */
     private void addReporters( SurefireBooter surefireBooter )
     {
-
         if ( useFile )
         {
             if ( printSummary )
