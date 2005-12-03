@@ -17,11 +17,9 @@ package org.apache.maven.plugin.deploy;
  */
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.deployer.ArtifactDeployer;
 import org.apache.maven.artifact.deployer.ArtifactDeploymentException;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 
@@ -39,7 +37,7 @@ import java.util.List;
  * @phase deploy
  */
 public class DeployMojo
-    extends AbstractMojo
+    extends AbstractDeployMojo
 {
 
     /**
@@ -64,24 +62,10 @@ public class DeployMojo
     private File pomFile;
 
     /**
-     * @parameter expression="${component.org.apache.maven.artifact.deployer.ArtifactDeployer}"
-     * @required
-     * @readonly
-     */
-    private ArtifactDeployer deployer;
-
-    /**
      * @parameter expression="${project.distributionManagementArtifactRepository}"
      * @readonly
      */
     private ArtifactRepository deploymentRepository;
-
-    /**
-     * @parameter expression="${localRepository}"
-     * @required
-     * @readonly
-     */
-    private ArtifactRepository localRepository;
 
     /**
      * @parameter expression="${project.attachedArtifacts}
@@ -134,7 +118,7 @@ public class DeployMojo
         {
             if ( isPomArtifact )
             {
-                deployer.deploy( pomFile, artifact, deploymentRepository, localRepository );
+                getDeployer().deploy( pomFile, artifact, deploymentRepository, getLocalRepository() );
             }
             else
             {
@@ -144,13 +128,14 @@ public class DeployMojo
                     throw new MojoExecutionException(
                         "The packaging for this project did not assign a file to the build artifact" );
                 }
-                deployer.deploy( file, artifact, deploymentRepository, localRepository );
+                getDeployer().deploy( file, artifact, deploymentRepository, getLocalRepository() );
             }
-
+            
             for ( Iterator i = attachedArtifacts.iterator(); i.hasNext(); )
-            {
+            {	
                 Artifact attached = (Artifact) i.next();
-                deployer.deploy( attached.getFile(), attached, deploymentRepository, localRepository );
+                
+                getDeployer().deploy( attached.getFile(), attached, deploymentRepository, getLocalRepository() );
             }
         }
         catch ( ArtifactDeploymentException e )
