@@ -27,7 +27,7 @@ div.clear hr{
   display: none;
 }
 #bannerLeft, #bannerRight {
-  font-size: xx-large; 
+  font-size: xx-large;
   font-weight: bold;
 }
 #bannerLeft img, #bannerRight img {
@@ -80,7 +80,7 @@ div.clear hr{
   background-repeat: no-repeat;
   background-position: 0 0.4em;
   padding-left: 16px;
-  list-style-position: ouside;
+  list-style-position: outside;
   line-height: 1.2em;
   font-size: smaller;
 }
