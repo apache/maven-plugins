@@ -173,12 +173,21 @@ public class SurefirePlugin
     private boolean useFile;
 
     /**
-     * Option to generate a file test report or just output the test report to the console.
+     * Option to specify the forking mode.
      *
      * @parameter expression="${forkMode}"
      * default-value="none" 
      */
     private String forkMode;
+    
+    /**
+     * Option to specify the jvm (or path to the java executable) to use with
+     * the forking options. For the default we will assume that java is in the path.
+     *
+     * @parameter expression="${jvm}"
+     * default-value="java" 
+     */
+    private String forkMode;    
     
     public void execute()
         throws MojoExecutionException
@@ -210,6 +219,8 @@ public class SurefirePlugin
         getLog().info( "forkMode: " + forkMode ); 
         
         surefireBooter.setForkMode( forkMode );
+
+        surefireBooter.setJvm( jvm );
         
         // ----------------------------------------------------------------------
         // Reporting
