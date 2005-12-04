@@ -250,7 +250,7 @@ public class SurefirePlugin
                 includes.add( "**/" + testRegexes[i] + ".java" );
             }
 
-            surefireBooter.addBattery( "org.codehaus.surefire.battery.DirectoryBattery", new Object[]{testClassesDirectory, includes, excludes} );
+            surefireBooter.addBattery( "org.apache.maven.surefire.battery.DirectoryBattery", new Object[]{testClassesDirectory, includes, excludes} );
         }
         else
         {
@@ -265,7 +265,7 @@ public class SurefirePlugin
                 excludes = new ArrayList( Arrays.asList( new String[]{"**/Abstract*Test.java", "**/Abstract*TestCase.java"} ) );
             }
 
-            surefireBooter.addBattery( "org.codehaus.surefire.battery.DirectoryBattery", new Object[]{testClassesDirectory, includes, excludes} );
+            surefireBooter.addBattery( "org.apache.maven.surefire.battery.DirectoryBattery", new Object[]{testClassesDirectory, includes, excludes} );
         }
 
         // ----------------------------------------------------------------------
@@ -428,33 +428,33 @@ public class SurefirePlugin
         {
             if ( printSummary )
             {
-                surefireBooter.addReport( "org.codehaus.surefire.report.ConsoleReporter" );
+                surefireBooter.addReport( "org.apache.maven.surefire.report.ConsoleReporter" );
             }
             else
             {
-                surefireBooter.addReport( "org.codehaus.surefire.report.SummaryConsoleReporter" );
+                surefireBooter.addReport( "org.apache.maven.surefire.report.SummaryConsoleReporter" );
             }
 
             if ( reportFormat.equals( "brief" ) )
             {
-                surefireBooter.addReport( "org.codehaus.surefire.report.BriefFileReporter" );
+                surefireBooter.addReport( "org.apache.maven.surefire.report.BriefFileReporter" );
             }
             else if ( reportFormat.equals( "plain" ) )
             {
-                surefireBooter.addReport( "org.codehaus.surefire.report.FileReporter" );
+                surefireBooter.addReport( "org.apache.maven.surefire.report.FileReporter" );
             }
         }
         else
         {
             if ( reportFormat.equals( "brief" ) )
             {
-                surefireBooter.addReport( "org.codehaus.surefire.report.BriefConsoleReporter" );
+                surefireBooter.addReport( "org.apache.maven.surefire.report.BriefConsoleReporter" );
             }
             else if ( reportFormat.equals( "plain" ) )
             {
-                surefireBooter.addReport( "org.codehaus.surefire.report.DetailedConsoleReporter" );
+                surefireBooter.addReport( "org.apache.maven.surefire.report.DetailedConsoleReporter" );
             }
         }
-        surefireBooter.addReport( "org.codehaus.surefire.report.XMLReporter" );
+        surefireBooter.addReport( "org.apache.maven.surefire.report.XMLReporter" );
     }
 }
