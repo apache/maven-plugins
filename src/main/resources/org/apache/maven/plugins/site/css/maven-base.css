@@ -53,6 +53,7 @@ div.clear hr{
 #leftColumn {
  width: 170px;
  float:left;
+ overflow: auto;
 }
 #bodyColumn {
   margin-right: 1.5em;
