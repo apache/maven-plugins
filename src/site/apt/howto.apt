@@ -4,7 +4,7 @@
  Vincent Siveton
  <vincent.siveton@gmail.com>
  ------
- September 20, 2005
+ December 4, 2005
  ------
 
 Maven 2 Site Plugin
@@ -29,6 +29,30 @@ Maven 2 Site Plugin
 -------------------
   mvn site:deploy
 -------------------
+
+*How to change the site template
+
+  It is possible to change the velocity template used for creating the site.
+  In your pom, just add something like this:
+
+-------------------
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+       <groupId>org.apache.maven.plugins</groupId>
+       <artifactId>maven-site-plugin</artifactId>
+       <configuration>
+         <templateDirectory>${basedir}</templateDirectory>
+         <template>maven-site.vm</template>
+       </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+  ...
+-------------------
+
+  And execute the site goal from your project.
 
 *Site Descriptor
 

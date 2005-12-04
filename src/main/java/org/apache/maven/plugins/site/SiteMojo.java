@@ -119,7 +119,7 @@ public class SiteMojo
      *
      * @parameter expression="${templateDirectory}"
      */
-    private String templateDirectory;
+    private File templateDirectory;
 
     /**
      * Default template page.
@@ -203,7 +203,12 @@ public class SiteMojo
         {
             try
             {
-                URL templateDirectoryUrl = new URL( templateDirectory );
+                if ( !templateDirectory.exists() )
+                {
+                    throw new MojoExecutionException( "This templateDirectory=[" + templateDirectory + "] doesn't exist." );
+                }
+
+                URL templateDirectoryUrl = templateDirectory.toURL();
 
                 URL[] urls = {templateDirectoryUrl};
 
