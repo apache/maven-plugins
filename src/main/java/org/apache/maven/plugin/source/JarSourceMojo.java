@@ -16,6 +16,7 @@ package org.apache.maven.plugin.source;
  * limitations under the License.
  */
 
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
@@ -113,12 +114,18 @@ public class JarSourceMojo
         File outputFile = new File( outputDirectory, finalName + "-sources.jar" );
 
         List compileSourceRoots = executedProject.getCompileSourceRoots();
+        List resources = executedProject.getResources();
 
-        File[] sourceDirectories = new File[compileSourceRoots.size()];
+        File[] sourceDirectories = new File[compileSourceRoots.size() + resources.size()];
         int count = 0;
         for ( Iterator i = compileSourceRoots.iterator(); i.hasNext(); count++ )
         {
             sourceDirectories[count] = new File( (String) i.next() );
+        }
+        for ( Iterator i = resources.iterator(); i.hasNext(); count++ )
+        {
+            Resource resource = (Resource) i.next();
+            sourceDirectories[count] = new File( resource.getDirectory() );
         }
 
         try
