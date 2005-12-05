@@ -27,12 +27,6 @@
       <artifactId>surefire</artifactId>
       <version>1.5-SNAPSHOT</version>
       <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>plexus-utils</artifactId>
-          <groupId>plexus</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -48,12 +42,6 @@
       <groupId>surefire</groupId>
       <artifactId>surefire-booter</artifactId>
       <version>1.5-SNAPSHOT</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>plexus-utils</artifactId>
-          <groupId>plexus</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
   </dependencies>
 </project>
