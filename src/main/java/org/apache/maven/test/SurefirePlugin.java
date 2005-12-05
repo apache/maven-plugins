@@ -20,7 +20,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.codehaus.surefire.SurefireBooter;
+import org.apache.maven.surefire.SurefireBooter;
 
 import java.io.File;
 import java.util.ArrayList;
