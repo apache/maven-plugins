@@ -23,7 +23,7 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>surefire</groupId>
+      <groupId>org.apache.maven.surefire</groupId>
       <artifactId>surefire</artifactId>
       <version>1.5-SNAPSHOT</version>
       <scope>runtime</scope>
@@ -39,7 +39,7 @@
       <version>2.0</version>
     </dependency>
     <dependency>
-      <groupId>surefire</groupId>
+      <groupId>org.apache.maven.surefire</groupId>
       <artifactId>surefire-booter</artifactId>
       <version>1.5-SNAPSHOT</version>
     </dependency>
