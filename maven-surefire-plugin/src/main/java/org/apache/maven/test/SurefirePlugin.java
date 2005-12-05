@@ -187,7 +187,7 @@ public class SurefirePlugin
      * @parameter expression="${jvm}"
      * default-value="java" 
      */
-    private String forkMode;    
+    private String jvm;    
     
     public void execute()
         throws MojoExecutionException
@@ -220,7 +220,7 @@ public class SurefirePlugin
         
         surefireBooter.setForkMode( forkMode );
 
-        surefireBooter.setJvm( jvm );
+        // surefireBooter.setJvm( jvm );
         
         // ----------------------------------------------------------------------
         // Reporting
