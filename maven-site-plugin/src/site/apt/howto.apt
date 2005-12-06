@@ -54,6 +54,28 @@ Maven 2 Site Plugin
 
   And execute the site goal from your project.
 
+*How to Staging Site plugin
+
+  To review/test the generated Web site before an official deploy, you could stage the site in
+  a specific directory. It will use the distributionManagement elements or the project hierarchy to link
+  project and its modules.
+  Just execute the site:stage goal from your project with the stagingDirectory parameter.
+
+-------------------
+  mvn site:stage -DstagingDirectory=C:\fullsite
+-------------------
+
+  Note: stagingDirectory could not by dynamic, i.e. stagingDirectory=$\{basedir\}\fullsite
+
+
+  To stage a site and to deploy it, just execute the site:stage goal from your project with required
+  parameters.
+
+-------------------
+  mvn site:stage -DstagingDirectory=C:\fullsite \
+    -DstagingSiteURL=scp://www.mycompany.com/www/project/
+-------------------
+
 *Site Descriptor
 
   For more references of site descriptor, here's a link {{{http://maven.apache.org/site.html}http://maven.apache.org/site.html}}.
