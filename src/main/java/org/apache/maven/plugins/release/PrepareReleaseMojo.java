@@ -66,9 +66,6 @@ import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Prepare for a release in SCM.
- * <br/>
- * NOTE: This will cause the 'install' phase to be executed...if we cannot
- * at least install the project, we shouldn't start the release process.
  *
  * @author <a href="mailto:jdcasey@apache.org">John Casey</a>
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
@@ -76,7 +73,6 @@ import org.codehaus.plexus.util.StringUtils;
  * @version $Id$
  * @aggregator
  * @goal prepare
- * @execute phase="install"
  * @requiresDependencyResolution test
  * @todo check how this works with version ranges
  */
