@@ -43,6 +43,10 @@
         <role>Polish translator</role>
       </roles>
     </contributor>
+    <contributor>
+      <name>John Allen</name>
+      <email>john_h_allen@hotmail.com</email>
+    </contributor>
   </contributors>
   <dependencies>
     <dependency>
