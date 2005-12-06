@@ -104,7 +104,7 @@ public class SiteMojo
      * @parameter expression="${project.reporting.outputDirectory}"
      * @required
      */
-    private File outputDirectory;
+    protected File outputDirectory;
 
     /**
      * Directory which contains the resources for the site.
@@ -176,7 +176,16 @@ public class SiteMojo
      * @required
      * @readonly
      */
-    private MavenProject project;
+    protected MavenProject project;
+
+    /**
+     * The reactor projects.
+     *
+     * @parameter expression="${reactorProjects}"
+     * @required
+     * @readonly
+     */
+    protected List reactorProjects;
 
     /**
      * @parameter expression="${reports}"
@@ -195,6 +204,7 @@ public class SiteMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+
         if ( templateDirectory == null )
         {
             siteRenderer.setTemplateClassLoader( SiteMojo.class.getClassLoader() );
@@ -205,12 +215,13 @@ public class SiteMojo
             {
                 if ( !templateDirectory.exists() )
                 {
-                    throw new MojoExecutionException( "This templateDirectory=[" + templateDirectory + "] doesn't exist." );
+                    throw new MojoExecutionException( "This templateDirectory=[" + templateDirectory
+                        + "] doesn't exist." );
                 }
 
                 URL templateDirectoryUrl = templateDirectory.toURL();
 
-                URL[] urls = {templateDirectoryUrl};
+                URL[] urls = { templateDirectoryUrl };
 
                 URLClassLoader urlClassloader = new URLClassLoader( urls );
 
@@ -298,7 +309,7 @@ public class SiteMojo
                 String defaultExcludes = StringUtils.join( FileUtils.getDefaultExcludes(), "," );
                 if ( locale.getLanguage().equals( defaultLocale.getLanguage() ) )
                 {
-                    for (Iterator it = localesList.iterator(); it.hasNext();)
+                    for ( Iterator it = localesList.iterator(); it.hasNext(); )
                     {
                         Locale l = (Locale) it.next();
                         defaultExcludes += "," + l.getLanguage() + "/**";
@@ -329,8 +340,8 @@ public class SiteMojo
                 List generatedReportsFileName = Collections.EMPTY_LIST;
                 if ( reports != null )
                 {
-                    generatedReportsFileName =
-                        generateReportsPages( reports, locale, outputDirectory, defaultLocale, siteDescriptor );
+                    generatedReportsFileName = generateReportsPages( reports, locale, outputDirectory, defaultLocale,
+                                                                     siteDescriptor );
                 }
 
                 //Generate overview pages
@@ -356,6 +367,9 @@ public class SiteMojo
                     generateIndexPage( siteDescriptor, locale, outputDirectory );
                 }
 
+                // TODO: Be good to generate a module's summary page thats referenced off the
+                // Modules menu item.
+
                 // Log if a user override a report file
                 for ( Iterator it = generatedReportsFileName.iterator(); it.hasNext(); )
                 {
@@ -363,24 +377,26 @@ public class SiteMojo
 
                     if ( duplicate.get( reportFileName ) != null )
                     {
-                        getLog().info( "Override the generated file \"" + reportFileName + "\" for the " +
-                            displayLanguage + " version." );
+                        getLog().info(
+                                       "Override the generated file \"" + reportFileName + "\" for the "
+                                           + displayLanguage + " version." );
                     }
                 }
 
                 siteRenderer.render( siteDirectoryFile, outputDirectory, siteDescriptor, template, attributes, locale );
 
                 // Check if ${basedir}/xdocs is existing
-                if( xdocDirectory.exists() )
+                if ( xdocDirectory.exists() )
                 {
                     File[] fileNames = xdocDirectoryFile.listFiles();
 
-                    if( fileNames.length > 0 )
+                    if ( fileNames.length > 0 )
                     {
                         XdocSiteModule xdoc = new XdocSiteModule();
 
-                        siteRenderer.render( xdocDirectoryFile, outputDirectory, xdoc.getSourceDirectory(), xdoc.getExtension(), xdoc.getParserId(),
-                                         siteDescriptor, template, attributes, locale, outputEncoding );
+                        siteRenderer.render( xdocDirectoryFile, outputDirectory, xdoc.getSourceDirectory(), xdoc
+                            .getExtension(), xdoc.getParserId(), siteDescriptor, template, attributes, locale,
+                                             outputEncoding );
                     }
                 }
 
@@ -390,36 +406,6 @@ public class SiteMojo
                 if ( resourcesDirectory != null && resourcesDirectory.exists() )
                 {
                     copyDirectory( resourcesDirectory, outputDirectory );
-                }
-
-                // Copy the generated site in parent site if needed to provide module links
-                if ( addModules )
-                {
-                    MavenProject parentProject = project.getParent();
-                    if ( parentProject != null )
-                    {
-                        // TODO Handle user plugin configuration
-/* TODO: Not working, and would be better working as a top-level aggregation rather than pushing from the subprojects...
-                        File basedir = parentProject.getBasedir();
-                        if ( basedir != null )
-                        {
-                            String path = parentProject.getBuild().getDirectory() + "/site/" + project.getArtifactId();
-                            File parentSiteDir = new File( basedir, path );
-
-                            if ( !parentSiteDir.exists() )
-                            {
-                                parentSiteDir.mkdirs();
-                            }
-
-                            File siteDir = new File( outputDirectory );
-                            FileUtils.copyDirectoryStructure( siteDir, parentSiteDir );
-                        }
-                        else
-                        {
-                            getLog().info( "Not using parent as it was not located on the filesystem" );
-                        }
-*/
-                    }
                 }
 
                 if ( generatedSiteDirectory.exists() )
@@ -462,8 +448,8 @@ public class SiteMojo
             catch ( AbstractMethodError e )
             {
                 getLog().warn(
-                              "Error loading report " + report.getClass().getName()
-                                  + " - AbstractMethodError: canGenerateReport()" );
+                               "Error loading report " + report.getClass().getName()
+                                   + " - AbstractMethodError: canGenerateReport()" );
                 filteredReports.add( report );
             }
         }
@@ -520,16 +506,20 @@ public class SiteMojo
             {
                 if ( !Arrays.asList( Locale.getAvailableLocales() ).contains( locale ) )
                 {
-                    getLog().warn( "The locale parsed defined by '" + locale +
-                        "' is not available in this Java Virtual Machine (" + System.getProperty( "java.version" ) +
-                        " from " + System.getProperty( "java.vendor" ) + ") - IGNORING" );
+                    getLog().warn(
+                                   "The locale parsed defined by '" + locale
+                                       + "' is not available in this Java Virtual Machine ("
+                                       + System.getProperty( "java.version" ) + " from "
+                                       + System.getProperty( "java.vendor" ) + ") - IGNORING" );
                     continue;
                 }
 
                 // Default bundles are in English
                 if ( !locale.getLanguage().equals( DEFAULT_LOCALE.getLanguage() ) )
                 {
-                    if ( !i18n.getBundle( "site-plugin", locale ).getLocale().getLanguage().equals( locale.getLanguage() ) )
+                    if ( !i18n.getBundle( "site-plugin", locale ).getLocale().getLanguage().equals(
+                                                                                                    locale
+                                                                                                        .getLanguage() ) )
                     {
                         StringBuffer sb = new StringBuffer();
 
@@ -592,8 +582,7 @@ public class SiteMojo
      * @param key
      * @param indexFilename index page filename
      */
-    private void writeReportSubMenu( List reports, StringBuffer buffer, Locale locale, String key,
-                                     String indexFilename )
+    private void writeReportSubMenu( List reports, StringBuffer buffer, Locale locale, String key, String indexFilename )
     {
         if ( reports.size() > 0 )
         {
@@ -623,26 +612,54 @@ public class SiteMojo
      *
      * @param locale the locale wanted
      * @return a XML menu for modules
+     * @throws MojoExecutionException
      */
-/*    private String getModulesMenu( Locale locale )
+    private String getModulesMenu( Locale locale )
+        throws MojoExecutionException
     {
+
         StringBuffer buffer = new StringBuffer();
+
         buffer.append( "<menu name=\"" );
         buffer.append( i18n.getString( "site-plugin", locale, "report.menu.projectmodules" ) );
         buffer.append( "\">\n" );
 
-        List modules = project.getModules();
-        if ( project.getModules() != null )
+        if ( reactorProjects != null && reactorProjects.size() > 1 )
         {
-            for ( Iterator it = modules.iterator(); it.hasNext(); )
-            {
-                String module = (String) it.next();
+            Iterator reactorItr = reactorProjects.iterator();
 
-                buffer.append( "    <item name=\"" );
-                buffer.append( module );
-                buffer.append( "\" href=\"" );
-                buffer.append( module );
-                buffer.append( "/index.html\"/>\n" );
+            while ( reactorItr.hasNext() )
+            {
+                MavenProject reactorProject = (MavenProject) reactorItr.next();
+
+                // dont't use modules as they address file system locations and we need projects
+                //
+                // Note, we could try and parse the module's pom based upon its directory location
+                // which would remove our reliance on reactorProjects but its more complicated.
+                // The side effect of using reactorProjects is that to generate module links
+                // you must do a recursive build (no mvn -N)
+
+                if ( reactorProject != null && reactorProject.getParent() != null
+                    && project.getArtifactId().equals( reactorProject.getParent().getArtifactId() ) )
+                {
+                    String reactorUrl = reactorProject.getUrl();
+
+                    if ( reactorUrl != null )
+                    {
+                        buffer.append( "    <item name=\"" );
+                        buffer.append( reactorProject.getName() );
+                        buffer.append( "\" href=\"" );
+                        buffer.append( reactorUrl );
+                        if ( reactorUrl.endsWith( "/" ) )
+                        {
+                            buffer.append( "index.html\"/>\n" );
+                        }
+                        else
+                        {
+                            buffer.append( "/index.html\"/>\n" );
+                        }
+                    }
+                }
             }
         }
 
@@ -650,34 +667,54 @@ public class SiteMojo
 
         return buffer.toString();
     }
-*/
+
     /**
      * Generate a menu for the parent project
      *
      * @param locale the locale wanted
      * @return a XML menu for the parent project
      */
-/*    private String getProjectParentMenu( Locale locale )
+    private String getProjectParentMenu( Locale locale )
     {
         StringBuffer buffer = new StringBuffer();
-        buffer.append( "<menu name=\"" );
-        buffer.append( i18n.getString( "site-plugin", locale, "report.menu.parentproject" ) );
-        buffer.append( "\">\n" );
 
-        buffer.append( "    <item name=\"" );
-        buffer.append( project.getParent().getArtifactId() );
-        buffer.append( "\" href=\"../index.html\"/>\n" );
+        String parentUrl = project.getParent().getUrl();
+        if ( parentUrl != null )
+        {
+            if ( parentUrl.endsWith( "/" ) )
+            {
+                parentUrl += "index.html";
+            }
+            else
+            {
+                parentUrl += "/index.html";
+            }
 
-        buffer.append( "</menu>\n" );
+            buffer.append( "<menu name=\"" );
+            buffer.append( i18n.getString( "site-plugin", locale, "report.menu.parentproject" ) );
+            buffer.append( "\">\n" );
+
+            buffer.append( "    <item name=\"" );
+            buffer.append( project.getParent().getName() );
+            buffer.append( "\" href=\"" );
+            buffer.append( parentUrl );
+            buffer.append( "\"/>\n" );
+
+            buffer.append( "</menu>\n" );
+
+        }
 
         return buffer.toString();
     }
-*/
+
     /**
-     * @param reports a list of reports
-     * @param locale the current locale
+     * @param reports
+     *            a list of reports
+     * @param locale
+     *            the current locale
      * @return the inpustream
-     * @throws org.apache.maven.plugin.MojoExecutionException is any
+     * @throws org.apache.maven.plugin.MojoExecutionException
+     *             is any
      */
     private String getSiteDescriptor( List reports, Locale locale, List projectInfos, List projectReports )
         throws MojoExecutionException
@@ -722,17 +759,14 @@ public class SiteMojo
 
         if ( project.getParent() != null )
         {
-            /* See the Not working section*/
-            //props.put( "parentProject", getProjectParentMenu( locale ) );
+            props.put( "parentProject", getProjectParentMenu( locale ) );
         }
 
-        if ( addModules )
+        // we require child modules and reactors to process module menu
+
+        if ( ( addModules && reactorProjects.size() > 1 && project.getModules().size() > 0 ) )
         {
-            if ( project.getModules() != null && project.getModules().size() > 0 )
-            {
-                /* See the Not working section*/
-                //props.put( "modules", getModulesMenu( locale ) );
-            }
+            props.put( "modules", getModulesMenu( locale ) );
         }
 
         // TODO: interpolate ${project.*} in general
@@ -822,7 +856,7 @@ public class SiteMojo
      * @param localeOutputDirectory
      */
     private List generateReportsPages( List reports, Locale locale, File localeOutputDirectory, Locale defaultLocale,
-                                       String siteDescriptor )
+                                      String siteDescriptor )
         throws RendererException, IOException, MavenReportException
     {
         List generatedReportsFileName = new ArrayList();
@@ -861,9 +895,9 @@ public class SiteMojo
                     outputFile.getParentFile().mkdirs();
                 }
 
-                siteRenderer.generateDocument(
-                    new OutputStreamWriter( new FileOutputStream( outputFile ), outputEncoding ), template, attributes,
-                    sink, locale );
+                siteRenderer.generateDocument( new OutputStreamWriter( new FileOutputStream( outputFile ),
+                                                                       outputEncoding ), template, attributes, sink,
+                                               locale );
             }
         }
         return generatedReportsFileName;
@@ -877,8 +911,7 @@ public class SiteMojo
      * @param projectInfos list of projectInfos
      * @param outputDirectory directory that will contain the generated project info page
      */
-    private void generateProjectInfoPage( String siteDescriptor, Locale locale, List projectInfos,
-                                          File outputDirectory )
+    private void generateProjectInfoPage( String siteDescriptor, Locale locale, List projectInfos, File outputDirectory )
         throws RendererException, IOException
     {
         String outputFileName = "project-info.html";
@@ -967,7 +1000,7 @@ public class SiteMojo
      * @param outputDirectory directory that will contain the generated project report pages
      */
     private void generateProjectReportsPage( String siteDescriptor, Locale locale, List projectReports,
-                                             File outputDirectory )
+                                            File outputDirectory )
         throws RendererException, IOException
     {
         String outputFileName = "maven-reports.html";
@@ -1066,8 +1099,8 @@ public class SiteMojo
 
                 if ( is == null )
                 {
-                    throw new IOException(
-                        "The resource " + line + " doesn't exists in " + DEFAULT_TEMPLATE + " template." );
+                    throw new IOException( "The resource " + line + " doesn't exists in " + DEFAULT_TEMPLATE
+                        + " template." );
                 }
 
                 File outputFile = new File( outputDir, line );
@@ -1115,7 +1148,7 @@ public class SiteMojo
         {
             DirectoryScanner scanner = new DirectoryScanner();
 
-            String[] includedResources = {"**/**"};
+            String[] includedResources = { "**/**" };
 
             scanner.setIncludes( includedResources );
 
@@ -1215,7 +1248,7 @@ public class SiteMojo
                     if ( sb == null )
                     {
                         sb = new StringBuffer(
-                            "Some files are duplicates in the site directory or in the generated-site directory. " );
+                                               "Some files are duplicates in the site directory or in the generated-site directory. " );
                         sb.append( "\n" );
                         sb.append( "Review the following files for the \"" );
                         sb.append( locale.getDisplayLanguage( Locale.ENGLISH ) );
