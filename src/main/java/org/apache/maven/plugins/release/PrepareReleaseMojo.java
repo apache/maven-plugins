@@ -1054,6 +1054,8 @@ public class PrepareReleaseMojo
 
                 try
                 {
+                    writePom( releasePomFile, releaseProject.getModel(), "release" );
+                    
                     writer = new FileWriter( releasePomFile );
 
                     releaseProject.writeModel( writer );
@@ -1239,6 +1241,8 @@ public class PrepareReleaseMojo
                     ScmHelper scm = getScm( basedir.getAbsolutePath() );
 
                     scm.remove( "Removing for next development iteration.", releasePomPath );
+                    
+                    pomFiles.remove( currentReleasePomFile );
 
                     currentReleasePomFile.delete();
                 }
