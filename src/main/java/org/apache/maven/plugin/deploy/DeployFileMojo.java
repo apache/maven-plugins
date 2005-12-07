@@ -77,14 +77,14 @@ public class DeployFileMojo
 	private File deployFile;
 	
 	/**
-	 * Server Id to map on the <id> under <server> section of settings.xml
+	 * Server Id to map on the &lt;id&gt; under &lt;server&gt; section of settings.xml
 	 * 
 	 * @parameter expression="${serverId}" default-value="my-repo"
 	 */
 	private String repositoryId;
 	
 	/**
-	 * URL where the artifact will be deployed. <br>
+	 * URL where the artifact will be deployed. <br/>
 	 * ie ( file://C:\m2-repo )
 	 * 
 	 * @parameter expression="${url}"
