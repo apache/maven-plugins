@@ -74,12 +74,13 @@ public class DeployFileMojo
 	 * @parameter expression="${file}"
 	 * @required
 	 */
-	private File deployFile;
+	private File file;
 	
 	/**
 	 * Server Id to map on the &lt;id&gt; under &lt;server&gt; section of settings.xml
 	 * 
-	 * @parameter expression="${serverId}" default-value="my-repo"
+	 * @parameter expression="${repositoryId}"
+	 * @required
 	 */
 	private String repositoryId;
 	
@@ -93,23 +94,17 @@ public class DeployFileMojo
 	private String url;
 	
     /**
-     * @parameter expression="${component.org.apache.maven.artifact.factory.ArtifactFactory}"
-     * @required
-     * @readonly
+     * @component
      */
     private ArtifactFactory artifactFactory;	
     
     /**
-     * @parameter expression="${component.org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout}"
-     * @required
-     * @readonly
+     * @component
      */
     private ArtifactRepositoryLayout layout;    
     
     /**
-     * @parameter expression="${component.org.apache.maven.artifact.repository.ArtifactRepositoryFactory}"
-     * @required
-     * @readonly
+     * @component
      */
     private ArtifactRepositoryFactory repositoryFactory;
 	
@@ -122,16 +117,16 @@ public class DeployFileMojo
 			ArtifactRepository deploymentRepository = 
 				repositoryFactory.createDeploymentArtifactRepository( repositoryId, url, layout, false );
 			
-	        if ( deployFile == null )
+	        if ( file == null )
 	        {
 	            throw new MojoExecutionException(
 	                "The packaging for this project did not assign a file to the build artifact" );
 	        }
 	        else
 	        {
-	        	if( deployFile.exists() )
+	        	if( file.exists() )
 	        	{
-	        		getDeployer().deploy( deployFile, artifact, deploymentRepository, getLocalRepository() );	
+	        		getDeployer().deploy( file, artifact, deploymentRepository, getLocalRepository() );	
 	        	}
 	        }
 		}
