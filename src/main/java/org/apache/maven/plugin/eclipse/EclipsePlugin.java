@@ -341,7 +341,7 @@ public class EclipsePlugin
         Collection artifacts = project.getTestArtifacts();
         EclipseUtils.fixMissingOptionalArtifacts( artifacts, project.getDependencyArtifacts(), localRepository,
                                                   artifactResolver, remoteArtifactRepositories, getLog() );
-        EclipseUtils.fixSystemScopeArtifacts( artifacts, project.getDependencies() );
+//        EclipseUtils.fixSystemScopeArtifacts( artifacts, project.getDependencies() );
         return artifacts;
     }
 
