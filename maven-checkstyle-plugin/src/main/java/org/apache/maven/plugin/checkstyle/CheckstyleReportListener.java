@@ -16,17 +16,15 @@ package org.apache.maven.plugin.checkstyle;
  * limitations under the License.
  */
 
+import java.io.File;
+import java.util.List;
+
+import org.codehaus.plexus.util.StringUtils;
+
 import com.puppycrawl.tools.checkstyle.api.AuditEvent;
 import com.puppycrawl.tools.checkstyle.api.AuditListener;
 import com.puppycrawl.tools.checkstyle.api.AutomaticBean;
 import com.puppycrawl.tools.checkstyle.api.SeverityLevel;
-import java.util.LinkedList;
-import java.util.TreeMap;
-import java.util.Map;
-import java.util.List;
-import java.io.File;
-
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
@@ -38,7 +36,7 @@ public class CheckstyleReportListener
 {
     private File sourceDirectory;
 
-    private Map files;
+    private CheckstyleResults results;
 
     private String currentFile;
 
@@ -63,7 +61,7 @@ public class CheckstyleReportListener
 
     public void auditStarted( AuditEvent event )
     {
-        setFiles( new TreeMap() );
+        setResults( new CheckstyleResults() );
     }
 
     public void auditFinished( AuditEvent event )
@@ -76,15 +74,12 @@ public class CheckstyleReportListener
         currentFile = StringUtils.substring( event.getFileName(), sourceDirectory.getPath().length() + 1 );
         currentFile = StringUtils.replace( currentFile, "\\", "/" );
 
-        if ( !getFiles().containsKey( currentFile ) )
-            getFiles().put( currentFile, new LinkedList() );
-
-        events = (LinkedList) getFiles().get( currentFile );
+        events = getResults().getFileViolations( currentFile );
     }
 
     public void fileFinished( AuditEvent event )
     {
-        getFiles().put( currentFile, events );
+        getResults().setFileViolations( currentFile, events );
         currentFile = null;
     }
 
@@ -103,14 +98,14 @@ public class CheckstyleReportListener
         //Do Nothing
     }
 
-    public Map getFiles()
+    public CheckstyleResults getResults()
     {
-        return files;
+        return results;
     }
 
-    public void setFiles( Map files )
+    public void setResults( CheckstyleResults results )
     {
-        this.files = files;
+        this.results = results;
     }
 }
 

@@ -54,38 +54,30 @@
     </dependency -->
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-velocity</artifactId>
+      <version>1.1.2</version>
+      <exclusions>
+        <exclusion>
+          <!-- Excluding old plexus-utils in favor of updated rev -->
+          <groupId>plexus</groupId>
+          <artifactId>plexus-utils</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
+      <version>1.0.4</version>
     </dependency>
     <dependency>
       <groupId>checkstyle</groupId>
       <artifactId>checkstyle</artifactId>
-      <version>3.4</version>
+      <version>4.0</version>
     </dependency>
     <dependency>
       <groupId>checkstyle</groupId>
       <artifactId>checkstyle-optional</artifactId>
-      <version>3.4</version>
-    </dependency>
-    <!-- regexp, beanutils, logging, antlr should be transitive! -->
-    <dependency>
-      <groupId>commons-beanutils</groupId>
-      <artifactId>commons-beanutils</artifactId>
-      <version>1.6.1</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-      <version>1.0.3</version>
-    </dependency>
-    <dependency>
-      <groupId>antlr</groupId>
-      <artifactId>antlr</artifactId>
-      <version>2.7.2</version>
-    </dependency>
-    <dependency>
-      <groupId>regexp</groupId>
-      <artifactId>regexp</artifactId>
-      <version>1.3</version>
+      <version>4.0</version>
     </dependency>
   </dependencies>
 </project>
