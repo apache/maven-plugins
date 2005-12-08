@@ -127,46 +127,43 @@
   #end
 #end
 
-#macro ( publishDate $position)
-  #if ( $siteDescriptor.getChild( "publishDate" ) )
-      
-      #if ( $siteDescriptor.getChild( "publishDate" ).getAttribute( "format" ) ) 
-          #set ( $format = $siteDescriptor.getChild( "publishDate" ).getAttribute( "format" ) )
-      #end
-      
-      #if ( $format )
-          $dateFormat.applyPattern( $format )
-      #end
-          ##$dateFormat.applyPattern( "MM/dd/yyyy" )          
-      ##end    
-      
-      #set ( $dateToday = $dateFormat.format( $currentDate ) )
-      
-      #set ( $datePosition = $siteDescriptor.getChild( "publishDate" ).getAttribute( "position" ) ) 
-      #if ( $datePosition.equalsIgnoreCase( $position ) )
-        
-        #if ( $datePosition.equalsIgnoreCase( "right" ) || $datePosition.equalsIgnoreCase( "bottom" ) )
-          &nbsp;| $i18n.getString( "site-plugin", $locale, "template.lastpublished" ): $dateToday
-        
-        #elseif ( $datePosition.equalsIgnoreCase( "navigation-bottom" ) || $datePosition.equalsIgnoreCase( "navigation-top" ) )
-           <div id="lastPublished">$i18n.getString( "site-plugin", $locale, "template.lastpublished" ): $dateToday</div>
-        
-        #elseif ( $datePosition.equalsIgnoreCase("left") )
-            <div class="xleft">
-              $i18n.getString( "site-plugin", $locale, "template.lastpublished" ): $dateToday &nbsp; | &nbsp; Doc for 
-              #if ( $siteDescriptor.getChild( "version" ))
-                $siteDescriptor.getChild( "version" ).getValue()
-              #else
-                ${project.version}
-              #end
-            </div>
-        #end   
-      #end
-  #end                
+#macro ( publishDate $position )
+  #if ( ( $siteDescriptor.getChild( "publishDate" ) ) && ( $siteDescriptor.getChild( "publishDate" ).getAttribute( "format" ) ) )
+    #set ( $format = $siteDescriptor.getChild( "publishDate" ).getAttribute( "format" ) )
+  #else
+    #set ( $format = "MM/dd/yyyy" )
+  #end
+
+  $dateFormat.applyPattern( $format )
+
+  #set ( $dateToday = $dateFormat.format( $currentDate ) )
+
+  #if ( ( $siteDescriptor.getChild( "publishDate" ) ) && ( $siteDescriptor.getChild( "publishDate" ).getAttribute( "position" ) ) )
+    #set ( $datePosition = $siteDescriptor.getChild( "publishDate" ).getAttribute( "position" ) )
+  #else
+    #set ( $datePosition = "left" )
+  #end
+
+  #if ( $datePosition.equalsIgnoreCase( $position ) )
+    #if ( ( $datePosition.equalsIgnoreCase( "right" ) ) || ( $datePosition.equalsIgnoreCase( "bottom" ) ) )
+      &nbsp;| $i18n.getString( "site-plugin", $locale, "template.lastpublished" ): $dateToday
+    #elseif ( ( $datePosition.equalsIgnoreCase( "navigation-bottom" ) ) || ( $datePosition.equalsIgnoreCase( "navigation-top" ) ) )
+      <div id="lastPublished">$i18n.getString( "site-plugin", $locale, "template.lastpublished" ): $dateToday</div>
+    #elseif ( $datePosition.equalsIgnoreCase("left") )
+      <div class="xleft">
+        $i18n.getString( "site-plugin", $locale, "template.lastpublished" ): $dateToday &nbsp; | &nbsp; Doc for
+        #if ( $siteDescriptor.getChild( "version" ))
+          $siteDescriptor.getChild( "version" ).getValue()
+        #else
+          ${project.version}
+        #end
+      </div>
+    #end
+  #end
 #end
 
 #macro ( poweredByLogo )
-                
+
     #if( $siteDescriptor.getChild( "powered-by" ) )
         #foreach ($item in $siteDescriptor.getChild( "powered-by" ).getChildren() )
             #if( $item.getAttribute( "href" ) )
@@ -174,20 +171,20 @@
             #else
                 #set ( $href="http://maven.apache.org/" )
             #end
-            
+
             #if( $item.getAttribute( "name" ) )
                 #set ( $name = $item.getAttribute( "name" ) )
             #else
                 #set ( $name = $i18n.getString( "site-plugin", $locale, "template.builtby" )  )
                 #set ( $name = "${name} Maven"  )
-            #end   
-            
+            #end
+
             #if( $item.getAttribute( "img" ) )
                 #set ( $img = $item.getAttribute( "img" ) )
             #else
                 #set ( $img = "maven-feather.png" )
-            #end 
-            
+            #end
+
             <a href="$href" title="$name" id="poweredBy">
               <img alt="$name" src="$relativePath/images/logos/$img"></img>
             </a>
@@ -244,7 +241,7 @@
     </div>
     <div id="leftColumn">
       <div id="navcolumn">
-       #publishDate( "navigation-top" )   
+       #publishDate( "navigation-top" )
        #mainMenu()
        #poweredByLogo()
        #publishDate( "navigation-bottom" )
