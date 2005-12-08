@@ -4,7 +4,7 @@
  Vincent Siveton
  <vincent.siveton@gmail.com>
  ------
- December 4, 2005
+ December 8, 2005
  ------
 
 Maven 2 Site Plugin
@@ -32,7 +32,7 @@ Maven 2 Site Plugin
 
 *How to change the site template
 
-  It is possible to change the velocity template used for creating the site.
+  It is possible to change the Velocity template used for creating the site.
   In your pom, just add something like this:
 
 -------------------
@@ -79,3 +79,17 @@ Maven 2 Site Plugin
 *Site Descriptor
 
   For more references of site descriptor, here's a link {{{http://maven.apache.org/site.html}http://maven.apache.org/site.html}}.
+
+  With the out-of box Velocity template, the "Last Published" position could be configurable.
+  By default, the position is on the left but you could change it.
+  To do this, you could add a \<publishDate/> in the site.xml like this following:
+
+-------------------
+<project name="My Site Descriptor">
+  ...
+  <publishDate position="navigation-bottom" format="MM-dd-yy"/>
+  ...
+</project>
+-------------------
+
+  The position could be: left, right, navigation-top, navigation-bottom, bottom.
