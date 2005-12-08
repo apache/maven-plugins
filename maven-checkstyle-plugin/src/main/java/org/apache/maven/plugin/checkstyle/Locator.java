@@ -16,15 +16,15 @@ package org.apache.maven.plugin.checkstyle;
  * limitations under the License.
  */
 
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugin.logging.SystemStreamLog;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.StringUtils;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.logging.SystemStreamLog;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Performs Locator services for the <code>*Location</code> parameters in the 
@@ -35,15 +35,18 @@ import java.net.URL;
 public class Locator
 {
     private Log log;
+    private File localDir;
 
     /**
      * Create a Locator object.
      * 
      * @param logger the logger object to log with.
+     * @param resolveToDir the directory to resolve resources into.
      */
-    public Locator( Log log )
+    public Locator( Log log, File resolveToDir )
     {
         this.log = log;
+        this.localDir = resolveToDir;
     }
 
     /**
@@ -85,7 +88,7 @@ public class Locator
             return null;
         }
 
-        File retFile = new File( localfile );
+        File retFile = new File( localDir, localfile );
 
         // Attempt a URL
         if ( location.indexOf( "://" ) > 1 )

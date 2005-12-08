@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<rss version="0.91">
+  <channel>
+    <title>Maven Checkstyle Plugin - (SAMPLE) Checkstyle report</title>
+    <link>http://maven.apache.org/maven2/plugins/maven-checkstyle-plugin</link>
+    <description>Maven Checkstyle Plugin - Checkstyle report</description>
+    <language>en-us</language>
+    <copyright>&#169;2005 Apache Software Foundation</copyright>
+    <item>
+      <title>File: 8,
+             Errors: 224,
+             Warnings: 0,
+             Infos: 0,
+             (SAMPLE)
+      </title>
+            <link>http://maven.apache.org/maven2/plugins/maven-checkstyle-plugin/checkstyle.html</link>
+      <description>
+        <p>Click <a href="http://maven.apache.org/maven2/plugins/maven-checkstyle-plugin/checkstyle.html">here</a> for the full Checkstyle report.</p>
+
+        <table summary="Files" boder="1">
+          <thead>
+            <tr>
+              <th>Files</th>
+              <th style="width:30px;"><abbr title="Info">I</abbr></th>
+              <th style="width:30px;"><abbr title="Warning">W</abbr></th>
+              <th style="width:30px;"><abbr title="Error">E</abbr></th>
+            </tr>
+          </thead>
+          <tbody>
+                          <tr>
+                <td>
+                  <a href="http://maven.apache.org/maven2/plugins/maven-checkstyle-plugin/checkstyle.html#org.apache.maven.plugin.checkstyle.CheckstyleReportListener.java">org/apache/maven/plugin/checkstyle/CheckstyleReportListener.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  20
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://maven.apache.org/maven2/plugins/maven-checkstyle-plugin/checkstyle.html#org.apache.maven.plugin.checkstyle.VelocityTemplate.java">org/apache/maven/plugin/checkstyle/VelocityTemplate.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  16
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://maven.apache.org/maven2/plugins/maven-checkstyle-plugin/checkstyle.html#org.apache.maven.plugin.checkstyle.CheckstyleReport.java">org/apache/maven/plugin/checkstyle/CheckstyleReport.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  40
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://maven.apache.org/maven2/plugins/maven-checkstyle-plugin/checkstyle.html#org.apache.maven.plugin.checkstyle.ReportResource.java">org/apache/maven/plugin/checkstyle/ReportResource.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  16
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://maven.apache.org/maven2/plugins/maven-checkstyle-plugin/checkstyle.html#org.apache.maven.plugin.checkstyle.CheckstyleReportGenerator.java">org/apache/maven/plugin/checkstyle/CheckstyleReportGenerator.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  104
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://maven.apache.org/maven2/plugins/maven-checkstyle-plugin/checkstyle.html#org.apache.maven.plugin.checkstyle.Locator.java">org/apache/maven/plugin/checkstyle/Locator.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  5
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://maven.apache.org/maven2/plugins/maven-checkstyle-plugin/checkstyle.html#org.apache.maven.plugin.checkstyle.CheckstyleResults.java">org/apache/maven/plugin/checkstyle/CheckstyleResults.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  19
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://maven.apache.org/maven2/plugins/maven-checkstyle-plugin/checkstyle.html#org.apache.maven.plugin.checkstyle.CheckstyleViolationCheckMojo.java">org/apache/maven/plugin/checkstyle/CheckstyleViolationCheckMojo.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  4
+                </td>
+              </tr>
+                      </tbody>
+        </table>
+        
+      </description>
+    </item>
+  </channel>
+</rss>
+

@@ -16,6 +16,37 @@ package org.apache.maven.plugin.checkstyle;
  * limitations under the License.
  */
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URL;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.ResourceBundle;
+
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.reporting.AbstractMavenReport;
+import org.apache.maven.reporting.MavenReportException;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.context.Context;
+import org.apache.velocity.exception.ResourceNotFoundException;
+import org.apache.velocity.exception.VelocityException;
+import org.codehaus.doxia.site.renderer.SiteRenderer;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.StringInputStream;
+import org.codehaus.plexus.util.StringOutputStream;
+import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.velocity.VelocityComponent;
+
 import com.puppycrawl.tools.checkstyle.Checker;
 import com.puppycrawl.tools.checkstyle.ConfigurationLoader;
 import com.puppycrawl.tools.checkstyle.DefaultLogger;
@@ -27,34 +58,11 @@ import com.puppycrawl.tools.checkstyle.api.AuditListener;
 import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
 import com.puppycrawl.tools.checkstyle.api.Configuration;
 import com.puppycrawl.tools.checkstyle.api.FilterSet;
+import com.puppycrawl.tools.checkstyle.api.SeverityLevel;
 import com.puppycrawl.tools.checkstyle.filters.SuppressionsLoader;
 
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.AbstractMavenReport;
-import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.doxia.site.renderer.SiteRenderer;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.StringInputStream;
-import org.codehaus.plexus.util.StringOutputStream;
-import org.codehaus.plexus.util.StringUtils;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.URL;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.ResourceBundle;
-
 /**
- * TODO: add report generation for ruleset/configuration. 
+ * Perform checkstyle analysis, and generate report on violations. 
  * 
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
@@ -64,6 +72,8 @@ import java.util.ResourceBundle;
 public class CheckstyleReport
     extends AbstractMavenReport
 {
+    private static final String PLUGIN_RESOURCES = "org/apache/maven/plugin/checkstyle";
+
     /**
      * @deprecated Remove with format parameter.
      */
@@ -88,11 +98,43 @@ public class CheckstyleReport
      * @required
      */
     private File outputDirectory;
+    
+    /**
+     * Specifies if the Rules summary should be enabled or not.
+     * 
+     * @parameter expression="${checkstyle.enable.rules.summary}"
+     *            default-value="true"
+     */
+    private boolean enableRulesSummary;
 
+    /**
+     * Specifies if the Severity summary should be enabled or not.
+     * 
+     * @parameter expression="${checkstyle.enable.severity.summary}"
+     *            default-value="true"
+     */
+    private boolean enableSeveritySummary;
+    
+    /**
+     * Specifies if the Files summary should be enabled or not.
+     * 
+     * @parameter expression="${checkstyle.enable.files.summary}"
+     *            default-value="true"
+     */
+    private boolean enableFilesSummary;
+    
+    /**
+     * Specifies if the Files summary should be enabled or not.
+     * 
+     * @parameter expression="${checkstyle.enable.rss}"
+     *            default-value="true"
+     */
+    private boolean enableRSS;
+    
     /**
      * Specifies the names filter of the source files to be used for checkstyle
      *
-     * @parameter default-value="**\/*.java"
+     * @parameter expression="${checkstyle.includes}" default-value="**\/*.java"
      * @required
      */
     private String includes;
@@ -100,7 +142,7 @@ public class CheckstyleReport
     /**
      * Specifies the names filter of the source files to be excluded for checkstyle
      *
-     * @parameter
+     * @parameter expression="${checkstyle.excludes}"
      */
     private String excludes;
 
@@ -119,8 +161,7 @@ public class CheckstyleReport
      * 
      * <p>
      * This parameter is resolved as resource, URL, then file.  
-     * If resolved to a resource, or a URL, the contents of the configuration
-     * is copied into the 
+     * If successfully resolved, the contents of the configuration is copied into the 
      * <code>${project.build.directory}/checkstyle-configuration.xml</code>
      * file before being passed to checkstyle as a configuration.
      * </p>
@@ -136,7 +177,7 @@ public class CheckstyleReport
      * <li><code>config/maven_checks.xml</code>: Maven Source Checks.</li>
      * </ul>
      * 
-     * @parameter default-value="config/sun_checks.xml"
+     * @parameter expression="${checkstyle.config.location}" default-value="config/sun_checks.xml"
      */
     private String configLocation;
     
@@ -157,8 +198,7 @@ public class CheckstyleReport
      * 
      * <p>
      * This parameter is resolved as URL, File, then resource.  
-     * If successfully resolved, the contents of the properties location is 
-     * copied into the 
+     * If successfully resolved, the contents of the properties location is copied into the 
      * <code>${project.build.directory}/checkstyle-checker.properties</code>
      * file before being passed to checkstyle for loading.
      * </p>
@@ -170,7 +210,7 @@ public class CheckstyleReport
      * parameter).
      * </p> 
      * 
-     * @parameter 
+     * @parameter expression="${checkstyle.properties.location}"
      * @since 2.0-beta-2
      */
     private String propertiesLocation;
@@ -203,7 +243,7 @@ public class CheckstyleReport
      * that is used by Checkstyle to verify that source code has the 
      * correct copyright.
      *
-     * @parameter default-value="LICENSE.txt"
+     * @parameter expression="${checkstyle.header.file}" default-value="LICENSE.txt"
      * @since 2.0-beta-2
      */
     private String headerLocation;
@@ -239,13 +279,12 @@ public class CheckstyleReport
      * 
      * <p>
      * This parameter is resolved as resource, URL, then file.  
-     * If resolved to a resource, or a URL, the contents of the suppressions
-     * XML is copied into the 
+     * If successfully resolved, the contents of the suppressions XML is copied into the 
      * <code>${project.build.directory}/checkstyle-supressions.xml</code>
      * file before being passed to checkstyle for loading.
      * </p>
      *
-     * @parameter
+     * @parameter expression="${checkstyle.suppressions.location}"
      * @since 2.0-beta-2
      */
     private String suppressionsLocation;
@@ -256,7 +295,7 @@ public class CheckstyleReport
      * property. This allows using the Checkstyle property your own custom checkstyle
      * configuration file when specifying a suppressions file.
      *
-     * @parameter
+     * @parameter 
      * @deprecated Use suppressionsLocation instead.
      */
     private String suppressionsFile;
@@ -265,15 +304,16 @@ public class CheckstyleReport
      * Specifies the path and filename to save the checkstyle output.  The format of the output file is
      * determined by the <code>outputFileFormat</code>
      *
-     * @parameter default-value="${project.build.directory}/checkstyle-result.txt"
+     * @parameter expression="${checkstyle.output.file}" 
+     *            default-value="${project.build.directory}/checkstyle-result.xml"
      */
-    private String outputFile;
+    private File outputFile;
 
     /**
      * Specifies the format of the output to be used when writing to the output file. Valid values are
      * "plain" and "xml"
      *
-     * @parameter default-value="plain"
+     * @parameter expression="${checkstyle.output.format}" default-value="xml"
      */
     private String outputFileFormat;
 
@@ -332,7 +372,15 @@ public class CheckstyleReport
      * @readonly
      */
     private SiteRenderer siteRenderer;
-
+    
+    /**
+     * Velocity Component
+     * 
+     * @component role="org.codehaus.plexus.velocity.VelocityComponent"
+     * @required
+     */
+    private VelocityComponent velocityComponent;
+    
     private static final File[] EMPTY_FILE_ARRAY = new File[0];
 
     private StringOutputStream stringOutputStream;
@@ -395,13 +443,119 @@ public class CheckstyleReport
 //        for when we start using maven-shared-io and maven-shared-monitor...
 //        locator = new Locator( new MojoLogMonitorAdaptor( getLog() ) );
         
-        locator = new Locator( getLog() );
+        locator = new Locator( getLog(), new File( project.getBuild().getDirectory() ) );
+        
+        String configFile = getConfigFile();
+        Properties overridingProperties = getOverridingProperties();
+        ModuleFactory moduleFactory;
+        Configuration config;
+        CheckstyleResults results;
+        try
+        {
+            moduleFactory = getModuleFactory();
+            config = ConfigurationLoader.loadConfiguration( configFile, new PropertiesExpander( overridingProperties ) );
+            results = executeCheckstyle( config, moduleFactory );
+        }
+        catch ( CheckstyleException e )
+        {
+            throw new MavenReportException( "Failed during checkstyle configuration", e );
+        }
 
-        Map files = executeCheckstyle();
+        ResourceBundle bundle = getBundle( locale );
+        
+        generateReportStatics();
+        generateMainReport( results, config, moduleFactory, bundle );
+        
+        if( enableRSS )
+        {
+            generateRSS( results );
+        }
+    }
+    
+    private void generateReportStatics()
+        throws MavenReportException
+    {
+        ReportResource rresource = new ReportResource( PLUGIN_RESOURCES, outputDirectory );
+        try
+        {
+            rresource.copy( "images/rss.png" );
+        }
+        catch ( IOException e )
+        {
+            throw new MavenReportException( "Unable to copy static resources." );
+        }
+    }
 
-        CheckstyleReportGenerator generator = new CheckstyleReportGenerator( getSink(), getBundle( locale ) );
+    private void generateRSS( CheckstyleResults results )
+        throws MavenReportException
+    {
+        VelocityTemplate vtemplate = new VelocityTemplate(velocityComponent, PLUGIN_RESOURCES);
+        vtemplate.setLog( getLog() );
+        
+        Context context = new VelocityContext();
+        context.put( "results", results );
+        context.put( "project", project );
+        context.put( "copyright", getCopyright() );
+        context.put( "levelInfo", SeverityLevel.INFO );
+        context.put( "levelWarning", SeverityLevel.WARNING );
+        context.put( "levelError", SeverityLevel.ERROR );
+        context.put( "stringutils", new StringUtils() );
+        
+        try
+        {
+            vtemplate.generate( outputDirectory.getPath() + "/checkstyle.rss", "checkstyle-rss.vm", context );
+        }
+        catch ( ResourceNotFoundException e )
+        {
+            throw new MavenReportException( "Unable to find checkstyle-rss.vm resource.", e );
+        }
+        catch ( MojoExecutionException e )
+        {
+            throw new MavenReportException( "Unable to generate checkstyle.rss.", e );
+        }
+        catch ( VelocityException e )
+        {
+            throw new MavenReportException( "Unable to generate checkstyle.rss.", e );
+        }
+        catch ( IOException e )
+        {
+            throw new MavenReportException( "Unable to generate checkstyle.rss.", e );
+        }
+    }
 
-        generator.generateReport( files );
+    private String getCopyright()
+    {
+        String copyright;
+        int currentYear = Calendar.getInstance().get( Calendar.YEAR );
+        if ( StringUtils.isNotEmpty( project.getInceptionYear() )
+            && !String.valueOf( currentYear ).equals( project.getInceptionYear() ) )
+        {
+            copyright = project.getInceptionYear() + " - " + currentYear;
+        }
+        else
+        {
+            copyright = String.valueOf( currentYear );
+        }
+
+        if ( ( project.getOrganization() != null ) && StringUtils.isNotEmpty( project.getOrganization().getName() ) )
+        {
+            copyright = copyright + " " + project.getOrganization().getName();
+        }
+        return copyright;
+    }
+
+    private void generateMainReport( CheckstyleResults results, Configuration config, ModuleFactory moduleFactory, ResourceBundle bundle )
+    {
+        CheckstyleReportGenerator generator = new CheckstyleReportGenerator( getSink(), bundle );
+
+        generator.setLog( getLog() );
+        generator.setEnableRulesSummary( enableRulesSummary );
+        generator.setEnableSeveritySummary( enableSeveritySummary );
+        generator.setEnableFilesSummary( enableFilesSummary );
+        generator.setEnableRSS( enableRSS );
+        generator.setCheckstyleConfig( config );
+        generator.setCheckstyleModuleFactory( moduleFactory );
+        generator.generateReport( results );
     }
 
     /**
@@ -448,8 +602,8 @@ public class CheckstyleReport
         }
     }
 
-    private Map executeCheckstyle()
-        throws MavenReportException
+    private CheckstyleResults executeCheckstyle( Configuration config, ModuleFactory moduleFactory )
+        throws MavenReportException, CheckstyleException
     {
         File[] files = new File[0];
         try
@@ -461,39 +615,21 @@ public class CheckstyleReport
             throw new MavenReportException( "Error getting files to process", e );
         }
 
-        String configFile = getConfigFile();
-        
-        Properties overridingProperties = getOverridingProperties();
+        FilterSet filterSet = getSuppressions();
 
-        Checker checker;
+        Checker checker = new Checker();
 
-        try
+        if ( moduleFactory != null )
         {
-            ModuleFactory moduleFactory = getModuleFactory();
-
-            FilterSet filterSet = getSuppressions();
-
-            Configuration config =
-                ConfigurationLoader.loadConfiguration( configFile, new PropertiesExpander( overridingProperties ) );
-
-            checker = new Checker();
-
-            if ( moduleFactory != null )
-            {
-                checker.setModuleFactory( moduleFactory );
-            }
-
-            if ( filterSet != null )
-            {
-                checker.addFilter( filterSet );
-            }
-
-            checker.configure( config );
+            checker.setModuleFactory( moduleFactory );
         }
-        catch ( CheckstyleException ce )
+
+        if ( filterSet != null )
         {
-            throw new MavenReportException( "Failed during checkstyle configuration", ce );
+            checker.addFilter( filterSet );
         }
+
+        checker.configure( config );
 
         AuditListener listener = getListener();
 
@@ -524,7 +660,7 @@ public class CheckstyleReport
             throw new MavenReportException( "There are " + nbErrors + " formatting errors." );
         }
 
-        return sinkListener.getFiles();
+        return sinkListener.getResults();
     }
 
     /**
@@ -542,7 +678,7 @@ public class CheckstyleReport
 
         if ( StringUtils.isNotEmpty( outputFileFormat ) )
         {
-            File resultFile = new File( outputFile );
+            File resultFile = outputFile;
 
             OutputStream out = getOutputStream( resultFile );
 
@@ -613,10 +749,6 @@ public class CheckstyleReport
         return (File[]) files.toArray( EMPTY_FILE_ARRAY );
     }
     
-    private String getLocationTemp(String name) {
-        return project.getBuild().getDirectory() + File.separator + name;
-    }
-
     private Properties getOverridingProperties()
         throws MavenReportException
     {
@@ -624,8 +756,7 @@ public class CheckstyleReport
 
         try
         {
-            File propertiesFile = locator.resolveLocation( propertiesLocation,
-                                                           getLocationTemp( "checkstyle-checker.properties" ) );
+            File propertiesFile = locator.resolveLocation( propertiesLocation, "checkstyle-checker.properties" );
             
             if ( propertiesFile != null )
             {
@@ -641,8 +772,7 @@ public class CheckstyleReport
             {
                 try
                 {
-                    File headerFile = locator.resolveLocation( headerLocation,
-                                                               getLocationTemp( "checkstyle-header.txt" ) );
+                    File headerFile = locator.resolveLocation( headerLocation, "checkstyle-header.txt" );
                     if ( headerFile != null )
                     {
                         p.setProperty( "checkstyle.header.file", headerFile.getAbsolutePath() );
@@ -672,7 +802,7 @@ public class CheckstyleReport
     {
         try
         {
-            File configFile = locator.resolveLocation( configLocation, getLocationTemp( "checkstyle-checker.xml" ) );
+            File configFile = locator.resolveLocation( configLocation, "checkstyle-checker.xml" );
             if ( configFile == null )
             {
                 throw new MavenReportException( "Unable to process null config location." );
@@ -689,23 +819,26 @@ public class CheckstyleReport
     private ModuleFactory getModuleFactory()
         throws CheckstyleException
     {
+        // default to internal module factory.
+        ModuleFactory moduleFactory = PackageNamesLoader.loadModuleFactory( Thread.currentThread()
+            .getContextClassLoader() );
+
         try
         {
-            File packageNamesFile = locator.resolveLocation( packageNamesLocation,
-                                                             getLocationTemp( "checkstyle-packages.xml" ) );
+            // attempt to locate any specified package file.
+            File packageNamesFile = locator.resolveLocation( packageNamesLocation, "checkstyle-packages.xml" );
 
-            if ( packageNamesFile == null )
+            if ( packageNamesFile != null )
             {
-                return null;
+                // load resolved location.
+                moduleFactory = PackageNamesLoader.loadModuleFactory( packageNamesFile.getAbsolutePath() );
             }
-
-            return PackageNamesLoader.loadModuleFactory( packageNamesFile.getAbsolutePath() );
         }
         catch ( IOException e )
         {
             getLog().error( "Unable to process package names location: " + packageNamesLocation, e );
-            return null;
         }
+        return moduleFactory;
     }
 
     private FilterSet getSuppressions()
@@ -713,8 +846,7 @@ public class CheckstyleReport
     {
         try
         {
-            File suppressionsFile = locator.resolveLocation( suppressionsLocation,
-                                                             getLocationTemp( "checkstyle-suppressions.xml" ) );
+            File suppressionsFile = locator.resolveLocation( suppressionsLocation, "checkstyle-suppressions.xml" );
 
             if ( suppressionsFile == null )
             {
