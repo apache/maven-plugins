@@ -17,14 +17,27 @@ package org.apache.maven.plugin.deploy;
  */
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.deployer.ArtifactDeploymentException;
 import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.Parent;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.artifact.ProjectArtifactMetadata;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
  * Installs the artifact in the remote repository.
@@ -34,105 +47,240 @@ import org.apache.maven.plugin.MojoExecutionException;
  * @author <a href="mailto:aramirez@apache.org">Allan Ramirez</a>
  */
 public class DeployFileMojo
-	extends AbstractDeployMojo
+    extends AbstractDeployMojo
 {
     /**
-     * GroupId of the artifact to be deployed.
+     * GroupId of the artifact to be deployed.  Retrieved from POM file if specified.
      * 
      * @parameter expression="${groupId}"
-     * @required
      */
     private String groupId;
 
     /**
-     * ArtifactId of the artifact to be deployed.
+     * ArtifactId of the artifact to be deployed.  Retrieved from POM file if specified.
      * 
      * @parameter expression="${artifactId}"
-     * @required
      */
     private String artifactId;
 
     /**
-     * Version of the artifact to be deployed.
+     * Version of the artifact to be deployed.  Retrieved from POM file if specified.
      * 
      * @parameter expression="${version}"
-     * @required
      */
     private String version;
 
     /**
-     * Type of the artifact to be deployed.
+     * Type of the artifact to be deployed.  Retrieved from POM file if specified.
      * 
      * @parameter expression="${packaging}"
+     */
+    private String packaging;
+
+    /**
+     * File to be deployed.
+     * 
+     * @parameter expression="${file}"
      * @required
      */
-    private String packaging;	
-	
-	/**
-	 * File to be deployed.
-	 * 
-	 * @parameter expression="${file}"
-	 * @required
-	 */
-	private File file;
-	
-	/**
-	 * Server Id to map on the &lt;id&gt; under &lt;server&gt; section of settings.xml
-	 * 
-	 * @parameter expression="${repositoryId}"
-	 * @required
-	 */
-	private String repositoryId;
-	
-	/**
-	 * URL where the artifact will be deployed. <br/>
-	 * ie ( file://C:\m2-repo )
-	 * 
-	 * @parameter expression="${url}"
-	 * @required
-	 */
-	private String url;
-	
+    private File file;
+
+    /**
+     * Server Id to map on the &lt;id&gt; under &lt;server&gt; section of settings.xml
+     * 
+     * @parameter expression="${repositoryId}"
+     * @required
+     */
+    private String repositoryId;
+
+    /**
+     * URL where the artifact will be deployed. <br/>
+     * ie ( file://C:\m2-repo )
+     * 
+     * @parameter expression="${url}"
+     * @required
+     */
+    private String url;
+
     /**
      * @component
      */
-    private ArtifactFactory artifactFactory;	
-    
+    private ArtifactFactory artifactFactory;
+
     /**
      * @component
      */
-    private ArtifactRepositoryLayout layout;    
-    
+    private ArtifactRepositoryLayout layout;
+
     /**
      * @component
      */
     private ArtifactRepositoryFactory repositoryFactory;
-	
-	public void execute() throws MojoExecutionException
-	{
-		try
-		{	
-			Artifact artifact = artifactFactory.createArtifact( groupId, artifactId, version, null, packaging );
-			
-			ArtifactRepository deploymentRepository = 
-				repositoryFactory.createDeploymentArtifactRepository( repositoryId, url, layout, false );
-			
-	        if ( file == null )
-	        {
-	            throw new MojoExecutionException(
-	                "The packaging for this project did not assign a file to the build artifact" );
-	        }
-	        else
-	        {
-	        	if( file.exists() )
-	        	{
-	        		getDeployer().deploy( file, artifact, deploymentRepository, getLocalRepository() );	
-	        	}
-	        }
-		}
-		catch( ArtifactDeploymentException e )
-		{
+
+    /**
+     * @parameter expression="${pomFile}"
+     */
+    private File pomFile;
+
+    /**
+     * Upload a POM for this artifact.  Will generate a default POM if none is 
+     * supplied with the pomFile argument.
+     * 
+     * @parameter expression="${generatePom}"
+     * @readonly
+     */
+    private boolean generatePom = true;
+
+    public void execute()
+        throws MojoExecutionException
+    {
+        try
+        {
+            // Process the supplied POM (if there is one)
+            if ( pomFile != null )
+            {
+                if ( !pomFile.exists() )
+                {
+                    throw new MojoExecutionException( "Specified pomFile does not exist" );
+                }
+                else
+                {
+                    processPom();
+                }
+            }
+
+            // Verify arguments
+            if ( groupId == null || artifactId == null || version == null || packaging == null )
+            {
+                throw new MojoExecutionException( "Missing group, artifact, version, or packaging information" );
+            }
+
+            // Create the artifact
+            Artifact artifact = artifactFactory.createArtifact( groupId, artifactId, version, null, packaging );
+            
+            ArtifactRepository deploymentRepository = repositoryFactory
+                .createDeploymentArtifactRepository( repositoryId, url, layout, false );
+
+            // Upload the POM if requested, generating one if need be
+            if ( generatePom )
+            {
+                if ( null == pomFile )
+                {
+                    generatePomFile();
+                }
+                ArtifactMetadata metadata = new ProjectArtifactMetadata( artifact, pomFile );
+                artifact.addMetadata( metadata );
+            }
+
+            // Upload the artifact with this file
+            if ( file == null )
+            {
+                throw new MojoExecutionException(
+                   "The packaging for this project did not assign a file to the build artifact" );
+            }
+            else
+            {
+                if ( file.exists() )
+                {
+                    getDeployer().deploy( file, artifact, deploymentRepository, getLocalRepository() );
+                }
+            }
+        }
+        catch ( ArtifactDeploymentException e )
+        {
             throw new MojoExecutionException( e.getMessage(), e );
-		}
-	}
+        }
+    }
+
+    /**
+     * Process the supplied pomFile to get groupId, artifactId, version, and packaging
+     * @throws MojoExecutionException 
+     *
+     */
+    private void processPom()
+        throws MojoExecutionException
+    {
+        if ( pomFile != null && pomFile.exists() )
+        {
+            Reader reader = null;
+            try
+            {
+
+                reader = new FileReader( pomFile );
+                MavenXpp3Reader modelReader = new MavenXpp3Reader();
+                Model model = modelReader.read( reader );
+
+                Parent parent = model.getParent();
+                
+                if( parent.getGroupId() != null )
+                {
+                    this.groupId = parent.getGroupId();
+                }
+                else if( model.getGroupId() != null )
+                {
+                    this.groupId = model.getGroupId();
+                }
+                if ( model.getArtifactId() != null )
+                {
+                    this.artifactId = model.getArtifactId();
+                }
+                if ( model.getVersion() != null )
+                {
+                    this.version = model.getVersion();
+                }
+                if ( model.getPackaging() != null )
+                {
+                    this.packaging = model.getPackaging();
+                }
+            }
+            catch ( FileNotFoundException e )
+            {
+                throw new MojoExecutionException( "Error reading specified POM file: " + e.getMessage(), e );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Error reading specified POM file: " + e.getMessage(), e );
+            }
+            catch ( XmlPullParserException e )
+            {
+                throw new MojoExecutionException( "Error reading specified POM file: " + e.getMessage(), e );
+            }
+            finally
+            {
+                IOUtil.close( reader );
+            }
+        }
+    }
+
+    private void generatePomFile()
+        throws MojoExecutionException
+    {
+        FileWriter fw = null;
+        try
+        {
+            File tempFile = File.createTempFile( "mvninstall", ".pom" );
+            tempFile.deleteOnExit();
+
+            Model model = new Model();
+            model.setModelVersion( "4.0.0" );
+            model.setGroupId( groupId );
+            model.setArtifactId( artifactId );
+            model.setVersion( version );
+            model.setPackaging( packaging );
+            model.setDescription( "POM was created from deploy:deploy-file" );
+
+            fw = new FileWriter( tempFile );
+            new MavenXpp3Writer().write( fw, model );
+
+            pomFile = tempFile;
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Error writing temporary pom file: " + e.getMessage(), e );
+        }
+        finally
+        {
+            IOUtil.close( fw );
+        }
+    }
 }
