@@ -21,7 +21,7 @@
             <configuration>
               <sourceRoot>target/generated/src/main/java</sourceRoot>
               <tasks>
-                <ant antfile="${basedir}/build.xml" inheritall="true">
+                <ant antfile="${basedir}/build.xml" inheritrefs="true">
                   <target name="test"/>
                 </ant>
               </tasks>
