@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<project name="test1">
+
+    <target name="test">
+
+        <path id="classpath">
+            <path refid="maven.dependency.classpath"/>
+            <path refid="maven.compile.classpath"/>
+        	<path refid="maven.runtime.classpath"/>
+        	<path refid="maven.test.classpath"/>
+            <path refid="maven.plugin.classpath"/>
+        </path>
+        <java failonerror="true" classname="Test" fork="true" newenvironment="true">
+        	<classpath refid="classpath"/>
+        </java>
+
+    </target>
+
+</project>
