@@ -220,7 +220,9 @@ public class SurefirePlugin
         
         surefireBooter.setForkMode( forkMode );
 
-        // surefireBooter.setJvm( jvm );
+        surefireBooter.setSystemProperties( systemProperties );
+
+        surefireBooter.setJvm( jvm );
         
         // ----------------------------------------------------------------------
         // Reporting
