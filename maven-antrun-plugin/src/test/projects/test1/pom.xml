@@ -16,12 +16,16 @@
         <artifactId>maven-antrun-plugin</artifactId>
         <executions>
           <execution>
-            <id>generate-sources</id>
-            <phase>generate-sources</phase>
+            <id>compile</id>
+            <phase>compile</phase>
             <configuration>
               <sourceRoot>target/generated/src/main/java</sourceRoot>
               <tasks>
-                <ant antfile="${basedir}/build.xml" inheritrefs="true">
+                <path id="classpath">
+                  <path refid="maven.compile.classpath"/>
+                  <path refid="maven.plugin.classpath"/>
+                </path>
+                <ant antfile="${basedir}/build.xml" inheritRefs="true">
                   <target name="test"/>
                 </ant>
               </tasks>
