@@ -223,7 +223,9 @@ public class SurefirePlugin
         surefireBooter.setSystemProperties( systemProperties );
 
         surefireBooter.setJvm( jvm );
-        
+
+        surefireBooter.setBasedir( basedir.getAbsolutePath() );
+
         // ----------------------------------------------------------------------
         // Reporting
         // ----------------------------------------------------------------------                
