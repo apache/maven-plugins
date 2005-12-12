@@ -1,88 +1,115 @@
  ------
  Maven 2 Surefire Plugin 
  ------
- Johnny R. Ruiz III
- <jruiz@exist.com>
+ Johnny R. Ruiz III <jruiz@exist.com>
  ------
  September 20, 2005
 
 How to Use
 
-  These example shows how to include and exclude unit test files in your testing..
+ These example shows how to include and exclude unit test files in your testing:
  
--------------------
-    <project>
-       ...
-          <build>
-             ...
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <includes>
-                        <include implementation="java.lang.String">**/*.java</include>
-                    </includes>
-                    <excludes>
-                        <exclude implementation="java.lang.String">**/*Point*.java</exclude>
-                    </excludes>
-                </configuration>
-             </plugin>
-             ...
-          </build>
-       ...
-    </project>
--------------------
+-----
+<project>
+  ...
+  <build>
+    ...
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-surefire-plugin</artifactId>
+      <configuration>
+        <includes>
+          <include>**/*.java</include>
+        </includes>
+        <excludes>
+          <exclude>**/*Point*.java</exclude>
+        </excludes>
+      </configuration>
+    </plugin>
+    ...
+  </build>
+  ...
+</project>
+-----
 
-    These example shows how to skip test when using m2.
+* Skipping Tests
 
--------------------
-    <project>
-       ...
-          <build>
-             ...
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                  <skip>true</skip>
-                </configuration>
-             </plugin>
-             ...
-          </build>
-       ...
-    </project>
--------------------
-   
-   Alternatively, you can use "m2 -Dmaven.test.skip=true install" to skip test.
+ These example shows how to skip test when using m2:
 
+-----
+<project>
+  ...
+  <build>
+    ...
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-surefire-plugin</artifactId>
+      <configuration>
+        <skip>true</skip>
+      </configuration>
+    </plugin>
+    ...
+  </build>
+  ...
+</project>
+-----
 
-  To add a System property, you can try this one.
+ Alternatively, you can execute the following on the command line to skip tests:
 
--------------------
-    <project>
-       ...
-          <build>
-             ...
-             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <systemProperties>
-                        <property>
-                            <name>propertyName</name>
-                            <value>propertyValue</value>
-                        </property>
-                    </systemProperties>
-                  </configuration>
-             </plugin>
-             ...
-          </build>
-       ...
-    </project>
--------------------
+-----
+m2 -Dmaven.test.skip=true install
+-----
 
+* Using System Properties
 
-  There are other parameters that you can configure like testFailureIgnore, reportsDirectory, test , etc.
+ To add a System property, you can try this one.
 
-  For full documentation, click {{{index.html}here}}.
+-----
+<project>
+  ...
+  <build>
+    ...
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-surefire-plugin</artifactId>
+      <configuration>
+        <systemProperties>
+          <property>
+            <name>propertyName</name>
+            <value>propertyValue</value>
+          </property>
+        </systemProperties>
+      </configuration>
+    </plugin>
+    ...
+  </build>
+  ...
+</project>
+-----
+
+* Forking
+
+ If you need to run your tests in a new JVM process you can use the <<<forkMode>>> option to start a new
+ JVM process once for all your tests, or start a new JVM process for each of your tests:
+
+-----
+<project>
+  ...
+  <build>
+    ...
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-surefire-plugin</artifactId>
+      <configuration>
+        <forkMode>once|pertest</forkMode>
+      </configuration>
+    </plugin>
+    ...
+  </build>
+  ...
+</project>
+-----
+
+ There are other parameters that you can configure like testFailureIgnore, reportsDirectory, test , etc.
+ For full documentation, click {{{index.html}here}}.
  
