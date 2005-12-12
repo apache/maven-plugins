@@ -16,13 +16,12 @@ package org.apache.maven.plugins.site;
  * limitations under the License.
  */
 
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.plexus.i18n.I18N;
+import org.codehaus.doxia.module.xdoc.XdocSiteModule;
 import org.codehaus.plexus.siterenderer.Renderer;
 import org.codehaus.plexus.siterenderer.RendererException;
 import org.codehaus.plexus.siterenderer.sink.SiteRendererSink;
@@ -30,7 +29,6 @@ import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.doxia.module.xdoc.XdocSiteModule;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -53,7 +51,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 /**
  * Generates the project site.
@@ -65,22 +62,11 @@ import java.util.StringTokenizer;
  * @requiresDependencyResolution test
  */
 public class SiteMojo
-    extends AbstractMojo
+    extends AbstractSiteMojo
 {
     private static final String RESOURCE_DIR = "org/apache/maven/plugins/site";
 
     private static final String DEFAULT_TEMPLATE = RESOURCE_DIR + "/maven-site.vm";
-
-    /** The locale by default for all default bundles */
-    private static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
-
-    /**
-     * Directory containing source for apt, fml and xdoc docs.
-     *
-     * @parameter expression="${basedir}/src/site"
-     * @required
-     */
-    private File siteDirectory;
 
     /**
      * Alternative directory for xdoc source, useful for m1 to m2 migration
@@ -134,14 +120,6 @@ public class SiteMojo
     private Map attributes;
 
     /**
-     * A comma separated list of locales supported by Maven. The first valid token will be the default Locale
-     * for this instance of the Java Virtual Machine.
-     *
-     * @parameter expression="${locales}"
-     */
-    private String locales;
-
-    /**
      * @parameter expression="${addModules}"
      * default-value="true"
      */
@@ -161,13 +139,6 @@ public class SiteMojo
      * @component
      */
     private Renderer siteRenderer;
-
-    /**
-     * Internationalization.
-     *
-     * @component
-     */
-    private I18N i18n;
 
     /**
      * The maven project.
@@ -196,7 +167,7 @@ public class SiteMojo
 
     /**
      * Generate the project site
-     *
+     * <p/>
      * throws MojoExecutionException if any
      *
      * @see org.apache.maven.plugin.Mojo#execute()
@@ -215,13 +186,13 @@ public class SiteMojo
             {
                 if ( !templateDirectory.exists() )
                 {
-                    throw new MojoExecutionException( "This templateDirectory=[" + templateDirectory
-                        + "] doesn't exist." );
+                    throw new MojoExecutionException(
+                        "This templateDirectory=[" + templateDirectory + "] doesn't exist." );
                 }
 
                 URL templateDirectoryUrl = templateDirectory.toURL();
 
-                URL[] urls = { templateDirectoryUrl };
+                URL[] urls = {templateDirectoryUrl};
 
                 URLClassLoader urlClassloader = new URLClassLoader( urls );
 
@@ -267,10 +238,6 @@ public class SiteMojo
         try
         {
             List localesList = initLocalesList();
-            if ( localesList.isEmpty() )
-            {
-                localesList = Collections.singletonList( DEFAULT_LOCALE );
-            }
 
             // Default is first in the list
             Locale defaultLocale = (Locale) localesList.get( 0 );
@@ -340,8 +307,8 @@ public class SiteMojo
                 List generatedReportsFileName = Collections.EMPTY_LIST;
                 if ( reports != null )
                 {
-                    generatedReportsFileName = generateReportsPages( reports, locale, outputDirectory, defaultLocale,
-                                                                     siteDescriptor );
+                    generatedReportsFileName =
+                        generateReportsPages( reports, locale, outputDirectory, defaultLocale, siteDescriptor );
                 }
 
                 //Generate overview pages
@@ -377,9 +344,8 @@ public class SiteMojo
 
                     if ( duplicate.get( reportFileName ) != null )
                     {
-                        getLog().info(
-                                       "Override the generated file \"" + reportFileName + "\" for the "
-                                           + displayLanguage + " version." );
+                        getLog().info( "Override the generated file \"" + reportFileName + "\" for the " +
+                            displayLanguage + " version." );
                     }
                 }
 
@@ -447,9 +413,8 @@ public class SiteMojo
             // be nice with them, output a warning and don't let them break anything
             catch ( AbstractMethodError e )
             {
-                getLog().warn(
-                               "Error loading report " + report.getClass().getName()
-                                   + " - AbstractMethodError: canGenerateReport()" );
+                getLog().warn( "Error loading report " + report.getClass().getName() +
+                    " - AbstractMethodError: canGenerateReport()" );
                 filteredReports.add( report );
             }
         }
@@ -483,73 +448,10 @@ public class SiteMojo
     }
 
     /**
-     * Init the <code>localesList</code> variable.
-     * <p>If <code>locales</code> variable is available, the first valid token will be the <code>defaultLocale</code>
-     * for this instance of the Java Virtual Machine.</p>
-     *
-     * @return a list of <code>Locale</code>
-     */
-    private List initLocalesList()
-    {
-        if ( locales == null )
-        {
-            return Collections.EMPTY_LIST;
-        }
-        String[] localesArray = StringUtils.split( locales, "," );
-
-        List localesList = new ArrayList();
-        for ( int i = 0; i < localesArray.length; i++ )
-        {
-            Locale locale = codeToLocale( localesArray[i] );
-
-            if ( locale != null )
-            {
-                if ( !Arrays.asList( Locale.getAvailableLocales() ).contains( locale ) )
-                {
-                    getLog().warn(
-                                   "The locale parsed defined by '" + locale
-                                       + "' is not available in this Java Virtual Machine ("
-                                       + System.getProperty( "java.version" ) + " from "
-                                       + System.getProperty( "java.vendor" ) + ") - IGNORING" );
-                    continue;
-                }
-
-                // Default bundles are in English
-                if ( !locale.getLanguage().equals( DEFAULT_LOCALE.getLanguage() ) )
-                {
-                    if ( !i18n.getBundle( "site-plugin", locale ).getLocale().getLanguage().equals(
-                                                                                                    locale
-                                                                                                        .getLanguage() ) )
-                    {
-                        StringBuffer sb = new StringBuffer();
-
-                        sb.append( "The locale '" ).append( locale ).append( "' (" );
-                        sb.append( locale.getDisplayName( Locale.ENGLISH ) );
-                        sb.append( ") is not currently support by Maven - IGNORING. " );
-                        sb.append( "\n" );
-                        sb.append( "Contribution are welcome and greatly appreciated! " );
-                        sb.append( "\n" );
-                        sb.append( "If you want to contribute a new translation, please visit " );
-                        sb.append( "http://maven.apache.org/plugins/maven-site-plugin/i18n.html " );
-                        sb.append( "for detailed instructions." );
-
-                        getLog().warn( sb.toString() );
-
-                        continue;
-                    }
-                }
-
-                localesList.add( locale );
-            }
-        }
-        return localesList;
-    }
-
-    /**
      * Retrieve the reports menu
      *
-     * @param locale the locale used
-     * @param projectInfos list of project infos
+     * @param locale         the locale used
+     * @param projectInfos   list of project infos
      * @param projectReports list of project reports
      * @return a XML for reports menu
      */
@@ -576,13 +478,14 @@ public class SiteMojo
     /**
      * Create a report sub menu
      *
-     * @param reports list of reports specified in pom
-     * @param buffer string to be appended
-     * @param locale the locale used
+     * @param reports       list of reports specified in pom
+     * @param buffer        string to be appended
+     * @param locale        the locale used
      * @param key
      * @param indexFilename index page filename
      */
-    private void writeReportSubMenu( List reports, StringBuffer buffer, Locale locale, String key, String indexFilename )
+    private void writeReportSubMenu( List reports, StringBuffer buffer, Locale locale, String key,
+                                     String indexFilename )
     {
         if ( reports.size() > 0 )
         {
@@ -612,10 +515,8 @@ public class SiteMojo
      *
      * @param locale the locale wanted
      * @return a XML menu for modules
-     * @throws MojoExecutionException
      */
     private String getModulesMenu( Locale locale )
-        throws MojoExecutionException
     {
 
         StringBuffer buffer = new StringBuffer();
@@ -639,8 +540,8 @@ public class SiteMojo
                 // The side effect of using reactorProjects is that to generate module links
                 // you must do a recursive build (no mvn -N)
 
-                if ( reactorProject != null && reactorProject.getParent() != null
-                    && project.getArtifactId().equals( reactorProject.getParent().getArtifactId() ) )
+                if ( reactorProject != null && reactorProject.getParent() != null &&
+                    project.getArtifactId().equals( reactorProject.getParent().getArtifactId() ) )
                 {
                     String reactorUrl = reactorProject.getUrl();
 
@@ -708,18 +609,16 @@ public class SiteMojo
     }
 
     /**
-     * @param reports
-     *            a list of reports
-     * @param locale
-     *            the current locale
+     * @param reports a list of reports
+     * @param locale  the current locale
      * @return the inpustream
      * @throws org.apache.maven.plugin.MojoExecutionException
-     *             is any
+     *          is any
      */
     private String getSiteDescriptor( List reports, Locale locale, List projectInfos, List projectReports )
         throws MojoExecutionException
     {
-        File siteDescriptor = new File( siteDirectory, "site_" + locale.getLanguage() + ".xml" );
+        File siteDescriptor = getSiteDescriptorFile( locale );
 
         String siteDescriptorContent;
 
@@ -731,16 +630,7 @@ public class SiteMojo
             }
             else
             {
-                siteDescriptor = new File( siteDirectory, "site.xml" );
-
-                if ( siteDescriptor.exists() )
-                {
-                    siteDescriptorContent = FileUtils.fileRead( siteDescriptor );
-                }
-                else
-                {
-                    siteDescriptorContent = IOUtil.toString( getClass().getResourceAsStream( "/default-site.xml" ) );
-                }
+                siteDescriptorContent = IOUtil.toString( getClass().getResourceAsStream( "/default-site.xml" ) );
             }
         }
         catch ( IOException e )
@@ -856,7 +746,7 @@ public class SiteMojo
      * @param localeOutputDirectory
      */
     private List generateReportsPages( List reports, Locale locale, File localeOutputDirectory, Locale defaultLocale,
-                                      String siteDescriptor )
+                                       String siteDescriptor )
         throws RendererException, IOException, MavenReportException
     {
         List generatedReportsFileName = new ArrayList();
@@ -895,9 +785,9 @@ public class SiteMojo
                     outputFile.getParentFile().mkdirs();
                 }
 
-                siteRenderer.generateDocument( new OutputStreamWriter( new FileOutputStream( outputFile ),
-                                                                       outputEncoding ), template, attributes, sink,
-                                               locale );
+                siteRenderer.generateDocument(
+                    new OutputStreamWriter( new FileOutputStream( outputFile ), outputEncoding ), template, attributes,
+                    sink, locale );
             }
         }
         return generatedReportsFileName;
@@ -906,12 +796,13 @@ public class SiteMojo
     /**
      * Generates Project Info Page
      *
-     * @param siteDescriptor site.xml
-     * @param locale the locale used
-     * @param projectInfos list of projectInfos
+     * @param siteDescriptor  site.xml
+     * @param locale          the locale used
+     * @param projectInfos    list of projectInfos
      * @param outputDirectory directory that will contain the generated project info page
      */
-    private void generateProjectInfoPage( String siteDescriptor, Locale locale, List projectInfos, File outputDirectory )
+    private void generateProjectInfoPage( String siteDescriptor, Locale locale, List projectInfos,
+                                          File outputDirectory )
         throws RendererException, IOException
     {
         String outputFileName = "project-info.html";
@@ -994,13 +885,13 @@ public class SiteMojo
     /**
      * Generates the Project Report Pages
      *
-     * @param siteDescriptor site.xml
-     * @param locale the locale used
-     * @param projectReports list of project reports
+     * @param siteDescriptor  site.xml
+     * @param locale          the locale used
+     * @param projectReports  list of project reports
      * @param outputDirectory directory that will contain the generated project report pages
      */
     private void generateProjectReportsPage( String siteDescriptor, Locale locale, List projectReports,
-                                            File outputDirectory )
+                                             File outputDirectory )
         throws RendererException, IOException
     {
         String outputFileName = "maven-reports.html";
@@ -1099,8 +990,8 @@ public class SiteMojo
 
                 if ( is == null )
                 {
-                    throw new IOException( "The resource " + line + " doesn't exists in " + DEFAULT_TEMPLATE
-                        + " template." );
+                    throw new IOException(
+                        "The resource " + line + " doesn't exists in " + DEFAULT_TEMPLATE + " template." );
                 }
 
                 File outputFile = new File( outputDir, line );
@@ -1137,7 +1028,7 @@ public class SiteMojo
     /**
      * Copy the directory
      *
-     * @param source source file to be copied
+     * @param source      source file to be copied
      * @param destination destination file
      * @throws IOException if any
      */
@@ -1148,7 +1039,7 @@ public class SiteMojo
         {
             DirectoryScanner scanner = new DirectoryScanner();
 
-            String[] includedResources = { "**/**" };
+            String[] includedResources = {"**/**"};
 
             scanner.setIncludes( includedResources );
 
@@ -1187,9 +1078,9 @@ public class SiteMojo
      * Convenience method that try to find duplicate files in sub-directories of a given directory.
      * <p>The scan is case sensitive.</p>
      *
-     * @param directory the directory to scan
+     * @param directory       the directory to scan
      * @param defaultExcludes files patterns to be exclude from the search
-     * @param duplicate the map to update
+     * @param duplicate       the map to update
      * @throws IOException if any
      */
     private static void tryToFindDuplicates( File directory, String defaultExcludes, Map duplicate )
@@ -1229,7 +1120,7 @@ public class SiteMojo
      * Throw an exception if a file is duplicate.
      *
      * @param duplicate a map of duplicate files
-     * @param locale the current locale
+     * @param locale    the current locale
      */
     private void checkDuplicates( Map duplicate, Locale locale )
         throws MojoFailureException
@@ -1248,7 +1139,7 @@ public class SiteMojo
                     if ( sb == null )
                     {
                         sb = new StringBuffer(
-                                               "Some files are duplicates in the site directory or in the generated-site directory. " );
+                            "Some files are duplicates in the site directory or in the generated-site directory. " );
                         sb.append( "\n" );
                         sb.append( "Review the following files for the \"" );
                         sb.append( locale.getDisplayLanguage( Locale.ENGLISH ) );
@@ -1281,52 +1172,4 @@ public class SiteMojo
         }
     }
 
-    /**
-     * Converts a locale code like "en", "en_US" or "en_US_win" to a <code>java.util.Locale</code>
-     * object.
-     * <p>If localeCode = <code>default</code>, return the current value of the default locale for this instance
-     * of the Java Virtual Machine.</p>
-     *
-     * @param localeCode the locale code string.
-     * @return a java.util.Locale object instancied or null if errors occurred
-     * @see <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Locale.html">java.util.Locale#getDefault()</a>
-     */
-    private Locale codeToLocale( String localeCode )
-    {
-        if ( localeCode == null )
-        {
-            return null;
-        }
-
-        if ( "default".equalsIgnoreCase( localeCode ) )
-        {
-            return Locale.getDefault();
-        }
-
-        String language = "";
-        String country = "";
-        String variant = "";
-
-        StringTokenizer tokenizer = new StringTokenizer( localeCode, "_" );
-        if ( tokenizer.countTokens() > 3 )
-        {
-            getLog().warn( "Invalid java.util.Locale format for '" + localeCode + "' entry - IGNORING" );
-            return null;
-        }
-
-        if ( tokenizer.hasMoreTokens() )
-        {
-            language = tokenizer.nextToken();
-            if ( tokenizer.hasMoreTokens() )
-            {
-                country = tokenizer.nextToken();
-                if ( tokenizer.hasMoreTokens() )
-                {
-                    variant = tokenizer.nextToken();
-                }
-            }
-        }
-
-        return new Locale( language, country, variant );
-    }
 }
