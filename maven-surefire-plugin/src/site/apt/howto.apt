@@ -90,7 +90,9 @@ m2 -Dmaven.test.skip=true install
 * Forking
 
  If you need to run your tests in a new JVM process you can use the <<<forkMode>>> option to start a new
- JVM process once for all your tests, or start a new JVM process for each of your tests:
+ JVM process once for all your tests, or start a new JVM process for each of your tests. You can also set
+ any arbitrary options like <<<-enableassertions>>> or any other JVM options. Here's an example of what
+ this might look like:
 
 -----
 <project>
@@ -102,6 +104,7 @@ m2 -Dmaven.test.skip=true install
       <artifactId>maven-surefire-plugin</artifactId>
       <configuration>
         <forkMode>once|pertest</forkMode>
+        <argLine>-enableassertions</argLine>
       </configuration>
     </plugin>
     ...
