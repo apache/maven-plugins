@@ -188,7 +188,15 @@ public class SurefirePlugin
      * default-value="java" 
      */
     private String jvm;    
-    
+
+    /**
+     * Option to specify the jvm (or path to the java executable) to use with
+     * the forking options. For the default we will assume that java is in the path.
+     *
+     * @parameter expression="${argLine}"
+     */
+    private String argLine;
+
     public void execute()
         throws MojoExecutionException
     {
@@ -225,6 +233,8 @@ public class SurefirePlugin
         surefireBooter.setJvm( jvm );
 
         surefireBooter.setBasedir( basedir.getAbsolutePath() );
+
+        surefireBooter.setArgLine( argLine );
 
         // ----------------------------------------------------------------------
         // Reporting
