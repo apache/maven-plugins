@@ -212,7 +212,7 @@ public class DeployFileMojo
 
                 Parent parent = model.getParent();
                 
-                if( parent.getGroupId() != null )
+                if( parent != null && parent.getGroupId() != null )
                 {
                     this.groupId = parent.getGroupId();
                 }
