@@ -8,13 +8,38 @@
   <artifactId>maven-surefire-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Maven Surefire Plugin</name>
-  <version>2.1.1-SNAPSHOT</version>
+  <version>2.1.1</version>
   <contributors>
     <contributor>
       <name>Joakim Erdfelt</name>
       <email>joakim@erdfelt.com</email>
     </contributor>
   </contributors>
+  <build>
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-ssh-external</artifactId>
+        <version>1.0-alpha-5</version>
+      </extension>
+    </extensions>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-release-plugin</artifactId>
+          <configuration>
+            <tagBase>https://svn.apache.org/repos/asf/maven/plugins/tags</tagBase>
+          </configuration>
+        </plugin>
+        <plugin>
+          <artifactId>maven-release-plugin</artifactId>
+          <configuration>
+            <tagBase>https://svn.apache.org/repos/asf/maven/plugins/tags</tagBase>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -60,23 +85,4 @@
       <url>scp://minotaur.apache.org/www/maven.apache.org/plugins/</url>
     </site>
   </distributionManagement>
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <artifactId>maven-release-plugin</artifactId>
-          <configuration>
-            <tagBase>https://svn.apache.org/repos/asf/maven/plugins/tags</tagBase>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-    <extensions>
-      <extension>
-        <groupId>org.apache.maven.wagon</groupId>
-         <artifactId>wagon-ssh-external</artifactId>
-         <version>1.0-alpha-5</version>
-      </extension>
-    </extensions>
-  </build>
 </project>
