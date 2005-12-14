@@ -232,10 +232,10 @@ public class SurefirePlugin
         // Forking
         // ----------------------------------------------------------------------        
 
+        surefireBooter.setForkMode( forkMode );
+
         if ( !forkMode.equals( "none" ) )
         {
-            surefireBooter.setForkMode( forkMode );
-
             surefireBooter.setSystemProperties( systemProperties );
 
             surefireBooter.setJvm( jvm );
