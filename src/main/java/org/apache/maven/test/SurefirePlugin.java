@@ -32,7 +32,7 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 
 /**
- * @author <a href="mailto:jason@maven.org">Jason van Zyl</a>
+ * @author Jason van Zyl
  * @version $Id$
  * @requiresDependencyResolution test
  * @goal test
@@ -176,19 +176,35 @@ public class SurefirePlugin
      * Option to specify the forking mode.
      *
      * @parameter expression="${forkMode}"
-     * default-value="none" 
+     * default-value="none"
      */
     private String forkMode;
-    
+
     /**
      * Option to specify the jvm (or path to the java executable) to use with
      * the forking options. For the default we will assume that java is in the path.
      *
      * @parameter expression="${jvm}"
-     * default-value="java" 
+     * default-value="java"
      */
-    private String jvm;    
-    
+    private String jvm;
+
+    /**
+     * Arbitrary options to set on the command line.
+     *
+     * @parameter expression="${argLine}"
+     */
+    private String argLine;
+
+    /**
+     * Option to specify the jvm (or path to the java executable) to use with
+     * the forking options. For the default we will assume that java is in the path.
+     *
+     * @parameter expression="${childDelegation}"
+     * default-value="true"
+     */
+    private boolean childDelegation;
+
     public void execute()
         throws MojoExecutionException
     {
@@ -215,19 +231,31 @@ public class SurefirePlugin
         // ----------------------------------------------------------------------
         // Forking
         // ----------------------------------------------------------------------        
-        
-        getLog().info( "forkMode: " + forkMode ); 
-        
+
         surefireBooter.setForkMode( forkMode );
 
-        surefireBooter.setSystemProperties( systemProperties );
+        if ( !forkMode.equals( "none" ) )
+        {
+            surefireBooter.setSystemProperties( systemProperties );
 
-        surefireBooter.setJvm( jvm );
-        
+            surefireBooter.setJvm( jvm );
+
+            surefireBooter.setBasedir( basedir.getAbsolutePath() );
+
+            surefireBooter.setArgLine( argLine );
+
+            surefireBooter.setChildDelegation( childDelegation );
+
+            if ( getLog().isDebugEnabled() )
+            {
+                surefireBooter.setDebug( true );
+            }
+        }
+
         // ----------------------------------------------------------------------
         // Reporting
         // ----------------------------------------------------------------------                
-        
+
         getLog().info( "Setting reports dir: " + reportsDirectory );
 
         surefireBooter.setReportsDirectory( reportsDirectory );
