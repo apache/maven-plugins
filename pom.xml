@@ -61,6 +61,16 @@
     </site>
   </distributionManagement>
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-release-plugin</artifactId>
+          <configuration>
+            <tagBase>https://svn.apache.org/repos/asf/maven/plugins/tags</tagBase>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <extensions>
       <extension>
         <groupId>org.apache.maven.wagon</groupId>
