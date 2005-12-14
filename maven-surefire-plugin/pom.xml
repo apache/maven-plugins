@@ -60,4 +60,13 @@
       <url>scp://minotaur.apache.org/www/maven.apache.org/plugins/</url>
     </site>
   </distributionManagement>
+  <build>
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+         <artifactId>wagon-ssh-external</artifactId>
+         <version>1.0-alpha-5</version>
+      </extension>
+    </extensions>
+  </build>
 </project>
