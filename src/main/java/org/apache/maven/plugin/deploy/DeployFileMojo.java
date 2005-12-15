@@ -172,19 +172,12 @@ public class DeployFileMojo
                 artifact.addMetadata( metadata );
             }
 
-            // Upload the artifact with this file
-            if ( file == null )
+            if ( ! file.exists() )
             {
-                throw new MojoExecutionException(
-                   "The packaging for this project did not assign a file to the build artifact" );
+                throw new MojoExecutionException( file.getPath() + " not found." );
             }
-            else
-            {
-                if ( file.exists() )
-                {
-                    getDeployer().deploy( file, artifact, deploymentRepository, getLocalRepository() );
-                }
-            }
+            
+            getDeployer().deploy( file, artifact, deploymentRepository, getLocalRepository() );
         }
         catch ( ArtifactDeploymentException e )
         {
