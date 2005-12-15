@@ -128,6 +128,13 @@ public class AbstractAssemblyMojo
      * @parameter expression="${includeSite}" default-value="false"
      */
     private boolean includeSite;
+    
+    /**
+     * Set to false to exclude the assembly id from the assembly final name.
+     *
+     * @parameter expression="${appendAssemblyId}" default-value="true"
+     */
+    protected boolean appendAssemblyId;
 
     private ComponentsXmlArchiverFileFilter componentsXmlFilter = new ComponentsXmlArchiverFileFilter();
 
@@ -176,7 +183,14 @@ public class AbstractAssemblyMojo
                 throw new MojoExecutionException( "Error creating assembly: " + e.getMessage(), e );
             }
 
-            projectHelper.attachArtifact( project, format, assembly.getId(), destFile );
+            if ( appendAssemblyId )
+            {
+                projectHelper.attachArtifact( project, format, assembly.getId(), destFile );
+            }
+            else
+            {
+                projectHelper.attachArtifact( project, format, null, destFile );
+            }
         }
     }
 
@@ -192,8 +206,15 @@ public class AbstractAssemblyMojo
         {
             return finalName;
         }
-
-        return finalName + "-" + assembly.getId();
+        
+        if ( appendAssemblyId )
+        {
+            return finalName + "-" + assembly.getId();
+        }
+        else
+        {
+            return finalName;
+        }
     }
 
     protected File createArchive( Archiver archiver, Assembly assembly, String filename )
