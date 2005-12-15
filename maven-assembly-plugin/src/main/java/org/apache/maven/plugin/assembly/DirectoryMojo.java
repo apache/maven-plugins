@@ -40,9 +40,13 @@ public class DirectoryMojo
         throws MojoExecutionException, MojoFailureException
     {
         Assembly assembly = readAssembly();
+        String fullName = finalName;
 
-        String fullName = finalName + "-" + assembly.getId();
-
+        if ( appendAssemblyId)
+        {
+            fullName = fullName + "-" + assembly.getId();
+        }
+        
         try
         {
             Archiver archiver = new DirectoryArchiver();
