@@ -681,8 +681,8 @@ public class JavadocReport
         }
 
         File javadocDirectory = getReportOutputDirectory();
-
-        if ( !javadocDirectory.equals( getOutputDirectory() ) )
+               
+        if ( !javadocDirectory.getAbsolutePath().equals( getOutputDirectory() ) )
         {
             // we're in site-embedded report mode, so Doxia has set the
             // reportOutputDirectory to the basedir of the site.
