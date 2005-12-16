@@ -13,5 +13,23 @@ Introduction
 
   The full description of goals is available {{{index.html}here}}.
 
+Supported artifacts
 
+  The EAR plugin supports the following artifacts:
+
+  * ejb
+
+  * war
+
+  * jar
+
+  * ejb-client
+
+  * rar
+
+  * ejb3
+
+  * par
+
+  * sar
 
