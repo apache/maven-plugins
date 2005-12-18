@@ -72,12 +72,12 @@
     <dependency>
       <groupId>checkstyle</groupId>
       <artifactId>checkstyle</artifactId>
-      <version>4.0</version>
+      <version>4.1</version>
     </dependency>
     <dependency>
       <groupId>checkstyle</groupId>
       <artifactId>checkstyle-optional</artifactId>
-      <version>4.0</version>
+      <version>4.1</version>
     </dependency>
   </dependencies>
 </project>
