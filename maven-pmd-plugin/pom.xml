@@ -17,12 +17,7 @@
     <dependency>
       <groupId>pmd</groupId>
       <artifactId>pmd</artifactId>
-      <version>3.0</version>
-    </dependency>
-    <dependency>
-      <groupId>jaxen</groupId>
-      <artifactId>jaxen</artifactId>
-      <version>1.0-FCS</version>
+      <version>3.4</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
