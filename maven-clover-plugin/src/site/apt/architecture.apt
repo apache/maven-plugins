@@ -1,0 +1,16 @@
+ ------
+ Maven 2 Clover Plugin
+ ------
+ Vincent Massol
+ <vmassol@apache.org>
+ ------
+ December 19th, 2005
+
+Architecture
+
+  TODO
+  
+  Here's how the <<<clover:check>>> goal works:
+
+[images/clover-check-achitecture.jpg] Clover check goal architecture
+  
