@@ -35,7 +35,9 @@
     <menu name="Overview">
       <item name="Introduction" href="introduction.html"/>
       <item name="How to Use" href="howto.html"/>
+      <item name="How it works" href="architecture.html"/>
     </menu>
     ${reports}
+
   </body>
 </project>
