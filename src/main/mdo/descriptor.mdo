@@ -45,6 +45,15 @@
           </association>
         </field>
         <field>
+          <name>files</name>
+          <version>1.0.0</version>
+          <association>
+            <type>FileItem</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+        
+        <field>
           <name>dependencySets</name>
           <version>1.0.0</version>
           <association>
@@ -113,6 +122,47 @@
         </field>
       </fields>
     </class>
+    <class>
+      <name>FileItem</name>
+      <version>1.0.0</version>
+      <description>Allows individual file copy with option to change destination 
+                   file name not supported by fileSet</description>
+      <fields>
+        <field>
+          <name>source</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <description>Absolute or relative from the module's directory.</description>
+          <required>true</required>
+        </field>
+        <field>
+          <name>outputDirectory</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <description>Relative to root archive.</description>
+          <required>false</required>
+        </field>
+        <field>
+          <name>destName</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <description>Destination file name in outputDirectory. Default is source's file name</description>
+        </field>
+        <field>
+          <name>fileMode</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <defaultValue>0644</defaultValue>
+        </field>
+        <field>
+          <name>lineEnding</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <!-- keep | unix | lf | dos | crlf -->
+        </field>
+      </fields>
+    </class>
+    
     <class>
       <name>DependencySet</name>
       <version>1.0.0</version>
