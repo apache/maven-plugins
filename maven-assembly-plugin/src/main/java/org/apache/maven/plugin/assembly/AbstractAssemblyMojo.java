@@ -20,6 +20,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.assembly.model.Assembly;
 import org.apache.maven.plugins.assembly.model.DependencySet;
+import org.apache.maven.plugins.assembly.model.FileItem;
 import org.apache.maven.plugins.assembly.model.FileSet;
 import org.apache.maven.plugins.assembly.model.io.xpp3.AssemblyXpp3Reader;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
@@ -114,6 +115,15 @@ public class AbstractAssemblyMojo
      */
     private File tempRoot;
 
+    /**
+     * Temporary file for line ending translation.
+     *
+     * @parameter expression="${project.build.directory}/tempFile"
+     * @required
+     * @readonly
+     */
+    private File tempFile;
+    
     /**
      * Directory for site generated.
      *
@@ -223,6 +233,7 @@ public class AbstractAssemblyMojo
         File destFile;
         processDependencySets( archiver, assembly.getDependencySets(), assembly.isIncludeBaseDirectory() );
         processFileSets( archiver, assembly.getFileSets(), assembly.isIncludeBaseDirectory() );
+        processFileList( archiver, assembly.getFiles(), assembly.isIncludeBaseDirectory() );
 
         componentsXmlFilter.addToArchive( archiver );
 
@@ -482,6 +493,50 @@ public class AbstractAssemblyMojo
         }
     }
 
+    /**
+     * Copy files to the distribution with option to change destination name
+     *
+     * @param archiver
+     * @param fileList
+     * @throws org.codehaus.plexus.archiver.ArchiverException
+     */
+    protected void processFileList( Archiver archiver, List fileList, boolean includeBaseDirecetory )
+        throws ArchiverException, IOException
+    {
+        for ( Iterator i = fileList.iterator(); i.hasNext(); )
+        {
+            FileItem fileItem = (FileItem) i.next();
+            
+            File source = new File ( fileItem.getSource() );
+            
+            String outputDirectory = fileItem.getOutputDirectory();
+            
+            if ( outputDirectory == null )
+            {
+            	outputDirectory = "";
+            }
+            
+            String destName = fileItem.getDestName();
+            
+            if  ( destName == null )
+            {
+            	destName = source.getName();
+            }
+
+            String lineEnding = getLineEndingCharacters( fileItem.getLineEnding() );
+            
+            if ( lineEnding != null )
+            {
+            	this.copyReplacingLineEndings( source, this.tempFile, lineEnding );
+            	source = this.tempFile;
+            }
+            
+            outputDirectory = getOutputDirectory( outputDirectory, includeBaseDirecetory );
+            
+            archiver.addFile( source , outputDirectory + "/" + destName, Integer.parseInt( fileItem.getFileMode() ) );
+        }
+    }
+    
     /**
      * Evaluates Filename Mapping
      *
