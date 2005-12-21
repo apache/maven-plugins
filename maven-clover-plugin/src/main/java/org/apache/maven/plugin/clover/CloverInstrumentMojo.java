@@ -19,6 +19,7 @@ package org.apache.maven.plugin.clover;
 import com.cenqua.clover.CloverInstr;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 
@@ -85,9 +86,7 @@ public class CloverInstrumentMojo
     public void execute()
         throws MojoExecutionException
     {
-        // Do not perform anything if there are no source files
-        File srcDir = new File(this.project.getBuild().getSourceDirectory());
-        if (srcDir.exists())
+        if ( shouldExecute() )
         {
             init();
             registerLicenseFile();
@@ -96,12 +95,30 @@ public class CloverInstrumentMojo
             addCloverDependencyToCompileClasspath();
             redirectOutputDirectories();
         }
-        else
-        {
-            getLog().debug("No sources found - No Clover instrumentation done");
-        }
     }
 
+    private boolean shouldExecute()
+    {
+        boolean shouldExecute = true;
+        
+        // Only execute reports for java projects
+        ArtifactHandler artifactHandler = this.project.getArtifact().getArtifactHandler();
+        File srcDir = new File(this.project.getBuild().getSourceDirectory());
+
+        if ( !"java".equals( artifactHandler.getLanguage() ) )
+        {
+            getLog().debug( "Not executing Clover as this is not a Java project." );
+            shouldExecute = false;
+        }
+        else if ( !srcDir.exists() )
+        {
+            getLog().debug("No sources found - No Clover instrumentation done");
+            shouldExecute = false;
+        }
+
+        return shouldExecute;
+    }
+    
     private void instrumentSources() throws MojoExecutionException
     {
         int result = CloverInstr.mainImpl( createCliArgs() );
