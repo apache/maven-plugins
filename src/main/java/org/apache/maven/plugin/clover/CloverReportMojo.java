@@ -17,6 +17,8 @@ package org.apache.maven.plugin.clover;
  */
 
 import com.cenqua.clover.reporters.html.HtmlReporter;
+
+import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
@@ -75,6 +77,14 @@ public class CloverReportMojo
     public void executeReport( Locale locale )
         throws MavenReportException
     {
+        // Only execute reports for java projects
+        ArtifactHandler artifactHandler = this.project.getArtifact().getArtifactHandler();
+        if ( !"java".equals( artifactHandler.getLanguage() ) )
+        {
+            getLog().debug( "Not generating a Clover report as this is not a Java project." );
+            return;
+        }
+        
         int result = HtmlReporter.mainImpl( createCliArgs() );
         if ( result != 0 )
         {
