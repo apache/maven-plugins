@@ -85,19 +85,34 @@ public class CloverInstrumentMojo
     public void execute()
         throws MojoExecutionException
     {
-        init();
+        // Do not perform anything if there are no source files
+        File srcDir = new File(this.project.getBuild().getSourceDirectory());
+        if (srcDir.exists())
+        {
+            init();
+            registerLicenseFile();
+            instrumentSources();
+            addGeneratedSourcesToCompileRoots();
+            addCloverDependencyToCompileClasspath();
+            redirectOutputDirectories();
+        }
+        else
+        {
+            getLog().debug("No sources found - No Clover instrumentation done");
+        }
+    }
 
-        registerLicenseFile();
-
+    private void instrumentSources() throws MojoExecutionException
+    {
         int result = CloverInstr.mainImpl( createCliArgs() );
         if ( result != 0 )
         {
             throw new MojoExecutionException( "Clover has failed to instrument the source files" );
         }
+    }
 
-        addGeneratedSourcesToCompileRoots();
-        addCloverDependencyToCompileClasspath();
-
+    private void redirectOutputDirectories()
+    {
         // Explicitely set the output directory to be the Clover one so that all other plugins executing
         // thereafter output files in the Clover output directory and not in the main output directory.
         this.project.getBuild().setDirectory( this.cloverOutputDirectory );
@@ -108,7 +123,7 @@ public class CloverInstrumentMojo
         this.project.getBuild().setTestOutputDirectory(
             new File( this.cloverOutputDirectory, "test-classes" ).getPath() );
     }
-
+    
     /**
      * @todo handle multiple source roots. At the moment only the first source root is instrumented
      */
