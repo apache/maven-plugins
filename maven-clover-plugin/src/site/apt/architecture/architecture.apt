@@ -1,0 +1,18 @@
+ ------
+ Maven 2 Clover Plugin
+ ------
+ Vincent Massol
+ <vmassol@apache.org>
+ ------
+ December 20th, 2005
+
+Architecture
+
+  You'll find here the list of architecture documents available for the Clover plugin. Users should
+  not need to read those docments to be able to use the plugin. However they do provide some
+  insight about the implementation and may help code contributors.
+  
+  {{{clover-check.html}Clover check goal architecture}}:
+
+[../images/clover-check-achitecture-small.jpg] Clover check goal architecture
+  
