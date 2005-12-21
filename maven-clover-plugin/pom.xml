@@ -68,6 +68,9 @@
             <goals>
               <goal>test</goal>
             </goals>
+            <configuration>
+              <goals>verify</goals>
+            </configuration>
           </execution>
         </executions>
       </plugin>
