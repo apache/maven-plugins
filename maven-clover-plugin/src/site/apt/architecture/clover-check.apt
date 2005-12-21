@@ -4,13 +4,11 @@
  Vincent Massol
  <vmassol@apache.org>
  ------
- December 19th, 2005
+ December 20th, 2005
 
-Architecture
+Architecture of the clover:check goal
 
-  TODO
-  
   Here's how the <<<clover:check>>> goal works:
 
-[images/clover-check-achitecture.jpg] Clover check goal architecture
+[../images/clover-check-achitecture.jpg] Clover check goal architecture
   

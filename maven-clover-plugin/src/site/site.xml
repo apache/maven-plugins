@@ -35,8 +35,13 @@
     <menu name="Overview">
       <item name="Introduction" href="introduction.html"/>
       <item name="How to Use" href="howto.html"/>
-      <item name="How it works" href="architecture.html"/>
     </menu>
+
+    <menu name="Architecture">
+      <item name="Overview" href="/architecture/architecture.html"/>
+      <item name="Check Goal" href="/architecture/clover-check.html"/>
+    </menu>
+    
     ${reports}
 
   </body>
