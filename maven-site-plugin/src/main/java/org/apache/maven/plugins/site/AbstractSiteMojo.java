@@ -71,13 +71,15 @@ public abstract class AbstractSiteMojo
      * @param locale the locale
      * @return the site descriptor path
      */
-    protected File getSiteDescriptorFile( Locale locale )
+    protected File getSiteDescriptorFile( File basedir, Locale locale )
     {
-        File siteDescriptor = new File( siteDirectory, "site_" + locale.getLanguage() + ".xml" );
+        // TODO: get proper siteDirectory
+
+        File siteDescriptor = new File( basedir, "src/site/site_" + locale.getLanguage() + ".xml" );
 
         if ( !siteDescriptor.exists() )
         {
-            siteDescriptor = new File( siteDirectory, "site.xml" );
+            siteDescriptor = new File( basedir, "src/site/site.xml" );
         }
         return siteDescriptor;
     }

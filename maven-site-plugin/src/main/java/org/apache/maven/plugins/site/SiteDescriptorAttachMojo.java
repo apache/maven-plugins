@@ -42,6 +42,13 @@ public class SiteDescriptorAttachMojo
      */
     private Artifact artifact;
 
+    /**
+     * @parameter expression="${basedir}"
+     * @required
+     * @readonly
+     */
+    private File basedir;
+
     public void execute()
         throws MojoExecutionException
     {
@@ -51,7 +58,7 @@ public class SiteDescriptorAttachMojo
         {
             Locale locale = (Locale) iterator.next();
 
-            File descriptorFile = getSiteDescriptorFile( locale );
+            File descriptorFile = getSiteDescriptorFile( basedir, locale );
 
             if ( descriptorFile.exists() )
             {
