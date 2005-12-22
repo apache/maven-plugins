@@ -16,6 +16,12 @@ package org.apache.maven.plugins.site;
  * limitations under the License.
  */
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.doxia.module.xdoc.XdocSiteModule;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.inheritance.DecorationModelInheritanceAssembler;
@@ -184,6 +190,35 @@ public class SiteMojo
      * @component
      */
     private DecorationModelInheritanceAssembler assembler;
+
+    /**
+     * The component that is used to resolve additional artifacts required.
+     *
+     * @component
+     */
+    private ArtifactResolver artifactResolver;
+
+    /**
+     * The local repository.
+     *
+     * @parameter expression="${localRepository}
+     */
+    private ArtifactRepository localRepository;
+
+    /**
+     * Remote repositories used for the project.
+     *
+     * @todo this is used for site descriptor resolution - it should relate to the actual project but for some reason they are not always filled in
+     * @parameter expression="${project.remoteArtifactRepositories}"
+     */
+    private List repositories;
+
+    /**
+     * The component used for creating artifact instances.
+     *
+     * @component
+     */
+    private ArtifactFactory artifactFactory;
 
     /**
      * Generate the project site
@@ -448,15 +483,20 @@ public class SiteMojo
     {
         Map props = new HashMap( origProps );
 
-        // TODO: this isn't taking into account the pom in the repository. It should be resolving it in some way that
-        //  is compatible with the parent resolution and USD
+        // TODO: we should use a workspace API that would know if it was in the repository already or not
         File siteDescriptor = getSiteDescriptorFile( project.getBasedir(), locale );
 
         String siteDescriptorContent;
 
         try
         {
-            if ( siteDescriptor.exists() )
+            if ( !siteDescriptor.exists() )
+            {
+                // try the repository
+                siteDescriptor = getSiteDescriptorFromRepository( project, locale );
+            }
+
+            if ( siteDescriptor != null && siteDescriptor.exists() )
             {
                 siteDescriptorContent = FileUtils.fileRead( siteDescriptor );
             }
@@ -468,6 +508,11 @@ public class SiteMojo
         catch ( IOException e )
         {
             throw new MojoExecutionException( "The site descriptor cannot be read!", e );
+        }
+        catch ( ArtifactResolutionException e )
+        {
+            throw new MojoExecutionException(
+                "The site descriptor cannot be resolved from the repository: " + e.getMessage(), e );
         }
 
         props.put( "outputEncoding", outputEncoding );
@@ -518,6 +563,53 @@ public class SiteMojo
         }
 
         return decoration;
+    }
+
+    private File getSiteDescriptorFromRepository( MavenProject project, Locale locale )
+        throws ArtifactResolutionException
+    {
+        File result = null;
+
+        try
+        {
+            result = resolveSiteDescriptor( project, locale );
+        }
+        catch ( ArtifactNotFoundException e )
+        {
+            getLog().debug( "Unable to locate site descriptor: " + e );
+        }
+
+        return result;
+    }
+
+    private File resolveSiteDescriptor( MavenProject project, Locale locale )
+        throws ArtifactResolutionException, ArtifactNotFoundException
+    {
+        File result;
+
+        try
+        {
+            // TODO: this is a bit crude - proper type, or proper handling as metadata rather than an artifact in 2.1?
+            Artifact artifact = artifactFactory.createArtifactWithClassifier( project.getGroupId(),
+                                                                              project.getArtifactId(),
+                                                                              project.getVersion(), "xml",
+                                                                              "site_" + locale.getLanguage() );
+            artifactResolver.resolve( artifact, repositories, localRepository );
+
+            result = artifact.getFile();
+        }
+        catch ( ArtifactNotFoundException e )
+        {
+            getLog().debug( "Unable to locate site descriptor: " + e );
+
+            Artifact artifact = artifactFactory.createArtifactWithClassifier( project.getGroupId(),
+                                                                              project.getArtifactId(),
+                                                                              project.getVersion(), "xml", "site" );
+            artifactResolver.resolve( artifact, repositories, localRepository );
+
+            result = artifact.getFile();
+        }
+        return result;
     }
 
     private List filterReports( List reports )
