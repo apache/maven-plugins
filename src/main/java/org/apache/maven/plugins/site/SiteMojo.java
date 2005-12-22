@@ -16,19 +16,24 @@ package org.apache.maven.plugins.site;
  * limitations under the License.
  */
 
+import org.apache.maven.doxia.module.xdoc.XdocSiteModule;
+import org.apache.maven.doxia.site.decoration.DecorationModel;
+import org.apache.maven.doxia.site.decoration.inheritance.DecorationModelInheritanceAssembler;
+import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
+import org.apache.maven.doxia.siterenderer.Renderer;
+import org.apache.maven.doxia.siterenderer.RendererException;
+import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
+import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.doxia.module.xdoc.XdocSiteModule;
-import org.codehaus.plexus.siterenderer.Renderer;
-import org.codehaus.plexus.siterenderer.RendererException;
-import org.codehaus.plexus.siterenderer.sink.SiteRendererSink;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -37,6 +42,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.OutputStreamWriter;
+import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -166,6 +172,20 @@ public class SiteMojo
     private List reports;
 
     /**
+     * Convenience parameter that allows you to disable report generation.
+     *
+     * @parameter expression="${generateReports}" default-value="true"
+     */
+    private boolean generateReports;
+
+    /**
+     * The component for assembling inheritance.
+     *
+     * @component
+     */
+    private DecorationModelInheritanceAssembler assembler;
+
+    /**
      * Generate the project site
      * <p/>
      * throws MojoExecutionException if any
@@ -175,10 +195,11 @@ public class SiteMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        ClassLoader templateClassLoader;
 
         if ( templateDirectory == null )
         {
-            siteRenderer.setTemplateClassLoader( SiteMojo.class.getClassLoader() );
+            templateClassLoader = SiteMojo.class.getClassLoader();
         }
         else
         {
@@ -190,13 +211,7 @@ public class SiteMojo
                         "This templateDirectory=[" + templateDirectory + "] doesn't exist." );
                 }
 
-                URL templateDirectoryUrl = templateDirectory.toURL();
-
-                URL[] urls = {templateDirectoryUrl};
-
-                URLClassLoader urlClassloader = new URLClassLoader( urls );
-
-                siteRenderer.setTemplateClassLoader( urlClassloader );
+                templateClassLoader = new URLClassLoader( new URL[]{templateDirectory.toURL()} );
             }
             catch ( MalformedURLException e )
             {
@@ -301,25 +316,31 @@ public class SiteMojo
                 // Exception if a file is duplicate
                 checkDuplicates( duplicate, locale );
 
-                String siteDescriptor = getSiteDescriptor( reports, locale, projectInfos, projectReports );
+                DecorationModel decoration = getDecorationModel( reports, locale, projectInfos, projectReports );
+
+                SiteRenderingContext context = new SiteRenderingContext();
+                context.setTemplate( template );
+                context.setTemplateProperties( attributes );
+                context.setLocale( locale );
+                context.setTemplateClassLoader( templateClassLoader );
+                context.setDecoration( decoration );
 
                 //Generate reports
                 List generatedReportsFileName = Collections.EMPTY_LIST;
                 if ( reports != null )
                 {
-                    generatedReportsFileName =
-                        generateReportsPages( reports, locale, outputDirectory, defaultLocale, siteDescriptor );
+                    generatedReportsFileName = generateReportsPages( reports, outputDirectory, defaultLocale, context );
                 }
 
                 //Generate overview pages
                 if ( projectInfos.size() > 0 )
                 {
-                    generateProjectInfoPage( siteDescriptor, locale, projectInfos, outputDirectory );
+                    generateProjectInfoPage( projectInfos, outputDirectory, context );
                 }
 
                 if ( projectReports.size() > 0 )
                 {
-                    generateProjectReportsPage( siteDescriptor, locale, projectReports, outputDirectory );
+                    generateProjectReportsPage( projectReports, outputDirectory, context );
                 }
 
                 // Try to generate the index.html
@@ -331,7 +352,7 @@ public class SiteMojo
                 else
                 {
                     getLog().info( "Generate an index file for the " + displayLanguage + " version." );
-                    generateIndexPage( siteDescriptor, locale, outputDirectory );
+                    generateIndexPage( outputDirectory, context );
                 }
 
                 // TODO: Be good to generate a module's summary page thats referenced off the
@@ -349,7 +370,7 @@ public class SiteMojo
                     }
                 }
 
-                siteRenderer.render( siteDirectoryFile, outputDirectory, siteDescriptor, template, attributes, locale );
+                siteRenderer.render( siteDirectoryFile, outputDirectory, context );
 
                 // Check if ${basedir}/xdocs is existing
                 if ( xdocDirectory.exists() )
@@ -360,9 +381,8 @@ public class SiteMojo
                     {
                         XdocSiteModule xdoc = new XdocSiteModule();
 
-                        siteRenderer.render( xdocDirectoryFile, outputDirectory, xdoc.getSourceDirectory(), xdoc
-                            .getExtension(), xdoc.getParserId(), siteDescriptor, template, attributes, locale,
-                                             outputEncoding );
+                        siteRenderer.render( xdocDirectoryFile, outputDirectory, xdoc.getSourceDirectory(),
+                                             xdoc.getExtension(), xdoc.getParserId(), context, outputEncoding );
                     }
                 }
 
@@ -376,8 +396,7 @@ public class SiteMojo
 
                 if ( generatedSiteDirectory.exists() )
                 {
-                    siteRenderer.render( generatedSiteDirectory, outputDirectory, siteDescriptor, template, attributes,
-                                         locale );
+                    siteRenderer.render( generatedSiteDirectory, outputDirectory, context );
                 }
             }
         }
@@ -395,27 +414,139 @@ public class SiteMojo
         }
     }
 
+    private DecorationModel getDecorationModel( List reports, Locale locale, List projectInfos, List projectReports )
+        throws MojoExecutionException
+    {
+        Map props = new HashMap();
+
+        // TODO: can we replace these with an XML tag?
+        if ( reports != null )
+        {
+            props.put( "reports", getReportsMenu( locale, projectInfos, projectReports ) );
+        }
+        else
+        {
+            props.put( "reports", "" );
+        }
+
+        // we require child modules and reactors to process module menu
+
+        if ( addModules && reactorProjects.size() > 1 && project.getModules().size() > 0 )
+        {
+            props.put( "modules", getModulesMenu( locale ) );
+        }
+        else
+        {
+            props.put( "modules", "" );
+        }
+
+        return getDecorationModel( project, locale, props );
+    }
+
+    private DecorationModel getDecorationModel( MavenProject project, Locale locale, Map origProps )
+        throws MojoExecutionException
+    {
+        Map props = new HashMap( origProps );
+
+        // TODO: this isn't taking into account the pom in the repository. It should be resolving it in some way that
+        //  is compatible with the parent resolution and USD
+        File siteDescriptor = getSiteDescriptorFile( project.getBasedir(), locale );
+
+        String siteDescriptorContent;
+
+        try
+        {
+            if ( siteDescriptor.exists() )
+            {
+                siteDescriptorContent = FileUtils.fileRead( siteDescriptor );
+            }
+            else
+            {
+                siteDescriptorContent = IOUtil.toString( getClass().getResourceAsStream( "/default-site.xml" ) );
+            }
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "The site descriptor cannot be read!", e );
+        }
+
+        props.put( "outputEncoding", outputEncoding );
+
+        // TODO: interpolate ${project.*} in general
+
+        if ( project.getName() != null )
+        {
+            props.put( "project.name", project.getName() );
+        }
+        else
+        {
+            props.put( "project.name", "NO_PROJECT_NAME_SET" );
+        }
+
+        if ( project.getUrl() != null )
+        {
+            props.put( "project.url", project.getUrl() );
+        }
+        else
+        {
+            props.put( "project.url", "NO_PROJECT_URL_SET" );
+        }
+
+        siteDescriptorContent = StringUtils.interpolate( siteDescriptorContent, props );
+
+        DecorationModel decoration;
+        try
+        {
+            decoration = new DecorationXpp3Reader().read( new StringReader( siteDescriptorContent ) );
+        }
+        catch ( XmlPullParserException e )
+        {
+            throw new MojoExecutionException( "Error parsing site descriptor", e );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Error reading site descriptor", e );
+        }
+
+        if ( project.getParent() != null )
+        {
+            props.put( "parentProject", getProjectParentMenu( locale ) );
+
+            DecorationModel parent = getDecorationModel( project.getParent(), locale, props );
+
+            assembler.assembleModelInheritance( decoration, parent );
+        }
+
+        return decoration;
+    }
+
     private List filterReports( List reports )
     {
         List filteredReports = new ArrayList( reports.size() );
-        for ( Iterator i = reports.iterator(); i.hasNext(); )
+        if ( generateReports )
         {
-            MavenReport report = (MavenReport) i.next();
-            try
+            for ( Iterator i = reports.iterator(); i.hasNext(); )
             {
-                if ( report.canGenerateReport() )
+                MavenReport report = (MavenReport) i.next();
+                //noinspection ErrorNotRethrown,UnusedCatchParameter
+                try
                 {
+                    if ( report.canGenerateReport() )
+                    {
+                        filteredReports.add( report );
+                    }
+                }
+                catch ( AbstractMethodError e )
+                {
+
+                    // the canGenerateReport() has been added just before the 2.0 release and will cause all the reporting
+                    // plugins with an earlier version to fail (most of the codehaus mojo now fails)
+                    // be nice with them, output a warning and don't let them break anything
+
+                    getLog().warn( "Error loading report " + report.getClass().getName() +
+                        " - AbstractMethodError: canGenerateReport()" );
                     filteredReports.add( report );
                 }
-            }
-            // the canGenerateReport() has been added just before the 2.0 release and will cause all the reporting
-            // plugins with an earlier version to fail (most of the codehaus mojo now fails)
-            // be nice with them, output a warning and don't let them break anything
-            catch ( AbstractMethodError e )
-            {
-                getLog().warn( "Error loading report " + report.getClass().getName() +
-                    " - AbstractMethodError: canGenerateReport()" );
-                filteredReports.add( report );
             }
         }
         return filteredReports;
@@ -609,95 +740,18 @@ public class SiteMojo
     }
 
     /**
-     * @param reports a list of reports
-     * @param locale  the current locale
-     * @return the inpustream
-     * @throws org.apache.maven.plugin.MojoExecutionException
-     *          is any
-     */
-    private String getSiteDescriptor( List reports, Locale locale, List projectInfos, List projectReports )
-        throws MojoExecutionException
-    {
-        File siteDescriptor = getSiteDescriptorFile( locale );
-
-        String siteDescriptorContent;
-
-        try
-        {
-            if ( siteDescriptor.exists() )
-            {
-                siteDescriptorContent = FileUtils.fileRead( siteDescriptor );
-            }
-            else
-            {
-                siteDescriptorContent = IOUtil.toString( getClass().getResourceAsStream( "/default-site.xml" ) );
-            }
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "The site descriptor cannot be read!", e );
-        }
-
-        Map props = new HashMap();
-
-        props.put( "outputEncoding", outputEncoding );
-
-        if ( reports != null )
-        {
-            props.put( "reports", getReportsMenu( locale, projectInfos, projectReports ) );
-        }
-
-        if ( project.getParent() != null )
-        {
-            props.put( "parentProject", getProjectParentMenu( locale ) );
-        }
-
-        // we require child modules and reactors to process module menu
-
-        if ( ( addModules && reactorProjects.size() > 1 && project.getModules().size() > 0 ) )
-        {
-            props.put( "modules", getModulesMenu( locale ) );
-        }
-
-        // TODO: interpolate ${project.*} in general
-
-        if ( project.getName() != null )
-        {
-            props.put( "project.name", project.getName() );
-        }
-        else
-        {
-            props.put( "project.name", "NO_PROJECT_NAME_SET" );
-        }
-
-        if ( project.getUrl() != null )
-        {
-            props.put( "project.url", project.getUrl() );
-        }
-        else
-        {
-            props.put( "project.url", "NO_PROJECT_URL_SET" );
-        }
-
-        siteDescriptorContent = StringUtils.interpolate( siteDescriptorContent, props );
-
-        return siteDescriptorContent;
-    }
-
-    /**
      * Generate an index page.
      *
-     * @param siteDescriptor
-     * @param locale
      * @param outputDirectory
      */
-    private void generateIndexPage( String siteDescriptor, Locale locale, File outputDirectory )
+    private void generateIndexPage( File outputDirectory, SiteRenderingContext context )
         throws RendererException, IOException
     {
         String outputFileName = "index.html";
 
-        SiteRendererSink sink = siteRenderer.createSink( siteDirectory, outputFileName, siteDescriptor );
+        SiteRendererSink sink = siteRenderer.createSink( siteDirectory, outputFileName );
 
+        Locale locale = context.getLocale();
         String title = i18n.getString( "site-plugin", locale, "report.index.title" ).trim() + " " + project.getName();
 
         sink.head();
@@ -733,7 +787,7 @@ public class SiteMojo
         File outputFile = new File( outputDirectory, outputFileName );
 
         siteRenderer.generateDocument( new OutputStreamWriter( new FileOutputStream( outputFile ), outputEncoding ),
-                                       template, attributes, sink, locale );
+                                       sink, context );
     }
 
     // Generate specific pages
@@ -742,11 +796,10 @@ public class SiteMojo
      * Generate reports pages
      *
      * @param reports
-     * @param locale
      * @param localeOutputDirectory
      */
-    private List generateReportsPages( List reports, Locale locale, File localeOutputDirectory, Locale defaultLocale,
-                                       String siteDescriptor )
+    private List generateReportsPages( List reports, File localeOutputDirectory, Locale defaultLocale,
+                                       SiteRenderingContext context )
         throws RendererException, IOException, MavenReportException
     {
         List generatedReportsFileName = new ArrayList();
@@ -755,6 +808,7 @@ public class SiteMojo
         {
             MavenReport report = (MavenReport) j.next();
 
+            Locale locale = context.getLocale();
             getLog().info( "Generate \"" + report.getName( locale ) + "\" report." );
 
             report.setReportOutputDirectory( localeOutputDirectory );
@@ -772,7 +826,7 @@ public class SiteMojo
 
             String outputFileName = reportFileName + ".html";
 
-            SiteRendererSink sink = siteRenderer.createSink( siteDirectory, outputFileName, siteDescriptor );
+            SiteRendererSink sink = siteRenderer.createSink( siteDirectory, outputFileName );
 
             report.generate( sink, locale );
 
@@ -786,8 +840,7 @@ public class SiteMojo
                 }
 
                 siteRenderer.generateDocument(
-                    new OutputStreamWriter( new FileOutputStream( outputFile ), outputEncoding ), template, attributes,
-                    sink, locale );
+                    new OutputStreamWriter( new FileOutputStream( outputFile ), outputEncoding ), sink, context );
             }
         }
         return generatedReportsFileName;
@@ -796,19 +849,17 @@ public class SiteMojo
     /**
      * Generates Project Info Page
      *
-     * @param siteDescriptor  site.xml
-     * @param locale          the locale used
      * @param projectInfos    list of projectInfos
      * @param outputDirectory directory that will contain the generated project info page
      */
-    private void generateProjectInfoPage( String siteDescriptor, Locale locale, List projectInfos,
-                                          File outputDirectory )
+    private void generateProjectInfoPage( List projectInfos, File outputDirectory, SiteRenderingContext context )
         throws RendererException, IOException
     {
         String outputFileName = "project-info.html";
 
-        SiteRendererSink sink = siteRenderer.createSink( siteDirectory, outputFileName, siteDescriptor );
+        SiteRendererSink sink = siteRenderer.createSink( siteDirectory, outputFileName );
 
+        Locale locale = context.getLocale();
         String title = i18n.getString( "site-plugin", locale, "report.information.title" );
 
         sink.head();
@@ -879,25 +930,23 @@ public class SiteMojo
         File outputFile = new File( outputDirectory, outputFileName );
 
         siteRenderer.generateDocument( new OutputStreamWriter( new FileOutputStream( outputFile ), outputEncoding ),
-                                       template, attributes, sink, locale );
+                                       sink, context );
     }
 
     /**
      * Generates the Project Report Pages
      *
-     * @param siteDescriptor  site.xml
-     * @param locale          the locale used
      * @param projectReports  list of project reports
      * @param outputDirectory directory that will contain the generated project report pages
      */
-    private void generateProjectReportsPage( String siteDescriptor, Locale locale, List projectReports,
-                                             File outputDirectory )
+    private void generateProjectReportsPage( List projectReports, File outputDirectory, SiteRenderingContext context )
         throws RendererException, IOException
     {
         String outputFileName = "maven-reports.html";
 
-        SiteRendererSink sink = siteRenderer.createSink( siteDirectory, outputFileName, siteDescriptor );
+        SiteRendererSink sink = siteRenderer.createSink( siteDirectory, outputFileName );
 
+        Locale locale = context.getLocale();
         String title = i18n.getString( "site-plugin", locale, "report.project.title" );
 
         sink.head();
@@ -964,7 +1013,7 @@ public class SiteMojo
         File outputFile = new File( outputDirectory, outputFileName );
 
         siteRenderer.generateDocument( new OutputStreamWriter( new FileOutputStream( outputFile ), outputEncoding ),
-                                       template, attributes, sink, locale );
+                                       sink, context );
     }
 
     /**
@@ -972,6 +1021,7 @@ public class SiteMojo
      *
      * @param outputDir the output directory
      * @throws IOException if any
+     * @todo move to skin functionality in site renderer
      */
     private void copyResources( File outputDir )
         throws IOException
@@ -1066,12 +1116,16 @@ public class SiteMojo
 
     private File getOutputDirectory( Locale locale, Locale defaultLocale )
     {
+        File file;
         if ( locale.getLanguage().equals( defaultLocale.getLanguage() ) )
         {
-            return outputDirectory;
+            file = outputDirectory;
         }
-
-        return new File( outputDirectory, locale.getLanguage() );
+        else
+        {
+            file = new File( outputDirectory, locale.getLanguage() );
+        }
+        return file;
     }
 
     /**
@@ -1091,28 +1145,29 @@ public class SiteMojo
         {
             String currentFile = (String) it.next();
 
+            int endIndex = currentFile.lastIndexOf( "." );
             if ( currentFile.lastIndexOf( File.separator ) == -1 )
             {
                 // ignore files directly in the directory
-                continue;
             }
-
-            if ( currentFile.lastIndexOf( "." ) == -1 || currentFile.startsWith( "." ) )
+            else if ( endIndex == -1 || currentFile.startsWith( "." ) )
             {
                 // ignore files without extension
-                continue;
             }
-
-            String key = currentFile.substring( currentFile.indexOf( File.separator ) + 1, currentFile
-                .lastIndexOf( "." ) );
-
-            List tmp = (List) duplicate.get( key.toLowerCase() );
-            if ( tmp == null )
+            else
             {
-                tmp = new ArrayList();
-                duplicate.put( key.toLowerCase(), tmp );
+
+                int beginIndex = currentFile.indexOf( File.separator ) + 1;
+                String key = currentFile.substring( beginIndex, endIndex ).toLowerCase( Locale.getDefault() );
+
+                List tmp = (List) duplicate.get( key );
+                if ( tmp == null )
+                {
+                    tmp = new ArrayList();
+                    duplicate.put( key, tmp );
+                }
+                tmp.add( currentFile );
             }
-            tmp.add( currentFile );
         }
     }
 
