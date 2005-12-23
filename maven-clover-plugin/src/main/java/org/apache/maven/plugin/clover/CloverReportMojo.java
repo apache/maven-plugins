@@ -25,6 +25,7 @@ import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.doxia.site.renderer.SiteRenderer;
 
+import java.io.File;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -57,7 +58,7 @@ public class CloverReportMojo
      * @parameter expression="${project.reporting.outputDirectory}/clover"
      * @required
      */
-    private String outputDirectory;
+    private File outputDirectory;
 
     /**
      * When the Clover Flush Policy is set to "interval" or threaded this value is the minimum 
@@ -124,11 +125,11 @@ public class CloverReportMojo
      */
     private String[] createCliArgs()
     {
-        return new String[]{
+        return new String[] {
             "-t", "Maven Clover report", 
             "-p", (String) this.project.getCompileSourceRoots().get( 0 ),
             "-i", this.cloverDatabase, 
-            "-o", this.outputDirectory};
+            "-o", this.outputDirectory.getPath() };
     }
 
     public String getOutputName()
@@ -154,7 +155,7 @@ public class CloverReportMojo
      */
     protected String getOutputDirectory()
     {
-        return this.outputDirectory;
+        return this.outputDirectory.getAbsoluteFile().toString();
     }
 
     /**
