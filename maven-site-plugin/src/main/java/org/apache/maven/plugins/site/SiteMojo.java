@@ -556,6 +556,10 @@ public class SiteMojo
 
             assembler.assembleModelInheritance( decoration, parent, project.getUrl(), parentProject.getUrl() );
         }
+        else
+        {
+            props.put( "parentProject", "" );
+        }
 
         return decoration;
     }
