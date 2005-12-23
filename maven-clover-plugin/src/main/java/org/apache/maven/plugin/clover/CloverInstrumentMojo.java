@@ -49,6 +49,8 @@ public class CloverInstrumentMojo
     private String cloverOutputDirectory;
 
     /**
+     * The location of the <a href="http://cenqua.com/clover/doc/adv/database.html">Clover database</a>.
+     * 
      * @parameter
      * @required
      */
@@ -57,7 +59,6 @@ public class CloverInstrumentMojo
     /**
      * @parameter expression="${project}"
      * @required
-     * @readonly
      */
     private MavenProject project;
 
