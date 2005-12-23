@@ -19,7 +19,6 @@ package org.apache.maven.plugin.clover;
 import com.cenqua.clover.reporters.html.HtmlReporter;
 
 import org.apache.maven.artifact.handler.ArtifactHandler;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
@@ -41,6 +40,9 @@ import java.util.ResourceBundle;
 public class CloverReportMojo
     extends AbstractMavenReport
 {
+    // TODO: Need some way to share config elements and code between report mojos and main build
+    // mojos. See http://jira.codehaus.org/browse/MNG-1886
+    
     /**
      * The location of the <a href="http://cenqua.com/clover/doc/adv/database.html">Clover database</a>.
      * 
@@ -57,6 +59,28 @@ public class CloverReportMojo
      */
     private String outputDirectory;
 
+    /**
+     * When the Clover Flush Policy is set to "interval" or threaded this value is the minimum 
+     * period between flush operations (in milliseconds).
+     *
+     * @parameter default-value="500"
+     */
+    protected int flushInterval;
+
+    /**
+     * If true we'll wait 2*flushInterval to ensure coverage data is flushed to the Clover 
+     * database before running any query on it. 
+     * 
+     * Note: The only use case where you would want to turn this off is if you're running your 
+     * tests in a separate JVM. In that case the coverage data will be flushed by default upon
+     * the JVM shutdown and there would be no need to wait for the data to be flushed. As we
+     * can't control whether users want to fork their tests or not, we're offering this parameter
+     * to them.  
+     * 
+     * @parameter default-value="true"
+     */
+    protected boolean waitForFlush;
+    
     /**
      * @component
      */
@@ -84,6 +108,8 @@ public class CloverReportMojo
             getLog().debug( "Not generating a Clover report as this is not a Java project." );
             return;
         }
+
+        AbstractCloverMojo.waitForFlush( this.waitForFlush, this.flushInterval );
         
         int result = HtmlReporter.mainImpl( createCliArgs() );
         if ( result != 0 )
@@ -98,8 +124,11 @@ public class CloverReportMojo
      */
     private String[] createCliArgs()
     {
-        return new String[]{"-t", "Maven Clover report", "-p", (String) this.project.getCompileSourceRoots().get( 0 ),
-            "-i", this.cloverDatabase, "-o", this.outputDirectory};
+        return new String[]{
+            "-t", "Maven Clover report", 
+            "-p", (String) this.project.getCompileSourceRoots().get( 0 ),
+            "-i", this.cloverDatabase, 
+            "-o", this.outputDirectory};
     }
 
     public String getOutputName()
@@ -159,23 +188,6 @@ public class CloverReportMojo
         throws MavenReportException
     {
         executeReport( locale );
-    }
-
-    /**
-     * @see org.apache.maven.plugin.Mojo#execute()
-     */
-    public void execute()
-        throws MojoExecutionException
-    {
-        try
-        {
-            generate( null, Locale.ENGLISH );
-        }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException(
-                "An error has occurred in " + getName( Locale.ENGLISH ) + " report generation.", e );
-        }
     }
 
     public boolean isExternalReport()

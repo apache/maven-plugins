@@ -50,7 +50,7 @@ public class CloverCheckMojo
     public void execute()
         throws MojoExecutionException
     {
-        waitForFlush();
+        AbstractCloverMojo.waitForFlush( this.waitForFlush, this.flushInterval );
 
         Project antProject = registerCloverAntTasks();
 
