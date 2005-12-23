@@ -73,7 +73,7 @@ public abstract class AbstractSiteMojo
      */
     protected File getSiteDescriptorFile( File basedir, Locale locale )
     {
-        // TODO: get proper siteDirectory
+        // TODO: get proper siteDirectory from site configuration of the project this relates to
 
         File siteDescriptor = new File( basedir, "src/site/site_" + locale.getLanguage() + ".xml" );
 

@@ -553,13 +553,14 @@ public class SiteMojo
             throw new MojoExecutionException( "Error reading site descriptor", e );
         }
 
-        if ( project.getParent() != null )
+        MavenProject parentProject = project.getParent();
+        if ( parentProject != null )
         {
             props.put( "parentProject", getProjectParentMenu( locale ) );
 
-            DecorationModel parent = getDecorationModel( project.getParent(), locale, props );
+            DecorationModel parent = getDecorationModel( parentProject, locale, props );
 
-            assembler.assembleModelInheritance( decoration, parent );
+            assembler.assembleModelInheritance( decoration, parent, project.getUrl(), parentProject.getUrl() );
         }
 
         return decoration;
