@@ -97,14 +97,17 @@ public abstract class AbstractCloverMojo extends AbstractMojo
 
     /**
      * Wait 2*'flush interval' milliseconds to ensure that the coverage data have been flushed.
+     * 
+     * TODOe: This method should not be static but we need it static because cannot share code 
+     * between non report mojos and main build mojos. See http://jira.codehaus.org/browse/MNG-1886 
      */
-    protected void waitForFlush()
+    public static void waitForFlush(boolean waitForFlush, int flushInterval) 
     {
-        if ( this.waitForFlush )
+        if ( waitForFlush )
         {
             try
             {
-                Thread.sleep( 2 * this.flushInterval );
+                Thread.sleep( 2 * flushInterval );
             }
             catch ( InterruptedException e )
             {
