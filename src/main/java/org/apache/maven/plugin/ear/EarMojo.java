@@ -23,12 +23,14 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Arrays;
 
 /**
  * Builds J2EE Enteprise Archive (EAR) files.
@@ -261,7 +263,7 @@ public class EarMojo
         List excludeList = new ArrayList( FileUtils.getDefaultExcludesAsList() );
         if ( earSourceExcludes != null && !"".equals( earSourceExcludes ) )
         {
-            excludeList.add( earSourceExcludes );
+            excludeList.addAll( Arrays.asList( StringUtils.split( earSourceExcludes, "," ) ) );
         }
 
         // if applicationXml is specified, omit the one in the source directory
@@ -281,7 +283,7 @@ public class EarMojo
      */
     protected String[] getIncludes()
     {
-        return new String[]{earSourceIncludes};
+        return StringUtils.split( StringUtils.defaultString( earSourceIncludes ), "," );
     }
 
     private static File buildDestinationFile( File buildDir, String uri )
