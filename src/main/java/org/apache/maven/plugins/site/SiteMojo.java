@@ -132,12 +132,6 @@ public class SiteMojo
     private Map attributes;
 
     /**
-     * @parameter expression="${addModules}"
-     * default-value="true"
-     */
-    private boolean addModules;
-
-    /**
      * Specifies the output encoding.
      *
      * @parameter expression="${outputEncoding}"
@@ -466,7 +460,7 @@ public class SiteMojo
 
         // we require child modules and reactors to process module menu
 
-        if ( addModules && reactorProjects.size() > 1 && project.getModules().size() > 0 )
+        if ( reactorProjects.size() > 1 && project.getModules().size() > 0 )
         {
             props.put( "modules", getModulesMenu( locale ) );
         }
