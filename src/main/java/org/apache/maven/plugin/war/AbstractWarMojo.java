@@ -31,6 +31,7 @@ import org.codehaus.plexus.util.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -197,7 +198,7 @@ public abstract class AbstractWarMojo
         List excludeList = new ArrayList();
         if ( StringUtils.isNotEmpty(warSourceExcludes) )
         {
-            excludeList.add( warSourceExcludes );
+            excludeList.addAll( Arrays.asList( StringUtils.split( warSourceExcludes, "," ) ) );
         }
 
         // if webXML is specified, omit the one in the source directory
@@ -217,7 +218,7 @@ public abstract class AbstractWarMojo
      */
     protected String[] getIncludes()
     {
-        return new String[]{warSourceIncludes};
+        return StringUtils.split( StringUtils.defaultString( warSourceIncludes ), "," );
     }
     
     /**
@@ -227,13 +228,12 @@ public abstract class AbstractWarMojo
      * @return an array of tokens to exclude
      */
     protected String[] getDependentWarExcludes() {
-        List excludeList = new ArrayList();
         if ( StringUtils.isNotEmpty(dependentWarExcludes) )
         {
-            excludeList.add( dependentWarExcludes );
+            return StringUtils.split( dependentWarExcludes, "," );
         }
 
-        return (String[]) excludeList.toArray( EMPTY_STRING_ARRAY );
+        return (String[]) EMPTY_STRING_ARRAY.clone();
     }
     
     /**
@@ -243,7 +243,7 @@ public abstract class AbstractWarMojo
      * @return an array of tokens to include
      */
     protected String[] getDependentWarIncludes() {
-        return new String[] { dependentWarIncludes };
+        return StringUtils.split( StringUtils.defaultString( dependentWarIncludes ), "," );
     }
 
     public void buildExplodedWebapp( File webappDirectory )
