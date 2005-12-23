@@ -107,6 +107,7 @@ public class EarMojo
      *
      * @parameter expression="${project.build.outputDirectory}"
      * @required
+     * @deprecated 
      */
     private File resourcesDir;
 
