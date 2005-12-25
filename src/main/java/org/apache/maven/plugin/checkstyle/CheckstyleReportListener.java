@@ -28,7 +28,7 @@ import com.puppycrawl.tools.checkstyle.api.SeverityLevel;
 
 /**
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
- * @version $Id: DependenciesReport.java,v 1.2 2005/02/23 00:08:02 brett Exp $
+ * @version $Id$
  */
 public class CheckstyleReportListener
     extends AutomaticBean
