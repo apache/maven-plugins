@@ -52,7 +52,7 @@ import java.util.StringTokenizer;
  *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
- * @version $Id: DependenciesReport.java,v 1.2 2005/02/23 00:08:02 brett Exp $
+ * @version $Id$
  * @goal javadoc
  * @requiresDependencyResolution compile
  * @phase generate-sources
