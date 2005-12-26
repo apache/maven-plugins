@@ -14,6 +14,10 @@
   <version>2.0-alpha-2-SNAPSHOT</version>
   <description>Maven plugin for Clover</description>
   <inceptionYear>2005</inceptionYear>
+  <issueManagement>
+    <system>jira</system>
+    <url>http://jira.codehaus.org/browse/MCLOVER</url>
+  </issueManagement>
   <developers>
     <developer>
       <id>vmassol</id>
