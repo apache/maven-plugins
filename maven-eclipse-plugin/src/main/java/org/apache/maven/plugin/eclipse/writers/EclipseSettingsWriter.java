@@ -94,10 +94,11 @@ public class EclipseSettingsWriter
                     Properties props = new Properties();
 
                     props.load( new FileInputStream( oldCoreSettingsFile ) );
+                    props.putAll( coreSettings );
 
                     if ( !props.equals( coreSettings ) )
                     {
-                        coreSettings.store( new FileOutputStream( coreSettingsFile ), null );
+                        props.store( new FileOutputStream( coreSettingsFile ), null );
                     }
                 }
                 else
