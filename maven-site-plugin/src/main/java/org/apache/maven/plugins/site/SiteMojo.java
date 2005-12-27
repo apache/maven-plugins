@@ -548,7 +548,7 @@ public class SiteMojo
         }
 
         MavenProject parentProject = project.getParent();
-        if ( parentProject != null )
+        if ( ( parentProject != null ) && ( project.getUrl() != null ) && ( parentProject.getUrl() != null ) )
         {
             props.put( "parentProject", getProjectParentMenu( locale ) );
 
