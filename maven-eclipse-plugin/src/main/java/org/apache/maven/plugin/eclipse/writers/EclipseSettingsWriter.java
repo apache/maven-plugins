@@ -91,14 +91,15 @@ public class EclipseSettingsWriter
                 {
                     oldCoreSettingsFile = coreSettingsFile;
 
-                    Properties props = new Properties();
+                    Properties oldsettings = new Properties();
+                    oldsettings.load( new FileInputStream( oldCoreSettingsFile ) );
 
-                    props.load( new FileInputStream( oldCoreSettingsFile ) );
-                    props.putAll( coreSettings );
+                    Properties newsettings = (Properties) oldsettings.clone();
+                    newsettings.putAll( coreSettings );
 
-                    if ( !props.equals( coreSettings ) )
+                    if ( !oldsettings.equals( newsettings ) )
                     {
-                        props.store( new FileOutputStream( coreSettingsFile ), null );
+                        newsettings.store( new FileOutputStream( coreSettingsFile ), null );
                     }
                 }
                 else
