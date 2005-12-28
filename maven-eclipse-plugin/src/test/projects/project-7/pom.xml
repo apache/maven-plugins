@@ -21,6 +21,7 @@
     </dependency>
   </dependencies>
   <build>
+    <finalName>mywar</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
