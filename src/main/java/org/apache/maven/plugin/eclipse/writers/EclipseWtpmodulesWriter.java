@@ -20,12 +20,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.EclipseSourceDir;
 import org.apache.maven.plugin.eclipse.EclipseUtils;
@@ -33,7 +30,6 @@ import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
 
@@ -44,22 +40,14 @@ import org.codehaus.plexus.util.xml.XMLWriter;
  * @version $Id$
  */
 public class EclipseWtpmodulesWriter
+    extends AbstractWtpResourceWriter
 {
 
-    private Log log;
-
-    private File eclipseProjectDir;
-
-    private MavenProject project;
-
-    private Collection artifacts;
+    protected static final String FILE_DOT_WTPMODULES = ".wtpmodules";
 
     public EclipseWtpmodulesWriter( Log log, File eclipseProjectDir, MavenProject project, Collection artifacts )
     {
-        this.log = log;
-        this.eclipseProjectDir = eclipseProjectDir;
-        this.project = project;
-        this.artifacts = artifacts;
+        super( log, eclipseProjectDir, project, artifacts );
     }
 
     public void write( List referencedReactorArtifacts, EclipseSourceDir[] sourceDirs,
@@ -70,7 +58,7 @@ public class EclipseWtpmodulesWriter
 
         try
         {
-            w = new FileWriter( new File( eclipseProjectDir, ".wtpmodules" ) ); //$NON-NLS-1$
+            w = new FileWriter( new File( getEclipseProjectDirectory(), FILE_DOT_WTPMODULES ) ); //$NON-NLS-1$
         }
         catch ( IOException ex )
         {
@@ -78,50 +66,49 @@ public class EclipseWtpmodulesWriter
         }
 
         XMLWriter writer = new PrettyPrintXMLWriter( w );
+        writer.startElement( ELT_PROJECT_MODULES ); //$NON-NLS-1$
+        writer.addAttribute( ATTR_MODULE_ID, "moduleCoreId" ); //$NON-NLS-1$ //$NON-NLS-2$
 
-        writer.startElement( "project-modules" ); //$NON-NLS-1$
-        writer.addAttribute( "id", "moduleCoreId" ); //$NON-NLS-1$ //$NON-NLS-2$
+        writer.startElement( ELT_WB_MODULE ); //$NON-NLS-1$
+        writer.addAttribute( ATTR_DEPLOY_NAME, getProject().getArtifactId() ); //$NON-NLS-1$
 
-        writer.startElement( "wb-module" ); //$NON-NLS-1$
-        writer.addAttribute( "deploy-name", project.getArtifactId() ); //$NON-NLS-1$
+        String packaging = getProject().getPackaging();
 
-        String packaging = project.getPackaging();
-
-        writer.startElement( "module-type" ); //$NON-NLS-1$
-        writeModuleTypeAccordingToPackaging( project, writer, packaging, buildOutputDirectory );
+        writer.startElement( ELT_MODULE_TYPE ); //$NON-NLS-1$
+        writeModuleTypeAccordingToPackaging( getProject(), writer, packaging, buildOutputDirectory );
         writer.endElement(); // module-type
 
         // source and resource paths.
         // deploy-path is "/" for utility and ejb projects, "/WEB-INF/classes" for webapps
 
         String target = "/"; //$NON-NLS-1$
-        if ( "war".equals( project.getPackaging() ) ) //$NON-NLS-1$
+        if ( "war".equals( getProject().getPackaging() ) ) //$NON-NLS-1$
         {
-            String warSourceDirectory = EclipseUtils.getPluginSetting( project, "maven-war-plugin", //$NON-NLS-1$
+            String warSourceDirectory = EclipseUtils.getPluginSetting( getProject(), ARTIFACT_MAVEN_WAR_PLUGIN, //$NON-NLS-1$
                                                                        "warSourceDirectory", //$NON-NLS-1$
                                                                        "/src/main/webapp" ); //$NON-NLS-1$
 
-            writer.startElement( "wb-resource" ); //$NON-NLS-1$
-            writer.addAttribute( "deploy-path", "/" ); //$NON-NLS-1$ //$NON-NLS-2$
-            writer.addAttribute( "source-path", //$NON-NLS-1$
+            writer.startElement( ELT_WB_RESOURCE ); //$NON-NLS-1$
+            writer.addAttribute( ATTR_DEPLOY_PATH, "/" ); //$NON-NLS-1$ //$NON-NLS-2$
+            writer.addAttribute( ATTR_SOURCE_PATH, //$NON-NLS-1$
                                  "/"
-                                     + EclipseUtils.toRelativeAndFixSeparator( eclipseProjectDir,
-                                                                               new File( eclipseProjectDir,
+                                     + EclipseUtils.toRelativeAndFixSeparator( getEclipseProjectDirectory(),
+                                                                               new File( getEclipseProjectDirectory(),
                                                                                          warSourceDirectory ), false ) );
             writer.endElement();
 
-            writeWarOrEarResources( writer, project, referencedReactorArtifacts, localRepository );
+            writeWarOrEarResources( writer, getProject(), referencedReactorArtifacts, localRepository );
 
             target = "/WEB-INF/classes"; //$NON-NLS-1$
         }
-        else if ( "ear".equals( project.getPackaging() ) ) //$NON-NLS-1$
+        else if ( "ear".equals( getProject().getPackaging() ) ) //$NON-NLS-1$
         {
-            writer.startElement( "wb-resource" ); //$NON-NLS-1$
-            writer.addAttribute( "deploy-path", "/" ); //$NON-NLS-1$ //$NON-NLS-2$
-            writer.addAttribute( "source-path", "/" ); //$NON-NLS-1$ //$NON-NLS-2$
+            writer.startElement( ELT_WB_RESOURCE ); //$NON-NLS-1$
+            writer.addAttribute( ATTR_DEPLOY_PATH, "/" ); //$NON-NLS-1$ //$NON-NLS-2$
+            writer.addAttribute( ATTR_SOURCE_PATH, "/" ); //$NON-NLS-1$ //$NON-NLS-2$
             writer.endElement();
 
-            writeWarOrEarResources( writer, project, referencedReactorArtifacts, localRepository );
+            writeWarOrEarResources( writer, getProject(), referencedReactorArtifacts, localRepository );
         }
 
         for ( int j = 0; j < sourceDirs.length; j++ )
@@ -130,10 +117,10 @@ public class EclipseWtpmodulesWriter
             // test src/resources are not added to wtpmodules
             if ( !dir.isTest() )
             {
-                //  <wb-resource deploy-path="/" source-path="/src/java" />
-                writer.startElement( "wb-resource" ); //$NON-NLS-1$
-                writer.addAttribute( "deploy-path", target ); //$NON-NLS-1$
-                writer.addAttribute( "source-path", dir.getPath() ); //$NON-NLS-1$
+                // <wb-resource deploy-path="/" source-path="/src/java" />
+                writer.startElement( ELT_WB_RESOURCE ); //$NON-NLS-1$
+                writer.addAttribute( ATTR_DEPLOY_PATH, target ); //$NON-NLS-1$
+                writer.addAttribute( ATTR_SOURCE_PATH, dir.getPath() ); //$NON-NLS-1$
                 writer.endElement();
             }
         }
@@ -142,165 +129,6 @@ public class EclipseWtpmodulesWriter
         writer.endElement(); // project-modules
 
         IOUtil.close( w );
-    }
-
-    /**
-     * @param project
-     * @param writer
-     * @param packaging
-     * @throws MojoExecutionException 
-     */
-    private void writeModuleTypeAccordingToPackaging( MavenProject project, XMLWriter writer, String packaging,
-                                                     File buildOutputDirectory )
-        throws MojoExecutionException
-    {
-        if ( "war".equals( packaging ) ) //$NON-NLS-1$
-        {
-            writer.addAttribute( "module-type-id", "jst.web" ); //$NON-NLS-1$ //$NON-NLS-2$
-
-            writer.startElement( "version" ); //$NON-NLS-1$
-
-            // defaults to 2.4, try to detect real version from dependencies
-            String servletVersion = "2.4"; //$NON-NLS-1$
-
-            for ( Iterator it = project.getArtifacts().iterator(); it.hasNext(); )
-            {
-                Artifact artifact = (Artifact) it.next();
-                if ( "servlet-api".equals( artifact.getArtifactId() ) //$NON-NLS-1$
-                    || "servletapi".equals( artifact.getArtifactId() ) // $NON-NLS-1$
-                    || "geronimo-spec-servlet".equals( artifact.getArtifactId() ) ) //$NON-NLS-1$
-                {
-                    servletVersion = StringUtils.substring( artifact.getVersion(), 0, 3 );
-                }
-                else if ( "geronimo-spec-j2ee".equals( artifact.getArtifactId() ) ) // $NON-NLS-1$
-                {
-                    String j2eeMinorVersion = StringUtils.substring( artifact.getVersion(), 2, 3 );
-                    servletVersion = "2." + j2eeMinorVersion;
-                }
-            }
-
-            writer.writeText( servletVersion );
-            writer.endElement();
-
-            writer.startElement( "property" ); //$NON-NLS-1$
-            writer.addAttribute( "name", "context-root" ); //$NON-NLS-1$ //$NON-NLS-2$
-            writer.addAttribute( "value", project.getArtifactId() ); //$NON-NLS-1$
-            writer.endElement();
-        }
-        else if ( "ejb".equals( packaging ) ) //$NON-NLS-1$
-        {
-            writer.addAttribute( "module-type-id", "jst.ejb" ); //$NON-NLS-1$ //$NON-NLS-2$
-
-            writer.startElement( "version" ); //$NON-NLS-1$
-            writer.writeText( "2.1" ); //$NON-NLS-1$
-            // @todo this is the default, find real ejb version from dependencies
-            writer.endElement();
-
-            writer.startElement( "property" ); //$NON-NLS-1$
-            writer.addAttribute( "name", "java-output-path" ); //$NON-NLS-1$ //$NON-NLS-2$
-            writer.addAttribute( "value", "/" + //$NON-NLS-1$ //$NON-NLS-2$
-                EclipseUtils.toRelativeAndFixSeparator( project.getBasedir(), buildOutputDirectory, false ) );
-            writer.endElement();
-        }
-        else if ( "ear".equals( packaging ) )
-        {
-            writer.addAttribute( "module-type-id", "jst.ear" ); //$NON-NLS-1$ //$NON-NLS-2$
-
-            writer.startElement( "version" ); //$NON-NLS-1$
-            writer.writeText( "1.3" ); //$NON-NLS-1$
-            // @todo 1.3 is the default
-            writer.endElement();
-        }
-        else
-        {
-            // jar
-            writer.addAttribute( "module-type-id", "jst.utility" ); //$NON-NLS-1$ //$NON-NLS-2$
-
-            writer.startElement( "property" ); //$NON-NLS-1$
-            writer.addAttribute( "name", "java-output-path" ); //$NON-NLS-1$ //$NON-NLS-2$
-            writer.addAttribute( "value", "/" + //$NON-NLS-1$ //$NON-NLS-2$
-                EclipseUtils.toRelativeAndFixSeparator( project.getBasedir(), buildOutputDirectory, false ) );
-            writer.endElement();
-        }
-    }
-
-    private void writeWarOrEarResources( XMLWriter writer, MavenProject project, List referencedReactorArtifacts,
-                                        ArtifactRepository localRepository )
-        throws MojoExecutionException
-    {
-
-        ScopeArtifactFilter scopeFilter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
-
-        // dependencies
-        for ( Iterator it = artifacts.iterator(); it.hasNext(); )
-        {
-            Artifact artifact = (Artifact) it.next();
-            String type = artifact.getType();
-
-            // NB war is needed for ear projects, we suppose nobody adds a war dependency to a war/jar project
-            if ( ( scopeFilter.include( artifact ) || Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
-                && ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type ) || "war".equals( type ) ) )
-            {
-                addDependency( writer, artifact, referencedReactorArtifacts, localRepository, project.getBasedir() );
-            }
-        }
-    }
-
-    private void addDependency( XMLWriter writer, Artifact artifact, List referencedReactorProjects,
-                               ArtifactRepository localRepository, File basedir )
-        throws MojoExecutionException
-    {
-        String handle;
-
-        if ( referencedReactorProjects.contains( artifact ) )
-        {
-            //  <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/artifactid/artifactid">
-            //    <dependency-type>uses</dependency-type>
-            //  </dependent-module>
-
-            handle = "module:/resource/" + artifact.getArtifactId() + "/" + artifact.getArtifactId(); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-        else
-        {
-            // <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/var/M2_REPO/cl/cl/2.1/cl-2.1.jar">
-            //    <dependency-type>uses</dependency-type>
-            // </dependent-module>
-
-            File artifactPath = artifact.getFile();
-
-            if ( artifactPath == null )
-            {
-                log.error( Messages.getString( "EclipsePlugin.artifactpathisnull", artifact.getId() ) ); //$NON-NLS-1$
-                return;
-            }
-
-            String fullPath = artifactPath.getPath();
-            File repoFile = new File( fullPath );
-
-            if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
-            {
-                handle = "module:/classpath/lib/" //$NON-NLS-1$
-                    + EclipseUtils.toRelativeAndFixSeparator( basedir, repoFile, false );
-            }
-            else
-            {
-                File localRepositoryFile = new File( localRepository.getBasedir() );
-
-                handle = "module:/classpath/var/M2_REPO/" //$NON-NLS-1$
-                    + EclipseUtils.toRelativeAndFixSeparator( localRepositoryFile, repoFile, false );
-            }
-        }
-
-        writer.startElement( "dependent-module" ); //$NON-NLS-1$
-
-        writer.addAttribute( "deploy-path", "/WEB-INF/lib" ); //$NON-NLS-1$ //$NON-NLS-2$
-        writer.addAttribute( "handle", handle ); //$NON-NLS-1$
-
-        writer.startElement( "dependency-type" ); //$NON-NLS-1$
-        writer.writeText( "uses" ); //$NON-NLS-1$
-        writer.endElement();
-
-        writer.endElement();
     }
 
 }

@@ -30,21 +30,46 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * A Maven2 plugin to ensure that the classpath variable MAVEN_REPO exists in the Eclipse environment.
- *
+ * A Maven2 plugin to ensure that the classpath variable MAVEN_REPO exists in
+ * the Eclipse environment.
+ * 
  * @goal add-maven-repo
  * @requiresProject false
  */
 public class AddMavenRepoMojo
     extends AbstractMojo
 {
+
     /**
-     * Location of the <code>Eclipse</code> workspace that holds your configuration and source.
+     * Path under Eclipse workspace where Eclipse Plugin metadata/config is
+     * stored.
+     */
+    private static final String DIR_ECLIPSE_PLUGINS_METADATA = ".metadata/.plugins";
+
+    /**
+     * Path under {@value #DIR_ECLIPSE_PLUGINS_METADATA } folder where Eclipse
+     * Workspace Runtime settings are stored.
+     */
+    private static final String DIR_ECLIPSE_CORE_RUNTIME_SETTINGS = DIR_ECLIPSE_PLUGINS_METADATA
+        + "/org.eclipse.core.runtime/.settings";
+
+    /**
+     * File that stores the Eclipse JDT Core preferences.
+     */
+    private static final String FILE_ECLIPSE_JDT_CORE_PREFS = "org.eclipse.jdt.core.prefs";
+
+    /**
+     * Property constant under which Variable 'M2_REPO' is setup.
+     */
+    private static final String CLASSPATH_VARIABLE_M2_REPO = "org.eclipse.jdt.core.classpathVariable.M2_REPO";
+
+    /**
+     * Location of the <code>Eclipse</code> workspace that holds your
+     * configuration and source. On Windows, this will be the
+     * <code>workspace</code> directory under your eclipse installation. For
+     * example, if you installed eclipse into <code>c:\eclipse</code>, the
+     * workspace is <code>c:\eclipse\workspace</code>.
      * 
-     * On Windows, this will be the <code>workspace</code> directory under your eclipse
-     *     installation. For example, if you installed eclipse into <code>c:\eclipse</code>, the
-     *     workspace is <code>c:\eclipse\workspace</code>.
-     *
      * @parameter expression="${eclipse.workspace}"
      * @required
      */
@@ -61,12 +86,12 @@ public class AddMavenRepoMojo
         throws MojoExecutionException
     {
 
-        File workDir = new File( workspace, ".metadata/.plugins/org.eclipse.core.runtime/.settings" ); //$NON-NLS-1$
+        File workDir = new File( workspace, DIR_ECLIPSE_CORE_RUNTIME_SETTINGS ); //$NON-NLS-1$
         workDir.mkdirs();
 
         Properties props = new Properties();
 
-        File f = new File( workDir, "org.eclipse.jdt.core.prefs" ); //$NON-NLS-1$
+        File f = new File( workDir, FILE_ECLIPSE_JDT_CORE_PREFS ); //$NON-NLS-1$
 
         // preserve old settings
         if ( f.exists() )
@@ -87,7 +112,7 @@ public class AddMavenRepoMojo
             }
         }
 
-        props.put( "org.eclipse.jdt.core.classpathVariable.M2_REPO", //$NON-NLS-1$
+        props.put( CLASSPATH_VARIABLE_M2_REPO, //$NON-NLS-1$
                    StringUtils.replace( localRepository.getBasedir(), ":", "\\:" ) ); //$NON-NLS-1$  //$NON-NLS-2$
 
         try

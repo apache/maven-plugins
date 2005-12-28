@@ -51,6 +51,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-eclipse-plugin</artifactId>
         <configuration>
+          <wtpversion>R7</wtpversion>
           <projectnatures>
             <projectnature>org.eclipse.jdt.core.javanature</projectnature>
           </projectnatures>
