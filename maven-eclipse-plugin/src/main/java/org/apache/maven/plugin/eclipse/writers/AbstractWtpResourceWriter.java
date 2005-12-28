@@ -137,9 +137,17 @@ public abstract class AbstractWtpResourceWriter
             writer.writeText( servletVersion );
             writer.endElement();
 
+            // use finalName as context root only if it has been explicitely set
+            String contextRoot = project.getArtifactId();
+            String finalName = project.getBuild().getFinalName();
+            if ( !finalName.equals( project.getArtifactId() + "-" + project.getVersion() ) )
+            {
+                contextRoot = finalName;
+            }
+
             writer.startElement( ELT_PROPERTY ); //$NON-NLS-1$
             writer.addAttribute( ATTR_NAME, "context-root" ); //$NON-NLS-1$ //$NON-NLS-2$
-            writer.addAttribute( ATTR_VALUE, getProject().getArtifactId() ); //$NON-NLS-1$
+            writer.addAttribute( ATTR_VALUE, contextRoot ); //$NON-NLS-1$
             writer.endElement();
         }
         else if ( "ejb".equals( packaging ) ) //$NON-NLS-1$
