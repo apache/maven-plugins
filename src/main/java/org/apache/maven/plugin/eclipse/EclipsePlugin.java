@@ -508,4 +508,164 @@ public class EclipsePlugin
 
     }
 
+    public ArtifactFactory getArtifactFactory()
+    {
+        return artifactFactory;
+    }
+
+    public void setArtifactFactory( ArtifactFactory artifactFactory )
+    {
+        this.artifactFactory = artifactFactory;
+    }
+
+    public ArtifactResolver getArtifactResolver()
+    {
+        return artifactResolver;
+    }
+
+    public void setArtifactResolver( ArtifactResolver artifactResolver )
+    {
+        this.artifactResolver = artifactResolver;
+    }
+
+    public List getBuildcommands()
+    {
+        return buildcommands;
+    }
+
+    public void setBuildcommands( List buildcommands )
+    {
+        this.buildcommands = buildcommands;
+    }
+
+    public File getBuildOutputDirectory()
+    {
+        return buildOutputDirectory;
+    }
+
+    public void setBuildOutputDirectory( File buildOutputDirectory )
+    {
+        this.buildOutputDirectory = buildOutputDirectory;
+    }
+
+    public List getClasspathContainers()
+    {
+        return classpathContainers;
+    }
+
+    public void setClasspathContainers( List classpathContainers )
+    {
+        this.classpathContainers = classpathContainers;
+    }
+
+    public boolean isDownloadSources()
+    {
+        return downloadSources;
+    }
+
+    public void setDownloadSources( boolean downloadSources )
+    {
+        this.downloadSources = downloadSources;
+    }
+
+    public File getEclipseProjectDir()
+    {
+        return eclipseProjectDir;
+    }
+
+    public void setEclipseProjectDir( File eclipseProjectDir )
+    {
+        this.eclipseProjectDir = eclipseProjectDir;
+    }
+
+    public MavenProject getExecutedProject()
+    {
+        return executedProject;
+    }
+
+    public void setExecutedProject( MavenProject executedProject )
+    {
+        this.executedProject = executedProject;
+    }
+
+    public ArtifactRepository getLocalRepository()
+    {
+        return localRepository;
+    }
+
+    public void setLocalRepository( ArtifactRepository localRepository )
+    {
+        this.localRepository = localRepository;
+    }
+
+    public List getMissingSourceArtifacts()
+    {
+        return missingSourceArtifacts;
+    }
+
+    public void setMissingSourceArtifacts( List missingSourceArtifacts )
+    {
+        this.missingSourceArtifacts = missingSourceArtifacts;
+    }
+
+    public MavenProject getProject()
+    {
+        return project;
+    }
+
+    public void setProject( MavenProject project )
+    {
+        this.project = project;
+    }
+
+    public List getProjectnatures()
+    {
+        return projectnatures;
+    }
+
+    public void setProjectnatures( List projectnatures )
+    {
+        this.projectnatures = projectnatures;
+    }
+
+    public List getReactorProjects()
+    {
+        return reactorProjects;
+    }
+
+    public void setReactorProjects( List reactorProjects )
+    {
+        this.reactorProjects = reactorProjects;
+    }
+
+    public List getRemoteArtifactRepositories()
+    {
+        return remoteArtifactRepositories;
+    }
+
+    public void setRemoteArtifactRepositories( List remoteArtifactRepositories )
+    {
+        this.remoteArtifactRepositories = remoteArtifactRepositories;
+    }
+
+    public boolean isUseProjectReferences()
+    {
+        return useProjectReferences;
+    }
+
+    public void setUseProjectReferences( boolean useProjectReferences )
+    {
+        this.useProjectReferences = useProjectReferences;
+    }
+
+    public String getWtpversion()
+    {
+        return wtpversion;
+    }
+
+    public void setWtpversion( String wtpversion )
+    {
+        this.wtpversion = wtpversion;
+    }
+
 }

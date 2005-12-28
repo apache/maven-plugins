@@ -111,4 +111,14 @@ public class EclipseCleanMojo
         }
     }
 
+    public File getBasedir()
+    {
+        return basedir;
+    }
+
+    public void setBasedir( File basedir )
+    {
+        this.basedir = basedir;
+    }
+
 }
