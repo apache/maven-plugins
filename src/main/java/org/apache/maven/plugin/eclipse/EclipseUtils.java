@@ -305,7 +305,8 @@ public class EclipseUtils
 
     /**
      * @todo MNG-1379 Wrong path for artifacts with system scope
-     * Artifacts with a system scope have a wrong path in mvn 2.0. This is a temporary workaround.
+     * Artifacts with a system scope have a wrong path in mvn 2.0.
+     * This is fixed in mvn 2.0.1 but this method is needed for compatibility with the 2.0 release. Do not remove!
      */
     public static void fixSystemScopeArtifacts( Collection artifacts, Collection dependencies )
     {
@@ -367,18 +368,43 @@ public class EclipseUtils
         }
     }
 
-    public static Artifact resolveSourceArtifact( Artifact artifact, ArtifactRepository localRepository,
-                                                 ArtifactResolver artifactResolver, ArtifactFactory artifactFactory )
+    public static Artifact resolveLocalSourceArtifact( Artifact artifact, ArtifactRepository localRepository,
+                                                      ArtifactResolver artifactResolver, ArtifactFactory artifactFactory )
         throws MojoExecutionException
     {
-        // source artifact: use the "sources" classifier added by the source plugin
-        Artifact sourceArtifact = artifactFactory.createArtifactWithClassifier( artifact.getGroupId(), artifact
-            .getArtifactId(), artifact.getVersion(), "java-source", "sources" ); //$NON-NLS-1$ //$NON-NLS-2$
+        return resolveArtifactWithClassifier( artifact, "sources", localRepository, artifactResolver, artifactFactory,
+                                              new ArrayList( 0 ) );
+    }
+
+    public static Artifact resolveLocalJavadocArtifact( Artifact artifact, ArtifactRepository localRepository,
+                                                       ArtifactResolver artifactResolver,
+                                                       ArtifactFactory artifactFactory )
+        throws MojoExecutionException
+    {
+        return resolveArtifactWithClassifier( artifact, "javadoc", localRepository, artifactResolver, artifactFactory,
+                                              new ArrayList( 0 ) );
+    }
+
+    public static Artifact resolveArtifactWithClassifier( Artifact artifact, String classifier,
+                                                         ArtifactRepository localRepository,
+                                                         ArtifactResolver artifactResolver,
+                                                         ArtifactFactory artifactFactory, List remoteRepos )
+        throws MojoExecutionException
+    {
+        String type = classifier;
+
+        // the "sources" classifier maps to the "java-source" type
+        if ( "sources".equals( type ) )
+        {
+            type = "java-source";
+        }
+
+        Artifact resolvedArtifact = artifactFactory.createArtifactWithClassifier( artifact.getGroupId(), artifact
+            .getArtifactId(), artifact.getVersion(), type, classifier );
 
         try
         {
-
-            artifactResolver.resolve( sourceArtifact, new ArrayList(), localRepository );
+            artifactResolver.resolve( resolvedArtifact, remoteRepos, localRepository );
         }
         catch ( ArtifactNotFoundException e )
         {
@@ -386,13 +412,13 @@ public class EclipseUtils
         }
         catch ( ArtifactResolutionException e )
         {
-            String message = Messages.getString( "EclipseClasspathWriter.errorresolvingsources", //$NON-NLS-1$
-                                                 new Object[] { sourceArtifact.getId(), e.getMessage() } );
+            String message = Messages.getString( "EclipsePlugin.errorresolving", //$NON-NLS-1$
+                                                 new Object[] { classifier, resolvedArtifact.getId(), e.getMessage() } );
 
             throw new MojoExecutionException( message, e );
         }
 
-        return sourceArtifact;
+        return resolvedArtifact;
     }
 
 }
