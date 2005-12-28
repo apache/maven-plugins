@@ -26,6 +26,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-eclipse-plugin</artifactId>
         <configuration>
+          <wtpversion>R7</wtpversion>
           <outputDirectory>target/eclipse-classes</outputDirectory>
           <outputDir>../../../../target/project-9-test/</outputDir>
           <projectnatures>

@@ -18,6 +18,7 @@ package org.apache.maven.plugin.eclipse;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -33,8 +34,10 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.eclipse.writers.EclipseClasspathWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseProjectWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseSettingsWriter;
+import org.apache.maven.plugin.eclipse.writers.EclipseWtpSettingsWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseWtpmodulesWriter;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * A Maven2 plugin which integrates the use of Maven2 with Eclipse.
@@ -49,9 +52,41 @@ import org.apache.maven.project.MavenProject;
 public class EclipsePlugin
     extends AbstractMojo
 {
+
+    private static final String NATURE_WST_FACET_CORE_NATURE = "org.eclipse.wst.common.project.facet.core.nature";
+
+    private static final String BUILDER_WST_COMPONENT_STRUCTURAL_DEPENDENCY_RESOLVER = "org.eclipse.wst.common.modulecore.ComponentStructuralBuilderDependencyResolver";
+
+    private static final String BUILDER_WST_VALIDATION = "org.eclipse.wst.validation.validationbuilder";
+
+    private static final String BUILDER_JDT_CORE_JAVA = "org.eclipse.jdt.core.javabuilder";
+
+    private static final String BUILDER_WST_COMPONENT_STRUCTURAL = "org.eclipse.wst.common.modulecore.ComponentStructuralBuilder";
+
+    private static final String NATURE_WST_MODULE_CORE_NATURE = "org.eclipse.wst.common.modulecore.ModuleCoreNature";
+
+    private static final String NATURE_JDT_CORE_JAVA = "org.eclipse.jdt.core.javanature";
+
+    private static final String NATURE_JEM_WORKBENCH_JAVA_EMF = "org.eclipse.jem.workbench.JavaEMFNature";
+
+    private static final String COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER = "org.eclipse.jdt.launching.JRE_CONTAINER";
+
+    //  warning, order is important for binary search
+    public static final String[] WTP_SUPPORTED_VERSIONS = new String[] { "1.0", "R7" };
+
+    /**
+     * Constant for 'artifactId' element in POM.xml.
+     */
+    private static final String POM_ELT_ARTIFACT_ID = "artifactId";
+
+    /**
+     * Constant for 'groupId' element in POM.xml.
+     */
+    private static final String POM_ELT_GROUP_ID = "groupId";
+
     /**
      * The project whose project files to create.
-     *
+     * 
      * @parameter expression="${project}"
      * @required
      */
@@ -59,14 +94,14 @@ public class EclipsePlugin
 
     /**
      * The currently executed project (can be a reactor project).
-     *
+     * 
      * @parameter expression="${executedProject}"
      */
     private MavenProject executedProject;
 
     /**
      * Local maven repository.
-     *
+     * 
      * @parameter expression="${localRepository}"
      * @required
      * @readonly
@@ -74,8 +109,9 @@ public class EclipsePlugin
     private ArtifactRepository localRepository;
 
     /**
-     * If the executed project is a reactor project, this will contains the full list of projects in the reactor.
-     *
+     * If the executed project is a reactor project, this will contains the full
+     * list of projects in the reactor.
+     * 
      * @parameter expression="${reactorProjects}"
      * @required
      * @readonly
@@ -83,8 +119,9 @@ public class EclipsePlugin
     private List reactorProjects;
 
     /**
-     * Artifact resolver, needed to download source jars for inclusion in classpath.
-     *
+     * Artifact resolver, needed to download source jars for inclusion in
+     * classpath.
+     * 
      * @component role="org.apache.maven.artifact.resolver.ArtifactResolver"
      * @required
      * @readonly
@@ -92,8 +129,9 @@ public class EclipsePlugin
     private ArtifactResolver artifactResolver;
 
     /**
-     * Artifact factory, needed to download source jars for inclusion in classpath.
-     *
+     * Artifact factory, needed to download source jars for inclusion in
+     * classpath.
+     * 
      * @component role="org.apache.maven.artifact.factory.ArtifactFactory"
      * @required
      * @readonly
@@ -102,7 +140,7 @@ public class EclipsePlugin
 
     /**
      * Remote repositories which will be searched for source attachments.
-     *
+     * 
      * @parameter expression="${project.remoteArtifactRepositories}"
      * @required
      * @readonly
@@ -110,92 +148,97 @@ public class EclipsePlugin
     private List remoteArtifactRepositories;
 
     /**
-     * List of eclipse project natures. By default the <code>org.eclipse.jdt.core.javanature</code> nature plus the
-     * needed WTP natures are added.
+     * List of eclipse project natures. By default the
+     * <code>org.eclipse.jdt.core.javanature</code> nature plus the needed WTP
+     * natures are added.
+     * 
      * <pre>
-     *    &lt;projectnatures>
-     *      &lt;projectnature>org.eclipse.jdt.core.javanature&lt;/projectnature>
-     *      &lt;projectnature>org.eclipse.wst.common.modulecore.ModuleCoreNature&lt;/projectnature>
-     *    &lt;/projectnatures>
+     * &lt;projectnatures&gt;
+     *    &lt;projectnature&gt;org.eclipse.jdt.core.javanature&lt;/projectnature&gt;
+     *    &lt;projectnature&gt;org.eclipse.wst.common.modulecore.ModuleCoreNature&lt;/projectnature&gt;
+     * &lt;/projectnatures&gt;
      * </pre>
-     *
+     * 
      * @parameter
      */
     private List projectnatures;
 
     /**
-     * List of eclipse build commands. By default the <code>org.eclipse.jdt.core.javabuilder</code> builder plus the
-     * needed WTP builders are added.
-     * Configuration example:
+     * List of eclipse build commands. By default the <code>org.eclipse.jdt.core.javabuilder</code> builder plus the needed
+     * WTP builders are added. Configuration example:
+     * 
      * <pre>
-     *    &lt;buildcommands>
-     *      &lt;java.lang.String>org.eclipse.wst.common.modulecore.ComponentStructuralBuilder&lt;/java.lang.String>
-     *      &lt;java.lang.String>org.eclipse.jdt.core.javabuilder&lt;/java.lang.String>
-     *      &lt;java.lang.String>org.eclipse.wst.common.modulecore.ComponentStructuralBuilderDependencyResolver&lt;/java.lang.String>
-     *    &lt;/buildcommands>
+     * &lt;buildcommands&gt;
+     *    &lt;java.lang.String&gt;org.eclipse.wst.common.modulecore.ComponentStructuralBuilder&lt;/java.lang.String&gt;
+     *    &lt;java.lang.String&gt;org.eclipse.jdt.core.javabuilder&lt;/java.lang.String&gt;
+     *    &lt;java.lang.String&gt;org.eclipse.wst.common.modulecore.ComponentStructuralBuilderDependencyResolver&lt;/java.lang.String&gt;
+     * &lt;/buildcommands&gt;
      * </pre>
-     *
+     * 
      * @parameter
      */
     private List buildcommands;
 
     /**
      * List of container classpath entries. By default the <code>org.eclipse.jdt.launching.JRE_CONTAINER</code> classpath
-     * container is added.
-     * Configuration example:
+     * container is added. Configuration example: 
      * <pre>
-     *    &lt;classpathContainers>
-     *      &lt;buildcommand>org.eclipse.jdt.launching.JRE_CONTAINER&lt;/buildcommand>
-     *      &lt;buildcommand>org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v5.5&lt;/buildcommand>
-     *      &lt;buildcommand>org.eclipse.jst.j2ee.internal.web.container/artifact&lt;/buildcommand>
-     *    &lt;/classpathContainers>
+     * &lt;classpathContainers&gt;
+     *    &lt;buildcommand&gt;org.eclipse.jdt.launching.JRE_CONTAINER&lt;/buildcommand&gt;
+     *    &lt;buildcommand&gt;org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v5.5&lt;/buildcommand&gt;
+     *    &lt;buildcommand&gt;org.eclipse.jst.j2ee.internal.web.container/artifact&lt;/buildcommand&gt;
+     * &lt;/classpathContainers&gt;
      * </pre>
-     *
+     * 
      * @parameter
      */
     private List classpathContainers;
 
     /**
-     * Enables/disables the downloading of source attachments. Defaults to false.
-     *
+     * Enables/disables the downloading of source attachments. Defaults to
+     * false.
+     * 
      * @parameter expression="${eclipse.downloadSources}"
      */
     private boolean downloadSources;
 
     /**
      * Eclipse workspace directory.
-     *
+     * 
      * @parameter expression="${eclipse.workspace}" alias="outputDir"
      */
     private File eclipseProjectDir;
 
     /**
-     * When set to false, the plugin will not create sub-projects and instead reference those sub-projects 
-     * using the installed package in the local repository
-     *
-     * @parameter expression="${eclipse.useProjectReferences}" default-value="true"
+     * When set to false, the plugin will not create sub-projects and instead
+     * reference those sub-projects using the installed package in the local
+     * repository
+     * 
+     * @parameter expression="${eclipse.useProjectReferences}"
+     *            default-value="true"
      * @required
      */
     private boolean useProjectReferences;
 
     /**
      * The default output directory
-     *
-     * @parameter expression="${project.build.outputDirectory}" alias="outputDirectory"
+     * 
+     * @parameter expression="${project.build.outputDirectory}"
+     *            alias="outputDirectory"
      */
     private File buildOutputDirectory;
 
     /**
-     * The version of WTP for which configuration files will be generated. At the moment the only supported version is "R7",
-     * and generated files will not be compatible with the upcoming 1.0 release and with WTP milestones &gt; M8.
-     * As soon as WTP 1.0 will be released the default will be switched to 1.0.
-     *
+     * The version of WTP for which configuration files will be generated.
+     * The default value is "R7", supported versions are "R7" and "1.0"
+     * 
      * @parameter expression="${wtpversion}" default-value="R7"
      */
     private String wtpversion;
 
     /**
-     * Not a plugin parameter. Collect missing source artifact for the final report.
+     * Not a plugin parameter. Collect missing source artifact for the final
+     * report.
      */
     private List missingSourceArtifacts = new ArrayList();
 
@@ -206,10 +249,11 @@ public class EclipsePlugin
         throws MojoExecutionException, MojoFailureException
     {
 
-        if ( !"R7".equalsIgnoreCase( wtpversion ) )
+        if ( Arrays.binarySearch( WTP_SUPPORTED_VERSIONS, wtpversion ) < 0 )
         {
-            throw new MojoExecutionException( Messages
-                .getString( "EclipsePlugin.unsupportedwtp", new Object[] { wtpversion, "R7" } ) ); //$NON-NLS-1$
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.unsupportedwtp", new Object[] {
+                wtpversion,
+                StringUtils.join( WTP_SUPPORTED_VERSIONS, " " ) } ) );
         }
 
         if ( executedProject == null )
@@ -218,42 +262,18 @@ public class EclipsePlugin
             executedProject = project;
         }
 
-        assertNotEmpty( executedProject.getGroupId(), "groupId" ); //$NON-NLS-1$
-        assertNotEmpty( executedProject.getArtifactId(), "artifactId" ); //$NON-NLS-1$
-
-        // defaults
         String packaging = executedProject.getPackaging();
-        if ( projectnatures == null )
-        {
-            fillDefaultNatures( packaging );
-        }
 
-        if ( buildcommands == null )
-        {
-            fillDefaultBuilders( packaging );
-        }
-
-        if ( classpathContainers == null )
-        {
-            fillDefaultClasspathContainers( packaging );
-        }
-        else if ( !classpathContainers.contains( "org.eclipse.jdt.launching.JRE_CONTAINER" ) )
-        {
-            getLog()
-                .warn(
-                       "You did specify a list of classpath containers without the base org.eclipse.jdt.launching.JRE_CONTAINER.\n"
-                           + "If you specify custom classpath containers you should also add org.eclipse.jdt.launching.JRE_CONTAINER to the list" );
-            classpathContainers.add( 0, "org.eclipse.jdt.launching.JRE_CONTAINER" );
-        }
-
-        // end defaults
+        // validate sanity of the current m2 project
+        assertNotEmpty( executedProject.getGroupId(), POM_ELT_GROUP_ID ); //$NON-NLS-1$
+        assertNotEmpty( executedProject.getArtifactId(), POM_ELT_ARTIFACT_ID ); //$NON-NLS-1$
 
         if ( executedProject.getFile() == null || !executedProject.getFile().exists() )
         {
             throw new MojoExecutionException( Messages.getString( "EclipsePlugin.missingpom" ) ); //$NON-NLS-1$
         }
 
-        if ( "pom".equals( executedProject.getPackaging() ) && eclipseProjectDir == null ) //$NON-NLS-1$
+        if ( "pom".equals( packaging ) && eclipseProjectDir == null ) //$NON-NLS-1$
         {
             getLog().info( Messages.getString( "EclipsePlugin.pompackaging" ) ); //$NON-NLS-1$
             return;
@@ -269,14 +289,40 @@ public class EclipsePlugin
             {
                 throw new MojoExecutionException( Messages.getString( "EclipsePlugin.notadir", eclipseProjectDir ) ); //$NON-NLS-1$
             }
-
             eclipseProjectDir = new File( eclipseProjectDir, executedProject.getArtifactId() );
-
             if ( !eclipseProjectDir.isDirectory() && !eclipseProjectDir.mkdirs() )
             {
                 throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcreatedir", eclipseProjectDir ) ); //$NON-NLS-1$
             }
         }
+
+        // end validate
+
+        // defaults
+        if ( projectnatures == null )
+        {
+            fillDefaultNatures( packaging );
+        }
+
+        if ( buildcommands == null )
+        {
+            fillDefaultBuilders( packaging );
+        }
+
+        if ( classpathContainers == null )
+        {
+            fillDefaultClasspathContainers( packaging );
+        }
+        else if ( !classpathContainers.contains( COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER ) )
+        {
+            getLog()
+                .warn(
+                       "You did specify a list of classpath containers without the base org.eclipse.jdt.launching.JRE_CONTAINER.\n"
+                           + "If you specify custom classpath containers you should also add org.eclipse.jdt.launching.JRE_CONTAINER to the list" );
+            classpathContainers.add( 0, COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER );
+        }
+
+        // end defaults
 
         // ready to start
         write();
@@ -298,13 +344,34 @@ public class EclipsePlugin
             reactorArtifacts = Collections.EMPTY_LIST;
         }
 
-        // build a list of UNIQUE source dirs (both src and resources) to be used in classpath and wtpmodules
+        // build a list of UNIQUE source dirs (both src and resources) to be
+        // used in classpath and wtpmodules
         EclipseSourceDir[] sourceDirs = EclipseUtils.buildDirectoryList( executedProject, eclipseProjectDir, getLog(),
                                                                          buildOutputDirectory );
 
         Collection artifacts = prepareArtifacts();
 
         downloadSourceArtifacts( artifacts, reactorArtifacts );
+
+        if ( "R7".equalsIgnoreCase( wtpversion ) )
+        {
+            new EclipseWtpmodulesWriter( getLog(), eclipseProjectDir, project, artifacts ).write( reactorArtifacts,
+                                                                                                  sourceDirs,
+                                                                                                  localRepository,
+                                                                                                  buildOutputDirectory );
+        }
+        else if ( "1.0".equals( wtpversion ) )
+        {
+            // Check and write out a WTP Project if this was required.
+            if ( "war".equalsIgnoreCase( project.getPackaging() ) || "ear".equalsIgnoreCase( project.getPackaging() )
+                || "ejb".equalsIgnoreCase( project.getPackaging() ) )
+            {
+                // we assume we have a version 1.0 for WTP
+                getLog().info( "Generating Eclipse web facet assuming version 1.0 for WTP..." );
+                new EclipseWtpSettingsWriter( getLog(), eclipseProjectDir, project, artifacts )
+                    .write( reactorArtifacts, sourceDirs, localRepository, buildOutputDirectory );
+            }
+        }
 
         new EclipseProjectWriter( getLog(), eclipseProjectDir, project ).write( projectBaseDir, executedProject,
                                                                                 reactorArtifacts, projectnatures,
@@ -320,11 +387,6 @@ public class EclipsePlugin
                                                                                              artifactResolver,
                                                                                              artifactFactory,
                                                                                              buildOutputDirectory );
-
-        new EclipseWtpmodulesWriter( getLog(), eclipseProjectDir, project, artifacts ).write( reactorArtifacts,
-                                                                                              sourceDirs,
-                                                                                              localRepository,
-                                                                                              buildOutputDirectory );
 
         reportMissingSources();
 
@@ -355,32 +417,41 @@ public class EclipsePlugin
     private void fillDefaultNatures( String packaging )
     {
         projectnatures = new ArrayList();
-        // default natures for WTP R7, 1.0 may change
-        projectnatures.add( "org.eclipse.jem.workbench.JavaEMFNature" );
-        projectnatures.add( "org.eclipse.jdt.core.javanature" );
-        projectnatures.add( "org.eclipse.wst.common.modulecore.ModuleCoreNature" );
+
+        projectnatures.add( NATURE_JEM_WORKBENCH_JAVA_EMF ); // WTP nature
+
+        projectnatures.add( NATURE_JDT_CORE_JAVA );
+
+        projectnatures.add( NATURE_WST_MODULE_CORE_NATURE ); // WTP nature
+        if ( !"R7".equalsIgnoreCase( wtpversion ) )
+        {
+            projectnatures.add( NATURE_WST_FACET_CORE_NATURE ); // WTP nature
+        }
     }
 
     private void fillDefaultClasspathContainers( String packaging )
     {
         classpathContainers = new ArrayList();
-        classpathContainers.add( "org.eclipse.jdt.launching.JRE_CONTAINER" );
+        classpathContainers.add( COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER );
     }
 
     private void fillDefaultBuilders( String packaging )
     {
         buildcommands = new ArrayList();
-        // default builders for WTP R7, 1.0 may change
-        buildcommands.add( "org.eclipse.wst.common.modulecore.ComponentStructuralBuilder" );
-        buildcommands.add( "org.eclipse.jdt.core.javabuilder" );
-        buildcommands.add( "org.eclipse.wst.validation.validationbuilder" );
-        buildcommands.add( "org.eclipse.wst.common.modulecore.ComponentStructuralBuilderDependencyResolver" );
+
+        buildcommands.add( BUILDER_WST_COMPONENT_STRUCTURAL ); // WTP builder
+
+        buildcommands.add( BUILDER_JDT_CORE_JAVA );
+
+        buildcommands.add( BUILDER_WST_VALIDATION ); // WTP builder
+        buildcommands.add( BUILDER_WST_COMPONENT_STRUCTURAL_DEPENDENCY_RESOLVER ); // WTP builder
     }
 
     private void downloadSourceArtifacts( Collection artifacts, Collection reactorArtifacts )
         throws MojoExecutionException
     {
-        // if downloadSources is off, just check local repository for reporting missing jars
+        // if downloadSources is off, just check local repository for reporting
+        // missing jars
         List remoteRepos = downloadSources ? remoteArtifactRepositories : new ArrayList( 0 );
         for ( Iterator it = artifacts.iterator(); it.hasNext(); )
         {
