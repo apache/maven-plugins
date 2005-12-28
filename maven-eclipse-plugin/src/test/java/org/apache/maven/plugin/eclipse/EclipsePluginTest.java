@@ -78,4 +78,10 @@ public class EclipsePluginTest
         testProject( "project-9" );
     }
 
+    public void testProject10()
+        throws Exception
+    {
+        testProject( "project-10" );
+    }
+
 }

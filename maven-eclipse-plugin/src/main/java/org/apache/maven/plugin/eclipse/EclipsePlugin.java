@@ -26,8 +26,6 @@ import java.util.List;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -388,39 +386,23 @@ public class EclipsePlugin
         {
             Artifact artifact = (Artifact) it.next();
 
-            if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
-            {
-                missingSourceArtifacts.add( artifact );
-                continue;
-            }
-            else if ( reactorArtifacts.contains( artifact ) )
+            if ( reactorArtifacts.contains( artifact ) )
             {
                 // source artifact not needed
                 continue;
             }
 
             // source artifact: use the "sources" classifier added by the source plugin
-            Artifact sourceArtifact = artifactFactory.createArtifactWithClassifier( artifact.getGroupId(), artifact
-                .getArtifactId(), artifact.getVersion(), "java-source", "sources" ); //$NON-NLS-1$ //$NON-NLS-2$
-
-            try
-            {
-                artifactResolver.resolve( sourceArtifact, remoteRepos, localRepository );
-            }
-            catch ( ArtifactNotFoundException e )
-            {
-                // ignore, the jar has not been found
-            }
-            catch ( ArtifactResolutionException e )
-            {
-                String message = Messages.getString( "EclipseClasspathWriter.errorresolvingsources", //$NON-NLS-1$
-                                                     new Object[] { sourceArtifact.getId(), e.getMessage() } );
-
-                throw new MojoExecutionException( message, e );
-            }
+            Artifact sourceArtifact = EclipseUtils.resolveArtifactWithClassifier( artifact, "sources", localRepository,
+                                                                                  artifactResolver, artifactFactory,
+                                                                                  remoteRepos );
 
             if ( !sourceArtifact.isResolved() )
             {
+                // try using a plain javadoc jar if the source jar is not available
+                EclipseUtils.resolveArtifactWithClassifier( artifact, "javadoc", localRepository, artifactResolver,
+                                                            artifactFactory, remoteRepos );
+
                 missingSourceArtifacts.add( artifact );
             }
         }
