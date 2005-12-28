@@ -143,7 +143,8 @@ public class EclipseUtils
         EclipseUtils.extractResourceDirs( directories, project.getBuild().getResources(), project, basedir,
                                           projectBaseDir, false, null, log );
 
-        // If using the standard output location, don't mix the test output into it.
+        // If using the standard output location, don't mix the test output into
+        // it.
         String testOutput = null;
         boolean useFixedOutputDir = !buildOutputDirectory.equals( new File( project.getBuild().getOutputDirectory() ) );
         if ( !useFixedOutputDir )
@@ -202,25 +203,27 @@ public class EclipseUtils
                 log.warn( Messages.getString( "EclipsePlugin.excludenotsupported" ) ); //$NON-NLS-1$
             }
 
-            //          Example of setting include/exclude patterns for future reference.
+            // Example of setting include/exclude patterns for future reference.
             //
-            //          TODO: figure out how to merge if the same dir is specified twice
-            //          with different in/exclude patterns. We can't write them now,
-            //                      since only the the first one would be included.
+            // TODO: figure out how to merge if the same dir is specified twice
+            // with different in/exclude patterns. We can't write them now,
+            // since only the the first one would be included.
             //
-            //          if ( resource.getIncludes().size() != 0 )
-            //          {
-            //              writer.addAttribute(
-            //                      "including", StringUtils.join( resource.getIncludes().iterator(), "|" )
-            //                      );
-            //          }
+            // if ( resource.getIncludes().size() != 0 )
+            // {
+            // writer.addAttribute(
+            // "including", StringUtils.join( resource.getIncludes().iterator(),
+            // "|" )
+            // );
+            // }
             //
-            //          if ( resource.getExcludes().size() != 0 )
-            //          {
-            //              writer.addAttribute(
-            //                      "excluding", StringUtils.join( resource.getExcludes().iterator(), "|" )
-            //              );
-            //          }
+            // if ( resource.getExcludes().size() != 0 )
+            // {
+            // writer.addAttribute(
+            // "excluding", StringUtils.join( resource.getExcludes().iterator(),
+            // "|" )
+            // );
+            // }
 
             if ( !StringUtils.isEmpty( resource.getTargetPath() ) )
             {
@@ -251,9 +254,11 @@ public class EclipseUtils
 
     /**
      * Utility method that locates a project producing the given artifact.
-     *
-     * @param reactorProjects a list of projects to search.
-     * @param artifact the artifact a project should produce.
+     * 
+     * @param reactorProjects
+     *            a list of projects to search.
+     * @param artifact
+     *            the artifact a project should produce.
      * @return null or the first project found producing the artifact.
      */
     public static MavenProject findReactorProject( List reactorProjects, Artifact artifact )
@@ -280,6 +285,7 @@ public class EclipseUtils
 
     /**
      * Returns the list of referenced artifacts produced by reactor projects.
+     * 
      * @return List of Artifacts
      */
     public static List resolveReactorArtifacts( MavenProject project, List reactorProjects )
@@ -334,10 +340,12 @@ public class EclipseUtils
     }
 
     /**
-     * @todo MNG-1384 optional dependencies not resolved while compiling from a master project 
-     * Direct optional artifacts are not included in the list returned by project.getTestArtifacts()
-     * .classpath should include ANY direct dependency, and optional dependencies are required to compile
-     * This is fixed in mvn 2.0.1 but this method is needed for compatibility with the 2.0 release. Do not remove!
+     * @todo MNG-1384 optional dependencies not resolved while compiling from a
+     *       master project Direct optional artifacts are not included in the
+     *       list returned by project.getTestArtifacts() .classpath should
+     *       include ANY direct dependency, and optional dependencies are
+     *       required to compile This is fixed in mvn 2.0.1 but this method is
+     *       needed for compatibility with the 2.0 release. Do not remove!
      */
     public static void fixMissingOptionalArtifacts( Collection artifacts, Collection depArtifacts,
                                                    ArtifactRepository localRepository,
@@ -421,4 +429,32 @@ public class EclipseUtils
         return resolvedArtifact;
     }
 
+    /**
+     * Extracts the
+     * 
+     * @param artifactNames
+     *            artifact names to compare against for extracting version
+     * @param artifacts
+     *            Collection of dependencies for our project
+     * @param offset
+     *            start position to extract version
+     * @param len
+     *            expected length of the version sub-string
+     * @return
+     */
+    public static String getDependencyVersion( List artifactNames, Set artifacts, int offset, int len )
+    {
+        for ( Iterator itr = artifacts.iterator(); itr.hasNext(); )
+        {
+            Artifact artifact = (Artifact) itr.next();
+            for ( Iterator itArtNames = artifactNames.iterator(); itArtNames.hasNext(); )
+            {
+                String name = (String) itArtNames.next();
+                if ( name.equals( artifact.getArtifactId() ) )
+                    return StringUtils.substring( artifact.getVersion(), offset, len );
+            }
+        }
+        // shouldn't be the case.
+        return "";
+    }
 }

@@ -48,19 +48,24 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * @version $Id$
  */
 public class EclipseProjectWriter
+    extends AbstractEclipseResourceWriter
 {
 
-    private Log log;
+    private static final String ELT_NAME = "name";
 
-    private File eclipseProjectDir;
+    private static final String ELT_BUILD_COMMAND = "buildCommand";
 
-    private MavenProject project;
+    private static final String ELT_BUILD_SPEC = "buildSpec";
+
+    private static final String ELT_NATURE = "nature";
+
+    private static final String ELT_NATURES = "natures";
+
+    private static final String FILE_DOT_PROJECT = ".project";
 
     public EclipseProjectWriter( Log log, File eclipseProjectDir, MavenProject project )
     {
-        this.log = log;
-        this.eclipseProjectDir = eclipseProjectDir;
-        this.project = project;
+        super( log, eclipseProjectDir, project );
     }
 
     public void write( File projectBaseDir, MavenProject executedProject, List reactorArtifacts,
@@ -71,12 +76,12 @@ public class EclipseProjectWriter
         Set projectnatures = new LinkedHashSet();
         Set buildCommands = new LinkedHashSet();
 
-        File dotProject = new File( eclipseProjectDir, ".project" );
+        File dotProject = new File( getEclipseProjectDirectory(), FILE_DOT_PROJECT );
 
         if ( dotProject.exists() )
         {
 
-            log.info( Messages.getString( "EclipsePlugin.keepexisting", dotProject.getAbsolutePath() ) ); //$NON-NLS-1$
+            getLog().info( Messages.getString( "EclipsePlugin.keepexisting", dotProject.getAbsolutePath() ) ); //$NON-NLS-1$
 
             // parse existing file in order to keep manually-added entries
             FileReader reader = null;
@@ -85,10 +90,10 @@ public class EclipseProjectWriter
                 reader = new FileReader( dotProject );
                 Xpp3Dom dom = Xpp3DomBuilder.build( reader );
 
-                Xpp3Dom naturesElement = dom.getChild( "natures" );
+                Xpp3Dom naturesElement = dom.getChild( ELT_NATURES );
                 if ( naturesElement != null )
                 {
-                    Xpp3Dom[] existingNatures = naturesElement.getChildren( "nature" );
+                    Xpp3Dom[] existingNatures = naturesElement.getChildren( ELT_NATURE );
                     for ( int j = 0; j < existingNatures.length; j++ )
                     {
                         // adds all the existing natures
@@ -96,13 +101,13 @@ public class EclipseProjectWriter
                     }
                 }
 
-                Xpp3Dom buildSpec = dom.getChild( "buildSpec" );
+                Xpp3Dom buildSpec = dom.getChild( ELT_BUILD_SPEC );
                 if ( buildSpec != null )
                 {
-                    Xpp3Dom[] existingBuildCommands = buildSpec.getChildren( "buildCommand" );
+                    Xpp3Dom[] existingBuildCommands = buildSpec.getChildren( ELT_BUILD_COMMAND );
                     for ( int j = 0; j < existingBuildCommands.length; j++ )
                     {
-                        Xpp3Dom buildCommandName = existingBuildCommands[j].getChild( "name" );
+                        Xpp3Dom buildCommandName = existingBuildCommands[j].getChild( ELT_NAME );
                         if ( buildCommandName != null )
                         {
                             buildCommands.add( buildCommandName.getValue() );
@@ -112,11 +117,11 @@ public class EclipseProjectWriter
             }
             catch ( XmlPullParserException e )
             {
-                log.warn( Messages.getString( "EclipsePlugin.cantparseexisting", dotProject.getAbsolutePath() ) ); //$NON-NLS-1$
+                getLog().warn( Messages.getString( "EclipsePlugin.cantparseexisting", dotProject.getAbsolutePath() ) ); //$NON-NLS-1$
             }
             catch ( IOException e )
             {
-                log.warn( Messages.getString( "EclipsePlugin.cantparseexisting", dotProject.getAbsolutePath() ) ); //$NON-NLS-1$
+                getLog().warn( Messages.getString( "EclipsePlugin.cantparseexisting", dotProject.getAbsolutePath() ) ); //$NON-NLS-1$
             }
             finally
             {
@@ -149,18 +154,19 @@ public class EclipseProjectWriter
 
         writer.startElement( "projectDescription" ); //$NON-NLS-1$
 
-        writer.startElement( "name" ); //$NON-NLS-1$
-        writer.writeText( project.getArtifactId() );
+        writer.startElement( ELT_NAME ); //$NON-NLS-1$
+        writer.writeText( getProject().getArtifactId() );
         writer.endElement();
 
         // TODO: this entire element might be dropped if the comment is null.
-        // but as the maven1 eclipse plugin does it, it's better to be safe than sorry
+        // but as the maven1 eclipse plugin does it, it's better to be safe than
+        // sorry
         // A eclipse developer might want to look at this.
         writer.startElement( "comment" ); //$NON-NLS-1$
 
-        if ( project.getDescription() != null )
+        if ( getProject().getDescription() != null )
         {
-            writer.writeText( project.getDescription() );
+            writer.writeText( getProject().getDescription() );
         }
 
         writer.endElement();
@@ -179,12 +185,12 @@ public class EclipseProjectWriter
 
         writer.endElement(); // projects
 
-        writer.startElement( "buildSpec" ); //$NON-NLS-1$
+        writer.startElement( ELT_BUILD_SPEC ); //$NON-NLS-1$
 
         for ( Iterator it = buildCommands.iterator(); it.hasNext(); )
         {
-            writer.startElement( "buildCommand" ); //$NON-NLS-1$
-            writer.startElement( "name" ); //$NON-NLS-1$
+            writer.startElement( ELT_BUILD_COMMAND ); //$NON-NLS-1$
+            writer.startElement( ELT_NAME ); //$NON-NLS-1$
             writer.writeText( (String) it.next() );
             writer.endElement(); // name
             writer.startElement( "arguments" ); //$NON-NLS-1$
@@ -194,28 +200,32 @@ public class EclipseProjectWriter
 
         writer.endElement(); // buildSpec
 
-        writer.startElement( "natures" ); //$NON-NLS-1$
+        writer.startElement( ELT_NATURES ); //$NON-NLS-1$
 
         for ( Iterator it = projectnatures.iterator(); it.hasNext(); )
         {
-            writer.startElement( "nature" ); //$NON-NLS-1$
+            writer.startElement( ELT_NATURE ); //$NON-NLS-1$
             writer.writeText( (String) it.next() );
             writer.endElement(); // name
         }
 
         writer.endElement(); // natures
 
-        if ( !projectBaseDir.equals( eclipseProjectDir ) )
+        if ( !projectBaseDir.equals( getEclipseProjectDirectory() ) )
         {
             writer.startElement( "linkedResources" ); //$NON-NLS-1$
 
-            addFileLink( writer, projectBaseDir, eclipseProjectDir, project.getFile() );
+            addFileLink( writer, projectBaseDir, getEclipseProjectDirectory(), getProject().getFile() );
 
-            addSourceLinks( writer, projectBaseDir, eclipseProjectDir, executedProject.getCompileSourceRoots() );
-            addResourceLinks( writer, projectBaseDir, eclipseProjectDir, executedProject.getBuild().getResources() );
+            addSourceLinks( writer, projectBaseDir, getEclipseProjectDirectory(), executedProject
+                .getCompileSourceRoots() );
+            addResourceLinks( writer, projectBaseDir, getEclipseProjectDirectory(), executedProject.getBuild()
+                .getResources() );
 
-            addSourceLinks( writer, projectBaseDir, eclipseProjectDir, executedProject.getTestCompileSourceRoots() );
-            addResourceLinks( writer, projectBaseDir, eclipseProjectDir, executedProject.getBuild().getTestResources() );
+            addSourceLinks( writer, projectBaseDir, getEclipseProjectDirectory(), executedProject
+                .getTestCompileSourceRoots() );
+            addResourceLinks( writer, projectBaseDir, getEclipseProjectDirectory(), executedProject.getBuild()
+                .getTestResources() );
 
             writer.endElement(); // linedResources
         }
@@ -232,7 +242,7 @@ public class EclipseProjectWriter
         {
             writer.startElement( "link" ); //$NON-NLS-1$
 
-            writer.startElement( "name" ); //$NON-NLS-1$
+            writer.startElement( ELT_NAME ); //$NON-NLS-1$
             writer.writeText( EclipseUtils.toRelativeAndFixSeparator( projectBaseDir, file, true ) );
             writer.endElement(); // name
 
@@ -256,7 +266,7 @@ public class EclipseProjectWriter
         }
         else
         {
-            log.warn( Messages.getString( "EclipseProjectWriter.notafile", file ) ); //$NON-NLS-1$
+            getLog().warn( Messages.getString( "EclipseProjectWriter.notafile", file ) ); //$NON-NLS-1$
         }
     }
 
@@ -272,7 +282,7 @@ public class EclipseProjectWriter
             {
                 writer.startElement( "link" ); //$NON-NLS-1$
 
-                writer.startElement( "name" ); //$NON-NLS-1$
+                writer.startElement( ELT_NAME ); //$NON-NLS-1$
                 writer.writeText( EclipseUtils.toRelativeAndFixSeparator( projectBaseDir, sourceRoot, true ) );
                 writer.endElement(); // name
 
@@ -310,7 +320,7 @@ public class EclipseProjectWriter
             {
                 writer.startElement( "link" ); //$NON-NLS-1$
 
-                writer.startElement( "name" ); //$NON-NLS-1$
+                writer.startElement( ELT_NAME ); //$NON-NLS-1$
                 writer.writeText( EclipseUtils.toRelativeAndFixSeparator( projectBaseDir, resourceDir, true ) );
                 writer.endElement(); // name
 

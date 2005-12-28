@@ -47,6 +47,7 @@ public class EclipseSourceDir
 
     /**
      * Getter for <code>exclude</code>.
+     * 
      * @return Returns the exclude.
      */
     public String getExclude()
@@ -56,7 +57,9 @@ public class EclipseSourceDir
 
     /**
      * Setter for <code>exclude</code>.
-     * @param exclude The exclude to set.
+     * 
+     * @param exclude
+     *            The exclude to set.
      */
     public void setExclude( String exclude )
     {
@@ -65,6 +68,7 @@ public class EclipseSourceDir
 
     /**
      * Getter for <code>include</code>.
+     * 
      * @return Returns the include.
      */
     public String getInclude()
@@ -74,7 +78,9 @@ public class EclipseSourceDir
 
     /**
      * Setter for <code>include</code>.
-     * @param include The include to set.
+     * 
+     * @param include
+     *            The include to set.
      */
     public void setInclude( String include )
     {
@@ -83,6 +89,7 @@ public class EclipseSourceDir
 
     /**
      * Getter for <code>output</code>.
+     * 
      * @return Returns the output.
      */
     public String getOutput()
@@ -92,7 +99,9 @@ public class EclipseSourceDir
 
     /**
      * Setter for <code>output</code>.
-     * @param output The output to set.
+     * 
+     * @param output
+     *            The output to set.
      */
     public void setOutput( String output )
     {
@@ -101,6 +110,7 @@ public class EclipseSourceDir
 
     /**
      * Getter for <code>path</code>.
+     * 
      * @return Returns the path.
      */
     public String getPath()
@@ -110,7 +120,9 @@ public class EclipseSourceDir
 
     /**
      * Setter for <code>path</code>.
-     * @param path The path to set.
+     * 
+     * @param path
+     *            The path to set.
      */
     public void setPath( String path )
     {
@@ -119,6 +131,7 @@ public class EclipseSourceDir
 
     /**
      * Getter for <code>test</code>.
+     * 
      * @return Returns the test.
      */
     public boolean isTest()
@@ -128,7 +141,9 @@ public class EclipseSourceDir
 
     /**
      * Setter for <code>test</code>.
-     * @param test The test to set.
+     * 
+     * @param test
+     *            The test to set.
      */
     public void setTest( boolean test )
     {

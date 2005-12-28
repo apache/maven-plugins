@@ -101,10 +101,14 @@ public class EclipsePluginMasterProjectTest
     {
         MavenProject project = maven.readProjectWithDependencies( new File( basedir, "pom.xml" ) );
         EventMonitor eventMonitor = new DefaultEventMonitor( new PlexusLoggerAdapter( new MavenEmbedderConsoleLogger() ) );
+
+        Properties properties = new Properties();
+        properties.setProperty( "wtpversion", "R7" );
+
         this.maven.execute( project, Arrays.asList( new String[] {
             "org.apache.maven.plugins:maven-eclipse-plugin:clean",
             "org.apache.maven.plugins:maven-eclipse-plugin:eclipse" } ), eventMonitor, new ConsoleDownloadMonitor(),
-                            new Properties(), this.basedir );
+                            properties, this.basedir );
     }
 
     protected void executeMaven2()
@@ -273,6 +277,8 @@ public class EclipsePluginMasterProjectTest
         cmd.setWorkingDirectory( workingDir.getCanonicalPath() );
 
         cmd.setExecutable( "mvn" );
+        cmd.createArgument().setValue( "-Dwtpversion=R7" );
+
         cmd.createArgument().setValue( "-s" + settingsPath );
         cmd.createArgument().setValue( "-e" );
 

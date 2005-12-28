@@ -109,8 +109,12 @@ public abstract class AbstractEclipsePluginTestCase
         assertFileEquals( localRepositoryDir.getCanonicalPath(), new File( basedir, "classpath" ),
                           new File( projectOutputDir, ".classpath" ) );
 
-        assertFileEquals( localRepositoryDir.getCanonicalPath(), new File( basedir, "wtpmodules" ),
-                          new File( projectOutputDir, ".wtpmodules" ) );
+        File wtpModulesExpectedFile = new File( basedir, "wtpmodules" );
+        if ( wtpModulesExpectedFile.exists() )
+        {
+            assertFileEquals( localRepositoryDir.getCanonicalPath(), wtpModulesExpectedFile,
+                              new File( projectOutputDir, ".wtpmodules" ) );
+        }
 
         if ( new File( basedir, "settings" ).exists() )
         {
