@@ -34,6 +34,7 @@ import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
 
@@ -157,6 +158,7 @@ public class EclipseClasspathWriter
         String path;
         String kind;
         String sourcepath = null;
+        String javadocpath = null;
 
         if ( referencedReactorArtifacts.contains( artifact ) )
         {
@@ -194,13 +196,33 @@ public class EclipseClasspathWriter
                 path = "M2_REPO/" //$NON-NLS-1$
                     + EclipseUtils.toRelativeAndFixSeparator( localRepositoryFile, new File( fullPath ), false );
 
-                Artifact sourceArtifact = EclipseUtils.resolveSourceArtifact( artifact, localRepository,
+                Artifact sourceArtifact = EclipseUtils.resolveLocalSourceArtifact( artifact, localRepository,
                                                                               artifactResolver, artifactFactory );
 
                 if ( sourceArtifact.isResolved() )
                 {
                     sourcepath = "M2_REPO/" //$NON-NLS-1$
                         + EclipseUtils.toRelativeAndFixSeparator( localRepositoryFile, sourceArtifact.getFile(), false );
+                }
+                else
+                {
+
+                    // if a source artifact is not available, try with a plain javadoc jar
+                    Artifact javadocArtifact = EclipseUtils.resolveLocalJavadocArtifact( artifact, localRepository, artifactResolver, artifactFactory );
+                    if ( javadocArtifact.isResolved() )
+                    {
+                        try
+                        {
+                            // NB eclipse (3.1) doesn't support variables in javadoc paths, so we need to add the
+                            // full path for the maven repo
+                            javadocpath = StringUtils.replace( javadocArtifact.getFile().getCanonicalPath(), "\\", "/" );
+                        }
+                        catch ( IOException e )
+                        {
+                            // should never happen
+                            throw new MojoExecutionException( e.getMessage(), e );
+                        }
+                    }
                 }
 
                 kind = "var"; //$NON-NLS-1$
@@ -215,6 +237,17 @@ public class EclipseClasspathWriter
         if ( sourcepath != null )
         {
             writer.addAttribute( "sourcepath", sourcepath ); //$NON-NLS-1$
+        }
+        else if ( javadocpath != null )
+        {
+            writer.startElement( "attributes" ); //$NON-NLS-1$
+
+            writer.startElement( "attribute" ); //$NON-NLS-1$
+            writer.addAttribute( "value", "jar:file:/" + javadocpath + "!/" );
+            writer.addAttribute( "name", "javadoc_location" );
+            writer.endElement();
+
+            writer.endElement();
         }
 
         writer.endElement();

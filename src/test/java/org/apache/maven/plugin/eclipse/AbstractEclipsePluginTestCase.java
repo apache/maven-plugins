@@ -135,6 +135,8 @@ public abstract class AbstractEclipsePluginTestCase
             // replace some vars in the expected line, to account
             // for absolute paths that are different on each installation.
             expected = StringUtils.replace( expected, "${basedir}", basedir );
+            expected = StringUtils.replace( expected, "${M2_REPO}", localRepositoryDir.getCanonicalPath()
+                .replace( '\\', '/' ) );
 
             if ( actualLines.size() <= i )
             {
