@@ -16,6 +16,17 @@ package org.apache.maven.report.projectinfo;
  * limitations under the License.
  */
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -27,11 +38,6 @@ import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.doxia.site.renderer.SiteRenderer;
 import org.codehaus.plexus.i18n.I18N;
-
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Set;
 
 /**
  * Generates the Project Dependencies report.
@@ -188,8 +194,8 @@ public class DependenciesReport
         private I18N i18n;
 
         public DependenciesRenderer( Sink sink, MavenProject project, I18N i18n, Locale locale,
-                                     MavenProjectBuilder mavenProjectBuilder, ArtifactFactory artifactFactory,
-                                     ArtifactRepository localRepository )
+                                    MavenProjectBuilder mavenProjectBuilder, ArtifactFactory artifactFactory,
+                                    ArtifactRepository localRepository )
         {
             super( sink );
 
@@ -230,17 +236,28 @@ public class DependenciesReport
 
             startSection( getTitle() );
 
-            startTable();
-
-            tableCaption( i18n.getString( "project-info-report", locale, "report.dependencies.intro" ) );
-
             String groupId = i18n.getString( "project-info-report", locale, "report.dependencies.column.groupId" );
             String artifactId = i18n.getString( "project-info-report", locale, "report.dependencies.column.artifactId" );
             String version = i18n.getString( "project-info-report", locale, "report.dependencies.column.version" );
-            String description = i18n.getString( "project-info-report", locale, "report.dependencies.column.description" );
+            String description = i18n.getString( "project-info-report", locale,
+                                                 "report.dependencies.column.description" );
             String url = i18n.getString( "project-info-report", locale, "report.dependencies.column.url" );
+            String optional = i18n.getString( "project-info-report", locale, "report.dependencies.column.optional" );
 
-            tableHeader( new String[]{groupId, artifactId, version, description, url} );
+            // collect dependencies by scope
+            Map dependenciesByScope = new HashMap()
+            {
+                public Object put( Object key, Object value )
+                {
+                    List multiValue = (List) get( key );
+                    if ( multiValue == null )
+                    {
+                        multiValue = new ArrayList();
+                    }
+                    multiValue.add( value );
+                    return super.put( key, multiValue );
+                }
+            };
 
             for ( Iterator i = dependencies.iterator(); i.hasNext(); )
             {
@@ -249,8 +266,13 @@ public class DependenciesReport
                 MavenProject artifactProject;
                 if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
                 {
-                    tableRow( new String[]{artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
-                        null, null } );
+                    dependenciesByScope.put( artifact.getScope(), new String[] {
+                        artifact.getGroupId(),
+                        artifact.getArtifactId(),
+                        artifact.getVersion(),
+                        null,
+                        null,
+                        artifact.isOptional() ? "X" : null } );
                 }
                 else
                 {
@@ -262,18 +284,54 @@ public class DependenciesReport
                     catch ( ProjectBuildingException e )
                     {
                         throw new IllegalArgumentException(
-                            "Can't find a valid Maven project in the repository for the artifact [" +
-                                artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getVersion() +
-                                "]." );
+                                                            "Can't find a valid Maven project in the repository for the artifact ["
+                                                                + artifact.getGroupId() + ":"
+                                                                + artifact.getArtifactId() + ":"
+                                                                + artifact.getVersion() + "]." );
                     }
-
-                    tableRow( new String[]{artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
+                    dependenciesByScope.put( artifact.getScope(), new String[] {
+                        artifact.getGroupId(),
+                        artifact.getArtifactId(),
+                        artifact.getVersion(),
                         artifactProject.getDescription(),
-                        createLinkPatternedText( artifactProject.getUrl(), artifactProject.getUrl() )} );
+                        createLinkPatternedText( artifactProject.getUrl(), artifactProject.getUrl() ),
+                        artifact.isOptional() ? "X" : null } );
                 }
             }
 
-            endTable();
+            for ( Iterator iter = dependenciesByScope.keySet().iterator(); iter.hasNext(); )
+            {
+                String scope = (String) iter.next();
+                List artifactsRows = (List) dependenciesByScope.get( scope );
+
+                startSection( scope );
+
+                paragraph( i18n.getString( "project-info-report", locale, "report.dependencies.intro." + scope ) );
+                startTable();
+                tableHeader( new String[] { groupId, artifactId, version, description, url, optional } );
+
+                // optional at the end + sort group id
+                Collections.sort( artifactsRows, new Comparator()
+                {
+
+                    public int compare( Object row1, Object row2 )
+                    {
+                        String[] s1 = (String[]) row1;
+                        String[] s2 = (String[]) row2;
+                        return s1[0].compareTo( s2[0] ) + ( s1[5] != null ? 1000000 : 0 )
+                            - ( s2[5] != null ? 1000000 : 0 );
+                    }
+                } );
+
+                for ( Iterator iterator = artifactsRows.iterator(); iterator.hasNext(); )
+                {
+                    String[] row = (String[]) iterator.next();
+                    tableRow( row );
+                }
+                endTable();
+
+                endSection();
+            }
 
             endSection();
 
@@ -288,11 +346,11 @@ public class DependenciesReport
             }
             else
             {
+                paragraph( i18n.getString( "project-info-report", locale, "report.transitivedependencies.intro" ) );
+
                 startTable();
 
-                tableCaption( i18n.getString( "project-info-report", locale, "report.transitivedependencies.intro" ) );
-
-                tableHeader( new String[]{groupId, artifactId, version, description, url} );
+                tableHeader( new String[] { groupId, artifactId, version, description, url, optional } );
 
                 for ( Iterator i = artifacts.iterator(); i.hasNext(); )
                 {
@@ -301,8 +359,13 @@ public class DependenciesReport
                     MavenProject artifactProject;
                     if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
                     {
-                        tableRow( new String[]{artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
-                            null, null } );
+                        tableRow( new String[] {
+                            artifact.getGroupId(),
+                            artifact.getArtifactId(),
+                            artifact.getVersion(),
+                            null,
+                            null,
+                            artifact.isOptional() ? "X" : null } );
                     }
                     else
                     {
@@ -315,13 +378,18 @@ public class DependenciesReport
                         {
                             // TODO: better exception handling needed - log PBE
                             throw new IllegalArgumentException(
-                                "Can't find a valid Maven project in the repository for the artifact [" +
-                                    artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getVersion() +
-                                    "]." );
+                                                                "Can't find a valid Maven project in the repository for the artifact ["
+                                                                    + artifact.getGroupId() + ":"
+                                                                    + artifact.getArtifactId() + ":"
+                                                                    + artifact.getVersion() + "]." );
                         }
-                        tableRow( new String[]{artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
+                        tableRow( new String[] {
+                            artifact.getGroupId(),
+                            artifact.getArtifactId(),
+                            artifact.getVersion(),
                             artifactProject.getDescription(),
-                            createLinkPatternedText( artifactProject.getUrl(), artifactProject.getUrl() )} );
+                            createLinkPatternedText( artifactProject.getUrl(), artifactProject.getUrl() ),
+                            artifact.isOptional() ? "X" : null } );
                     }
                 }
 
@@ -379,9 +447,8 @@ public class DependenciesReport
             boolean allowStubModel = false;
             if ( !"pom".equals( artifact.getType() ) )
             {
-                projectArtifact = artifactFactory.createProjectArtifact( artifact.getGroupId(),
-                                                                         artifact.getArtifactId(),
-                                                                         artifact.getVersion(), artifact.getScope() );
+                projectArtifact = artifactFactory.createProjectArtifact( artifact.getGroupId(), artifact
+                    .getArtifactId(), artifact.getVersion(), artifact.getScope() );
                 allowStubModel = true;
             }
 
