@@ -127,4 +127,24 @@ public class AddMavenRepoMojo
                                                                   f.getAbsolutePath() ) );
         }
     }
+
+    public ArtifactRepository getLocalRepository()
+    {
+        return localRepository;
+    }
+
+    public void setLocalRepository( ArtifactRepository localRepository )
+    {
+        this.localRepository = localRepository;
+    }
+
+    public String getWorkspace()
+    {
+        return workspace;
+    }
+
+    public void setWorkspace( String workspace )
+    {
+        this.workspace = workspace;
+    }
 }
