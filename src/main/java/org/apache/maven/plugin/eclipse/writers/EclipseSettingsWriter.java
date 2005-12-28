@@ -36,19 +36,38 @@ import org.apache.maven.project.MavenProject;
  * @version $Id$
  */
 public class EclipseSettingsWriter
+    extends AbstractEclipseResourceWriter
 {
 
-    private Log log;
+    /**
+     * 'target' property for maven-compiler-plugin.
+     */
+    private static final String PROPERTY_TARGET = "target";
 
-    private File eclipseProjectDir;
+    /**
+     * 'source' property for maven-compiler-plugin.
+     */
+    private static final String PROPERTY_SOURCE = "source";
 
-    private MavenProject project;
+    private static final String JDK_1_2_SOURCES = "1.2";
+
+    private static final String JDK_1_3_SOURCES = "1.3";
+
+    private static final String FILE_ECLIPSE_JDT_CORE_PREFS = "org.eclipse.jdt.core.prefs";
+
+    private static final String PROP_ECLIPSE_PREFERENCES_VERSION = "eclipse.preferences.version";
+
+    private static final String DIR_DOT_SETTINGS = ".settings";
+
+    private static final String PROP_JDT_CORE_COMPILER_COMPLIANCE = "org.eclipse.jdt.core.compiler.compliance";
+
+    private static final String PROP_JDT_CORE_COMPILER_SOURCE = "org.eclipse.jdt.core.compiler.source";
+
+    private static final String ARTIFACT_MAVEN_COMPILER_PLUGIN = "maven-compiler-plugin";
 
     public EclipseSettingsWriter( Log log, File eclipseProjectDir, MavenProject project )
     {
-        this.log = log;
-        this.eclipseProjectDir = eclipseProjectDir;
-        this.project = project;
+        super( log, eclipseProjectDir, project );
     }
 
     public void write()
@@ -58,16 +77,18 @@ public class EclipseSettingsWriter
         // check if it's necessary to create project specific settings
         Properties coreSettings = new Properties();
 
-        String source = EclipseUtils.getPluginSetting( project, "maven-compiler-plugin", "source", null ); //$NON-NLS-1$ //$NON-NLS-2$
-        String target = EclipseUtils.getPluginSetting( project, "maven-compiler-plugin", "target", null ); //$NON-NLS-1$ //$NON-NLS-2$
+        String source = EclipseUtils.getPluginSetting( getProject(), ARTIFACT_MAVEN_COMPILER_PLUGIN, PROPERTY_SOURCE,
+                                                       null ); //$NON-NLS-1$ //$NON-NLS-2$
+        String target = EclipseUtils.getPluginSetting( getProject(), ARTIFACT_MAVEN_COMPILER_PLUGIN, PROPERTY_TARGET,
+                                                       null ); //$NON-NLS-1$ //$NON-NLS-2$
 
-        if ( source != null && !"1.3".equals( source ) ) //$NON-NLS-1$
+        if ( source != null && !JDK_1_3_SOURCES.equals( source ) ) //$NON-NLS-1$
         {
-            coreSettings.put( "org.eclipse.jdt.core.compiler.source", source ); //$NON-NLS-1$
-            coreSettings.put( "org.eclipse.jdt.core.compiler.compliance", source ); //$NON-NLS-1$
+            coreSettings.put( PROP_JDT_CORE_COMPILER_SOURCE, source ); //$NON-NLS-1$
+            coreSettings.put( PROP_JDT_CORE_COMPILER_COMPLIANCE, source ); //$NON-NLS-1$
         }
 
-        if ( target != null && !"1.2".equals( target ) ) //$NON-NLS-1$
+        if ( target != null && !JDK_1_2_SOURCES.equals( target ) ) //$NON-NLS-1$
         {
             coreSettings.put( "org.eclipse.jdt.core.compiler.codegen.targetPlatform", target ); //$NON-NLS-1$
         }
@@ -75,17 +96,17 @@ public class EclipseSettingsWriter
         // write the settings, if needed
         if ( !coreSettings.isEmpty() )
         {
-            File settingsDir = new File( eclipseProjectDir, "/.settings" ); //$NON-NLS-1$
+            File settingsDir = new File( getEclipseProjectDirectory(), "/" + DIR_DOT_SETTINGS ); //$NON-NLS-1$
 
             settingsDir.mkdirs();
 
-            coreSettings.put( "eclipse.preferences.version", "1" ); //$NON-NLS-1$ //$NON-NLS-2$
+            coreSettings.put( PROP_ECLIPSE_PREFERENCES_VERSION, "1" ); //$NON-NLS-1$ //$NON-NLS-2$
 
             try
             {
                 File oldCoreSettingsFile;
 
-                File coreSettingsFile = new File( settingsDir, "org.eclipse.jdt.core.prefs" ); //$NON-NLS-1$
+                File coreSettingsFile = new File( settingsDir, FILE_ECLIPSE_JDT_CORE_PREFS ); //$NON-NLS-1$
 
                 if ( coreSettingsFile.exists() )
                 {
@@ -106,8 +127,8 @@ public class EclipseSettingsWriter
                 {
                     coreSettings.store( new FileOutputStream( coreSettingsFile ), null );
 
-                    log.info( Messages.getString( "EclipseSettingsWriter.wrotesettings", //$NON-NLS-1$
-                                                  coreSettingsFile.getCanonicalPath() ) );
+                    getLog().info( Messages.getString( "EclipseSettingsWriter.wrotesettings", //$NON-NLS-1$
+                                                       coreSettingsFile.getCanonicalPath() ) );
                 }
             }
             catch ( FileNotFoundException e )
@@ -121,7 +142,7 @@ public class EclipseSettingsWriter
         }
         else
         {
-            log.info( Messages.getString( "EclipseSettingsWriter.usingdefaults" ) ); //$NON-NLS-1$
+            getLog().info( Messages.getString( "EclipseSettingsWriter.usingdefaults" ) ); //$NON-NLS-1$
         }
     }
 }

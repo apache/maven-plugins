@@ -17,19 +17,44 @@ package org.apache.maven.plugin.eclipse;
  */
 
 import java.io.File;
+import java.io.IOException;
 import java.text.MessageFormat;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.codehaus.plexus.util.FileUtils;
 
 /**
- * A Maven2 plugin to delete the .project, .classpath and .wtpmodules files needed for Eclipse.
- *
+ * A Maven2 plugin to delete the .project, .classpath, .wtpmodules files and
+ * .settings folder needed for Eclipse.
+ * 
  * @goal clean
  */
 public class EclipseCleanMojo
     extends AbstractMojo
 {
+
+    /**
+     * Definition file for Eclipse Web Tools project.
+     */
+    private static final String FILE_DOT_WTPMODULES = ".wtpmodules";
+
+    /**
+     * Classpath definition file for an Eclipse Java project.
+     */
+    private static final String FILE_DOT_CLASSPATH = ".classpath";
+
+    /**
+     * Project definition file for an Eclipse Project.
+     */
+    private static final String FILE_DOT_PROJECT = ".project";
+
+    /**
+     * Web Project definition file for Eclipse Web Tools Project (Release 1.0RC5
+     * compatible).
+     */
+    private static final String DIR_DOT_SETTINGS = ".settings";
+
     /**
      * @parameter expression="${basedir}"
      */
@@ -38,15 +63,19 @@ public class EclipseCleanMojo
     public void execute()
         throws MojoExecutionException
     {
-        delete( new File( basedir, ".project" ) );
-        delete( new File( basedir, ".classpath" ) );
-        delete( new File( basedir, ".wtpmodules" ) );
+        delete( new File( basedir, FILE_DOT_PROJECT ) );
+        delete( new File( basedir, FILE_DOT_CLASSPATH ) );
+        delete( new File( basedir, FILE_DOT_WTPMODULES ) );
+        delete( new File( basedir, DIR_DOT_SETTINGS ) );
     }
 
     /**
      * Delete a file, handling log messages and exceptions
-     * @param f File to be deleted
-     * @throws MojoExecutionException only if a file exists and can't be deleted
+     * 
+     * @param f
+     *            File to be deleted
+     * @throws MojoExecutionException
+     *             only if a file exists and can't be deleted
      */
     private void delete( File f )
         throws MojoExecutionException
@@ -57,11 +86,23 @@ public class EclipseCleanMojo
         {
             if ( !f.delete() )
             {
-                throw new MojoExecutionException( MessageFormat.format( "Failed to delete {0} file: {0}", new Object[] {
-                    f.getName(),
-                    f.getAbsolutePath() } ) )
+                try
                 {
-                };
+                    if ( getLog().isDebugEnabled() )
+                        getLog().debug(
+                                        MessageFormat.format( "Forcibly deleting {0} file...", new Object[] { f
+                                            .getName() } ) );
+                    FileUtils.forceDelete( f );
+                }
+                catch ( IOException e )
+                {
+                    throw new MojoExecutionException( MessageFormat.format( "Failed to delete {0} file: {0}",
+                                                                            new Object[] {
+                                                                                f.getName(),
+                                                                                f.getAbsolutePath() } ) )
+                    {
+                    };
+                }
             }
         }
         else

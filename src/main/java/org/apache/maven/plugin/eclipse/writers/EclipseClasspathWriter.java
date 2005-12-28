@@ -47,21 +47,61 @@ import org.codehaus.plexus.util.xml.XMLWriter;
  * @version $Id$
  */
 public class EclipseClasspathWriter
+    extends AbstractEclipseResourceWriter
 {
 
-    private Log log;
+    /**
+     * Eclipse build path variable M2_REPO
+     */
+    private static final String M2_REPO = "M2_REPO";
 
     private File eclipseProjectDir;
 
+    /**
+     * Attribute for sourcepath.
+     */
+    private static final String ATTR_SOURCEPATH = "sourcepath";
+
     private MavenProject project;
 
+    /**
+     * Attribute for output.
+     */
+    private static final String ATTR_OUTPUT = "output";
+
+    /**
+     * Attribute for path.
+     */
+    private static final String ATTR_PATH = "path";
+
+    /**
+     * Attribute for kind - Container (con), Variable (var)..etc.
+     */
+    private static final String ATTR_KIND = "kind";
+
+    /**
+     * Element for classpathentry.
+     */
+    private static final String ELT_CLASSPATHENTRY = "classpathentry";
+
+    /**
+     * Element for classpath.
+     */
+    private static final String ELT_CLASSPATH = "classpath";
+
+    /**
+     * File name that stores project classpath settings.
+     */
+    private static final String FILE_DOT_CLASSPATH = ".classpath";
+
+    /**
+     * Dependencies for our project.
+     */
     private Collection artifacts;
 
     public EclipseClasspathWriter( Log log, File eclipseProjectDir, MavenProject project, Collection artifacts )
     {
-        this.log = log;
-        this.eclipseProjectDir = eclipseProjectDir;
-        this.project = project;
+        super( log, eclipseProjectDir, project );
         this.artifacts = artifacts;
     }
 
@@ -75,7 +115,7 @@ public class EclipseClasspathWriter
 
         try
         {
-            w = new FileWriter( new File( eclipseProjectDir, ".classpath" ) ); //$NON-NLS-1$
+            w = new FileWriter( new File( getEclipseProjectDirectory(), FILE_DOT_CLASSPATH ) ); //$NON-NLS-1$
         }
         catch ( IOException ex )
         {
@@ -84,7 +124,7 @@ public class EclipseClasspathWriter
 
         XMLWriter writer = new PrettyPrintXMLWriter( w );
 
-        writer.startElement( "classpath" ); //$NON-NLS-1$
+        writer.startElement( ELT_CLASSPATH ); //$NON-NLS-1$
 
         // ----------------------------------------------------------------------
         // Source roots and resources
@@ -94,13 +134,13 @@ public class EclipseClasspathWriter
         {
             EclipseSourceDir dir = sourceDirs[j];
 
-            writer.startElement( "classpathentry" ); //$NON-NLS-1$
+            writer.startElement( ELT_CLASSPATHENTRY ); //$NON-NLS-1$
 
-            writer.addAttribute( "kind", "src" ); //$NON-NLS-1$ //$NON-NLS-2$
-            writer.addAttribute( "path", dir.getPath() ); //$NON-NLS-1$
+            writer.addAttribute( ATTR_KIND, "src" ); //$NON-NLS-1$ //$NON-NLS-2$
+            writer.addAttribute( ATTR_PATH, dir.getPath() ); //$NON-NLS-1$
             if ( dir.getOutput() != null )
             {
-                writer.addAttribute( "output", dir.getOutput() ); //$NON-NLS-1$
+                writer.addAttribute( ATTR_OUTPUT, dir.getOutput() ); //$NON-NLS-1$
             }
 
             writer.endElement();
@@ -111,9 +151,9 @@ public class EclipseClasspathWriter
         // The default output
         // ----------------------------------------------------------------------
 
-        writer.startElement( "classpathentry" ); //$NON-NLS-1$
-        writer.addAttribute( "kind", "output" ); //$NON-NLS-1$ //$NON-NLS-2$
-        writer.addAttribute( "path", //$NON-NLS-1$ 
+        writer.startElement( ELT_CLASSPATHENTRY ); //$NON-NLS-1$
+        writer.addAttribute( ATTR_KIND, ATTR_OUTPUT ); //$NON-NLS-1$ //$NON-NLS-2$
+        writer.addAttribute( ATTR_PATH, //$NON-NLS-1$ 
                              EclipseUtils.toRelativeAndFixSeparator( projectBaseDir, buildOutputDirectory, false ) );
         writer.endElement();
 
@@ -123,9 +163,9 @@ public class EclipseClasspathWriter
 
         for ( Iterator it = classpathContainers.iterator(); it.hasNext(); )
         {
-            writer.startElement( "classpathentry" ); //$NON-NLS-1$
-            writer.addAttribute( "kind", "con" ); //$NON-NLS-1$ //$NON-NLS-2$
-            writer.addAttribute( "path", (String) it.next() ); //$NON-NLS-1$
+            writer.startElement( ELT_CLASSPATHENTRY ); //$NON-NLS-1$
+            writer.addAttribute( ATTR_KIND, "con" ); //$NON-NLS-1$ //$NON-NLS-2$
+            writer.addAttribute( ATTR_PATH, (String) it.next() ); //$NON-NLS-1$
             writer.endElement(); // name
         }
 
@@ -171,7 +211,7 @@ public class EclipseClasspathWriter
 
             if ( artifactPath == null )
             {
-                log.error( Messages.getString( "EclipsePlugin.artifactpathisnull", artifact.getId() ) ); //$NON-NLS-1$
+                getLog().error( Messages.getString( "EclipsePlugin.artifactpathisnull", artifact.getId() ) ); //$NON-NLS-1$
                 return;
             }
 
@@ -179,10 +219,10 @@ public class EclipseClasspathWriter
             {
                 path = EclipseUtils.toRelativeAndFixSeparator( projectBaseDir, artifactPath, false );
 
-                if ( log.isDebugEnabled() )
+                if ( getLog().isDebugEnabled() )
                 {
-                    log.debug( Messages.getString( "EclipsePlugin.artifactissystemscoped", //$NON-NLS-1$
-                                                   new Object[] { artifact.getArtifactId(), path } ) );
+                    getLog().debug( Messages.getString( "EclipsePlugin.artifactissystemscoped", //$NON-NLS-1$
+                                                        new Object[] { artifact.getArtifactId(), path } ) );
                 }
 
                 kind = "lib"; //$NON-NLS-1$
@@ -197,7 +237,7 @@ public class EclipseClasspathWriter
                     + EclipseUtils.toRelativeAndFixSeparator( localRepositoryFile, new File( fullPath ), false );
 
                 Artifact sourceArtifact = EclipseUtils.resolveLocalSourceArtifact( artifact, localRepository,
-                                                                              artifactResolver, artifactFactory );
+                                                                                   artifactResolver, artifactFactory );
 
                 if ( sourceArtifact.isResolved() )
                 {
@@ -208,7 +248,9 @@ public class EclipseClasspathWriter
                 {
 
                     // if a source artifact is not available, try with a plain javadoc jar
-                    Artifact javadocArtifact = EclipseUtils.resolveLocalJavadocArtifact( artifact, localRepository, artifactResolver, artifactFactory );
+                    Artifact javadocArtifact = EclipseUtils.resolveLocalJavadocArtifact( artifact, localRepository,
+                                                                                         artifactResolver,
+                                                                                         artifactFactory );
                     if ( javadocArtifact.isResolved() )
                     {
                         try
