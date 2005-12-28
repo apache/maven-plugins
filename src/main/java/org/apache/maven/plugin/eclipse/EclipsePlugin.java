@@ -47,7 +47,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @version $Id$
  * @goal eclipse
  * @requiresDependencyResolution test
- * @execute phase="generate-sources"
+ * @execute phase="generate-test-resources"
  */
 public class EclipsePlugin
     extends AbstractMojo
