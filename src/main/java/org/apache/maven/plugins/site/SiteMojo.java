@@ -22,8 +22,11 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
+import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.doxia.module.xdoc.XdocSiteModule;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
+import org.apache.maven.doxia.site.decoration.Skin;
 import org.apache.maven.doxia.site.decoration.inheritance.DecorationModelInheritanceAssembler;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
 import org.apache.maven.doxia.siterenderer.Renderer;
@@ -36,6 +39,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.DirectoryScanner;
+import org.codehaus.plexus.util.Expand;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
@@ -78,7 +82,7 @@ public class SiteMojo
 {
     private static final String RESOURCE_DIR = "org/apache/maven/plugins/site";
 
-    private static final String DEFAULT_TEMPLATE = RESOURCE_DIR + "/maven-site.vm";
+    private static final String DEFAULT_TEMPLATE = RESOURCE_DIR + "/default-site.vm";
 
     /**
      * Alternative directory for xdoc source, useful for m1 to m2 migration
@@ -195,7 +199,7 @@ public class SiteMojo
     /**
      * The local repository.
      *
-     * @parameter expression="${localRepository}
+     * @parameter expression="${localRepository}"
      */
     private ArtifactRepository localRepository;
 
@@ -415,7 +419,7 @@ public class SiteMojo
                     }
                 }
 
-                copyResources( outputDirectory );
+                copyResources( outputDirectory, decoration );
 
                 // Copy site resources
                 if ( resourcesDirectory != null && resourcesDirectory.exists() )
@@ -548,7 +552,7 @@ public class SiteMojo
         }
 
         MavenProject parentProject = project.getParent();
-        if ( ( parentProject != null ) && ( project.getUrl() != null ) && ( parentProject.getUrl() != null ) )
+        if ( parentProject != null && project.getUrl() != null && parentProject.getUrl() != null )
         {
             props.put( "parentProject", getProjectParentMenu( locale ) );
 
@@ -1111,11 +1115,12 @@ public class SiteMojo
      * Copy Resources
      *
      * @param outputDir the output directory
+     * @param decoration
      * @throws IOException if any
      * @todo move to skin functionality in site renderer
      */
-    private void copyResources( File outputDir )
-        throws IOException
+    private void copyResources( File outputDir, DecorationModel decoration )
+        throws IOException, MojoFailureException, MojoExecutionException
     {
         InputStream resourceList = getStream( RESOURCE_DIR + "/resources.txt" );
 
@@ -1152,6 +1157,53 @@ public class SiteMojo
 
                 line = reader.readLine();
             }
+        }
+
+        Skin skin = decoration.getSkin();
+
+        if ( skin == null )
+        {
+            skin = Skin.getDefaultSkin();
+        }
+
+        String version = skin.getVersion();
+        Artifact artifact;
+        try
+        {
+            if ( version == null )
+            {
+                version = Artifact.RELEASE_VERSION;
+            }
+            VersionRange versionSpec = VersionRange.createFromVersionSpec( version );
+            artifact = artifactFactory.createDependencyArtifact( skin.getGroupId(), skin.getArtifactId(), versionSpec,
+                                                                 "jar", null, null );
+
+            artifactResolver.resolve( artifact, repositories, localRepository );
+        }
+        catch ( InvalidVersionSpecificationException e )
+        {
+            throw new MojoFailureException( "The skin version '" + version + "' is not valid: " + e.getMessage() );
+        }
+        catch ( ArtifactResolutionException e )
+        {
+            throw new MojoExecutionException( "Unable to find skin", e );
+        }
+        catch ( ArtifactNotFoundException e )
+        {
+            throw new MojoFailureException( "The skin does not exist: " + e.getMessage() );
+        }
+
+        try
+        {
+            Expand expand = new Expand();
+            expand.setSrc( artifact.getFile() );
+            expand.setDest( outputDir );
+            expand.setOverwrite( true );
+            expand.execute();
+        }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( "Error expanding skin", e );
         }
     }
 
