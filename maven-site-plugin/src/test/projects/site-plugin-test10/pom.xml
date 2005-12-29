@@ -58,7 +58,7 @@
        <configuration> 
           
         <templateDirectory>${basedir}</templateDirectory> 
-         <template>maven-site.vm</template> 
+         <template>default-site.vm</template> 
        </configuration> 
       </plugin> 
     </plugins> 
