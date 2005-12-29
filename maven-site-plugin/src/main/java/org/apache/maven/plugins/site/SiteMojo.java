@@ -39,7 +39,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.DirectoryScanner;
-import org.codehaus.plexus.util.Expand;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
@@ -53,7 +52,6 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -61,12 +59,15 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * Generates the project site.
@@ -128,7 +129,7 @@ public class SiteMojo
      *
      * @parameter expression="${template}"
      */
-    private String template = DEFAULT_TEMPLATE;
+    private String template;
 
     /**
      * @parameter expression="${attributes}"
@@ -218,6 +219,8 @@ public class SiteMojo
      */
     private ArtifactFactory artifactFactory;
 
+    private static final String SKIN_TEMPLATE_LOCATION = "META-INF/maven/site.vm";
+
     /**
      * Generate the project site
      * <p/>
@@ -228,30 +231,6 @@ public class SiteMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        ClassLoader templateClassLoader;
-
-        if ( templateDirectory == null )
-        {
-            templateClassLoader = SiteMojo.class.getClassLoader();
-        }
-        else
-        {
-            try
-            {
-                if ( !templateDirectory.exists() )
-                {
-                    throw new MojoExecutionException(
-                        "This templateDirectory=[" + templateDirectory + "] doesn't exist." );
-                }
-
-                templateClassLoader = new URLClassLoader( new URL[]{templateDirectory.toURL()} );
-            }
-            catch ( MalformedURLException e )
-            {
-                throw new MojoExecutionException( templateDirectory + " isn't a valid URL.", e );
-            }
-        }
-
         if ( attributes == null )
         {
             attributes = new HashMap();
@@ -351,6 +330,55 @@ public class SiteMojo
 
                 DecorationModel decoration = getDecorationModel( reports, locale, projectInfos, projectReports );
 
+                File skinArtifactFile = getSkinArtifactFile( decoration );
+
+                boolean hasSiteTemplate = false;
+                if ( template == null )
+                {
+                    if ( skinArtifactFile != null && skinArtifactFile.exists() )
+                    {
+                        ZipFile zipFile = new ZipFile( skinArtifactFile );
+                        try
+                        {
+                            if ( zipFile.getEntry( SKIN_TEMPLATE_LOCATION ) != null )
+                            {
+                                hasSiteTemplate = true;
+                                template = SKIN_TEMPLATE_LOCATION;
+                            }
+                        }
+                        finally
+                        {
+                            zipFile.close();
+                        }
+                    }
+                }
+
+                if ( template == null )
+                {
+                    template = DEFAULT_TEMPLATE;
+                }
+
+                ClassLoader templateClassLoader;
+
+                if ( hasSiteTemplate )
+                {
+                    templateClassLoader = new URLClassLoader( new URL[]{skinArtifactFile.toURL()} );
+                }
+                else if ( templateDirectory == null )
+                {
+                    templateClassLoader = SiteMojo.class.getClassLoader();
+                }
+                else
+                {
+                    if ( !templateDirectory.exists() )
+                    {
+                        throw new MojoExecutionException(
+                            "This templateDirectory=[" + templateDirectory + "] doesn't exist." );
+                    }
+
+                    templateClassLoader = new URLClassLoader( new URL[]{templateDirectory.toURL()} );
+                }
+
                 SiteRenderingContext context = new SiteRenderingContext();
                 context.setTemplate( template );
                 context.setTemplateProperties( attributes );
@@ -419,7 +447,7 @@ public class SiteMojo
                     }
                 }
 
-                copyResources( outputDirectory, decoration );
+                copyResources( outputDirectory, skinArtifactFile );
 
                 // Copy site resources
                 if ( resourcesDirectory != null && resourcesDirectory.exists() )
@@ -1115,12 +1143,12 @@ public class SiteMojo
      * Copy Resources
      *
      * @param outputDir the output directory
-     * @param decoration
+     * @param skinFile
      * @throws IOException if any
      * @todo move to skin functionality in site renderer
      */
-    private void copyResources( File outputDir, DecorationModel decoration )
-        throws IOException, MojoFailureException, MojoExecutionException
+    private void copyResources( File outputDir, File skinFile )
+        throws IOException
     {
         InputStream resourceList = getStream( RESOURCE_DIR + "/resources.txt" );
 
@@ -1136,8 +1164,7 @@ public class SiteMojo
 
                 if ( is == null )
                 {
-                    throw new IOException(
-                        "The resource " + line + " doesn't exists in " + DEFAULT_TEMPLATE + " template." );
+                    throw new IOException( "The resource " + line + " doesn't exist." );
                 }
 
                 File outputFile = new File( outputDir, line );
@@ -1159,6 +1186,48 @@ public class SiteMojo
             }
         }
 
+        // TODO: plexus-archiver, if it could do the excludes
+        ZipFile file = new ZipFile( skinFile );
+        try
+        {
+            for ( Enumeration e = file.entries(); e.hasMoreElements(); )
+            {
+                ZipEntry entry = (ZipEntry) e.nextElement();
+
+                if ( !entry.getName().startsWith( "META-INF/" ) )
+                {
+                    File destFile = new File( outputDir, entry.getName() );
+                    if ( !entry.isDirectory() )
+                    {
+                        destFile.getParentFile().mkdirs();
+
+                        FileOutputStream fos = new FileOutputStream( destFile );
+
+                        try
+                        {
+                            IOUtil.copy( file.getInputStream( entry ), fos );
+                        }
+                        finally
+                        {
+                            IOUtil.close( fos );
+                        }
+                    }
+                    else
+                    {
+                        destFile.mkdirs();
+                    }
+                }
+            }
+        }
+        finally
+        {
+            file.close();
+        }
+    }
+
+    private File getSkinArtifactFile( DecorationModel decoration )
+        throws MojoFailureException, MojoExecutionException
+    {
         Skin skin = decoration.getSkin();
 
         if ( skin == null )
@@ -1193,18 +1262,7 @@ public class SiteMojo
             throw new MojoFailureException( "The skin does not exist: " + e.getMessage() );
         }
 
-        try
-        {
-            Expand expand = new Expand();
-            expand.setSrc( artifact.getFile() );
-            expand.setDest( outputDir );
-            expand.setOverwrite( true );
-            expand.execute();
-        }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( "Error expanding skin", e );
-        }
+        return artifact.getFile();
     }
 
     /**
