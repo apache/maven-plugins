@@ -77,8 +77,8 @@
     #end
   #end
   <li class="$collapse">
-    #if ( $currentFileName == $currentItemHref )
-      <strong><a href="$currentItemHref">$item.name</a></strong>
+    #if ( $currentFileName == $currentItemHref || $currentItemHref.length() == 0 )
+      <strong><a href="$currentFileName">$item.name</a></strong>
     #else
       <a href="$currentItemHref">$item.name</a>
     #end
