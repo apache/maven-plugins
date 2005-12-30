@@ -385,6 +385,7 @@ public class SiteMojo
                 context.setLocale( locale );
                 context.setTemplateClassLoader( templateClassLoader );
                 context.setDecoration( decoration );
+                context.setDefaultWindowTitle( project.getName() );
 
                 //Generate reports
                 List generatedReportsFileName = Collections.EMPTY_LIST;
