@@ -68,8 +68,9 @@ public class CheckstyleViolationCheckMojo
 
         if ( !outputFile.exists() )
         {
-            throw new MojoExecutionException( "Unable to perform checkstyle:check, "
+            getLog().info( "Unable to perform checkstyle:check, "
                 + "unable to find checkstyle:checkstyle outputFile." );
+            return;
         }
 
         try
