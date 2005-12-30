@@ -441,8 +441,8 @@ public class CheckstyleReport
         
         if ( !canGenerateReport() )
         {
-            // TODO: failure if not a report
-            throw new MavenReportException( "No source directory to process for checkstyle" );
+            getLog().info( "Source directory does not exist - skipping report." );
+            return;
         }
         
 //        for when we start using maven-shared-io and maven-shared-monitor...
@@ -936,6 +936,6 @@ public class CheckstyleReport
     public boolean canGenerateReport()
     {
         // TODO: would be good to scan the files here
-        return super.canGenerateReport() && sourceDirectory.exists();
+        return sourceDirectory.exists();
     }
 }
