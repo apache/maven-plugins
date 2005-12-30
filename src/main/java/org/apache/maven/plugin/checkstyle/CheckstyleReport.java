@@ -450,8 +450,16 @@ public class CheckstyleReport
         ModuleFactory moduleFactory;
         Configuration config;
         CheckstyleResults results;
+        
+        ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
+
         try
         {
+            // checkstyle will always use the context classloader in order to load resources (dtds),
+            // so we have to fix it
+            ClassLoader checkstyleClassLoader = PackageNamesLoader.class.getClassLoader();
+            Thread.currentThread().setContextClassLoader( checkstyleClassLoader );
+
             moduleFactory = getModuleFactory();
             config = ConfigurationLoader.loadConfiguration( configFile, new PropertiesExpander( overridingProperties ) );
             results = executeCheckstyle( config, moduleFactory );
@@ -462,14 +470,15 @@ public class CheckstyleReport
         }
 
         ResourceBundle bundle = getBundle( locale );
-        
         generateReportStatics();
         generateMainReport( results, config, moduleFactory, bundle );
-        
-        if( enableRSS )
+        if ( enableRSS )
         {
             generateRSS( results );
         }
+
+        // be sure to restore original context classloader
+        Thread.currentThread().setContextClassLoader( currentClassLoader );
     }
     
     private void generateReportStatics()
