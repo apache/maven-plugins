@@ -520,7 +520,12 @@ public class CheckstyleReportGenerator
         for( Iterator files = results.getFiles().keySet().iterator(); files.hasNext(); )
         {
             String filename = (String) files.next();
-            List violations = (List) results.getFileViolations( filename );
+            List violations = results.getFileViolations( filename );
+            if ( violations.isEmpty() )
+            {
+                // skip files without violations
+                continue;
+            }
             
             sink.tableRow();
             
@@ -557,7 +562,13 @@ public class CheckstyleReportGenerator
         while ( files.hasNext() )
         {
             String file = (String) files.next();
-            List violations = (List) results.getFileViolations( file );
+            List violations = results.getFileViolations( file );
+            
+            if ( violations.isEmpty() )
+            {
+                // skip files without violations
+                continue;
+            }
             
             doxiaHack(); 
             sink.section1();
