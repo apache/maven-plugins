@@ -61,16 +61,6 @@ drwxr-xr-x+ 4      0 Nov  1 15:48 src/
   <packaging>pom</packaging>
   <name>WhizBang Parent</name>
 
-  <build>
-    <extensions>
-      <extension>
-        <groupId>com.example.whizbang</groupId>
-        <artifactId>build-tools</artifactId>
-        <version>1.0</version>
-      </extension>
-    </extensions>
-  </build>
-
   <reporting>
     <plugins>
       <plugin>
@@ -80,6 +70,13 @@ drwxr-xr-x+ 4      0 Nov  1 15:48 src/
           <configLocation>whizbang/checkstyle.xml</configLocation>
           <headerLocation>whizbang/LICENSE.txt</headerLocation>
         </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>com.example.whizbang</groupId>
+            <artifactId>build-tools</artifactId>
+            <version>1.0</version>
+          </dependency>
+        </dependencies>
       </plugin>
     </plugins>
   </reporting>
