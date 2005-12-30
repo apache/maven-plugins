@@ -22,16 +22,21 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
@@ -628,6 +633,35 @@ public class CheckstyleReport
 
         Checker checker = new Checker();
 
+        // setup classloader, needed to avoid "Unable to get class information for ..." errors
+        List classPathStrings;
+        try
+        {
+            classPathStrings = this.project.getCompileClasspathElements();
+        }
+        catch ( DependencyResolutionRequiredException e )
+        {
+            throw new MavenReportException( e.getMessage(), e );
+        }
+
+        List URLs = new ArrayList( classPathStrings.size() );
+
+        Iterator iter = classPathStrings.iterator();
+        while ( iter.hasNext() )
+        {
+            try
+            {
+                URLs.add( new File( ( (String) iter.next() ) ).toURL() );
+            }
+            catch ( MalformedURLException e )
+            {
+                throw new MavenReportException( e.getMessage(), e );
+            }
+        }
+
+        URLClassLoader projectClassLoader = new URLClassLoader( (URL[]) URLs.toArray( new URL[URLs.size()] ), null );
+        checker.setClassloader( projectClassLoader );
+
         if ( moduleFactory != null )
         {
             checker.setModuleFactory( moduleFactory );
@@ -654,7 +688,7 @@ public class CheckstyleReport
         checker.addListener( sinkListener );
 
         int nbErrors = checker.process( files );
-
+      
         checker.destroy();
 
         if ( stringOutputStream != null )
