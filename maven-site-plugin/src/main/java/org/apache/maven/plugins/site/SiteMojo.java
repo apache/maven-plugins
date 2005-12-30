@@ -33,6 +33,8 @@ import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.siterenderer.RendererException;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
@@ -46,6 +48,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -491,18 +494,72 @@ public class SiteMojo
             props.put( "reports", "" );
         }
 
-        // we require child modules and reactors to process module menu
+        populateModules( props, locale );
 
-        if ( reactorProjects.size() > 1 && project.getModules().size() > 0 )
+        return getDecorationModel( project, locale, props );
+    }
+
+    private void populateModules( Map props, Locale locale )
+        throws MojoExecutionException
+    {
+        // we require child modules and reactors to process module menu
+        if ( project.getModules().size() > 0 )
         {
-            props.put( "modules", getModulesMenu( locale ) );
+            List projects = this.reactorProjects;
+            String menuItems;
+            if ( projects.size() == 1 )
+            {
+                // Not running reactor - search for the projects manually
+                List models = new ArrayList( project.getModules().size() );
+                for ( Iterator i = project.getModules().iterator(); i.hasNext(); )
+                {
+                    String module = (String) i.next();
+                    Model model;
+                    File f = new File( project.getBasedir(), module + "/pom.xml" );
+                    if ( f.exists() )
+                    {
+                        MavenXpp3Reader reader = new MavenXpp3Reader();
+                        FileReader fileReader = null;
+                        try
+                        {
+                            fileReader = new FileReader( f );
+                            model = reader.read( fileReader );
+                        }
+                        catch ( IOException e )
+                        {
+                            throw new MojoExecutionException( "Unable to read POM", e );
+                        }
+                        catch ( XmlPullParserException e )
+                        {
+                            throw new MojoExecutionException( "Unable to read POM", e );
+                        }
+                        finally
+                        {
+                            IOUtil.close( fileReader );
+                        }
+                    }
+                    else
+                    {
+                        model = new Model();
+                        model.setName( module );
+                        model.setUrl( module );
+                    }
+                    models.add( model );
+                }
+                menuItems = getModulesMenuItemsFromModels( models );
+            }
+            else
+            {
+                menuItems = getModulesMenuItemsFromReactorProjects();
+            }
+            props.put( "modulesItems", menuItems );
+            props.put( "modules", getModulesMenu( locale, menuItems ) );
         }
         else
         {
+            props.put( "modulesItems", "" );
             props.put( "modules", "" );
         }
-
-        return getDecorationModel( project, locale, props );
     }
 
     private DecorationModel getDecorationModel( MavenProject project, Locale locale, Map origProps )
@@ -768,18 +825,28 @@ public class SiteMojo
     /**
      * Generate a menu for modules
      *
-     * @param locale the locale wanted
+     * @param locale    the locale wanted
+     * @param menuItems
      * @return a XML menu for modules
      */
-    private String getModulesMenu( Locale locale )
+    private String getModulesMenu( Locale locale, String menuItems )
     {
-
         StringBuffer buffer = new StringBuffer();
 
         buffer.append( "<menu name=\"" );
         buffer.append( i18n.getString( "site-plugin", locale, "report.menu.projectmodules" ) );
         buffer.append( "\">\n" );
 
+        buffer.append( menuItems );
+
+        buffer.append( "</menu>\n" );
+
+        return buffer.toString();
+    }
+
+    private String getModulesMenuItemsFromReactorProjects()
+    {
+        StringBuffer buffer = new StringBuffer();
         if ( reactorProjects != null && reactorProjects.size() > 1 )
         {
             Iterator reactorItr = reactorProjects.iterator();
@@ -788,40 +855,56 @@ public class SiteMojo
             {
                 MavenProject reactorProject = (MavenProject) reactorItr.next();
 
-                // dont't use modules as they address file system locations and we need projects
-                //
-                // Note, we could try and parse the module's pom based upon its directory location
-                // which would remove our reliance on reactorProjects but its more complicated.
-                // The side effect of using reactorProjects is that to generate module links
-                // you must do a recursive build (no mvn -N)
-
                 if ( reactorProject != null && reactorProject.getParent() != null &&
                     project.getArtifactId().equals( reactorProject.getParent().getArtifactId() ) )
                 {
                     String reactorUrl = reactorProject.getUrl();
+                    String name = reactorProject.getName();
 
-                    if ( reactorUrl != null )
-                    {
-                        buffer.append( "    <item name=\"" );
-                        buffer.append( reactorProject.getName() );
-                        buffer.append( "\" href=\"" );
-                        buffer.append( reactorUrl );
-                        if ( reactorUrl.endsWith( "/" ) )
-                        {
-                            buffer.append( "index.html\"/>\n" );
-                        }
-                        else
-                        {
-                            buffer.append( "/index.html\"/>\n" );
-                        }
-                    }
+                    appendMenuItem( buffer, name, reactorUrl );
                 }
             }
         }
-
-        buffer.append( "</menu>\n" );
-
         return buffer.toString();
+    }
+
+    private String getModulesMenuItemsFromModels( List models )
+    {
+        StringBuffer buffer = new StringBuffer();
+        if ( models != null && models.size() > 1 )
+        {
+            Iterator reactorItr = models.iterator();
+
+            while ( reactorItr.hasNext() )
+            {
+                Model model = (Model) reactorItr.next();
+
+                String reactorUrl = model.getUrl();
+                String name = model.getName();
+
+                appendMenuItem( buffer, name, reactorUrl );
+            }
+        }
+        return buffer.toString();
+    }
+
+    private static void appendMenuItem( StringBuffer buffer, String name, String href )
+    {
+        if ( href != null )
+        {
+            buffer.append( "    <item name=\"" );
+            buffer.append( name );
+            buffer.append( "\" href=\"" );
+            buffer.append( href );
+            if ( href.endsWith( "/" ) )
+            {
+                buffer.append( "index.html\"/>\n" );
+            }
+            else
+            {
+                buffer.append( "/index.html\"/>\n" );
+            }
+        }
     }
 
     /**
