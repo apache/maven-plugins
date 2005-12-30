@@ -290,7 +290,7 @@ public class CheckstyleReportGenerator
         sink.tableCell();
         sink.text( ruleName );
         
-        List attribnames = Arrays.asList( checkerConfig.getAttributeNames() );
+        List attribnames = new ArrayList( Arrays.asList( checkerConfig.getAttributeNames() ) );
         attribnames.remove( "severity" ); // special value (deserves unique column)
         if ( !attribnames.isEmpty() )
         {
