@@ -44,19 +44,24 @@ public class AntPropertyHelper
     {
         log.debug( "getProperty(ns="+ns+", name="+name+", user="+user+")" );
 
+        Object val = null;
         try
         {
-            if ( name.startsWith( "project." ) || name.equals( "basedir" ) )
+            if ( name.startsWith( "project." ) )
             {
-                Object val = ReflectionValueExtractor.evaluate(
-                    name.substring( "project.".length() ),
-                    mavenProject
+                val = ReflectionValueExtractor.evaluate(
+                    name,
+                    mavenProject,
+                    true
                 );
-
-                if ( val != null )
-                {
-                    return val;
-                }
+            }
+            else if ( name.equals("basedir") )
+            {
+                val = ReflectionValueExtractor.evaluate(
+                    "basedir.path",
+                    mavenProject,
+                    false
+                );
             }
         }
         catch ( Exception e )
@@ -65,11 +70,13 @@ public class AntPropertyHelper
             e.printStackTrace();
         }
 
-        Object val = super.getPropertyHook( ns, name, user );
-
         if ( val == null )
         {
-            val = System.getProperty( name.toString() );
+            val = super.getPropertyHook( ns, name, user );
+            if ( val == null )
+            {
+                val = System.getProperty( name.toString() );
+            }
         }
 
         return val;
