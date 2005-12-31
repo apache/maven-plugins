@@ -53,46 +53,46 @@ public class EclipseClasspathWriter
     /**
      * Eclipse build path variable M2_REPO
      */
-    private static final String M2_REPO = "M2_REPO";
+    private static final String M2_REPO = "M2_REPO"; //$NON-NLS-1$
 
     private File eclipseProjectDir;
 
     /**
      * Attribute for sourcepath.
      */
-    private static final String ATTR_SOURCEPATH = "sourcepath";
+    private static final String ATTR_SOURCEPATH = "sourcepath"; //$NON-NLS-1$
 
     private MavenProject project;
 
     /**
      * Attribute for output.
      */
-    private static final String ATTR_OUTPUT = "output";
+    private static final String ATTR_OUTPUT = "output"; //$NON-NLS-1$
 
     /**
      * Attribute for path.
      */
-    private static final String ATTR_PATH = "path";
+    private static final String ATTR_PATH = "path"; //$NON-NLS-1$
 
     /**
      * Attribute for kind - Container (con), Variable (var)..etc.
      */
-    private static final String ATTR_KIND = "kind";
+    private static final String ATTR_KIND = "kind"; //$NON-NLS-1$
 
     /**
      * Element for classpathentry.
      */
-    private static final String ELT_CLASSPATHENTRY = "classpathentry";
+    private static final String ELT_CLASSPATHENTRY = "classpathentry"; //$NON-NLS-1$
 
     /**
      * Element for classpath.
      */
-    private static final String ELT_CLASSPATH = "classpath";
+    private static final String ELT_CLASSPATH = "classpath"; //$NON-NLS-1$
 
     /**
      * File name that stores project classpath settings.
      */
-    private static final String FILE_DOT_CLASSPATH = ".classpath";
+    private static final String FILE_DOT_CLASSPATH = ".classpath"; //$NON-NLS-1$
 
     /**
      * Dependencies for our project.
@@ -115,7 +115,7 @@ public class EclipseClasspathWriter
 
         try
         {
-            w = new FileWriter( new File( getEclipseProjectDirectory(), FILE_DOT_CLASSPATH ) ); //$NON-NLS-1$
+            w = new FileWriter( new File( getEclipseProjectDirectory(), FILE_DOT_CLASSPATH ) );
         }
         catch ( IOException ex )
         {
@@ -124,7 +124,7 @@ public class EclipseClasspathWriter
 
         XMLWriter writer = new PrettyPrintXMLWriter( w );
 
-        writer.startElement( ELT_CLASSPATH ); //$NON-NLS-1$
+        writer.startElement( ELT_CLASSPATH );
 
         // ----------------------------------------------------------------------
         // Source roots and resources
@@ -134,13 +134,13 @@ public class EclipseClasspathWriter
         {
             EclipseSourceDir dir = sourceDirs[j];
 
-            writer.startElement( ELT_CLASSPATHENTRY ); //$NON-NLS-1$
+            writer.startElement( ELT_CLASSPATHENTRY );
 
-            writer.addAttribute( ATTR_KIND, "src" ); //$NON-NLS-1$ //$NON-NLS-2$
-            writer.addAttribute( ATTR_PATH, dir.getPath() ); //$NON-NLS-1$
+            writer.addAttribute( ATTR_KIND, "src" ); //$NON-NLS-1$ 
+            writer.addAttribute( ATTR_PATH, dir.getPath() );
             if ( dir.getOutput() != null )
             {
-                writer.addAttribute( ATTR_OUTPUT, dir.getOutput() ); //$NON-NLS-1$
+                writer.addAttribute( ATTR_OUTPUT, dir.getOutput() );
             }
 
             writer.endElement();
@@ -151,10 +151,10 @@ public class EclipseClasspathWriter
         // The default output
         // ----------------------------------------------------------------------
 
-        writer.startElement( ELT_CLASSPATHENTRY ); //$NON-NLS-1$
-        writer.addAttribute( ATTR_KIND, ATTR_OUTPUT ); //$NON-NLS-1$ //$NON-NLS-2$
-        writer.addAttribute( ATTR_PATH, //$NON-NLS-1$ 
-                             EclipseUtils.toRelativeAndFixSeparator( projectBaseDir, buildOutputDirectory, false ) );
+        writer.startElement( ELT_CLASSPATHENTRY );
+        writer.addAttribute( ATTR_KIND, ATTR_OUTPUT );
+        writer.addAttribute( ATTR_PATH, EclipseUtils.toRelativeAndFixSeparator( projectBaseDir, buildOutputDirectory,
+                                                                                false ) );
         writer.endElement();
 
         // ----------------------------------------------------------------------
@@ -163,9 +163,9 @@ public class EclipseClasspathWriter
 
         for ( Iterator it = classpathContainers.iterator(); it.hasNext(); )
         {
-            writer.startElement( ELT_CLASSPATHENTRY ); //$NON-NLS-1$
-            writer.addAttribute( ATTR_KIND, "con" ); //$NON-NLS-1$ //$NON-NLS-2$
-            writer.addAttribute( ATTR_PATH, (String) it.next() ); //$NON-NLS-1$
+            writer.startElement( ELT_CLASSPATHENTRY );
+            writer.addAttribute( ATTR_KIND, "con" ); //$NON-NLS-1$ 
+            writer.addAttribute( ATTR_PATH, (String) it.next() );
             writer.endElement(); // name
         }
 
@@ -257,7 +257,7 @@ public class EclipseClasspathWriter
                         {
                             // NB eclipse (3.1) doesn't support variables in javadoc paths, so we need to add the
                             // full path for the maven repo
-                            javadocpath = StringUtils.replace( javadocArtifact.getFile().getCanonicalPath(), "\\", "/" );
+                            javadocpath = StringUtils.replace( javadocArtifact.getFile().getCanonicalPath(), "\\", "/" ); //$NON-NLS-1$ //$NON-NLS-2$
                         }
                         catch ( IOException e )
                         {
@@ -285,8 +285,8 @@ public class EclipseClasspathWriter
             writer.startElement( "attributes" ); //$NON-NLS-1$
 
             writer.startElement( "attribute" ); //$NON-NLS-1$
-            writer.addAttribute( "value", "jar:file:/" + javadocpath + "!/" );
-            writer.addAttribute( "name", "javadoc_location" );
+            writer.addAttribute( "value", "jar:file:/" + javadocpath + "!/" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            writer.addAttribute( "name", "javadoc_location" ); //$NON-NLS-1$ //$NON-NLS-2$
             writer.endElement();
 
             writer.endElement();
