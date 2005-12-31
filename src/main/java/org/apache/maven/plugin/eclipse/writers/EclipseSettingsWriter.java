@@ -42,28 +42,28 @@ public class EclipseSettingsWriter
     /**
      * 'target' property for maven-compiler-plugin.
      */
-    private static final String PROPERTY_TARGET = "target";
+    private static final String PROPERTY_TARGET = "target"; //$NON-NLS-1$
 
     /**
      * 'source' property for maven-compiler-plugin.
      */
-    private static final String PROPERTY_SOURCE = "source";
+    private static final String PROPERTY_SOURCE = "source"; //$NON-NLS-1$
 
-    private static final String JDK_1_2_SOURCES = "1.2";
+    private static final String JDK_1_2_SOURCES = "1.2"; //$NON-NLS-1$
 
-    private static final String JDK_1_3_SOURCES = "1.3";
+    private static final String JDK_1_3_SOURCES = "1.3"; //$NON-NLS-1$
 
-    private static final String FILE_ECLIPSE_JDT_CORE_PREFS = "org.eclipse.jdt.core.prefs";
+    private static final String FILE_ECLIPSE_JDT_CORE_PREFS = "org.eclipse.jdt.core.prefs"; //$NON-NLS-1$
 
-    private static final String PROP_ECLIPSE_PREFERENCES_VERSION = "eclipse.preferences.version";
+    private static final String PROP_ECLIPSE_PREFERENCES_VERSION = "eclipse.preferences.version"; //$NON-NLS-1$
 
-    private static final String DIR_DOT_SETTINGS = ".settings";
+    private static final String DIR_DOT_SETTINGS = ".settings"; //$NON-NLS-1$
 
-    private static final String PROP_JDT_CORE_COMPILER_COMPLIANCE = "org.eclipse.jdt.core.compiler.compliance";
+    private static final String PROP_JDT_CORE_COMPILER_COMPLIANCE = "org.eclipse.jdt.core.compiler.compliance"; //$NON-NLS-1$
 
-    private static final String PROP_JDT_CORE_COMPILER_SOURCE = "org.eclipse.jdt.core.compiler.source";
+    private static final String PROP_JDT_CORE_COMPILER_SOURCE = "org.eclipse.jdt.core.compiler.source"; //$NON-NLS-1$
 
-    private static final String ARTIFACT_MAVEN_COMPILER_PLUGIN = "maven-compiler-plugin";
+    private static final String ARTIFACT_MAVEN_COMPILER_PLUGIN = "maven-compiler-plugin"; //$NON-NLS-1$
 
     public EclipseSettingsWriter( Log log, File eclipseProjectDir, MavenProject project )
     {
@@ -78,17 +78,17 @@ public class EclipseSettingsWriter
         Properties coreSettings = new Properties();
 
         String source = EclipseUtils.getPluginSetting( getProject(), ARTIFACT_MAVEN_COMPILER_PLUGIN, PROPERTY_SOURCE,
-                                                       null ); //$NON-NLS-1$ //$NON-NLS-2$
+                                                       null );
         String target = EclipseUtils.getPluginSetting( getProject(), ARTIFACT_MAVEN_COMPILER_PLUGIN, PROPERTY_TARGET,
-                                                       null ); //$NON-NLS-1$ //$NON-NLS-2$
+                                                       null );
 
-        if ( source != null && !JDK_1_3_SOURCES.equals( source ) ) //$NON-NLS-1$
+        if ( source != null && !JDK_1_3_SOURCES.equals( source ) )
         {
-            coreSettings.put( PROP_JDT_CORE_COMPILER_SOURCE, source ); //$NON-NLS-1$
-            coreSettings.put( PROP_JDT_CORE_COMPILER_COMPLIANCE, source ); //$NON-NLS-1$
+            coreSettings.put( PROP_JDT_CORE_COMPILER_SOURCE, source );
+            coreSettings.put( PROP_JDT_CORE_COMPILER_COMPLIANCE, source );
         }
 
-        if ( target != null && !JDK_1_2_SOURCES.equals( target ) ) //$NON-NLS-1$
+        if ( target != null && !JDK_1_2_SOURCES.equals( target ) )
         {
             coreSettings.put( "org.eclipse.jdt.core.compiler.codegen.targetPlatform", target ); //$NON-NLS-1$
         }
@@ -100,13 +100,13 @@ public class EclipseSettingsWriter
 
             settingsDir.mkdirs();
 
-            coreSettings.put( PROP_ECLIPSE_PREFERENCES_VERSION, "1" ); //$NON-NLS-1$ //$NON-NLS-2$
+            coreSettings.put( PROP_ECLIPSE_PREFERENCES_VERSION, "1" ); //$NON-NLS-1$ 
 
             try
             {
                 File oldCoreSettingsFile;
 
-                File coreSettingsFile = new File( settingsDir, FILE_ECLIPSE_JDT_CORE_PREFS ); //$NON-NLS-1$
+                File coreSettingsFile = new File( settingsDir, FILE_ECLIPSE_JDT_CORE_PREFS );
 
                 if ( coreSettingsFile.exists() )
                 {

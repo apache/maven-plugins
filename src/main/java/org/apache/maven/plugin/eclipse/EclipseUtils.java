@@ -65,7 +65,7 @@ public class EclipseUtils
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcanonicalize", basedir
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcanonicalize", basedir //$NON-NLS-1$
                 .getAbsolutePath() ), e );
         }
 
@@ -75,7 +75,7 @@ public class EclipseUtils
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcanonicalize", fileToAdd
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcanonicalize", fileToAdd //$NON-NLS-1$
                 .getAbsolutePath() ), e );
         }
 
@@ -83,7 +83,7 @@ public class EclipseUtils
 
         if ( absolutePath.equals( basedirpath ) )
         {
-            relative = ".";
+            relative = "."; //$NON-NLS-1$
         }
         else if ( absolutePath.startsWith( basedirpath ) )
         {
@@ -380,7 +380,7 @@ public class EclipseUtils
                                                       ArtifactResolver artifactResolver, ArtifactFactory artifactFactory )
         throws MojoExecutionException
     {
-        return resolveArtifactWithClassifier( artifact, "sources", localRepository, artifactResolver, artifactFactory,
+        return resolveArtifactWithClassifier( artifact, "sources", localRepository, artifactResolver, artifactFactory, //$NON-NLS-1$
                                               new ArrayList( 0 ) );
     }
 
@@ -389,7 +389,7 @@ public class EclipseUtils
                                                        ArtifactFactory artifactFactory )
         throws MojoExecutionException
     {
-        return resolveArtifactWithClassifier( artifact, "javadoc", localRepository, artifactResolver, artifactFactory,
+        return resolveArtifactWithClassifier( artifact, "javadoc", localRepository, artifactResolver, artifactFactory, //$NON-NLS-1$
                                               new ArrayList( 0 ) );
     }
 
@@ -402,9 +402,9 @@ public class EclipseUtils
         String type = classifier;
 
         // the "sources" classifier maps to the "java-source" type
-        if ( "sources".equals( type ) )
+        if ( "sources".equals( type ) ) //$NON-NLS-1$
         {
-            type = "java-source";
+            type = "java-source"; //$NON-NLS-1$
         }
 
         Artifact resolvedArtifact = artifactFactory.createArtifactWithClassifier( artifact.getGroupId(), artifact
@@ -420,8 +420,8 @@ public class EclipseUtils
         }
         catch ( ArtifactResolutionException e )
         {
-            String message = Messages.getString( "EclipsePlugin.errorresolving", //$NON-NLS-1$
-                                                 new Object[] { classifier, resolvedArtifact.getId(), e.getMessage() } );
+            String message = Messages.getString( "EclipsePlugin.errorresolving", new Object[] { //$NON-NLS-1$
+                                                 classifier, resolvedArtifact.getId(), e.getMessage() } );
 
             throw new MojoExecutionException( message, e );
         }
