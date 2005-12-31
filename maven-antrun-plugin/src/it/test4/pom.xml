@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <groupId>org.apache.maven.plugins.antrun</groupId>
+  <artifactId>test4</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <name>Test for MANTRUN-29</name>
+  <description>properties not resolved in attributes</description>
+
+  <dependencies>
+  </dependencies>
+  
+  <properties>
+    <mavenProperty>xyz</mavenProperty>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>test</phase>
+            <configuration>
+              <tasks>
+
+                <ant antfile="${basedir}/build.xml" inheritAll="true" inheritRefs="true">
+                  <target name="test"/>
+                </ant>
+
+                <echo/>
+                <echo>Embedded tasks:</echo>
+
+                <property name="property1" value="value"/>
+                <property name="property2" value="${property1}"/>
+                <property name="property3" value="prefix ${property1}"/>
+                <echo>P1: ${property1}</echo>
+                <echo>P2: ${property2}</echo>
+                <echo>P3: ${property3}</echo>
+                <echo>mavenProperty: ${mavenProperty}</echo>
+                <echo message="P1: ${property1}"/>
+                <echo message="P2: ${property2}"/>
+                <echo message="P3: ${property3}"/>
+                <echo message="mavenProperty: ${mavenProperty}"/>
+                <echo message="${property1}"/>
+                <echo message="${property2}"/>
+                <echo message="${property3}"/>
+                <echo message="${mavenProperty}"/>
+
+                <fail message="Some property contains null in embedded tasks">
+                  <condition>
+                    <or>
+                      <contains string="${property1}" substring="null" casesensitive="no"/>
+                      <contains string="${property2}" substring="null" casesensitive="no"/>
+                      <contains string="${property3}" substring="null" casesensitive="no"/>
+                      <contains string="${mavenProperty}" substring="null" casesensitive="no"/>
+                    </or>
+                  </condition>
+                </fail>
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
