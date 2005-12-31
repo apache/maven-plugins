@@ -164,6 +164,7 @@ public abstract class AbstractWtpResourceWriter
             writer.addAttribute( ATTR_VALUE, "/" + //$NON-NLS-1$ //$NON-NLS-2$
                 EclipseUtils.toRelativeAndFixSeparator( getProject().getBasedir(), buildOutputDirectory, false ) );
             writer.endElement();
+
         }
         else if ( "ear".equals( packaging ) )
         {
