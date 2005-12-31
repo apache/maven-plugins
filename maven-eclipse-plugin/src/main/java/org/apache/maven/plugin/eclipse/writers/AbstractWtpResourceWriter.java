@@ -4,7 +4,6 @@
 package org.apache.maven.plugin.eclipse.writers;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -23,8 +22,8 @@ import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
  * Base class to hold common constants used by extending classes.
- * 
  * @author <a href="mailto:rahul.thakur.xdev@gmail.com">Rahul Thakur</a>
+ * @author <a href="mailto:fgiust@users.sourceforge.net">Fabrizio Giustina</a>
  */
 public abstract class AbstractWtpResourceWriter
     extends AbstractEclipseResourceWriter
@@ -114,27 +113,7 @@ public abstract class AbstractWtpResourceWriter
 
             writer.startElement( ELT_VERSION ); //$NON-NLS-1$
 
-            // defaults to 2.4, try to detect real version from dependencies
-            String servletVersion = "2.4"; //$NON-NLS-1$
-            List artifactNames = new ArrayList();
-            artifactNames.add( "servlet-api" );
-            artifactNames.add( "servletapi" );
-            artifactNames.add( "geronimo-spec-servlet" );
-            String version = EclipseUtils.getDependencyVersion( artifactNames, project.getArtifacts(), 0, 3 );
-            if ( version.trim().equals( "" ) )
-            {
-                // none of the above specified matched, try geronimo-spec-j2ee
-                artifactNames.clear();
-                artifactNames.add( "geronimo-spec-j2ee" );
-                version = EclipseUtils.getDependencyVersion( artifactNames, project.getArtifacts(), 0, 3 );
-                if ( !version.trim().equals( "" ) )
-                {
-                    String j2eeMinorVersion = StringUtils.substring( version, 2, 3 );
-                    servletVersion = "2." + j2eeMinorVersion;
-                }
-            }
-
-            writer.writeText( servletVersion );
+            writer.writeText( resolveServletVersion() );
             writer.endElement();
 
             // use finalName as context root only if it has been explicitely set
@@ -155,8 +134,8 @@ public abstract class AbstractWtpResourceWriter
             writer.addAttribute( ATTR_MODULE_TYPE_ID, "jst.ejb" ); //$NON-NLS-1$ //$NON-NLS-2$
 
             writer.startElement( ELT_VERSION ); //$NON-NLS-1$
-            writer.writeText( "2.1" ); //$NON-NLS-1$
-            // @todo this is the default, find real ejb version from dependencies
+            writer.writeText( resolveEjbVersion() ); //$NON-NLS-1$
+
             writer.endElement();
 
             writer.startElement( ELT_PROPERTY ); //$NON-NLS-1$
@@ -171,8 +150,7 @@ public abstract class AbstractWtpResourceWriter
             writer.addAttribute( ATTR_MODULE_TYPE_ID, "jst.ear" ); //$NON-NLS-1$ //$NON-NLS-2$
 
             writer.startElement( ELT_VERSION ); //$NON-NLS-1$
-            writer.writeText( "1.3" ); //$NON-NLS-1$
-            // @todo 1.3 is the default
+            writer.writeText( resolveJ2eeVersion() ); //$NON-NLS-1$
             writer.endElement();
         }
         else
@@ -279,4 +257,50 @@ public abstract class AbstractWtpResourceWriter
             }
         }
     }
+
+    protected String resolveServletVersion()
+    {
+        String[] artifactNames = new String[] { "servlet-api", "servletapi", "geronimo-spec-servlet" };
+
+        String version = EclipseUtils.getDependencyVersion( artifactNames, getProject().getArtifacts(), 3 );
+        if ( version == null )
+        {
+            // none of the above specified matched, try geronimo-spec-j2ee
+            artifactNames = new String[] { "geronimo-spec-j2ee" };
+            version = EclipseUtils.getDependencyVersion( artifactNames, getProject().getArtifacts(), 3 );
+            if ( version != null )
+            {
+                String j2eeMinorVersion = StringUtils.substring( version, 2, 3 );
+                version = "2." + j2eeMinorVersion;
+            }
+        }
+        return version == null ? "2.4" : version;
+    }
+
+    protected String resolveEjbVersion()
+    {
+        String version = null;
+        // @todo this is the default, find real ejb version from dependencies
+
+        return version == null ? "2.1" : version;
+    }
+
+    protected String resolveJ2eeVersion()
+    {
+        String version = null;
+        // @todo this is the default, find real j2ee version from dependencies
+        return version == null ? "1.3" : version;
+    }
+
+    protected String resolveJavaVersion()
+    {
+        String version = EclipseUtils.getPluginSetting( getProject(), "maven-compiler-plugin", "target", null );
+        if ( version == null )
+        {
+            EclipseUtils.getPluginSetting( getProject(), "maven-compiler-plugin", "source", null );
+        }
+
+        return version == null ? "1.4" : version;
+    }
+
 }
