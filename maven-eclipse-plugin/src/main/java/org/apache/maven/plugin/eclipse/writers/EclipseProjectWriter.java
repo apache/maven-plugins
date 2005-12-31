@@ -51,17 +51,17 @@ public class EclipseProjectWriter
     extends AbstractEclipseResourceWriter
 {
 
-    private static final String ELT_NAME = "name";
+    private static final String ELT_NAME = "name"; //$NON-NLS-1$
 
-    private static final String ELT_BUILD_COMMAND = "buildCommand";
+    private static final String ELT_BUILD_COMMAND = "buildCommand"; //$NON-NLS-1$
 
-    private static final String ELT_BUILD_SPEC = "buildSpec";
+    private static final String ELT_BUILD_SPEC = "buildSpec"; //$NON-NLS-1$
 
-    private static final String ELT_NATURE = "nature";
+    private static final String ELT_NATURE = "nature"; //$NON-NLS-1$
 
-    private static final String ELT_NATURES = "natures";
+    private static final String ELT_NATURES = "natures"; //$NON-NLS-1$
 
-    private static final String FILE_DOT_PROJECT = ".project";
+    private static final String FILE_DOT_PROJECT = ".project"; //$NON-NLS-1$
 
     public EclipseProjectWriter( Log log, File eclipseProjectDir, MavenProject project )
     {
@@ -143,7 +143,7 @@ public class EclipseProjectWriter
 
         try
         {
-            w = new FileWriter( dotProject ); //$NON-NLS-1$
+            w = new FileWriter( dotProject );
         }
         catch ( IOException ex )
         {
@@ -154,7 +154,7 @@ public class EclipseProjectWriter
 
         writer.startElement( "projectDescription" ); //$NON-NLS-1$
 
-        writer.startElement( ELT_NAME ); //$NON-NLS-1$
+        writer.startElement( ELT_NAME );
         writer.writeText( getProject().getArtifactId() );
         writer.endElement();
 
@@ -185,12 +185,12 @@ public class EclipseProjectWriter
 
         writer.endElement(); // projects
 
-        writer.startElement( ELT_BUILD_SPEC ); //$NON-NLS-1$
+        writer.startElement( ELT_BUILD_SPEC );
 
         for ( Iterator it = buildCommands.iterator(); it.hasNext(); )
         {
-            writer.startElement( ELT_BUILD_COMMAND ); //$NON-NLS-1$
-            writer.startElement( ELT_NAME ); //$NON-NLS-1$
+            writer.startElement( ELT_BUILD_COMMAND );
+            writer.startElement( ELT_NAME );
             writer.writeText( (String) it.next() );
             writer.endElement(); // name
             writer.startElement( "arguments" ); //$NON-NLS-1$
@@ -200,11 +200,11 @@ public class EclipseProjectWriter
 
         writer.endElement(); // buildSpec
 
-        writer.startElement( ELT_NATURES ); //$NON-NLS-1$
+        writer.startElement( ELT_NATURES );
 
         for ( Iterator it = projectnatures.iterator(); it.hasNext(); )
         {
-            writer.startElement( ELT_NATURE ); //$NON-NLS-1$
+            writer.startElement( ELT_NATURE );
             writer.writeText( (String) it.next() );
             writer.endElement(); // name
         }
@@ -242,7 +242,7 @@ public class EclipseProjectWriter
         {
             writer.startElement( "link" ); //$NON-NLS-1$
 
-            writer.startElement( ELT_NAME ); //$NON-NLS-1$
+            writer.startElement( ELT_NAME );
             writer.writeText( EclipseUtils.toRelativeAndFixSeparator( projectBaseDir, file, true ) );
             writer.endElement(); // name
 
@@ -257,7 +257,7 @@ public class EclipseProjectWriter
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcanonicalize", file
+                throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcanonicalize", file //$NON-NLS-1$
                     .getAbsolutePath() ), e );
             }
             writer.endElement(); // location
@@ -282,7 +282,7 @@ public class EclipseProjectWriter
             {
                 writer.startElement( "link" ); //$NON-NLS-1$
 
-                writer.startElement( ELT_NAME ); //$NON-NLS-1$
+                writer.startElement( ELT_NAME );
                 writer.writeText( EclipseUtils.toRelativeAndFixSeparator( projectBaseDir, sourceRoot, true ) );
                 writer.endElement(); // name
 
@@ -297,7 +297,7 @@ public class EclipseProjectWriter
                 }
                 catch ( IOException e )
                 {
-                    throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcanonicalize", sourceRoot
+                    throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcanonicalize", sourceRoot //$NON-NLS-1$
                         .getAbsolutePath() ), e );
                 }
 
@@ -320,7 +320,7 @@ public class EclipseProjectWriter
             {
                 writer.startElement( "link" ); //$NON-NLS-1$
 
-                writer.startElement( ELT_NAME ); //$NON-NLS-1$
+                writer.startElement( ELT_NAME );
                 writer.writeText( EclipseUtils.toRelativeAndFixSeparator( projectBaseDir, resourceDir, true ) );
                 writer.endElement(); // name
 
@@ -335,7 +335,7 @@ public class EclipseProjectWriter
                 }
                 catch ( IOException e )
                 {
-                    throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcanonicalize", resourceDir
+                    throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcanonicalize", resourceDir //$NON-NLS-1$
                         .getAbsolutePath() ), e );
                 }
                 writer.endElement(); // location

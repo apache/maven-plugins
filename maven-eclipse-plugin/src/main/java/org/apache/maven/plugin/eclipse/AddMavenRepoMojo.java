@@ -44,24 +44,24 @@ public class AddMavenRepoMojo
      * Path under Eclipse workspace where Eclipse Plugin metadata/config is
      * stored.
      */
-    private static final String DIR_ECLIPSE_PLUGINS_METADATA = ".metadata/.plugins";
+    private static final String DIR_ECLIPSE_PLUGINS_METADATA = ".metadata/.plugins"; //$NON-NLS-1$
 
     /**
      * Path under {@value #DIR_ECLIPSE_PLUGINS_METADATA } folder where Eclipse
      * Workspace Runtime settings are stored.
      */
     private static final String DIR_ECLIPSE_CORE_RUNTIME_SETTINGS = DIR_ECLIPSE_PLUGINS_METADATA
-        + "/org.eclipse.core.runtime/.settings";
+        + "/org.eclipse.core.runtime/.settings"; //$NON-NLS-1$
 
     /**
      * File that stores the Eclipse JDT Core preferences.
      */
-    private static final String FILE_ECLIPSE_JDT_CORE_PREFS = "org.eclipse.jdt.core.prefs";
+    private static final String FILE_ECLIPSE_JDT_CORE_PREFS = "org.eclipse.jdt.core.prefs"; //$NON-NLS-1$
 
     /**
      * Property constant under which Variable 'M2_REPO' is setup.
      */
-    private static final String CLASSPATH_VARIABLE_M2_REPO = "org.eclipse.jdt.core.classpathVariable.M2_REPO";
+    private static final String CLASSPATH_VARIABLE_M2_REPO = "org.eclipse.jdt.core.classpathVariable.M2_REPO"; //$NON-NLS-1$
 
     /**
      * Location of the <code>Eclipse</code> workspace that holds your
@@ -86,12 +86,12 @@ public class AddMavenRepoMojo
         throws MojoExecutionException
     {
 
-        File workDir = new File( workspace, DIR_ECLIPSE_CORE_RUNTIME_SETTINGS ); //$NON-NLS-1$
+        File workDir = new File( workspace, DIR_ECLIPSE_CORE_RUNTIME_SETTINGS );
         workDir.mkdirs();
 
         Properties props = new Properties();
 
-        File f = new File( workDir, FILE_ECLIPSE_JDT_CORE_PREFS ); //$NON-NLS-1$
+        File f = new File( workDir, FILE_ECLIPSE_JDT_CORE_PREFS );
 
         // preserve old settings
         if ( f.exists() )
@@ -112,8 +112,7 @@ public class AddMavenRepoMojo
             }
         }
 
-        props.put( CLASSPATH_VARIABLE_M2_REPO, //$NON-NLS-1$
-                   StringUtils.replace( localRepository.getBasedir(), ":", "\\:" ) ); //$NON-NLS-1$  //$NON-NLS-2$
+        props.put( CLASSPATH_VARIABLE_M2_REPO, StringUtils.replace( localRepository.getBasedir(), ":", "\\:" ) ); //$NON-NLS-1$  //$NON-NLS-2$
 
         try
         {
