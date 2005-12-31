@@ -5,10 +5,10 @@
   <modelVersion>4.0.0</modelVersion>
   
   <groupId>org.apache.maven.plugins.antrun</groupId>
-  <artifactId>test2</artifactId>
+  <artifactId>test3</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <name>Test for MANTRUN-28</name>
-  <description>maven.test.classpath doesn't contain test scope dependancies</description>
+  <name>Test for MANTRUN-32</name>
+  <description>ant tasks don't use correct environment in antrun plugin</description>
 
   <dependencies>
     <dependency>
@@ -28,15 +28,17 @@
             <phase>test</phase>
             <configuration>
               <tasks>
-                <property name="test.classpath" refid="maven.test.classpath"/>
-                <echo>${test.classpath}</echo>
-                <fail message="Test classpath doesn't contain test scoped dependencies">
+                <echo>user.home = ${user.home}</echo>
+                <fail message="user.home is not set">
                   <condition>
                     <not>
-                      <contains string="${test.classpath}" substring="junit" casesensitive="no"/>
+                      <isset property="user.home"/>
                     </not>
                   </condition>
                 </fail>
+                <ant antfile="${basedir}/build.xml" inheritAll="true" inheritRefs="true">
+                  <target name="test"/>
+                </ant>
               </tasks>
             </configuration>
             <goals>
