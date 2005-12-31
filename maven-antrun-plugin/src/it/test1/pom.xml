@@ -7,6 +7,8 @@
   <groupId>org.apache.maven.plugins.antrun</groupId>
   <artifactId>test1</artifactId>
   <version>1.0-SNAPSHOT</version>
+  <name>Test for compile and plugin classpath references</name>
+  <description>Ensure that maven.compile.classpath and maven.plugin.classpath referencies are set</description>
  
   <dependencies>
   </dependencies>
