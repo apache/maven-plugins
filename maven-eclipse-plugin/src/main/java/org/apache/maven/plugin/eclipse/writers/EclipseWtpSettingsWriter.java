@@ -38,10 +38,10 @@ import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
- * Creates a .settings folder for Eclipse WTP 1.xRCx release and writes out the
- * configuration under it.
+ * Creates a .settings folder for Eclipse WTP 1.xRCx release and writes out the configuration under it.
  * 
  * @author <a href="mailto:rahul.thakur.xdev@gmail.com">Rahul Thakur</a>
+ * @author <a href="mailto:fgiust@apache.org">Fabrizio Giustina</a>
  * @version $Id$
  */
 public class EclipseWtpSettingsWriter
@@ -69,13 +69,12 @@ public class EclipseWtpSettingsWriter
     private static final String ELT_FACETED_PROJECT = "faceted-project";
 
     /**
-     * The .settings folder for Web Tools Project 1.xRCx release.
+     * The .settings folder for Web Tools Project 1.x release.
      */
     private static final String DIR_WTP_SETTINGS = ".settings";
 
     /**
-     * File name where the WTP component settings will be stored for our Eclipse
-     * Project.
+     * File name where the WTP component settings will be stored for our Eclipse Project.
      */
     private static final String FILE_DOT_COMPONENT = ".component";
 
@@ -193,10 +192,9 @@ public class EclipseWtpSettingsWriter
         // write out properties.
         writer.startElement( ELT_PROPERTY );
         writer.addAttribute( ATTR_NAME, "java-output-path" );
-        // writer.addAttribute (ATTR_VALUE, "/" +
-        // EclipseUtils.toRelativeAndFixSeparator (getProject ().getBasedir (),
-        // buildOutputDirectory, false));
-        writer.addAttribute( ATTR_VALUE, "/build/classes/" );
+        writer.addAttribute( ATTR_VALUE, "/"
+            + EclipseUtils.toRelativeAndFixSeparator( getProject().getBasedir(), buildOutputDirectory, false ) );
+
         // close elements
         writer.endElement(); // property
         writer.startElement( ELT_PROPERTY );
@@ -226,7 +224,7 @@ public class EclipseWtpSettingsWriter
             writer.endElement(); // fixed
             writer.startElement( ELT_INSTALLED );
             writer.addAttribute( ATTR_FACET, FACET_JST_WEB );
-            writer.addAttribute( ATTR_VERSION, "2.4" );
+            writer.addAttribute( ATTR_VERSION, resolveServletVersion() );
             writer.endElement(); // installed
         }
         else if ( "ejb".equalsIgnoreCase( packaging ) )
@@ -236,7 +234,7 @@ public class EclipseWtpSettingsWriter
             writer.endElement(); // fixed
             writer.startElement( ELT_INSTALLED );
             writer.addAttribute( ATTR_FACET, FACET_JST_EJB );
-            writer.addAttribute( ATTR_VERSION, "2.1" );
+            writer.addAttribute( ATTR_VERSION, resolveEjbVersion() );
             writer.endElement(); // installed
         }
         else if ( "ear".equalsIgnoreCase( packaging ) )
@@ -246,24 +244,22 @@ public class EclipseWtpSettingsWriter
             writer.endElement(); // fixed
             writer.startElement( ELT_INSTALLED );
             writer.addAttribute( ATTR_FACET, FACET_JST_EAR );
-            writer.addAttribute( ATTR_VERSION, "1.4" );
+            writer.addAttribute( ATTR_VERSION, resolveJ2eeVersion() );
             writer.endElement(); // installed
         }
+
         // common installed element
         writer.startElement( ELT_INSTALLED );
         writer.addAttribute( ATTR_FACET, FACET_JST_JAVA );
-        writer.addAttribute( ATTR_VERSION, "1.4" );
+        writer.addAttribute( ATTR_VERSION, resolveJavaVersion() );
         writer.endElement(); // installed
         writer.endElement(); // faceted-project
     }
 
     /**
-     * Patch that overrides the default implementation for super{@link #writeWarOrEarResources(XMLWriter, MavenProject, List, ArtifactRepository)}
-     * to patch issue of referring to external libs by WTP.<br>
+     * Patch fpr WTP 1.0, external libraries are not copied to deployed app.
      * See <a
      * href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=116783">https://bugs.eclipse.org/bugs/show_bug.cgi?id=116783</a>
-     * <br>
-     * TODO: Remove this method definition the issue is addressed in WTP.
      */
     protected void copyExternalDependencies( XMLWriter writer, MavenProject project, List referencedReactorArtifacts,
                                             ArtifactRepository localRepository )

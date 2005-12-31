@@ -430,31 +430,27 @@ public class EclipseUtils
     }
 
     /**
-     * Extracts the
+     * Extracts the version of the first matching dependencyin the given list.
      * 
-     * @param artifactNames
-     *            artifact names to compare against for extracting version
-     * @param artifacts
-     *            Collection of dependencies for our project
-     * @param offset
-     *            start position to extract version
-     * @param len
-     *            expected length of the version sub-string
+     * @param artifactNames artifact names to compare against for extracting version
+     * @param artifacts Collection of dependencies for our project
+     * @param len expected length of the version sub-string
      * @return
      */
-    public static String getDependencyVersion( List artifactNames, Set artifacts, int offset, int len )
+    public static String getDependencyVersion( String[] artifactNames, Set artifacts, int len )
     {
         for ( Iterator itr = artifacts.iterator(); itr.hasNext(); )
         {
             Artifact artifact = (Artifact) itr.next();
-            for ( Iterator itArtNames = artifactNames.iterator(); itArtNames.hasNext(); )
+            for ( int j = 0; j < artifactNames.length; j++ )
             {
-                String name = (String) itArtNames.next();
+                String name = artifactNames[j];
                 if ( name.equals( artifact.getArtifactId() ) )
-                    return StringUtils.substring( artifact.getVersion(), offset, len );
+                {
+                    return StringUtils.substring( artifact.getVersion(), 0, len );
+                }
             }
         }
-        // shouldn't be the case.
-        return "";
+        return null;
     }
 }
