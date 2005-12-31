@@ -48,40 +48,40 @@ public class EclipseWtpSettingsWriter
     extends AbstractWtpResourceWriter
 {
 
-    private static final String FACET_JST_EAR = "jst.ear";
+    private static final String FACET_JST_EAR = "jst.ear"; //$NON-NLS-1$
 
-    private static final String ATTR_CONTEXT_ROOT = "context-root";
+    private static final String ATTR_CONTEXT_ROOT = "context-root"; //$NON-NLS-1$
 
-    private static final String ATTR_VERSION = "version";
+    private static final String ATTR_VERSION = "version"; //$NON-NLS-1$
 
-    private static final String ELT_INSTALLED = "installed";
+    private static final String ELT_INSTALLED = "installed"; //$NON-NLS-1$
 
-    private static final String FACET_JST_EJB = "jst.ejb";
+    private static final String FACET_JST_EJB = "jst.ejb"; //$NON-NLS-1$
 
-    private static final String FACET_JST_WEB = "jst.web";
+    private static final String FACET_JST_WEB = "jst.web"; //$NON-NLS-1$
 
-    private static final String FACET_JST_JAVA = "jst.java";
+    private static final String FACET_JST_JAVA = "jst.java"; //$NON-NLS-1$
 
-    private static final String ATTR_FACET = "facet";
+    private static final String ATTR_FACET = "facet"; //$NON-NLS-1$
 
-    private static final String ELT_FIXED = "fixed";
+    private static final String ELT_FIXED = "fixed"; //$NON-NLS-1$
 
-    private static final String ELT_FACETED_PROJECT = "faceted-project";
+    private static final String ELT_FACETED_PROJECT = "faceted-project"; //$NON-NLS-1$
 
     /**
      * The .settings folder for Web Tools Project 1.x release.
      */
-    private static final String DIR_WTP_SETTINGS = ".settings";
+    private static final String DIR_WTP_SETTINGS = ".settings"; //$NON-NLS-1$
 
     /**
      * File name where the WTP component settings will be stored for our Eclipse Project.
      */
-    private static final String FILE_DOT_COMPONENT = ".component";
+    private static final String FILE_DOT_COMPONENT = ".component"; //$NON-NLS-1$
 
     /**
      * File name where Eclipse Project's Facet configuration will be stored.
      */
-    private static final String FILE_FACET_CORE_XML = "org.eclipse.wst.common.project.facet.core.xml";
+    private static final String FILE_FACET_CORE_XML = "org.eclipse.wst.common.project.facet.core.xml"; //$NON-NLS-1$
 
     public EclipseWtpSettingsWriter( Log log, File eclipseProjectDir, MavenProject project, Collection artifacts )
     {
@@ -104,7 +104,9 @@ public class EclipseWtpSettingsWriter
             catch ( IOException e )
             {
                 if ( getLog().isErrorEnabled() )
+                {
                     getLog().error( "Unable to delete directory " + DIR_WTP_SETTINGS );
+                }
             }
         }
 
@@ -155,13 +157,13 @@ public class EclipseWtpSettingsWriter
         throws MojoExecutionException
     {
         writer.startElement( ELT_PROJECT_MODULES );
-        writer.addAttribute( ATTR_MODULE_ID, "moduleCoreId" );
+        writer.addAttribute( ATTR_MODULE_ID, "moduleCoreId" ); //$NON-NLS-1$
         writer.startElement( ELT_WB_MODULE );
         writer.addAttribute( ATTR_DEPLOY_NAME, getProject().getArtifactId() );
-        if ( "war".equalsIgnoreCase( packaging ) )
+        if ( "war".equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
         {
             writer.startElement( ELT_WB_RESOURCE );
-            writer.addAttribute( ATTR_DEPLOY_PATH, "/WEB-INF/classes" );
+            writer.addAttribute( ATTR_DEPLOY_PATH, "/WEB-INF/classes" ); //$NON-NLS-1$
             writer.addAttribute( ATTR_SOURCE_PATH, EclipseUtils.toRelativeAndFixSeparator( getProject().getBasedir(),
                                                                                            new File( getProject()
                                                                                                .getBuild()
@@ -169,18 +171,18 @@ public class EclipseWtpSettingsWriter
                                                                                            false ) );
             writer.endElement();
             String warSourceDirectory = EclipseUtils.getPluginSetting( getProject(), ARTIFACT_MAVEN_WAR_PLUGIN,
-                                                                       "warSourceDirectory", "/src/main/webapp" );
+                                                                       "warSourceDirectory", "/src/main/webapp" ); //$NON-NLS-1$ //$NON-NLS-2$
             writer.startElement( ELT_WB_RESOURCE );
-            writer.addAttribute( ATTR_DEPLOY_PATH, "/" );
+            writer.addAttribute( ATTR_DEPLOY_PATH, "/" ); //$NON-NLS-1$
             writer.addAttribute( ATTR_SOURCE_PATH, EclipseUtils
                 .toRelativeAndFixSeparator( getProject().getBasedir(), new File( getEclipseProjectDirectory(),
                                                                                  warSourceDirectory ), false ) );
             writer.endElement();
         }
-        else if ( "ear".equalsIgnoreCase( packaging ) )
+        else if ( "ear".equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
         {
             writer.startElement( ELT_WB_RESOURCE );
-            writer.addAttribute( ATTR_DEPLOY_PATH, "/ejbmodule" );
+            writer.addAttribute( ATTR_DEPLOY_PATH, "/ejbmodule" ); //$NON-NLS-1$
             writer.endElement();
         }
         // write out the dependencies.
@@ -191,8 +193,8 @@ public class EclipseWtpSettingsWriter
 
         // write out properties.
         writer.startElement( ELT_PROPERTY );
-        writer.addAttribute( ATTR_NAME, "java-output-path" );
-        writer.addAttribute( ATTR_VALUE, "/"
+        writer.addAttribute( ATTR_NAME, "java-output-path" ); //$NON-NLS-1$
+        writer.addAttribute( ATTR_VALUE, "/" //$NON-NLS-1$
             + EclipseUtils.toRelativeAndFixSeparator( getProject().getBasedir(), buildOutputDirectory, false ) );
 
         // close elements
@@ -217,7 +219,7 @@ public class EclipseWtpSettingsWriter
         writer.startElement( ELT_FIXED );
         writer.addAttribute( ATTR_FACET, FACET_JST_JAVA );
         writer.endElement(); // element fixed
-        if ( "war".equalsIgnoreCase( packaging ) )
+        if ( "war".equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
         {
             writer.startElement( ELT_FIXED );
             writer.addAttribute( ATTR_FACET, FACET_JST_WEB );
@@ -227,7 +229,7 @@ public class EclipseWtpSettingsWriter
             writer.addAttribute( ATTR_VERSION, resolveServletVersion() );
             writer.endElement(); // installed
         }
-        else if ( "ejb".equalsIgnoreCase( packaging ) )
+        else if ( "ejb".equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
         {
             writer.startElement( ELT_FIXED );
             writer.addAttribute( ATTR_FACET, FACET_JST_EJB );
@@ -237,7 +239,7 @@ public class EclipseWtpSettingsWriter
             writer.addAttribute( ATTR_VERSION, resolveEjbVersion() );
             writer.endElement(); // installed
         }
-        else if ( "ear".equalsIgnoreCase( packaging ) )
+        else if ( "ear".equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
         {
             writer.startElement( ELT_FIXED );
             writer.addAttribute( ATTR_FACET, FACET_JST_EAR );
@@ -267,9 +269,9 @@ public class EclipseWtpSettingsWriter
     {
         ScopeArtifactFilter scopeFilter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
         String warSourceDirectory = EclipseUtils.getPluginSetting( getProject(), ARTIFACT_MAVEN_WAR_PLUGIN,
-                                                                   "warSourceDirectory", "/src/main/webapp/" );
+                                                                   "warSourceDirectory", "/src/main/webapp/" ); //$NON-NLS-1$ //$NON-NLS-2$
 
-        File webInfLibDir = new File( getEclipseProjectDirectory() + "/" + warSourceDirectory + "/WEB-INF/lib" );
+        File webInfLibDir = new File( getEclipseProjectDirectory() + "/" + warSourceDirectory + "/WEB-INF/lib" ); //$NON-NLS-1$ //$NON-NLS-2$
         String webInfLibDirAsString = EclipseUtils.toRelativeAndFixSeparator( getProject().getBasedir(), webInfLibDir,
                                                                               false );
 
@@ -291,7 +293,7 @@ public class EclipseWtpSettingsWriter
 
             if ( !referencedReactorArtifacts.contains( artifact )
                 && ( scopeFilter.include( artifact ) || Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
-                && ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type ) || "war".equals( type ) ) )
+                && ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type ) || "war".equals( type ) ) ) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             {
                 // we want this bit container independent, so copy over everything to /WEB-INF/lib under our eclipse
                 // warSourceDirectory and add a deploy-path so that resources get published.
@@ -317,7 +319,7 @@ public class EclipseWtpSettingsWriter
             getLog().warn( "----------------------------------------------------------------------------" );
         }
         writer.startElement( ELT_WB_RESOURCE );
-        writer.addAttribute( ATTR_DEPLOY_PATH, "/WEB-INF/lib" );
+        writer.addAttribute( ATTR_DEPLOY_PATH, "/WEB-INF/lib" ); //$NON-NLS-1$
         writer.addAttribute( ATTR_SOURCE_PATH, webInfLibDirAsString );
         writer.endElement();
     }

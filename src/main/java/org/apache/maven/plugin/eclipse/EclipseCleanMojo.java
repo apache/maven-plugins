@@ -37,23 +37,23 @@ public class EclipseCleanMojo
     /**
      * Definition file for Eclipse Web Tools project.
      */
-    private static final String FILE_DOT_WTPMODULES = ".wtpmodules";
+    private static final String FILE_DOT_WTPMODULES = ".wtpmodules"; //$NON-NLS-1$
 
     /**
      * Classpath definition file for an Eclipse Java project.
      */
-    private static final String FILE_DOT_CLASSPATH = ".classpath";
+    private static final String FILE_DOT_CLASSPATH = ".classpath"; //$NON-NLS-1$
 
     /**
      * Project definition file for an Eclipse Project.
      */
-    private static final String FILE_DOT_PROJECT = ".project";
+    private static final String FILE_DOT_PROJECT = ".project"; //$NON-NLS-1$
 
     /**
      * Web Project definition file for Eclipse Web Tools Project (Release 1.0RC5
      * compatible).
      */
-    private static final String DIR_DOT_SETTINGS = ".settings";
+    private static final String DIR_DOT_SETTINGS = ".settings"; //$NON-NLS-1$
 
     /**
      * @parameter expression="${basedir}"
@@ -89,9 +89,11 @@ public class EclipseCleanMojo
                 try
                 {
                     if ( getLog().isDebugEnabled() )
+                    {
                         getLog().debug(
                                         MessageFormat.format( "Forcibly deleting {0} file...", new Object[] { f
                                             .getName() } ) );
+                    }
                     FileUtils.forceDelete( f );
                 }
                 catch ( IOException e )

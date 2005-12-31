@@ -53,36 +53,36 @@ public class EclipsePlugin
     extends AbstractMojo
 {
 
-    private static final String NATURE_WST_FACET_CORE_NATURE = "org.eclipse.wst.common.project.facet.core.nature";
+    private static final String NATURE_WST_FACET_CORE_NATURE = "org.eclipse.wst.common.project.facet.core.nature"; //$NON-NLS-1$
 
-    private static final String BUILDER_WST_COMPONENT_STRUCTURAL_DEPENDENCY_RESOLVER = "org.eclipse.wst.common.modulecore.ComponentStructuralBuilderDependencyResolver";
+    private static final String BUILDER_WST_COMPONENT_STRUCTURAL_DEPENDENCY_RESOLVER = "org.eclipse.wst.common.modulecore.ComponentStructuralBuilderDependencyResolver"; //$NON-NLS-1$
 
-    private static final String BUILDER_WST_VALIDATION = "org.eclipse.wst.validation.validationbuilder";
+    private static final String BUILDER_WST_VALIDATION = "org.eclipse.wst.validation.validationbuilder"; //$NON-NLS-1$
 
-    private static final String BUILDER_JDT_CORE_JAVA = "org.eclipse.jdt.core.javabuilder";
+    private static final String BUILDER_JDT_CORE_JAVA = "org.eclipse.jdt.core.javabuilder"; //$NON-NLS-1$
 
-    private static final String BUILDER_WST_COMPONENT_STRUCTURAL = "org.eclipse.wst.common.modulecore.ComponentStructuralBuilder";
+    private static final String BUILDER_WST_COMPONENT_STRUCTURAL = "org.eclipse.wst.common.modulecore.ComponentStructuralBuilder"; //$NON-NLS-1$
 
-    private static final String NATURE_WST_MODULE_CORE_NATURE = "org.eclipse.wst.common.modulecore.ModuleCoreNature";
+    private static final String NATURE_WST_MODULE_CORE_NATURE = "org.eclipse.wst.common.modulecore.ModuleCoreNature"; //$NON-NLS-1$
 
-    private static final String NATURE_JDT_CORE_JAVA = "org.eclipse.jdt.core.javanature";
+    private static final String NATURE_JDT_CORE_JAVA = "org.eclipse.jdt.core.javanature"; //$NON-NLS-1$
 
-    private static final String NATURE_JEM_WORKBENCH_JAVA_EMF = "org.eclipse.jem.workbench.JavaEMFNature";
+    private static final String NATURE_JEM_WORKBENCH_JAVA_EMF = "org.eclipse.jem.workbench.JavaEMFNature"; //$NON-NLS-1$
 
-    private static final String COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER = "org.eclipse.jdt.launching.JRE_CONTAINER";
+    private static final String COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER = "org.eclipse.jdt.launching.JRE_CONTAINER"; //$NON-NLS-1$
 
     //  warning, order is important for binary search
-    public static final String[] WTP_SUPPORTED_VERSIONS = new String[] { "1.0", "R7" };
+    public static final String[] WTP_SUPPORTED_VERSIONS = new String[] { "1.0", "R7" }; //$NON-NLS-1$ //$NON-NLS-2$
 
     /**
      * Constant for 'artifactId' element in POM.xml.
      */
-    private static final String POM_ELT_ARTIFACT_ID = "artifactId";
+    private static final String POM_ELT_ARTIFACT_ID = "artifactId"; //$NON-NLS-1$
 
     /**
      * Constant for 'groupId' element in POM.xml.
      */
-    private static final String POM_ELT_GROUP_ID = "groupId";
+    private static final String POM_ELT_GROUP_ID = "groupId"; //$NON-NLS-1$
 
     /**
      * The project whose project files to create.
@@ -251,9 +251,9 @@ public class EclipsePlugin
 
         if ( Arrays.binarySearch( WTP_SUPPORTED_VERSIONS, wtpversion ) < 0 )
         {
-            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.unsupportedwtp", new Object[] {
-                wtpversion,
-                StringUtils.join( WTP_SUPPORTED_VERSIONS, " " ) } ) );
+            throw new MojoExecutionException( Messages
+                .getString( "EclipsePlugin.unsupportedwtp", new Object[] { //$NON-NLS-1$
+                            wtpversion, StringUtils.join( WTP_SUPPORTED_VERSIONS, " " ) } ) ); //$NON-NLS-1$
         }
 
         if ( executedProject == null )
@@ -353,18 +353,18 @@ public class EclipsePlugin
 
         downloadSourceArtifacts( artifacts, reactorArtifacts );
 
-        if ( "R7".equalsIgnoreCase( wtpversion ) )
+        if ( "R7".equalsIgnoreCase( wtpversion ) ) //$NON-NLS-1$
         {
             new EclipseWtpmodulesWriter( getLog(), eclipseProjectDir, project, artifacts ).write( reactorArtifacts,
                                                                                                   sourceDirs,
                                                                                                   localRepository,
                                                                                                   buildOutputDirectory );
         }
-        else if ( "1.0".equals( wtpversion ) )
+        else if ( "1.0".equals( wtpversion ) ) //$NON-NLS-1$
         {
             // Check and write out a WTP Project if this was required.
-            if ( "war".equalsIgnoreCase( project.getPackaging() ) || "ear".equalsIgnoreCase( project.getPackaging() )
-                || "ejb".equalsIgnoreCase( project.getPackaging() ) )
+            if ( "war".equalsIgnoreCase( project.getPackaging() ) || "ear".equalsIgnoreCase( project.getPackaging() ) //$NON-NLS-1$ //$NON-NLS-2$
+                || "ejb".equalsIgnoreCase( project.getPackaging() ) ) //$NON-NLS-1$
             {
                 // we assume we have a version 1.0 for WTP
                 getLog().info( "Generating Eclipse web facet assuming version 1.0 for WTP..." );
@@ -423,7 +423,7 @@ public class EclipsePlugin
         projectnatures.add( NATURE_JDT_CORE_JAVA );
 
         projectnatures.add( NATURE_WST_MODULE_CORE_NATURE ); // WTP nature
-        if ( !"R7".equalsIgnoreCase( wtpversion ) )
+        if ( !"R7".equalsIgnoreCase( wtpversion ) ) //$NON-NLS-1$
         {
             projectnatures.add( NATURE_WST_FACET_CORE_NATURE ); // WTP nature
         }
@@ -464,14 +464,14 @@ public class EclipsePlugin
             }
 
             // source artifact: use the "sources" classifier added by the source plugin
-            Artifact sourceArtifact = EclipseUtils.resolveArtifactWithClassifier( artifact, "sources", localRepository,
+            Artifact sourceArtifact = EclipseUtils.resolveArtifactWithClassifier( artifact, "sources", localRepository, //$NON-NLS-1$
                                                                                   artifactResolver, artifactFactory,
                                                                                   remoteRepos );
 
             if ( !sourceArtifact.isResolved() )
             {
                 // try using a plain javadoc jar if the source jar is not available
-                EclipseUtils.resolveArtifactWithClassifier( artifact, "javadoc", localRepository, artifactResolver,
+                EclipseUtils.resolveArtifactWithClassifier( artifact, "javadoc", localRepository, artifactResolver, //$NON-NLS-1$
                                                             artifactFactory, remoteRepos );
 
                 missingSourceArtifacts.add( artifact );
@@ -500,9 +500,9 @@ public class EclipsePlugin
         for ( Iterator it = missingSourceArtifacts.iterator(); it.hasNext(); )
         {
             Artifact art = (Artifact) it.next();
-            msg.append( Messages.getString( "EclipseClasspathWriter.sourcesmissingitem", art.getId() ) );
+            msg.append( Messages.getString( "EclipseClasspathWriter.sourcesmissingitem", art.getId() ) ); //$NON-NLS-1$
         }
-        msg.append( "\n" );
+        msg.append( "\n" ); //$NON-NLS-1$
 
         getLog().info( msg ); //$NON-NLS-1$
 

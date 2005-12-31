@@ -29,39 +29,39 @@ public abstract class AbstractWtpResourceWriter
     extends AbstractEclipseResourceWriter
 {
 
-    private static final String ELT_DEPENDENCY_TYPE = "dependency-type";
+    private static final String ELT_DEPENDENCY_TYPE = "dependency-type"; //$NON-NLS-1$
 
-    private static final String ATTR_HANDLE = "handle";
+    private static final String ATTR_HANDLE = "handle"; //$NON-NLS-1$
 
-    private static final String ELT_DEPENDENT_MODULE = "dependent-module";
+    private static final String ELT_DEPENDENT_MODULE = "dependent-module"; //$NON-NLS-1$
 
-    protected static final String ATTR_VALUE = "value";
+    protected static final String ATTR_VALUE = "value"; //$NON-NLS-1$
 
-    protected static final String ATTR_NAME = "name";
+    protected static final String ATTR_NAME = "name"; //$NON-NLS-1$
 
-    protected static final String ELT_PROPERTY = "property";
+    protected static final String ELT_PROPERTY = "property"; //$NON-NLS-1$
 
-    protected static final String ELT_VERSION = "version";
+    protected static final String ELT_VERSION = "version"; //$NON-NLS-1$
 
-    protected static final String ATTR_MODULE_TYPE_ID = "module-type-id";
+    protected static final String ATTR_MODULE_TYPE_ID = "module-type-id"; //$NON-NLS-1$
 
-    protected static final String ATTR_SOURCE_PATH = "source-path";
+    protected static final String ATTR_SOURCE_PATH = "source-path"; //$NON-NLS-1$
 
-    protected static final String ATTR_DEPLOY_PATH = "deploy-path";
+    protected static final String ATTR_DEPLOY_PATH = "deploy-path"; //$NON-NLS-1$
 
-    protected static final String ELT_WB_RESOURCE = "wb-resource";
+    protected static final String ELT_WB_RESOURCE = "wb-resource"; //$NON-NLS-1$
 
-    protected static final String ELT_MODULE_TYPE = "module-type";
+    protected static final String ELT_MODULE_TYPE = "module-type"; //$NON-NLS-1$
 
-    protected static final String ATTR_DEPLOY_NAME = "deploy-name";
+    protected static final String ATTR_DEPLOY_NAME = "deploy-name"; //$NON-NLS-1$
 
-    protected static final String ELT_WB_MODULE = "wb-module";
+    protected static final String ELT_WB_MODULE = "wb-module"; //$NON-NLS-1$
 
-    protected static final String ATTR_MODULE_ID = "id";
+    protected static final String ATTR_MODULE_ID = "id"; //$NON-NLS-1$
 
-    protected static final String ELT_PROJECT_MODULES = "project-modules";
+    protected static final String ELT_PROJECT_MODULES = "project-modules"; //$NON-NLS-1$
 
-    protected static final String ARTIFACT_MAVEN_WAR_PLUGIN = "maven-war-plugin";
+    protected static final String ARTIFACT_MAVEN_WAR_PLUGIN = "maven-war-plugin"; //$NON-NLS-1$
 
     /**
      * Dependencies for our project.
@@ -109,9 +109,9 @@ public abstract class AbstractWtpResourceWriter
     {
         if ( "war".equals( packaging ) ) //$NON-NLS-1$
         {
-            writer.addAttribute( ATTR_MODULE_TYPE_ID, "jst.web" ); //$NON-NLS-1$ //$NON-NLS-2$
+            writer.addAttribute( ATTR_MODULE_TYPE_ID, "jst.web" ); //$NON-NLS-1$ 
 
-            writer.startElement( ELT_VERSION ); //$NON-NLS-1$
+            writer.startElement( ELT_VERSION );
 
             writer.writeText( resolveServletVersion() );
             writer.endElement();
@@ -119,48 +119,48 @@ public abstract class AbstractWtpResourceWriter
             // use finalName as context root only if it has been explicitely set
             String contextRoot = project.getArtifactId();
             String finalName = project.getBuild().getFinalName();
-            if ( !finalName.equals( project.getArtifactId() + "-" + project.getVersion() ) )
+            if ( !finalName.equals( project.getArtifactId() + "-" + project.getVersion() ) ) //$NON-NLS-1$
             {
                 contextRoot = finalName;
             }
 
-            writer.startElement( ELT_PROPERTY ); //$NON-NLS-1$
-            writer.addAttribute( ATTR_NAME, "context-root" ); //$NON-NLS-1$ //$NON-NLS-2$
-            writer.addAttribute( ATTR_VALUE, contextRoot ); //$NON-NLS-1$
+            writer.startElement( ELT_PROPERTY );
+            writer.addAttribute( ATTR_NAME, "context-root" ); //$NON-NLS-1$ 
+            writer.addAttribute( ATTR_VALUE, contextRoot );
             writer.endElement();
         }
         else if ( "ejb".equals( packaging ) ) //$NON-NLS-1$
         {
-            writer.addAttribute( ATTR_MODULE_TYPE_ID, "jst.ejb" ); //$NON-NLS-1$ //$NON-NLS-2$
+            writer.addAttribute( ATTR_MODULE_TYPE_ID, "jst.ejb" ); //$NON-NLS-1$ 
 
-            writer.startElement( ELT_VERSION ); //$NON-NLS-1$
-            writer.writeText( resolveEjbVersion() ); //$NON-NLS-1$
+            writer.startElement( ELT_VERSION );
+            writer.writeText( resolveEjbVersion() );
 
             writer.endElement();
 
-            writer.startElement( ELT_PROPERTY ); //$NON-NLS-1$
-            writer.addAttribute( ATTR_NAME, "java-output-path" ); //$NON-NLS-1$ //$NON-NLS-2$
-            writer.addAttribute( ATTR_VALUE, "/" + //$NON-NLS-1$ //$NON-NLS-2$
+            writer.startElement( ELT_PROPERTY );
+            writer.addAttribute( ATTR_NAME, "java-output-path" ); //$NON-NLS-1$ 
+            writer.addAttribute( ATTR_VALUE, "/" + //$NON-NLS-1$ 
                 EclipseUtils.toRelativeAndFixSeparator( getProject().getBasedir(), buildOutputDirectory, false ) );
             writer.endElement();
 
         }
-        else if ( "ear".equals( packaging ) )
+        else if ( "ear".equals( packaging ) ) //$NON-NLS-1$
         {
-            writer.addAttribute( ATTR_MODULE_TYPE_ID, "jst.ear" ); //$NON-NLS-1$ //$NON-NLS-2$
+            writer.addAttribute( ATTR_MODULE_TYPE_ID, "jst.ear" ); //$NON-NLS-1$ 
 
-            writer.startElement( ELT_VERSION ); //$NON-NLS-1$
-            writer.writeText( resolveJ2eeVersion() ); //$NON-NLS-1$
+            writer.startElement( ELT_VERSION );
+            writer.writeText( resolveJ2eeVersion() );
             writer.endElement();
         }
         else
         {
             // jar
-            writer.addAttribute( ATTR_MODULE_TYPE_ID, "jst.utility" ); //$NON-NLS-1$ //$NON-NLS-2$
+            writer.addAttribute( ATTR_MODULE_TYPE_ID, "jst.utility" ); //$NON-NLS-1$ 
 
-            writer.startElement( ELT_PROPERTY ); //$NON-NLS-1$
-            writer.addAttribute( ATTR_NAME, "java-output-path" ); //$NON-NLS-1$ //$NON-NLS-2$
-            writer.addAttribute( ATTR_VALUE, "/" + //$NON-NLS-1$ //$NON-NLS-2$
+            writer.startElement( ELT_PROPERTY );
+            writer.addAttribute( ATTR_NAME, "java-output-path" ); //$NON-NLS-1$ 
+            writer.addAttribute( ATTR_VALUE, "/" + //$NON-NLS-1$ 
                 EclipseUtils.toRelativeAndFixSeparator( getProject().getBasedir(), buildOutputDirectory, false ) );
             writer.endElement();
         }
@@ -223,12 +223,12 @@ public abstract class AbstractWtpResourceWriter
             }
         }
 
-        writer.startElement( ELT_DEPENDENT_MODULE ); //$NON-NLS-1$
+        writer.startElement( ELT_DEPENDENT_MODULE );
 
-        writer.addAttribute( ATTR_DEPLOY_PATH, "/WEB-INF/lib" ); //$NON-NLS-1$ //$NON-NLS-2$
-        writer.addAttribute( ATTR_HANDLE, handle ); //$NON-NLS-1$
+        writer.addAttribute( ATTR_DEPLOY_PATH, "/WEB-INF/lib" ); //$NON-NLS-1$ 
+        writer.addAttribute( ATTR_HANDLE, handle );
 
-        writer.startElement( ELT_DEPENDENCY_TYPE ); //$NON-NLS-1$
+        writer.startElement( ELT_DEPENDENCY_TYPE );
         writer.writeText( "uses" ); //$NON-NLS-1$
         writer.endElement();
 
@@ -251,7 +251,7 @@ public abstract class AbstractWtpResourceWriter
             // NB war is needed for ear projects, we suppose nobody adds a war
             // dependency to a war/jar project
             if ( ( scopeFilter.include( artifact ) || Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
-                && ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type ) || "war".equals( type ) ) )
+                && ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type ) || "war".equals( type ) ) ) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             {
                 addDependency( writer, artifact, referencedReactorArtifacts, localRepository, getProject().getBasedir() );
             }
@@ -260,21 +260,21 @@ public abstract class AbstractWtpResourceWriter
 
     protected String resolveServletVersion()
     {
-        String[] artifactNames = new String[] { "servlet-api", "servletapi", "geronimo-spec-servlet" };
+        String[] artifactNames = new String[] { "servlet-api", "servletapi", "geronimo-spec-servlet" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
         String version = EclipseUtils.getDependencyVersion( artifactNames, getProject().getArtifacts(), 3 );
         if ( version == null )
         {
             // none of the above specified matched, try geronimo-spec-j2ee
-            artifactNames = new String[] { "geronimo-spec-j2ee" };
+            artifactNames = new String[] { "geronimo-spec-j2ee" }; //$NON-NLS-1$
             version = EclipseUtils.getDependencyVersion( artifactNames, getProject().getArtifacts(), 3 );
             if ( version != null )
             {
                 String j2eeMinorVersion = StringUtils.substring( version, 2, 3 );
-                version = "2." + j2eeMinorVersion;
+                version = "2." + j2eeMinorVersion; //$NON-NLS-1$
             }
         }
-        return version == null ? "2.4" : version;
+        return version == null ? "2.4" : version; //$NON-NLS-1$
     }
 
     protected String resolveEjbVersion()
@@ -282,25 +282,25 @@ public abstract class AbstractWtpResourceWriter
         String version = null;
         // @todo this is the default, find real ejb version from dependencies
 
-        return version == null ? "2.1" : version;
+        return version == null ? "2.1" : version; //$NON-NLS-1$
     }
 
     protected String resolveJ2eeVersion()
     {
         String version = null;
         // @todo this is the default, find real j2ee version from dependencies
-        return version == null ? "1.3" : version;
+        return version == null ? "1.3" : version; //$NON-NLS-1$
     }
 
     protected String resolveJavaVersion()
     {
-        String version = EclipseUtils.getPluginSetting( getProject(), "maven-compiler-plugin", "target", null );
+        String version = EclipseUtils.getPluginSetting( getProject(), "maven-compiler-plugin", "target", null ); //$NON-NLS-1$ //$NON-NLS-2$
         if ( version == null )
         {
-            EclipseUtils.getPluginSetting( getProject(), "maven-compiler-plugin", "source", null );
+            EclipseUtils.getPluginSetting( getProject(), "maven-compiler-plugin", "source", null ); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
-        return version == null ? "1.4" : version;
+        return version == null ? "1.4" : version; //$NON-NLS-1$
     }
 
 }
