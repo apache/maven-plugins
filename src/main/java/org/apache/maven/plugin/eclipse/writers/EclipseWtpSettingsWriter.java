@@ -186,6 +186,10 @@ public class EclipseWtpSettingsWriter
         }
         // write out the dependencies.
         writeWarOrEarResources( writer, getProject(), referencedReactorArtifacts, localRepository );
+
+        // fix for WTP 1.0
+        copyExternalDependencies( writer, getProject(), referencedReactorArtifacts, localRepository );
+
         // write out properties.
         writer.startElement( ELT_PROPERTY );
         writer.addAttribute( ATTR_NAME, "java-output-path" );
@@ -261,19 +265,22 @@ public class EclipseWtpSettingsWriter
      * <br>
      * TODO: Remove this method definition the issue is addressed in WTP.
      */
-    protected void writeWarOrEarResources( XMLWriter writer, MavenProject project, List referencedReactorArtifacts,
-                                          ArtifactRepository localRepository )
+    protected void copyExternalDependencies( XMLWriter writer, MavenProject project, List referencedReactorArtifacts,
+                                            ArtifactRepository localRepository )
         throws MojoExecutionException
     {
         ScopeArtifactFilter scopeFilter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
         String warSourceDirectory = EclipseUtils.getPluginSetting( getProject(), ARTIFACT_MAVEN_WAR_PLUGIN,
                                                                    "warSourceDirectory", "/src/main/webapp/" );
-        String webInfLibDirectory = getEclipseProjectDirectory() + "/" + warSourceDirectory + "/WEB-INF/lib";
+
+        File webInfLibDir = new File( getEclipseProjectDirectory() + "/" + warSourceDirectory + "/WEB-INF/lib" );
+        String webInfLibDirAsString = EclipseUtils.toRelativeAndFixSeparator( getProject().getBasedir(), webInfLibDir,
+                                                                              false );
 
         if ( getLog().isWarnEnabled() )
         {
             getLog().warn( "----------------------------------------------------------------------------" );
-            getLog().warn( "Copying over dependencies for WTP1.0 Project to directory: " + webInfLibDirectory );
+            getLog().warn( "Copying over dependencies for WTP1.0 Project to directory: " + webInfLibDirAsString );
             getLog()
                 .warn(
                        "Please NOTE that this is a patch to allow publishing external dependencies for a WTP1.0 project." );
@@ -286,27 +293,24 @@ public class EclipseWtpSettingsWriter
             Artifact artifact = (Artifact) it.next();
             String type = artifact.getType();
 
-            if ( ( scopeFilter.include( artifact ) || Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
+            if ( !referencedReactorArtifacts.contains( artifact )
+                && ( scopeFilter.include( artifact ) || Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
                 && ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type ) || "war".equals( type ) ) )
             {
-                // we want this bit container independent, so copy over
-                // everything to /WEB-INF/lib under our eclipse
-                // warSourceDirectory
-                // and add a deploy-path so that resources get published.
+                // we want this bit container independent, so copy over everything to /WEB-INF/lib under our eclipse
+                // warSourceDirectory and add a deploy-path so that resources get published.
                 try
                 {
-
                     getLog().info( "Copying dependency: " + artifact.getFile().getName() + "..." );
-                    FileUtils.copyFileToDirectory( artifact.getFile(), new File( webInfLibDirectory ) );
+                    FileUtils.copyFileToDirectory( artifact.getFile(), webInfLibDir );
                 }
                 catch ( IOException e )
                 {
-                    // we log the error and still go ahead with the wtp project
-                    // creation.
+                    // we log the error and still go ahead with the wtp project creation.
 
                     getLog().error(
                                     "Unable to copy dependency: " + artifact.getFile().getAbsolutePath()
-                                        + " over to web app lib directory : " + webInfLibDirectory );
+                                        + " over to web app lib directory : " + webInfLibDirAsString );
                 }
             }
         }
@@ -318,7 +322,7 @@ public class EclipseWtpSettingsWriter
         }
         writer.startElement( ELT_WB_RESOURCE );
         writer.addAttribute( ATTR_DEPLOY_PATH, "/WEB-INF/lib" );
-        writer.addAttribute( ATTR_SOURCE_PATH, webInfLibDirectory );
+        writer.addAttribute( ATTR_SOURCE_PATH, webInfLibDirAsString );
         writer.endElement();
     }
 
