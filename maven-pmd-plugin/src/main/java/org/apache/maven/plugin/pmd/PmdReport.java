@@ -25,6 +25,8 @@ import net.sourceforge.pmd.RuleSetFactory;
 import net.sourceforge.pmd.TargetJDK1_3;
 import net.sourceforge.pmd.TargetJDK1_4;
 import net.sourceforge.pmd.TargetJDK1_5;
+
+import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
@@ -263,5 +265,14 @@ public class PmdReport
     private static ResourceBundle getBundle( Locale locale )
     {
         return ResourceBundle.getBundle( "pmd-report", locale, PmdReport.class.getClassLoader() );
+    }
+
+    /**
+     * @see org.apache.maven.reporting.AbstractMavenReport#canGenerateReport()
+     */
+    public boolean canGenerateReport()
+    {
+        ArtifactHandler artifactHandler = project.getArtifact().getArtifactHandler();
+        return ( "java".equals( artifactHandler.getLanguage() ) );
     }
 }
