@@ -19,6 +19,7 @@ package org.apache.maven.plugins.release;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -1513,14 +1514,31 @@ public class PrepareReleaseMojo
         }
 
         Writer writer = null;
+        Writer tempOutput = null;
 
         try
         {
-            writer = new FileWriter( pomFile );
 
             MavenXpp3Writer pomWriter = new MavenXpp3Writer();
 
-            pomWriter.write( writer, model );
+            // temporary hack to add namespace declaration, not supported by modello/MavenXpp3Writer
+            // MavenXpp3Writer doesn't support writing the xsd declaration, do it manually
+            tempOutput = new StringWriter();
+            pomWriter.write( tempOutput, model );
+            String pomString = tempOutput.toString();
+            pomString = StringUtils
+                .replaceOnce(
+                              pomString,
+                              "<project>",
+                              "<project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+                                  + System.getProperty( "line.separator" )
+                                  + "  xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\">" );
+
+            writer = new FileWriter( pomFile );
+            writer.write( pomString );
+
+            // pomWriter.write( writer, model );
+
         }
         catch ( IOException e )
         {
@@ -1528,6 +1546,7 @@ public class PrepareReleaseMojo
         }
         finally
         {
+            IOUtil.close( tempOutput );
             IOUtil.close( writer );
         }
     }
