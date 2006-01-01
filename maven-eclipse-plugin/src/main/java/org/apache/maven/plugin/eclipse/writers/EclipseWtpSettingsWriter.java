@@ -93,7 +93,7 @@ public class EclipseWtpSettingsWriter
         throws MojoExecutionException
     {
         // delete the .settings directory (if exists)
-        File settingsDir = new File( DIR_WTP_SETTINGS );
+        File settingsDir = new File( getEclipseProjectDirectory(), DIR_WTP_SETTINGS );
         if ( settingsDir.isDirectory() && !settingsDir.delete() )
         {
             // force delete
@@ -111,11 +111,11 @@ public class EclipseWtpSettingsWriter
         }
 
         // create a .settings directory
-        FileUtils.mkdir( DIR_WTP_SETTINGS );
+        settingsDir.mkdirs();
         FileWriter w;
         try
         {
-            w = new FileWriter( new File( getEclipseProjectDirectory() + "/" + DIR_WTP_SETTINGS, FILE_DOT_COMPONENT ) ); //$NON-NLS-1$
+            w = new FileWriter( new File( settingsDir, FILE_DOT_COMPONENT ) );
         }
         catch ( IOException ex )
         {
@@ -131,7 +131,7 @@ public class EclipseWtpSettingsWriter
         // Write out facet core xml
         try
         {
-            w = new FileWriter( new File( getEclipseProjectDirectory() + "/" + DIR_WTP_SETTINGS, FILE_FACET_CORE_XML ) ); //$NON-NLS-1$
+            w = new FileWriter( new File( settingsDir, FILE_FACET_CORE_XML ) );
         }
         catch ( IOException ex )
         {

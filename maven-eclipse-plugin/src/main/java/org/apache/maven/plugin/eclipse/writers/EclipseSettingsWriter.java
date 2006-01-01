@@ -96,7 +96,7 @@ public class EclipseSettingsWriter
         // write the settings, if needed
         if ( !coreSettings.isEmpty() )
         {
-            File settingsDir = new File( getEclipseProjectDirectory(), "/" + DIR_DOT_SETTINGS ); //$NON-NLS-1$
+            File settingsDir = new File( getEclipseProjectDirectory(), DIR_DOT_SETTINGS ); //$NON-NLS-1$
 
             settingsDir.mkdirs();
 
