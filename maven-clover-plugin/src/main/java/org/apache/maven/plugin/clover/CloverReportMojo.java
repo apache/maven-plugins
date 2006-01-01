@@ -195,4 +195,15 @@ public class CloverReportMojo
     {
         return true;
     }
+
+    /**
+     * @see org.apache.maven.reporting.AbstractMavenReport#canGenerateReport()
+     */
+    public boolean canGenerateReport()
+    {
+        // Only execute reports for java projects
+        ArtifactHandler artifactHandler = this.project.getArtifact().getArtifactHandler();
+        return "java".equals( artifactHandler.getLanguage() );
+    }
+
 }
