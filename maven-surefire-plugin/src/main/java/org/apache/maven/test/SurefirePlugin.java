@@ -119,7 +119,7 @@ public class SurefirePlugin
     /**
      * List of patterns (separated by commas) used to specify the tests that should be excluded in testing.
      * When not specified and whent the <code>test</code> parameter is not specified, the default excludes will be
-     * <code>**&#47;Abstract*Test.java  **&#47;Abstract*TestCase.java</code>
+     * <code>**&#47;Abstract*Test.java  **&#47;Abstract*TestCase.java **&#47;*$*</code>
      *
      * @parameter
      */
@@ -292,7 +292,7 @@ public class SurefirePlugin
             }
             if ( excludes == null || excludes.size() == 0 )
             {
-                excludes = new ArrayList( Arrays.asList( new String[]{"**/Abstract*Test.java", "**/Abstract*TestCase.java"} ) );
+                excludes = new ArrayList( Arrays.asList( new String[]{"**/Abstract*Test.java", "**/Abstract*TestCase.java", "**/*$*"} ) );
             }
 
             surefireBooter.addBattery( "org.apache.maven.surefire.battery.DirectoryBattery", new Object[]{testClassesDirectory, includes, excludes} );
