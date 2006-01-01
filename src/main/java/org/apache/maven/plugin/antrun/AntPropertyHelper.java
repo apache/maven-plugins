@@ -38,11 +38,12 @@ public class AntPropertyHelper
         log = l;
     }
 
-    public synchronized Object getPropertyHook( String ns, String name,
-        boolean user
-    )
+    public synchronized Object getPropertyHook( String ns, String name, boolean user )
     {
-        log.debug( "getProperty(ns="+ns+", name="+name+", user="+user+")" );
+        if ( log.isDebugEnabled() )
+        {
+            log.debug( "getProperty(ns="+ns+", name="+name+", user="+user+")" );
+        }
 
         Object val = null;
         try
@@ -66,7 +67,10 @@ public class AntPropertyHelper
         }
         catch ( Exception e )
         {
-            log.warn( "Error evaluating expression '" + name + "'", e );
+            if ( log.isWarnEnabled() )
+            {
+                log.warn( "Error evaluating expression '" + name + "'", e );
+            }
             e.printStackTrace();
         }
 
