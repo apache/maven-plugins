@@ -27,7 +27,6 @@ import org.codehaus.plexus.component.configurator.ConfigurationListener;
 import org.codehaus.plexus.component.configurator.converters.AbstractConfigurationConverter;
 import org.codehaus.plexus.component.configurator.converters.ConfigurationConverter;
 import org.codehaus.plexus.component.configurator.converters.lookup.ConverterLookup;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.PlexusConfigurationException;
@@ -40,6 +39,8 @@ import org.codehaus.plexus.configuration.PlexusConfigurationException;
 public class AntTargetConverter
     extends AbstractConfigurationConverter
 {
+    public static final String MAVEN_EXPRESSION_EVALUATOR_ID = "maven.expressionEvaluator";
+
     public static final String ROLE = ConfigurationConverter.class.getName();
 
     public boolean canConvert( Class type )
@@ -79,14 +80,16 @@ public class AntTargetConverter
         target.setProject( project );
         project.addTarget( target );
 
+        project.addReference(MAVEN_EXPRESSION_EVALUATOR_ID , expressionEvaluator);
+        
         initDefinitions( project, target );
 
-        processConfiguration( null, project, target, configuration, expressionEvaluator );
+        processConfiguration( null, project, target, configuration );
     }
 
 
     private void processConfiguration( RuntimeConfigurable parentWrapper, Project project, Target target,
-                                       PlexusConfiguration configuration, ExpressionEvaluator expressionEvaluator )
+                                       PlexusConfiguration configuration )
         throws ComponentConfigurationException
     {
         int items = configuration.getChildCount();
@@ -136,18 +139,6 @@ public class AntTargetConverter
                 try
                 {
                     String v = childConfiguration.getAttribute( attrNames[a] );
-
-                    try
-                    {
-                        Object evaluatedExpr = expressionEvaluator.evaluate( v );
-                        v = evaluatedExpr == null ? v : evaluatedExpr.toString();
-                    }
-                    catch ( ExpressionEvaluationException e )
-                    {
-                        throw new ComponentConfigurationException( "Error evaluating value '" + v + "' of attribute '" +
-                            attrNames[a] + "' of tag '" + childConfiguration.getName() + "'", e );
-                    }
-
                     wrapper.setAttribute( attrNames[a], v );
                 }
                 catch ( PlexusConfigurationException e )
@@ -163,7 +154,7 @@ public class AntTargetConverter
                 parentWrapper.addChild( wrapper );
             }
 
-            processConfiguration( wrapper, project, target, childConfiguration, expressionEvaluator );
+            processConfiguration( wrapper, project, target, childConfiguration );
         }
     }
 
