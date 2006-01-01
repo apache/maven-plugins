@@ -557,6 +557,12 @@ public class CheckstyleReportGenerator
     
     private void doDetails( CheckstyleResults results )
     {
+
+        sink.section1();
+        sink.sectionTitle1();
+        sink.text( bundle.getString( "report.checkstyle.details" ) );
+        sink.sectionTitle1_();
+        
         Iterator files = results.getFiles().keySet().iterator();
         
         while ( files.hasNext() )
@@ -571,12 +577,12 @@ public class CheckstyleReportGenerator
             }
             
             doxiaHack(); 
-            sink.section1();
-            sink.sectionTitle1();
+            sink.section2();
+            sink.sectionTitle2();
             sink.anchor( file.replace( '/', '.' ) );
-            sink.text( file );
             sink.anchor_();
-            sink.sectionTitle1_();
+            sink.text( file );
+            sink.sectionTitle2_();
             
             sink.table();
             sink.tableRow();
@@ -594,8 +600,10 @@ public class CheckstyleReportGenerator
             doFileEvents( violations);
             
             sink.table_();
-            sink.section1_();
+            sink.section2_();
         }
+        
+        sink.section1_();
     }
     
     private void doFileEvents( List eventList )
