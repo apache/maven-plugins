@@ -1196,4 +1196,13 @@ public class JavadocReport
     {
         return true;
     }
+
+    /**
+     * @see org.apache.maven.reporting.AbstractMavenReport#canGenerateReport()
+     */
+    public boolean canGenerateReport()
+    {
+        ArtifactHandler artifactHandler = project.getArtifact().getArtifactHandler();
+        return ( "java".equals( artifactHandler.getLanguage() ) );
+    }
 }
