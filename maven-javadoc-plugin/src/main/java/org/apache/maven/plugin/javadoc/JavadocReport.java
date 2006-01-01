@@ -887,7 +887,7 @@ public class JavadocReport
 
         cmd.createArgument().setValue( "@files" );
 
-        getLog().info( Commandline.toString( cmd.getCommandline() ) );
+        getLog().debug( Commandline.toString( cmd.getCommandline() ) );
 
         CommandLineUtils.StringStreamConsumer err = new CommandLineUtils.StringStreamConsumer();
         try
