@@ -372,6 +372,12 @@ public class CheckstyleReport
     private MavenProject project;
 
     /**
+     * Output errors to console.
+     * @parameter default-value="false"
+     */
+    private boolean consoleOutput;
+
+    /**
      * @component
      * @required
      * @readonly
@@ -681,7 +687,10 @@ public class CheckstyleReport
             checker.addListener( listener );
         }
 
-        checker.addListener( getConsoleListener() );
+        if ( consoleOutput )
+        {
+            checker.addListener( getConsoleListener() );
+        }
 
         CheckstyleReportListener sinkListener = new CheckstyleReportListener( sourceDirectory );
 
@@ -700,7 +709,11 @@ public class CheckstyleReport
         {
             // TODO: should be a failure, not an error. Report is not meant to throw an exception here (so site would
             // work regardless of config), but should record this information
-            throw new MavenReportException( "There are " + nbErrors + " formatting errors." );
+            throw new MavenReportException( "There are " + nbErrors + " checkstyle errors." );
+        }
+        else if ( nbErrors > 0 )
+        {
+            getLog().info( "There are " + nbErrors + " checkstyle errors." );
         }
 
         return sinkListener.getResults();
