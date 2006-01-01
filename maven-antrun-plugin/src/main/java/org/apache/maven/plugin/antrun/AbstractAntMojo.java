@@ -25,12 +25,14 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.antrun.components.AntTargetConverter;
 import org.apache.maven.project.MavenProject;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.PropertyHelper;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.types.Path;
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -54,11 +56,14 @@ public abstract class AbstractAntMojo
     {
         try
         {
+            //TODO refactor - place the manipulation of the expressionEvaluator into a separated class.
+            ExpressionEvaluator exprEvaluator = (ExpressionEvaluator) antTasks.getProject().getReference(AntTargetConverter.MAVEN_EXPRESSION_EVALUATOR_ID);
+
             Project antProject = antTasks.getProject();
 
             PropertyHelper propertyHelper = PropertyHelper.getPropertyHelper( antProject );
 
-            propertyHelper.setNext( new AntPropertyHelper( mavenProject, getLog() ) );
+            propertyHelper.setNext( new AntPropertyHelper( exprEvaluator, getLog() ) );
 
             DefaultLogger antLogger = new DefaultLogger();
             antLogger.setOutputPrintStream( System.out );
