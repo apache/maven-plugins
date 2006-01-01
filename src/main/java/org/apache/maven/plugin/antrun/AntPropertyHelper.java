@@ -19,6 +19,8 @@ package org.apache.maven.plugin.antrun;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.tools.ant.PropertyHelper;
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.codehaus.plexus.util.introspection.ReflectionValueExtractor;
 
 /**
@@ -30,12 +32,25 @@ public class AntPropertyHelper
     extends PropertyHelper
 {
     private Log log;
+    private ExpressionEvaluator exprEvaluator;
     private MavenProject mavenProject;
 
+    /**
+     * @deprecated use the other constructor
+     * @param project
+     * @param l
+     */
     public AntPropertyHelper( MavenProject project, Log l )
     {
         mavenProject = project;
         log = l;
+    }
+
+    public AntPropertyHelper( ExpressionEvaluator exprEvaluator, Log l )
+    {
+        this.mavenProject = null;
+        this.exprEvaluator = exprEvaluator;
+        this.log = l;
     }
 
     public synchronized Object getPropertyHook( String ns, String name, boolean user )
@@ -45,6 +60,47 @@ public class AntPropertyHelper
             log.debug( "getProperty(ns="+ns+", name="+name+", user="+user+")" );
         }
 
+        /* keep old behaviour */
+        if ( mavenProject != null )
+        {
+            return getPropertyHook( ns, name, user, mavenProject );
+        }
+        
+        Object val = null;
+        try 
+        {
+            val = exprEvaluator.evaluate( "${" + name + "}" );
+        }
+        catch (ExpressionEvaluationException e) 
+        {
+            if ( log.isErrorEnabled() )
+            {
+                log.error("Failed to evaluate expression" , e);
+            }
+        }
+        if ( val == null )
+        {
+            val = super.getPropertyHook( ns, name, user );
+
+            if ( val == null )
+            {
+                val = System.getProperty( name.toString() );
+            }
+        }
+
+        return val;
+    }
+
+    /**
+     * @deprecated added to keep backwards compatibility
+     * @param ns
+     * @param name
+     * @param user
+     * @param mavenProject
+     * @return
+     */
+    private Object getPropertyHook( String ns, String name, boolean user, MavenProject mavenProject )
+    {
         Object val = null;
         try
         {
@@ -85,4 +141,5 @@ public class AntPropertyHelper
 
         return val;
     }
+
 }
