@@ -102,14 +102,6 @@ public class CloverReportMojo
     public void executeReport( Locale locale )
         throws MavenReportException
     {
-        // Only execute reports for java projects
-        ArtifactHandler artifactHandler = this.project.getArtifact().getArtifactHandler();
-        if ( !"java".equals( artifactHandler.getLanguage() ) )
-        {
-            getLog().debug( "Not generating a Clover report as this is not a Java project." );
-            return;
-        }
-
         AbstractCloverMojo.waitForFlush( this.waitForFlush, this.flushInterval );
         
         int result = HtmlReporter.mainImpl( createCliArgs() );
