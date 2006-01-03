@@ -213,32 +213,28 @@ public class AbstractAssemblyMojo
      */
     protected String getDistributionName( Assembly assembly )
     {
-        if ( StringUtils.isEmpty( assembly.getId() ) )
+        String distributionName;
+        if ( appendAssemblyId && !StringUtils.isEmpty( assembly.getId() ) )
         {
-            return finalName;
-        }
-
-        if ( appendAssemblyId )
-        {
-            return finalName + "-" + assembly.getId();
+            distributionName = finalName + "-" + assembly.getId();
         }
         else
         {
-            return finalName;
+            distributionName = finalName;
         }
+        return distributionName;
     }
 
     protected File createArchive( Archiver archiver, Assembly assembly, String filename )
         throws ArchiverException, IOException, MojoExecutionException, MojoFailureException, XmlPullParserException
     {
-        File destFile;
         processDependencySets( archiver, assembly.getDependencySets(), assembly.isIncludeBaseDirectory() );
         processFileSets( archiver, assembly.getFileSets(), assembly.isIncludeBaseDirectory() );
         processFileList( archiver, assembly.getFiles(), assembly.isIncludeBaseDirectory() );
 
         componentsXmlFilter.addToArchive( archiver );
 
-        destFile = new File( outputDirectory, filename );
+        File destFile = new File( outputDirectory, filename );
         archiver.setDestFile( destFile );
         archiver.createArchive();
 
@@ -401,16 +397,19 @@ public class AbstractAssemblyMojo
     {
         if ( directory.exists() )
         {
+            List adaptedExcludes = excludes;
+
             // TODO: more robust set of filters on added files in the archiver
             File componentsXml = new File( directory, ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH );
             if ( componentsXml.exists() )
             {
                 componentsXmlFilter.addComponentsXml( componentsXml );
-                excludes = new ArrayList( excludes );
-                excludes.add( ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH );
+                adaptedExcludes = new ArrayList( excludes );
+                adaptedExcludes.add( ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH );
             }
 
-            archiver.addDirectory( directory, output, includes, (String[]) excludes.toArray( EMPTY_STRING_ARRAY ) );
+            archiver.addDirectory( directory, output, includes,
+                                   (String[]) adaptedExcludes.toArray( EMPTY_STRING_ARRAY ) );
         }
     }
 
@@ -556,17 +555,16 @@ public class AbstractAssemblyMojo
     private static String evaluateFileNameMapping( String expression, Artifact artifact )
         throws MojoExecutionException
     {
+        String value = expression;
+
         // this matches the last ${...} string
         Pattern pat = Pattern.compile( "^(.*)\\$\\{([^\\}]+)\\}(.*)$" );
         Matcher mat = pat.matcher( expression );
 
-        String left;
-        String right;
-        Object middle;
-
         if ( mat.matches() )
         {
-            left = evaluateFileNameMapping( mat.group( 1 ), artifact );
+            Object middle;
+            String left = evaluateFileNameMapping( mat.group( 1 ), artifact );
             try
             {
                 middle = ReflectionValueExtractor.evaluate( "dep." + mat.group( 2 ), artifact );
@@ -575,7 +573,7 @@ public class AbstractAssemblyMojo
             {
                 throw new MojoExecutionException( "Cannot evaluate filenameMapping", e );
             }
-            right = mat.group( 3 );
+            String right = mat.group( 3 );
 
             if ( middle == null )
             {
@@ -592,10 +590,10 @@ public class AbstractAssemblyMojo
                 }
             }
 
-            return left + middle + right;
+            value = left + middle + right;
         }
 
-        return expression;
+        return value;
     }
 
     /**
@@ -606,35 +604,36 @@ public class AbstractAssemblyMojo
      */
     private String getOutputDirectory( String output, boolean includeBaseDirectory )
     {
-        if ( output == null )
+        String value = output;
+        if ( value == null )
         {
-            output = "";
+            value = "";
         }
-        if ( !output.endsWith( "/" ) && !output.endsWith( "\\" ) )
+        if ( !value.endsWith( "/" ) && !value.endsWith( "\\" ) )
         {
             // TODO: shouldn't archiver do this?
-            output += '/';
+            value += '/';
         }
 
         if ( includeBaseDirectory )
         {
-            if ( output.startsWith( "/" ) )
+            if ( value.startsWith( "/" ) )
             {
-                output = finalName + output;
+                value = finalName + value;
             }
             else
             {
-                output = finalName + "/" + output;
+                value = finalName + "/" + value;
             }
         }
         else
         {
-            if ( output.startsWith( "/" ) )
+            if ( value.startsWith( "/" ) )
             {
-                output = output.substring( 1 );
+                value = value.substring( 1 );
             }
         }
-        return output;
+        return value;
     }
 
     /**
@@ -678,7 +677,7 @@ public class AbstractAssemblyMojo
                 tarArchiver.setCompression( tarCompressionMethod );
             }
         }
-        else if ( format.equals( "war" ) )
+        else if ( "war".equals( format ) )
         {
             WarArchiver warArchiver = (WarArchiver) this.archiverManager.getArchiver( "war" );
             warArchiver.setIgnoreWebxml( false ); // See MNG-1274
@@ -701,11 +700,17 @@ public class AbstractAssemblyMojo
 
         String line;
 
-        while ( ( line = in.readLine() ) != null )
+        do
         {
-            out.write( line );
-            out.write( lineEndings );
+            line = in.readLine();
+            if ( line != null )
+            {
+                out.write( line );
+                out.write( lineEndings );
+            }
         }
+        while ( line != null );
+
         out.flush();
         out.close();
     }
@@ -750,19 +755,20 @@ public class AbstractAssemblyMojo
     private static String getLineEndingCharacters( String lineEnding )
         throws ArchiverException
     {
+        String value = lineEnding;
         if ( lineEnding != null )
         {
             if ( "keep".equals( lineEnding ) )
             {
-                lineEnding = null;
+                value = null;
             }
             else if ( "dos".equals( lineEnding ) || "crlf".equals( lineEnding ) )
             {
-                lineEnding = "\r\n";
+                value = "\r\n";
             }
             else if ( "unix".equals( lineEnding ) || "lf".equals( lineEnding ) )
             {
-                lineEnding = "\n";
+                value = "\n";
             }
             else
             {
@@ -770,7 +776,7 @@ public class AbstractAssemblyMojo
             }
         }
 
-        return lineEnding;
+        return value;
     }
 
     private void includeSiteInAssembly( Assembly assembly )
