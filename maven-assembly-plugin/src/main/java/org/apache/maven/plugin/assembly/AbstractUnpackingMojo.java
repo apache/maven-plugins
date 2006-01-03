@@ -16,8 +16,10 @@ package org.apache.maven.plugin.assembly;
  * limitations under the License.
  */
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
@@ -32,8 +34,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.project.MavenProject;
 
 /**
  * Base routines for assembly and unpack goals.
@@ -88,6 +88,15 @@ public abstract class AbstractUnpackingMojo
     private List reactorProjects;
 
     /**
+     * The executed project when the base was forked.
+     *
+     * @parameter expression="${executedProject}"
+     * @required
+     * @readonly
+     */
+    private MavenProject executedProject;
+
+    /**
      * Retrieves all artifact dependencies within the reactor
      *
      * @return A HashSet of artifacts
@@ -96,16 +105,40 @@ public abstract class AbstractUnpackingMojo
     {
         Map dependencies = new HashMap();
 
+        // TODO: this is not mediating dependencies versions - first wins. Is there a way we can do that properly from here?
+        if ( executedProject != null )
+        {
+            Artifact artifact = executedProject.getArtifact();
+
+            if ( artifact.getFile() != null )
+            {
+                String key = artifact.getDependencyConflictId();
+
+                dependencies.put( key, artifact );
+            }
+        }
+
         for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
         {
             MavenProject reactorProject = (MavenProject) i.next();
 
+            Artifact artifact = reactorProject.getArtifact();
+
+            if ( artifact.getFile() != null )
+            {
+                String key = artifact.getDependencyConflictId();
+
+                if ( !dependencies.containsKey( key ) )
+                {
+                    dependencies.put( key, artifact );
+                }
+            }
+
             for ( Iterator j = reactorProject.getArtifacts().iterator(); j.hasNext(); )
             {
-                Artifact artifact = (Artifact) j.next();
+                artifact = (Artifact) j.next();
 
-                // TODO: [jc; 16-nov-05] Why doesn't this use artifact.getId()?
-                String key = artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getVersion();
+                String key = artifact.getDependencyConflictId();
 
                 if ( !dependencies.containsKey( key ) )
                 {
@@ -120,7 +153,7 @@ public abstract class AbstractUnpackingMojo
     /**
      * Unpacks the archive file.
      *
-     * @param file File to be unpacked.
+     * @param file     File to be unpacked.
      * @param location Location where to put the unpacked files.
      */
     protected void unpack( File file, File location )
