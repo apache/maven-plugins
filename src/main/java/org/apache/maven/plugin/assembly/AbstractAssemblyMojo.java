@@ -209,9 +209,13 @@ public class AbstractAssemblyMojo
             {
                 projectHelper.attachArtifact( project, format, assembly.getId(), destFile );
             }
+            else if ( classifier != null )
+            {
+                projectHelper.attachArtifact( project, format, classifier, destFile );
+            }
             else
             {
-                projectHelper.attachArtifact( project, format, null, destFile );
+                getLog().info( "No artifact attached as no classifier was given." );
             }
         }
     }
@@ -224,14 +228,17 @@ public class AbstractAssemblyMojo
      */
     protected String getDistributionName( Assembly assembly )
     {
-        String distributionName;
-        if ( appendAssemblyId && !StringUtils.isEmpty( assembly.getId() ) )
+        String distributionName = finalName;
+        if ( appendAssemblyId )
         {
-            distributionName = finalName + "-" + assembly.getId();
+            if ( !StringUtils.isEmpty( assembly.getId() ) )
+            {
+                distributionName = finalName + "-" + assembly.getId();
+            }
         }
-        else
+        else if ( classifier != null )
         {
-            distributionName = finalName;
+            distributionName = finalName + "-" + classifier;
         }
         return distributionName;
     }
@@ -837,4 +844,5 @@ public class AbstractAssemblyMojo
 
         assembly.addFileSet( siteFileSet );
     }
+
 }

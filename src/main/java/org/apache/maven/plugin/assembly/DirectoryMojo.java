@@ -34,7 +34,7 @@ import java.io.IOException;
  * @execute phase="package"
  */
 public class DirectoryMojo
-    extends AssemblyMojo
+    extends AbstractAssemblyMojo
 {
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -42,11 +42,15 @@ public class DirectoryMojo
         Assembly assembly = readAssembly();
         String fullName = finalName;
 
-        if ( appendAssemblyId)
+        if ( appendAssemblyId )
         {
             fullName = fullName + "-" + assembly.getId();
         }
-        
+        else if ( getClassifier() != null )
+        {
+            fullName = fullName + "-" + getClassifier();
+        }
+
         try
         {
             Archiver archiver = new DirectoryArchiver();

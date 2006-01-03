@@ -97,6 +97,11 @@ public abstract class AbstractUnpackingMojo
     private MavenProject executedProject;
 
     /**
+     * @parameter expression="${classifier}"
+     */
+    protected String classifier;
+
+    /**
      * Retrieves all artifact dependencies within the reactor
      *
      * @return A HashSet of artifacts
@@ -163,9 +168,7 @@ public abstract class AbstractUnpackingMojo
 
         try
         {
-            UnArchiver unArchiver;
-
-            unArchiver = this.archiverManager.getUnArchiver( archiveExt );
+            UnArchiver unArchiver = this.archiverManager.getUnArchiver( archiveExt );
 
             unArchiver.setSourceFile( file );
 
@@ -183,4 +186,8 @@ public abstract class AbstractUnpackingMojo
         }
     }
 
+    public String getClassifier()
+    {
+        return classifier;
+    }
 }
