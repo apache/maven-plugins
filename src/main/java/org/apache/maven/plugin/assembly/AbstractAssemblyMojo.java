@@ -16,6 +16,12 @@ package org.apache.maven.plugin.assembly;
  * limitations under the License.
  */
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
+import org.apache.maven.artifact.resolver.filter.ExcludesArtifactFilter;
+import org.apache.maven.artifact.resolver.filter.IncludesArtifactFilter;
+import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.assembly.model.Assembly;
@@ -23,41 +29,35 @@ import org.apache.maven.plugins.assembly.model.DependencySet;
 import org.apache.maven.plugins.assembly.model.FileItem;
 import org.apache.maven.plugins.assembly.model.FileSet;
 import org.apache.maven.plugins.assembly.model.io.xpp3.AssemblyXpp3Reader;
-import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
-import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
-import org.apache.maven.artifact.resolver.filter.IncludesArtifactFilter;
-import org.apache.maven.artifact.resolver.filter.ExcludesArtifactFilter;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
-import org.codehaus.plexus.archiver.war.WarArchiver;
-import org.codehaus.plexus.archiver.tar.TarArchiver;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.archiver.tar.TarArchiver;
+import org.codehaus.plexus.archiver.war.WarArchiver;
 import org.codehaus.plexus.util.DirectoryScanner;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.introspection.ReflectionValueExtractor;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-import java.io.File;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.FileReader;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
@@ -123,7 +123,7 @@ public class AbstractAssemblyMojo
      * @readonly
      */
     private File tempFile;
-    
+
     /**
      * Directory for site generated.
      *
@@ -138,7 +138,7 @@ public class AbstractAssemblyMojo
      * @parameter expression="${includeSite}" default-value="false"
      */
     private boolean includeSite;
-    
+
     /**
      * Set to false to exclude the assembly id from the assembly final name.
      *
@@ -152,6 +152,7 @@ public class AbstractAssemblyMojo
      * Create the binary distribution.
      *
      * @throws org.apache.maven.plugin.MojoExecutionException
+     *
      */
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -216,7 +217,7 @@ public class AbstractAssemblyMojo
         {
             return finalName;
         }
-        
+
         if ( appendAssemblyId )
         {
             return finalName + "-" + assembly.getId();
@@ -385,7 +386,8 @@ public class AbstractAssemblyMojo
                             evaluateFileNameMapping( dependencySet.getOutputFileNameMapping(), artifact ) );
                     }
                 }
-                else {
+                else
+                {
                     // would be better to have a way to find out when a specified include or exclude
                     // is never triggered and warn() it.
                     getLog().debug( "artifact: " + artifact + " not included" );
@@ -397,16 +399,19 @@ public class AbstractAssemblyMojo
     private void addDirectory( Archiver archiver, File directory, String output, String[] includes, List excludes )
         throws IOException, XmlPullParserException, ArchiverException
     {
-        // TODO: more robust set of filters on added files in the archiver
-        File componentsXml = new File( directory, ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH );
-        if ( componentsXml.exists() )
+        if ( directory.exists() )
         {
-            componentsXmlFilter.addComponentsXml( componentsXml );
-            excludes = new ArrayList( excludes );
-            excludes.add( ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH );
-        }
+            // TODO: more robust set of filters on added files in the archiver
+            File componentsXml = new File( directory, ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH );
+            if ( componentsXml.exists() )
+            {
+                componentsXmlFilter.addComponentsXml( componentsXml );
+                excludes = new ArrayList( excludes );
+                excludes.add( ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH );
+            }
 
-        archiver.addDirectory( directory, output, includes, (String[]) excludes.toArray( EMPTY_STRING_ARRAY ) );
+            archiver.addDirectory( directory, output, includes, (String[]) excludes.toArray( EMPTY_STRING_ARRAY ) );
+        }
     }
 
     /**
@@ -416,6 +421,7 @@ public class AbstractAssemblyMojo
      * @param fileSets
      * @param includeBaseDirecetory
      * @throws org.codehaus.plexus.archiver.ArchiverException
+     *
      */
     protected void processFileSets( Archiver archiver, List fileSets, boolean includeBaseDirecetory )
         throws ArchiverException, IOException, XmlPullParserException
@@ -499,6 +505,7 @@ public class AbstractAssemblyMojo
      * @param archiver
      * @param fileList
      * @throws org.codehaus.plexus.archiver.ArchiverException
+     *
      */
     protected void processFileList( Archiver archiver, List fileList, boolean includeBaseDirecetory )
         throws ArchiverException, IOException
@@ -506,37 +513,37 @@ public class AbstractAssemblyMojo
         for ( Iterator i = fileList.iterator(); i.hasNext(); )
         {
             FileItem fileItem = (FileItem) i.next();
-            
-            File source = new File ( fileItem.getSource() );
-            
+
+            File source = new File( fileItem.getSource() );
+
             String outputDirectory = fileItem.getOutputDirectory();
-            
+
             if ( outputDirectory == null )
             {
-            	outputDirectory = "";
+                outputDirectory = "";
             }
-            
+
             String destName = fileItem.getDestName();
-            
-            if  ( destName == null )
+
+            if ( destName == null )
             {
-            	destName = source.getName();
+                destName = source.getName();
             }
 
             String lineEnding = getLineEndingCharacters( fileItem.getLineEnding() );
-            
+
             if ( lineEnding != null )
             {
-            	this.copyReplacingLineEndings( source, this.tempFile, lineEnding );
-            	source = this.tempFile;
+                this.copyReplacingLineEndings( source, this.tempFile, lineEnding );
+                source = this.tempFile;
             }
-            
+
             outputDirectory = getOutputDirectory( outputDirectory, includeBaseDirecetory );
-            
-            archiver.addFile( source , outputDirectory + "/" + destName, Integer.parseInt( fileItem.getFileMode() ) );
+
+            archiver.addFile( source, outputDirectory + "/" + destName, Integer.parseInt( fileItem.getFileMode() ) );
         }
     }
-    
+
     /**
      * Evaluates Filename Mapping
      *
@@ -544,6 +551,7 @@ public class AbstractAssemblyMojo
      * @param artifact
      * @return expression
      * @throws org.apache.maven.plugin.MojoExecutionException
+     *
      */
     private static String evaluateFileNameMapping( String expression, Artifact artifact )
         throws MojoExecutionException
@@ -635,7 +643,9 @@ public class AbstractAssemblyMojo
      * @param format Archive format
      * @return archiver  Archiver generated
      * @throws org.codehaus.plexus.archiver.ArchiverException
+     *
      * @throws org.codehaus.plexus.archiver.manager.NoSuchArchiverException
+     *
      */
     private Archiver createArchiver( String format )
         throws ArchiverException, NoSuchArchiverException
