@@ -7,8 +7,8 @@
   <groupId>org.apache.maven.plugins.surefire</groupId>
   <artifactId>test1</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <name>Test for MSUREFIRE-20</name>
-  <description>forkMode=pertest fails to call setUp</description>
+  <name>Test for default configuration</name>
+  <description>Test for default surefire configuration</description>
  
   <dependencies>
     <dependency>
@@ -18,17 +18,5 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <forkMode>pertest</forkMode>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>
