@@ -16,7 +16,10 @@ package org.apache.maven.plugin.assembly;
  * limitations under the License.
  */
 
+import org.apache.maven.archiver.MavenArchiveConfiguration;
+import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ExcludesArtifactFilter;
@@ -33,6 +36,9 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.jar.JarArchiver;
+import org.codehaus.plexus.archiver.jar.Manifest;
+import org.codehaus.plexus.archiver.jar.ManifestException;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.archiver.tar.TarArchiver;
 import org.codehaus.plexus.archiver.war.WarArchiver;
@@ -149,6 +155,11 @@ public class AbstractAssemblyMojo
     private ComponentsXmlArchiverFileFilter componentsXmlFilter = new ComponentsXmlArchiverFileFilter();
 
     /**
+     * @parameter
+     */
+    private MavenArchiveConfiguration archive;
+
+    /**
      * Create the binary distribution.
      *
      * @throws org.apache.maven.plugin.MojoExecutionException
@@ -235,6 +246,34 @@ public class AbstractAssemblyMojo
         componentsXmlFilter.addToArchive( archiver );
 
         File destFile = new File( outputDirectory, filename );
+
+        if ( archiver instanceof JarArchiver )
+        {
+            // TODO: I'd really prefer to rewrite MavenArchiver as either a separate manifest creation utility (and to
+            // create an include pom.properties etc into another archiver), or an implementation of an archiver
+            // (the first is preferable).
+            MavenArchiver mavenArchiver = new MavenArchiver();
+
+            if ( archive != null && archive.getManifest() != null )
+            {
+                try
+                {
+                    Manifest manifest = mavenArchiver.getManifest( project, archive.getManifest() );
+
+                    JarArchiver jarArchiver = (JarArchiver) archiver;
+                    jarArchiver.addConfiguredManifest( manifest );
+                }
+                catch ( ManifestException e )
+                {
+                    throw new MojoExecutionException( "Error creating manifest: " + e.getMessage(), e );
+                }
+                catch ( DependencyResolutionRequiredException e )
+                {
+                    throw new MojoExecutionException( "Dependencies were not resolved: " + e.getMessage(), e );
+                }
+            }
+        }
+
         archiver.setDestFile( destFile );
         archiver.createArchive();
 
