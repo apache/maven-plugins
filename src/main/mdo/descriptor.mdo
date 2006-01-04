@@ -37,6 +37,11 @@
           <defaultValue>true</defaultValue>
         </field>
         <field>
+          <name>includeSiteDirectory</name>
+          <type>boolean</type>
+          <defaultValue>false</defaultValue>
+        </field>
+        <field>
           <name>fileSets</name>
           <version>1.0.0</version>
           <association>
@@ -52,7 +57,7 @@
             <multiplicity>*</multiplicity>
           </association>
         </field>
-        
+
         <field>
           <name>dependencySets</name>
           <version>1.0.0</version>
@@ -125,8 +130,8 @@
     <class>
       <name>FileItem</name>
       <version>1.0.0</version>
-      <description>Allows individual file copy with option to change destination 
-                   file name not supported by fileSet</description>
+      <description>Allows individual file copy with option to change destination
+        file name not supported by fileSet</description>
       <fields>
         <field>
           <name>source</name>
@@ -162,7 +167,7 @@
         </field>
       </fields>
     </class>
-    
+
     <class>
       <name>DependencySet</name>
       <version>1.0.0</version>
