@@ -96,12 +96,22 @@ public class InstallMojo
             else
             {
                 File file = artifact.getFile();
-                if ( file == null )
+
+                // Here, we have a temporary solution to MINSTALL-3 (isDirectory() is true if it went through compile
+                // but not package). We are designing in a proper solution for Maven 2.1
+                if ( file != null && !file.isDirectory() )
+                {
+                    installer.install( file, artifact, localRepository );
+                }
+                else if ( !attachedArtifacts.isEmpty() )
+                {
+                    getLog().info( "No primary artifact to install, installing attached artifacts instead." );
+                }
+                else
                 {
                     throw new MojoExecutionException(
                         "The packaging for this project did not assign a file to the build artifact" );
                 }
-                installer.install( file, artifact, localRepository );
             }
 
             for ( Iterator i = attachedArtifacts.iterator(); i.hasNext(); )
