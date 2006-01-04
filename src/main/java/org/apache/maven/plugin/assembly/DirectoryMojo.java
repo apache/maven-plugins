@@ -25,6 +25,8 @@ import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Assemble an application bundle or distribution.
@@ -39,7 +41,17 @@ public class DirectoryMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        Assembly assembly = readAssembly();
+        List assemblies = readAssemblies();
+        for ( Iterator i = assemblies.iterator(); i.hasNext(); )
+        {
+            Assembly assembly = (Assembly) i.next();
+            createDirectory( assembly );
+        }
+    }
+
+    private void createDirectory( Assembly assembly )
+        throws MojoExecutionException, MojoFailureException
+    {
         String fullName = finalName;
 
         if ( appendAssemblyId )
