@@ -418,15 +418,15 @@ public class EclipsePlugin
     {
         projectnatures = new ArrayList();
 
-        projectnatures.add( NATURE_JEM_WORKBENCH_JAVA_EMF ); // WTP nature
-
-        projectnatures.add( NATURE_JDT_CORE_JAVA );
-
-        projectnatures.add( NATURE_WST_MODULE_CORE_NATURE ); // WTP nature
         if ( !"R7".equalsIgnoreCase( wtpversion ) ) //$NON-NLS-1$
         {
-            projectnatures.add( NATURE_WST_FACET_CORE_NATURE ); // WTP nature
+            projectnatures.add( NATURE_WST_FACET_CORE_NATURE ); // WTP 1.0 nature
         }
+
+        projectnatures.add( NATURE_JDT_CORE_JAVA );
+        projectnatures.add( NATURE_WST_MODULE_CORE_NATURE ); // WTP 0.7/1.0 nature
+        projectnatures.add( NATURE_JEM_WORKBENCH_JAVA_EMF ); // WTP 0.7/1.0 nature
+
     }
 
     private void fillDefaultClasspathContainers( String packaging )
@@ -439,12 +439,19 @@ public class EclipsePlugin
     {
         buildcommands = new ArrayList();
 
-        buildcommands.add( BUILDER_WST_COMPONENT_STRUCTURAL ); // WTP builder
+        if ( "R7".equalsIgnoreCase( wtpversion ) ) //$NON-NLS-1$
+        {
+            buildcommands.add( BUILDER_WST_COMPONENT_STRUCTURAL ); // WTP 0.7 builder
+        }
 
         buildcommands.add( BUILDER_JDT_CORE_JAVA );
 
-        buildcommands.add( BUILDER_WST_VALIDATION ); // WTP builder
-        buildcommands.add( BUILDER_WST_COMPONENT_STRUCTURAL_DEPENDENCY_RESOLVER ); // WTP builder
+        buildcommands.add( BUILDER_WST_VALIDATION ); // WTP 0.7/1.0 builder
+
+        if ( "R7".equalsIgnoreCase( wtpversion ) ) //$NON-NLS-1$
+        {
+            buildcommands.add( BUILDER_WST_COMPONENT_STRUCTURAL_DEPENDENCY_RESOLVER ); // WTP 0.7 builder
+        }
     }
 
     private void downloadSourceArtifacts( Collection artifacts, Collection reactorArtifacts )
