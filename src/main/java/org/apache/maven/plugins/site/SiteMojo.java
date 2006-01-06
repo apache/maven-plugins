@@ -496,7 +496,11 @@ public class SiteMojo
 
         populateModules( props, locale );
 
-        return getDecorationModel( project, locale, props );
+        DecorationModel decorationModel = getDecorationModel( project, locale, props );
+
+        assembler.resolvePaths( decorationModel, project.getUrl() );
+
+        return decorationModel;
     }
 
     private void populateModules( Map props, Locale locale )
@@ -646,8 +650,6 @@ public class SiteMojo
         {
             throw new MojoExecutionException( "Error reading site descriptor", e );
         }
-
-        assembler.resolvePaths( decoration, project.getUrl() );
 
         if ( parentProject != null && project.getUrl() != null && parentProject.getUrl() != null )
         {
