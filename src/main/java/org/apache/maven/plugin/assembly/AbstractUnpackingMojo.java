@@ -88,14 +88,6 @@ public abstract class AbstractUnpackingMojo
     private List reactorProjects;
 
     /**
-     * The executed project when the base was forked.
-     *
-     * @parameter expression="${executedProject}"
-     * @readonly
-     */
-    private MavenProject executedProject;
-
-    /**
      * @parameter expression="${classifier}"
      */
     protected String classifier;
@@ -118,7 +110,7 @@ public abstract class AbstractUnpackingMojo
     {
         Map dependencies = new HashMap();
 
-        MavenProject project = executedProject != null ? executedProject : this.project;
+        MavenProject project = getExecutedProject();
 
         // TODO: this is not mediating dependencies versions - first wins. Is there a way we can do that properly from here?
         if ( project != null )
@@ -164,6 +156,8 @@ public abstract class AbstractUnpackingMojo
 
         return new HashSet( dependencies.values() );
     }
+
+    protected abstract MavenProject getExecutedProject();
 
     /**
      * Unpacks the archive file.
