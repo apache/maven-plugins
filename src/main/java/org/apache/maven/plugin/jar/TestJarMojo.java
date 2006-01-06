@@ -35,9 +35,8 @@ public class TestJarMojo
      *
      * @parameter expression="${project.build.testOutputDirectory}"
      * @required
-     * @readonly
      */
-    private File testOutputDirectory;
+    private File testClassesDirectory;
 
     protected String getClassifier()
     {
@@ -47,8 +46,8 @@ public class TestJarMojo
     /**
      * Return the test-classes directory, to serve as the root of the tests jar.
      */
-    protected File getOutputDirectory()
+    protected File getClassesDirectory()
     {
-        return testOutputDirectory;
+        return testClassesDirectory;
     }
 }
