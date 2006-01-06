@@ -621,6 +621,16 @@ public class SiteMojo
             props.put( "project.url", "NO_PROJECT_URL_SET" );
         }
 
+        MavenProject parentProject = project.getParent();
+        if ( parentProject != null && project.getUrl() != null && parentProject.getUrl() != null )
+        {
+            props.put( "parentProject", getProjectParentMenu( locale ) );
+        }
+        else
+        {
+            props.put( "parentProject", "" );
+        }
+
         siteDescriptorContent = StringUtils.interpolate( siteDescriptorContent, props );
 
         DecorationModel decoration;
@@ -637,18 +647,11 @@ public class SiteMojo
             throw new MojoExecutionException( "Error reading site descriptor", e );
         }
 
-        MavenProject parentProject = project.getParent();
         if ( parentProject != null && project.getUrl() != null && parentProject.getUrl() != null )
         {
-            props.put( "parentProject", getProjectParentMenu( locale ) );
-
             DecorationModel parent = getDecorationModel( parentProject, locale, props );
 
             assembler.assembleModelInheritance( decoration, parent, project.getUrl(), parentProject.getUrl() );
-        }
-        else
-        {
-            props.put( "parentProject", "" );
         }
 
         return decoration;
