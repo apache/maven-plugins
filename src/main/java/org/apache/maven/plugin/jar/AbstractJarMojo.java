@@ -45,9 +45,8 @@ public abstract class AbstractJarMojo
      *
      * @parameter expression="${project.build.directory}"
      * @required
-     * @readonly
      */
-    private File basedir;
+    private File outputDirectory;
 
     /**
      * Name of the generated JAR.
@@ -89,16 +88,11 @@ public abstract class AbstractJarMojo
     /**
      * Return the specific output directory to serve as the root for the archive.
      */
-    protected abstract File getOutputDirectory();
+    protected abstract File getClassesDirectory();
 
     protected final MavenProject getProject()
     {
         return project;
-    }
-
-    protected final File getBaseDir()
-    {
-        return basedir;
     }
 
     /**
@@ -128,7 +122,7 @@ public abstract class AbstractJarMojo
     public File createArchive()
         throws MojoExecutionException
     {
-        File jarFile = getJarFile( basedir, finalName, getClassifier() );
+        File jarFile = getJarFile( outputDirectory, finalName, getClassifier() );
 
         MavenArchiver archiver = new MavenArchiver();
 
@@ -138,7 +132,7 @@ public abstract class AbstractJarMojo
 
         try
         {
-            File contentDirectory = getOutputDirectory();
+            File contentDirectory = getClassesDirectory();
             if ( !contentDirectory.exists() )
             {
                 getLog().warn( "JAR will be empty - no content was marked for inclusion!" );
