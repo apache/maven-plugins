@@ -31,13 +31,12 @@ public class JarMojo
     extends AbstractJarMojo
 {
     /**
-	 * Directory containing the classes.
-	 *
+     * Directory containing the classes.
+     *
      * @parameter expression="${project.build.outputDirectory}"
      * @required
-     * @readonly
      */
-    private File outputDirectory;
+    private File classesDirectory;
 
     /**
      * Classifier to add to the artifact generated. If given, the artifact will be an attachment instead.
@@ -54,8 +53,8 @@ public class JarMojo
     /**
      * Return the main classes directory, so it's used as the root of the jar.
      */
-    protected File getOutputDirectory()
+    protected File getClassesDirectory()
     {
-        return outputDirectory;
+        return classesDirectory;
     }
 }
