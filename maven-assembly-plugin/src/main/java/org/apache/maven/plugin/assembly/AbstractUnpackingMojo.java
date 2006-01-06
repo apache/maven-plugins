@@ -91,7 +91,6 @@ public abstract class AbstractUnpackingMojo
      * The executed project when the base was forked.
      *
      * @parameter expression="${executedProject}"
-     * @required
      * @readonly
      */
     private MavenProject executedProject;
@@ -102,6 +101,15 @@ public abstract class AbstractUnpackingMojo
     protected String classifier;
 
     /**
+     * The Maven Project.
+     *
+     * @parameter expression="${project}"
+     * @required
+     * @readonly
+     */
+    protected MavenProject project;
+
+    /**
      * Retrieves all artifact dependencies within the reactor
      *
      * @return A HashSet of artifacts
@@ -110,10 +118,12 @@ public abstract class AbstractUnpackingMojo
     {
         Map dependencies = new HashMap();
 
+        MavenProject project = executedProject != null ? executedProject : this.project;
+
         // TODO: this is not mediating dependencies versions - first wins. Is there a way we can do that properly from here?
-        if ( executedProject != null )
+        if ( project != null )
         {
-            Artifact artifact = executedProject.getArtifact();
+            Artifact artifact = project.getArtifact();
 
             if ( artifact.getFile() != null )
             {
