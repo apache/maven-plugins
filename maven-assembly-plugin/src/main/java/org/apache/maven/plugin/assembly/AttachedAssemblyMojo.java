@@ -1,5 +1,7 @@
 package org.apache.maven.plugin.assembly;
 
+import org.apache.maven.project.MavenProject;
+
 /*
  * Copyright 2001-2005 The Apache Software Foundation.
  *
@@ -29,4 +31,8 @@ package org.apache.maven.plugin.assembly;
 public class AttachedAssemblyMojo
     extends AbstractAssemblyMojo
 {
+    protected MavenProject getExecutedProject()
+    {
+        return project;
+    }
 }
