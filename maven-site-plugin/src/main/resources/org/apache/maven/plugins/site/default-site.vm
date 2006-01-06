@@ -43,6 +43,24 @@
   #end
 #end
 
+#macro ( breadcrumbs $breadcrumbs )
+  #set ( $counter = 0 )
+  #foreach( $item in $breadcrumbs )
+    #set ( $counter = $counter + 1 )
+    #set ( $currentItemHref = $PathTool.calculateLink( $item.href, $relativePath ) )
+    #set ( $currentItemHref = $currentItemHref.replaceAll( "\\", "/" ) )
+
+    #if ( $currentItemHref == $currentFileName || $currentItemHref == "" )
+      $item.name
+    #else
+      <a href="$item.href">$item.name</a>
+    #end
+    #if ( $breadcrumbs.size() > $counter )
+      &gt;
+    #end
+  #end
+#end
+
 #macro ( displayTree $display $item )
   #if ( $item && $item.items && $item.items.size() > 0 )
     #foreach( $subitem in $item.items )
@@ -61,7 +79,6 @@
 #macro ( menuItem $item )
   #set ( $collapse = "none" )
   #set ( $currentItemHref = $PathTool.calculateLink( $item.href, $relativePath ) )
-  #set ( $currentFileName = $currentFileName.replaceAll( "\\", "/" ) )
   #set ( $currentItemHref = $currentItemHref.replaceAll( "\\", "/" ) )
 
   #if ( $item && $item.items && $item.items.size() > 0 )
@@ -149,6 +166,8 @@
     #end
   #end
 
+  #set ( $breadcrumbs = $decoration.body.breadcrumbs )
+
   #if ( $datePosition.equalsIgnoreCase( $position ) )
     #if ( ( $datePosition.equalsIgnoreCase( "right" ) ) || ( $datePosition.equalsIgnoreCase( "bottom" ) ) )
       &nbsp;| $i18n.getString( "site-plugin", $locale, "template.lastpublished" ): $dateToday
@@ -168,6 +187,9 @@
         #if ( $versionPosition.equalsIgnoreCase( $position ) )
           &nbsp;| $i18n.getString( "site-plugin", $locale, "template.version" ): ${project.version}
         #end
+        #if ( $breadcrumbs && $breadcrumbs.size() > 0 )
+          | #breadcrumbs( $breadcrumbs )
+        #end
       </div>
     #end
   #elseif ( $versionPosition.equalsIgnoreCase( $position ) )
@@ -180,6 +202,15 @@
     #elseif ( $versionPosition.equalsIgnoreCase("left") )
       <div class="xleft">
         $i18n.getString( "site-plugin", $locale, "template.version" ): ${project.version}
+        #if ( $breadcrumbs && $breadcrumbs.size() > 0 )
+          | #breadcrumbs( $breadcrumbs )
+        #end
+      </div>
+    #end
+  #elseif ( $position.equalsIgnoreCase( "left" ) )
+    #if ( $breadcrumbs && $breadcrumbs.size() > 0 )
+      <div class="xleft">
+        #breadcrumbs( $breadcrumbs )
       </div>
     #end
   #end
