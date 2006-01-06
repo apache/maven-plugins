@@ -71,7 +71,7 @@ import java.util.regex.Pattern;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  */
-public class AbstractAssemblyMojo
+public abstract class AbstractAssemblyMojo
     extends AbstractUnpackingMojo
 {
     /**

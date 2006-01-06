@@ -1,5 +1,7 @@
 package org.apache.maven.plugin.assembly;
 
+import org.apache.maven.project.MavenProject;
+
 /*
  * Copyright 2001-2005 The Apache Software Foundation.
  *
@@ -30,4 +32,16 @@ package org.apache.maven.plugin.assembly;
 public class AssemblyMojo
     extends AbstractAssemblyMojo
 {
+    /**
+     * Get the executed project from the forked lifecycle.
+     *
+     * @parameter expression="${executedProject}"
+     */
+    private MavenProject executedProject;
+
+    protected MavenProject getExecutedProject()
+    {
+        return executedProject;
+    }
+
 }

@@ -20,6 +20,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.assembly.archiver.DirectoryArchiver;
 import org.apache.maven.plugins.assembly.model.Assembly;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -38,6 +39,18 @@ import java.util.List;
 public class DirectoryMojo
     extends AbstractAssemblyMojo
 {
+    /**
+     * Get the executed project from the forked lifecycle.
+     *
+     * @parameter expression="${executedProject}"
+     */
+    private MavenProject executedProject;
+
+    protected MavenProject getExecutedProject()
+    {
+        return executedProject;
+    }
+
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {

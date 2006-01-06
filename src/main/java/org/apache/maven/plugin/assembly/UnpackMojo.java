@@ -19,6 +19,7 @@ package org.apache.maven.plugin.assembly;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 
 import java.io.File;
@@ -34,6 +35,11 @@ import java.util.Iterator;
 public class UnpackMojo
     extends AbstractUnpackingMojo
 {
+    protected MavenProject getExecutedProject()
+    {
+        return project;
+    }
+
     /**
      * Unpacks the archive file.
      *
