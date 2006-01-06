@@ -655,7 +655,8 @@ public class SiteMojo
         {
             DecorationModel parent = getDecorationModel( parentProject, locale, props );
 
-            assembler.assembleModelInheritance( decoration, parent, project.getUrl(), parentProject.getUrl() );
+            assembler.assembleModelInheritance( project.getName(), decoration, parent, project.getUrl(),
+                                                parentProject.getUrl() );
         }
 
         return decoration;
