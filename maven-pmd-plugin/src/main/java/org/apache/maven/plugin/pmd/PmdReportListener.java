@@ -50,6 +50,8 @@ public class PmdReportListener
 
     private ResourceBundle bundle;
 
+    private String xrefLocation;
+
     private List violations = new ArrayList();
 
     private List metrics = new ArrayList();
@@ -111,8 +113,18 @@ public class PmdReportListener
             sink.text( ruleViolation.getDescription() );
             sink.tableCell_();
             sink.tableCell();
-            // TODO: xref link the line number
+
+            if ( getXrefLocation() != null )
+            {
+                sink.link( getXrefLocation() + "/" + currentFilename.replaceAll( "\\.java$", ".html" ) + "#"
+                    + ruleViolation.getLine() );
+            }
             sink.text( String.valueOf( ruleViolation.getLine() ) );
+            if ( getXrefLocation() != null )
+            {
+                sink.link_();
+            }
+
             sink.tableCell_();
             sink.tableRow_();
         }
@@ -121,9 +133,10 @@ public class PmdReportListener
 
     public void metricAdded( Metric metric )
     {
-        if (metric.getCount() != 0) {
+        if ( metric.getCount() != 0 )
+        {
             // Skip metrics which have no data
-            metrics.add(metric);
+            metrics.add( metric );
         }
     }
 
@@ -239,5 +252,15 @@ public class PmdReportListener
         sink.flush();
 
         sink.close();
+    }
+
+    public String getXrefLocation()
+    {
+        return xrefLocation;
+    }
+
+    public void setXrefLocation( String xrefLocation )
+    {
+        this.xrefLocation = xrefLocation;
     }
 }
