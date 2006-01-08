@@ -1,0 +1,39 @@
+ ------
+ Maven 2 PMD Plugin: configuration examples
+ ------
+ ------
+ January 6, 2006
+
+Introduction
+
+  The {{{http://pmd.sourceforge.net/}PMD}} plugin allows you to automatically run the PMD code analysis tool
+  on your project's source code and generate a site report with its results.
+
+   * pmd:pmd (default): run PMD and generate the report
+
+Configuration
+
+  To configure the PMD plugin, you use the standard m2 report plugin conventions.  For example, the following
+  tells Maven to run the PMD report as part of the site report generation, use the 'basic' and 'controversial'
+  PMD rulesets and output the report in XML format.  The rulesets are assumed to reside in /rulesets/[name].xml 
+  in the classpath.  Note that HTML is always generated in addition to any other alternate format.  Legal formats
+  are "html", "csv", "xml" and "txt".
+
++--------
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <configuration>
+                    <rulesets>
+                        <ruleset>basic</ruleset>
+                        <ruleset>controversial</ruleset>
+                    </rulesets>
+                    <format>xml</format>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
++---------
+

@@ -19,8 +19,10 @@ package org.apache.maven.plugin.pmd;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Writer;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -36,6 +38,11 @@ import net.sourceforge.pmd.RuleSetFactory;
 import net.sourceforge.pmd.TargetJDK1_3;
 import net.sourceforge.pmd.TargetJDK1_4;
 import net.sourceforge.pmd.TargetJDK1_5;
+import net.sourceforge.pmd.renderers.CSVRenderer;
+import net.sourceforge.pmd.renderers.HTMLRenderer;
+import net.sourceforge.pmd.renderers.Renderer;
+import net.sourceforge.pmd.renderers.TextRenderer;
+import net.sourceforge.pmd.renderers.XMLRenderer;
 
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.project.MavenProject;
@@ -79,6 +86,15 @@ public class PmdReport
      * @parameter expression="${targetJdk}
      */
     private String targetJdk;
+
+    /**
+     * Set the output format type.  Defaults to "html".  Must be one of:
+     * "html", "csv", "xml", "txt" or the full class name of the PMD renderer to use.
+     * See the net.sourceforge.pmd.renderers package javadoc for available renderers.
+     * 
+     * @parameter
+     */
+    private String format = "html";
 
     /**
      * @parameter
@@ -125,6 +141,11 @@ public class PmdReport
         return siteRenderer;
     }
 
+    private boolean isHtml()
+    {
+        return "html".equals( format );
+    }
+
     /**
      * @see org.apache.maven.reporting.AbstractMavenReport#executeReport(java.util.Locale)
      */
@@ -141,7 +162,6 @@ public class PmdReport
         PmdReportListener reportSink = new PmdReportListener( sink, sourceDirectory, getBundle( locale ) );
         report.addListener( reportSink );
         ruleContext.setReport( report );
-
         reportSink.beginDocument();
 
         List files;
@@ -197,6 +217,23 @@ public class PmdReport
             }
         }
         reportSink.endDocument();
+        
+        if ( !isHtml() )
+        {
+            // Use the PMD renderers to render in any format aside from HTML.
+            Renderer r = createRenderer();
+            String buffer = r.render( report );
+            try
+            {
+                Writer writer = new FileWriter( new File( this.getReportOutputDirectory(), "pmd." + format ) );
+                writer.write( buffer, 0, buffer.length() );
+                writer.close();
+            }
+            catch ( IOException ioe )
+            {
+                throw new MavenReportException( ioe.getMessage(), ioe );
+            }
+        }
     }
 
     /**
@@ -274,5 +311,45 @@ public class PmdReport
     {
         ArtifactHandler artifactHandler = project.getArtifact().getArtifactHandler();
         return ( "java".equals( artifactHandler.getLanguage() ) );
+    }
+
+    /**
+     * Create and return the correct renderer for the output type.
+     * @return the renderer based on the configured output
+     * @throws MavenReportException if no renderer found for the output type
+     */
+    public final Renderer createRenderer()
+        throws MavenReportException
+    {
+        if ( format.equals( "xml" ) )
+        {
+            return new XMLRenderer();
+        }
+        else if ( format.equals( "txt" ) )
+        {
+            return new TextRenderer();
+        }
+        else if ( format.equals( "csv" ) )
+        {
+            return new CSVRenderer();
+        }
+        else if ( format.equals( "html" ) )
+        {
+            return new HTMLRenderer();
+        }
+        if ( !format.equals( "" ) )
+        {
+            try
+            {
+                return (Renderer) Class.forName( format ).newInstance();
+            }
+            catch ( Exception e )
+            {
+                throw new MavenReportException( "Can't find the custom format " + format + ": "
+                    + e.getClass().getName() );
+            }
+        }
+
+        throw new MavenReportException( "Can't create report with format of " + format );
     }
 }
