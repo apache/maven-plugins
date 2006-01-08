@@ -149,6 +149,7 @@ public class CloverInstrumentMojo
         this.project.getBuild().setSourceDirectory( this.cloverOutputSourceDirectory );
         
         // Maven2 limitation: changing the source directory doesn't change the compile source roots
+        // See http://jira.codehaus.org/browse/MNG-1945
         List sourceRoots = this.project.getCompileSourceRoots();
         for (int i = 0; i < sourceRoots.size(); i++)
         {
