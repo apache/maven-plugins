@@ -17,11 +17,15 @@ package org.apache.maven.plugin.pmd;
  */
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.Collections;
 import java.util.Iterator;
@@ -116,6 +120,12 @@ public class PmdReport
     private String xrefLocation = "xref";
     
     /**
+     * The file encoding to use when reading the java source.
+     * @parameter 
+     */
+    private String sourceEncoding;
+    
+    /**
      * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
      */
     public String getName( Locale locale )
@@ -203,6 +213,8 @@ public class PmdReport
             InputStream rulesInput = pmd.getClass().getResourceAsStream( location );
             sets[idx] = ruleSetFactory.createRuleSet( rulesInput );
         }
+        
+        boolean hasEncoding = sourceEncoding != null;
 
         for ( Iterator i = files.iterator(); i.hasNext(); )
         {
@@ -216,8 +228,18 @@ public class PmdReport
                 ruleContext.setSourceCodeFilename( file.getAbsolutePath() );
                 for ( int idx = 0; idx < rulesets.length; idx++ )
                 {
-                    // PMD closes this Reader even though it did not open it.
-                    pmd.processFile( new FileReader( file ), sets[idx], ruleContext );
+                    try
+                    {
+                        // PMD closes this Reader even though it did not open it so we have
+                        // to open a new one with every call to processFile().
+                        Reader reader = hasEncoding ? new InputStreamReader( new FileInputStream( file ), sourceEncoding ) 
+                                                    : new FileReader( file );
+                        pmd.processFile( reader, sets[idx], ruleContext );
+                    }
+                    catch ( UnsupportedEncodingException e1 )
+                    {
+                        throw new MavenReportException( "Encoding '" + sourceEncoding + "' is not supported.", e1 );
+                    }
                 }
                 reportSink.endFile( file );
             }
