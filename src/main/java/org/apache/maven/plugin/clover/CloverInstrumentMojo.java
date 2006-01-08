@@ -92,8 +92,8 @@ public class CloverInstrumentMojo
             init();
             registerLicenseFile();
             instrumentSources();
-            addGeneratedSourcesToCompileRoots();
             addCloverDependencyToCompileClasspath();
+            redirectSourceDirectories();
             redirectOutputDirectories();
         }
     }
@@ -141,16 +141,29 @@ public class CloverInstrumentMojo
         this.project.getBuild().setTestOutputDirectory(
             new File( this.cloverOutputDirectory, "test-classes" ).getPath() );
     }
-    
-    /**
-     * @todo handle multiple source roots. At the moment only the first source root is instrumented
-     */
-    private void addGeneratedSourcesToCompileRoots()
-    {
-        this.project.getCompileSourceRoots().remove( 0 );
-        this.project.addCompileSourceRoot( this.cloverOutputSourceDirectory );
-    }
 
+    private void redirectSourceDirectories()
+    {
+        String oldSourceDirectory = this.project.getBuild().getSourceDirectory();
+
+        this.project.getBuild().setSourceDirectory( this.cloverOutputSourceDirectory );
+        
+        // Maven2 limitation: changing the source directory doesn't change the compile source roots
+        List sourceRoots = this.project.getCompileSourceRoots();
+        for (int i = 0; i < sourceRoots.size(); i++)
+        {
+            String sourceRoot = (String) this.project.getCompileSourceRoots().get( i );
+            if (sourceRoot.equals(oldSourceDirectory))
+            {
+                this.project.getCompileSourceRoots().remove( i );
+
+                // Note: Ideally we should add the new compile source root at the same place as the
+                // one we're removing but there's no API for this...
+                this.project.addCompileSourceRoot( this.project.getBuild().getSourceDirectory() );
+            }
+        }
+    }
+    
     private void addCloverDependencyToCompileClasspath()
         throws MojoExecutionException
     {
