@@ -102,6 +102,20 @@ public class PmdReport
     private String[] rulesets = new String[] { "controversial" };
 
     /**
+     * Link the violation line numbers to the source xref.
+     * @parameter
+     * 
+     * TODO Can we automagically determine if xfer is being run and enable this?
+     */
+    private boolean linkXref;
+
+    /**
+     * The location of the xref pages relative to the location of the pmd report.
+     * @parameter
+     */
+    private String xrefLocation = "xref";
+    
+    /**
      * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
      */
     public String getName( Locale locale )
@@ -160,6 +174,11 @@ public class PmdReport
         // TODO: use source roots instead
         String sourceDirectory = getProject().getBuild().getSourceDirectory();
         PmdReportListener reportSink = new PmdReportListener( sink, sourceDirectory, getBundle( locale ) );
+        if ( linkXref )
+        {
+            reportSink.setXrefLocation( xrefLocation );
+        }
+
         report.addListener( reportSink );
         ruleContext.setReport( report );
         reportSink.beginDocument();
