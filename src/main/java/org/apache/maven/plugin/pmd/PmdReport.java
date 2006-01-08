@@ -16,6 +16,17 @@ package org.apache.maven.plugin.pmd;
  * limitations under the License.
  */
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 import net.sourceforge.pmd.PMD;
 import net.sourceforge.pmd.PMDException;
 import net.sourceforge.pmd.Report;
@@ -34,17 +45,6 @@ import org.codehaus.doxia.sink.Sink;
 import org.codehaus.doxia.site.renderer.SiteRenderer;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
 
 /**
  * Implement the PMD report.
@@ -79,6 +79,11 @@ public class PmdReport
      * @parameter expression="${targetJdk}
      */
     private String targetJdk;
+
+    /**
+     * @parameter
+     */
+    private String[] rulesets = new String[] { "controversial" };
 
     /**
      * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
@@ -137,10 +142,6 @@ public class PmdReport
         report.addListener( reportSink );
         ruleContext.setReport( report );
 
-        RuleSetFactory ruleSetFactory = new RuleSetFactory();
-        InputStream rulesInput = pmd.getClass().getResourceAsStream( "/rulesets/controversial.xml" );
-        RuleSet ruleSet = ruleSetFactory.createRuleSet( rulesInput );
-
         reportSink.beginDocument();
 
         List files;
@@ -153,18 +154,20 @@ public class PmdReport
             throw new MavenReportException( "Can't parse " + sourceDirectory, e );
         }
 
+        RuleSetFactory ruleSetFactory = new RuleSetFactory();
+        RuleSet[] sets = new RuleSet[rulesets.length];
+        for ( int idx = 0; idx < rulesets.length; idx++ )
+        {
+            String set = rulesets[idx];
+            String location = "/rulesets/" + set + ".xml";
+            getLog().debug( "Preparing " + set + " ruleset found in classpath:" + location );
+            InputStream rulesInput = pmd.getClass().getResourceAsStream( location );
+            sets[idx] = ruleSetFactory.createRuleSet( rulesInput );
+        }
+
         for ( Iterator i = files.iterator(); i.hasNext(); )
         {
             File file = (File) i.next();
-            FileReader fileReader;
-            try
-            {
-                fileReader = new FileReader( file );
-            }
-            catch ( FileNotFoundException e )
-            {
-                throw new MavenReportException( "Error opening source file: " + file, e );
-            }
 
             try
             {
@@ -172,7 +175,11 @@ public class PmdReport
 
                 reportSink.beginFile( file );
                 ruleContext.setSourceCodeFilename( file.getAbsolutePath() );
-                pmd.processFile( fileReader, ruleSet, ruleContext );
+                for ( int idx = 0; idx < rulesets.length; idx++ )
+                {
+                    // PMD closes this Reader even though it did not open it.
+                    pmd.processFile( new FileReader( file ), sets[idx], ruleContext );
+                }
                 reportSink.endFile( file );
             }
             catch ( PMDException e )
@@ -184,16 +191,9 @@ public class PmdReport
                 }
                 throw new MavenReportException( "Failure executing PMD for: " + file, ex );
             }
-            finally
+            catch ( FileNotFoundException e )
             {
-                try
-                {
-                    fileReader.close();
-                }
-                catch ( IOException e )
-                {
-                    throw new MavenReportException( "Error closing source file: " + file, e );
-                }
+                throw new MavenReportException( "Error opening source file: " + file, e );
             }
         }
         reportSink.endDocument();
