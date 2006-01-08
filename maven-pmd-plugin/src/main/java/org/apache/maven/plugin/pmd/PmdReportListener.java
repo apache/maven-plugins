@@ -16,14 +16,20 @@ package org.apache.maven.plugin.pmd;
  * limitations under the License.
  */
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ResourceBundle;
+
 import net.sourceforge.pmd.ReportListener;
 import net.sourceforge.pmd.RuleViolation;
 import net.sourceforge.pmd.stat.Metric;
+
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.io.File;
-import java.util.ResourceBundle;
 
 /**
  * Handle events from PMD, converting them into Doxia events.
@@ -44,6 +50,10 @@ public class PmdReportListener
 
     private ResourceBundle bundle;
 
+    private List violations = new ArrayList();
+
+    private List metrics = new ArrayList();
+
     public PmdReportListener( Sink sink, String sourceDirectory, ResourceBundle bundle )
     {
         this.sink = sink;
@@ -58,7 +68,7 @@ public class PmdReportListener
 
     public void ruleViolationAdded( RuleViolation ruleViolation )
     {
-        if ( ! fileInitialized )
+        if ( !fileInitialized )
         {
             sink.section2();
             sink.sectionTitle2();
@@ -77,20 +87,44 @@ public class PmdReportListener
 
             fileInitialized = true;
         }
-        sink.tableRow();
-        sink.tableCell();
-        sink.text( ruleViolation.getDescription() );
-        sink.tableCell_();
-        sink.tableCell();
-        // TODO: xref link the line number
-        sink.text( String.valueOf( ruleViolation.getLine() ) );
-        sink.tableCell_();
-        sink.tableRow_();
+        violations.add( ruleViolation );
+    }
+
+    // When dealing with multiple rulesets, the violations will get out of order
+    // wrt their source line number.  We re-sort them before writing them to the report.
+    private void processViolations()
+    {
+        Collections.sort( violations, new Comparator()
+        {
+            public int compare( Object o1, Object o2 )
+            {
+                return ( (RuleViolation) o1 ).getLine() - ( (RuleViolation) o2 ).getLine();
+            }
+        } );
+
+        for ( Iterator it = violations.iterator(); it.hasNext(); )
+        {
+            RuleViolation ruleViolation = (RuleViolation) it.next();
+
+            sink.tableRow();
+            sink.tableCell();
+            sink.text( ruleViolation.getDescription() );
+            sink.tableCell_();
+            sink.tableCell();
+            // TODO: xref link the line number
+            sink.text( String.valueOf( ruleViolation.getLine() ) );
+            sink.tableCell_();
+            sink.tableRow_();
+        }
+        violations.clear();
     }
 
     public void metricAdded( Metric metric )
     {
-        // TODO: metrics
+        if (metric.getCount() != 0) {
+            // Skip metrics which have no data
+            metrics.add(metric);
+        }
     }
 
     public void beginDocument()
@@ -118,6 +152,7 @@ public class PmdReportListener
         // TODO overall summary
 
         sink.section1_();
+        sink.section1();
         sink.sectionTitle1();
         sink.text( bundle.getString( "report.pmd.files" ) );
         sink.sectionTitle1_();
@@ -136,14 +171,68 @@ public class PmdReportListener
     {
         if ( fileInitialized )
         {
+            processViolations();
             sink.table_();
             sink.section2_();
         }
     }
 
+    private void processMetrics()
+    {
+        sink.section1();
+        sink.sectionTitle1();
+        sink.text( "Metrics" );
+        sink.sectionTitle1_();
+
+        sink.table();
+        sink.tableRow();
+        sink.tableHeaderCell();
+        sink.text( "Name" );
+        sink.tableHeaderCell_();
+        sink.tableHeaderCell();
+        sink.text( "Count" );
+        sink.tableHeaderCell_();
+        sink.tableHeaderCell();
+        sink.text( "High" );
+        sink.tableHeaderCell_();
+        sink.tableHeaderCell();
+        sink.text( "Low" );
+        sink.tableHeaderCell_();
+        sink.tableHeaderCell();
+        sink.text( "Average" );
+        sink.tableHeaderCell_();
+        sink.tableRow_();
+
+        for ( Iterator iter = metrics.iterator(); iter.hasNext(); )
+        {
+            Metric met = (Metric) iter.next();
+            sink.tableRow();
+            sink.tableCell();
+            sink.text( met.getMetricName() );
+            sink.tableCell_();
+            sink.tableCell();
+            sink.text( "" + met.getCount() );
+            sink.tableCell_();
+            sink.tableCell();
+            sink.text( "" + met.getHighValue() );
+            sink.tableCell_();
+            sink.tableCell();
+            sink.text( "" + met.getLowValue() );
+            sink.tableCell_();
+            sink.tableCell();
+            sink.text( "" + met.getAverage() );
+            sink.tableCell_();
+            sink.tableRow_();
+        }
+        sink.table_();
+        sink.section1_();
+    }
+
     public void endDocument()
     {
         sink.section1_();
+
+        processMetrics();
 
         sink.body_();
 
