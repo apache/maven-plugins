@@ -9,21 +9,25 @@ Introduction
   The {{{http://pmd.sourceforge.net/}PMD}} plugin allows you to automatically run the PMD code analysis tool
   on your project's source code and generate a site report with its results.
 
-   * pmd:pmd (default): run PMD and generate the report
+   * pmd:pmd - run PMD and generate the report
+   * pmd:cpd - run PMD's Copy/Paste Detector tool and generate a report
 
 Configuration
 
-  To configure the PMD plugin, you use the standard m2 report plugin conventions.  For example, the following
-  tells Maven to run the PMD report as part of the site report generation, use the 'basic' and 'controversial'
+  The PMD and CPD reports share the same configuration.  For example, the following
+  tells Maven to run the PMD and CPD report as part of the site report generation, use the 'basic' and 'controversial'
   PMD rulesets and output the report in XML format.  The rulesets are assumed to reside in /rulesets/[name].xml 
   in the classpath.  Note that HTML is always generated in addition to any other alternate format.  Legal formats
   are "html", "csv", "xml" and "txt".
   
-  The PMD report will link directly to the cross-referenced source if you enable this with the linkXref parameter.
+  The reports will link directly to the cross-referenced source if you enable this with the linkXref parameter.
   See the {{{http://mojo.codehaus.org/jxr-maven-plugin/}JXR}} plugin for more details.
 
   If your source uses a non-default encoding, you can use the sourceEncoding parameter to tell Maven which
   encoding to use when reading the java source.
+  
+  You can configure the minimum code size which trips the CPD.  The default of 100 tokens cooresponds
+  to approxiamately 5-10 lines of code.
 
 +--------
     <reporting>
@@ -39,6 +43,7 @@ Configuration
                     <format>xml</format>
                     <linkXref>true</linkXref>
                     <sourceEncoding>utf-8</sourceEncoding>
+                    <minimumTokens>100</minimumTokens>
                 </configuration>
             </plugin>
         </plugins>
