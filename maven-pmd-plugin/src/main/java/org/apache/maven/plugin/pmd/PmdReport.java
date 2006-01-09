@@ -101,6 +101,8 @@ public class PmdReport
     private String format = "html";
 
     /**
+     * The PMD rulesets to use.  <a href="http://pmd.sourceforge.net/rules/index.html">Stock Rulesets</a> 
+     * 
      * @parameter
      */
     private String[] rulesets = new String[] { "controversial" };
