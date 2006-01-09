@@ -38,7 +38,7 @@ import org.codehaus.doxia.sink.Sink;
 import org.codehaus.doxia.site.renderer.SiteRenderer;
 
 /**
- * Report for PMD's CPD tool.  See http://pmd.sourceforge.net/cpd.html
+ * Report for PMD's CPD tool.  See <a href="http://pmd.sourceforge.net/cpd.html">http://pmd.sourceforge.net/cpd.html</a>
  * for more detail.
  *
  * @author Mike Perham
@@ -77,7 +77,8 @@ public class CpdReport
     private String format = "html";
 
     /**
-     * Link the violation line numbers to the source xref.
+     * Link the violation line numbers to the source xref.  See the JXR plugin
+     * for more details.
      * @parameter
      * 
      * TODO Can we automagically determine if xfer is being run and enable this?
@@ -85,16 +86,10 @@ public class CpdReport
     private boolean linkXref;
 
     /**
-     * The location of the xref pages relative to the location of the pmd report.
+     * The location of the xref pages relative to the location of the CPD report.
      * @parameter
      */
     private String xrefLocation = "xref";
-
-    /**
-     * The file encoding to use when reading the java source.
-     * @parameter 
-     */
-    private String sourceEncoding;
 
     /**
      * @parameter
