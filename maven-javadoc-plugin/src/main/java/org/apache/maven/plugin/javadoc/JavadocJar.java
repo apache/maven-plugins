@@ -36,6 +36,15 @@ public class JavadocJar
     extends AbstractMojo
 {
     /**
+     * Specifies the destination directory where javadoc saves the generated HTML files.
+     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#d">d</a>.
+     *
+     * @parameter expression="${destDir}" alias="destDir" default-value="${project.build.directory}/javadoc/"
+     * @required
+     */
+    private File destDir;
+    
+    /**
      * @parameter expression="${project.build.directory}"
      */
     private String outputDirectory;
@@ -74,7 +83,7 @@ public class JavadocJar
 
         try
         {
-            File outputFile = generateArchive( outputDirectory + "/javadoc", finalName + "-javadoc.jar" );
+            File outputFile = generateArchive( destDir.getAbsolutePath(), finalName + "-javadoc.jar" );
 
             if ( !attach )
             {
