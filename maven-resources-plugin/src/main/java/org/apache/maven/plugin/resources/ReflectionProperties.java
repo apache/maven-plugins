@@ -17,6 +17,7 @@ package org.apache.maven.plugin.resources;
  */
 
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.introspection.ReflectionValueExtractor;
 
 import java.util.Properties;
@@ -32,10 +33,15 @@ public class ReflectionProperties
 
     private MavenProject project;
 
-    public ReflectionProperties( MavenProject aProject ) 
+    boolean escapedBackslashesInFilePath;
+
+    public ReflectionProperties( MavenProject aProject, boolean escapedBackslashesInFilePath ) 
     {
        super();
-       project = aProject; 
+
+       project = aProject;
+
+       this.escapedBackslashesInFilePath = escapedBackslashesInFilePath;
     }
     
     public Object get( Object key )
@@ -44,6 +50,11 @@ public class ReflectionProperties
         try 
         {
             value = ReflectionValueExtractor.evaluate( "" + key , project );
+
+            if ( escapedBackslashes && value != null && "java.lang.String".equals( value.getClass().getName() ) )
+            {
+                value = StringUtils.replace( (String)value, "\\", "\\\\" );
+            }
         }
         catch ( Exception e ) 
         {
