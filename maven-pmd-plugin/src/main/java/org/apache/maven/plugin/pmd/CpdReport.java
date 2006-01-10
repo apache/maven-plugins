@@ -34,7 +34,6 @@ import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.doxia.sink.Sink;
 import org.codehaus.doxia.site.renderer.SiteRenderer;
 
 /**
@@ -147,7 +146,6 @@ public class CpdReport
     public void executeReport( Locale locale )
         throws MavenReportException
     {
-        Sink sink = getSink();
 
         CPD cpd = new CPD( minimumTokens, new JavaLanguage() );
         String src = getProject().getBuild().getSourceDirectory();
@@ -161,8 +159,9 @@ public class CpdReport
             throw new MavenReportException( e.getMessage(), e );
         }
         cpd.go();
-        
-        CpdReportGenerator gen = new CpdReportGenerator(getSink(), src, getBundle( locale ), xrefLocation );
+
+        CpdReportGenerator gen = new CpdReportGenerator( getSink(), src, getBundle( locale ), linkXref ? xrefLocation
+                                                                                                      : null );
         gen.generate( cpd.getMatches() );
 
         if ( !isHtml() )
