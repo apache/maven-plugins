@@ -11,6 +11,10 @@
   <packaging>maven-plugin</packaging>
   <name>Maven Eclipse Plugin</name>
   <version>2.1-SNAPSHOT</version>
+  <issueManagement>
+    <system>JIRA</system>
+    <url>http://jira.codehaus.org/browse/MECLIPSE</url>
+  </issueManagement>
   <build>
     <plugins>
       <plugin>
