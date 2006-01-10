@@ -16,6 +16,17 @@ package org.apache.maven.plugin.javadoc;
  * limitations under the License.
  */
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.StringTokenizer;
+
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -34,17 +45,6 @@ import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.DefaultConsumer;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.StringTokenizer;
 
 /**
  * Generates documentation for the Java code in the project using the standard
@@ -114,7 +114,8 @@ public class JavadocReport
     // @see http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#options
 
     /**
-     * Set an additional parameter on the command line.
+     * Set an additional parameter(s) on the command line.  This value should include quotes as necessary for parameters
+     * that include spaces.
      *
      * @parameter expression="${additionalparam}"
      */
@@ -209,36 +210,20 @@ public class JavadocReport
     private String overview;
 
     /**
-     * Shows only protected and public classes and members.
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#package">package</a>.
-     *
-     * @parameter expression="${package}" default-value="true"
+     * Specifies the access level for classes and members to show in the Javadocs.
+     * Possible values are: 
+     * <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#public">public</a>
+     *      (shows only public classes and members),
+     * <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#protected">protected</a>
+     *      (shows only public and protected classes and members),
+     * <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#package">package</a>
+     *      (shows all classes and members not marked private), and
+     * <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#private">private</a>
+     *      (shows all classes and members).
+     * 
+     * @parameter expression="${show}" default-value="protected"
      */
-    private boolean showPackage = true;
-
-    /**
-     * Shows only protected and public classes and members.
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#protected">protected</a>.
-     *
-     * @parameter expression="${protected}" default-value="false"
-     */
-    private boolean showProtected = false;
-
-    /**
-     * Shows all classes and members.
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#private">private</a>
-     *
-     * @parameter expression="${private}" default-value="false"
-     */
-    private boolean showPrivate = false;
-
-    /**
-     * Shows only public classes and members.
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#public">public</a>.
-     *
-     * @parameter expression="${public}" default-value="false"
-     */
-    private boolean public_ = false;
+    private String show = "protected";
 
     /**
      * Shuts off non-error and non-warning messages, leaving only the warnings and errors appear, making them easier to view.
@@ -652,18 +637,40 @@ public class JavadocReport
             options.append( quotedPathArgument( classpath.toString() ) );
         }
 
+        char FILE_SEPARATOR = System.getProperty( "file.separator" ).charAt( 0 );
+        String[] excludePackages = {};
+        if ( excludePackageNames != null )
+        {
+            excludePackages = excludePackageNames.split( "[ ,:;]" );
+        }
+        for ( int i = 0; i < excludePackages.length; i++ )
+        {
+            excludePackages[i] = excludePackages[i].replace( '.', FILE_SEPARATOR );
+        }
+
         StringBuffer sourcePath = new StringBuffer();
         StringBuffer files = new StringBuffer();
         for ( Iterator i = getProject().getCompileSourceRoots().iterator(); i.hasNext(); )
         {
             String sourceDirectory = (String) i.next();
-            String[] fileList = FileUtils.getFilesFromExtension( sourceDirectory, new String[]{"java"} );
+            String[] fileList = FileUtils.getFilesFromExtension( sourceDirectory, new String[] { "java" } );
             if ( fileList != null && fileList.length != 0 )
             {
                 for ( int j = 0; j < fileList.length; j++ )
                 {
-                    files.append( quotedPathArgument( fileList[j] ) );
-                    files.append( "\n" );
+                    boolean include = true;
+                    for ( int k = 0; k < excludePackages.length && include; k++ )
+                    {
+                        if ( fileList[j].startsWith( sourceDirectory + FILE_SEPARATOR + excludePackages[k] ) )
+                        {
+                            include = false;
+                        }
+                    }
+                    if ( include )
+                    {
+                        files.append( quotedPathArgument( fileList[j] ) );
+                        files.append( "\n" );
+                    }
                 }
             }
 
@@ -681,7 +688,7 @@ public class JavadocReport
         }
 
         File javadocDirectory = getReportOutputDirectory();
-               
+
         if ( !javadocDirectory.getAbsolutePath().equals( getOutputDirectory() ) )
         {
             // we're in site-embedded report mode, so Doxia has set the
@@ -723,8 +730,8 @@ public class JavadocReport
             }
             else
             {
-                if ( ( NumberUtils.isDigits( maxmemory.substring( 0, maxmemory.length() - 1 ) ) ) &&
-                    ( maxmemory.toLowerCase().endsWith( "m" ) ) )
+                if ( ( NumberUtils.isDigits( maxmemory.substring( 0, maxmemory.length() - 1 ) ) )
+                    && ( maxmemory.toLowerCase().endsWith( "m" ) ) )
                 {
                     cmd.createArgument().setValue( "-J-Xmx" + maxmemory );
                 }
@@ -744,8 +751,8 @@ public class JavadocReport
             }
             else
             {
-                if ( ( NumberUtils.isDigits( minmemory.substring( 0, minmemory.length() - 1 ) ) ) &&
-                    ( minmemory.toLowerCase().endsWith( "m" ) ) )
+                if ( ( NumberUtils.isDigits( minmemory.substring( 0, minmemory.length() - 1 ) ) )
+                    && ( minmemory.toLowerCase().endsWith( "m" ) ) )
                 {
                     cmd.createArgument().setValue( "-J-Xms" + minmemory );
                 }
@@ -771,7 +778,6 @@ public class JavadocReport
         }
         addArgIfNotEmpty( arguments, "-encoding", quotedArgument( encoding ) );
         addArgIfNotEmpty( arguments, "-extdirs", quotedPathArgument( extdirs ) );
-        addArgIfNotEmpty( arguments, "-exclude", quotedArgument( excludePackageNames ), 1.4f );
 
         if ( old && SystemUtils.isJavaVersionAtLeast( 1.4f ) )
         {
@@ -782,22 +788,49 @@ public class JavadocReport
             addArgIf( arguments, old, "-1.1" );
         }
 
-        addArgIfNotEmpty( arguments, "-overview", quotedArgument( overview ) );
-        addArgIf( arguments, showPackage, "-package" );
-        addArgIf( arguments, showPrivate, "-private" );
-        addArgIf( arguments, showProtected, "-protected" );
-        addArgIf( arguments, public_, "-public" );
+        final int LEVEL_PUBLIC = 1;
+        final int LEVEL_PROTECTED = 2;
+        final int LEVEL_PACKAGE = 3;
+        final int LEVEL_PRIVATE = 4;
+        int accessLevel = 0;
+        if ( "public".equalsIgnoreCase( show ) )
+        {
+            accessLevel = LEVEL_PUBLIC;
+        }
+        else if ( "protected".equalsIgnoreCase( show ) )
+        {
+            accessLevel = LEVEL_PROTECTED;
+        }
+        else if ( "package".equalsIgnoreCase( show ) )
+        {
+            accessLevel = LEVEL_PACKAGE;
+        }
+        else if ( "private".equalsIgnoreCase( show ) )
+        {
+            accessLevel = LEVEL_PRIVATE;
+        }
+        else
+        {
+            getLog().error( "Unrecognized access level to show '" + show + "'. Defaulting to protected." );
+            accessLevel = LEVEL_PROTECTED;
+        }
+
+        addArgIfNotEmpty( arguments, "-overview", quotedPathArgument( overview ) );
+        addArgIf( arguments, accessLevel == LEVEL_PUBLIC, "-public" );
+        addArgIf( arguments, accessLevel == LEVEL_PROTECTED, "-protected" );
+        addArgIf( arguments, accessLevel == LEVEL_PACKAGE, "-package" );
+        addArgIf( arguments, accessLevel == LEVEL_PRIVATE, "-private" );
         addArgIf( arguments, quiet, "-quiet", 1.4f );
         addArgIfNotEmpty( arguments, "-source", quotedArgument( source ), 1.4f );
         addArgIf( arguments, verbose, "-verbose" );
-        addArgIfNotEmpty( arguments, null, quotedArgument( additionalparam ) );
-        addArgIfNotEmpty( arguments, "-sourcePath", quotedPathArgument( sourcePath.toString() ) );
+        addArgIfNotEmpty( arguments, null, additionalparam );
+        addArgIfNotEmpty( arguments, "-sourcepath", quotedPathArgument( sourcePath.toString() ) );
 
         // javadoc arguments for default doclet
         if ( StringUtils.isEmpty( doclet ) )
         {
             bottom = StringUtils.replace( bottom, "{currentYear}", year );
-            if ( project.getInceptionYear() != null )
+            if ( project.getInceptionYear() != null && year.indexOf('-') == -1 )
             {
                 bottom = StringUtils.replace( bottom, "{inceptionYear}", project.getInceptionYear() );
             }
@@ -1062,7 +1095,7 @@ public class JavadocReport
      * @see <a href="http://jakarta.apache.org/commons/lang/api/org/apache/commons/lang/SystemUtils.html#isJavaVersionAtLeast(float)">SystemUtils.html#isJavaVersionAtLeast(float)</a>
      */
     private void addArgIfNotEmpty( List arguments, String key, String value, float requiredJavaVersion,
-                                   boolean repeatKey )
+                                  boolean repeatKey )
     {
         if ( SystemUtils.isJavaVersionAtLeast( requiredJavaVersion ) )
         {
@@ -1117,8 +1150,8 @@ public class JavadocReport
             for ( int i = 0; i < offlineLinks.size(); i++ )
             {
                 OfflineLink offlineLink = (OfflineLink) offlineLinks.get( i );
-                addArgIfNotEmpty( arguments, "-linkoffline", quotedPathArgument( offlineLink.getUrl() ) + " " +
-                    quotedPathArgument( offlineLink.getLocation().getAbsolutePath() ), true );
+                addArgIfNotEmpty( arguments, "-linkoffline", quotedPathArgument( offlineLink.getUrl() ) + " "
+                    + quotedPathArgument( offlineLink.getLocation().getAbsolutePath() ), true );
             }
         }
     }
