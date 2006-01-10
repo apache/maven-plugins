@@ -593,24 +593,7 @@ public class JavadocReport
             return;
         }
 
-        int actualYear = Calendar.getInstance().get( Calendar.YEAR );
-        String year = String.valueOf( actualYear );
-
         Model model = getProject().getModel();
-        if ( model.getInceptionYear() != null )
-        {
-            if ( StringUtils.isNumeric( model.getInceptionYear() ) )
-            {
-                if ( Integer.valueOf( model.getInceptionYear() ).intValue() != actualYear )
-                {
-                    year = model.getInceptionYear() + "-" + String.valueOf( actualYear );
-                }
-            }
-            else
-            {
-                getLog().warn( "The inception year is not a valid year." );
-            }
-        }
 
         StringBuffer options = new StringBuffer();
         StringBuffer classpath = new StringBuffer();
@@ -829,14 +812,17 @@ public class JavadocReport
         // javadoc arguments for default doclet
         if ( StringUtils.isEmpty( doclet ) )
         {
+            int actualYear = Calendar.getInstance().get( Calendar.YEAR );
+            String year = String.valueOf( actualYear );
+
             bottom = StringUtils.replace( bottom, "{currentYear}", year );
-            if ( project.getInceptionYear() != null && year.indexOf('-') == -1 )
+            if ( model.getInceptionYear().equals( year ) )
             {
-                bottom = StringUtils.replace( bottom, "{inceptionYear}", project.getInceptionYear() );
+                bottom = StringUtils.replace( bottom, "{inceptionYear}-", "" );                
             }
             else
             {
-                bottom = StringUtils.replace( bottom, "{inceptionYear}-", "" );
+                bottom = StringUtils.replace( bottom, "{inceptionYear}", model.getInceptionYear() );                
             }
 
             if ( StringUtils.isEmpty( stylesheetfile ) )
