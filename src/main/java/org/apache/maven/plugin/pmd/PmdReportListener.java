@@ -192,6 +192,11 @@ public class PmdReportListener
 
     private void processMetrics()
     {
+        if ( metrics.size() == 0 )
+        {
+            return;
+        }
+
         sink.section1();
         sink.sectionTitle1();
         sink.text( "Metrics" );
