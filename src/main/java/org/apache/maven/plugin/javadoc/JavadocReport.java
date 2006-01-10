@@ -816,13 +816,17 @@ public class JavadocReport
             String year = String.valueOf( actualYear );
 
             bottom = StringUtils.replace( bottom, "{currentYear}", year );
-            if ( model.getInceptionYear().equals( year ) )
+
+            if ( model != null  && model.getInceptionYear() != null )
             {
-                bottom = StringUtils.replace( bottom, "{inceptionYear}-", "" );                
-            }
-            else
-            {
-                bottom = StringUtils.replace( bottom, "{inceptionYear}", model.getInceptionYear() );                
+                if ( model.getInceptionYear().equals( year ) )
+                {
+                    bottom = StringUtils.replace( bottom, "{inceptionYear}-", "" );                
+                }
+                else
+                {
+                    bottom = StringUtils.replace( bottom, "{inceptionYear}", model.getInceptionYear() );                
+                }
             }
 
             if ( StringUtils.isEmpty( stylesheetfile ) )
