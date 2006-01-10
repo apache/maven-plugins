@@ -30,7 +30,7 @@
 
                 <echo message="basedir:${basedir}" />
                 <echo message="sourceDirectory:${project.build.sourceDirectory}" />
-
+                <echo message="pom.build.directory=${project.build.directory}"/>
                 <taskdef name="test" classname="TestTask">
                   <classpath refid="maven.compile.classpath"/>
                 </taskdef>
