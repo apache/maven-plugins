@@ -101,11 +101,17 @@ public class PmdReport
     private String format = "html";
 
     /**
-     * The PMD rulesets to use.  <a href="http://pmd.sourceforge.net/rules/index.html">Stock Rulesets</a> 
+     * The PMD rulesets to use.  <a href="http://pmd.sourceforge.net/rules/index.html">Stock Rulesets</a>
+     * Defaults to the basic, imports and unusedcode rulesets. 
      * 
      * @parameter
      */
-    private String[] rulesets = new String[] { "controversial" };
+    private String[] rulesets = new String[] 
+    {
+        "/rulesets/basic.xml",
+        "/rulesets/unusedcode.xml",
+        "/rulesets/imports.xml",
+    };
 
     /**
      * Link the violation line numbers to the source xref.
@@ -120,13 +126,13 @@ public class PmdReport
      * @parameter
      */
     private String xrefLocation = "xref";
-    
+
     /**
      * The file encoding to use when reading the java source.
      * @parameter 
      */
     private String sourceEncoding;
-    
+
     /**
      * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
      */
@@ -205,17 +211,25 @@ public class PmdReport
             throw new MavenReportException( "Can't parse " + sourceDirectory, e );
         }
 
+        Locator locator = new Locator( getLog() );
         RuleSetFactory ruleSetFactory = new RuleSetFactory();
         RuleSet[] sets = new RuleSet[rulesets.length];
-        for ( int idx = 0; idx < rulesets.length; idx++ )
+        try
         {
-            String set = rulesets[idx];
-            String location = "/rulesets/" + set + ".xml";
-            getLog().debug( "Preparing " + set + " ruleset found in classpath:" + location );
-            InputStream rulesInput = pmd.getClass().getResourceAsStream( location );
-            sets[idx] = ruleSetFactory.createRuleSet( rulesInput );
+            for ( int idx = 0; idx < rulesets.length; idx++ )
+            {
+                String set = rulesets[idx];
+                getLog().debug( "Preparing ruleset: " + set );
+                File ruleset = locator.resolveLocation( set, getLocationTemp( set ) );
+                InputStream rulesInput = new FileInputStream( ruleset );
+                sets[idx] = ruleSetFactory.createRuleSet( rulesInput );
+            }
         }
-        
+        catch ( IOException e )
+        {
+            throw new MavenReportException( e.getMessage(), e );
+        }
+
         boolean hasEncoding = sourceEncoding != null;
 
         for ( Iterator i = files.iterator(); i.hasNext(); )
@@ -234,8 +248,8 @@ public class PmdReport
                     {
                         // PMD closes this Reader even though it did not open it so we have
                         // to open a new one with every call to processFile().
-                        Reader reader = hasEncoding ? new InputStreamReader( new FileInputStream( file ), sourceEncoding ) 
-                                                    : new FileReader( file );
+                        Reader reader = hasEncoding ? new InputStreamReader( new FileInputStream( file ),
+                                                                             sourceEncoding ) : new FileReader( file );
                         pmd.processFile( reader, sets[idx], ruleContext );
                     }
                     catch ( UnsupportedEncodingException e1 )
@@ -260,7 +274,7 @@ public class PmdReport
             }
         }
         reportSink.endDocument();
-        
+
         if ( !isHtml() )
         {
             // Use the PMD renderers to render in any format aside from HTML.
@@ -277,6 +291,21 @@ public class PmdReport
                 throw new MavenReportException( ioe.getMessage(), ioe );
             }
         }
+    }
+
+    private String getLocationTemp( String name )
+    {
+        String loc = name;
+        if ( loc.indexOf( '/' ) != -1 )
+        {
+            loc = loc.substring( loc.lastIndexOf( '/' ) + 1 );
+        }
+        if ( loc.indexOf( '\\' ) != -1 )
+        {
+            loc = loc.substring( loc.lastIndexOf( '\\' ) + 1 );
+        }
+        getLog().debug( "Before: " + name + " After: " + loc );
+        return project.getBuild().getDirectory() + File.separator + loc;
     }
 
     /**
