@@ -255,7 +255,14 @@ public class ResourcesMojo
                 // support @token@
                 reader = new InterpolationFilterReader( reader, filterProperties, "@", "@" );
 
-                reader = new InterpolationFilterReader( reader, new ReflectionProperties( project ), "${", "}" );
+                boolean isPropertiesFile = false;
+
+                if ( to.isFile() && to.getName().endsWith( ".properties" ) )
+                {
+                    isPropertiesFile = true;
+                }
+
+                reader = new InterpolationFilterReader( reader, new ReflectionProperties( project, isPropertiesFile ), "${", "}" );
 
                 IOUtil.copy( reader, fileWriter );
             }
