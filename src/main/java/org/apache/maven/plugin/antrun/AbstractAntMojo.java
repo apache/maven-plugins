@@ -18,6 +18,7 @@ package org.apache.maven.plugin.antrun;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -85,21 +86,7 @@ public abstract class AbstractAntMojo
             antProject.addReference( "maven.test.classpath", p );
 
             /* set maven.plugin.classpath with plugin dependencies */
-            List list = new ArrayList( artifacts.size() );
-
-            for ( Iterator i = artifacts.iterator(); i.hasNext(); )
-            {
-                Artifact a = (Artifact) i.next();
-                File file = a.getFile();
-                if ( file == null )
-                {
-                    throw new DependencyResolutionRequiredException( a );
-                }
-                list.add( file.getPath() );
-            }
-            p = new Path( antProject );
-            p.setPath( StringUtils.join( list.iterator(), File.pathSeparator ) );
-            antProject.addReference( "maven.plugin.classpath", p );
+            antProject.addReference( "maven.plugin.classpath", getPathFromArtifacts( artifacts, antProject ) );
 
             getLog().info( "Executing tasks" );
 
@@ -112,4 +99,25 @@ public abstract class AbstractAntMojo
             throw new MojoExecutionException( "Error executing ant tasks", e );
         }
     }
+
+    public Path getPathFromArtifacts( Collection artifacts, Project antProject )
+        throws DependencyResolutionRequiredException
+    {
+        List list = new ArrayList( artifacts.size() );
+
+        for ( Iterator i = artifacts.iterator(); i.hasNext(); )
+        {
+            Artifact a = (Artifact) i.next();
+            File file = a.getFile();
+            if ( file == null )
+            {
+                throw new DependencyResolutionRequiredException( a );
+            }
+            list.add( file.getPath() );
+        }
+        Path p = new Path( antProject );
+        p.setPath( StringUtils.join( list.iterator(), File.pathSeparator ) );
+        return p;
+    }
+
 }
