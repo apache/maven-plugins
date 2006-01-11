@@ -80,7 +80,7 @@ public abstract class AbstractWarMojo
      * @parameter expression="${maven.war.webxml}"
      */
     private String webXml;
-    
+
     /**
      * Directory to unpack dependent WARs into if needed
      *
@@ -88,7 +88,7 @@ public abstract class AbstractWarMojo
      * @required
      */
     private File workDirectory;
-    
+
     /**
      * To look up Archiver/UnArchiver implementations
      *
@@ -96,7 +96,6 @@ public abstract class AbstractWarMojo
      * @required
      */
     protected ArchiverManager archiverManager;
-    
 
     public static final String WEB_INF = "WEB-INF";
 
@@ -114,20 +113,20 @@ public abstract class AbstractWarMojo
      * @parameter alias="excludes"
      */
     private String warSourceExcludes;
-    
+
     /**
      * The comma separated list of tokens to include when doing
      * a war overlay.
      * Default is '**'
-     * 
+     *
      * @parameter
      */
     private String dependentWarIncludes = "**";
-    
+
     /**
      * The comma separated list of tokens to exclude when doing
      * a way overlay.
-     * 
+     *
      * @parameter
      */
     private String dependentWarExcludes;
@@ -220,11 +219,11 @@ public abstract class AbstractWarMojo
     {
         return StringUtils.split( StringUtils.defaultString( warSourceIncludes ), "," );
     }
-    
+
     /**
      * Returns a string array of the excludes to be used
      * when adding dependent wars as an overlay onto this war.
-     * 
+     *
      * @return an array of tokens to exclude
      */
     protected String[] getDependentWarExcludes() {
@@ -235,11 +234,11 @@ public abstract class AbstractWarMojo
 
         return (String[]) EMPTY_STRING_ARRAY.clone();
     }
-    
+
     /**
      * Returns a string array of the includes to be used
      * when adding dependent wars as an overlay onto this war.
-     * 
+     *
      * @return an array of tokens to include
      */
     protected String[] getDependentWarIncludes() {
@@ -334,7 +333,7 @@ public abstract class AbstractWarMojo
         }
 
         Set artifacts = project.getArtifacts();
-        
+
         List dependentWarDirectories = new ArrayList();
 
         for ( Iterator iter = artifacts.iterator(); iter.hasNext(); )
@@ -364,7 +363,7 @@ public abstract class AbstractWarMojo
                 }
             }
         }
-        
+
         if ( dependentWarDirectories.size() > 0 )
         {
             getLog().info( "Overlaying " + dependentWarDirectories.size() + " war(s)." );
@@ -376,11 +375,11 @@ public abstract class AbstractWarMojo
             }
         }
     }
-    
+
     /**
      * Unpacks war artifacts into a temporary directory inside <tt>workDirectory</tt>
      * named with the name of the war.
-     * 
+     *
      * @param artifact War artifact to unpack.
      * @return Directory containing the unpacked war.
      * @throws MojoExecutionException
@@ -417,7 +416,7 @@ public abstract class AbstractWarMojo
 
         return tempLocation;
     }
-    
+
     /**
      * Unpacks the archive file.
      *
@@ -446,16 +445,16 @@ public abstract class AbstractWarMojo
             throw new MojoExecutionException( "Error unpacking file: " + file + "to: " + location, e );
         }
     }
-    
+
     /**
      * Recursively copies contents of <tt>srcDir</tt> into <tt>targetDir</tt>.
      * This will not overwrite any existing files.
-     * 
+     *
      * @param srcDir Directory containing unpacked dependent war contents
      * @param targetDir Directory to overlay srcDir into
      */
     private void copyDependentWarContents( File srcDir, File targetDir )
-        throws IOException, MojoExecutionException
+        throws MojoExecutionException
     {
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir( srcDir );
@@ -477,7 +476,7 @@ public abstract class AbstractWarMojo
         for ( int j = 0; j < files.length; j++ )
         {
             File targetFile = new File( targetDir, files[j] );
-            
+
             // Do not overwrite existing files.
             if (!targetFile.exists())
             {
