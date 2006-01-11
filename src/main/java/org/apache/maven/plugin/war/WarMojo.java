@@ -20,13 +20,13 @@ import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.ManifestException;
 import org.codehaus.plexus.archiver.war.WarArchiver;
 
 import java.io.File;
 import java.io.IOException;
-
 
 /**
  * Build a war/webapp.
@@ -57,6 +57,13 @@ public class WarMojo
     private String warName;
 
     /**
+     * Classifier to add to the artifact generated. If given, the artifact will be an attachment instead.
+     *
+     * @parameter
+     */
+    private String classifier;
+
+    /**
      * The Jar archiver.
      *
      * @parameter expression="${component.org.codehaus.plexus.archiver.Archiver#war}"
@@ -72,6 +79,37 @@ public class WarMojo
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
     /**
+     * @component
+     */
+    private MavenProjectHelper projectHelper;
+
+    // ----------------------------------------------------------------------
+    // Implementation
+    // ----------------------------------------------------------------------
+
+    /**
+     * Overload this to produce a test-war, for example.
+     */
+    protected String getClassifier()
+    {
+        return classifier;
+    }
+
+    protected static File getWarFile( File basedir, String finalName, String classifier )
+    {
+        if ( classifier == null )
+        {
+            classifier = "";
+        }
+        else if ( classifier.trim().length() > 0 && !classifier.startsWith( "-" ) )
+        {
+            classifier = "-" + classifier;
+        }
+
+        return new File( basedir, finalName + classifier + ".war" );
+    }
+
+    /**
      * Executes the WarMojo on the current project.
      *
      * @throws MojoExecutionException if an error occured while building the webapp
@@ -79,7 +117,7 @@ public class WarMojo
     public void execute()
         throws MojoExecutionException
     {
-        File warFile = new File( outputDirectory, warName + ".war" );
+        File warFile = getWarFile( new File( outputDirectory ), warName, getClassifier() );
 
         try
         {
@@ -123,6 +161,14 @@ public class WarMojo
         // create archive
         archiver.createArchive( getProject(), archive );
 
-        getProject().getArtifact().setFile( warFile );
+        String classifier = getClassifier();
+        if ( classifier != null )
+        {
+            projectHelper.attachArtifact( getProject(), "war", classifier, warFile );
+        }
+        else
+        {
+            getProject().getArtifact().setFile( warFile );
+        }
     }
 }
