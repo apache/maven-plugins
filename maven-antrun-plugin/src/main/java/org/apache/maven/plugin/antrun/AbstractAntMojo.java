@@ -88,11 +88,18 @@ public abstract class AbstractAntMojo
             /* set maven.plugin.classpath with plugin dependencies */
             antProject.addReference( "maven.plugin.classpath", getPathFromArtifacts( artifacts, antProject ) );
 
-            getLog().info( "Executing tasks" );
+            if ( getLog().isInfoEnabled() )
+            {
+                getLog().info( "Executing tasks" );
+            }
 
             antTasks.execute();
 
-            getLog().info( "Executed tasks" );
+            if ( getLog().isInfoEnabled() )
+            {
+                getLog().info( "Executed tasks" );
+            }
+
         }
         catch ( Exception e )
         {
