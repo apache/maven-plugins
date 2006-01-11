@@ -10,7 +10,7 @@ Referencing the maven classpaths
 
  You can use these classpath references:
   
-  * <<<maven.dependency.classpath>>>
+  * <<<maven.dependency.classpath>>> (deprecated, equal to <<<maven.compile.classpath>>>)
 
   * <<<maven.compile.classpath>>>
 
