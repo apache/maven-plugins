@@ -76,7 +76,10 @@ public abstract class AbstractAntMojo
 
             Path p = new Path( antProject );
             p.setPath( StringUtils.join( mavenProject.getCompileClasspathElements().iterator(), File.pathSeparator ) );
+
+            /* maven.dependency.classpath it's deprecated as it's equal to maven.compile.classpath */
             antProject.addReference( "maven.dependency.classpath", p );
+
             antProject.addReference( "maven.compile.classpath", p );
             p = new Path( antProject );
             p.setPath( StringUtils.join( mavenProject.getRuntimeClasspathElements().iterator(), File.pathSeparator ) );
