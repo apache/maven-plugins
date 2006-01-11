@@ -54,18 +54,6 @@ Usage
   a new phase.
 
   
-  You can use these classpath references:
-  
-  * <<<maven.dependency.classpath>>>
-
-  * <<<maven.compile.classpath>>>
-
-  * <<<maven.runtime.classpath>>>
-
-  * <<<maven.test.classpath>>>
-
-  * <<<maven.plugin.classpath>>>
-  
   Below you can see how to indicate that ant has generated some more java
   source that needs to be included in the compilation phase. Note that the
   compile phase follows the generate-sources phase in the lifecycle.
