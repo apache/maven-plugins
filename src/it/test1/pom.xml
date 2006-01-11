@@ -11,8 +11,13 @@
   <description>Ensure that maven.compile.classpath and maven.plugin.classpath referencies are set</description>
  
   <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+    </dependency>
   </dependencies>
-  
+
   <build>
     <plugins>
       <plugin>
@@ -25,6 +30,7 @@
             <configuration>
               <sourceRoot>target/generated/src/main/java</sourceRoot>
               <tasks>
+
                 <path id="classpath">
                   <path refid="maven.compile.classpath"/>
                   <path refid="maven.plugin.classpath"/>
@@ -32,6 +38,14 @@
                 <ant antfile="${basedir}/build.xml" inheritRefs="true">
                   <target name="test"/>
                 </ant>
+
+                <path id="classpath">
+                  <path refid="maven.dependency.classpath"/>
+                </path>
+                <ant antfile="${basedir}/build.xml" inheritRefs="true">
+                  <target name="test"/>
+                </ant>
+
               </tasks>
             </configuration>
             <goals>
