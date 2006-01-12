@@ -155,7 +155,7 @@ public class EclipseWtpFacetsWriter
             writer.endElement(); // fixed
             writer.startElement( ELT_INSTALLED );
             writer.addAttribute( ATTR_FACET, FACET_JST_UTILITY );
-            writer.addAttribute( ATTR_VERSION, "1.0" ); //$NON-NLS-2$
+            writer.addAttribute( ATTR_VERSION, "1.0" ); //$NON-NLS-1$
             writer.endElement(); // installed
         }
 
