@@ -18,7 +18,6 @@ package org.apache.maven.plugin.eclipse;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.MessageFormat;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -50,8 +49,7 @@ public class EclipseCleanMojo
     private static final String FILE_DOT_PROJECT = ".project"; //$NON-NLS-1$
 
     /**
-     * Web Project definition file for Eclipse Web Tools Project (Release 1.0RC5
-     * compatible).
+     * Web Project definition file for Eclipse Web Tools Project (Release 1.0RC5 compatible).
      */
     private static final String DIR_DOT_SETTINGS = ".settings"; //$NON-NLS-1$
 
@@ -80,7 +78,7 @@ public class EclipseCleanMojo
     private void delete( File f )
         throws MojoExecutionException
     {
-        getLog().info( MessageFormat.format( "Deleting {0} file...", new Object[] { f.getName() } ) );
+        getLog().info( Messages.getString( "EclipseCleanMojo.deleting", f.getName() ) ); //$NON-NLS-1$
 
         if ( f.exists() )
         {
@@ -88,28 +86,20 @@ public class EclipseCleanMojo
             {
                 try
                 {
-                    if ( getLog().isDebugEnabled() )
-                    {
-                        getLog().debug(
-                                        MessageFormat.format( "Forcibly deleting {0} file...", new Object[] { f
-                                            .getName() } ) );
-                    }
                     FileUtils.forceDelete( f );
                 }
                 catch ( IOException e )
                 {
-                    throw new MojoExecutionException( MessageFormat.format( "Failed to delete {0} file: {0}",
-                                                                            new Object[] {
-                                                                                f.getName(),
-                                                                                f.getAbsolutePath() } ) )
-                    {
-                    };
+                    throw new MojoExecutionException( Messages.getString( "EclipseCleanMojo.failedtodelete", //$NON-NLS-1$
+                                                                          new Object[] {
+                                                                              f.getName(),
+                                                                              f.getAbsolutePath() } ) );
                 }
             }
         }
         else
         {
-            getLog().info( MessageFormat.format( "No {0} file found", new Object[] { f.getName() } ) );
+            getLog().debug( Messages.getString( "EclipseCleanMojo.nofilefound", f.getName() ) ); //$NON-NLS-1$
         }
     }
 
