@@ -34,7 +34,8 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.eclipse.writers.EclipseClasspathWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseProjectWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseSettingsWriter;
-import org.apache.maven.plugin.eclipse.writers.EclipseWtpSettingsWriter;
+import org.apache.maven.plugin.eclipse.writers.EclipseWtpComponentWriter;
+import org.apache.maven.plugin.eclipse.writers.EclipseWtpFacetsWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseWtpmodulesWriter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
@@ -360,17 +361,16 @@ public class EclipsePlugin
                                                                                                   localRepository,
                                                                                                   buildOutputDirectory );
         }
-        else if ( "1.0".equals( wtpversion ) ) //$NON-NLS-1$
+        else if ( wtpversion != null && wtpversion.startsWith( "1" ) ) //$NON-NLS-1$
         {
-            // Check and write out a WTP Project if this was required.
-            if ( "war".equalsIgnoreCase( project.getPackaging() ) || "ear".equalsIgnoreCase( project.getPackaging() ) //$NON-NLS-1$ //$NON-NLS-2$
-                || "ejb".equalsIgnoreCase( project.getPackaging() ) ) //$NON-NLS-1$
-            {
-                // we assume we have a version 1.0 for WTP
-                getLog().info( "Generating Eclipse web facet assuming version 1.0 for WTP..." );
-                new EclipseWtpSettingsWriter( getLog(), eclipseProjectDir, project, artifacts )
-                    .write( reactorArtifacts, sourceDirs, localRepository, buildOutputDirectory );
-            }
+            // we assume we have a version 1.0 for WTP
+            getLog().info( "Generating Eclipse web facet assuming version 1.x for WTP..." );
+            new EclipseWtpFacetsWriter( getLog(), eclipseProjectDir, project, artifacts ).write( reactorArtifacts,
+                                                                                                 sourceDirs,
+                                                                                                 localRepository,
+                                                                                                 buildOutputDirectory );
+            new EclipseWtpComponentWriter( getLog(), eclipseProjectDir, project, artifacts )
+                .write( reactorArtifacts, sourceDirs, localRepository, buildOutputDirectory );
         }
 
         new EclipseProjectWriter( getLog(), eclipseProjectDir, project ).write( projectBaseDir, executedProject,
