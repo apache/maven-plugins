@@ -73,7 +73,7 @@ public class EclipsePlugin
     private static final String COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER = "org.eclipse.jdt.launching.JRE_CONTAINER"; //$NON-NLS-1$
 
     //  warning, order is important for binary search
-    public static final String[] WTP_SUPPORTED_VERSIONS = new String[] { "1.0", "R7" }; //$NON-NLS-1$ //$NON-NLS-2$
+    public static final String[] WTP_SUPPORTED_VERSIONS = new String[] { "1.0", "R7", "none" }; //$NON-NLS-1$ //$NON-NLS-2$  //$NON-NLS-3$
 
     /**
      * Constant for 'artifactId' element in POM.xml.
@@ -314,12 +314,9 @@ public class EclipsePlugin
         {
             fillDefaultClasspathContainers( packaging );
         }
-        else if ( !classpathContainers.contains( COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER ) )
+        else if ( !classpathContainers.contains( COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER ) ) //$NON-NLS-1$
         {
-            getLog()
-                .warn(
-                       "You did specify a list of classpath containers without the base org.eclipse.jdt.launching.JRE_CONTAINER.\n"
-                           + "If you specify custom classpath containers you should also add org.eclipse.jdt.launching.JRE_CONTAINER to the list" );
+            getLog().warn( Messages.getString( "EclipsePlugin.missingjrecontainer" ) ); //$NON-NLS-1$
             classpathContainers.add( 0, COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER );
         }
 
@@ -363,8 +360,6 @@ public class EclipsePlugin
         }
         else if ( wtpversion != null && wtpversion.startsWith( "1" ) ) //$NON-NLS-1$
         {
-            // we assume we have a version 1.0 for WTP
-            getLog().info( "Generating Eclipse web facet assuming version 1.x for WTP..." );
             new EclipseWtpFacetsWriter( getLog(), eclipseProjectDir, project, artifacts ).write( reactorArtifacts,
                                                                                                  sourceDirs,
                                                                                                  localRepository,

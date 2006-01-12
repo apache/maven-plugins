@@ -196,15 +196,7 @@ public class EclipseWtpComponentWriter
         String webInfLibDirAsString = EclipseUtils.toRelativeAndFixSeparator( getProject().getBasedir(), webInfLibDir,
                                                                               false );
 
-        if ( getLog().isWarnEnabled() )
-        {
-            getLog().warn( "----------------------------------------------------------------------------" );
-            getLog().warn( "Copying over dependencies for WTP1.0 Project to directory: " + webInfLibDirAsString );
-            getLog()
-                .warn(
-                       "Please NOTE that this is a patch to allow publishing external dependencies for a WTP1.0 project." );
-            getLog().warn( "----------------------------------------------------------------------------" );
-        }
+        getLog().warn( Messages.getString( "EclipseWtpComponentWriter.copyingdepswarning", webInfLibDirAsString ) ); //$NON-NLS-1$
 
         // dependencies
         for ( Iterator it = getDependencies().iterator(); it.hasNext(); )
@@ -220,25 +212,19 @@ public class EclipseWtpComponentWriter
                 // warSourceDirectory and add a deploy-path so that resources get published.
                 try
                 {
-                    getLog().info( "Copying dependency: " + artifact.getFile().getName() + "..." );
+                    getLog().info( Messages.getString( "EclipseWtpComponentWriter.copyingsingledep", //$NON-NLS-1$ 
+                                                       artifact.getFile().getName() ) );
                     FileUtils.copyFileToDirectory( artifact.getFile(), webInfLibDir );
                 }
                 catch ( IOException e )
                 {
                     // we log the error and still go ahead with the wtp project creation.
-
-                    getLog().error(
-                                    "Unable to copy dependency: " + artifact.getFile().getAbsolutePath()
-                                        + " over to web app lib directory : " + webInfLibDirAsString );
+                    getLog().error( Messages.getString( "EclipseWtpComponentWriter.unabletocopy", new Object[] { //$NON-NLS-1$ 
+                                                        artifact.getFile().getAbsolutePath(), webInfLibDirAsString } ) );
                 }
             }
         }
-        if ( getLog().isWarnEnabled() )
-        {
-            getLog().warn( "----------------------------------------------------------------------------" );
-            getLog().warn( "WTP1.0 Project dependencies copied!" );
-            getLog().warn( "----------------------------------------------------------------------------" );
-        }
+
         writer.startElement( ELT_WB_RESOURCE );
         writer.addAttribute( ATTR_DEPLOY_PATH, "/WEB-INF/lib" ); //$NON-NLS-1$
         writer.addAttribute( ATTR_SOURCE_PATH, webInfLibDirAsString );
