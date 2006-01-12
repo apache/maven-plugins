@@ -300,9 +300,9 @@ public abstract class AbstractWtpResourceWriter
             EclipseUtils.getPluginSetting( getProject(), "maven-compiler-plugin", "source", null ); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
-        if ( "1.5".equals( version ) || "5".equals( version ) )
+        if ( "1.5".equals( version ) || "5".equals( version ) ) //$NON-NLS-1$ //$NON-NLS-2$
         {
-            version = "5.0";// see MECLIPSE-47 eclipse only accept 5.0 as a valid version
+            version = "5.0";// see MECLIPSE-47 eclipse only accept 5.0 as a valid version //$NON-NLS-1$
         }
 
         return version == null ? "1.4" : version; //$NON-NLS-1$

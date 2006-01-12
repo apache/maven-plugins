@@ -363,12 +363,14 @@ public class EclipseUtils
                 }
                 catch ( ArtifactResolutionException e )
                 {
-                    log.error( "Unable to resolve optional artifact " + artifact.getId() );
+                    log.error( Messages.getString( "EclipsePlugin.errorresolving", new Object[] { //$NON-NLS-1$
+                                                   artifact.getType(), artifact.getId(), e.getMessage() } ) );
                     continue;
                 }
                 catch ( ArtifactNotFoundException e )
                 {
-                    log.error( "Unable to resolve optional artifact " + artifact.getId() );
+                    log.error( Messages.getString( "EclipsePlugin.errorresolving", new Object[] { //$NON-NLS-1$
+                                                   artifact.getType(), artifact.getId(), e.getMessage() } ) );
                     continue;
                 }
                 artifacts.add( artifact );
