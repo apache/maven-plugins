@@ -38,35 +38,17 @@ import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
- * Creates a .settings folder for Eclipse WTP 1.xRCx release and writes out the configuration under it.
+ * Creates a .settings folder for Eclipse WTP 1.x release and writes out the configuration under it.
  * 
  * @author <a href="mailto:rahul.thakur.xdev@gmail.com">Rahul Thakur</a>
  * @author <a href="mailto:fgiust@apache.org">Fabrizio Giustina</a>
  * @version $Id$
  */
-public class EclipseWtpSettingsWriter
+public class EclipseWtpComponentWriter
     extends AbstractWtpResourceWriter
 {
 
-    private static final String FACET_JST_EAR = "jst.ear"; //$NON-NLS-1$
-
     private static final String ATTR_CONTEXT_ROOT = "context-root"; //$NON-NLS-1$
-
-    private static final String ATTR_VERSION = "version"; //$NON-NLS-1$
-
-    private static final String ELT_INSTALLED = "installed"; //$NON-NLS-1$
-
-    private static final String FACET_JST_EJB = "jst.ejb"; //$NON-NLS-1$
-
-    private static final String FACET_JST_WEB = "jst.web"; //$NON-NLS-1$
-
-    private static final String FACET_JST_JAVA = "jst.java"; //$NON-NLS-1$
-
-    private static final String ATTR_FACET = "facet"; //$NON-NLS-1$
-
-    private static final String ELT_FIXED = "fixed"; //$NON-NLS-1$
-
-    private static final String ELT_FACETED_PROJECT = "faceted-project"; //$NON-NLS-1$
 
     /**
      * The .settings folder for Web Tools Project 1.x release.
@@ -78,12 +60,7 @@ public class EclipseWtpSettingsWriter
      */
     private static final String FILE_DOT_COMPONENT = ".component"; //$NON-NLS-1$
 
-    /**
-     * File name where Eclipse Project's Facet configuration will be stored.
-     */
-    private static final String FILE_FACET_CORE_XML = "org.eclipse.wst.common.project.facet.core.xml"; //$NON-NLS-1$
-
-    public EclipseWtpSettingsWriter( Log log, File eclipseProjectDir, MavenProject project, Collection artifacts )
+    public EclipseWtpComponentWriter( Log log, File eclipseProjectDir, MavenProject project, Collection artifacts )
     {
         super( log, eclipseProjectDir, project, artifacts );
     }
@@ -92,26 +69,11 @@ public class EclipseWtpSettingsWriter
                       ArtifactRepository localRepository, File buildOutputDirectory )
         throws MojoExecutionException
     {
-        // delete the .settings directory (if exists)
-        File settingsDir = new File( getEclipseProjectDirectory(), DIR_WTP_SETTINGS );
-        if ( settingsDir.isDirectory() && !settingsDir.delete() )
-        {
-            // force delete
-            try
-            {
-                FileUtils.forceDelete( settingsDir );
-            }
-            catch ( IOException e )
-            {
-                if ( getLog().isErrorEnabled() )
-                {
-                    getLog().error( "Unable to delete directory " + DIR_WTP_SETTINGS );
-                }
-            }
-        }
 
-        // create a .settings directory
+        // create a .settings directory (if not existing)
+        File settingsDir = new File( getEclipseProjectDirectory(), DIR_WTP_SETTINGS );
         settingsDir.mkdirs();
+
         FileWriter w;
         try
         {
@@ -125,21 +87,10 @@ public class EclipseWtpSettingsWriter
         // create a .component file and write out to it
         XMLWriter writer = new PrettyPrintXMLWriter( w );
         String packaging = getProject().getPackaging();
-        writeModuleTypeComponent( writer, packaging, buildOutputDirectory, referencedReactorArtifacts, localRepository );
+        writeModuleTypeComponent( writer, packaging, buildOutputDirectory, sourceDirs, referencedReactorArtifacts,
+                                  localRepository );
         IOUtil.close( w );
 
-        // Write out facet core xml
-        try
-        {
-            w = new FileWriter( new File( settingsDir, FILE_FACET_CORE_XML ) );
-        }
-        catch ( IOException ex )
-        {
-            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex ); //$NON-NLS-1$
-        }
-        writer = new PrettyPrintXMLWriter( w );
-        writeModuleTypeFacetCore( writer, packaging );
-        IOUtil.close( w );
     }
 
     /**
@@ -153,109 +104,79 @@ public class EclipseWtpSettingsWriter
      * @throws MojoExecutionException
      */
     private void writeModuleTypeComponent( XMLWriter writer, String packaging, File buildOutputDirectory,
-                                          List referencedReactorArtifacts, ArtifactRepository localRepository )
+                                          EclipseSourceDir[] sourceDirs, List referencedReactorArtifacts,
+                                          ArtifactRepository localRepository )
         throws MojoExecutionException
     {
         writer.startElement( ELT_PROJECT_MODULES );
         writer.addAttribute( ATTR_MODULE_ID, "moduleCoreId" ); //$NON-NLS-1$
         writer.startElement( ELT_WB_MODULE );
+
         writer.addAttribute( ATTR_DEPLOY_NAME, getProject().getArtifactId() );
+
+        // deploy-path is "/" for utility and ejb projects, "/WEB-INF/classes" for webapps
+        String target = "/"; //$NON-NLS-1$
+
         if ( "war".equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
         {
-            writer.startElement( ELT_WB_RESOURCE );
-            writer.addAttribute( ATTR_DEPLOY_PATH, "/WEB-INF/classes" ); //$NON-NLS-1$
-            writer.addAttribute( ATTR_SOURCE_PATH, EclipseUtils.toRelativeAndFixSeparator( getProject().getBasedir(),
-                                                                                           new File( getProject()
-                                                                                               .getBuild()
-                                                                                               .getSourceDirectory() ),
-                                                                                           false ) );
-            writer.endElement();
+            target = "/WEB-INF/classes"; //$NON-NLS-1$
+
             String warSourceDirectory = EclipseUtils.getPluginSetting( getProject(), ARTIFACT_MAVEN_WAR_PLUGIN,
-                                                                       "warSourceDirectory", "/src/main/webapp" ); //$NON-NLS-1$ //$NON-NLS-2$
+                                                                       "warSourceDirectory", //$NON-NLS-1$
+                                                                       "/src/main/webapp" ); //$NON-NLS-1$
+
+            writer.startElement( ELT_PROPERTY );
+            writer.addAttribute( ATTR_CONTEXT_ROOT, getProject().getArtifactId() );
+            writer.endElement(); // property
+
             writer.startElement( ELT_WB_RESOURCE );
             writer.addAttribute( ATTR_DEPLOY_PATH, "/" ); //$NON-NLS-1$
             writer.addAttribute( ATTR_SOURCE_PATH, EclipseUtils
                 .toRelativeAndFixSeparator( getProject().getBasedir(), new File( getEclipseProjectDirectory(),
                                                                                  warSourceDirectory ), false ) );
             writer.endElement();
+
+            // @todo is this really needed?
+            writer.startElement( ELT_PROPERTY );
+            writer.addAttribute( ATTR_NAME, "java-output-path" ); //$NON-NLS-1$
+            writer.addAttribute( ATTR_VALUE, "/" //$NON-NLS-1$
+                + EclipseUtils.toRelativeAndFixSeparator( getProject().getBasedir(), buildOutputDirectory, false ) );
+            writer.endElement(); // property
+
         }
         else if ( "ear".equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
         {
             writer.startElement( ELT_WB_RESOURCE );
-            writer.addAttribute( ATTR_DEPLOY_PATH, "/ejbmodule" ); //$NON-NLS-1$
+            writer.addAttribute( ATTR_DEPLOY_PATH, "/" ); //$NON-NLS-1$ 
+            writer.addAttribute( ATTR_SOURCE_PATH, "/" ); //$NON-NLS-1$ 
             writer.endElement();
         }
-        // write out the dependencies.
-        writeWarOrEarResources( writer, getProject(), referencedReactorArtifacts, localRepository );
 
-        // fix for WTP 1.0
-        copyExternalDependencies( writer, getProject(), referencedReactorArtifacts, localRepository );
+        if ( "war".equalsIgnoreCase( packaging ) || "ear".equalsIgnoreCase( packaging ) ) //$NON-NLS-1$ //$NON-NLS-2$
+        {
+            // write out the dependencies.
+            writeWarOrEarResources( writer, getProject(), referencedReactorArtifacts, localRepository );
 
-        // write out properties.
-        writer.startElement( ELT_PROPERTY );
-        writer.addAttribute( ATTR_NAME, "java-output-path" ); //$NON-NLS-1$
-        writer.addAttribute( ATTR_VALUE, "/" //$NON-NLS-1$
-            + EclipseUtils.toRelativeAndFixSeparator( getProject().getBasedir(), buildOutputDirectory, false ) );
+            // fix for WTP 1.0
+            copyExternalDependencies( writer, getProject(), referencedReactorArtifacts, localRepository );
+        }
 
-        // close elements
-        writer.endElement(); // property
-        writer.startElement( ELT_PROPERTY );
-        writer.addAttribute( ATTR_CONTEXT_ROOT, getProject().getArtifactId() );
-        writer.endElement(); // property
+        for ( int j = 0; j < sourceDirs.length; j++ )
+        {
+            EclipseSourceDir dir = sourceDirs[j];
+            // test src/resources are not added to wtpmodules
+            if ( !dir.isTest() )
+            {
+                // <wb-resource deploy-path="/" source-path="/src/java" />
+                writer.startElement( ELT_WB_RESOURCE );
+                writer.addAttribute( ATTR_DEPLOY_PATH, target );
+                writer.addAttribute( ATTR_SOURCE_PATH, dir.getPath() );
+                writer.endElement();
+            }
+        }
+
         writer.endElement(); // wb-module
         writer.endElement(); // project-modules
-    }
-
-    /**
-     * Writes out the facet info for a faceted-project based on the packaging.
-     * 
-     * @param writer
-     * @param packaging
-     */
-    private void writeModuleTypeFacetCore( XMLWriter writer, String packaging )
-    {
-        writer.startElement( ELT_FACETED_PROJECT );
-        // common facet
-        writer.startElement( ELT_FIXED );
-        writer.addAttribute( ATTR_FACET, FACET_JST_JAVA );
-        writer.endElement(); // element fixed
-        if ( "war".equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
-        {
-            writer.startElement( ELT_FIXED );
-            writer.addAttribute( ATTR_FACET, FACET_JST_WEB );
-            writer.endElement(); // fixed
-            writer.startElement( ELT_INSTALLED );
-            writer.addAttribute( ATTR_FACET, FACET_JST_WEB );
-            writer.addAttribute( ATTR_VERSION, resolveServletVersion() );
-            writer.endElement(); // installed
-        }
-        else if ( "ejb".equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
-        {
-            writer.startElement( ELT_FIXED );
-            writer.addAttribute( ATTR_FACET, FACET_JST_EJB );
-            writer.endElement(); // fixed
-            writer.startElement( ELT_INSTALLED );
-            writer.addAttribute( ATTR_FACET, FACET_JST_EJB );
-            writer.addAttribute( ATTR_VERSION, resolveEjbVersion() );
-            writer.endElement(); // installed
-        }
-        else if ( "ear".equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
-        {
-            writer.startElement( ELT_FIXED );
-            writer.addAttribute( ATTR_FACET, FACET_JST_EAR );
-            writer.endElement(); // fixed
-            writer.startElement( ELT_INSTALLED );
-            writer.addAttribute( ATTR_FACET, FACET_JST_EAR );
-            writer.addAttribute( ATTR_VERSION, resolveJ2eeVersion() );
-            writer.endElement(); // installed
-        }
-
-        // common installed element
-        writer.startElement( ELT_INSTALLED );
-        writer.addAttribute( ATTR_FACET, FACET_JST_JAVA );
-        writer.addAttribute( ATTR_VERSION, resolveJavaVersion() );
-        writer.endElement(); // installed
-        writer.endElement(); // faceted-project
     }
 
     /**
