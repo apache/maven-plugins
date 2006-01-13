@@ -235,7 +235,7 @@ public abstract class AbstractAssemblyMojo
             }
             else
             {
-                getLog().info( "No artifact attached as no classifier was given." );
+            	projectHelper.attachArtifact( project, format, null, destFile );
             }
         }
     }
