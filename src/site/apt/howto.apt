@@ -8,7 +8,7 @@
 
 How to Use
 
-  These is a brief example on how to use the assembly:assembly goal and assembly:unpack goal.
+  These are brief examples of how to use the assembly:assembly and assembly:unpack goals.
 
   To use the assembly:assembly goal, you must define the descriptor file that you are going to use or
   define the descriptorId from the predefined {{{descriptor.html}descriptor ids}}.
@@ -17,7 +17,7 @@ How to Use
 * How To use assembly:assembly using a customized descriptor file.
 
 -----
-  m2 assembly:assembly -Ddescriptor=path/to/descriptor.xml
+  mvn assembly:assembly -Ddescriptor=path/to/descriptor.xml
 -----
 
 
@@ -25,17 +25,17 @@ How to Use
 
 ----
 
-  m2 assembly:assembly -DdescriptorId=bin
+  mvn assembly:assembly -DdescriptorId=bin
 
-  or  m2 assembly:assembly -DdescriptorId=jar-with-dependencies
+  or  mvn assembly:assembly -DdescriptorId=jar-with-dependencies
 
-  or  m2 assembly:assembly -DdescriptorId=src
+  or  mvn assembly:assembly -DdescriptorId=src
 
 -----
 
-* How to configure assembly:assembly plugin in pom.xml
+* How to configure the assembly:assembly plugin in your POM
 
- You can also configure this plugin inside your pom.xml.  To run use "m2 assembly:assembly".
+ You can also configure this plugin inside your pom.xml.  To run use "mvn assembly:assembly".
 
 -------------------
 <project>
@@ -62,10 +62,11 @@ How to Use
 
 * How to use assembly:unpack
 
-  After running this goal, all dependencies will be extracted at the specified "\<workDirectory\>".
+  After running this goal, all dependencies will be extracted into the location specified in the
+  \<workDirectory\> element.
 
 -----
- m2 assembly:unpack
+ mvn assembly:unpack
 -----
 
   For full documentation of plugin's goals and parameters, click {{{index.html}here}}.
