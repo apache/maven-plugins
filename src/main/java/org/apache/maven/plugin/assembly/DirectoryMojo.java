@@ -23,6 +23,7 @@ import org.apache.maven.plugins.assembly.model.Assembly;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.IOException;
@@ -78,9 +79,14 @@ public class DirectoryMojo
 
         try
         {
-            Archiver archiver = new DirectoryArchiver();
+            Archiver archiver = this.archiverManager.getArchiver( "dir" );
 
             createArchive( archiver, assembly, fullName );
+        }
+        
+        catch ( NoSuchArchiverException e )
+        {
+            throw new MojoExecutionException( "Error creating assembly", e );
         }
         catch ( ArchiverException e )
         {
