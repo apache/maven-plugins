@@ -18,7 +18,6 @@ package org.apache.maven.plugin.assembly;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.assembly.archiver.DirectoryArchiver;
 import org.apache.maven.plugins.assembly.model.Assembly;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.Archiver;
