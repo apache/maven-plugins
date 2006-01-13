@@ -4,7 +4,7 @@
  Vincent Massol
  <vmassol@apache.org>
  ------
- December 20th, 2005
+ January 13th, 2006
 
 Architecture
 
@@ -15,4 +15,8 @@ Architecture
   {{{clover-check.html}Clover check goal architecture}}:
 
 [../images/clover-check-achitecture-small.jpg] Clover check goal architecture
+
+  {{{clover-report.html}Clover report goal architecture}}:
+
+[../images/clover-report-achitecture-small.jpg] Clover report goal architecture
   
