@@ -1,0 +1,15 @@
+ ------
+ Maven 2 Clover Plugin
+ ------
+ Vincent Massol
+ <vmassol@apache.org>
+ ------
+ January 13th, 2006
+
+Architecture of the clover:clover goal
+
+  The <<<clover:clover>>> goal performs source code instrumentation and generates a Clover report.
+  Here's how it works:
+
+[../images/clover-report-achitecture.jpg] Clover report goal architecture
+  
