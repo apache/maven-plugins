@@ -54,6 +54,14 @@ public class EclipseCleanMojo
     private static final String DIR_DOT_SETTINGS = ".settings"; //$NON-NLS-1$
 
     /**
+     * Packaging for the current project.
+     * @parameter expression="${project.packaging}"
+     * @required
+     * @readonly
+     */
+    private String packaging;
+
+    /**
      * @parameter expression="${basedir}"
      */
     private File basedir;
@@ -61,6 +69,14 @@ public class EclipseCleanMojo
     public void execute()
         throws MojoExecutionException
     {
+
+        // since the eclipse plugin doesn't generate configuration for POM projects, it should neither delete it
+        if ( "pom".equals( packaging ) ) //$NON-NLS-1$
+        {
+            getLog().info( Messages.getString( "EclipsePlugin.pompackaging" ) ); //$NON-NLS-1$
+            return;
+        }
+
         delete( new File( basedir, FILE_DOT_PROJECT ) );
         delete( new File( basedir, FILE_DOT_CLASSPATH ) );
         delete( new File( basedir, FILE_DOT_WTPMODULES ) );
