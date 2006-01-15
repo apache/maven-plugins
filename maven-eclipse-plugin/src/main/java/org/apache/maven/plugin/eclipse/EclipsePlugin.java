@@ -90,6 +90,7 @@ public class EclipsePlugin
      * 
      * @parameter expression="${project}"
      * @required
+     * @readonly
      */
     private MavenProject project;
 
@@ -97,6 +98,7 @@ public class EclipsePlugin
      * The currently executed project (can be a reactor project).
      * 
      * @parameter expression="${executedProject}"
+     * @readonly
      */
     private MavenProject executedProject;
 
@@ -215,8 +217,7 @@ public class EclipsePlugin
      * reference those sub-projects using the installed package in the local
      * repository
      * 
-     * @parameter expression="${eclipse.useProjectReferences}"
-     *            default-value="true"
+     * @parameter expression="${eclipse.useProjectReferences}" default-value="true"
      * @required
      */
     private boolean useProjectReferences;
@@ -224,8 +225,7 @@ public class EclipsePlugin
     /**
      * The default output directory
      * 
-     * @parameter expression="${project.build.outputDirectory}"
-     *            alias="outputDirectory"
+     * @parameter expression="${project.build.outputDirectory}" alias="outputDirectory"
      */
     private File buildOutputDirectory;
 
@@ -238,8 +238,7 @@ public class EclipsePlugin
     private String wtpversion;
 
     /**
-     * Not a plugin parameter. Collect missing source artifact for the final
-     * report.
+     * Not a plugin parameter. Collect missing source artifact for the final report.
      */
     private List missingSourceArtifacts = new ArrayList();
 
