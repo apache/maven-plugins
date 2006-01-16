@@ -250,7 +250,12 @@ public class PmdReportListener
     {
         sink.section1_();
 
-        processMetrics();
+        // The Metrics report useless with the current PMD metrics impl.
+        // For instance, run the coupling ruleset and you will get a boatload
+        // of excessive imports metrics, none of which is really any use.
+        // TODO Determine if we are going to just ignore metrics.
+        
+        // processMetrics();
 
         sink.body_();
 
