@@ -10,6 +10,7 @@ Introduction
   on your project's source code and generate a site report with its results.
 
    * pmd:pmd - run PMD and generate the report
+
    * pmd:cpd - run PMD's Copy/Paste Detector tool and generate a report
 
 Configuration
@@ -37,10 +38,10 @@ Configuration
                 <artifactId>maven-pmd-plugin</artifactId>
                 <configuration>
                     <rulesets>
-						<ruleset>/rulesets/basic.xml</ruleset>
-						<ruleset>/rulesets/controversial.xml</ruleset>
-						<ruleset>d:\rulesets\strings.xml</ruleset>
-						<ruleset>http://localhost/design.xml</ruleset>
+                        <ruleset>/rulesets/basic.xml</ruleset>
+                        <ruleset>/rulesets/controversial.xml</ruleset>
+                        <ruleset>d:\rulesets\strings.xml</ruleset>
+                        <ruleset>http://localhost/design.xml</ruleset>
                     </rulesets>
                     <format>xml</format>
                     <linkXref>true</linkXref>
