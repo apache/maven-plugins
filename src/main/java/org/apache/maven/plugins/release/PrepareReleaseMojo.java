@@ -209,6 +209,22 @@ public class PrepareReleaseMojo
         }
     }
 
+    private Set createReactorProjectSet( List reactorProjects )
+    {
+        Set reactorProjectSet = new HashSet();
+
+        for ( Iterator it = reactorProjects.iterator(); it.hasNext(); )
+        {
+            MavenProject project = (MavenProject) it.next();
+
+            String versionlessArtifactKey = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
+
+            reactorProjectSet.add( versionlessArtifactKey );
+        }
+
+        return reactorProjectSet;
+    }
+
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -220,6 +236,21 @@ public class PrepareReleaseMojo
         {
             checkForLocalModifications();
 
+            // ----------------------------------------------------------------------
+            // Walk through all the projects in the reactor so that we can check
+            // up-front that we don't have any snapshot dependencies hiding in one
+            // of the POMs.
+            // ----------------------------------------------------------------------
+
+            getLog().info( "Checking dependencies and plugins for snapshots ..." );
+
+            for ( Iterator it = reactorProjects.iterator(); it.hasNext(); )
+            {
+                MavenProject project = (MavenProject) it.next();
+
+                checkDependenciesForSnapshots( project, createReactorProjectSet( reactorProjects ) );
+            }
+
             if ( !getReleaseProgress().verifyCheckpoint( ReleaseProgressTracker.CP_POM_TRANSFORMED_FOR_RELEASE ) )
             {
                 Map releasedProjects = new HashMap();
@@ -227,8 +258,6 @@ public class PrepareReleaseMojo
                 for ( Iterator it = reactorProjects.iterator(); it.hasNext(); )
                 {
                     MavenProject project = (MavenProject) it.next();
-
-                    checkForPresenceOfSnapshots( project );
 
                     String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
 
@@ -611,30 +640,31 @@ public class PrepareReleaseMojo
 
             currentProject = parentProject;
         }
+    }
 
-        getLog().info( "Checking dependencies for snapshots ..." );
-
+    private void checkDependenciesForSnapshots( MavenProject project, Set reactorProjectSet )
+        throws MojoExecutionException
+    {
         Set snapshotDependencies = new HashSet();
 
         for ( Iterator i = project.getArtifacts().iterator(); i.hasNext(); )
         {
             Artifact artifact = (Artifact) i.next();
 
-            String artifactVersion = getVersionResolver().getResolvedVersion( artifact.getGroupId(),
-                                                                              artifact.getArtifactId() );
+            String versionlessArtifactKey = ArtifactUtils.versionlessKey( artifact.getGroupId(), artifact.getArtifactId() );
 
-            if ( artifactVersion == null )
-            {
-                artifactVersion = artifact.getVersion();
-            }
+            // ----------------------------------------------------------------------
+            // We only care about dependencies that we are not processing as part
+            // of the release. Projects in the reactor will be dealt with so we
+            // don't need to worry about them here. We are strictly looking at
+            // dependencies that are external to this project.
+            // ----------------------------------------------------------------------
 
-            if ( ArtifactUtils.isSnapshot( artifactVersion ) )
+            if ( !reactorProjectSet.contains( versionlessArtifactKey ) && ArtifactUtils.isSnapshot( artifact.getVersion() ) )
             {
                 snapshotDependencies.add( artifact );
             }
         }
-
-        getLog().info( "Checking plugins for snapshots ..." );
 
         for ( Iterator i = project.getPluginArtifacts().iterator(); i.hasNext(); )
         {
