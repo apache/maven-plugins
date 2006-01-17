@@ -149,6 +149,11 @@ public class CpdReport
 
         CPD cpd = new CPD( minimumTokens, new JavaLanguage() );
         String src = getProject().getBuild().getSourceDirectory();
+        if ( !new File( src ).exists() ) 
+        {
+            return;
+        }
+        
         try
         {
             // TODO: use source roots instead
