@@ -498,10 +498,14 @@ public class SiteMojo
 
         DecorationModel decorationModel = getDecorationModel( project, locale, props );
 
-        if ( project.getUrl() == null )
-                throw new MojoExecutionException( "Project " + project.getId() + " has no Url defined" );
-
-        assembler.resolvePaths( decorationModel, project.getUrl() );
+        if ( project.getUrl() != null )
+        {
+            assembler.resolvePaths( decorationModel, project.getUrl() );
+        }
+        else
+        {
+            getLog().warn( "No URL defined for the project - decoration links will not be resolved" );
+        }
 
         return decorationModel;
     }
