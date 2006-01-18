@@ -204,7 +204,9 @@ public class PmdReport
         List files;
         try
         {
-            files = getFilesToProcess( "**/*.java", null );
+            // MPMD-2  pmd has problems with package-info.java
+            String excludes = "**/package-info.java";
+            files = getFilesToProcess( "**/*.java", excludes );
         }
         catch ( IOException e )
         {
