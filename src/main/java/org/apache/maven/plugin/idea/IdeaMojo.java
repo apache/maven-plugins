@@ -70,7 +70,7 @@ public class IdeaMojo
      * Specify the name of the registered IDEA JDK to use
      * for the project.
      *
-     * @parameter
+     * @parameter expression="${jdkName}"
      */
     private String jdkName;
 
