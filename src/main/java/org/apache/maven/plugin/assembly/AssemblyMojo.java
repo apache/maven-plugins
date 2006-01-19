@@ -16,7 +16,25 @@ package org.apache.maven.plugin.assembly;
  * limitations under the License.
  */
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.Iterator;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.maven.archiver.MavenArchiveConfiguration;
+import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ExcludesArtifactFilter;
@@ -32,6 +50,9 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.jar.JarArchiver;
+import org.codehaus.plexus.archiver.jar.Manifest;
+import org.codehaus.plexus.archiver.jar.ManifestException;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.archiver.tar.TarArchiver;
 import org.codehaus.plexus.util.DirectoryScanner;
@@ -39,21 +60,6 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.introspection.ReflectionValueExtractor;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.Iterator;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Assemble an application bundle or distribution from an assembly descriptor.
@@ -134,6 +140,11 @@ public class AssemblyMojo
     private boolean includeSite;
 
     /**
+     * @parameter
+     */
+    private MavenArchiveConfiguration archive;
+
+    /**
      * Create the binary distribution.
      *
      * @throws MojoExecutionException
@@ -187,6 +198,34 @@ public class AssemblyMojo
         processFileSets( archiver, assembly.getFileSets(), assembly.isIncludeBaseDirectory() );
 
         destFile = new File( outputDirectory, filename );
+
+        if ( archiver instanceof JarArchiver )
+        {
+            // TODO: I'd really prefer to rewrite MavenArchiver as either a separate manifest creation utility (and to
+            // create an include pom.properties etc into another archiver), or an implementation of an archiver
+            // (the first is preferable).
+            MavenArchiver mavenArchiver = new MavenArchiver();
+
+            if ( archive != null && archive.getManifest() != null )
+            {
+                try
+                {
+                    Manifest manifest = mavenArchiver.getManifest( project, archive.getManifest() );
+
+                    JarArchiver jarArchiver = (JarArchiver) archiver;
+                    jarArchiver.addConfiguredManifest( manifest );
+                }
+                catch ( ManifestException e )
+                {
+                    throw new MojoExecutionException( "Error creating manifest: " + e.getMessage(), e );
+                }
+                catch ( DependencyResolutionRequiredException e )
+                {
+                    throw new MojoExecutionException( "Dependencies were not resolved: " + e.getMessage(), e );
+                }
+            }
+        }
+
         archiver.setDestFile( destFile );
         archiver.createArchive();
 
