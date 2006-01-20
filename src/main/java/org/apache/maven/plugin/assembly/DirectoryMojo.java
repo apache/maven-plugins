@@ -16,14 +16,16 @@ package org.apache.maven.plugin.assembly;
  * limitations under the License.
  */
 
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.assembly.archiver.DirectoryArchiver;
 import org.apache.maven.plugins.assembly.model.Assembly;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
-
-import java.io.IOException;
 
 /**
  * Assemble an application bundle or distribution.
@@ -39,7 +41,17 @@ public class DirectoryMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        Assembly assembly = readAssembly();
+        List assemblies = readAssemblies();
+        for ( Iterator i = assemblies.iterator(); i.hasNext(); )
+        {
+            Assembly assembly = (Assembly) i.next();
+            createDirectory( assembly );
+        }
+    }
+
+    private void createDirectory( Assembly assembly )
+        throws MojoExecutionException, MojoFailureException
+    {
 
         String fullName = finalName + "-" + assembly.getId();
 

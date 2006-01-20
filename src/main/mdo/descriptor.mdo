@@ -37,6 +37,11 @@
           <defaultValue>true</defaultValue>
         </field>
         <field>
+          <name>includeSiteDirectory</name>
+          <type>boolean</type>
+          <defaultValue>false</defaultValue>
+        </field>
+        <field>
           <name>fileSets</name>
           <version>1.0.0</version>
           <association>
