@@ -20,6 +20,8 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
@@ -73,7 +75,6 @@ public class JarSignMojo
      * Path of the jar to sign. When specified, the finalName is ignored.
      *
      * @parameter alias="jarpath"
-     * @required
      */
     private File jarPath;
 
@@ -111,9 +112,8 @@ public class JarSignMojo
      *
      * @parameter expression="${signedjar}" default-value="${project.build.directory}/signed/${project.build.finalName}.jar"
      * @required
-     * @todo make a File?
      */
-    private String signedjar;
+    private File signedjar;
 
     /**
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
@@ -132,7 +132,7 @@ public class JarSignMojo
 
     /**
      * Automatically verify a jar after signing it.
-     *
+     * <p/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
      *
      * @parameter expression="${verify}" default-value="false"
@@ -147,31 +147,59 @@ public class JarSignMojo
      */
     private boolean verbose;
 
+    /**
+     * @component
+     */
+    private MavenProjectHelper projectHelper;
+
+    /**
+     * The maven project.
+     *
+     * @parameter expression="${project}"
+     * @required
+     * @readonly
+     */
+    private MavenProject project;
+
+    /**
+     * Classifier to use for the generated artifact. If not specified, the generated artifact becomes the primary artifact.
+     *
+     * @parameter expression="${classifier}"
+     */
+    private String classifier;
+
     public void execute()
         throws MojoExecutionException
     {
 
         signJar();
 
-        if ( verify ) {
-             JarSignVerifyMojo verify = new JarSignVerifyMojo();
-             verify.setWorkingDir( workingDirectory );
-             verify.setBasedir( basedir );
-             verify.setJarPath( getJarFile() );
-             verify.setVerbose( verbose );
-             verify.execute();
+        if ( verify )
+        {
+            JarSignVerifyMojo verify = new JarSignVerifyMojo();
+            verify.setWorkingDir( workingDirectory );
+            verify.setBasedir( basedir );
+            verify.setJarPath( getJarFile() );
+            verify.setVerbose( verbose );
+            verify.execute();
         }
     }
 
-    File getJarFile() {
-        if ( jarPath != null ) {
+    File getJarFile()
+    {
+        if ( jarPath != null )
+        {
             return jarPath;
-        } else {
-            return AbstractJarMojo.getJarFile( basedir, finalName, null);
+        }
+        else
+        {
+            return AbstractJarMojo.getJarFile( basedir, finalName, null );
         }
     }
 
-    void signJar() throws MojoExecutionException {
+    void signJar()
+        throws MojoExecutionException
+    {
         List arguments = new ArrayList();
 
         Commandline commandLine = new Commandline();
@@ -186,7 +214,7 @@ public class JarSignMojo
         addArgIfNotEmpty( arguments, "-keystore", this.keystore );
         addArgIfNotEmpty( arguments, "-storepass", this.storepass );
         addArgIfNotEmpty( arguments, "-keypass", this.keypass );
-        addArgIfNotEmpty( arguments, "-signedjar", this.signedjar );
+        addArgIfNotEmpty( arguments, "-signedjar", this.signedjar.getPath() );
         addArgIfNotEmpty( arguments, "-storetype", this.type );
         addArgIfNotEmpty( arguments, "-sigfile", this.sigfile );
 
@@ -244,13 +272,22 @@ public class JarSignMojo
         {
             throw new MojoExecutionException( "command execution failed", e );
         }
+
+        if ( classifier != null )
+        {
+            projectHelper.attachArtifact( project, "jar", classifier, signedjar );
+        }
+        else
+        {
+            project.getArtifact().setFile( signedjar );
+        }
     }
 
-    private void createParentDirIfNecessary( final String file )
+    private void createParentDirIfNecessary( File file )
     {
         if ( file != null )
         {
-            final File fileDir = new File( file ).getParentFile();
+            File fileDir = file.getParentFile();
 
             if ( fileDir != null )
             { // not a relative path
@@ -310,8 +347,8 @@ public class JarSignMojo
      * conditionally based on the given flag.
      *
      * @param arguments
-     * @param b the flag which controls if the argument is added or not.
-     * @param value the argument value to be added.
+     * @param b         the flag which controls if the argument is added or not.
+     * @param value     the argument value to be added.
      */
     private void addArgIf( List arguments, boolean b, String value )
     {
@@ -324,12 +361,12 @@ public class JarSignMojo
     /**
      * Convenience method to add an argument to the <code>command line</code>
      * if the the value is not null or empty.
-     * <p>
+     * <p/>
      * Moreover, the value could be comma separated.
      *
      * @param arguments
-     * @param key the argument name.
-     * @param value the argument value to be added.
+     * @param key       the argument name.
+     * @param value     the argument value to be added.
      * @see #addArgIfNotEmpty(java.util.List,String,String,boolean)
      */
     private void addArgIfNotEmpty( List arguments, String key, String value )
@@ -340,12 +377,12 @@ public class JarSignMojo
     /**
      * Convenience method to add an argument to the <code>command line</code>
      * if the the value is not null or empty.
-     * <p>
+     * <p/>
      * Moreover, the value could be comma separated.
      *
      * @param arguments
-     * @param key the argument name.
-     * @param value the argument value to be added.
+     * @param key       the argument name.
+     * @param value     the argument value to be added.
      * @param repeatKey repeat or not the key in the command line
      */
     private void addArgIfNotEmpty( List arguments, String key, String value, boolean repeatKey )
@@ -377,7 +414,7 @@ public class JarSignMojo
     //
 
     protected int executeCommandLine( Commandline commandLine, InputStream inputStream, StreamConsumer stream1,
-                                     StreamConsumer stream2 )
+                                      StreamConsumer stream2 )
         throws CommandLineException
     {
         return CommandLineUtils.executeCommandLine( commandLine, inputStream, stream1, stream2 );
@@ -403,7 +440,7 @@ public class JarSignMojo
         this.keypass = keypass;
     }
 
-    public void setSignedJar( String signedjar )
+    public void setSignedJar( File signedjar )
     {
         this.signedjar = signedjar;
     }
@@ -445,7 +482,13 @@ public class JarSignMojo
         this.verbose = verbose;
     }
 
-    public void setVerify( boolean verify ) {
+    public void setProject( MavenProject project )
+    {
+        this.project = project;
+    }
+
+    public void setVerify( boolean verify )
+    {
         this.verify = verify;
     }
 }
