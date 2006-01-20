@@ -17,8 +17,9 @@ package org.apache.maven.plugin.jar;
  */
 
 import junit.framework.TestCase;
-
+import org.apache.maven.model.Model;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.StreamConsumer;
@@ -36,7 +37,7 @@ import java.util.Map;
  * Really running the command would mean checking the results, which is too painful and not really a unit test.
  * It would probably require to 'jarsigner -verify' the resulting signed jar and I believe it would make the code
  * too complex with very few benefits.
- * 
+ *
  * @author Jerome Lacoste <jerome@coffeebreaks.org>
  * @version $Id$
  */
@@ -57,7 +58,7 @@ public class JarSignMojoTest
         public Map systemProperties = new HashMap();
 
         protected int executeCommandLine( Commandline commandLine, InputStream inputStream, StreamConsumer stream1,
-                                         StreamConsumer stream2 )
+                                          StreamConsumer stream2 )
             throws CommandLineException
         {
             commandLines.add( commandLine );
@@ -83,20 +84,23 @@ public class JarSignMojoTest
         File basedir = new File( System.getProperty( "java.io.tmpdir" ) );
         mojo.setBasedir( basedir );
         mojo.setWorkingDir( basedir );
-        mojo.setSignedJar( "/tmp/signed/file-version.jar" );
+        mojo.setSignedJar( new File( "/tmp/signed/file-version.jar" ) );
         mojo.setAlias( "alias" );
         mojo.setKeystore( "/tmp/keystore" );
         mojo.setKeypass( "secretpassword" );
+        MavenProject project = new MavenProject( new Model() );
+        MockArtifact mockArtifact = new MockArtifact();
+        mockArtifact.setGroupId( "test" );
+        mockArtifact.setArtifactId( "test" );
+        mockArtifact.setVersion( "1.0" );
+        mockArtifact.setType( "jar" );
+        project.setArtifact( mockArtifact );
+        mojo.setProject( project );
     }
 
     public void tearDown()
     {
         mojo = null;
-    }
-
-    public void testPleaseMaven()
-    {
-        assertTrue( true );
     }
 
     /**
@@ -106,15 +110,8 @@ public class JarSignMojoTest
     {
         mojo.execute();
 
-        String[] expectedArguments = {
-            "-keystore",
-            "/tmp/keystore",
-            "-keypass",
-            "secretpassword",
-            "-signedjar",
-            "/tmp/signed/file-version.jar",
-            getNullJar(),
-            "alias" };
+        String[] expectedArguments = {"-keystore", "/tmp/keystore", "-keypass", "secretpassword", "-signedjar",
+            "/tmp/signed/file-version.jar", getNullJar(), "alias"};
 
         checkMojo( expectedArguments );
     }
@@ -138,14 +135,8 @@ public class JarSignMojoTest
             assertTrue( e.getMessage().startsWith( "Result of " ) );
         }
 
-        String[] expectedArguments = {
-            "-keystore",
-            "/tmp/keystore",
-            "-keypass",
-            "secretpassword",
-            "-signedjar",
-            "/tmp/signed/file-version.jar",
-            getNullJar() };
+        String[] expectedArguments = {"-keystore", "/tmp/keystore", "-keypass", "secretpassword", "-signedjar",
+            "/tmp/signed/file-version.jar", getNullJar()};
 
         checkMojo( expectedArguments );
     }
@@ -177,15 +168,8 @@ public class JarSignMojoTest
             assertEquals( "command execution failed", e.getMessage() );
         }
 
-        String[] expectedArguments = {
-            "-keystore",
-            "/tmp/keystore",
-            "-keypass",
-            "secretpassword",
-            "-signedjar",
-            "/tmp/signed/file-version.jar",
-            getNullJar(),
-            "alias" };
+        String[] expectedArguments = {"-keystore", "/tmp/keystore", "-keypass", "secretpassword", "-signedjar",
+            "/tmp/signed/file-version.jar", getNullJar(), "alias"};
 
         checkMojo( expectedArguments );
     }
@@ -204,7 +188,7 @@ public class JarSignMojoTest
         assertEquals( "Differing number of arguments", expectedCommandLineArguments.length, arguments.length );
         for ( int i = 0; i < arguments.length; i++ )
         {
-            assertEquals( expectedCommandLineArguments[i], arguments[i] );
+            assertEquals( expectedCommandLineArguments[i].replace( '\\', '/' ), arguments[i].replace( '\\', '/' ) );
         }
     }
 }
