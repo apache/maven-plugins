@@ -325,24 +325,24 @@ public class AssemblyMojo
     }
 
     private Assembly getAssembly( File file )
-    throws MojoFailureException, MojoExecutionException
-{
-    Reader r;
-    try
+        throws MojoFailureException, MojoExecutionException
     {
-        r = new FileReader( file );
-    }
-    catch ( FileNotFoundException e )
-    {
-        throw new MojoFailureException( "Unable to find descriptor: " + e.getMessage() );
+        Reader r;
+        try
+        {
+            r = new FileReader( file );
+        }
+        catch ( FileNotFoundException e )
+        {
+            throw new MojoFailureException( "Unable to find descriptor: " + e.getMessage() );
+        }
+
+        return getAssembly( r );
     }
 
-    return getAssembly( r );
-}
-
-private Assembly getAssembly( Reader reader )
-    throws MojoExecutionException
-{
+    private Assembly getAssembly( Reader reader )
+        throws MojoExecutionException
+    {
         Assembly assembly;
         try
         {
