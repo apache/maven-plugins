@@ -1,23 +1,58 @@
  ------
  Maven 2 Assembly Plugin 
  ------
- Johnny R. Ruiz III
- <jruiz@exist.com>
+ Maven Development Team
+ <dev@maven.apache.org>
  ------
  September 20, 2005
 
 Introduction
 
- This plugin is the Maven2 version of Maven1's Distribution Plugin.  
- 
- This plugin provides the capability to create binary and source distributions.  
+ Want to create a binary distribution from a Maven project that includes supporting 
+ scripts, configuration files, and all runtime dependencies?  You need to use the assembly 
+ plugin to create a distribution for your project.
+
+ This plugin generates "assemblies". It is the equivalent of the 
+ Maven 1 distribution plug-in.  This plugin provides the capability to create binary 
+ and source distributions.  These distributions (assemblies) are defined using
+ an assembly descriptor.  You can {{{assembly.html}write your own description}} to create a custom assembly,
+ or you can reuse one of the {{{descriptor.html}three pre-defined assemblies}}.
+
  Currently it can create distribution formats such as: zip, tar.bz, tar.gz2, and jar.
- The goal to do this is "assembly:assembly".
 
- It also provides the capability to extract all project dependencies into a given working directory.  
- The goal to do this is "assembly:unpack".
-
- To learn how to use the plugin, click {{{howto.html}here}}.
-
+ To use the assembly plugin in Maven 2, you simply need to:
  
+   * configure the assembly in pom.xml, 
+ 
+   * write an assembly descriptor, and
+ 
+   * run "mvn assembly:assembly"  
+   
+ For a more detailed, step-by-step 
+ introduction to the assembly plugin, read this {{{howto.html}HOW-TO}}.
+ 
+ To write your own custom assembly, you will need to refer to the {{assembly.html}Assembly
+ Descriptor Format}} reference.
+ 
+What is an Assembly?
 
+ An "assembly" is a group of files, directories, and dependencies that is assembled into an 
+ archive format and distributed.  For example, assume that a Maven project defines a single 
+ JAR artifact that contains both a console application and a Swing application.  Such a 
+ project could define two "assemblies" that bundle the application with a different set of 
+ supporting scripts and dependency sets.  One assembly would be the assembly for the 
+ console application, and the other assembly could be a Swing application bundled 
+ with a slightly different set of dependencies.  
+ 
+ This assembly plugin provides a descriptor format which allows you to define an arbitrary
+ assembly of files and directories from a project.  For example, if your Maven 2 project contains
+ the directory "src/main/bin", you can instruct the assembly plugin to copy the contents of this 
+ directory to the "bin" directory of an assembly and to change the permissions of the files in
+ the "bin" directory to UNIX mode 755.  The parameters for configuring this behavior are supplied
+ to the assembly plugin by way of the {{{assembly.html}assembly descriptor}}.
+
+Goal Overview
+
+ An overview of the assembly plugin's goals can be found {{{index.html}here}}.
+ To create a binary distribution for a project, use the {{{index.html}"assembly:assembly"}} goal.  
+ To extract all project dependencies on certain working directory, use the {{{index.html}"assembly:unpack"}}.
