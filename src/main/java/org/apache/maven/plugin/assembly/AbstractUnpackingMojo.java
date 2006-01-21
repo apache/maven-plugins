@@ -89,6 +89,7 @@ public abstract class AbstractUnpackingMojo
 
     /**
      * @parameter expression="${classifier}"
+     * @deprecated Please use the Assembly's id for classifier instead
      */
     protected String classifier;
 
