@@ -26,8 +26,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
@@ -197,6 +199,20 @@ public class SurefirePlugin
     private String argLine;
 
     /**
+     * Additional environments to set on the command line.
+     *
+     * @parameter 
+     */
+    private Map environmentVariables = new HashMap();
+    
+    /**
+     * Command line working directory.
+     *
+     * @parameter 
+     */
+    private File workingDirectory;
+        
+    /**
      * Option to specify the jvm (or path to the java executable) to use with
      * the forking options. For the default we will assume that java is in the path.
      *
@@ -243,6 +259,10 @@ public class SurefirePlugin
             surefireBooter.setBasedir( basedir.getAbsolutePath() );
 
             surefireBooter.setArgLine( argLine );
+            
+            surefireBooter.setEnvironmentVariables( environmentVariables );
+            
+            surefireBooter.setWorkingDirectory( workingDirectory );
 
             surefireBooter.setChildDelegation( childDelegation );
 
