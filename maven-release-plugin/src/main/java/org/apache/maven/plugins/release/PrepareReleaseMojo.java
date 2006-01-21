@@ -343,13 +343,17 @@ public class PrepareReleaseMojo
             {
                 Dependency dep = (Dependency) i.next();
 
-                if ( dep.getVersion() != null )
+                // If our dependency specifies an explicit released version, do NOT update
+                // it to the latest released version.  If we depend on a SNAPSHOT that is
+                // being released, we update the version to reflect the newly released version.
+                // TODO Cleaner way to determine snapshot?
+                if ( dep.getVersion() != null && dep.getVersion().endsWith( "-SNAPSHOT" ) )
                 {
                     String version = versionResolver.getResolvedVersion( dep.getGroupId(), dep.getArtifactId() );
 
                     if ( version != null )
                     {
-                        getLog().info( "Updating DM " + dep.getArtifactId() + " to " + version );
+                        getLog().info( "Updating DepMgmt " + dep.getArtifactId() + " to " + version );
                         dep.setVersion( version );
                     }
                 }
