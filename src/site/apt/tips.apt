@@ -61,7 +61,7 @@ drwxr-xr-x+ 4      0 Nov  1 15:48 src/
   <packaging>pom</packaging>
   <name>WhizBang Parent</name>
 
-  <reporting>
+  <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -72,7 +72,7 @@ drwxr-xr-x+ 4      0 Nov  1 15:48 src/
         </configuration>
       </plugin>
     </plugins>
-  </reporting>
+  </build>
   <dependencies>
     <dependency>
       <groupId>com.example.whizbang</groupId>
@@ -94,7 +94,7 @@ drwxr-xr-x+ 4      0 Nov  1 15:48 src/
   Lastly, kick off a build of the site.
 
 -------------------
-[whizbang]$ mvn site
+[whizbang]$ mvn checkstyle:check
 -------------------
 
   Every sub project will use the same checkstyle setup and configuration.
