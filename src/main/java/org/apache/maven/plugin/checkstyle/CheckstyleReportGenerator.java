@@ -36,37 +36,39 @@ import com.puppycrawl.tools.checkstyle.api.SeverityLevel;
 public class CheckstyleReportGenerator
 {
     private Log log;
-    
+
     private ResourceBundle bundle;
-    
+
     private Sink sink;
-    
+
     private SeverityLevel severityLevel;
-    
+
     private Configuration checkstyleConfig;
-    
+
     private ModuleFactory checkstyleModuleFactory;
-    
+
     private boolean enableRulesSummary;
-    
+
     private boolean enableSeveritySummary;
-    
+
     private boolean enableFilesSummary;
-    
+
     private boolean enableRSS;
-    
+
+    private String xrefLocation;
+
     public CheckstyleReportGenerator( Sink sink, ResourceBundle bundle )
     {
         this.bundle = bundle;
-        
+
         this.sink = sink;
-        
+
         this.enableRulesSummary = true;
         this.enableSeveritySummary = true;
         this.enableFilesSummary = true;
         this.enableRSS = true;
     }
-    
+
     public Log getLog()
     {
         if ( this.log == null )
@@ -75,48 +77,51 @@ public class CheckstyleReportGenerator
         }
         return this.log;
     }
-    
+
     public void setLog( Log log )
     {
         this.log = log;
     }
-    
+
     private String getTitle()
     {
         String title;
-        
+
         if ( getSeverityLevel() == null )
             title = bundle.getString( "report.checkstyle.title" );
         else
             title = bundle.getString( "report.checkstyle.severity_title" ) + severityLevel.getName();
-                    
+
         return title;
     }
 
     public void generateReport( CheckstyleResults results )
     {
         doHeading();
-        
-        if ( getSeverityLevel() == null ) 
+
+        if ( getSeverityLevel() == null )
         {
-            if(enableSeveritySummary) {
+            if ( enableSeveritySummary )
+            {
                 doSeveritySummary( results );
             }
-            
-            if(enableRulesSummary) {
+
+            if ( enableRulesSummary )
+            {
                 doRulesSummary( results );
             }
-            
-            if(enableFilesSummary) {
+
+            if ( enableFilesSummary )
+            {
                 doFilesSummary( results );
             }
         }
-        
+
         doDetails( results );
         sink.body_();
         sink.flush();
     }
-    
+
     private void doHeading()
     {
         sink.head();
@@ -131,17 +136,17 @@ public class CheckstyleReportGenerator
         sink.sectionTitle1();
         sink.text( getTitle() );
         sink.sectionTitle1_();
-        
-        doxiaHack(); 
-        
+
+        doxiaHack();
+
         sink.paragraph();
         sink.text( bundle.getString( "report.checkstyle.checkstylelink" ) + " " );
         sink.link( "http://checkstyle.sourceforge.net/" );
         sink.text( "Checkstyle" );
         sink.link_();
         sink.text( "." );
-        
-        if(enableRSS)
+
+        if ( enableRSS )
         {
             sink.nonBreakingSpace();
             sink.link( "checkstyle.rss" );
@@ -153,11 +158,11 @@ public class CheckstyleReportGenerator
             sink.figure_();
             sink.link_();
         }
-        
+
         sink.paragraph_();
-        doxiaHack(); 
+        doxiaHack();
     }
-    
+
     private void iconSeverity( String level )
     {
         if ( SeverityLevel.INFO.getName().equalsIgnoreCase( level ) )
@@ -173,7 +178,7 @@ public class CheckstyleReportGenerator
             iconError();
         }
     }
-    
+
     private void iconInfo()
     {
         sink.figure();
@@ -202,21 +207,22 @@ public class CheckstyleReportGenerator
         sink.figureCaption_();
         sink.figureGraphics( "images/icon_error_sml.gif" );
         sink.figure_();
-    }    
-    
-    private String getConfigAttribute(Configuration config, String attname, String defvalue) {
+    }
+
+    private String getConfigAttribute( Configuration config, String attname, String defvalue )
+    {
         String ret = defvalue;
         try
         {
-            ret = config.getAttribute(attname);
+            ret = config.getAttribute( attname );
         }
         catch ( CheckstyleException e )
         {
-            ret = defvalue; 
-        } 
+            ret = defvalue;
+        }
         return ret;
     }
-    
+
     private void doRulesSummary( CheckstyleResults results )
     {
         if ( checkstyleConfig == null )
@@ -228,24 +234,24 @@ public class CheckstyleReportGenerator
         sink.sectionTitle1();
         sink.text( bundle.getString( "report.checkstyle.rules" ) );
         sink.sectionTitle1_();
-        doxiaHack(); 
-        
+        doxiaHack();
+
         sink.table();
-        
+
         sink.tableRow();
         sink.tableHeaderCell();
         sink.text( bundle.getString( "report.checkstyle.rules" ) );
         sink.tableHeaderCell_();
-        
+
         sink.tableHeaderCell();
         sink.text( "Violations" );
         sink.tableHeaderCell_();
-        
+
         sink.tableHeaderCell();
         sink.text( "Severity" );
         sink.tableHeaderCell_();
         sink.tableRow_();
-        
+
         // Top level should be the checker.
         if ( "checker".equalsIgnoreCase( checkstyleConfig.getName() ) )
         {
@@ -261,11 +267,11 @@ public class CheckstyleReportGenerator
         }
 
         sink.table_();
-        
+
         sink.section1_();
-        doxiaHack(); 
+        doxiaHack();
     }
-    
+
     private void doRuleChildren( Configuration configChildren[], CheckstyleResults results )
     {
         for ( int cci = 0; cci < configChildren.length; cci++ )
@@ -289,7 +295,7 @@ public class CheckstyleReportGenerator
         sink.tableRow();
         sink.tableCell();
         sink.text( ruleName );
-        
+
         List attribnames = new ArrayList( Arrays.asList( checkerConfig.getAttributeNames() ) );
         attribnames.remove( "severity" ); // special value (deserves unique column)
         if ( !attribnames.isEmpty() )
@@ -308,10 +314,10 @@ public class CheckstyleReportGenerator
                 // special case, Header.header and RegexpHeader.header
                 if ( "header".equals( name ) && ( "Header".equals( ruleName ) || "RegexpHeader".equals( ruleName ) ) )
                 {
-                    List lines = stringSplit(value, "\\n");
+                    List lines = stringSplit( value, "\\n" );
                     int linenum = 1;
                     Iterator itl = lines.iterator();
-                    while(itl.hasNext())
+                    while ( itl.hasNext() )
                     {
                         String line = (String) itl.next();
                         sink.lineBreak();
@@ -320,11 +326,13 @@ public class CheckstyleReportGenerator
                         sink.rawText( "</span>" );
                         sink.nonBreakingSpace();
                         sink.monospaced();
-                        sink.text(line);
+                        sink.text( line );
                         sink.monospaced_();
                         linenum++;
                     }
-                } else {
+                }
+                else
+                {
                     sink.text( ": " );
                     sink.monospaced();
                     sink.text( "\"" );
@@ -333,29 +341,29 @@ public class CheckstyleReportGenerator
                     sink.monospaced_();
                 }
                 sink.listItem_();
-                doxiaHack(); 
+                doxiaHack();
             }
             sink.list_();
         }
-        
+
         sink.tableCell_();
-        
+
         sink.tableCell();
         String fixedmessage = getConfigAttribute( checkerConfig, "message", null );
         sink.text( countRuleViolation( results.getFiles().values().iterator(), ruleName, fixedmessage ) );
         sink.tableCell_();
-        
+
         sink.tableCell();
         String configSeverity = getConfigAttribute( checkerConfig, "severity", "error" );
         iconSeverity( configSeverity );
         sink.nonBreakingSpace();
         sink.text( StringUtils.capitalise( configSeverity ) );
         sink.tableCell_();
-        
+
         sink.tableRow_();
-        doxiaHack(); 
+        doxiaHack();
     }
-    
+
     /**
      * Splits a string against a delim consisting of a string (not a single character).
      * 
@@ -385,22 +393,22 @@ public class CheckstyleReportGenerator
 
         return ret;
     }
-    
+
     private String countRuleViolation( Iterator files, String ruleName, String message )
     {
         long count = 0;
         String sourceName;
-        
+
         try
         {
-            sourceName = checkstyleModuleFactory.createModule(ruleName).getClass().getName();
+            sourceName = checkstyleModuleFactory.createModule( ruleName ).getClass().getName();
         }
         catch ( CheckstyleException e )
         {
-            getLog().error("Unable to obtain Source Name for Rule '" + ruleName + "'.", e);
+            getLog().error( "Unable to obtain Source Name for Rule '" + ruleName + "'.", e );
             return "(report failure)";
-        } 
-        
+        }
+
         while ( files.hasNext() )
         {
             List errors = (List) files.next();
@@ -427,45 +435,45 @@ public class CheckstyleReportGenerator
                 }
             }
         }
-        
+
         return String.valueOf( count );
-    }    
-    
+    }
+
     private void doSeveritySummary( CheckstyleResults results )
     {
         sink.section1();
         sink.sectionTitle1();
         sink.text( bundle.getString( "report.checkstyle.summary" ) );
         sink.sectionTitle1_();
-        
+
         doxiaHack();
-        
+
         sink.table();
-        
+
         sink.tableRow();
         sink.tableHeaderCell();
         sink.text( bundle.getString( "report.checkstyle.files" ) );
         sink.tableHeaderCell_();
-        
+
         sink.tableHeaderCell();
         sink.text( "Infos" );
         sink.nonBreakingSpace();
         iconInfo();
         sink.tableHeaderCell_();
-        
+
         sink.tableHeaderCell();
         sink.text( "Warnings" );
         sink.nonBreakingSpace();
         iconWarning();
         sink.tableHeaderCell_();
-        
+
         sink.tableHeaderCell();
         sink.text( "Errors" );
         sink.nonBreakingSpace();
         iconError();
         sink.tableHeaderCell_();
         sink.tableRow_();
-        
+
         sink.tableRow();
         sink.tableCell();
         sink.text( String.valueOf( results.getFileCount() ) );
@@ -482,20 +490,20 @@ public class CheckstyleReportGenerator
         sink.tableRow_();
 
         sink.table_();
-        
+
         sink.section1_();
-        doxiaHack(); 
+        doxiaHack();
     }
-    
+
     private void doFilesSummary( CheckstyleResults results )
     {
         sink.section1();
         sink.sectionTitle1();
         sink.text( bundle.getString( "report.checkstyle.files" ) );
         sink.sectionTitle1_();
-        
+
         sink.table();
-        
+
         sink.tableRow();
         sink.tableHeaderCell();
         sink.text( bundle.getString( "report.checkstyle.files" ) );
@@ -516,8 +524,8 @@ public class CheckstyleReportGenerator
         iconError();
         sink.tableHeaderCell_();
         sink.tableRow_();
-        
-        for( Iterator files = results.getFiles().keySet().iterator(); files.hasNext(); )
+
+        for ( Iterator files = results.getFiles().keySet().iterator(); files.hasNext(); )
         {
             String filename = (String) files.next();
             List violations = results.getFileViolations( filename );
@@ -526,35 +534,35 @@ public class CheckstyleReportGenerator
                 // skip files without violations
                 continue;
             }
-            
+
             sink.tableRow();
-            
+
             sink.tableCell();
             sink.link( "#" + filename.replace( '/', '.' ) );
             sink.text( filename );
             sink.link_();
             sink.tableCell_();
-            
+
             sink.tableCell();
             sink.text( String.valueOf( results.getSeverityCount( violations, SeverityLevel.INFO ) ) );
             sink.tableCell_();
-            
+
             sink.tableCell();
             sink.text( String.valueOf( results.getSeverityCount( violations, SeverityLevel.WARNING ) ) );
             sink.tableCell_();
-            
+
             sink.tableCell();
             sink.text( String.valueOf( results.getSeverityCount( violations, SeverityLevel.ERROR ) ) );
             sink.tableCell_();
-            
+
             sink.tableRow_();
-            doxiaHack(); 
+            doxiaHack();
         }
-        
+
         sink.table_();
         sink.section1_();
     }
-    
+
     private void doDetails( CheckstyleResults results )
     {
 
@@ -562,28 +570,28 @@ public class CheckstyleReportGenerator
         sink.sectionTitle1();
         sink.text( bundle.getString( "report.checkstyle.details" ) );
         sink.sectionTitle1_();
-        
+
         Iterator files = results.getFiles().keySet().iterator();
-        
+
         while ( files.hasNext() )
         {
             String file = (String) files.next();
             List violations = results.getFileViolations( file );
-            
+
             if ( violations.isEmpty() )
             {
                 // skip files without violations
                 continue;
             }
-            
-            doxiaHack(); 
+
+            doxiaHack();
             sink.section2();
             sink.sectionTitle2();
             sink.anchor( file.replace( '/', '.' ) );
             sink.anchor_();
             sink.text( file );
             sink.sectionTitle2_();
-            
+
             sink.table();
             sink.tableRow();
             sink.tableHeaderCell();
@@ -597,30 +605,31 @@ public class CheckstyleReportGenerator
             sink.tableHeaderCell_();
             sink.tableRow_();
 
-            doFileEvents( violations);
-            
+            doFileEvents( violations, file );
+
             sink.table_();
             sink.section2_();
         }
-        
+
         sink.section1_();
     }
-    
-    private void doFileEvents( List eventList )
+
+    private void doFileEvents( List eventList, String filename )
     {
         Iterator events = eventList.iterator();
         while ( events.hasNext() )
         {
             AuditEvent event = (AuditEvent) events.next();
             SeverityLevel level = event.getSeverityLevel();
-            
+
             if ( getSeverityLevel() != null )
-                if ( !getSeverityLevel().equals( level ) ) continue;
+                if ( !getSeverityLevel().equals( level ) )
+                    continue;
 
             sink.tableRow();
-            
+
             sink.tableCell();
-            
+
             if ( SeverityLevel.INFO.equals( level ) )
                 iconInfo();
             else if ( SeverityLevel.WARNING.equals( level ) )
@@ -629,26 +638,35 @@ public class CheckstyleReportGenerator
                 iconError();
 
             sink.tableCell_();
-            
+
             sink.tableCell();
             sink.text( event.getMessage() );
             sink.tableCell_();
-            
+
             sink.tableCell();
+            if ( getXrefLocation() != null )
+            {
+                sink
+                    .link( getXrefLocation() + "/" + filename.replaceAll( "\\.java$", ".html" ) + "#" + event.getLine() );
+            }
             sink.text( String.valueOf( event.getLine() ) );
+            if ( getXrefLocation() != null )
+            {
+                sink.link_();
+            }
             sink.tableCell_();
 
             sink.tableRow_();
-            doxiaHack(); 
+            doxiaHack();
         }
     }
-    
+
     public SeverityLevel getSeverityLevel()
     {
         return severityLevel;
     }
 
-    public void setSeverityLevel(SeverityLevel severityLevel)
+    public void setSeverityLevel( SeverityLevel severityLevel )
     {
         this.severityLevel = severityLevel;
     }
@@ -693,6 +711,16 @@ public class CheckstyleReportGenerator
         this.enableRSS = enableRSS;
     }
 
+    public String getXrefLocation()
+    {
+        return xrefLocation;
+    }
+
+    public void setXrefLocation( String xrefLocation )
+    {
+        this.xrefLocation = xrefLocation;
+    }
+
     public Configuration getCheckstyleConfig()
     {
         return checkstyleConfig;
@@ -712,7 +740,7 @@ public class CheckstyleReportGenerator
     {
         this.checkstyleModuleFactory = checkstyleModuleFactory;
     }
-    
+
     /**
      * This is here purely as a hack against the large lines the XhtmlSink
      * produces.
@@ -725,7 +753,7 @@ public class CheckstyleReportGenerator
      */
     private void doxiaHack()
     {
-        sink.rawText("\n");
+        sink.rawText( "\n" );
         sink.flush();
     }
 }
