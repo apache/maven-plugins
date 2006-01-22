@@ -1,0 +1,53 @@
+							 ------------------
+							    WTP support
+							 ------------------
+							 Fabrizio Giustina
+							 ------------------
+							     22-01-2006
+							 ------------------
+ 
+WTP support
+
+ The eclipse plugin supports creating configurations for eclipse WTP (Web Tools Project).
+ Projects with a WAR packaging are setup as WTP dynamic web projects and runtime dependencies are configured to be used
+ when running them using eclipse internal servers.
+
+
+* WTP versions
+ 
+ In order to create a configuration for WTP you <always> need to specify the version of WTP you are using.
+ 
+ The plugin actually supports WTP R7 and 1.0. Note that R7/1.0 configuration files are totally different, so be sure to
+ check the version you are using.
+
+ In order to generate WTP configuration files simply run:
+ 
++-----------------------------------------------------+
+mvn -Dwtpversion=R7 eclipse:eclipse
++-----------------------------------------------------+
+ 
+ Where wtpversion can be <<<R7>>>, <<<1.0>>> or <<<none>>> (default)
+ 
+ <Note that in the 2.0 version of the plugin the default was R7 and WTP configuration was always generated. Now that
+ different incompatible versions are out the default is to not to generate WTP configuration if the user doesn't specify
+ the desired version>
+ 
+ 
+ 
+* WTP 1.0 warning
+
+ Unfortunately WTP 1.0 has been shipped bug which prevents external dependencies from work.
+ 
+ <<This means that only project-dependencies (in a multi-module build) will work, but any other dependency in the POM
+ will be ignored when running the web application inside eclipse>>
+ 
+ Apart from this, WTP 1.0 also has a grave performance regression which makes internal server pretty unusable, so we suggest
+ to stay with R7 till WTP 1.0.1 will be out (the external dependency bug is scheduled for such release).
+ 
+ As a workaround, the current 2.1-SNAPSHOT plugin supports copying external dependencies to src/main/webapp/WEB-INF/lib while
+ creating WTP 1.0 configuration files, but this is not an optimal solution. You can grab it from svn if you really need
+ to work with WTP 1.0 and can't wait for WTP 1.0.1 to be released.
+ 
+ 
+ 
+ 
