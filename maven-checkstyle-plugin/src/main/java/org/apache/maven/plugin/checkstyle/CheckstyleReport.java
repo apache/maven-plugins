@@ -83,19 +83,19 @@ public class CheckstyleReport
      * @deprecated Remove with format parameter.
      */
     private static final Map FORMAT_TO_CONFIG_LOCATION;
-    
+
     static
     {
         Map fmt2Cfg = new HashMap();
-        
+
         fmt2Cfg.put( "sun", "config/sun_checks.xml" );
         fmt2Cfg.put( "turbine", "config/turbine_checks.xml" );
         fmt2Cfg.put( "avalon", "config/avalon_checks.xml" );
         fmt2Cfg.put( "maven", "config/maven_checks.xml" );
-        
+
         FORMAT_TO_CONFIG_LOCATION = Collections.unmodifiableMap( fmt2Cfg );
     }
-    
+
     /**
      * Specifies the directory where the report will be generated
      *
@@ -103,7 +103,7 @@ public class CheckstyleReport
      * @required
      */
     private File outputDirectory;
-    
+
     /**
      * Specifies if the Rules summary should be enabled or not.
      * 
@@ -119,7 +119,7 @@ public class CheckstyleReport
      *            default-value="true"
      */
     private boolean enableSeveritySummary;
-    
+
     /**
      * Specifies if the Files summary should be enabled or not.
      * 
@@ -127,7 +127,7 @@ public class CheckstyleReport
      *            default-value="true"
      */
     private boolean enableFilesSummary;
-    
+
     /**
      * Specifies if the Files summary should be enabled or not.
      * 
@@ -135,7 +135,7 @@ public class CheckstyleReport
      *            default-value="true"
      */
     private boolean enableRSS;
-    
+
     /**
      * Specifies the names filter of the source files to be used for checkstyle
      *
@@ -185,7 +185,7 @@ public class CheckstyleReport
      * @parameter expression="${checkstyle.config.location}" default-value="config/sun_checks.xml"
      */
     private String configLocation;
-    
+
     /**
      * Specifies what predefined check set to use. Available sets are
      * "sun" (for the Sun coding conventions), "turbine", and "avalon".
@@ -219,7 +219,7 @@ public class CheckstyleReport
      * @since 2.0-beta-2
      */
     private String propertiesLocation;
-    
+
     /**
      * Specifies the location of the checkstyle properties that will be used to check the source.
      *
@@ -261,7 +261,7 @@ public class CheckstyleReport
      * @deprecated Use headerLocation instead.
      */
     private File headerFile;
-    
+
     /**
      * Specifies the cache file used to speed up Checkstyle on successive runs.
      *
@@ -378,12 +378,18 @@ public class CheckstyleReport
     private boolean consoleOutput;
 
     /**
+     * Location of the Xrefs to link to.
+     * @parameter
+     */
+    private String xrefLocation;
+
+    /**
      * @component
      * @required
      * @readonly
      */
     private SiteRenderer siteRenderer;
-    
+
     /**
      * Velocity Component
      * 
@@ -391,10 +397,11 @@ public class CheckstyleReport
      * @required
      */
     private VelocityComponent velocityComponent;
-    
+
     private static final File[] EMPTY_FILE_ARRAY = new File[0];
 
     private StringOutputStream stringOutputStream;
+
     private Locator locator;
 
     /**
@@ -444,24 +451,24 @@ public class CheckstyleReport
         throws MavenReportException
     {
         mergeDeprecatedInfo();
-        
+
         if ( !canGenerateReport() )
         {
             getLog().info( "Source directory does not exist - skipping report." );
             return;
         }
-        
-//        for when we start using maven-shared-io and maven-shared-monitor...
-//        locator = new Locator( new MojoLogMonitorAdaptor( getLog() ) );
-        
+
+        //        for when we start using maven-shared-io and maven-shared-monitor...
+        //        locator = new Locator( new MojoLogMonitorAdaptor( getLog() ) );
+
         locator = new Locator( getLog(), new File( project.getBuild().getDirectory() ) );
-        
+
         String configFile = getConfigFile();
         Properties overridingProperties = getOverridingProperties();
         ModuleFactory moduleFactory;
         Configuration config;
         CheckstyleResults results;
-        
+
         ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
 
         try
@@ -491,7 +498,7 @@ public class CheckstyleReport
         // be sure to restore original context classloader
         Thread.currentThread().setContextClassLoader( currentClassLoader );
     }
-    
+
     private void generateReportStatics()
         throws MavenReportException
     {
@@ -509,9 +516,9 @@ public class CheckstyleReport
     private void generateRSS( CheckstyleResults results )
         throws MavenReportException
     {
-        VelocityTemplate vtemplate = new VelocityTemplate(velocityComponent, PLUGIN_RESOURCES);
+        VelocityTemplate vtemplate = new VelocityTemplate( velocityComponent, PLUGIN_RESOURCES );
         vtemplate.setLog( getLog() );
-        
+
         Context context = new VelocityContext();
         context.put( "results", results );
         context.put( "project", project );
@@ -520,7 +527,7 @@ public class CheckstyleReport
         context.put( "levelWarning", SeverityLevel.WARNING );
         context.put( "levelError", SeverityLevel.ERROR );
         context.put( "stringutils", new StringUtils() );
-        
+
         try
         {
             vtemplate.generate( outputDirectory.getPath() + "/checkstyle.rss", "checkstyle-rss.vm", context );
@@ -564,7 +571,8 @@ public class CheckstyleReport
         return copyright;
     }
 
-    private void generateMainReport( CheckstyleResults results, Configuration config, ModuleFactory moduleFactory, ResourceBundle bundle )
+    private void generateMainReport( CheckstyleResults results, Configuration config, ModuleFactory moduleFactory,
+                                     ResourceBundle bundle )
     {
         CheckstyleReportGenerator generator = new CheckstyleReportGenerator( getSink(), bundle );
 
@@ -575,6 +583,7 @@ public class CheckstyleReport
         generator.setEnableRSS( enableRSS );
         generator.setCheckstyleConfig( config );
         generator.setCheckstyleModuleFactory( moduleFactory );
+        generator.setXrefLocation( xrefLocation );
         generator.generateReport( results );
     }
 
@@ -589,7 +598,7 @@ public class CheckstyleReport
         {
             configLocation = (String) FORMAT_TO_CONFIG_LOCATION.get( format );
         }
-        
+
         if ( StringUtils.isEmpty( propertiesLocation ) )
         {
             if ( propertiesFile != null )
@@ -601,7 +610,7 @@ public class CheckstyleReport
                 propertiesLocation = propertiesURL.toExternalForm();
             }
         }
-        
+
         if ( "LICENSE.txt".equals( headerLocation ) )
         {
             File defaultHeaderFile = new File( project.getBasedir(), "LICENSE.txt" );
@@ -610,12 +619,12 @@ public class CheckstyleReport
                 headerLocation = headerFile.getPath();
             }
         }
-        
+
         if ( StringUtils.isEmpty( suppressionsLocation ) )
         {
             suppressionsLocation = suppressionsFile;
         }
-        
+
         if ( StringUtils.isEmpty( packageNamesLocation ) )
         {
             packageNamesLocation = packageNamesFile;
@@ -697,7 +706,7 @@ public class CheckstyleReport
         checker.addListener( sinkListener );
 
         int nbErrors = checker.process( files );
-      
+
         checker.destroy();
 
         if ( stringOutputStream != null )
@@ -749,8 +758,8 @@ public class CheckstyleReport
             else
             {
                 // TODO: failure if not a report
-                throw new MavenReportException(
-                    "Invalid output file format: (" + outputFileFormat + "). Must be 'plain' or 'xml'." );
+                throw new MavenReportException( "Invalid output file format: (" + outputFileFormat
+                    + "). Must be 'plain' or 'xml'." );
             }
         }
 
@@ -804,7 +813,7 @@ public class CheckstyleReport
 
         return (File[]) files.toArray( EMPTY_FILE_ARRAY );
     }
-    
+
     private Properties getOverridingProperties()
         throws MavenReportException
     {
@@ -813,12 +822,12 @@ public class CheckstyleReport
         try
         {
             File propertiesFile = locator.resolveLocation( propertiesLocation, "checkstyle-checker.properties" );
-            
+
             if ( propertiesFile != null )
             {
                 p.load( new FileInputStream( propertiesFile ) );
             }
-            
+
             if ( StringUtils.isNotEmpty( propertyExpansion ) )
             {
                 p.load( new StringInputStream( propertyExpansion ) );
@@ -852,7 +861,7 @@ public class CheckstyleReport
 
         return p;
     }
-    
+
     private String getConfigFile()
         throws MavenReportException
     {
