@@ -231,9 +231,9 @@ public class EclipsePlugin
 
     /**
      * The version of WTP for which configuration files will be generated.
-     * The default value is "R7", supported versions are "R7" and "1.0"
+     * The default value is "none" (don't generate WTP configuration), supported versions are "R7" and "1.0"
      * 
-     * @parameter expression="${wtpversion}" default-value="R7"
+     * @parameter expression="${wtpversion}" default-value="none"
      */
     private String wtpversion;
 
@@ -241,6 +241,16 @@ public class EclipsePlugin
      * Not a plugin parameter. Collect missing source artifact for the final report.
      */
     private List missingSourceArtifacts = new ArrayList();
+
+    /**
+     * Not a plugin parameter. Are we working with wtp r7?
+     */
+    private boolean wtpR7;
+
+    /**
+     * Not a plugin parameter. Are we working with wtp 1.0?
+     */
+    private boolean wtp10;
 
     /**
      * @see org.apache.maven.plugin.Mojo#execute()
@@ -254,6 +264,19 @@ public class EclipsePlugin
             throw new MojoExecutionException( Messages
                 .getString( "EclipsePlugin.unsupportedwtp", new Object[] { //$NON-NLS-1$
                             wtpversion, StringUtils.join( WTP_SUPPORTED_VERSIONS, " " ) } ) ); //$NON-NLS-1$
+        }
+
+        if ( "R7".equalsIgnoreCase( wtpversion ) ) //$NON-NLS-1$
+        {
+            wtpR7 = true;
+        }
+        else if ( "1.0".equalsIgnoreCase( wtpversion ) ) //$NON-NLS-1$
+        {
+            wtp10 = true;
+        }
+        if ( !"none".equalsIgnoreCase( wtpversion ) )
+        {
+            getLog().info( Messages.getString( "EclipsePlugin.wtpversion", wtpversion ) );
         }
 
         if ( executedProject == null )
@@ -350,14 +373,14 @@ public class EclipsePlugin
 
         downloadSourceArtifacts( artifacts, reactorArtifacts );
 
-        if ( "R7".equalsIgnoreCase( wtpversion ) ) //$NON-NLS-1$
+        if ( wtpR7 )
         {
             new EclipseWtpmodulesWriter( getLog(), eclipseProjectDir, project, artifacts ).write( reactorArtifacts,
                                                                                                   sourceDirs,
                                                                                                   localRepository,
                                                                                                   buildOutputDirectory );
         }
-        else if ( wtpversion != null && wtpversion.startsWith( "1" ) ) //$NON-NLS-1$
+        else if ( wtp10 )
         {
             new EclipseWtpFacetsWriter( getLog(), eclipseProjectDir, project, artifacts ).write( reactorArtifacts,
                                                                                                  sourceDirs,
@@ -412,14 +435,18 @@ public class EclipsePlugin
     {
         projectnatures = new ArrayList();
 
-        if ( !"R7".equalsIgnoreCase( wtpversion ) ) //$NON-NLS-1$
+        if ( wtp10 )
         {
             projectnatures.add( NATURE_WST_FACET_CORE_NATURE ); // WTP 1.0 nature
         }
 
         projectnatures.add( NATURE_JDT_CORE_JAVA );
-        projectnatures.add( NATURE_WST_MODULE_CORE_NATURE ); // WTP 0.7/1.0 nature
-        projectnatures.add( NATURE_JEM_WORKBENCH_JAVA_EMF ); // WTP 0.7/1.0 nature
+
+        if ( wtpR7 || wtp10 )
+        {
+            projectnatures.add( NATURE_WST_MODULE_CORE_NATURE ); // WTP 0.7/1.0 nature
+            projectnatures.add( NATURE_JEM_WORKBENCH_JAVA_EMF ); // WTP 0.7/1.0 nature
+        }
 
     }
 
@@ -433,16 +460,19 @@ public class EclipsePlugin
     {
         buildcommands = new ArrayList();
 
-        if ( "R7".equalsIgnoreCase( wtpversion ) ) //$NON-NLS-1$
+        if ( wtpR7 )
         {
             buildcommands.add( BUILDER_WST_COMPONENT_STRUCTURAL ); // WTP 0.7 builder
         }
 
         buildcommands.add( BUILDER_JDT_CORE_JAVA );
 
-        buildcommands.add( BUILDER_WST_VALIDATION ); // WTP 0.7/1.0 builder
+        if ( wtpR7 || wtp10 )
+        {
+            buildcommands.add( BUILDER_WST_VALIDATION ); // WTP 0.7/1.0 builder
+        }
 
-        if ( "R7".equalsIgnoreCase( wtpversion ) ) //$NON-NLS-1$
+        if ( wtpR7 )
         {
             buildcommands.add( BUILDER_WST_COMPONENT_STRUCTURAL_DEPENDENCY_RESOLVER ); // WTP 0.7 builder
         }
