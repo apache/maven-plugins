@@ -11,6 +11,10 @@
   <name>Maven Checkstyle Plugin</name>
   <version>2.0-beta-2-SNAPSHOT</version>
   <inceptionYear>2005</inceptionYear>
+  <issueManagement>
+    <system>JIRA</system>
+    <url>http://jira.codehaus.org/browse/MCHECKSTYLE</url>
+  </issueManagement>
   <developers>
     <developer>
       <id>vsiveton</id>
@@ -21,6 +25,13 @@
         <role>Java Developer</role>
       </roles>
       <timezone>-5</timezone>
+    </developer>
+    <developer>
+      <id>fgiust</id>
+      <name>Fabrizio Giustina</name>
+      <email>fgiust@apache.org</email>
+      <organization>openmind</organization>
+      <timezone>+1</timezone>
     </developer>
   </developers>
   <contributors>
