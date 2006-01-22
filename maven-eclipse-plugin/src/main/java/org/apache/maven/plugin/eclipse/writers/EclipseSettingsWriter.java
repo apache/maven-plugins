@@ -51,8 +51,6 @@ public class EclipseSettingsWriter
 
     private static final String JDK_1_2_SOURCES = "1.2"; //$NON-NLS-1$
 
-    private static final String JDK_1_3_SOURCES = "1.3"; //$NON-NLS-1$
-
     private static final String FILE_ECLIPSE_JDT_CORE_PREFS = "org.eclipse.jdt.core.prefs"; //$NON-NLS-1$
 
     private static final String PROP_ECLIPSE_PREFERENCES_VERSION = "eclipse.preferences.version"; //$NON-NLS-1$
@@ -82,7 +80,7 @@ public class EclipseSettingsWriter
         String target = EclipseUtils.getPluginSetting( getProject(), ARTIFACT_MAVEN_COMPILER_PLUGIN, PROPERTY_TARGET,
                                                        null );
 
-        if ( source != null && !JDK_1_3_SOURCES.equals( source ) )
+        if ( source != null )
         {
             coreSettings.put( PROP_JDT_CORE_COMPILER_SOURCE, source );
             coreSettings.put( PROP_JDT_CORE_COMPILER_COMPLIANCE, source );
