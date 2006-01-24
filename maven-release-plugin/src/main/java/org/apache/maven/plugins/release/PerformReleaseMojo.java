@@ -23,6 +23,7 @@ import org.apache.maven.plugins.release.helpers.ReleaseProgressTracker;
 import org.apache.maven.plugins.release.helpers.ScmHelper;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
@@ -48,13 +49,6 @@ import java.util.Properties;
 public class PerformReleaseMojo
     extends AbstractReleaseMojo
 {
-    /**
-     * @parameter expression="${basedir}"
-     * @required
-     * @readonly
-     */
-    private File basedir;
-
     /**
      * Comma or space separated goals 
      * @parameter expression="${goals}"
@@ -96,6 +90,8 @@ public class PerformReleaseMojo
         checkout();
 
         runGoals();
+
+        cleanup();
     }
 
     private void checkout()
@@ -246,6 +242,16 @@ public class PerformReleaseMojo
             throw new MojoExecutionException( "Can't run goal " + goals, e );
         }
     }
+
+    private void cleanup()
+    {
+        removeReleaseProperties();
+    }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
 
     protected ReleaseProgressTracker getReleaseProgress()
         throws MojoExecutionException
