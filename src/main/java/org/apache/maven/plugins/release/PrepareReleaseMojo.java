@@ -85,13 +85,6 @@ public class PrepareReleaseMojo
     private static final String POM = "pom.xml";
 
     /**
-     * @parameter expression="${basedir}"
-     * @required
-     * @readonly
-     */
-    private File basedir;
-
-    /**
      * @parameter expression="${settings.interactiveMode}"
      * @required
      * @readonly
@@ -178,57 +171,21 @@ public class PrepareReleaseMojo
 
     private List pomFiles;
 
-    private void validateConfiguration()
-        throws MojoExecutionException
-    {
-        if ( StringUtils.isEmpty( urlScm ) )
-        {
-            Model model = ( (MavenProject) reactorProjects.get( 0 ) ).getModel();
-            if ( model.getScm() != null )
-            {
-                urlScm = model.getScm().getConnection();
-                if ( StringUtils.isEmpty( urlScm ) )
-                {
-                    throw new MojoExecutionException(
-                                                      "Missing required setting: scm connection or developerConnection must be specified." );
-                }
-            }
-        }
-    }
-
-    private void checkpoint( String pointName )
-        throws MojoExecutionException
-    {
-        try
-        {
-            getReleaseProgress().checkpoint( pointName );
-        }
-        catch ( IOException e )
-        {
-            getLog().warn( "Error writing checkpoint.", e );
-        }
-    }
-
-    private Set createReactorProjectSet( List reactorProjects )
-    {
-        Set reactorProjectSet = new HashSet();
-
-        for ( Iterator it = reactorProjects.iterator(); it.hasNext(); )
-        {
-            MavenProject project = (MavenProject) it.next();
-
-            String versionlessArtifactKey = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
-
-            reactorProjectSet.add( versionlessArtifactKey );
-        }
-
-        return reactorProjectSet;
-    }
-
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        // ----------------------------------------------------------------------
+        // Path of clarity
+        //
+        // You should be able to easily see what the path is that this will follow
+        // in order to release a plugin.
+        // ----------------------------------------------------------------------
+
         validateConfiguration();
+
+        // checkForInitialization()
+
+        // checkForReleasedPrepared()
 
         checkpoint( ReleaseProgressTracker.CP_INITIALIZED );
 
@@ -282,8 +239,11 @@ public class PrepareReleaseMojo
                 for ( Iterator it = reactorProjects.iterator(); it.hasNext(); )
                 {
                     MavenProject project = (MavenProject) it.next();
+
                     String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
+
                     Model model = (Model) releasedProjects.get( projectId );
+
                     updateDependencyManagement( model, project.getFile(), "release" );
                 }
 
@@ -328,6 +288,57 @@ public class PrepareReleaseMojo
 
             checkpoint( ReleaseProgressTracker.CP_PREPARED_RELEASE );
         }
+    }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
+    private void validateConfiguration()
+        throws MojoExecutionException
+    {
+        if ( StringUtils.isEmpty( urlScm ) )
+        {
+            Model model = ( (MavenProject) reactorProjects.get( 0 ) ).getModel();
+            if ( model.getScm() != null )
+            {
+                urlScm = model.getScm().getConnection();
+                if ( StringUtils.isEmpty( urlScm ) )
+                {
+                    throw new MojoExecutionException(
+                                                      "Missing required setting: scm connection or developerConnection must be specified." );
+                }
+            }
+        }
+    }
+
+    private void checkpoint( String pointName )
+        throws MojoExecutionException
+    {
+        try
+        {
+            getReleaseProgress().checkpoint( pointName );
+        }
+        catch ( IOException e )
+        {
+            getLog().warn( "Error writing checkpoint.", e );
+        }
+    }
+
+    private Set createReactorProjectSet( List reactorProjects )
+    {
+        Set reactorProjectSet = new HashSet();
+
+        for ( Iterator it = reactorProjects.iterator(); it.hasNext(); )
+        {
+            MavenProject project = (MavenProject) it.next();
+
+            String versionlessArtifactKey = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
+
+            reactorProjectSet.add( versionlessArtifactKey );
+        }
+
+        return reactorProjectSet;
     }
 
     private void updateDependencyManagement( Model model, File file, String type )
