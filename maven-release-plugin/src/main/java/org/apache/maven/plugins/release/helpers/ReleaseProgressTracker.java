@@ -14,8 +14,7 @@ import java.util.Properties;
 
 public class ReleaseProgressTracker
 {
-
-    private static final String RELEASE_PROPERTIES = "release.properties";
+    public static final String RELEASE_PROPERTIES = "release.properties";
 
     private static final String USERNAME = "maven.username";
 
