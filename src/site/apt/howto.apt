@@ -2,35 +2,11 @@
  Maven 2 Surefire Plugin 
  ------
  Johnny R. Ruiz III <jruiz@exist.com>
+ Allan Ramirez <aramirez@apache.org>
  ------
  September 20, 2005
 
 How to Use
-
- These example shows how to include and exclude unit test files in your testing:
- 
------
-<project>
-  ...
-  <build>
-    ...
-    <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-surefire-plugin</artifactId>
-      <configuration>
-        <includes>
-          <include>**/*.java</include>
-        </includes>
-        <excludes>
-          <exclude>**/*Point*.java</exclude>
-        </excludes>
-      </configuration>
-    </plugin>
-    ...
-  </build>
-  ...
-</project>
------
 
 * Skipping Tests
 
@@ -112,6 +88,131 @@ m2 -Dmaven.test.skip=true install
   ...
 </project>
 -----
+
+* Tests Inclusion and Exclusion
+
+  The following are the sample test classes.
+
+  * TestCircle.java
+  * TestRectangle.java
+  * TestSquare.java
+  * TestTriangle.java
+  * PentagonTest.java
+  * HeptagonTest.java
+  * OctagonTest.java
+  * Sample.java
+
+** Inclusions
+  
+  By default, the surefire plugin will automatically include all test classes with the following wildcard patterns
+
+  <"**/Test*.java"> - includes all of its subdirectory and all java filename that starts with "Test". 
+  <"**/*Test.java"> - includes all of its subdirectory and all java filename that ends with "Test".
+  <"**/*TestCase.java"> - includes all of its subdirectory and all java filename that ends with "TestCase".
+
+  If your test classes does not go with the naming convention, then configure surefire plugin and include your test.
+
++---+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+	<configuration>
+	  <includes>
+	    <include>Sample.java</include>
+	  </includes>
+	</configuration>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++---+  
+
+  Another scenario to use inclusion is when you most of your test classes should be excluded and only few of them are 
+  need to be included.
+
++---+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+	<configuration>
+	  <excludes>
+	    <exclude>**/*.java</exclude>
+	  </excludes>
+	  <includes>
+	    <include>PentagonTest.java</include>
+	    <include>OctagonTest.java</include>
+	  </includes>
+	</configuration>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++---+  
+
+
+** Exclusions
+
+  There are certain times that some tests are causing the build to fail. If the bad test classes are only few 
+  we may exclude them to continue the build. Exclusions can be done by the following:
+
+  * Excluding per java file.
+  
++---+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+	<configuration>
+	  <excludes>
+	    <exclude>TestCircle.java</exclude>
+	    <exclude>TestSquare.java</exclude>
+	  </excludes>
+	</configuration>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++---+
+  
+  The above example will exclude TestCircle.java and TestSquare.java from the unit testing of surefire plugin.
+ 
+  * Excluding test using wildcards.
+
++---+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+	<configuration>
+	  <excludes>
+	    <exclude>**/Test*.java</exclude>
+	  </excludes>
+	</configuration>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++---+
+
+  The above example will exclude all its subfolders and java files that starts with "Test".
 
  There are other parameters that you can configure like testFailureIgnore, reportsDirectory, test , etc.
  For full documentation, click {{{index.html}here}}.
