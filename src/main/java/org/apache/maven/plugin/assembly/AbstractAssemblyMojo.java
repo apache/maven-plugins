@@ -31,7 +31,9 @@ import org.apache.maven.plugins.assembly.model.Assembly;
 import org.apache.maven.plugins.assembly.model.DependencySet;
 import org.apache.maven.plugins.assembly.model.FileItem;
 import org.apache.maven.plugins.assembly.model.FileSet;
+import org.apache.maven.plugins.assembly.model.Component;
 import org.apache.maven.plugins.assembly.model.io.xpp3.AssemblyXpp3Reader;
+import org.apache.maven.plugins.assembly.model.io.xpp3.ComponentXpp3Reader;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
@@ -385,7 +387,7 @@ public abstract class AbstractAssemblyMojo
     }
 
     private Assembly getAssembly( Reader reader )
-        throws MojoExecutionException
+        throws MojoFailureException, MojoExecutionException
     {
         Assembly assembly;
         try
@@ -411,16 +413,127 @@ public abstract class AbstractAssemblyMojo
             includeSiteInAssembly( assembly );
         }
 
+        appendComponentsToMainAssembly( assembly );
+        
         return assembly;
     }
 
     /**
-     * Processes Dependency Sets
-     *
-     * @param archiver
-     * @param dependencySets
-     * @param includeBaseDirectory
+     * Add the contents of all included components to main assembly
+     * @param assembly
+     * @throws MojoFailureException
+     * @throws MojoExecutionException
      */
+    private void appendComponentsToMainAssembly( Assembly assembly )
+        throws MojoFailureException, MojoExecutionException
+    {
+        List componentDescriptorFiles = assembly.getComponentDescriptors();
+        
+        for( int i = 0 ; i < componentDescriptorFiles.size(); ++i )
+        {
+            Component component = getComponent( componentDescriptorFiles.get( i ).toString() );
+            
+            appendComponent( assembly, component );
+        }
+    }
+
+    /**
+     * Add the content of a single Component to main assembly
+     * @param assembly
+     * @param component
+     * @throws MojoFailureException
+     * @throws MojoExecutionException
+     */
+    private void appendComponent( Assembly assembly, Component component )
+        throws MojoFailureException, MojoExecutionException
+    {
+        List dependencySetList = component.getDependencySets();
+        
+        for ( int i = 0 ; i < dependencySetList.size(); ++i )
+        {
+            assembly.addDependencySet( (DependencySet) dependencySetList.get(i) );
+        }
+
+        List fileSetList = component.getFileSets();
+        
+        for ( int i = 0 ; i < fileSetList.size(); ++i )
+        {
+            assembly.addFileSet( (FileSet) fileSetList.get(i) );
+        }
+
+        List fileList = component.getFiles();
+        
+        for ( int i = 0 ; i < fileList.size(); ++i )
+        {
+            assembly.addFile( (FileItem) fileList.get(i) );
+        }
+    }
+    
+    /**
+     * Load the Component via a given file path relative to ${basedir}
+     * @param filePath
+     * @return
+     * @throws MojoFailureException
+     * @throws MojoExecutionException
+     */
+    
+    private Component getComponent( String filePath )
+        throws MojoFailureException, MojoExecutionException
+    {
+        File componentDescriptor = new File ( this.project.getBasedir() + "/" + filePath );
+
+        Reader r;
+        try
+        {
+            r = new FileReader( componentDescriptor );
+        }
+        catch ( FileNotFoundException e )
+        {
+            throw new MojoFailureException( "Unable to find descriptor: " + e.getMessage() );
+        }
+
+        return getComponent( r );
+        
+    }
+    
+    /**
+     * Load the Component via a Reader
+     * @param reader
+     * @return
+     * @throws MojoExecutionException
+     */
+    private Component getComponent( Reader reader )
+        throws MojoExecutionException
+    {
+        Component component;
+        try
+        {
+            ComponentXpp3Reader r = new ComponentXpp3Reader();
+            component = r.read( reader );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Error reading component descriptor", e );
+        }
+        catch ( XmlPullParserException e )
+        {
+            throw new MojoExecutionException( "Error reading component descriptor", e );
+        }
+        finally
+        {
+            IOUtil.close( reader );
+        }
+
+        return component;
+    }
+
+    /**
+	 * Processes Dependency Sets
+	 * 
+	 * @param archiver
+	 * @param dependencySets
+	 * @param includeBaseDirectory
+	 */
     protected void processDependencySets( Archiver archiver, List dependencySets, boolean includeBaseDirectory )
         throws ArchiverException, IOException, MojoExecutionException, MojoFailureException, XmlPullParserException
     {

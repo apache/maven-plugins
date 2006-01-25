@@ -28,18 +28,32 @@
         <artifactId>modello-maven-plugin</artifactId>
         <executions>
           <execution>
+            <id>descriptor</id>
             <goals>
               <goal>xpp3-reader</goal>
               <goal>xpp3-writer</goal>
               <goal>java</goal>
               <goal>xsd</goal>
             </goals>
+            <configuration>
+              <model>src/main/mdo/descriptor.mdo</model>
+              <version>1.0.0</version>
+            </configuration>
+          </execution>
+          <execution>
+            <id>component</id>
+            <goals>
+              <goal>xpp3-reader</goal>
+              <goal>xpp3-writer</goal>
+              <goal>java</goal>
+              <goal>xsd</goal>
+            </goals>
+            <configuration>
+              <model>src/main/mdo/component.mdo</model>
+              <version>1.0.0</version>
+            </configuration>
           </execution>
         </executions>
-        <configuration>
-          <model>src/main/mdo/descriptor.mdo</model>
-          <version>1.0.0</version>
-        </configuration>
       </plugin>
     </plugins>
   </build>
