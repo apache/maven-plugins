@@ -9,11 +9,12 @@
   <packaging>maven-plugin</packaging>
   <name>Maven Help Plugin</name>
   <version>2.1-SNAPSHOT</version>
-  <description>Provides mojos aimed at helping the user to make sense out of
-    the build environment. It includes mojos to view the effective
+  <description>
+    The Maven Help plugin provides goals aimed at helping to make sense out of
+    the build environment. It includes the ability to view the effective
     POM and settings files, after inheritance and active profiles
-    have been applied, as well as a 'describe' mojo to give the
-    user information about how to use a plugin.</description>
+    have been applied, as well as a describe a particular plugin goal to give usage information.
+  </description>
   <inceptionYear>2001</inceptionYear>
   <dependencies>
     <dependency>
