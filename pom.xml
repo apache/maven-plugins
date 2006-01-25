@@ -1,4 +1,4 @@
-<project>
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>maven-plugin-parent</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
@@ -8,21 +8,13 @@
   <artifactId>maven-help-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Maven Help Plugin</name>
-  <version>2.0-beta-2-SNAPSHOT</version>
-  <inceptionYear>2001</inceptionYear>
-  
-  <description>
-    Provides mojos aimed at helping the user to make sense out of
+  <version>2.0</version>
+  <description>Provides mojos aimed at helping the user to make sense out of
     the build environment. It includes mojos to view the effective
     POM and settings files, after inheritance and active profiles
     have been applied, as well as a 'describe' mojo to give the
-    user information about how to use a plugin.
-  </description>
-
-  <prerequisites>
-    <maven>2.0</maven>
-  </prerequisites>
-  
+    user information about how to use a plugin.</description>
+  <inceptionYear>2001</inceptionYear>
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -36,12 +28,12 @@
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
-      <artifactId>maven-plugin-descriptor</artifactId>
+      <artifactId>maven-plugin-tools-api</artifactId>
       <version>2.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
-      <artifactId>maven-plugin-tools-api</artifactId>
+      <artifactId>maven-plugin-descriptor</artifactId>
       <version>2.0</version>
     </dependency>
   </dependencies>
