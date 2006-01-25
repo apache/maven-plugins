@@ -1,31 +1,18 @@
 <?xml version="1.0"?>
 
-<!--
-  Since modello does not have the capability to share descriptor,
-  If you make changes to FileSet, FileItem, DependendencySet, or
-  adding new collection, make sure to propagate your changes
-  to "component.xml".
+<!-- Note Definitions of FileSet, FileItem, and DependencySet are 
+     already defined in descriptor.mod, but repeated  here since
+     Modello currently does not have capability to share files
 -->
-
-
 <model>
-  <id>assembly</id>
-  <name>Assembly</name>
+  <id>component</id>
+  <name>Component</name>
   <description>
     <![CDATA[
 	<p>
-	A definition of an assembly.  This descriptor specifies the 
-	type of assembly archive to create, the contents of the 
-	assembly, and the ways in which dependencies are bundled with
-	an assembly.
-	</p>
-	<p>
-	An assembly defines a collection of files usually distributed in an
-	archive format such as zip, tar, or tar.gz that is generated from a
-	project.  For example, a project could produce a ZIP assembly which
-	contains a project's JAR artifact in the root directory, the 
-	runtime dependencies in a lib/ directory, and a shell script to launch
-	a stand-alone application.
+	Component contains FileSets, FileItems, and DependencySets already
+	define in Assembly. It allows multiple assemblies to share a set of user
+	defined collections.
 	</p>
     ]]>
   </description>
@@ -36,61 +23,11 @@
     </default>
   </defaults>
   <classes>
-    <class rootElement="true" xml.tagName="assembly">
-      <name>Assembly</name>
-      <description>Describes the assembly layout and packaging.</description>
+    <class rootElement="true" xml.tagName="component">
+      <name>Component</name>
+      <description>Describes the component layout and packaging.</description>
       <version>1.0.0</version>
       <fields>
-        <field>
-          <name>id</name>
-          <version>1.0.0</version>
-          <required>true</required>
-          <type>String</type>
-          <description>
-            The id of this assembly.  This is a symbolic name for a 
-            particular assembly of files from this project.
-          </description>
-        </field>
-        <field>
-          <name>formats</name>
-          <version>1.0.0</version>
-          <required>true</required>
-          <association>
-            <type>String</type>
-            <multiplicity>*</multiplicity>
-          </association>
-          <description>
-            <![CDATA[
-            Specify the formats of the assembly.  A format is specified by 
-            supplying one of the following values in a &lt;format&gt; subelement:
-            <ul>
-              <li><b>"zip"</b> - Creates a ZIP file format</li>
-              <li><b>"gz"</b> - Creates a GZIP format</li>
-              <li><b>"tar"</b> - Creates a TAR format</li>
-              <li><b>"tar.gz"</b> - Creates a gzip'd TAR format</li>
-              <li><b>"tar.bz2</b> - Creates a bzip'd TAR format</li>
-            </ul>
-            ]]>
-          </description>
-        </field>
-        <field>
-          <name>includeBaseDirectory</name>
-          <type>boolean</type>
-          <defaultValue>true</defaultValue>
-          <description>
-            Includes a base directory in the final archive.  For example,
-            if you are creating an assembly named "your-app", setting
-            includeBaseDirectory to true will create an archive that
-            includes this base directory.  If this option is set to false
-            the archive created will unzip its content to the current
-            directory.
-          </description>
-        </field>
-        <field>
-          <name>includeSiteDirectory</name>
-          <type>boolean</type>
-          <defaultValue>false</defaultValue>
-        </field>
         <field>
           <name>fileSets</name>
           <version>1.0.0</version>
@@ -124,23 +61,8 @@
             Specify assembly behavior for sets of dependencies.
           </description>
         </field>
-
-        <field>
-          <name>componentDescriptors</name>
-          <version>1.0.0</version>
-          <association>
-            <type>String</type>
-            <multiplicity>*</multiplicity>
-          </association>
-          <description>
-            File relative to basedir containing Component.
-          </description>
-        </field>
-        
-        
       </fields>
     </class>
-    
     
     <class>
       <name>SetBase</name>
