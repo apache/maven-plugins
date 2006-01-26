@@ -42,7 +42,7 @@ import java.util.Properties;
  * Perform a release from SCM
  *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
- * @version $Id: DoxiaMojo.java 169372 2005-05-09 22:47:34Z evenisse $
+ * @version $Id$
  * @aggregator
  * @goal perform
  */
