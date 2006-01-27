@@ -177,7 +177,13 @@ public class DeployFileMojo
                 throw new MojoExecutionException( file.getPath() + " not found." );
             }
             
-            getDeployer().deploy( file, artifact, deploymentRepository, getLocalRepository() );
+            String protocol = deploymentRepository.getProtocol();
+            
+            if( protocol.equals( "" ) || protocol == null )
+            {
+                throw new MojoExecutionException( "No transfer protocol found." );
+            }
+                getDeployer().deploy( file, artifact, deploymentRepository, getLocalRepository() );
         }
         catch ( ArtifactDeploymentException e )
         {
