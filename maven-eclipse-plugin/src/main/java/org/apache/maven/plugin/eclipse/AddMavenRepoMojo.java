@@ -27,7 +27,6 @@ import java.util.Properties;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * A Maven2 plugin to ensure that the classpath variable MAVEN_REPO exists in
@@ -112,7 +111,7 @@ public class AddMavenRepoMojo
             }
         }
 
-        props.put( CLASSPATH_VARIABLE_M2_REPO, StringUtils.replace( localRepository.getBasedir(), ":", "\\:" ) ); //$NON-NLS-1$  //$NON-NLS-2$
+        props.put( CLASSPATH_VARIABLE_M2_REPO, localRepository.getBasedir() ); //$NON-NLS-1$  //$NON-NLS-2$
 
         try
         {
