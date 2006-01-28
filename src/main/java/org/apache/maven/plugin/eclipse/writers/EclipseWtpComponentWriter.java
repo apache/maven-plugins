@@ -20,19 +20,15 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.EclipseSourceDir;
 import org.apache.maven.plugin.eclipse.EclipseUtils;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
@@ -66,7 +62,7 @@ public class EclipseWtpComponentWriter
     }
 
     public void write( List referencedReactorArtifacts, EclipseSourceDir[] sourceDirs,
-                      ArtifactRepository localRepository, File buildOutputDirectory )
+                       ArtifactRepository localRepository, File buildOutputDirectory )
         throws MojoExecutionException
     {
 
@@ -104,8 +100,8 @@ public class EclipseWtpComponentWriter
      * @throws MojoExecutionException
      */
     private void writeModuleTypeComponent( XMLWriter writer, String packaging, File buildOutputDirectory,
-                                          EclipseSourceDir[] sourceDirs, List referencedReactorArtifacts,
-                                          ArtifactRepository localRepository )
+                                           EclipseSourceDir[] sourceDirs, List referencedReactorArtifacts,
+                                           ArtifactRepository localRepository )
         throws MojoExecutionException
     {
         writer.startElement( ELT_PROJECT_MODULES );
@@ -157,8 +153,6 @@ public class EclipseWtpComponentWriter
             // write out the dependencies.
             writeWarOrEarResources( writer, getProject(), referencedReactorArtifacts, localRepository );
 
-            // fix for WTP 1.0
-            copyExternalDependencies( writer, getProject(), referencedReactorArtifacts, localRepository );
         }
 
         for ( int j = 0; j < sourceDirs.length; j++ )
@@ -177,58 +171,6 @@ public class EclipseWtpComponentWriter
 
         writer.endElement(); // wb-module
         writer.endElement(); // project-modules
-    }
-
-    /**
-     * Patch fpr WTP 1.0, external libraries are not copied to deployed app.
-     * See <a
-     * href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=116783">https://bugs.eclipse.org/bugs/show_bug.cgi?id=116783</a>
-     */
-    protected void copyExternalDependencies( XMLWriter writer, MavenProject project, List referencedReactorArtifacts,
-                                            ArtifactRepository localRepository )
-        throws MojoExecutionException
-    {
-        ScopeArtifactFilter scopeFilter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
-        String warSourceDirectory = EclipseUtils.getPluginSetting( getProject(), ARTIFACT_MAVEN_WAR_PLUGIN,
-                                                                   "warSourceDirectory", "/src/main/webapp/" ); //$NON-NLS-1$ //$NON-NLS-2$
-
-        File webInfLibDir = new File( getEclipseProjectDirectory() + "/" + warSourceDirectory + "/WEB-INF/lib" ); //$NON-NLS-1$ //$NON-NLS-2$
-        String webInfLibDirAsString = EclipseUtils.toRelativeAndFixSeparator( getProject().getBasedir(), webInfLibDir,
-                                                                              false );
-
-        getLog().warn( Messages.getString( "EclipseWtpComponentWriter.copyingdepswarning", webInfLibDirAsString ) ); //$NON-NLS-1$
-
-        // dependencies
-        for ( Iterator it = getDependencies().iterator(); it.hasNext(); )
-        {
-            Artifact artifact = (Artifact) it.next();
-            String type = artifact.getType();
-
-            if ( !referencedReactorArtifacts.contains( artifact )
-                && ( scopeFilter.include( artifact ) || Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
-                && ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type ) || "war".equals( type ) ) ) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-            {
-                // we want this bit container independent, so copy over everything to /WEB-INF/lib under our eclipse
-                // warSourceDirectory and add a deploy-path so that resources get published.
-                try
-                {
-                    getLog().info( Messages.getString( "EclipseWtpComponentWriter.copyingsingledep", //$NON-NLS-1$ 
-                                                       artifact.getFile().getName() ) );
-                    FileUtils.copyFileToDirectory( artifact.getFile(), webInfLibDir );
-                }
-                catch ( IOException e )
-                {
-                    // we log the error and still go ahead with the wtp project creation.
-                    getLog().error( Messages.getString( "EclipseWtpComponentWriter.unabletocopy", new Object[] { //$NON-NLS-1$ 
-                                                        artifact.getFile().getAbsolutePath(), webInfLibDirAsString } ) );
-                }
-            }
-        }
-
-        writer.startElement( ELT_WB_RESOURCE );
-        writer.addAttribute( ATTR_DEPLOY_PATH, "/WEB-INF/lib" ); //$NON-NLS-1$
-        writer.addAttribute( ATTR_SOURCE_PATH, webInfLibDirAsString );
-        writer.endElement();
     }
 
 }
