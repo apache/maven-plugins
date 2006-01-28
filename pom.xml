@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>maven-plugin-parent</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
@@ -9,12 +8,12 @@
   <artifactId>maven-checkstyle-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Maven Checkstyle Plugin</name>
-  <version>2.0-beta-2-SNAPSHOT</version>
-  <inceptionYear>2005</inceptionYear>
+  <version>2.0</version>
   <issueManagement>
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MCHECKSTYLE</url>
   </issueManagement>
+  <inceptionYear>2005</inceptionYear>
   <developers>
     <developer>
       <id>vsiveton</id>
@@ -42,30 +41,23 @@
   </contributors>
   <dependencies>
     <dependency>
+      <groupId>checkstyle</groupId>
+      <artifactId>checkstyle</artifactId>
+      <version>4.1</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-impl</artifactId>
       <version>2.0</version>
     </dependency>
-    <!-- Eventually, use the shared libs to keep it consistent with other plugins... -->
-    <!-- dependency>
-      <groupId>org.apache.maven.shared</groupId>
-      <artifactId>maven-shared-io</artifactId>
-      <version>1.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-      <groupId>org.apache.maven.shared</groupId>
-      <artifactId>maven-shared-monitor</artifactId>
-      <version>1.0-SNAPSHOT</version>
-      </dependency -->
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-velocity</artifactId>
       <version>1.1.2</version>
       <exclusions>
         <exclusion>
-          <!-- Excluding old plexus-utils in favor of updated rev -->
-          <groupId>plexus</groupId>
           <artifactId>plexus-utils</artifactId>
+          <groupId>plexus</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -73,11 +65,6 @@
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
       <version>1.0.4</version>
-    </dependency>
-    <dependency>
-      <groupId>checkstyle</groupId>
-      <artifactId>checkstyle</artifactId>
-      <version>4.1</version>
     </dependency>
     <dependency>
       <groupId>checkstyle</groupId>
