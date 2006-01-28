@@ -29,8 +29,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 
 /**
- * A Maven2 plugin to ensure that the classpath variable MAVEN_REPO exists in
- * the Eclipse environment.
+ * Adds the classpath variable MAVEN_REPO to Eclipse.
  * 
  * @goal add-maven-repo
  * @requiresProject false

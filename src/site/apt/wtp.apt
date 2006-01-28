@@ -24,8 +24,8 @@ WTP support
  to avoid using the 1.0 release.
  
  The bug is now fixed for the 1.0.1 release, expected for February, 2006. You can already download a working copy of WTP
- from {{{http://download.eclipse.org/webtools/downloads/}}} ("Released Maintenance" for Eclipse 3.1 or "Integration Build"
- for Eclipse 3.2)
+ from {{{http://download.eclipse.org/webtools/downloads/}http://download.eclipse.org/webtools/downloads/}}
+ ("Released Maintenance" for Eclipse 3.1 or "Integration Build" for Eclipse 3.2)
 
 * WTP versions
  
