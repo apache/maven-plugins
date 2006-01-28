@@ -245,34 +245,6 @@ public class SurefirePlugin
         SurefireBooter surefireBooter = new SurefireBooter();
 
         // ----------------------------------------------------------------------
-        // Forking
-        // ----------------------------------------------------------------------        
-
-        surefireBooter.setForkMode( forkMode );
-
-        if ( !forkMode.equals( "none" ) )
-        {
-            surefireBooter.setSystemProperties( systemProperties );
-
-            surefireBooter.setJvm( jvm );
-
-            surefireBooter.setBasedir( basedir.getAbsolutePath() );
-
-            surefireBooter.setArgLine( argLine );
-            
-            surefireBooter.setEnvironmentVariables( environmentVariables );
-            
-            surefireBooter.setWorkingDirectory( workingDirectory );
-
-            surefireBooter.setChildDelegation( childDelegation );
-
-            if ( getLog().isDebugEnabled() )
-            {
-                surefireBooter.setDebug( true );
-            }
-        }
-
-        // ----------------------------------------------------------------------
         // Reporting
         // ----------------------------------------------------------------------                
 
@@ -322,25 +294,6 @@ public class SurefirePlugin
         //
         // ----------------------------------------------------------------------
 
-        System.setProperty( "basedir", basedir.getAbsolutePath() );
-
-        System.setProperty( "localRepository", localRepository.getBasedir() );
-
-        // Add all system properties configured by the user
-        if ( systemProperties != null )
-        {
-            Enumeration propertyKeys = systemProperties.propertyNames();
-
-            while ( propertyKeys.hasMoreElements() )
-            {
-                String key = (String) propertyKeys.nextElement();
-
-                System.setProperty( key, systemProperties.getProperty( key ) );
-
-                getLog().debug( "Setting system property [" + key + "]=[" + systemProperties.getProperty( key ) + "]" );
-            }
-        }
-
         getLog().debug( "Test Classpath :" );
 
         getLog().debug( testClassesDirectory.getPath() );
@@ -379,6 +332,36 @@ public class SurefirePlugin
 
         addReporters( surefireBooter );
 
+        processSystemProperties();
+
+        // ----------------------------------------------------------------------
+        // Forking
+        // ----------------------------------------------------------------------
+
+        surefireBooter.setForkMode( forkMode );
+
+        if ( !forkMode.equals( "none" ) )
+        {
+            surefireBooter.setSystemProperties( System.getProperties() );
+
+            surefireBooter.setJvm( jvm );
+
+            surefireBooter.setBasedir( basedir.getAbsolutePath() );
+
+            surefireBooter.setArgLine( argLine );
+
+            surefireBooter.setEnvironmentVariables( environmentVariables );
+
+            surefireBooter.setWorkingDirectory( workingDirectory );
+
+            surefireBooter.setChildDelegation( childDelegation );
+
+            if ( getLog().isDebugEnabled() )
+            {
+                surefireBooter.setDebug( true );
+            }
+        }
+
         boolean success;
 
         try
@@ -402,6 +385,28 @@ public class SurefirePlugin
             else
             {
                 throw new MojoExecutionException( msg );
+            }
+        }
+    }
+
+    protected void processSystemProperties()
+    {
+        System.setProperty( "basedir", basedir.getAbsolutePath() );
+
+        System.setProperty( "localRepository", localRepository.getBasedir() );
+
+        // Add all system properties configured by the user
+        if ( systemProperties != null )
+        {
+            Enumeration propertyKeys = systemProperties.propertyNames();
+
+            while ( propertyKeys.hasMoreElements() )
+            {
+                String key = (String) propertyKeys.nextElement();
+
+                System.setProperty( key, systemProperties.getProperty( key ) );
+
+                getLog().debug( "Setting system property [" + key + "]=[" + systemProperties.getProperty( key ) + "]" );
             }
         }
     }
