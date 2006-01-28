@@ -24,8 +24,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
- * A Maven2 plugin to delete the .project, .classpath, .wtpmodules files and
- * .settings folder needed for Eclipse.
+ * Deletes the .project, .classpath, .wtpmodules files and .settings folder used by Eclipse.
  * 
  * @goal clean
  */
