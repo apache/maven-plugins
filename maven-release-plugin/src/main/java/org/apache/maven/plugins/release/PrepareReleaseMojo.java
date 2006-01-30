@@ -157,6 +157,16 @@ public class PrepareReleaseMojo
     private boolean useEditMode;
 
     /**
+     * Test mode: don't checkin or tag anything in the scm repository.
+     * Running <code>mvn -Dtestmode=true release:prepare</code> could be useful in order to check that modifications to
+     * poms and scm operations (only listed in console) are working as expected.
+     * Warning: running this goal in test mode will not checkin anything, but it will modificate your POMs! You will have
+     * to manually rollback any change performed during the test, so be sure to commit everything before!
+     * @parameter expression="${testmode}" default-value="false"
+     */
+    private boolean testmode;
+
+    /**
      * @component
      */
     private PathTranslator pathTranslator;
@@ -182,6 +192,16 @@ public class PrepareReleaseMojo
         // ----------------------------------------------------------------------
 
         validateConfiguration();
+
+        if ( testmode )
+        {
+            getLog()
+                .info(
+                       "\n*****\n"
+                           + "Warning, release:perform is run in TEST MODE.\n"
+                           + "Nothing will be committed or tagged in the repository, but you pom files will be updated!\n"
+                           + "*****" );
+        }
 
         // checkForInitialization()
 
@@ -259,6 +279,22 @@ public class PrepareReleaseMojo
 
             tagRelease();
 
+            if ( testmode )
+            {
+                getLog().info( "[TESTMODE] You can now verify how POMs have been transformed for release." );
+                getLog()
+                    .info(
+                           "[TESTMODE] Press [return] in order to proceed and to see how POMs are transformed for next development iteration." );
+                try
+                {
+                    getInputHandler().readLine();
+                }
+                catch ( IOException e )
+                {
+                    // ignore
+                }
+            }
+
             if ( !getReleaseProgress().verifyCheckpoint( ReleaseProgressTracker.CP_POM_TRANSORMED_FOR_DEVELOPMENT ) )
             {
                 for ( Iterator it = reactorProjects.iterator(); it.hasNext(); )
@@ -333,7 +369,8 @@ public class PrepareReleaseMojo
         {
             MavenProject project = (MavenProject) it.next();
 
-            String versionlessArtifactKey = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
+            String versionlessArtifactKey = ArtifactUtils
+                .versionlessKey( project.getGroupId(), project.getArtifactId() );
 
             reactorProjectSet.add( versionlessArtifactKey );
         }
@@ -666,7 +703,8 @@ public class PrepareReleaseMojo
         {
             Artifact artifact = (Artifact) i.next();
 
-            String versionlessArtifactKey = ArtifactUtils.versionlessKey( artifact.getGroupId(), artifact.getArtifactId() );
+            String versionlessArtifactKey = ArtifactUtils.versionlessKey( artifact.getGroupId(), artifact
+                .getArtifactId() );
 
             // ----------------------------------------------------------------------
             // We only care about dependencies that we are not processing as part
@@ -675,7 +713,8 @@ public class PrepareReleaseMojo
             // dependencies that are external to this project.
             // ----------------------------------------------------------------------
 
-            if ( !reactorProjectSet.contains( versionlessArtifactKey ) && ArtifactUtils.isSnapshot( artifact.getVersion() ) )
+            if ( !reactorProjectSet.contains( versionlessArtifactKey )
+                && ArtifactUtils.isSnapshot( artifact.getVersion() ) )
             {
                 snapshotDependencies.add( artifact );
             }
@@ -723,7 +762,7 @@ public class PrepareReleaseMojo
     }
 
     private void transformPomToReleaseVersionPom( Model model, String projectId, File file, Artifact parentArtifact,
-                                                 List pluginArtifactRepositories )
+                                                  List pluginArtifactRepositories )
         throws MojoExecutionException
     {
         getLog().info( "Transforming " + projectId + " to release" );
@@ -1101,7 +1140,7 @@ public class PrepareReleaseMojo
                 try
                 {
                     writePom( releasePomFile, releaseProject.getModel(), "release" );
-                    
+
                     writer = new FileWriter( releasePomFile );
 
                     releaseProject.writeModel( writer );
@@ -1123,7 +1162,14 @@ public class PrepareReleaseMojo
 
                     ScmHelper scm = getScm( basedir.getAbsolutePath() );
 
-                    scm.add( releasePomPath );
+                    if ( !testmode )
+                    {
+                        scm.add( releasePomPath );
+                    }
+                    else
+                    {
+                        getLog().info( "[TESTMODE] adding file: " + releasePomPath );
+                    }
                 }
                 catch ( ScmException e )
                 {
@@ -1285,9 +1331,15 @@ public class PrepareReleaseMojo
                     releasePomPath = releasePomPath.substring( canonicalBasedir.length() + 1 );
 
                     ScmHelper scm = getScm( basedir.getAbsolutePath() );
+                    if ( !testmode )
+                    {
+                        scm.remove( "Removing for next development iteration.", releasePomPath );
+                    }
+                    else
+                    {
+                        getLog().info( "[TESTMODE] Removing for next development iteration. " + releasePomPath );
+                    }
 
-                    scm.remove( "Removing for next development iteration.", releasePomPath );
-                    
                     pomFiles.remove( currentReleasePomFile );
 
                     currentReleasePomFile.delete();
@@ -1348,7 +1400,14 @@ public class PrepareReleaseMojo
 
         try
         {
-            scm.checkin( pomFiles, message );
+            if ( !testmode )
+            {
+                scm.checkin( pomFiles, message );
+            }
+            else
+            {
+                getLog().info( "[TESTMODE] Checking in " + pomFiles.size() + " pom.xml files with message: " + message );
+            }
         }
         catch ( ScmException e )
         {
@@ -1521,9 +1580,15 @@ public class PrepareReleaseMojo
 
                 scm.setTag( tag );
 
-                getLog().info( "Tagging release with the label " + tag + "." );
-
-                scm.tag();
+                if ( !testmode )
+                {
+                    getLog().info( "Tagging release with the label " + tag + "." );
+                    scm.tag();
+                }
+                else
+                {
+                    getLog().info( "[TESTMODE] Tagging release with the label " + tag + "." );
+                }
             }
             catch ( ScmException e )
             {
