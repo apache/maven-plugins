@@ -28,6 +28,8 @@ import java.io.File;
 import java.io.IOException;
 
 /**
+ * Bundles the javadoc documentation in a jar so it can be deployed to the repo.
+ * 
  * @goal jar
  * @phase package
  * @execute goal="javadoc"
