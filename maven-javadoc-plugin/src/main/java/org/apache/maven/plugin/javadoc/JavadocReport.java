@@ -261,7 +261,9 @@ public class JavadocReport
     private boolean author = true;
 
     /**
-     * Specifies the text to be placed at the bottom of each output file.
+     * Specifies the text to be placed at the bottom of each output file.<br/>
+     * If you want to use html you have to put it in a CDATA section, <br/>
+     * eg. <code>&lt;![CDATA[Copyright 2005, &lt;a href="http://www.mycompany.com">MyCompany, Inc.&lt;a>]]&gt;</code><br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#bottom">bottom</a>.
      *
      * @parameter expression="${bottom}" default-value="Copyright {inceptionYear}-{currentYear} ${project.organization.name}. All Rights Reserved."
