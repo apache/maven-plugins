@@ -16,23 +16,18 @@ package org.apache.maven.plugins.mavenone;
  * limitations under the License.
  */
 
+import java.io.File;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.deployer.ArtifactDeployer;
 import org.apache.maven.artifact.deployer.ArtifactDeploymentException;
-import org.apache.maven.artifact.installer.ArtifactInstallationException;
-import org.apache.maven.artifact.installer.ArtifactInstaller;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.codehaus.plexus.util.IOUtil;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Properties;
 
 /**
  * Install the artifact in a maven one local repository
@@ -98,6 +93,13 @@ public class MavenOneRepositoryDeployMojo
      */
     private ArtifactRepository localRepository;
 
+    /**
+     * @parameter expression="${project.attachedArtifacts}
+     * @required
+     * @readonly
+     */
+    private List attachedArtifacts;
+
     public void execute()
         throws MojoExecutionException
     {
@@ -124,6 +126,15 @@ public class MavenOneRepositoryDeployMojo
                 deployer.deploy( file, artifact, deploymentRepository, localRepository );
             }
 
+            if ( attachedArtifacts != null && !attachedArtifacts.isEmpty() )
+            {
+                for ( Iterator i = attachedArtifacts.iterator(); i.hasNext(); )
+                {
+                    Artifact attached = (Artifact) i.next();
+
+                    deployer.deploy( attached.getFile(), attached, deploymentRepository, localRepository );
+                }
+            }            
         }
         catch ( ArtifactDeploymentException e )
         {
