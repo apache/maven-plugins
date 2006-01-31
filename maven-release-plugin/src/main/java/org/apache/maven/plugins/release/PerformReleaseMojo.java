@@ -56,6 +56,12 @@ public class PerformReleaseMojo
     private String goals = "deploy";
 
     /**
+     * Comma or space separated arguments such as 
+     * @parameter expression="${arguments}"
+     */
+    private String arguments;
+    
+    /**
      * @parameter expression="${project.build.directory}/checkout"
      * @required
      */
@@ -135,6 +141,8 @@ public class PerformReleaseMojo
 
         cl.setWorkingDirectory( workingDirectory );
 
+        cl.createArgument().setLine( "-DperformRelease=true" );
+
         if ( this.goals != null )
         {
             // accept both space and comma, so the old way still work
@@ -145,9 +153,17 @@ public class PerformReleaseMojo
                 cl.createArgument().setValue( tokens[i] );
             }
         }
-        
-        cl.createArgument().setLine( "-DperformRelease=true" );
 
+        if ( this.arguments != null )
+        {
+            String [] tokens = StringUtils.split( this.arguments, ", " );
+            
+            for ( int i = 0 ; i < tokens.length ; ++i )
+            {
+                cl.createArgument().setValue( tokens[i] );
+            }
+        }
+        
         cl.createArgument().setLine( "--no-plugin-updates" );
 
         if ( !interactive )
