@@ -82,7 +82,7 @@ public class AntTargetConverter
 
         project.addReference(MAVEN_EXPRESSION_EVALUATOR_ID , expressionEvaluator);
         
-        initDefinitions( project );
+        initDefinitions( project, target );
 
         processConfiguration( null, project, target, configuration );
 
@@ -161,7 +161,7 @@ public class AntTargetConverter
     }
 
 
-    protected void initDefinitions( Project project )
+    protected void initDefinitions( Project project, Target unused )
     {
         ComponentHelper componentHelper = ComponentHelper.getComponentHelper( project );
 
