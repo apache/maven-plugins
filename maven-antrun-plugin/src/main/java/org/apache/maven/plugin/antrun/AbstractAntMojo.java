@@ -69,7 +69,7 @@ public abstract class AbstractAntMojo
             DefaultLogger antLogger = new DefaultLogger();
             antLogger.setOutputPrintStream( System.out );
             antLogger.setErrorPrintStream( System.err );
-            antLogger.setMessageOutputLevel( Project.MSG_INFO );
+            antLogger.setMessageOutputLevel( getLog().isDebugEnabled() ? Project.MSG_DEBUG : Project.MSG_INFO );
 
             antProject.addBuildListener( antLogger );
             antProject.setBaseDir( mavenProject.getBasedir() );
