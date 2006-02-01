@@ -64,7 +64,7 @@ public abstract class AbstractAntMojo
 
             PropertyHelper propertyHelper = PropertyHelper.getPropertyHelper( antProject );
 
-            propertyHelper.setNext( new AntPropertyHelper( exprEvaluator, getLog() ) );
+            propertyHelper.setNext( new AntPropertyHelper( exprEvaluator, mavenProject.getArtifacts(), getLog() ) );
 
             DefaultLogger antLogger = new DefaultLogger();
             antLogger.setOutputPrintStream( System.out );
