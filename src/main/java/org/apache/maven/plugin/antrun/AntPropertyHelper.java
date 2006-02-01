@@ -64,11 +64,14 @@ public class AntPropertyHelper
         for ( Iterator it = artifacts.iterator(); it.hasNext(); )
         {
             Artifact artifact = (Artifact) it.next();
-	    log.debug( "Storing: maven.dependency." + artifact.getGroupId() + "." +
-                artifact.getArtifactId() + "." + artifact.getType() + ".path=" + artifact.getFile().getPath() );
 
-            artifactMap.put( "maven.dependency." + artifact.getGroupId() + "." +
-                artifact.getArtifactId() + "." + artifact.getType() + ".path", artifact.getFile().getPath() );
+            String key = "maven.dependency." + artifact.getGroupId() + "." + artifact.getArtifactId() + "." +
+                ( artifact.getClassifier() == null || artifact.getType().equals( artifact.getClassifier() ) ?
+                  artifact.getType() : artifact.getClassifier() ) + ".path";
+
+            log.debug( "Storing: " + key + "=" + artifact.getFile().getPath() );
+
+            artifactMap.put( key, artifact.getFile().getPath() );
         }
     }
 
