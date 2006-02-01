@@ -19,6 +19,42 @@ How to use
   From your project's target directory you'll able to see the generated jar file.
 
 
+* Manifest customization
+
+  By default a manifest will contain something like the following
+
+-------------------
+  Manifest-Version: 1.0
+  Built-By: ${user.name}
+  Created-By: Apache Maven
+  Build-Jdk: ${java.version}
+  Extension-Name: ${project.artifactId}
+  Specification-Vendor: ${project.organization.name}
+  Implementation-Vendor: ${project.organization.name}
+  Implementation-Title: ${project.description}
+  Implementation-Version: ${project.version}
+-------------------
+
+  Configuration can be done using the <<<archive>>> element. See the
+  {{{http://maven.apache.org/ref/current/maven-archiver/apidocs/org/apache/maven/archiver/MavenArchiveConfiguration.html}maven archive reference}}.
+
+-------------------
+  <configuration>
+    <archive>
+      <index>true</index>
+      <manifest>
+        <addClasspath>true</addClasspath>
+      </manifest>
+      <manifestEntries>
+        <mode>development</mode>
+        <url>${pom.url}</url>
+        <key>value</key>
+      </manifestEntries>
+    </archive>
+  </configuration>
+-------------------
+
+
 * How to configure jar:sign using pom.xml
 
   If you need to sign a jar, when using the 'jar' packaging, you just need to configure
