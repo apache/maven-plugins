@@ -16,12 +16,6 @@ package org.apache.maven.test;
  * limitations under the License.
  */
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.surefire.SurefireBooter;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +26,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
+
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.surefire.SurefireBooter;
 
 /**
  * @author Jason van Zyl
@@ -175,7 +175,7 @@ public class SurefirePlugin
     private boolean useFile;
 
     /**
-     * Option to specify the forking mode.
+     * Option to specify the forking mode. Can be "none", "once" or "pertest"
      *
      * @parameter expression="${forkMode}"
      * default-value="none"
@@ -338,34 +338,33 @@ public class SurefirePlugin
         // Forking
         // ----------------------------------------------------------------------
 
-        surefireBooter.setForkMode( forkMode );
-
-        if ( !forkMode.equals( "none" ) )
-        {
-            surefireBooter.setSystemProperties( System.getProperties() );
-
-            surefireBooter.setJvm( jvm );
-
-            surefireBooter.setBasedir( basedir.getAbsolutePath() );
-
-            surefireBooter.setArgLine( argLine );
-
-            surefireBooter.setEnvironmentVariables( environmentVariables );
-
-            surefireBooter.setWorkingDirectory( workingDirectory );
-
-            surefireBooter.setChildDelegation( childDelegation );
-
-            if ( getLog().isDebugEnabled() )
-            {
-                surefireBooter.setDebug( true );
-            }
-        }
-
         boolean success;
-
         try
         {
+            surefireBooter.setForkMode( forkMode );
+
+            if ( !forkMode.equals( "none" ) )
+            {
+                surefireBooter.setSystemProperties( System.getProperties() );
+
+                surefireBooter.setJvm( jvm );
+
+                surefireBooter.setBasedir( basedir.getAbsolutePath() );
+
+                surefireBooter.setArgLine( argLine );
+
+                surefireBooter.setEnvironmentVariables( environmentVariables );
+
+                surefireBooter.setWorkingDirectory( workingDirectory );
+
+                surefireBooter.setChildDelegation( childDelegation );
+
+                if ( getLog().isDebugEnabled() )
+                {
+                    surefireBooter.setDebug( true );
+                }
+            }
+
             success = surefireBooter.run();
         }
         catch ( Exception e )
