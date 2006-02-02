@@ -3,16 +3,16 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-public class SurefireTest
+public class SurefireTest3
     extends TestCase
 {
 
-    public SurefireTest( )
+    public SurefireTest3( )
     {
         super( );
     }
 
-    public SurefireTest( String name )
+    public SurefireTest3( String name )
     {
         super( name );
     }
