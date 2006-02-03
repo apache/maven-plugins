@@ -134,30 +134,14 @@ public class DeployFileMojo
     public void execute()
         throws MojoExecutionException
     {
+
+        initProperties();
+
         try
         {
-            // Process the supplied POM (if there is one)
-            if ( pomFile != null )
-            {
-                if ( !pomFile.exists() )
-                {
-                    throw new MojoExecutionException( "Specified pomFile does not exist" );
-                }
-                else
-                {
-                    processPom();
-                }
-            }
-
-            // Verify arguments
-            if ( groupId == null || artifactId == null || version == null || packaging == null )
-            {
-                throw new MojoExecutionException( "Missing group, artifact, version, or packaging information" );
-            }
-
             // Create the artifact
             Artifact artifact = artifactFactory.createArtifact( groupId, artifactId, version, null, packaging );
-            
+
             ArtifactRepository deploymentRepository = repositoryFactory
                 .createDeploymentArtifactRepository( repositoryId, url, layout, false );
 
@@ -172,18 +156,18 @@ public class DeployFileMojo
                 artifact.addMetadata( metadata );
             }
 
-            if ( ! file.exists() )
+            if ( !file.exists() )
             {
                 throw new MojoExecutionException( file.getPath() + " not found." );
             }
-            
+
             String protocol = deploymentRepository.getProtocol();
-            
-            if( protocol.equals( "" ) || protocol == null )
+
+            if ( protocol.equals( "" ) || protocol == null )
             {
                 throw new MojoExecutionException( "No transfer protocol found." );
             }
-                getDeployer().deploy( file, artifact, deploymentRepository, getLocalRepository() );
+            getDeployer().deploy( file, artifact, deploymentRepository, getLocalRepository() );
         }
         catch ( ArtifactDeploymentException e )
         {
@@ -191,63 +175,94 @@ public class DeployFileMojo
         }
     }
 
-    /**
-     * Process the supplied pomFile to get groupId, artifactId, version, and packaging
-     * @throws MojoExecutionException 
-     *
-     */
-    private void processPom()
+    void initProperties()
         throws MojoExecutionException
     {
-        if ( pomFile != null && pomFile.exists() )
+        // Process the supplied POM (if there is one)
+        if ( pomFile != null )
         {
-            Reader reader = null;
-            try
-            {
+            Model model = readModel( pomFile );
 
-                reader = new FileReader( pomFile );
-                MavenXpp3Reader modelReader = new MavenXpp3Reader();
-                Model model = modelReader.read( reader );
+            processModel( model );
+        }
 
-                Parent parent = model.getParent();
-                
-                if( parent != null && parent.getGroupId() != null )
-                {
-                    this.groupId = parent.getGroupId();
-                }
-                else if( model.getGroupId() != null )
-                {
-                    this.groupId = model.getGroupId();
-                }
-                if ( model.getArtifactId() != null )
-                {
-                    this.artifactId = model.getArtifactId();
-                }
-                if ( model.getVersion() != null )
-                {
-                    this.version = model.getVersion();
-                }
-                if ( model.getPackaging() != null )
-                {
-                    this.packaging = model.getPackaging();
-                }
-            }
-            catch ( FileNotFoundException e )
+        // Verify arguments
+        if ( groupId == null || artifactId == null || version == null || packaging == null )
+        {
+            throw new MojoExecutionException( "Missing group, artifact, version, or packaging information" );
+        }
+    }
+
+    /**
+     * Process the supplied pomFile to get groupId, artifactId, version, and packaging
+     * @throws NullPointerException if model is <code>null</code>
+     */
+    void processModel( Model model )
+    {
+        Parent parent = model.getParent();
+
+        if ( this.groupId == null )
+        {
+            if ( parent != null && parent.getGroupId() != null )
             {
-                throw new MojoExecutionException( "Error reading specified POM file: " + e.getMessage(), e );
+                this.groupId = parent.getGroupId();
             }
-            catch ( IOException e )
+            if ( model.getGroupId() != null )
             {
-                throw new MojoExecutionException( "Error reading specified POM file: " + e.getMessage(), e );
+                this.groupId = model.getGroupId();
             }
-            catch ( XmlPullParserException e )
-            {
-                throw new MojoExecutionException( "Error reading specified POM file: " + e.getMessage(), e );
-            }
-            finally
-            {
-                IOUtil.close( reader );
-            }
+        }
+        if ( this.artifactId == null && model.getArtifactId() != null )
+        {
+            this.artifactId = model.getArtifactId();
+        }
+        if ( this.version == null && model.getVersion() != null )
+        {
+            this.version = model.getVersion();
+        }
+        if ( this.packaging == null && model.getPackaging() != null )
+        {
+            this.packaging = model.getPackaging();
+        }
+    }
+
+    /**
+     * Extract the Model from the specified file.
+     * @param pomFile
+     * @return
+     * @throws MojoExecutionException if the file doesn't exist of cannot be read.
+     */
+    protected Model readModel( File pomFile )
+        throws MojoExecutionException
+    {
+
+        if ( !pomFile.exists() )
+        {
+            throw new MojoExecutionException( "Specified pomFile does not exist" );
+        }
+
+        Reader reader = null;
+        try
+        {
+            reader = new FileReader( pomFile );
+            MavenXpp3Reader modelReader = new MavenXpp3Reader();
+            return modelReader.read( reader );
+        }
+        catch ( FileNotFoundException e )
+        {
+            throw new MojoExecutionException( "Error reading specified POM file: " + e.getMessage(), e );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Error reading specified POM file: " + e.getMessage(), e );
+        }
+        catch ( XmlPullParserException e )
+        {
+            throw new MojoExecutionException( "Error reading specified POM file: " + e.getMessage(), e );
+        }
+        finally
+        {
+            IOUtil.close( reader );
         }
     }
 
@@ -281,5 +296,55 @@ public class DeployFileMojo
         {
             IOUtil.close( fw );
         }
+    }
+
+    void setGroupId( String groupId )
+    {
+        this.groupId = groupId;
+    }
+
+    void setArtifactId( String artifactId )
+    {
+        this.artifactId = artifactId;
+    }
+
+    void setVersion( String version )
+    {
+        this.version = version;
+    }
+
+    void setPackaging( String packaging )
+    {
+        this.packaging = packaging;
+    }
+
+    void setPomFile( File pomFile )
+    {
+        this.pomFile = pomFile;
+    }
+
+    String getGroupId()
+    {
+        return groupId;
+    }
+
+    String getArtifactId()
+    {
+        return artifactId;
+    }
+
+    String getVersion()
+    {
+        return version;
+    }
+
+    String getPackaging()
+    {
+        return packaging;
+    }
+
+    File getFile()
+    {
+        return file;
     }
 }
