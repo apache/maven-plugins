@@ -93,7 +93,7 @@ public class JavadocReport
      * Specifies the destination directory where javadoc saves the generated HTML files.
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#d">d</a>.
      *
-     * @parameter expression="${destDir}" alias="destDir" default-value="${project.build.directory}/javadoc/"
+     * @parameter expression="${destDir}" alias="destDir" default-value="${project.build.directory}/site/apidocs"
      * @required
      */
     private File outputDirectory;
