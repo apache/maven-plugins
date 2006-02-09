@@ -16,6 +16,12 @@ package org.apache.maven.plugin.pmd;
  * limitations under the License.
  */
 
+import net.sourceforge.pmd.ReportListener;
+import net.sourceforge.pmd.RuleViolation;
+import net.sourceforge.pmd.stat.Metric;
+import org.codehaus.doxia.sink.Sink;
+import org.codehaus.plexus.util.StringUtils;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,13 +29,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
-
-import net.sourceforge.pmd.ReportListener;
-import net.sourceforge.pmd.RuleViolation;
-import net.sourceforge.pmd.stat.Metric;
-
-import org.codehaus.doxia.sink.Sink;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Handle events from PMD, converting them into Doxia events.
@@ -100,7 +99,8 @@ public class PmdReportListener
         {
             public int compare( Object o1, Object o2 )
             {
-                return ( (RuleViolation) o1 ).getLine() - ( (RuleViolation) o2 ).getLine();
+                return ( (RuleViolation) o1 ).getNode().getBeginLine() -
+                    ( (RuleViolation) o2 ).getNode().getBeginLine();
             }
         } );
 
@@ -114,21 +114,32 @@ public class PmdReportListener
             sink.tableCell_();
             sink.tableCell();
 
-            if ( getXrefLocation() != null )
+            int beginLine = ruleViolation.getNode().getBeginLine();
+            outputLineLink( beginLine );
+            int endLine = ruleViolation.getNode().getEndLine();
+            if ( endLine != beginLine )
             {
-                sink.link( getXrefLocation() + "/" + currentFilename.replaceAll( "\\.java$", ".html" ) + "#"
-                    + ruleViolation.getLine() );
-            }
-            sink.text( String.valueOf( ruleViolation.getLine() ) );
-            if ( getXrefLocation() != null )
-            {
-                sink.link_();
+                sink.text( " - ");
+                outputLineLink( beginLine );
             }
 
             sink.tableCell_();
             sink.tableRow_();
         }
         violations.clear();
+    }
+
+    private void outputLineLink( int line )
+    {
+        if ( xrefLocation != null )
+        {
+            sink.link( xrefLocation + "/" + currentFilename.replaceAll( "\\.java$", ".html" ) + "#" + line );
+        }
+        sink.text( String.valueOf( line ) );
+        if ( xrefLocation != null )
+        {
+            sink.link_();
+        }
     }
 
     public void metricAdded( Metric metric )
@@ -229,16 +240,16 @@ public class PmdReportListener
             sink.text( met.getMetricName() );
             sink.tableCell_();
             sink.tableCell();
-            sink.text( "" + met.getCount() );
+            sink.text( String.valueOf( met.getCount() ) );
             sink.tableCell_();
             sink.tableCell();
-            sink.text( "" + met.getHighValue() );
+            sink.text( String.valueOf( met.getHighValue() ) );
             sink.tableCell_();
             sink.tableCell();
-            sink.text( "" + met.getLowValue() );
+            sink.text( String.valueOf( met.getLowValue() ) );
             sink.tableCell_();
             sink.tableCell();
-            sink.text( "" + met.getAverage() );
+            sink.text( String.valueOf( met.getAverage() ) );
             sink.tableCell_();
             sink.tableRow_();
         }
@@ -254,7 +265,7 @@ public class PmdReportListener
         // For instance, run the coupling ruleset and you will get a boatload
         // of excessive imports metrics, none of which is really any use.
         // TODO Determine if we are going to just ignore metrics.
-        
+
         // processMetrics();
 
         sink.body_();
