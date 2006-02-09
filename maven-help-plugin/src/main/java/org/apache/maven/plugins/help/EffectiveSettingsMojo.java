@@ -66,7 +66,7 @@ public class EffectiveSettingsMojo
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "Cannot serialize POM to XML.", e );
+            throw new MojoExecutionException( "Cannot serialize Settings to XML.", e );
         }
 
         if ( output != null && output.trim().length() > 0 )
