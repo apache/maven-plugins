@@ -70,6 +70,10 @@ public final class EarModuleFactory
         {
             return new SarModule( artifact );
         }
+        else if ( "wsr".equals( artifact.getType() ) )
+        {
+            return new WsrModule( artifact );
+        }
         else
         {
             throw new IllegalStateException( "Could not handle artifact type[" + artifact.getType() + "]" );
