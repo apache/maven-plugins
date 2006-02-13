@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-plugin-parent</groupId>
+    <artifactId>maven-plugin-parent</artifactId>
     <version>2.0.1</version>
   </parent>
   <artifactId>maven-one-plugin</artifactId>
