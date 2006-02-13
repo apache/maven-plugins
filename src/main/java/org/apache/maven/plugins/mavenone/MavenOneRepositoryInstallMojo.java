@@ -30,6 +30,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -81,6 +83,13 @@ public class MavenOneRepositoryInstallMojo
      * @component roleHint="legacy"
      */
     private ArtifactRepositoryLayout legacyLayout;
+
+    /**
+     * @parameter expression="${project.attachedArtifacts}
+     * @required
+     * @readonly
+     */
+    private List attachedArtifacts;
 
     public void execute()
         throws MojoExecutionException
@@ -137,6 +146,16 @@ public class MavenOneRepositoryInstallMojo
                 }
                 installer.install( file, artifact, localRepository );
             }
+
+            if ( attachedArtifacts != null && !attachedArtifacts.isEmpty() )
+            {
+                for ( Iterator i = attachedArtifacts.iterator(); i.hasNext(); )
+                {
+                    Artifact attached = (Artifact) i.next();
+
+                    installer.install( attached.getFile(), attached, localRepository );
+                }
+            }            
 
         }
         catch ( ArtifactInstallationException e )
