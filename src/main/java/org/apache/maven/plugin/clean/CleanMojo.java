@@ -18,9 +18,13 @@ package org.apache.maven.plugin.clean;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.shared.model.fileset.FileSet;
+import org.apache.maven.shared.model.fileset.util.FileSetUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Goal which cleans the build.
@@ -32,8 +36,6 @@ import java.io.IOException;
 public class CleanMojo
     extends AbstractMojo
 {
-    private static final int DELETE_RETRY_SLEEP_MILLIS = 10;
-
     /** 
      * This is where build results go.
      * 
@@ -67,6 +69,12 @@ public class CleanMojo
      * @parameter default=value="false" expression="${clean.verbose}"
      */
     private boolean verbose;
+    
+    /**
+     * The list of filesets to delete, in addition to the default directories.
+     * @parameter
+     */
+    private List filesets;
 
     /**
      * Should we follow symbolically linked files?
@@ -81,132 +89,48 @@ public class CleanMojo
         removeDirectory( directory );
         removeDirectory( outputDirectory );
         removeDirectory( testOutputDirectory );
+        
+        removeAdditionalFilesets();
+    }
+
+    private void removeAdditionalFilesets() throws MojoExecutionException
+    {
+        if ( filesets != null && !filesets.isEmpty() )
+        {
+            for ( Iterator it = filesets.iterator(); it.hasNext(); )
+            {
+                Fileset fileset = (Fileset) it.next();
+                
+                try
+                {
+                    getLog().info( "Deleting " + fileset );
+                    FileSetUtils.delete( fileset );
+                }
+                catch ( IOException e )
+                {
+                    throw new MojoExecutionException( "Failed to delete directory: " + fileset.getDirectory() + ". Reason: " + e.getMessage(), e );
+                }
+            }
+        }
     }
 
     private void removeDirectory( File dir )
         throws MojoExecutionException
     {
-        if ( dir != null )
-        {
-            if ( dir.exists() && dir.isDirectory() )
-            {
-                getLog().info( "Deleting directory " + dir.getAbsolutePath() );
-                removeDir( dir );
-            }
-        }
-    }
-
-    /**
-     * Accommodate Windows bug encountered in both Sun and IBM JDKs.
-     * Others possible. If the delete does not work, call System.gc(),
-     * wait a little and try again.
-     */
-    private boolean delete( File f )
-    {
-        if ( !f.delete() )
-        {
-            if ( verbose )
-            {
-                getLog().debug( "Failed to delete: " + f + " on first pass. Taking evasive actions." );
-            }
-            
-            if ( System.getProperty( "os.name" ).toLowerCase().indexOf( "windows" ) > -1 )
-            {
-                System.gc();
-            }
-            try
-            {
-                if ( verbose )
-                {
-                    getLog().debug( "Waiting: " + DELETE_RETRY_SLEEP_MILLIS + "ms to retry delete." );
-                }
-                
-                Thread.sleep( DELETE_RETRY_SLEEP_MILLIS );
-                return f.delete();
-            }
-            catch ( InterruptedException ex )
-            {
-                return f.delete();
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Delete a directory
-     *
-     * @param d the directory to delete
-     */
-    protected void removeDir( File d )
-        throws MojoExecutionException
-    {
-        if ( verbose )
-        {
-            getLog().debug( "Deleting directory: " + d + ". Traversing children first." );
-        }
+        FileSet fs = new FileSet();
+        fs.setDirectory( dir.getPath() );
+        fs.addInclude( "**/**" );
+        fs.setFollowSymlinks( followSymLinks );
         
-        String[] list = d.list();
-        if ( list == null )
-        {
-            list = new String[0];
-        }
-        for ( int i = 0; i < list.length; i++ )
-        {
-            String s = list[i];
-            File f = new File( d, s );
-
-            if ( verbose )
-            {
-                getLog().debug( "Deleting: " + f + "." );
-            }
-            
-            if ( f.isDirectory() && ( followSymLinks || !isSymLink( f ) ) )
-            {
-                removeDir( f );
-            }
-            else
-            {
-                if ( !delete( f ) )
-                {
-                    String message = "Unable to delete file " + f.getAbsolutePath();
-// TODO:...
-//                    if ( failOnError )
-//                    {
-                        throw new MojoExecutionException( message );
-//                    }
-//                    else
-//                    {
-//                        getLog().info( message );
-//                    }
-                }
-            }
-        }
-
-        if ( !delete( d ) )
-        {
-            String message = "Unable to delete directory " + d.getAbsolutePath();
-// TODO:...
-//            if ( failOnError )
-//            {
-                throw new MojoExecutionException( message );
-//            }
-//            else
-//            {
-//                getLog().info( message );
-//            }
-        }
-    }
-
-    private boolean isSymLink( File file ) throws MojoExecutionException
-    {
-        File dir = file.getParentFile();
         try
         {
-            return !file.getCanonicalPath().startsWith( dir.getCanonicalPath() );
+            getLog().info( "Deleting directory " + dir.getAbsolutePath() );
+            FileSetUtils.delete( fs );
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "Error checking whether file: " + file + " is a symbolic link. Error: " + e.getMessage(), e );
+            throw new MojoExecutionException( "Failed to delete directory: " + dir + ". Reason: " + e.getMessage(), e );
         }
     }
+
 }
