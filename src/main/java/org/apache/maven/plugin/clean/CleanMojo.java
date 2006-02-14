@@ -20,6 +20,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Goal which cleans the build.
@@ -59,6 +60,20 @@ public class CleanMojo
      * @readonly
      */
     private File testOutputDirectory;
+    
+    /**
+     * Be verbose in the debug log-level?
+     * 
+     * @parameter default=value="false" expression="${clean.verbose}"
+     */
+    private boolean verbose;
+
+    /**
+     * Should we follow symbolically linked files?
+     * 
+     * @parameter default=value="false" expression="${clean.followSymLinks}"
+     */
+    private boolean followSymLinks;
 
     public void execute()
         throws MojoExecutionException
@@ -90,12 +105,22 @@ public class CleanMojo
     {
         if ( !f.delete() )
         {
+            if ( verbose )
+            {
+                getLog().debug( "Failed to delete: " + f + " on first pass. Taking evasive actions." );
+            }
+            
             if ( System.getProperty( "os.name" ).toLowerCase().indexOf( "windows" ) > -1 )
             {
                 System.gc();
             }
             try
             {
+                if ( verbose )
+                {
+                    getLog().debug( "Waiting: " + DELETE_RETRY_SLEEP_MILLIS + "ms to retry delete." );
+                }
+                
                 Thread.sleep( DELETE_RETRY_SLEEP_MILLIS );
                 return f.delete();
             }
@@ -115,6 +140,11 @@ public class CleanMojo
     protected void removeDir( File d )
         throws MojoExecutionException
     {
+        if ( verbose )
+        {
+            getLog().debug( "Deleting directory: " + d + ". Traversing children first." );
+        }
+        
         String[] list = d.list();
         if ( list == null )
         {
@@ -124,7 +154,13 @@ public class CleanMojo
         {
             String s = list[i];
             File f = new File( d, s );
-            if ( f.isDirectory() )
+
+            if ( verbose )
+            {
+                getLog().debug( "Deleting: " + f + "." );
+            }
+            
+            if ( f.isDirectory() && ( followSymLinks || !isSymLink( f ) ) )
             {
                 removeDir( f );
             }
@@ -158,6 +194,19 @@ public class CleanMojo
 //            {
 //                getLog().info( message );
 //            }
+        }
+    }
+
+    private boolean isSymLink( File file ) throws MojoExecutionException
+    {
+        File dir = file.getParentFile();
+        try
+        {
+            return !file.getCanonicalPath().startsWith( dir.getCanonicalPath() );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Error checking whether file: " + file + " is a symbolic link. Error: " + e.getMessage(), e );
         }
     }
 }
