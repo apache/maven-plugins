@@ -10,4 +10,19 @@
   <name>Maven Clean Plugin</name>
   <version>2.0.1-SNAPSHOT</version>
   <inceptionYear>2001</inceptionYear>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.maven.shared</groupId>
+      <artifactId>file-management</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin><artifactId>maven-clean-plugin</artifactId>
+        <configuration><filesets><fileset><directory>${basedir}/test</directory></fileset></filesets></configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
