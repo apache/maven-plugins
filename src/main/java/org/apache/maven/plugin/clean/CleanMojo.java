@@ -19,7 +19,8 @@ package org.apache.maven.plugin.clean;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.shared.model.fileset.FileSet;
-import org.apache.maven.shared.model.fileset.util.FileSetUtils;
+import org.apache.maven.shared.model.fileset.util.FileSetManager;
+import org.apache.maven.shared.monitor.MojoLogMonitorAdaptor;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,7 +40,7 @@ public class CleanMojo
     /** 
      * This is where build results go.
      * 
-     * @parameter expression="${project.build.directory}"
+     * @parameter default-value="${project.build.directory}"
      * @required
      * @readonly
      */
@@ -48,7 +49,7 @@ public class CleanMojo
     /** 
      * This is where compiled classes go.
      * 
-     * @parameter expression="${project.build.outputDirectory}"
+     * @parameter default-value="${project.build.outputDirectory}"
      * @required
      * @readonly
      */
@@ -57,7 +58,7 @@ public class CleanMojo
     /** 
      * This is where compiled test classes go.
      * 
-     * @parameter expression="${project.build.testOutputDirectory}"
+     * @parameter default-value="${project.build.testOutputDirectory}"
      * @required
      * @readonly
      */
@@ -66,12 +67,13 @@ public class CleanMojo
     /**
      * Be verbose in the debug log-level?
      * 
-     * @parameter default=value="false" expression="${clean.verbose}"
+     * @parameter expression="${clean.verbose}" default=value="false"
      */
     private boolean verbose;
     
     /**
      * The list of filesets to delete, in addition to the default directories.
+     * 
      * @parameter
      */
     private List filesets;
@@ -79,13 +81,20 @@ public class CleanMojo
     /**
      * Should we follow symbolically linked files?
      * 
-     * @parameter default=value="false" expression="${clean.followSymLinks}"
+     * @parameter expression="${clean.followSymLinks}" default=value="false"
      */
     private boolean followSymLinks;
+
+    private FileSetManager fileSetManager;
 
     public void execute()
         throws MojoExecutionException
     {
+        getLog().info( "Be verbose? " + verbose );
+        
+        MojoLogMonitorAdaptor monitor = new MojoLogMonitorAdaptor( getLog() );
+        fileSetManager = new FileSetManager( monitor, verbose );
+        
         removeDirectory( directory );
         removeDirectory( outputDirectory );
         removeDirectory( testOutputDirectory );
@@ -104,7 +113,8 @@ public class CleanMojo
                 try
                 {
                     getLog().info( "Deleting " + fileset );
-                    FileSetUtils.delete( fileset );
+                    
+                    fileSetManager.delete( fileset );
                 }
                 catch ( IOException e )
                 {
@@ -125,7 +135,7 @@ public class CleanMojo
         try
         {
             getLog().info( "Deleting directory " + dir.getAbsolutePath() );
-            FileSetUtils.delete( fs );
+            fileSetManager.delete( fs );
         }
         catch ( IOException e )
         {
