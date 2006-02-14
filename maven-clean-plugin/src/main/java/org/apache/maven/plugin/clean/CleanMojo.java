@@ -90,8 +90,6 @@ public class CleanMojo
     public void execute()
         throws MojoExecutionException
     {
-        getLog().info( "Be verbose? " + verbose );
-        
         MojoLogMonitorAdaptor monitor = new MojoLogMonitorAdaptor( getLog() );
         fileSetManager = new FileSetManager( monitor, verbose );
         
