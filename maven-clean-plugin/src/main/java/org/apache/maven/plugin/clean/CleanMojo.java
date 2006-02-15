@@ -20,7 +20,6 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.shared.model.fileset.FileSet;
 import org.apache.maven.shared.model.fileset.util.FileSetManager;
-import org.apache.maven.shared.monitor.MojoLogMonitorAdaptor;
 
 import java.io.File;
 import java.io.IOException;
@@ -90,8 +89,7 @@ public class CleanMojo
     public void execute()
         throws MojoExecutionException
     {
-        MojoLogMonitorAdaptor monitor = new MojoLogMonitorAdaptor( getLog() );
-        fileSetManager = new FileSetManager( monitor, verbose );
+        fileSetManager = new FileSetManager( getLog(), verbose );
         
         removeDirectory( directory );
         removeDirectory( outputDirectory );
