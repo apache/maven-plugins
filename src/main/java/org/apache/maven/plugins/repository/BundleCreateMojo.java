@@ -121,6 +121,8 @@ public class BundleCreateMojo
 
         File sourceArtifact = new File( outputDirectory, finalName + "-sources." + extension );
 
+        File javadocArtifact = new File( outputDirectory, finalName + "-javadoc." + extension );
+
         File bundle = new File( outputDirectory, finalName + "-bundle.jar" );
 
         try
@@ -139,7 +141,18 @@ public class BundleCreateMojo
             {
                 getLog()
                     .warn(
-                           "Sources not included in upload bundle. In order to add sources please run \"mvn source:jar repository:bundle-create\"" );
+                           "Sources not included in upload bundle. In order to add sources please run \"mvn source:jar javadoc:jar repository:bundle-create\"" );
+            }
+
+            if ( javadocArtifact.exists() )
+            {
+                jarArchiver.addFile( javadocArtifact, javadocArtifact.getName() );
+            }
+            else
+            {
+                getLog()
+                    .warn(
+                           "Javadoc not included in upload bundle. In order to add javadocs please run \"mvn source:jar javadoc:jar repository:bundle-create\"" );
             }
 
             jarArchiver.setDestFile( bundle );
