@@ -23,11 +23,14 @@ import org.apache.maven.plugins.release.helpers.ScmHelper;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.provider.starteam.repository.StarteamScmProviderRepository;
 import org.apache.maven.scm.repository.ScmRepository;
+import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.components.interactivity.InputHandler;
 
 import java.io.File;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author <a href="mailto:jdcasey@apache.org">John Casey</a>
@@ -127,6 +130,21 @@ public abstract class AbstractReleaseMojo
             try
             {
                 repository = getScmManager().makeScmRepository( scmHelper.getUrl() );
+            }
+            catch ( ScmRepositoryException e )
+            {
+                List messages = e.getValidationMessages();
+
+                Iterator iter = messages.iterator();
+
+                while ( iter.hasNext() )
+                {
+                    getLog().error( iter.next().toString() );
+                }
+
+                getLog().error( "The invalid scm url connection: '" + scmHelper.getUrl() + "'." );
+
+                throw new MojoExecutionException( "Command failed. Bad Scm URL." );
             }
             catch ( Exception e )
             {
