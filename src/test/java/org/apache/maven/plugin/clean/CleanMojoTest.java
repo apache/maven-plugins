@@ -34,13 +34,17 @@ public class CleanMojoTest
 {
     private static final String TARGET_TEST_DIR = "target/testDirectoryStructure";
 
+    private String basedir;
+
     protected void setUp()
         throws Exception
     {
         super.setUp();
 
-        FileUtils.copyDirectoryStructure( new File( "src/test/resources/testDirectoryStructure" ),
-                                          new File( TARGET_TEST_DIR ) );
+        basedir = System.getProperty( "basedir", System.getProperty( "user.dir" ) );
+
+        FileUtils.copyDirectoryStructure( new File( basedir, "src/test/resources/testDirectoryStructure" ),
+                                          new File( basedir, TARGET_TEST_DIR ) );
     }
 
     protected void tearDown()
@@ -48,7 +52,7 @@ public class CleanMojoTest
     {
         super.tearDown();
 
-        FileUtils.deleteDirectory( new File( TARGET_TEST_DIR ) );
+        FileUtils.deleteDirectory( new File( basedir, TARGET_TEST_DIR ) );
     }
 
     public void testClean()
@@ -61,15 +65,15 @@ public class CleanMojoTest
 
         CleanMojo mojo = new CleanMojo();
 
-        mojo.setDirectory( new File( directory ) );
-        mojo.setOutputDirectory( new File( outputDirectory ) );
-        mojo.setTestOutputDirectory( new File( testOutputDirectory ) );
+        mojo.setDirectory( new File( basedir, directory ) );
+        mojo.setOutputDirectory( new File( basedir, outputDirectory ) );
+        mojo.setTestOutputDirectory( new File( basedir, testOutputDirectory ) );
 
         mojo.execute();
 
-        assertFalse( FileUtils.fileExists( directory ) );
-        assertFalse( FileUtils.fileExists( outputDirectory ) );
-        assertFalse( FileUtils.fileExists( testOutputDirectory ) );
+        assertFalse( checkExists( directory ) );
+        assertFalse( checkExists( outputDirectory ) );
+        assertFalse( checkExists( testOutputDirectory ) );
     }
 
     public void testNestedStructure()
@@ -81,15 +85,20 @@ public class CleanMojoTest
 
         CleanMojo mojo = new CleanMojo();
 
-        mojo.setDirectory( new File( base ) );
-        mojo.setOutputDirectory( new File( outputDirectory ) );
-        mojo.setTestOutputDirectory( new File( testOutputDirectory ) );
+        mojo.setDirectory( new File( basedir, base ) );
+        mojo.setOutputDirectory( new File( basedir, outputDirectory ) );
+        mojo.setTestOutputDirectory( new File( basedir, testOutputDirectory ) );
 
         mojo.execute();
 
-        assertFalse( FileUtils.fileExists( base ) );
-        assertFalse( FileUtils.fileExists( outputDirectory ) );
-        assertFalse( FileUtils.fileExists( testOutputDirectory ) );
+        assertFalse( checkExists( base ) );
+        assertFalse( checkExists( outputDirectory ) );
+        assertFalse( checkExists( testOutputDirectory ) );
+    }
+
+    private boolean checkExists( String testOutputDirectory )
+    {
+        return FileUtils.fileExists( new File( basedir, testOutputDirectory ).getAbsolutePath() );
     }
 
     public void testEmptyDirectories()
@@ -118,16 +127,16 @@ public class CleanMojoTest
         mojo.execute();
 
         // fileset 1
-        assertTrue( FileUtils.fileExists( base ) );
-        assertTrue( FileUtils.fileExists( base + "/classes" ) );
-        assertFalse( FileUtils.fileExists( base + "/classes/file.txt" ) );
+        assertTrue( checkExists( base ) );
+        assertTrue( checkExists( base + "/classes" ) );
+        assertFalse( checkExists( base + "/classes/file.txt" ) );
 /* TODO: looks like a bug in the file-management library
         assertTrue( FileUtils.fileExists( base + "/subdir/file.txt" ) );
 */
 
         // fileset 2
-        assertTrue( FileUtils.fileExists( outputDirectory ) );
-        assertFalse( FileUtils.fileExists( outputDirectory + "/file.txt" ) );
+        assertTrue( checkExists( outputDirectory ) );
+        assertFalse( checkExists( outputDirectory + "/file.txt" ) );
     }
 
     public void testInvalidDirectory()
@@ -136,7 +145,7 @@ public class CleanMojoTest
         String path = TARGET_TEST_DIR + "/target/subdir/file.txt";
 
         CleanMojo mojo = new CleanMojo();
-        mojo.setDirectory( new File( path ) );
+        mojo.setDirectory( new File( basedir, path ) );
 
         try
         {
@@ -156,9 +165,9 @@ public class CleanMojoTest
         String path = TARGET_TEST_DIR + "/target/subdir";
 
         CleanMojo mojo = new CleanMojo();
-        mojo.setDirectory( new File( path ) );
+        mojo.setDirectory( new File( basedir, path ) );
 
-        FileInputStream fis = new FileInputStream( new File( path, "file.txt" ) );
+        FileInputStream fis = new FileInputStream( new File( basedir, path + "/file.txt" ) );
 
         try
         {
@@ -184,7 +193,7 @@ public class CleanMojoTest
         CleanMojo mojo = new CleanMojo();
         mojo.addFileset( createFileset( path, "**", "" ) );
 
-        FileInputStream fis = new FileInputStream( new File( path, "file.txt" ) );
+        FileInputStream fis = new FileInputStream( new File( basedir, path + "/file.txt" ) );
 
         try
         {
@@ -208,18 +217,18 @@ public class CleanMojoTest
         String path = TARGET_TEST_DIR + "/does-not-exist";
 
         CleanMojo mojo = new CleanMojo();
-        mojo.setDirectory( new File( path ) );
-        assertFalse( FileUtils.fileExists( path ) );
+        mojo.setDirectory( new File( basedir, path ) );
+        assertFalse( checkExists( path ) );
 
         mojo.execute();
 
-        assertFalse( FileUtils.fileExists( path ) );
+        assertFalse( checkExists( path ) );
     }
 
-    private static Fileset createFileset( String dir, String includes, String excludes )
+    private Fileset createFileset( String dir, String includes, String excludes )
     {
         Fileset fileset = new Fileset();
-        fileset.setDirectory( dir );
+        fileset.setDirectory( new File( basedir, dir ).getAbsolutePath() );
         fileset.setIncludes( Arrays.asList( new String[]{includes} ) );
         fileset.setExcludes( Arrays.asList( new String[]{excludes} ) );
         return fileset;
