@@ -24,6 +24,7 @@ import org.apache.maven.shared.model.fileset.util.FileSetManager;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -125,19 +126,29 @@ public class CleanMojo
     private void removeDirectory( File dir )
         throws MojoExecutionException
     {
-        FileSet fs = new FileSet();
-        fs.setDirectory( dir.getPath() );
-        fs.addInclude( "**/**" );
-        fs.setFollowSymlinks( followSymLinks );
+        if ( dir != null )
+        {
+            FileSet fs = new FileSet();
+            fs.setDirectory( dir.getPath() );
+            fs.addInclude( "**/**" );
+            fs.setFollowSymlinks( followSymLinks );
 
-        try
-        {
-            getLog().info( "Deleting directory " + dir.getAbsolutePath() );
-            fileSetManager.delete( fs );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Failed to delete directory: " + dir + ". Reason: " + e.getMessage(), e );
+            try
+            {
+                getLog().info( "Deleting directory " + dir.getAbsolutePath() );
+                fileSetManager.delete( fs );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Failed to delete directory: " + dir + ". Reason: " + e.getMessage(),
+                                                  e );
+            }
+            catch ( IllegalStateException e )
+            {
+                // TODO: IOException from plexus-utils should be acceptable here
+                throw new MojoExecutionException( "Failed to delete directory: " + dir + ". Reason: " + e.getMessage(),
+                                                  e );
+            }
         }
     }
 
@@ -163,5 +174,19 @@ public class CleanMojo
     protected void setTestOutputDirectory( File testOutputDirectory )
     {
         this.testOutputDirectory = testOutputDirectory;
+    }
+
+    /**
+     * Add a fileset to the list of filesets to clean.
+     *
+     * @param fileset the fileset
+     */
+    public void addFileset( Fileset fileset )
+    {
+        if ( filesets == null )
+        {
+            filesets = new LinkedList();
+        }
+        filesets.add( fileset );
     }
 }
