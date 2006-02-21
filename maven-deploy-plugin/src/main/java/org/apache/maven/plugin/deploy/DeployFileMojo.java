@@ -137,23 +137,32 @@ public class DeployFileMojo
 
         initProperties();
 
+        Artifact pomArtifact = null;
+        
         try
         {
             // Create the artifact
             Artifact artifact = artifactFactory.createArtifact( groupId, artifactId, version, null, packaging );
-
+            
             ArtifactRepository deploymentRepository = repositoryFactory
                 .createDeploymentArtifactRepository( repositoryId, url, layout, false );
 
             // Upload the POM if requested, generating one if need be
             if ( generatePom )
             {
-                if ( null == pomFile )
+                if ( !isPomFileExisting() )
                 {
                     generatePomFile();
                 }
                 ArtifactMetadata metadata = new ProjectArtifactMetadata( artifact, pomFile );
                 artifact.addMetadata( metadata );
+            }
+            else
+            {
+                if( isPomFileExisting() )
+                {
+                    pomArtifact = artifactFactory.createArtifact( groupId, artifactId, version, null, "pom" );
+                }
             }
 
             if ( !file.exists() )
@@ -168,11 +177,26 @@ public class DeployFileMojo
                 throw new MojoExecutionException( "No transfer protocol found." );
             }
             getDeployer().deploy( file, artifact, deploymentRepository, getLocalRepository() );
+            
+            if( isPomFileExisting() && generatePom == false )
+            {
+                getDeployer().deploy( pomFile, pomArtifact, deploymentRepository, getLocalRepository() );
+            }
         }
         catch ( ArtifactDeploymentException e )
         {
             throw new MojoExecutionException( e.getMessage(), e );
         }
+    }
+    
+    private boolean isPomFileExisting()
+    {
+        boolean existing = false;
+        if( pomFile != null && pomFile.exists() )
+        {
+            existing = true;
+        }
+        return existing;
     }
 
     void initProperties()
@@ -181,6 +205,8 @@ public class DeployFileMojo
         // Process the supplied POM (if there is one)
         if ( pomFile != null )
         {
+            generatePom = false;
+            
             Model model = readModel( pomFile );
 
             processModel( model );
