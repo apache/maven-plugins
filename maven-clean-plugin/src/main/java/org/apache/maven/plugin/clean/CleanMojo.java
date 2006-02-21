@@ -28,58 +28,58 @@ import java.util.List;
 
 /**
  * Goal which cleans the build.
-
- * @goal clean
+ *
  * @author <a href="mailto:evenisse@maven.org">Emmanuel Venisse</a>
  * @version $Id$
+ * @goal clean
  */
 public class CleanMojo
     extends AbstractMojo
 {
-    /** 
+    /**
      * This is where build results go.
-     * 
+     *
      * @parameter default-value="${project.build.directory}"
      * @required
      * @readonly
      */
     private File directory;
 
-    /** 
+    /**
      * This is where compiled classes go.
-     * 
+     *
      * @parameter default-value="${project.build.outputDirectory}"
      * @required
      * @readonly
      */
     private File outputDirectory;
 
-    /** 
+    /**
      * This is where compiled test classes go.
-     * 
+     *
      * @parameter default-value="${project.build.testOutputDirectory}"
      * @required
      * @readonly
      */
     private File testOutputDirectory;
-    
+
     /**
      * Be verbose in the debug log-level?
-     * 
+     *
      * @parameter expression="${clean.verbose}" default=value="false"
      */
     private boolean verbose;
-    
+
     /**
      * The list of filesets to delete, in addition to the default directories.
-     * 
+     *
      * @parameter
      */
     private List filesets;
 
     /**
      * Should we follow symbolically linked files?
-     * 
+     *
      * @parameter expression="${clean.followSymLinks}" default=value="false"
      */
     private boolean followSymLinks;
@@ -90,31 +90,33 @@ public class CleanMojo
         throws MojoExecutionException
     {
         fileSetManager = new FileSetManager( getLog(), verbose );
-        
+
         removeDirectory( directory );
         removeDirectory( outputDirectory );
         removeDirectory( testOutputDirectory );
-        
+
         removeAdditionalFilesets();
     }
 
-    private void removeAdditionalFilesets() throws MojoExecutionException
+    private void removeAdditionalFilesets()
+        throws MojoExecutionException
     {
         if ( filesets != null && !filesets.isEmpty() )
         {
             for ( Iterator it = filesets.iterator(); it.hasNext(); )
             {
                 Fileset fileset = (Fileset) it.next();
-                
+
                 try
                 {
                     getLog().info( "Deleting " + fileset );
-                    
+
                     fileSetManager.delete( fileset );
                 }
                 catch ( IOException e )
                 {
-                    throw new MojoExecutionException( "Failed to delete directory: " + fileset.getDirectory() + ". Reason: " + e.getMessage(), e );
+                    throw new MojoExecutionException(
+                        "Failed to delete directory: " + fileset.getDirectory() + ". Reason: " + e.getMessage(), e );
                 }
             }
         }
@@ -127,7 +129,7 @@ public class CleanMojo
         fs.setDirectory( dir.getPath() );
         fs.addInclude( "**/**" );
         fs.setFollowSymlinks( followSymLinks );
-        
+
         try
         {
             getLog().info( "Deleting directory " + dir.getAbsolutePath() );
@@ -139,4 +141,27 @@ public class CleanMojo
         }
     }
 
+    /**
+     * @param directory The directory to set.
+     */
+    protected void setDirectory( File directory )
+    {
+        this.directory = directory;
+    }
+
+    /**
+     * @param outputDirectory The outputDirectory to set.
+     */
+    protected void setOutputDirectory( File outputDirectory )
+    {
+        this.outputDirectory = outputDirectory;
+    }
+
+    /**
+     * @param testOutputDirectory The testOutputDirectory to set.
+     */
+    protected void setTestOutputDirectory( File testOutputDirectory )
+    {
+        this.testOutputDirectory = testOutputDirectory;
+    }
 }
