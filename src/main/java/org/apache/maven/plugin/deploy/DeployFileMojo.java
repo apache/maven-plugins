@@ -130,6 +130,14 @@ public class DeployFileMojo
      * @readonly
      */
     private boolean generatePom = true;
+    
+    /**
+     * Add classifier to the artifact
+     * 
+     * @parameter expression="${classifier}";
+     */
+    private String classifier;
+    
 
     public void execute()
         throws MojoExecutionException
@@ -142,7 +150,7 @@ public class DeployFileMojo
         try
         {
             // Create the artifact
-            Artifact artifact = artifactFactory.createArtifact( groupId, artifactId, version, null, packaging );
+            Artifact artifact = artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, packaging, classifier );
             
             ArtifactRepository deploymentRepository = repositoryFactory
                 .createDeploymentArtifactRepository( repositoryId, url, layout, false );
@@ -372,5 +380,15 @@ public class DeployFileMojo
     File getFile()
     {
         return file;
+    }
+
+    String getClassifier()
+    {
+        return classifier;
+    }
+
+    void setClassifier( String classifier )
+    {
+        this.classifier = classifier;
     }
 }
