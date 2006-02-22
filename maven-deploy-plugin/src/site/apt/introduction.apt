@@ -1,0 +1,47 @@
+ ------
+ Maven 2 Deploy Plugin
+ ------
+ Jerome Lacoste
+ ------
+ January 29 2006
+ ------
+
+Introduction
+
+  The deploy plugin is primarily used during the deploy phase, to add your artifact(s) to a remote repository for sharing with other developers and projects. This is usualy done in an integration or release environment. It can also be used to deploy a particular artifact (e.g. a third party jar like Sun's non redistributable reference implementations).
+
+  As a repository contains more than the artifacts (POMs, the metadata, MD5 and SHA1 hash files...), deploying means not only copying the artifacts, but making sure all this information is correctly updated. It's the reponsibility of the deploy plugin.
+
+  To work, the deployment will require:
+
+  * information about the repository: its location, the transport method used to access it (FTP, SCP, SFTP...) and the optional user specific required account information
+
+  * information about the artifact(s): the group, artifact, version, packaging, classifier...
+
+  * a deployer: a method to actually perform the deployment. This can be implemented as a wagon transport (making it cross-platform), or use a system specific method.
+
+  The information will be taken from the implied (or specified) pom and from the command line. The settings.xml file may also be parsed to retrieve user credentials.
+
+
+Goals overview
+
+  The deploy plugin has 2 goals:
+
+  * {{{index.html} deploy:deploy}} is used to automatically install the artifact, its pom and the attached artifacts produced by a particuliar project. Most if not all the information related to the deployment is stored in the project's pom. The operation
+
+  * {{{index.html} deploy:deploy-file}} is used to install a single artifact along with its pom. In that case the artifact information can be taken from an optionally specified pomFile, but can be completed/overriden using the command line.
+
+
+Links
+
+  * {{{http://maven.apache.org/guides/introduction/introduction-to-repositories.html} Introduction to repositories}}
+
+  * {{{http://maven.apache.org/guides/mini/guide-deploying-3rd-party-jars.html} Guide to deploying 3rd party jars to remote repository}}
+
+  * {{{http://maven.apache.org/guides/mini/guide-deploy-ftp.html} Guide to deployment using FTP}}
+
+  * {{{http://maven.apache.org/guides/mini/guide-deploy-ssh-external.html} Guide to deployment using an external SSH}}
+
+  * {{{http://maven.apache.org/guides/mini/guide-deployment-security-settings.html} Security and Deployment Settings}}
+
+  * {{{http://maven.apache.org/guides/index.html} Maven guides}}
