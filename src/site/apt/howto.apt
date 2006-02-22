@@ -1,0 +1,41 @@
+ ------
+ Maven 2 Deploy Plugin
+ ------
+ Jerome Lacoste
+ ------
+ January 29 2006
+ ------
+
+How-to
+
+ 
+
+deploy:deploy
+
+  If you've configured your repository deployment information correctly (in the pom and in your settings.xml), most of the time, deploying will only require to run
+
+-------------------------------
+mvn deploy
+-------------------------------
+ 
+
+deploy:deploy-file
+
+-------------------------------
+mvn deploy:deploy-file -Durl=file://C:\m2-repo -DrepositoryId -Dfile=thefile.jar 
+                       [-DpomFile=the.pom]
+                       [-DgroupId=group] [-DartifactId=artifact] [-Dversion=version] [-Dpackaging]
+                       [-Dclassifier=test]
+                       [-DgeneratePom=true]
+-------------------------------
+
+  If the following required information is not specified in some way, the goal will fail:
+
+  * the file to deploy
+  
+  * the group, artifact, version and packaging of the file to deploy. These can be taken from the specified pomFile, and overriden or specified using the command line. When the pomFile contains a <parent> section, the parent's groupId can be considered if the groupId is not specified further for the current project or on the command line.
+
+  * the repository information: the url to deploy to and the repositoryId mapping to a server section in the settings.xml file.
+
+  Optionally, one can specify a classifier, or avoid generating a pom.
+
