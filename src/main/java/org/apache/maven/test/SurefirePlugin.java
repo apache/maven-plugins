@@ -141,7 +141,7 @@ public class SurefirePlugin
      *
      * @parameter
      */
-    private Properties systemProperties;
+    private Map systemProperties;
 
     /**
      * List of of Plugin Artifacts.
@@ -397,15 +397,17 @@ public class SurefirePlugin
         // Add all system properties configured by the user
         if ( systemProperties != null )
         {
-            Enumeration propertyKeys = systemProperties.propertyNames();
+            Iterator iter = systemProperties.keySet().iterator();
 
-            while ( propertyKeys.hasMoreElements() )
+            while ( iter.hasNext() )
             {
-                String key = (String) propertyKeys.nextElement();
+                String key = (String) iter.next();
 
-                System.setProperty( key, systemProperties.getProperty( key ) );
+                String value = (String) systemProperties.get( key );
 
-                getLog().debug( "Setting system property [" + key + "]=[" + systemProperties.getProperty( key ) + "]" );
+                System.setProperty( key, value ); 
+
+                getLog().debug( "Setting system property [" + key + "]=[" + value + "]" );
             }
         }
     }
