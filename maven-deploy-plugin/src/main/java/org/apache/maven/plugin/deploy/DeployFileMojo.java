@@ -137,7 +137,14 @@ public class DeployFileMojo
      * @parameter expression="${classifier}";
      */
     private String classifier;
-    
+
+    /**
+     * Whether to deploy snapshots with a unique version or not.
+     *
+     * @parameter expression="${uniqueVersion}" default-value="true"
+     */
+    private boolean uniqueVersion;
+
 
     public void execute()
         throws MojoExecutionException
@@ -146,14 +153,14 @@ public class DeployFileMojo
         initProperties();
 
         Artifact pomArtifact = null;
-        
+
         try
         {
             // Create the artifact
             Artifact artifact = artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, packaging, classifier );
-            
+
             ArtifactRepository deploymentRepository = repositoryFactory
-                .createDeploymentArtifactRepository( repositoryId, url, layout, false );
+                .createDeploymentArtifactRepository( repositoryId, url, layout, uniqueVersion );
 
             // Upload the POM if requested, generating one if need be
             if ( generatePom )
@@ -185,7 +192,7 @@ public class DeployFileMojo
                 throw new MojoExecutionException( "No transfer protocol found." );
             }
             getDeployer().deploy( file, artifact, deploymentRepository, getLocalRepository() );
-            
+
             if( isPomFileExisting() && generatePom == false )
             {
                 getDeployer().deploy( pomFile, pomArtifact, deploymentRepository, getLocalRepository() );
