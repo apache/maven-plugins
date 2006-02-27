@@ -981,6 +981,7 @@ public class SiteMojo
         sink.text( title );
         sink.title_();
         sink.head_();
+
         sink.body();
 
         sink.section1();
@@ -999,6 +1000,7 @@ public class SiteMojo
             sink.text( i18n.getString( "site-plugin", locale, "report.index.nodescription" ) );
         }
         sink.paragraph_();
+        sink.section1_();
 
         sink.body_();
 
