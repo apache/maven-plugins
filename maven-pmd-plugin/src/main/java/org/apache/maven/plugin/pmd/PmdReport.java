@@ -96,7 +96,7 @@ public class PmdReport
      * "html", "csv", "xml", "txt" or the full class name of the PMD renderer to use.
      * See the net.sourceforge.pmd.renderers package javadoc for available renderers.
      * 
-     * @parameter
+     * @parameter expression="${format}"
      */
     private String format = "html";
 
