@@ -405,9 +405,9 @@ public class SurefirePlugin
 
                 String value = (String) systemProperties.get( key );
 
-                System.setProperty( key, value ); 
-
                 getLog().debug( "Setting system property [" + key + "]=[" + value + "]" );
+                
+                System.setProperty( key, value ); 
             }
         }
     }
