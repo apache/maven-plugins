@@ -484,11 +484,25 @@ public class SurefirePlugin
         {
             if ( printSummary )
             {
-                surefireBooter.addReport( "org.apache.maven.surefire.report.ConsoleReporter" );
+                if ( forking() )
+                {
+                    surefireBooter.addReport( "org.apache.maven.surefire.report.ForkingConsoleReporter" );                    
+                }
+                else
+                {
+                    surefireBooter.addReport( "org.apache.maven.surefire.report.ConsoleReporter" ); 
+                }
             }
             else
             {
-                surefireBooter.addReport( "org.apache.maven.surefire.report.SummaryConsoleReporter" );
+                if ( forking() )
+                {
+                    surefireBooter.addReport( "org.apache.maven.surefire.report.ForkingSummaryConsoleReporter" );
+                }
+                else
+                {
+                    surefireBooter.addReport( "org.apache.maven.surefire.report.SummaryConsoleReporter" );
+                }
             }
 
             if ( reportFormat.equals( "brief" ) )
@@ -511,6 +525,12 @@ public class SurefirePlugin
                 surefireBooter.addReport( "org.apache.maven.surefire.report.DetailedConsoleReporter" );
             }
         }
+        
         surefireBooter.addReport( "org.apache.maven.surefire.report.XMLReporter" );
+    }
+    
+    private boolean forking()
+    {
+        return !forkMode.equals( "none" );
     }
 }
