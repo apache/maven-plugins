@@ -101,8 +101,8 @@ public class SurefirePlugin
     private String reportsDirectory;
 
     /**
-     * Specify this parameter if you want to use the test regex notation to select tests to run.
-     * The regular expression will be used to create an include pattern formatted like <code>**&#47;${test}.java</code>
+     * Specify this parameter if you want to use the test pattern matching notation, Ant pattern matching, to select tests to run.
+     * The Ant pattern will be used to create an include pattern formatted like <code>**&#47;${test}.java</code>
      * When used, the <code>includes</code> and <code>excludes</code> patterns parameters are ignored
      *
      * @parameter expression="${test}"
