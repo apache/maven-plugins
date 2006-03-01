@@ -251,10 +251,10 @@ public class IdeaMojo
             Xpp3Dom component = findComponent( module, "ProjectModuleManager" );
             Xpp3Dom modules = findElement( component, "modules" );
 
+            removeOldElements( modules, "module" );
+
             if ( project.getCollectedProjects().size() > 0 )
             {
-                removeOldElements( modules, "module" );
-
                 Xpp3Dom m = createElement( modules, "module" );
                 String projectPath = new File( project.getBasedir(),
                                                project.getArtifactId() + ".iml" ).getAbsolutePath();
@@ -361,11 +361,11 @@ public class IdeaMojo
                 addSourceFolder( content, directory, true );
             }
 
+            List resourceDirectory = new ArrayList();
             for ( Iterator i = project.getBuild().getResources().iterator(); i.hasNext(); )
             {
                 Resource resource = (Resource) i.next();
-                String directory = resource.getDirectory();
-                addSourceFolder( content, directory, false );
+                resourceDirectory.add( resource.getDirectory() );
             }
 
             for ( Iterator i = project.getBuild().getTestResources().iterator(); i.hasNext(); )
@@ -449,6 +449,15 @@ public class IdeaMojo
                 }
             }
 
+            for( Iterator resourceDirs = resourceDirectory.iterator(); resourceDirs.hasNext(); )
+            {
+                String resourceDir = (String) resourceDirs.next();
+
+                getLog().info( "Adding resource directory: " + resourceDir );
+
+                addResources( component, resourceDir );
+            }
+
             FileWriter writer = new FileWriter( moduleFile );
             try
             {
@@ -467,6 +476,20 @@ public class IdeaMojo
         {
             throw new MojoExecutionException( "Error parsing existing IML file " + moduleFile.getAbsolutePath(), e );
         }
+    }
+
+    private void addResources( Xpp3Dom component, String directory ) {
+        Xpp3Dom dep = createElement( component, "orderEntry" );
+        dep.setAttribute( "type", "module-library" );
+        dep = createElement( dep, "library" );
+        dep.setAttribute( "name", "resources" );
+
+        Xpp3Dom el = createElement( dep, "CLASSES" );
+        el = createElement( el, "root" );
+        el.setAttribute( "url", getModuleFileUrl( directory ) );
+
+        createElement( dep, "JAVADOC" );
+        createElement( dep, "SOURCES" );
     }
 
     /**
