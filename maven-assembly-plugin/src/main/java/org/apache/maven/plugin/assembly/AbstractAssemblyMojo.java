@@ -90,6 +90,16 @@ public abstract class AbstractAssemblyMojo
      * @parameter
      */
     private String[] descriptorRefs;
+    
+    /**
+     * This is the base directory from which archive files are created.
+     * This base directory pre-pended to any <code>&lt;directory&gt;</code>
+     * specifications in the assembly descriptor.  This is an optional
+     * parameter
+     * 
+     * @parameter
+     */
+    private File archiveBaseDirectory;
 
     /**
      * Predefined Assembly Descriptor Id's.  You can select bin, jar-with-dependencies, or src.
@@ -709,7 +719,24 @@ public abstract class AbstractAssemblyMojo
 
             String[] excludes = (String[]) excludesList.toArray( EMPTY_STRING_ARRAY );
 
-            File archiveBaseDir = new File( directory );
+            File archiveBaseDir;
+            if ( archiveBaseDirectory == null)
+            {
+                archiveBaseDir = new File( directory );    
+            }
+            else
+            {
+                if (! archiveBaseDirectory.exists())
+                {
+                    throw new IOException("The archive base directory '"+archiveBaseDirectory.getAbsolutePath()+"' does not exist");
+                }
+                if (! archiveBaseDirectory.isDirectory())
+                {
+                    throw new IOException("The archive base directory '"+archiveBaseDirectory.getAbsolutePath()+"' exists, but it is not a directory");
+                }
+                archiveBaseDir = new File( archiveBaseDirectory, directory);                
+            }
+            getLog().debug("The archive base directory is '"+archiveBaseDir.getAbsolutePath()+"'");            
 
             if ( ! archiveBaseDir.isAbsolute() )
             {
@@ -722,7 +749,7 @@ public abstract class AbstractAssemblyMojo
 
                 archiveBaseDir = tmpDir;
             }
-
+            getLog().debug("Archive base directory: '"+archiveBaseDir.getAbsolutePath()+"'");
             addDirectory( archiver, archiveBaseDir, output, includes, excludesList );
         }
     }
