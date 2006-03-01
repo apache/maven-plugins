@@ -16,13 +16,6 @@ package org.apache.maven.plugin.deploy;
  * limitations under the License.
  */
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Reader;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.deployer.ArtifactDeploymentException;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -39,47 +32,54 @@ import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
+
 /**
  * Installs the artifact in the remote repository.
- * 
- * @goal deploy-file
- * @requiresProject false 
+ *
  * @author <a href="mailto:aramirez@apache.org">Allan Ramirez</a>
+ * @goal deploy-file
+ * @requiresProject false
  */
 public class DeployFileMojo
     extends AbstractDeployMojo
 {
     /**
      * GroupId of the artifact to be deployed.  Retrieved from POM file if specified.
-     * 
+     *
      * @parameter expression="${groupId}"
      */
     private String groupId;
 
     /**
      * ArtifactId of the artifact to be deployed.  Retrieved from POM file if specified.
-     * 
+     *
      * @parameter expression="${artifactId}"
      */
     private String artifactId;
 
     /**
      * Version of the artifact to be deployed.  Retrieved from POM file if specified.
-     * 
+     *
      * @parameter expression="${version}"
      */
     private String version;
 
     /**
      * Type of the artifact to be deployed.  Retrieved from POM file if specified.
-     * 
+     *
      * @parameter expression="${packaging}"
      */
     private String packaging;
 
     /**
      * File to be deployed.
-     * 
+     *
      * @parameter expression="${file}"
      * @required
      */
@@ -87,7 +87,7 @@ public class DeployFileMojo
 
     /**
      * Server Id to map on the &lt;id&gt; under &lt;server&gt; section of settings.xml
-     * 
+     *
      * @parameter expression="${repositoryId}"
      * @required
      */
@@ -96,7 +96,7 @@ public class DeployFileMojo
     /**
      * URL where the artifact will be deployed. <br/>
      * ie ( file://C:\m2-repo )
-     * 
+     *
      * @parameter expression="${url}"
      * @required
      */
@@ -123,17 +123,17 @@ public class DeployFileMojo
     private File pomFile;
 
     /**
-     * Upload a POM for this artifact.  Will generate a default POM if none is 
+     * Upload a POM for this artifact.  Will generate a default POM if none is
      * supplied with the pomFile argument.
-     * 
+     *
      * @parameter expression="${generatePom}"
      * @readonly
      */
     private boolean generatePom = true;
-    
+
     /**
      * Add classifier to the artifact
-     * 
+     *
      * @parameter expression="${classifier}";
      */
     private String classifier;
@@ -149,76 +149,11 @@ public class DeployFileMojo
     public void execute()
         throws MojoExecutionException
     {
-
-        initProperties();
-
-        Artifact pomArtifact = null;
-
-        try
-        {
-            // Create the artifact
-            Artifact artifact = artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, packaging, classifier );
-
-            ArtifactRepository deploymentRepository = repositoryFactory
-                .createDeploymentArtifactRepository( repositoryId, url, layout, uniqueVersion );
-
-            // Upload the POM if requested, generating one if need be
-            if ( generatePom )
-            {
-                if ( !isPomFileExisting() )
-                {
-                    generatePomFile();
-                }
-                ArtifactMetadata metadata = new ProjectArtifactMetadata( artifact, pomFile );
-                artifact.addMetadata( metadata );
-            }
-            else
-            {
-                if( isPomFileExisting() )
-                {
-                    pomArtifact = artifactFactory.createArtifact( groupId, artifactId, version, null, "pom" );
-                    ArtifactMetadata metadata = new ProjectArtifactMetadata( artifact, pomFile );
-                    artifact.addMetadata( metadata );
-                }
-            }
-
-            if ( !file.exists() )
-            {
-                throw new MojoExecutionException( file.getPath() + " not found." );
-            }
-
-            String protocol = deploymentRepository.getProtocol();
-
-            if ( protocol.equals( "" ) || protocol == null )
-            {
-                throw new MojoExecutionException( "No transfer protocol found." );
-            }
-            getDeployer().deploy( file, artifact, deploymentRepository, getLocalRepository() );
-        }
-        catch ( ArtifactDeploymentException e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
-    }
-    
-    private boolean isPomFileExisting()
-    {
-        boolean existing = false;
-        if( pomFile != null && pomFile.exists() )
-        {
-            existing = true;
-        }
-        return existing;
-    }
-
-    void initProperties()
-        throws MojoExecutionException
-    {
         // Process the supplied POM (if there is one)
         if ( pomFile != null )
         {
             generatePom = false;
-            
+
             Model model = readModel( pomFile );
 
             processModel( model );
@@ -229,13 +164,54 @@ public class DeployFileMojo
         {
             throw new MojoExecutionException( "Missing group, artifact, version, or packaging information" );
         }
+
+        if ( !file.exists() )
+        {
+            throw new MojoExecutionException( file.getPath() + " not found." );
+        }
+
+        ArtifactRepository deploymentRepository =
+            repositoryFactory.createDeploymentArtifactRepository( repositoryId, url, layout, uniqueVersion );
+
+        String protocol = deploymentRepository.getProtocol();
+
+        if ( "".equals( protocol ) || protocol == null )
+        {
+            throw new MojoExecutionException( "No transfer protocol found." );
+        }
+
+        // Create the artifact
+        Artifact artifact =
+            artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, packaging, classifier );
+
+        // Upload the POM if requested, generating one if need be
+        if ( generatePom )
+        {
+            ArtifactMetadata metadata = new ProjectArtifactMetadata( artifact, generatePomFile() );
+            artifact.addMetadata( metadata );
+        }
+        else if ( pomFile != null && pomFile.exists() )
+        {
+            ArtifactMetadata metadata = new ProjectArtifactMetadata( artifact, pomFile );
+            artifact.addMetadata( metadata );
+        }
+
+        try
+        {
+            getDeployer().deploy( file, artifact, deploymentRepository, getLocalRepository() );
+        }
+        catch ( ArtifactDeploymentException e )
+        {
+            throw new MojoExecutionException( e.getMessage(), e );
+        }
     }
 
     /**
      * Process the supplied pomFile to get groupId, artifactId, version, and packaging
+     *
      * @throws NullPointerException if model is <code>null</code>
      */
-    void processModel( Model model )
+    private void processModel( Model model )
     {
         Parent parent = model.getParent();
 
@@ -266,6 +242,7 @@ public class DeployFileMojo
 
     /**
      * Extract the Model from the specified file.
+     *
      * @param pomFile
      * @return
      * @throws MojoExecutionException if the file doesn't exist of cannot be read.
@@ -304,7 +281,7 @@ public class DeployFileMojo
         }
     }
 
-    private void generatePomFile()
+    private File generatePomFile()
         throws MojoExecutionException
     {
         FileWriter fw = null;
@@ -324,7 +301,7 @@ public class DeployFileMojo
             fw = new FileWriter( tempFile );
             new MavenXpp3Writer().write( fw, model );
 
-            pomFile = tempFile;
+            return tempFile;
         }
         catch ( IOException e )
         {
