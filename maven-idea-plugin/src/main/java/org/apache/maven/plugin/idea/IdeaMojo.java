@@ -37,6 +37,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * Goal for generating IDEA files from a POM.
@@ -82,6 +83,17 @@ public class IdeaMojo
      * @todo would be good to use the compilation source if possible
      */
     private String jdkLevel;
+
+    /**
+     * Specify the resource pattern in wildcard format, for example "?*.xml;?*.properties".
+     * Currently supports 4.x and 5.x.
+     * The default value is any file without a java extension ("!?*.java").
+     * Because IDEA doesn't distinguish between source and resources directories, this is needed.
+     * Please note that the default value includes package.html files as it's not possible to exclude those.
+     *
+     * @parameter expression="${wildcardResourcePatterns}" default-value="!?*.java"
+     */
+    private String wildcardResourcePatterns;
 
     /**
      * Specify the version of idea to use.  This is needed to identify the default formatting of
@@ -233,6 +245,8 @@ public class IdeaMojo
                 getLog().info( "jdkName is not set, using [java version" + javaVersion + "] as default." );
                 setJdkName( module, defaultJdkName );
             }
+
+            setWildcardResourcePatterns(module, wildcardResourcePatterns);
 
             Xpp3Dom component = findComponent( module, "ProjectModuleManager" );
             Xpp3Dom modules = findElement( component, "modules" );
@@ -547,6 +561,29 @@ Can't run this anyway as Xpp3Dom is in both classloaders...
         else
         {
             component.setAttribute( "assert-keyword", "false" );
+        }
+    }
+
+    /**
+     * Sets the wilcard resource patterns.
+     *
+     * @param content Xpp3Dom element.
+     * @param wildcardResourcePatterns The wilcard resource patterns.
+     */
+    private void setWildcardResourcePatterns( Xpp3Dom content, String wildcardResourcePatterns )
+    {
+        Xpp3Dom compilerConfigurationElement = findComponent( content, "CompilerConfiguration" );
+        if (!StringUtils.isEmpty( wildcardResourcePatterns )) {
+            removeOldElements( compilerConfigurationElement, "wildcardResourcePatterns" );
+            Xpp3Dom wildcardResourcePatternsElement = createElement( compilerConfigurationElement,
+                                                                     "wildcardResourcePatterns" );
+            StringTokenizer wildcardResourcePatternsTokenizer = new StringTokenizer( wildcardResourcePatterns, ";");
+            while ( wildcardResourcePatternsTokenizer.hasMoreTokens() )
+            {
+                String wildcardResourcePattern = wildcardResourcePatternsTokenizer.nextToken();
+                Xpp3Dom entryElement = createElement( wildcardResourcePatternsElement, "entry" );
+                entryElement.setAttribute( "name", wildcardResourcePattern );
+            }
         }
     }
 
