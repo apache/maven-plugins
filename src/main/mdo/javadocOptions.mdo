@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+
+<model>
+  <id>javadocoptions</id>
+  <name>JavadocOptions</name>
+  <description><![CDATA[Model for Javadoc Options.]]></description>
+  <defaults>
+    <default>
+      <key>package</key>
+      <value>org.apache.maven.plugin.javadoc.options</value>
+    </default>
+  </defaults>
+  <classes>
+    <class>
+      <name>Group</name>
+      <description>A Group parameter.</description>
+      <version>1.0.0</version>
+      <fields>
+        <field>
+          <name>title</name>
+          <description>Title can be any text, and can include white space. This text is placed in the table heading for the group.</description>
+          <version>1.0.0</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field>
+          <name>packages</name>
+          <description>Packages can be any package name, or can be the start of any package name followed by an asterisk (*). The asterisk is a wildcard meaning "match any characters". This is the only wildcard allowed. Multiple patterns can be included in a group by separating them with colons (:).</description>
+          <version>1.0.0</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+      </fields>
+    </class>
+  </classes>
+</model>
+

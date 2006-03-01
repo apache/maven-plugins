@@ -3,13 +3,13 @@
  ------
  Vincent Siveton
  ------
- 10 July 2005
+ 01 March 2005
  ------
-
+
 
 Javadoc Plugin Configuration
 
- To generate the project javadocs as part of the site generation, add configuration 
+ To generate the project javadocs as part of the site generation, add configuration
  similar to the following to your POM:
 
 -------------------
@@ -35,7 +35,7 @@ Javadoc Plugin Configuration
 
   The configuration within <reporting> is not used when javadoc is explicitly invoked
   via 'mvn javadoc:javadoc'.  To configure explicit invocation, use the <build> element instead:
-  
+
 -------------------
 <project>
   ...
@@ -56,3 +56,39 @@ Javadoc Plugin Configuration
   ...
 </project>
 -------------------
+
+Specific configuration for some Javadoc options
+
+ Some Javadoc options have a specific configuration. Add similar configuration to your POM:
+
+*group
+
+-------------------
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <groups>
+            <group>
+              <title>Core Packages</title>
+              <packages>org.apache.maven.plugin.javadoc.test1</packages>
+            </group>
+            <group>
+              <title>Extension Packages</title>
+              <packages>org.apache.maven.plugin.javadoc.test2</packages>
+            </group>
+          </groups>
+          ...
+        </configuration>
+      </plugin>
+    </plugins>
+  ...
+  </build>
+  ...
+</project>
+-------------------
+
