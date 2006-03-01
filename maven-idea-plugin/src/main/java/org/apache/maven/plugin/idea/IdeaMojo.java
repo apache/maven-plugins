@@ -23,8 +23,8 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.wagon.TransferFailedException;
 import org.apache.maven.wagon.ResourceDoesNotExistException;
+import org.apache.maven.wagon.TransferFailedException;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
@@ -38,7 +38,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 /**
@@ -299,7 +303,7 @@ public class IdeaMojo
                 setJdkName( module, defaultJdkName );
             }
 
-            setWildcardResourcePatterns(module, wildcardResourcePatterns);
+            setWildcardResourcePatterns( module, wildcardResourcePatterns );
 
             Xpp3Dom component = findComponent( module, "ProjectModuleManager" );
             Xpp3Dom modules = findElement( component, "modules" );
@@ -309,8 +313,8 @@ public class IdeaMojo
             if ( project.getCollectedProjects().size() > 0 )
             {
                 Xpp3Dom m = createElement( modules, "module" );
-                String projectPath = new File( project.getBasedir(),
-                                               project.getArtifactId() + ".iml" ).getAbsolutePath();
+                String projectPath =
+                    new File( project.getBasedir(), project.getArtifactId() + ".iml" ).getAbsolutePath();
                 m.setAttribute( "filepath", "$PROJECT_DIR$/" + toRelative( project.getBasedir(), projectPath ) );
 
                 for ( Iterator i = project.getCollectedProjects().iterator(); i.hasNext(); )
@@ -325,8 +329,8 @@ public class IdeaMojo
             else
             {
                 Xpp3Dom m = createElement( modules, "module" );
-                String modulePath = new File( project.getBasedir(),
-                                              project.getArtifactId() + ".iml" ).getAbsolutePath();
+                String modulePath =
+                    new File( project.getBasedir(), project.getArtifactId() + ".iml" ).getAbsolutePath();
                 m.setAttribute( "filepath", "$PROJECT_DIR$/" + toRelative( project.getBasedir(), modulePath ) );
             }
 
@@ -493,7 +497,8 @@ public class IdeaMojo
                     String moduleName;
                     if ( useFullNames )
                     {
-                        moduleName = a.getGroupId() + ':' + a.getArtifactId() + ':' + a.getType() + ':' + a.getVersion();
+                        moduleName =
+                            a.getGroupId() + ':' + a.getArtifactId() + ':' + a.getType() + ':' + a.getVersion();
                     }
                     else
                     {
@@ -508,17 +513,13 @@ public class IdeaMojo
 
                     if ( useClassifiers )
                     {
-                        resolveClassifier(createElement(dep, "JAVADOC"),
-                                          a,
-                                          javadocClassifier);
-                        resolveClassifier(createElement(dep, "SOURCES"),
-                                          a,
-                                          sourceClassifier);
+                        resolveClassifier( createElement( dep, "JAVADOC" ), a, javadocClassifier );
+                        resolveClassifier( createElement( dep, "SOURCES" ), a, sourceClassifier );
                     }
                 }
             }
 
-            for( Iterator resourceDirs = resourceDirectory.iterator(); resourceDirs.hasNext(); )
+            for ( Iterator resourceDirs = resourceDirectory.iterator(); resourceDirs.hasNext(); )
             {
                 String resourceDir = (String) resourceDirs.next();
 
@@ -547,7 +548,8 @@ public class IdeaMojo
         }
     }
 
-    private void addResources( Xpp3Dom component, String directory ) {
+    private void addResources( Xpp3Dom component, String directory )
+    {
         Xpp3Dom dep = createElement( component, "orderEntry" );
         dep.setAttribute( "type", "module-library" );
         dep = createElement( dep, "library" );
@@ -561,58 +563,67 @@ public class IdeaMojo
         createElement( dep, "SOURCES" );
     }
 
-    private void resolveClassifier(Xpp3Dom element, Artifact a, String classifier) {
+    private void resolveClassifier( Xpp3Dom element, Artifact a, String classifier )
+    {
         String id = a.getId() + '-' + classifier;
 
         String path;
-        if ( attemptedDownloads.containsKey( id ) ) {
+        if ( attemptedDownloads.containsKey( id ) )
+        {
             getLog().debug( id + " was already downloaded." );
             path = (String) attemptedDownloads.get( id );
         }
-        else {
+        else
+        {
             getLog().debug( id + " was not attempted to be downloaded yet: trying..." );
             path = resolveClassifiedArtifact( a, classifier );
             attemptedDownloads.put( id, path );
         }
 
-        if (path != null) {
+        if ( path != null )
+        {
             String jarPath = "jar://" + path + "!/";
-            getLog().debug("Setting " + classifier + " for " + id + " to " + jarPath);
-            createElement(element, "root").setAttribute("url", jarPath);
+            getLog().debug( "Setting " + classifier + " for " + id + " to " + jarPath );
+            createElement( element, "root" ).setAttribute( "url", jarPath );
         }
     }
 
-    private String resolveClassifiedArtifact(Artifact artifact, String classifier) {
-        String basePath = artifact.getFile().getAbsolutePath().replace('\\', '/');
-        int delIndex = basePath.indexOf(".jar");
-        if(delIndex < 0) return null;
+    private String resolveClassifiedArtifact( Artifact artifact, String classifier )
+    {
+        String basePath = artifact.getFile().getAbsolutePath().replace( '\\', '/' );
+        int delIndex = basePath.indexOf( ".jar" );
+        if ( delIndex < 0 )
+        {
+            return null;
+        }
 
         List remoteRepos = project.getRemoteArtifactRepositories();
-        try {
-            Artifact classifiedArtifact =
-                    artifactFactory.createArtifactWithClassifier(
-                            artifact.getGroupId(),
-                            artifact.getArtifactId(),
-                            artifact.getVersion(),
-                            artifact.getType(),
-                            classifier);
-            String dstFilename = basePath.substring(0, delIndex) + '-' + classifier + ".jar";
-            File dstFile = new File(dstFilename);
-            classifiedArtifact.setFile(dstFile);
+        try
+        {
+            Artifact classifiedArtifact = artifactFactory.createArtifactWithClassifier( artifact.getGroupId(),
+                                                                                        artifact.getArtifactId(),
+                                                                                        artifact.getVersion(),
+                                                                                        artifact.getType(),
+                                                                                        classifier );
+            String dstFilename = basePath.substring( 0, delIndex ) + '-' + classifier + ".jar";
+            File dstFile = new File( dstFilename );
+            classifiedArtifact.setFile( dstFile );
             //this check is here because wagonManager does not seem to check if the remote file is newer
             //    or such feature is not working
             if ( !dstFile.exists() )
             {
-                wagonManager.getArtifact(classifiedArtifact, remoteRepos);
+                wagonManager.getArtifact( classifiedArtifact, remoteRepos );
             }
-            return dstFile.getAbsolutePath().replace('\\', '/');
+            return dstFile.getAbsolutePath().replace( '\\', '/' );
         }
-        catch (TransferFailedException e) {
-            getLog().debug(e);
+        catch ( TransferFailedException e )
+        {
+            getLog().debug( e );
             return null;
         }
-        catch (ResourceDoesNotExistException e) {
-            getLog().debug(e);
+        catch ( ResourceDoesNotExistException e )
+        {
+            getLog().debug( e );
             return null;
         }
     }
@@ -765,17 +776,18 @@ Can't run this anyway as Xpp3Dom is in both classloaders...
     /**
      * Sets the wilcard resource patterns.
      *
-     * @param content Xpp3Dom element.
+     * @param content                  Xpp3Dom element.
      * @param wildcardResourcePatterns The wilcard resource patterns.
      */
     private void setWildcardResourcePatterns( Xpp3Dom content, String wildcardResourcePatterns )
     {
         Xpp3Dom compilerConfigurationElement = findComponent( content, "CompilerConfiguration" );
-        if (!StringUtils.isEmpty( wildcardResourcePatterns )) {
+        if ( !StringUtils.isEmpty( wildcardResourcePatterns ) )
+        {
             removeOldElements( compilerConfigurationElement, "wildcardResourcePatterns" );
-            Xpp3Dom wildcardResourcePatternsElement = createElement( compilerConfigurationElement,
-                                                                     "wildcardResourcePatterns" );
-            StringTokenizer wildcardResourcePatternsTokenizer = new StringTokenizer( wildcardResourcePatterns, ";");
+            Xpp3Dom wildcardResourcePatternsElement =
+                createElement( compilerConfigurationElement, "wildcardResourcePatterns" );
+            StringTokenizer wildcardResourcePatternsTokenizer = new StringTokenizer( wildcardResourcePatterns, ";" );
             while ( wildcardResourcePatternsTokenizer.hasMoreTokens() )
             {
                 String wildcardResourcePattern = wildcardResourcePatternsTokenizer.nextToken();
