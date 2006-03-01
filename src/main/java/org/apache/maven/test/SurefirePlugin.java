@@ -117,8 +117,8 @@ public class SurefirePlugin
     private File testSourceDirectory;
 
     /**
-     * Specify this parameter if you want to use the test regex notation to select tests to run.
-     * The regular expression will be used to create an include pattern formatted like <code>**&#47;${test}.java</code>
+     * Specify this parameter if you want to use the test pattern matching notation, Ant pattern matching, to select tests to run.
+     * The Ant pattern will be used to create an include pattern formatted like <code>**&#47;${test}.java</code>
      * When used, the <code>includes</code> and <code>excludes</code> patterns parameters are ignored
      *
      * @parameter expression="${test}"
@@ -466,7 +466,7 @@ public class SurefirePlugin
 
         if ( !success )
         {
-            String msg = "There are some test failures.";
+            String msg = "There are test failures.";
 
             if ( testFailureIgnore )
             {
@@ -496,9 +496,9 @@ public class SurefirePlugin
 
                 String value = (String) systemProperties.get( key );
 
-                System.setProperty( key, value );
-
                 getLog().debug( "Setting system property [" + key + "]=[" + value + "]" );
+
+                System.setProperty( key, value );
             }
         }
     }
@@ -575,11 +575,25 @@ public class SurefirePlugin
         {
             if ( printSummary )
             {
-                surefireBooter.addReport( "org.apache.maven.surefire.report.ConsoleReporter" );
+                if ( forking() )
+                {
+                    surefireBooter.addReport( "org.apache.maven.surefire.report.ForkingConsoleReporter" );
+                }
+                else
+                {
+                    surefireBooter.addReport( "org.apache.maven.surefire.report.ConsoleReporter" );
+                }
             }
             else
             {
-                surefireBooter.addReport( "org.apache.maven.surefire.report.SummaryConsoleReporter" );
+                if ( forking() )
+                {
+                    surefireBooter.addReport( "org.apache.maven.surefire.report.ForkingSummaryConsoleReporter" );
+                }
+                else
+                {
+                    surefireBooter.addReport( "org.apache.maven.surefire.report.SummaryConsoleReporter" );
+                }
             }
 
             if ( reportFormat.equals( "brief" ) )
@@ -602,6 +616,12 @@ public class SurefirePlugin
                 surefireBooter.addReport( "org.apache.maven.surefire.report.DetailedConsoleReporter" );
             }
         }
+
         surefireBooter.addReport( "org.apache.maven.surefire.report.XMLReporter" );
+    }
+
+    private boolean forking()
+    {
+        return !forkMode.equals( "none" );
     }
 }
