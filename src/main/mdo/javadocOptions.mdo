@@ -32,6 +32,88 @@
         </field>
       </fields>
     </class>
+
+    <class>
+      <name>Tag</name>
+      <description>A Tag parameter.</description>
+      <version>1.0.0</version>
+      <fields>
+        <field>
+          <name>name</name>
+          <description>Name of the tag.</description>
+          <version>1.0.0</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field>
+          <name>head</name>
+          <description>Head of the tag.</description>
+          <version>1.0.0</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+      </fields>
+      <codeSegments>
+        <codeSegment>
+          <version>1.0.0</version>
+            <code><![CDATA[
+    /**
+     * Field placement
+     */
+    private String placement;
+
+    /**
+     * Get the placement.
+     */
+    public String getPlacement()
+    {
+        return this.placement;
+    }
+
+    /**
+     * Set a Placement. Should be a combinaison of the letters:
+     * <ul>
+     * <li> X (disable tag)</li>
+     * <li> a (all)</li>
+     * <li> o (overview)</li>
+     * <li> p (packages)</li>
+     * <li> t (types, that is classes and interfaces)</li>
+     * <li> c (constructors)</li>
+     * <li> m (methods)</li>
+     * <li> f (fields)</li>
+     * </ul>
+     *
+     * @param placement
+     * @throws IllegalArgumentException  if not a valid combinaison of the letters
+     */
+    public void setPlacement(String placement)
+      throws IllegalArgumentException
+    {
+        char[] chars = placement.toCharArray();
+        for ( int i = 0; i < chars.length; i++ )
+        {
+            switch ( chars[i] )
+            {
+                case 'X':
+                case 'a':
+                case 'o':
+                case 'p':
+                case 't':
+                case 'c':
+                case 'm':
+                case 'f':
+                    break;
+                default:
+                    throw new IllegalArgumentException( "Placement should be a combinaison of the letters 'Xaoptcmf'." );
+            }
+        }
+        this.placement = placement;
+    }
+
+          ]]></code>
+        </codeSegment>
+      </codeSegments>
+    </class>
   </classes>
 </model>
 
