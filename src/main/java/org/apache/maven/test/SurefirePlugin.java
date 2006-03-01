@@ -1,7 +1,7 @@
 package org.apache.maven.test;
 
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,30 +16,29 @@ package org.apache.maven.test;
  * limitations under the License.
  */
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.StringTokenizer;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.surefire.SurefireBooter;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+
 /**
+ * Run tests using Surefire.
+ *
  * @author Jason van Zyl
  * @version $Id$
  * @requiresDependencyResolution test
  * @goal test
  * @phase test
- * @description Run tests using Surefire
  * @todo make version of junit and surefire configurable
  * @todo make report to be produced configurable
  */
@@ -304,17 +303,17 @@ public class SurefirePlugin
 
         SurefireBooter surefireBooter = new SurefireBooter();
 
-        surefireBooter.setForceTestNG(forceTestNG);
+        surefireBooter.setForceTestNG( forceTestNG );
 
-        surefireBooter.setGroups(groups);
+        surefireBooter.setGroups( groups );
 
-        surefireBooter.setExcludedGroups(excludedGroups);
+        surefireBooter.setExcludedGroups( excludedGroups );
 
-        surefireBooter.setThreadCount(threadCount);
+        surefireBooter.setThreadCount( threadCount );
 
-        surefireBooter.setParallel(parallel);
+        surefireBooter.setParallel( parallel );
 
-        surefireBooter.setTestSourceDirectory(testSourceDirectory.getPath());
+        surefireBooter.setTestSourceDirectory( testSourceDirectory.getPath() );
 
         // ----------------------------------------------------------------------
         // Reporting
@@ -324,15 +323,18 @@ public class SurefirePlugin
 
         surefireBooter.setReportsDirectory( reportsDirectory );
 
-        if (suiteXmlFiles != null && suiteXmlFiles.size() > 0) {
-        		for (int i = 0; i < suiteXmlFiles.size(); i++) {
-        			String filePath = (String)suiteXmlFiles.get(i);
-        			File file = new File(filePath);
-        			if (file.exists()) {
-        				surefireBooter.addBattery("org.apache.maven.surefire.battery.TestNGXMLBattery",
-        						new Object[] { file });
-        			}
-        		}
+        if ( suiteXmlFiles != null && suiteXmlFiles.size() > 0 )
+        {
+            for ( int i = 0; i < suiteXmlFiles.size(); i++ )
+            {
+                String filePath = (String) suiteXmlFiles.get( i );
+                File file = new File( filePath );
+                if ( file.exists() )
+                {
+                    surefireBooter.addBattery( "org.apache.maven.surefire.battery.TestNGXMLBattery",
+                                               new Object[]{file} );
+                }
+            }
         }
 
         // ----------------------------------------------------------------------
@@ -355,23 +357,27 @@ public class SurefirePlugin
                 includes.add( "**/" + testRegexes[i] + ".java" );
             }
 
-            surefireBooter.addBattery( "org.apache.maven.surefire.battery.DirectoryBattery", new Object[]{testClassesDirectory, includes, excludes} );
+            surefireBooter.addBattery( "org.apache.maven.surefire.battery.DirectoryBattery",
+                                       new Object[]{testClassesDirectory, includes, excludes} );
         }
         //Only if testng suites aren't being run
-        else if (suiteXmlFiles == null || suiteXmlFiles.size() < 1)
+        else if ( suiteXmlFiles == null || suiteXmlFiles.size() < 1 )
         {
             // defaults here, qdox doesn't like the end javadoc value
             // Have to wrap in an ArrayList as surefire expects an ArrayList instead of a List for some reason
             if ( includes == null || includes.size() == 0 )
             {
-                includes = new ArrayList( Arrays.asList( new String[]{"**/Test*.java", "**/*Test.java", "**/*TestCase.java"} ) );
+                includes = new ArrayList(
+                    Arrays.asList( new String[]{"**/Test*.java", "**/*Test.java", "**/*TestCase.java"} ) );
             }
             if ( excludes == null || excludes.size() == 0 )
             {
-                excludes = new ArrayList( Arrays.asList( new String[]{"**/Abstract*Test.java", "**/Abstract*TestCase.java", "**/*$*"} ) );
+                excludes = new ArrayList(
+                    Arrays.asList( new String[]{"**/Abstract*Test.java", "**/Abstract*TestCase.java", "**/*$*"} ) );
             }
 
-            surefireBooter.addBattery( "org.apache.maven.surefire.battery.DirectoryBattery", new Object[]{testClassesDirectory, includes, excludes} );
+            surefireBooter.addBattery( "org.apache.maven.surefire.battery.DirectoryBattery",
+                                       new Object[]{testClassesDirectory, includes, excludes} );
         }
 
         // ----------------------------------------------------------------------
@@ -398,7 +404,10 @@ public class SurefirePlugin
         }
 
         boolean jvm15 = false;
-        if (System.getProperty("java.version").indexOf("1.5") > -1) jvm15 = true;
+        if ( System.getProperty( "java.version" ).indexOf( "1.5" ) > -1 )
+        {
+            jvm15 = true;
+        }
 
         for ( Iterator i = pluginArtifacts.iterator(); i.hasNext(); )
         {
@@ -410,10 +419,8 @@ public class SurefirePlugin
             if ( "junit".equals( artifact.getArtifactId() ) || "surefire".equals( artifact.getArtifactId() ) ||
                 "surefire-booter".equals( artifact.getArtifactId() ) ||
                 "plexus-utils".equals( artifact.getArtifactId() ) ||
-                ("testng-jdk14".equals( artifact.getArtifactId() )
-                		&& !jvm15) ||
-                		("testng-jdk15".equals( artifact.getArtifactId() )
-                				&& jvm15) )
+                ( "testng-jdk14".equals( artifact.getArtifactId() ) && !jvm15 ) ||
+                ( "testng-jdk15".equals( artifact.getArtifactId() ) && jvm15 ) )
             {
                 getLog().debug( "Adding to surefire test classpath: " + artifact.getFile().getAbsolutePath() );
 
