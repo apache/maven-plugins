@@ -591,17 +591,6 @@ public class SurefirePlugin
                     surefireBooter.addReport( "org.apache.maven.surefire.report.ConsoleReporter" );
                 }
             }
-            else
-            {
-                if ( forking() )
-                {
-                    surefireBooter.addReport( "org.apache.maven.surefire.report.ForkingSummaryConsoleReporter" );
-                }
-                else
-                {
-                    surefireBooter.addReport( "org.apache.maven.surefire.report.SummaryConsoleReporter" );
-                }
-            }
 
             if ( reportFormat.equals( "brief" ) )
             {
