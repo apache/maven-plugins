@@ -94,7 +94,7 @@ Customizing a module location
         <artifactId>maven-ear-plugin</artifactId>
         <configuration>
            [...]
-           <defaultBundleDir>APP-INF/lib
+           <defaultJavaBundleDir>APP-INF/lib</defaultJavaBundleDir>
            <modules>
              <javaModule>
                <groupId>artifactGroupId</groupId>
