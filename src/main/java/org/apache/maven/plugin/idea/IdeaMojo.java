@@ -17,12 +17,24 @@ package org.apache.maven.plugin.idea;
  */
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
+import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.manager.WagonManager;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.model.Resource;
+import org.apache.maven.model.DependencyManagement;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.wagon.ResourceDoesNotExistException;
 import org.apache.maven.wagon.TransferFailedException;
 import org.codehaus.plexus.util.IOUtil;
@@ -44,6 +56,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.Collections;
 
 /**
  * Goal for generating IDEA files from a POM.
@@ -51,7 +64,6 @@ import java.util.StringTokenizer;
  *
  * @goal idea
  * @execute phase="generate-sources"
- * @requiresDependencyResolution test
  * @todo use dom4j or something. Xpp3Dom can't cope properly with entities and so on
  */
 public class IdeaMojo
@@ -178,6 +190,23 @@ public class IdeaMojo
     private ArtifactFactory artifactFactory;
 
     /**
+     * @parameter expression="${localRepository}"
+     * @required
+     * @readonly
+     */
+    private ArtifactRepository localRepo;
+
+    /**
+     * @parameter expression="${component.org.apache.maven.artifact.resolver.ArtifactResolver}"
+     */
+    private ArtifactResolver artifactResolver;
+
+    /**
+     * @parameter expression="${component.org.apache.maven.artifact.metadata.ArtifactMetadataSource}"
+     */
+    private ArtifactMetadataSource artifactMetadataSource;
+
+    /**
      * A temporary cache of artifacts that's already been downloaded or
      * attempted to be downloaded. This is to refrain from trying to download a
      * dependency that we have already tried to download.
@@ -189,6 +218,15 @@ public class IdeaMojo
     public void execute()
         throws MojoExecutionException
     {
+        try
+        {
+            doDependencyResolution();
+        }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( "Unable to build project dependencies.", e );
+        }
+
         rewriteModule();
 
         if ( project.isExecutionRoot() )
@@ -196,6 +234,70 @@ public class IdeaMojo
             rewriteProject();
 
             rewriteWorkspace();
+        }
+    }
+
+    private void doDependencyResolution()
+        throws InvalidDependencyVersionException, ProjectBuildingException, ArtifactNotFoundException,
+        ArtifactResolutionException
+    {
+        if ( project.getDependencies() != null )
+        {
+            List missingArtifacts = new ArrayList();
+
+            Map managedVersions = createManagedVersionMap( project.getId(), project.getDependencyManagement() );
+
+            ArtifactResolutionResult result = artifactResolver.resolveTransitively( project.createArtifacts( artifactFactory, Artifact.SCOPE_TEST, null ), project.getArtifact(), managedVersions,
+                                                  localRepo, project.getRemoteArtifactRepositories(),
+                                                  artifactMetadataSource );
+
+            //project.setArtifacts( project.createArtifacts( artifactFactory, Artifact.SCOPE_TEST, null ) );
+            project.setArtifacts( result.getArtifacts() );
+
+            for ( Iterator artifacts = project.getTestArtifacts().iterator(); artifacts.hasNext(); )
+            {
+                Artifact artifact = (Artifact) artifacts.next();
+
+                artifact.setFile( new File( localRepo.getBasedir(), localRepo.pathOf( artifact ) ) );
+
+                if ( !artifact.getFile().exists() )
+                {
+                    try
+                    {
+                        wagonManager.getArtifact( artifact, project.getRemoteArtifactRepositories() );
+                    }
+                    catch ( ResourceDoesNotExistException e )
+                    {
+                        getLog().debug( "Unable to resolve a project dependency: " + artifact.getId(), e  );
+
+                        missingArtifacts.add( artifact );
+                    }
+                    catch ( TransferFailedException e )
+                    {
+                        getLog().debug( "Unable to resolve a project dependency: " + artifact.getId(), e );
+
+                        missingArtifacts.add( artifact );
+                    }
+                }
+            }
+
+            if ( missingArtifacts.size() > 0 )
+            {
+                StringBuffer warnMsg = new StringBuffer();
+
+                warnMsg.append( "The following artifacts failed to resolve\n\n" );
+
+                for( Iterator artifacts = missingArtifacts.iterator(); artifacts.hasNext(); )
+                {
+                    Artifact artifact = (Artifact) artifacts.next();
+
+                    warnMsg.append( "    " + artifact.getId() + "\n" );
+                }
+
+                warnMsg.append( "\nfor the project " + project.getId() + "\n" );
+
+                getLog().warn( warnMsg );
+            }
         }
     }
 
@@ -1070,5 +1172,39 @@ Can't run this anyway as Xpp3Dom is in both classloaders...
     public void setProject( MavenProject project )
     {
         this.project = project;
+    }
+
+    private Map createManagedVersionMap( String projectId, DependencyManagement dependencyManagement )
+        throws ProjectBuildingException
+    {
+        Map map;
+        if ( dependencyManagement != null && dependencyManagement.getDependencies() != null )
+        {
+            map = new HashMap();
+            for ( Iterator i = dependencyManagement.getDependencies().iterator(); i.hasNext(); )
+            {
+                Dependency d = (Dependency) i.next();
+
+                try
+                {
+                    VersionRange versionRange = VersionRange.createFromVersionSpec( d.getVersion() );
+                    Artifact artifact = artifactFactory.createDependencyArtifact( d.getGroupId(), d.getArtifactId(),
+                                                                                  versionRange, d.getType(),
+                                                                                  d.getClassifier(), d.getScope(),
+                                                                                  d.isOptional() );
+                    map.put( d.getManagementKey(), artifact );
+                }
+                catch ( InvalidVersionSpecificationException e )
+                {
+                    throw new ProjectBuildingException( projectId, "Unable to parse version '" + d.getVersion() +
+                        "' for dependency '" + d.getManagementKey() + "': " + e.getMessage(), e );
+                }
+            }
+        }
+        else
+        {
+            map = Collections.EMPTY_MAP;
+        }
+        return map;
     }
 }
