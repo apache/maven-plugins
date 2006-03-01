@@ -177,6 +177,8 @@ public class DeployFileMojo
                 if( isPomFileExisting() )
                 {
                     pomArtifact = artifactFactory.createArtifact( groupId, artifactId, version, null, "pom" );
+                    ArtifactMetadata metadata = new ProjectArtifactMetadata( artifact, pomFile );
+                    artifact.addMetadata( metadata );
                 }
             }
 
@@ -192,11 +194,6 @@ public class DeployFileMojo
                 throw new MojoExecutionException( "No transfer protocol found." );
             }
             getDeployer().deploy( file, artifact, deploymentRepository, getLocalRepository() );
-
-            if( isPomFileExisting() && generatePom == false )
-            {
-                getDeployer().deploy( pomFile, pomArtifact, deploymentRepository, getLocalRepository() );
-            }
         }
         catch ( ArtifactDeploymentException e )
         {
