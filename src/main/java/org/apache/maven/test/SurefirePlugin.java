@@ -53,14 +53,6 @@ public class SurefirePlugin
     private boolean skip;
 
     /**
-     * Set this to 'true' to force all tests to be run using TestNG. This should be safe to do in almost all
-     * circumstances as TestNG is capable of running JUnit and TestNG tests.
-     *
-     * @parameter expression="${maven.test.forcetestng}"
-     */
-    private boolean forceTestNG;
-
-    /**
      * Set this to true to ignore a failure during testing. Its use is NOT RECOMMENDED, but quite convenient on occasion.
      *
      * @parameter expression="${maven.test.failure.ignore}"
@@ -237,7 +229,7 @@ public class SurefirePlugin
     private boolean childDelegation;
 
     /**
-     * TestNG included groups for this test. Only classes/methods/etc decorated with one of the
+     * Groups for this test. Only classes/methods/etc decorated with one of the
      * groups specified here will be included in test run, if specified.
      *
      * @parameter expression="${groups}"
@@ -245,7 +237,7 @@ public class SurefirePlugin
     private String groups;
 
     /**
-     * TestNG excluded groups. Any methods/classes/etc with one of the groups specified in this
+     * Excluded groups. Any methods/classes/etc with one of the groups specified in this
      * list will specifically not be run.
      *
      * @parameter expression="${excludedGroups}"
@@ -258,6 +250,7 @@ public class SurefirePlugin
      * any other parameters, like include/exclude useless.
      *
      * @parameter
+     * @todo do we want this? should they be discovered?
      */
     private List suiteXmlFiles;
 
@@ -302,8 +295,6 @@ public class SurefirePlugin
         // ----------------------------------------------------------------------
 
         SurefireBooter surefireBooter = new SurefireBooter();
-
-        surefireBooter.setForceTestNG( forceTestNG );
 
         surefireBooter.setGroups( groups );
 
@@ -403,12 +394,6 @@ public class SurefirePlugin
             surefireBooter.addClassPathUrl( classpathElement );
         }
 
-        boolean jvm15 = false;
-        if ( System.getProperty( "java.version" ).indexOf( "1.5" ) > -1 )
-        {
-            jvm15 = true;
-        }
-
         for ( Iterator i = pluginArtifacts.iterator(); i.hasNext(); )
         {
             Artifact artifact = (Artifact) i.next();
@@ -416,11 +401,9 @@ public class SurefirePlugin
             // TODO: this is crude for now. We really want to get "surefire-booter" and all its dependencies, but the
             // artifacts don't keep track of their children. We could just throw all of them in, but that would add an
             // unnecessary maven-artifact dependency which is precisely the reason we are isolating the classloader
-            if ( "junit".equals( artifact.getArtifactId() ) || "surefire-api".equals( artifact.getArtifactId() ) ||
-                "surefire-booter".equals( artifact.getArtifactId() ) ||
-                "plexus-utils".equals( artifact.getArtifactId() ) ||
-                ( "testng-jdk14".equals( artifact.getArtifactId() ) && !jvm15 ) ||
-                ( "testng-jdk15".equals( artifact.getArtifactId() ) && jvm15 ) )
+            if ( "junit".equals( artifact.getArtifactId() ) || "org.testng".equals( artifact.getGroupId() ) ||
+                "org.apache.maven.surefire".equals( artifact.getGroupId() ) ||
+                "plexus-utils".equals( artifact.getArtifactId() ) )
             {
                 getLog().debug( "Adding to surefire test classpath: " + artifact.getFile().getAbsolutePath() );
 
