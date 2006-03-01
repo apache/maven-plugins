@@ -129,6 +129,13 @@ public class IdeaMojo
      */
     private List reactorProjects;
 
+    /**
+     * Whether to use full artifact names when referencing libraries.
+     *
+     * @parameter expression="${useFullNames}" default-value="false"
+     */
+    private boolean useFullNames;
+
     public void execute()
         throws MojoExecutionException
     {
@@ -437,7 +444,16 @@ public class IdeaMojo
                 {
                     dep.setAttribute( "type", "module-library" );
                     dep = createElement( dep, "library" );
-                    dep.setAttribute( "name", a.getArtifactId() );
+                    String moduleName;
+                    if ( useFullNames )
+                    {
+                        moduleName = a.getGroupId() + ':' + a.getArtifactId() + ':' + a.getType() + ':' + a.getVersion();
+                    }
+                    else
+                    {
+                        moduleName = a.getArtifactId();
+                    }
+                    dep.setAttribute( "name", moduleName );
 
                     Xpp3Dom el = createElement( dep, "CLASSES" );
                     el = createElement( el, "root" );
