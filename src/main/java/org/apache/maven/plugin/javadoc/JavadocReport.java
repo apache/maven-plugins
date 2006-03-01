@@ -34,6 +34,7 @@ import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.javadoc.options.Group;
+import org.apache.maven.plugin.javadoc.options.Tag;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
@@ -322,7 +323,15 @@ public class JavadocReport
     /**
      * Separates packages on the overview page into whatever groups you specify, one group per table.
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#group">group</a>.
-     * It is a comma separated String.
+     * Example:
+     * <pre>
+     * &lt;groups&gt;
+     *   &lt;group&gt;
+     *     &lt;title&gt;Core Packages&lt;/title&gt;
+     *     &lt;packages&gt;org.apache.core&lt;/packages&gt;
+     *   &lt;/group&gt;
+     *  &lt;/groups&gt;
+     * </pre>
      *
      * @parameter expression="${groups}"
      */
@@ -468,25 +477,22 @@ public class JavadocReport
     private String stylesheetfile;
 
     /**
-     * Contains a list of tag names, which will result in conversion to support the following, from the javadoc
-     * API:
-     * <br/>
      * Enables the Javadoc tool to interpret a simple, one-argument custom block tag tagname in doc comments.
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#tag">tag</a>.
-     * It is a comma separated String.
+     * Example:
+     * <pre>
+     * &lt;tags&gt;
+     *   &lt;tag&gt;
+     *     &lt;name&gt;todo&lt;/name&gt;
+     *     &lt;placement&gt;a&lt;/placement&gt;
+     *     &lt;head&gt;To Do:&lt;/head&gt;
+     *   &lt;/tag&gt;
+     *  &lt;/tags&gt;
+     * </pre>
      *
      * @parameter expression="${tags}"
      */
-    private ArrayList tags;
-
-    /**
-     * Enables the Javadoc tool to interpret a simple, one-argument custom block tag tagname in doc comments.
-     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#tag">tag</a>.
-     * It is a comma separated String.
-     *
-     * @parameter expression="${tag}"
-     */
-    private String tag;
+    private Tag[] tags;
 
     /**
      * Specifies the class file that starts the taglet used in generating the documentation for that tag.
@@ -882,20 +888,26 @@ public class JavadocReport
             addArgIf( arguments, splitindex, "-splitindex" );
             addArgIfNotEmpty( arguments, "-stylesheetfile", quotedPathArgument( stylesheetfile ) );
 
-            addArgIfNotEmpty( arguments, "-tag", quotedArgument( tag ), 1.4f, true );
-
-            if ( tags != null && !tags.isEmpty() )
-            {
-                for ( Iterator it = tags.iterator(); it.hasNext(); )
-                {
-                    String tag = (String) it.next();
-
-                    addArgIfNotEmpty( arguments, "-tag", quotedArgument( tag ), 1.4f, true );
-                }
-            }
-
             addArgIfNotEmpty( arguments, "-taglet", quotedArgument( taglet ), 1.4f );
             addArgIfNotEmpty( arguments, "-tagletpath", quotedPathArgument( tagletpath ), 1.4f );
+
+            for ( int i = 0; i < tags.length; i++ )
+            {
+                if ( ( tags[i] == null ) || ( StringUtils.isEmpty( tags[i].getName() ) )
+                    || ( StringUtils.isEmpty( tags[i].getPlacement() ) ) )
+                {
+                    getLog().info( "A tag option is empty. Ignore this option." );
+                    continue;
+                }
+                String value = "\"" + tags[i].getName() + ":" + tags[i].getPlacement();
+                if ( !StringUtils.isEmpty( tags[i].getHead() ) )
+                {
+                    value += ":" + quotedArgument( tags[i].getHead() );
+                }
+                value+="\"";
+                addArgIfNotEmpty( arguments, "-tag", value, 1.4f, false );
+            }
+
             addArgIf( arguments, use, "-use" );
             addArgIf( arguments, version, "-version" );
             addArgIfNotEmpty( arguments, "-windowtitle", quotedArgument( windowtitle ) );
@@ -918,7 +930,10 @@ public class JavadocReport
                 throw new MavenReportException( "Unable to write temporary file for command execution", e );
             }
             cmd.createArgument().setValue( "@options" );
-            optionsFile.deleteOnExit();
+            if ( !getLog().isDebugEnabled() )
+            {
+                optionsFile.deleteOnExit();
+            }
         }
 
         cmd.createArgument().setValue( "@files" );

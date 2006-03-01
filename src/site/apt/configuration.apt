@@ -72,6 +72,7 @@ Specific configuration for some Javadoc options
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
+          ...
           <groups>
             <group>
               <title>Core Packages</title>
@@ -92,3 +93,32 @@ Specific configuration for some Javadoc options
 </project>
 -------------------
 
+*tag
+
+-------------------
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          ...
+          <tags>
+            <tag>
+              <name>todo</name>
+              <!-- Should be a combinaison of the letters Xaoptcmf -->
+              <placement>a</placement>
+              <head>To do something:</head>
+            </tag>
+          </tags>
+          ...
+        </configuration>
+      </plugin>
+    </plugins>
+  ...
+  </build>
+  ...
+</project>
+-------------------
