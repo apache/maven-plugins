@@ -17,10 +17,14 @@ package org.apache.maven.plugin.idea;
  */
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.wagon.TransferFailedException;
+import org.apache.maven.wagon.ResourceDoesNotExistException;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
@@ -34,9 +38,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.StringTokenizer;
 
 /**
@@ -135,6 +137,50 @@ public class IdeaMojo
      * @parameter expression="${useFullNames}" default-value="false"
      */
     private boolean useFullNames;
+
+    /**
+     * Switch to enable or disable the inclusion of sources and javadoc references to the project's library
+     *
+     * @parameter expression="${useClassifiers}" default-value="false"
+     */
+    private boolean useClassifiers;
+
+    /**
+     * Sets the classifier string attached to an artifact source archive name
+     *
+     * @parameter expression="${sourceClassifier}" default-value="sources"
+     */
+    private String sourceClassifier;
+
+    /**
+     * Sets the classifier string attached to an artifact javadoc archive name
+     *
+     * @parameter expression="${javadocClassifier}" default-value="javadoc"
+     */
+    private String javadocClassifier;
+
+    /**
+     * @parameter expression="${component.org.apache.maven.artifact.manager.WagonManager}"
+     * @required
+     * @readonly
+     */
+    private WagonManager wagonManager;
+
+    /**
+     * @parameter expression="${component.org.apache.maven.artifact.factory.ArtifactFactory}"
+     * @required
+     * @readonly
+     */
+    private ArtifactFactory artifactFactory;
+
+    /**
+     * A temporary cache of artifacts that's already been downloaded or
+     * attempted to be downloaded. This is to refrain from trying to download a
+     * dependency that we have already tried to download.
+     *
+     * @todo this is nasty! the only reason this is static is to use the same cache between reactor calls
+     */
+    private static Map attemptedDownloads = new HashMap();
 
     public void execute()
         throws MojoExecutionException
@@ -460,8 +506,15 @@ public class IdeaMojo
                     File file = a.getFile();
                     el.setAttribute( "url", "jar://" + file.getAbsolutePath().replace( '\\', '/' ) + "!/" );
 
-                    createElement( dep, "JAVADOC" );
-                    createElement( dep, "SOURCES" );
+                    if ( useClassifiers )
+                    {
+                        resolveClassifier(createElement(dep, "JAVADOC"),
+                                          a,
+                                          javadocClassifier);
+                        resolveClassifier(createElement(dep, "SOURCES"),
+                                          a,
+                                          sourceClassifier);
+                    }
                 }
             }
 
@@ -506,6 +559,62 @@ public class IdeaMojo
 
         createElement( dep, "JAVADOC" );
         createElement( dep, "SOURCES" );
+    }
+
+    private void resolveClassifier(Xpp3Dom element, Artifact a, String classifier) {
+        String id = a.getId() + '-' + classifier;
+
+        String path;
+        if ( attemptedDownloads.containsKey( id ) ) {
+            getLog().debug( id + " was already downloaded." );
+            path = (String) attemptedDownloads.get( id );
+        }
+        else {
+            getLog().debug( id + " was not attempted to be downloaded yet: trying..." );
+            path = resolveClassifiedArtifact( a, classifier );
+            attemptedDownloads.put( id, path );
+        }
+
+        if (path != null) {
+            String jarPath = "jar://" + path + "!/";
+            getLog().debug("Setting " + classifier + " for " + id + " to " + jarPath);
+            createElement(element, "root").setAttribute("url", jarPath);
+        }
+    }
+
+    private String resolveClassifiedArtifact(Artifact artifact, String classifier) {
+        String basePath = artifact.getFile().getAbsolutePath().replace('\\', '/');
+        int delIndex = basePath.indexOf(".jar");
+        if(delIndex < 0) return null;
+
+        List remoteRepos = project.getRemoteArtifactRepositories();
+        try {
+            Artifact classifiedArtifact =
+                    artifactFactory.createArtifactWithClassifier(
+                            artifact.getGroupId(),
+                            artifact.getArtifactId(),
+                            artifact.getVersion(),
+                            artifact.getType(),
+                            classifier);
+            String dstFilename = basePath.substring(0, delIndex) + '-' + classifier + ".jar";
+            File dstFile = new File(dstFilename);
+            classifiedArtifact.setFile(dstFile);
+            //this check is here because wagonManager does not seem to check if the remote file is newer
+            //    or such feature is not working
+            if ( !dstFile.exists() )
+            {
+                wagonManager.getArtifact(classifiedArtifact, remoteRepos);
+            }
+            return dstFile.getAbsolutePath().replace('\\', '/');
+        }
+        catch (TransferFailedException e) {
+            getLog().debug(e);
+            return null;
+        }
+        catch (ResourceDoesNotExistException e) {
+            getLog().debug(e);
+            return null;
+        }
     }
 
     /**
