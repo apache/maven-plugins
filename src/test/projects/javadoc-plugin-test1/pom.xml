@@ -57,7 +57,16 @@
           <bottom>Copyright me</bottom>
           <source>true</source>
           <link>http://java.sun.com/j2se/1.4.2/docs/api, http://maven.apache.org/apidocs/</link>
-          <group>"Core Packages" "org.apache.maven.plugin.javadoc.test1", "Extension Packages" "org.apache.maven.plugin.javadoc.test2"</group>
+          <groups>
+          	<group>
+          	  <title>Core Packages</title>
+          	  <packages>org.apache.maven.plugin.javadoc.test1</packages>
+          	</group>
+          	<group>
+          	  <title>Extension Packages</title>
+          	  <packages>org.apache.maven.plugin.javadoc.test2</packages>
+          	</group>
+          </groups>
           <tag>.usage:a:Usage:, .todo:a:To do something:, .fixme:a:Fixme:</tag>
         </configuration>
       </plugin>
