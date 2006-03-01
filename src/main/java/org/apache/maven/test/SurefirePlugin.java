@@ -52,15 +52,15 @@ public class SurefirePlugin
      * @parameter expression="${maven.test.skip}"
      */
     private boolean skip;
-    
+
     /**
      * Set this to 'true' to force all tests to be run using TestNG. This should be safe to do in almost all
      * circumstances as TestNG is capable of running JUnit and TestNG tests.
-     * 
+     *
      * @parameter expression="${maven.test.forcetestng}"
      */
     private boolean forceTestNG;
-    
+
     /**
      * Set this to true to ignore a failure during testing. Its use is NOT RECOMMENDED, but quite convenient on occasion.
      *
@@ -110,12 +110,12 @@ public class SurefirePlugin
 
     /**
      * The test source directory containing test class sources.
-     * 
+     *
      * @parameter expression="${project.build.testSourceDirectory}"
      * @required
      */
     private File testSourceDirectory;
-    
+
     /**
      * Specify this parameter if you want to use the test regex notation to select tests to run.
      * The regular expression will be used to create an include pattern formatted like <code>**&#47;${test}.java</code>
@@ -217,17 +217,17 @@ public class SurefirePlugin
     /**
      * Additional environments to set on the command line.
      *
-     * @parameter 
+     * @parameter
      */
     private Map environmentVariables = new HashMap();
-    
+
     /**
      * Command line working directory.
      *
-     * @parameter 
+     * @parameter
      */
     private File workingDirectory;
-        
+
     /**
      * Option to specify the jvm (or path to the java executable) to use with
      * the forking options. For the default we will assume that java is in the path.
@@ -236,51 +236,51 @@ public class SurefirePlugin
      * default-value="true"
      */
     private boolean childDelegation;
-    
+
     /**
-     * TestNG included groups for this test. Only classes/methods/etc decorated with one of the 
+     * TestNG included groups for this test. Only classes/methods/etc decorated with one of the
      * groups specified here will be included in test run, if specified.
-     * 
+     *
      * @parameter expression="${groups}"
      */
     private String groups;
-    
+
     /**
      * TestNG excluded groups. Any methods/classes/etc with one of the groups specified in this
      * list will specifically not be run.
-     * 
+     *
      * @parameter expression="${excludedGroups}"
      */
     private String excludedGroups;
-    
+
     /**
      * List of TestNG suite xml file locations, seperated by commas. It should be noted that
      * if suiteXmlFiles is specified, <b>no</b> other tests will be run, effectively making
      * any other parameters, like include/exclude useless.
-     * 
+     *
      * @parameter
      */
     private List suiteXmlFiles;
-    
+
     /**
-     * The attribute thread-count allows you to specify how many threads should be allocated 
+     * The attribute thread-count allows you to specify how many threads should be allocated
      * for this execution. Makes most sense to use in conjunction with parallel.
-     * 
+     *
      * @parameter expression="${threadCount}"
      * default-value="0"
      */
     private int threadCount;
-    
+
     /**
-     * When you use the parallel attribute, TestNG will try to run all your test methods in 
-     * separate threads, except for methods that depend on each other, which will be run in 
+     * When you use the parallel attribute, TestNG will try to run all your test methods in
+     * separate threads, except for methods that depend on each other, which will be run in
      * the same thread in order to respect their order of execution.
-     * 
+     *
      * @parameter expression="${parallel}"
      * default-value="false"
      */
     private boolean parallel;
-    
+
     public void execute()
         throws MojoExecutionException
     {
@@ -305,25 +305,25 @@ public class SurefirePlugin
         SurefireBooter surefireBooter = new SurefireBooter();
 
         surefireBooter.setForceTestNG(forceTestNG);
-        
+
         surefireBooter.setGroups(groups);
-        
+
         surefireBooter.setExcludedGroups(excludedGroups);
-        
+
         surefireBooter.setThreadCount(threadCount);
-        
+
         surefireBooter.setParallel(parallel);
-        
+
         surefireBooter.setTestSourceDirectory(testSourceDirectory.getPath());
-        
+
         // ----------------------------------------------------------------------
         // Reporting
-        // ----------------------------------------------------------------------                
+        // ----------------------------------------------------------------------
 
         getLog().info( "Setting reports dir: " + reportsDirectory );
 
         surefireBooter.setReportsDirectory( reportsDirectory );
-        
+
         if (suiteXmlFiles != null && suiteXmlFiles.size() > 0) {
         		for (int i = 0; i < suiteXmlFiles.size(); i++) {
         			String filePath = (String)suiteXmlFiles.get(i);
@@ -334,7 +334,7 @@ public class SurefirePlugin
         			}
         		}
         }
-        
+
         // ----------------------------------------------------------------------
         // Check to see if we are running a single test. The raw parameter will
         // come through if it has not been set.
@@ -370,7 +370,7 @@ public class SurefirePlugin
             {
                 excludes = new ArrayList( Arrays.asList( new String[]{"**/Abstract*Test.java", "**/Abstract*TestCase.java", "**/*$*"} ) );
             }
-            
+
             surefireBooter.addBattery( "org.apache.maven.surefire.battery.DirectoryBattery", new Object[]{testClassesDirectory, includes, excludes} );
         }
 
@@ -396,33 +396,33 @@ public class SurefirePlugin
 
             surefireBooter.addClassPathUrl( classpathElement );
         }
-        
+
         boolean jvm15 = false;
         if (System.getProperty("java.version").indexOf("1.5") > -1) jvm15 = true;
-        
+
         for ( Iterator i = pluginArtifacts.iterator(); i.hasNext(); )
         {
             Artifact artifact = (Artifact) i.next();
-            
+
             // TODO: this is crude for now. We really want to get "surefire-booter" and all its dependencies, but the
             // artifacts don't keep track of their children. We could just throw all of them in, but that would add an
             // unnecessary maven-artifact dependency which is precisely the reason we are isolating the classloader
             if ( "junit".equals( artifact.getArtifactId() ) || "surefire".equals( artifact.getArtifactId() ) ||
                 "surefire-booter".equals( artifact.getArtifactId() ) ||
                 "plexus-utils".equals( artifact.getArtifactId() ) ||
-                ("testng-jdk14".equals( artifact.getArtifactId() ) 
+                ("testng-jdk14".equals( artifact.getArtifactId() )
                 		&& !jvm15) ||
-                		("testng-jdk15".equals( artifact.getArtifactId() ) 
+                		("testng-jdk15".equals( artifact.getArtifactId() )
                 				&& jvm15) )
             {
                 getLog().debug( "Adding to surefire test classpath: " + artifact.getFile().getAbsolutePath() );
-                
+
                 surefireBooter.addClassPathUrl( artifact.getFile().getAbsolutePath() );
             }
         }
-        
+
         addReporters( surefireBooter );
-        
+
         processSystemProperties();
 
         // ----------------------------------------------------------------------
@@ -496,7 +496,7 @@ public class SurefirePlugin
 
                 String value = (String) systemProperties.get( key );
 
-                System.setProperty( key, value ); 
+                System.setProperty( key, value );
 
                 getLog().debug( "Setting system property [" + key + "]=[" + value + "]" );
             }
