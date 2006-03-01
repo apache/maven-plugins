@@ -33,6 +33,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.model.Model;
+import org.apache.maven.plugin.javadoc.options.Group;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
@@ -211,7 +212,7 @@ public class JavadocReport
 
     /**
      * Specifies the access level for classes and members to show in the Javadocs.
-     * Possible values are: 
+     * Possible values are:
      * <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#public">public</a>
      *      (shows only public classes and members),
      * <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#protected">protected</a>
@@ -220,7 +221,7 @@ public class JavadocReport
      *      (shows all classes and members not marked private), and
      * <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#private">private</a>
      *      (shows all classes and members).
-     * 
+     *
      * @parameter expression="${show}" default-value="protected"
      */
     private String show = "protected";
@@ -323,9 +324,9 @@ public class JavadocReport
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#group">group</a>.
      * It is a comma separated String.
      *
-     * @parameter expression="${group}"
+     * @parameter expression="${groups}"
      */
-    private String group;
+    private Group[] groups;
 
     /**
      * Specifies the header text to be placed at the top of each output file.
@@ -819,15 +820,15 @@ public class JavadocReport
 
             bottom = StringUtils.replace( bottom, "{currentYear}", year );
 
-            if ( model != null  && model.getInceptionYear() != null )
+            if ( model != null && model.getInceptionYear() != null )
             {
                 if ( model.getInceptionYear().equals( year ) )
                 {
-                    bottom = StringUtils.replace( bottom, "{inceptionYear}-", "" );                
+                    bottom = StringUtils.replace( bottom, "{inceptionYear}-", "" );
                 }
                 else
                 {
-                    bottom = StringUtils.replace( bottom, "{inceptionYear}", model.getInceptionYear() );                
+                    bottom = StringUtils.replace( bottom, "{inceptionYear}", model.getInceptionYear() );
                 }
             }
 
@@ -847,7 +848,17 @@ public class JavadocReport
             addArgIfNotEmpty( arguments, "-doctitle", quotedArgument( doctitle ) );
             addArgIfNotEmpty( arguments, "-excludedocfilessubdir", quotedPathArgument( excludedocfilessubdir ), 1.4f );
             addArgIfNotEmpty( arguments, "-footer", quotedArgument( footer ) );
-            addArgIfNotEmpty( arguments, "-group", quotedArgument( group ), true );
+            for ( int i = 0; i < groups.length; i++ )
+            {
+                if ( ( groups[i] == null ) || ( StringUtils.isEmpty( groups[i].getTitle() ) )
+                    || ( StringUtils.isEmpty( groups[i].getPackages() ) ) )
+                {
+                    getLog().info( "A group option is empty. Ignore this option." );
+                    continue;
+                }
+                addArgIfNotEmpty( arguments, "-group", quotedArgument( groups[i].getTitle() ) + " "
+                    + quotedArgument( groups[i].getPackages() ), true );
+            }
             addArgIfNotEmpty( arguments, "-header", quotedArgument( header ) );
             addArgIfNotEmpty( arguments, "-helpfile", quotedPathArgument( helpfile ) );
 
