@@ -375,7 +375,7 @@ public class SurefirePlugin
 
         if ( !success )
         {
-            String msg = "There are some test failure.";
+            String msg = "There are test failures.";
 
             if ( testFailureIgnore )
             {
