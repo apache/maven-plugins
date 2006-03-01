@@ -416,7 +416,7 @@ public class SurefirePlugin
             // TODO: this is crude for now. We really want to get "surefire-booter" and all its dependencies, but the
             // artifacts don't keep track of their children. We could just throw all of them in, but that would add an
             // unnecessary maven-artifact dependency which is precisely the reason we are isolating the classloader
-            if ( "junit".equals( artifact.getArtifactId() ) || "surefire".equals( artifact.getArtifactId() ) ||
+            if ( "junit".equals( artifact.getArtifactId() ) || "surefire-api".equals( artifact.getArtifactId() ) ||
                 "surefire-booter".equals( artifact.getArtifactId() ) ||
                 "plexus-utils".equals( artifact.getArtifactId() ) ||
                 ( "testng-jdk14".equals( artifact.getArtifactId() ) && !jvm15 ) ||
