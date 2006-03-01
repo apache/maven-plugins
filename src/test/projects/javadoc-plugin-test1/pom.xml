@@ -58,16 +58,32 @@
           <source>true</source>
           <link>http://java.sun.com/j2se/1.4.2/docs/api, http://maven.apache.org/apidocs/</link>
           <groups>
-          	<group>
-          	  <title>Core Packages</title>
-          	  <packages>org.apache.maven.plugin.javadoc.test1</packages>
-          	</group>
-          	<group>
-          	  <title>Extension Packages</title>
-          	  <packages>org.apache.maven.plugin.javadoc.test2</packages>
-          	</group>
+            <group>
+              <title>Core Packages</title>
+              <packages>org.apache.maven.plugin.javadoc.test1</packages>
+            </group>
+            <group>
+              <title>Extension Packages</title>
+              <packages>org.apache.maven.plugin.javadoc.test2</packages>
+            </group>
           </groups>
-          <tag>.usage:a:Usage:, .todo:a:To do something:, .fixme:a:Fixme:</tag>
+          <tags>
+            <tag>
+              <name>.usage</name>
+              <placement>a</placement>
+              <head>Usage</head>
+            </tag>
+            <tag>
+              <name>.todo</name>
+              <placement>a</placement>
+              <head>To do something:</head>
+            </tag>
+            <tag>
+              <name>.fixme</name>
+              <placement>a</placement>
+              <head>Fixme</head>
+            </tag>
+          </tags>
         </configuration>
       </plugin>
     </plugins>
