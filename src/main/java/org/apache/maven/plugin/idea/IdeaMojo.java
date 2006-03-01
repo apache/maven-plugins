@@ -533,6 +533,56 @@ Can't run this anyway as Xpp3Dom is in both classloaders...
         setting.setAttribute( "value", getModuleFileUrl( warWebapp ) );
 
         component = findComponent( module, "WebModuleProperties" );
+
+        removeOldElements( component, "containerElement" );
+        List artifacts = project.getTestArtifacts();
+        for ( Iterator i = artifacts.iterator(); i.hasNext(); )
+        {
+            Artifact artifact = (Artifact) i.next();
+            if ( artifact.getScope().equals( "compile" ) || artifact.getScope().equals( "runtime" ) )
+            {
+                Xpp3Dom containerElement = createElement( component, "containerElement" );
+
+                boolean linkAsModule = false;
+                if ( reactorProjects != null && linkModules )
+                {
+                    for ( Iterator j = reactorProjects.iterator(); j.hasNext() && !linkAsModule; )
+                    {
+                        MavenProject p = (MavenProject) j.next();
+                        if ( p.getGroupId().equals( artifact.getGroupId() ) &&
+                            p.getArtifactId().equals( artifact.getArtifactId() ) )
+                        {
+                            linkAsModule = true;
+                        }
+                    }
+                }
+
+                if ( linkAsModule )
+                {
+                    containerElement.setAttribute( "type", "module" );
+                    containerElement.setAttribute( "name", artifact.getArtifactId() );
+                    Xpp3Dom methodAttribute = createElement( containerElement, "attribute" );
+                    methodAttribute.setAttribute( "name", "method" );
+                    methodAttribute.setAttribute( "value", "1" );
+                    Xpp3Dom uriAttribute = createElement( containerElement, "attribute" );
+                    uriAttribute.setAttribute( "name", "URI" );
+                    uriAttribute.setAttribute( "value", "/WEB-INF/classes" );
+                }
+                else if ( artifact.getFile() != null )
+                {
+                    containerElement.setAttribute( "type", "library" );
+                    containerElement.setAttribute( "level", "module" );
+                    containerElement.setAttribute( "name", artifact.getArtifactId() );
+                    Xpp3Dom methodAttribute = createElement( containerElement, "attribute" );
+                    methodAttribute.setAttribute( "name", "method" );
+                    methodAttribute.setAttribute( "value", "1" ); // IntelliJ 5.0.2 is bugged and doesn't read it
+                    Xpp3Dom uriAttribute = createElement( containerElement, "attribute" );
+                    uriAttribute.setAttribute( "name", "URI" );
+                    uriAttribute.setAttribute( "value", "/WEB-INF/lib/" + artifact.getFile().getName() );
+                }
+            }
+        }
+
         Xpp3Dom element = findElement( component, "deploymentDescriptor" );
         if ( element.getAttribute( "version" ) == null )
         {
