@@ -21,7 +21,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.release.helpers.ReleaseProgressTracker;
 import org.apache.maven.plugins.release.helpers.ScmHelper;
 import org.apache.maven.scm.manager.ScmManager;
-import org.apache.maven.scm.provider.starteam.repository.StarteamScmProviderRepository;
+import org.apache.maven.scm.provider.ScmProviderRepositoryWithHost;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.apache.maven.settings.Server;
@@ -45,7 +45,7 @@ public abstract class AbstractReleaseMojo
      * @required
      * @readonly
      */
-     protected File basedir;    
+    protected File basedir;
 
     /**
      * @component
@@ -104,7 +104,7 @@ public abstract class AbstractReleaseMojo
 
         scmHelper.setWorkingDirectory( directory );
 
-        loadStarteamUsernamePassword( scmHelper );
+        loadUserInfos( scmHelper );
 
         return scmHelper;
     }
@@ -120,7 +120,7 @@ public abstract class AbstractReleaseMojo
      * @param scmHelper
      * @throws MojoExecutionException
      */
-    private void loadStarteamUsernamePassword( ScmHelper scmHelper )
+    private void loadUserInfos( ScmHelper scmHelper )
         throws MojoExecutionException
     {
         if ( scmHelper.getUsername() == null || scmHelper.getPassword() == null )
@@ -151,38 +151,57 @@ public abstract class AbstractReleaseMojo
                 throw new MojoExecutionException( "Can't load the scm provider.", e );
             }
 
-            if ( repository.getProvider().equals( "starteam" ) )
+            if ( repository.getProviderRepository() instanceof ScmProviderRepositoryWithHost )
             {
-                StarteamScmProviderRepository starteamRepo = (StarteamScmProviderRepository) repository.getProviderRepository();
+                loadInfosFromSettings( (ScmProviderRepositoryWithHost) repository.getProviderRepository(), scmHelper );
+            }
+        }
+    }
 
-                String starteamAddress = starteamRepo.getHost();
+    /**
+     * Load username password from settings if user has not set them in JVM properties
+     *
+     * @param repo
+     */
+    private void loadInfosFromSettings( ScmProviderRepositoryWithHost repo, ScmHelper scmHelper )
+    {
+        if ( scmHelper.getUsername() == null || scmHelper.getPassword() == null )
+        {
+            String host = repo.getHost();
 
-                int starteamPort = starteamRepo.getPort();
+            int port = repo.getPort();
 
-                if ( starteamPort != 0 )
+            if ( port > 0 )
+            {
+                host += ":" + port;
+            }
+
+            Server server = this.settings.getServer( host );
+
+            if ( server != null )
+            {
+                if ( scmHelper.getUsername() == null )
                 {
-                    starteamAddress += ":" + starteamPort;
+                    scmHelper.setUsername( this.settings.getServer( host ).getUsername() );
                 }
 
-                Server server = this.settings.getServer( starteamAddress );
-
-                if ( server != null )
+                if ( scmHelper.getPassword() == null )
                 {
-                    if ( scmHelper.getUsername() == null )
-                    {
-                        scmHelper.setUsername( server.getUsername() );
-                    }
+                    scmHelper.setPassword( this.settings.getServer( host ).getPassword() );
+                }
 
-                    if ( scmHelper.getPassword() == null )
-                    {
-                        scmHelper.setPassword( server.getPassword() );
-                    }
+                if ( scmHelper.getPrivateKey() == null )
+                {
+                    scmHelper.setPrivateKey( this.settings.getServer( host ).getPrivateKey() );
+                }
+
+                if ( scmHelper.getPassphrase() == null )
+                {
+                    scmHelper.setPassphrase( this.settings.getServer( host ).getPassphrase() );
                 }
             }
         }
-
     }
-
     // ----------------------------------------------------------------------
     // Utility methods
     // ----------------------------------------------------------------------

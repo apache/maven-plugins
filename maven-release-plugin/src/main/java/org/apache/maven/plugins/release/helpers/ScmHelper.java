@@ -30,6 +30,7 @@ import org.apache.maven.scm.command.unedit.UnEditScmResult;
 import org.apache.maven.scm.command.update.UpdateScmResult;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.provider.ScmProviderRepository;
+import org.apache.maven.scm.provider.ScmProviderRepositoryWithHost;
 import org.apache.maven.scm.provider.svn.repository.SvnScmProviderRepository;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.codehaus.plexus.util.FileUtils;
@@ -51,6 +52,10 @@ public class ScmHelper
     private String username;
 
     private String password;
+
+    private String privateKey;
+
+    private String passphrase;
 
     private String url;
 
@@ -94,6 +99,19 @@ public class ScmHelper
             if ( !StringUtils.isEmpty( password ) )
             {
                 scmRepo.setPassword( password );
+            }
+
+            if ( scmRepo instanceof ScmProviderRepositoryWithHost )
+            {
+                if ( !StringUtils.isEmpty( privateKey ) )
+                {
+                    ( (ScmProviderRepositoryWithHost) scmRepo ).setPrivateKey( privateKey );
+                }
+
+                if ( !StringUtils.isEmpty( passphrase ) )
+                {
+                    ( (ScmProviderRepositoryWithHost) scmRepo ).setPassphrase( passphrase );
+                }
             }
 
             if ( repository.getProvider().equals( "svn" ) )
@@ -221,8 +239,8 @@ public class ScmHelper
 
         ScmFileSet fs = new ScmFileSet( new File( workingDirectory ), new File( file ) );
 
-        RemoveScmResult result = getScmManager().getProviderByRepository( repository ).remove( repository, fs,
-                                                                                               message );
+        RemoveScmResult result =
+            getScmManager().getProviderByRepository( repository ).remove( repository, fs, message );
 
         checkResult( result );
     }
@@ -230,7 +248,7 @@ public class ScmHelper
     public void checkin( List pomFiles, String message )
         throws ScmException
     {
-        File[] files = (File[])pomFiles.toArray( new File[pomFiles.size()] );
+        File[] files = (File[]) pomFiles.toArray( new File[pomFiles.size()] );
 
         ScmRepository repository = getScmRepository();
 
@@ -345,7 +363,27 @@ public class ScmHelper
         this.password = password;
     }
 
-    public boolean requiresEditMode() 
+    public String getPrivateKey()
+    {
+        return privateKey;
+    }
+
+    public void setPrivateKey( String privateKey )
+    {
+        this.privateKey = privateKey;
+    }
+
+    public String getPassphrase()
+    {
+        return passphrase;
+    }
+
+    public void setPassphrase( String passphrase )
+    {
+        this.passphrase = passphrase;
+    }
+
+    public boolean requiresEditMode()
         throws ScmException
     {
         ScmRepository repository = getScmRepository();
