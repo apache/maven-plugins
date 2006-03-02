@@ -1,4 +1,4 @@
-org.apache.maven.report.projectinfo.test10;
+package org.apache.maven.report.projectinfo.test10;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
