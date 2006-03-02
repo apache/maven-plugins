@@ -238,65 +238,27 @@ public class IdeaMojo
     }
 
     private void doDependencyResolution()
-        throws InvalidDependencyVersionException, ProjectBuildingException, ArtifactNotFoundException,
-        ArtifactResolutionException
+        throws InvalidDependencyVersionException, ProjectBuildingException
     {
         if ( project.getDependencies() != null )
         {
-            List missingArtifacts = new ArrayList();
-
             Map managedVersions = createManagedVersionMap( project.getId(), project.getDependencyManagement() );
 
-            ArtifactResolutionResult result = artifactResolver.resolveTransitively( project.createArtifacts( artifactFactory, Artifact.SCOPE_TEST, null ), project.getArtifact(), managedVersions,
-                                                  localRepo, project.getRemoteArtifactRepositories(),
-                                                  artifactMetadataSource );
-
-            //project.setArtifacts( project.createArtifacts( artifactFactory, Artifact.SCOPE_TEST, null ) );
-            project.setArtifacts( result.getArtifacts() );
-
-            for ( Iterator artifacts = project.getTestArtifacts().iterator(); artifacts.hasNext(); )
+            try
             {
-                Artifact artifact = (Artifact) artifacts.next();
+                ArtifactResolutionResult result = artifactResolver.resolveTransitively(
+                    project.createArtifacts( artifactFactory, Artifact.SCOPE_TEST, null ), project.getArtifact(), managedVersions,
+                    localRepo, project.getRemoteArtifactRepositories(), artifactMetadataSource );
 
-                artifact.setFile( new File( localRepo.getBasedir(), localRepo.pathOf( artifact ) ) );
-
-                if ( !artifact.getFile().exists() )
-                {
-                    try
-                    {
-                        wagonManager.getArtifact( artifact, project.getRemoteArtifactRepositories() );
-                    }
-                    catch ( ResourceDoesNotExistException e )
-                    {
-                        getLog().debug( "Unable to resolve a project dependency: " + artifact.getId(), e  );
-
-                        missingArtifacts.add( artifact );
-                    }
-                    catch ( TransferFailedException e )
-                    {
-                        getLog().debug( "Unable to resolve a project dependency: " + artifact.getId(), e );
-
-                        missingArtifacts.add( artifact );
-                    }
-                }
+                project.setArtifacts( result.getArtifacts() );
             }
-
-            if ( missingArtifacts.size() > 0 )
+            catch ( ArtifactNotFoundException e )
             {
-                StringBuffer warnMsg = new StringBuffer();
-
-                warnMsg.append( "The following artifacts failed to resolve\n\n" );
-
-                for( Iterator artifacts = missingArtifacts.iterator(); artifacts.hasNext(); )
-                {
-                    Artifact artifact = (Artifact) artifacts.next();
-
-                    warnMsg.append( "    " + artifact.getId() + "\n" );
-                }
-
-                warnMsg.append( "\nfor the project " + project.getId() + "\n" );
-
-                getLog().warn( warnMsg );
+                e.printStackTrace();
+            }
+            catch ( ArtifactResolutionException e )
+            {
+                e.printStackTrace();
             }
         }
     }
@@ -577,22 +539,19 @@ public class IdeaMojo
                 Artifact a = (Artifact) i.next();
                 Xpp3Dom dep = createElement( component, "orderEntry" );
 
-                boolean found = false;
-                if ( reactorProjects != null && linkModules )
+                boolean isIdeaModule = false;
+                if ( linkModules )
                 {
-                    for ( Iterator j = reactorProjects.iterator(); j.hasNext() && !found; )
+                    isIdeaModule = isReactorProject( a.getGroupId(), a.getArtifactId() );
+
+                    if ( isIdeaModule )
                     {
-                        MavenProject p = (MavenProject) j.next();
-                        if ( p.getGroupId().equals( a.getGroupId() ) && p.getArtifactId().equals( a.getArtifactId() ) )
-                        {
-                            dep.setAttribute( "type", "module" );
-                            dep.setAttribute( "module-name", a.getArtifactId() );
-                            found = true;
-                        }
+                        dep.setAttribute( "type", "module" );
+                        dep.setAttribute( "module-name", a.getArtifactId() );
                     }
                 }
 
-                if ( a.getFile() != null && !found )
+                if ( a.getFile() != null && !isIdeaModule )
                 {
                     dep.setAttribute( "type", "module-library" );
                     dep = createElement( dep, "library" );
@@ -648,6 +607,22 @@ public class IdeaMojo
         {
             throw new MojoExecutionException( "Error parsing existing IML file " + moduleFile.getAbsolutePath(), e );
         }
+    }
+
+    private boolean isReactorProject( String groupId, String artifactId )
+    {
+        if ( reactorProjects != null )
+        {
+            for ( Iterator j = reactorProjects.iterator(); j.hasNext(); )
+            {
+                MavenProject p = (MavenProject) j.next();
+                if ( p.getGroupId().equals( groupId ) && p.getArtifactId().equals( artifactId ) )
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void addResources( Xpp3Dom component, String directory )
@@ -777,47 +752,37 @@ Can't run this anyway as Xpp3Dom is in both classloaders...
         for ( Iterator i = artifacts.iterator(); i.hasNext(); )
         {
             Artifact artifact = (Artifact) i.next();
-            if ( artifact.getScope().equals( "compile" ) || artifact.getScope().equals( "runtime" ) )
+
+            Xpp3Dom containerElement = createElement( component, "containerElement" );
+
+            boolean linkAsModule = false;
+            if ( linkModules )
             {
-                Xpp3Dom containerElement = createElement( component, "containerElement" );
+                linkAsModule = isReactorProject( artifact.getGroupId(), artifact.getArtifactId() );
+            }
 
-                boolean linkAsModule = false;
-                if ( reactorProjects != null && linkModules )
-                {
-                    for ( Iterator j = reactorProjects.iterator(); j.hasNext() && !linkAsModule; )
-                    {
-                        MavenProject p = (MavenProject) j.next();
-                        if ( p.getGroupId().equals( artifact.getGroupId() ) &&
-                            p.getArtifactId().equals( artifact.getArtifactId() ) )
-                        {
-                            linkAsModule = true;
-                        }
-                    }
-                }
-
-                if ( linkAsModule )
-                {
-                    containerElement.setAttribute( "type", "module" );
-                    containerElement.setAttribute( "name", artifact.getArtifactId() );
-                    Xpp3Dom methodAttribute = createElement( containerElement, "attribute" );
-                    methodAttribute.setAttribute( "name", "method" );
-                    methodAttribute.setAttribute( "value", "1" );
-                    Xpp3Dom uriAttribute = createElement( containerElement, "attribute" );
-                    uriAttribute.setAttribute( "name", "URI" );
-                    uriAttribute.setAttribute( "value", "/WEB-INF/classes" );
-                }
-                else if ( artifact.getFile() != null )
-                {
-                    containerElement.setAttribute( "type", "library" );
-                    containerElement.setAttribute( "level", "module" );
-                    containerElement.setAttribute( "name", artifact.getArtifactId() );
-                    Xpp3Dom methodAttribute = createElement( containerElement, "attribute" );
-                    methodAttribute.setAttribute( "name", "method" );
-                    methodAttribute.setAttribute( "value", "1" ); // IntelliJ 5.0.2 is bugged and doesn't read it
-                    Xpp3Dom uriAttribute = createElement( containerElement, "attribute" );
-                    uriAttribute.setAttribute( "name", "URI" );
-                    uriAttribute.setAttribute( "value", "/WEB-INF/lib/" + artifact.getFile().getName() );
-                }
+            if ( linkAsModule )
+            {
+                containerElement.setAttribute( "type", "module" );
+                containerElement.setAttribute( "name", artifact.getArtifactId() );
+                Xpp3Dom methodAttribute = createElement( containerElement, "attribute" );
+                methodAttribute.setAttribute( "name", "method" );
+                methodAttribute.setAttribute( "value", "5" );
+                Xpp3Dom uriAttribute = createElement( containerElement, "attribute" );
+                uriAttribute.setAttribute( "name", "URI" );
+                uriAttribute.setAttribute( "value", "/WEB-INF/classes" );
+            }
+            else if ( artifact.getFile() != null )
+            {
+                containerElement.setAttribute( "type", "library" );
+                containerElement.setAttribute( "level", "module" );
+                containerElement.setAttribute( "name", artifact.getArtifactId() );
+                Xpp3Dom methodAttribute = createElement( containerElement, "attribute" );
+                methodAttribute.setAttribute( "name", "method" );
+                methodAttribute.setAttribute( "value", "1" ); // IntelliJ 5.0.2 is bugged and doesn't read it
+                Xpp3Dom uriAttribute = createElement( containerElement, "attribute" );
+                uriAttribute.setAttribute( "name", "URI" );
+                uriAttribute.setAttribute( "value", "/WEB-INF/lib/" + artifact.getFile().getName() );
             }
         }
 
