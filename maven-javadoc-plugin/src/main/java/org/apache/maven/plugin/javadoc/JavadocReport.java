@@ -606,6 +606,14 @@ public class JavadocReport
 
         StringBuffer options = new StringBuffer();
         StringBuffer classpath = new StringBuffer();
+
+        if ( !StringUtils.isEmpty( this.locale ) )
+        {
+            options.append( "-locale " );
+            options.append( quotedArgument( this.locale ) );
+            options.append( " " );
+        }
+
         try
         {
             for ( Iterator i = getProject().getCompileClasspathElements().iterator(); i.hasNext(); )
@@ -761,7 +769,6 @@ public class JavadocReport
         cmd.setExecutable( getJavadocPath() );
 
         // General javadoc arguments
-        addArgIfNotEmpty( arguments, "-locale", quotedArgument( this.locale ) );
         addArgIf( arguments, breakiterator, "-breakiterator", 1.4f );
         if ( !StringUtils.isEmpty( doclet ) )
         {
