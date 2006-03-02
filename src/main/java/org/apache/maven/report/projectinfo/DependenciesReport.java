@@ -47,6 +47,7 @@ import org.codehaus.plexus.i18n.I18N;
  * @version $Id$
  * @goal dependencies
  * @plexus.component
+ * @requiresDependencyResolution
  */
 public class DependenciesReport
     extends AbstractMavenReport
