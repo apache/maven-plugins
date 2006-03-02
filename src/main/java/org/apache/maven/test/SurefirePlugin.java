@@ -250,7 +250,6 @@ public class SurefirePlugin
      * any other parameters, like include/exclude useless.
      *
      * @parameter
-     * @todo do we want this? should they be discovered?
      */
     private List suiteXmlFiles;
 
