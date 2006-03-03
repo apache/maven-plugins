@@ -18,6 +18,7 @@ package org.apache.maven.plugin.assembly;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolationException;
 import org.apache.maven.plugins.assembly.model.Assembly;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.Archiver;
@@ -54,7 +55,15 @@ public class DirectoryMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        List assemblies = readAssemblies();
+        List assemblies;
+        try
+        {
+            assemblies = readAssemblies();
+        }
+        catch( AssemblyInterpolationException e )
+        {
+            throw new MojoExecutionException( "Failed to interpolate assembly descriptor", e );
+        }
         for ( Iterator i = assemblies.iterator(); i.hasNext(); )
         {
             Assembly assembly = (Assembly) i.next();
