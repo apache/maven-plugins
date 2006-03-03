@@ -30,6 +30,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.surefire.booter.ForkConfiguration;
 import org.apache.maven.surefire.booter.SurefireBooter;
+import org.apache.maven.surefire.booter.SurefireBooterForkException;
+import org.apache.maven.surefire.booter.SurefireExecutionException;
 import org.apache.maven.surefire.report.BriefConsoleReporter;
 import org.apache.maven.surefire.report.BriefFileReporter;
 import org.apache.maven.surefire.report.ConsoleReporter;
@@ -338,17 +340,20 @@ public class SurefirePlugin
         {
             SurefireBooter surefireBooter = constructSurefireBooter();
 
+            getLog().info( "Surefire report directory: " + reportsDirectory );
+
             boolean success;
             try
             {
-                getLog().info( "Surefire report directory: " + reportsDirectory );
-
                 success = surefireBooter.run();
             }
-            catch ( Exception e )
+            catch ( SurefireBooterForkException e )
             {
-                // TODO: better handling
-                throw new MojoExecutionException( "Error executing surefire", e );
+                throw new MojoExecutionException( e.getMessage(), e );
+            }
+            catch ( SurefireExecutionException e )
+            {
+                throw new MojoExecutionException( e.getMessage(), e );
             }
 
             if ( !success )
@@ -618,9 +623,9 @@ public class SurefirePlugin
             systemProperties = new Properties();
         }
 
-        systemProperties.put( "basedir", basedir.getAbsolutePath() );
+        systemProperties.setProperty( "basedir", basedir.getAbsolutePath() );
 
-        systemProperties.put( "localRepository", localRepository.getBasedir() );
+        systemProperties.setProperty( "localRepository", localRepository.getBasedir() );
 
         if ( setInSystem )
         {
@@ -631,7 +636,7 @@ public class SurefirePlugin
             {
                 String key = (String) iter.next();
 
-                String value = (String) systemProperties.get( key );
+                String value = systemProperties.getProperty( key );
 
                 System.setProperty( key, value );
             }
