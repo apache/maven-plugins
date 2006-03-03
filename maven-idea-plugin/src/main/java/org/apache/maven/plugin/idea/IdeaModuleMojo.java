@@ -320,6 +320,7 @@ public class IdeaModuleMojo
                 if ( a.getFile() != null && !isIdeaModule )
                 {
                     dep.setAttribute( "type", "module-library" );
+                    removeOldElements( dep, "library" );
                     dep = createElement( dep, "library" );
                     dep.setAttribute( "name", moduleName );
 
