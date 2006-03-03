@@ -146,7 +146,7 @@ public class DeployFileMojo
     private boolean uniqueVersion;
 
 
-    public void execute()
+    protected void initProperties()
         throws MojoExecutionException
     {
         // Process the supplied POM (if there is one)
@@ -164,6 +164,12 @@ public class DeployFileMojo
         {
             throw new MojoExecutionException( "Missing group, artifact, version, or packaging information" );
         }
+    }
+
+    public void execute()
+        throws MojoExecutionException
+    {
+        initProperties();
 
         if ( !file.exists() )
         {
