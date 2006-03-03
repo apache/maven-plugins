@@ -16,35 +16,34 @@ package org.apache.maven.plugin.idea;
  * limitations under the License.
  */
 
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.codehaus.plexus.util.xml.Xpp3DomWriter;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
-import java.io.Reader;
 import java.io.FileReader;
-import java.io.InputStreamReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
 /**
+ * @author Edwin Punzalan
  * @goal project
  * @execute phase="generate-sources"
  * @todo use dom4j or something. Xpp3Dom can't cope properly with entities and so on
- *
- * @author Edwin Punzalan
  */
 public class IdeaProjectMojo
     extends AbstractIdeaMojo
@@ -89,9 +88,12 @@ public class IdeaProjectMojo
     private String ideaVersion;
 
     public void initParam( MavenProject project, ArtifactFactory artifactFactory, ArtifactRepository localRepo,
-                           ArtifactResolver artifactResolver, ArtifactMetadataSource artifactMetadataSource, Log log, boolean overwrite, String jdkName, String jdkLevel, String wildcardResourcePatterns, String ideaVersion )
+                           ArtifactResolver artifactResolver, ArtifactMetadataSource artifactMetadataSource, Log log,
+                           boolean overwrite, String jdkName, String jdkLevel, String wildcardResourcePatterns,
+                           String ideaVersion )
     {
-        super.initParam( project, artifactFactory, localRepo, artifactResolver, artifactMetadataSource, log, overwrite );
+        super.initParam( project, artifactFactory, localRepo, artifactResolver, artifactMetadataSource, log,
+                         overwrite );
 
         this.jdkName = jdkName;
 

@@ -17,11 +17,11 @@ package org.apache.maven.plugin.idea;
  */
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.manager.WagonManager;
+import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
@@ -48,11 +48,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * @author Edwin Punzalan
  * @goal module
  * @execute phase="generate-sources"
  * @todo use dom4j or something. Xpp3Dom can't cope properly with entities and so on
- *
- * @author Edwin Punzalan
  */
 public class IdeaModuleMojo
     extends AbstractIdeaMojo
@@ -125,9 +124,13 @@ public class IdeaModuleMojo
     private static Map attemptedDownloads = new HashMap();
 
     public void initParam( MavenProject project, ArtifactFactory artifactFactory, ArtifactRepository localRepo,
-                            ArtifactResolver artifactResolver, ArtifactMetadataSource artifactMetadataSource, Log log, boolean overwrite, MavenProject executedProject, List reactorProjects, WagonManager wagonManager, boolean linkModules, boolean useFullNames, boolean useClassifiers, String sourceClassifier, String javadocClassifier )
+                           ArtifactResolver artifactResolver, ArtifactMetadataSource artifactMetadataSource, Log log,
+                           boolean overwrite, MavenProject executedProject, List reactorProjects,
+                           WagonManager wagonManager, boolean linkModules, boolean useFullNames, boolean useClassifiers,
+                           String sourceClassifier, String javadocClassifier )
     {
-        super.initParam( project, artifactFactory, localRepo, artifactResolver, artifactMetadataSource, log, overwrite );
+        super.initParam( project, artifactFactory, localRepo, artifactResolver, artifactMetadataSource, log,
+                         overwrite );
 
         this.executedProject = executedProject;
 

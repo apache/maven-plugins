@@ -31,11 +31,10 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 
 /**
+ * @author Edwin Punzalan
  * @goal workspace
  * @execute phase="generate-sources"
  * @todo use dom4j or something. Xpp3Dom can't cope properly with entities and so on
- *
- * @author Edwin Punzalan
  */
 public class IdeaWorkspaceMojo
     extends AbstractIdeaMojo
