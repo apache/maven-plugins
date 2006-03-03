@@ -263,7 +263,47 @@ public class IdeaModuleMojo
             for ( Iterator i = testClasspathElements.iterator(); i.hasNext(); )
             {
                 Artifact a = (Artifact) i.next();
-                Xpp3Dom dep = createElement( component, "orderEntry" );
+
+                String moduleName;
+                if ( useFullNames )
+                {
+                    moduleName = a.getGroupId() + ':' + a.getArtifactId() + ':' + a.getType() + ':' + a.getVersion();
+                }
+                else
+                {
+                    moduleName = a.getArtifactId();
+                }
+
+                Xpp3Dom dep = null;
+
+                Xpp3Dom[] orderEntries = component.getChildren( "orderEntry" );
+                for( int idx = 0; idx < orderEntries.length; idx++ )
+                {
+                    Xpp3Dom orderEntry = orderEntries[ idx ];
+
+                    if ( orderEntry.getAttribute( "type" ).equals( "module" ) )
+                    {
+                        if ( orderEntry.getAttribute( "module-name" ).equals( moduleName ) )
+                        {
+                            dep = orderEntry;
+                            break;
+                        }
+                    }
+                    else if ( orderEntry.getAttribute( "type" ).equals( "module-library" ) )
+                    {
+                        Xpp3Dom lib = orderEntry.getChild( "library" );
+                        if ( lib.getAttribute( "name" ).equals( moduleName ) )
+                        {
+                            dep = orderEntry;
+                            break;
+                        }
+                    }
+                }
+
+                if ( dep == null )
+                {
+                    dep = createElement( component, "orderEntry" );
+                }
 
                 boolean isIdeaModule = false;
                 if ( linkModules )
@@ -273,7 +313,7 @@ public class IdeaModuleMojo
                     if ( isIdeaModule )
                     {
                         dep.setAttribute( "type", "module" );
-                        dep.setAttribute( "module-name", a.getArtifactId() );
+                        dep.setAttribute( "module-name", moduleName );
                     }
                 }
 
@@ -281,16 +321,6 @@ public class IdeaModuleMojo
                 {
                     dep.setAttribute( "type", "module-library" );
                     dep = createElement( dep, "library" );
-                    String moduleName;
-                    if ( useFullNames )
-                    {
-                        moduleName =
-                            a.getGroupId() + ':' + a.getArtifactId() + ':' + a.getType() + ':' + a.getVersion();
-                    }
-                    else
-                    {
-                        moduleName = a.getArtifactId();
-                    }
                     dep.setAttribute( "name", moduleName );
 
                     Xpp3Dom el = createElement( dep, "CLASSES" );
