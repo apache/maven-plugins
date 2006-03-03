@@ -17,19 +17,37 @@ package org.apache.maven.test;
  */
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.surefire.SurefireBooter;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.surefire.booter.ForkConfiguration;
+import org.apache.maven.surefire.booter.SurefireBooter;
+import org.apache.maven.surefire.report.BriefConsoleReporter;
+import org.apache.maven.surefire.report.BriefFileReporter;
+import org.apache.maven.surefire.report.ConsoleReporter;
+import org.apache.maven.surefire.report.DetailedConsoleReporter;
+import org.apache.maven.surefire.report.FileReporter;
+import org.apache.maven.surefire.report.ForkingConsoleReporter;
+import org.apache.maven.surefire.report.XMLReporter;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.Properties;
 
 /**
  * Run tests using Surefire.
@@ -39,8 +57,6 @@ import java.util.StringTokenizer;
  * @requiresDependencyResolution test
  * @goal test
  * @phase test
- * @todo make version of junit and surefire configurable
- * @todo make report to be produced configurable
  */
 public class SurefirePlugin
     extends AbstractMojo
@@ -97,7 +113,7 @@ public class SurefirePlugin
      *
      * @parameter expression="${project.build.directory}/surefire-reports"
      */
-    private String reportsDirectory;
+    private File reportsDirectory;
 
     /**
      * The test source directory containing test class sources.
@@ -151,11 +167,22 @@ public class SurefirePlugin
     private Map systemProperties;
 
     /**
-     * List of of Plugin Artifacts.
+     * Map of of plugin artifacts.
      *
-     * @parameter expression="${plugin.artifacts}"
+     * @parameter expression="${plugin.artifactMap}"
+     * @required
+     * @readonly
      */
-    private List pluginArtifacts;
+    private Map pluginArtifactMap;
+
+    /**
+     * Map of of project artifacts.
+     *
+     * @parameter expression="${project.artifactMap}"
+     * @required
+     * @readonly
+     */
+    private Map projectArtifactMap;
 
     /**
      * Option to print summary of test suites or just print the test cases that has errors.
@@ -220,8 +247,7 @@ public class SurefirePlugin
     private File workingDirectory;
 
     /**
-     * Option to specify the jvm (or path to the java executable) to use with
-     * the forking options. For the default we will assume that java is in the path.
+     * Whether to run the tests in an isolated classloader, or to delegate to the system classloader when forking.
      *
      * @parameter expression="${childDelegation}"
      * default-value="true"
@@ -246,16 +272,16 @@ public class SurefirePlugin
 
     /**
      * List of TestNG suite xml file locations, seperated by commas. It should be noted that
-     * if suiteXmlFiles is specified, <b>no</b> other tests will be run, effectively making
-     * any other parameters, like include/exclude useless.
+     * if suiteXmlFiles is specified, <b>no</b> other tests will be run, ignoring other parameters,
+     * like includes and excludes.
      *
      * @parameter
      */
-    private List suiteXmlFiles;
+    private File[] suiteXmlFiles;
 
     /**
      * The attribute thread-count allows you to specify how many threads should be allocated
-     * for this execution. Makes most sense to use in conjunction with parallel.
+     * for this execution. Only makes sense to use in conjunction with parallel.
      *
      * @parameter expression="${threadCount}"
      * default-value="0"
@@ -269,105 +295,202 @@ public class SurefirePlugin
      *
      * @parameter expression="${parallel}"
      * default-value="false"
+     * @todo test how this works with forking, and console/file output parallelism
      */
     private boolean parallel;
 
+    /**
+     * @component
+     */
+    private ArtifactResolver artifactResolver;
+
+    /**
+     * @component
+     */
+    private ArtifactFactory artifactFactory;
+
+    /**
+     * @parameter expression="${project.remoteArtifactRepositories}"
+     */
+    private List remoteRepositories;
+
+    /**
+     * @component
+     */
+    private ArtifactMetadataSource metadataSource;
+
+    private static final String BRIEF_REPORT_FORMAT = "brief";
+
+    private static final String PLAIN_REPORT_FORMAT = "plain";
+
     public void execute()
-        throws MojoExecutionException
+        throws MojoExecutionException, MojoFailureException
     {
         if ( skip )
         {
             getLog().info( "Tests are skipped." );
-
-            return;
         }
-
-        if ( !testClassesDirectory.exists() )
+        else if ( !testClassesDirectory.exists() )
         {
             getLog().info( "No tests to run." );
-
-            return;
         }
-
-        // ----------------------------------------------------------------------
-        // Setup the surefire booter
-        // ----------------------------------------------------------------------
-
-        SurefireBooter surefireBooter = new SurefireBooter();
-
-        surefireBooter.setGroups( groups );
-
-        surefireBooter.setExcludedGroups( excludedGroups );
-
-        surefireBooter.setThreadCount( threadCount );
-
-        surefireBooter.setParallel( parallel );
-
-        surefireBooter.setTestSourceDirectory( testSourceDirectory.getPath() );
-
-        // ----------------------------------------------------------------------
-        // Reporting
-        // ----------------------------------------------------------------------
-
-        getLog().info( "Setting reports dir: " + reportsDirectory );
-
-        surefireBooter.setReportsDirectory( reportsDirectory );
-
-        if ( suiteXmlFiles != null && suiteXmlFiles.size() > 0 )
+        else
         {
-            for ( int i = 0; i < suiteXmlFiles.size(); i++ )
+            SurefireBooter surefireBooter = constructSurefireBooter();
+
+            boolean success;
+            try
             {
-                String filePath = (String) suiteXmlFiles.get( i );
-                File file = new File( filePath );
-                if ( file.exists() )
+                getLog().info( "Surefire report directory: " + reportsDirectory );
+
+                success = surefireBooter.run();
+            }
+            catch ( Exception e )
+            {
+                // TODO: better handling
+                throw new MojoExecutionException( "Error executing surefire", e );
+            }
+
+            if ( !success )
+            {
+                String msg = "There are test failures.";
+
+                if ( testFailureIgnore )
                 {
-                    surefireBooter.addBattery( "org.apache.maven.surefire.battery.TestNGXMLBattery",
-                                               new Object[]{file} );
+                    getLog().error( msg );
+                }
+                else
+                {
+                    throw new MojoFailureException( msg );
                 }
             }
         }
+    }
 
-        // ----------------------------------------------------------------------
-        // Check to see if we are running a single test. The raw parameter will
-        // come through if it has not been set.
-        // ----------------------------------------------------------------------
+    private SurefireBooter constructSurefireBooter()
+        throws MojoExecutionException
+    {
+        SurefireBooter surefireBooter = new SurefireBooter();
 
-        if ( test != null )
+/* TODO
+        surefireBooter.setTestSourceDirectory( testSourceDirectory.getPath() );
+*/
+
+        Artifact surefireArtifact = (Artifact) pluginArtifactMap.get( "org.apache.maven.surefire:surefire-booter" );
+
+        if ( surefireArtifact == null )
         {
-            // FooTest -> **/FooTest.java
-
-            List includes = new ArrayList();
-
-            List excludes = new ArrayList();
-
-            String[] testRegexes = split( test, ",", -1 );
-
-            for ( int i = 0; i < testRegexes.length; i++ )
-            {
-                includes.add( "**/" + testRegexes[i] + ".java" );
-            }
-
-            surefireBooter.addBattery( "org.apache.maven.surefire.battery.DirectoryBattery",
-                                       new Object[]{testClassesDirectory, includes, excludes} );
+            throw new MojoExecutionException( "Unable to locate surefire-booter in the list of plugin artifacts" );
         }
-        //Only if testng suites aren't being run
-        else if ( suiteXmlFiles == null || suiteXmlFiles.size() < 1 )
+
+        Artifact junitArtifact;
+        Artifact testNgArtifact;
+        try
         {
-            // defaults here, qdox doesn't like the end javadoc value
-            // Have to wrap in an ArrayList as surefire expects an ArrayList instead of a List for some reason
-            if ( includes == null || includes.size() == 0 )
+            addArtifact( surefireBooter, surefireArtifact );
+
+            junitArtifact = (Artifact) projectArtifactMap.get( "junit:junit" );
+
+            // TODO: this is pretty manual, but I'd rather not require the plugin > dependencies section right now
+            testNgArtifact = (Artifact) projectArtifactMap.get( "org.testng:testng" );
+
+            if ( testNgArtifact != null )
             {
-                includes = new ArrayList(
-                    Arrays.asList( new String[]{"**/Test*.java", "**/*Test.java", "**/*TestCase.java"} ) );
+                addProvider( surefireBooter, "surefire-testng", surefireArtifact.getBaseVersion() );
             }
-            if ( excludes == null || excludes.size() == 0 )
+            else
             {
-                excludes = new ArrayList(
-                    Arrays.asList( new String[]{"**/Abstract*Test.java", "**/Abstract*TestCase.java", "**/*$*"} ) );
+                // only need to discover JUnit if there is no TestNG, it runs the tests for you.
+                if ( junitArtifact != null )
+                {
+                    addProvider( surefireBooter, "surefire-junit", surefireArtifact.getBaseVersion() );
+                }
+            }
+        }
+        catch ( ArtifactNotFoundException e )
+        {
+            throw new MojoExecutionException(
+                "Unable to locate required surefire provider dependency: " + e.getMessage(), e );
+        }
+        catch ( ArtifactResolutionException e )
+        {
+            throw new MojoExecutionException( "Error to resolving surefire provider dependency: " + e.getMessage(), e );
+        }
+
+        if ( suiteXmlFiles != null && suiteXmlFiles.length > 0 )
+        {
+            if ( testNgArtifact == null )
+            {
+                throw new MojoExecutionException( "suiteXmlFiles is configured, but there is no TestNG dependency" );
+            }
+            for ( int i = 0; i < suiteXmlFiles.length; i++ )
+            {
+                File file = suiteXmlFiles[i];
+                if ( file.exists() )
+                {
+                    surefireBooter.addTestSuite( "org.apache.maven.surefire.testng.TestNgXmlTestSuite",
+                                                 new Object[]{file} );
+                }
+            }
+        }
+        else
+        {
+            List includes;
+            List excludes;
+
+            if ( test != null )
+            {
+                // Check to see if we are running a single test. The raw parameter will
+                // come through if it has not been set.
+
+                // FooTest -> **/FooTest.java
+
+                includes = new ArrayList();
+
+                excludes = new ArrayList();
+
+                String[] testRegexes = StringUtils.split( test, "," );
+
+                for ( int i = 0; i < testRegexes.length; i++ )
+                {
+                    includes.add( "**/" + testRegexes[i] + ".java" );
+                }
+            }
+            else
+            {
+                includes = this.includes;
+
+                excludes = this.excludes;
+
+                // defaults here, qdox doesn't like the end javadoc value
+                // Have to wrap in an ArrayList as surefire expects an ArrayList instead of a List for some reason
+                if ( includes == null || includes.size() == 0 )
+                {
+                    includes = new ArrayList(
+                        Arrays.asList( new String[]{"**/Test*.java", "**/*Test.java", "**/*TestCase.java"} ) );
+                }
+                if ( excludes == null || excludes.size() == 0 )
+                {
+                    excludes = new ArrayList(
+                        Arrays.asList( new String[]{"**/Abstract*Test.java", "**/Abstract*TestCase.java", "**/*$*"} ) );
+                }
             }
 
-            surefireBooter.addBattery( "org.apache.maven.surefire.battery.DirectoryBattery",
-                                       new Object[]{testClassesDirectory, includes, excludes} );
+            if ( testNgArtifact != null )
+            {
+                surefireBooter.addTestSuite( "org.apache.maven.surefire.testng.TestNGDirectoryTestSuite", new Object[]{
+                    testClassesDirectory, includes, excludes, groups, excludedGroups, Boolean.valueOf( parallel ),
+                    new Integer( threadCount )} );
+            }
+            else if ( junitArtifact != null )
+            {
+                surefireBooter.addTestSuite( "org.apache.maven.surefire.junit.JUnitDirectoryTestSuite",
+                                             new Object[]{testClassesDirectory, includes, excludes} );
+            }
+            else
+            {
+                throw new MojoExecutionException( "No Java test frameworks found" );
+            }
         }
 
         // ----------------------------------------------------------------------
@@ -376,11 +499,11 @@ public class SurefirePlugin
 
         getLog().debug( "Test Classpath :" );
 
-        getLog().debug( testClassesDirectory.getPath() );
+        getLog().debug( "  " + testClassesDirectory.getPath() );
 
         surefireBooter.addClassPathUrl( testClassesDirectory.getPath() );
 
-        getLog().debug( classesDirectory.getPath() );
+        getLog().debug( "  " + classesDirectory.getPath() );
 
         surefireBooter.addClassPathUrl( classesDirectory.getPath() );
 
@@ -388,95 +511,120 @@ public class SurefirePlugin
         {
             String classpathElement = (String) i.next();
 
-            getLog().debug( classpathElement );
+            getLog().debug( "  " + classpathElement );
 
             surefireBooter.addClassPathUrl( classpathElement );
         }
-
-        for ( Iterator i = pluginArtifacts.iterator(); i.hasNext(); )
-        {
-            Artifact artifact = (Artifact) i.next();
-
-            // TODO: this is crude for now. We really want to get "surefire-booter" and all its dependencies, but the
-            // artifacts don't keep track of their children. We could just throw all of them in, but that would add an
-            // unnecessary maven-artifact dependency which is precisely the reason we are isolating the classloader
-            if ( "junit".equals( artifact.getArtifactId() ) || "org.testng".equals( artifact.getGroupId() ) ||
-                "org.apache.maven.surefire".equals( artifact.getGroupId() ) ||
-                "plexus-utils".equals( artifact.getArtifactId() ) )
-            {
-                getLog().debug( "Adding to surefire test classpath: " + artifact.getFile().getAbsolutePath() );
-
-                surefireBooter.addClassPathUrl( artifact.getFile().getAbsolutePath() );
-            }
-        }
-
-        addReporters( surefireBooter );
-
-        processSystemProperties();
 
         // ----------------------------------------------------------------------
         // Forking
         // ----------------------------------------------------------------------
 
-        boolean success;
-        try
+        ForkConfiguration fork = new ForkConfiguration();
+
+        fork.setForkMode( forkMode );
+
+        processSystemProperties( fork.isForking() );
+
+        if ( getLog().isDebugEnabled() )
         {
-            surefireBooter.setForkMode( forkMode );
-
-            if ( !forkMode.equals( "none" ) )
-            {
-                surefireBooter.setSystemProperties( System.getProperties() );
-
-                surefireBooter.setJvm( jvm );
-
-                surefireBooter.setBasedir( basedir.getAbsolutePath() );
-
-                surefireBooter.setArgLine( argLine );
-
-                surefireBooter.setEnvironmentVariables( environmentVariables );
-
-                surefireBooter.setWorkingDirectory( workingDirectory );
-
-                surefireBooter.setChildDelegation( childDelegation );
-
-                if ( getLog().isDebugEnabled() )
-                {
-                    surefireBooter.setDebug( true );
-                }
-            }
-
-            success = surefireBooter.run();
-        }
-        catch ( Exception e )
-        {
-            // TODO: better handling
-            throw new MojoExecutionException( "Error executing surefire", e );
+            showMap( systemProperties, "system property" );
         }
 
-        if ( !success )
+        if ( fork.isForking() )
         {
-            String msg = "There are test failures.";
+            fork.setSystemProperties( systemProperties );
 
-            if ( testFailureIgnore )
+            fork.setJvmExecutable( jvm );
+
+            if ( workingDirectory != null )
             {
-                getLog().error( msg );
+                fork.setWorkingDirectory( workingDirectory );
             }
             else
             {
-                throw new MojoExecutionException( msg );
+                fork.setWorkingDirectory( basedir );
             }
+
+            fork.setArgLine( argLine );
+
+            fork.setEnvironmentVariables( environmentVariables );
+
+            fork.setChildDelegation( childDelegation );
+
+            if ( getLog().isDebugEnabled() )
+            {
+                showMap( environmentVariables, "environment variable" );
+
+                fork.setDebug( true );
+            }
+        }
+
+        surefireBooter.setForkConfiguration( fork );
+
+        addReporters( surefireBooter, fork.isForking() );
+
+        return surefireBooter;
+    }
+
+    private void showMap( Map map, String setting )
+    {
+        for ( Iterator i = map.keySet().iterator(); i.hasNext(); )
+        {
+            String key = (String) i.next();
+            String value = (String) map.get( key );
+            getLog().debug( "Setting " + setting + " [" + key + "]=[" + value + "]" );
         }
     }
 
-    protected void processSystemProperties()
+    private void addProvider( SurefireBooter surefireBooter, String provider, String version )
+        throws ArtifactNotFoundException, ArtifactResolutionException
     {
-        System.setProperty( "basedir", basedir.getAbsolutePath() );
+        Artifact providerArtifact = artifactFactory.createDependencyArtifact( "org.apache.maven.surefire", provider,
+                                                                              VersionRange.createFromVersion( version ),
+                                                                              "jar", null, Artifact.SCOPE_TEST );
+        resolveArtifact( providerArtifact, surefireBooter );
+    }
 
-        System.setProperty( "localRepository", localRepository.getBasedir() );
+    private void resolveArtifact( Artifact providerArtifact, SurefireBooter surefireBooter )
+        throws ArtifactResolutionException, ArtifactNotFoundException
+    {
+        Artifact originatingArtifact = artifactFactory.createBuildArtifact( "dummy", "dummy", "1.0", "jar" );
 
-        // Add all system properties configured by the user
-        if ( systemProperties != null )
+        ArtifactResolutionResult result = artifactResolver.resolveTransitively(
+            Collections.singleton( providerArtifact ), originatingArtifact, localRepository, remoteRepositories,
+            metadataSource, null );
+
+        for ( Iterator i = result.getArtifacts().iterator(); i.hasNext(); )
         {
+            Artifact artifact = (Artifact) i.next();
+
+            getLog().debug( "Adding to surefire test classpath: " + artifact.getFile().getAbsolutePath() );
+
+            surefireBooter.addSurefireClassPathUrl( artifact.getFile().getAbsolutePath() );
+        }
+    }
+
+    private void addArtifact( SurefireBooter surefireBooter, Artifact artifact )
+        throws ArtifactNotFoundException, ArtifactResolutionException
+    {
+        resolveArtifact( artifact, surefireBooter );
+    }
+
+    protected void processSystemProperties( boolean setInSystem )
+    {
+        if ( systemProperties == null )
+        {
+            systemProperties = new Properties();
+        }
+
+        systemProperties.put( "basedir", basedir.getAbsolutePath() );
+
+        systemProperties.put( "localRepository", localRepository.getBasedir() );
+
+        if ( setInSystem )
+        {
+            // Add all system properties configured by the user
             Iterator iter = systemProperties.keySet().iterator();
 
             while ( iter.hasNext() )
@@ -485,70 +633,9 @@ public class SurefirePlugin
 
                 String value = (String) systemProperties.get( key );
 
-                getLog().debug( "Setting system property [" + key + "]=[" + value + "]" );
-
                 System.setProperty( key, value );
             }
         }
-    }
-
-    protected String[] split( String str, String separator, int max )
-    {
-        StringTokenizer tok;
-
-        if ( separator == null )
-        {
-            // Null separator means we're using StringTokenizer's default
-            // delimiter, which comprises all whitespace characters.
-            tok = new StringTokenizer( str );
-        }
-        else
-        {
-            tok = new StringTokenizer( str, separator );
-        }
-
-        int listSize = tok.countTokens();
-
-        if ( max > 0 && listSize > max )
-        {
-            listSize = max;
-        }
-
-        String[] list = new String[listSize];
-
-        int i = 0;
-
-        int lastTokenBegin;
-
-        int lastTokenEnd = 0;
-
-        while ( tok.hasMoreTokens() )
-        {
-            if ( max > 0 && i == listSize - 1 )
-            {
-                // In the situation where we hit the max yet have
-                // tokens left over in our input, the last list
-                // element gets all remaining text.
-                String endToken = tok.nextToken();
-
-                lastTokenBegin = str.indexOf( endToken, lastTokenEnd );
-
-                list[i] = str.substring( lastTokenBegin );
-
-                break;
-            }
-            else
-            {
-                list[i] = tok.nextToken();
-
-                lastTokenBegin = str.indexOf( list[i], lastTokenEnd );
-
-                lastTokenEnd = lastTokenBegin + list[i].length();
-            }
-            i++;
-        }
-
-        return list;
     }
 
     /**
@@ -557,49 +644,45 @@ public class SurefirePlugin
      * useFile, reportFormat, and printSummary.
      *
      * @param surefireBooter The surefire booter that will run tests.
+     * @param forking
      */
-    private void addReporters( SurefireBooter surefireBooter )
+    private void addReporters( SurefireBooter surefireBooter, boolean forking )
     {
         if ( useFile )
         {
             if ( printSummary )
             {
-                if ( forking() )
+                if ( forking )
                 {
-                    surefireBooter.addReport( "org.apache.maven.surefire.report.ForkingConsoleReporter" );
+                    surefireBooter.addReport( ForkingConsoleReporter.class.getName() );
                 }
                 else
                 {
-                    surefireBooter.addReport( "org.apache.maven.surefire.report.ConsoleReporter" );
+                    surefireBooter.addReport( ConsoleReporter.class.getName() );
                 }
             }
 
-            if ( reportFormat.equals( "brief" ) )
+            if ( BRIEF_REPORT_FORMAT.equals( reportFormat ) )
             {
-                surefireBooter.addReport( "org.apache.maven.surefire.report.BriefFileReporter" );
+                surefireBooter.addReport( BriefFileReporter.class.getName(), new Object[]{reportsDirectory} );
             }
-            else if ( reportFormat.equals( "plain" ) )
+            else if ( PLAIN_REPORT_FORMAT.equals( reportFormat ) )
             {
-                surefireBooter.addReport( "org.apache.maven.surefire.report.FileReporter" );
+                surefireBooter.addReport( FileReporter.class.getName(), new Object[]{reportsDirectory} );
             }
         }
         else
         {
-            if ( reportFormat.equals( "brief" ) )
+            if ( BRIEF_REPORT_FORMAT.equals( reportFormat ) )
             {
-                surefireBooter.addReport( "org.apache.maven.surefire.report.BriefConsoleReporter" );
+                surefireBooter.addReport( BriefConsoleReporter.class.getName() );
             }
-            else if ( reportFormat.equals( "plain" ) )
+            else if ( PLAIN_REPORT_FORMAT.equals( reportFormat ) )
             {
-                surefireBooter.addReport( "org.apache.maven.surefire.report.DetailedConsoleReporter" );
+                surefireBooter.addReport( DetailedConsoleReporter.class.getName() );
             }
         }
 
-        surefireBooter.addReport( "org.apache.maven.surefire.report.XMLReporter" );
-    }
-
-    private boolean forking()
-    {
-        return !forkMode.equals( "none" );
+        surefireBooter.addReport( XMLReporter.class.getName(), new Object[]{reportsDirectory} );
     }
 }
