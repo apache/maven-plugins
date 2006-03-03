@@ -349,10 +349,18 @@ public abstract class AbstractWarMojo
                 {
                     FileUtils.copyFileToDirectory( artifact.getFile(), tldDirectory );
                 }
-                else if ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type )
-                    || "par".equals( type ) )
+                else if ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type ) )
                 {
                     FileUtils.copyFileToDirectory( artifact.getFile(), libDirectory );
+                }
+                else if ( "par".equals( type ) )
+                {
+                    String newName = artifact.getFile().getName();
+                    newName = newName.substring( 0, newName.lastIndexOf('.') ) + ".jar";
+
+                    getLog().debug( "Copying " + artifact.getFile() + " to " + new File( libDirectory, newName ) );
+
+                    FileUtils.copyFile( artifact.getFile(), new File( libDirectory, newName ) );
                 }
                 else if ( "war".equals( type ) )
                 {
