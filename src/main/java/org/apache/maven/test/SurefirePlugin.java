@@ -164,7 +164,7 @@ public class SurefirePlugin
      *
      * @parameter
      */
-    private Map systemProperties;
+    private Properties systemProperties;
 
     /**
      * Map of of plugin artifacts.
