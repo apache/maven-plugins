@@ -1141,6 +1141,10 @@ public class JavadocReport
     {
         if ( !StringUtils.isEmpty( value ) )
         {
+            if ( value.indexOf( "'" ) != 1 )
+            {
+                value = StringUtils.replace( value, "'", "\\'" );
+            }
             return "'" + value + "'";
         }
 
