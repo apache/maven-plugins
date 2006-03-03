@@ -39,8 +39,10 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Edwin Punzalan
@@ -222,7 +224,7 @@ public abstract class AbstractIdeaMojo
             try
             {
                 ArtifactResolutionResult result = artifactResolver.resolveTransitively(
-                    project.createArtifacts( artifactFactory, Artifact.SCOPE_TEST, null ), project.getArtifact(),
+                    getProjectArtifacts(), project.getArtifact(),
                     managedVersions, localRepo, project.getRemoteArtifactRepositories(), artifactMetadataSource );
 
                 project.setArtifacts( result.getArtifacts() );
@@ -236,6 +238,22 @@ public abstract class AbstractIdeaMojo
                 e.printStackTrace();
             }
         }
+    }
+
+    private Set getProjectArtifacts()
+    {
+        Set artifacts = new HashSet();
+
+        for( Iterator dependencies = project.getDependencies().iterator(); dependencies.hasNext(); )
+        {
+            Dependency dep = (Dependency) dependencies.next();
+
+            Artifact artifact = artifactFactory.createArtifact( dep.getGroupId(), dep.getArtifactId(), dep.getVersion(), dep.getScope(), dep.getType() );
+
+            artifacts.add( artifact );
+        }
+
+        return artifacts;
     }
 
     private Map createManagedVersionMap( ArtifactFactory artifactFactory, String projectId,
