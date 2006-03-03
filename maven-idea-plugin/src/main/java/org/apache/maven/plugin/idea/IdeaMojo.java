@@ -16,9 +16,9 @@ package org.apache.maven.plugin.idea;
  * limitations under the License.
  */
 
+import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.artifact.manager.WagonManager;
 
 import java.util.List;
 
@@ -135,8 +135,7 @@ public class IdeaMojo
     {
         try
         {
-            doDependencyResolution( project, artifactFactory, artifactResolver, localRepo,
-                                    artifactMetadataSource );
+            doDependencyResolution( project, artifactFactory, artifactResolver, localRepo, artifactMetadataSource );
         }
         catch ( Exception e )
         {
@@ -158,7 +157,9 @@ public class IdeaMojo
     {
         IdeaModuleMojo mojo = new IdeaModuleMojo();
 
-        mojo.initParam( project, artifactFactory, localRepo, artifactResolver, artifactMetadataSource, getLog(), overwrite, executedProject, reactorProjects, wagonManager, linkModules, useFullNames, useClassifiers, sourceClassifier, javadocClassifier );
+        mojo.initParam( project, artifactFactory, localRepo, artifactResolver, artifactMetadataSource, getLog(),
+                        overwrite, executedProject, reactorProjects, wagonManager, linkModules, useFullNames,
+                        useClassifiers, sourceClassifier, javadocClassifier );
 
         mojo.execute();
     }
@@ -168,7 +169,8 @@ public class IdeaMojo
     {
         IdeaProjectMojo mojo = new IdeaProjectMojo();
 
-        mojo.initParam( project, artifactFactory, localRepo, artifactResolver, artifactMetadataSource, getLog(), overwrite, jdkName, jdkLevel, wildcardResourcePatterns, ideaVersion );
+        mojo.initParam( project, artifactFactory, localRepo, artifactResolver, artifactMetadataSource, getLog(),
+                        overwrite, jdkName, jdkLevel, wildcardResourcePatterns, ideaVersion );
 
         mojo.execute();
     }
@@ -178,7 +180,8 @@ public class IdeaMojo
     {
         IdeaWorkspaceMojo mojo = new IdeaWorkspaceMojo();
 
-        mojo.initParam( project, artifactFactory, localRepo, artifactResolver, artifactMetadataSource, getLog(), overwrite );
+        mojo.initParam( project, artifactFactory, localRepo, artifactResolver, artifactMetadataSource, getLog(),
+                        overwrite );
 
         mojo.execute();
     }

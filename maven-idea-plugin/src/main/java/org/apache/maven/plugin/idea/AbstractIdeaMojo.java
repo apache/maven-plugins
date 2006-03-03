@@ -91,7 +91,9 @@ public abstract class AbstractIdeaMojo
      */
     protected ArtifactMetadataSource artifactMetadataSource;
 
-    public void initParam( MavenProject project, ArtifactFactory artifactFactory, ArtifactRepository localRepo, ArtifactResolver artifactResolver, ArtifactMetadataSource artifactMetadataSource, Log log, boolean overwrite )
+    public void initParam( MavenProject project, ArtifactFactory artifactFactory, ArtifactRepository localRepo,
+                           ArtifactResolver artifactResolver, ArtifactMetadataSource artifactMetadataSource, Log log,
+                           boolean overwrite )
     {
         this.project = project;
 
@@ -237,7 +239,7 @@ public abstract class AbstractIdeaMojo
     }
 
     private Map createManagedVersionMap( ArtifactFactory artifactFactory, String projectId,
-                                            DependencyManagement dependencyManagement )
+                                         DependencyManagement dependencyManagement )
         throws ProjectBuildingException
     {
         Map map;
