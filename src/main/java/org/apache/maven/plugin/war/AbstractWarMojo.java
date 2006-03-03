@@ -349,7 +349,8 @@ public abstract class AbstractWarMojo
                 {
                     FileUtils.copyFileToDirectory( artifact.getFile(), tldDirectory );
                 }
-                else if ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type ) )
+                else if ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type )
+                    || "par".equals( type ) )
                 {
                     FileUtils.copyFileToDirectory( artifact.getFile(), libDirectory );
                 }
