@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -241,35 +242,19 @@ public class IdeaModuleMojo
 
             //For excludeFolder
             File target = new File( project.getBuild().getDirectory() );
+            File classes = new File( project.getBuild().getOutputDirectory() );
+            File testClasses = new File( project.getBuild().getTestOutputDirectory() );
 
-            List excludeFolders = new ArrayList();
-            excludeFolders.add( new File( project.getBuild().getOutputDirectory() ).getAbsolutePath() );
-            excludeFolders.add( new File( project.getBuild().getTestOutputDirectory() ).getAbsolutePath() );
+            List sourceFolders = Arrays.asList( content.getChildren( "sourceFolder" ) );
 
-            if ( target.exists() )
+            List filteredExcludes = new ArrayList();
+            filteredExcludes.addAll( getExcludedDirectories( target, filteredExcludes, sourceFolders ) );
+            filteredExcludes.addAll( getExcludedDirectories( classes, filteredExcludes, sourceFolders ) );
+            filteredExcludes.addAll( getExcludedDirectories( testClasses, filteredExcludes, sourceFolders ) );
+
+            for ( Iterator i = filteredExcludes.iterator(); i.hasNext(); )
             {
-                File[] fileNames = target.listFiles();
-
-                for ( int i = 0; i < fileNames.length; i++ )
-                {
-                    File fileName = fileNames[i];
-                    if ( fileName.isDirectory() )
-                    {
-                        String absolutePath = fileName.getAbsolutePath();
-                        if ( !executedProject.getCompileSourceRoots().contains( absolutePath ) )
-                        {
-                            if ( !excludeFolders.contains( absolutePath ) )
-                            {
-                                excludeFolders.add( absolutePath );
-                            }
-                        }
-                    }
-                }
-
-                for ( Iterator i = excludeFolders.iterator(); i.hasNext(); )
-                {
-                    addExcludeFolder( content, i.next().toString() );
-                }
+                addExcludeFolder( content, i.next().toString() );
             }
 
             removeOldDependencies( component );
@@ -348,6 +333,57 @@ public class IdeaModuleMojo
         {
             throw new MojoExecutionException( "Error parsing existing IML file " + moduleFile.getAbsolutePath(), e );
         }
+    }
+
+    private List getExcludedDirectories( File target, List excludeList, List sourceFolders )
+    {
+        List foundFolders = new ArrayList();
+        int dirs = 0;
+
+        if ( target.exists() && !excludeList.contains( target.getAbsolutePath() ) )
+        {
+            File[] files = target.listFiles();
+
+            for ( int i = 0; i < files.length; i++ )
+            {
+                File file = files[i];
+                if ( file.isDirectory() && !excludeList.contains( file.getAbsolutePath() ) )
+                {
+                    String absolutePath = file.getAbsolutePath();
+                    String url = getModuleFileUrl( absolutePath );
+
+                    for( Iterator sources = sourceFolders.iterator(); sources.hasNext(); )
+                    {
+                        String source = ( (Xpp3Dom) sources.next() ).getAttribute( "url" );
+                        if ( source.equals( url ) )
+                        {
+                            dirs++;
+                            break;
+                        }
+                        else if ( source.indexOf( url ) == 0 )
+                        {
+                            dirs++;
+                            foundFolders.addAll( getExcludedDirectories( new File( absolutePath ), excludeList, sourceFolders ) );
+                            break;
+                        }
+                        else
+                        {
+                            foundFolders.add( absolutePath );
+                        }
+                    }
+                }
+            }
+
+            //if all directories are excluded, then just exclude the parent directory
+            if ( dirs == 0 )
+            {
+                foundFolders.clear();
+
+                foundFolders.add( target.getAbsolutePath() );
+            }
+        }
+
+        return foundFolders;
     }
 
     /**
@@ -478,10 +514,8 @@ Can't run this anyway as Xpp3Dom is in both classloaders...
      */
     private void addSourceFolder( Xpp3Dom content, String directory, boolean isTest )
     {
-        getLog().debug( "Source folder found: " + directory );
         if ( !StringUtils.isEmpty( directory ) && new File( directory ).isDirectory() )
         {
-            getLog().info( "Adding source folder to module..." );
             Xpp3Dom sourceFolder = createElement( content, "sourceFolder" );
             sourceFolder.setAttribute( "url", getModuleFileUrl( directory ) );
             sourceFolder.setAttribute( "isTestSource", Boolean.toString( isTest ) );
