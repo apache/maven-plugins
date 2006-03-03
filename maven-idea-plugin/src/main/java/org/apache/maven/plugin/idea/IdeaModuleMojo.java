@@ -478,8 +478,10 @@ Can't run this anyway as Xpp3Dom is in both classloaders...
      */
     private void addSourceFolder( Xpp3Dom content, String directory, boolean isTest )
     {
+        getLog().debug( "Source folder found: " + directory );
         if ( !StringUtils.isEmpty( directory ) && new File( directory ).isDirectory() )
         {
+            getLog().info( "Adding source folder to module..." );
             Xpp3Dom sourceFolder = createElement( content, "sourceFolder" );
             sourceFolder.setAttribute( "url", getModuleFileUrl( directory ) );
             sourceFolder.setAttribute( "isTestSource", Boolean.toString( isTest ) );
