@@ -248,6 +248,11 @@ public abstract class AbstractIdeaMojo
         {
             Dependency dep = (Dependency) dependencies.next();
 
+            if ( dep.getScope() == null )
+            {
+                dep.setScope( Artifact.SCOPE_COMPILE );
+            }
+
             Artifact artifact = artifactFactory.createArtifact( dep.getGroupId(), dep.getArtifactId(), dep.getVersion(), dep.getScope(), dep.getType() );
 
             artifacts.add( artifact );
