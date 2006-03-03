@@ -25,8 +25,11 @@ import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ExcludesArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.IncludesArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
+import org.apache.maven.model.Model;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolationException;
+import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolator;
 import org.apache.maven.plugins.assembly.model.Assembly;
 import org.apache.maven.plugins.assembly.model.DependencySet;
 import org.apache.maven.plugins.assembly.model.FileItem;
@@ -35,6 +38,11 @@ import org.apache.maven.plugins.assembly.model.Component;
 import org.apache.maven.plugins.assembly.model.io.xpp3.AssemblyXpp3Reader;
 import org.apache.maven.plugins.assembly.model.io.xpp3.ComponentXpp3Reader;
 import org.apache.maven.project.MavenProjectHelper;
+import org.apache.maven.project.injection.DefaultModelDefaultsInjector;
+import org.apache.maven.project.injection.ModelDefaultsInjector;
+import org.apache.maven.project.interpolation.ModelInterpolationException;
+import org.apache.maven.project.interpolation.ModelInterpolator;
+import org.apache.maven.project.interpolation.RegexBasedModelInterpolator;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
@@ -61,9 +69,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -190,8 +201,16 @@ public abstract class AbstractAssemblyMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        List assemblies = readAssemblies();
-
+        List assemblies;
+        try
+        {
+            assemblies = readAssemblies();
+        }
+        catch( AssemblyInterpolationException e )
+        {
+            throw new MojoExecutionException( "Failed to interpolate assembly descriptor", e );
+        }
+        
         // TODO: include dependencies marked for distribution under certain formats
         // TODO: how, might we plug this into an installer, such as NSIS?
 
@@ -320,7 +339,7 @@ public abstract class AbstractAssemblyMojo
     }
 
     protected List readAssemblies()
-        throws MojoFailureException, MojoExecutionException
+        throws MojoFailureException, MojoExecutionException, AssemblyInterpolationException
     {
         List assemblies = new ArrayList();
 
@@ -370,7 +389,7 @@ public abstract class AbstractAssemblyMojo
     }
 
     private Assembly getAssembly( String ref )
-        throws MojoFailureException, MojoExecutionException
+        throws MojoFailureException, MojoExecutionException, AssemblyInterpolationException
     {
         InputStream resourceAsStream = getClass().getResourceAsStream( "/assemblies/" + ref + ".xml" );
         if ( resourceAsStream == null )
@@ -381,7 +400,7 @@ public abstract class AbstractAssemblyMojo
     }
 
     private Assembly getAssembly( File file )
-        throws MojoFailureException, MojoExecutionException
+        throws MojoFailureException, MojoExecutionException, AssemblyInterpolationException
     {
         Reader r;
         try
@@ -397,13 +416,20 @@ public abstract class AbstractAssemblyMojo
     }
 
     private Assembly getAssembly( Reader reader )
-        throws MojoFailureException, MojoExecutionException
+        throws MojoFailureException, MojoExecutionException, AssemblyInterpolationException
     {
         Assembly assembly;
+        
         try
         {
+            Map context = new HashMap( System.getProperties() );
+                
+            context.put( "basedir", basedir.getAbsolutePath() );
+
             AssemblyXpp3Reader r = new AssemblyXpp3Reader();
             assembly = r.read( reader );
+            
+            assembly = new AssemblyInterpolator().interpolate( assembly, project.getModel(), context );   
         }
         catch ( IOException e )
         {
