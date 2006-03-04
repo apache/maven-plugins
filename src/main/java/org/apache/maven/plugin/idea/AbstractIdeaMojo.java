@@ -237,11 +237,11 @@ public abstract class AbstractIdeaMojo
             }
             catch ( ArtifactNotFoundException e )
             {
-                e.printStackTrace();
+                getLog().debug( e.toString() );
             }
             catch ( ArtifactResolutionException e )
             {
-                e.printStackTrace();
+                getLog().debug( e.toString() );
             }
         }
     }
