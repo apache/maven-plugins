@@ -39,7 +39,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,6 +46,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Edwin Punzalan
@@ -116,6 +118,35 @@ public class IdeaModuleMojo
     private String javadocClassifier;
 
     /**
+     * An optional set of Library objects that allow you to specify a comma separated list of source dirs, class dirs,
+     * or to indicate that the library should be excluded from the module. For example:
+     * <p/>
+     * <pre>
+     * &lt;libraries&gt;
+     *  &lt;library&gt;
+     *      &lt;name&gt;webwork&lt;/name&gt;
+     *      &lt;sources&gt;file://$webwork$/src/java&lt;/sources&gt;
+     *      &lt;!--
+     *      &lt;classes&gt;...&lt;/classes&gt;
+     *      &lt;exclude&gt;true&lt;/exclude&gt;
+     *      --&gt;
+     *  &lt;/library&gt;
+     * &lt;/libraries&gt;
+     * </pre>
+     *
+     * @parameter
+     */
+    private Library[] libraries;
+
+    /**
+     * A comma-separated list of directories that should be excluded. These directories are in addition to those
+     * already excluded, such as target.
+     *
+     * @parameter
+     */
+    private String exclude;
+
+    /**
      * A temporary cache of artifacts that's already been downloaded or
      * attempted to be downloaded. This is to refrain from trying to download a
      * dependency that we have already tried to download.
@@ -124,11 +155,14 @@ public class IdeaModuleMojo
      */
     private static Map attemptedDownloads = new HashMap();
 
+    private Set macros;
+
     public void initParam( MavenProject project, ArtifactFactory artifactFactory, ArtifactRepository localRepo,
                            ArtifactResolver artifactResolver, ArtifactMetadataSource artifactMetadataSource, Log log,
                            boolean overwrite, MavenProject executedProject, List reactorProjects,
                            WagonManager wagonManager, boolean linkModules, boolean useFullNames, boolean useClassifiers,
-                           String sourceClassifier, String javadocClassifier )
+                           String sourceClassifier, String javadocClassifier, Library[] libraries, Set macros,
+                           String exclude )
     {
         super.initParam( project, artifactFactory, localRepo, artifactResolver, artifactMetadataSource, log,
                          overwrite );
@@ -148,6 +182,12 @@ public class IdeaModuleMojo
         this.sourceClassifier = sourceClassifier;
 
         this.javadocClassifier = javadocClassifier;
+
+        this.libraries = libraries;
+
+        this.macros = macros;
+
+        this.exclude = exclude;
     }
 
     /**
@@ -178,7 +218,7 @@ public class IdeaModuleMojo
             }
             else
             {
-                reader = new InputStreamReader( getClass().getResourceAsStream( "/templates/default/module.xml" ) );
+                reader = getXmlReader( "module.xml" );
             }
 
             Xpp3Dom module;
@@ -252,6 +292,16 @@ public class IdeaModuleMojo
             filteredExcludes.addAll( getExcludedDirectories( classes, filteredExcludes, sourceFolders ) );
             filteredExcludes.addAll( getExcludedDirectories( testClasses, filteredExcludes, sourceFolders ) );
 
+            if ( exclude != null )
+            {
+                String[] dirs = exclude.split( "[,\\s]+" );
+                for ( int i = 0; i < dirs.length; i++ )
+                {
+                    File excludedDir = new File( dirs[ i ] );
+                    filteredExcludes.add( getExcludedDirectories( excludedDir, filteredExcludes, sourceFolders ) );
+                }
+            }
+
             for ( Iterator i = filteredExcludes.iterator(); i.hasNext(); )
             {
                 addExcludeFolder( content, i.next().toString() );
@@ -263,6 +313,12 @@ public class IdeaModuleMojo
             for ( Iterator i = testClasspathElements.iterator(); i.hasNext(); )
             {
                 Artifact a = (Artifact) i.next();
+
+                Library library = findLibrary( a );
+                if ( library != null && library.isExclude() )
+                {
+                    continue;
+                }
 
                 String moduleName;
                 if ( useFullNames )
@@ -277,9 +333,9 @@ public class IdeaModuleMojo
                 Xpp3Dom dep = null;
 
                 Xpp3Dom[] orderEntries = component.getChildren( "orderEntry" );
-                for( int idx = 0; idx < orderEntries.length; idx++ )
+                for ( int idx = 0; idx < orderEntries.length; idx++ )
                 {
-                    Xpp3Dom orderEntry = orderEntries[ idx ];
+                    Xpp3Dom orderEntry = orderEntries[idx];
 
                     if ( orderEntry.getAttribute( "type" ).equals( "module" ) )
                     {
@@ -325,14 +381,46 @@ public class IdeaModuleMojo
                     dep.setAttribute( "name", moduleName );
 
                     Xpp3Dom el = createElement( dep, "CLASSES" );
-                    el = createElement( el, "root" );
-                    File file = a.getFile();
-                    el.setAttribute( "url", "jar://" + file.getAbsolutePath().replace( '\\', '/' ) + "!/" );
+                    if ( library != null && library.getSplitClasses().length > 0 )
+                    {
+                        String[] libraryClasses = library.getSplitClasses();
+                        for ( int k = 0; k < libraryClasses.length; k++ )
+                        {
+                            String classpath = libraryClasses[k];
+                            extractMacro( classpath );
+                            Xpp3Dom classEl = createElement( el, "root" );
+                            classEl.setAttribute( "url", classpath );
+                        }
+                    }
+                    else
+                    {
+                        el = createElement( el, "root" );
+                        File file = a.getFile();
+                        el.setAttribute( "url", "jar://" + file.getAbsolutePath().replace( '\\', '/' ) + "!/" );
+                    }
+
+                    boolean usedSources = false;
+                    if ( library != null && library.getSplitSources().length > 0 )
+                    {
+                        Xpp3Dom sourcesElement = createElement( dep, "SOURCES" );
+                        usedSources = true;
+                        String[] sources = library.getSplitSources();
+                        for ( int k = 0; k < sources.length; k++ )
+                        {
+                            String source = sources[k];
+                            extractMacro( source );
+                            Xpp3Dom sourceEl = createElement( sourcesElement, "root" );
+                            sourceEl.setAttribute( "url", source );
+                        }
+                    }
 
                     if ( useClassifiers )
                     {
                         resolveClassifier( createElement( dep, "JAVADOC" ), a, javadocClassifier );
-                        resolveClassifier( createElement( dep, "SOURCES" ), a, sourceClassifier );
+                        if ( !usedSources )
+                        {
+                            resolveClassifier( createElement( dep, "SOURCES" ), a, sourceClassifier );
+                        }
                     }
                 }
             }
@@ -366,6 +454,37 @@ public class IdeaModuleMojo
         }
     }
 
+    private void extractMacro( String path )
+    {
+        if ( macros != null )
+        {
+            Pattern p = Pattern.compile( ".*\\$([^\\$]+)\\$.*" );
+            Matcher matcher = p.matcher( path );
+            while ( matcher.find() )
+            {
+                String macro = matcher.group( 1 );
+                macros.add( macro );
+            }
+        }
+    }
+
+    private Library findLibrary( Artifact a )
+    {
+        if ( libraries != null )
+        {
+            for ( int j = 0; j < libraries.length; j++ )
+            {
+                Library library = libraries[j];
+                if ( a.getArtifactId().equals( library.getName() ) )
+                {
+                    return library;
+                }
+            }
+        }
+
+        return null;
+    }
+
     private List getExcludedDirectories( File target, List excludeList, List sourceFolders )
     {
         List foundFolders = new ArrayList();
@@ -383,7 +502,7 @@ public class IdeaModuleMojo
                     String absolutePath = file.getAbsolutePath();
                     String url = getModuleFileUrl( absolutePath );
 
-                    for( Iterator sources = sourceFolders.iterator(); sources.hasNext(); )
+                    for ( Iterator sources = sourceFolders.iterator(); sources.hasNext(); )
                     {
                         String source = ( (Xpp3Dom) sources.next() ).getAttribute( "url" );
                         if ( source.equals( url ) )
@@ -394,7 +513,8 @@ public class IdeaModuleMojo
                         else if ( source.indexOf( url ) == 0 )
                         {
                             dirs++;
-                            foundFolders.addAll( getExcludedDirectories( new File( absolutePath ), excludeList, sourceFolders ) );
+                            foundFolders.addAll(
+                                getExcludedDirectories( new File( absolutePath ), excludeList, sourceFolders ) );
                             break;
                         }
                         else

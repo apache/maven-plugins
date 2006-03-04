@@ -34,9 +34,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 /**
@@ -87,10 +87,12 @@ public class IdeaProjectMojo
      */
     private String ideaVersion;
 
+    private Set macros;
+
     public void initParam( MavenProject project, ArtifactFactory artifactFactory, ArtifactRepository localRepo,
                            ArtifactResolver artifactResolver, ArtifactMetadataSource artifactMetadataSource, Log log,
                            boolean overwrite, String jdkName, String jdkLevel, String wildcardResourcePatterns,
-                           String ideaVersion )
+                           String ideaVersion, Set macros )
     {
         super.initParam( project, artifactFactory, localRepo, artifactResolver, artifactMetadataSource, log,
                          overwrite );
@@ -102,6 +104,8 @@ public class IdeaProjectMojo
         this.wildcardResourcePatterns = wildcardResourcePatterns;
 
         this.ideaVersion = ideaVersion;
+
+        this.macros = macros;
     }
 
     /**
@@ -132,7 +136,7 @@ public class IdeaProjectMojo
             }
             else
             {
-                reader = new InputStreamReader( getClass().getResourceAsStream( "/templates/default/project.xml" ) );
+                reader = getXmlReader( "project.xml" );
             }
 
             Xpp3Dom module;
@@ -196,6 +200,19 @@ public class IdeaProjectMojo
                 String modulePath =
                     new File( project.getBasedir(), project.getArtifactId() + ".iml" ).getAbsolutePath();
                 m.setAttribute( "filepath", "$PROJECT_DIR$/" + toRelative( project.getBasedir(), modulePath ) );
+            }
+
+            // add any PathMacros we've come across
+            if ( macros != null )
+            {
+                Xpp3Dom usedPathMacros = module.getChildren( "UsedPathMacros" )[0];
+                removeOldElements( usedPathMacros, "macro" );
+                for ( Iterator iterator = macros.iterator(); iterator.hasNext(); )
+                {
+                    String macro = (String) iterator.next();
+                    Xpp3Dom macroElement = createElement( usedPathMacros, "macro" );
+                    macroElement.setAttribute( "name", macro );
+                }
             }
 
             FileWriter writer = new FileWriter( projectFile );
