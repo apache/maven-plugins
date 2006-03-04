@@ -288,7 +288,7 @@ public class SurefirePlugin
      * for this execution. Only makes sense to use in conjunction with parallel.
      *
      * @parameter expression="${threadCount}"
-     * default-value="0"
+     * default-value="5"
      */
     private int threadCount;
 
@@ -340,6 +340,14 @@ public class SurefirePlugin
         }
         else
         {
+            if ( parallel )
+            {
+                if ( threadCount < 1 )
+                {
+                    throw new MojoFailureException( "Must have at least one thread in parallel mode" );
+                }
+            }
+
             SurefireBooter surefireBooter = constructSurefireBooter();
 
             getLog().info( "Surefire report directory: " + reportsDirectory );
