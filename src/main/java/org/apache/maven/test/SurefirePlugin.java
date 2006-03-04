@@ -24,6 +24,8 @@ import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
+import org.apache.maven.artifact.resolver.filter.ExcludesArtifactFilter;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -397,14 +399,16 @@ public class SurefirePlugin
 
             if ( testNgArtifact != null )
             {
-                addProvider( surefireBooter, "surefire-testng", surefireArtifact.getBaseVersion() );
+                // The plugin uses a JDK based profile to select the right testng. We might be explicity using a
+                // different one since its based on the source level, not the JVM. Prune using the filter.
+                addProvider( surefireBooter, "surefire-testng", surefireArtifact.getBaseVersion(), testNgArtifact );
             }
             else
             {
                 // only need to discover JUnit if there is no TestNG, it runs the tests for you.
                 if ( junitArtifact != null )
                 {
-                    addProvider( surefireBooter, "surefire-junit", surefireArtifact.getBaseVersion() );
+                    addProvider( surefireBooter, "surefire-junit", surefireArtifact.getBaseVersion(), null );
                 }
             }
         }
@@ -583,23 +587,31 @@ public class SurefirePlugin
         }
     }
 
-    private void addProvider( SurefireBooter surefireBooter, String provider, String version )
+    private void addProvider( SurefireBooter surefireBooter, String provider, String version,
+                              Artifact filteredArtifact )
         throws ArtifactNotFoundException, ArtifactResolutionException
     {
         Artifact providerArtifact = artifactFactory.createDependencyArtifact( "org.apache.maven.surefire", provider,
                                                                               VersionRange.createFromVersion( version ),
                                                                               "jar", null, Artifact.SCOPE_TEST );
-        resolveArtifact( providerArtifact, surefireBooter );
+        resolveArtifact( providerArtifact, surefireBooter, filteredArtifact );
     }
 
-    private void resolveArtifact( Artifact providerArtifact, SurefireBooter surefireBooter )
+    private void resolveArtifact( Artifact providerArtifact, SurefireBooter surefireBooter, Artifact filteredArtifact )
         throws ArtifactResolutionException, ArtifactNotFoundException
     {
+        ArtifactFilter filter = null;
+        if ( filteredArtifact != null )
+        {
+            filter = new ExcludesArtifactFilter(
+                Collections.singletonList( filteredArtifact.getGroupId() + ":" + filteredArtifact.getArtifactId() ) );
+        }
+
         Artifact originatingArtifact = artifactFactory.createBuildArtifact( "dummy", "dummy", "1.0", "jar" );
 
         ArtifactResolutionResult result = artifactResolver.resolveTransitively(
             Collections.singleton( providerArtifact ), originatingArtifact, localRepository, remoteRepositories,
-            metadataSource, null );
+            metadataSource, filter );
 
         for ( Iterator i = result.getArtifacts().iterator(); i.hasNext(); )
         {
@@ -614,7 +626,7 @@ public class SurefirePlugin
     private void addArtifact( SurefireBooter surefireBooter, Artifact artifact )
         throws ArtifactNotFoundException, ArtifactResolutionException
     {
-        resolveArtifact( artifact, surefireBooter );
+        resolveArtifact( artifact, surefireBooter, null );
     }
 
     protected void processSystemProperties( boolean setInSystem )
