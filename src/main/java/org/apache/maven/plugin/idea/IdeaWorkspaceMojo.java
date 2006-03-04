@@ -56,6 +56,12 @@ public class IdeaWorkspaceMojo
             throw new MojoExecutionException( "Unable to build project dependencies.", e );
         }
 
+        rewriteWorkspace();
+    }
+
+    public void rewriteWorkspace()
+        throws MojoExecutionException
+    {
         File workspaceFile = new File( project.getBasedir(), project.getArtifactId() + ".iws" );
 
         FileWriter writer = null;
