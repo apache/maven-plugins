@@ -30,8 +30,14 @@ import java.util.StringTokenizer;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.javadoc.options.Group;
 import org.apache.maven.plugin.javadoc.options.Tag;
@@ -146,6 +152,15 @@ public class JavadocReport
      * @parameter expression="${docletPath}"
      */
     private String docletPath;
+
+    /**
+     * Specifies the artifact containing the doclet starting class file (specified with the -docletpath option).
+     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#docletpath">docletpath</a>.
+     *
+     * @parameter
+     */
+    //TODO: May need to allow multiple artifacts
+    private DocletArtifact docletArtifact;
 
     /**
      * Specifies the encoding name of the source files.
@@ -535,6 +550,19 @@ public class JavadocReport
      */
     private String windowtitle;
 
+    /** @component */
+    private ArtifactResolver resolver;
+
+    /** @component */
+    private ArtifactFactory factory;
+
+    /** @parameter expression="${localRepository}" */
+    private ArtifactRepository localRepository;
+
+    /** @parameter expression="${project.remoteArtifactRepositories}" */
+    private List remoteRepositories;
+
+
     // ----------------------------------------------------------------------
     //
     // ----------------------------------------------------------------------
@@ -773,6 +801,20 @@ public class JavadocReport
         if ( !StringUtils.isEmpty( doclet ) )
         {
             addArgIfNotEmpty( arguments, "-doclet", quotedArgument( doclet ) );
+
+            if ( docletArtifact != null ) {
+                Artifact artifact = factory.createArtifact( docletArtifact.getGroupId(),
+                    docletArtifact.getArtifactId(), docletArtifact.getVersion(), "compile", "jar" );
+                try {
+                    resolver.resolve( artifact, remoteRepositories, localRepository );
+                    docletPath = artifact.getFile().getAbsolutePath();
+                } catch ( ArtifactResolutionException e ) {
+                    throw new MavenReportException( "Unable to resolve artifact.", e );
+                } catch (ArtifactNotFoundException e) {
+                    throw new MavenReportException( "Unable to find artifact.", e );
+                }
+            }
+
             addArgIfNotEmpty( arguments, "-docletpath", quotedPathArgument( docletPath ) );
         }
         addArgIfNotEmpty( arguments, "-encoding", quotedArgument( encoding ) );
