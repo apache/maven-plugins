@@ -33,4 +33,10 @@
       <version>2.0</version>
     </dependency>
   </dependencies>
+  <repositories>
+    <repository>
+      <id>apache.snapshots</id>
+      <url>http://cvs.apache.org/maven-snapshot-repository</url>
+    </repository>
+  </repositories>
 </project>
