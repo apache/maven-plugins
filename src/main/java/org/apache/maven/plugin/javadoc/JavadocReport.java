@@ -714,16 +714,8 @@ public class JavadocReport
         {
             return;
         }
-
-        File javadocDirectory = getReportOutputDirectory();
-
-        if ( !javadocDirectory.getAbsolutePath().equals( getOutputDirectory() ) )
-        {
-            // we're in site-embedded report mode, so Doxia has set the
-            // reportOutputDirectory to the basedir of the site.
-            // Append 'apidocs'.
-            javadocDirectory = new File( javadocDirectory, "apidocs" );
-        }
+                
+        File javadocDirectory = new File( getOutputDirectory() );
         javadocDirectory.mkdirs();
 
         File file = new File( javadocDirectory, "files" );
