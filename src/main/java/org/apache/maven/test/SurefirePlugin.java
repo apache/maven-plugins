@@ -430,7 +430,7 @@ public class SurefirePlugin
                 if ( file.exists() )
                 {
                     surefireBooter.addTestSuite( "org.apache.maven.surefire.testng.TestNGXmlTestSuite",
-                                                 new Object[]{file} );
+                                                 new Object[]{file, testSourceDirectory.getAbsolutePath()} );
                 }
             }
         }
