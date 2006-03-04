@@ -20,7 +20,9 @@ import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Goal for generating IDEA files from a POM.
@@ -109,6 +111,35 @@ public class IdeaMojo
     private String jdkLevel;
 
     /**
+     * An optional set of Library objects that allow you to specify a comma separated list of source dirs, class dirs,
+     * or to indicate that the library should be excluded from the module. For example:
+     * <p/>
+     * <pre>
+     * &lt;libraries&gt;
+     *  &lt;library&gt;
+     *      &lt;name&gt;webwork&lt;/name&gt;
+     *      &lt;sources&gt;file://$webwork$/src/java&lt;/sources&gt;
+     *      &lt;!--
+     *      &lt;classes&gt;...&lt;/classes&gt;
+     *      &lt;exclude&gt;true&lt;/exclude&gt;
+     *      --&gt;
+     *  &lt;/library&gt;
+     * &lt;/libraries&gt;
+     * </pre>
+     *
+     * @parameter
+     */
+    private Library[] libraries;
+
+    /**
+     * A comma-separated list of directories that should be excluded. These directories are in addition to those
+     * already excluded, such as target/classes. A common use of this is to exclude the entire target directory.
+     *
+     * @parameter
+     */
+    private String exclude;
+
+    /**
      * Specify the resource pattern in wildcard format, for example "?*.xml;?*.properties".
      * Currently supports 4.x and 5.x.
      * The default value is any file without a java extension ("!?*.java").
@@ -142,35 +173,36 @@ public class IdeaMojo
             throw new MojoExecutionException( "Unable to build project dependencies.", e );
         }
 
-        rewriteModule();
+        Set macros = new HashSet();
+        rewriteModule( macros );
 
         if ( project.isExecutionRoot() )
         {
-            rewriteProject();
+            rewriteProject( macros );
 
             rewriteWorkspace();
         }
     }
 
-    private void rewriteModule()
+    private void rewriteModule( Set macros )
         throws MojoExecutionException
     {
         IdeaModuleMojo mojo = new IdeaModuleMojo();
 
         mojo.initParam( project, artifactFactory, localRepo, artifactResolver, artifactMetadataSource, getLog(),
                         overwrite, executedProject, reactorProjects, wagonManager, linkModules, useFullNames,
-                        useClassifiers, sourceClassifier, javadocClassifier );
+                        useClassifiers, sourceClassifier, javadocClassifier, libraries, macros, exclude );
 
         mojo.execute();
     }
 
-    private void rewriteProject()
+    private void rewriteProject( Set macros )
         throws MojoExecutionException
     {
         IdeaProjectMojo mojo = new IdeaProjectMojo();
 
         mojo.initParam( project, artifactFactory, localRepo, artifactResolver, artifactMetadataSource, getLog(),
-                        overwrite, jdkName, jdkLevel, wildcardResourcePatterns, ideaVersion );
+                        overwrite, jdkName, jdkLevel, wildcardResourcePatterns, ideaVersion, macros );
 
         mojo.execute();
     }
