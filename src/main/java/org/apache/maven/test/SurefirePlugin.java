@@ -377,10 +377,6 @@ public class SurefirePlugin
     {
         SurefireBooter surefireBooter = new SurefireBooter();
 
-/* TODO
-        surefireBooter.setTestSourceDirectory( testSourceDirectory.getPath() );
-*/
-
         Artifact surefireArtifact = (Artifact) pluginArtifactMap.get( "org.apache.maven.surefire:surefire-booter" );
 
         if ( surefireArtifact == null )
@@ -433,7 +429,7 @@ public class SurefirePlugin
                 File file = suiteXmlFiles[i];
                 if ( file.exists() )
                 {
-                    surefireBooter.addTestSuite( "org.apache.maven.surefire.testng.TestNgXmlTestSuite",
+                    surefireBooter.addTestSuite( "org.apache.maven.surefire.testng.TestNGXmlTestSuite",
                                                  new Object[]{file} );
                 }
             }
@@ -485,7 +481,7 @@ public class SurefirePlugin
             {
                 surefireBooter.addTestSuite( "org.apache.maven.surefire.testng.TestNGDirectoryTestSuite", new Object[]{
                     testClassesDirectory, includes, excludes, groups, excludedGroups, Boolean.valueOf( parallel ),
-                    new Integer( threadCount )} );
+                    new Integer( threadCount ), testSourceDirectory.getAbsolutePath()} );
             }
             else if ( junitArtifact != null )
             {
