@@ -37,6 +37,10 @@ import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -223,9 +227,11 @@ public abstract class AbstractIdeaMojo
 
             try
             {
-                ArtifactResolutionResult result = artifactResolver.resolveTransitively(
-                    getProjectArtifacts(), project.getArtifact(),
-                    managedVersions, localRepo, project.getRemoteArtifactRepositories(), artifactMetadataSource );
+                ArtifactResolutionResult result = artifactResolver.resolveTransitively( getProjectArtifacts(),
+                                                                                        project.getArtifact(),
+                                                                                        managedVersions, localRepo,
+                                                                                        project.getRemoteArtifactRepositories(),
+                                                                                        artifactMetadataSource );
 
                 project.setArtifacts( result.getArtifacts() );
             }
@@ -244,7 +250,7 @@ public abstract class AbstractIdeaMojo
     {
         Set artifacts = new HashSet();
 
-        for( Iterator dependencies = project.getDependencies().iterator(); dependencies.hasNext(); )
+        for ( Iterator dependencies = project.getDependencies().iterator(); dependencies.hasNext(); )
         {
             Dependency dep = (Dependency) dependencies.next();
 
@@ -253,7 +259,8 @@ public abstract class AbstractIdeaMojo
                 dep.setScope( Artifact.SCOPE_COMPILE );
             }
 
-            Artifact artifact = artifactFactory.createArtifact( dep.getGroupId(), dep.getArtifactId(), dep.getVersion(), dep.getScope(), dep.getType() );
+            Artifact artifact = artifactFactory.createArtifact( dep.getGroupId(), dep.getArtifactId(), dep.getVersion(),
+                                                                dep.getScope(), dep.getType() );
 
             artifacts.add( artifact );
         }
@@ -304,5 +311,28 @@ public abstract class AbstractIdeaMojo
         }
 
         return log;
+    }
+
+    protected Reader getXmlReader( String file )
+    {
+        File altFile = new File( project.getBasedir(), "src/main/idea/" + file );
+        if ( altFile.exists() )
+        {
+            try
+            {
+                return new FileReader( altFile );
+            }
+            catch ( FileNotFoundException e )
+            {
+                // this shouldn't happen, since we just verified it exists,
+                // but we'll print the error out in the off change
+                getLog().error( "File not found even though we just verified it exists. Failing.", e );
+                throw new RuntimeException( e );
+            }
+        }
+        else
+        {
+            return new InputStreamReader( getClass().getResourceAsStream( "/templates/default/" + file ) );
+        }
     }
 }

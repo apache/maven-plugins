@@ -97,5 +97,7 @@
       <!-- module filepath="$$PROJECT_DIR$$/${pom.artifactId}.iml"/ -->
     </modules>
   </component>
-
+  <UsedPathMacros>
+      <!--<macro name="cargo"></macro>-->
+  </UsedPathMacros>
 </project>
