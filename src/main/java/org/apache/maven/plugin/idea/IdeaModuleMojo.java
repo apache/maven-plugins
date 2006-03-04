@@ -797,9 +797,6 @@ Can't run this anyway as Xpp3Dom is in both classloaders...
         Xpp3Dom el = createElement( dep, "CLASSES" );
         el = createElement( el, "root" );
         el.setAttribute( "url", getModuleFileUrl( directory ) );
-
-        createElement( dep, "JAVADOC" );
-        createElement( dep, "SOURCES" );
     }
 
     /**
