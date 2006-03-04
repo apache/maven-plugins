@@ -208,6 +208,12 @@ public class IdeaModuleMojo
             throw new MojoExecutionException( "Unable to build project dependencies.", e );
         }
 
+        rewriteModule();
+    }
+
+    public void rewriteModule()
+        throws MojoExecutionException
+    {
         File moduleFile = new File( project.getBasedir(), project.getArtifactId() + ".iml" );
         try
         {

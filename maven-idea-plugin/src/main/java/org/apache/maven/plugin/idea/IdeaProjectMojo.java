@@ -126,6 +126,12 @@ public class IdeaProjectMojo
             throw new MojoExecutionException( "Unable to build project dependencies.", e );
         }
 
+        rewriteProject();
+    }
+
+    public void rewriteProject()
+        throws MojoExecutionException
+    {
         File projectFile = new File( project.getBasedir(), project.getArtifactId() + ".ipr" );
         try
         {
@@ -203,7 +209,7 @@ public class IdeaProjectMojo
             }
 
             // add any PathMacros we've come across
-            if ( macros != null )
+            if ( macros != null && module.getChildren( "UsedPathMacros" ).length > 0 )
             {
                 Xpp3Dom usedPathMacros = module.getChildren( "UsedPathMacros" )[0];
                 removeOldElements( usedPathMacros, "macro" );
