@@ -41,7 +41,7 @@ public class JavadocJar
      * Specifies the destination directory where javadoc saves the generated HTML files.
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#d">d</a>.
      *
-     * @parameter expression="${destDir}" alias="destDir" default-value="${project.build.directory}/site/apidocs"
+     * @parameter expression="${destDir}" default-value="${project.build.directory}/site/apidocs"
      * @required
      */
     private File destDir;
@@ -49,7 +49,7 @@ public class JavadocJar
     /**
      * @parameter expression="${project.build.directory}"
      */
-    private String outputDirectory;
+    private String jarOutputDirectory;
 
     /**
      * @parameter expression="${project.build.finalName}"
@@ -119,7 +119,7 @@ public class JavadocJar
             throw new MojoExecutionException( "javadoc files not found." );
         }
 
-        File javadocJar = new File( outputDirectory, target );
+        File javadocJar = new File( jarOutputDirectory, target );
 
         if ( javadocJar.exists() )
         {
