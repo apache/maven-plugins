@@ -193,7 +193,7 @@ public class IdeaMojo
                         overwrite, executedProject, reactorProjects, wagonManager, linkModules, useFullNames,
                         useClassifiers, sourceClassifier, javadocClassifier, libraries, macros, exclude );
 
-        mojo.execute();
+        mojo.rewriteModule();
     }
 
     private void rewriteProject( Set macros )
@@ -204,7 +204,7 @@ public class IdeaMojo
         mojo.initParam( project, artifactFactory, localRepo, artifactResolver, artifactMetadataSource, getLog(),
                         overwrite, jdkName, jdkLevel, wildcardResourcePatterns, ideaVersion, macros );
 
-        mojo.execute();
+        mojo.rewriteProject();
     }
 
     private void rewriteWorkspace()
@@ -215,7 +215,7 @@ public class IdeaMojo
         mojo.initParam( project, artifactFactory, localRepo, artifactResolver, artifactMetadataSource, getLog(),
                         overwrite );
 
-        mojo.execute();
+        mojo.rewriteWorkspace();
     }
 
     public void setProject( MavenProject project )
