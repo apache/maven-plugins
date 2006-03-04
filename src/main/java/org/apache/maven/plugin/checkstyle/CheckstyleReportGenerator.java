@@ -35,6 +35,8 @@ import com.puppycrawl.tools.checkstyle.api.SeverityLevel;
 
 public class CheckstyleReportGenerator
 {
+    private static final String EOL = System.getProperty( "line.separator" );
+
     private Log log;
 
     private ResourceBundle bundle;
@@ -753,7 +755,7 @@ public class CheckstyleReportGenerator
      */
     private void doxiaHack()
     {
-        sink.rawText( "\n" );
+        sink.rawText( EOL );
         sink.flush();
     }
 }
