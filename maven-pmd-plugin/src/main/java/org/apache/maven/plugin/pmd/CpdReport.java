@@ -205,7 +205,8 @@ public class CpdReport
     public boolean canGenerateReport()
     {
         ArtifactHandler artifactHandler = project.getArtifact().getArtifactHandler();
-        return ( "java".equals( artifactHandler.getLanguage() ) );
+        return ( "java".equals( artifactHandler.getLanguage() ) && new File( getProject().getBuild()
+            .getSourceDirectory() ).exists() );
     }
 
     /**
