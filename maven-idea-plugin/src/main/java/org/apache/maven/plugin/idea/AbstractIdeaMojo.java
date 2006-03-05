@@ -262,6 +262,11 @@ public abstract class AbstractIdeaMojo
             Artifact artifact = artifactFactory.createArtifact( dep.getGroupId(), dep.getArtifactId(), dep.getVersion(),
                                                                 dep.getScope(), dep.getType() );
 
+            if ( dep.getScope().equalsIgnoreCase( Artifact.SCOPE_SYSTEM ) )
+            {
+                artifact.setFile( new File( dep.getSystemPath() ) );
+            }
+
             artifacts.add( artifact );
         }
 
