@@ -245,7 +245,7 @@ public class IdeaModuleMojo
             }
             else if ( "ejb".equals( project.getPackaging() ) )
             {
-                module.setAttribute( "type", "J2EE_EJB_MODULE" );
+                addEjbModule( module );
             }
 
             Xpp3Dom component = findComponent( module, "NewModuleRootManager" );
@@ -458,6 +458,66 @@ public class IdeaModuleMojo
         {
             throw new MojoExecutionException( "Error parsing existing IML file " + moduleFile.getAbsolutePath(), e );
         }
+    }
+
+    private void addEjbModule( Xpp3Dom module )
+    {
+        module.setAttribute( "type", "J2EE_EJB_MODULE" );
+
+        String explodedDir = project.getBuild().getDirectory() + "/" + project.getArtifactId();
+
+        Xpp3Dom component = findComponent( module, "EjbModuleBuildComponent" );
+
+        Xpp3Dom setting = findSetting( component, "EXPLODED_URL" );
+        setting.setAttribute( "value", getModuleFileUrl( explodedDir ) );
+
+        component = findComponent( module, "EjbModuleProperties" );
+
+        removeOldElements( component, "containerElement" );
+        List artifacts = project.getTestArtifacts();
+        for ( Iterator i = artifacts.iterator(); i.hasNext(); )
+        {
+            Artifact artifact = (Artifact) i.next();
+
+            Xpp3Dom containerElement = createElement( component, "containerElement" );
+
+            boolean linkAsModule = false;
+            if ( linkModules )
+            {
+                linkAsModule = isReactorProject( artifact.getGroupId(), artifact.getArtifactId() );
+            }
+
+            if ( linkAsModule )
+            {
+                containerElement.setAttribute( "type", "module" );
+                containerElement.setAttribute( "name", artifact.getArtifactId() );
+                Xpp3Dom methodAttribute = createElement( containerElement, "attribute" );
+                methodAttribute.setAttribute( "name", "method" );
+                methodAttribute.setAttribute( "value", "6" );
+                Xpp3Dom uriAttribute = createElement( containerElement, "attribute" );
+                uriAttribute.setAttribute( "name", "URI" );
+                uriAttribute.setAttribute( "value", "/WEB-INF/classes" );
+            }
+            else if ( artifact.getFile() != null )
+            {
+                containerElement.setAttribute( "type", "library" );
+                containerElement.setAttribute( "level", "module" );
+                containerElement.setAttribute( "name", artifact.getArtifactId() );
+                Xpp3Dom methodAttribute = createElement( containerElement, "attribute" );
+                methodAttribute.setAttribute( "name", "method" );
+                methodAttribute.setAttribute( "value", "2" );
+                Xpp3Dom uriAttribute = createElement( containerElement, "attribute" );
+                uriAttribute.setAttribute( "name", "URI" );
+                uriAttribute.setAttribute( "value", "/WEB-INF/lib/" + artifact.getFile().getName() );
+            }
+        }
+
+        Xpp3Dom element = findElement( component, "deploymentDescriptor" );
+        if ( element.getAttribute( "name" ) == null )
+        {
+            element.setAttribute( "name", "ejb-jar.xml" );
+        }
+        element.setAttribute( "url", getModuleFileUrl( "src/main/resources/META-INF/ejb-jar.xml" ) );
     }
 
     private void extractMacro( String path )
