@@ -16,10 +16,9 @@ package org.apache.maven.report.projectinfo;
  * limitations under the License.
  */
 
-import org.xml.sax.SAXException;
-
 import com.meterware.httpunit.WebLink;
 import com.meterware.httpunit.WebResponse;
+import org.xml.sax.SAXException;
 
 /**
  * Abstract class to test reports with <a href="http://www.httpunit.org/">HTTPUnit</a> framework.

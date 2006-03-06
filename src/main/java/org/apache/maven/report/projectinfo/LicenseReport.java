@@ -269,8 +269,8 @@ public class LicenseReport
                         }
                         catch ( MalformedURLException e )
                         {
-                            throw new MissingResourceException( "The license url [" + url + "] seems to be invalid: "
-                                + e.getMessage(), null, null );
+                            throw new MissingResourceException(
+                                "The license url [" + url + "] seems to be invalid: " + e.getMessage(), null, null );
                         }
                     }
                     else
@@ -284,8 +284,8 @@ public class LicenseReport
                         }
                         if ( !licenseFile.exists() )
                         {
-                            throw new MissingResourceException( "Maven can't find the file " + licenseFile
-                                + " on the system.", null, null );
+                            throw new MissingResourceException(
+                                "Maven can't find the file " + licenseFile + " on the system.", null, null );
                         }
                         try
                         {
@@ -293,8 +293,8 @@ public class LicenseReport
                         }
                         catch ( MalformedURLException e )
                         {
-                            throw new MissingResourceException( "The license url [" + url + "] seems to be invalid: "
-                                + e.getMessage(), null, null );
+                            throw new MissingResourceException(
+                                "The license url [" + url + "] seems to be invalid: " + e.getMessage(), null, null );
                         }
                     }
 
@@ -304,8 +304,8 @@ public class LicenseReport
                     String licenseContentLC = licenseContent.toLowerCase();
                     int bodyStart = licenseContentLC.indexOf( "<body" );
                     int bodyEnd = licenseContentLC.indexOf( "</body>" );
-                    if ( ( licenseContentLC.startsWith( "<!doctype html" ) || licenseContentLC.startsWith( "<html>" ) )
-                        && bodyStart >= 0 && bodyEnd >= 0 )
+                    if ( ( licenseContentLC.startsWith( "<!doctype html" ) ||
+                        licenseContentLC.startsWith( "<html>" ) ) && bodyStart >= 0 && bodyEnd >= 0 )
                     {
                         bodyStart = licenseContentLC.indexOf( ">", bodyStart ) + 1;
                         String body = licenseContent.substring( bodyStart, bodyEnd );
@@ -392,7 +392,8 @@ public class LicenseReport
             }
             catch ( IOException e )
             {
-                throw new MissingResourceException( "Can't read the url [" + licenseUrl + "] : " + e.getMessage(), null, null );
+                throw new MissingResourceException( "Can't read the url [" + licenseUrl + "] : " + e.getMessage(), null,
+                                                    null );
             }
             finally
             {
@@ -435,10 +436,10 @@ public class LicenseReport
     }
 
     private static String replaceParts( String html, String baseURL, String serverURL, String tagPattern,
-                                       String attributePattern )
+                                        String attributePattern )
     {
-        Pattern anchor = Pattern.compile( "(<\\s*" + tagPattern + "\\s+[^>]*" + attributePattern
-            + "\\s*=\\s*\")([^\"]*)\"([^>]*>)" );
+        Pattern anchor = Pattern.compile(
+            "(<\\s*" + tagPattern + "\\s+[^>]*" + attributePattern + "\\s*=\\s*\")([^\"]*)\"([^>]*>)" );
         StringBuffer sb = new StringBuffer( html );
 
         int indx = 0;
