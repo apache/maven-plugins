@@ -237,11 +237,31 @@ public abstract class AbstractIdeaMojo
             }
             catch ( ArtifactNotFoundException e )
             {
-                getLog().debug( e.toString() );
+                getLog().debug( e.getMessage(), e );
+
+                StringBuffer msg = new StringBuffer();
+                msg.append( "An error occurred during dependency resolution.\n\n" );
+                msg.append( "    Failed to retrieve " + e.getDownloadUrl() + "\n" );
+                msg.append( "from the following repositories:" );
+                for( Iterator repositories = e.getRemoteRepositories().iterator(); repositories.hasNext(); )
+                {
+                    ArtifactRepository repository = (ArtifactRepository) repositories.next();
+                    msg.append( "\n    " + repository.getId() + "(" + repository.getUrl() + ")" );
+                }
+                msg.append( "\nCaused by: " + e.getMessage() );
+
+                getLog().warn( msg );
             }
             catch ( ArtifactResolutionException e )
             {
-                getLog().debug( e.toString() );
+                getLog().debug( e.getMessage(), e );
+
+                StringBuffer msg = new StringBuffer();
+                msg.append( "An error occurred during dependency resolution of the following artifact:\n\n" );
+                msg.append( "    " + e.getGroupId() + ":" + e.getArtifactId() + e.getVersion() + "\n\n" );
+                msg.append( "Caused by: " + e.getMessage() );
+
+                getLog().warn( msg );
             }
         }
     }
