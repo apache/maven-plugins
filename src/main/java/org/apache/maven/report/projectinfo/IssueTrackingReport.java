@@ -194,19 +194,23 @@ public class IssueTrackingReport
             }
             else if ( isIssueManagementSystem( system, "bugzilla" ) )
             {
-                linkPatternedText( i18n.getString( "project-info-report", locale, "report.issuetracking.bugzilla.intro" ) );
+                linkPatternedText(
+                    i18n.getString( "project-info-report", locale, "report.issuetracking.bugzilla.intro" ) );
             }
             else if ( isIssueManagementSystem( system, "scarab" ) )
             {
-                linkPatternedText( i18n.getString( "project-info-report", locale, "report.issuetracking.scarab.intro" ) );
+                linkPatternedText(
+                    i18n.getString( "project-info-report", locale, "report.issuetracking.scarab.intro" ) );
             }
             else if ( ( system == null ) || ( system.trim().equals( "" ) ) )
             {
                 paragraph( i18n.getString( "project-info-report", locale, "report.issuetracking.general.intro" ) );
             }
-            else 
+            else
             {
-                paragraph( i18n.getString( "project-info-report", locale,"report.issuetracking.custom.intro").replaceFirst("%issueManagementSystem%", system) );
+                paragraph(
+                    i18n.getString( "project-info-report", locale, "report.issuetracking.custom.intro" ).replaceFirst(
+                        "%issueManagementSystem%", system ) );
             }
 
             endSection();

@@ -16,15 +16,6 @@ package org.apache.maven.report.projectinfo;
  * limitations under the License.
  */
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TreeMap;
-
 import org.apache.maven.model.Dependency;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
@@ -34,8 +25,16 @@ import org.codehaus.doxia.site.renderer.SiteRenderer;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TreeMap;
+
 /**
- * 
  * Generates the Dependency Convergence report for reactor builds.
  *
  * @author <a href="mailto:joakim@erdfelt.com">Joakim Erdfelt</a>
@@ -82,7 +81,7 @@ public class DependencyConvergenceReport
     /**
      * The projects in the current build. The effective-POM for
      * each of these projects will written.
-     * 
+     *
      * @parameter expression="${reactorProjects}"
      * @required
      * @readonly

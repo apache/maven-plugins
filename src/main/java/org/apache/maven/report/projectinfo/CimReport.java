@@ -220,7 +220,8 @@ public class CimReport
 
                 String type = i18n.getString( "project-info-report", locale, "report.cim.notifiers.column.type" );
                 String address = i18n.getString( "project-info-report", locale, "report.cim.notifiers.column.address" );
-                String configuration = i18n.getString( "project-info-report", locale, "report.cim.notifiers.column.configuration" );
+                String configuration =
+                    i18n.getString( "project-info-report", locale, "report.cim.notifiers.column.configuration" );
 
                 tableHeader( new String[]{type, address, configuration} );
 
