@@ -341,7 +341,8 @@ public class ScmReport
             }
             else
             {
-                paragraph( i18n.getString( "project-info-report", locale, "report.scm.anonymousaccess.general.intro" ) );
+                paragraph(
+                    i18n.getString( "project-info-report", locale, "report.scm.anonymousaccess.general.intro" ) );
 
                 if ( anonymousConnection.length() < 4 )
                 {
@@ -429,7 +430,8 @@ public class ScmReport
             {
                 SvnScmProviderRepository svnRepo = (SvnScmProviderRepository) devRepository.getProviderRepository();
 
-                paragraph( i18n.getString( "project-info-report", locale, "report.scm.accessbehindfirewall.svn.intro" ) );
+                paragraph(
+                    i18n.getString( "project-info-report", locale, "report.scm.accessbehindfirewall.svn.intro" ) );
 
                 StringBuffer sb = new StringBuffer();
                 sb.append( "$ svn checkout " ).append( svnRepo.getUrl() ).append( " " ).append( model.getArtifactId() );
@@ -437,11 +439,13 @@ public class ScmReport
             }
             else if ( ( devRepository != null ) && ( isScmSystem( devRepository, "cvs" ) ) )
             {
-                linkPatternedText( i18n.getString( "project-info-report", locale, "report.scm.accessbehindfirewall.cvs.intro" ) );
+                linkPatternedText(
+                    i18n.getString( "project-info-report", locale, "report.scm.accessbehindfirewall.cvs.intro" ) );
             }
             else
             {
-                paragraph( i18n.getString( "project-info-report", locale, "report.scm.accessbehindfirewall.general.intro" ) );
+                paragraph(
+                    i18n.getString( "project-info-report", locale, "report.scm.accessbehindfirewall.general.intro" ) );
             }
 
             endSection();
@@ -451,7 +455,7 @@ public class ScmReport
          * Render the access from behind a firewall section
          *
          * @param anonymousRepository the anonymous repository
-         * @param devRepository the dev repository
+         * @param devRepository       the dev repository
          */
         private void renderAccessThroughProxySection( ScmRepository anonymousRepository, ScmRepository devRepository )
         {
@@ -459,9 +463,12 @@ public class ScmReport
             {
                 startSection( i18n.getString( "project-info-report", locale, "report.scm.accessthroughtproxy.title" ) );
 
-                paragraph( i18n.getString( "project-info-report", locale, "report.scm.accessthroughtproxy.svn.intro1" ) );
-                paragraph( i18n.getString( "project-info-report", locale, "report.scm.accessthroughtproxy.svn.intro2" ) );
-                paragraph( i18n.getString( "project-info-report", locale, "report.scm.accessthroughtproxy.svn.intro3" ) );
+                paragraph(
+                    i18n.getString( "project-info-report", locale, "report.scm.accessthroughtproxy.svn.intro1" ) );
+                paragraph(
+                    i18n.getString( "project-info-report", locale, "report.scm.accessthroughtproxy.svn.intro2" ) );
+                paragraph(
+                    i18n.getString( "project-info-report", locale, "report.scm.accessthroughtproxy.svn.intro3" ) );
 
                 StringBuffer sb = new StringBuffer();
                 sb.append( "[global]" );
@@ -686,7 +693,7 @@ public class ScmReport
          * <p>Actually, we fully support Clearcase, CVS, Perforce, Starteam, SVN by the maven-scm-providers component.</p>
          *
          * @param scmRepository a SCM repository
-         * @param scmProvider a SCM provider name
+         * @param scmProvider   a SCM provider name
          * @return true if the provider of the given SCM repository is equal to the given scm provider.
          * @see <a href="http://svn.apache.org/repos/asf/maven/scm/trunk/maven-scm-providers/">maven-scm-providers</a>
          */
