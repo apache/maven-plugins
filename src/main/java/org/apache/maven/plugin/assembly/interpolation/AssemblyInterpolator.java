@@ -90,7 +90,7 @@ public class AssemblyInterpolator
         while ( matcher.find() )
         {
             String wholeExpr = matcher.group( 0 );
-            String realExpr = matcher.group( 2 );
+            String realExpr = parseExpression( wholeExpr );
             
             Object value = context.get( realExpr );
 
@@ -136,5 +136,15 @@ public class AssemblyInterpolator
             }
         }
         return result;
+    }
+    
+    private String parseExpression( String expression )
+    {
+        int startIndex = expression.indexOf( "{" );
+        int endIndex = expression.indexOf( "}" );
+        
+        expression = expression.substring( startIndex + 1, endIndex );
+        
+        return expression;
     }
 }
