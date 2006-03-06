@@ -554,7 +554,8 @@ public class IdeaModuleMojo
     private List getExcludedDirectories( File target, List excludeList, List sourceFolders )
     {
         List foundFolders = new ArrayList();
-        int dirs = 0;
+
+        int totalDirs = 0, excludedDirs = 0;
 
         if ( target.exists() && !excludeList.contains( target.getAbsolutePath() ) )
         {
@@ -565,39 +566,48 @@ public class IdeaModuleMojo
                 File file = files[i];
                 if ( file.isDirectory() && !excludeList.contains( file.getAbsolutePath() ) )
                 {
+                    totalDirs++;
+
                     String absolutePath = file.getAbsolutePath();
                     String url = getModuleFileUrl( absolutePath );
 
+                    boolean addToExclude = true;
                     for ( Iterator sources = sourceFolders.iterator(); sources.hasNext(); )
                     {
                         String source = ( (Xpp3Dom) sources.next() ).getAttribute( "url" );
                         if ( source.equals( url ) )
                         {
-                            dirs++;
+                            addToExclude = false;
                             break;
                         }
                         else if ( source.indexOf( url ) == 0 )
                         {
-                            dirs++;
                             foundFolders.addAll(
                                 getExcludedDirectories( new File( absolutePath ), excludeList, sourceFolders ) );
+                            addToExclude = false;
                             break;
                         }
-                        else
-                        {
-                            foundFolders.add( absolutePath );
-                        }
+                    }
+                    if ( addToExclude )
+                    {
+                        excludedDirs++;
+                        foundFolders.add( absolutePath );
                     }
                 }
             }
 
             //if all directories are excluded, then just exclude the parent directory
-            if ( dirs == 0 )
+            if ( totalDirs > 0 && totalDirs == excludedDirs )
             {
                 foundFolders.clear();
 
                 foundFolders.add( target.getAbsolutePath() );
             }
+        }
+        else if ( !target.exists() )
+        {
+            //might as well exclude a non-existent dir so that it won't show when it suddenly appears
+            foundFolders.add( target.getAbsolutePath() );
         }
 
         return foundFolders;
@@ -741,11 +751,8 @@ Can't run this anyway as Xpp3Dom is in both classloaders...
 
     private void addExcludeFolder( Xpp3Dom content, String directory )
     {
-        if ( !StringUtils.isEmpty( directory ) && new File( directory ).isDirectory() )
-        {
-            Xpp3Dom excludeFolder = createElement( content, "excludeFolder" );
-            excludeFolder.setAttribute( "url", getModuleFileUrl( directory ) );
-        }
+        Xpp3Dom excludeFolder = createElement( content, "excludeFolder" );
+        excludeFolder.setAttribute( "url", getModuleFileUrl( directory ) );
     }
 
     /**
