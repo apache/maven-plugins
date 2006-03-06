@@ -208,10 +208,12 @@ public class MailingListsReport
 
             String name = i18n.getString( "project-info-report", locale, "report.mailing-lists.column.name" );
             String subscribe = i18n.getString( "project-info-report", locale, "report.mailing-lists.column.subscribe" );
-            String unsubscribe = i18n.getString( "project-info-report", locale, "report.mailing-lists.column.unsubscribe" );
+            String unsubscribe =
+                i18n.getString( "project-info-report", locale, "report.mailing-lists.column.unsubscribe" );
             String post = i18n.getString( "project-info-report", locale, "report.mailing-lists.column.post" );
             String archive = i18n.getString( "project-info-report", locale, "report.mailing-lists.column.archive" );
-            String archivesOther = i18n.getString( "project-info-report", locale, "report.mailing-lists.column.otherArchives" );
+            String archivesOther =
+                i18n.getString( "project-info-report", locale, "report.mailing-lists.column.otherArchives" );
 
             if ( otherArchives )
             {

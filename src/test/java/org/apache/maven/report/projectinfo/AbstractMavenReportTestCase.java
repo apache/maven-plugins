@@ -36,10 +36,9 @@ import java.util.Locale;
 /**
  * An abstract TestCase class to test <code>Maven Reports</code> generated.
  *
- * @phase test
- *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id $
+ * @phase test
  */
 public abstract class AbstractMavenReportTestCase
     extends PlexusTestCase
@@ -132,10 +131,9 @@ public abstract class AbstractMavenReportTestCase
     /**
      * Load and build a Maven project from the test projects directory.
      *
-     * @see #getTestProjectDir()
-     *
      * @param projectDirName not null name of the test project dir in the <code>PROJECTS_DIR</code> directory.
      * @throws Exception is any
+     * @see #getTestProjectDir()
      */
     protected void loadTestMavenProject( String projectDirName )
         throws Exception
@@ -145,8 +143,8 @@ public abstract class AbstractMavenReportTestCase
         File pom = new File( projectDir, "pom.xml" );
         if ( !pom.exists() )
         {
-            throw new IllegalArgumentException( "No 'pom.xml' file exists in the test project directory '"
-                + projectDir.getAbsolutePath() + "'" );
+            throw new IllegalArgumentException(
+                "No 'pom.xml' file exists in the test project directory '" + projectDir.getAbsolutePath() + "'" );
         }
 
         MavenProjectBuilder builder = (MavenProjectBuilder) lookup( MavenProjectBuilder.ROLE );
@@ -159,9 +157,8 @@ public abstract class AbstractMavenReportTestCase
      * Execute a m2 command line to execute the specific goal <code>M2_SITE_GOAL</code> to generate report
      * for the current Maven proeject.
      *
-     * @see #M2_SITE_GOAL
-     *
      * @throws CommandLineException if any Exception is caught
+     * @see #M2_SITE_GOAL
      */
     protected void executeMaven2CommandLine()
         throws CommandLineException
@@ -198,9 +195,8 @@ public abstract class AbstractMavenReportTestCase
     /**
      * Get the basedir for the current test Maven project.
      *
-     * @see #getTestMavenProject()
-     *
      * @return the basedir of the current test project
+     * @see #getTestMavenProject()
      */
     protected File getTestProjectDir()
     {
@@ -210,10 +206,9 @@ public abstract class AbstractMavenReportTestCase
     /**
      * Get the generated report as file in the test maven project.
      *
-     * @see #getReportName()
-     *
      * @return the generated report as file
      * @throws IOException if the return file doesnt exist
+     * @see #getReportName()
      */
     protected File getGeneratedReport()
         throws IOException
@@ -247,7 +242,7 @@ public abstract class AbstractMavenReportTestCase
      * <p>We suppose that the <code>m2</code> executable is present in the command path</p>.
      *
      * @param workingDir a not null working directory.
-     * @param goal the wanted goal
+     * @param goal       the wanted goal
      * @return the m2 command line, eg <code>m2 clean:clean site:site</code>
      * @throws IllegalArgumentException if the parameter workingDir is empty or doesnt exist.
      */
@@ -279,10 +274,9 @@ public abstract class AbstractMavenReportTestCase
     /**
      * Get the path for the directory which contains test projects.
      *
+     * @return the projects directory full path.
      * @see #PROJECTS_DIR
      * @see PlexusTestCase#getBasedir()
-     *
-     * @return the projects directory full path.
      */
     private static String getTestProjectsPath()
     {
@@ -292,11 +286,10 @@ public abstract class AbstractMavenReportTestCase
     /**
      * Get a specific project path defined by the project name in the <code>PROJECTS_DIR</code> directory.
      *
-     * @see #getTestProjectsPath()
-     *
      * @param projectName not null name of the test project dir in the <code>PROJECTS_DIR</code> directory.
      * @return the specific path for a project in the test projects directory.
      * @throws IllegalArgumentException if the parameter is empty.
+     * @see #getTestProjectsPath()
      */
     private static String getTestProjectPath( String projectName )
     {
@@ -306,12 +299,11 @@ public abstract class AbstractMavenReportTestCase
     /**
      * Get the specific project file defined by the project name in the <code>PROJECTS_DIR</code> directory.
      *
-     * @see #getTestProjectPath(String)
-     *
      * @param projectName not null name of the test project dir in the <code>PROJECTS_DIR</code> directory.
      * @return the specific path for a project in the test projects directory.
-     * @throws IOException if the return file doesnt exist
+     * @throws IOException              if the return file doesnt exist
      * @throws IllegalArgumentException if the parameter is empty.
+     * @see #getTestProjectPath(String)
      */
     private static File getTestProjectDir( String projectName )
         throws IOException

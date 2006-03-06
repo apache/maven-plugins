@@ -211,12 +211,17 @@ public class TeamListReport
                 String name = i18n.getString( "project-info-report", locale, "report.team-list.developers.name" );
                 String email = i18n.getString( "project-info-report", locale, "report.team-list.developers.email" );
                 String url = i18n.getString( "project-info-report", locale, "report.team-list.developers.url" );
-                String organization = i18n.getString( "project-info-report", locale, "report.team-list.developers.organization" );
-                String organizationUrl = i18n.getString( "project-info-report", locale, "report.team-list.developers.organizationurl" );
+                String organization =
+                    i18n.getString( "project-info-report", locale, "report.team-list.developers.organization" );
+                String organizationUrl =
+                    i18n.getString( "project-info-report", locale, "report.team-list.developers.organizationurl" );
                 String roles = i18n.getString( "project-info-report", locale, "report.team-list.developers.roles" );
-                String timeZone = i18n.getString( "project-info-report", locale, "report.team-list.developers.timezone" );
-                String actualTime = i18n.getString( "project-info-report", locale, "report.team-list.developers.actualtime" );
-                String properties = i18n.getString( "project-info-report", locale, "report.team-list.developers.properties" );
+                String timeZone =
+                    i18n.getString( "project-info-report", locale, "report.team-list.developers.timezone" );
+                String actualTime =
+                    i18n.getString( "project-info-report", locale, "report.team-list.developers.actualtime" );
+                String properties =
+                    i18n.getString( "project-info-report", locale, "report.team-list.developers.properties" );
 
                 tableHeader( new String[]{id, name, email, url, organization, organizationUrl, roles, timeZone,
                     actualTime, properties} );
@@ -306,12 +311,17 @@ public class TeamListReport
                 String name = i18n.getString( "project-info-report", locale, "report.team-list.contributors.name" );
                 String email = i18n.getString( "project-info-report", locale, "report.team-list.contributors.email" );
                 String url = i18n.getString( "project-info-report", locale, "report.team-list.contributors.url" );
-                String organization = i18n.getString( "project-info-report", locale, "report.team-list.contributors.organization" );
-                String organizationUrl = i18n.getString( "project-info-report", locale, "report.team-list.contributors.organizationurl" );
+                String organization =
+                    i18n.getString( "project-info-report", locale, "report.team-list.contributors.organization" );
+                String organizationUrl =
+                    i18n.getString( "project-info-report", locale, "report.team-list.contributors.organizationurl" );
                 String roles = i18n.getString( "project-info-report", locale, "report.team-list.contributors.roles" );
-                String timeZone = i18n.getString( "project-info-report", locale, "report.team-list.contributors.timezone" );
-                String actualTime = i18n.getString( "project-info-report", locale, "report.team-list.contributors.actualtime" );
-                String properties = i18n.getString( "project-info-report", locale, "report.team-list.contributors.properties" );
+                String timeZone =
+                    i18n.getString( "project-info-report", locale, "report.team-list.contributors.timezone" );
+                String actualTime =
+                    i18n.getString( "project-info-report", locale, "report.team-list.contributors.actualtime" );
+                String properties =
+                    i18n.getString( "project-info-report", locale, "report.team-list.contributors.properties" );
 
                 tableHeader( new String[]{name, email, url, organization, organizationUrl, roles, timeZone, actualTime,
                     properties} );
