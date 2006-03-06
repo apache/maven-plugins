@@ -910,10 +910,14 @@ public class JavadocReport
             addArgIfNotEmpty( arguments, "-helpfile", quotedPathArgument( helpfile ) );
 
             if ( !isOffline )
-            {
+            {                   
                 addLinkArguments( arguments );
                 addLinkofflineArguments( arguments );
                 addArgIf( arguments, linksource, "-linksource", 1.4f );
+            }
+            else
+            {
+                addLinkofflineArguments( arguments );
             }
 
             addArgIf( arguments, nodeprecated, "-nodeprecated" );
