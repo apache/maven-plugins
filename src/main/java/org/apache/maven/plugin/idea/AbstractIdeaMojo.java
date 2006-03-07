@@ -274,15 +274,25 @@ public abstract class AbstractIdeaMojo
         {
             Dependency dep = (Dependency) dependencies.next();
 
-            if ( dep.getScope() == null )
+            String groupId = dep.getGroupId();
+            String artifactId = dep.getArtifactId();
+            VersionRange versionRange = VersionRange.createFromVersion( dep.getVersion() );
+            String type = dep.getType();
+            if ( type == null )
             {
-                dep.setScope( Artifact.SCOPE_COMPILE );
+                type = "jar";
+            }
+            String classifier = dep.getClassifier();
+            boolean optional = dep.isOptional();
+            String scope = dep.getScope();
+            if ( scope == null )
+            {
+                scope = Artifact.SCOPE_COMPILE;
             }
 
-            Artifact artifact = artifactFactory.createArtifact( dep.getGroupId(), dep.getArtifactId(), dep.getVersion(),
-                                                                dep.getScope(), dep.getType() );
+            Artifact artifact = artifactFactory.createDependencyArtifact( groupId, artifactId, versionRange, type, classifier, scope, optional ) ;
 
-            if ( dep.getScope().equalsIgnoreCase( Artifact.SCOPE_SYSTEM ) )
+            if ( scope.equalsIgnoreCase( Artifact.SCOPE_SYSTEM ) )
             {
                 artifact.setFile( new File( dep.getSystemPath() ) );
             }
