@@ -484,6 +484,13 @@ public class JavadocReport
     private boolean splitindex = false;
 
     /**
+     * Specifies whether the stylesheet to be used is the maven javadoc stylesheet or java's default stylesheet when a <i>stylesheetfile</i> parameter is not specified. Possible values: maven or java.
+     *
+     * @parameter expression="${stylesheet}" default-value="java"
+     */
+    private String stylesheet;
+
+    /**
      * Specifies the path of an alternate HTML stylesheet file.
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#stylesheetfile">stylesheetfile</a>.
      *
@@ -881,7 +888,13 @@ public class JavadocReport
 
             if ( StringUtils.isEmpty( stylesheetfile ) )
             {
-                stylesheetfile = javadocDirectory + File.separator + DEFAULT_CSS_NAME;
+                 if ( !StringUtils.isEmpty( stylesheet ) )
+                {
+                      if ( stylesheet.equals( "maven" ) )
+                      {
+                          stylesheetfile = javadocDirectory + File.separator + DEFAULT_CSS_NAME;
+                      }
+                }
             }
             // End Specify default values
 
