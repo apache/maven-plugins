@@ -134,6 +134,13 @@ public class PmdReport
     private String sourceEncoding;
 
     /**
+     * Files to exclude from checking. Can contain wildcards and double wildcards.
+     * 
+     * @parameter
+     */
+    private String[] excludes;
+
+    /**
      * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
      */
     public String getName( Locale locale )
@@ -204,9 +211,7 @@ public class PmdReport
         List files;
         try
         {
-            // MPMD-2  pmd has problems with package-info.java
-            String excludes = "**/package-info.java";
-            files = getFilesToProcess( "**/*.java", excludes );
+            files = getFilesToProcess( "**/*.java", getExclusionsString( excludes ) );
         }
         catch ( IOException e )
         {
@@ -369,7 +374,7 @@ public class PmdReport
             }
             excludesStr.append( defaultExcludes[i] );
         }
-
+        getLog().debug( "Excluded files: '" + excludesStr + "'" );
         return FileUtils.getFiles( dir, includes, excludesStr.toString() );
     }
 
@@ -426,5 +431,27 @@ public class PmdReport
         }
 
         throw new MavenReportException( "Can't create report with format of " + format );
+    }
+
+    private String getExclusionsString( String[] exclude )
+    {
+        StringBuffer excludes = new StringBuffer();
+        
+        
+        if ( exclude == null )
+        {
+            return excludes.toString();
+        }
+        
+        for ( int index = 0; index < exclude.length; index++ )
+        {
+            if ( excludes.length() > 0 )
+            {
+                excludes.append( ',' );
+            }
+            excludes.append( exclude[index] );
+        }
+        
+        return excludes.toString();
     }
 }
