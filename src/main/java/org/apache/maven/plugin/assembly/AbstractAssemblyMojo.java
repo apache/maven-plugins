@@ -607,7 +607,7 @@ public abstract class AbstractAssemblyMojo
                 if ( filter.include( artifact ) )
                 {
                     String name = artifact.getFile().getName();
-
+                    
                     if ( dependencySet.isUnpack() )
                     {
                         // TODO: something like zipfileset in plexus-archiver
@@ -642,9 +642,21 @@ public abstract class AbstractAssemblyMojo
                         addDirectory( archiver, tempLocation, output, null, FileUtils.getDefaultExcludesAsList() );
                     }
                     else
-                    {
+                    {    
+                        String outputFileNameMapping = dependencySet.getOutputFileNameMapping();
+                        
+                        //insert the classifier if exist
+                        if( artifact.getClassifier() != null && !artifact.getClassifier().equals( "" ) )
+                        {                           
+                            int dotIdx = outputFileNameMapping.lastIndexOf( "." );
+                            
+                            String extension = outputFileNameMapping.substring( dotIdx + 1, outputFileNameMapping.length() );
+                            String artifactWithoutExt = outputFileNameMapping.substring( 0, dotIdx );
+                            
+                            outputFileNameMapping = artifactWithoutExt + "-" + artifact.getClassifier() + "." + extension;
+                        }
                         archiver.addFile( artifact.getFile(), output +
-                            evaluateFileNameMapping( dependencySet.getOutputFileNameMapping(), artifact ) );
+                              evaluateFileNameMapping( outputFileNameMapping, artifact ) );
                     }
                 }
                 else
