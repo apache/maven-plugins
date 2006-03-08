@@ -165,8 +165,7 @@ public class DependenciesReport
      */
     public void executeReport( Locale locale )
     {
-        DependenciesRenderer r = new DependenciesRenderer( getSink(), getProject(), i18n, locale, mavenProjectBuilder,
-                                                           artifactFactory, localRepository );
+        DependenciesRenderer r = new DependenciesRenderer( getSink(), locale );
 
         r.render();
     }
@@ -179,38 +178,16 @@ public class DependenciesReport
         return "dependencies";
     }
 
-    static class DependenciesRenderer
+    private class DependenciesRenderer
         extends AbstractMavenReportRenderer
     {
-        private MavenProject project;
-
         private Locale locale;
 
-        private ArtifactFactory artifactFactory;
-
-        private MavenProjectBuilder mavenProjectBuilder;
-
-        private ArtifactRepository localRepository;
-
-        private I18N i18n;
-
-        public DependenciesRenderer( Sink sink, MavenProject project, I18N i18n, Locale locale,
-                                     MavenProjectBuilder mavenProjectBuilder, ArtifactFactory artifactFactory,
-                                     ArtifactRepository localRepository )
+        public DependenciesRenderer( Sink sink, Locale locale )
         {
             super( sink );
 
-            this.project = project;
-
-            this.i18n = i18n;
-
             this.locale = locale;
-
-            this.mavenProjectBuilder = mavenProjectBuilder;
-
-            this.artifactFactory = artifactFactory;
-
-            this.localRepository = localRepository;
         }
 
         public String getTitle()
