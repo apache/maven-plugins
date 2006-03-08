@@ -18,7 +18,16 @@ package org.apache.maven.report.projectinfo;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.artifact.resolver.ResolutionListener;
+import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
+import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
@@ -47,7 +56,6 @@ import java.util.Set;
  * @version $Id$
  * @goal dependencies
  * @plexus.component
- * @requiresDependencyResolution
  */
 public class DependenciesReport
     extends AbstractMavenReport
@@ -95,6 +103,20 @@ public class DependenciesReport
      * @readonly
      */
     private MavenProjectBuilder mavenProjectBuilder;
+
+    /**
+     * Maven Artifact Resolver
+     *
+     * @parameter expression="${component.org.apache.maven.artifact.resolver.ArtifactResolver}"
+     * @required
+     * @readonly
+     */
+    private ArtifactResolver artifactResolver;
+
+    /**
+     * @parameter expression="${component.org.apache.maven.artifact.metadata.ArtifactMetadataSource}"
+     */
+    protected ArtifactMetadataSource artifactMetadataSource;
 
     /**
      * Local Repository.
@@ -165,9 +187,66 @@ public class DependenciesReport
      */
     public void executeReport( Locale locale )
     {
-        DependenciesRenderer r = new DependenciesRenderer( getSink(), locale );
+        try
+        {
+            ReportResolutionListener listener = resolveProject();
 
-        r.render();
+            DependenciesRenderer r = new DependenciesRenderer( getSink(), locale, listener.getDirectDependencies(), listener.getTransitiveDependencies() );
+
+            r.render();
+        }
+        catch ( Exception e )
+        {
+            getLog().error( "An error occurred while resolving project dependencies.", e );
+        }
+    }
+
+    private ReportResolutionListener resolveProject()
+        throws ArtifactNotFoundException, ArtifactResolutionException, ProjectBuildingException
+    {
+        Map managedVersions = createManagedVersionMap( project.getId(), project.getDependencyManagement() );
+
+        ReportResolutionListener listener = new ReportResolutionListener();
+
+        artifactResolver.resolveTransitively( project.getDependencyArtifacts(), project.getArtifact(),
+                                              managedVersions, localRepository,
+                                              project.getRemoteArtifactRepositories(), artifactMetadataSource, null,
+                                              Collections.singletonList( listener ) );
+
+        return listener;
+    }
+
+    private Map createManagedVersionMap( String projectId, DependencyManagement dependencyManagement )
+        throws ProjectBuildingException
+    {
+        Map map;
+        if ( dependencyManagement != null && dependencyManagement.getDependencies() != null )
+        {
+            map = new HashMap();
+            for ( Iterator i = dependencyManagement.getDependencies().iterator(); i.hasNext(); )
+            {
+                Dependency d = (Dependency) i.next();
+
+                try
+                {
+                    VersionRange versionRange = VersionRange.createFromVersionSpec( d.getVersion() );
+                    Artifact artifact = artifactFactory.createDependencyArtifact( d.getGroupId(), d.getArtifactId(),
+                                                                                  versionRange, d.getType(),
+                                                                                  d.getClassifier(), d.getScope() );
+                    map.put( d.getManagementKey(), artifact );
+                }
+                catch ( InvalidVersionSpecificationException e )
+                {
+                    throw new ProjectBuildingException( projectId, "Unable to parse version '" + d.getVersion() +
+                        "' for dependency '" + d.getManagementKey() + "': " + e.getMessage(), e );
+                }
+            }
+        }
+        else
+        {
+            map = Collections.EMPTY_MAP;
+        }
+        return map;
     }
 
     /**
@@ -183,29 +262,37 @@ public class DependenciesReport
     {
         private Locale locale;
 
-        public DependenciesRenderer( Sink sink, Locale locale )
+        private Map directDep;
+
+        private Map transitiveDep;
+
+        public DependenciesRenderer( Sink sink, Locale locale, Map directDependencies, Map transitiveDependencies )
         {
             super( sink );
 
             this.locale = locale;
+
+            this.directDep = directDependencies;
+
+            this.transitiveDep = transitiveDependencies;
         }
 
         public String getTitle()
         {
-            return i18n.getString( "project-info-report", locale, "report.dependencies.title" );
+            return getReportString( "report.dependencies.title" );
         }
 
         public void renderBody()
         {
             // Dependencies report
-            Set dependencies = project.getDependencyArtifacts();
+            Set dependencies = new HashSet( directDep.values() );
 
-            if ( dependencies == null || dependencies.isEmpty() )
+            if ( dependencies.isEmpty() )
             {
                 startSection( getTitle() );
 
                 // TODO: should the report just be excluded?
-                paragraph( i18n.getString( "project-info-report", locale, "report.dependencies.nolist" ) );
+                paragraph( getReportString( "report.dependencies.nolist" ) );
 
                 endSection();
 
@@ -214,14 +301,12 @@ public class DependenciesReport
 
             startSection( getTitle() );
 
-            String groupId = i18n.getString( "project-info-report", locale, "report.dependencies.column.groupId" );
-            String artifactId =
-                i18n.getString( "project-info-report", locale, "report.dependencies.column.artifactId" );
-            String version = i18n.getString( "project-info-report", locale, "report.dependencies.column.version" );
-            String description =
-                i18n.getString( "project-info-report", locale, "report.dependencies.column.description" );
-            String url = i18n.getString( "project-info-report", locale, "report.dependencies.column.url" );
-            String optional = i18n.getString( "project-info-report", locale, "report.dependencies.column.optional" );
+            String groupId = getReportString( "report.dependencies.column.groupId" );
+            String artifactId = getReportString( "report.dependencies.column.artifactId" );
+            String version = getReportString( "report.dependencies.column.version" );
+            String description = getReportString( "report.dependencies.column.description" );
+            String url = getReportString( "report.dependencies.column.url" );
+            String optional = getReportString( "report.dependencies.column.optional" );
 
             // collect dependencies by scope
             Map dependenciesByScope = new HashMap()
@@ -277,7 +362,7 @@ public class DependenciesReport
 
                 startSection( scope );
 
-                paragraph( i18n.getString( "project-info-report", locale, "report.dependencies.intro." + scope ) );
+                paragraph( getReportString( "report.dependencies.intro." + scope ) );
                 startTable();
                 tableHeader( new String[]{groupId, artifactId, version, description, url, optional} );
 
@@ -307,17 +392,17 @@ public class DependenciesReport
             endSection();
 
             // Transitive dependencies
-            Set artifacts = getTransitiveDependencies( project );
+            Set artifacts = new HashSet( transitiveDep.values() );
 
-            startSection( i18n.getString( "project-info-report", locale, "report.transitivedependencies.title" ) );
+            startSection( getReportString( "report.transitivedependencies.title" ) );
 
             if ( artifacts.isEmpty() )
             {
-                paragraph( i18n.getString( "project-info-report", locale, "report.transitivedependencies.nolist" ) );
+                paragraph( getReportString( "report.transitivedependencies.nolist" ) );
             }
             else
             {
-                paragraph( i18n.getString( "project-info-report", locale, "report.transitivedependencies.intro" ) );
+                paragraph( getReportString( "report.transitivedependencies.intro" ) );
 
                 startTable();
 
@@ -359,38 +444,23 @@ public class DependenciesReport
             }
 
             endSection();
-        }
 
-        /**
-         * Return a set of <code>Artifacts</code> which are not already
-         * present in the dependencies list.
-         *
-         * @param project a Maven project
-         * @return a set of transitive dependencies as artifacts
-         */
-        private Set getTransitiveDependencies( MavenProject project )
-        {
-            Set transitiveDependencies = new HashSet();
+            //for Dependencies Graph
+            startSection( "report.dependencies.graph.title" );
 
-            Set dependencies = project.getDependencyArtifacts();
-            Set artifacts = project.getArtifacts();
+            startSection( "report.dependencies.graph.tree.title" );
 
-            if ( dependencies == null || artifacts == null )
-            {
-                return transitiveDependencies;
-            }
 
-            for ( Iterator j = artifacts.iterator(); j.hasNext(); )
-            {
-                Artifact artifact = (Artifact) j.next();
 
-                if ( !dependencies.contains( artifact ) )
-                {
-                    transitiveDependencies.add( artifact );
-                }
-            }
+            endSection();
 
-            return transitiveDependencies;
+            startSection( "report.dependencies.graph.tables.title" );
+
+            
+
+            endSection();
+
+            endSection();
         }
 
         /**
@@ -418,6 +488,165 @@ public class DependenciesReport
             // TODO: we should use the MavenMetadataSource instead
             return mavenProjectBuilder.buildFromRepository( projectArtifact, project.getRemoteArtifactRepositories(),
                                                             localRepository, allowStubModel );
+        }
+
+        private String getReportString( String key )
+        {
+            return i18n.getString( "project-info-report", locale, key );
+        }
+
+    }
+
+    private class ReportResolutionListener
+        implements ResolutionListener
+    {
+        private Map directDep = new HashMap();
+
+        private Map transitiveDep = new HashMap();
+
+        private Map replacedDep = new HashMap();
+
+        private List parents = new ArrayList();
+
+        private Map depTree = new HashMap();
+
+        public void testArtifact( Artifact node )
+        {
+
+        }
+
+        public void startProcessChildren( Artifact artifact )
+        {
+            parents.add( artifact );
+        }
+
+        public void endProcessChildren( Artifact artifact )
+        {
+            parents.remove( artifact );
+        }
+
+        public void includeArtifact( Artifact artifact )
+        {
+            addDependency( artifact );
+
+            if ( parents.size() > 0 )
+            {
+                Artifact parent = (Artifact) parents.get( parents.size() - 1 );
+
+                if ( depTree.containsKey( parent.getId() ) )
+                {
+                    List deps = (List) depTree.get( parent.getId() );
+
+                    deps.add( artifact );
+                }
+                else
+                {
+                    List deps = new ArrayList();
+                    deps.add( artifact );
+                    depTree.put( parent.getId(), deps );
+                }
+            }
+        }
+
+        public void omitForNearer( Artifact omitted, Artifact kept )
+        {
+            String key = omitted.getId();
+
+            replacedDep.put( key, omitted );
+
+            if ( directDep.containsKey( key ) )
+            {
+                directDep.remove( key );
+            }
+            else if ( transitiveDep.containsKey( key ) )
+            {
+                transitiveDep.remove( key );
+            }
+
+            addDependency( kept );
+        }
+
+        private void addDependency( Artifact artifact )
+        {
+            if ( parents.size() == 0 )
+            {
+                //do nothing... artifact is current project
+            }
+            else if ( parents.size() == 1 )
+            {
+                if ( !directDep.containsKey( artifact.getId() ) )
+                {
+                    directDep.put( artifact.getId(), artifact );
+                }
+            }
+            else
+            {
+                if ( !transitiveDep.containsKey( artifact.getId() ) )
+                {
+                    transitiveDep.put( artifact.getId(), artifact );
+                }
+            }
+        }
+
+        public void updateScope( Artifact artifact, String scope )
+        {
+
+        }
+
+        public void manageArtifact( Artifact artifact, Artifact replacement )
+        {
+            omitForNearer( artifact, replacement );
+        }
+
+        public void omitForCycle( Artifact artifact )
+        {
+            replacedDep.put( artifact.getId(), artifact );
+        }
+
+        public void updateScopeCurrentPom( Artifact artifact, String scope )
+        {
+
+        }
+
+        public void selectVersionFromRange( Artifact artifact )
+        {
+
+        }
+
+        public void restrictRange( Artifact artifact, Artifact replacement, VersionRange newRange )
+        {
+
+        }
+
+        public Set getArtifacts()
+        {
+            Set all = new HashSet();
+
+            all.addAll( directDep.values() );
+
+            all.addAll( transitiveDep.values() );
+
+            return all;
+        }
+
+        public Map getTransitiveDependencies()
+        {
+            return Collections.unmodifiableMap( transitiveDep );
+        }
+
+        public Map getDirectDependencies()
+        {
+            return Collections.unmodifiableMap( directDep );
+        }
+
+        public Map getOmittedArtifacts()
+        {
+            return Collections.unmodifiableMap( replacedDep );
+        }
+
+        public Map getDepTree()
+        {
+            return depTree;
         }
     }
 }
