@@ -191,7 +191,9 @@ public class DependenciesReport
         {
             ReportResolutionListener listener = resolveProject();
 
-            DependenciesRenderer r = new DependenciesRenderer( getSink(), locale, listener.getDirectDependencies(), listener.getTransitiveDependencies(), listener.getOmittedArtifacts(), listener.getDepTree() );
+            DependenciesRenderer r = new DependenciesRenderer( getSink(), locale, listener.getDirectDependencies(),
+                                                               listener.getTransitiveDependencies(),
+                                                               listener.getOmittedArtifacts(), listener.getDepTree() );
 
             r.render();
         }
@@ -208,10 +210,9 @@ public class DependenciesReport
 
         ReportResolutionListener listener = new ReportResolutionListener();
 
-        artifactResolver.resolveTransitively( project.getDependencyArtifacts(), project.getArtifact(),
-                                              managedVersions, localRepository,
-                                              project.getRemoteArtifactRepositories(), artifactMetadataSource, null,
-                                              Collections.singletonList( listener ) );
+        artifactResolver.resolveTransitively( project.getDependencyArtifacts(), project.getArtifact(), managedVersions,
+                                              localRepository, project.getRemoteArtifactRepositories(),
+                                              artifactMetadataSource, null, Collections.singletonList( listener ) );
 
         return listener;
     }
@@ -270,7 +271,8 @@ public class DependenciesReport
 
         private Map depTree;
 
-        public DependenciesRenderer( Sink sink, Locale locale, Map directDependencies, Map transitiveDependencies, Map omittedDependencies, Map dependencyTree )
+        public DependenciesRenderer( Sink sink, Locale locale, Map directDependencies, Map transitiveDependencies,
+                                     Map omittedDependencies, Map dependencyTree )
         {
             super( sink );
 
@@ -490,13 +492,27 @@ public class DependenciesReport
 
                 startTable();
 
-                tableHeader( new String [] { getReportString( "report.dependencies.graph.tables.column.groupid" ), getReportString( "report.dependencies.graph.tables.column.artifactid" ), getReportString( "report.dependencies.graph.tables.column.version" ) } );
+                tableHeader( new String []{getReportString( "report.dependencies.graph.tables.column.groupid" ),
+                    getReportString( "report.dependencies.graph.tables.column.artifactid" ),
+                    getReportString( "report.dependencies.graph.tables.column.version" ),
+                    getReportString( "report.dependencies.graph.tables.column.comments" )} );
 
                 List depList = (List) depTree.get( id );
                 for ( Iterator deps = depList.iterator(); deps.hasNext(); )
                 {
                     Artifact dep = (Artifact) deps.next();
-                    tableRow( new String[] { dep.getGroupId(), dep.getArtifactId(), dep.getVersion() } );
+
+                    String comment = "";
+                    if ( omittedDeps.containsKey( dep.getId() ) )
+                    {
+                        comment = getReportString( "report.dependencies.graph.tables.notAttached" );
+                    }
+                    else
+                    {
+                        comment = getReportString( "report.dependencies.graph.tables.attached" );
+                    }
+
+                    tableRow( new String[]{dep.getGroupId(), dep.getArtifactId(), dep.getVersion(), comment } );
                 }
 
                 endTable();
