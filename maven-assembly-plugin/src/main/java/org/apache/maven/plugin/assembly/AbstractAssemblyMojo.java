@@ -28,6 +28,7 @@ import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.assembly.filter.AssemblyScopeArtifactFilter;
 import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolationException;
 import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolator;
 import org.apache.maven.plugins.assembly.model.Assembly;
@@ -588,8 +589,8 @@ public abstract class AbstractAssemblyMojo
                 Integer.toString( archiver.getDefaultFileMode(), 8 ) );
 
             AndArtifactFilter filter = new AndArtifactFilter();
-            filter.add( new ScopeArtifactFilter( dependencySet.getScope() ) );
-
+            filter.add( new AssemblyScopeArtifactFilter( dependencySet.getScope() ) );
+            
             if ( !dependencySet.getIncludes().isEmpty() )
             {
                 filter.add( new IncludesArtifactFilter( dependencySet.getIncludes() ) );
