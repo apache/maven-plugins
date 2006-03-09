@@ -46,35 +46,30 @@ public class InstallFileMojo
     /**
      * @parameter expression="${groupId}"
      * @required
-     * @readonly
      */
     protected String groupId;
 
     /**
      * @parameter expression="${artifactId}"
      * @required
-     * @readonly
      */
     protected String artifactId;
 
     /**
      * @parameter expression="${version}"
      * @required
-     * @readonly
      */
     protected String version;
 
     /**
      * @parameter expression="${packaging}"
      * @required
-     * @readonly
      */
     protected String packaging;
 
     /**
      * @parameter expression="${file}"
      * @required
-     * @readonly
      */
     private File file;
     
@@ -85,14 +80,11 @@ public class InstallFileMojo
 
     /**
      * @parameter expression="${generatePom}"
-     * @readonly
      */
     private boolean generatePom = false;
 
     /**
-     * @parameter expression="${component.org.apache.maven.artifact.factory.ArtifactFactory}"
-     * @required
-     * @readonly
+     * @component
      */
     private ArtifactFactory artifactFactory;
 
