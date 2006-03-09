@@ -193,7 +193,7 @@ public class DependenciesReport
 
             DependenciesRenderer r = new DependenciesRenderer( getSink(), locale, listener.getDirectDependencies(),
                                                                listener.getTransitiveDependencies(),
-                                                               listener.getOmittedArtifacts(), listener.getDepTree() );
+                                                               listener.getOmittedArtifacts(), listener.getDepTree(), listener.getDepMap() );
 
             r.render();
         }
@@ -271,8 +271,10 @@ public class DependenciesReport
 
         private Map depTree;
 
+        private Map depMap;
+
         public DependenciesRenderer( Sink sink, Locale locale, Map directDependencies, Map transitiveDependencies,
-                                     Map omittedDependencies, Map dependencyTree )
+                                     Map omittedDependencies, Map dependencyTree, Map dependencyMap )
         {
             super( sink );
 
@@ -285,6 +287,8 @@ public class DependenciesReport
             this.omittedDeps = omittedDependencies;
 
             this.depTree = dependencyTree;
+
+            this.depMap = dependencyMap;
         }
 
         public String getTitle()
@@ -455,7 +459,7 @@ public class DependenciesReport
 
             endSection();
 
-            //for Dependencies Graph
+            //for Dependencies Graph - Tree
             startSection( getReportString( "report.dependencies.graph.title" ) );
 
             startSection( getReportString( "report.dependencies.graph.tree.title" ) );
@@ -464,6 +468,7 @@ public class DependenciesReport
 
             endSection();
 
+            //for Dependencies Graph - Table Listings
             startSection( getReportString( "report.dependencies.graph.tables.title" ) );
 
             printDependencyTable( project.getArtifact() );
@@ -484,7 +489,7 @@ public class DependenciesReport
         {
             String id = artifact.getId();
 
-            if ( !omittedDeps.containsKey( id ) && depTree.containsKey( id ) )
+            if ( !omittedDeps.containsKey( id ) && depMap.containsKey( id ) )
             {
                 sink.anchor( id );
                 startSection( artifact.getArtifactId() );
@@ -497,7 +502,7 @@ public class DependenciesReport
                     getReportString( "report.dependencies.graph.tables.column.version" ),
                     getReportString( "report.dependencies.graph.tables.column.comments" )} );
 
-                List depList = (List) depTree.get( id );
+                List depList = (List) depMap.get( id );
                 for ( Iterator deps = depList.iterator(); deps.hasNext(); )
                 {
                     Artifact dep = (Artifact) deps.next();
@@ -600,6 +605,10 @@ public class DependenciesReport
 
         private Map depTree = new HashMap();
 
+        private Map depMap = new HashMap();
+
+        private Map depthMap = new HashMap();
+
         public void testArtifact( Artifact node )
         {
 
@@ -617,8 +626,47 @@ public class DependenciesReport
 
         public void includeArtifact( Artifact artifact )
         {
+            addToDepMap( artifact );
+
+            if ( depthMap.containsKey( artifact.getId() ) )
+            {
+                Integer depth = (Integer) depthMap.get( artifact.getId() );
+                if ( depth.intValue() <= parents.size() )
+                {
+                    return;
+                }
+            }
+
+            //remove from tree the artifact which is farther down the dependency trail
+            removeFromDepTree( artifact );
+
+            depthMap.put( artifact.getId(), new Integer( parents.size() ) );
+
             addDependency( artifact );
 
+            addToDepTree( artifact );
+        }
+
+        private void removeFromDepTree( Artifact artifact )
+        {
+            for ( Iterator artifactDeps = depTree.values().iterator(); artifactDeps.hasNext(); )
+            {
+                List depList = (List) artifactDeps.next();
+                for ( Iterator artifacts = depList.iterator(); artifacts.hasNext(); )
+                {
+                    Artifact dep = (Artifact) artifacts.next();
+
+                    if ( dep.getId().equals( artifact.getId() ) )
+                    {
+                        depList.remove( dep );
+                        break;
+                    }
+                }
+            }
+        }
+
+        private void addToDepTree( Artifact artifact )
+        {
             if ( parents.size() > 0 )
             {
                 Artifact parent = (Artifact) parents.get( parents.size() - 1 );
@@ -634,6 +682,27 @@ public class DependenciesReport
                     List deps = new ArrayList();
                     deps.add( artifact );
                     depTree.put( parent.getId(), deps );
+                }
+            }
+        }
+
+        private void addToDepMap( Artifact artifact )
+        {
+            if ( parents.size() > 0 )
+            {
+                Artifact parent = (Artifact) parents.get( parents.size() - 1 );
+
+                if ( depMap.containsKey( parent.getId() ) )
+                {
+                    List deps = (List) depMap.get( parent.getId() );
+
+                    deps.add( artifact );
+                }
+                else
+                {
+                    List deps = new ArrayList();
+                    deps.add( artifact );
+                    depMap.put( parent.getId(), deps );
                 }
             }
         }
@@ -654,6 +723,16 @@ public class DependenciesReport
             }
 
             addDependency( kept );
+        }
+
+        private Artifact getDependency( String key )
+        {
+            if ( directDep.containsKey( key ) )
+                return (Artifact) directDep.get( key );
+            else if ( transitiveDep.containsKey( key ) )
+                return (Artifact) transitiveDep.get( key );
+            else
+                return null;
         }
 
         private void addDependency( Artifact artifact )
@@ -737,6 +816,11 @@ public class DependenciesReport
         public Map getDepTree()
         {
             return depTree;
+        }
+
+        public Map getDepMap()
+        {
+            return depMap;
         }
     }
 }
