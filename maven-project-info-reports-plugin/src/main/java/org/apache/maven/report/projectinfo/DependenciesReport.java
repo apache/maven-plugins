@@ -191,7 +191,7 @@ public class DependenciesReport
         {
             ReportResolutionListener listener = resolveProject();
 
-            DependenciesRenderer r = new DependenciesRenderer( getSink(), locale, listener.getDirectDependencies(), listener.getTransitiveDependencies() );
+            DependenciesRenderer r = new DependenciesRenderer( getSink(), locale, listener.getDirectDependencies(), listener.getTransitiveDependencies(), listener.getOmittedArtifacts(), listener.getDepTree() );
 
             r.render();
         }
@@ -266,7 +266,11 @@ public class DependenciesReport
 
         private Map transitiveDep;
 
-        public DependenciesRenderer( Sink sink, Locale locale, Map directDependencies, Map transitiveDependencies )
+        private Map omittedDeps;
+
+        private Map depTree;
+
+        public DependenciesRenderer( Sink sink, Locale locale, Map directDependencies, Map transitiveDependencies, Map omittedDependencies, Map dependencyTree )
         {
             super( sink );
 
@@ -275,6 +279,10 @@ public class DependenciesReport
             this.directDep = directDependencies;
 
             this.transitiveDep = transitiveDependencies;
+
+            this.omittedDeps = omittedDependencies;
+
+            this.depTree = dependencyTree;
         }
 
         public String getTitle()
@@ -446,21 +454,87 @@ public class DependenciesReport
             endSection();
 
             //for Dependencies Graph
-            startSection( "report.dependencies.graph.title" );
+            startSection( getReportString( "report.dependencies.graph.title" ) );
 
-            startSection( "report.dependencies.graph.tree.title" );
+            startSection( getReportString( "report.dependencies.graph.tree.title" ) );
 
-
-
-            endSection();
-
-            startSection( "report.dependencies.graph.tables.title" );
-
-            
+            printDependencyListing( project.getArtifact() );
 
             endSection();
 
+            startSection( getReportString( "report.dependencies.graph.tables.title" ) );
+
+            printDependencyTable( project.getArtifact() );
+
+            for ( Iterator deps = project.getArtifacts().iterator(); deps.hasNext(); )
+            {
+                Artifact dep = (Artifact) deps.next();
+
+                printDependencyTable( dep );
+            }
+
             endSection();
+
+            endSection();
+        }
+
+        private void printDependencyTable( Artifact artifact )
+        {
+            String id = artifact.getId();
+
+            if ( !omittedDeps.containsKey( id ) && depTree.containsKey( id ) )
+            {
+                sink.anchor( id );
+                startSection( artifact.getArtifactId() );
+                sink.anchor_();
+
+                startTable();
+
+                tableHeader( new String [] { getReportString( "report.dependencies.graph.tables.column.groupid" ), getReportString( "report.dependencies.graph.tables.column.artifactid" ), getReportString( "report.dependencies.graph.tables.column.version" ) } );
+
+                List depList = (List) depTree.get( id );
+                for ( Iterator deps = depList.iterator(); deps.hasNext(); )
+                {
+                    Artifact dep = (Artifact) deps.next();
+                    tableRow( new String[] { dep.getGroupId(), dep.getArtifactId(), dep.getVersion() } );
+                }
+
+                endTable();
+
+                endSection();
+            }
+        }
+
+        private void printDependencyListing( Artifact artifact )
+        {
+            String id = artifact.getId();
+
+            if ( !omittedDeps.containsKey( id ) )
+            {
+                sink.list();
+                sink.listItem();
+
+                if ( depTree.containsKey( id ) )
+                {
+                    sink.link( "#" + id );
+                    sink.text( id );
+                    sink.link_();
+
+                    List depList = (List) depTree.get( id );
+                    for ( Iterator deps = depList.iterator(); deps.hasNext(); )
+                    {
+                        Artifact dep = (Artifact) deps.next();
+                        printDependencyListing( dep );
+                    }
+                }
+                else
+                {
+                    sink.text( id );
+                }
+
+                sink.listItem_();
+                sink.list_();
+            }
         }
 
         /**
