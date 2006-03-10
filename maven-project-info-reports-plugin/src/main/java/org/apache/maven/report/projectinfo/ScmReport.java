@@ -83,6 +83,14 @@ public class ScmReport
     protected ScmManager scmManager;
 
     /**
+     * The directory name to checkout right after the scm url
+     *
+     * @parameter expression="${project.artifactId}"
+     * @required
+     */
+    private String checkoutDirectoryName;
+
+    /**
      * Internationalization.
      *
      * @component
@@ -142,7 +150,8 @@ public class ScmReport
      */
     public void executeReport( Locale locale )
     {
-        ScmRenderer r = new ScmRenderer( scmManager, getSink(), getProject().getModel(), i18n, locale );
+        ScmRenderer r = new ScmRenderer( scmManager, getSink(), getProject().getModel(),
+                                         i18n, locale, checkoutDirectoryName );
 
         r.render();
     }
@@ -173,7 +182,10 @@ public class ScmReport
 
         private String devConnection;
 
-        public ScmRenderer( ScmManager scmManager, Sink sink, Model model, I18N i18n, Locale locale )
+        private String checkoutDirectoryName;
+
+        public ScmRenderer( ScmManager scmManager, Sink sink, Model model, I18N i18n,
+                            Locale locale, String checkoutDirName )
         {
             super( sink );
 
@@ -184,6 +196,8 @@ public class ScmReport
             this.i18n = i18n;
 
             this.locale = locale;
+
+            this.checkoutDirectoryName = checkoutDirName;
         }
 
         /**
@@ -434,7 +448,7 @@ public class ScmReport
                     i18n.getString( "project-info-report", locale, "report.scm.accessbehindfirewall.svn.intro" ) );
 
                 StringBuffer sb = new StringBuffer();
-                sb.append( "$ svn checkout " ).append( svnRepo.getUrl() ).append( " " ).append( model.getArtifactId() );
+                sb.append( "$ svn checkout " ).append( svnRepo.getUrl() ).append( " " ).append( checkoutDirectoryName );
                 verbatimText( sb.toString() );
             }
             else if ( ( devRepository != null ) && ( isScmSystem( devRepository, "cvs" ) ) )
@@ -629,7 +643,7 @@ public class ScmReport
             paragraph( i18n.getString( "project-info-report", locale, "report.scm.anonymousaccess.svn.intro" ) );
 
             StringBuffer sb = new StringBuffer();
-            sb.append( "$ svn checkout " ).append( svnRepo.getUrl() ).append( " " ).append( model.getArtifactId() );
+            sb.append( "$ svn checkout " ).append( svnRepo.getUrl() ).append( " " ).append( checkoutDirectoryName );
 
             verbatimText( sb.toString() );
         }
@@ -649,7 +663,7 @@ public class ScmReport
 
             StringBuffer sb = new StringBuffer();
 
-            sb.append( "$ svn checkout " ).append( svnRepo.getUrl() ).append( " " ).append( model.getArtifactId() );
+            sb.append( "$ svn checkout " ).append( svnRepo.getUrl() ).append( " " ).append( checkoutDirectoryName );
 
             verbatimText( sb.toString() );
 
