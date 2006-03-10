@@ -1,0 +1,808 @@
+package org.apache.maven.plugins.site;
+
+/*
+ * Copyright 2001-2005 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import org.apache.maven.doxia.module.xdoc.XdocSiteModule;
+import org.apache.maven.doxia.site.decoration.DecorationModel;
+import org.apache.maven.doxia.siterenderer.RendererException;
+import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
+import org.apache.maven.doxia.siterenderer.Renderer;
+import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.reporting.MavenReport;
+import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+/**
+ * Generates the project site.
+ *
+ * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
+ * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
+ * @version $Id$
+ * @goal site
+ * @requiresDependencyResolution test
+ * @todo refactor out the parts that could go to doxia-site-renderer/maven-reporting-impl to make this much thinner
+ * @todo map out renderers in advance, accounting for duplicates, to make site:run easier (eg index -> this report, project-info -> project info summary report, foo -> src/site/apt/foo.apt)
+ * @todo GO OVER OTHER TODOS IN THIS PROJECT! :)
+ */
+public class SiteMojo
+    extends AbstractSiteMojo
+{
+
+    /**
+     * Alternative directory for xdoc source, useful for m1 to m2 migration
+     *
+     * @parameter expression="${basedir}/xdocs"
+     * @required
+     */
+    private File xdocDirectory;
+
+    /**
+     * Directory containing generated documentation.
+     *
+     * @parameter alias="workingDirectory" expression="${project.build.directory}/generated-site"
+     * @required
+     */
+    private File generatedSiteDirectory;
+
+    /**
+     * Directory containing the generated project sites and report distributions.
+     *
+     * @parameter expression="${project.reporting.outputDirectory}"
+     * @required
+     */
+    protected File outputDirectory;
+
+    /**
+     * The reactor projects.
+     *
+     * @parameter expression="${reactorProjects}"
+     * @required
+     * @readonly
+     */
+    protected List reactorProjects;
+
+    /**
+     * @parameter expression="${reports}"
+     * @required
+     * @readonly
+     */
+    private List reports;
+
+    /**
+     * Convenience parameter that allows you to disable report generation.
+     *
+     * @parameter expression="${generateReports}" default-value="true"
+     */
+    private boolean generateReports;
+
+    /**
+     * Site renderer. Not included in the abstract mojo so that deploy/attach-descriptor don't need to go through it's
+     * initialisation.
+     *
+     * @component
+     */
+    protected Renderer siteRenderer;
+
+    /**
+     * Generate the project site
+     * <p/>
+     * throws MojoExecutionException if any
+     *
+     * @see org.apache.maven.plugin.Mojo#execute()
+     */
+    public void execute()
+        throws MojoExecutionException, MojoFailureException
+    {
+        if ( attributes == null )
+        {
+            attributes = new HashMap();
+        }
+
+        if ( attributes.get( "project" ) == null )
+        {
+            attributes.put( "project", project );
+        }
+
+        if ( attributes.get( "outputEncoding" ) == null )
+        {
+            attributes.put( "outputEncoding", outputEncoding );
+        }
+
+        List reports = filterReports( this.reports );
+
+        Map categories = categorizeReports( reports );
+
+        try
+        {
+            List localesList = initLocalesList();
+
+            // Default is first in the list
+            Locale defaultLocale = (Locale) localesList.get( 0 );
+            Locale.setDefault( defaultLocale );
+
+            // Sort projectInfos and projectReports with the default locale setted
+            // TODO Beautify the output by sorting with each current locale
+            Comparator reportComparator = new ReportComparator();
+            for ( Iterator i = categories.values().iterator(); i.hasNext(); )
+            {
+                List reportSet = (List) i.next();
+                Collections.sort( reportSet, reportComparator );
+            }
+
+            for ( Iterator iterator = localesList.iterator(); iterator.hasNext(); )
+            {
+                Locale locale = (Locale) iterator.next();
+
+                File outputDirectory = getOutputDirectory( locale, defaultLocale );
+
+                // Safety
+                if ( !outputDirectory.exists() )
+                {
+                    outputDirectory.mkdirs();
+                }
+
+                // Generate static site
+                File siteDirectoryFile = siteDirectory;
+                File xdocDirectoryFile = xdocDirectory;
+                if ( !locale.getLanguage().equals( defaultLocale.getLanguage() ) )
+                {
+                    siteDirectoryFile = new File( siteDirectory, locale.getLanguage() );
+
+                    xdocDirectoryFile = new File( xdocDirectory, locale.getLanguage() );
+                }
+
+                // Try to find duplicate files
+                Map duplicate = new LinkedHashMap();
+                String defaultExcludes = StringUtils.join( FileUtils.getDefaultExcludes(), "," );
+                if ( locale.getLanguage().equals( defaultLocale.getLanguage() ) )
+                {
+                    for ( Iterator it = localesList.iterator(); it.hasNext(); )
+                    {
+                        Locale l = (Locale) it.next();
+                        defaultExcludes += "," + l.getLanguage() + "/**";
+                    }
+                }
+
+                if ( siteDirectoryFile.exists() )
+                {
+                    // TODO: avoid this hardcoding - the resources dir might be elsewhere. We should really test for duplicate targets, not guess at what source files will be html.
+                    // add the site's 'resources' directory to the default exclude list
+                    String actualExcludes = defaultExcludes + "," + "resources/**";
+
+                    tryToFindDuplicates( siteDirectoryFile, actualExcludes, duplicate );
+                }
+
+                // Handle the GeneratedSite Directory
+                if ( generatedSiteDirectory.exists() )
+                {
+                    tryToFindDuplicates( generatedSiteDirectory, defaultExcludes, duplicate );
+                }
+
+                // Exception if a file is duplicate
+                checkDuplicates( duplicate, locale );
+
+                DecorationModel decoration = getDecorationModel( categories, locale );
+
+                File skinArtifactFile = getSkinArtifactFile( decoration );
+
+                SiteRenderingContext context = createSiteRenderingContext( skinArtifactFile, locale, decoration );
+
+                //Generate reports
+                List generatedReportsFileName = Collections.EMPTY_LIST;
+                if ( reports != null )
+                {
+                    generatedReportsFileName = generateReportsPages( reports, outputDirectory, defaultLocale, context );
+                }
+
+                // Try to generate the index.html
+                String displayLanguage = locale.getDisplayLanguage( Locale.ENGLISH );
+
+                // TODO: Be good to generate a module's summary page thats referenced off the
+                // Modules menu item.
+
+                // Log if a user override a report file
+                for ( Iterator it = generatedReportsFileName.iterator(); it.hasNext(); )
+                {
+                    String reportFileName = (String) it.next();
+
+                    if ( duplicate.get( reportFileName ) != null )
+                    {
+                        getLog().info( "Override the generated file \"" + reportFileName + "\" for the " +
+                            displayLanguage + " version." );
+                    }
+                }
+
+                siteRenderer.render( siteDirectoryFile, outputDirectory, context );
+
+                // Check if ${basedir}/xdocs is existing
+                if ( xdocDirectory.exists() )
+                {
+                    File[] fileNames = xdocDirectoryFile.listFiles();
+
+                    if ( fileNames.length > 0 )
+                    {
+                        XdocSiteModule xdoc = new XdocSiteModule();
+
+                        siteRenderer.render( xdocDirectoryFile, outputDirectory, xdoc.getSourceDirectory(),
+                                             xdoc.getExtension(), xdoc.getParserId(), context, outputEncoding );
+                    }
+                }
+
+                copyResources( outputDirectory, skinArtifactFile );
+
+                // Copy site resources
+                if ( resourcesDirectory != null && resourcesDirectory.exists() )
+                {
+                    copyDirectory( resourcesDirectory, outputDirectory );
+                }
+
+                if ( generatedSiteDirectory.exists() )
+                {
+                    siteRenderer.render( generatedSiteDirectory, outputDirectory, context );
+                }
+            }
+        }
+        catch ( MavenReportException e )
+        {
+            throw new MojoExecutionException( "Error during report generation", e );
+        }
+        catch ( RendererException e )
+        {
+            throw new MojoExecutionException( "Error during page generation", e );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Error during site generation", e );
+        }
+    }
+
+    private DecorationModel getDecorationModel( Map categories, Locale locale )
+        throws MojoExecutionException
+    {
+        Map props = new HashMap();
+
+        // TODO: can we replace these with an XML tag?
+        if ( reports != null )
+        {
+            props.put( "reports", getReportsMenu( locale, categories ) );
+        }
+        else
+        {
+            props.put( "reports", "" );
+        }
+
+        populateModules( props, locale );
+
+        DecorationModel decorationModel = getDecorationModel( project, locale, props );
+
+        if ( project.getUrl() != null )
+        {
+            assembler.resolvePaths( decorationModel, project.getUrl() );
+        }
+        else
+        {
+            getLog().warn( "No URL defined for the project - decoration links will not be resolved" );
+        }
+
+        return decorationModel;
+    }
+
+    private void populateModules( Map props, Locale locale )
+        throws MojoExecutionException
+    {
+        // we require child modules and reactors to process module menu
+        if ( project.getModules().size() > 0 )
+        {
+            List projects = this.reactorProjects;
+            String menuItems;
+            if ( projects.size() == 1 )
+            {
+                // Not running reactor - search for the projects manually
+                List models = new ArrayList( project.getModules().size() );
+                for ( Iterator i = project.getModules().iterator(); i.hasNext(); )
+                {
+                    String module = (String) i.next();
+                    Model model;
+                    File f = new File( project.getBasedir(), module + "/pom.xml" );
+                    if ( f.exists() )
+                    {
+                        MavenXpp3Reader reader = new MavenXpp3Reader();
+                        FileReader fileReader = null;
+                        try
+                        {
+                            fileReader = new FileReader( f );
+                            model = reader.read( fileReader );
+                        }
+                        catch ( IOException e )
+                        {
+                            throw new MojoExecutionException( "Unable to read POM", e );
+                        }
+                        catch ( XmlPullParserException e )
+                        {
+                            throw new MojoExecutionException( "Unable to read POM", e );
+                        }
+                        finally
+                        {
+                            IOUtil.close( fileReader );
+                        }
+                    }
+                    else
+                    {
+                        model = new Model();
+                        model.setName( module );
+                        model.setUrl( module );
+                    }
+                    models.add( model );
+                }
+                menuItems = getModulesMenuItemsFromModels( models );
+            }
+            else
+            {
+                menuItems = getModulesMenuItemsFromReactorProjects();
+            }
+            props.put( "modulesItems", menuItems );
+            props.put( "modules", getModulesMenu( locale, menuItems ) );
+        }
+        else
+        {
+            props.put( "modulesItems", "" );
+            props.put( "modules", "" );
+        }
+    }
+
+    private List filterReports( List reports )
+    {
+        List filteredReports = new ArrayList( reports.size() );
+        if ( generateReports )
+        {
+            for ( Iterator i = reports.iterator(); i.hasNext(); )
+            {
+                MavenReport report = (MavenReport) i.next();
+                //noinspection ErrorNotRethrown,UnusedCatchParameter
+                try
+                {
+                    if ( report.canGenerateReport() )
+                    {
+                        filteredReports.add( report );
+                    }
+                }
+                catch ( AbstractMethodError e )
+                {
+                    // the canGenerateReport() has been added just before the 2.0 release and will cause all the reporting
+                    // plugins with an earlier version to fail (most of the codehaus mojo now fails)
+                    // be nice with them, output a warning and don't let them break anything
+
+                    getLog().warn( "Error loading report " + report.getClass().getName() +
+                        " - AbstractMethodError: canGenerateReport()" );
+                    filteredReports.add( report );
+                }
+            }
+        }
+        return filteredReports;
+    }
+
+    /**
+     * Categorize reports by category name.
+     *
+     * @param reports list of reports
+     * @return the categorised reports
+     */
+    private Map categorizeReports( List reports )
+    {
+        Map categories = new HashMap();
+
+        for ( Iterator i = reports.iterator(); i.hasNext(); )
+        {
+            MavenReport report = (MavenReport) i.next();
+
+            List category = (List) categories.get( report.getCategoryName() );
+
+            if ( category == null )
+            {
+                category = new ArrayList();
+                categories.put( report.getCategoryName(), category );
+            }
+            category.add( report );
+        }
+        return categories;
+    }
+
+    /**
+     * Retrieve the reports menu
+     *
+     * @param locale     the locale used
+     * @param categories report categories, each with a list of reports
+     * @return a XML for reports menu
+     */
+    private String getReportsMenu( Locale locale, Map categories )
+    {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "<menu name=\"" );
+        buffer.append( i18n.getString( "site-plugin", locale, "report.menu.projectdocumentation" ) );
+        buffer.append( "\">\n" );
+
+        for ( Iterator i = categories.keySet().iterator(); i.hasNext(); )
+        {
+            String key = (String) i.next();
+            List reports = (List) categories.get( key );
+            writeReportSubMenu( reports, buffer, locale, key );
+        }
+
+        buffer.append( "</menu>\n" );
+
+        return buffer.toString();
+    }
+
+    /**
+     * Create a report sub menu
+     *
+     * @param reports list of reports specified in pom
+     * @param buffer  string to be appended
+     * @param locale  the locale used
+     * @param key2    the default name of the category
+     */
+    private void writeReportSubMenu( List reports, StringBuffer buffer, Locale locale, String key2 )
+    {
+        if ( reports.size() > 0 )
+        {
+            // TODO: this is a hack, change to a different class - Category instead of MavenReport
+            MavenReport summary = null;
+            for ( Iterator i = reports.iterator(); i.hasNext() && summary == null; )
+            {
+                MavenReport report = (MavenReport) i.next();
+                if ( "".equals( report.getDescription( locale ) ) )
+                {
+                    summary = report;
+                    try
+                    {
+                        Field f = summary.getClass().getDeclaredField( "reports" );
+                        boolean acc = f.isAccessible();
+                        f.setAccessible( true );
+                        List newReports = new ArrayList( reports );
+                        newReports.remove( summary );
+                        f.set( summary, newReports );
+                        f.setAccessible( acc );
+                    }
+                    catch ( NoSuchFieldException e )
+                    {
+                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    }
+                    catch ( IllegalAccessException e )
+                    {
+                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    }
+                }
+            }
+
+            String name;
+            String href = null;
+            if ( summary == null )
+            {
+                name = key2;
+            }
+            else
+            {
+                name = summary.getName( locale );
+                href = summary.getOutputName() + ".html";
+            }
+
+            buffer.append( "    <item name=\"" );
+            buffer.append( name );
+            buffer.append( "\"" );
+            if ( href != null )
+            {
+                buffer.append( " href=\"/" );
+                buffer.append( href );
+                buffer.append( "\" collapse=\"true\"" );
+            }
+            buffer.append( ">\n" );
+
+            for ( Iterator i = reports.iterator(); i.hasNext(); )
+            {
+                MavenReport report = (MavenReport) i.next();
+
+                buffer.append( "        <item name=\"" );
+                buffer.append( report.getName( locale ) );
+                buffer.append( "\" href=\"/" );
+                buffer.append( report.getOutputName() );
+                buffer.append( ".html\"/>\n" );
+            }
+
+            buffer.append( "    </item>\n" );
+        }
+    }
+
+    /**
+     * Generate a menu for modules
+     *
+     * @param locale    the locale wanted
+     * @param menuItems
+     * @return a XML menu for modules
+     */
+    private String getModulesMenu( Locale locale, String menuItems )
+    {
+        StringBuffer buffer = new StringBuffer();
+
+        buffer.append( "<menu name=\"" );
+        buffer.append( i18n.getString( "site-plugin", locale, "report.menu.projectmodules" ) );
+        buffer.append( "\">\n" );
+
+        buffer.append( menuItems );
+
+        buffer.append( "</menu>\n" );
+
+        return buffer.toString();
+    }
+
+    private String getModulesMenuItemsFromReactorProjects()
+    {
+        StringBuffer buffer = new StringBuffer();
+        if ( reactorProjects != null && reactorProjects.size() > 1 )
+        {
+            Iterator reactorItr = reactorProjects.iterator();
+
+            while ( reactorItr.hasNext() )
+            {
+                MavenProject reactorProject = (MavenProject) reactorItr.next();
+
+                if ( reactorProject != null && reactorProject.getParent() != null &&
+                    project.getArtifactId().equals( reactorProject.getParent().getArtifactId() ) )
+                {
+                    String reactorUrl = reactorProject.getUrl();
+                    String name = reactorProject.getName();
+
+                    appendMenuItem( buffer, name, reactorUrl );
+                }
+            }
+        }
+        return buffer.toString();
+    }
+
+    private String getModulesMenuItemsFromModels( List models )
+    {
+        StringBuffer buffer = new StringBuffer();
+        if ( models != null && models.size() > 1 )
+        {
+            Iterator reactorItr = models.iterator();
+
+            while ( reactorItr.hasNext() )
+            {
+                Model model = (Model) reactorItr.next();
+
+                String reactorUrl = model.getUrl();
+                String name = model.getName();
+
+                appendMenuItem( buffer, name, reactorUrl );
+            }
+        }
+        return buffer.toString();
+    }
+
+    private static void appendMenuItem( StringBuffer buffer, String name, String href )
+    {
+        if ( href != null )
+        {
+            buffer.append( "    <item name=\"" );
+            buffer.append( name );
+            buffer.append( "\" href=\"" );
+            buffer.append( href );
+            if ( href.endsWith( "/" ) )
+            {
+                buffer.append( "index.html\"/>\n" );
+            }
+            else
+            {
+                buffer.append( "/index.html\"/>\n" );
+            }
+        }
+    }
+
+    // Generate specific pages
+
+    /**
+     * Generate reports pages
+     *
+     * @param reports
+     * @param localeOutputDirectory
+     */
+    private List generateReportsPages( List reports, File localeOutputDirectory, Locale defaultLocale,
+                                       SiteRenderingContext context )
+        throws RendererException, IOException, MavenReportException
+    {
+        List generatedReportsFileName = new ArrayList();
+
+        for ( Iterator j = reports.iterator(); j.hasNext(); )
+        {
+            MavenReport report = (MavenReport) j.next();
+
+            Locale locale = context.getLocale();
+            getLog().info( "Generate \"" + report.getName( locale ) + "\" report." );
+
+            report.setReportOutputDirectory( localeOutputDirectory );
+
+            String reportFileName = report.getOutputName();
+
+            if ( locale.equals( defaultLocale ) )
+            {
+                generatedReportsFileName.add( reportFileName );
+            }
+            else
+            {
+                generatedReportsFileName.add( locale.getLanguage() + File.separator + reportFileName );
+            }
+
+            String outputFileName = reportFileName + ".html";
+
+            SiteRendererSink sink = siteRenderer.createSink( siteDirectory, outputFileName );
+
+            report.generate( sink, locale );
+
+            if ( !report.isExternalReport() )
+            {
+                File outputFile = new File( localeOutputDirectory, outputFileName );
+
+                if ( !outputFile.getParentFile().exists() )
+                {
+                    outputFile.getParentFile().mkdirs();
+                }
+
+                siteRenderer.generateDocument(
+                    new OutputStreamWriter( new FileOutputStream( outputFile ), outputEncoding ), sink, context );
+            }
+        }
+        return generatedReportsFileName;
+    }
+
+    private File getOutputDirectory( Locale locale, Locale defaultLocale )
+    {
+        File file;
+        if ( locale.getLanguage().equals( defaultLocale.getLanguage() ) )
+        {
+            file = outputDirectory;
+        }
+        else
+        {
+            file = new File( outputDirectory, locale.getLanguage() );
+        }
+        return file;
+    }
+
+    /**
+     * Convenience method that try to find duplicate files in sub-directories of a given directory.
+     * <p>The scan is case sensitive.</p>
+     *
+     * @param directory       the directory to scan
+     * @param defaultExcludes files patterns to be exclude from the search
+     * @param duplicate       the map to update
+     * @throws IOException if any
+     */
+    private static void tryToFindDuplicates( File directory, String defaultExcludes, Map duplicate )
+        throws IOException
+    {
+        List siteFiles = FileUtils.getFileNames( directory, null, defaultExcludes, false );
+        for ( Iterator it = siteFiles.iterator(); it.hasNext(); )
+        {
+            String currentFile = (String) it.next();
+
+            int endIndex = currentFile.lastIndexOf( "." );
+            if ( currentFile.lastIndexOf( File.separator ) == -1 )
+            {
+                // ignore files directly in the directory
+            }
+            else if ( endIndex == -1 || currentFile.startsWith( "." ) )
+            {
+                // ignore files without extension
+            }
+            else
+            {
+
+                int beginIndex = currentFile.indexOf( File.separator ) + 1;
+                String key = currentFile.substring( beginIndex, endIndex ).toLowerCase( Locale.getDefault() );
+
+                List tmp = (List) duplicate.get( key );
+                if ( tmp == null )
+                {
+                    tmp = new ArrayList();
+                    duplicate.put( key, tmp );
+                }
+                tmp.add( currentFile );
+            }
+        }
+    }
+
+    /**
+     * Throw an exception if a file is duplicate.
+     *
+     * @param duplicate a map of duplicate files
+     * @param locale    the current locale
+     */
+    private void checkDuplicates( Map duplicate, Locale locale )
+        throws MojoFailureException
+    {
+        if ( duplicate.size() > 0 )
+        {
+            StringBuffer sb = null;
+
+            for ( Iterator it = duplicate.entrySet().iterator(); it.hasNext(); )
+            {
+                Map.Entry entry = (Map.Entry) it.next();
+                Collection values = (Collection) entry.getValue();
+
+                if ( values.size() > 1 )
+                {
+                    if ( sb == null )
+                    {
+                        sb = new StringBuffer(
+                            "Some files are duplicates in the site directory or in the generated-site directory. " );
+                        sb.append( "\n" );
+                        sb.append( "Review the following files for the \"" );
+                        sb.append( locale.getDisplayLanguage( Locale.ENGLISH ) );
+                        sb.append( "\" version:" );
+                    }
+
+                    sb.append( "\n" );
+                    sb.append( entry.getKey() );
+                    sb.append( "\n" );
+
+                    for ( Iterator it2 = values.iterator(); it2.hasNext(); )
+                    {
+                        String current = (String) it2.next();
+
+                        sb.append( "\t" );
+                        sb.append( current );
+
+                        if ( it2.hasNext() )
+                        {
+                            sb.append( "\n" );
+                        }
+                    }
+                }
+            }
+
+            if ( sb != null )
+            {
+                throw new MojoFailureException( sb.toString() );
+            }
+        }
+    }
+
+}
