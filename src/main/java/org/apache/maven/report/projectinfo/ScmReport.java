@@ -509,9 +509,7 @@ public class ScmReport
             paragraph( i18n.getString( "project-info-report", locale, "report.scm.devaccess.clearcase.intro" ) );
 
             StringBuffer command = new StringBuffer();
-            // @todo test replacement of getModule() with directory...
-            // found on a site that the next parameter is a pathname
-            command.append( "$ cleartool checkout " ).append( checkoutDirectoryName );
+            command.append( "$ cleartool checkout " );
 
             verbatimText( command.toString() );
         }
