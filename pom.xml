@@ -9,18 +9,6 @@
   <packaging>maven-plugin</packaging>
   <name>Maven Source Plug-In</name>
   <version>2.0.1-SNAPSHOT</version>
-  <developers>
-    <developer>
-      <id>vsiveton</id>
-      <name>Vincent Siveton</name>
-      <email>vsiveton@apache.org</email>
-      <organization>Apache Software Foundation</organization>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-      <timezone>-5</timezone>
-    </developer>
-  </developers>
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
