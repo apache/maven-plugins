@@ -9,18 +9,6 @@
   <packaging>maven-plugin</packaging>
   <name>Maven Verifier Plugin</name>
   <version>1.0-beta-2-SNAPSHOT</version>
-  <developers>
-    <developer>
-      <id>vmassol</id>
-      <name>Vincent Massol</name>
-      <email>vmassol@apache.org</email>
-      <organization>Apache Software Foundation</organization>
-      <roles>
-        <role>Creator</role>
-        <role>Java Developer</role>
-      </roles>
-    </developer>
-  </developers>
   <build>
     <plugins>
       <plugin>
