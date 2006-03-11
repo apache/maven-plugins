@@ -24,6 +24,7 @@ import org.apache.maven.model.Site;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.Settings;
 import org.apache.maven.wagon.ConnectionException;
 import org.apache.maven.wagon.ResourceDoesNotExistException;
 import org.apache.maven.wagon.TransferFailedException;
@@ -32,6 +33,7 @@ import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.authentication.AuthenticationException;
 import org.apache.maven.wagon.authorization.AuthorizationException;
 import org.apache.maven.wagon.observers.Debug;
+import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.apache.maven.wagon.repository.Repository;
 import org.codehaus.plexus.util.PathTool;
 import org.codehaus.plexus.util.StringUtils;
@@ -69,6 +71,15 @@ public class SiteStageMojo
      * @component
      */
     private WagonManager wagonManager;
+
+    /**
+     * The current user system settings for use in Maven.
+     *
+     * @parameter expression="${settings}"
+     * @required
+     * @readonly
+     */
+    private Settings settings;
 
     /**
      * @see org.apache.maven.plugin.Mojo#execute()
@@ -203,7 +214,15 @@ public class SiteStageMojo
 
             wagon.addTransferListener( debug );
 
-            wagon.connect( repository, wagonManager.getAuthenticationInfo( id ) );
+            ProxyInfo proxyInfo = SiteDeployMojo.getProxyInfo( settings );
+            if ( proxyInfo != null )
+            {
+                wagon.connect( repository, wagonManager.getAuthenticationInfo( id ), proxyInfo );
+            }
+            else
+            {
+                wagon.connect( repository, wagonManager.getAuthenticationInfo( id ) );
+            }
 
             wagon.putDirectory( stagingDirectory, "." );
         }
