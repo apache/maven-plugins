@@ -10,18 +10,6 @@
   <name>Maven Project Info Reports Plugin</name>
   <version>2.0-beta-4-SNAPSHOT</version>
   <inceptionYear>2005</inceptionYear>
-  <developers>
-    <developer>
-      <id>vsiveton</id>
-      <name>Vincent Siveton</name>
-      <email>vsiveton@apache.org</email>
-      <organization>Apache Software Foundation</organization>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-      <timezone>-5</timezone>
-    </developer>
-  </developers>
   <contributors>
     <contributor>
       <name>Johnny R. Ruiz III</name>
