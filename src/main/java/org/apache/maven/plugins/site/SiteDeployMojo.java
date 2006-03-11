@@ -22,12 +22,15 @@ import org.apache.maven.model.Site;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.Proxy;
+import org.apache.maven.settings.Settings;
 import org.apache.maven.wagon.ConnectionException;
 import org.apache.maven.wagon.ResourceDoesNotExistException;
 import org.apache.maven.wagon.TransferFailedException;
 import org.apache.maven.wagon.UnsupportedProtocolException;
 import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.observers.Debug;
+import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.apache.maven.wagon.authentication.AuthenticationException;
 import org.apache.maven.wagon.authorization.AuthorizationException;
 import org.apache.maven.wagon.repository.Repository;
@@ -51,7 +54,7 @@ public class SiteDeployMojo
 {
     /**
      * Directory containing the generated project sites and report distributions.
-     * 
+     *
      * @parameter alias="outputDirectory" expression="${project.reporting.outputDirectory}"
      * @required
      */
@@ -68,6 +71,15 @@ public class SiteDeployMojo
      * @component
      */
     private WagonManager wagonManager;
+
+    /**
+     * The current user system settings for use in Maven.
+     *
+     * @parameter expression="${settings}"
+     * @required
+     * @readonly
+     */
+    private Settings settings;
 
     public void execute()
         throws MojoExecutionException
@@ -89,7 +101,7 @@ public class SiteDeployMojo
         if ( site == null )
         {
             throw new MojoExecutionException(
-                "Missing site information in the distribution management element in the project.." );
+                                              "Missing site information in the distribution management element in the project.." );
         }
 
         String url = site.getUrl();
@@ -117,8 +129,8 @@ public class SiteDeployMojo
 
         if ( !wagon.supportsDirectoryCopy() )
         {
-            throw new MojoExecutionException(
-                "Wagon protocol '" + repository.getProtocol() + "' doesn't support directory copying" );
+            throw new MojoExecutionException( "Wagon protocol '" + repository.getProtocol()
+                + "' doesn't support directory copying" );
         }
 
         try
@@ -129,7 +141,15 @@ public class SiteDeployMojo
 
             wagon.addTransferListener( debug );
 
-            wagon.connect( repository, wagonManager.getAuthenticationInfo( id ) );
+            ProxyInfo proxyInfo = getProxyInfo( settings );
+            if ( proxyInfo != null )
+            {
+                wagon.connect( repository, wagonManager.getAuthenticationInfo( id ), proxyInfo );
+            }
+            else
+            {
+                wagon.connect( repository, wagonManager.getAuthenticationInfo( id ) );
+            }
 
             wagon.putDirectory( inputDirectory, "." );
         }
@@ -164,5 +184,30 @@ public class SiteDeployMojo
                 getLog().error( "Error disconnecting wagon - ignored", e );
             }
         }
+    }
+
+    /**
+     * Convenience method to map a <code>Proxy</code> object from the user system settings to a
+     * <code>ProxyInfo</code> object.
+     *
+     * @return a proxyInfo object instancied or null if no active proxy is define in the settings.xml
+     */
+    public static ProxyInfo getProxyInfo( Settings settings )
+    {
+        ProxyInfo proxyInfo = null;
+        if ( ( settings != null ) && ( settings.getActiveProxy() != null ) )
+        {
+            Proxy settingsProxy = settings.getActiveProxy();
+
+            proxyInfo = new ProxyInfo();
+            proxyInfo.setHost( settingsProxy.getHost() );
+            proxyInfo.setType( settingsProxy.getProtocol() );
+            proxyInfo.setPort( settingsProxy.getPort() );
+            proxyInfo.setNonProxyHosts( settingsProxy.getNonProxyHosts() );
+            proxyInfo.setUserName( settingsProxy.getUsername() );
+            proxyInfo.setPassword( settingsProxy.getPassword() );
+        }
+
+        return proxyInfo;
     }
 }
