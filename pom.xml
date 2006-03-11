@@ -9,17 +9,6 @@
   <packaging>maven-plugin</packaging>
   <name>Maven Assembly Plugin</name>
   <version>2.1-SNAPSHOT</version>
-  <developers>
-    <developer>
-      <id>vsiveton</id>
-      <name>Vincent Siveton</name>
-      <email>vincent.siveton@gmail.com</email>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-      <timezone>-5</timezone>
-    </developer>
-  </developers>
   <build>
     <plugins>
       <plugin>
@@ -80,7 +69,7 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-	  <version>1.2-SNAPSHOT</version>
+      <version>1.2-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
