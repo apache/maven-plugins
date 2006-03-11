@@ -9,27 +9,6 @@
   <packaging>maven-plugin</packaging>
   <name>Maven Javadoc Plugin</name>
   <version>2.0-beta-4-SNAPSHOT</version>
-  <developers>
-    <developer>
-      <id>evenisse</id>
-      <name>Emmanuel Venisse</name>
-      <email>evenisse@apache.org</email>
-      <organization>Apache Software Foundation</organization>
-      <roles>
-        <role>Creator</role>
-      </roles>
-    </developer>
-    <developer>
-      <id>vsiveton</id>
-      <name>Vincent Siveton</name>
-      <email>vsiveton@apache.org</email>
-      <organization>Apache Software Foundation</organization>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-      <timezone>-5</timezone>
-    </developer>
-  </developers>
   <build>
     <plugins>
       <plugin>
