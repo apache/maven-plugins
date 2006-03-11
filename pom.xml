@@ -12,18 +12,6 @@
   <prerequisites>
     <maven>2.0.2</maven>
   </prerequisites>
-  <developers>
-    <developer>
-      <id>vsiveton</id>
-      <name>Vincent Siveton</name>
-      <email>vsiveton@apache.org</email>
-      <organization>Apache Software Foundation</organization>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-      <timezone>-5</timezone>
-    </developer>
-  </developers>
   <contributors>
     <contributor>
       <name>Naoki Nose</name>
