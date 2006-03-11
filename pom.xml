@@ -15,24 +15,6 @@
   </issueManagement>
   <inceptionYear>2005</inceptionYear>
   <developers>
-    <developer>
-      <id>vsiveton</id>
-      <name>Vincent Siveton</name>
-      <email>vsiveton@apache.org</email>
-      <organization>Apache Software Foundation</organization>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-      <timezone>-5</timezone>
-    </developer>
-    <developer>
-      <id>fgiust</id>
-      <name>Fabrizio Giustina</name>
-      <email>fgiust@apache.org</email>
-      <organization>openmind</organization>
-      <timezone>+1</timezone>
-    </developer>
-  </developers>
   <contributors>
     <contributor>
       <name>Joakim Erdfelt</name>
