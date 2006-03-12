@@ -14,7 +14,6 @@
     <url>http://jira.codehaus.org/browse/MCHECKSTYLE</url>
   </issueManagement>
   <inceptionYear>2005</inceptionYear>
-  <developers>
   <contributors>
     <contributor>
       <name>Joakim Erdfelt</name>
