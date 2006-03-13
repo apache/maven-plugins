@@ -25,6 +25,8 @@ import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
+import org.apache.maven.doxia.site.decoration.Menu;
+import org.apache.maven.doxia.site.decoration.MenuItem;
 import org.apache.maven.doxia.site.decoration.Skin;
 import org.apache.maven.doxia.site.decoration.inheritance.DecorationModelInheritanceAssembler;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
@@ -211,15 +213,9 @@ public abstract class AbstractSiteRenderingMojo
             props.put( "project.url", "NO_PROJECT_URL_SET" );
         }
 
+        // Legacy for the old ${parentProject} syntax
         MavenProject parentProject = project.getParent();
-        if ( parentProject != null && project.getUrl() != null && parentProject.getUrl() != null )
-        {
-            props.put( "parentProject", getProjectParentMenu( locale ) );
-        }
-        else
-        {
-            props.put( "parentProject", "" );
-        }
+        props.put( "parentProject", "<menu ref=\"parentProject\"/>" );
 
         siteDescriptorContent = StringUtils.interpolate( siteDescriptorContent, props );
 
@@ -235,6 +231,11 @@ public abstract class AbstractSiteRenderingMojo
         catch ( IOException e )
         {
             throw new MojoExecutionException( "Error reading site descriptor", e );
+        }
+
+        if ( parentProject != null && project.getUrl() != null && parentProject.getUrl() != null )
+        {
+            populateProjectParentMenu( decoration, locale );
         }
 
         if ( parentProject != null && project.getUrl() != null && parentProject.getUrl() != null )
@@ -295,45 +296,31 @@ public abstract class AbstractSiteRenderingMojo
         return result;
     }
 
-    /**
-     * Generate a menu for the parent project
-     *
-     * @param locale the locale wanted
-     * @return a XML menu for the parent project
-     */
-    private String getProjectParentMenu( Locale locale )
+    private void populateProjectParentMenu( DecorationModel decorationModel, Locale locale )
     {
-        // TODO [IMPORTANT] should go straight to decoration model
-
-        StringBuffer buffer = new StringBuffer();
-
-        String parentUrl = project.getParent().getUrl();
-        if ( parentUrl != null )
+        Menu menu = decorationModel.getMenuRef( "parentProject" );
+        if ( menu != null )
         {
-            if ( parentUrl.endsWith( "/" ) )
+            String parentUrl = project.getParent().getUrl();
+            if ( parentUrl != null )
             {
-                parentUrl += "index.html";
+                if ( parentUrl.endsWith( "/" ) )
+                {
+                    parentUrl += "index.html";
+                }
+                else
+                {
+                    parentUrl += "/index.html";
+                }
+
+                menu.setName( i18n.getString( "site-plugin", locale, "report.menu.parentproject" ) );
+
+                MenuItem item = new MenuItem();
+                item.setName( project.getParent().getName() );
+                item.setHref( parentUrl );
+                menu.addItem( item );
             }
-            else
-            {
-                parentUrl += "/index.html";
-            }
-
-            buffer.append( "<menu name=\"" );
-            buffer.append( i18n.getString( "site-plugin", locale, "report.menu.parentproject" ) );
-            buffer.append( "\">\n" );
-
-            buffer.append( "    <item name=\"" );
-            buffer.append( project.getParent().getName() );
-            buffer.append( "\" href=\"" );
-            buffer.append( parentUrl );
-            buffer.append( "\"/>\n" );
-
-            buffer.append( "</menu>\n" );
-
         }
-
-        return buffer.toString();
     }
 
     protected SiteRenderingContext createSiteRenderingContext( Locale locale, DecorationModel decoration,
