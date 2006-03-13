@@ -35,9 +35,9 @@ import java.util.Locale;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton </a>
  * @version $Id$
  * @goal project-info-summary
- * @todo this is the same for each category, should juts be one renderer. Maybe put it in Doxia instead, and instantiate directly from the site plugin?
- * @todo need to have a key prefix - report.information (Project Infos) vs report.project (Project Reports)
- * @todo have not moved keys correctly in translations yet
+ * @todo [IMPORTANT] this is the same for each category, should juts be one renderer. Maybe put it in Doxia instead, and instantiate directly from the site plugin?
+ * @todo [IMPORTANT] need to have a key prefix - report.information (Project Infos) vs report.project (Project Reports)
+ * @todo [IMPORTANT] have not moved keys correctly in translations yet
  */
 public class ProjectInfoSummaryReport
     extends AbstractMavenReport

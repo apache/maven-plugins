@@ -119,7 +119,7 @@ public class SiteMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        // TODO: use in :run as well? better way to call it?
+        // TODO [IMPORTANT]: use in :run as well? better way to call it?
         setDefaultAttributes();
 
         List reports = filterReports( this.reports );
@@ -224,8 +224,6 @@ public class SiteMojo
             }
 
         }
-
-        // TODO: [IMPORTANT] Be good to generate a module's summary page thats referenced off the Modules menu item.
 
         siteRenderer.render( documents.values(), context, outputDirectory, outputEncoding );
     }
