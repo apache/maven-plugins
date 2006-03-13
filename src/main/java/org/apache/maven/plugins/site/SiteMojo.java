@@ -88,6 +88,46 @@ public class SiteMojo
 
     private static final String DEFAULT_TEMPLATE = RESOURCE_DIR + "/default-site.vm";
 
+    //TODO: Replace this by FileUtils.getDefaultExcludes() when maven will use plexus-utils-1.2
+    private static final String[] DEFAULTEXCLUDES = {
+        // Miscellaneous typical temporary files
+        "**/*~",
+        "**/#*#",
+        "**/.#*",
+        "**/%*%",
+        "**/._*",
+
+        // CVS
+        "**/CVS",
+        "**/CVS/**",
+        "**/.cvsignore",
+
+        // SCCS
+        "**/SCCS",
+        "**/SCCS/**",
+
+        // Visual SourceSafe
+        "**/vssver.scc",
+
+        // Subversion
+        "**/.svn",
+        "**/.svn/**",
+
+        // Arch
+        "**/.arch-ids",
+        "**/.arch-ids/**",
+
+        //Bazaar
+        "**/.bzr",
+        "**/.bzr/**",
+
+        //SurroundSCM
+        "**/.MySCMServerInfo",
+
+        // Mac
+        "**/.DS_Store"
+    };
+
     /**
      * Alternative directory for xdoc source, useful for m1 to m2 migration
      *
@@ -303,7 +343,7 @@ public class SiteMojo
 
                 // Try to find duplicate files
                 Map duplicate = new LinkedHashMap();
-                String defaultExcludes = StringUtils.join( FileUtils.getDefaultExcludes(), "," );
+                String defaultExcludes = StringUtils.join( DEFAULTEXCLUDES, "," );
                 if ( locale.getLanguage().equals( defaultLocale.getLanguage() ) )
                 {
                     for ( Iterator it = localesList.iterator(); it.hasNext(); )
@@ -1528,5 +1568,4 @@ public class SiteMojo
             }
         }
     }
-
 }
