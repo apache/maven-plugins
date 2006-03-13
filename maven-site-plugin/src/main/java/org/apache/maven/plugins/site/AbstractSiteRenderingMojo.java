@@ -312,6 +312,8 @@ public abstract class AbstractSiteRenderingMojo
      */
     private String getProjectParentMenu( Locale locale )
     {
+        // TODO [IMPORTANT] should go straight to decoration model
+
         StringBuffer buffer = new StringBuffer();
 
         String parentUrl = project.getParent().getUrl();

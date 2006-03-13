@@ -58,8 +58,6 @@ import java.util.Map;
  * @version $Id$
  * @goal site
  * @requiresDependencyResolution test
- * @todo [IMPORTANT] refactor out the parts that could go to doxia-site-renderer/maven-reporting-impl to make this much thinner
- * @todo [IMPORTANT] map out renderers in advance, accounting for duplicates, to make site:run easier (eg index -> this report, project-info -> project info summary report, foo -> src/site/apt/foo.apt)
  */
 public class SiteMojo
     extends AbstractSiteRenderingMojo
@@ -131,6 +129,7 @@ public class SiteMojo
 
         try
         {
+            // TODO [IMPORTANT] map out renderers in advance, accounting for duplicates, to make site:run easier (eg index -> this report, project-info -> project info summary report, foo -> src/site/apt/foo.apt), then push to site renderer
             List localesList = initLocalesList();
 
             // Default is first in the list
@@ -490,6 +489,7 @@ public class SiteMojo
                 href = summary.getOutputName() + ".html";
             }
 
+            // TODO [IMPORTANT]: this should go straight to the doxia model
             buffer.append( "    <item name=\"" );
             buffer.append( name );
             buffer.append( "\"" );
@@ -525,6 +525,7 @@ public class SiteMojo
      */
     private String getModulesMenu( Locale locale, String menuItems )
     {
+        // TODO [IMPORTANT]: this should go straight to the doxia model
         StringBuffer buffer = new StringBuffer();
 
         buffer.append( "<menu name=\"" );
@@ -584,6 +585,7 @@ public class SiteMojo
 
     private static void appendMenuItem( StringBuffer buffer, String name, String href )
     {
+        // TODO [IMPORTANT]: this should go straight to the doxia model
         if ( href != null )
         {
             buffer.append( "    <item name=\"" );
@@ -727,6 +729,7 @@ public class SiteMojo
      *
      * @param duplicate a map of duplicate files
      * @param locale    the current locale
+     * @todo [IMPORTANT] move to site renderer
      */
     private void checkDuplicates( Map duplicate, Locale locale )
         throws MojoFailureException
