@@ -20,7 +20,6 @@ import org.apache.maven.doxia.module.xdoc.XdocSiteModule;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.siterenderer.RendererException;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
-import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -59,19 +58,18 @@ import java.util.Map;
  * @version $Id$
  * @goal site
  * @requiresDependencyResolution test
- * @todo refactor out the parts that could go to doxia-site-renderer/maven-reporting-impl to make this much thinner
- * @todo map out renderers in advance, accounting for duplicates, to make site:run easier (eg index -> this report, project-info -> project info summary report, foo -> src/site/apt/foo.apt)
- * @todo GO OVER OTHER TODOS IN THIS PROJECT! :)
+ * @todo [IMPORTANT] refactor out the parts that could go to doxia-site-renderer/maven-reporting-impl to make this much thinner
+ * @todo [IMPORTANT] map out renderers in advance, accounting for duplicates, to make site:run easier (eg index -> this report, project-info -> project info summary report, foo -> src/site/apt/foo.apt)
  */
 public class SiteMojo
-    extends AbstractSiteMojo
+    extends AbstractSiteRenderingMojo
 {
 
     /**
      * Alternative directory for xdoc source, useful for m1 to m2 migration
      *
-     * @parameter expression="${basedir}/xdocs"
-     * @required
+     * @parameter default-value="${basedir}/xdocs"
+     * @deprecated
      */
     private File xdocDirectory;
 
@@ -115,14 +113,6 @@ public class SiteMojo
     private boolean generateReports;
 
     /**
-     * Site renderer. Not included in the abstract mojo so that deploy/attach-descriptor don't need to go through it's
-     * initialisation.
-     *
-     * @component
-     */
-    protected Renderer siteRenderer;
-
-    /**
      * Generate the project site
      * <p/>
      * throws MojoExecutionException if any
@@ -132,20 +122,8 @@ public class SiteMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        if ( attributes == null )
-        {
-            attributes = new HashMap();
-        }
-
-        if ( attributes.get( "project" ) == null )
-        {
-            attributes.put( "project", project );
-        }
-
-        if ( attributes.get( "outputEncoding" ) == null )
-        {
-            attributes.put( "outputEncoding", outputEncoding );
-        }
+        // TODO: use in :run as well? better way to call it?
+        setDefaultAttributes();
 
         List reports = filterReports( this.reports );
 
@@ -159,35 +137,33 @@ public class SiteMojo
             Locale defaultLocale = (Locale) localesList.get( 0 );
             Locale.setDefault( defaultLocale );
 
-            // Sort projectInfos and projectReports with the default locale setted
-            // TODO Beautify the output by sorting with each current locale
-            Comparator reportComparator = new ReportComparator();
-            for ( Iterator i = categories.values().iterator(); i.hasNext(); )
-            {
-                List reportSet = (List) i.next();
-                Collections.sort( reportSet, reportComparator );
-            }
-
             for ( Iterator iterator = localesList.iterator(); iterator.hasNext(); )
             {
                 Locale locale = (Locale) iterator.next();
 
-                File outputDirectory = getOutputDirectory( locale, defaultLocale );
-
-                // Safety
-                if ( !outputDirectory.exists() )
+                // Sort projectInfos and projectReports
+                Comparator reportComparator = new ReportComparator( locale );
+                for ( Iterator i = categories.values().iterator(); i.hasNext(); )
                 {
-                    outputDirectory.mkdirs();
+                    List reportSet = (List) i.next();
+                    Collections.sort( reportSet, reportComparator );
                 }
 
+                File outputDirectory = getOutputDirectory( locale, defaultLocale );
+
                 // Generate static site
-                File siteDirectoryFile = siteDirectory;
-                File xdocDirectoryFile = xdocDirectory;
+                File siteDirectoryFile;
+                File xdocDirectoryFile;
                 if ( !locale.getLanguage().equals( defaultLocale.getLanguage() ) )
                 {
                     siteDirectoryFile = new File( siteDirectory, locale.getLanguage() );
 
                     xdocDirectoryFile = new File( xdocDirectory, locale.getLanguage() );
+                }
+                else
+                {
+                    siteDirectoryFile = siteDirectory;
+                    xdocDirectoryFile = xdocDirectory;
                 }
 
                 // Try to find duplicate files
@@ -222,9 +198,7 @@ public class SiteMojo
 
                 DecorationModel decoration = getDecorationModel( categories, locale );
 
-                File skinArtifactFile = getSkinArtifactFile( decoration );
-
-                SiteRenderingContext context = createSiteRenderingContext( skinArtifactFile, locale, decoration );
+                SiteRenderingContext context = createSiteRenderingContext( locale, decoration, siteRenderer );
 
                 //Generate reports
                 List generatedReportsFileName = Collections.EMPTY_LIST;
@@ -236,8 +210,7 @@ public class SiteMojo
                 // Try to generate the index.html
                 String displayLanguage = locale.getDisplayLanguage( Locale.ENGLISH );
 
-                // TODO: Be good to generate a module's summary page thats referenced off the
-                // Modules menu item.
+                // TODO: [IMPORTANT] Be good to generate a module's summary page thats referenced off the Modules menu item.
 
                 // Log if a user override a report file
                 for ( Iterator it = generatedReportsFileName.iterator(); it.hasNext(); )
@@ -265,14 +238,6 @@ public class SiteMojo
                         siteRenderer.render( xdocDirectoryFile, outputDirectory, xdoc.getSourceDirectory(),
                                              xdoc.getExtension(), xdoc.getParserId(), context, outputEncoding );
                     }
-                }
-
-                copyResources( outputDirectory, skinArtifactFile );
-
-                // Copy site resources
-                if ( resourcesDirectory != null && resourcesDirectory.exists() )
-                {
-                    copyDirectory( resourcesDirectory, outputDirectory );
                 }
 
                 if ( generatedSiteDirectory.exists() )
@@ -484,7 +449,7 @@ public class SiteMojo
     {
         if ( reports.size() > 0 )
         {
-            // TODO: this is a hack, change to a different class - Category instead of MavenReport
+            // TODO: [IMPORTANT] this is a hack, change to a different class - Category instead of MavenReport
             MavenReport summary = null;
             for ( Iterator i = reports.iterator(); i.hasNext() && summary == null; )
             {
@@ -685,6 +650,7 @@ public class SiteMojo
                     outputFile.getParentFile().mkdirs();
                 }
 
+                // TODO: outputDirectory should be in rendering context
                 siteRenderer.generateDocument(
                     new OutputStreamWriter( new FileOutputStream( outputFile ), outputEncoding ), sink, context );
             }
@@ -703,6 +669,13 @@ public class SiteMojo
         {
             file = new File( outputDirectory, locale.getLanguage() );
         }
+
+        // Safety
+        if ( !file.exists() )
+        {
+            file.mkdirs();
+        }
+
         return file;
     }
 

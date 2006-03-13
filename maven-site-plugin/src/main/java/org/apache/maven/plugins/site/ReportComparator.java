@@ -18,25 +18,34 @@ package org.apache.maven.plugins.site;
 
 import org.apache.maven.reporting.MavenReport;
 
+import java.text.Collator;
 import java.util.Comparator;
 import java.util.Locale;
 
 /**
  * Sorts reports.
  *
- * @todo move to reporting API?
- * @todo allow reports to define their order in some other way?
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
+ * @todo move to reporting API?
+ * @todo allow reports to define their order in some other way?
  */
 public class ReportComparator
     implements Comparator
 {
+    private final Locale locale;
+
+    public ReportComparator( Locale locale )
+    {
+        this.locale = locale;
+    }
+
     public int compare( Object o1, Object o2 )
     {
         MavenReport r1 = (MavenReport) o1;
         MavenReport r2 = (MavenReport) o2;
 
-        return r1.getName( Locale.getDefault() ).compareTo( r2.getName( Locale.getDefault() ) );
+        Collator collator = Collator.getInstance( locale );
+        return collator.compare( r1.getName( locale ), r2.getName( locale ) );
     }
 }

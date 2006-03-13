@@ -17,7 +17,6 @@ package org.apache.maven.plugins.site;
  */
 
 import org.apache.maven.doxia.site.decoration.DecorationModel;
-import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -46,7 +45,7 @@ import java.util.Map;
  * @goal run
  */
 public class SiteRunMojo
-    extends AbstractSiteMojo
+    extends AbstractSiteRenderingMojo
 {
     /**
      * Where to create the dummy web application.
@@ -61,14 +60,6 @@ public class SiteRunMojo
      * @parameter expression="${port}" default-value="8080"
      */
     private int port;
-
-    /**
-     * Site renderer. Not included in the abstract mojo so that deploy/attach-descriptor don't need to go through it's
-     * initialisation.
-     *
-     * @component
-     */
-    protected Renderer siteRenderer;
 
     private static final int MAX_IDLE_TIME = 30000;
 
@@ -155,19 +146,10 @@ public class SiteRunMojo
 
         try
         {
-            File skinArtifactFile = getSkinArtifactFile( decorationModel );
-
             SiteRenderingContext context =
-                createSiteRenderingContext( skinArtifactFile, Locale.getDefault(), decorationModel );
+                createSiteRenderingContext( Locale.getDefault(), decorationModel, siteRenderer );
 
-
-            copyResources( tempWebappDirectory, skinArtifactFile );
-
-            // Copy site resources
-            if ( resourcesDirectory != null && resourcesDirectory.exists() )
-            {
-                copyDirectory( resourcesDirectory, tempWebappDirectory );
-            }
+            siteRenderer.copyResources( tempWebappDirectory, context );
 
             webapp.setAttribute( "context", context );
         }
