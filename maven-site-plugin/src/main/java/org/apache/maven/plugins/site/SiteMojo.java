@@ -192,37 +192,37 @@ public class SiteMojo
         {
             MavenReport report = (MavenReport) i.next();
 
-            getLog().info( "Generate \"" + report.getName( locale ) + "\" report." );
-
             String outputName = report.getOutputName() + ".html";
 
+            String localReportName = report.getName( locale );
             if ( documents.containsKey( outputName ) )
             {
-                getLog().info(
-                    "Override the generated file \"" + outputName + "\" for the " + displayLanguage + " version." );
-
-                documents.remove( outputName );
+                getLog().info( "Skipped \"" + localReportName + "\" report, file \"" + outputName +
+                    "\" already exists for the " + displayLanguage + " version." );
             }
-
-            report.setReportOutputDirectory( outputDirectory );
-
-            SiteRendererSink sink = siteRenderer.createSink( new RenderingContext( siteDirectory, outputName ) );
-
-            report.generate( sink, locale );
-
-            if ( !report.isExternalReport() )
+            else
             {
-                File outputFile = new File( outputDirectory, outputName );
+                getLog().info( "Generate \"" + localReportName + "\" report." );
 
-                if ( !outputFile.getParentFile().exists() )
+                report.setReportOutputDirectory( outputDirectory );
+
+                SiteRendererSink sink = siteRenderer.createSink( new RenderingContext( siteDirectory, outputName ) );
+
+                report.generate( sink, locale );
+
+                if ( !report.isExternalReport() )
                 {
-                    outputFile.getParentFile().mkdirs();
+                    File outputFile = new File( outputDirectory, outputName );
+
+                    if ( !outputFile.getParentFile().exists() )
+                    {
+                        outputFile.getParentFile().mkdirs();
+                    }
+
+                    siteRenderer.generateDocument(
+                        new OutputStreamWriter( new FileOutputStream( outputFile ), outputEncoding ), sink, context );
                 }
-
-                siteRenderer.generateDocument(
-                    new OutputStreamWriter( new FileOutputStream( outputFile ), outputEncoding ), sink, context );
             }
-
         }
 
         siteRenderer.render( documents.values(), context, outputDirectory, outputEncoding );
