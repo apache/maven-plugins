@@ -21,6 +21,19 @@ How to Use
 -----
 
 
+** How to assemble your project with your project modules only.
+  
+  There may be some situations that you only needed the jars of your project 
+  modules. You may exclude their dependencies but what if you have 10 
+  modules with 10 dependencies each? Isn't it a bit hassle to exclude 100 where 
+  you only needed 10. To achieve this goal, set the "projectModulesOnly" 
+  parameter to true and maven will do it for you.
+
+-----
+ mvn assembly:assembly -DprojectModulesOnly=true
+-----
+
+
 * How to use assembly:assembly using predefined descriptor ids.
 
 ----
