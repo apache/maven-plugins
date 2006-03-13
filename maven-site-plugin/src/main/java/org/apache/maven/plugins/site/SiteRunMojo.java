@@ -149,7 +149,8 @@ public class SiteRunMojo
             SiteRenderingContext context =
                 createSiteRenderingContext( Locale.getDefault(), decorationModel, siteRenderer );
 
-            siteRenderer.copyResources( tempWebappDirectory, context );
+            // TODO
+            siteRenderer.copyResources( context, new File( siteDirectory, "resources" ), tempWebappDirectory );
 
             webapp.setAttribute( "context", context );
         }

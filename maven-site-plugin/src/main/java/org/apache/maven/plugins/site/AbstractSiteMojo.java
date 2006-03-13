@@ -63,7 +63,7 @@ public abstract class AbstractSiteMojo
      *
      * @return a list of <code>Locale</code>
      */
-    protected List initLocalesList()
+    protected List getAvailableLocales()
     {
         List localesList = new ArrayList();
         if ( locales != null )

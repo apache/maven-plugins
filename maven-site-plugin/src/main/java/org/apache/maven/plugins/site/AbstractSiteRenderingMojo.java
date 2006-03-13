@@ -67,8 +67,7 @@ public abstract class AbstractSiteRenderingMojo
     /**
      * Specifies the output encoding.
      *
-     * @parameter expression="${outputEncoding}"
-     * default-value="ISO-8859-1"
+     * @parameter expression="${outputEncoding}" default-value="ISO-8859-1"
      */
     protected String outputEncoding;
 
@@ -145,14 +144,6 @@ public abstract class AbstractSiteRenderingMojo
      * @parameter expression="${attributes}"
      */
     protected Map attributes;
-
-    /**
-     * Directory which contains the resources for the site.
-     *
-     * @parameter expression="${basedir}/src/site/resources"
-     * @required
-     */
-    protected File resourcesDirectory;
 
     /**
      * Site renderer.
@@ -369,14 +360,14 @@ public abstract class AbstractSiteRenderingMojo
             {
                 throw new MojoFailureException( "Template file '" + templateFile + "' does not exist" );
             }
-            context = siteRenderer.createContextForTemplate( templateFile, attributes, decoration, locale,
-                                                             project.getName(), skinFile, resourcesDirectory );
+            context = siteRenderer.createContextForTemplate( templateFile, skinFile, attributes, decoration,
+                                                             project.getName(), locale );
         }
         else
         {
-            context = siteRenderer.createContextForSkin( skinFile, attributes, decoration, locale, project.getName(),
-                                                         resourcesDirectory );
+            context = siteRenderer.createContextForSkin( skinFile, attributes, decoration, project.getName(), locale );
         }
+
         return context;
     }
 

@@ -52,7 +52,7 @@ public class SiteDescriptorAttachMojo
     public void execute()
         throws MojoExecutionException
     {
-        List localesList = initLocalesList();
+        List localesList = getAvailableLocales();
 
         for ( Iterator iterator = localesList.iterator(); iterator.hasNext(); )
         {

@@ -16,7 +16,7 @@ package org.apache.maven.plugins.site;
  * limitations under the License.
  */
 
-import org.apache.maven.doxia.module.xdoc.XdocSiteModule;
+import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.Menu;
 import org.apache.maven.doxia.site.decoration.MenuItem;
@@ -30,9 +30,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
@@ -42,12 +40,10 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -78,6 +74,7 @@ public class SiteMojo
      *
      * @parameter alias="workingDirectory" expression="${project.build.directory}/generated-site"
      * @required
+     * @todo should we deprecate in favour of reports?
      */
     private File generatedSiteDirectory;
 
@@ -131,8 +128,7 @@ public class SiteMojo
 
         try
         {
-            // TODO [IMPORTANT] map out renderers in advance, accounting for duplicates, to make site:run easier (eg index -> this report, project-info -> project info summary report, foo -> src/site/apt/foo.apt), then push to site renderer
-            List localesList = initLocalesList();
+            List localesList = getAvailableLocales();
 
             // Default is first in the list
             Locale defaultLocale = (Locale) localesList.get( 0 );
@@ -150,101 +146,9 @@ public class SiteMojo
                     Collections.sort( reportSet, reportComparator );
                 }
 
-                File outputDirectory = getOutputDirectory( locale, defaultLocale );
-
-                // Generate static site
-                File siteDirectoryFile;
-                File xdocDirectoryFile;
-                if ( !locale.getLanguage().equals( defaultLocale.getLanguage() ) )
-                {
-                    siteDirectoryFile = new File( siteDirectory, locale.getLanguage() );
-
-                    xdocDirectoryFile = new File( xdocDirectory, locale.getLanguage() );
-                }
-                else
-                {
-                    siteDirectoryFile = siteDirectory;
-                    xdocDirectoryFile = xdocDirectory;
-                }
-
-                // Try to find duplicate files
-                Map duplicate = new LinkedHashMap();
-                String defaultExcludes = StringUtils.join( FileUtils.getDefaultExcludes(), "," );
-                if ( locale.getLanguage().equals( defaultLocale.getLanguage() ) )
-                {
-                    for ( Iterator it = localesList.iterator(); it.hasNext(); )
-                    {
-                        Locale l = (Locale) it.next();
-                        defaultExcludes += "," + l.getLanguage() + "/**";
-                    }
-                }
-
-                if ( siteDirectoryFile.exists() )
-                {
-                    // TODO: avoid this hardcoding - the resources dir might be elsewhere. We should really test for duplicate targets, not guess at what source files will be html.
-                    // add the site's 'resources' directory to the default exclude list
-                    String actualExcludes = defaultExcludes + "," + "resources/**";
-
-                    tryToFindDuplicates( siteDirectoryFile, actualExcludes, duplicate );
-                }
-
-                // Handle the GeneratedSite Directory
-                if ( generatedSiteDirectory.exists() )
-                {
-                    tryToFindDuplicates( generatedSiteDirectory, defaultExcludes, duplicate );
-                }
-
-                // Exception if a file is duplicate
-                checkDuplicates( duplicate, locale );
-
-                DecorationModel decoration = getDecorationModel( categories, locale );
-
-                SiteRenderingContext context = createSiteRenderingContext( locale, decoration, siteRenderer );
-
-                //Generate reports
-                List generatedReportsFileName = Collections.EMPTY_LIST;
-                if ( reports != null )
-                {
-                    generatedReportsFileName = generateReportsPages( reports, outputDirectory, defaultLocale, context );
-                }
-
-                // Try to generate the index.html
-                String displayLanguage = locale.getDisplayLanguage( Locale.ENGLISH );
-
-                // TODO: [IMPORTANT] Be good to generate a module's summary page thats referenced off the Modules menu item.
-
-                // Log if a user override a report file
-                for ( Iterator it = generatedReportsFileName.iterator(); it.hasNext(); )
-                {
-                    String reportFileName = (String) it.next();
-
-                    if ( duplicate.get( reportFileName ) != null )
-                    {
-                        getLog().info( "Override the generated file \"" + reportFileName + "\" for the " +
-                            displayLanguage + " version." );
-                    }
-                }
-
-                siteRenderer.render( siteDirectoryFile, outputDirectory, context );
-
-                // Check if ${basedir}/xdocs is existing
-                if ( xdocDirectory.exists() )
-                {
-                    File[] fileNames = xdocDirectoryFile.listFiles();
-
-                    if ( fileNames.length > 0 )
-                    {
-                        XdocSiteModule xdoc = new XdocSiteModule();
-
-                        siteRenderer.render( xdocDirectoryFile, outputDirectory, xdoc.getSourceDirectory(),
-                                             xdoc.getExtension(), xdoc.getParserId(), context, outputEncoding );
-                    }
-                }
-
-                if ( generatedSiteDirectory.exists() )
-                {
-                    siteRenderer.render( generatedSiteDirectory, outputDirectory, context );
-                }
+                DecorationModel decorationModel = getDecorationModel( categories, locale );
+                renderLocale( locale, defaultLocale, reports,
+                              createSiteRenderingContext( locale, decorationModel, siteRenderer ) );
             }
         }
         catch ( MavenReportException e )
@@ -259,6 +163,71 @@ public class SiteMojo
         {
             throw new MojoExecutionException( "Error during site generation", e );
         }
+    }
+
+    private void renderLocale( Locale locale, Locale defaultLocale, List reports, SiteRenderingContext context )
+        throws IOException, RendererException, MavenReportException
+    {
+        String displayLanguage = locale.getDisplayLanguage( Locale.ENGLISH );
+
+        File outputDirectory = getOutputDirectory( locale, defaultLocale );
+
+        // Generate static site
+        if ( !locale.getLanguage().equals( defaultLocale.getLanguage() ) )
+        {
+            context.addSiteDirectory( new File( siteDirectory, locale.getLanguage() ) );
+            context.addModuleDirectory( new File( xdocDirectory, locale.getLanguage() ), "xdoc" );
+        }
+        else
+        {
+            context.addSiteDirectory( siteDirectory );
+            context.addModuleDirectory( xdocDirectory, "xdoc" );
+        }
+
+        context.addSiteDirectory( generatedSiteDirectory );
+
+        Map documents = siteRenderer.locateDocumentFiles( context );
+
+        for ( Iterator i = reports.iterator(); i.hasNext(); )
+        {
+            MavenReport report = (MavenReport) i.next();
+
+            getLog().info( "Generate \"" + report.getName( locale ) + "\" report." );
+
+            String outputName = report.getOutputName() + ".html";
+
+            if ( documents.containsKey( outputName ) )
+            {
+                getLog().info(
+                    "Override the generated file \"" + outputName + "\" for the " + displayLanguage + " version." );
+
+                documents.remove( outputName );
+            }
+
+            report.setReportOutputDirectory( outputDirectory );
+
+            SiteRendererSink sink = siteRenderer.createSink( new RenderingContext( siteDirectory, outputName ) );
+
+            report.generate( sink, locale );
+
+            if ( !report.isExternalReport() )
+            {
+                File outputFile = new File( outputDirectory, outputName );
+
+                if ( !outputFile.getParentFile().exists() )
+                {
+                    outputFile.getParentFile().mkdirs();
+                }
+
+                siteRenderer.generateDocument(
+                    new OutputStreamWriter( new FileOutputStream( outputFile ), outputEncoding ), sink, context );
+            }
+
+        }
+
+        // TODO: [IMPORTANT] Be good to generate a module's summary page thats referenced off the Modules menu item.
+
+        siteRenderer.render( documents.values(), context, outputDirectory, outputEncoding );
     }
 
     private DecorationModel getDecorationModel( Map categories, Locale locale )
@@ -355,6 +324,8 @@ public class SiteMojo
                         item.setCollapse( true );
                     }
 
+                    menu.addItem( item );
+
                     for ( Iterator j = reports.iterator(); j.hasNext(); )
                     {
                         MavenReport report = (MavenReport) j.next();
@@ -363,7 +334,7 @@ public class SiteMojo
                         subitem.setName( report.getName( locale ) );
                         subitem.setHref( report.getOutputName() + ".html" );
 
-                        item.addItem( subitem );
+                        item.getItems().add( subitem );
                     }
                 }
                 else
@@ -558,61 +529,6 @@ public class SiteMojo
 
     // Generate specific pages
 
-    /**
-     * Generate reports pages
-     *
-     * @param reports
-     * @param localeOutputDirectory
-     */
-    private List generateReportsPages( List reports, File localeOutputDirectory, Locale defaultLocale,
-                                       SiteRenderingContext context )
-        throws RendererException, IOException, MavenReportException
-    {
-        List generatedReportsFileName = new ArrayList();
-
-        for ( Iterator j = reports.iterator(); j.hasNext(); )
-        {
-            MavenReport report = (MavenReport) j.next();
-
-            Locale locale = context.getLocale();
-            getLog().info( "Generate \"" + report.getName( locale ) + "\" report." );
-
-            report.setReportOutputDirectory( localeOutputDirectory );
-
-            String reportFileName = report.getOutputName();
-
-            if ( locale.equals( defaultLocale ) )
-            {
-                generatedReportsFileName.add( reportFileName );
-            }
-            else
-            {
-                generatedReportsFileName.add( locale.getLanguage() + File.separator + reportFileName );
-            }
-
-            String outputFileName = reportFileName + ".html";
-
-            SiteRendererSink sink = siteRenderer.createSink( siteDirectory, outputFileName );
-
-            report.generate( sink, locale );
-
-            if ( !report.isExternalReport() )
-            {
-                File outputFile = new File( localeOutputDirectory, outputFileName );
-
-                if ( !outputFile.getParentFile().exists() )
-                {
-                    outputFile.getParentFile().mkdirs();
-                }
-
-                // TODO: outputDirectory should be in rendering context
-                siteRenderer.generateDocument(
-                    new OutputStreamWriter( new FileOutputStream( outputFile ), outputEncoding ), sink, context );
-            }
-        }
-        return generatedReportsFileName;
-    }
-
     private File getOutputDirectory( Locale locale, Locale defaultLocale )
     {
         File file;
@@ -632,106 +548,6 @@ public class SiteMojo
         }
 
         return file;
-    }
-
-    /**
-     * Convenience method that try to find duplicate files in sub-directories of a given directory.
-     * <p>The scan is case sensitive.</p>
-     *
-     * @param directory       the directory to scan
-     * @param defaultExcludes files patterns to be exclude from the search
-     * @param duplicate       the map to update
-     * @throws IOException if any
-     */
-    private static void tryToFindDuplicates( File directory, String defaultExcludes, Map duplicate )
-        throws IOException
-    {
-        List siteFiles = FileUtils.getFileNames( directory, null, defaultExcludes, false );
-        for ( Iterator it = siteFiles.iterator(); it.hasNext(); )
-        {
-            String currentFile = (String) it.next();
-
-            int endIndex = currentFile.lastIndexOf( "." );
-            if ( currentFile.lastIndexOf( File.separator ) == -1 )
-            {
-                // ignore files directly in the directory
-            }
-            else if ( endIndex == -1 || currentFile.startsWith( "." ) )
-            {
-                // ignore files without extension
-            }
-            else
-            {
-
-                int beginIndex = currentFile.indexOf( File.separator ) + 1;
-                String key = currentFile.substring( beginIndex, endIndex ).toLowerCase( Locale.getDefault() );
-
-                List tmp = (List) duplicate.get( key );
-                if ( tmp == null )
-                {
-                    tmp = new ArrayList();
-                    duplicate.put( key, tmp );
-                }
-                tmp.add( currentFile );
-            }
-        }
-    }
-
-    /**
-     * Throw an exception if a file is duplicate.
-     *
-     * @param duplicate a map of duplicate files
-     * @param locale    the current locale
-     * @todo [IMPORTANT] move to site renderer
-     */
-    private void checkDuplicates( Map duplicate, Locale locale )
-        throws MojoFailureException
-    {
-        if ( duplicate.size() > 0 )
-        {
-            StringBuffer sb = null;
-
-            for ( Iterator it = duplicate.entrySet().iterator(); it.hasNext(); )
-            {
-                Map.Entry entry = (Map.Entry) it.next();
-                Collection values = (Collection) entry.getValue();
-
-                if ( values.size() > 1 )
-                {
-                    if ( sb == null )
-                    {
-                        sb = new StringBuffer(
-                            "Some files are duplicates in the site directory or in the generated-site directory. " );
-                        sb.append( "\n" );
-                        sb.append( "Review the following files for the \"" );
-                        sb.append( locale.getDisplayLanguage( Locale.ENGLISH ) );
-                        sb.append( "\" version:" );
-                    }
-
-                    sb.append( "\n" );
-                    sb.append( entry.getKey() );
-                    sb.append( "\n" );
-
-                    for ( Iterator it2 = values.iterator(); it2.hasNext(); )
-                    {
-                        String current = (String) it2.next();
-
-                        sb.append( "\t" );
-                        sb.append( current );
-
-                        if ( it2.hasNext() )
-                        {
-                            sb.append( "\n" );
-                        }
-                    }
-                }
-            }
-
-            if ( sb != null )
-            {
-                throw new MojoFailureException( sb.toString() );
-            }
-        }
     }
 
 }
