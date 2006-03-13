@@ -599,16 +599,27 @@ public abstract class AbstractAssemblyMojo
             {
                 filter.add( new ExcludesArtifactFilter( dependencySet.getExcludes() ) );
             }
-
+            
+            Set set;
+            
+            if( projectModulesOnly )
+            {
+                set = getModules();
+            }
+            else
+            {
+                set = getDependencies();
+            }
+            
             // TODO: includes and excludes
-            for ( Iterator j = getDependencies().iterator(); j.hasNext(); )
+            for ( Iterator j = set.iterator(); j.hasNext(); )
             {
                 Artifact artifact = (Artifact) j.next();
 
                 if ( filter.include( artifact ) )
                 {
                     String name = artifact.getFile().getName();
-                    
+                                       
                     if ( dependencySet.isUnpack() )
                     {
                         // TODO: something like zipfileset in plexus-archiver
