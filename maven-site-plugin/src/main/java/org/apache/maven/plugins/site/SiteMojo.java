@@ -330,11 +330,14 @@ public class SiteMojo
                     {
                         MavenReport report = (MavenReport) j.next();
 
-                        MenuItem subitem = new MenuItem();
-                        subitem.setName( report.getName( locale ) );
-                        subitem.setHref( report.getOutputName() + ".html" );
+                        if ( !report.equals( summary ) )
+                        {
+                            MenuItem subitem = new MenuItem();
+                            subitem.setName( report.getName( locale ) );
+                            subitem.setHref( report.getOutputName() + ".html" );
 
-                        item.getItems().add( subitem );
+                            item.getItems().add( subitem );
+                        }
                     }
                 }
                 else
