@@ -17,6 +17,7 @@ package org.apache.maven.plugin.war;
  */
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
@@ -35,7 +36,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 
 public abstract class AbstractWarMojo
     extends AbstractMojo
@@ -82,6 +82,13 @@ public abstract class AbstractWarMojo
     private String webXml;
 
     /**
+     * The path to the context.xml file to use.
+     *
+     * @parameter expression="${maven.war.contextxml}"
+     */
+    private String contextXml;
+
+    /**
      * Directory to unpack dependent WARs into if needed
      *
      * @parameter expression="${project.build.directory}/war/work"
@@ -98,6 +105,8 @@ public abstract class AbstractWarMojo
     protected ArchiverManager archiverManager;
 
     public static final String WEB_INF = "WEB-INF";
+
+    public static final String META_INF = "META-INF";
 
     /**
      * The comma separated list of tokens to include in the WAR.
@@ -186,6 +195,16 @@ public abstract class AbstractWarMojo
         this.webXml = webXml;
     }
 
+    public String getContextXml()
+    {
+        return contextXml;
+    }
+
+    public void setContextXml( String contextXml )
+    {
+        this.contextXml = contextXml;
+    }
+
     /**
      * Returns a string array of the excludes to be used
      * when assembling/copying the war.
@@ -201,10 +220,17 @@ public abstract class AbstractWarMojo
         }
 
         // if webXML is specified, omit the one in the source directory
-        if ( getWebXml() != null && !"".equals( getWebXml() ) )
+        if ( getWebXml() != null && !"".trim().equals( getWebXml() ) )
         {
             excludeList.add( "**/" + WEB_INF + "/web.xml" );
         }
+
+        // if contextXML is specified, omit the one in the source directory
+        if ( StringUtils.isNotEmpty( getContextXml() ) )
+        {
+            excludeList.add( "**/" + META_INF + "/context.xml" );
+        }
+
 
         return (String[]) excludeList.toArray( EMPTY_STRING_ARRAY );
     }
@@ -253,12 +279,14 @@ public abstract class AbstractWarMojo
         webappDirectory.mkdirs();
 
         File webinfDir = new File( webappDirectory, WEB_INF );
-
         webinfDir.mkdirs();
+
+        File metainfDir = new File( webappDirectory, META_INF );
+        metainfDir.mkdirs();
 
         try
         {
-            copyResources( getWarSourceDirectory(), webappDirectory, getWebXml() );
+            copyResources( getWarSourceDirectory(), webappDirectory, getWebXml(), getContextXml() );
 
             buildWebapp( getProject(), webappDirectory );
         }
@@ -281,7 +309,7 @@ public abstract class AbstractWarMojo
      * @param webXml the path to a custom web.xml
      * @throws java.io.IOException if an error occured while copying resources
      */
-    public void copyResources( File sourceDirectory, File webappDirectory, String webXml )
+    public void copyResources( File sourceDirectory, File webappDirectory, String webXml, String contextXml )
         throws IOException
     {
         if ( !sourceDirectory.equals( webappDirectory ) )
@@ -297,11 +325,18 @@ public abstract class AbstractWarMojo
                 }
             }
 
-            if ( webXml != null && !"".equals( webXml ) )
+            if ( StringUtils.isNotEmpty( webXml ) )
             {
                 //rename to web.xml
                 File webinfDir = new File( webappDirectory, WEB_INF );
                 FileUtils.copyFile( new File( webXml ), new File( webinfDir, "/web.xml" ) );
+            }
+
+            if ( StringUtils.isNotEmpty( contextXml ) )
+            {
+                //rename to web.xml
+                File metainfDir = new File( webappDirectory, META_INF );
+                FileUtils.copyFile( new File( contextXml ), new File( metainfDir, "/context.xml" ) );
             }
         }
     }
