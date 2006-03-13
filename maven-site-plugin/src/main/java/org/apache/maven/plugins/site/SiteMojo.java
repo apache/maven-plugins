@@ -18,6 +18,8 @@ package org.apache.maven.plugins.site;
 
 import org.apache.maven.doxia.module.xdoc.XdocSiteModule;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
+import org.apache.maven.doxia.site.decoration.Menu;
+import org.apache.maven.doxia.site.decoration.MenuItem;
 import org.apache.maven.doxia.siterenderer.RendererException;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
@@ -264,19 +266,19 @@ public class SiteMojo
     {
         Map props = new HashMap();
 
-        // TODO: can we replace these with an XML tag?
-        if ( reports != null )
+        // This is to support the deprecated ${reports} and ${modules} tags.
+        String menus = "";
+        for ( Iterator i = categories.keySet().iterator(); i.hasNext(); )
         {
-            props.put( "reports", getReportsMenu( locale, categories ) );
+            String key = (String) i.next();
+            menus += "<menu ref=\"" + key + "\"/>\n";
         }
-        else
-        {
-            props.put( "reports", "" );
-        }
-
-        populateModules( props, locale );
+        props.put( "reports", menus );
+        props.put( "modules", "<menu ref=\"modules\"/>\n" );
 
         DecorationModel decorationModel = getDecorationModel( project, locale, props );
+        populateReportsMenus( decorationModel, locale, categories );
+        populateModules( decorationModel, locale );
 
         if ( project.getUrl() != null )
         {
@@ -290,66 +292,152 @@ public class SiteMojo
         return decorationModel;
     }
 
-    private void populateModules( Map props, Locale locale )
-        throws MojoExecutionException
+    private void populateReportsMenus( DecorationModel decorationModel, Locale locale, Map categories )
     {
-        // we require child modules and reactors to process module menu
-        if ( project.getModules().size() > 0 )
+        for ( Iterator i = categories.keySet().iterator(); i.hasNext(); )
         {
-            List projects = this.reactorProjects;
-            String menuItems;
-            if ( projects.size() == 1 )
+            String key = (String) i.next();
+            Menu menu = decorationModel.getMenuRef( key );
+            if ( menu != null )
             {
-                // Not running reactor - search for the projects manually
-                List models = new ArrayList( project.getModules().size() );
-                for ( Iterator i = project.getModules().iterator(); i.hasNext(); )
+                List reports = (List) categories.get( key );
+
+                if ( reports.size() > 0 )
                 {
-                    String module = (String) i.next();
-                    Model model;
-                    File f = new File( project.getBasedir(), module + "/pom.xml" );
-                    if ( f.exists() )
+                    menu.setName( i18n.getString( "site-plugin", locale, "report.menu.projectdocumentation" ) );
+
+                    // TODO: [IMPORTANT] this is a hack, change to a different class - Category instead of MavenReport
+                    MavenReport summary = null;
+                    for ( Iterator j = reports.iterator(); j.hasNext() && summary == null; )
                     {
-                        MavenXpp3Reader reader = new MavenXpp3Reader();
-                        FileReader fileReader = null;
-                        try
+                        MavenReport report = (MavenReport) j.next();
+                        if ( "".equals( report.getDescription( locale ) ) )
                         {
-                            fileReader = new FileReader( f );
-                            model = reader.read( fileReader );
+                            summary = report;
+                            try
+                            {
+                                Field f = summary.getClass().getDeclaredField( "reports" );
+                                boolean acc = f.isAccessible();
+                                f.setAccessible( true );
+                                List newReports = new ArrayList( reports );
+                                newReports.remove( summary );
+                                f.set( summary, newReports );
+                                f.setAccessible( acc );
+                            }
+                            catch ( NoSuchFieldException e )
+                            {
+                                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            }
+                            catch ( IllegalAccessException e )
+                            {
+                                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            }
                         }
-                        catch ( IOException e )
-                        {
-                            throw new MojoExecutionException( "Unable to read POM", e );
-                        }
-                        catch ( XmlPullParserException e )
-                        {
-                            throw new MojoExecutionException( "Unable to read POM", e );
-                        }
-                        finally
-                        {
-                            IOUtil.close( fileReader );
-                        }
+                    }
+
+                    String name;
+                    String href = null;
+                    if ( summary == null )
+                    {
+                        name = key;
                     }
                     else
                     {
-                        model = new Model();
-                        model.setName( module );
-                        model.setUrl( module );
+                        name = summary.getName( locale );
+                        href = summary.getOutputName() + ".html";
                     }
-                    models.add( model );
+
+                    MenuItem item = new MenuItem();
+                    item.setName( name );
+                    if ( href != null )
+                    {
+                        item.setHref( href );
+                        item.setCollapse( true );
+                    }
+
+                    for ( Iterator j = reports.iterator(); j.hasNext(); )
+                    {
+                        MavenReport report = (MavenReport) j.next();
+
+                        MenuItem subitem = new MenuItem();
+                        subitem.setName( report.getName( locale ) );
+                        subitem.setHref( report.getOutputName() + ".html" );
+
+                        item.addItem( subitem );
+                    }
                 }
-                menuItems = getModulesMenuItemsFromModels( models );
+                else
+                {
+                    decorationModel.removeMenuRef( key );
+                }
+            }
+        }
+    }
+
+    private void populateModules( DecorationModel decorationModel, Locale locale )
+        throws MojoExecutionException
+    {
+        Menu menu = decorationModel.getMenuRef( "modules" );
+
+        if ( menu != null )
+        {
+            // we require child modules and reactors to process module menu
+            if ( project.getModules().size() > 0 )
+            {
+                List projects = this.reactorProjects;
+
+                menu.setName( i18n.getString( "site-plugin", locale, "report.menu.projectmodules" ) );
+
+                if ( projects.size() == 1 )
+                {
+                    // Not running reactor - search for the projects manually
+                    List models = new ArrayList( project.getModules().size() );
+                    for ( Iterator i = project.getModules().iterator(); i.hasNext(); )
+                    {
+                        String module = (String) i.next();
+                        Model model;
+                        File f = new File( project.getBasedir(), module + "/pom.xml" );
+                        if ( f.exists() )
+                        {
+                            MavenXpp3Reader reader = new MavenXpp3Reader();
+                            FileReader fileReader = null;
+                            try
+                            {
+                                fileReader = new FileReader( f );
+                                model = reader.read( fileReader );
+                            }
+                            catch ( IOException e )
+                            {
+                                throw new MojoExecutionException( "Unable to read POM", e );
+                            }
+                            catch ( XmlPullParserException e )
+                            {
+                                throw new MojoExecutionException( "Unable to read POM", e );
+                            }
+                            finally
+                            {
+                                IOUtil.close( fileReader );
+                            }
+                        }
+                        else
+                        {
+                            model = new Model();
+                            model.setName( module );
+                            model.setUrl( module );
+                        }
+                        models.add( model );
+                    }
+                    populateModulesMenuItemsFromModels( models, menu );
+                }
+                else
+                {
+                    populateModulesMenuItemsFromReactorProjects( menu );
+                }
             }
             else
             {
-                menuItems = getModulesMenuItemsFromReactorProjects();
+                decorationModel.removeMenuRef( "modules" );
             }
-            props.put( "modulesItems", menuItems );
-            props.put( "modules", getModulesMenu( locale, menuItems ) );
-        }
-        else
-        {
-            props.put( "modulesItems", "" );
-            props.put( "modules", "" );
         }
     }
 
@@ -410,138 +498,8 @@ public class SiteMojo
         return categories;
     }
 
-    /**
-     * Retrieve the reports menu
-     *
-     * @param locale     the locale used
-     * @param categories report categories, each with a list of reports
-     * @return a XML for reports menu
-     */
-    private String getReportsMenu( Locale locale, Map categories )
+    private void populateModulesMenuItemsFromReactorProjects( Menu menu )
     {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append( "<menu name=\"" );
-        buffer.append( i18n.getString( "site-plugin", locale, "report.menu.projectdocumentation" ) );
-        buffer.append( "\">\n" );
-
-        for ( Iterator i = categories.keySet().iterator(); i.hasNext(); )
-        {
-            String key = (String) i.next();
-            List reports = (List) categories.get( key );
-            writeReportSubMenu( reports, buffer, locale, key );
-        }
-
-        buffer.append( "</menu>\n" );
-
-        return buffer.toString();
-    }
-
-    /**
-     * Create a report sub menu
-     *
-     * @param reports list of reports specified in pom
-     * @param buffer  string to be appended
-     * @param locale  the locale used
-     * @param key2    the default name of the category
-     */
-    private void writeReportSubMenu( List reports, StringBuffer buffer, Locale locale, String key2 )
-    {
-        if ( reports.size() > 0 )
-        {
-            // TODO: [IMPORTANT] this is a hack, change to a different class - Category instead of MavenReport
-            MavenReport summary = null;
-            for ( Iterator i = reports.iterator(); i.hasNext() && summary == null; )
-            {
-                MavenReport report = (MavenReport) i.next();
-                if ( "".equals( report.getDescription( locale ) ) )
-                {
-                    summary = report;
-                    try
-                    {
-                        Field f = summary.getClass().getDeclaredField( "reports" );
-                        boolean acc = f.isAccessible();
-                        f.setAccessible( true );
-                        List newReports = new ArrayList( reports );
-                        newReports.remove( summary );
-                        f.set( summary, newReports );
-                        f.setAccessible( acc );
-                    }
-                    catch ( NoSuchFieldException e )
-                    {
-                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                    }
-                    catch ( IllegalAccessException e )
-                    {
-                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                    }
-                }
-            }
-
-            String name;
-            String href = null;
-            if ( summary == null )
-            {
-                name = key2;
-            }
-            else
-            {
-                name = summary.getName( locale );
-                href = summary.getOutputName() + ".html";
-            }
-
-            // TODO [IMPORTANT]: this should go straight to the doxia model
-            buffer.append( "    <item name=\"" );
-            buffer.append( name );
-            buffer.append( "\"" );
-            if ( href != null )
-            {
-                buffer.append( " href=\"/" );
-                buffer.append( href );
-                buffer.append( "\" collapse=\"true\"" );
-            }
-            buffer.append( ">\n" );
-
-            for ( Iterator i = reports.iterator(); i.hasNext(); )
-            {
-                MavenReport report = (MavenReport) i.next();
-
-                buffer.append( "        <item name=\"" );
-                buffer.append( report.getName( locale ) );
-                buffer.append( "\" href=\"/" );
-                buffer.append( report.getOutputName() );
-                buffer.append( ".html\"/>\n" );
-            }
-
-            buffer.append( "    </item>\n" );
-        }
-    }
-
-    /**
-     * Generate a menu for modules
-     *
-     * @param locale    the locale wanted
-     * @param menuItems
-     * @return a XML menu for modules
-     */
-    private String getModulesMenu( Locale locale, String menuItems )
-    {
-        // TODO [IMPORTANT]: this should go straight to the doxia model
-        StringBuffer buffer = new StringBuffer();
-
-        buffer.append( "<menu name=\"" );
-        buffer.append( i18n.getString( "site-plugin", locale, "report.menu.projectmodules" ) );
-        buffer.append( "\">\n" );
-
-        buffer.append( menuItems );
-
-        buffer.append( "</menu>\n" );
-
-        return buffer.toString();
-    }
-
-    private String getModulesMenuItemsFromReactorProjects()
-    {
-        StringBuffer buffer = new StringBuffer();
         if ( reactorProjects != null && reactorProjects.size() > 1 )
         {
             Iterator reactorItr = reactorProjects.iterator();
@@ -556,16 +514,14 @@ public class SiteMojo
                     String reactorUrl = reactorProject.getUrl();
                     String name = reactorProject.getName();
 
-                    appendMenuItem( buffer, name, reactorUrl );
+                    appendMenuItem( menu, name, reactorUrl );
                 }
             }
         }
-        return buffer.toString();
     }
 
-    private String getModulesMenuItemsFromModels( List models )
+    private void populateModulesMenuItemsFromModels( List models, Menu menu )
     {
-        StringBuffer buffer = new StringBuffer();
         if ( models != null && models.size() > 1 )
         {
             Iterator reactorItr = models.iterator();
@@ -577,29 +533,26 @@ public class SiteMojo
                 String reactorUrl = model.getUrl();
                 String name = model.getName();
 
-                appendMenuItem( buffer, name, reactorUrl );
+                appendMenuItem( menu, name, reactorUrl );
             }
         }
-        return buffer.toString();
     }
 
-    private static void appendMenuItem( StringBuffer buffer, String name, String href )
+    private static void appendMenuItem( Menu menu, String name, String href )
     {
-        // TODO [IMPORTANT]: this should go straight to the doxia model
         if ( href != null )
         {
-            buffer.append( "    <item name=\"" );
-            buffer.append( name );
-            buffer.append( "\" href=\"" );
-            buffer.append( href );
+            MenuItem item = new MenuItem();
+            item.setName( name );
             if ( href.endsWith( "/" ) )
             {
-                buffer.append( "index.html\"/>\n" );
+                item.setHref( href + "index.html" );
             }
             else
             {
-                buffer.append( "/index.html\"/>\n" );
+                item.setHref( href + "/index.html" );
             }
+            menu.addItem( item );
         }
     }
 
