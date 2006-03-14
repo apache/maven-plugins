@@ -16,7 +16,9 @@ package org.apache.maven.plugins.site.webapp;
  * limitations under the License.
  */
 
+import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
 import org.apache.maven.doxia.siterenderer.Renderer;
+import org.apache.maven.doxia.siterenderer.RendererException;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 
 import javax.servlet.Filter;
@@ -29,6 +31,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * Render a page as requested.
@@ -44,6 +47,8 @@ public class DoxiaFilter
 
     private SiteRenderingContext context;
 
+    private Map documents;
+
     public void init( FilterConfig filterConfig )
         throws ServletException
     {
@@ -51,75 +56,29 @@ public class DoxiaFilter
         siteDirectory = (File) servletContext.getAttribute( "siteDirectory" );
         siteRenderer = (Renderer) servletContext.getAttribute( "siteRenderer" );
         context = (SiteRenderingContext) servletContext.getAttribute( "context" );
+        documents = (Map) servletContext.getAttribute( "documents" );
     }
 
     public void doFilter( ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain )
         throws IOException, ServletException
     {
         HttpServletRequest req = (HttpServletRequest) servletRequest;
-        String path = req.getServletPath();
+        String path = req.getServletPath().substring( 1 );
 
-        if ( "/index.html".equals( path ) )
+        if ( documents.containsKey( path ) )
         {
-/*
-            // TODO
+            // TODO: documents are not right for the locale
             context.setLocale( req.getLocale() );
 
-            SiteRendererSink sink = null;
             try
             {
-                sink = siteRenderer.createSink( siteDirectory, "index.html" );
-            }
-            catch ( RendererException e )
-            {
-                // TODO
-            }
-
-            Locale locale = context.getLocale();
-            String title = i18n.getString( "site-plugin", locale, "report.index.title" ).trim() + " " + project.getName();
-            String title = "title";
-
-            sink.head();
-            sink.title();
-            sink.text( title );
-            sink.title_();
-            sink.head_();
-            sink.body();
-
-            sink.section1();
-            sink.sectionTitle1();
-            sink.text( title );
-            sink.sectionTitle1_();
-
-            sink.paragraph();
-
-            if ( project.getDescription() != null )
-            {
-                // TODO How to handle i18n?
-                sink.text( project.getDescription() );
-            }
-            else
-            {
-                sink.text( i18n.getString( "site-plugin", locale, "report.index.nodescription" ) );
-            }
-
-            sink.paragraph_();
-
-            sink.body_();
-
-            sink.flush();
-
-            sink.close();
-
-            try
-            {
-                siteRenderer.generateDocument( servletResponse.getWriter(), sink, context );
+                siteRenderer.renderDocument( servletResponse.getWriter(), (RenderingContext) documents.get( path ),
+                                             context );
             }
             catch ( RendererException e )
             {
                 throw new ServletException( e );
             }
-*/
         }
         else
         {

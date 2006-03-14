@@ -23,22 +23,17 @@ import org.apache.maven.doxia.site.decoration.MenuItem;
 import org.apache.maven.doxia.siterenderer.RendererException;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -60,45 +55,12 @@ public class SiteMojo
 {
 
     /**
-     * Alternative directory for xdoc source, useful for m1 to m2 migration
-     *
-     * @parameter default-value="${basedir}/xdocs"
-     * @deprecated
-     */
-    private File xdocDirectory;
-
-    /**
-     * Directory containing generated documentation.
-     *
-     * @parameter alias="workingDirectory" expression="${project.build.directory}/generated-site"
-     * @required
-     * @todo should we deprecate in favour of reports?
-     */
-    private File generatedSiteDirectory;
-
-    /**
      * Directory containing the generated project sites and report distributions.
      *
      * @parameter expression="${project.reporting.outputDirectory}"
      * @required
      */
     protected File outputDirectory;
-
-    /**
-     * The reactor projects.
-     *
-     * @parameter expression="${reactorProjects}"
-     * @required
-     * @readonly
-     */
-    protected List reactorProjects;
-
-    /**
-     * @parameter expression="${reports}"
-     * @required
-     * @readonly
-     */
-    private List reports;
 
     /**
      * Convenience parameter that allows you to disable report generation.
@@ -117,10 +79,15 @@ public class SiteMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        // TODO [IMPORTANT]: use in :run as well? better way to call it?
-        setDefaultAttributes();
-
-        List reports = filterReports( this.reports );
+        List filteredReports;
+        if ( generateReports )
+        {
+            filteredReports = filterReports( reports );
+        }
+        else
+        {
+            filteredReports = Collections.EMPTY_LIST;
+        }
 
         try
         {
@@ -134,7 +101,7 @@ public class SiteMojo
             {
                 Locale locale = (Locale) iterator.next();
 
-                renderLocale( locale, reports );
+                renderLocale( locale, filteredReports );
             }
         }
         catch ( MavenReportException e )
@@ -154,27 +121,9 @@ public class SiteMojo
     private void renderLocale( Locale locale, List reports )
         throws IOException, RendererException, MavenReportException, MojoFailureException, MojoExecutionException
     {
-        String displayLanguage = locale.getDisplayLanguage( Locale.ENGLISH );
+        File outputDirectory = getOutputDirectory( locale );
 
-        Locale defaultLocale = Locale.getDefault();
-        File outputDirectory = getOutputDirectory( locale, defaultLocale );
-
-        DecorationModel decorationModel = getDecorationModel( locale );
-        SiteRenderingContext context = createSiteRenderingContext( locale, decorationModel, siteRenderer );
-
-        // Generate static site
-        if ( !locale.getLanguage().equals( defaultLocale.getLanguage() ) )
-        {
-            context.addSiteDirectory( new File( siteDirectory, locale.getLanguage() ) );
-            context.addModuleDirectory( new File( xdocDirectory, locale.getLanguage() ), "xdoc" );
-        }
-        else
-        {
-            context.addSiteDirectory( siteDirectory );
-            context.addModuleDirectory( xdocDirectory, "xdoc" );
-        }
-
-        context.addSiteDirectory( generatedSiteDirectory );
+        SiteRenderingContext context = createSiteRenderingContext( locale );
 
         Map documents = siteRenderer.locateDocumentFiles( context );
 
@@ -188,6 +137,8 @@ public class SiteMojo
             String outputName = report.getOutputName() + ".html";
             if ( documents.containsKey( outputName ) )
             {
+                String displayLanguage = locale.getDisplayLanguage( Locale.ENGLISH );
+
                 getLog().info( "Skipped \"" + report.getName( locale ) + "\" report, file \"" + outputName +
                     "\" already exists for the " + displayLanguage + " version." );
                 i.remove();
@@ -195,7 +146,7 @@ public class SiteMojo
         }
 
         // TODO: I want to get rid of categories eventually. There's no way to add your own in a fully i18n manner
-        Map categories = categoriseReports( reports );
+        Map categories = categoriseReports( reportsByOutputName.values() );
 
         populateReportsMenu( context.getDecoration(), locale, categories );
         populateReportItems( context.getDecoration(), locale, reportsByOutputName );
@@ -218,6 +169,13 @@ public class SiteMojo
                               i18n.getString( "site-plugin", locale, "report.project.description2" ) );
         }
 
+        renderDocuments( documents, reportsByOutputName.values(), outputDirectory, locale, context );
+    }
+
+    private void renderDocuments( Map documents, Collection reports, File outputDirectory, Locale locale,
+                                  SiteRenderingContext context )
+        throws RendererException, IOException, MavenReportException
+    {
         for ( Iterator i = reports.iterator(); i.hasNext(); )
         {
             MavenReport report = (MavenReport) i.next();
@@ -349,30 +307,6 @@ public class SiteMojo
                                        sink, context );
     }
 
-    private DecorationModel getDecorationModel( Locale locale )
-        throws MojoExecutionException
-    {
-        Map props = new HashMap();
-
-        // This is to support the deprecated ${reports} and ${modules} tags.
-        props.put( "reports", "<menu ref=\"reports\"/>\n" );
-        props.put( "modules", "<menu ref=\"modules\"/>\n" );
-
-        DecorationModel decorationModel = getDecorationModel( project, locale, props );
-        populateModules( decorationModel, locale );
-
-        if ( project.getUrl() != null )
-        {
-            assembler.resolvePaths( decorationModel, project.getUrl() );
-        }
-        else
-        {
-            getLog().warn( "No URL defined for the project - decoration links will not be resolved" );
-        }
-
-        return decorationModel;
-    }
-
     private void populateReportsMenu( DecorationModel decorationModel, Locale locale, Map categories )
     {
         Menu menu = decorationModel.getMenuRef( "reports" );
@@ -436,7 +370,7 @@ public class SiteMojo
         return item;
     }
 
-    private Map categoriseReports( List reports )
+    private Map categoriseReports( Collection reports )
     {
         Map categories = new HashMap();
         for ( Iterator i = reports.iterator(); i.hasNext(); )
@@ -495,168 +429,10 @@ public class SiteMojo
         }
     }
 
-    private void populateModules( DecorationModel decorationModel, Locale locale )
-        throws MojoExecutionException
-    {
-        Menu menu = decorationModel.getMenuRef( "modules" );
-
-        if ( menu != null )
-        {
-            // we require child modules and reactors to process module menu
-            if ( project.getModules().size() > 0 )
-            {
-                List projects = this.reactorProjects;
-
-                menu.setName( i18n.getString( "site-plugin", locale, "report.menu.projectmodules" ) );
-
-                if ( projects.size() == 1 )
-                {
-                    // Not running reactor - search for the projects manually
-                    List models = new ArrayList( project.getModules().size() );
-                    for ( Iterator i = project.getModules().iterator(); i.hasNext(); )
-                    {
-                        String module = (String) i.next();
-                        Model model;
-                        File f = new File( project.getBasedir(), module + "/pom.xml" );
-                        if ( f.exists() )
-                        {
-                            MavenXpp3Reader reader = new MavenXpp3Reader();
-                            FileReader fileReader = null;
-                            try
-                            {
-                                fileReader = new FileReader( f );
-                                model = reader.read( fileReader );
-                            }
-                            catch ( IOException e )
-                            {
-                                throw new MojoExecutionException( "Unable to read POM", e );
-                            }
-                            catch ( XmlPullParserException e )
-                            {
-                                throw new MojoExecutionException( "Unable to read POM", e );
-                            }
-                            finally
-                            {
-                                IOUtil.close( fileReader );
-                            }
-                        }
-                        else
-                        {
-                            model = new Model();
-                            model.setName( module );
-                            model.setUrl( module );
-                        }
-                        models.add( model );
-                    }
-                    populateModulesMenuItemsFromModels( models, menu );
-                }
-                else
-                {
-                    populateModulesMenuItemsFromReactorProjects( menu );
-                }
-            }
-            else
-            {
-                decorationModel.removeMenuRef( "modules" );
-            }
-        }
-    }
-
-    private List filterReports( List reports )
-    {
-        List filteredReports = new ArrayList( reports.size() );
-        if ( generateReports )
-        {
-            for ( Iterator i = reports.iterator(); i.hasNext(); )
-            {
-                MavenReport report = (MavenReport) i.next();
-                //noinspection ErrorNotRethrown,UnusedCatchParameter
-                try
-                {
-                    if ( report.canGenerateReport() )
-                    {
-                        filteredReports.add( report );
-                    }
-                }
-                catch ( AbstractMethodError e )
-                {
-                    // the canGenerateReport() has been added just before the 2.0 release and will cause all the reporting
-                    // plugins with an earlier version to fail (most of the codehaus mojo now fails)
-                    // be nice with them, output a warning and don't let them break anything
-
-                    getLog().warn( "Error loading report " + report.getClass().getName() +
-                        " - AbstractMethodError: canGenerateReport()" );
-                    filteredReports.add( report );
-                }
-            }
-        }
-        return filteredReports;
-    }
-
-    private void populateModulesMenuItemsFromReactorProjects( Menu menu )
-    {
-        if ( reactorProjects != null && reactorProjects.size() > 1 )
-        {
-            Iterator reactorItr = reactorProjects.iterator();
-
-            while ( reactorItr.hasNext() )
-            {
-                MavenProject reactorProject = (MavenProject) reactorItr.next();
-
-                if ( reactorProject != null && reactorProject.getParent() != null &&
-                    project.getArtifactId().equals( reactorProject.getParent().getArtifactId() ) )
-                {
-                    String reactorUrl = reactorProject.getUrl();
-                    String name = reactorProject.getName();
-
-                    appendMenuItem( menu, name, reactorUrl );
-                }
-            }
-        }
-    }
-
-    private void populateModulesMenuItemsFromModels( List models, Menu menu )
-    {
-        if ( models != null && models.size() > 1 )
-        {
-            Iterator reactorItr = models.iterator();
-
-            while ( reactorItr.hasNext() )
-            {
-                Model model = (Model) reactorItr.next();
-
-                String reactorUrl = model.getUrl();
-                String name = model.getName();
-
-                appendMenuItem( menu, name, reactorUrl );
-            }
-        }
-    }
-
-    private static void appendMenuItem( Menu menu, String name, String href )
-    {
-        if ( href != null )
-        {
-            MenuItem item = new MenuItem();
-            item.setName( name );
-            if ( href.endsWith( "/" ) )
-            {
-                item.setHref( href + "index.html" );
-            }
-            else
-            {
-                item.setHref( href + "/index.html" );
-            }
-            menu.addItem( item );
-        }
-    }
-
-    // Generate specific pages
-
-    private File getOutputDirectory( Locale locale, Locale defaultLocale )
+    private File getOutputDirectory( Locale locale )
     {
         File file;
-        if ( locale.getLanguage().equals( defaultLocale.getLanguage() ) )
+        if ( locale.getLanguage().equals( Locale.getDefault().getLanguage() ) )
         {
             file = outputDirectory;
         }

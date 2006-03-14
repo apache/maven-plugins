@@ -32,18 +32,24 @@ import org.apache.maven.doxia.site.decoration.inheritance.DecorationModelInherit
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.reporting.MavenReport;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -153,6 +159,39 @@ public abstract class AbstractSiteRenderingMojo
      * @component
      */
     protected Renderer siteRenderer;
+
+    /**
+     * @parameter expression="${reports}"
+     * @required
+     * @readonly
+     */
+    protected List reports;
+
+    /**
+     * Alternative directory for xdoc source, useful for m1 to m2 migration
+     *
+     * @parameter default-value="${basedir}/xdocs"
+     * @deprecated
+     */
+    private File xdocDirectory;
+
+    /**
+     * Directory containing generated documentation.
+     *
+     * @parameter alias="workingDirectory" expression="${project.build.directory}/generated-site"
+     * @required
+     * @todo should we deprecate in favour of reports?
+     */
+    private File generatedSiteDirectory;
+
+    /**
+     * The reactor projects.
+     *
+     * @parameter expression="${reactorProjects}"
+     * @required
+     * @readonly
+     */
+    protected List reactorProjects;
 
     protected DecorationModel getDecorationModel( MavenProject project, Locale locale, Map origProps )
         throws MojoExecutionException
@@ -323,41 +362,6 @@ public abstract class AbstractSiteRenderingMojo
         }
     }
 
-    protected SiteRenderingContext createSiteRenderingContext( Locale locale, DecorationModel decoration,
-                                                               Renderer siteRenderer )
-        throws IOException, MojoExecutionException, MojoFailureException
-    {
-        if ( template != null )
-        {
-            if ( templateFile != null )
-            {
-                getLog().warn( "'template' configuration is ignored when 'templateFile' is set" );
-            }
-            else
-            {
-                templateFile = new File( templateDirectory, template );
-            }
-        }
-
-        File skinFile = getSkinArtifactFile( decoration );
-        SiteRenderingContext context;
-        if ( templateFile != null )
-        {
-            if ( !templateFile.exists() )
-            {
-                throw new MojoFailureException( "Template file '" + templateFile + "' does not exist" );
-            }
-            context = siteRenderer.createContextForTemplate( templateFile, skinFile, attributes, decoration,
-                                                             project.getName(), locale );
-        }
-        else
-        {
-            context = siteRenderer.createContextForSkin( skinFile, attributes, decoration, project.getName(), locale );
-        }
-
-        return context;
-    }
-
     private File getSkinArtifactFile( DecorationModel decoration )
         throws MojoFailureException, MojoExecutionException
     {
@@ -398,7 +402,36 @@ public abstract class AbstractSiteRenderingMojo
         return artifact.getFile();
     }
 
-    protected void setDefaultAttributes()
+    protected List filterReports( List reports )
+    {
+        List filteredReports = new ArrayList( reports.size() );
+        for ( Iterator i = reports.iterator(); i.hasNext(); )
+        {
+            MavenReport report = (MavenReport) i.next();
+            //noinspection ErrorNotRethrown,UnusedCatchParameter
+            try
+            {
+                if ( report.canGenerateReport() )
+                {
+                    filteredReports.add( report );
+                }
+            }
+            catch ( AbstractMethodError e )
+            {
+                // the canGenerateReport() has been added just before the 2.0 release and will cause all the reporting
+                // plugins with an earlier version to fail (most of the codehaus mojo now fails)
+                // be nice with them, output a warning and don't let them break anything
+
+                getLog().warn( "Error loading report " + report.getClass().getName() +
+                    " - AbstractMethodError: canGenerateReport()" );
+                filteredReports.add( report );
+            }
+        }
+        return filteredReports;
+    }
+
+    protected SiteRenderingContext createSiteRenderingContext( Locale locale )
+        throws MojoExecutionException, IOException, MojoFailureException
     {
         if ( attributes == null )
         {
@@ -413,6 +446,200 @@ public abstract class AbstractSiteRenderingMojo
         if ( attributes.get( "outputEncoding" ) == null )
         {
             attributes.put( "outputEncoding", outputEncoding );
+        }
+
+        DecorationModel decorationModel = getDecorationModel( locale );
+        if ( template != null )
+        {
+            if ( templateFile != null )
+            {
+                getLog().warn( "'template' configuration is ignored when 'templateFile' is set" );
+            }
+            else
+            {
+                templateFile = new File( templateDirectory, template );
+            }
+        }
+
+        File skinFile = getSkinArtifactFile( decorationModel );
+        SiteRenderingContext context;
+        if ( templateFile != null )
+        {
+            if ( !templateFile.exists() )
+            {
+                throw new MojoFailureException( "Template file '" + templateFile + "' does not exist" );
+            }
+            context = siteRenderer.createContextForTemplate( templateFile, skinFile, attributes, decorationModel,
+                                                             project.getName(), locale );
+        }
+        else
+        {
+            context =
+                siteRenderer.createContextForSkin( skinFile, attributes, decorationModel, project.getName(), locale );
+        }
+
+        // Generate static site
+        if ( !locale.getLanguage().equals( Locale.getDefault().getLanguage() ) )
+        {
+            context.addSiteDirectory( new File( siteDirectory, locale.getLanguage() ) );
+            context.addModuleDirectory( new File( xdocDirectory, locale.getLanguage() ), "xdoc" );
+        }
+        else
+        {
+            context.addSiteDirectory( siteDirectory );
+            context.addModuleDirectory( xdocDirectory, "xdoc" );
+        }
+
+        context.addSiteDirectory( generatedSiteDirectory );
+        return context;
+    }
+
+    private DecorationModel getDecorationModel( Locale locale )
+        throws MojoExecutionException
+    {
+        Map props = new HashMap();
+
+        // This is to support the deprecated ${reports} and ${modules} tags.
+        props.put( "reports", "<menu ref=\"reports\"/>\n" );
+        props.put( "modules", "<menu ref=\"modules\"/>\n" );
+
+        DecorationModel decorationModel = getDecorationModel( project, locale, props );
+        populateModules( decorationModel, locale );
+
+        if ( project.getUrl() != null )
+        {
+            assembler.resolvePaths( decorationModel, project.getUrl() );
+        }
+        else
+        {
+            getLog().warn( "No URL defined for the project - decoration links will not be resolved" );
+        }
+
+        return decorationModel;
+    }
+
+    private void populateModules( DecorationModel decorationModel, Locale locale )
+        throws MojoExecutionException
+    {
+        Menu menu = decorationModel.getMenuRef( "modules" );
+
+        if ( menu != null )
+        {
+            // we require child modules and reactors to process module menu
+            if ( project.getModules().size() > 0 )
+            {
+                List projects = this.reactorProjects;
+
+                menu.setName( i18n.getString( "site-plugin", locale, "report.menu.projectmodules" ) );
+
+                if ( projects.size() == 1 )
+                {
+                    // Not running reactor - search for the projects manually
+                    List models = new ArrayList( project.getModules().size() );
+                    for ( Iterator i = project.getModules().iterator(); i.hasNext(); )
+                    {
+                        String module = (String) i.next();
+                        Model model;
+                        File f = new File( project.getBasedir(), module + "/pom.xml" );
+                        if ( f.exists() )
+                        {
+                            MavenXpp3Reader reader = new MavenXpp3Reader();
+                            FileReader fileReader = null;
+                            try
+                            {
+                                fileReader = new FileReader( f );
+                                model = reader.read( fileReader );
+                            }
+                            catch ( IOException e )
+                            {
+                                throw new MojoExecutionException( "Unable to read POM", e );
+                            }
+                            catch ( XmlPullParserException e )
+                            {
+                                throw new MojoExecutionException( "Unable to read POM", e );
+                            }
+                            finally
+                            {
+                                IOUtil.close( fileReader );
+                            }
+                        }
+                        else
+                        {
+                            model = new Model();
+                            model.setName( module );
+                            model.setUrl( module );
+                        }
+                        models.add( model );
+                    }
+                    populateModulesMenuItemsFromModels( models, menu );
+                }
+                else
+                {
+                    populateModulesMenuItemsFromReactorProjects( menu );
+                }
+            }
+            else
+            {
+                decorationModel.removeMenuRef( "modules" );
+            }
+        }
+    }
+
+    private void populateModulesMenuItemsFromReactorProjects( Menu menu )
+    {
+        if ( reactorProjects != null && reactorProjects.size() > 1 )
+        {
+            Iterator reactorItr = reactorProjects.iterator();
+
+            while ( reactorItr.hasNext() )
+            {
+                MavenProject reactorProject = (MavenProject) reactorItr.next();
+
+                if ( reactorProject != null && reactorProject.getParent() != null &&
+                    project.getArtifactId().equals( reactorProject.getParent().getArtifactId() ) )
+                {
+                    String reactorUrl = reactorProject.getUrl();
+                    String name = reactorProject.getName();
+
+                    appendMenuItem( menu, name, reactorUrl );
+                }
+            }
+        }
+    }
+
+    private void populateModulesMenuItemsFromModels( List models, Menu menu )
+    {
+        if ( models != null && models.size() > 1 )
+        {
+            Iterator reactorItr = models.iterator();
+
+            while ( reactorItr.hasNext() )
+            {
+                Model model = (Model) reactorItr.next();
+
+                String reactorUrl = model.getUrl();
+                String name = model.getName();
+
+                appendMenuItem( menu, name, reactorUrl );
+            }
+        }
+    }
+
+    private static void appendMenuItem( Menu menu, String name, String href )
+    {
+        if ( href != null )
+        {
+            MenuItem item = new MenuItem();
+            item.setName( name );
+            if ( href.endsWith( "/" ) )
+            {
+                item.setHref( href + "index.html" );
+            }
+            else
+            {
+                item.setHref( href + "/index.html" );
+            }
+            menu.addItem( item );
         }
     }
 }

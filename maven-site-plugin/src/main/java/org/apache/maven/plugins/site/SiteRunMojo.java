@@ -16,7 +16,6 @@ package org.apache.maven.plugins.site;
  * limitations under the License.
  */
 
-import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -33,7 +32,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -138,23 +137,26 @@ public class SiteRunMojo
         webapp.setAttribute( "siteDirectory", siteDirectory );
         webapp.setAttribute( "siteRenderer", siteRenderer );
 
-        // TODO fix
-        Map props = new HashMap();
-        props.put( "reports", "" );
-        props.put( "modules", "" );
-        DecorationModel decorationModel = getDecorationModel( project, Locale.getDefault(), props );
+        List filteredReports = filterReports( reports );
+
+        List localesList = getAvailableLocales();
+
+        // Default is first in the list
+        Locale defaultLocale = (Locale) localesList.get( 0 );
+        Locale.setDefault( defaultLocale );
 
         try
         {
-            SiteRenderingContext context =
-                createSiteRenderingContext( Locale.getDefault(), decorationModel, siteRenderer );
-
             // TODO
-            siteRenderer.copyResources( context, new File( siteDirectory, "resources" ), tempWebappDirectory );
-
+            SiteRenderingContext context = createSiteRenderingContext( Locale.getDefault() );
             webapp.setAttribute( "context", context );
+
+            Map documents = siteRenderer.locateDocumentFiles( context );
+            webapp.setAttribute( "documents", documents );
+
+            siteRenderer.copyResources( context, new File( siteDirectory, "resources" ), tempWebappDirectory );
         }
-        catch ( IOException e )
+        catch ( Exception e )
         {
             // TODO
         }
