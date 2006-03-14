@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
   <parent>
-    <artifactId>maven-plugin-parent</artifactId>
+    <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>2.0.1</version>
+    <version>1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>maven-surefire-plugin</artifactId>
@@ -17,6 +17,11 @@
     </contributor>
   </contributors>
   <dependencies>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-api</artifactId>
+      <version>2.0</version>
+    </dependency>
     <dependency>
       <groupId>org.apache.maven.surefire</groupId>
       <artifactId>surefire-booter</artifactId>
@@ -33,10 +38,4 @@
       <version>2.0</version>
     </dependency>
   </dependencies>
-  <repositories>
-    <repository>
-      <id>apache.snapshots</id>
-      <url>http://cvs.apache.org/maven-snapshot-repository</url>
-    </repository>
-  </repositories>
 </project>
