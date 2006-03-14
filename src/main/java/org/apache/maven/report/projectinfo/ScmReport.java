@@ -30,8 +30,8 @@ import org.apache.maven.scm.provider.starteam.repository.StarteamScmProviderRepo
 import org.apache.maven.scm.provider.svn.repository.SvnScmProviderRepository;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
-import org.codehaus.doxia.sink.Sink;
-import org.codehaus.doxia.site.renderer.SiteRenderer;
+import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.doxia.siterenderer.Renderer;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -58,11 +58,9 @@ public class ScmReport
     /**
      * Doxia Site Renderer.
      *
-     * @parameter expression="${component.org.codehaus.doxia.site.renderer.SiteRenderer}"
-     * @required
-     * @readonly
+     * @component
      */
-    private SiteRenderer siteRenderer;
+    private Renderer siteRenderer;
 
     /**
      * The Maven Project.
@@ -140,7 +138,7 @@ public class ScmReport
     /**
      * @see org.apache.maven.reporting.AbstractMavenReport#getSiteRenderer()
      */
-    protected SiteRenderer getSiteRenderer()
+    protected Renderer getSiteRenderer()
     {
         return siteRenderer;
     }
