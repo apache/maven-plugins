@@ -84,9 +84,9 @@ public abstract class AbstractWarMojo
     /**
      * The path to the context.xml file to use.
      *
-     * @parameter expression="${maven.war.contextxml}"
+     * @parameter expression="${maven.war.containerConfigXML}"
      */
-    private String contextXml;
+    private String containerConfigXML;
 
     /**
      * Directory to unpack dependent WARs into if needed
@@ -195,14 +195,14 @@ public abstract class AbstractWarMojo
         this.webXml = webXml;
     }
 
-    public String getContextXml()
+    public String getContainerConfigXML()
     {
-        return contextXml;
+        return containerConfigXML;
     }
 
-    public void setContextXml( String contextXml )
+    public void setContainerConfigXML( String containerConfigXML )
     {
-        this.contextXml = contextXml;
+        this.containerConfigXML = containerConfigXML;
     }
 
     /**
@@ -226,7 +226,7 @@ public abstract class AbstractWarMojo
         }
 
         // if contextXML is specified, omit the one in the source directory
-        if ( StringUtils.isNotEmpty( getContextXml() ) )
+        if ( StringUtils.isNotEmpty( getContainerConfigXML() ) )
         {
             excludeList.add( "**/" + META_INF + "/context.xml" );
         }
@@ -286,7 +286,7 @@ public abstract class AbstractWarMojo
 
         try
         {
-            copyResources( getWarSourceDirectory(), webappDirectory, getWebXml(), getContextXml() );
+            copyResources( getWarSourceDirectory(), webappDirectory, getWebXml(), getContainerConfigXML() );
 
             buildWebapp( getProject(), webappDirectory );
         }
@@ -309,7 +309,7 @@ public abstract class AbstractWarMojo
      * @param webXml the path to a custom web.xml
      * @throws java.io.IOException if an error occured while copying resources
      */
-    public void copyResources( File sourceDirectory, File webappDirectory, String webXml, String contextXml )
+    public void copyResources( File sourceDirectory, File webappDirectory, String webXml, String containerConfigXML )
         throws IOException
     {
         if ( !sourceDirectory.equals( webappDirectory ) )
@@ -332,11 +332,11 @@ public abstract class AbstractWarMojo
                 FileUtils.copyFile( new File( webXml ), new File( webinfDir, "/web.xml" ) );
             }
 
-            if ( StringUtils.isNotEmpty( contextXml ) )
+            if ( StringUtils.isNotEmpty( containerConfigXML ) )
             {
-                //rename to web.xml
                 File metainfDir = new File( webappDirectory, META_INF );
-                FileUtils.copyFile( new File( contextXml ), new File( metainfDir, "/context.xml" ) );
+                String xmlFileName = new File( containerConfigXML ).getName();
+                FileUtils.copyFile( new File( containerConfigXML ), new File( metainfDir, xmlFileName ) );
             }
         }
     }
