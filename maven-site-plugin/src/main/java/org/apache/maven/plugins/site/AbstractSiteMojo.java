@@ -32,7 +32,6 @@ import java.util.StringTokenizer;
  * Base class for site mojos.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
- * @version $Id$
  */
 public abstract class AbstractSiteMojo
     extends AbstractMojo
@@ -41,14 +40,6 @@ public abstract class AbstractSiteMojo
      * The locale by default for all default bundles
      */
     private static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
-
-    /**
-     * Directory containing source for apt, fml and xdoc docs.
-     *
-     * @parameter expression="${basedir}/src/site"
-     * @required
-     */
-    protected File siteDirectory;
 
     /**
      * A comma separated list of locales supported by Maven. The first valid token will be the default Locale
@@ -66,32 +57,13 @@ public abstract class AbstractSiteMojo
     protected I18N i18n;
 
     /**
-     * Get the path of the site descriptor for a given locale.
-     *
-     * @param locale the locale
-     * @return the site descriptor path
-     */
-    protected File getSiteDescriptorFile( File basedir, Locale locale )
-    {
-        // TODO: get proper siteDirectory from site configuration of the project this relates to
-
-        File siteDescriptor = new File( basedir, "src/site/site_" + locale.getLanguage() + ".xml" );
-
-        if ( !siteDescriptor.exists() )
-        {
-            siteDescriptor = new File( basedir, "src/site/site.xml" );
-        }
-        return siteDescriptor;
-    }
-
-    /**
      * Init the <code>localesList</code> variable.
      * <p>If <code>locales</code> variable is available, the first valid token will be the <code>defaultLocale</code>
      * for this instance of the Java Virtual Machine.</p>
      *
      * @return a list of <code>Locale</code>
      */
-    protected List initLocalesList()
+    protected List getAvailableLocales()
     {
         List localesList = new ArrayList();
         if ( locales != null )
@@ -196,5 +168,24 @@ public abstract class AbstractSiteMojo
         }
 
         return new Locale( language, country, variant );
+    }
+
+    /**
+     * Get the path of the site descriptor for a given locale.
+     *
+     * @param locale the locale
+     * @return the site descriptor path
+     */
+    protected File getSiteDescriptorFile( File basedir, Locale locale )
+    {
+        // TODO: get proper siteDirectory from site configuration of the project this relates to
+
+        File siteDescriptor = new File( basedir, "src/site/site_" + locale.getLanguage() + ".xml" );
+
+        if ( !siteDescriptor.exists() )
+        {
+            siteDescriptor = new File( basedir, "src/site/site.xml" );
+        }
+        return siteDescriptor;
     }
 }
