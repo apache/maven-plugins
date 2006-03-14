@@ -134,7 +134,6 @@ public class SiteRunMojo
         WebAppContext webapp = new WebAppContext();
         webapp.setContextPath( "/" );
         webapp.setResourceBase( tempWebappDirectory.getAbsolutePath() );
-        webapp.setAttribute( "siteDirectory", siteDirectory );
         webapp.setAttribute( "siteRenderer", siteRenderer );
 
         List filteredReports = filterReports( reports );
@@ -148,10 +147,12 @@ public class SiteRunMojo
         try
         {
             // TODO
-            SiteRenderingContext context = createSiteRenderingContext( Locale.getDefault() );
+            Locale locale = Locale.getDefault();
+            SiteRenderingContext context = createSiteRenderingContext( locale );
             webapp.setAttribute( "context", context );
 
-            Map documents = siteRenderer.locateDocumentFiles( context );
+            Map documents = locateDocuments( context, filteredReports, locale );
+
             webapp.setAttribute( "documents", documents );
 
             siteRenderer.copyResources( context, new File( siteDirectory, "resources" ), tempWebappDirectory );

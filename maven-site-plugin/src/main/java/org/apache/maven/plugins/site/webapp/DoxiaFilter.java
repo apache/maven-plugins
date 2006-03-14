@@ -16,7 +16,7 @@ package org.apache.maven.plugins.site.webapp;
  * limitations under the License.
  */
 
-import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
+import org.apache.maven.doxia.siterenderer.DocumentRenderer;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.siterenderer.RendererException;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
@@ -29,7 +29,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
@@ -41,8 +40,6 @@ import java.util.Map;
 public class DoxiaFilter
     implements Filter
 {
-    private File siteDirectory;
-
     private Renderer siteRenderer;
 
     private SiteRenderingContext context;
@@ -53,7 +50,6 @@ public class DoxiaFilter
         throws ServletException
     {
         ServletContext servletContext = filterConfig.getServletContext();
-        siteDirectory = (File) servletContext.getAttribute( "siteDirectory" );
         siteRenderer = (Renderer) servletContext.getAttribute( "siteRenderer" );
         context = (SiteRenderingContext) servletContext.getAttribute( "context" );
         documents = (Map) servletContext.getAttribute( "documents" );
@@ -72,8 +68,8 @@ public class DoxiaFilter
 
             try
             {
-                siteRenderer.renderDocument( servletResponse.getWriter(), (RenderingContext) documents.get( path ),
-                                             context );
+                DocumentRenderer renderer = (DocumentRenderer) documents.get( path );
+                renderer.renderDocument( servletResponse.getWriter(), siteRenderer, context );
             }
             catch ( RendererException e )
             {

@@ -24,13 +24,16 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.Menu;
 import org.apache.maven.doxia.site.decoration.MenuItem;
 import org.apache.maven.doxia.site.decoration.Skin;
 import org.apache.maven.doxia.site.decoration.inheritance.DecorationModelInheritanceAssembler;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
+import org.apache.maven.doxia.siterenderer.DocumentRenderer;
 import org.apache.maven.doxia.siterenderer.Renderer;
+import org.apache.maven.doxia.siterenderer.RendererException;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -48,6 +51,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -641,5 +646,211 @@ public abstract class AbstractSiteRenderingMojo
             }
             menu.addItem( item );
         }
+    }
+
+    protected Map locateReports( List reports, Map documents, Locale locale )
+    {
+        Map reportsByOutputName = new HashMap();
+        for ( Iterator i = reports.iterator(); i.hasNext(); )
+        {
+            MavenReport report = (MavenReport) i.next();
+
+            String outputName = report.getOutputName() + ".html";
+            if ( documents.containsKey( outputName ) )
+            {
+                String displayLanguage = locale.getDisplayLanguage( Locale.ENGLISH );
+
+                getLog().info( "Skipped \"" + report.getName( locale ) + "\" report, file \"" + outputName +
+                    "\" already exists for the " + displayLanguage + " version." );
+                i.remove();
+            }
+            else
+            {
+                reportsByOutputName.put( report.getOutputName(), report );
+
+                RenderingContext renderingContext = new RenderingContext( siteDirectory, outputName );
+                ReportDocumentRenderer renderer = new ReportDocumentRenderer( report, renderingContext, getLog() );
+                documents.put( outputName, renderer );
+            }
+        }
+        return reportsByOutputName;
+    }
+
+    protected void populateReportsMenu( DecorationModel decorationModel, Locale locale, Map categories )
+    {
+        Menu menu = decorationModel.getMenuRef( "reports" );
+
+        if ( menu != null )
+        {
+            if ( menu.getName() == null )
+            {
+                menu.setName( i18n.getString( "site-plugin", locale, "report.menu.projectdocumentation" ) );
+            }
+
+            boolean found = false;
+            if ( menu.getItems().isEmpty() )
+            {
+                List categoryReports = (List) categories.get( MavenReport.CATEGORY_PROJECT_INFORMATION );
+                if ( !categoryReports.isEmpty() )
+                {
+                    MenuItem item = createCategoryMenu(
+                        i18n.getString( "site-plugin", locale, "report.menu.projectinformation" ), "/project-info.html",
+                        categoryReports, locale );
+                    menu.getItems().add( item );
+                    found = true;
+                }
+
+                categoryReports = (List) categories.get( MavenReport.CATEGORY_PROJECT_REPORTS );
+                if ( !categoryReports.isEmpty() )
+                {
+                    MenuItem item = createCategoryMenu(
+                        i18n.getString( "site-plugin", locale, "report.menu.projectreports" ), "/project-reports.html",
+                        categoryReports, locale );
+                    menu.getItems().add( item );
+                    found = true;
+                }
+            }
+            if ( !found )
+            {
+                decorationModel.removeMenuRef( "reports" );
+            }
+        }
+    }
+
+    private MenuItem createCategoryMenu( String name, String href, List categoryReports, Locale locale )
+    {
+        MenuItem item = new MenuItem();
+        item.setName( name );
+        item.setCollapse( true );
+        item.setHref( href );
+
+        Collections.sort( categoryReports, new ReportComparator( locale ) );
+
+        for ( Iterator k = categoryReports.iterator(); k.hasNext(); )
+        {
+            MavenReport report = (MavenReport) k.next();
+
+            MenuItem subitem = new MenuItem();
+            subitem.setName( report.getName( locale ) );
+            subitem.setHref( report.getOutputName() + ".html" );
+            item.getItems().add( subitem );
+        }
+
+        return item;
+    }
+
+    protected void populateReportItems( DecorationModel decorationModel, Locale locale, Map reportsByOutputName )
+    {
+        for ( Iterator i = decorationModel.getMenus().iterator(); i.hasNext(); )
+        {
+            Menu menu = (Menu) i.next();
+
+            populateItemRefs( menu.getItems(), locale, reportsByOutputName );
+        }
+    }
+
+    private void populateItemRefs( List items, Locale locale, Map reportsByOutputName )
+    {
+        for ( Iterator i = items.iterator(); i.hasNext(); )
+        {
+            MenuItem item = (MenuItem) i.next();
+
+            if ( item.getRef() != null )
+            {
+                if ( reportsByOutputName.containsKey( item.getRef() ) )
+                {
+                    MavenReport report = (MavenReport) reportsByOutputName.get( item.getRef() );
+
+                    if ( item.getName() == null )
+                    {
+                        item.setName( report.getName( locale ) );
+                    }
+
+                    if ( item.getHref() == null || item.getHref().length() == 0 )
+                    {
+                        item.setHref( report.getOutputName() + ".html" );
+                    }
+                }
+                else
+                {
+                    getLog().warn( "Unrecognised reference: '" + item.getRef() + "'" );
+                    i.remove();
+                }
+            }
+            populateItemRefs( item.getItems(), locale, reportsByOutputName );
+        }
+    }
+
+    protected Map categoriseReports( Collection reports )
+    {
+        Map categories = new HashMap();
+        for ( Iterator i = reports.iterator(); i.hasNext(); )
+        {
+            MavenReport report = (MavenReport) i.next();
+            List categoryReports = (List) categories.get( report.getCategoryName() );
+            if ( categoryReports == null )
+            {
+                categoryReports = new ArrayList();
+                categories.put( report.getCategoryName(), categoryReports );
+            }
+            categoryReports.add( report );
+        }
+        return categories;
+    }
+
+    protected Map locateDocuments( SiteRenderingContext context, List reports, Locale locale )
+        throws IOException, RendererException
+    {
+        Map documents = siteRenderer.locateDocumentFiles( context );
+
+        Map reportsByOutputName = locateReports( reports, documents, locale );
+
+        // TODO: I want to get rid of categories eventually. There's no way to add your own in a fully i18n manner
+        Map categories = categoriseReports( reportsByOutputName.values() );
+
+        populateReportsMenu( context.getDecoration(), locale, categories );
+        populateReportItems( context.getDecoration(), locale, reportsByOutputName );
+
+        if ( categories.containsKey( MavenReport.CATEGORY_PROJECT_INFORMATION ) )
+        {
+            List categoryReports = (List) categories.get( MavenReport.CATEGORY_PROJECT_INFORMATION );
+
+            RenderingContext renderingContext = new RenderingContext( siteDirectory, "project-info.html" );
+            String title = i18n.getString( "site-plugin", locale, "report.information.title" );
+            String desc1 = i18n.getString( "site-plugin", locale, "report.information.description1" );
+            String desc2 = i18n.getString( "site-plugin", locale, "report.information.description2" );
+            DocumentRenderer renderer =
+                new CategorySummaryDocumentRenderer( renderingContext, title, desc1, desc2, i18n, categoryReports );
+
+            if ( !documents.containsKey( renderer.getOutputName() ) )
+            {
+                documents.put( renderer.getOutputName(), renderer );
+            }
+            else
+            {
+                getLog().info( "Category summary '" + renderer.getOutputName() + "' skipped; already exists" );
+            }
+        }
+
+        if ( categories.containsKey( MavenReport.CATEGORY_PROJECT_REPORTS ) )
+        {
+            List categoryReports = (List) categories.get( MavenReport.CATEGORY_PROJECT_REPORTS );
+            RenderingContext renderingContext = new RenderingContext( siteDirectory, "project-reports.html" );
+            String title = i18n.getString( "site-plugin", locale, "report.project.title" );
+            String desc1 = i18n.getString( "site-plugin", locale, "report.project.description1" );
+            String desc2 = i18n.getString( "site-plugin", locale, "report.project.description2" );
+            DocumentRenderer renderer =
+                new CategorySummaryDocumentRenderer( renderingContext, title, desc1, desc2, i18n, categoryReports );
+
+            if ( !documents.containsKey( renderer.getOutputName() ) )
+            {
+                documents.put( renderer.getOutputName(), renderer );
+            }
+            else
+            {
+                getLog().info( "Category summary '" + renderer.getOutputName() + "' skipped; already exists" );
+            }
+        }
+        return documents;
     }
 }
