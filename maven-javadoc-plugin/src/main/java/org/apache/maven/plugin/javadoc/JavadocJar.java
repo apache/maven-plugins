@@ -29,7 +29,7 @@ import java.io.IOException;
 
 /**
  * Bundles the javadoc documentation in a jar so it can be deployed to the repo.
- * 
+ *
  * @goal jar
  * @phase package
  * @execute goal="javadoc"
@@ -45,7 +45,7 @@ public class JavadocJar
      * @required
      */
     private File destDir;
-    
+
     /**
      * @parameter expression="${project.build.directory}"
      */

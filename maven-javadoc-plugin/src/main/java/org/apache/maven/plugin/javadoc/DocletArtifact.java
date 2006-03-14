@@ -17,33 +17,42 @@ package org.apache.maven.plugin.javadoc;
  */
 
 
-public class DocletArtifact {
+public class DocletArtifact
+{
 
     private String groupId;
+
     private String artifactId;
+
     private String version;
 
-    public String getGroupId() {
+    public String getGroupId()
+    {
         return groupId;
     }
 
-    public void setGroupId( String groupId ) {
+    public void setGroupId( String groupId )
+    {
         this.groupId = groupId;
     }
 
-    public String getArtifactId() {
+    public String getArtifactId()
+    {
         return artifactId;
     }
 
-    public void setArtifactId( String artifactId ) {
+    public void setArtifactId( String artifactId )
+    {
         this.artifactId = artifactId;
     }
 
-    public String getVersion() {
+    public String getVersion()
+    {
         return version;
     }
 
-    public void setVersion( String version ) {
+    public void setVersion( String version )
+    {
         this.version = version;
     }
 
