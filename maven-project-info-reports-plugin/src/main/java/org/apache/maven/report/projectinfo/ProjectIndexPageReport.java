@@ -33,7 +33,6 @@ import java.util.Locale;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton </a>
  * @version $Id$
  * @goal index
- * @todo [IMPORTANT] have not moved keys correctly in translations yet
  */
 public class ProjectIndexPageReport
     extends AbstractMavenReport
