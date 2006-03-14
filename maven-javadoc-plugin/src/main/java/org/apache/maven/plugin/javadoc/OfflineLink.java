@@ -21,6 +21,7 @@ import java.io.File;
 public class OfflineLink
 {
     private String url;
+
     private File location;
 
     public String getUrl()
