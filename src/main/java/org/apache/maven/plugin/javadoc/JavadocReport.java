@@ -721,9 +721,27 @@ public class JavadocReport
                     boolean include = true;
                     for ( int k = 0; k < excludePackages.length && include; k++ )
                     {
-                        if ( fileList[j].startsWith( sourceDirectory + FILE_SEPARATOR + excludePackages[k] ) )
+                        // handle wildcards (*) in the excludePackageNames
+                        String[] excludeName = excludePackages[k].split( "[*]" );
+                        if ( excludeName.length > 1 )
                         {
-                            include = false;
+                            int u = 0;
+                            while ( include == true && u < excludeName.length )
+                            {
+                                if ( !excludeName[u].trim().equals( "" ) &&
+                                    fileList[j].indexOf( excludeName[u] ) != -1 )
+                                {
+                                    include = false;
+                                }
+                                u++;
+                            }
+                        }
+                        else
+                        {
+                            if ( fileList[j].startsWith( sourceDirectory + FILE_SEPARATOR + excludeName[0] ) )
+                            {
+                                include = false;
+                            }
                         }
                     }
                     if ( include )
