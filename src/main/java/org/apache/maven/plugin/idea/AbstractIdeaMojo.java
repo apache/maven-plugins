@@ -34,13 +34,16 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.dom4j.Element;
+import org.dom4j.DocumentException;
+import org.dom4j.Document;
+import org.dom4j.io.SAXReader;
+import org.dom4j.io.XMLWriter;
+import org.dom4j.io.OutputFormat;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -116,6 +119,36 @@ public abstract class AbstractIdeaMojo
         this.overwrite = overwrite;
     }
 
+    protected Document readXmlDocument( File file, String altFilename )
+        throws DocumentException
+    {
+        SAXReader reader = new SAXReader();
+        if ( file.exists() && !overwrite )
+        {
+            return reader.read( file );
+        }
+        else
+        {
+            File altFile = new File( project.getBasedir(), "src/main/idea/" + altFilename );
+            if ( altFile.exists() )
+            {
+                return reader.read( altFile );
+            }
+            else
+            {
+                return reader.read( getClass().getResourceAsStream( "/templates/default/" + altFilename ) );
+            }
+        }
+    }
+
+    protected void writeXmlDocument( File file, Document document )
+        throws IOException
+    {
+        XMLWriter writer = new XMLWriter( new FileWriter( file ), OutputFormat.createPrettyPrint() );
+        writer.write( document );
+        writer.close();
+    }
+
     /**
      * Finds element from the module element.
      *
@@ -123,33 +156,27 @@ public abstract class AbstractIdeaMojo
      * @param name   Name attribute to find
      * @return component  Returns the Xpp3Dom element found.
      */
-    protected Xpp3Dom findComponent( Xpp3Dom module, String name )
+    protected Element findComponent( Element module, String name )
     {
-        Xpp3Dom[] components = module.getChildren( "component" );
-        for ( int i = 0; i < components.length; i++ )
-        {
-            if ( name.equals( components[i].getAttribute( "name" ) ) )
-            {
-                return components[i];
-            }
-        }
-
-        Xpp3Dom component = createElement( module, "component" );
-        component.setAttribute( "name", name );
-        return component;
+        return findElement( module, "component", name );
     }
 
-    /**
-     * Finds an element from Xpp3Dom component.
-     *
-     * @param component Xpp3Dom component
-     * @param name      Name of the element to find.
-     * @return the element
-     */
-    protected Xpp3Dom findElement( Xpp3Dom component, String name )
+    protected Element findElement( Element element, String elementName, String attributeName )
     {
-        Xpp3Dom element = component.getChild( name );
+        for ( Iterator children = element.elementIterator( elementName ); children.hasNext(); )
+        {
+            Element child = (Element) children.next();
+            if ( attributeName.equals( child.attributeValue( "name" ) ) )
+            {
+                return child;
+            }
+        }
+        return createElement( element, elementName ).addAttribute( "name", attributeName );
+    }
 
+    protected Element findElement( Element component, String name )
+    {
+        Element element = component.element( name );
         if ( element == null )
         {
             element = createElement( component, name );
@@ -164,11 +191,9 @@ public abstract class AbstractIdeaMojo
      * @param name   Name of the element
      * @return component Xpp3Dom element
      */
-    protected Xpp3Dom createElement( Xpp3Dom module, String name )
+    protected Element createElement( Element module, String name )
     {
-        Xpp3Dom component = new Xpp3Dom( name );
-        module.addChild( component );
-        return component;
+        return module.addElement( name );
     }
 
     /**
@@ -202,15 +227,14 @@ public abstract class AbstractIdeaMojo
      * @param content Xpp3Dom element
      * @param name    Name of the element to be removed
      */
-    protected void removeOldElements( Xpp3Dom content, String name )
+    protected void removeOldElements( Element content, String name )
     {
-        Xpp3Dom[] children = content.getChildren();
-        for ( int i = children.length - 1; i >= 0; i-- )
+        for ( Iterator children = content.elementIterator(); children.hasNext(); )
         {
-            Xpp3Dom child = children[i];
-            if ( child.getName().equals( name ) )
+            Element child = (Element) children.next();
+            if ( name.equals( child.getName() ) )
             {
-                content.removeChild( i );
+                content.remove( child );
             }
         }
     }
@@ -243,7 +267,7 @@ public abstract class AbstractIdeaMojo
                 msg.append( "An error occurred during dependency resolution.\n\n" );
                 msg.append( "    Failed to retrieve " + e.getDownloadUrl() + "\n" );
                 msg.append( "from the following repositories:" );
-                for( Iterator repositories = e.getRemoteRepositories().iterator(); repositories.hasNext(); )
+                for ( Iterator repositories = e.getRemoteRepositories().iterator(); repositories.hasNext(); )
                 {
                     ArtifactRepository repository = (ArtifactRepository) repositories.next();
                     msg.append( "\n    " + repository.getId() + "(" + repository.getUrl() + ")" );
@@ -346,28 +370,5 @@ public abstract class AbstractIdeaMojo
         }
 
         return log;
-    }
-
-    protected Reader getXmlReader( String file )
-    {
-        File altFile = new File( project.getBasedir(), "src/main/idea/" + file );
-        if ( altFile.exists() )
-        {
-            try
-            {
-                return new FileReader( altFile );
-            }
-            catch ( FileNotFoundException e )
-            {
-                // this shouldn't happen, since we just verified it exists,
-                // but we'll print the error out in the off change
-                getLog().error( "File not found even though we just verified it exists. Failing.", e );
-                throw new RuntimeException( e );
-            }
-        }
-        else
-        {
-            return new InputStreamReader( getClass().getResourceAsStream( "/templates/default/" + file ) );
-        }
     }
 }

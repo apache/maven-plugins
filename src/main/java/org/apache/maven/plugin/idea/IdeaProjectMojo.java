@@ -23,18 +23,13 @@ import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
-import org.codehaus.plexus.util.xml.Xpp3DomWriter;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.dom4j.Element;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -133,27 +128,12 @@ public class IdeaProjectMojo
         throws MojoExecutionException
     {
         File projectFile = new File( project.getBasedir(), project.getArtifactId() + ".ipr" );
+
         try
         {
-            Reader reader;
-            if ( projectFile.exists() && !overwrite )
-            {
-                reader = new FileReader( projectFile );
-            }
-            else
-            {
-                reader = getXmlReader( "project.xml" );
-            }
+            Document document = readXmlDocument( projectFile, "project.xml" );
 
-            Xpp3Dom module;
-            try
-            {
-                module = Xpp3DomBuilder.build( reader );
-            }
-            finally
-            {
-                IOUtil.close( reader );
-            }
+            Element module = document.getRootElement();
 
             // Set the jdk name if set
             if ( jdkName != null )
@@ -179,17 +159,17 @@ public class IdeaProjectMojo
 
             setWildcardResourcePatterns( module, wildcardResourcePatterns );
 
-            Xpp3Dom component = findComponent( module, "ProjectModuleManager" );
-            Xpp3Dom modules = findElement( component, "modules" );
+            Element component = findComponent( module, "ProjectModuleManager" );
+            Element modules = findElement( component, "modules" );
 
             removeOldElements( modules, "module" );
 
             if ( project.getCollectedProjects().size() > 0 )
             {
-                Xpp3Dom m = createElement( modules, "module" );
+                Element m = createElement( modules, "module" );
                 String projectPath =
                     new File( project.getBasedir(), project.getArtifactId() + ".iml" ).getAbsolutePath();
-                m.setAttribute( "filepath", "$PROJECT_DIR$/" + toRelative( project.getBasedir(), projectPath ) );
+                m.addAttribute( "filepath", "$PROJECT_DIR$/" + toRelative( project.getBasedir(), projectPath ) );
 
                 for ( Iterator i = project.getCollectedProjects().iterator(); i.hasNext(); )
                 {
@@ -197,41 +177,33 @@ public class IdeaProjectMojo
 
                     m = createElement( modules, "module" );
                     String modulePath = new File( p.getBasedir(), p.getArtifactId() + ".iml" ).getAbsolutePath();
-                    m.setAttribute( "filepath", "$PROJECT_DIR$/" + toRelative( project.getBasedir(), modulePath ) );
+                    m.addAttribute( "filepath", "$PROJECT_DIR$/" + toRelative( project.getBasedir(), modulePath ) );
                 }
             }
             else
             {
-                Xpp3Dom m = createElement( modules, "module" );
+                Element m = createElement( modules, "module" );
                 String modulePath =
                     new File( project.getBasedir(), project.getArtifactId() + ".iml" ).getAbsolutePath();
-                m.setAttribute( "filepath", "$PROJECT_DIR$/" + toRelative( project.getBasedir(), modulePath ) );
+                m.addAttribute( "filepath", "$PROJECT_DIR$/" + toRelative( project.getBasedir(), modulePath ) );
             }
 
             // add any PathMacros we've come across
-            if ( macros != null && module.getChildren( "UsedPathMacros" ).length > 0 )
+            if ( macros != null && module.elements( "UsedPathMacros" ).size() > 0 )
             {
-                Xpp3Dom usedPathMacros = module.getChildren( "UsedPathMacros" )[0];
+                Element usedPathMacros = (Element) module.elements( "UsedPathMacros" ).get( 0 );
                 removeOldElements( usedPathMacros, "macro" );
                 for ( Iterator iterator = macros.iterator(); iterator.hasNext(); )
                 {
                     String macro = (String) iterator.next();
-                    Xpp3Dom macroElement = createElement( usedPathMacros, "macro" );
-                    macroElement.setAttribute( "name", macro );
+                    Element macroElement = createElement( usedPathMacros, "macro" );
+                    macroElement.addAttribute( "name", macro );
                 }
             }
 
-            FileWriter writer = new FileWriter( projectFile );
-            try
-            {
-                Xpp3DomWriter.write( writer, module );
-            }
-            finally
-            {
-                IOUtil.close( writer );
-            }
+            writeXmlDocument( projectFile, document );
         }
-        catch ( XmlPullParserException e )
+        catch ( DocumentException e )
         {
             throw new MojoExecutionException( "Error parsing existing IPR file: " + projectFile.getAbsolutePath(), e );
         }
@@ -247,10 +219,10 @@ public class IdeaProjectMojo
      * @param content Xpp3Dom element.
      * @param jdkName Name of the JDK to use.
      */
-    private void setJdkName( Xpp3Dom content, String jdkName )
+    private void setJdkName( Element content, String jdkName )
     {
-        Xpp3Dom component = findComponent( content, "ProjectRootManager" );
-        component.setAttribute( "project-jdk-name", jdkName );
+        Element component = findComponent( content, "ProjectRootManager" );
+        component.addAttribute( "project-jdk-name", jdkName );
 
         String jdkLevel = this.jdkLevel;
         if ( jdkLevel == null )
@@ -260,17 +232,17 @@ public class IdeaProjectMojo
 
         if ( jdkLevel.startsWith( "1.4" ) )
         {
-            component.setAttribute( "assert-keyword", "true" );
-            component.setAttribute( "jdk-15", "false" );
+            component.addAttribute( "assert-keyword", "true" );
+            component.addAttribute( "jdk-15", "false" );
         }
         else if ( jdkLevel.compareTo( "1.5" ) >= 0 )
         {
-            component.setAttribute( "assert-keyword", "true" );
-            component.setAttribute( "jdk-15", "true" );
+            component.addAttribute( "assert-keyword", "true" );
+            component.addAttribute( "jdk-15", "true" );
         }
         else
         {
-            component.setAttribute( "assert-keyword", "false" );
+            component.addAttribute( "assert-keyword", "false" );
         }
     }
 
@@ -280,20 +252,20 @@ public class IdeaProjectMojo
      * @param content                  Xpp3Dom element.
      * @param wildcardResourcePatterns The wilcard resource patterns.
      */
-    private void setWildcardResourcePatterns( Xpp3Dom content, String wildcardResourcePatterns )
+    private void setWildcardResourcePatterns( Element content, String wildcardResourcePatterns )
     {
-        Xpp3Dom compilerConfigurationElement = findComponent( content, "CompilerConfiguration" );
+        Element compilerConfigurationElement = findComponent( content, "CompilerConfiguration" );
         if ( !StringUtils.isEmpty( wildcardResourcePatterns ) )
         {
             removeOldElements( compilerConfigurationElement, "wildcardResourcePatterns" );
-            Xpp3Dom wildcardResourcePatternsElement =
+            Element wildcardResourcePatternsElement =
                 createElement( compilerConfigurationElement, "wildcardResourcePatterns" );
             StringTokenizer wildcardResourcePatternsTokenizer = new StringTokenizer( wildcardResourcePatterns, ";" );
             while ( wildcardResourcePatternsTokenizer.hasMoreTokens() )
             {
                 String wildcardResourcePattern = wildcardResourcePatternsTokenizer.nextToken();
-                Xpp3Dom entryElement = createElement( wildcardResourcePatternsElement, "entry" );
-                entryElement.setAttribute( "name", wildcardResourcePattern );
+                Element entryElement = createElement( wildcardResourcePatternsElement, "entry" );
+                entryElement.addAttribute( "name", wildcardResourcePattern );
             }
         }
     }

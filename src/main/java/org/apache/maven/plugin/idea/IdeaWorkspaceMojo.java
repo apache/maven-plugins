@@ -17,23 +17,17 @@ package org.apache.maven.plugin.idea;
  */
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
-import org.codehaus.plexus.util.xml.Xpp3DomWriter;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.dom4j.Element;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Reader;
 
 /**
  * @author Edwin Punzalan
  * @goal workspace
  * @execute phase="generate-sources"
- * @todo use dom4j or something. Xpp3Dom can't cope properly with entities and so on
  */
 public class IdeaWorkspaceMojo
     extends AbstractIdeaMojo
@@ -64,31 +58,17 @@ public class IdeaWorkspaceMojo
     {
         File workspaceFile = new File( project.getBasedir(), project.getArtifactId() + ".iws" );
 
-        FileWriter writer = null;
-
-        Reader reader = null;
-
-        Xpp3Dom module;
-
         try
         {
-            if ( workspaceFile.exists() && !overwrite )
-            {
-                reader = new FileReader( workspaceFile );
-            }
-            else
-            {
-                reader = getXmlReader( "workspace.xml" );
-            }
-            module = Xpp3DomBuilder.build( reader );
+            Document document = readXmlDocument( workspaceFile, "workspace.xml" );
+
+            Element module = document.getRootElement();
 
             setProjectScmType( module );
 
-            writer = new FileWriter( workspaceFile );
-
-            Xpp3DomWriter.write( writer, module );
+            writeXmlDocument( workspaceFile, document );
         }
-        catch ( XmlPullParserException e )
+        catch ( DocumentException e )
         {
             throw new MojoExecutionException( "Error parsing existing IWS file: " + workspaceFile.getAbsolutePath(),
                                               e );
@@ -97,30 +77,22 @@ public class IdeaWorkspaceMojo
         {
             throw new MojoExecutionException( "Unable to create workspace file", e );
         }
-        finally
-        {
-            IOUtil.close( reader );
-
-            IOUtil.close( writer );
-        }
     }
 
     /**
      * Sets the SCM type of the project
      */
-    private void setProjectScmType( Xpp3Dom content )
+    private void setProjectScmType( Element content )
     {
-        String scmType;
-
-        scmType = getScmType();
+        String scmType = getScmType();
 
         if ( scmType != null )
         {
-            Xpp3Dom component = findComponent( content, "VcsManagerConfiguration" );
+            Element component = findComponent( content, "VcsManagerConfiguration" );
 
-            Xpp3Dom element = findElementName( component, "option", "ACTIVE_VCS_NAME" );
+            Element element = findElement( component, "option", "ACTIVE_VCS_NAME" );
 
-            element.setAttribute( "value", scmType );
+            element.addAttribute( "value", scmType );
         }
     }
 
@@ -169,28 +141,5 @@ public class IdeaWorkspaceMojo
             }
         }
         return null;
-    }
-
-    /**
-     * Returns a an Xpp3Dom element with (child) tag name and (name) attribute name.
-     *
-     * @param component Xpp3Dom element
-     * @param name      Setting attribute to find
-     * @return option Xpp3Dom element
-     */
-    private Xpp3Dom findElementName( Xpp3Dom component, String child, String name )
-    {
-        Xpp3Dom[] elements = component.getChildren( child );
-        for ( int i = 0; i < elements.length; i++ )
-        {
-            if ( name.equals( elements[i].getAttribute( "name" ) ) )
-            {
-                return elements[i];
-            }
-        }
-
-        Xpp3Dom element = createElement( component, child );
-        element.setAttribute( "name", name );
-        return element;
     }
 }
