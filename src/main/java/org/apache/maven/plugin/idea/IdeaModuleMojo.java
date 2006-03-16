@@ -28,20 +28,14 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.wagon.ResourceDoesNotExistException;
 import org.apache.maven.wagon.TransferFailedException;
-import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
-import org.codehaus.plexus.util.xml.Xpp3DomWriter;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.dom4j.Element;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -217,25 +211,9 @@ public class IdeaModuleMojo
         File moduleFile = new File( project.getBasedir(), project.getArtifactId() + ".iml" );
         try
         {
-            Reader reader;
-            if ( moduleFile.exists() && !overwrite )
-            {
-                reader = new FileReader( moduleFile );
-            }
-            else
-            {
-                reader = getXmlReader( "module.xml" );
-            }
+            Document document = readXmlDocument( moduleFile, "module.xml" );
 
-            Xpp3Dom module;
-            try
-            {
-                module = Xpp3DomBuilder.build( reader );
-            }
-            finally
-            {
-                IOUtil.close( reader );
-            }
+            Element module = document.getRootElement();
 
             // TODO: how can we let the WAR/EJBs plugin hook in and provide this?
             // TODO: merge in ejb-module, etc.
@@ -248,14 +226,14 @@ public class IdeaModuleMojo
                 addEjbModule( module );
             }
 
-            Xpp3Dom component = findComponent( module, "NewModuleRootManager" );
-            Xpp3Dom output = findElement( component, "output" );
-            output.setAttribute( "url", getModuleFileUrl( project.getBuild().getOutputDirectory() ) );
+            Element component = findComponent( module, "NewModuleRootManager" );
+            Element output = findElement( component, "output" );
+            output.addAttribute( "url", getModuleFileUrl( project.getBuild().getOutputDirectory() ) );
 
-            Xpp3Dom outputTest = findElement( component, "output-test" );
-            outputTest.setAttribute( "url", getModuleFileUrl( project.getBuild().getTestOutputDirectory() ) );
+            Element outputTest = findElement( component, "output-test" );
+            outputTest.addAttribute( "url", getModuleFileUrl( project.getBuild().getTestOutputDirectory() ) );
 
-            Xpp3Dom content = findElement( component, "content" );
+            Element content = findElement( component, "content" );
 
             removeOldElements( content, "sourceFolder" );
 
@@ -291,7 +269,7 @@ public class IdeaModuleMojo
             File classes = new File( project.getBuild().getOutputDirectory() );
             File testClasses = new File( project.getBuild().getTestOutputDirectory() );
 
-            List sourceFolders = Arrays.asList( content.getChildren( "sourceFolder" ) );
+            List sourceFolders = content.elements( "sourceFolder" );
 
             List filteredExcludes = new ArrayList();
             filteredExcludes.addAll( getExcludedDirectories( target, filteredExcludes, sourceFolders ) );
@@ -303,7 +281,7 @@ public class IdeaModuleMojo
                 String[] dirs = exclude.split( "[,\\s]+" );
                 for ( int i = 0; i < dirs.length; i++ )
                 {
-                    File excludedDir = new File( dirs[ i ] );
+                    File excludedDir = new File( dirs[i] );
                     filteredExcludes.add( getExcludedDirectories( excludedDir, filteredExcludes, sourceFolders ) );
                 }
             }
@@ -336,25 +314,24 @@ public class IdeaModuleMojo
                     moduleName = a.getArtifactId();
                 }
 
-                Xpp3Dom dep = null;
+                Element dep = null;
 
-                Xpp3Dom[] orderEntries = component.getChildren( "orderEntry" );
-                for ( int idx = 0; idx < orderEntries.length; idx++ )
+                for ( Iterator children = component.elementIterator( "orderEntry" ); children.hasNext(); )
                 {
-                    Xpp3Dom orderEntry = orderEntries[idx];
+                    Element orderEntry = (Element) children.next();
 
-                    if ( orderEntry.getAttribute( "type" ).equals( "module" ) )
+                    if ( orderEntry.attributeValue( "type" ).equals( "module" ) )
                     {
-                        if ( orderEntry.getAttribute( "module-name" ).equals( moduleName ) )
+                        if ( orderEntry.attributeValue( "module-name" ).equals( moduleName ) )
                         {
                             dep = orderEntry;
                             break;
                         }
                     }
-                    else if ( orderEntry.getAttribute( "type" ).equals( "module-library" ) )
+                    else if ( orderEntry.attributeValue( "type" ).equals( "module-library" ) )
                     {
-                        Xpp3Dom lib = orderEntry.getChild( "library" );
-                        if ( lib.getAttribute( "name" ).equals( moduleName ) )
+                        Element lib = orderEntry.element( "library" );
+                        if ( lib.attributeValue( "name" ).equals( moduleName ) )
                         {
                             dep = orderEntry;
                             break;
@@ -374,19 +351,19 @@ public class IdeaModuleMojo
 
                     if ( isIdeaModule )
                     {
-                        dep.setAttribute( "type", "module" );
-                        dep.setAttribute( "module-name", moduleName );
+                        dep.addAttribute( "type", "module" );
+                        dep.addAttribute( "module-name", moduleName );
                     }
                 }
 
                 if ( a.getFile() != null && !isIdeaModule )
                 {
-                    dep.setAttribute( "type", "module-library" );
+                    dep.addAttribute( "type", "module-library" );
                     removeOldElements( dep, "library" );
                     dep = createElement( dep, "library" );
-                    dep.setAttribute( "name", moduleName );
+                    dep.addAttribute( "name", moduleName );
 
-                    Xpp3Dom el = createElement( dep, "CLASSES" );
+                    Element el = createElement( dep, "CLASSES" );
                     if ( library != null && library.getSplitClasses().length > 0 )
                     {
                         String[] libraryClasses = library.getSplitClasses();
@@ -394,29 +371,29 @@ public class IdeaModuleMojo
                         {
                             String classpath = libraryClasses[k];
                             extractMacro( classpath );
-                            Xpp3Dom classEl = createElement( el, "root" );
-                            classEl.setAttribute( "url", classpath );
+                            Element classEl = createElement( el, "root" );
+                            classEl.addAttribute( "url", classpath );
                         }
                     }
                     else
                     {
                         el = createElement( el, "root" );
                         File file = a.getFile();
-                        el.setAttribute( "url", "jar://" + file.getAbsolutePath().replace( '\\', '/' ) + "!/" );
+                        el.addAttribute( "url", "jar://" + file.getAbsolutePath().replace( '\\', '/' ) + "!/" );
                     }
 
                     boolean usedSources = false;
                     if ( library != null && library.getSplitSources().length > 0 )
                     {
-                        Xpp3Dom sourcesElement = createElement( dep, "SOURCES" );
+                        Element sourcesElement = createElement( dep, "SOURCES" );
                         usedSources = true;
                         String[] sources = library.getSplitSources();
                         for ( int k = 0; k < sources.length; k++ )
                         {
                             String source = sources[k];
                             extractMacro( source );
-                            Xpp3Dom sourceEl = createElement( sourcesElement, "root" );
-                            sourceEl.setAttribute( "url", source );
+                            Element sourceEl = createElement( sourcesElement, "root" );
+                            sourceEl.addAttribute( "url", source );
                         }
                     }
 
@@ -440,17 +417,9 @@ public class IdeaModuleMojo
                 addResources( component, resourceDir );
             }
 
-            FileWriter writer = new FileWriter( moduleFile );
-            try
-            {
-                Xpp3DomWriter.write( writer, module );
-            }
-            finally
-            {
-                IOUtil.close( writer );
-            }
+            writeXmlDocument( moduleFile, document );
         }
-        catch ( XmlPullParserException e )
+        catch ( DocumentException e )
         {
             throw new MojoExecutionException( "Error parsing existing IML file " + moduleFile.getAbsolutePath(), e );
         }
@@ -460,16 +429,16 @@ public class IdeaModuleMojo
         }
     }
 
-    private void addEjbModule( Xpp3Dom module )
+    private void addEjbModule( Element module )
     {
-        module.setAttribute( "type", "J2EE_EJB_MODULE" );
+        module.addAttribute( "type", "J2EE_EJB_MODULE" );
 
         String explodedDir = project.getBuild().getDirectory() + "/" + project.getArtifactId();
 
-        Xpp3Dom component = findComponent( module, "EjbModuleBuildComponent" );
+        Element component = findComponent( module, "EjbModuleBuildComponent" );
 
-        Xpp3Dom setting = findSetting( component, "EXPLODED_URL" );
-        setting.setAttribute( "value", getModuleFileUrl( explodedDir ) );
+        Element setting = findSetting( component, "EXPLODED_URL" );
+        setting.addAttribute( "value", getModuleFileUrl( explodedDir ) );
 
         component = findComponent( module, "EjbModuleProperties" );
 
@@ -479,7 +448,7 @@ public class IdeaModuleMojo
         {
             Artifact artifact = (Artifact) i.next();
 
-            Xpp3Dom containerElement = createElement( component, "containerElement" );
+            Element containerElement = createElement( component, "containerElement" );
 
             boolean linkAsModule = false;
             if ( linkModules )
@@ -489,35 +458,35 @@ public class IdeaModuleMojo
 
             if ( linkAsModule )
             {
-                containerElement.setAttribute( "type", "module" );
-                containerElement.setAttribute( "name", artifact.getArtifactId() );
-                Xpp3Dom methodAttribute = createElement( containerElement, "attribute" );
-                methodAttribute.setAttribute( "name", "method" );
-                methodAttribute.setAttribute( "value", "6" );
-                Xpp3Dom uriAttribute = createElement( containerElement, "attribute" );
-                uriAttribute.setAttribute( "name", "URI" );
-                uriAttribute.setAttribute( "value", "/WEB-INF/classes" );
+                containerElement.addAttribute( "type", "module" );
+                containerElement.addAttribute( "name", artifact.getArtifactId() );
+                Element methodAttribute = createElement( containerElement, "attribute" );
+                methodAttribute.addAttribute( "name", "method" );
+                methodAttribute.addAttribute( "value", "6" );
+                Element uriAttribute = createElement( containerElement, "attribute" );
+                uriAttribute.addAttribute( "name", "URI" );
+                uriAttribute.addAttribute( "value", "/WEB-INF/classes" );
             }
             else if ( artifact.getFile() != null )
             {
-                containerElement.setAttribute( "type", "library" );
-                containerElement.setAttribute( "level", "module" );
-                containerElement.setAttribute( "name", artifact.getArtifactId() );
-                Xpp3Dom methodAttribute = createElement( containerElement, "attribute" );
-                methodAttribute.setAttribute( "name", "method" );
-                methodAttribute.setAttribute( "value", "2" );
-                Xpp3Dom uriAttribute = createElement( containerElement, "attribute" );
-                uriAttribute.setAttribute( "name", "URI" );
-                uriAttribute.setAttribute( "value", "/WEB-INF/lib/" + artifact.getFile().getName() );
+                containerElement.addAttribute( "type", "library" );
+                containerElement.addAttribute( "level", "module" );
+                containerElement.addAttribute( "name", artifact.getArtifactId() );
+                Element methodAttribute = createElement( containerElement, "attribute" );
+                methodAttribute.addAttribute( "name", "method" );
+                methodAttribute.addAttribute( "value", "2" );
+                Element uriAttribute = createElement( containerElement, "attribute" );
+                uriAttribute.addAttribute( "name", "URI" );
+                uriAttribute.addAttribute( "value", "/WEB-INF/lib/" + artifact.getFile().getName() );
             }
         }
 
-        Xpp3Dom element = findElement( component, "deploymentDescriptor" );
-        if ( element.getAttribute( "name" ) == null )
+        Element element = findElement( component, "deploymentDescriptor" );
+        if ( element.attributeValue( "name" ) == null )
         {
-            element.setAttribute( "name", "ejb-jar.xml" );
+            element.addAttribute( "name", "ejb-jar.xml" );
         }
-        element.setAttribute( "url", getModuleFileUrl( "src/main/resources/META-INF/ejb-jar.xml" ) );
+        element.addAttribute( "url", getModuleFileUrl( "src/main/resources/META-INF/ejb-jar.xml" ) );
     }
 
     private void extractMacro( String path )
@@ -574,7 +543,7 @@ public class IdeaModuleMojo
                     boolean addToExclude = true;
                     for ( Iterator sources = sourceFolders.iterator(); sources.hasNext(); )
                     {
-                        String source = ( (Xpp3Dom) sources.next() ).getAttribute( "url" );
+                        String source = ( (Element) sources.next() ).attributeValue( "url" );
                         if ( source.equals( url ) )
                         {
                             addToExclude = false;
@@ -618,7 +587,7 @@ public class IdeaModuleMojo
      *
      * @param module Xpp3Dom element
      */
-    private void addWebModule( Xpp3Dom module )
+    private void addWebModule( Element module )
     {
         // TODO: this is bad - reproducing war plugin defaults, etc!
         //   --> this is where the OGNL out of a plugin would be helpful as we could run package first and
@@ -647,11 +616,11 @@ Can't run this anyway as Xpp3Dom is in both classloaders...
         String warSrc = "src/main/webapp";
         String webXml = warSrc + "/WEB-INF/web.xml";
 
-        module.setAttribute( "type", "J2EE_WEB_MODULE" );
+        module.addAttribute( "type", "J2EE_WEB_MODULE" );
 
-        Xpp3Dom component = findComponent( module, "WebModuleBuildComponent" );
-        Xpp3Dom setting = findSetting( component, "EXPLODED_URL" );
-        setting.setAttribute( "value", getModuleFileUrl( warWebapp ) );
+        Element component = findComponent( module, "WebModuleBuildComponent" );
+        Element setting = findSetting( component, "EXPLODED_URL" );
+        setting.addAttribute( "value", getModuleFileUrl( warWebapp ) );
 
         component = findComponent( module, "WebModuleProperties" );
 
@@ -661,7 +630,7 @@ Can't run this anyway as Xpp3Dom is in both classloaders...
         {
             Artifact artifact = (Artifact) i.next();
 
-            Xpp3Dom containerElement = createElement( component, "containerElement" );
+            Element containerElement = createElement( component, "containerElement" );
 
             boolean linkAsModule = false;
             if ( linkModules )
@@ -671,48 +640,48 @@ Can't run this anyway as Xpp3Dom is in both classloaders...
 
             if ( linkAsModule )
             {
-                containerElement.setAttribute( "type", "module" );
-                containerElement.setAttribute( "name", artifact.getArtifactId() );
-                Xpp3Dom methodAttribute = createElement( containerElement, "attribute" );
-                methodAttribute.setAttribute( "name", "method" );
-                methodAttribute.setAttribute( "value", "5" );
-                Xpp3Dom uriAttribute = createElement( containerElement, "attribute" );
-                uriAttribute.setAttribute( "name", "URI" );
-                uriAttribute.setAttribute( "value", "/WEB-INF/classes" );
+                containerElement.addAttribute( "type", "module" );
+                containerElement.addAttribute( "name", artifact.getArtifactId() );
+                Element methodAttribute = createElement( containerElement, "attribute" );
+                methodAttribute.addAttribute( "name", "method" );
+                methodAttribute.addAttribute( "value", "5" );
+                Element uriAttribute = createElement( containerElement, "attribute" );
+                uriAttribute.addAttribute( "name", "URI" );
+                uriAttribute.addAttribute( "value", "/WEB-INF/classes" );
             }
             else if ( artifact.getFile() != null )
             {
-                containerElement.setAttribute( "type", "library" );
-                containerElement.setAttribute( "level", "module" );
-                containerElement.setAttribute( "name", artifact.getArtifactId() );
-                Xpp3Dom methodAttribute = createElement( containerElement, "attribute" );
-                methodAttribute.setAttribute( "name", "method" );
-                methodAttribute.setAttribute( "value", "1" ); // IntelliJ 5.0.2 is bugged and doesn't read it
-                Xpp3Dom uriAttribute = createElement( containerElement, "attribute" );
-                uriAttribute.setAttribute( "name", "URI" );
-                uriAttribute.setAttribute( "value", "/WEB-INF/lib/" + artifact.getFile().getName() );
+                containerElement.addAttribute( "type", "library" );
+                containerElement.addAttribute( "level", "module" );
+                containerElement.addAttribute( "name", artifact.getArtifactId() );
+                Element methodAttribute = createElement( containerElement, "attribute" );
+                methodAttribute.addAttribute( "name", "method" );
+                methodAttribute.addAttribute( "value", "1" ); // IntelliJ 5.0.2 is bugged and doesn't read it
+                Element uriAttribute = createElement( containerElement, "attribute" );
+                uriAttribute.addAttribute( "name", "URI" );
+                uriAttribute.addAttribute( "value", "/WEB-INF/lib/" + artifact.getFile().getName() );
             }
         }
 
-        Xpp3Dom element = findElement( component, "deploymentDescriptor" );
-        if ( element.getAttribute( "version" ) == null )
+        Element element = findElement( component, "deploymentDescriptor" );
+        if ( element.attributeValue( "version" ) == null )
         {
             // TODO: should derive from web.xml - does IDEA do this if omitted?
 //                    element.setAttribute( "version", "2.3" );
         }
-        if ( element.getAttribute( "name" ) == null )
+        if ( element.attributeValue( "name" ) == null )
         {
-            element.setAttribute( "name", "web.xml" );
+            element.addAttribute( "name", "web.xml" );
         }
 
-        element.setAttribute( "url", getModuleFileUrl( webXml ) );
+        element.addAttribute( "url", getModuleFileUrl( webXml ) );
 
         element = findElement( component, "webroots" );
         removeOldElements( element, "root" );
 
         element = createElement( element, "root" );
-        element.setAttribute( "relative", "/" );
-        element.setAttribute( "url", getModuleFileUrl( warSrc ) );
+        element.addAttribute( "relative", "/" );
+        element.addAttribute( "url", getModuleFileUrl( warSrc ) );
     }
 
     /**
@@ -739,20 +708,20 @@ Can't run this anyway as Xpp3Dom is in both classloaders...
      * @param directory Directory to set as url.
      * @param isTest    True if directory isTestSource.
      */
-    private void addSourceFolder( Xpp3Dom content, String directory, boolean isTest )
+    private void addSourceFolder( Element content, String directory, boolean isTest )
     {
         if ( !StringUtils.isEmpty( directory ) && new File( directory ).isDirectory() )
         {
-            Xpp3Dom sourceFolder = createElement( content, "sourceFolder" );
-            sourceFolder.setAttribute( "url", getModuleFileUrl( directory ) );
-            sourceFolder.setAttribute( "isTestSource", Boolean.toString( isTest ) );
+            Element sourceFolder = createElement( content, "sourceFolder" );
+            sourceFolder.addAttribute( "url", getModuleFileUrl( directory ) );
+            sourceFolder.addAttribute( "isTestSource", Boolean.toString( isTest ) );
         }
     }
 
-    private void addExcludeFolder( Xpp3Dom content, String directory )
+    private void addExcludeFolder( Element content, String directory )
     {
-        Xpp3Dom excludeFolder = createElement( content, "excludeFolder" );
-        excludeFolder.setAttribute( "url", getModuleFileUrl( directory ) );
+        Element excludeFolder = createElement( content, "excludeFolder" );
+        excludeFolder.addAttribute( "url", getModuleFileUrl( directory ) );
     }
 
     /**
@@ -760,15 +729,14 @@ Can't run this anyway as Xpp3Dom is in both classloaders...
      *
      * @param component Xpp3Dom element
      */
-    private void removeOldDependencies( Xpp3Dom component )
+    private void removeOldDependencies( Element component )
     {
-        Xpp3Dom[] children = component.getChildren();
-        for ( int i = children.length - 1; i >= 0; i-- )
+        for ( Iterator children = component.elementIterator(); children.hasNext(); )
         {
-            Xpp3Dom child = children[i];
-            if ( "orderEntry".equals( child.getName() ) && "module-library".equals( child.getAttribute( "type" ) ) )
+            Element child = (Element) children.next();
+            if ( "orderEntry".equals( child.getName() ) && "module-library".equals( child.attributeValue( "type" ) ) )
             {
-                component.removeChild( i );
+                component.remove( child );
             }
         }
     }
@@ -789,7 +757,7 @@ Can't run this anyway as Xpp3Dom is in both classloaders...
         return false;
     }
 
-    private void resolveClassifier( Xpp3Dom element, Artifact a, String classifier )
+    private void resolveClassifier( Element element, Artifact a, String classifier )
     {
         String id = a.getId() + '-' + classifier;
 
@@ -810,7 +778,7 @@ Can't run this anyway as Xpp3Dom is in both classloaders...
         {
             String jarPath = "jar://" + path + "!/";
             getLog().debug( "Setting " + classifier + " for " + id + " to " + jarPath );
-            createElement( element, "root" ).setAttribute( "url", jarPath );
+            createElement( element, "root" ).addAttribute( "url", jarPath );
         }
     }
 
@@ -854,16 +822,16 @@ Can't run this anyway as Xpp3Dom is in both classloaders...
         }
     }
 
-    private void addResources( Xpp3Dom component, String directory )
+    private void addResources( Element component, String directory )
     {
-        Xpp3Dom dep = createElement( component, "orderEntry" );
-        dep.setAttribute( "type", "module-library" );
+        Element dep = createElement( component, "orderEntry" );
+        dep.addAttribute( "type", "module-library" );
         dep = createElement( dep, "library" );
-        dep.setAttribute( "name", "resources" );
+        dep.addAttribute( "name", "resources" );
 
-        Xpp3Dom el = createElement( dep, "CLASSES" );
+        Element el = createElement( dep, "CLASSES" );
         el = createElement( el, "root" );
-        el.setAttribute( "url", getModuleFileUrl( directory ) );
+        el.addAttribute( "url", getModuleFileUrl( directory ) );
     }
 
     /**
@@ -873,19 +841,8 @@ Can't run this anyway as Xpp3Dom is in both classloaders...
      * @param name      Setting attribute to find
      * @return setting Xpp3Dom element
      */
-    private Xpp3Dom findSetting( Xpp3Dom component, String name )
+    private Element findSetting( Element component, String name )
     {
-        Xpp3Dom[] settings = component.getChildren( "setting" );
-        for ( int i = 0; i < settings.length; i++ )
-        {
-            if ( name.equals( settings[i].getAttribute( "name" ) ) )
-            {
-                return settings[i];
-            }
-        }
-
-        Xpp3Dom setting = createElement( component, "setting" );
-        setting.setAttribute( "name", name );
-        return setting;
+        return findElement( component, "setting", name );
     }
 }
