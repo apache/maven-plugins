@@ -214,7 +214,7 @@ public abstract class AbstractWarMojo
     protected String[] getExcludes()
     {
         List excludeList = new ArrayList();
-        if ( StringUtils.isNotEmpty(warSourceExcludes) )
+        if ( StringUtils.isNotEmpty( warSourceExcludes ) )
         {
             excludeList.addAll( Arrays.asList( StringUtils.split( warSourceExcludes, "," ) ) );
         }
@@ -230,7 +230,6 @@ public abstract class AbstractWarMojo
         {
             excludeList.add( "**/" + META_INF + "/context.xml" );
         }
-
 
         return (String[]) excludeList.toArray( EMPTY_STRING_ARRAY );
     }
@@ -252,8 +251,9 @@ public abstract class AbstractWarMojo
      *
      * @return an array of tokens to exclude
      */
-    protected String[] getDependentWarExcludes() {
-        if ( StringUtils.isNotEmpty(dependentWarExcludes) )
+    protected String[] getDependentWarExcludes()
+    {
+        if ( StringUtils.isNotEmpty( dependentWarExcludes ) )
         {
             return StringUtils.split( dependentWarExcludes, "," );
         }
@@ -267,7 +267,8 @@ public abstract class AbstractWarMojo
      *
      * @return an array of tokens to include
      */
-    protected String[] getDependentWarIncludes() {
+    protected String[] getDependentWarIncludes()
+    {
         return StringUtils.split( StringUtils.defaultString( dependentWarIncludes ), "," );
     }
 
@@ -306,7 +307,7 @@ public abstract class AbstractWarMojo
      *
      * @param sourceDirectory the source directory
      * @param webappDirectory the target directory
-     * @param webXml the path to a custom web.xml
+     * @param webXml          the path to a custom web.xml
      * @throws java.io.IOException if an error occured while copying resources
      */
     public void copyResources( File sourceDirectory, File webappDirectory, String webXml, String containerConfigXML )
@@ -320,8 +321,8 @@ public abstract class AbstractWarMojo
                 String[] fileNames = getWarFiles( sourceDirectory );
                 for ( int i = 0; i < fileNames.length; i++ )
                 {
-                    FileUtils.copyFile( new File( sourceDirectory, fileNames[i] ),
-                                        new File( webappDirectory, fileNames[i] ) );
+                    FileUtils.copyFileIfModified( new File( sourceDirectory, fileNames[i] ),
+                                                  new File( webappDirectory, fileNames[i] ) );
                 }
             }
 
@@ -329,14 +330,14 @@ public abstract class AbstractWarMojo
             {
                 //rename to web.xml
                 File webinfDir = new File( webappDirectory, WEB_INF );
-                FileUtils.copyFile( new File( webXml ), new File( webinfDir, "/web.xml" ) );
+                FileUtils.copyFileIfModified( new File( webXml ), new File( webinfDir, "/web.xml" ) );
             }
 
             if ( StringUtils.isNotEmpty( containerConfigXML ) )
             {
                 File metainfDir = new File( webappDirectory, META_INF );
                 String xmlFileName = new File( containerConfigXML ).getName();
-                FileUtils.copyFile( new File( containerConfigXML ), new File( metainfDir, xmlFileName ) );
+                FileUtils.copyFileIfModified( new File( containerConfigXML ), new File( metainfDir, xmlFileName ) );
             }
         }
     }
@@ -347,7 +348,7 @@ public abstract class AbstractWarMojo
      * Classes, libraries and tld files are copied to
      * the <tt>webappDirectory</tt> during this phase.
      *
-     * @param project the maven project
+     * @param project         the maven project
      * @param webappDirectory
      * @throws java.io.IOException if an error occured while building the webapp
      */
@@ -362,7 +363,7 @@ public abstract class AbstractWarMojo
 
         File webappClassesDirectory = new File( webappDirectory, WEB_INF + "/classes" );
 
-        if ( getClassesDirectory().exists() && (!getClassesDirectory().equals(webappClassesDirectory)))
+        if ( getClassesDirectory().exists() && ( !getClassesDirectory().equals( webappClassesDirectory ) ) )
         {
             FileUtils.copyDirectoryStructure( getClassesDirectory(), webappClassesDirectory );
         }
@@ -382,20 +383,20 @@ public abstract class AbstractWarMojo
                 String type = artifact.getType();
                 if ( "tld".equals( type ) )
                 {
-                    FileUtils.copyFileToDirectory( artifact.getFile(), tldDirectory );
+                    FileUtils.copyFileToDirectoryIfModified( artifact.getFile(), tldDirectory );
                 }
                 else if ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type ) )
                 {
-                    FileUtils.copyFileToDirectory( artifact.getFile(), libDirectory );
+                    FileUtils.copyFileToDirectoryIfModified( artifact.getFile(), libDirectory );
                 }
                 else if ( "par".equals( type ) )
                 {
                     String newName = artifact.getFile().getName();
-                    newName = newName.substring( 0, newName.lastIndexOf('.') ) + ".jar";
+                    newName = newName.substring( 0, newName.lastIndexOf( '.' ) ) + ".jar";
 
                     getLog().debug( "Copying " + artifact.getFile() + " to " + new File( libDirectory, newName ) );
 
-                    FileUtils.copyFile( artifact.getFile(), new File( libDirectory, newName ) );
+                    FileUtils.copyFileIfModified( artifact.getFile(), new File( libDirectory, newName ) );
                 }
                 else if ( "war".equals( type ) )
                 {
@@ -464,7 +465,7 @@ public abstract class AbstractWarMojo
     /**
      * Unpacks the archive file.
      *
-     * @param file File to be unpacked.
+     * @param file     File to be unpacked.
      * @param location Location where to put the unpacked files.
      */
     private void unpack( File file, File location )
@@ -494,7 +495,7 @@ public abstract class AbstractWarMojo
      * Recursively copies contents of <tt>srcDir</tt> into <tt>targetDir</tt>.
      * This will not overwrite any existing files.
      *
-     * @param srcDir Directory containing unpacked dependent war contents
+     * @param srcDir    Directory containing unpacked dependent war contents
      * @param targetDir Directory to overlay srcDir into
      */
     private void copyDependentWarContents( File srcDir, File targetDir )
@@ -522,16 +523,17 @@ public abstract class AbstractWarMojo
             File targetFile = new File( targetDir, files[j] );
 
             // Do not overwrite existing files.
-            if (!targetFile.exists())
+            if ( !targetFile.exists() )
             {
                 try
                 {
                     targetFile.getParentFile().mkdirs();
-                    FileUtils.copyFile( new File( srcDir, files[j] ), targetFile );
+                    FileUtils.copyFileIfModified( new File( srcDir, files[j] ), targetFile );
                 }
                 catch ( IOException e )
                 {
-                    throw new MojoExecutionException( "Error copying file '" + files[j] + "' to '" + targetFile + "'", e );
+                    throw new MojoExecutionException( "Error copying file '" + files[j] + "' to '" + targetFile + "'",
+                                                      e );
                 }
             }
         }
