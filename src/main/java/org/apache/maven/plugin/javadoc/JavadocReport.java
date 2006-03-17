@@ -221,7 +221,7 @@ public class JavadocReport
 
     /**
      * Specifies the proxy port where the javadoc web access in -link would pass through.
-     * It defaults to the proxy port of the active proxy set in the settings.xml, otherwise it gets the proxy 
+     * It defaults to the proxy port of the active proxy set in the settings.xml, otherwise it gets the proxy
      * configuration set in the pom.
      *
      * @parameter expression="${proxyPort}" default-value="${settings.activeProxy.port}"
@@ -275,6 +275,20 @@ public class JavadocReport
      * @parameter expression="${source}"
      */
     private String source;
+
+    /**
+     * Specifies the source path where the subpackages are located.
+     *
+     * @parameter expression="${sourcepath}"
+     */
+    private String sourcepath;
+
+    /**
+     * Specifies the package directory where javadoc will be executed.
+     *
+     * @parameter expression="${subpackages}"
+     */
+    private String subpackages;
 
     /**
      * Provides more detailed messages while javadoc is running.
@@ -699,6 +713,8 @@ public class JavadocReport
 
         char FILE_SEPARATOR = System.getProperty( "file.separator" ).charAt( 0 );
         String[] excludePackages = {};
+
+        // for the specified excludePackageNames
         if ( excludePackageNames != null )
         {
             excludePackages = excludePackageNames.split( "[ ,:;]" );
@@ -708,59 +724,64 @@ public class JavadocReport
             excludePackages[i] = excludePackages[i].replace( '.', FILE_SEPARATOR );
         }
 
+        // if the sourcepath is not empty
         StringBuffer sourcePath = new StringBuffer();
         StringBuffer files = new StringBuffer();
-        for ( Iterator i = getProject().getCompileSourceRoots().iterator(); i.hasNext(); )
+        List excludedNames = new ArrayList();
+        if ( sourcepath != null && !StringUtils.isEmpty( sourcepath ) )
         {
-            String sourceDirectory = (String) i.next();
-            String[] fileList = FileUtils.getFilesFromExtension( sourceDirectory, new String[]{"java"} );
-            if ( fileList != null && fileList.length != 0 )
+            String[] sourcePaths = sourcepath.split( "[;]" );
+            if ( subpackages != null && !StringUtils.isEmpty( subpackages ) )
             {
-                for ( int j = 0; j < fileList.length; j++ )
+                for ( int i = 0; i < sourcePaths.length; i++ )
                 {
-                    boolean include = true;
-                    for ( int k = 0; k < excludePackages.length && include; k++ )
+                    String[] subpackagesList = subpackages.split( "[:]" );
+                    for ( int j = 0; j < subpackagesList.length; j++ )
                     {
-                        // handle wildcards (*) in the excludePackageNames
-                        String[] excludeName = excludePackages[k].split( "[*]" );
-                        if ( excludeName.length > 1 )
-                        {
-                            int u = 0;
-                            while ( include == true && u < excludeName.length )
-                            {
-                                if ( !excludeName[u].trim().equals( "" ) &&
-                                    fileList[j].indexOf( excludeName[u] ) != -1 )
-                                {
-                                    include = false;
-                                }
-                                u++;
-                            }
-                        }
-                        else
-                        {
-                            if ( fileList[j].startsWith( sourceDirectory + FILE_SEPARATOR + excludeName[0] ) )
-                            {
-                                include = false;
-                            }
-                        }
+                        excludePackageNames = "";
+                        List excludes = getExcludedPackages( sourcePaths[i], excludePackages, FILE_SEPARATOR );
+                        excludedNames.addAll( excludes );
                     }
-                    if ( include )
+
+                    sourcePath.append( sourcePaths[i] );
+                    if ( ( i + 1 ) < sourcePaths.length )
                     {
-                        files.append( quotedPathArgument( fileList[j] ) );
-                        files.append( "\n" );
+                        sourcePath.append( PATH_SEPARATOR );
                     }
                 }
             }
-
-            sourcePath.append( sourceDirectory );
-
-            if ( i.hasNext() )
+            else
             {
-                sourcePath.append( PATH_SEPARATOR );
+                for ( int i = 0; i < sourcePaths.length; i++ )
+                {
+                    String sourceDirectory = sourcePaths[i];
+                    files = getAllFilesFromSource( sourceDirectory, files, excludePackages, FILE_SEPARATOR );
+                    sourcePath.append( sourceDirectory );
+
+                    if ( ( i + 1 ) < sourcePaths.length )
+                    {
+                        sourcePath.append( PATH_SEPARATOR );
+                    }
+                }
+
+            }
+        }
+        else
+        {
+            for ( Iterator i = getProject().getCompileSourceRoots().iterator(); i.hasNext(); )
+            {
+                String sourceDirectory = (String) i.next();
+                files = getAllFilesFromSource( sourceDirectory, files, excludePackages, FILE_SEPARATOR );
+                sourcePath.append( sourceDirectory );
+
+                if ( i.hasNext() )
+                {
+                    sourcePath.append( PATH_SEPARATOR );
+                }
             }
         }
 
-        if ( files.length() == 0 )
+        if ( files.length() == 0 && ( subpackages == null || StringUtils.isEmpty( subpackages ) ) )
         {
             return;
         }
@@ -921,6 +942,28 @@ public class JavadocReport
         addArgIf( arguments, verbose, "-verbose" );
         addArgIfNotEmpty( arguments, null, additionalparam );
         addArgIfNotEmpty( arguments, "-sourcepath", quotedPathArgument( sourcePath.toString() ) );
+
+        if ( sourcepath != null && !StringUtils.isEmpty( sourcepath ) )
+        {
+            addArgIfNotEmpty( arguments, "-subpackages", subpackages );
+        }
+
+        if ( subpackages != null && !StringUtils.isEmpty( subpackages ) )
+        {
+            String packageNames = "";
+            //add the excludedpackage names
+            for ( Iterator it = excludedNames.iterator(); it.hasNext(); )
+            {
+                String str = (String) it.next();
+                packageNames = packageNames + str;
+
+                if ( it.hasNext() )
+                {
+                    packageNames = packageNames + ":";
+                }
+            }
+            addArgIfNotEmpty( arguments, "-exclude", packageNames );
+        }
 
         // javadoc arguments for default doclet
         if ( StringUtils.isEmpty( doclet ) )
@@ -1374,4 +1417,133 @@ public class JavadocReport
         ArtifactHandler artifactHandler = project.getArtifact().getArtifactHandler();
         return ( "java".equals( artifactHandler.getLanguage() ) );
     }
+
+    /**
+     * Method that gets the files or classes that would be included in the javadocs using the subpackages
+     * parameter.
+     *
+     * @param sourceDirectory the directory where the source files are located
+     * @param fileList        the list of all files found in the sourceDirectory
+     * @param excludePackages package names to be excluded in the javadoc
+     * @param FILE_SEPARATOR  the standard file separator used
+     * @return a StringBuffer that contains the appended file names of the files to be included in the javadoc
+     */
+    private StringBuffer getIncludedFiles( String sourceDirectory, String[] fileList, String[] excludePackages,
+                                           char FILE_SEPARATOR )
+    {
+        StringBuffer files = new StringBuffer();
+
+        for ( int j = 0; j < fileList.length; j++ )
+        {
+            boolean include = true;
+            for ( int k = 0; k < excludePackages.length && include; k++ )
+            {
+                // handle wildcards (*) in the excludePackageNames
+                String[] excludeName = excludePackages[k].split( "[*]" );
+                if ( excludeName.length > 1 )
+                {
+                    int u = 0;
+                    while ( include == true && u < excludeName.length )
+                    {
+                        if ( !excludeName[u].trim().equals( "" ) && fileList[j].indexOf( excludeName[u] ) != -1 )
+                        {
+                            include = false;
+                        }
+                        u++;
+                    }
+                }
+                else
+                {
+                    if ( fileList[j].startsWith( sourceDirectory + FILE_SEPARATOR + excludeName[0] ) )
+                    {
+                        include = false;
+                    }
+                }
+            }
+
+            if ( include )
+            {
+                files.append( quotedPathArgument( fileList[j] ) );
+                files.append( "\n" );
+            }
+        }
+
+        return files;
+    }
+
+    /**
+     * Method that gets the complete package names (including subpackages) of the packages that were defined
+     * in the excludePackageNames parameter.
+     *
+     * @param sourceDirectory     the directory where the source files are located
+     * @param excludePackagenames package names to be excluded in the javadoc
+     * @param FILE_SEPARATOR      the standard file separator used
+     * @return a List of the packagenames to be excluded
+     */
+    private List getExcludedPackages( String sourceDirectory, String[] excludePackagenames, char FILE_SEPARATOR )
+    {
+        List files = new ArrayList();
+        for ( int i = 0; i < excludePackagenames.length; i++ )
+        {
+            String[] fileList = FileUtils.getFilesFromExtension( sourceDirectory, new String[]{"java"} );
+            for ( int j = 0; j < fileList.length; j++ )
+            {
+                String[] excludeName = excludePackagenames[i].split( "[*]" );
+                int u = 0;
+                while ( u < excludeName.length )
+                {
+                    if ( !excludeName[u].trim().equals( "" ) && fileList[j].indexOf( excludeName[u] ) != -1 &&
+                        sourceDirectory.indexOf( excludeName[u] ) == -1 )
+                    {
+                        files.add( fileList[j] );
+                    }
+                    u++;
+                }
+            }
+        }
+
+        List excluded = new ArrayList();
+        for ( Iterator it = files.iterator(); it.hasNext(); )
+        {
+            String file = (String) it.next();
+            int idx = file.lastIndexOf( FILE_SEPARATOR );
+            String tmpStr = file.substring( 0, idx );
+            tmpStr = tmpStr.replace( '\\', '/' );
+            sourceDirectory = sourceDirectory.replace( '\\', '/' );
+            String[] srcSplit = tmpStr.split( sourceDirectory + '/' );
+            String excludedPackage = srcSplit[1].replace( '/', '.' );
+
+            if ( !excluded.contains( excludedPackage ) )
+            {
+                excluded.add( excludedPackage );
+            }
+        }
+
+        return excluded;
+    }
+
+
+    /**
+     * Convenience method that gets the files to be included in the javadoc.
+     *
+     * @param sourceDirectory the directory where the source files are located
+     * @param files           the variable that contains the appended filenames of the files to be included in the javadoc
+     * @param excludePackages the packages to be excluded in the javadocs
+     * @param FILE_SEPARATOR  the standard file separator used
+     * @return a StringBuffer that contains the appended file names of the files to be included in the javadoc
+     */
+    private StringBuffer getAllFilesFromSource( String sourceDirectory, StringBuffer files, String[] excludePackages,
+                                                char FILE_SEPARATOR )
+    {
+
+        String[] fileList = FileUtils.getFilesFromExtension( sourceDirectory, new String[]{"java"} );
+        if ( fileList != null && fileList.length != 0 )
+        {
+            StringBuffer tmpFiles = getIncludedFiles( sourceDirectory, fileList, excludePackages, FILE_SEPARATOR );
+            files.append( tmpFiles );
+        }
+
+        return files;
+    }
+
 }
