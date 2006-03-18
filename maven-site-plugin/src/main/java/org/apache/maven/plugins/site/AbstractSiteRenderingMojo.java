@@ -691,7 +691,7 @@ public abstract class AbstractSiteRenderingMojo
             if ( menu.getItems().isEmpty() )
             {
                 List categoryReports = (List) categories.get( MavenReport.CATEGORY_PROJECT_INFORMATION );
-                if ( !categoryReports.isEmpty() )
+                if ( !isEmptyList( categoryReports ) )
                 {
                     MenuItem item = createCategoryMenu(
                         i18n.getString( "site-plugin", locale, "report.menu.projectinformation" ), "/project-info.html",
@@ -701,7 +701,7 @@ public abstract class AbstractSiteRenderingMojo
                 }
 
                 categoryReports = (List) categories.get( MavenReport.CATEGORY_PROJECT_REPORTS );
-                if ( !categoryReports.isEmpty() )
+                if ( !isEmptyList( categoryReports ) )
                 {
                     MenuItem item = createCategoryMenu(
                         i18n.getString( "site-plugin", locale, "report.menu.projectreports" ), "/project-reports.html",
@@ -852,5 +852,10 @@ public abstract class AbstractSiteRenderingMojo
             }
         }
         return documents;
+    }
+
+    private static boolean isEmptyList( List list )
+    {
+        return list == null || list.isEmpty();
     }
 }
