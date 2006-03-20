@@ -1,5 +1,7 @@
 package org.apache.maven.plugin.assembly;
 
+import org.apache.maven.project.MavenProject;
+
 /*
  * Copyright 2001-2005 The Apache Software Foundation.
  *
@@ -16,29 +18,16 @@ package org.apache.maven.plugin.assembly;
  * limitations under the License.
  */
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolationException;
-import org.apache.maven.plugins.assembly.model.Assembly;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.archiver.Archiver;
-import org.codehaus.plexus.archiver.ArchiverException;
-import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-
 /**
  * Assemble an application bundle or distribution.
  *
  * @goal directory
  * @requiresDependencyResolution test
  * @execute phase="package"
+ * @aggregator
  */
-public class DirectoryMojo
-    extends AbstractAssemblyMojo
+public class DirectoryMojo 
+	extends AbstractDirectoryMojo
 {
     /**
      * Get the executed project from the forked lifecycle.
@@ -50,64 +39,6 @@ public class DirectoryMojo
     protected MavenProject getExecutedProject()
     {
         return executedProject;
-    }
-
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
-    {
-        List assemblies;
-        try
-        {
-            assemblies = readAssemblies();
-        }
-        catch( AssemblyInterpolationException e )
-        {
-            throw new MojoExecutionException( "Failed to interpolate assembly descriptor", e );
-        }
-        for ( Iterator i = assemblies.iterator(); i.hasNext(); )
-        {
-            Assembly assembly = (Assembly) i.next();
-            createDirectory( assembly );
-        }
-    }
-
-    private void createDirectory( Assembly assembly )
-        throws MojoExecutionException, MojoFailureException
-    {
-        String fullName = finalName;
-
-        if ( appendAssemblyId )
-        {
-            fullName = fullName + "-" + assembly.getId();
-        }
-        else if ( getClassifier() != null )
-        {
-            fullName = fullName + "-" + getClassifier();
-        }
-
-        try
-        {
-            Archiver archiver = this.archiverManager.getArchiver( "dir" );
-
-            createArchive( archiver, assembly, fullName );
-        }
-        
-        catch ( NoSuchArchiverException e )
-        {
-            throw new MojoExecutionException( "Error creating assembly", e );
-        }
-        catch ( ArchiverException e )
-        {
-            throw new MojoExecutionException( "Error creating assembly", e );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Error creating assembly", e );
-        }
-        catch ( XmlPullParserException e )
-        {
-            throw new MojoExecutionException( "Error creating assembly", e );
-        }
     }
 
 }
