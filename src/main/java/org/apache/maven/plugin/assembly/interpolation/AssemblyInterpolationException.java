@@ -1,14 +1,12 @@
 package org.apache.maven.plugin.assembly.interpolation;
 
-import org.apache.maven.project.interpolation.ModelInterpolationException;
-
 public class AssemblyInterpolationException
     extends Exception
 {
     private String expression;
 
     private String originalMessage;
-    
+
     public AssemblyInterpolationException( String message )
     {
         super( message );
@@ -18,7 +16,7 @@ public class AssemblyInterpolationException
     {
         super( message, cause );
     }
-    
+
     public AssemblyInterpolationException( String expression, String message, Throwable cause )
     {
         super( "The Assembly expression: " + expression + " could not be evaluated. Reason: " + message, cause );
@@ -34,7 +32,7 @@ public class AssemblyInterpolationException
         this.expression = expression;
         this.originalMessage = message;
     }
-    
+
     public String getExpression()
     {
         return expression;
