@@ -321,7 +321,7 @@ public abstract class AbstractWarMojo
                 String[] fileNames = getWarFiles( sourceDirectory );
                 for ( int i = 0; i < fileNames.length; i++ )
                 {
-                    FileUtils.copyFileIfModified( new File( sourceDirectory, fileNames[i] ),
+                    FileUtils.copyFile( new File( sourceDirectory, fileNames[i] ),
                                                   new File( webappDirectory, fileNames[i] ) );
                 }
             }
@@ -337,7 +337,7 @@ public abstract class AbstractWarMojo
             {
                 File metainfDir = new File( webappDirectory, META_INF );
                 String xmlFileName = new File( containerConfigXML ).getName();
-                FileUtils.copyFileIfModified( new File( containerConfigXML ), new File( metainfDir, xmlFileName ) );
+                FileUtils.copyFile( new File( containerConfigXML ), new File( metainfDir, xmlFileName ) );
             }
         }
     }
@@ -383,11 +383,11 @@ public abstract class AbstractWarMojo
                 String type = artifact.getType();
                 if ( "tld".equals( type ) )
                 {
-                    FileUtils.copyFileToDirectoryIfModified( artifact.getFile(), tldDirectory );
+                    FileUtils.copyFileToDirectory( artifact.getFile(), tldDirectory );
                 }
                 else if ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type ) )
                 {
-                    FileUtils.copyFileToDirectoryIfModified( artifact.getFile(), libDirectory );
+                    FileUtils.copyFileToDirectory( artifact.getFile(), libDirectory );
                 }
                 else if ( "par".equals( type ) )
                 {
@@ -396,7 +396,7 @@ public abstract class AbstractWarMojo
 
                     getLog().debug( "Copying " + artifact.getFile() + " to " + new File( libDirectory, newName ) );
 
-                    FileUtils.copyFileIfModified( artifact.getFile(), new File( libDirectory, newName ) );
+                    FileUtils.copyFile( artifact.getFile(), new File( libDirectory, newName ) );
                 }
                 else if ( "war".equals( type ) )
                 {
@@ -528,7 +528,7 @@ public abstract class AbstractWarMojo
                 try
                 {
                     targetFile.getParentFile().mkdirs();
-                    FileUtils.copyFileIfModified( new File( srcDir, files[j] ), targetFile );
+                    FileUtils.copyFile( new File( srcDir, files[j] ), targetFile );
                 }
                 catch ( IOException e )
                 {
