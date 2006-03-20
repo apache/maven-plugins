@@ -42,14 +42,14 @@ public class AssemblyScopeArtifactFilter
             compileScope = true;
             runtimeScope = true;
             testScope = true;
-        }  
-        else if( DefaultArtifact.SCOPE_PROVIDED.equals( scope ) )
+        }
+        else if ( DefaultArtifact.SCOPE_PROVIDED.equals( scope ) )
         {
             systemScope = false;
             providedScope = true;
             compileScope = false;
             runtimeScope = false;
-            testScope = false;            
+            testScope = false;
         }
         else
         {
@@ -59,8 +59,8 @@ public class AssemblyScopeArtifactFilter
             runtimeScope = false;
             testScope = false;
         }
-    }    
-    
+    }
+
     public boolean include( Artifact artifact )
     {
         if ( Artifact.SCOPE_COMPILE.equals( artifact.getScope() ) )

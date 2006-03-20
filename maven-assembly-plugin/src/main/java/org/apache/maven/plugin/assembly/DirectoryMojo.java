@@ -26,8 +26,8 @@ import org.apache.maven.project.MavenProject;
  * @execute phase="package"
  * @aggregator
  */
-public class DirectoryMojo 
-	extends AbstractDirectoryMojo
+public class DirectoryMojo
+    extends AbstractDirectoryMojo
 {
     /**
      * Get the executed project from the forked lifecycle.

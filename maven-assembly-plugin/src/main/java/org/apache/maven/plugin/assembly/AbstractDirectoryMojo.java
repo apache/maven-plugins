@@ -1,9 +1,5 @@
 package org.apache.maven.plugin.assembly;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolationException;
@@ -13,19 +9,24 @@ import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-public abstract class AbstractDirectoryMojo 
-	extends AbstractAssemblyMojo {
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+
+public abstract class AbstractDirectoryMojo
+    extends AbstractAssemblyMojo
+{
 
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-       List assemblies;
+        List assemblies;
         try
         {
             assemblies = readAssemblies();
         }
-        catch( AssemblyInterpolationException e )
+        catch ( AssemblyInterpolationException e )
         {
             throw new MojoExecutionException( "Failed to interpolate assembly descriptor", e );
         }
@@ -56,7 +57,7 @@ public abstract class AbstractDirectoryMojo
 
             createArchive( archiver, assembly, fullName );
         }
-        
+
         catch ( NoSuchArchiverException e )
         {
             throw new MojoExecutionException( "Error creating assembly", e );
