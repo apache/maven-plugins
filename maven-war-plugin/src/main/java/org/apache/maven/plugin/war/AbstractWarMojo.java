@@ -79,7 +79,7 @@ public abstract class AbstractWarMojo
      *
      * @parameter expression="${maven.war.webxml}"
      */
-    private String webXml;
+    private File webXml;
 
     /**
      * The path to the context.xml file to use.
@@ -185,12 +185,12 @@ public abstract class AbstractWarMojo
         this.warSourceDirectory = warSourceDirectory;
     }
 
-    public String getWebXml()
+    public File getWebXml()
     {
         return webXml;
     }
 
-    public void setWebXml( String webXml )
+    public void setWebXml( File webXml )
     {
         this.webXml = webXml;
     }
@@ -307,10 +307,10 @@ public abstract class AbstractWarMojo
      *
      * @param sourceDirectory the source directory
      * @param webappDirectory the target directory
-     * @param webXml          the path to a custom web.xml
+     * @param webXml          the abstract path to the web.xml
      * @throws java.io.IOException if an error occured while copying resources
      */
-    public void copyResources( File sourceDirectory, File webappDirectory, String webXml, String containerConfigXML )
+    public void copyResources( File sourceDirectory, File webappDirectory, File webXml, String containerConfigXML )
         throws IOException
     {
         if ( !sourceDirectory.equals( webappDirectory ) )
@@ -326,11 +326,11 @@ public abstract class AbstractWarMojo
                 }
             }
 
-            if ( StringUtils.isNotEmpty( webXml ) )
+            if ( webXml != null )
             {
                 //rename to web.xml
                 File webinfDir = new File( webappDirectory, WEB_INF );
-                FileUtils.copyFileIfModified( new File( webXml ), new File( webinfDir, "/web.xml" ) );
+                FileUtils.copyFile( webXml, new File( webinfDir, "/web.xml" ) );
             }
 
             if ( StringUtils.isNotEmpty( containerConfigXML ) )
