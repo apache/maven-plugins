@@ -19,17 +19,14 @@ import org.apache.maven.project.MavenProject;
  */
 
 
-
 /**
  * Assemble an application bundle or distribution from an assembly descriptor without
  * launching a parallel lifecycle build.
  *
  * @author <a href="mailto:gscokart@users.sourceforge.net">Gilles Scokart</a>
- *
  * @goal directory-inline
  * @requiresDependencyResolution test
  * @aggregator
- * 
  */
 public class DirectoryInlineMojo
     extends AbstractDirectoryMojo
