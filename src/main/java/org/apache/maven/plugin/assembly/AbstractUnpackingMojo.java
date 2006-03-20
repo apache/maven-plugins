@@ -70,7 +70,7 @@ public abstract class AbstractUnpackingMojo
      * @parameter expression="${projectModulesOnly}" default-value="false"
      */
     protected boolean projectModulesOnly = false;
-    
+
     /**
      * Directory to unpack JARs into if needed
      *
@@ -87,12 +87,12 @@ public abstract class AbstractUnpackingMojo
      */
 
     protected ArchiverManager archiverManager;
-    
+
     /**
      * @component
      */
     protected ArtifactResolver artifactResolver;
-    
+
     /**
      * @parameter expression="${localRepository}"
      */
@@ -133,7 +133,7 @@ public abstract class AbstractUnpackingMojo
         Map dependencies = new HashMap();
 
         MavenProject project = getExecutedProject();
-        
+
         // TODO: this is not mediating dependencies versions - first wins. Is there a way we can do that properly from here?
         if ( project != null )
         {
@@ -152,7 +152,7 @@ public abstract class AbstractUnpackingMojo
             MavenProject reactorProject = (MavenProject) i.next();
 
             Artifact artifact = reactorProject.getArtifact();
-            
+
             if ( artifact.getFile() != null )
             {
                 String key = artifact.getDependencyConflictId();
@@ -165,8 +165,8 @@ public abstract class AbstractUnpackingMojo
 
             for ( Iterator j = reactorProject.getArtifacts().iterator(); j.hasNext(); )
             {
-                artifact = (Artifact) j.next();      
-                
+                artifact = (Artifact) j.next();
+
                 String key = artifact.getDependencyConflictId();
 
                 if ( !dependencies.containsKey( key ) )
@@ -182,55 +182,58 @@ public abstract class AbstractUnpackingMojo
         throws MojoExecutionException, MojoFailureException
     {
         Map dependencies = new HashMap();
-      
+
         for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
         {
             MavenProject reactorProject = (MavenProject) i.next();
 
             Artifact artifact = reactorProject.getArtifact();
-    
+
             try
             {
                 artifactResolver.resolve( artifact, project.getRemoteArtifactRepositories(), localRepository );
             }
-            catch( ArtifactNotFoundException e )
+            catch ( ArtifactNotFoundException e )
             {
                 //TODO: Is there a better way to get the artifact if it is not yet installed in the repo?
                 //reactorProject.getArtifact().getFile() is returning null
                 //tried also the project.getArtifact().getFile() but returning same result
-                File fileArtifact = new File( reactorProject.getBuild().getDirectory() + File.separator + 
-                                              reactorProject.getBuild().getFinalName() + "." +
-                                              reactorProject.getPackaging() );
-                
+                File fileArtifact = new File( reactorProject.getBuild().getDirectory() + File.separator +
+                    reactorProject.getBuild().getFinalName() + "." + reactorProject.getPackaging() );
+
                 getLog().info( "Artifact ( " + artifact.getFile().getName() + " ) not found " +
-                                "in any repository, resolving thru modules..." );
-                
+                    "in any repository, resolving thru modules..." );
+
                 artifact.setFile( fileArtifact );
-                
-                if( fileArtifact.exists() )
+
+                if ( fileArtifact.exists() )
                 {
-                    if( artifact.getType().equals( "pom" ) )
+                    if ( artifact.getType().equals( "pom" ) )
+                    {
                         continue;
-                        
+                    }
+
                     addModuleArtifact( dependencies, artifact );
                 }
             }
-            catch( ArtifactResolutionException e )
+            catch ( ArtifactResolutionException e )
             {
                 throw new MojoExecutionException( "Failed to resolve artifact", e );
             }
-            
+
             if ( artifact.getFile() != null )
             {
-                if( artifact.getType().equals( "pom" ) )
+                if ( artifact.getType().equals( "pom" ) )
+                {
                     continue;
-                
+                }
+
                 addModuleArtifact( dependencies, artifact );
             }
         }
         return new HashSet( dependencies.values() );
     }
-    
+
     private void addModuleArtifact( Map dependencies, Artifact artifact )
     {
         String key = artifact.getDependencyConflictId();
@@ -240,7 +243,7 @@ public abstract class AbstractUnpackingMojo
             dependencies.put( key, artifact );
         }
     }
-    
+
     protected abstract MavenProject getExecutedProject();
 
     /**
