@@ -1,15 +1,5 @@
 package org.apache.maven.plugins.help;
 
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.settings.Settings;
-import org.apache.maven.settings.io.xpp3.SettingsXpp3Writer;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.StringWriter;
-
 /*
  * Copyright 2001-2005 The Apache Software Foundation.
  *
@@ -26,11 +16,21 @@ import java.io.StringWriter;
  * limitations under the License.
  */
 
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.settings.Settings;
+import org.apache.maven.settings.io.xpp3.SettingsXpp3Writer;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.StringWriter;
+
 /** Print out the calculated settings for this project, given any profile enhancement and 
  *  the inheritance of the global settings into the user-level settings.
  *  
  * @goal effective-settings
- * 
+ * @requiresProject false
  */
 public class EffectiveSettingsMojo
     extends AbstractMojo
