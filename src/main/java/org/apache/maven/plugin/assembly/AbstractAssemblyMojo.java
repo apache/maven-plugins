@@ -47,6 +47,7 @@ import org.codehaus.plexus.archiver.jar.Manifest;
 import org.codehaus.plexus.archiver.jar.ManifestException;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.archiver.tar.TarArchiver;
+import org.codehaus.plexus.archiver.tar.TarLongFileMode;
 import org.codehaus.plexus.archiver.war.WarArchiver;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
@@ -123,6 +124,13 @@ public abstract class AbstractAssemblyMojo
      * @deprecated Please use descriptors instead
      */
     protected File descriptor;
+
+    /**
+     * Sets the TarArchiver behavior on file paths with more than 100 characters length
+     *
+     * @parameter expression="${tarLongFileMode}" default-value="warn"
+     */
+    private String tarLongFileMode;
 
     /**
      * Base directory of the project.
@@ -1098,6 +1106,8 @@ public abstract class AbstractAssemblyMojo
                     throw new IllegalArgumentException( "Unknown compression format: " + compression );
                 }
                 tarArchiver.setCompression( tarCompressionMethod );
+
+                tarArchiver.setLongfile( getTarLongFileMode() );
             }
         }
         else if ( "war".equals( format ) )
@@ -1111,6 +1121,16 @@ public abstract class AbstractAssemblyMojo
             archiver = this.archiverManager.getArchiver( format );
         }
         return archiver;
+    }
+
+    private TarLongFileMode getTarLongFileMode()
+        throws ArchiverException
+    {
+        TarLongFileMode tarFileMode = new TarLongFileMode();
+
+        tarFileMode.setValue( tarLongFileMode );
+
+        return tarFileMode;
     }
 
     private void copyReplacingLineEndings( File source, File dest, String lineEndings )
