@@ -39,6 +39,7 @@ import org.apache.maven.plugins.assembly.model.io.xpp3.ComponentXpp3Reader;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.wagon.PathUtils;
+import org.apache.maven.shared.model.fileset.util.FileSetManager;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
@@ -308,14 +309,38 @@ public abstract class AbstractAssemblyMojo
             // (the first is preferable).
             MavenArchiver mavenArchiver = new MavenArchiver();
 
-            if ( archive != null && archive.getManifest() != null )
+            if ( archive != null )
             {
                 try
                 {
-                    Manifest manifest = mavenArchiver.getManifest( project, archive.getManifest() );
+                    Manifest manifest = null;
+                    File manifestFile = archive.getManifestFile();
+                    
+                    if ( manifestFile != null )
+                    {
+                        try
+                        {
+                            manifest = new Manifest( new FileReader( manifestFile ) );
+                        }
+                        catch ( FileNotFoundException e )
+                        {
+                            throw new MojoFailureException( "Manifest not found: " + e.getMessage() );
+                        }
+                        catch ( IOException e )
+                        {
+                            throw new MojoExecutionException( "Error processing manifest: " + e.getMessage(), e );
+                        }
+                    }
+                    else
+                    {
+                        manifest = mavenArchiver.getManifest( project, archive.getManifest() );
+                    }
 
-                    JarArchiver jarArchiver = (JarArchiver) archiver;
-                    jarArchiver.addConfiguredManifest( manifest );
+                    if ( manifest != null )
+                    {
+                        JarArchiver jarArchiver = (JarArchiver) archiver;
+                        jarArchiver.addConfiguredManifest( manifest );
+                    }
                 }
                 catch ( ManifestException e )
                 {
@@ -705,6 +730,32 @@ public abstract class AbstractAssemblyMojo
                             try
                             {
                                 unpack( artifact.getFile(), tempLocation );
+                                
+                                /*
+                                 * If the assembly is 'jar-with-dependencies', remove the security files in all dependencies
+                                 * that will prevent the uberjar to execute.  Please see MASSEMBLY-64 for details.
+                                 */
+                                if ( archiver instanceof JarArchiver )
+                                {
+                                    String[] securityFiles = { "*.RSA", "*.DSA", "*.SF", "*.rsa", "*.dsa", "*.sf" };
+                                    org.apache.maven.shared.model.fileset.FileSet securityFileSet = new org.apache.maven.shared.model.fileset.FileSet();
+                                    securityFileSet.setDirectory(tempLocation.getAbsolutePath() + "/META-INF/" );
+                                    
+                                    for ( int sfsi = 0; sfsi < securityFiles.length; sfsi++ )
+                                    {
+                                        securityFileSet.addInclude( securityFiles[sfsi] );
+                                    }
+                                    
+                                    FileSetManager fsm = new FileSetManager( getLog() );
+                                    try
+                                    {
+                                        fsm.delete( securityFileSet );
+                                    }
+                                    catch ( IOException e )
+                                    {
+                                        throw new MojoExecutionException("Failed to delete security files: " + e.getMessage(), e);
+                                    }
+                                }
                             }
                             catch ( NoSuchArchiverException e )
                             {
