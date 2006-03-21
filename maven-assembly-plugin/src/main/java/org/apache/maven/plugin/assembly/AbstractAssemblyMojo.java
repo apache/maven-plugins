@@ -180,13 +180,6 @@ public abstract class AbstractAssemblyMojo
      */
     protected boolean appendAssemblyId;
 
-    /**
-     * @parameter expression="${reactorProjects}"
-     * @required
-     * @readonly
-     */
-    private List reactorProjects;
-
     private ComponentsXmlArchiverFileFilter componentsXmlFilter = new ComponentsXmlArchiverFileFilter();
 
     /**
