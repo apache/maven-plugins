@@ -92,6 +92,17 @@
           <defaultValue>false</defaultValue>
         </field>
         <field>
+          <name>modules</name>
+          <version>1.0.0</version>
+          <association>
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
+          <description>
+            Specify which modules source files to include in the assembly
+          </description>
+        </field>
+        <field>
           <name>fileSets</name>
           <version>1.0.0</version>
           <association>
@@ -99,7 +110,7 @@
             <multiplicity>*</multiplicity>
           </association>
           <description>
-            Specify assembly parameters for groups of files. 
+            Specify assembly parameters for groups of files.
           </description>
         </field>
         <field>
@@ -136,12 +147,12 @@
             File relative to basedir containing Component.
           </description>
         </field>
-        
-        
+
+
       </fields>
     </class>
-    
-    
+
+
     <class>
       <name>SetBase</name>
       <version>1.0.0</version>
@@ -193,8 +204,8 @@
             <![CDATA[
             Similar to a UNIX permission.  Format: (User)(Group)(Other) where each
             component is a sum of Read = 4, Write = 2, and Execute = 1.  For example,
-            the default value of 0644 translates to User read-write, Group and Other 
-            read-only. 
+            the default value of 0644 translates to User read-write, Group and Other
+            read-only.
             <a href="http://www.onlamp.com/pub/a/bsd/2000/09/06/FreeBSD_Basics.html">(more on unix-style permissions)</a>
           	]]>
           </description>
@@ -208,8 +219,8 @@
             <![CDATA[
             Similar to a UNIX permission.  Format: (User)(Group)(Other) where each
             component is a sum of Read = 4, Write = 2, and Execute = 1.  For example,
-            the default value of 0644 translates to User read-write, Group and Other 
-            read-only. 
+            the default value of 0644 translates to User read-write, Group and Other
+            read-only.
             <a href="http://www.onlamp.com/pub/a/bsd/2000/09/06/FreeBSD_Basics.html">(more on unix-style permissions)</a>
           	]]>
           </description>
@@ -239,7 +250,7 @@
           <description>
             <![CDATA[
             Controls the line-endings of files in this fileSet.
-            Valid values: 
+            Valid values:
             <ul>
               <li><b>"keep"</b> - Preserve all line endings</li>
               <li><b>"unix"</b> - Use Unix-style line endings</li>

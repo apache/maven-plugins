@@ -36,7 +36,9 @@ import org.apache.maven.plugins.assembly.model.FileItem;
 import org.apache.maven.plugins.assembly.model.FileSet;
 import org.apache.maven.plugins.assembly.model.io.xpp3.AssemblyXpp3Reader;
 import org.apache.maven.plugins.assembly.model.io.xpp3.ComponentXpp3Reader;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.apache.maven.wagon.PathUtils;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
@@ -178,6 +180,13 @@ public abstract class AbstractAssemblyMojo
      */
     protected boolean appendAssemblyId;
 
+    /**
+     * @parameter expression="${reactorProjects}"
+     * @required
+     * @readonly
+     */
+    private List reactorProjects;
+
     private ComponentsXmlArchiverFileFilter componentsXmlFilter = new ComponentsXmlArchiverFileFilter();
 
     /**
@@ -291,6 +300,7 @@ public abstract class AbstractAssemblyMojo
         throws ArchiverException, IOException, MojoExecutionException, MojoFailureException, XmlPullParserException
     {
         processDependencySets( archiver, assembly.getDependencySets(), assembly.isIncludeBaseDirectory() );
+        processModules( archiver, assembly.getModules(), assembly.isIncludeBaseDirectory() );
         processFileSets( archiver, assembly.getFileSets(), assembly.isIncludeBaseDirectory() );
         processFileList( archiver, assembly.getFiles(), assembly.isIncludeBaseDirectory() );
 
@@ -329,6 +339,69 @@ public abstract class AbstractAssemblyMojo
         archiver.createArchive();
 
         return destFile;
+    }
+
+    private void processModules( Archiver archiver, List modulesList, boolean includeBaseDirectory )
+        throws IOException, ArchiverException, XmlPullParserException
+    {
+        if ( reactorProjects != null )
+        {
+            List moduleFileSets = new ArrayList();
+
+            for ( Iterator modules = modulesList.iterator(); modules.hasNext(); )
+            {
+                String module = (String) modules.next();
+
+                MavenProject reactorProject = getModuleFromReactor( module );
+
+                if ( reactorProject != null )
+                {
+                    FileSet moduleFileSet = new FileSet();
+
+                    moduleFileSet.setDirectory( reactorProject.getBasedir().getAbsolutePath() );
+                    moduleFileSet.setOutputDirectory( module );
+
+                    List excludesList = new ArrayList();
+                    excludesList.add( PathUtils.toRelative( reactorProject.getBasedir(), reactorProject.getBuild().getDirectory() ) + "/**" );
+                    excludesList.add( PathUtils.toRelative( reactorProject.getBasedir(), reactorProject.getBuild().getOutputDirectory() ) + "/**" );
+                    excludesList.add( PathUtils.toRelative( reactorProject.getBasedir(), reactorProject.getBuild().getTestOutputDirectory() ) + "/**" );
+                    excludesList.add( PathUtils.toRelative( reactorProject.getBasedir(), reactorProject.getReporting().getOutputDirectory() ) + "/**" );
+                    moduleFileSet.setExcludes( excludesList );
+
+                    moduleFileSets.add( moduleFileSet );
+                }
+            }
+
+            processFileSets( archiver, moduleFileSets, includeBaseDirectory );
+        }
+    }
+
+    private MavenProject getModuleFromReactor( String module )
+    {
+        MavenProject reactorProject = null;
+
+        if ( reactorProjects != null )
+        {
+            File executedProjectDir = getExecutedProject().getFile().getParentFile();
+            File moduleDir = new File( executedProjectDir, module );
+            String modulePath = moduleDir.getAbsolutePath();
+
+            for ( Iterator projects = reactorProjects.iterator(); projects.hasNext(); )
+            {
+                MavenProject project = (MavenProject) projects.next();
+
+                String projectPath = project.getFile().getParentFile().getAbsolutePath();
+
+                if ( modulePath.equals( projectPath ) )
+                {
+                    reactorProject = project;
+
+                    break;
+                }
+            }
+        }
+
+        return reactorProject;
     }
 
     protected List readAssemblies()
