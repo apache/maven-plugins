@@ -105,7 +105,7 @@ public abstract class AbstractUnpackingMojo
      * @required
      * @readonly
      */
-    private List reactorProjects;
+    protected List reactorProjects;
 
     /**
      * @parameter expression="${classifier}"
