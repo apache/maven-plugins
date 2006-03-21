@@ -48,7 +48,6 @@ import java.util.regex.Pattern;
  * @author Edwin Punzalan
  * @goal module
  * @execute phase="generate-sources"
- * @todo use dom4j or something. Xpp3Dom can't cope properly with entities and so on
  */
 public class IdeaModuleMojo
     extends AbstractIdeaMojo
@@ -331,10 +330,31 @@ public class IdeaModuleMojo
                     else if ( orderEntry.attributeValue( "type" ).equals( "module-library" ) )
                     {
                         Element lib = orderEntry.element( "library" );
-                        if ( lib.attributeValue( "name" ).equals( moduleName ) )
+                        String name = lib.attributeValue( "name" );
+                        if ( name != null )
                         {
-                            dep = orderEntry;
-                            break;
+                            if ( name.equals( moduleName ) )
+                            {
+                                dep = orderEntry;
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            Element classesChild = lib.element( "CLASSES" );
+                            if ( classesChild != null )
+                            {
+                                Element rootChild = classesChild.element( "root" );
+                                if ( rootChild != null )
+                                {
+                                    String url = getLibraryUrl( a );
+                                    if ( url.equals( rootChild.getText() ) )
+                                    {
+                                        dep = orderEntry;
+                                        break;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -361,11 +381,11 @@ public class IdeaModuleMojo
                     dep.addAttribute( "type", "module-library" );
                     removeOldElements( dep, "library" );
                     dep = createElement( dep, "library" );
-                    dep.addAttribute( "name", moduleName );
 
                     Element el = createElement( dep, "CLASSES" );
                     if ( library != null && library.getSplitClasses().length > 0 )
                     {
+                        dep.addAttribute( "name", moduleName );
                         String[] libraryClasses = library.getSplitClasses();
                         for ( int k = 0; k < libraryClasses.length; k++ )
                         {
@@ -377,9 +397,7 @@ public class IdeaModuleMojo
                     }
                     else
                     {
-                        el = createElement( el, "root" );
-                        File file = a.getFile();
-                        el.addAttribute( "url", "jar://" + file.getAbsolutePath().replace( '\\', '/' ) + "!/" );
+                        createElement( el, "root" ).addAttribute( "url", getLibraryUrl( a ) );
                     }
 
                     boolean usedSources = false;
@@ -653,13 +671,14 @@ Can't run this anyway as Xpp3Dom is in both classloaders...
             {
                 containerElement.addAttribute( "type", "library" );
                 containerElement.addAttribute( "level", "module" );
-                containerElement.addAttribute( "name", artifact.getArtifactId() );
                 Element methodAttribute = createElement( containerElement, "attribute" );
                 methodAttribute.addAttribute( "name", "method" );
                 methodAttribute.addAttribute( "value", "1" ); // IntelliJ 5.0.2 is bugged and doesn't read it
                 Element uriAttribute = createElement( containerElement, "attribute" );
                 uriAttribute.addAttribute( "name", "URI" );
                 uriAttribute.addAttribute( "value", "/WEB-INF/lib/" + artifact.getFile().getName() );
+                Element url = createElement( containerElement, "url" );
+                url.setText( getLibraryUrl( artifact ) );
             }
         }
 
@@ -844,5 +863,10 @@ Can't run this anyway as Xpp3Dom is in both classloaders...
     private Element findSetting( Element component, String name )
     {
         return findElement( component, "setting", name );
+    }
+
+    private String getLibraryUrl( Artifact artifact )
+    {
+        return "jar://" + artifact.getFile().getAbsolutePath().replace( '\\', '/' ) + "!/";
     }
 }
