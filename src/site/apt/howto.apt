@@ -78,9 +78,8 @@ due-to-email         | Optional     |  Email of the person to be credited for th
     <reporting>
       <plugins>
         <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>changes-maven-plugin</artifactId>
-          <version>2.0-beta-1-SNAPSHOT</version>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-changes-plugin</artifactId>
             <reportSets>
               <reportSet>
                 <reports>
@@ -125,8 +124,8 @@ mvn site:site
     <reporting>
       <plugins>
         <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>changes-maven-plugin</artifactId>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-changes-plugin</artifactId>
           <version>2.0-beta-1-SNAPSHOT</version>
             <reportSets>
               <reportSet>
@@ -157,9 +156,8 @@ mvn site:site
 <build>    
     <plugins>
         <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>changes-maven-plugin</artifactId>
-            <version>2.0-beta-1-SNAPSHOT</version>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-changes-plugin</artifactId>
             <executions>
                 <execution>
                     <goals>

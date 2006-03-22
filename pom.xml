@@ -1,11 +1,11 @@
 <project>
   <parent>
-    <artifactId>mojo</artifactId>
-    <groupId>org.codehaus.mojo</groupId>
-    <version>6</version>
+    <artifactId>maven-plugins</artifactId>
+    <groupId>org.apache.maven.plugins</groupId>
+    <version>1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>changes-maven-plugin</artifactId>
+  <artifactId>maven-changes-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Maven Changes Report Plugin</name>
   <version>2.0-beta-2-SNAPSHOT</version>
@@ -73,11 +73,4 @@
       <version>2.0.2</version>
     </dependency>
   </dependencies>
-<distributionManagement>
-    <site>
-      <id>mojo.website</id>
-      <name>Mojo Website</name>
-      <url>scpexe://beaver.codehaus.org/home/projects/mojo/public_html/changes-maven-plugin</url>
-    </site>
-</distributionManagement>
 </project>
