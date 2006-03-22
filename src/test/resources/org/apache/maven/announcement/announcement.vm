@@ -1,0 +1,87 @@
+The ${developmentTeam} team is pleased to announce the ${plugin} ${version} release!
+
+${url}
+
+${introduction}
+
+Changes in this version include:
+#*
+   for New features
+*#
+#foreach($actionsN in $release.getAction())
+#if($actionsN.getType()=="add")
+#set($hasNew = 1)
+#end
+#end
+
+
+#if($hasNew==1)
+New Features:
+
+#end
+#foreach($actions in $release.getAction())
+#if($actions.getType()=="add")
+#set($action=$actions.getAction())
+#set($word="Issue: ")
+#set($issue=${actions.getIssue()})
+#set($NewIssue="$word$issue")
+o ${action} $NewIssue
+#end
+#end
+#*
+   for Fixed bugs
+*#
+#foreach($actionsF in $release.getAction())
+#if($actionsF.getType()=="add")
+#set($hasFix = 1)
+#end
+#end
+#if($hasFix == 1)
+Fixed Bugs:
+
+#end
+#foreach( $actions in $release.getAction() )
+#if( $actions.getType() == "fix" )
+#set( $action = $actions.getAction() )
+o ${action}
+#end
+#end
+#*
+   Changes
+*#
+Changes:
+
+#foreach( $actions in $release.getAction() )
+#if( $actions.getType() == "update" )
+#set( $action = $actions.getAction() )
+o ${action} 
+#end
+#end
+
+
+Removed:
+
+#foreach( $actions in $release.getAction() )
+#if( $actions.getType() == "remove" )
+#set( $action = $actions.getAction() )
+o ${action} 
+#end
+#end
+
+
+
+To automatically install the plugin, type the following on a single line:
+
+m2 plugin:download
+	-DgroupId=${groupId}
+	-DartifactId=${artifactId}
+	-Dversion=${version}
+
+For a manual installation, you can download the ${plugin} here:
+
+${url}/${plugin}-${version}.${packaging}
+
+
+Have fun!
+-${developmentTeam}
+

@@ -1,0 +1,14 @@
+
+<component-set>
+  <components>
+
+    <component>
+      <role>org.codehaus.plexus.mailsender.test.SmtpServer</role>
+      <implementation>org.codehaus.plexus.mailsender.test.DumbsterSmtpServer</implementation>
+      <configuration>
+        <port>4000</port>
+      </configuration>
+    </component>
+
+  </components>
+</component-set>
