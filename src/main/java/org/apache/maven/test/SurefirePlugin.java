@@ -26,6 +26,7 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ExcludesArtifactFilter;
+import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -383,7 +384,7 @@ public class SurefirePlugin
     }
 
     private SurefireBooter constructSurefireBooter()
-        throws MojoExecutionException
+        throws MojoExecutionException, MojoFailureException
     {
         SurefireBooter surefireBooter = new SurefireBooter();
 
@@ -407,6 +408,12 @@ public class SurefirePlugin
 
             if ( testNgArtifact != null )
             {
+                VersionRange range = VersionRange.createFromVersionSpec( "[4.7-SNAPSHOT,)" );
+                if ( !range.containsVersion( testNgArtifact.getSelectedVersion() ) )
+                {
+                    throw new MojoFailureException( "TestNG support requires version 4.7 or above. You have declared version " + testNgArtifact.getVersion() );
+                }
+
                 // The plugin uses a JDK based profile to select the right testng. We might be explicity using a
                 // different one since its based on the source level, not the JVM. Prune using the filter.
                 addProvider( surefireBooter, "surefire-testng", surefireArtifact.getBaseVersion(), testNgArtifact );
@@ -424,6 +431,11 @@ public class SurefirePlugin
         {
             throw new MojoExecutionException(
                 "Unable to locate required surefire provider dependency: " + e.getMessage(), e );
+        }
+        catch ( InvalidVersionSpecificationException e )
+        {
+            throw new MojoExecutionException(
+                "Error determining the TestNG version requested: " + e.getMessage(), e );
         }
         catch ( ArtifactResolutionException e )
         {
