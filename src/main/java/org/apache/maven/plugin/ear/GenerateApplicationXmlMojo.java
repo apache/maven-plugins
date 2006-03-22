@@ -24,14 +24,13 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * A Mojo used to build the application.xml file.
+ * A Mojo that generates the application.xml deployment descriptor file.
  *
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  * @goal generate-application-xml
  * @phase generate-resources
  * @requiresDependencyResolution test
- * @description generates the application.xml deployment descriptor
  */
 public class GenerateApplicationXmlMojo
     extends AbstractEarMojo
