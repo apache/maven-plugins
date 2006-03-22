@@ -1,11 +1,11 @@
 <project>
   <parent>
-    <artifactId>mojo</artifactId>
-    <groupId>org.codehaus.mojo</groupId>
-    <version>7</version>
+    <artifactId>maven-plugins</artifactId>
+    <groupId>org.apache.maven.plugins</groupId>
+    <version>1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>changelog-maven-plugin</artifactId>
+  <artifactId>maven-changelog-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Maven Changelog Plug-in</name>
   <version>2.0-beta-2-SNAPSHOT</version>
