@@ -34,12 +34,13 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.surefire.SurefireBooter;
 
 /**
+ * Run tests using Surefire
+ * 
  * @author Jason van Zyl
  * @version $Id$
  * @requiresDependencyResolution test
  * @goal test
  * @phase test
- * @description Run tests using Surefire
  * @todo make version of junit and surefire configurable
  * @todo make report to be produced configurable
  */
