@@ -115,7 +115,7 @@ public class PmdReport
 
     /**
      * Link the violation line numbers to the source xref.
-     * @parameter
+     * @parameter expression="${linkXref}" default-value="true"
      * 
      * TODO Can we automagically determine if xfer is being run and enable this?
      */
