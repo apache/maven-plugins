@@ -1,28 +1,10 @@
-<project name="Mojo">
-   <bannerLeft>
-      <name>Mojo</name>
-      <src>/images/mojo_logo.png</src>
-      <href>http://mojo.codehaus.org</href>
-   </bannerLeft>
-   <bannerRight>
-      <name>Codehaus</name>
-      <src>http://mojo.codehaus.org/images/codehaus-small.png</src>
-      <href>http://www.codehaus.org</href>
-   </bannerRight>
-   <body>
-      <links>
-         <item name="Mojo" href="http://mojo.codehaus.org"/>
-         <item name="Maven" href="http://maven.apache.org/maven2"/>
-      </links>
-      <menu name="Mojo">
-         <item name="mojo" href="http://mojo.codehaus.org"/>
-      </menu>
-      <menu name="Changelog Plugin Quickstart">
-               <item name="Overview" href="howto.html"/>
-               <item name="Sample Changelog Report" href="sample-changelog.html"/>
-               <item name="Sample Developer Activity Report" href="sample-dev-activity.html"/>
-               <item name="Sample File Activity Report" href="sample-file-activity.html"/>
-      </menu>
-      ${reports}
-   </body>
+<project>
+  <body>
+    <menu name="Changelog Plugin Quickstart">
+      <item name="Overview" href="howto.html"/>
+      <item name="Sample Changelog Report" href="sample-changelog.html"/>
+      <item name="Sample Developer Activity Report" href="sample-dev-activity.html"/>
+      <item name="Sample File Activity Report" href="sample-file-activity.html"/>
+    </menu>
+  </body>
 </project>

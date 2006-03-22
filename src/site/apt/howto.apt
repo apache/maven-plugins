@@ -41,9 +41,8 @@ Maven 2 Changelog Plugin
 <project>
   ...
     <plugin>
-      <groupId>org.codehaus.mojo</groupId>
-      <artifactId>changelog-maven-plugin</artifactId>
-      <version>2.0-beta-1</version>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-changelog-plugin</artifactId>
       <configuration>
         <type>date</type>
         <dates>
@@ -63,9 +62,8 @@ Maven 2 Changelog Plugin
 <project>
   ...
     <plugin>
-      <groupId>org.codehaus.mojo</groupId>
-      <artifactId>changelog-maven-plugin</artifactId>
-      <version>2.0-beta-1</version>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-changelog-plugin</artifactId>
       <reportSets>
         <reportSet>
           <id>dev-only</id>
@@ -92,9 +90,8 @@ Maven 2 Changelog Plugin
 <project>
   ...
     <plugin>
-      <groupId>org.codehaus.mojo</groupId>
-      <artifactId>changelog-maven-plugin</artifactId>
-      <version>2.0-beta-1</version>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-changelog-plugin</artifactId>
       <reportSets>
         <reportSet>
           <id>dual-report</id>
