@@ -379,7 +379,7 @@ public class CheckstyleReport
 
     /**
      * Location of the Xrefs to link to.
-     * @parameter
+     * @parameter default-value="${project.build.directory}/site/xref"
      */
     private String xrefLocation;
 
