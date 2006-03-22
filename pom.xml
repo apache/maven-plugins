@@ -1,0 +1,83 @@
+<project>
+  <parent>
+    <artifactId>mojo</artifactId>
+    <groupId>org.codehaus.mojo</groupId>
+    <version>6</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>changes-maven-plugin</artifactId>
+  <packaging>maven-plugin</packaging>
+  <name>Maven Changes Report Plugin</name>
+  <version>2.0-beta-2-SNAPSHOT</version>
+  <developers>
+    <developer>
+      <id>jruiz</id>
+      <name>Johnny Ruiz III</name>
+      <email>jruiz@apache.org</email>
+    </developer>
+    <developer>
+      <id>aramirez</id>
+      <name>Allan Ramirez</name>
+      <email>aramirez@exist.com</email>
+    </developer>    
+  </developers>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-settings</artifactId>
+      <version>2.0-beta-1</version>
+    </dependency>
+    <dependency>
+      <groupId>plexus</groupId>
+      <artifactId>plexus-velocity</artifactId>
+      <version>1.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>plexus</groupId>
+      <artifactId>plexus-mail-sender-simple</artifactId>
+      <version>1.0-alpha-2</version>
+    </dependency>
+    <dependency>
+      <groupId>plexus</groupId>
+      <artifactId>plexus-mail-sender-javamail</artifactId>
+      <version>1.0-alpha-2</version>
+    </dependency>    
+    <dependency>
+      <groupId>org.apache.maven.reporting</groupId>
+      <artifactId>maven-reporting-api</artifactId>
+      <version>2.0-beta-1</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.0.3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.reporting</groupId>
+      <artifactId>maven-reporting-impl</artifactId>
+      <version>2.0-beta-1</version>
+    </dependency>
+    <dependency>
+      <groupId>velocity</groupId>
+      <artifactId>velocity</artifactId>
+      <version>1.4</version>
+    </dependency>
+    <dependency>
+      <groupId>doxia</groupId>
+      <artifactId>doxia-sink-api</artifactId>
+      <version>1.0-alpha-4</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-httpclient</groupId>
+      <artifactId>commons-httpclient</artifactId>
+      <version>2.0.2</version>
+    </dependency>
+  </dependencies>
+<distributionManagement>
+    <site>
+      <id>mojo.website</id>
+      <name>Mojo Website</name>
+      <url>scpexe://beaver.codehaus.org/home/projects/mojo/public_html/changes-maven-plugin</url>
+    </site>
+</distributionManagement>
+</project>
