@@ -40,7 +40,6 @@ import java.util.Arrays;
  * @goal ear
  * @phase package
  * @requiresDependencyResolution test
- * @description builds an ear
  */
 public class EarMojo
     extends AbstractEarMojo

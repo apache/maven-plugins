@@ -34,7 +34,6 @@ import java.util.List;
  * @version $Id$
  * @goal ejb
  * @phase package
- * @description build an ejb
  */
 public class EjbMojo
     extends AbstractMojo

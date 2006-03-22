@@ -39,7 +39,6 @@ import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
  * @goal rar
  * @phase package
  * @requiresDependencyResolution test
- * @description builds a rar
  */
 public class RarMojo
     extends AbstractMojo
