@@ -39,7 +39,6 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -267,8 +266,7 @@ public class LicenseReport
                         }
                         catch ( MalformedURLException e )
                         {
-                            throw new MissingResourceException(
-                                "The license url [" + url + "] seems to be invalid: " + e.getMessage(), null, null );
+                            paragraph( "The license url [" + url + "] seems to be invalid: " + e.getMessage() );
                         }
                     }
                     else
@@ -282,8 +280,7 @@ public class LicenseReport
                         }
                         if ( !licenseFile.exists() )
                         {
-                            throw new MissingResourceException(
-                                "Maven can't find the file " + licenseFile + " on the system.", null, null );
+                            paragraph( "Maven can't find the file " + licenseFile + " on the system." );
                         }
                         try
                         {
@@ -291,32 +288,44 @@ public class LicenseReport
                         }
                         catch ( MalformedURLException e )
                         {
-                            throw new MissingResourceException(
-                                "The license url [" + url + "] seems to be invalid: " + e.getMessage(), null, null );
+                            paragraph( "The license url [" + url + "] seems to be invalid: " + e.getMessage() );
                         }
                     }
 
-                    licenseContent = getLicenseInputStream( licenseUrl );
-
-                    // TODO: we should check for a text/html mime type instead, and possibly use a html parser to do this a bit more cleanly/reliably.
-                    String licenseContentLC = licenseContent.toLowerCase();
-                    int bodyStart = licenseContentLC.indexOf( "<body" );
-                    int bodyEnd = licenseContentLC.indexOf( "</body>" );
-                    if ( ( licenseContentLC.startsWith( "<!doctype html" ) ||
-                        licenseContentLC.startsWith( "<html>" ) ) && bodyStart >= 0 && bodyEnd >= 0 )
+                    if ( licenseUrl != null )
                     {
-                        bodyStart = licenseContentLC.indexOf( ">", bodyStart ) + 1;
-                        String body = licenseContent.substring( bodyStart, bodyEnd );
-
-                        link( "[Original text]", licenseUrl.toExternalForm() );
-                        paragraph( "Copy of the license follows." );
-
-                        body = replaceRelativeLinks( body, baseURL( licenseUrl ).toExternalForm() );
-                        sink.rawText( body );
-                    }
-                    else
-                    {
-                        verbatimText( licenseContent );
+                        try
+                        {
+                            licenseContent = getLicenseInputStream( licenseUrl );
+                        }
+                        catch ( IOException e )
+                        {
+                            paragraph( "Can't read the url [" + licenseUrl + "] : " + e.getMessage() );
+                        }
+    
+                        if ( licenseContent != null )
+                        {
+                            // TODO: we should check for a text/html mime type instead, and possibly use a html parser to do this a bit more cleanly/reliably.
+                            String licenseContentLC = licenseContent.toLowerCase();
+                            int bodyStart = licenseContentLC.indexOf( "<body" );
+                            int bodyEnd = licenseContentLC.indexOf( "</body>" );
+                            if ( ( licenseContentLC.startsWith( "<!doctype html" ) ||
+                                licenseContentLC.startsWith( "<html>" ) ) && bodyStart >= 0 && bodyEnd >= 0 )
+                            {
+                                bodyStart = licenseContentLC.indexOf( ">", bodyStart ) + 1;
+                                String body = licenseContent.substring( bodyStart, bodyEnd );
+           
+                                link( "[Original text]", licenseUrl.toExternalForm() );
+                                paragraph( "Copy of the license follows." );
+          
+                                body = replaceRelativeLinks( body, baseURL( licenseUrl ).toExternalForm() );
+                                sink.rawText( body );
+                            }
+                            else
+                            {
+                                verbatimText( licenseContent );
+                            }
+                        }
                     }
                 }
 
@@ -333,6 +342,7 @@ public class LicenseReport
          * @return the content of the licenseUrl
          */
         private String getLicenseInputStream( URL licenseUrl )
+            throws IOException
         {
             String scheme = licenseUrl.getProtocol();
             if ( !"file".equals( scheme ) )
@@ -387,11 +397,6 @@ public class LicenseReport
                 in = licenseUrl.openStream();
                 // All licenses are supposed in English...
                 return IOUtil.toString( in, "ISO-8859-1" );
-            }
-            catch ( IOException e )
-            {
-                throw new MissingResourceException( "Can't read the url [" + licenseUrl + "] : " + e.getMessage(), null,
-                                                    null );
             }
             finally
             {
