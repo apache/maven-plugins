@@ -1,0 +1,9 @@
+<project>
+  <body>
+    <menu name="JXR QuickStart">
+      <item name="Overview" href="howto.html"/>
+      <item name="Configuration Options" href="jxr-mojo.html"/>
+      <item name="JXR Sample Report" href="example/jxr.html"/>
+    </menu>
+  </body>
+</project>

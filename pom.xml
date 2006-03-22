@@ -47,6 +47,7 @@
     <module>maven-install-plugin</module>
     <module>maven-jar-plugin</module>
     <module>maven-javadoc-plugin</module>
+    <module>maven-jxr-plugin</module>
     <module>maven-plugin-plugin</module>
     <module>maven-pmd-plugin</module>
     <module>maven-project-info-reports-plugin</module>
@@ -57,6 +58,7 @@
     <module>maven-site-plugin</module>
     <module>maven-source-plugin</module>
     <module>maven-surefire-plugin</module>
+    <module>maven-surefire-report-plugin</module>
     <module>maven-war-plugin</module>
     <module>maven-verifier-plugin</module>
   </modules>
