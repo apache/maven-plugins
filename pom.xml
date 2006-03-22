@@ -1,0 +1,40 @@
+<project>
+  <parent>
+    <artifactId>mojo</artifactId>
+    <groupId>org.codehaus.mojo</groupId>
+    <version>6</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>jxr-maven-plugin</artifactId>
+  <packaging>maven-plugin</packaging>
+  <name>Maven JXR Plugin</name>
+  <version>2.0-beta-2-SNAPSHOT</version>
+  <inceptionYear>2005</inceptionYear>
+  <developers>
+    <developer>
+      <name>Fabrice Bellingard</name>
+      <email>bellingard.NO-SPAM@gmail.com</email>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+  </developers>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.maven.reporting</groupId>
+      <artifactId>maven-reporting-api</artifactId>
+      <version>2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-jxr</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.reporting</groupId>
+      <artifactId>maven-reporting-impl</artifactId>
+      <version>2.0</version>
+    </dependency>
+  </dependencies>
+</project>

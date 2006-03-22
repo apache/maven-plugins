@@ -1,0 +1,47 @@
+ ------
+ Maven 2 JXR Plugin
+ ------
+ Fabrice Bellingard
+ <bellingard.NO-SPAM@gmail.com>
+ ------
+ September 30, 2005
+
+Maven 2 JXR Plugin
+
+ This plug-in produces a cross-reference of the project's sources.
+ 
+*Available Configuration Options
+ 
+ You can refer to the {{{jxr-mojo.html}MOJO generated documentation}} to discover the different configuration options for this report.
+
+*How to Use
+
+ 
+  In the pom.xml, insert this segment.
+
+-------------------
+<project>
+   ...
+      <build>
+         ...
+      </build>
+
+      <reporting>
+          <plugins>
+              <plugin>
+                  <groupId>org.codehaus.mojo</groupId>
+                  <artifactId>jxr-maven-plugin</artifactId>
+                  <version>2.0-beta-1</version>
+	          </plugin>
+	      </plugins>
+      </reporting>
+   ...
+</project>
+-------------------
+
+  The report will be generated when executing the m2 site plugin.
+
+-------------------
+  mvn site:site
+-------------------
+
