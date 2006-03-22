@@ -1,8 +1,7 @@
-package org.codehaus.mojo.surefire;
-
+package org.apache.maven.plugins.surefire.report;
 
 /*
- * Copyright 2001-2005 The Codehaus.
+ * Copyright 2001-2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +15,7 @@ package org.codehaus.mojo.surefire;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import java.util.HashMap;
 
 public class ReportTestCase
