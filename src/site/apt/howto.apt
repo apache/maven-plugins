@@ -1,0 +1,34 @@
+ ------
+ Maven 2 Surefire Report Plugin 
+ ------
+ Johnny R. Ruiz III
+ <jruiz@exist.com>
+ ------
+ September 16, 2005
+
+Maven 2 Surefire Report Plugin
+
+ This plugin generates a nicely formatted html report about the test result.  
+ 
+ This plugin parses the all TEST*.xml generated in folder ${basedir}/target/surefire-reports and then render them into HTML through DOXIA.
+ 
+
+*How to Use
+ 
+-------------------
+<project>
+   ...
+      <build>
+         ...
+         <plugins>
+            <plugin>
+               <groupId>org.codehaus.mojo</groupId>
+               <artifactId>surefire-report-maven-plugin</artifactId>
+               <version>2.0-beta-1-SNAPSHOT</version>
+            </plugin>
+         </plugins>
+         ...
+      </build>
+   ...
+</project>
+-------------------
