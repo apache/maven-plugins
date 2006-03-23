@@ -90,11 +90,18 @@ public class IdeaModuleMojo
     private boolean useFullNames;
 
     /**
-     * Switch to enable or disable the inclusion of sources and javadoc references to the project's library
+     * Enables/disables the downloading of source attachments. Defaults to false.
      *
-     * @parameter expression="${useClassifiers}" default-value="false"
+     * @parameter expression="${downloadSources}" default-value="false"
      */
-    private boolean useClassifiers;
+    private boolean downloadSources;
+
+    /**
+     * Enables/disables the downloading of javadoc attachements. Defaults to false.
+     *
+     * @parameter expression="${downloadJavadocs}" default-value="false"
+     */
+    private boolean downloadJavadocs;
 
     /**
      * Sets the classifier string attached to an artifact source archive name
@@ -153,9 +160,9 @@ public class IdeaModuleMojo
     public void initParam( MavenProject project, ArtifactFactory artifactFactory, ArtifactRepository localRepo,
                            ArtifactResolver artifactResolver, ArtifactMetadataSource artifactMetadataSource, Log log,
                            boolean overwrite, MavenProject executedProject, List reactorProjects,
-                           WagonManager wagonManager, boolean linkModules, boolean useFullNames, boolean useClassifiers,
-                           String sourceClassifier, String javadocClassifier, Library[] libraries, Set macros,
-                           String exclude )
+                           WagonManager wagonManager, boolean linkModules, boolean useFullNames,
+                           boolean downloadSources, String sourceClassifier, boolean downloadJavadocs,
+                           String javadocClassifier, Library[] libraries, Set macros, String exclude )
     {
         super.initParam( project, artifactFactory, localRepo, artifactResolver, artifactMetadataSource, log,
                          overwrite );
@@ -170,9 +177,11 @@ public class IdeaModuleMojo
 
         this.useFullNames = useFullNames;
 
-        this.useClassifiers = useClassifiers;
+        this.downloadSources = downloadSources;
 
         this.sourceClassifier = sourceClassifier;
+
+        this.downloadJavadocs = downloadJavadocs;
 
         this.javadocClassifier = javadocClassifier;
 
@@ -415,13 +424,15 @@ public class IdeaModuleMojo
                         }
                     }
 
-                    if ( useClassifiers )
+
+                    if ( !usedSources && downloadSources )
+                    {
+                        resolveClassifier( createElement( dep, "SOURCES" ), a, sourceClassifier );
+                    }
+
+                    if ( downloadJavadocs )
                     {
                         resolveClassifier( createElement( dep, "JAVADOC" ), a, javadocClassifier );
-                        if ( !usedSources )
-                        {
-                            resolveClassifier( createElement( dep, "SOURCES" ), a, sourceClassifier );
-                        }
                     }
                 }
             }

@@ -73,11 +73,18 @@ public class IdeaMojo
     private boolean useFullNames;
 
     /**
-     * Switch to enable or disable the inclusion of sources and javadoc references to the project's library
+     * Enables/disables the downloading of source attachments. Defaults to false.
      *
-     * @parameter expression="${useClassifiers}" default-value="false"
+     * @parameter expression="${downloadSources}" default-value="false"
      */
-    private boolean useClassifiers;
+    private boolean downloadSources;
+
+    /**
+     * Enables/disables the downloading of javadoc attachements. Defaults to false.
+     *
+     * @parameter expression="${downloadJavadocs}" default-value="false"
+     */
+    private boolean downloadJavadocs;
 
     /**
      * Sets the classifier string attached to an artifact source archive name
@@ -191,7 +198,7 @@ public class IdeaMojo
 
         mojo.initParam( project, artifactFactory, localRepo, artifactResolver, artifactMetadataSource, getLog(),
                         overwrite, executedProject, reactorProjects, wagonManager, linkModules, useFullNames,
-                        useClassifiers, sourceClassifier, javadocClassifier, libraries, macros, exclude );
+                        downloadSources, sourceClassifier, downloadJavadocs, javadocClassifier, libraries, macros, exclude );
 
         mojo.rewriteModule();
     }
