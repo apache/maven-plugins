@@ -743,6 +743,10 @@ public class DependenciesReport
             {
                 if ( !directDep.containsKey( artifact.getId() ) )
                 {
+                    if ( artifact.getScope() == null )
+                    {
+                        artifact.setScope( Artifact.SCOPE_COMPILE );
+                    }
                     directDep.put( artifact.getId(), artifact );
                 }
             }
@@ -750,6 +754,13 @@ public class DependenciesReport
             {
                 if ( !transitiveDep.containsKey( artifact.getId() ) )
                 {
+                    if ( artifact.getScope() == null )
+                    {
+                        Artifact parent = (Artifact) parents.get(  parents.size() );
+
+                        artifact.setScope( parent.getScope() );
+                    }
+
                     transitiveDep.put( artifact.getId(), artifact );
                 }
             }
@@ -757,7 +768,19 @@ public class DependenciesReport
 
         public void updateScope( Artifact artifact, String scope )
         {
+            if (  directDep.containsKey( artifact.getId() ) )
+            {
+                Artifact depArtifact = (Artifact) directDep.get( artifact.getId() );
 
+                depArtifact.setScope( scope );
+            }
+
+            if (  transitiveDep.containsKey( artifact.getId() ) )
+            {
+                Artifact depArtifact = (Artifact) transitiveDep.get( artifact.getId() );
+
+                depArtifact.setScope( scope );
+            }
         }
 
         public void manageArtifact( Artifact artifact, Artifact replacement )
@@ -772,7 +795,7 @@ public class DependenciesReport
 
         public void updateScopeCurrentPom( Artifact artifact, String scope )
         {
-
+            updateScope( artifact, scope );
         }
 
         public void selectVersionFromRange( Artifact artifact )
