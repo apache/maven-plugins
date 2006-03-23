@@ -28,6 +28,7 @@ import org.codehaus.plexus.util.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -60,6 +61,7 @@ public class JxrReport
 
     /**
      * Source directories of the project.
+     *
      * @parameter expression="${project.compileSourceRoots}"
      * @required
      * @readonly
@@ -68,6 +70,7 @@ public class JxrReport
 
     /**
      * Test directories of the project.
+     *
      * @parameter expression="${project.testCompileSourceRoots}"
      * @required
      * @readonly
@@ -76,6 +79,7 @@ public class JxrReport
 
     /**
      * Output folder where the main page of the report will be generated.
+     *
      * @parameter expression="${project.build.directory}/site"
      * @required
      */
@@ -83,42 +87,49 @@ public class JxrReport
 
     /**
      * Folder where the Xref files will be copied to.
+     *
      * @parameter expression="${project.build.directory}/site/xref"
      */
     private String destDir;
 
     /**
      * File input encoding.
+     *
      * @parameter default-value="ISO-8859-1"
      */
     private String inputEncoding;
 
     /**
      * File output encoding.
+     *
      * @parameter default-value="ISO-8859-1"
      */
     private String outputEncoding;
 
     /**
      * Folder where Javadoc is generated for this project.
+     *
      * @parameter expression="${project.build.directory}/site/apidocs"
      */
     private String javadocDir;
 
     /**
      * Title of window of the Xref HTML files.
+     *
      * @parameter expression="${project.name} ${project.version} Reference"
      */
     private String windowTitle;
 
     /**
      * Title of main page of the Xref HTML files.
+     *
      * @parameter expression="${project.name} ${project.version} Reference"
      */
     private String docTitle;
 
     /**
      * String uses at the bottom of the Xref HTML files.
+     *
      * @parameter expression="Copyright &copy; ${project.inceptionYear} ${project.organization.name}. All Rights Reserved."
      */
     private String bottom;
@@ -135,6 +146,7 @@ public class JxrReport
     /**
      * Style sheet used for the Xref HTML files.
      * Should not be used. If used, should be an absolute path, like "${basedir}/myStyles.css".
+     *
      * @parameter default-value="stylesheet.css"
      */
     private String stylesheet;
@@ -181,7 +193,10 @@ public class JxrReport
         sink.text( getBundle( locale ).getString( "report.xref.projectSources.title" ) );
         sink.sectionTitle2_();
         sink.paragraph();
-        if ( hasSources( sourceDirs ) )
+
+        List sourceDirs = pruneSourceDirs( this.sourceDirs );
+
+        if ( !sourceDirs.isEmpty() )
         {
             try
             {
@@ -210,6 +225,20 @@ public class JxrReport
         sink.section2_();
     }
 
+    private List pruneSourceDirs( List sourceDirs )
+    {
+        List pruned = new ArrayList( sourceDirs.size() );
+        for ( Iterator i = sourceDirs.iterator(); i.hasNext(); )
+        {
+            String dir = (String) i.next();
+            if ( hasSources( new File( dir ) ) )
+            {
+                pruned.add( dir );
+            }
+        }
+        return pruned;
+    }
+
     private boolean hasSources( List sourceDirs )
     {
         boolean found = false;
@@ -235,7 +264,9 @@ public class JxrReport
         sink.text( getBundle( locale ).getString( "report.xref.testSources.title" ) );
         sink.sectionTitle2_();
         sink.paragraph();
-        if ( hasSources( testSourceDirs ) )
+
+        List testSourceDirs = pruneSourceDirs( this.testSourceDirs );
+        if ( !testSourceDirs.isEmpty() )
         {
             try
             {
@@ -363,9 +394,9 @@ public class JxrReport
      * Creates the Xref for the Java files found in the given source directory and puts
      * them in the given destination directory.
      *
-     * @param locale The user locale to use for the Xref generation
+     * @param locale               The user locale to use for the Xref generation
      * @param destinationDirectory The output folder
-     * @param sourceDirs The source directories
+     * @param sourceDirs           The source directories
      * @throws IOException
      * @throws Exception
      */
@@ -481,7 +512,7 @@ public class JxrReport
      * Returns the correct resource bundle according to the locale
      *
      * @param locale :
-     * the locale of the user
+     *               the locale of the user
      * @return the bundle correponding to the locale
      */
     private ResourceBundle getBundle( Locale locale )
