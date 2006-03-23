@@ -16,35 +16,23 @@ package org.apache.maven.plugin.javadoc;
  * limitations under the License.
  */
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.StringTokenizer;
-
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.model.Model;
+import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugin.javadoc.options.Group;
 import org.apache.maven.plugin.javadoc.options.Tag;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
-import org.apache.maven.doxia.siterenderer.Renderer;
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
@@ -53,6 +41,18 @@ import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.DefaultConsumer;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.StringTokenizer;
 
 /**
  * Generates documentation for the Java code in the project using the standard
@@ -81,10 +81,6 @@ public class JavadocReport
     private static final String DEFAULT_CSS_NAME = "stylesheet.css";
 
     private static final String RESOURCE_CSS_DIR = RESOURCE_DIR + "/css";
-
-    // Using for the plugin:xdoc goal. Best way?
-
-    private static final String PATH_SEPARATOR = System.getProperty( "path.separator" );
 
     // ----------------------------------------------------------------------
     // Mojo Parameters
@@ -609,6 +605,31 @@ public class JavadocReport
      */
     private List remoteRepositories;
 
+    /**
+     * The projects in the reactor for aggregation report.
+     *
+     * @parameter expression="${reactorProjects}"
+     * @readonly
+     */
+    private List reactorProjects;
+
+    /**
+     * Whether to build an aggregated report at the root, or build individual reports.
+     *
+     * @parameter expression="${aggregate}" default-value="false"
+     */
+    private boolean aggregate;
+
+    private static final float MIN_JAVA_VERSION = 1.4f;
+
+    private static final int LEVEL_PUBLIC = 1;
+
+    private static final int LEVEL_PROTECTED = 2;
+
+    private static final int LEVEL_PACKAGE = 3;
+
+    private static final int LEVEL_PRIVATE = 4;
+
     // ----------------------------------------------------------------------
     //
     // ----------------------------------------------------------------------
@@ -669,119 +690,16 @@ public class JavadocReport
     protected void executeReport( Locale locale )
         throws MavenReportException
     {
-        ArtifactHandler artifactHandler = project.getArtifact().getArtifactHandler();
-        if ( !"java".equals( artifactHandler.getLanguage() ) )
+        if ( aggregate && !project.isExecutionRoot() )
         {
-            getLog().info( "Not executing Javadoc as the project is not a Java classpath-capable package" );
             return;
         }
 
-        Model model = getProject().getModel();
+        List sourcePaths = getSourcePaths();
 
-        StringBuffer options = new StringBuffer();
-        StringBuffer classpath = new StringBuffer();
+        List files = getFiles( sourcePaths );
 
-        if ( !StringUtils.isEmpty( this.locale ) )
-        {
-            options.append( "-locale " );
-            options.append( quotedArgument( this.locale ) );
-            options.append( " " );
-        }
-
-        try
-        {
-            for ( Iterator i = getProject().getCompileClasspathElements().iterator(); i.hasNext(); )
-            {
-                classpath.append( (String) i.next() );
-
-                if ( i.hasNext() )
-                {
-                    classpath.append( PATH_SEPARATOR );
-                }
-            }
-        }
-        catch ( DependencyResolutionRequiredException e )
-        {
-            throw new MavenReportException( "Error in plugin descriptor - compile dependencies were not resolved", e );
-        }
-
-        if ( classpath.length() > 0 )
-        {
-            options.append( "-classpath " );
-            options.append( quotedPathArgument( classpath.toString() ) );
-        }
-
-        char FILE_SEPARATOR = System.getProperty( "file.separator" ).charAt( 0 );
-        String[] excludePackages = {};
-
-        // for the specified excludePackageNames
-        if ( excludePackageNames != null )
-        {
-            excludePackages = excludePackageNames.split( "[ ,:;]" );
-        }
-        for ( int i = 0; i < excludePackages.length; i++ )
-        {
-            excludePackages[i] = excludePackages[i].replace( '.', FILE_SEPARATOR );
-        }
-
-        // if the sourcepath is not empty
-        StringBuffer sourcePath = new StringBuffer();
-        StringBuffer files = new StringBuffer();
-        List excludedNames = new ArrayList();
-        if ( sourcepath != null && !StringUtils.isEmpty( sourcepath ) )
-        {
-            String[] sourcePaths = sourcepath.split( "[;]" );
-            if ( subpackages != null && !StringUtils.isEmpty( subpackages ) )
-            {
-                for ( int i = 0; i < sourcePaths.length; i++ )
-                {
-                    String[] subpackagesList = subpackages.split( "[:]" );
-                    for ( int j = 0; j < subpackagesList.length; j++ )
-                    {
-                        excludePackageNames = "";
-                        List excludes = getExcludedPackages( sourcePaths[i], excludePackages, FILE_SEPARATOR );
-                        excludedNames.addAll( excludes );
-                    }
-
-                    sourcePath.append( sourcePaths[i] );
-                    if ( ( i + 1 ) < sourcePaths.length )
-                    {
-                        sourcePath.append( PATH_SEPARATOR );
-                    }
-                }
-            }
-            else
-            {
-                for ( int i = 0; i < sourcePaths.length; i++ )
-                {
-                    String sourceDirectory = sourcePaths[i];
-                    files = getAllFilesFromSource( sourceDirectory, files, excludePackages, FILE_SEPARATOR );
-                    sourcePath.append( sourceDirectory );
-
-                    if ( ( i + 1 ) < sourcePaths.length )
-                    {
-                        sourcePath.append( PATH_SEPARATOR );
-                    }
-                }
-
-            }
-        }
-        else
-        {
-            for ( Iterator i = getProject().getCompileSourceRoots().iterator(); i.hasNext(); )
-            {
-                String sourceDirectory = (String) i.next();
-                files = getAllFilesFromSource( sourceDirectory, files, excludePackages, FILE_SEPARATOR );
-                sourcePath.append( sourceDirectory );
-
-                if ( i.hasNext() )
-                {
-                    sourcePath.append( PATH_SEPARATOR );
-                }
-            }
-        }
-
-        if ( files.length() == 0 && ( subpackages == null || StringUtils.isEmpty( subpackages ) ) )
+        if ( !canGenerateReport( files ) )
         {
             return;
         }
@@ -789,15 +707,18 @@ public class JavadocReport
         File javadocDirectory = new File( getOutputDirectory() );
         javadocDirectory.mkdirs();
 
-        File file = new File( javadocDirectory, "files" );
-        file.deleteOnExit();
-        try
+        if ( !files.isEmpty() )
         {
-            FileUtils.fileWrite( file.getAbsolutePath(), files.toString() );
-        }
-        catch ( IOException e )
-        {
-            throw new MavenReportException( "Unable to write temporary file for command execution", e );
+            File file = new File( javadocDirectory, "files" );
+            file.deleteOnExit();
+            try
+            {
+                FileUtils.fileWrite( file.getAbsolutePath(), StringUtils.join( files.iterator(), "\n" ) );
+            }
+            catch ( IOException e )
+            {
+                throw new MavenReportException( "Unable to write temporary file for command execution", e );
+            }
         }
 
         try
@@ -810,6 +731,21 @@ public class JavadocReport
             throw new MavenReportException( "Unable to copy default stylesheet", e );
         }
 
+        StringBuffer options = new StringBuffer();
+        if ( !StringUtils.isEmpty( this.locale ) )
+        {
+            options.append( "-locale " );
+            options.append( quotedArgument( this.locale ) );
+            options.append( " " );
+        }
+
+        String classpath = getClasspath();
+        if ( classpath.length() > 0 )
+        {
+            options.append( "-classpath " );
+            options.append( quotedPathArgument( classpath ) );
+        }
+
         Commandline cmd = new Commandline();
 
         // Set the proxy host and port
@@ -819,47 +755,9 @@ public class JavadocReport
             cmd.createArgument().setValue( "-J-DproxyPort=" + proxyPort );
         }
 
-        if ( !StringUtils.isEmpty( maxmemory ) )
-        {
-            // Allow '128' or '128m'
-            if ( NumberUtils.isDigits( maxmemory ) )
-            {
-                cmd.createArgument().setValue( "-J-Xmx" + maxmemory + "m" );
-            }
-            else
-            {
-                if ( ( NumberUtils.isDigits( maxmemory.substring( 0, maxmemory.length() - 1 ) ) ) &&
-                    ( maxmemory.toLowerCase().endsWith( "m" ) ) )
-                {
-                    cmd.createArgument().setValue( "-J-Xmx" + maxmemory );
-                }
-                else
-                {
-                    getLog().error( "The maxmemory '" + maxmemory + "' is not a valid number. Ignore this option." );
-                }
-            }
-        }
+        addMemoryArg( cmd, "-Xmx", this.maxmemory );
 
-        if ( !StringUtils.isEmpty( minmemory ) )
-        {
-            // Allow '128' or '128m'
-            if ( NumberUtils.isDigits( minmemory ) )
-            {
-                cmd.createArgument().setValue( "-J-Xms" + minmemory + "m" );
-            }
-            else
-            {
-                if ( ( NumberUtils.isDigits( minmemory.substring( 0, minmemory.length() - 1 ) ) ) &&
-                    ( minmemory.toLowerCase().endsWith( "m" ) ) )
-                {
-                    cmd.createArgument().setValue( "-J-Xms" + minmemory );
-                }
-                else
-                {
-                    getLog().error( "The minmemory '" + minmemory + "' is not a valid number. Ignore this option." );
-                }
-            }
-        }
+        addMemoryArg( cmd, "-Xms", this.minmemory );
 
         List arguments = new ArrayList();
 
@@ -867,36 +765,16 @@ public class JavadocReport
         cmd.setExecutable( getJavadocPath() );
 
         // General javadoc arguments
-        addArgIf( arguments, breakiterator, "-breakiterator", 1.4f );
+        addArgIf( arguments, breakiterator, "-breakiterator", MIN_JAVA_VERSION );
         if ( !StringUtils.isEmpty( doclet ) )
         {
             addArgIfNotEmpty( arguments, "-doclet", quotedArgument( doclet ) );
-
-            if ( docletArtifact != null )
-            {
-                Artifact artifact = factory.createArtifact( docletArtifact.getGroupId(), docletArtifact.getArtifactId(),
-                                                            docletArtifact.getVersion(), "compile", "jar" );
-                try
-                {
-                    resolver.resolve( artifact, remoteRepositories, localRepository );
-                    docletPath = artifact.getFile().getAbsolutePath();
-                }
-                catch ( ArtifactResolutionException e )
-                {
-                    throw new MavenReportException( "Unable to resolve artifact.", e );
-                }
-                catch ( ArtifactNotFoundException e )
-                {
-                    throw new MavenReportException( "Unable to find artifact.", e );
-                }
-            }
-
-            addArgIfNotEmpty( arguments, "-docletpath", quotedPathArgument( docletPath ) );
+            addArgIfNotEmpty( arguments, "-docletpath", quotedPathArgument( getDocletPath() ) );
         }
         addArgIfNotEmpty( arguments, "-encoding", quotedArgument( encoding ) );
         addArgIfNotEmpty( arguments, "-extdirs", quotedPathArgument( extdirs ) );
 
-        if ( old && SystemUtils.isJavaVersionAtLeast( 1.4f ) )
+        if ( old && SystemUtils.isJavaVersionAtLeast( MIN_JAVA_VERSION ) )
         {
             getLog().warn( "Javadoc 1.4 doesn't support the -1.1 switch anymore. Ignore this option." );
         }
@@ -905,118 +783,48 @@ public class JavadocReport
             addArgIf( arguments, old, "-1.1" );
         }
 
-        final int LEVEL_PUBLIC = 1;
-        final int LEVEL_PROTECTED = 2;
-        final int LEVEL_PACKAGE = 3;
-        final int LEVEL_PRIVATE = 4;
-        int accessLevel = 0;
-        if ( "public".equalsIgnoreCase( show ) )
-        {
-            accessLevel = LEVEL_PUBLIC;
-        }
-        else if ( "protected".equalsIgnoreCase( show ) )
-        {
-            accessLevel = LEVEL_PROTECTED;
-        }
-        else if ( "package".equalsIgnoreCase( show ) )
-        {
-            accessLevel = LEVEL_PACKAGE;
-        }
-        else if ( "private".equalsIgnoreCase( show ) )
-        {
-            accessLevel = LEVEL_PRIVATE;
-        }
-        else
-        {
-            getLog().error( "Unrecognized access level to show '" + show + "'. Defaulting to protected." );
-            accessLevel = LEVEL_PROTECTED;
-        }
-
         addArgIfNotEmpty( arguments, "-overview", quotedPathArgument( overview ) );
-        addArgIf( arguments, accessLevel == LEVEL_PUBLIC, "-public" );
-        addArgIf( arguments, accessLevel == LEVEL_PROTECTED, "-protected" );
-        addArgIf( arguments, accessLevel == LEVEL_PACKAGE, "-package" );
-        addArgIf( arguments, accessLevel == LEVEL_PRIVATE, "-private" );
-        addArgIf( arguments, quiet, "-quiet", 1.4f );
-        addArgIfNotEmpty( arguments, "-source", quotedArgument( source ), 1.4f );
+        arguments.add( getAccessLevel() );
+        addArgIf( arguments, quiet, "-quiet", MIN_JAVA_VERSION );
+        addArgIfNotEmpty( arguments, "-source", quotedArgument( source ), MIN_JAVA_VERSION );
         addArgIf( arguments, verbose, "-verbose" );
         addArgIfNotEmpty( arguments, null, additionalparam );
-        addArgIfNotEmpty( arguments, "-sourcepath", quotedPathArgument( sourcePath.toString() ) );
+        addArgIfNotEmpty( arguments, "-sourcepath", quotedPathArgument( getSourcePath( sourcePaths ) ) );
 
-        if ( sourcepath != null && !StringUtils.isEmpty( sourcepath ) )
+        if ( !StringUtils.isEmpty( sourcepath ) )
         {
             addArgIfNotEmpty( arguments, "-subpackages", subpackages );
         }
 
-        if ( subpackages != null && !StringUtils.isEmpty( subpackages ) )
-        {
-            String packageNames = "";
-            //add the excludedpackage names
-            for ( Iterator it = excludedNames.iterator(); it.hasNext(); )
-            {
-                String str = (String) it.next();
-                packageNames = packageNames + str;
-
-                if ( it.hasNext() )
-                {
-                    packageNames = packageNames + ":";
-                }
-            }
-            addArgIfNotEmpty( arguments, "-exclude", packageNames );
-        }
+        addArgIfNotEmpty( arguments, "-exclude", getExcludedPackages( sourcePaths ) );
 
         // javadoc arguments for default doclet
         if ( StringUtils.isEmpty( doclet ) )
         {
-            int actualYear = Calendar.getInstance().get( Calendar.YEAR );
-            String year = String.valueOf( actualYear );
-
-            bottom = StringUtils.replace( bottom, "{currentYear}", year );
-
-            if ( model != null && model.getInceptionYear() != null )
-            {
-                if ( model.getInceptionYear().equals( year ) )
-                {
-                    bottom = StringUtils.replace( bottom, "{inceptionYear}-", "" );
-                }
-                else
-                {
-                    bottom = StringUtils.replace( bottom, "{inceptionYear}", model.getInceptionYear() );
-                }
-            }
-
-            if ( StringUtils.isEmpty( stylesheetfile ) )
-            {
-                if ( !StringUtils.isEmpty( stylesheet ) )
-                {
-                    if ( stylesheet.equals( "maven" ) )
-                    {
-                        stylesheetfile = javadocDirectory + File.separator + DEFAULT_CSS_NAME;
-                    }
-                }
-            }
-            // End Specify default values
-
             addArgIf( arguments, author, "-author" );
-            addArgIfNotEmpty( arguments, "-bottom", quotedArgument( bottom ) );
-            addArgIf( arguments, breakiterator, "-breakiterator", 1.4f );
+            addArgIfNotEmpty( arguments, "-bottom",
+                              quotedArgument( getBottomText( project.getModel().getInceptionYear() ) ) );
+            addArgIf( arguments, breakiterator, "-breakiterator", MIN_JAVA_VERSION );
             addArgIfNotEmpty( arguments, "-charset", quotedArgument( charset ) );
             addArgIfNotEmpty( arguments, "-d", quotedPathArgument( javadocDirectory.toString() ) );
-            addArgIf( arguments, docfilessubdirs, "-docfilessubdirs", 1.4f );
+            addArgIf( arguments, docfilessubdirs, "-docfilessubdirs", MIN_JAVA_VERSION );
             addArgIfNotEmpty( arguments, "-docencoding", quotedArgument( docencoding ) );
             addArgIfNotEmpty( arguments, "-doctitle", quotedArgument( doctitle ) );
-            addArgIfNotEmpty( arguments, "-excludedocfilessubdir", quotedPathArgument( excludedocfilessubdir ), 1.4f );
+            addArgIfNotEmpty( arguments, "-excludedocfilessubdir", quotedPathArgument( excludedocfilessubdir ),
+                              MIN_JAVA_VERSION );
             addArgIfNotEmpty( arguments, "-footer", quotedArgument( footer ) );
             for ( int i = 0; i < groups.length; i++ )
             {
-                if ( ( groups[i] == null ) || ( StringUtils.isEmpty( groups[i].getTitle() ) ) ||
-                    ( StringUtils.isEmpty( groups[i].getPackages() ) ) )
+                if ( groups[i] == null || StringUtils.isEmpty( groups[i].getTitle() ) ||
+                    StringUtils.isEmpty( groups[i].getPackages() ) )
                 {
                     getLog().info( "A group option is empty. Ignore this option." );
-                    continue;
                 }
-                addArgIfNotEmpty( arguments, "-group", quotedArgument( groups[i].getTitle() ) + " " +
-                    quotedArgument( groups[i].getPackages() ), true );
+                else
+                {
+                    addArgIfNotEmpty( arguments, "-group", quotedArgument( groups[i].getTitle() ) + " " +
+                        quotedArgument( groups[i].getPackages() ), true );
+                }
             }
             addArgIfNotEmpty( arguments, "-header", quotedArgument( header ) );
             addArgIfNotEmpty( arguments, "-helpfile", quotedPathArgument( helpfile ) );
@@ -1025,7 +833,7 @@ public class JavadocReport
             {
                 addLinkArguments( arguments );
                 addLinkofflineArguments( arguments );
-                addArgIf( arguments, linksource, "-linksource", 1.4f );
+                addArgIf( arguments, linksource, "-linksource", MIN_JAVA_VERSION );
             }
             else
             {
@@ -1034,35 +842,38 @@ public class JavadocReport
 
             addArgIf( arguments, nodeprecated, "-nodeprecated" );
             addArgIf( arguments, nodeprecatedlist, "-nodeprecatedlist" );
-            addArgIf( arguments, nocomment, "-nocomment", 1.4f );
+            addArgIf( arguments, nocomment, "-nocomment", MIN_JAVA_VERSION );
             addArgIf( arguments, nohelp, "-nohelp" );
             addArgIf( arguments, noindex, "-noindex" );
             addArgIf( arguments, nonavbar, "-nonavbar" );
-            addArgIfNotEmpty( arguments, "-noqualifier", quotedArgument( noqualifier ), 1.4f );
+            addArgIfNotEmpty( arguments, "-noqualifier", quotedArgument( noqualifier ), MIN_JAVA_VERSION );
             addArgIf( arguments, nosince, "-nosince" );
             addArgIf( arguments, notree, "-notree" );
             addArgIf( arguments, serialwarn, "-serialwarn" );
             addArgIf( arguments, splitindex, "-splitindex" );
-            addArgIfNotEmpty( arguments, "-stylesheetfile", quotedPathArgument( stylesheetfile ) );
+            addArgIfNotEmpty( arguments, "-stylesheetfile",
+                              quotedPathArgument( getStylesheetFile( javadocDirectory ) ) );
 
-            addArgIfNotEmpty( arguments, "-taglet", quotedArgument( taglet ), 1.4f );
-            addArgIfNotEmpty( arguments, "-tagletpath", quotedPathArgument( tagletpath ), 1.4f );
+            addArgIfNotEmpty( arguments, "-taglet", quotedArgument( taglet ), MIN_JAVA_VERSION );
+            addArgIfNotEmpty( arguments, "-tagletpath", quotedPathArgument( tagletpath ), MIN_JAVA_VERSION );
 
             for ( int i = 0; i < tags.length; i++ )
             {
-                if ( ( tags[i] == null ) || ( StringUtils.isEmpty( tags[i].getName() ) ) ||
-                    ( StringUtils.isEmpty( tags[i].getPlacement() ) ) )
+                if ( tags[i] == null || StringUtils.isEmpty( tags[i].getName() ) ||
+                    StringUtils.isEmpty( tags[i].getPlacement() ) )
                 {
                     getLog().info( "A tag option is empty. Ignore this option." );
-                    continue;
                 }
-                String value = "\"" + tags[i].getName() + ":" + tags[i].getPlacement();
-                if ( !StringUtils.isEmpty( tags[i].getHead() ) )
+                else
                 {
-                    value += ":" + quotedArgument( tags[i].getHead() );
+                    String value = "\"" + tags[i].getName() + ":" + tags[i].getPlacement();
+                    if ( !StringUtils.isEmpty( tags[i].getHead() ) )
+                    {
+                        value += ":" + quotedArgument( tags[i].getHead() );
+                    }
+                    value += "\"";
+                    addArgIfNotEmpty( arguments, "-tag", value, MIN_JAVA_VERSION, false );
                 }
-                value += "\"";
-                addArgIfNotEmpty( arguments, "-tag", value, 1.4f, false );
             }
 
             addArgIf( arguments, use, "-use" );
@@ -1093,7 +904,10 @@ public class JavadocReport
             }
         }
 
-        cmd.createArgument().setValue( "@files" );
+        if ( !files.isEmpty() )
+        {
+            cmd.createArgument().setValue( "@files" );
+        }
 
         getLog().debug( Commandline.toString( cmd.getCommandline() ) );
 
@@ -1110,6 +924,263 @@ public class JavadocReport
         catch ( CommandLineException e )
         {
             throw new MavenReportException( "Unable to execute javadoc command", e );
+        }
+    }
+
+    private List getFiles( List sourcePaths )
+    {
+        List files = new ArrayList();
+        if ( StringUtils.isEmpty( subpackages ) )
+        {
+            String[] excludedPackages = getExcludedPackages();
+
+            for ( Iterator i = sourcePaths.iterator(); i.hasNext(); )
+            {
+                String sourceDirectory = (String) i.next();
+                addFilesFromSource( files, sourceDirectory, excludedPackages );
+            }
+        }
+        return files;
+    }
+
+    private String getExcludedPackages( List sourcePaths )
+    {
+        List excludedNames = null;
+
+        if ( !StringUtils.isEmpty( sourcepath ) && !StringUtils.isEmpty( subpackages ) )
+        {
+            String[] excludedPackages = getExcludedPackages();
+            String[] subpackagesList = subpackages.split( "[:]" );
+
+            excludedNames = getExcludedNames( sourcePaths, subpackagesList, excludedPackages );
+        }
+
+        String excludeArg = "";
+        if ( !StringUtils.isEmpty( subpackages ) && excludedNames != null )
+        {
+            //add the excludedpackage names
+            for ( Iterator it = excludedNames.iterator(); it.hasNext(); )
+            {
+                String str = (String) it.next();
+                excludeArg = excludeArg + str;
+
+                if ( it.hasNext() )
+                {
+                    excludeArg = excludeArg + ":";
+                }
+            }
+        }
+        return excludeArg;
+    }
+
+    private String getSourcePath( List sourcePaths )
+    {
+        String sourcePath = null;
+
+        if ( StringUtils.isEmpty( subpackages ) || !StringUtils.isEmpty( sourcepath ) )
+        {
+            sourcePath = StringUtils.join( sourcePaths.iterator(), File.pathSeparator );
+        }
+        return sourcePath;
+    }
+
+    private List getSourcePaths()
+    {
+        List sourcePaths;
+        if ( StringUtils.isEmpty( sourcepath ) )
+        {
+            sourcePaths = new ArrayList( project.getCompileSourceRoots() );
+
+            if ( aggregate && project.isExecutionRoot() )
+            {
+                for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+                {
+                    MavenProject project = (MavenProject) i.next();
+
+                    List sourceRoots = project.getCompileSourceRoots();
+                    ArtifactHandler artifactHandler = project.getArtifact().getArtifactHandler();
+                    if ( "java".equals( artifactHandler.getLanguage() ) )
+                    {
+                        sourcePaths.addAll( sourceRoots );
+                    }
+                }
+            }
+
+            sourcePaths = pruneSourceDirs( sourcePaths );
+        }
+        else
+        {
+            sourcePaths = Arrays.asList( sourcepath.split( "[;]" ) );
+        }
+        return sourcePaths;
+    }
+
+    // TODO: could be better aligned with JXR, including getFiles() vs hasSources that finds java files.
+    private List pruneSourceDirs( List sourceDirs )
+    {
+        List pruned = new ArrayList( sourceDirs.size() );
+        for ( Iterator i = sourceDirs.iterator(); i.hasNext(); )
+        {
+            String dir = (String) i.next();
+            File directory = new File( dir );
+            if ( directory.exists() && directory.isDirectory() )
+            {
+                if ( !pruned.contains( dir ) )
+                {
+                    pruned.add( dir );
+                }
+            }
+        }
+        return pruned;
+    }
+
+    private List getExcludedNames( List sourcePaths, String[] subpackagesList, String[] excludedPackages )
+    {
+        List excludedNames = new ArrayList();
+        for ( Iterator i = sourcePaths.iterator(); i.hasNext(); )
+        {
+            String path = (String) i.next();
+            for ( int j = 0; j < subpackagesList.length; j++ )
+            {
+                List excludes = getExcludedPackages( path, excludedPackages );
+                excludedNames.addAll( excludes );
+            }
+        }
+        return excludedNames;
+    }
+
+    private String[] getExcludedPackages()
+    {
+        String[] excludePackages = {};
+
+        // for the specified excludePackageNames
+        if ( excludePackageNames != null )
+        {
+            excludePackages = excludePackageNames.split( "[ ,:;]" );
+        }
+        for ( int i = 0; i < excludePackages.length; i++ )
+        {
+            excludePackages[i] = excludePackages[i].replace( '.', File.separatorChar );
+        }
+        return excludePackages;
+    }
+
+    private String getClasspath()
+        throws MavenReportException
+    {
+        List compileClasspathElements;
+        try
+        {
+            compileClasspathElements = project.getCompileClasspathElements();
+        }
+        catch ( DependencyResolutionRequiredException e )
+        {
+            throw new MavenReportException( "Error in plugin descriptor - compile dependencies were not resolved", e );
+        }
+
+        return StringUtils.join( compileClasspathElements.iterator(), File.pathSeparator );
+    }
+
+    private String getBottomText( String inceptionYear )
+    {
+        int actualYear = Calendar.getInstance().get( Calendar.YEAR );
+        String year = String.valueOf( actualYear );
+
+        String bottom = StringUtils.replace( this.bottom, "{currentYear}", year );
+
+        if ( inceptionYear != null )
+        {
+            if ( inceptionYear.equals( year ) )
+            {
+                bottom = StringUtils.replace( bottom, "{inceptionYear}-", "" );
+            }
+            else
+            {
+                bottom = StringUtils.replace( bottom, "{inceptionYear}", inceptionYear );
+            }
+        }
+        return bottom;
+    }
+
+    private String getStylesheetFile( File javadocDirectory )
+    {
+        String stylesheetfile = this.stylesheetfile;
+        if ( StringUtils.isEmpty( stylesheetfile ) )
+        {
+            if ( "maven".equals( stylesheet ) )
+            {
+                stylesheetfile = javadocDirectory + File.separator + DEFAULT_CSS_NAME;
+            }
+        }
+        return stylesheetfile;
+    }
+
+    private String getAccessLevel()
+    {
+        String accessLevel;
+        if ( "public".equalsIgnoreCase( show ) || "protected".equalsIgnoreCase( show ) ||
+            "package".equalsIgnoreCase( show ) || "private".equalsIgnoreCase( show ) )
+        {
+            accessLevel = "-" + show;
+        }
+        else
+        {
+            getLog().error( "Unrecognized access level to show '" + show + "'. Defaulting to protected." );
+            accessLevel = "-protected";
+        }
+        return accessLevel;
+    }
+
+    private String getDocletPath()
+        throws MavenReportException
+    {
+        String path;
+        if ( docletArtifact != null )
+        {
+            Artifact artifact = factory.createArtifact( docletArtifact.getGroupId(), docletArtifact.getArtifactId(),
+                                                        docletArtifact.getVersion(), "compile", "jar" );
+            try
+            {
+                resolver.resolve( artifact, remoteRepositories, localRepository );
+                path = artifact.getFile().getAbsolutePath();
+            }
+            catch ( ArtifactResolutionException e )
+            {
+                throw new MavenReportException( "Unable to resolve artifact.", e );
+            }
+            catch ( ArtifactNotFoundException e )
+            {
+                throw new MavenReportException( "Unable to find artifact.", e );
+            }
+        }
+        else
+        {
+            path = docletPath;
+        }
+        return path;
+    }
+
+    private void addMemoryArg( Commandline cmd, String arg, String memory )
+    {
+        if ( !StringUtils.isEmpty( memory ) )
+        {
+            // Allow '128' or '128m'
+            if ( NumberUtils.isDigits( memory ) )
+            {
+                cmd.createArgument().setValue( "-J" + arg + memory + "m" );
+            }
+            else
+            {
+                if ( NumberUtils.isDigits( memory.substring( 0, memory.length() - 1 ) ) &&
+                    memory.toLowerCase().endsWith( "m" ) )
+                {
+                    cmd.createArgument().setValue( "-J" + arg + memory );
+                }
+                else
+                {
+                    getLog().error( arg + " '" + memory + "' is not a valid number. Ignore this option." );
+                }
+            }
         }
     }
 
@@ -1289,16 +1360,17 @@ public class JavadocReport
      */
     private String quotedArgument( String value )
     {
-        if ( !StringUtils.isEmpty( value ) )
+        String arg = value;
+        if ( !StringUtils.isEmpty( arg ) )
         {
-            if ( value.indexOf( "'" ) != -1 )
+            if ( arg.indexOf( "'" ) != -1 )
             {
-                value = StringUtils.replace( value, "'", "\\'" );
+                arg = StringUtils.replace( arg, "'", "\\'" );
             }
-            return "'" + value + "'";
+            arg = "'" + arg + "'";
         }
 
-        return value;
+        return arg;
     }
 
     /**
@@ -1309,12 +1381,12 @@ public class JavadocReport
      */
     private String quotedPathArgument( String value )
     {
-        if ( !StringUtils.isEmpty( value ) )
+        String path = value;
+        if ( !StringUtils.isEmpty( path ) )
         {
-            return "'" + value.replace( '\\', '/' ) + "'";
+            path = "'" + path.replace( '\\', '/' ) + "'";
         }
-
-        return value;
+        return path;
     }
 
     /**
@@ -1409,13 +1481,34 @@ public class JavadocReport
         return true;
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#canGenerateReport()
-     */
     public boolean canGenerateReport()
     {
-        ArtifactHandler artifactHandler = project.getArtifact().getArtifactHandler();
-        return ( "java".equals( artifactHandler.getLanguage() ) );
+        boolean canGenerate;
+        if ( aggregate && !project.isExecutionRoot() )
+        {
+            canGenerate = false;
+        }
+        else
+        {
+            List sourcePaths = getSourcePaths();
+
+            List files = getFiles( sourcePaths );
+
+            canGenerate = canGenerateReport( files );
+        }
+        return canGenerate;
+    }
+
+    private boolean canGenerateReport( List files )
+    {
+        boolean canGenerate = true;
+
+        if ( files.isEmpty() && StringUtils.isEmpty( subpackages ) )
+        {
+            canGenerate = false;
+        }
+
+        return canGenerate;
     }
 
     /**
@@ -1425,13 +1518,11 @@ public class JavadocReport
      * @param sourceDirectory the directory where the source files are located
      * @param fileList        the list of all files found in the sourceDirectory
      * @param excludePackages package names to be excluded in the javadoc
-     * @param FILE_SEPARATOR  the standard file separator used
      * @return a StringBuffer that contains the appended file names of the files to be included in the javadoc
      */
-    private StringBuffer getIncludedFiles( String sourceDirectory, String[] fileList, String[] excludePackages,
-                                           char FILE_SEPARATOR )
+    private List getIncludedFiles( String sourceDirectory, String[] fileList, String[] excludePackages )
     {
-        StringBuffer files = new StringBuffer();
+        List files = new ArrayList();
 
         for ( int j = 0; j < fileList.length; j++ )
         {
@@ -1443,9 +1534,9 @@ public class JavadocReport
                 if ( excludeName.length > 1 )
                 {
                     int u = 0;
-                    while ( include == true && u < excludeName.length )
+                    while ( include && u < excludeName.length )
                     {
-                        if ( !excludeName[u].trim().equals( "" ) && fileList[j].indexOf( excludeName[u] ) != -1 )
+                        if ( !"".equals( excludeName[u].trim() ) && fileList[j].indexOf( excludeName[u] ) != -1 )
                         {
                             include = false;
                         }
@@ -1454,7 +1545,7 @@ public class JavadocReport
                 }
                 else
                 {
-                    if ( fileList[j].startsWith( sourceDirectory + FILE_SEPARATOR + excludeName[0] ) )
+                    if ( fileList[j].startsWith( sourceDirectory + File.separatorChar + excludeName[0] ) )
                     {
                         include = false;
                     }
@@ -1463,8 +1554,7 @@ public class JavadocReport
 
             if ( include )
             {
-                files.append( quotedPathArgument( fileList[j] ) );
-                files.append( "\n" );
+                files.add( quotedPathArgument( fileList[j] ) );
             }
         }
 
@@ -1477,10 +1567,9 @@ public class JavadocReport
      *
      * @param sourceDirectory     the directory where the source files are located
      * @param excludePackagenames package names to be excluded in the javadoc
-     * @param FILE_SEPARATOR      the standard file separator used
      * @return a List of the packagenames to be excluded
      */
-    private List getExcludedPackages( String sourceDirectory, String[] excludePackagenames, char FILE_SEPARATOR )
+    private List getExcludedPackages( String sourceDirectory, String[] excludePackagenames )
     {
         List files = new ArrayList();
         for ( int i = 0; i < excludePackagenames.length; i++ )
@@ -1492,7 +1581,7 @@ public class JavadocReport
                 int u = 0;
                 while ( u < excludeName.length )
                 {
-                    if ( !excludeName[u].trim().equals( "" ) && fileList[j].indexOf( excludeName[u] ) != -1 &&
+                    if ( !"".equals( excludeName[u].trim() ) && fileList[j].indexOf( excludeName[u] ) != -1 &&
                         sourceDirectory.indexOf( excludeName[u] ) == -1 )
                     {
                         files.add( fileList[j] );
@@ -1506,11 +1595,10 @@ public class JavadocReport
         for ( Iterator it = files.iterator(); it.hasNext(); )
         {
             String file = (String) it.next();
-            int idx = file.lastIndexOf( FILE_SEPARATOR );
+            int idx = file.lastIndexOf( File.separatorChar );
             String tmpStr = file.substring( 0, idx );
             tmpStr = tmpStr.replace( '\\', '/' );
-            sourceDirectory = sourceDirectory.replace( '\\', '/' );
-            String[] srcSplit = tmpStr.split( sourceDirectory + '/' );
+            String[] srcSplit = tmpStr.split( sourceDirectory.replace( '\\', '/' ) + '/' );
             String excludedPackage = srcSplit[1].replace( '/', '.' );
 
             if ( !excluded.contains( excludedPackage ) )
@@ -1529,21 +1617,14 @@ public class JavadocReport
      * @param sourceDirectory the directory where the source files are located
      * @param files           the variable that contains the appended filenames of the files to be included in the javadoc
      * @param excludePackages the packages to be excluded in the javadocs
-     * @param FILE_SEPARATOR  the standard file separator used
-     * @return a StringBuffer that contains the appended file names of the files to be included in the javadoc
      */
-    private StringBuffer getAllFilesFromSource( String sourceDirectory, StringBuffer files, String[] excludePackages,
-                                                char FILE_SEPARATOR )
+    private void addFilesFromSource( List files, String sourceDirectory, String[] excludePackages )
     {
-
         String[] fileList = FileUtils.getFilesFromExtension( sourceDirectory, new String[]{"java"} );
         if ( fileList != null && fileList.length != 0 )
         {
-            StringBuffer tmpFiles = getIncludedFiles( sourceDirectory, fileList, excludePackages, FILE_SEPARATOR );
-            files.append( tmpFiles );
+            List tmpFiles = getIncludedFiles( sourceDirectory, fileList, excludePackages );
+            files.addAll( tmpFiles );
         }
-
-        return files;
     }
-
 }
