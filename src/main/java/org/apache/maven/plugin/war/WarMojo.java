@@ -83,6 +83,11 @@ public class WarMojo
      */
     private MavenProjectHelper projectHelper;
 
+    /**
+     * @parameter expression="${setWarFile}" default-value="true"
+     */
+    private boolean setWarFile;
+
     // ----------------------------------------------------------------------
     // Implementation
     // ----------------------------------------------------------------------
@@ -168,7 +173,17 @@ public class WarMojo
         }
         else
         {
-            getProject().getArtifact().setFile( warFile );
+            if( setWarFile )
+            {
+                getProject().getArtifact().setFile( warFile );
+            }
+            else
+            {
+                if( getProject().getArtifact().getFile() == null || getProject().getArtifact().getFile().isDirectory() )
+                {
+                    getProject().getArtifact().setFile( warFile );
+                }
+            }            
         }
     }
 }
