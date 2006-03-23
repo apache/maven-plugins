@@ -56,6 +56,8 @@ Maven 2 Site Plugin
 
 *How to Staging Site plugin
 
+  <<This goal is only available in version 2.0 of the Site plugin and above>>
+
   To review/test the generated Web site before an official deploy, you could stage the site in
   a specific directory. It will use the distributionManagement elements or the project hierarchy to link
   project and its modules.
