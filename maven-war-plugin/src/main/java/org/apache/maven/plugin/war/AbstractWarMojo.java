@@ -370,11 +370,23 @@ public abstract class AbstractWarMojo
 
         Set artifacts = project.getArtifacts();
 
+        List duplicates = findDuplicates( artifacts );
+
         List dependentWarDirectories = new ArrayList();
 
         for ( Iterator iter = artifacts.iterator(); iter.hasNext(); )
         {
             Artifact artifact = (Artifact) iter.next();
+            String targetFileName = artifact.getFile().getName();
+
+            getLog().debug( "Processing: " + targetFileName );
+
+            if ( duplicates.contains( targetFileName ) )
+            {
+                getLog().debug( "Duplicate found: " + targetFileName );
+                targetFileName = artifact.getGroupId() + "-" + targetFileName;
+                getLog().debug( "Renamed to: " + targetFileName );
+            }
 
             // TODO: utilise appropriate methods from project builder
             ScopeArtifactFilter filter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
@@ -383,20 +395,19 @@ public abstract class AbstractWarMojo
                 String type = artifact.getType();
                 if ( "tld".equals( type ) )
                 {
-                    copyFileToDirectoryIfModified( artifact.getFile(), tldDirectory );
+                    copyFileIfModified( artifact.getFile(), new File( tldDirectory, targetFileName ) );
                 }
                 else if ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type ) )
                 {
-                    copyFileToDirectoryIfModified( artifact.getFile(), libDirectory );
+                    copyFileIfModified( artifact.getFile(), new File( libDirectory, targetFileName ) );
                 }
                 else if ( "par".equals( type ) )
                 {
-                    String newName = artifact.getFile().getName();
-                    newName = newName.substring( 0, newName.lastIndexOf( '.' ) ) + ".jar";
+                    targetFileName = targetFileName.substring( 0, targetFileName.lastIndexOf( '.' ) ) + ".jar";
 
-                    getLog().debug( "Copying " + artifact.getFile() + " to " + new File( libDirectory, newName ) );
+                    getLog().debug( "Copying " + artifact.getFile() + " to " + new File( libDirectory, targetFileName ) );
 
-                    copyFileIfModified( artifact.getFile(), new File( libDirectory, newName ) );
+                    copyFileIfModified( artifact.getFile(), new File( libDirectory, targetFileName ) );
                 }
                 else if ( "war".equals( type ) )
                 {
@@ -419,6 +430,32 @@ public abstract class AbstractWarMojo
                 copyDependentWarContents( (File) iter.next(), webappDirectory );
             }
         }
+    }
+
+    /**
+     * Searches a set of artifacts for duplicate filenames and returns a list of duplicates.
+     *
+     * @param artifacts set of artifacts
+     * @return List of duplicated artifacts
+     */
+    private List findDuplicates( Set artifacts )
+    {
+        List duplicates = new ArrayList();
+        List identifiers = new ArrayList();
+        for ( Iterator iter = artifacts.iterator(); iter.hasNext(); )
+        {
+            Artifact artifact = (Artifact) iter.next();
+            String candidate = artifact.getFile().getName();
+            if ( identifiers.contains( candidate ) )
+            {
+                duplicates.add( candidate );
+            }
+            else
+            {
+                identifiers.add( candidate );
+            }
+        }
+        return duplicates;
     }
 
     /**
