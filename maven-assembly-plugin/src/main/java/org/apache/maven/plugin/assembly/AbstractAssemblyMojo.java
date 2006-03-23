@@ -126,7 +126,8 @@ public abstract class AbstractAssemblyMojo
     protected File descriptor;
 
     /**
-     * Sets the TarArchiver behavior on file paths with more than 100 characters length
+     * Sets the TarArchiver behavior on file paths with more than 100 characters length.
+     * Valid values are: "warn" (default), "fail", "truncate", "gnu", or "omit".
      *
      * @parameter expression="${tarLongFileMode}" default-value="warn"
      */
