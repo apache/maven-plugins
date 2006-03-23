@@ -36,7 +36,7 @@
             <multiplicity>*</multiplicity>
           </association>
           <description>
-            Specify assembly parameters for groups of files. 
+            Specify assembly parameters for groups of files.
           </description>
         </field>
         <field>
@@ -63,7 +63,7 @@
         </field>
       </fields>
     </class>
-    
+
     <class>
       <name>SetBase</name>
       <version>1.0.0</version>
@@ -74,7 +74,7 @@
           <type>String</type>
           <description>
             Specifies the output directory relative to the root
-            of the root directory of the assembly.  For example,
+            of the root directory of the assembly. For example,
             "log" will put the specified files in the log directory.
           </description>
         </field>
@@ -148,7 +148,7 @@
           <version>1.0.0</version>
           <type>String</type>
           <description>
-            Absolute or relative from the module's directory.  For
+            Absolute or relative from the module's directory. For
             example, "src/main/bin" would select this subdirectory
             of the project in which this dependency is defined.
           </description>
@@ -198,7 +198,7 @@
           <required>false</required>
           <description>
             Specifies the output directory relative to the root
-            of the root directory of the assembly.  For example,
+            of the root directory of the assembly. For example,
             "log" will put the specified files in the log directory.
           </description>
         </field>
@@ -207,7 +207,7 @@
           <version>1.0.0</version>
           <type>String</type>
           <description>
-            Destination file name in outputDirectory. 
+            Destination file name in outputDirectory.
             Default is the same name as the source's file.
           </description>
         </field>
@@ -244,6 +244,14 @@
             ]]>
           </description>
         </field>
+        <field>
+          <name>filtered</name>
+          <version>1.0.0</version>
+          <type>boolean</type>
+          <description>
+            Flag used to determine if the file is filtered.
+          </description>
+        </field>
       </fields>
     </class>
 
@@ -259,7 +267,7 @@
           <type>String</type>
           <defaultValue>${artifactId}-${version}.${extension}</defaultValue>
           <description>
-            Specify the mapping pattern for all dependencies included 
+            Specify the mapping pattern for all dependencies included
             in this assembly.
             Default is ${artifactId}-${version}.${extension}.
           </description>
@@ -270,7 +278,7 @@
           <defaultValue>false</defaultValue>
           <description>
             If set to true, this property will unpack all dependencies
-            into the specified output directory.  When set to false
+            into the specified output directory. When set to false
             dependencies will be includes as archives (jars).
             Default value is false.
           </description>
@@ -288,7 +296,7 @@
         </field>
       </fields>
     </class>
-    
+
   </classes>
 </model>
 
