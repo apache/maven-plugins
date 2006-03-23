@@ -17,6 +17,7 @@ package org.apache.maven.plugin.jxr;
  */
 
 import org.apache.maven.jxr.JXR;
+import org.apache.maven.jxr.JxrException;
 import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
@@ -158,6 +159,21 @@ public class JxrReport
     private boolean javadocReportGenerated;
 
     /**
+     * The projects in the reactor for aggregation report.
+     *
+     * @parameter expression="${reactorProjects}"
+     * @readonly
+     */
+    private List reactorProjects;
+
+    /**
+     * Whether to build an aggregated report at the root, or build individual reports.
+     *
+     * @parameter expression="${aggregate}" default-value="false"
+     */
+    private boolean aggregate;
+
+    /**
      * Cf. overriden method documentation.
      *
      * @see org.apache.maven.reporting.AbstractMavenReport#executeReport(java.util.Locale)
@@ -165,28 +181,44 @@ public class JxrReport
     protected void executeReport( Locale locale )
         throws MavenReportException
     {
-        // init some attributes
-        init();
+        List testSourceDirs = constructTestSourceDirs();
+        List sourceDirs = constructSourceDirs();
+        if ( canGenerateReport( sourceDirs, testSourceDirs ) )
+        {
+            // init some attributes
+            init();
 
-        // and start the report 
-        Sink sink = getSink();
+            // and start the report
+            Sink sink = getSink();
 
-        startSink( sink, locale );
+            startSink( sink, locale );
 
-        // check if there are sources in the sourceDir and generate Xref
-        generateXrefForSources( locale, sink );
+            try
+            {
+                // check if there are sources in the sourceDir and generate Xref
+                generateXrefForSources( locale, sink, sourceDirs );
 
-        // check if there are test sources in the testSourceDir and generate Xref
-        generateXrefForTests( locale, sink );
+                // check if there are test sources in the testSourceDir and generate Xref
+                generateXrefForTests( locale, sink, testSourceDirs );
+            }
+            catch ( JxrException e )
+            {
+                throw new MavenReportException( "Error while generating the HTML source code of the projet.", e );
+            }
+            catch ( IOException e )
+            {
+                throw new MavenReportException( "Error while generating the HTML source code of the projet.", e );
+            }
 
-        endSink( sink );
+            endSink( sink );
+        }
     }
 
     /*
      * Generates the Xref for the application sources if they exist
      */
-    private void generateXrefForSources( Locale locale, Sink sink )
-        throws MavenReportException
+    private void generateXrefForSources( Locale locale, Sink sink, List sourceDirs )
+        throws JxrException, IOException
     {
         sink.section2();
         sink.sectionTitle2();
@@ -194,28 +226,19 @@ public class JxrReport
         sink.sectionTitle2_();
         sink.paragraph();
 
-        List sourceDirs = pruneSourceDirs( this.sourceDirs );
-
         if ( !sourceDirs.isEmpty() )
         {
-            try
-            {
-                // create the XRef for the source dir
-                createXref( locale, destDir, sourceDirs );
+            // create the XRef for the source dir
+            createXref( locale, destDir, sourceDirs );
 
-                // put the link to the sources
-                sink.text( getBundle( locale ).getString( "report.xref.projectSources.link" ) );
-                File out = new File( outputDirectory );
-                File des = new File( destDir );
-                String relativPath = des.getAbsolutePath().substring( out.getAbsolutePath().length() + 1 );
-                sink.link( relativPath + "/index.html" );
-                sink.text( relativPath + "/index.html" );
-                sink.link_();
-            }
-            catch ( Exception e )
-            {
-                throw new MavenReportException( "Error while generating the HTML source code of the projet.", e );
-            }
+            // put the link to the sources
+            sink.text( getBundle( locale ).getString( "report.xref.projectSources.link" ) );
+            File out = new File( outputDirectory );
+            File des = new File( destDir );
+            String relativPath = des.getAbsolutePath().substring( out.getAbsolutePath().length() + 1 );
+            sink.link( relativPath + "/index.html" );
+            sink.text( relativPath + "/index.html" );
+            sink.link_();
         }
         else
         {
@@ -225,13 +248,30 @@ public class JxrReport
         sink.section2_();
     }
 
+    private List constructSourceDirs()
+    {
+        List sourceDirs = new ArrayList( this.sourceDirs );
+        if ( aggregate )
+        {
+            for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+            {
+                MavenProject project = (MavenProject) i.next();
+
+                sourceDirs.addAll( project.getCompileSourceRoots() );
+            }
+        }
+
+        sourceDirs = pruneSourceDirs( sourceDirs );
+        return sourceDirs;
+    }
+
     private List pruneSourceDirs( List sourceDirs )
     {
         List pruned = new ArrayList( sourceDirs.size() );
         for ( Iterator i = sourceDirs.iterator(); i.hasNext(); )
         {
             String dir = (String) i.next();
-            if ( hasSources( new File( dir ) ) )
+            if ( !pruned.contains( dir ) && hasSources( new File( dir ) ) )
             {
                 pruned.add( dir );
             }
@@ -239,25 +279,11 @@ public class JxrReport
         return pruned;
     }
 
-    private boolean hasSources( List sourceDirs )
-    {
-        boolean found = false;
-        for ( Iterator i = sourceDirs.iterator(); i.hasNext() && !found; )
-        {
-            String dir = (String) i.next();
-            if ( hasSources( new File( dir ) ) )
-            {
-                found = true;
-            }
-        }
-        return found;
-    }
-
     /*
      * Generates the Xref for the test sources if they exist
      */
-    private void generateXrefForTests( Locale locale, Sink sink )
-        throws MavenReportException
+    private void generateXrefForTests( Locale locale, Sink sink, List testSourceDirs )
+        throws JxrException, IOException
     {
         sink.section2();
         sink.sectionTitle2();
@@ -265,29 +291,21 @@ public class JxrReport
         sink.sectionTitle2_();
         sink.paragraph();
 
-        List testSourceDirs = pruneSourceDirs( this.testSourceDirs );
         if ( !testSourceDirs.isEmpty() )
         {
-            try
-            {
-                String testDestDir = destDir + "-test";
+            String testDestDir = destDir + "-test";
 
-                // create the XRef for the source dir
-                createXref( locale, testDestDir, testSourceDirs );
+            // create the XRef for the source dir
+            createXref( locale, testDestDir, testSourceDirs );
 
-                // put the link to the sources
-                sink.text( getBundle( locale ).getString( "report.xref.testSources.link" ) );
-                File out = new File( outputDirectory );
-                File des = new File( testDestDir );
-                String relativPath = des.getAbsolutePath().substring( out.getAbsolutePath().length() + 1 );
-                sink.link( relativPath + "/index.html" );
-                sink.text( relativPath + "/index.html" );
-                sink.link_();
-            }
-            catch ( Exception e )
-            {
-                throw new MavenReportException( "Error while generating the HTML source code of the projet.", e );
-            }
+            // put the link to the sources
+            sink.text( getBundle( locale ).getString( "report.xref.testSources.link" ) );
+            File out = new File( outputDirectory );
+            File des = new File( testDestDir );
+            String relativPath = des.getAbsolutePath().substring( out.getAbsolutePath().length() + 1 );
+            sink.link( relativPath + "/index.html" );
+            sink.text( relativPath + "/index.html" );
+            sink.link_();
         }
         else
         {
@@ -297,6 +315,24 @@ public class JxrReport
         sink.section2_();
     }
 
+    private List constructTestSourceDirs()
+    {
+        List testSourceDirs = new ArrayList( this.testSourceDirs );
+        if ( aggregate )
+        {
+            for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+            {
+                MavenProject project = (MavenProject) i.next();
+
+                List sourceRoots = project.getTestCompileSourceRoots();
+                testSourceDirs.addAll( sourceRoots );
+            }
+        }
+
+        testSourceDirs = pruneSourceDirs( testSourceDirs );
+        return testSourceDirs;
+    }
+
     /*
      * Initialize some attributes required during the report generation
      */
@@ -304,7 +340,7 @@ public class JxrReport
     {
         // wanna know if Javadoc is being generated
         // TODO: what if it is not part of the site though, and just on the command line?
-        Collection plugin = getProject().getReportPlugins();
+        Collection plugin = project.getReportPlugins();
         if ( plugin != null )
         {
             for ( Iterator iter = plugin.iterator(); iter.hasNext(); )
@@ -366,28 +402,28 @@ public class JxrReport
      */
     private boolean hasSources( File dir )
     {
-        if ( !dir.exists() || !dir.isDirectory() )
+        boolean found = false;
+        if ( dir.exists() && dir.isDirectory() )
         {
-            return false;
-        }
-        File[] files = dir.listFiles();
-        for ( int i = 0; i < files.length; i++ )
-        {
-            File currentFile = files[i];
-            if ( currentFile.isFile() && currentFile.getName().endsWith( ".java" ) )
+            File[] files = dir.listFiles();
+            for ( int i = 0; i < files.length && !found; i++ )
             {
-                return true;
-            }
-            else if ( currentFile.isDirectory() )
-            {
-                boolean hasSources = hasSources( currentFile );
-                if ( hasSources )
+                File currentFile = files[i];
+                if ( currentFile.isFile() && currentFile.getName().endsWith( ".java" ) )
                 {
-                    return true;
+                    found = true;
+                }
+                else if ( currentFile.isDirectory() )
+                {
+                    boolean hasSources = hasSources( currentFile );
+                    if ( hasSources )
+                    {
+                        found = true;
+                    }
                 }
             }
         }
-        return false;
+        return found;
     }
 
     /**
@@ -398,10 +434,10 @@ public class JxrReport
      * @param destinationDirectory The output folder
      * @param sourceDirs           The source directories
      * @throws IOException
-     * @throws Exception
+     * @throws JxrException
      */
     private void createXref( Locale locale, String destinationDirectory, List sourceDirs )
-        throws IOException, Exception
+        throws IOException, JxrException
     {
         JXR jxr = new JXR();
         jxr.setDest( destinationDirectory );
@@ -520,4 +556,19 @@ public class JxrReport
         return ResourceBundle.getBundle( "jxr-report", locale, this.getClass().getClassLoader() );
     }
 
+    public boolean canGenerateReport()
+    {
+        return canGenerateReport( constructSourceDirs(), constructTestSourceDirs() );
+    }
+
+    private boolean canGenerateReport( List sourceDirs, List testSourceDirs )
+    {
+        boolean canGenerate = !pruneSourceDirs( sourceDirs ).isEmpty() || !pruneSourceDirs( testSourceDirs ).isEmpty();
+
+        if ( aggregate && !project.isExecutionRoot() )
+        {
+            canGenerate = false;
+        }
+        return canGenerate;
+    }
 }
