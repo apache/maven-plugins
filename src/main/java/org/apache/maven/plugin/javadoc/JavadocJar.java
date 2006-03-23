@@ -17,32 +17,31 @@ package org.apache.maven.plugin.javadoc;
  */
 
 import org.apache.maven.artifact.handler.ArtifactHandler;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 
 /**
  * Bundles the javadoc documentation in a jar so it can be deployed to the repo.
  *
  * @goal jar
  * @phase package
- * @execute goal="javadoc"
  */
 public class JavadocJar
-    extends AbstractMojo
+    extends AbstractJavadocMojo
 {
     /**
      * Specifies the destination directory where javadoc saves the generated HTML files.
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#d">d</a>.
      *
-     * @parameter expression="${destDir}" default-value="${project.build.directory}/site/apidocs"
-     * @required
+     * @parameter expression="${destDir}"
+     * @deprecated
      */
     private File destDir;
 
@@ -57,46 +56,53 @@ public class JavadocJar
     private String finalName;
 
     /**
-     * @parameter expression="${project}"
-     * @readonly
-     * @required
-     */
-    private MavenProject project;
-
-    /**
-     * @parameter expression="${component.org.apache.maven.project.MavenProjectHelper}
+     * @component
      */
     private MavenProjectHelper projectHelper;
 
     /**
      * @parameter expression="${attach}" default-value="true"
      */
-    private boolean attach = true;
+    private boolean attach;
 
     public void execute()
         throws MojoExecutionException
     {
+        File destDir = this.destDir;
+
+        if ( destDir == null )
+        {
+            destDir = outputDirectory;
+        }
+
+        aggregate = false;
+
         ArtifactHandler artifactHandler = project.getArtifact().getArtifactHandler();
         if ( !"java".equals( artifactHandler.getLanguage() ) )
         {
             getLog().info( "Not executing Javadoc as the project is not a Java classpath-capable package" );
         }
-        else if ( destDir.exists() )
+        else
         {
             try
             {
-                File outputFile = generateArchive( destDir.getAbsolutePath(), finalName + "-javadoc.jar" );
+                executeReport( Locale.getDefault() );
 
-                if ( !attach )
+                if ( destDir.exists() )
                 {
-                    getLog().info( "NOT adding javadoc to attached artifacts list." );
+                    File outputFile = generateArchive( destDir, finalName + "-javadoc.jar" );
 
-                }
-                else
-                {
-                    // TODO: these introduced dependencies on the project are going to become problematic - can we export it
-                    //  through metadata instead?
-                    projectHelper.attachArtifact( project, "javadoc", "javadoc", outputFile );
+                    if ( !attach )
+                    {
+                        getLog().info( "NOT adding javadoc to attached artifacts list." );
+
+                    }
+                    else
+                    {
+                        // TODO: these introduced dependencies on the project are going to become problematic - can we export it
+                        //  through metadata instead?
+                        projectHelper.attachArtifact( project, "javadoc", "javadoc", outputFile );
+                    }
                 }
             }
             catch ( ArchiverException e )
@@ -107,19 +113,16 @@ public class JavadocJar
             {
                 throw new MojoExecutionException( "Error while creating archive.", e );
             }
+            catch ( MavenReportException e )
+            {
+                throw new MojoExecutionException( "Error while creating archive.", e );
+            }
         }
     }
 
-    private File generateArchive( String source, String target )
-        throws MojoExecutionException, ArchiverException, IOException
+    private File generateArchive( File javadocFiles, String target )
+        throws ArchiverException, IOException
     {
-        File javadocFiles = new File( source );
-
-        if ( !javadocFiles.exists() )
-        {
-            throw new MojoExecutionException( "javadoc files not found." );
-        }
-
         File javadocJar = new File( jarOutputDirectory, target );
 
         if ( javadocJar.exists() )
