@@ -333,6 +333,14 @@
             ]]>
           </description>
         </field>
+        <field>
+          <name>filtered</name>
+          <version>1.0.0</version>
+          <type>boolean</type>
+          <description>
+            Flag used to determine if the file is filtered.
+          </description>
+        </field>
       </fields>
     </class>
 
