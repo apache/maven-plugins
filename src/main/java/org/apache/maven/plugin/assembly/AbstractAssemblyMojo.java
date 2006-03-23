@@ -29,6 +29,8 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.assembly.filter.AssemblyScopeArtifactFilter;
 import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolationException;
 import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolator;
+import org.apache.maven.plugin.assembly.interpolation.ReflectionProperties;
+import org.apache.maven.plugin.assembly.utils.PropertyUtils;
 import org.apache.maven.plugins.assembly.model.Assembly;
 import org.apache.maven.plugins.assembly.model.Component;
 import org.apache.maven.plugins.assembly.model.DependencySet;
@@ -53,6 +55,7 @@ import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.InterpolationFilterReader;
 import org.codehaus.plexus.util.introspection.ReflectionValueExtractor;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
@@ -66,6 +69,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.FileInputStream;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -73,6 +79,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -196,6 +203,13 @@ public abstract class AbstractAssemblyMojo
      * @parameter
      */
     private MavenArchiveConfiguration archive;
+
+    /**
+     * @parameter expression="${project.build.filters}"
+     */
+    protected List filters;
+
+    private Properties filterProperties;
 
     /**
      * Create the binary distribution.
@@ -324,7 +338,7 @@ public abstract class AbstractAssemblyMojo
                 {
                     Manifest manifest = null;
                     File manifestFile = archive.getManifestFile();
-                    
+
                     if ( manifestFile != null )
                     {
                         try
@@ -739,7 +753,7 @@ public abstract class AbstractAssemblyMojo
                             try
                             {
                                 unpack( artifact.getFile(), tempLocation );
-                                
+
                                 /*
                                  * If the assembly is 'jar-with-dependencies', remove the security files in all dependencies
                                  * that will prevent the uberjar to execute.  Please see MASSEMBLY-64 for details.
@@ -749,12 +763,12 @@ public abstract class AbstractAssemblyMojo
                                     String[] securityFiles = { "*.RSA", "*.DSA", "*.SF", "*.rsa", "*.dsa", "*.sf" };
                                     org.apache.maven.shared.model.fileset.FileSet securityFileSet = new org.apache.maven.shared.model.fileset.FileSet();
                                     securityFileSet.setDirectory(tempLocation.getAbsolutePath() + "/META-INF/" );
-                                    
+
                                     for ( int sfsi = 0; sfsi < securityFiles.length; sfsi++ )
                                     {
                                         securityFileSet.addInclude( securityFiles[sfsi] );
                                     }
-                                    
+
                                     FileSetManager fsm = new FileSetManager( getLog() );
                                     try
                                     {
@@ -939,15 +953,35 @@ public abstract class AbstractAssemblyMojo
      *
      */
     protected void processFileList( Archiver archiver, List fileList, boolean includeBaseDirecetory )
-        throws ArchiverException, IOException
+        throws ArchiverException, IOException, MojoExecutionException
     {
+        File source = null;
+        File filteredFile = null;
+        File sourceFileItem = null;
+
         for ( Iterator i = fileList.iterator(); i.hasNext(); )
         {
             FileItem fileItem = (FileItem) i.next();
 
-            File source = new File( fileItem.getSource() );
+            if( fileItem.isFiltered() )
+            {
+                sourceFileItem = new File( fileItem.getSource() );
+
+                try
+                {
+                    filteredFile = filterFile( sourceFileItem );
+
+                    fileItem.setSource( filteredFile.getAbsolutePath() );
+                }
+                catch( Exception e )
+                {
+                    throw new MojoExecutionException( "Failed to interpolate resource " + sourceFileItem.getName(), e );
+                }
+            }
 
             String outputDirectory = fileItem.getOutputDirectory();
+
+            source = new File( fileItem.getSource() );
 
             if ( outputDirectory == null )
             {
@@ -971,7 +1005,19 @@ public abstract class AbstractAssemblyMojo
 
             outputDirectory = getOutputDirectory( outputDirectory, includeBaseDirecetory );
 
+            // omit the last char if ends with / or \\
+            if( outputDirectory.endsWith( "/" ) || outputDirectory.endsWith( "\\" ) )
+            {
+                outputDirectory = outputDirectory.substring( 0, outputDirectory.length() - 1 );
+            }
+
             archiver.addFile( source, outputDirectory + "/" + destName, Integer.parseInt( fileItem.getFileMode() ) );
+
+            // return to original source
+            if( fileItem.isFiltered() )
+            {
+                fileItem.setSource( sourceFileItem.getAbsolutePath() );
+            }
         }
     }
 
@@ -1242,5 +1288,78 @@ public abstract class AbstractAssemblyMojo
 
         assembly.addFileSet( siteFileSet );
     }
+    private void initializeFiltering()
+        throws MojoExecutionException
+    {
+        getLog().info( "Initializing assembly filters..." );
 
+        // System properties
+        filterProperties = new Properties( System.getProperties() );
+
+        // Project properties
+        filterProperties.putAll( project.getProperties() );
+
+        if( filters != null && !filters.isEmpty() )
+        {
+            for ( Iterator i = filters.iterator(); i.hasNext(); )
+            {
+                String filtersfile = (String) i.next();
+
+                try
+                {
+                    Properties properties = PropertyUtils.loadPropertyFile( new File( filtersfile ), true, true );
+
+                    filterProperties.putAll( properties );
+                }
+                catch ( IOException e )
+                {
+                    throw new MojoExecutionException( "Error loading property file '" + filtersfile + "'", e );
+                }
+            }
+        }
+    }
+
+    private File filterFile( File file )
+        throws IOException, MojoExecutionException
+    {
+        initializeFiltering();
+
+        BufferedReader fileReader = new BufferedReader( new FileReader( file ) );
+        //Writer fileWriter = new FileWriter( file );
+
+        // support ${token}
+        Reader reader = new InterpolationFilterReader( fileReader, filterProperties, "${", "}" );
+
+        boolean isPropertiesFile = false;
+
+        if ( file.isFile() && file.getName().endsWith( ".properties" ) )
+        {
+            isPropertiesFile = true;
+        }
+        reader = new InterpolationFilterReader( reader, new ReflectionProperties( project, isPropertiesFile ), "${", "}" );
+
+        File tempFilterFile = new File( tempRoot + "/" + file.getName() );
+
+        tempFilterFile.getParentFile().mkdirs();
+        tempFilterFile.createNewFile();
+
+        Writer fileWriter = new FileWriter( tempFilterFile );
+
+        String line = null;
+
+        BufferedReader in = new BufferedReader( reader );
+
+        while( ( line = in.readLine() ) != null )
+        {
+            fileWriter.write( line );
+            fileWriter.write( System.getProperty( "line.separator" ) );
+        }
+
+        fileWriter.flush();
+        fileWriter.close();
+        in.close();
+        fileReader.close();
+
+        return tempFilterFile;
+    }
 }
