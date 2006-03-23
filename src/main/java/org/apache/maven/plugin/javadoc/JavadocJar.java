@@ -80,32 +80,33 @@ public class JavadocJar
         if ( !"java".equals( artifactHandler.getLanguage() ) )
         {
             getLog().info( "Not executing Javadoc as the project is not a Java classpath-capable package" );
-            return;
         }
-
-        try
+        else if ( destDir.exists() )
         {
-            File outputFile = generateArchive( destDir.getAbsolutePath(), finalName + "-javadoc.jar" );
-
-            if ( !attach )
+            try
             {
-                getLog().info( "NOT adding javadoc to attached artifacts list." );
+                File outputFile = generateArchive( destDir.getAbsolutePath(), finalName + "-javadoc.jar" );
 
+                if ( !attach )
+                {
+                    getLog().info( "NOT adding javadoc to attached artifacts list." );
+
+                }
+                else
+                {
+                    // TODO: these introduced dependencies on the project are going to become problematic - can we export it
+                    //  through metadata instead?
+                    projectHelper.attachArtifact( project, "javadoc", "javadoc", outputFile );
+                }
             }
-            else
+            catch ( ArchiverException e )
             {
-                // TODO: these introduced dependencies on the project are going to become problematic - can we export it
-                //  through metadata instead?
-                projectHelper.attachArtifact( project, "javadoc", "javadoc", outputFile );
+                throw new MojoExecutionException( "Error while creating archive.", e );
             }
-        }
-        catch ( ArchiverException e )
-        {
-            throw new MojoExecutionException( "Error while creating archive.", e );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Error while creating archive.", e );
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Error while creating archive.", e );
+            }
         }
     }
 
