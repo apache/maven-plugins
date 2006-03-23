@@ -16,6 +16,7 @@ package org.apache.maven.plugin.jxr;
  * limitations under the License.
  */
 
+import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.jxr.JXR;
 import org.apache.maven.jxr.JxrException;
 import org.apache.maven.model.ReportPlugin;
@@ -257,7 +258,11 @@ public class JxrReport
             {
                 MavenProject project = (MavenProject) i.next();
 
-                sourceDirs.addAll( project.getCompileSourceRoots() );
+                ArtifactHandler artifactHandler = project.getArtifact().getArtifactHandler();
+                if ( "java".equals( artifactHandler.getLanguage() ) )
+                {
+                    sourceDirs.addAll( project.getCompileSourceRoots() );
+                }
             }
         }
 
@@ -325,7 +330,11 @@ public class JxrReport
                 MavenProject project = (MavenProject) i.next();
 
                 List sourceRoots = project.getTestCompileSourceRoots();
-                testSourceDirs.addAll( sourceRoots );
+                ArtifactHandler artifactHandler = project.getArtifact().getArtifactHandler();
+                if ( "java".equals( artifactHandler.getLanguage() ) )
+                {
+                    testSourceDirs.addAll( sourceRoots );
+                }
             }
         }
 
