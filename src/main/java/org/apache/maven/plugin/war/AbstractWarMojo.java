@@ -377,7 +377,7 @@ public abstract class AbstractWarMojo
         for ( Iterator iter = artifacts.iterator(); iter.hasNext(); )
         {
             Artifact artifact = (Artifact) iter.next();
-            String targetFileName = artifact.getFile().getName();
+            String targetFileName = getM2Filename( artifact );
 
             getLog().debug( "Processing: " + targetFileName );
 
@@ -445,7 +445,7 @@ public abstract class AbstractWarMojo
         for ( Iterator iter = artifacts.iterator(); iter.hasNext(); )
         {
             Artifact artifact = (Artifact) iter.next();
-            String candidate = artifact.getFile().getName();
+            String candidate = getM2Filename( artifact );
             if ( identifiers.contains( candidate ) )
             {
                 duplicates.add( candidate );
@@ -729,6 +729,27 @@ public abstract class AbstractWarMojo
                throw new IOException( "Unknown file type: " + file.getAbsolutePath() );
            }
        }
+    }
+
+    /**
+     * Converts the filename of an artifact to artifactId-version.type format.
+     *
+     * @param artifact
+     * @return converted filename of the artifact
+     */
+    private String getM2Filename( Artifact artifact )
+    {
+        String filename;
+        if ( !artifact.getFile().getName().equals(
+            artifact.getArtifactId() + "-" + artifact.getVersion() + "." + artifact.getType() ) )
+        {
+            filename = artifact.getArtifactId() + "-" + artifact.getVersion() + "." + artifact.getType();
+        }
+        else
+        {
+            filename = artifact.getFile().getName();
+        }
+        return filename;
     }
 
 }
