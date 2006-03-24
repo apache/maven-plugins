@@ -1,0 +1,15 @@
+<project>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+           <project implementation="org.apache.maven.plugins.testing.stubs.StubMavenProject">
+             <groupId implementation="java.lang.String">foo</groupId>
+             <artifactId implementation="java.lang.String">bar</artifactId>
+           </project>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
