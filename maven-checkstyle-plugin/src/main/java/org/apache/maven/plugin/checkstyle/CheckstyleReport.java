@@ -34,6 +34,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
+import org.apache.maven.model.ReportPlugin;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
 import org.apache.velocity.exception.ResourceNotFoundException;
@@ -151,29 +152,29 @@ public class CheckstyleReport
     private String excludes;
 
     /**
-     * <p/>
+     * <p>
      * Specifies the location of the XML configuration to use.
      * </p>
-     * <p/>
-     * <p/>
+     *
+     * <p>
      * Potential values are a filesystem path, a URL, or a classpath
      * resource.  This parameter expects that the contents of the location
      * conform to the xml format (Checkstyle
      * <a href="http://checkstyle.sourceforge.net/config.html#Modules">Checker
      * module</a>) configuration of rulesets.
      * </p>
-     * <p/>
-     * <p/>
+     *
+     * <p>
      * This parameter is resolved as resource, URL, then file.
      * If successfully resolved, the contents of the configuration is copied into the
      * <code>${project.build.directory}/checkstyle-configuration.xml</code>
      * file before being passed to checkstyle as a configuration.
      * </p>
-     * <p/>
-     * <p/>
+     *
+     * <p>
      * There are 4 predefined rulesets.
      * </p>
-     * <p/>
+     *
      * <ul>
      * <li><code>config/sun_checks.xml</code>: Sun Checks.</li>
      * <li><code>config/turbine_checks.xml</code>: Turbine Checks.</li>
@@ -196,18 +197,18 @@ public class CheckstyleReport
     private String format;
 
     /**
-     * <p/>
+     * <p>
      * Specifies the location of the properties file.
      * </p>
-     * <p/>
-     * <p/>
+     *
+     * <p>
      * This parameter is resolved as URL, File, then resource.
      * If successfully resolved, the contents of the properties location is copied into the
      * <code>${project.build.directory}/checkstyle-checker.properties</code>
      * file before being passed to checkstyle for loading.
      * </p>
-     * <p/>
-     * <p/>
+     *
+     * <p>
      * The contents of the <code>propertiesLocation</code> will be made
      * available to checkstyle for specifying values for parameters within
      * the xml configuration (specified in the <code>configLocation</code>
@@ -277,11 +278,11 @@ public class CheckstyleReport
     private File useFile;
 
     /**
-     * <p/>
+     * <p>
      * Specifies the location of the suppressions XML file to use.
      * </p>
-     * <p/>
-     * <p/>
+     *
+     * <p>
      * This parameter is resolved as resource, URL, then file.
      * If successfully resolved, the contents of the suppressions XML is copied into the
      * <code>${project.build.directory}/checkstyle-supressions.xml</code>
@@ -322,12 +323,12 @@ public class CheckstyleReport
     private String outputFileFormat;
 
     /**
-     * <p/>
+     * <p>
      * Specifies the location of the package names XML to be used to configure
      * the Checkstyle <a href="http://checkstyle.sourceforge.net/config.html#Packages">Packages</a>.
      * </p>
-     * <p/>
-     * <p/>
+     * 
+     * <p>
      * This parameter is resolved as resource, URL, then file.
      * If resolved to a resource, or a URL, the contents of the package names
      * XML is copied into the
@@ -376,6 +377,14 @@ public class CheckstyleReport
      * @parameter default-value="false"
      */
     private boolean consoleOutput;
+
+    /**
+     * Link the violation line numbers to the source xref. Defaults to true and will link
+     * automatically if jxr plugin is being used.
+     *
+     * @parameter expression="${checkstyle.linkXRef}" default-value="true"
+     */
+    private boolean linkXRef;
 
     /**
      * Location of the Xrefs to link to.
@@ -585,7 +594,19 @@ public class CheckstyleReport
         generator.setEnableRSS( enableRSS );
         generator.setCheckstyleConfig( config );
         generator.setCheckstyleModuleFactory( moduleFactory );
-        generator.setXrefLocation( xrefLocation );
+        if ( linkXRef )
+        {
+            for ( Iterator reports = getProject().getReportPlugins().iterator(); reports.hasNext(); )
+            {
+                ReportPlugin report = (ReportPlugin) reports.next();
+
+                String artifactId = report.getArtifactId();
+                if ( "maven-jxr-plugin".equals( artifactId ) || "jxr-maven-plugin".equals( artifactId ) )
+                {
+                    generator.setXrefLocation( xrefLocation );
+                }
+            }
+        }
         generator.generateReport( results );
     }
 

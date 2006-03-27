@@ -30,10 +30,10 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * <p/>
+ * <p>
  * A component to work with VelocityTemplates from within plugins.
  * </p>
- * <p/>
+ *
  * <p/>
  * You will need to reference the velocity component as a parameter
  * in your plugin.  Like this:

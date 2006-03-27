@@ -65,10 +65,10 @@ public class Locator
     }
 
     /**
-     * <p/>
+     * <p>
      * Attempts to resolve a location parameter into a real file.
      * </p>
-     * <p/>
+     *
      * <p/>
      * Checks a location string to for a resource, URL, or File that matches.
      * If a resource or URL is found, then a local file is created with that
