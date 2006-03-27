@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 The Apache Software Foundation.
+ * Copyright 2005-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,73 +16,151 @@
 package org.apache.maven.plugin.clover;
 
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.clover.internal.DefaultLocator;
+import org.apache.maven.plugin.clover.internal.Locator;
+import org.apache.maven.project.MavenProject;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Taskdef;
+
+import java.io.IOException;
+import java.io.File;
 
 public abstract class AbstractCloverMojo extends AbstractMojo
 {
     /**
+     * A Clover license file to be used by the plugin. If not specified, the Clover plugin uses a default evaluation
+     * license.
+     *
      * @parameter
+     * @deprecated As of Clover plugin v2.1, use licenseLocation instead
      */
     private String licenseFile;
 
     /**
-     * The <a href="http://cenqua.com/clover/doc/adv/flushpolicies.html">Clover flush policy</a>
-     * to use. Valid values are <code>directed</code>, <code>interval</code> and
-     * <code>threaded</code>.
+     * A Clover license file to be used by the plugin. The plugin tries to resolve this parameter first as a resource,
+     * then as a URL, and then as a file location on the filesystem.
+     *
+     * @parameter
+     */
+    private String licenseLocation;
+
+    /**
+     * The <a href="http://cenqua.com/clover/doc/adv/flushpolicies.html">Clover flush policy</a> to use.
+     * Valid values are <code>directed</code>, <code>interval</code> and <code>threaded</code>.
      *  
      * @parameter default-value="threaded"
      */
     protected String flushPolicy;
 
     /**
-     * When the Clover Flush Policy is set to "interval" or threaded this value is the minimum 
-     * period between flush operations (in milliseconds).
+     * When the Clover Flush Policy is set to "interval" or threaded this value is the minimum period between flush
+     * operations (in milliseconds).
      *
      * @parameter default-value="500"
      */
     protected int flushInterval;
 
     /**
-     * If true we'll wait 2*flushInterval to ensure coverage data is flushed to the Clover 
-     * database before running any query on it. 
+     * If true we'll wait 2*flushInterval to ensure coverage data is flushed to the Clover database before running
+     * any query on it.
      * 
-     * Note: The only use case where you would want to turn this off is if you're running your 
-     * tests in a separate JVM. In that case the coverage data will be flushed by default upon
-     * the JVM shutdown and there would be no need to wait for the data to be flushed. As we
-     * can't control whether users want to fork their tests or not, we're offering this parameter
-     * to them.  
+     * Note: The only use case where you would want to turn this off is if you're running your tests in a separate JVM.
+     * In that case the coverage data will be flushed by default upon the JVM shutdown and there would be no need to
+     * wait for the data to be flushed. As we can't control whether users want to fork their tests or not, we're
+     * offering this parameter to them.
      * 
      * @parameter default-value="true"
      */
     protected boolean waitForFlush;
-    
+
     /**
-     * Whether the Clover instrumentation should use the Clover <code>jdk14</code> or
-     * <code>jdk15</code> flags to parse sources.
+     * Whether the Clover instrumentation should use the Clover <code>jdk14</code> or <code>jdk15</code> flags to
+     * parse sources.
      *
      * @parameter
      */
     protected String jdk;
 
     /**
-     * Registers the license file for Clover runtime by setting the
-     * <code>clover.license.path</code> system property. If the <code>licenseFile</code>
-     * property has not been defined by the user we look it up in the classpath in
-     * <code>/clover.license</code>.
+     * @parameter expression="${project}"
+     * @required
      */
-    protected void registerLicenseFile()
-    {
-        String licenseToUse = this.licenseFile;
+    protected MavenProject project;
 
-        if (licenseToUse == null)
+    /**
+     * Resource locator.
+     */
+    private Locator locator;
+
+    /**
+     * {@inheritDoc}
+     * @see org.apache.maven.plugin.AbstractMojo#execute()
+     */
+    public void execute() throws MojoExecutionException
+    {
+        if (this.locator == null)
         {
-            licenseToUse = getClass().getResource("/clover.license").getFile();
+            this.locator = new DefaultLocator( getLog(), new File( this.project.getBuild().getDirectory() ) );
         }
 
-        System.setProperty("clover.license.path", licenseToUse);
+        registerLicenseFile();
     }
 
+    public void setLocator(Locator locator)
+    {
+        this.locator = locator;
+    }
+
+    public Locator getLocator()
+    {
+        return this.locator;
+    }
+
+    /**
+     * Registers the license file for Clover runtime by setting the <code>clover.license.path</code> system property.
+     * If the user has configured the <code>licenseLocation</code> parameter the plugin tries to resolve it first as a
+     * resource, then as a URL, and then as a file location on the filesystem. If the <code>licenseLocation</code>
+     * parameter has not been defined by the user we look up a default Clover license in the classpath in
+     * <code>/clover.license</code>.
+     *
+     * @throws MojoExecutionException when the license file cannot be found
+     */
+    protected void registerLicenseFile() throws MojoExecutionException
+    {
+        String license;
+
+        if (this.licenseLocation != null)
+        {
+            try
+            {
+                license = getLocator().resolveLocation(this.licenseLocation, "clover.license").getPath();
+            }
+            catch (IOException e)
+            {
+                throw new MojoExecutionException("Failed to load license file", e);
+            }
+        }
+        else if (this.licenseFile != null)
+        {
+            getLog().warn("Deprecation warning: please use licenseLocation instead of LicenseFile");
+            license = this.licenseFile;
+        }
+        else
+        {
+            license = getClass().getResource("/clover.license").getFile();
+        }
+
+        System.setProperty("clover.license.path", license);
+    }
+
+    /**
+     * Register the Clover Ant tasks against a fake Ant {{@link Project}} object so that we can the tasks later on.
+     * This is the Java equivalent of the <code>taskdef</code> call that you would need in your Ant
+     * <code>build.xml</code> file if you wanted to use the Clover Ant tasks from Ant.
+     *
+     * @return A {{@link Project}} instance with the Clover Ant tasks registered in it
+     */
     protected Project registerCloverAntTasks()
     {
         Project antProject = new Project();
@@ -96,12 +174,12 @@ public abstract class AbstractCloverMojo extends AbstractMojo
     }
 
     /**
-     * Wait 2*'flush interval' milliseconds to ensure that the coverage data have been flushed.
+     * Wait 2*'flush interval' milliseconds to ensure that the coverage data have been flushed to the Clover database.
      * 
-     * TODOe: This method should not be static but we need it static because cannot share code 
+     * TODO: This method should not be static but we need it static here because we cannot share code
      * between non report mojos and main build mojos. See http://jira.codehaus.org/browse/MNG-1886 
      */
-    public static void waitForFlush(boolean waitForFlush, int flushInterval) 
+    public static void waitForFlush(boolean waitForFlush, int flushInterval)
     {
         if ( waitForFlush )
         {
@@ -115,4 +193,9 @@ public abstract class AbstractCloverMojo extends AbstractMojo
             }
         }
     }
+
+    protected void setLicenseLocation(String licenseLocation)
+    {
+        this.licenseLocation = licenseLocation;
+    }  
 }
