@@ -1,7 +1,5 @@
-package org.apache.maven.plugin.clover;
-
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +13,7 @@ package org.apache.maven.plugin.clover;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.maven.plugin.clover;
 
 import com.cenqua.clover.cfg.Percentage;
 import com.cenqua.clover.tasks.CloverPassTask;
@@ -25,15 +24,19 @@ import org.apache.tools.ant.Project;
 /**
  * Verify test percentage coverage and fail the build if it is below the defined threshold.
  *
- * @author <a href="mailto:vmassol@apache.org">Vincent Massol</a>
- * @version $Id$
+ * Note: We're forking a lifecycle because we don't want the Clover instrumentation to affect the main lifecycle build.
+ * This will prevent instrumented sources to be put in production by error. Thus running <code>mvn install</code> on
+ * a project where this <code>check</code> goal has been specified will run the build twice: once for building the
+ * project as usual and another time for instrumenting the sources with Clover and verifying the test coverage value.
+ *
  * @goal check
  * @phase verify
  * @execute phase="test" lifecycle="clover"
- * *
+ *
+ * @author <a href="mailto:vmassol@apache.org">Vincent Massol</a>
+ * @version $Id$
  */
-public class CloverCheckMojo
-    extends AbstractCloverMojo
+public class CloverCheckMojo extends AbstractCloverMojo
 {
     /**
      * @parameter expression="${project.build.directory}/clover/clover.db"

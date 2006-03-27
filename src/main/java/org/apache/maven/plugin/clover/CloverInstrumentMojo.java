@@ -1,7 +1,5 @@
-package org.apache.maven.plugin.clover;
-
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +13,7 @@ package org.apache.maven.plugin.clover;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.maven.plugin.clover;
 
 import com.cenqua.clover.CloverInstr;
 import org.apache.maven.artifact.Artifact;
@@ -33,14 +32,16 @@ import java.util.Set;
 /**
  * Instrument source roots.
  *
- * @author <a href="mailto:vmassol@apache.org">Vincent Massol</a>
- * @version $Id$
+ * Note: Do not call this MOJO directly. It is meant to be called in a forked lifecycle by the other MOJOs.
+ *
  * @goal instrument
  * @phase generate-sources
  * @requiresDependencyResolution test
+ *
+ * @author <a href="mailto:vmassol@apache.org">Vincent Massol</a>
+ * @version $Id$
  */
-public class CloverInstrumentMojo
-    extends AbstractCloverMojo
+public class CloverInstrumentMojo extends AbstractCloverMojo
 {
     /**
      * @parameter
@@ -57,12 +58,6 @@ public class CloverInstrumentMojo
     private String cloverDatabase;
 
     /**
-     * @parameter expression="${project}"
-     * @required
-     */
-    private MavenProject project;
-
-    /**
      * @parameter expression="${plugin.artifacts}"
      * @required
      */
@@ -77,20 +72,16 @@ public class CloverInstrumentMojo
 
     private String cloverOutputSourceDirectory;
 
-    private void init()
-    {
-        new File( this.cloverOutputDirectory ).mkdirs();
-
-        this.cloverOutputSourceDirectory = new File( this.cloverOutputDirectory, "src" ).getPath();
-    }
-
     public void execute()
         throws MojoExecutionException
     {
         if ( shouldExecute() )
         {
-            init();
-            registerLicenseFile();
+            new File( this.cloverOutputDirectory ).mkdirs();
+            this.cloverOutputSourceDirectory = new File( this.cloverOutputDirectory, "src" ).getPath();
+
+            super.execute();
+
             instrumentSources();
             addCloverDependencyToCompileClasspath();
             redirectSourceDirectories();
