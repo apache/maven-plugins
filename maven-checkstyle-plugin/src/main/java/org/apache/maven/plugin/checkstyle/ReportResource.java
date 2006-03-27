@@ -16,17 +16,17 @@ package org.apache.maven.plugin.checkstyle;
  * limitations under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.codehaus.plexus.util.FileUtils;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+
 /**
  * Generic Report Resource management.
- * 
+ *
  * @author <a href="mailto:joakim@erdfelt.net">Joakim Erdfelt</a>
  */
 public class ReportResource

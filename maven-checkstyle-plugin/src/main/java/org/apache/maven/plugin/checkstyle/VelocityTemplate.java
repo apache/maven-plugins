@@ -16,11 +16,6 @@ package org.apache.maven.plugin.checkstyle;
  * limitations under the License.
  */
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
@@ -29,12 +24,17 @@ import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.exception.VelocityException;
 import org.codehaus.plexus.velocity.VelocityComponent;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+
 /**
- * <p>
+ * <p/>
  * A component to work with VelocityTemplates from within plugins.
  * </p>
- * 
- * <p>
+ * <p/>
+ * <p/>
  * You will need to reference the velocity component as a parameter
  * in your plugin.  Like this:
  * </p>
@@ -46,7 +46,7 @@ import org.codehaus.plexus.velocity.VelocityComponent;
  *  &#042;/
  *  private VelocityComponent velocity;
  * </pre>
- * 
+ *
  * @author <a href="mailto:joakim@erdfelt.net">Joakim Erdfelt</a>
  */
 public class VelocityTemplate
@@ -75,12 +75,12 @@ public class VelocityTemplate
 
     /**
      * Using a specified Velocity Template and provided context, create the outputFilename.
-     * @param outputFilename the file to be generated.
-     * @param template the velocity template to use.
-     * @param context the velocity context map.
      *
+     * @param outputFilename the file to be generated.
+     * @param template       the velocity template to use.
+     * @param context        the velocity context map.
      * @throws ResourceNotFoundException if the template was not found.
-     * @throws VelocityException if the 
+     * @throws VelocityException         if the
      * @throws MojoExecutionException
      * @throws IOException
      */

@@ -16,18 +16,18 @@ package org.apache.maven.plugin.checkstyle;
  * limitations under the License.
  */
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URL;
-
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URL;
+
 /**
- * Performs Locator services for the <code>*Location</code> parameters in the 
+ * Performs Locator services for the <code>*Location</code> parameters in the
  * Reports.
  *
  * @author <a href="mailto:joakim@erdfelt.com">Joakim Erdfelt</a>
@@ -35,12 +35,13 @@ import org.codehaus.plexus.util.StringUtils;
 public class Locator
 {
     private Log log;
+
     private File localDir;
 
     /**
      * Create a Locator object.
-     * 
-     * @param logger the logger object to log with.
+     *
+     * @param logger       the logger object to log with.
      * @param resolveToDir the directory to resolve resources into.
      */
     public Locator( Log log, File resolveToDir )
@@ -51,7 +52,7 @@ public class Locator
 
     /**
      * Obtain a Log object.
-     * 
+     *
      * @return the Log object.
      */
     private Log getLog()
@@ -64,17 +65,17 @@ public class Locator
     }
 
     /**
-     * <p>
+     * <p/>
      * Attempts to resolve a location parameter into a real file.
      * </p>
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * Checks a location string to for a resource, URL, or File that matches.
      * If a resource or URL is found, then a local file is created with that
      * locations contents.
      * </p>
-     * 
-     * @param location the location string to match against.
+     *
+     * @param location  the location string to match against.
      * @param localfile the local file to use in case of resource or URL.
      * @return the File of the resolved location.
      * @throws IOException if file is unable to be found or copied into <code>localfile</code> destination.
