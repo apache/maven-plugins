@@ -16,15 +16,14 @@ package org.apache.maven.plugin.checkstyle;
  * limitations under the License.
  */
 
-import java.io.File;
-import java.util.List;
-
-import org.codehaus.plexus.util.StringUtils;
-
 import com.puppycrawl.tools.checkstyle.api.AuditEvent;
 import com.puppycrawl.tools.checkstyle.api.AuditListener;
 import com.puppycrawl.tools.checkstyle.api.AutomaticBean;
 import com.puppycrawl.tools.checkstyle.api.SeverityLevel;
+import org.codehaus.plexus.util.StringUtils;
+
+import java.io.File;
+import java.util.List;
 
 /**
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
@@ -85,7 +84,10 @@ public class CheckstyleReportListener
 
     public void addError( AuditEvent event )
     {
-        if ( SeverityLevel.IGNORE.equals( event.getSeverityLevel() ) ) return;
+        if ( SeverityLevel.IGNORE.equals( event.getSeverityLevel() ) )
+        {
+            return;
+        }
 
         if ( severityLevel == null || severityLevel.equals( event.getSeverityLevel() ) )
         {
