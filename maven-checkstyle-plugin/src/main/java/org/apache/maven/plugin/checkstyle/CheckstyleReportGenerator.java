@@ -213,7 +213,7 @@ public class CheckstyleReportGenerator
 
     private String getConfigAttribute( Configuration config, String attname, String defvalue )
     {
-        String ret = defvalue;
+        String ret;
         try
         {
             ret = config.getAttribute( attname );
