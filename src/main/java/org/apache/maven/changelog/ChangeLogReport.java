@@ -1151,7 +1151,18 @@ public class ChangeLogReport
             absPath += baseToken;
         }
 
-        return absPath + target.substring( 1 );
+        if ( !absPath.endsWith( "/" ) )
+        {
+            absPath += "/";
+        }
+
+        String newTarget = target;
+        if ( newTarget.startsWith( "/" ) )
+        {
+            newTarget = newTarget.substring( 1 );
+        }
+
+        return absPath + newTarget;
     }
 
     /**
