@@ -16,22 +16,21 @@ package org.apache.maven.plugin.checkstyle;
  * limitations under the License.
  */
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ResourceBundle;
-
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugin.logging.SystemStreamLog;
-import org.codehaus.doxia.sink.Sink;
-import org.codehaus.plexus.util.StringUtils;
-
 import com.puppycrawl.tools.checkstyle.ModuleFactory;
 import com.puppycrawl.tools.checkstyle.api.AuditEvent;
 import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
 import com.puppycrawl.tools.checkstyle.api.Configuration;
 import com.puppycrawl.tools.checkstyle.api.SeverityLevel;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.logging.SystemStreamLog;
+import org.codehaus.doxia.sink.Sink;
+import org.codehaus.plexus.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ResourceBundle;
 
 public class CheckstyleReportGenerator
 {
@@ -90,9 +89,13 @@ public class CheckstyleReportGenerator
         String title;
 
         if ( getSeverityLevel() == null )
+        {
             title = bundle.getString( "report.checkstyle.title" );
+        }
         else
+        {
             title = bundle.getString( "report.checkstyle.severity_title" ) + severityLevel.getName();
+        }
 
         return title;
     }
@@ -368,7 +371,7 @@ public class CheckstyleReportGenerator
 
     /**
      * Splits a string against a delim consisting of a string (not a single character).
-     * 
+     *
      * @param input
      * @param delim
      * @return
@@ -625,19 +628,29 @@ public class CheckstyleReportGenerator
             SeverityLevel level = event.getSeverityLevel();
 
             if ( getSeverityLevel() != null )
+            {
                 if ( !getSeverityLevel().equals( level ) )
+                {
                     continue;
+                }
+            }
 
             sink.tableRow();
 
             sink.tableCell();
 
             if ( SeverityLevel.INFO.equals( level ) )
+            {
                 iconInfo();
+            }
             else if ( SeverityLevel.WARNING.equals( level ) )
+            {
                 iconWarning();
+            }
             else if ( SeverityLevel.ERROR.equals( level ) )
+            {
                 iconError();
+            }
 
             sink.tableCell_();
 
@@ -649,7 +662,8 @@ public class CheckstyleReportGenerator
             if ( getXrefLocation() != null )
             {
                 sink
-                    .link( getXrefLocation() + "/" + filename.replaceAll( "\\.java$", ".html" ) + "#" + event.getLine() );
+                    .link(
+                        getXrefLocation() + "/" + filename.replaceAll( "\\.java$", ".html" ) + "#" + event.getLine() );
             }
             sink.text( String.valueOf( event.getLine() ) );
             if ( getXrefLocation() != null )
@@ -746,11 +760,11 @@ public class CheckstyleReportGenerator
     /**
      * This is here purely as a hack against the large lines the XhtmlSink
      * produces.
-     * 
+     * <p/>
      * On a large report, this causes the report output to end prematurely.
-     * 
+     * <p/>
      * Doxia needs to be fixed. See MNG-1744 for details.
-     * 
+     *
      * @deprecated Remove when Doxia's XhtmlSink and MNG-1744 are fixed.
      */
     private void doxiaHack()

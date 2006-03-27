@@ -16,18 +16,18 @@ package org.apache.maven.plugin.checkstyle;
  * limitations under the License.
  */
 
+import com.puppycrawl.tools.checkstyle.api.AuditEvent;
+import com.puppycrawl.tools.checkstyle.api.SeverityLevel;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.puppycrawl.tools.checkstyle.api.AuditEvent;
-import com.puppycrawl.tools.checkstyle.api.SeverityLevel;
-
 /**
  * Object holding the references to the CheckstyleResults.
- * 
+ *
  * @author <a href="mailto:joakim@erdfelt.net">Joakim Erdfelt</a>
  * @todo provide fallback to disk based storage if too many results.
  */
@@ -76,52 +76,55 @@ public class CheckstyleResults
     {
         return this.files.size();
     }
-    
+
     public long getSeverityCount( SeverityLevel level )
     {
         long count = 0;
-        
+
         Iterator it = this.files.values().iterator();
-        
+
         while ( it.hasNext() )
         {
             List errors = (List) it.next();
-            
-            count = count + getSeverityCount(errors, level);
+
+            count = count + getSeverityCount( errors, level );
         }
 
         return count;
     }
-    
+
     public long getSeverityCount( String file, SeverityLevel level )
     {
         long count = 0;
-        
+
         if ( !this.files.containsKey( file ) )
         {
             return count;
         }
-        
-        List violations = (List) this.files.get(file);
-        
+
+        List violations = (List) this.files.get( file );
+
         count = getSeverityCount( violations, level );
 
         return count;
     }
-    
+
     public long getSeverityCount( List violations, SeverityLevel level )
     {
         long count = 0;
-        
+
         Iterator it = violations.iterator();
-        
-        while(it.hasNext())
+
+        while ( it.hasNext() )
         {
             AuditEvent event = (AuditEvent) it.next();
-            
-            if ( event.getSeverityLevel().equals( level ) ) count++;
+
+            if ( event.getSeverityLevel().equals( level ) )
+            {
+                count++;
+            }
         }
-        
+
         return count;
     }
 }
