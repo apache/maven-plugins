@@ -295,6 +295,11 @@ public class CheckstyleReport
     private String suppressionsLocation;
 
     /**
+     * @parameter expression="${checkstyle.suppression.expression}"
+     */
+    private String suppressionsFileExpression;
+
+    /**
      * Specifies the location of the supperssions XML file to use. The plugin defines a Checkstyle
      * property named <code>checkstyle.suppressions.file</code> with the value of this
      * property. This allows using the Checkstyle property your own custom checkstyle
@@ -327,7 +332,7 @@ public class CheckstyleReport
      * Specifies the location of the package names XML to be used to configure
      * the Checkstyle <a href="http://checkstyle.sourceforge.net/config.html#Packages">Packages</a>.
      * </p>
-     * 
+     *
      * <p>
      * This parameter is resolved as resource, URL, then file.
      * If resolved to a resource, or a URL, the contents of the package names
@@ -657,7 +662,7 @@ public class CheckstyleReport
     private CheckstyleResults executeCheckstyle( Configuration config, ModuleFactory moduleFactory )
         throws MavenReportException, CheckstyleException
     {
-        File[] files = new File[0];
+        File[] files;
         try
         {
             files = getFilesToProcess( includes, excludes );
@@ -882,6 +887,13 @@ public class CheckstyleReport
             throw new MavenReportException( "Failed to get overriding properties", e );
         }
 
+        if ( suppressionsFileExpression != null )
+        {
+            String suppresionFile = getSuppressionLocation();
+
+            p.setProperty( suppressionsFileExpression, suppresionFile );
+        }
+
         return p;
     }
 
@@ -929,9 +941,34 @@ public class CheckstyleReport
         return moduleFactory;
     }
 
+    private String getSuppressionLocation()
+        throws MavenReportException
+    {
+        try
+        {
+            File suppressionsFile = locator.resolveLocation( suppressionsLocation, "checkstyle-suppressions.xml" );
+
+            if ( suppressionsFile == null )
+            {
+                return null;
+            }
+
+            return suppressionsFile.getAbsolutePath();
+        }
+        catch ( IOException e )
+        {
+            throw new MavenReportException( "Failed to process supressions location: " + suppressionsLocation, e );
+        }
+    }
+
     private FilterSet getSuppressions()
         throws MavenReportException
     {
+        if ( suppressionsFileExpression != null )
+        {
+            return null;
+        }
+
         try
         {
             File suppressionsFile = locator.resolveLocation( suppressionsLocation, "checkstyle-suppressions.xml" );
