@@ -142,8 +142,6 @@ public class CheckstyleReportGenerator
         sink.text( getTitle() );
         sink.sectionTitle1_();
 
-        doxiaHack();
-
         sink.paragraph();
         sink.text( bundle.getString( "report.checkstyle.checkstylelink" ) + " " );
         sink.link( "http://checkstyle.sourceforge.net/" );
@@ -165,7 +163,6 @@ public class CheckstyleReportGenerator
         }
 
         sink.paragraph_();
-        doxiaHack();
     }
 
     private void iconSeverity( String level )
@@ -239,7 +236,6 @@ public class CheckstyleReportGenerator
         sink.sectionTitle1();
         sink.text( bundle.getString( "report.checkstyle.rules" ) );
         sink.sectionTitle1_();
-        doxiaHack();
 
         sink.table();
 
@@ -274,7 +270,6 @@ public class CheckstyleReportGenerator
         sink.table_();
 
         sink.section1_();
-        doxiaHack();
     }
 
     private void doRuleChildren( Configuration configChildren[], CheckstyleResults results )
@@ -346,7 +341,6 @@ public class CheckstyleReportGenerator
                     sink.monospaced_();
                 }
                 sink.listItem_();
-                doxiaHack();
             }
             sink.list_();
         }
@@ -366,7 +360,6 @@ public class CheckstyleReportGenerator
         sink.tableCell_();
 
         sink.tableRow_();
-        doxiaHack();
     }
 
     /**
@@ -451,8 +444,6 @@ public class CheckstyleReportGenerator
         sink.text( bundle.getString( "report.checkstyle.summary" ) );
         sink.sectionTitle1_();
 
-        doxiaHack();
-
         sink.table();
 
         sink.tableRow();
@@ -497,7 +488,6 @@ public class CheckstyleReportGenerator
         sink.table_();
 
         sink.section1_();
-        doxiaHack();
     }
 
     private void doFilesSummary( CheckstyleResults results )
@@ -561,7 +551,6 @@ public class CheckstyleReportGenerator
             sink.tableCell_();
 
             sink.tableRow_();
-            doxiaHack();
         }
 
         sink.table_();
@@ -589,7 +578,6 @@ public class CheckstyleReportGenerator
                 continue;
             }
 
-            doxiaHack();
             sink.section2();
             sink.sectionTitle2();
             sink.anchor( file.replace( '/', '.' ) );
@@ -673,7 +661,6 @@ public class CheckstyleReportGenerator
             sink.tableCell_();
 
             sink.tableRow_();
-            doxiaHack();
         }
     }
 
@@ -755,21 +742,5 @@ public class CheckstyleReportGenerator
     public void setCheckstyleModuleFactory( ModuleFactory checkstyleModuleFactory )
     {
         this.checkstyleModuleFactory = checkstyleModuleFactory;
-    }
-
-    /**
-     * This is here purely as a hack against the large lines the XhtmlSink
-     * produces.
-     * <p/>
-     * On a large report, this causes the report output to end prematurely.
-     * <p/>
-     * Doxia needs to be fixed. See MNG-1744 for details.
-     *
-     * @deprecated Remove when Doxia's XhtmlSink and MNG-1744 are fixed.
-     */
-    private void doxiaHack()
-    {
-        sink.rawText( EOL );
-        sink.flush();
     }
 }
