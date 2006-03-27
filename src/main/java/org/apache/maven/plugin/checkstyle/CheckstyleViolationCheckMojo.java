@@ -45,7 +45,7 @@ public class CheckstyleViolationCheckMojo
      * determined by the <code>outputFileFormat</code>
      *
      * @parameter expression="${checkstyle.output.file}"
-     *            default-value="${project.build.directory}/checkstyle-result.xml"
+     * default-value="${project.build.directory}/checkstyle-result.xml"
      */
     private File outputFile;
 
@@ -70,14 +70,14 @@ public class CheckstyleViolationCheckMojo
     {
         if ( !"xml".equals( outputFileFormat ) )
         {
-            throw new MojoExecutionException( "Output format is '" + outputFileFormat
-                + "', checkstyle:check requires format to be 'xml'." );
+            throw new MojoExecutionException(
+                "Output format is '" + outputFileFormat + "', checkstyle:check requires format to be 'xml'." );
         }
 
         if ( !outputFile.exists() )
         {
-            getLog().info( "Unable to perform checkstyle:check, "
-                + "unable to find checkstyle:checkstyle outputFile." );
+            getLog().info(
+                "Unable to perform checkstyle:check, " + "unable to find checkstyle:checkstyle outputFile." );
             return;
         }
 
@@ -91,16 +91,16 @@ public class CheckstyleViolationCheckMojo
             int violations = countViolations( xpp );
             if ( violations > 0 )
             {
-            	if ( failOnViolation )
-            	{
-            	    throw new MojoFailureException( "You have " + violations + " checkstyle violation"
-            	        + ( ( violations > 1 ) ? "s" : "" ) + "." );
-            	}
-            	else
-            	{
-	        	    getLog().warn( "checkstyle:check violations detected but failOnViolation set to false" );
-				}
-			}
+                if ( failOnViolation )
+                {
+                    throw new MojoFailureException(
+                        "You have " + violations + " checkstyle violation" + ( ( violations > 1 ) ? "s" : "" ) + "." );
+                }
+                else
+                {
+                    getLog().warn( "checkstyle:check violations detected but failOnViolation set to false" );
+                }
+            }
         }
         catch ( IOException e )
         {
