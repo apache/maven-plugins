@@ -39,6 +39,8 @@ import org.codehaus.plexus.util.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * A bean for using the Maven SCM API.
@@ -49,6 +51,8 @@ import java.util.List;
  */
 public class ScmHelper
 {
+    private static final String POM = "pom.xml";
+
     private String username;
 
     private String password;
@@ -215,7 +219,18 @@ public class ScmHelper
 
         checkResult( result );
 
-        changedFiles = result.getChangedFiles();
+        List unfilteredFiles = result.getChangedFiles();
+
+        changedFiles = new ArrayList();
+
+        for ( Iterator i = unfilteredFiles.iterator(); i.hasNext(); )
+        {
+            String test = ( String ) i.next();
+            if ( !test.toLowerCase().endsWith( POM ) )
+            {
+                changedFiles.add( test );
+            }
+        }
 
         return changedFiles;
     }
