@@ -1,0 +1,30 @@
+ ------
+ Maven 2 Release Plugin 
+ ------
+ Carlos Sanchez
+ <carlos@apache.org>
+ ------
+ March 28, 2006
+
+How to Use
+
+  These example shows how to set the repository location for all tagged files in Subversion.
+ 
+-------------------
+<project>
+    ...
+    <build>
+      ...
+      <plugins>
+        <plugin>
+          <artifactId>maven-release-plugin</artifactId>
+          <configuration>
+            <tagBase>https://svn.apache.org/repos/asf/maven/components/tags</tagBase>
+          </configuration>
+        </plugin>
+      </plugins>
+      ...
+    </build>
+    ...
+</project>
+-------------------
