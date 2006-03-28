@@ -14,7 +14,8 @@ Use a different username in the SCM server than he one in the operating system
 
 Set where to tag the files in the SCM
 
-  These example shows how to set the repository location for all tagged files in Subversion.
+  These example shows how to set the repository location for all tagged files in Subversion,
+  not needed if you use if the svn repository uses the standard layout (branches/tags/trunk)
  
 -------------------
 <project>
@@ -25,7 +26,7 @@ Set where to tag the files in the SCM
         <plugin>
           <artifactId>maven-release-plugin</artifactId>
           <configuration>
-            <tagBase>https://svn.apache.org/repos/asf/maven/components/tags</tagBase>
+            <tagBase>https://svn.apache.org/repos/asf/maven/components/anothertags</tagBase>
           </configuration>
         </plugin>
       </plugins>
