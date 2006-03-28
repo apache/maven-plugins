@@ -33,7 +33,7 @@ How to Use
  Alternatively, you can execute the following on the command line to skip tests:
 
 -----
-m2 -Dmaven.test.skip=true install
+mvn -Dmaven.test.skip=true install
 -----
 
 * Using System Properties
@@ -120,11 +120,11 @@ m2 -Dmaven.test.skip=true install
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-	<configuration>
-	  <includes>
-	    <include>Sample.java</include>
-	  </includes>
-	</configuration>
+        <configuration>
+          <includes>
+            <include>Sample.java</include>
+          </includes>
+        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -143,15 +143,15 @@ m2 -Dmaven.test.skip=true install
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-	<configuration>
-	  <excludes>
-	    <exclude>**/*.java</exclude>
-	  </excludes>
-	  <includes>
-	    <include>PentagonTest.java</include>
-	    <include>OctagonTest.java</include>
-	  </includes>
-	</configuration>
+        <configuration>
+          <excludes>
+            <exclude>**/*.java</exclude>
+          </excludes>
+          <includes>
+            <include>PentagonTest.java</include>
+            <include>OctagonTest.java</include>
+          </includes>
+        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -175,12 +175,12 @@ m2 -Dmaven.test.skip=true install
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-	<configuration>
-	  <excludes>
-	    <exclude>TestCircle.java</exclude>
-	    <exclude>TestSquare.java</exclude>
-	  </excludes>
-	</configuration>
+        <configuration>
+          <excludes>
+            <exclude>TestCircle.java</exclude>
+            <exclude>TestSquare.java</exclude>
+          </excludes>
+        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -200,11 +200,11 @@ m2 -Dmaven.test.skip=true install
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-	<configuration>
-	  <excludes>
-	    <exclude>**/Test*.java</exclude>
-	  </excludes>
-	</configuration>
+        <configuration>
+          <excludes>
+            <exclude>**/Test*.java</exclude>
+          </excludes>
+        </configuration>
       </plugin>
     </plugins>
   </build>
