@@ -24,7 +24,7 @@ import java.io.File;
 /**
  * This plugin bundles all the generated test sources into a jar archive.
  *
- * @goal jar-test
+ * @goal test-jar
  * @phase package
  * @execute phase="generate-sources"
  */
