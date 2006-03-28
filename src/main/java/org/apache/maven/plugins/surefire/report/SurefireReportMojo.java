@@ -17,15 +17,22 @@ package org.apache.maven.plugins.surefire.report;
  */
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.List;
+import java.util.Iterator;
+import java.util.Collections;
 
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
+import org.apache.maven.model.ReportPlugin;
 
 import org.codehaus.doxia.site.renderer.SiteRenderer;
+import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.FileUtils;
 
 
 /**
@@ -61,7 +68,7 @@ public class SurefireReportMojo
      * @required @readonly
      */
     private MavenProject project;
-    
+
     /**
      * If set to <code>false</code>, only failures are shown.
      *
@@ -69,7 +76,7 @@ public class SurefireReportMojo
      * @required
      */
     private boolean showSuccess;
-    
+
     /**
      * This directory contains the XML Report files that must be parsed and rendered to HTML format.
      *
@@ -77,7 +84,7 @@ public class SurefireReportMojo
      * @required
      */
     private File reportsDirectory;
-    
+
     /**
      * The default filename to use for the report.
      *
@@ -85,20 +92,54 @@ public class SurefireReportMojo
      * @required
      */
     private String outputName;
-    
+
+    /**
+     * Location of the Xrefs to link
+     *
+     * @parameter expression="${project.build.directory}/site/xref-test"
+     */
+    private String xrefLocation;
+
+    /**
+     * @parameter expression="${linkXref}" default-value="true"
+     */
+    private boolean linkXref;
+
     public void executeReport( Locale locale )
                        throws MavenReportException
     {
-        SurefireReportGenerator report = new SurefireReportGenerator( reportsDirectory, locale, showSuccess );
+        SurefireReportGenerator report = new SurefireReportGenerator( reportsDirectory,
+                                                                      locale, showSuccess,
+                                                                      doXref() ? xrefLocation : null);
 
         try
         {
             report.doGenerateReport( getBundle( locale ),
                                      getSink(  ) );
-        } catch ( Exception e )
-        {
-            e.printStackTrace(  );
         }
+        catch ( Exception e )
+        {
+            throw new MavenReportException( "Failed to generate report", e );
+        }
+    }
+
+    private boolean doXref()
+    {
+        List reportPlugins = getProject().getReportPlugins();
+
+        boolean retValue = false;
+
+        for( Iterator iter = reportPlugins.iterator(); iter.hasNext(); )
+        {
+            ReportPlugin plugin = ( ReportPlugin ) iter.next();
+
+            if( plugin.getArtifactId().equals( "maven-jxr-plugin" ) ||
+                plugin.getArtifactId().equals( "jxr-maven-plugin" ) )
+            {
+                retValue = true;
+            }
+        }
+        return retValue;
     }
 
     public String getName( Locale locale )
