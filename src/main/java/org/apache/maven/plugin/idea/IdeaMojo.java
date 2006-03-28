@@ -30,7 +30,6 @@ import java.util.Set;
  *
  * @goal idea
  * @execute phase="generate-sources"
- * @todo use dom4j or something. Xpp3Dom can't cope properly with entities and so on
  */
 public class IdeaMojo
     extends AbstractIdeaMojo
