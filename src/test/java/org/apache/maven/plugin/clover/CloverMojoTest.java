@@ -46,11 +46,7 @@ public class CloverMojoTest extends MockObjectTestCase
         mojo.setLocator( (Locator) mockLocator.proxy() );
 
         // Ensure that the system property is not already set
-        if ( System.getProperty( "clover.license.path" ) != null ) 
-        {
-            // Can't use System.clearProperty() as that requires JDK 1.5
-            throw new IllegalStateException( "clover.license.path must not be set" );
-        }
+        System.setProperty( "clover.license.path", "" );
 
         mojo.setLicenseLocation( "build-tools/clover.license" );
         mockLocator.expects( once() ).method( "resolveLocation" )
