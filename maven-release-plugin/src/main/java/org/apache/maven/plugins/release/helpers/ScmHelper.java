@@ -17,6 +17,7 @@ package org.apache.maven.plugins.release.helpers;
  */
 
 import org.apache.maven.scm.ScmException;
+import org.apache.maven.scm.ScmFile;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmResult;
 import org.apache.maven.scm.command.add.AddScmResult;
@@ -225,8 +226,8 @@ public class ScmHelper
 
         for ( Iterator i = unfilteredFiles.iterator(); i.hasNext(); )
         {
-            String test = ( String ) i.next();
-            if ( !test.toLowerCase().endsWith( POM ) )
+            ScmFile test = ( ScmFile ) i.next();
+            if ( !test.getPath().toLowerCase().endsWith( POM ) )
             {
                 changedFiles.add( test );
             }
