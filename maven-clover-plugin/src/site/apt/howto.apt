@@ -134,3 +134,26 @@ Specifying a custom license file
   Instead of specifying a file, you can also specify either a <<URL>> or a <<relative path inside a JAR>> (to learn
   how to use this last feature, refer to the
   {{{http://maven.apache.org/plugins/maven-checkstyle-plugin/tips.html}Checkstlye plugin documentation}}.
+
+Controlling the master report generation
+
+  By default if you execute <<<mvn clover:clover>>> or <<<mvn site>>> on a multimodule build, the Clover plguin will
+  automatically generate a master report aggreating all individual module reports. To disable this feature, use for
+  example:
+
++--------
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clover-plugin</artifactId>
+        <configuration>
+          <aggregate>false</aggregate>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
++---------
+
+  Note that you can control the location of the aggregated Clover database by using the <<<cloverMergeDatabase>>>
+  configuration property.
