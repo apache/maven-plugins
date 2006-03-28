@@ -17,12 +17,12 @@ package org.apache.maven.plugin.clover.samples.multiproject;
 
 import junit.framework.TestCase;
 
-public class SimpleTest extends TestCase
+public class Simple2Test extends TestCase
 {
     public void testSomeMethod()
     {
-        Simple simple = new Simple();
-        simple.someMethod();
+        Simple2 simple = new Simple2();
+        simple.someMethod2();
     }
 }
  

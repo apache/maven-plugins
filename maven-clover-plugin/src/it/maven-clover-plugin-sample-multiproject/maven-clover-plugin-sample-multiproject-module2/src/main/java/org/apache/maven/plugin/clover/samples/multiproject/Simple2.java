@@ -15,9 +15,9 @@
  */
 package org.apache.maven.plugin.clover.samples.multiproject;
 
-public class Simple
+public class Simple2
 {
-    public void someMethod()
+    public void someMethod2()
     {
         int i = 0;
         if (i > 0)
