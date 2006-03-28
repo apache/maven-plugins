@@ -35,12 +35,10 @@
         <artifactId>maven-clover-plugin</artifactId>
         <configuration>
           <jdk>1.4</jdk>
+          <targetPercentage>1%</targetPercentage>
         </configuration>
         <executions>
           <execution>
-            <configuration>
-              <targetPercentage>1%</targetPercentage>
-            </configuration>
             <goals>
               <goal>check</goal>
             </goals>
