@@ -18,6 +18,7 @@ package org.apache.maven.plugins.surefire.report;
 
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.doxia.sink.Sink;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.text.NumberFormat;
@@ -27,6 +28,7 @@ import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.StringTokenizer;
 
 public class SurefireReportGenerator
 {
@@ -36,9 +38,13 @@ public class SurefireReportGenerator
 
     private boolean showSuccess;
 
-    public SurefireReportGenerator( File reportsDirectory, Locale locale, boolean showSuccess )
+    private String xrefLocation;
+
+    public SurefireReportGenerator( File reportsDirectory, Locale locale, boolean showSuccess, String xrefLocation )
     {
         report = new SurefireReportParser( reportsDirectory, locale );
+
+        this.xrefLocation = xrefLocation;
 
         this.showSuccess = showSuccess;
     }
@@ -456,8 +462,11 @@ public class SurefireReportGenerator
                         sink.tableCell();
                         sink.verbatim( true );
                         boolean firstLine = true;
+
+                        String techMessage = "";
                         while ( it.hasNext() )
                         {
+                            techMessage = it.next().toString();
                             if ( firstLine )
                             {
                                 firstLine = false;
@@ -466,10 +475,32 @@ public class SurefireReportGenerator
                             {
                                 sink.text( "    " );
                             }
-                            sink.text( it.next().toString() + "\n" );
+                            sink.rawText( techMessage + "<br />" );
                         }
                         sink.verbatim_();
                         sink.tableCell_();
+                        sink.tableRow_();
+
+                        sink.tableRow();
+                        sinkCell( sink, "" );
+
+                        sink.tableCell();
+                        if ( xrefLocation != null )
+                        {
+                            String path = tCase.getFullClassName().replace( '.', '/' );
+
+                            sink.link( xrefLocation + "/" + path + ".html#" +
+                                getErrorLineNumber( tCase.getFullName() , techMessage ));
+                        }
+                        sink.text( tCase.getFullClassName() + ":" +
+                            getErrorLineNumber( tCase.getFullName() , techMessage ) );
+
+                        if ( xrefLocation != null )
+                        {
+                            sink.link_();
+                        }
+                        sink.tableCell_();
+
                         sink.tableRow_();
                     }
                 }
@@ -480,6 +511,25 @@ public class SurefireReportGenerator
         }
 
         sinkLineBreak( sink );
+    }
+
+    private String getErrorLineNumber( String className, String source )
+    {
+        StringTokenizer tokenizer = new StringTokenizer( source );
+
+        String lineNo = "";
+
+        while( tokenizer.hasMoreTokens() )
+        {
+            String token = tokenizer.nextToken();
+            if( token.startsWith( className ) )
+            {
+                int idx = token.indexOf( ":" );
+                lineNo = token.substring( idx + 1, token.indexOf( ")" ) );
+                break;
+            }
+        }
+        return lineNo;
     }
 
     private void constructHotLinks( Sink sink, ResourceBundle bundle )

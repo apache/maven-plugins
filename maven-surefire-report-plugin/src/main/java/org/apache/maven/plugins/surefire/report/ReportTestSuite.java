@@ -38,6 +38,7 @@ public class ReportTestSuite
     private int numberOfFailures;
     private int numberOfTests;
     private String name;
+    private String fullClassName;
     private String packageName;
     private float timeElapsed;
     private NumberFormat numberFormat;
@@ -86,13 +87,13 @@ public class ReportTestSuite
                 Number time = numberFormat.parse( attrs.getValue( "time" ) );
                 
                 timeElapsed = time.floatValue();
-    
-                String fName = attrs.getValue( "name" );
-    
-                name = fName.substring( fName.lastIndexOf( "." ) + 1,
-                                        fName.length(  ) );
 
-                int lastDotPosition = fName.lastIndexOf( "." );
+                fullClassName = attrs.getValue( "name" );
+    
+                name = fullClassName.substring( fullClassName.lastIndexOf( "." ) + 1,
+                                        fullClassName.length(  ) );
+
+                int lastDotPosition = fullClassName.lastIndexOf( "." );
                 if ( lastDotPosition < 0 )
                 {
                     /* no package name */
@@ -100,7 +101,7 @@ public class ReportTestSuite
                 }
                 else
                 {
-                    packageName = fName.substring( 0, lastDotPosition );
+                    packageName = fullClassName.substring( 0, lastDotPosition );
                 }
 
                 testCases = new ArrayList(  );
@@ -109,8 +110,12 @@ public class ReportTestSuite
                 currentElement = new StringBuffer(  );
     
                 testCase = new ReportTestCase(  );
-    
+
+                testCase.setFullClassName( fullClassName );
+
                 testCase.setName( attrs.getValue( "name" ) );
+
+                testCase.setClassName( name );
     
                 Number time = numberFormat.parse( attrs.getValue( "time" ) );
                 
@@ -225,6 +230,16 @@ public class ReportTestSuite
     }
 
     public void setName( String name )
+    {
+        this.name = name;
+    }
+
+    public String getFName(  )
+    {
+        return name;
+    }
+
+    public void setFName( String name )
     {
         this.name = name;
     }
