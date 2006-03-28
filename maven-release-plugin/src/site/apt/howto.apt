@@ -8,6 +8,12 @@
 
 How to Use
 
+Use a different username in the SCM server than he one in the operating system
+
+  Run <<<mvn -Duser.name=your_username release:prepare>>>
+
+Set where to tag the files in the SCM
+
   These example shows how to set the repository location for all tagged files in Subversion.
  
 -------------------
