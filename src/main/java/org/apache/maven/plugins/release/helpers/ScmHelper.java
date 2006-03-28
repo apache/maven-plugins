@@ -80,7 +80,7 @@ public class ScmHelper
     {
         if ( scmManager == null )
         {
-            throw new ScmException( "scmManager isn't define." );
+            throw new ScmException( "scmManager is not defined." );
         }
 
         return scmManager;
