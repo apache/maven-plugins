@@ -74,6 +74,8 @@ public class SurefireReportParserTest
         {
             ReportTestSuite suite = (ReportTestSuite) it.next();
             assertNotNull( suite.getName() + " was not correctly parsed", suite.getTestCases() );
+            assertNotNull( suite.getName() );
+            assertNotNull( suite.getPackageName() );
         }
     }
 
