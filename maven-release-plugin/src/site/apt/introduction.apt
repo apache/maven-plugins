@@ -1,0 +1,35 @@
+ ------
+ Maven 2 Release Plugin 
+ ------
+ Carlos Sanchez
+ <carlos@apache.org>
+ ------
+ March 28, 2006
+
+Introduction
+
+ This plugin allows releasing a maven project, which means:
+
+Prepare a release
+
+ * Check that there's no uncommitted changes in the sources
+ 
+ * Check that there's no SNAPSHOT dependencies
+ 
+ * Change the version in the poms from x-SNAPSHOT to a new version (the user is asked for the new version) 
+ 
+ * Commit the change of versions
+ 
+ * Tag the code in the SCM with a version name (asked to the user)
+ 
+ * Bump the version in the poms to a new value y-SNAPSHOT
+ 
+ * Commit the change of versions
+
+Perform a release
+
+ * Ask the user for a tag name
+ 
+ * Checkout from that tag
+ 
+ * Run any maven goals defined by the user ( eg. deploy )
