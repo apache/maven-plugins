@@ -20,6 +20,8 @@ import java.util.HashMap;
 
 public class ReportTestCase
 {
+    private String fullClassName;
+    private String className;
     private String fullName;
     private String name;
     private float time;
@@ -37,6 +39,26 @@ public class ReportTestCase
     public void setName( String name )
     {
         this.name = name;
+    }
+
+    public String getFullClassName(  )
+    {
+        return fullClassName;
+    }
+
+    public void setFullClassName( String name )
+    {
+        this.fullClassName = name;
+    }
+
+    public String getClassName(  )
+    {
+        return className;
+    }
+
+    public void setClassName( String name )
+    {
+        this.className = name;
     }
 
     public float getTime(  )
