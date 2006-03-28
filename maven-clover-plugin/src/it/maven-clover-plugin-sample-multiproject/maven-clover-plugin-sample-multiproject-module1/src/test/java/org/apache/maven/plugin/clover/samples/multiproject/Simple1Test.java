@@ -15,14 +15,14 @@
  */
 package org.apache.maven.plugin.clover.samples.multiproject;
 
-public class Simple
+import junit.framework.TestCase;
+
+public class Simple1Test extends TestCase
 {
-    public void someMethod()
+    public void testSomeMethod()
     {
-        int i = 0;
-        if (i > 0)
-        {
-            i = i + 1;
-        }
+        Simple1 simple = new Simple1();
+        simple.someMethod1();
     }
 }
+ 
