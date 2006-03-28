@@ -62,6 +62,26 @@ public class SurefireReportGenerator
 
         sink.body();
 
+        StringBuffer str = new StringBuffer();
+        str.append("<script type=\"text/javascript\">\n")
+        .append("function toggleDisplay(elementId) {\n")
+        .append(" var elm = document.getElementById(elementId + 'error');\n")
+        .append(" if (elm && typeof elm.style != \"undefined\") {\n")
+        .append(" if (elm.style.display == \"none\") {\n")
+        .append(" elm.style.display = \"\";\n")
+        .append(" document.getElementById(elementId + 'off').style.display = \"none\";\n")
+        .append(" document.getElementById(elementId + 'on').style.display = \"inline\";\n")
+        .append(" }")
+        .append(" else if (elm.style.display == \"\") {")
+        .append(" elm.style.display = \"none\";\n")
+        .append(" document.getElementById(elementId + 'off').style.display = \"inline\";\n")
+        .append(" document.getElementById(elementId + 'on').style.display = \"none\";\n")
+        .append(" } \n")
+        .append(" } \n")
+        .append(" }\n")
+        .append("</script>");
+        sink.rawText(str.toString());
+
         constructSummarySection( bundle, sink );
 
         Map suitePackages = report.getSuitesGroupByPackage( testSuites );
@@ -373,6 +393,21 @@ public class SurefireReportGenerator
 
                             sinkLink( sink, testCase.getName(), "#" + testCase.getFullName() );
 
+                            sink.rawText("  <div class=\"detailToggle\" style=\"display:inline\">");
+
+                            sink.link("javascript:toggleDisplay('" + testCase.getName()
+                                    + "');");
+
+                            sink.rawText("<span style=\"display: inline;\" "
+                                    + "id=\"" + testCase.getName() + "off\">+</span><span id=\""
+                                    + testCase.getName() + "on\" "
+                                    + "style=\"display: none;\">-</span> ");
+                            sink.text("[ Detail ]");
+                            sink.link_();
+
+                            sink.rawText("</div>");
+
+
                             sink.tableCell_();
                         }
                         else
@@ -383,6 +418,43 @@ public class SurefireReportGenerator
                         sinkCell( sink, numberFormat.format( testCase.getTime() ) );
 
                         sink.tableRow_();
+
+                        if (failure != null)
+                         {
+                            sink.tableRow();
+
+                            sinkCell(sink, "");
+                            sinkCell(sink, (String)failure.get("message"));
+                            sinkCell(sink, "");
+                            sink.tableRow_();
+
+                            sink.tableRow();
+                            sinkCell(sink, "");
+
+                            sink.tableCell();
+                            sink.rawText("  <div id=\"" + testCase.getName()
+                                    + "error\" style=\"display:none;\">");
+
+                            List detail = (List)failure.get("detail");
+                            if (detail != null)
+                            {
+
+                                Iterator it = detail.iterator();
+
+                                while(it.hasNext())
+                                {
+                                   sink.rawText(it.next().toString());
+                                   sink.lineBreak();
+                                }
+                            }
+
+                            sink.rawText("</div>");
+                            sink.tableCell_();
+
+                            sinkCell(sink, "");
+
+                            sink.tableRow_();
+                         }
                     }
                 }
 
@@ -451,16 +523,17 @@ public class SurefireReportGenerator
 
                 sink.tableRow_();
 
+                sink.rawText( "  <div id=\"" + tCase.getName() + "error\" >" );
+
+                sink.rawText( "</div>" );
+
                 if ( !type.startsWith( "junit.framework" ) )
                 {
                     List detail = (List) failure.get( "detail" );
                     if ( detail != null )
                     {
                         Iterator it = detail.iterator();
-                        sink.tableRow();
-                        sinkCell( sink, "" );
-                        sink.tableCell();
-                        sink.verbatim( true );
+
                         boolean firstLine = true;
 
                         String techMessage = "";
@@ -475,11 +548,7 @@ public class SurefireReportGenerator
                             {
                                 sink.text( "    " );
                             }
-                            sink.rawText( techMessage + "<br />" );
                         }
-                        sink.verbatim_();
-                        sink.tableCell_();
-                        sink.tableRow_();
 
                         sink.tableRow();
                         sinkCell( sink, "" );
@@ -504,7 +573,6 @@ public class SurefireReportGenerator
                         sink.tableRow_();
                     }
                 }
-
             }
 
             sink.table_();
