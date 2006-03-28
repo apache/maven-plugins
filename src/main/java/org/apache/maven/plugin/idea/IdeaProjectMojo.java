@@ -38,7 +38,6 @@ import java.util.StringTokenizer;
  * @author Edwin Punzalan
  * @goal project
  * @execute phase="generate-sources"
- * @todo use dom4j or something. Xpp3Dom can't cope properly with entities and so on
  */
 public class IdeaProjectMojo
     extends AbstractIdeaMojo
