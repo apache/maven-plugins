@@ -183,8 +183,9 @@ public abstract class AbstractJarSourceMojo
      * Method to attach generated artifact to artifact list
      *
      * @param outputFile the artifact file to be attached
+     * @param classifier
      */
-    protected void attachArtifact( File outputFile )
+    protected void attachArtifact( File outputFile, String classifier )
     {
         if ( !attach )
         {
@@ -194,7 +195,7 @@ public abstract class AbstractJarSourceMojo
         {
             // TODO: these introduced dependencies on the project are going to become problematic - can we export it
             //  through metadata instead?
-            projectHelper.attachArtifact( project, "java-source", "sources", outputFile );
+            projectHelper.attachArtifact( project, "java-source", classifier, outputFile );
         }
     }
 
