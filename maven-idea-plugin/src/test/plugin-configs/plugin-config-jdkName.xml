@@ -1,0 +1,15 @@
+<project>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-idea-plugin</artifactId>
+        <configuration>
+          <project implementation="org.apache.maven.plugin.idea.stubs.SimpleMavenProjectStub"/>
+          <localRepo implementation="org.apache.maven.plugin.idea.stubs.LocalRepositoryStub"/>
+          <ideaVersion>4</ideaVersion>
+          <jdkName>1.4</jdkName>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
