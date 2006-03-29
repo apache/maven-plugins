@@ -58,7 +58,7 @@ public class JarTestSourceMojo
                 throw new MojoExecutionException( "Error creating source archive: " + e.getMessage(), e );
             }
 
-            attachArtifact( outputFile );
+            attachArtifact( outputFile, "test-sources" );
         }
     }
 
