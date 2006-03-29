@@ -22,29 +22,16 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.archiver.Archiver;
+import org.codehaus.plexus.archiver.ArchiverException;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
 public abstract class AbstractJarSourceMojo
     extends AbstractMojo
 {
-    /**
-     * @deprecated ICK! This needs to be generalized OUTSIDE of this mojo!
-     */
-    private static final List BANNED_PACKAGINGS;
-
-    static
-    {
-        List banned = new ArrayList();
-
-        banned.add( "pom" );
-
-        BANNED_PACKAGINGS = banned;
-    }
-
     /**
      * @parameter expression="${project}"
      * @readonly
@@ -57,7 +44,7 @@ public abstract class AbstractJarSourceMojo
      * @readonly
      * @required
      */
-    private String packaging;
+    protected String packaging;
 
     /**
      * @parameter expression="${executedProject}"
@@ -71,11 +58,21 @@ public abstract class AbstractJarSourceMojo
     private boolean attach = true;
 
     /**
-     * @parameter expression="${component.org.apache.maven.project.MavenProjectHelper}
+     * @component
      */
     private MavenProjectHelper projectHelper;
 
-    private static SourceBundler sourceBundler;
+    /**
+     * @parameter expression="${project.build.directory}"
+     * @required
+     */
+    protected File outputDirectory;
+
+    /**
+     * @parameter expression="${project.build.finalName}"
+     * @required
+     */
+    protected String finalName;
 
     public abstract void execute()
         throws MojoExecutionException;
@@ -110,16 +107,6 @@ public abstract class AbstractJarSourceMojo
         this.executedProject = executedProject;
     }
 
-    protected void validatePackaging()
-    {
-        if ( BANNED_PACKAGINGS.contains( packaging ) )
-        {
-            getLog().info( "NOT adding java-sources to attached artifacts for packaging: \'" + packaging + "\'." );
-
-            return;
-        }
-    }
-
     /**
      * Add the compile source directories and resource directories that will be included in the jar file
      *
@@ -131,15 +118,17 @@ public abstract class AbstractJarSourceMojo
     protected File[] addDirectories( List compileSourceRoots, List resources, File[] sourceDirectories )
     {
         int count = 0;
-        for ( Iterator i = compileSourceRoots.iterator(); i.hasNext(); count++ )
+        for ( Iterator i = compileSourceRoots.iterator(); i.hasNext(); )
         {
             sourceDirectories[count] = new File( (String) i.next() );
+            count++;
         }
 
-        for ( Iterator i = resources.iterator(); i.hasNext(); count++ )
+        for ( Iterator i = resources.iterator(); i.hasNext(); )
         {
             Resource resource = (Resource) i.next();
             sourceDirectories[count] = new File( resource.getDirectory() );
+            count++;
         }
 
         return sourceDirectories;
@@ -152,8 +141,8 @@ public abstract class AbstractJarSourceMojo
      */
     protected File[] getTestSources()
     {
-        List testCompileSourceRoots = getExecutedProject().getTestCompileSourceRoots();
-        List testResources = getExecutedProject().getTestResources();
+        List testCompileSourceRoots = executedProject.getTestCompileSourceRoots();
+        List testResources = executedProject.getTestResources();
 
         File[] testSourceDirectories = new File[testCompileSourceRoots.size() + testResources.size()];
         testSourceDirectories = addDirectories( testCompileSourceRoots, testResources, testSourceDirectories );
@@ -182,15 +171,11 @@ public abstract class AbstractJarSourceMojo
      *
      * @param outputFile        the file name of the jar
      * @param sourceDirectories the source directories that will be included in the jar file
-     * @throws Exception
      */
     protected void createJar( File outputFile, File[] sourceDirectories, Archiver archiver )
-        throws Exception
+        throws IOException, ArchiverException
     {
-        if ( sourceBundler == null )
-        {
-            sourceBundler = new SourceBundler();
-        }
+        SourceBundler sourceBundler = new SourceBundler();
         sourceBundler.makeSourceBundle( outputFile, sourceDirectories, archiver );
     }
 
@@ -209,7 +194,7 @@ public abstract class AbstractJarSourceMojo
         {
             // TODO: these introduced dependencies on the project are going to become problematic - can we export it
             //  through metadata instead?
-            projectHelper.attachArtifact( getProject(), "java-source", "sources", outputFile );
+            projectHelper.attachArtifact( project, "java-source", "sources", outputFile );
         }
     }
 

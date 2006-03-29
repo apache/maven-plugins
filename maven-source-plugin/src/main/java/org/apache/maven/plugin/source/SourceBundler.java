@@ -17,8 +17,11 @@ package org.apache.maven.plugin.source;
  */
 
 import org.codehaus.plexus.archiver.Archiver;
+import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
@@ -26,22 +29,18 @@ import java.io.File;
  */
 public class SourceBundler
 {
-    private final static String[] DEFAULT_INCLUDES = new String[]{"**/*",};
-
-    private final static String[] DEFAULT_EXCLUDES = new String[]{"**/CVS/**", "**/.svn/**",};
+    private static final String[] DEFAULT_INCLUDES = new String[]{"**/*",};
 
     public void makeSourceBundle( File outputFile, File[] sourceDirectories, Archiver archiver )
-        throws Exception
+        throws ArchiverException, IOException
     {
         String[] includes = DEFAULT_INCLUDES;
-
-        String[] excludes = DEFAULT_EXCLUDES;
 
         for ( int i = 0; i < sourceDirectories.length; i++ )
         {
             if ( sourceDirectories[i].exists() )
             {
-                archiver.addDirectory( sourceDirectories[i], includes, excludes );
+                archiver.addDirectory( sourceDirectories[i], includes, FileUtils.getDefaultExcludes() );
             }
         }
 
