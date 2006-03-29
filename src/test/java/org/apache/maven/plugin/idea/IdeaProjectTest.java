@@ -44,10 +44,27 @@ public class IdeaProjectTest
             "/plugin-test-" + testCounter + ".ipr" ).exists() );
     }
 
-    public void testIdeaProjectTestEnvironment2()
+    public void testIdeaProjectVersion5()
         throws Exception
     {
-        File testPom = new File( getBasedir(), "src/test/plugin-configs/min-plugin-config.xml" );
+        File testPom = new File( getBasedir(), "src/test/plugin-configs/plugin-config-idea5.xml" );
+
+        IdeaProjectMojo mojo = (IdeaProjectMojo) lookupMojo( "project", testPom );
+
+        assertNotNull( "Get project mojo instance using " + testPom.getAbsolutePath() , mojo );
+
+        mojo.execute();
+
+        int testCounter = SimpleMavenProjectStub.getUsageCounter();
+
+        assertTrue( "Project file was created", new File( "target/test-harness/" + testCounter +
+            "/plugin-test-" + testCounter + ".ipr" ).exists() );
+    }
+
+    public void testIdeaProjectJdkName()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(), "src/test/plugin-configs/plugin-config-jdkName.xml" );
 
         IdeaProjectMojo mojo = (IdeaProjectMojo) lookupMojo( "project", testPom );
 
