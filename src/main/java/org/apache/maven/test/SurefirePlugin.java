@@ -214,7 +214,7 @@ public class SurefirePlugin
     private boolean useFile;
 
     /**
-     * Option to specify the forking mode. Can be "none", "once" or "pertest"
+     * Option to specify the forking mode. Can be "none", "once" or "pertest".
      *
      * @parameter expression="${forkMode}"
      * default-value="none"
@@ -252,7 +252,10 @@ public class SurefirePlugin
     private File workingDirectory;
 
     /**
-     * Whether to run the tests in an isolated classloader, or to delegate to the system classloader when forking.
+     * When false it makes tests run using the standard classloader delegation instead of the default
+     * Maven isolated classloader. Only used when forking (forkMode is not "none").<br/>
+     * Setting it to false helps with some problems caused by conflicts between
+     * xml parsers in the classpath and the Java 5 provider parser.
      *
      * @parameter expression="${childDelegation}"
      * default-value="true"
