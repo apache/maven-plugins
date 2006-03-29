@@ -138,7 +138,7 @@ Specifying a custom license file
 Controlling the master report generation
 
   By default if you execute <<<mvn clover:clover>>> or <<<mvn site>>> on a multimodule build, the Clover plguin will
-  automatically generate a master report aggreating all individual module reports. To disable this feature, use for
+  automatically generate a master report aggregating all individual module reports. To disable this feature, use for
   example:
 
 +--------
