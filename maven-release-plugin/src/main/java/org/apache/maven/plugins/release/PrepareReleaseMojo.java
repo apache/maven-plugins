@@ -56,6 +56,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -181,7 +182,7 @@ public class PrepareReleaseMojo
 
     private ProjectScmRewriter scmRewriter;
 
-    private List pomFiles;
+    private Set pomFiles;
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -1382,7 +1383,7 @@ public class PrepareReleaseMojo
         }
     }
 
-    private void checkIn( List pomFiles, String message )
+    private void checkIn( Collection pomFiles, String message )
         throws MojoExecutionException
     {
         ScmHelper scm = getScm( basedir.getAbsolutePath() );
@@ -1601,7 +1602,7 @@ public class PrepareReleaseMojo
     {
         if ( pomFiles == null )
         {
-            pomFiles = new ArrayList();
+            pomFiles = new HashSet();
         }
 
         if ( !pomFiles.contains( pomFile ) )
