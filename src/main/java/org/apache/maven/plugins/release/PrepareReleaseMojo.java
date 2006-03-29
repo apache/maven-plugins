@@ -1604,7 +1604,10 @@ public class PrepareReleaseMojo
             pomFiles = new ArrayList();
         }
 
-        pomFiles.add( pomFile );
+        if ( !pomFiles.contains( pomFile ) )
+        {
+            pomFiles.add( pomFile );
+        }
 
         ScmHelper scm = getScm( basedir.getAbsolutePath() );
 
