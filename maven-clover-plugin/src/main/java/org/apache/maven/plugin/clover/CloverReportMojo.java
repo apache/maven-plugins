@@ -127,25 +127,32 @@ public class CloverReportMojo extends AbstractMavenReport
      */
     public void executeReport( Locale locale ) throws MavenReportException
     {
-        // Only generate module reports for non root projects
-        if ( !getProject().isExecutionRoot() )
+        // Note: It seems we need to check whether or not we should generate a report here again because even though
+        // the canGenerateReport() method is called automatically when the "mvn site" phase is called, it's not called
+        // when the "mvn clover:clover" goal is called! Probably someone Maven2 should improve, see
+        // http://jira.codehaus.org/browse/MNG-2188
+        if ( canGenerateReport() )
         {
-            AbstractCloverMojo.waitForFlush( this.waitForFlush, this.flushInterval );
-            createCloverHtmlReport();
-        }
+            // Only generate module level report for Java projects
+            if ( isJavaProject(this.project) )
+            {
+                AbstractCloverMojo.waitForFlush( this.waitForFlush, this.flushInterval );
+                createCloverHtmlReport();
+            }
 
-        // If we're in the top level module, then create an extra report by aggregating the generated clover
-        // databases.
-        if ( this.aggregate && getProject().isExecutionRoot() )
-        {
-            // Ensure the merged database output directory exists
-            new File( this.cloverMergeDatabase ).getParentFile().mkdirs();
+            // If we're in the top level module and there are children modules, then create an extra report by
+            // aggregating the generated clover databases.
+            if ( this.aggregate && ( this.reactorProjects.size() > 1 ) )
+            {
+                // Ensure the merged database output directory exists
+                new File( this.cloverMergeDatabase ).getParentFile().mkdirs();
 
-            // Merge the databases
-            mergeCloverDatabases();
+                // Merge the databases
+                mergeCloverDatabases();
 
-            // Generate the merged report
-            createMasterCloverHtmlReport();
+                // Generate the merged report
+                createMasterCloverHtmlReport();
+            }
         }
     }
 
@@ -172,7 +179,7 @@ public class CloverReportMojo extends AbstractMavenReport
             }
             else
             {
-                getLog().warn("Skipping [" + cloverDb.getPath() + "] as it doesn't exist.");
+                getLog().debug("Skipping [" + cloverDb.getPath() + "] as it doesn't exist.");
             }
         }
 
@@ -303,31 +310,24 @@ public class CloverReportMojo extends AbstractMavenReport
     }
 
     /**
-     * Only execute reports for Java projects.
+     * Generate reports for Java projects and for projects which have a Clover database available.
      *
-     * @return true if the current project is Java project and false otherwise
+     * @return true if a project should be generated using the algorithm defined above
      * @see org.apache.maven.reporting.AbstractMavenReport#canGenerateReport()
      */
     public boolean canGenerateReport()
     {
         boolean canGenerate = false;
 
-        if ( this.aggregate && getProject().isExecutionRoot() )
+        // Check if we have at least one project which is a java project
+        for ( Iterator projects = this.reactorProjects.iterator(); projects.hasNext(); )
         {
-            // Check if we have at least one project which is a java project
-            for ( Iterator projects = this.reactorProjects.iterator(); projects.hasNext(); )
+            MavenProject project = (MavenProject) projects.next();
+            if ( isJavaProject(project) && !getChildrenCloverDatabases().isEmpty() )
             {
-                MavenProject project = (MavenProject) projects.next();
-                if ( isJavaProject(project) )
-                {
-                    canGenerate = true;
-                    break;
-                }
+                canGenerate = true;
+                break;
             }
-        }
-        else if ( isJavaProject(getProject()) )
-        {
-            canGenerate = true;
         }
 
         return canGenerate;
