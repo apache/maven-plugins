@@ -39,6 +39,7 @@ import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -261,7 +262,7 @@ public class ScmHelper
         checkResult( result );
     }
 
-    public void checkin( List pomFiles, String message )
+    public void checkin( Collection pomFiles, String message )
         throws ScmException
     {
         File[] files = (File[]) pomFiles.toArray( new File[pomFiles.size()] );
