@@ -16,20 +16,20 @@ package org.apache.maven.plugin.idea.stubs;
  * limitations under the License.
  */
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.model.Dependency;
-import org.apache.maven.plugins.testing.stubs.StubMavenProject;
-
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.io.File;
+
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.plugins.testing.stubs.MavenProjectStub;
 
 /**
  * @author Edwin Punzalan
  */
 public class SimpleMavenProjectStub
-    extends StubMavenProject
+    extends MavenProjectStub
 {
     private static int usageCounter;
 
