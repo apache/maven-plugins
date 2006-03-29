@@ -16,8 +16,8 @@ package org.apache.maven.plugin.idea;
  * limitations under the License.
  */
 
-import org.apache.maven.plugins.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.idea.stubs.SimpleMavenProjectStub;
+import org.apache.maven.plugins.testing.AbstractMojoTestCase;
 
 import java.io.File;
 
@@ -36,6 +36,15 @@ public class IdeaProjectTest
 
         assertNotNull( "Get project mojo instance using " + testPom.getAbsolutePath() , mojo );
 
+        setVariableValueToObject( mojo, "artifactMetadataSource",
+                                  lookup( "org.apache.maven.artifact.metadata.ArtifactMetadataSource", "maven" ) );
+
+        setVariableValueToObject( mojo, "artifactFactory",
+                                  lookup( "org.apache.maven.artifact.factory.ArtifactFactory" ) );
+
+        setVariableValueToObject( mojo, "artifactResolver",
+                                  lookup( "org.apache.maven.artifact.resolver.ArtifactResolver" ) );
+
         mojo.execute();
 
         int testCounter = SimpleMavenProjectStub.getUsageCounter();
@@ -53,6 +62,15 @@ public class IdeaProjectTest
 
         assertNotNull( "Get project mojo instance using " + testPom.getAbsolutePath() , mojo );
 
+        setVariableValueToObject( mojo, "artifactMetadataSource",
+                                  lookup( "org.apache.maven.artifact.metadata.ArtifactMetadataSource", "maven" ) );
+
+        setVariableValueToObject( mojo, "artifactFactory",
+                                  lookup( "org.apache.maven.artifact.factory.ArtifactFactory" ) );
+
+        setVariableValueToObject( mojo, "artifactResolver",
+                                  lookup( "org.apache.maven.artifact.resolver.ArtifactResolver" ) );
+
         mojo.execute();
 
         int testCounter = SimpleMavenProjectStub.getUsageCounter();
@@ -67,6 +85,15 @@ public class IdeaProjectTest
         File testPom = new File( getBasedir(), "src/test/plugin-configs/plugin-config-jdkName.xml" );
 
         IdeaProjectMojo mojo = (IdeaProjectMojo) lookupMojo( "project", testPom );
+
+        setVariableValueToObject( mojo, "artifactMetadataSource",
+                                  lookup( "org.apache.maven.artifact.metadata.ArtifactMetadataSource", "maven" ) );
+
+        setVariableValueToObject( mojo, "artifactFactory",
+                                  lookup( "org.apache.maven.artifact.factory.ArtifactFactory" ) );
+
+        setVariableValueToObject( mojo, "artifactResolver",
+                                  lookup( "org.apache.maven.artifact.resolver.ArtifactResolver" ) );
 
         assertNotNull( "Get project mojo instance using " + testPom.getAbsolutePath() , mojo );
 

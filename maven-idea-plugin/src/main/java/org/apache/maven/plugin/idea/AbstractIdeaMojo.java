@@ -24,30 +24,35 @@ import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
+import org.apache.maven.artifact.resolver.filter.ExcludesArtifactFilter;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
+import org.apache.maven.model.Exclusion;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.codehaus.plexus.util.StringUtils;
-import org.dom4j.Element;
-import org.dom4j.DocumentException;
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
-import org.dom4j.io.OutputFormat;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -96,7 +101,7 @@ public abstract class AbstractIdeaMojo
     protected ArtifactResolver artifactResolver;
 
     /**
-     * @parameter expression="${component.org.apache.maven.artifact.metadata.ArtifactMetadataSource}"
+     * @component role="org.apache.maven.artifact.metadata.ArtifactMetadataSource" hint="maven"
      */
     protected ArtifactMetadataSource artifactMetadataSource;
 
@@ -239,9 +244,7 @@ public abstract class AbstractIdeaMojo
         }
     }
 
-    protected void doDependencyResolution( MavenProject project, ArtifactFactory artifactFactory,
-                                           ArtifactResolver artifactResolver, ArtifactRepository localRepo,
-                                           ArtifactMetadataSource artifactMetadataSource )
+    protected void doDependencyResolution( MavenProject project, ArtifactRepository localRepo )
         throws InvalidDependencyVersionException, ProjectBuildingException
     {
         if ( project.getDependencies() != null )
@@ -320,6 +323,17 @@ public abstract class AbstractIdeaMojo
             {
                 artifact.setFile( new File( dep.getSystemPath() ) );
             }
+
+            List exclusions = new ArrayList();
+            for ( Iterator j = dep.getExclusions().iterator(); j.hasNext(); )
+            {
+                Exclusion e = (Exclusion) j.next();
+                exclusions.add( e.getGroupId() + ":" + e.getArtifactId() );
+            }
+
+            ArtifactFilter newFilter = new ExcludesArtifactFilter( exclusions );
+
+            artifact.setDependencyFilter( newFilter );
 
             artifacts.add( artifact );
         }

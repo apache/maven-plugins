@@ -17,9 +17,9 @@ package org.apache.maven.plugin.idea;
  */
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.manager.WagonManager;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.model.Resource;
@@ -29,9 +29,9 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.wagon.ResourceDoesNotExistException;
 import org.apache.maven.wagon.TransferFailedException;
 import org.codehaus.plexus.util.StringUtils;
-import org.dom4j.Element;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
+import org.dom4j.Element;
 
 import java.io.File;
 import java.io.IOException;
@@ -203,7 +203,7 @@ public class IdeaModuleMojo
     {
         try
         {
-            doDependencyResolution( project, artifactFactory, artifactResolver, localRepo, artifactMetadataSource );
+            doDependencyResolution( project, localRepo );
         }
         catch ( Exception e )
         {

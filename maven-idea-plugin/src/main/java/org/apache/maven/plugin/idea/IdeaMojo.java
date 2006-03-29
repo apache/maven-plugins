@@ -172,7 +172,7 @@ public class IdeaMojo
     {
         try
         {
-            doDependencyResolution( project, artifactFactory, artifactResolver, localRepo, artifactMetadataSource );
+            doDependencyResolution( project, localRepo );
         }
         catch ( Exception e )
         {
