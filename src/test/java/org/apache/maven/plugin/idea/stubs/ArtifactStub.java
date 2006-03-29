@@ -3,13 +3,12 @@ package org.apache.maven.plugin.idea.stubs;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.OverConstrainedVersionException;
-import org.apache.maven.plugins.testing.stubs.StubArtifact;
 
 /**
  * @author Edwin Punzalan
  */
 public class ArtifactStub
-    extends StubArtifact
+    extends org.apache.maven.plugins.testing.stubs.ArtifactStub
 {
     private String groupId;
 
