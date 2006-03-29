@@ -17,9 +17,11 @@ package org.apache.maven.plugin.source;
 */
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * This plugin bundles all the generated test sources into a jar archive.
@@ -31,35 +33,33 @@ import java.io.File;
 public class JarTestSourceMojo
     extends AbstractJarSourceMojo
 {
-    /**
-     * @parameter expression="${project.build.finalName}"
-     * @required
-     */
-    private String finalName;
-
-    /**
-     * @parameter expression="${project.build.directory}"
-     * @required
-     */
-    private File outputDirectory;
-
     public void execute()
         throws MojoExecutionException
     {
-        validatePackaging();
-        File outputFile = new File( outputDirectory, finalName + "-test-sources.jar" );
-        File[] testSourceDirectories = getTestSources();
-
-        try
+        if ( "pom".equals( packaging ) )
         {
-            createJar( outputFile, testSourceDirectories, new JarArchiver() );
+            getLog().info( "NOT adding test sources to attached artifacts for packaging: \'" + packaging + "\'." );
         }
-        catch ( Exception e )
+        else
         {
-            throw new MojoExecutionException( "Error building test source JAR", e );
-        }
+            File outputFile = new File( outputDirectory, finalName + "-test-sources.jar" );
+            File[] testSourceDirectories = getTestSources();
 
-        attachArtifact( outputFile );
+            try
+            {
+                createJar( outputFile, testSourceDirectories, new JarArchiver() );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Error creating source archive: " + e.getMessage(), e );
+            }
+            catch ( ArchiverException e )
+            {
+                throw new MojoExecutionException( "Error creating source archive: " + e.getMessage(), e );
+            }
+
+            attachArtifact( outputFile );
+        }
     }
 
 }
