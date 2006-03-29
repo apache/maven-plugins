@@ -88,20 +88,32 @@ public class ReportTestSuite
                 
                 timeElapsed = time.floatValue();
 
-                fullClassName = attrs.getValue( "name" );
-    
-                name = fullClassName.substring( fullClassName.lastIndexOf( "." ) + 1,
-                                        fullClassName.length(  ) );
-
-                int lastDotPosition = fullClassName.lastIndexOf( "." );
-                if ( lastDotPosition < 0 )
+                //check if group attribute is existing
+                if( attrs.getValue( "group" ) != null && !attrs.getValue( "group" ).equals( "" ) )
                 {
-                    /* no package name */
-                    packageName = "";
+                    packageName = attrs.getValue( "group" );
+
+                    name = attrs.getValue( "name" );
+
+                    fullClassName = packageName + "." + name;
                 }
                 else
                 {
-                    packageName = fullClassName.substring( 0, lastDotPosition );
+                    fullClassName = attrs.getValue( "name" );
+
+                    name = fullClassName.substring( fullClassName.lastIndexOf( "." ) + 1,
+                                            fullClassName.length(  ) );
+
+                    int lastDotPosition = fullClassName.lastIndexOf( "." );
+                    if ( lastDotPosition < 0 )
+                    {
+                        /* no package name */
+                        packageName = "";
+                    }
+                    else
+                    {
+                        packageName = fullClassName.substring( 0, lastDotPosition );
+                    }
                 }
 
                 testCases = new ArrayList(  );
