@@ -60,7 +60,7 @@ public class JarDefaultSourceMojo
                 throw new MojoExecutionException( "Error creating source archive: " + e.getMessage(), e );
             }
 
-            attachArtifact( outputFile );
+            attachArtifact( outputFile, "sources" );
         }
     }
 
