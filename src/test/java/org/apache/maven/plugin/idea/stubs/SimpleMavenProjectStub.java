@@ -16,6 +16,10 @@ package org.apache.maven.plugin.idea.stubs;
  * limitations under the License.
  */
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.plugins.testing.stubs.MavenProjectStub;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -102,7 +106,7 @@ public class SimpleMavenProjectStub
 
     public Artifact getArtifact()
     {
-        Artifact artifact = new ArtifactStub();
+        Artifact artifact = new IdeaArtifactStub();
 
         artifact.setGroupId( getGroupId() );
 
