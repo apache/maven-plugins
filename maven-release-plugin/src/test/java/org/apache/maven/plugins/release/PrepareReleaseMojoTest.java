@@ -76,7 +76,9 @@ public class PrepareReleaseMojoTest
     {
         Model model = new Model();
         Contributor contributor = new Contributor();
-        contributor.setName( "special chars αιρ" );
+        /* hack to avoid problems with sources encoding, this string contains accentuated "aeiou" */
+        String s = new String( new byte[] { -31, -23, -19, -13, -6 } );
+        contributor.setName( s );
         model.addContributor( contributor );
         File file = new File( mojo.basedir, "testWritePom.xml" );
 
@@ -90,7 +92,6 @@ public class PrepareReleaseMojoTest
         Model readModel = pomReader.read( new BufferedReader( new FileReader( file ) ) );
         Contributor readContributor = (Contributor) readModel.getContributors().get( 0 );
         assertEquals( contributor.getName(), readContributor.getName() );
-        System.out.println( readContributor.getName() );
 
         scmHelperMock.verify();
     }
