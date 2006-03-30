@@ -4,7 +4,7 @@
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
-           <project implementation="org.apache.maven.plugins.testing.stubs.StubMavenProject">
+           <project implementation="org.apache.maven.plugins.testing.stubs.MavenProjectStub">
              <groupId implementation="java.lang.String">foo</groupId>
              <artifactId implementation="java.lang.String">bar</artifactId>
            </project>
