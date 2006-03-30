@@ -109,9 +109,31 @@ public abstract class AbstractReleaseMojo
         return scmHelper;
     }
 
+    /**
+     * Set the SCM Helper
+     * @param scmHelper
+     */
+    protected void setScmHelper( ScmHelper scmHelper )
+    {
+        this.scmHelper = scmHelper;
+    }
+
+    /**
+     * Get the SCM Manager 
+     * @return
+     */
     private ScmManager getScmManager()
     {
         return this.scmManager;
+    }
+
+    /**
+     * Set the SCM Manager
+     * @param scmManager
+     */
+    public void setScmManager( ScmManager scmManager )
+    {
+        this.scmManager = scmManager;
     }
 
     /**
