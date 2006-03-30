@@ -21,13 +21,13 @@ import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.compiler.util.scan.SimpleSourceInclusionScanner;
+import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
+import org.codehaus.plexus.compiler.util.scan.InclusionScanException;
+import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Instrument source roots.
@@ -70,6 +70,18 @@ public class CloverInstrumentMojo extends AbstractCloverMojo
      */
     private ArtifactFactory factory;
 
+    /**
+     * The list of file to include in the instrumentation.
+     * @parameter
+     */
+    private Set includes = new HashSet();
+
+    /**
+     * The list of file to exclude from the instrumentation.
+     * @parameter
+     */
+    private Set excludes = new HashSet();
+
     private String cloverOutputSourceDirectory;
 
     public void execute()
@@ -82,17 +94,25 @@ public class CloverInstrumentMojo extends AbstractCloverMojo
 
             super.execute();
 
-            instrumentSources();
-            addCloverDependencyToCompileClasspath();
-            redirectSourceDirectories();
-            redirectOutputDirectories();
+            Set filesToInstrument = computeFilesToInstrument();
+            if ( filesToInstrument.isEmpty() )
+            {
+                getLog().warn("No Clover instrumentation done as no matching sources files found");
+            }
+            else
+            {
+                instrumentSources( filesToInstrument );
+                addCloverDependencyToCompileClasspath();
+                redirectSourceDirectories();
+                redirectOutputDirectories();
+            }
         }
     }
 
     private boolean shouldExecute()
     {
         boolean shouldExecute = true;
-        
+
         // Only execute reports for java projects
         ArtifactHandler artifactHandler = this.project.getArtifact().getArtifactHandler();
         File srcDir = new File(this.project.getBuild().getSourceDirectory());
@@ -110,10 +130,10 @@ public class CloverInstrumentMojo extends AbstractCloverMojo
 
         return shouldExecute;
     }
-    
-    private void instrumentSources() throws MojoExecutionException
+
+    private void instrumentSources(Set filesToInstrument) throws MojoExecutionException
     {
-        int result = CloverInstr.mainImpl( createCliArgs() );
+        int result = CloverInstr.mainImpl( createCliArgs( filesToInstrument ) );
         if ( result != 0 )
         {
             throw new MojoExecutionException( "Clover has failed to instrument the source files" );
@@ -138,7 +158,7 @@ public class CloverInstrumentMojo extends AbstractCloverMojo
         String oldSourceDirectory = this.project.getBuild().getSourceDirectory();
 
         this.project.getBuild().setSourceDirectory( this.cloverOutputSourceDirectory );
-        
+
         // Maven2 limitation: changing the source directory doesn't change the compile source roots
         // See http://jira.codehaus.org/browse/MNG-1945
         List sourceRoots = this.project.getCompileSourceRoots();
@@ -155,7 +175,7 @@ public class CloverInstrumentMojo extends AbstractCloverMojo
             }
         }
     }
-    
+
     private void addCloverDependencyToCompileClasspath()
         throws MojoExecutionException
     {
@@ -186,13 +206,56 @@ public class CloverInstrumentMojo extends AbstractCloverMojo
     }
 
     /**
+     * @return the list of files to instrument taking into account the includes and excludes specified by the user
+     */
+    private Set computeFilesToInstrument()
+    {
+        Set filesToInstrument = new HashSet();
+
+        SourceInclusionScanner scanner = null;
+
+        if ( includes.isEmpty() && excludes.isEmpty() )
+        {
+            includes = Collections.singleton( "**/*.java" );
+            scanner = new SimpleSourceInclusionScanner( includes, Collections.EMPTY_SET );
+        }
+        else
+        {
+            if ( includes.isEmpty() )
+            {
+                includes.add( "**/*.java" );
+            }
+            scanner = new SimpleSourceInclusionScanner( includes, excludes );
+        }
+
+        // Note: we shouldn't have to do this but this is a limitation of the Plexus SimpleSourceInclusionScanner
+        scanner.addSourceMapping(new SuffixMapping("dummy", "dummy"));
+
+        Iterator roots = this.project.getCompileSourceRoots().iterator();
+        while (roots.hasNext())
+        {
+            String sourceRoot = (String) roots.next();
+            try
+            {
+                filesToInstrument.addAll(scanner.getIncludedSources(new File(sourceRoot), null));
+            }
+            catch (InclusionScanException e)
+            {
+                getLog().warn("Failed to add sources from [" + sourceRoot + "]", e);
+            }
+        }
+
+        return filesToInstrument;
+    }
+
+    /**
      * @return the CLI args to be passed to CloverInstr
      * @todo handle multiple source roots. At the moment only the first source root is instrumented
      */
-    private String[] createCliArgs() throws MojoExecutionException
+    private String[] createCliArgs(Set filesToInstrument) throws MojoExecutionException
     {
         List parameters = new ArrayList();
-     
+
         parameters.add( "-p" );
         parameters.add( this.flushPolicy );
         parameters.add( "-f" );
@@ -200,10 +263,6 @@ public class CloverInstrumentMojo extends AbstractCloverMojo
 
         parameters.add( "-i" );
         parameters.add( this.cloverDatabase );
-        parameters.add( "-s" );
-
-        // TODO: Allow support for several source roots in the future.
-        parameters.add( (String) this.project.getCompileSourceRoots().get( 0 ) );
 
         parameters.add( "-d" );
         parameters.add( this.cloverOutputSourceDirectory );
@@ -220,13 +279,19 @@ public class CloverInstrumentMojo extends AbstractCloverMojo
             }
             else
             {
-                throw new MojoExecutionException("Unsupported jdk version [" + this.jdk 
+                throw new MojoExecutionException("Unsupported jdk version [" + this.jdk
                     + "]. Valid values are [1.4] and [1.5]");
             }
         }
-        
+
+        for ( Iterator files = filesToInstrument.iterator(); files.hasNext(); )
+        {
+            File file = (File) files.next();
+            parameters.add( file.getPath() );
+        }
+
         getLog().debug( "Instrumenting using parameters [" + parameters.toString() + "]");
-        
+
         return (String[]) parameters.toArray(new String[0]);
     }
 }

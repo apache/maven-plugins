@@ -157,3 +157,25 @@ Controlling the master report generation
 
   Note that you can control the location of the aggregated Clover database by using the <<<cloverMergeDatabase>>>
   configuration property.
+
+Controlling files to instrument
+
+  By default all Java files are included during the instrumentation. To specify inclusion and exclusion use the
+  <<<includes>>> and <<<excludes>>> configuration elements as shown in this example:
+
++--------
+  <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-clover-plugin</artifactId>
+    <configuration>
+      <includes>
+        <include>**/api/**/*.java</include>
+        <include>some/path/MyFile.java</include>
+        [...]
+      </includes>
+      <excludes>
+        <exclude>**/*Test/java</exclude>
+        [...]
+      </excludes>
+[...]
++---------
