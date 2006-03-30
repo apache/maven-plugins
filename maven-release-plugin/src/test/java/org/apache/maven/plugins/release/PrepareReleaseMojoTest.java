@@ -91,7 +91,7 @@ public class PrepareReleaseMojoTest
 
         Model readModel = pomReader.read( new BufferedReader( new FileReader( file ) ) );
         Contributor readContributor = (Contributor) readModel.getContributors().get( 0 );
-        assertEquals( contributor.getName(), readContributor.getName() );
+        assertEquals( "POM is written in a wrong encoding", contributor.getName(), readContributor.getName() );
 
         scmHelperMock.verify();
     }
