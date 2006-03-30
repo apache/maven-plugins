@@ -36,6 +36,9 @@
         <configuration>
           <jdk>1.4</jdk>
           <targetPercentage>1%</targetPercentage>
+          <excludes>
+            <exclude>**/*Dummy*.java</exclude>
+          </excludes>
         </configuration>
         <executions>
           <execution>
