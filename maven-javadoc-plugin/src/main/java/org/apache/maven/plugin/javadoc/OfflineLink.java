@@ -1,7 +1,5 @@
 package org.apache.maven.plugin.javadoc;
 
-import java.io.File;
-
 /*
  * Copyright 2004-2005 The Apache Software Foundation.
  *
@@ -17,6 +15,8 @@ import java.io.File;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import java.io.File;
 
 public class OfflineLink
 {
