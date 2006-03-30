@@ -83,6 +83,12 @@ public class IdeaModuleMojo
     private boolean linkModules;
 
     /**
+     *
+     * @parameter expression="${deploymentDescriptorFile}"
+     */
+    private String deploymentDescriptorFile;
+
+    /**
      * Whether to use full artifact names when referencing libraries.
      *
      * @parameter expression="${useFullNames}" default-value="false"
@@ -232,6 +238,10 @@ public class IdeaModuleMojo
             else if ( "ejb".equals( project.getPackaging() ) )
             {
                 addEjbModule( module );
+            }
+            else if ( "ear".equals( project.getPackaging() ) )
+            {
+                addEarModule( module );
             }
 
             Element component = findComponent( module, "NewModuleRootManager" );
@@ -458,6 +468,14 @@ public class IdeaModuleMojo
         }
     }
 
+    private void addEarModule( Element module )
+    {
+        module.addAttribute( "type", "J2EE_APPLICATION_MODULE" );
+        Element component = findComponent( module, "ApplicationModuleProperties" );
+        addDeploymentDescriptor( component, "application.xml", "1.3",
+                                 project.getBuild().getDirectory() + "/application.xml" );
+    }
+
     private void addEjbModule( Element module )
     {
         module.addAttribute( "type", "J2EE_EJB_MODULE" );
@@ -470,6 +488,7 @@ public class IdeaModuleMojo
         setting.addAttribute( "value", getModuleFileUrl( explodedDir ) );
 
         component = findComponent( module, "EjbModuleProperties" );
+        addDeploymentDescriptor( component, "ejb-jar.xml", "2.x", "src/main/resources/META-INF/ejb-jar.xml" );
 
         removeOldElements( component, "containerElement" );
         List artifacts = project.getTestArtifacts();
@@ -509,13 +528,6 @@ public class IdeaModuleMojo
                 uriAttribute.addAttribute( "value", "/WEB-INF/lib/" + artifact.getFile().getName() );
             }
         }
-
-        Element element = findElement( component, "deploymentDescriptor" );
-        if ( element.attributeValue( "name" ) == null )
-        {
-            element.addAttribute( "name", "ejb-jar.xml" );
-        }
-        element.addAttribute( "url", getModuleFileUrl( "src/main/resources/META-INF/ejb-jar.xml" ) );
     }
 
     private void extractMacro( String path )
@@ -693,20 +705,9 @@ Can't run this anyway as Xpp3Dom is in both classloaders...
             }
         }
 
-        Element element = findElement( component, "deploymentDescriptor" );
-        if ( element.attributeValue( "version" ) == null )
-        {
-            // TODO: should derive from web.xml - does IDEA do this if omitted?
-//                    element.setAttribute( "version", "2.3" );
-        }
-        if ( element.attributeValue( "name" ) == null )
-        {
-            element.addAttribute( "name", "web.xml" );
-        }
+        addDeploymentDescriptor( component, "web.xml", "2.3", webXml );
 
-        element.addAttribute( "url", getModuleFileUrl( webXml ) );
-
-        element = findElement( component, "webroots" );
+        Element element = findElement( component, "webroots" );
         removeOldElements( element, "root" );
 
         element = createElement( element, "root" );
@@ -880,4 +881,31 @@ Can't run this anyway as Xpp3Dom is in both classloaders...
     {
         return "jar://" + artifact.getFile().getAbsolutePath().replace( '\\', '/' ) + "!/";
     }
+
+    private Element addDeploymentDescriptor( Element component, String name, String version, String file )
+    {
+        Element deploymentDescriptor = findElement( component, "deploymentDescriptor" );
+
+        if ( deploymentDescriptor.attributeValue( "version" ) == null )
+        {
+            deploymentDescriptor.addAttribute( "version", version );
+        }
+
+        if ( deploymentDescriptor.attributeValue( "name" ) == null )
+        {
+            deploymentDescriptor.addAttribute( "name", name );
+        }
+
+        deploymentDescriptor.addAttribute( "optional", "false" );
+
+        if ( deploymentDescriptorFile == null )
+        {
+            deploymentDescriptorFile = file;
+        }
+
+        deploymentDescriptor.addAttribute( "url", getModuleFileUrl( deploymentDescriptorFile ) );
+
+        return deploymentDescriptor;
+    }
+
 }
