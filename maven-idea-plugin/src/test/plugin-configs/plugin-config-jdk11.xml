@@ -5,8 +5,10 @@
         <artifactId>maven-idea-plugin</artifactId>
         <configuration>
           <project implementation="org.apache.maven.plugin.idea.stubs.SimpleMavenProjectStub"/>
-          <localRepo implementation="org.apache.maven.plugin.idea.stubs.LocalRepositoryStub"/>
-          <ideaVersion>5</ideaVersion>
+          <localRepo>${localRepository}</localRepo>
+          <ideaVersion>4</ideaVersion>
+          <jdkName>java version 1.1</jdkName>
+          <jdkLevel>1.1</jdkLevel>
         </configuration>
       </plugin>
     </plugins>
