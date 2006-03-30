@@ -1345,9 +1345,9 @@ public abstract class AbstractJavadocMojo
      * @return InputStream An input stream for reading the resource, or <tt>null</tt>
      *         if the resource could not be found
      */
-    private static InputStream getStream( String resource )
+    private InputStream getStream( String resource )
     {
-        return JavadocReport.class.getClassLoader().getResourceAsStream( resource );
+        return getClass().getClassLoader().getResourceAsStream( resource );
     }
 
     /**

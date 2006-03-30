@@ -16,10 +16,8 @@ package org.apache.maven.plugin.javadoc;
  * limitations under the License.
  */
 
-
 public class DocletArtifact
 {
-
     private String groupId;
 
     private String artifactId;
