@@ -16,7 +16,7 @@ package org.apache.maven.plugins.surefire.report;
  * limitations under the License.
  */
 
-import junit.framework.*;
+import junit.framework.TestCase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,88 +24,68 @@ import java.util.List;
 public class ReportTestSuiteTest
     extends TestCase
 {
-    ReportTestSuite tSuite;
+    private ReportTestSuite tSuite;
 
-    public ReportTestSuiteTest( String testName )
+    protected void setUp()
+        throws Exception
     {
-        super( testName );
+        super.setUp();
+
+        tSuite = new ReportTestSuite();
     }
 
-    protected void setUp(  )
-                  throws Exception
+    public void testSetTestCases()
     {
-        tSuite = new ReportTestSuite(  );
-    }
+        ReportTestCase tCase = new ReportTestCase();
 
-    protected void tearDown(  )
-                     throws Exception
-    {
-    }
-
-    public static Test suite(  )
-    {
-        TestSuite suite = new TestSuite( ReportTestSuiteTest.class );
-
-        return suite;
-    }
-
-    public void testSetTestCases(  )
-    {
-        ReportTestCase tCase = new ReportTestCase(  );
-
-        List tCaseList = new ArrayList(  );
+        List tCaseList = new ArrayList();
 
         tCaseList.add( tCase );
 
         tSuite.setTestCases( tCaseList );
 
-        assertEquals( tCase, (ReportTestCase) tSuite.getTestCases(  ).get( 0 ) );
+        assertEquals( tCase, tSuite.getTestCases().get( 0 ) );
     }
 
-    public void testSetNumberdOfErrors(  )
+    public void testSetNumberdOfErrors()
     {
         tSuite.setNumberOfErrors( 9 );
 
-        assertEquals( 9,
-                      tSuite.getNumberOfErrors(  ) );
+        assertEquals( 9, tSuite.getNumberOfErrors() );
     }
 
-    public void testSetNumberOfFailures(  )
+    public void testSetNumberOfFailures()
     {
         tSuite.setNumberOfFailures( 10 );
 
-        assertEquals( 10,
-                      tSuite.getNumberOfFailures(  ) );
+        assertEquals( 10, tSuite.getNumberOfFailures() );
     }
 
-    public void testSetNumberOfTests(  )
+    public void testSetNumberOfTests()
     {
         tSuite.setNumberOfTests( 11 );
 
-        assertEquals( 11,
-                      tSuite.getNumberOfTests(  ) );
+        assertEquals( 11, tSuite.getNumberOfTests() );
     }
 
-    public void testSetName(  )
+    public void testSetName()
     {
         tSuite.setName( "Suite Name" );
 
-        assertEquals( "Suite Name",
-                      tSuite.getName(  ) );
+        assertEquals( "Suite Name", tSuite.getName() );
     }
 
-    public void testSetPackageName(  )
+    public void testSetPackageName()
     {
         tSuite.setPackageName( "Suite Package Name" );
 
-        assertEquals( "Suite Package Name",
-                      tSuite.getPackageName(  ) );
+        assertEquals( "Suite Package Name", tSuite.getPackageName() );
     }
 
-    public void testSetTimeElapsed(  )
+    public void testSetTimeElapsed()
     {
         tSuite.setTimeElapsed( .06f );
 
-        assertTrue( .06f == tSuite.getTimeElapsed(  ) );
+        assertEquals( .06f, tSuite.getTimeElapsed(), 0.0 );
     }
 }

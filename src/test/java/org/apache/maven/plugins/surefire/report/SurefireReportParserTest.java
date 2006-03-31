@@ -16,59 +16,41 @@ package org.apache.maven.plugins.surefire.report;
  * limitations under the License.
  */
 
+import junit.framework.TestCase;
+import org.apache.maven.reporting.MavenReportException;
+
 import java.io.File;
+import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Locale;
-import java.text.NumberFormat;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import java.util.Map;
 
 public class SurefireReportParserTest
     extends TestCase
 {
-    SurefireReportParser report;
-    File testFile;
+    private SurefireReportParser report;
 
-    public SurefireReportParserTest( String testName )
+    protected void setUp()
+        throws Exception
     {
-        super( testName );
-    }
+        super.setUp();
 
-    protected void setUp(  )
-                  throws Exception
-    {
-        report = new SurefireReportParser(  );
-        
+        report = new SurefireReportParser();
+
         report.setLocale( Locale.ENGLISH );
     }
 
-    protected void tearDown(  )
-                     throws Exception
+    public void testParseXMLReportFiles()
+        throws MavenReportException
     {
-    }
+        report.setReportsDirectory( new File( System.getProperty( "basedir" ), "target/test-classes/test-reports" ) );
 
-    public static Test suite(  )
-    {
-        TestSuite suite = new TestSuite( SurefireReportParserTest.class );
+        List suites = report.parseXMLReportFiles();
 
-        return suite;
-    }
+        assertEquals( 3, suites.size() );
 
-    public void testParseXMLReportFiles(  )
-    {
-        report.setReportsDirectory( new File( System.getProperty( "basedir" ),
-                                              "target/test-classes/test-reports" ) );
-
-        List suites = report.parseXMLReportFiles(  );
-
-        assertEquals( suites.size(), 3 );
-        
         Iterator it = suites.iterator();
         while ( it.hasNext() )
         {
@@ -79,28 +61,27 @@ public class SurefireReportParserTest
         }
     }
 
-    public void testParseTestSuiteName(  )
+    public void testParseTestSuiteName()
     {
-        assertEquals( "CircleTest",
-                      report.parseTestSuiteName( "Battery: com.shape.CircleTest" ) );
+        assertEquals( "CircleTest", report.parseTestSuiteName( "Battery: com.shape.CircleTest" ) );
     }
 
-    public void testParseTestSuitePackageName(  )
+    public void testParseTestSuitePackageName()
     {
-        assertEquals( "com.shape",
-                      report.parseTestSuitePackageName( "Battery: com.shape.CircleTest" ) );
+        assertEquals( "com.shape", report.parseTestSuitePackageName( "Battery: com.shape.CircleTest" ) );
     }
 
-    public void testParseTestCaseName(  )
+    public void testParseTestCaseName()
     {
-        assertTrue( "testCase".equals( report.parseTestCaseName( "testCase(com.shape.CircleTest)" ) ) );
+        assertEquals( "testCase", report.parseTestCaseName( "testCase(com.shape.CircleTest)" ) );
     }
 
-    public void testGetSummary(  ) throws Exception
+    public void testGetSummary()
+        throws Exception
     {
-        ReportTestSuite tSuite1 = new ReportTestSuite(  );
+        ReportTestSuite tSuite1 = new ReportTestSuite();
 
-        ReportTestSuite tSuite2 = new ReportTestSuite(  );
+        ReportTestSuite tSuite2 = new ReportTestSuite();
 
         tSuite1.setNumberOfErrors( 10 );
 
@@ -118,7 +99,7 @@ public class SurefireReportParserTest
 
         tSuite2.setNumberOfTests( 100 );
 
-        List suiteList = new ArrayList(  );
+        List suiteList = new ArrayList();
 
         suiteList.add( tSuite1 );
 
@@ -126,15 +107,12 @@ public class SurefireReportParserTest
 
         Map testMap = report.getSummary( suiteList );
 
-        assertEquals( 20,
-                      Integer.parseInt( testMap.get( "totalErrors" ).toString(  ) ) );
+        assertEquals( 20, Integer.parseInt( testMap.get( "totalErrors" ).toString() ) );
 
-        assertEquals( 40,
-                      Integer.parseInt( testMap.get( "totalFailures" ).toString(  ) ) );
+        assertEquals( 40, Integer.parseInt( testMap.get( "totalFailures" ).toString() ) );
 
-        assertEquals( 200,
-                      Integer.parseInt( testMap.get( "totalTests" ).toString(  ) ) );
-        
+        assertEquals( 200, Integer.parseInt( testMap.get( "totalTests" ).toString() ) );
+
         NumberFormat numberFormat = report.getNumberFormat();
 
         assertEquals( 2.0f, numberFormat.parse( testMap.get( "totalElapsedTime" ).toString() )
@@ -144,21 +122,20 @@ public class SurefireReportParserTest
             .floatValue(), 0 );
     }
 
-    public void testSetReportsDirectory(  )
+    public void testSetReportsDirectory()
     {
         report.setReportsDirectory( new File( "Reports_Directory" ) );
 
-        assertEquals( new File( "Reports_Directory" ),
-                      report.getReportsDirectory(  ) );
+        assertEquals( new File( "Reports_Directory" ), report.getReportsDirectory() );
     }
 
-    public void testGetSuitesGroupByPackage(  )
+    public void testGetSuitesGroupByPackage()
     {
-        ReportTestSuite tSuite1 = new ReportTestSuite(  );
+        ReportTestSuite tSuite1 = new ReportTestSuite();
 
-        ReportTestSuite tSuite2 = new ReportTestSuite(  );
+        ReportTestSuite tSuite2 = new ReportTestSuite();
 
-        ReportTestSuite tSuite3 = new ReportTestSuite(  );
+        ReportTestSuite tSuite3 = new ReportTestSuite();
 
         tSuite1.setPackageName( "Package1" );
 
@@ -166,7 +143,7 @@ public class SurefireReportParserTest
 
         tSuite3.setPackageName( "Package2" );
 
-        List suiteList = new ArrayList(  );
+        List suiteList = new ArrayList();
 
         suiteList.add( tSuite1 );
 
@@ -174,48 +151,45 @@ public class SurefireReportParserTest
 
         suiteList.add( tSuite3 );
 
-        HashMap groupMap = report.getSuitesGroupByPackage( suiteList );
+        Map groupMap = report.getSuitesGroupByPackage( suiteList );
 
-        assertEquals( 2,
-                      groupMap.size(  ) );
+        assertEquals( 2, groupMap.size() );
 
-        assertEquals( tSuite1,
-                      ( (List) groupMap.get( "Package1" ) ).get( 0 ) );
+        assertEquals( tSuite1, ( (List) groupMap.get( "Package1" ) ).get( 0 ) );
 
-        assertEquals( tSuite2,
-                      ( (List) groupMap.get( "Package1" ) ).get( 1 ) );
+        assertEquals( tSuite2, ( (List) groupMap.get( "Package1" ) ).get( 1 ) );
 
-        assertEquals( tSuite3,
-                      ( (List) groupMap.get( "Package2" ) ).get( 0 ) );
+        assertEquals( tSuite3, ( (List) groupMap.get( "Package2" ) ).get( 0 ) );
     }
 
-    public void testComputePercentage(  ) throws Exception
+    public void testComputePercentage()
+        throws Exception
     {
-    	NumberFormat numberFormat = report.getNumberFormat();
-    	
+        NumberFormat numberFormat = report.getNumberFormat();
+
         assertEquals( 70.00f, numberFormat.parse( report.computePercentage( 100, 20, 10 ) )
             .floatValue(), 0 );
     }
 
-    public void testGetFailureDetails(  )
+    public void testGetFailureDetails()
     {
-        ReportTestSuite tSuite1 = new ReportTestSuite(  );
+        ReportTestSuite tSuite1 = new ReportTestSuite();
 
-        ReportTestSuite tSuite2 = new ReportTestSuite(  );
+        ReportTestSuite tSuite2 = new ReportTestSuite();
 
-        ReportTestCase tCase1 = new ReportTestCase(  );
+        ReportTestCase tCase1 = new ReportTestCase();
 
-        ReportTestCase tCase2 = new ReportTestCase(  );
+        ReportTestCase tCase2 = new ReportTestCase();
 
-        ReportTestCase tCase3 = new ReportTestCase(  );
+        ReportTestCase tCase3 = new ReportTestCase();
 
-        tCase1.setFailure( new HashMap(  ) );
+        tCase1.addFailure( null, null );
 
-        tCase3.setFailure( new HashMap(  ) );
+        tCase3.addFailure( null, null );
 
-        List tCaseList = new ArrayList(  );
+        List tCaseList = new ArrayList();
 
-        List tCaseList2 = new ArrayList(  );
+        List tCaseList2 = new ArrayList();
 
         tCaseList.add( tCase1 );
 
@@ -227,7 +201,7 @@ public class SurefireReportParserTest
 
         tSuite2.setTestCases( tCaseList2 );
 
-        List suiteList = new ArrayList(  );
+        List suiteList = new ArrayList();
 
         suiteList.add( tSuite1 );
 
@@ -235,13 +209,10 @@ public class SurefireReportParserTest
 
         List failList = report.getFailureDetails( suiteList );
 
-        assertEquals( 2,
-                      failList.size(  ) );
+        assertEquals( 2, failList.size() );
 
-        assertEquals( tCase1,
-                      failList.get( 0 ) );
+        assertEquals( tCase1, failList.get( 0 ) );
 
-        assertEquals( tCase3,
-                      failList.get( 1 ) );
+        assertEquals( tCase3, failList.get( 1 ) );
     }
 }
