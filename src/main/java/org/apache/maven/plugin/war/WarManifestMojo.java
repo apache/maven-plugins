@@ -16,11 +16,6 @@ package org.apache.maven.plugin.war;
  * limitations under the License.
  */
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -28,6 +23,12 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.archiver.jar.Manifest;
 import org.codehaus.plexus.archiver.jar.ManifestException;
 import org.codehaus.plexus.archiver.war.WarArchiver;
+import org.codehaus.plexus.util.IOUtil;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * Generate a manifest for this WAR.
@@ -74,32 +75,28 @@ public class WarManifestMojo
         ma.setArchiver( warArchiver );
         ma.setOutputFile( manifestFile );
 
+        PrintWriter printWriter = null;
         try
         {
             Manifest mf = ma.getManifest( getProject(), archive.getManifest() );
-            FileWriter fileWriter = new FileWriter( manifestFile );
-            PrintWriter printWriter = new PrintWriter( fileWriter );
-            try
-            {
-                mf.write( printWriter );
-            }
-            finally
-            {
-                printWriter.close();
-                fileWriter.close();
-            }
+            printWriter = new PrintWriter( new FileWriter( manifestFile ) );
+            mf.write( printWriter );
         }
         catch ( ManifestException e )
         {
-            throw new MojoExecutionException( "Error preparing the manifest", e );
+            throw new MojoExecutionException( "Error preparing the manifest: " + e.getMessage(), e );
         }
         catch ( DependencyResolutionRequiredException e )
         {
-            throw new MojoExecutionException( "Error preparing the manifest", e );
+            throw new MojoExecutionException( "Error preparing the manifest: " + e.getMessage(), e );
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "Error preparing the manifest", e );
+            throw new MojoExecutionException( "Error preparing the manifest: " + e.getMessage(), e );
+        }
+        finally
+        {
+            IOUtil.close( printWriter );
         }
     }
 }
