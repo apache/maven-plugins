@@ -17,7 +17,7 @@ package org.apache.maven.plugin.idea;
  */
 
 import org.apache.maven.plugin.idea.stubs.SimpleMavenProjectStub;
-import org.apache.maven.plugins.testing.AbstractMojoTestCase;
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.dom4j.io.SAXReader;
 import org.dom4j.DocumentException;
 import org.dom4j.Document;
