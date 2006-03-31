@@ -17,21 +17,23 @@ package org.apache.maven.plugins.surefire.report;
  */
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class ReportTestCase
 {
     private String fullClassName;
+
     private String className;
+
     private String fullName;
+
     private String name;
+
     private float time;
-    private HashMap failure;
 
-    public ReportTestCase(  )
-    {
-    }
+    private Map failure;
 
-    public String getName(  )
+    public String getName()
     {
         return name;
     }
@@ -41,7 +43,7 @@ public class ReportTestCase
         this.name = name;
     }
 
-    public String getFullClassName(  )
+    public String getFullClassName()
     {
         return fullClassName;
     }
@@ -51,7 +53,7 @@ public class ReportTestCase
         this.fullClassName = name;
     }
 
-    public String getClassName(  )
+    public String getClassName()
     {
         return className;
     }
@@ -61,7 +63,7 @@ public class ReportTestCase
         this.className = name;
     }
 
-    public float getTime(  )
+    public float getTime()
     {
         return time;
     }
@@ -71,17 +73,12 @@ public class ReportTestCase
         this.time = time;
     }
 
-    public HashMap getFailure(  )
+    public Map getFailure()
     {
         return failure;
     }
 
-    public void setFailure( HashMap failure )
-    {
-        this.failure = failure;
-    }
-
-    public String getFullName(  )
+    public String getFullName()
     {
         return fullName;
     }
@@ -89,5 +86,12 @@ public class ReportTestCase
     public void setFullName( String fullName )
     {
         this.fullName = fullName;
+    }
+
+    public void addFailure( String message, String type )
+    {
+        failure = new HashMap();
+        failure.put( "message", message );
+        failure.put( "type", type );
     }
 }
