@@ -18,6 +18,7 @@ package org.apache.maven.plugin.war;
 
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProjectHelper;
@@ -84,9 +85,12 @@ public class WarMojo
     private MavenProjectHelper projectHelper;
 
     /**
-     * @parameter expression="${setWarFile}" default-value="true"
+     * Whether this is the main artifact being built. Set to <code>false</code> if you don't want to install or
+     * deploy it to the local repository instead of the default one in an execution.
+     *
+     * @parameter expression="${primaryArtifact}" default-value="true"
      */
-    private boolean setWarFile;
+    private boolean primaryArtifact;
 
     // ----------------------------------------------------------------------
     // Implementation
@@ -122,16 +126,27 @@ public class WarMojo
     public void execute()
         throws MojoExecutionException
     {
-        File warFile = getWarFile( new File( outputDirectory ), warName, getClassifier() );
+        File warFile = getWarFile( new File( outputDirectory ), warName, classifier );
 
         try
         {
             performPackaging( warFile );
         }
-        catch ( Exception e )
+        catch ( DependencyResolutionRequiredException e )
         {
-            // TODO: improve error handling
+            throw new MojoExecutionException( "Error assembling WAR: " + e.getMessage(), e );
+        }
+        catch ( ManifestException e )
+        {
             throw new MojoExecutionException( "Error assembling WAR", e );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Error assembling WAR", e );
+        }
+        catch ( ArchiverException e )
+        {
+            throw new MojoExecutionException( "Error assembling WAR: " + e.getMessage(), e );
         }
     }
 
@@ -143,10 +158,11 @@ public class WarMojo
      * @throws ArchiverException
      * @throws ManifestException
      * @throws DependencyResolutionRequiredException
+     *
      */
     private void performPackaging( File warFile )
         throws IOException, ArchiverException, ManifestException, DependencyResolutionRequiredException,
-            MojoExecutionException
+        MojoExecutionException
     {
         buildExplodedWebapp( getWebappDirectory() );
 
@@ -166,24 +182,22 @@ public class WarMojo
         // create archive
         archiver.createArchive( getProject(), archive );
 
-        String classifier = getClassifier();
+        String classifier = this.classifier;
         if ( classifier != null )
         {
             projectHelper.attachArtifact( getProject(), "war", classifier, warFile );
         }
         else
         {
-            if( setWarFile )
+            Artifact artifact = getProject().getArtifact();
+            if ( primaryArtifact )
             {
-                getProject().getArtifact().setFile( warFile );
+                artifact.setFile( warFile );
             }
-            else
+            else if ( artifact.getFile() == null || artifact.getFile().isDirectory() )
             {
-                if( getProject().getArtifact().getFile() == null || getProject().getArtifact().getFile().isDirectory() )
-                {
-                    getProject().getArtifact().setFile( warFile );
-                }
-            }            
+                artifact.setFile( warFile );
+            }
         }
     }
 }
