@@ -18,37 +18,37 @@ package org.apache.maven.plugin.war;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.model.Resource;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.InterpolationFilterReader;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.InterpolationFilterReader;
+import org.codehaus.plexus.util.StringUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
 import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.Properties;
+import java.util.Set;
 
 public abstract class AbstractWarMojo
     extends AbstractMojo
@@ -280,15 +280,15 @@ public abstract class AbstractWarMojo
         }
 
         // if webXML is specified, omit the one in the source directory
-        if ( ( webXml != null ) && StringUtils.isNotEmpty( webXml.getName() ) )
+        if ( webXml != null && StringUtils.isNotEmpty( webXml.getName() ) )
         {
             excludeList.add( "**/" + WEB_INF + "/web.xml" );
         }
 
         // if contextXML is specified, omit the one in the source directory
-        if ( ( containerConfigXML != null ) && StringUtils.isNotEmpty( containerConfigXML.getName() ) )
+        if ( containerConfigXML != null && StringUtils.isNotEmpty( containerConfigXML.getName() ) )
         {
-            excludeList.add( "**/" + META_INF + "/" + getContainerConfigXML().getName() );
+            excludeList.add( "**/" + META_INF + "/" + containerConfigXML.getName() );
         }
 
         return (String[]) excludeList.toArray( EMPTY_STRING_ARRAY );
@@ -313,12 +313,16 @@ public abstract class AbstractWarMojo
      */
     protected String[] getDependentWarExcludes()
     {
+        String[] excludes;
         if ( StringUtils.isNotEmpty( dependentWarExcludes ) )
         {
-            return StringUtils.split( dependentWarExcludes, "," );
+            excludes = StringUtils.split( dependentWarExcludes, "," );
         }
-
-        return (String[]) EMPTY_STRING_ARRAY.clone();
+        else
+        {
+            excludes = EMPTY_STRING_ARRAY;
+        }
+        return excludes;
     }
 
     /**
@@ -347,7 +351,7 @@ public abstract class AbstractWarMojo
 
         try
         {
-            if ( ( webResources != null ) && ( webResources.size() > 0 ) )
+            if ( webResources != null && webResources.size() > 0 )
             {
                 for ( Iterator it = webResources.iterator(); it.hasNext(); )
                 {
@@ -357,23 +361,23 @@ public abstract class AbstractWarMojo
             }
             else
             {
-                copyResources( getWarSourceDirectory(), webappDirectory );
+                copyResources( warSourceDirectory, webappDirectory );
             }
 
-            if ( ( webXml != null ) && StringUtils.isNotEmpty( webXml.getName() ) )
+            if ( webXml != null && StringUtils.isNotEmpty( webXml.getName() ) )
             {
                 //rename to web.xml
                 copyFileIfModified( webXml, new File( webinfDir, "/web.xml" ) );
             }
 
-            if ( ( containerConfigXML != null ) && StringUtils.isNotEmpty( containerConfigXML.getName() ) )
+            if ( containerConfigXML != null && StringUtils.isNotEmpty( containerConfigXML.getName() ) )
             {
                 metainfDir = new File( webappDirectory, META_INF );
                 String xmlFileName = containerConfigXML.getName();
                 copyFileIfModified( containerConfigXML, new File( metainfDir, xmlFileName ) );
             }
 
-            buildWebapp( getProject(), webappDirectory );
+            buildWebapp( project, webappDirectory );
         }
         catch ( IOException e )
         {
@@ -389,17 +393,17 @@ public abstract class AbstractWarMojo
      * exists, it will be copied to the <tt>META-INF</tt> directory and
      * renamed accordingly.
      *
-     * @param resource the resource to copy
+     * @param resource        the resource to copy
      * @param webappDirectory the target directory
      * @throws java.io.IOException if an error occured while copying webResources
      */
-    public void copyResources(Resource resource, File webappDirectory )
-         throws IOException
+    public void copyResources( Resource resource, File webappDirectory )
+        throws IOException
     {
         if ( !resource.getDirectory().equals( webappDirectory.getPath() ) )
         {
             getLog().info( "Copy webapp webResources to " + webappDirectory.getAbsolutePath() );
-            if ( getWarSourceDirectory().exists() )
+            if ( warSourceDirectory.exists() )
             {
                 String[] fileNames = getWarFiles( resource );
                 for ( int i = 0; i < fileNames.length; i++ )
@@ -429,13 +433,13 @@ public abstract class AbstractWarMojo
         if ( !sourceDirectory.equals( webappDirectory ) )
         {
             getLog().info( "Copy webapp webResources to " + webappDirectory.getAbsolutePath() );
-            if ( getWarSourceDirectory().exists() )
+            if ( warSourceDirectory.exists() )
             {
                 String[] fileNames = getWarFiles( sourceDirectory );
                 for ( int i = 0; i < fileNames.length; i++ )
                 {
                     copyFileIfModified( new File( sourceDirectory, fileNames[i] ),
-                                                  new File( webappDirectory, fileNames[i] ) );
+                                        new File( webappDirectory, fileNames[i] ) );
                 }
             }
         }
@@ -462,9 +466,9 @@ public abstract class AbstractWarMojo
 
         File webappClassesDirectory = new File( webappDirectory, WEB_INF + "/classes" );
 
-        if ( getClassesDirectory().exists() && ( !getClassesDirectory().equals( webappClassesDirectory ) ) )
+        if ( classesDirectory.exists() && !classesDirectory.equals( webappClassesDirectory ) )
         {
-            copyDirectoryStructureIfModified( getClassesDirectory(), webappClassesDirectory );
+            copyDirectoryStructureIfModified( classesDirectory, webappClassesDirectory );
         }
 
         Set artifacts = project.getArtifacts();
@@ -476,7 +480,7 @@ public abstract class AbstractWarMojo
         for ( Iterator iter = artifacts.iterator(); iter.hasNext(); )
         {
             Artifact artifact = (Artifact) iter.next();
-            String targetFileName = getM2Filename( artifact );
+            String targetFileName = getDefaultFinalName( artifact );
 
             getLog().debug( "Processing: " + targetFileName );
 
@@ -554,7 +558,7 @@ public abstract class AbstractWarMojo
         for ( Iterator iter = artifacts.iterator(); iter.hasNext(); )
         {
             Artifact artifact = (Artifact) iter.next();
-            String candidate = getM2Filename( artifact );
+            String candidate = getDefaultFinalName( artifact );
             if ( identifiers.contains( candidate ) )
             {
                 duplicates.add( candidate );
@@ -621,8 +625,7 @@ public abstract class AbstractWarMojo
 
         try
         {
-            UnArchiver unArchiver;
-            unArchiver = this.archiverManager.getUnArchiver( archiveExt );
+            UnArchiver unArchiver = archiverManager.getUnArchiver( archiveExt );
             unArchiver.setSourceFile( file );
             unArchiver.setDestDirectory( location );
             unArchiver.extract();
@@ -717,11 +720,11 @@ public abstract class AbstractWarMojo
     {
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir( source.getDirectory() );
-        String[] excludes = (String []) source.getExcludes().toArray(new String[source.getExcludes().size()]);
+        String[] excludes = (String []) source.getExcludes().toArray( new String[source.getExcludes().size()] );
         scanner.setExcludes( excludes );
         scanner.addDefaultExcludes();
 
-        String[] includes = (String []) source.getIncludes().toArray(new String[source.getIncludes().size()]);
+        String[] includes = (String []) source.getIncludes().toArray( new String[source.getIncludes().size()] );
         scanner.setIncludes( includes );
 
         scanner.scan();
@@ -735,18 +738,16 @@ public abstract class AbstractWarMojo
      * (and any parent directories) will be created. If a file <code>source</code> in
      * <code>destinationDirectory</code> exists, it will be overwritten.
      *
-     * @param source An existing <code>File</code> to copy.
+     * @param source               An existing <code>File</code> to copy.
      * @param destinationDirectory A directory to copy <code>source</code> into.
-     *
      * @throws java.io.FileNotFoundException if <code>source</code> isn't a normal file.
-     * @throws IllegalArgumentException if <code>destinationDirectory</code> isn't a directory.
-     * @throws java.io.IOException if <code>source</code> does not exist, the file in
-     * <code>destinationDirectory</code> cannot be written to, or an IO error occurs during copying.
-     *
-     * TO DO: Remove this method when Maven moves to plexus-utils version 1.4
+     * @throws IllegalArgumentException      if <code>destinationDirectory</code> isn't a directory.
+     * @throws java.io.IOException           if <code>source</code> does not exist, the file in
+     *                                       <code>destinationDirectory</code> cannot be written to, or an IO error occurs during copying.
+     *                                       <p/>
+     *                                       TO DO: Remove this method when Maven moves to plexus-utils version 1.4
      */
-    public static void copyFileToDirectoryIfModified( final File source,
-                                                      final File destinationDirectory )
+    private static void copyFileToDirectoryIfModified( File source, File destinationDirectory )
         throws IOException
     {
         // TO DO: Remove this method and use the method in WarFileUtils when Maven 2 changes
@@ -763,11 +764,9 @@ public abstract class AbstractWarMojo
      * @param from
      * @param to
      * @param filtering
-     * @throws IOException
-     *
-     * TO DO: Remove this method when Maven moves to plexus-utils version 1.4
+     * @throws IOException TO DO: Remove this method when Maven moves to plexus-utils version 1.4
      */
-    private void copyFileIfModified( File from, final File to, boolean filtering )
+    private void copyFileIfModified( File from, File to, boolean filtering )
         throws IOException
     {
         FilterWrapper[] wrappers = null;
@@ -777,17 +776,17 @@ public abstract class AbstractWarMojo
                 // support ${token}
                 new FilterWrapper()
                 {
-                    public Reader getReader( Reader reader )
+                    public Reader getReader( Reader fileReader )
                     {
-                        return new InterpolationFilterReader( reader, filterProperties, "${", "}" );
+                        return new InterpolationFilterReader( fileReader, filterProperties, "${", "}" );
                     }
                 },
                 // support @token@
                 new FilterWrapper()
                 {
-                    public Reader getReader( Reader reader )
+                    public Reader getReader( Reader fileReader )
                     {
-                        return new InterpolationFilterReader( reader, filterProperties, "@", "@" );
+                        return new InterpolationFilterReader( fileReader, filterProperties, "@", "@" );
                     }
                 }};
         }
@@ -799,11 +798,9 @@ public abstract class AbstractWarMojo
      * @param to
      * @param encoding
      * @param wrappers
-     * @throws IOException
-     *
-     * TO DO: Remove this method when Maven moves to plexus-utils version 1.4
+     * @throws IOException TO DO: Remove this method when Maven moves to plexus-utils version 1.4
      */
-    public static void copyFileIfModified(File from, File to, String encoding, FilterWrapper[] wrappers)
+    private static void copyFileIfModified( File from, File to, String encoding, FilterWrapper[] wrappers )
         throws IOException
     {
         if ( wrappers != null && wrappers.length > 0 )
@@ -830,9 +827,10 @@ public abstract class AbstractWarMojo
                 }
 
                 Reader reader = fileReader;
-                for (int i = 0; i < wrappers.length; i++) {
+                for ( int i = 0; i < wrappers.length; i++ )
+                {
                     FilterWrapper wrapper = wrappers[i];
-                    reader = wrapper.getReader(reader);
+                    reader = wrapper.getReader( reader );
                 }
 
                 IOUtil.copy( reader, fileWriter );
@@ -842,7 +840,9 @@ public abstract class AbstractWarMojo
                 IOUtil.close( fileReader );
                 IOUtil.close( fileWriter );
             }
-        } else {
+        }
+        else
+        {
             copyFileIfModified( from, to );
         }
     }
@@ -852,31 +852,29 @@ public abstract class AbstractWarMojo
      * The directories up to <code>destination</code> will be created if they don't already exist.
      * <code>destination</code> will be overwritten if it already exists.
      *
-     * @param source An existing non-directory <code>File</code> to copy bytes from.
+     * @param source      An existing non-directory <code>File</code> to copy bytes from.
      * @param destination A non-directory <code>File</code> to write bytes to (possibly
-     * overwriting).
-     *
-     * @throws IOException if <code>source</code> does not exist, <code>destination</code> cannot be
-     * written to, or an IO error occurs during copying.
-     *
+     *                    overwriting).
+     * @throws IOException                   if <code>source</code> does not exist, <code>destination</code> cannot be
+     *                                       written to, or an IO error occurs during copying.
      * @throws java.io.FileNotFoundException if <code>destination</code> is a directory
-     *
-     * TO DO: Remove this method when Maven moves to plexus-utils version 1.4
+     *                                       <p/>
+     *                                       TO DO: Remove this method when Maven moves to plexus-utils version 1.4
      */
-    public static void copyFileIfModified( final File source, final File destination )
+    private static void copyFileIfModified( File source, File destination )
         throws IOException
     {
         // TO DO: Remove this method and use the method in WarFileUtils when Maven 2 changes
         // to plexus-utils 1.2.
         if ( destination.lastModified() < source.lastModified() )
         {
-            org.codehaus.plexus.util.FileUtils.copyFile( source, destination );
+            FileUtils.copyFile( source, destination );
         }
     }
 
     /**
      * Copies a entire directory structure but only source files with timestamp later than the destinations'.
-     *
+     * <p/>
      * Note:
      * <ul>
      * <li>It will include empty directories.
@@ -885,59 +883,59 @@ public abstract class AbstractWarMojo
      *
      * @param sourceDirectory
      * @param destinationDirectory
-     * @throws IOException
-     *
-     * TO DO: Remove this method when Maven moves to plexus-utils version 1.4
+     * @throws IOException TO DO: Remove this method when Maven moves to plexus-utils version 1.4
      */
-    public static void copyDirectoryStructureIfModified( File sourceDirectory, File destinationDirectory )
+    private static void copyDirectoryStructureIfModified( File sourceDirectory, File destinationDirectory )
         throws IOException
     {
-       if ( !sourceDirectory.exists() )
-       {
-           throw new IOException( "Source directory doesn't exists (" + sourceDirectory.getAbsolutePath() + ")." );
-       }
+        if ( !sourceDirectory.exists() )
+        {
+            throw new IOException( "Source directory doesn't exists (" + sourceDirectory.getAbsolutePath() + ")." );
+        }
 
-       File[] files = sourceDirectory.listFiles();
+        File[] files = sourceDirectory.listFiles();
 
-       String sourcePath = sourceDirectory.getAbsolutePath();
+        String sourcePath = sourceDirectory.getAbsolutePath();
 
-       for ( int i = 0; i < files.length; i++ )
-       {
-           File file = files[i];
+        for ( int i = 0; i < files.length; i++ )
+        {
+            File file = files[i];
 
-           String dest = file.getAbsolutePath();
+            String dest = file.getAbsolutePath();
 
-           dest = dest.substring( sourcePath.length() + 1 );
+            dest = dest.substring( sourcePath.length() + 1 );
 
-           File destination = new File( destinationDirectory, dest );
+            File destination = new File( destinationDirectory, dest );
 
-           if ( file.isFile() )
-           {
-               destination = destination.getParentFile();
+            if ( file.isFile() )
+            {
+                destination = destination.getParentFile();
 
-               copyFileToDirectoryIfModified( file, destination );
-           }
-           else if ( file.isDirectory() )
-           {
-               if ( !destination.exists() && !destination.mkdirs() )
-               {
-                   throw new IOException( "Could not create destination directory '" + destination.getAbsolutePath() + "'." );
-               }
+                copyFileToDirectoryIfModified( file, destination );
+            }
+            else if ( file.isDirectory() )
+            {
+                if ( !destination.exists() && !destination.mkdirs() )
+                {
+                    throw new IOException(
+                        "Could not create destination directory '" + destination.getAbsolutePath() + "'." );
+                }
 
-               copyDirectoryStructureIfModified( file, destination );
-           }
-           else
-           {
-               throw new IOException( "Unknown file type: " + file.getAbsolutePath() );
-           }
-       }
+                copyDirectoryStructureIfModified( file, destination );
+            }
+            else
+            {
+                throw new IOException( "Unknown file type: " + file.getAbsolutePath() );
+            }
+        }
     }
 
     /**
-     * TO DO: Remove this abstract class when Maven moves to plexus-utils version 1.4
+     * TO DO: Remove this interface when Maven moves to plexus-utils version 1.4
      */
-    public static abstract class FilterWrapper {
-        public abstract Reader getReader(Reader fileReader);
+    private interface FilterWrapper
+    {
+        Reader getReader( Reader fileReader );
     }
 
     /**
@@ -946,19 +944,9 @@ public abstract class AbstractWarMojo
      * @param artifact
      * @return converted filename of the artifact
      */
-    private String getM2Filename( Artifact artifact )
+    private String getDefaultFinalName( Artifact artifact )
     {
-        String filename;
-        if ( !artifact.getFile().getName().equals(
-            artifact.getArtifactId() + "-" + artifact.getVersion() + "." + artifact.getType() ) )
-        {
-            filename = artifact.getArtifactId() + "-" + artifact.getVersion() + "." + artifact.getType();
-        }
-        else
-        {
-            filename = artifact.getFile().getName();
-        }
-        return filename;
+        return artifact.getArtifactId() + "-" + artifact.getVersion() + "." + artifact.getType();
     }
 
 }
