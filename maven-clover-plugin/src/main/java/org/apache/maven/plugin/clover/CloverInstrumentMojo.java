@@ -34,6 +34,10 @@ import org.apache.maven.plugin.MojoExecutionException;
  */
 public class CloverInstrumentMojo extends AbstractCloverMojo
 {
+    /**
+     * {@inheritDoc}
+     * @see org.apache.maven.plugin.clover.AbstractCloverMojo#execute()
+     */
     public void execute()
         throws MojoExecutionException
     {
