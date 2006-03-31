@@ -18,16 +18,12 @@ package org.apache.maven.plugin.idea.stubs;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Dependency;
-import org.apache.maven.plugins.testing.stubs.MavenProjectStub;
+import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.model.Dependency;
-import org.apache.maven.plugins.testing.stubs.MavenProjectStub;
 
 /**
  * @author Edwin Punzalan
