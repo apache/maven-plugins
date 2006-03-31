@@ -315,7 +315,7 @@ public abstract class AbstractWarMojo
 
         try
         {
-            List webResources = Arrays.asList( this.webResources );
+            List webResources = this.webResources != null ? Arrays.asList( this.webResources ) : null;
             if ( webResources != null && webResources.size() > 0 )
             {
                 Properties filterProperties = getBuildFilterProperties();
