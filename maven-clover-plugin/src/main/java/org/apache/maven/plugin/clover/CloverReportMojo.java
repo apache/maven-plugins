@@ -140,7 +140,6 @@ public class CloverReportMojo extends AbstractMavenReport
 
             // If we're in a module with children modules, then create an extra report by aggregating the children
             // clover databases.
-getLog().info("yyyyyyy modules = " + getProject().getModules().size());
             if ( this.aggregate && ( getProject().getModules().size() > 0 ) )
             {
                 // Ensure the merged database output directory exists
@@ -322,10 +321,6 @@ getLog().info("yyyyyyy modules = " + getProject().getModules().size());
         for ( Iterator projects = this.reactorProjects.iterator(); projects.hasNext(); )
         {
             MavenProject project = (MavenProject) projects.next();
-getLog().info("YYYY | project = " + project.getName());
-getLog().info("YYYY | is java project = " + isJavaProject(project));
-getLog().info("YYYY | children clover db not empty = " + !getChildrenCloverDatabases().isEmpty());
-
             if ( isJavaProject(project) && !getChildrenCloverDatabases().isEmpty() )
             {
                 canGenerate = true;
