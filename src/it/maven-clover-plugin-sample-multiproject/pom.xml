@@ -19,10 +19,6 @@
     <plugins>
       <plugin>
         <artifactId>maven-clover-plugin</artifactId>
-<!--        <configuration>
-          <flushPolicy>threaded</flushPolicy>
-          <flushInterval>100</flushInterval>
-        </configuration>-->
       </plugin>
     </plugins>
   </reporting>
@@ -39,6 +35,7 @@
             <phase>pre-site</phase>
             <goals>
               <goal>instrument</goal>
+              <goal>aggregate</goal>
             </goals>
           </execution>
         </executions>

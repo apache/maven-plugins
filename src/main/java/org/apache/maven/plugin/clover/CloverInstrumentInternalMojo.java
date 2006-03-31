@@ -83,6 +83,10 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
 
     private String cloverOutputSourceDirectory;
 
+    /**
+     * {@inheritDoc}
+     * @see org.apache.maven.plugin.clover.AbstractCloverMojo#execute()  
+     */
     public void execute()
         throws MojoExecutionException
     {
