@@ -16,17 +16,21 @@ package org.apache.maven.plugins.surefire.report;
  * limitations under the License.
  */
 
+import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.plexus.util.DirectoryScanner;
+import org.codehaus.plexus.util.StringUtils;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 import java.util.Locale;
-
-import org.codehaus.plexus.util.DirectoryScanner;
-import org.codehaus.plexus.util.StringUtils;
+import java.util.Map;
 
 public class SurefireReportParser
 {
@@ -35,8 +39,10 @@ public class SurefireReportParser
     private File reportsDirectory;
 
     private List testSuites = new ArrayList();
-    
+
     private Locale locale;
+
+    private static final int PCENT = 100;
 
     public SurefireReportParser()
     {
@@ -44,27 +50,40 @@ public class SurefireReportParser
 
     public SurefireReportParser( File reportsDirectory, Locale locale )
     {
-        setReportsDirectory(reportsDirectory);
-        
-        setLocale(locale);
+        this.reportsDirectory = reportsDirectory;
+
+        setLocale( locale );
     }
 
     public List parseXMLReportFiles()
+        throws MavenReportException
     {
-        ReportTestSuite testSuite;
-
-        if ( !reportsDirectory.exists() )
+        if ( reportsDirectory.exists() )
         {
-            return testSuites;
-        }
+            String[] xmlReportFiles = getIncludedFiles( reportsDirectory, "*.xml", "*.txt" );
 
-        String[] xmlReportFiles = getIncludedFiles( reportsDirectory, "*.xml", "*.txt" );
+            for ( int index = 0; index < xmlReportFiles.length; index++ )
+            {
+                ReportTestSuite testSuite = new ReportTestSuite();
+                try
+                {
+                    testSuite.parse( reportsDirectory + "/" + xmlReportFiles[index] );
+                }
+                catch ( ParserConfigurationException e )
+                {
+                    throw new MavenReportException( "Error setting up parser for JUnit XML report", e );
+                }
+                catch ( SAXException e )
+                {
+                    throw new MavenReportException( "Error parsing JUnit XML report", e );
+                }
+                catch ( IOException e )
+                {
+                    throw new MavenReportException( "Error reading JUnit XML report", e );
+                }
 
-        for ( int index = 0; index < xmlReportFiles.length; index++ )
-        {
-            testSuite = new ReportTestSuite( reportsDirectory + "/" + xmlReportFiles[index] );
-
-            testSuites.add( testSuite );
+                testSuites.add( testSuite );
+            }
         }
 
         return testSuites;
@@ -97,8 +116,6 @@ public class SurefireReportParser
 
         int totalNumberOfFailures = 0;
 
-        String totalPercentage = "";
-
         float totalElapsedTime = 0.0f;
 
         while ( iter.hasNext() )
@@ -114,7 +131,7 @@ public class SurefireReportParser
             totalElapsedTime += suite.getTimeElapsed();
         }
 
-        totalPercentage = computePercentage( totalNumberOfTests, totalNumberOfErrors, totalNumberOfFailures );
+        String totalPercentage = computePercentage( totalNumberOfTests, totalNumberOfErrors, totalNumberOfFailures );
 
         totalSummary.put( "totalTests", Integer.toString( totalNumberOfTests ) );
 
@@ -138,33 +155,33 @@ public class SurefireReportParser
     {
         return this.reportsDirectory;
     }
-    
-    public void setLocale( Locale locale )
+
+    public final void setLocale( Locale locale )
     {
         this.locale = locale;
-        setNumberFormat( NumberFormat.getInstance( locale ) );
+        numberFormat = NumberFormat.getInstance( locale );
     }
 
     public Locale getLocale()
     {
         return this.locale;
     }
-    
+
     public void setNumberFormat( NumberFormat numberFormat )
     {
         this.numberFormat = numberFormat;
     }
-    
+
     public NumberFormat getNumberFormat()
     {
-    	return this.numberFormat;
+        return this.numberFormat;
     }
 
-    public HashMap getSuitesGroupByPackage( List testSuitesList )
+    public Map getSuitesGroupByPackage( List testSuitesList )
     {
         ListIterator iter = testSuitesList.listIterator();
 
-        HashMap suitePackage = new HashMap();
+        Map suitePackage = new HashMap();
 
         while ( iter.hasNext() )
         {
@@ -172,7 +189,7 @@ public class SurefireReportParser
 
             List suiteList = new ArrayList();
 
-            if ( (List) suitePackage.get( suite.getPackageName() ) != null )
+            if ( suitePackage.get( suite.getPackageName() ) != null )
             {
                 suiteList = (List) suitePackage.get( suite.getPackageName() );
             }
@@ -187,12 +204,15 @@ public class SurefireReportParser
 
     public String computePercentage( int tests, int errors, int failures )
     {
+        float percentage;
         if ( tests == 0 )
         {
-            return numberFormat.format( 0.00f );
+            percentage = 0;
         }
-
-        float percentage = ( (float) ( tests - errors - failures ) / (float) tests ) * 100;
+        else
+        {
+            percentage = ( (float) ( tests - errors - failures ) / (float) tests ) * PCENT;
+        }
 
         return numberFormat.format( percentage );
     }
@@ -208,21 +228,19 @@ public class SurefireReportParser
             ReportTestSuite suite = (ReportTestSuite) iter.next();
 
             List testCaseList = suite.getTestCases();
-            
-            if ( testCaseList == null )
+
+            if ( testCaseList != null )
             {
-                continue;
-            }
+                ListIterator caseIter = testCaseList.listIterator();
 
-            ListIterator caseIter = testCaseList.listIterator();
-
-            while ( caseIter.hasNext() )
-            {
-                ReportTestCase tCase = (ReportTestCase) caseIter.next();
-
-                if ( tCase.getFailure() != null )
+                while ( caseIter.hasNext() )
                 {
-                    failureDetailList.add( tCase );
+                    ReportTestCase tCase = (ReportTestCase) caseIter.next();
+
+                    if ( tCase.getFailure() != null )
+                    {
+                        failureDetailList.add( tCase );
+                    }
                 }
             }
         }
@@ -242,8 +260,6 @@ public class SurefireReportParser
 
         scanner.scan();
 
-        String[] filesToFormat = scanner.getIncludedFiles();
-
-        return filesToFormat;
+        return scanner.getIncludedFiles();
     }
 }

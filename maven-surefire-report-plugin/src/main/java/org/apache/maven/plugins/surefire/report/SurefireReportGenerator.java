@@ -18,7 +18,6 @@ package org.apache.maven.plugins.surefire.report;
 
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.doxia.sink.Sink;
-import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.text.NumberFormat;
@@ -58,29 +57,29 @@ public class SurefireReportGenerator
 
         sink.text( bundle.getString( "report.surefire.description" ) );
 
+        StringBuffer str = new StringBuffer();
+        str.append( "<script type=\"text/javascript\">\n" );
+        str.append( "function toggleDisplay(elementId) {\n" );
+        str.append( " var elm = document.getElementById(elementId + 'error');\n" );
+        str.append( " if (elm && typeof elm.style != \"undefined\") {\n" );
+        str.append( " if (elm.style.display == \"none\") {\n" );
+        str.append( " elm.style.display = \"\";\n" );
+        str.append( " document.getElementById(elementId + 'off').style.display = \"none\";\n" );
+        str.append( " document.getElementById(elementId + 'on').style.display = \"inline\";\n" );
+        str.append( " }" );
+        str.append( " else if (elm.style.display == \"\") {" );
+        str.append( " elm.style.display = \"none\";\n" );
+        str.append( " document.getElementById(elementId + 'off').style.display = \"inline\";\n" );
+        str.append( " document.getElementById(elementId + 'on').style.display = \"none\";\n" );
+        str.append( " } \n" );
+        str.append( " } \n" );
+        str.append( " }\n" );
+        str.append( "</script>" );
+        sink.rawText( str.toString() );
+
         sink.head_();
 
         sink.body();
-
-        StringBuffer str = new StringBuffer();
-        str.append("<script type=\"text/javascript\">\n")
-        .append("function toggleDisplay(elementId) {\n")
-        .append(" var elm = document.getElementById(elementId + 'error');\n")
-        .append(" if (elm && typeof elm.style != \"undefined\") {\n")
-        .append(" if (elm.style.display == \"none\") {\n")
-        .append(" elm.style.display = \"\";\n")
-        .append(" document.getElementById(elementId + 'off').style.display = \"none\";\n")
-        .append(" document.getElementById(elementId + 'on').style.display = \"inline\";\n")
-        .append(" }")
-        .append(" else if (elm.style.display == \"\") {")
-        .append(" elm.style.display = \"none\";\n")
-        .append(" document.getElementById(elementId + 'off').style.display = \"inline\";\n")
-        .append(" document.getElementById(elementId + 'on').style.display = \"none\";\n")
-        .append(" } \n")
-        .append(" } \n")
-        .append(" }\n")
-        .append("</script>");
-        sink.rawText(str.toString());
 
         constructSummarySection( bundle, sink );
 
@@ -393,20 +392,17 @@ public class SurefireReportGenerator
 
                             sinkLink( sink, testCase.getName(), "#" + testCase.getFullName() );
 
-                            sink.rawText("  <div class=\"detailToggle\" style=\"display:inline\">");
+                            sink.rawText( "  <div class=\"detailToggle\" style=\"display:inline\">" );
 
-                            sink.link("javascript:toggleDisplay('" + testCase.getName()
-                                    + "');");
+                            sink.link( "javascript:toggleDisplay('" + testCase.getName() + "');" );
 
-                            sink.rawText("<span style=\"display: inline;\" "
-                                    + "id=\"" + testCase.getName() + "off\">+</span><span id=\""
-                                    + testCase.getName() + "on\" "
-                                    + "style=\"display: none;\">-</span> ");
-                            sink.text("[ Detail ]");
+                            sink.rawText( "<span style=\"display: inline;\" " + "id=\"" + testCase.getName() +
+                                "off\">+</span><span id=\"" + testCase.getName() + "on\" " +
+                                "style=\"display: none;\">-</span> " );
+                            sink.text( "[ Detail ]" );
                             sink.link_();
 
-                            sink.rawText("</div>");
-
+                            sink.rawText( "</div>" );
 
                             sink.tableCell_();
                         }
@@ -419,42 +415,44 @@ public class SurefireReportGenerator
 
                         sink.tableRow_();
 
-                        if (failure != null)
-                         {
+                        if ( failure != null )
+                        {
                             sink.tableRow();
 
-                            sinkCell(sink, "");
-                            sinkCell(sink, (String)failure.get("message"));
-                            sinkCell(sink, "");
+                            sinkCell( sink, "" );
+                            sinkCell( sink, (String) failure.get( "message" ) );
+                            sinkCell( sink, "" );
                             sink.tableRow_();
 
-                            sink.tableRow();
-                            sinkCell(sink, "");
-
-                            sink.tableCell();
-                            sink.rawText("  <div id=\"" + testCase.getName()
-                                    + "error\" style=\"display:none;\">");
-
-                            List detail = (List)failure.get("detail");
-                            if (detail != null)
+                            List detail = (List) failure.get( "detail" );
+                            if ( detail != null )
                             {
+
+                                sink.tableRow();
+                                sinkCell( sink, "" );
+
+                                sink.tableCell();
+                                sink.rawText(
+                                    "  <div id=\"" + testCase.getName() + "error\" style=\"display:none;\">" );
 
                                 Iterator it = detail.iterator();
 
-                                while(it.hasNext())
+                                sink.verbatim( true );
+                                while ( it.hasNext() )
                                 {
-                                   sink.rawText(it.next().toString());
-                                   sink.lineBreak();
+                                    sink.text( it.next().toString() );
+                                    sink.lineBreak();
                                 }
+                                sink.verbatim_();
+
+                                sink.rawText( "</div>" );
+                                sink.tableCell_();
+
+                                sinkCell( sink, "" );
+
+                                sink.tableRow_();
                             }
-
-                            sink.rawText("</div>");
-                            sink.tableCell_();
-
-                            sinkCell(sink, "");
-
-                            sink.tableRow_();
-                         }
+                        }
                     }
                 }
 
@@ -523,55 +521,53 @@ public class SurefireReportGenerator
 
                 sink.tableRow_();
 
-                sink.rawText( "  <div id=\"" + tCase.getName() + "error\" >" );
-
-                sink.rawText( "</div>" );
-
-                if ( !type.startsWith( "junit.framework" ) )
+                List detail = (List) failure.get( "detail" );
+                if ( detail != null )
                 {
-                    List detail = (List) failure.get( "detail" );
-                    if ( detail != null )
+                    Iterator it = detail.iterator();
+
+                    boolean firstLine = true;
+
+                    String techMessage = "";
+                    while ( it.hasNext() )
                     {
-                        Iterator it = detail.iterator();
-
-                        boolean firstLine = true;
-
-                        String techMessage = "";
-                        while ( it.hasNext() )
+                        techMessage = it.next().toString();
+                        if ( firstLine )
                         {
-                            techMessage = it.next().toString();
-                            if ( firstLine )
-                            {
-                                firstLine = false;
-                            }
-                            else
-                            {
-                                sink.text( "    " );
-                            }
+                            firstLine = false;
                         }
-
-                        sink.tableRow();
-                        sinkCell( sink, "" );
-
-                        sink.tableCell();
-                        if ( xrefLocation != null )
+                        else
                         {
-                            String path = tCase.getFullClassName().replace( '.', '/' );
-
-                            sink.link( xrefLocation + "/" + path + ".html#" +
-                                getErrorLineNumber( tCase.getFullName() , techMessage ));
+                            sink.text( "    " );
                         }
-                        sink.text( tCase.getFullClassName() + ":" +
-                            getErrorLineNumber( tCase.getFullName() , techMessage ) );
-
-                        if ( xrefLocation != null )
-                        {
-                            sink.link_();
-                        }
-                        sink.tableCell_();
-
-                        sink.tableRow_();
                     }
+
+                    sink.tableRow();
+
+                    sinkCell( sink, "" );
+
+                    sink.tableCell();
+                    sink.rawText( "  <div id=\"" + tCase.getName() + "error\" >" );
+
+                    if ( xrefLocation != null )
+                    {
+                        String path = tCase.getFullClassName().replace( '.', '/' );
+
+                        sink.link( xrefLocation + "/" + path + ".html#" +
+                            getErrorLineNumber( tCase.getFullName(), techMessage ) );
+                    }
+                    sink.text(
+                        tCase.getFullClassName() + ":" + getErrorLineNumber( tCase.getFullName(), techMessage ) );
+
+                    if ( xrefLocation != null )
+                    {
+                        sink.link_();
+                    }
+                    sink.rawText( "</div>" );
+
+                    sink.tableCell_();
+
+                    sink.tableRow_();
                 }
             }
 
@@ -587,10 +583,10 @@ public class SurefireReportGenerator
 
         String lineNo = "";
 
-        while( tokenizer.hasMoreTokens() )
+        while ( tokenizer.hasMoreTokens() )
         {
             String token = tokenizer.nextToken();
-            if( token.startsWith( className ) )
+            if ( token.startsWith( className ) )
             {
                 int idx = token.indexOf( ":" );
                 lineNo = token.substring( idx + 1, token.indexOf( ")" ) );

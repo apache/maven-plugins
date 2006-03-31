@@ -16,72 +16,50 @@ package org.apache.maven.plugins.surefire.report;
  * limitations under the License.
  */
 
-import junit.framework.*;
-
-import java.util.HashMap;
+import junit.framework.TestCase;
 
 /**
- *
  * @author Jontri
  */
 public class ReportTestCaseTest
     extends TestCase
 {
-    ReportTestCase tCase;
+    private ReportTestCase tCase;
 
-    public ReportTestCaseTest( String testName )
+    protected void setUp()
+        throws Exception
     {
-        super( testName );
+        super.setUp();
+
+        tCase = new ReportTestCase();
     }
 
-    protected void setUp(  )
-                  throws Exception
-    {
-        tCase = new ReportTestCase(  );
-    }
-
-    protected void tearDown(  )
-                     throws Exception
-    {
-    }
-
-    public static Test suite(  )
-    {
-        TestSuite suite = new TestSuite( ReportTestCaseTest.class );
-
-        return suite;
-    }
-
-    public void testSetName(  )
+    public void testSetName()
     {
         tCase.setName( "Test Case Name" );
 
-        assertEquals( "Test Case Name",
-                      tCase.getName(  ) );
+        assertEquals( "Test Case Name", tCase.getName() );
     }
 
-    public void testSetTime(  )
+    public void testSetTime()
     {
         tCase.setTime( .06f );
 
-        assertTrue( .06f == tCase.getTime(  ) );
+        assertEquals( .06f, tCase.getTime(), 0.0 );
     }
 
-    public void testSetFailure(  )
+    public void testSetFailure()
     {
-        HashMap hMap = new HashMap(  );
+        tCase.addFailure( "messagdeVal", "typeVal" );
 
-        tCase.setFailure( hMap );
-
-        assertEquals( hMap,
-                      tCase.getFailure(  ) );
+        assertEquals( "messageVal", tCase.getFailure().get( "message" ) );
+        assertEquals( "typeVal", tCase.getFailure().get( "type" ) );
     }
 
-    public void testSetFullName(  )
+    public void testSetFullName()
     {
         tCase.setFullName( "Test Case Full Name" );
 
-        assertEquals( "Test Case Full Name",
-                      tCase.getFullName(  ) );
+        assertEquals( "Test Case Full Name", tCase.getFullName() );
     }
 }
