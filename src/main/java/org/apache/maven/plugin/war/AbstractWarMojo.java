@@ -92,17 +92,12 @@ public abstract class AbstractWarMojo
      *
      * @parameter
      */
-    private List webResources;
+    private Resource[] webResources;
 
     /**
-     * @parameter
+     * @parameter expression="${project.build.filters}"
      */
     private List filters;
-
-    /**
-     * @parameter
-     */
-    private Properties filterProperties;
 
     /**
      * The path to the web.xml file to use.
@@ -134,9 +129,11 @@ public abstract class AbstractWarMojo
      */
     protected ArchiverManager archiverManager;
 
-    public static final String WEB_INF = "WEB-INF";
+    private static final String WEB_INF = "WEB-INF";
 
-    public static final String META_INF = "META-INF";
+    private static final String META_INF = "META-INF";
+
+    private static final String[] DEFAULT_INCLUDES = {"**/**"};
 
     /**
      * The comma separated list of tokens to include in the WAR.
@@ -171,9 +168,6 @@ public abstract class AbstractWarMojo
     private String dependentWarExcludes;
 
     private static final String[] EMPTY_STRING_ARRAY = {};
-
-    public abstract void execute()
-        throws MojoExecutionException;
 
     public MavenProject getProject()
     {
@@ -213,36 +207,6 @@ public abstract class AbstractWarMojo
     public void setWarSourceDirectory( File warSourceDirectory )
     {
         this.warSourceDirectory = warSourceDirectory;
-    }
-
-    public List getWebResources()
-    {
-        return webResources;
-    }
-
-    public void setWebResources( List webResources )
-    {
-        this.webResources = webResources;
-    }
-
-    public List getFilters()
-    {
-        return filters;
-    }
-
-    public void setFilters( List filters )
-    {
-        this.filters = filters;
-    }
-
-    public Properties getFilterProperties()
-    {
-        return filterProperties;
-    }
-
-    public void setFilterProperties( Properties filterProperties )
-    {
-        this.filterProperties = filterProperties;
     }
 
     public File getWebXml()
@@ -351,18 +315,18 @@ public abstract class AbstractWarMojo
 
         try
         {
+            List webResources = Arrays.asList( this.webResources );
             if ( webResources != null && webResources.size() > 0 )
             {
+                Properties filterProperties = getBuildFilterProperties();
                 for ( Iterator it = webResources.iterator(); it.hasNext(); )
                 {
                     Resource resource = (Resource) it.next();
-                    copyResources( resource, webappDirectory );
+                    copyResources( resource, webappDirectory, filterProperties );
                 }
             }
-            else
-            {
-                copyResources( warSourceDirectory, webappDirectory );
-            }
+
+            copyResources( warSourceDirectory, webappDirectory );
 
             if ( webXml != null && StringUtils.isNotEmpty( webXml.getName() ) )
             {
@@ -385,6 +349,33 @@ public abstract class AbstractWarMojo
         }
     }
 
+    private Properties getBuildFilterProperties()
+        throws MojoExecutionException
+    {
+        // System properties
+        Properties filterProperties = new Properties( System.getProperties() );
+
+        // Project properties
+        filterProperties.putAll( project.getProperties() );
+
+        for ( Iterator i = filters.iterator(); i.hasNext(); )
+        {
+            String filtersfile = (String) i.next();
+
+            try
+            {
+                Properties properties = PropertyUtils.loadPropertyFile( new File( filtersfile ), true, true );
+
+                filterProperties.putAll( properties );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Error loading property file '" + filtersfile + "'", e );
+            }
+        }
+        return filterProperties;
+    }
+
     /**
      * Copies webapp webResources from the specified directory.
      * <p/>
@@ -393,23 +384,33 @@ public abstract class AbstractWarMojo
      * exists, it will be copied to the <tt>META-INF</tt> directory and
      * renamed accordingly.
      *
-     * @param resource        the resource to copy
-     * @param webappDirectory the target directory
+     * @param resource         the resource to copy
+     * @param webappDirectory  the target directory
+     * @param filterProperties
      * @throws java.io.IOException if an error occured while copying webResources
      */
-    public void copyResources( Resource resource, File webappDirectory )
+    public void copyResources( Resource resource, File webappDirectory, Properties filterProperties )
         throws IOException
     {
         if ( !resource.getDirectory().equals( webappDirectory.getPath() ) )
         {
             getLog().info( "Copy webapp webResources to " + webappDirectory.getAbsolutePath() );
-            if ( warSourceDirectory.exists() )
+            if ( webappDirectory.exists() )
             {
                 String[] fileNames = getWarFiles( resource );
                 for ( int i = 0; i < fileNames.length; i++ )
                 {
-                    copyFileIfModified( new File( resource.getDirectory(), fileNames[i] ),
-                                        new File( webappDirectory, fileNames[i] ), resource.isFiltering() );
+                    if ( resource.isFiltering() )
+                    {
+                        copyFilteredFile( new File( resource.getDirectory(), fileNames[i] ),
+                                          new File( webappDirectory, fileNames[i] ), null, getFilterWrappers(),
+                                          filterProperties );
+                    }
+                    else
+                    {
+                        copyFileIfModified( new File( resource.getDirectory(), fileNames[i] ),
+                                            new File( webappDirectory, fileNames[i] ) );
+                    }
                 }
             }
         }
@@ -713,19 +714,27 @@ public abstract class AbstractWarMojo
      * Returns a list of filenames that should be copied
      * over to the destination directory.
      *
-     * @param source the resource to be scanned
+     * @param resource the resource to be scanned
      * @return the array of filenames, relative to the sourceDir
      */
-    private String[] getWarFiles( Resource source )
+    private String[] getWarFiles( Resource resource )
     {
         DirectoryScanner scanner = new DirectoryScanner();
-        scanner.setBasedir( source.getDirectory() );
-        String[] excludes = (String []) source.getExcludes().toArray( new String[source.getExcludes().size()] );
-        scanner.setExcludes( excludes );
-        scanner.addDefaultExcludes();
+        scanner.setBasedir( resource.getDirectory() );
+        if ( resource.getIncludes() != null && !resource.getIncludes().isEmpty() )
+        {
+            scanner.setIncludes( (String[]) resource.getIncludes().toArray( EMPTY_STRING_ARRAY ) );
+        }
+        else
+        {
+            scanner.setIncludes( DEFAULT_INCLUDES );
+        }
+        if ( resource.getExcludes() != null && !resource.getExcludes().isEmpty() )
+        {
+            scanner.setExcludes( (String[]) resource.getExcludes().toArray( EMPTY_STRING_ARRAY ) );
+        }
 
-        String[] includes = (String []) source.getIncludes().toArray( new String[source.getIncludes().size()] );
-        scanner.setIncludes( includes );
+        scanner.addDefaultExcludes();
 
         scanner.scan();
 
@@ -760,37 +769,25 @@ public abstract class AbstractWarMojo
         copyFileIfModified( source, new File( destinationDirectory, source.getName() ) );
     }
 
-    /**
-     * @param from
-     * @param to
-     * @param filtering
-     * @throws IOException TO DO: Remove this method when Maven moves to plexus-utils version 1.4
-     */
-    private void copyFileIfModified( File from, File to, boolean filtering )
-        throws IOException
+    private FilterWrapper[] getFilterWrappers()
     {
-        FilterWrapper[] wrappers = null;
-        if ( filtering )
-        {
-            wrappers = new FilterWrapper[]{
-                // support ${token}
-                new FilterWrapper()
+        return new FilterWrapper[]{
+            // support ${token}
+            new FilterWrapper()
+            {
+                public Reader getReader( Reader fileReader, Properties filterProperties )
                 {
-                    public Reader getReader( Reader fileReader )
-                    {
-                        return new InterpolationFilterReader( fileReader, filterProperties, "${", "}" );
-                    }
-                },
-                // support @token@
-                new FilterWrapper()
+                    return new InterpolationFilterReader( fileReader, filterProperties, "${", "}" );
+                }
+            },
+            // support @token@
+            new FilterWrapper()
+            {
+                public Reader getReader( Reader fileReader, Properties filterProperties )
                 {
-                    public Reader getReader( Reader fileReader )
-                    {
-                        return new InterpolationFilterReader( fileReader, filterProperties, "@", "@" );
-                    }
-                }};
-        }
-        copyFileIfModified( from, to, null, wrappers );
+                    return new InterpolationFilterReader( fileReader, filterProperties, "@", "@" );
+                }
+            }};
     }
 
     /**
@@ -798,52 +795,47 @@ public abstract class AbstractWarMojo
      * @param to
      * @param encoding
      * @param wrappers
+     * @param filterProperties
      * @throws IOException TO DO: Remove this method when Maven moves to plexus-utils version 1.4
      */
-    private static void copyFileIfModified( File from, File to, String encoding, FilterWrapper[] wrappers )
+    private static void copyFilteredFile( File from, File to, String encoding, FilterWrapper[] wrappers,
+                                          Properties filterProperties )
         throws IOException
     {
-        if ( wrappers != null && wrappers.length > 0 )
+        // buffer so it isn't reading a byte at a time!
+        Reader fileReader = null;
+        Writer fileWriter = null;
+        try
         {
-            // buffer so it isn't reading a byte at a time!
-            Reader fileReader = null;
-            Writer fileWriter = null;
-            try
+            if ( encoding == null || encoding.length() < 1 )
             {
-                if ( encoding == null || encoding.length() < 1 )
-                {
-                    fileReader = new BufferedReader( new FileReader( from ) );
-                    fileWriter = new FileWriter( to );
-                }
-                else
-                {
-                    FileInputStream instream = new FileInputStream( from );
-
-                    FileOutputStream outstream = new FileOutputStream( to );
-
-                    fileReader = new BufferedReader( new InputStreamReader( instream, encoding ) );
-
-                    fileWriter = new OutputStreamWriter( outstream, encoding );
-                }
-
-                Reader reader = fileReader;
-                for ( int i = 0; i < wrappers.length; i++ )
-                {
-                    FilterWrapper wrapper = wrappers[i];
-                    reader = wrapper.getReader( reader );
-                }
-
-                IOUtil.copy( reader, fileWriter );
+                fileReader = new BufferedReader( new FileReader( from ) );
+                fileWriter = new FileWriter( to );
             }
-            finally
+            else
             {
-                IOUtil.close( fileReader );
-                IOUtil.close( fileWriter );
+                FileInputStream instream = new FileInputStream( from );
+
+                FileOutputStream outstream = new FileOutputStream( to );
+
+                fileReader = new BufferedReader( new InputStreamReader( instream, encoding ) );
+
+                fileWriter = new OutputStreamWriter( outstream, encoding );
             }
+
+            Reader reader = fileReader;
+            for ( int i = 0; i < wrappers.length; i++ )
+            {
+                FilterWrapper wrapper = wrappers[i];
+                reader = wrapper.getReader( reader, filterProperties );
+            }
+
+            IOUtil.copy( reader, fileWriter );
         }
-        else
+        finally
         {
-            copyFileIfModified( from, to );
+            IOUtil.close( fileReader );
+            IOUtil.close( fileWriter );
         }
     }
 
@@ -935,7 +927,7 @@ public abstract class AbstractWarMojo
      */
     private interface FilterWrapper
     {
-        Reader getReader( Reader fileReader );
+        Reader getReader( Reader fileReader, Properties filterProperties );
     }
 
     /**
