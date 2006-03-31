@@ -45,6 +45,10 @@ public class CloverCheckMojo extends AbstractCloverMojo
      */
     private String targetPercentage;
 
+    /**
+     * {@inheritDoc}
+     * @see org.apache.maven.plugin.clover.AbstractCloverMojo#execute()
+     */
     public void execute()
         throws MojoExecutionException
     {
