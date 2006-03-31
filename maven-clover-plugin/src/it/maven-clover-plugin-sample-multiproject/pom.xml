@@ -19,13 +19,32 @@
     <plugins>
       <plugin>
         <artifactId>maven-clover-plugin</artifactId>
+<!--        <configuration>
+          <flushPolicy>threaded</flushPolicy>
+          <flushInterval>100</flushInterval>
+        </configuration>-->
+      </plugin>
+    </plugins>
+  </reporting>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-clover-plugin</artifactId>
         <configuration>
           <flushPolicy>threaded</flushPolicy>
           <flushInterval>100</flushInterval>
         </configuration>
+        <executions>
+          <execution>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>instrument</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
-  </reporting>
+  </build>
   <modules>
     <module>maven-clover-plugin-sample-multiproject-module1</module>
     <module>maven-clover-plugin-sample-multiproject-module2</module>

@@ -42,8 +42,18 @@
         </configuration>
         <executions>
           <execution>
+            <id>main</id>
+            <phase>verify</phase>
             <goals>
+              <goal>instrument</goal>
               <goal>check</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>site</id>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>instrument</goal>
             </goals>
           </execution>
         </executions>
