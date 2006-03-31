@@ -11,7 +11,7 @@
               <cloverDatabase>${project.build.directory}/clover/clover.db</cloverDatabase>
             </configuration>
             <goals>
-              <goal>instrument</goal>
+              <goal>instrumentInternal</goal>
             </goals>
           </execution>
         </executions>
