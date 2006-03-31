@@ -50,7 +50,7 @@ public class ReportTestCaseTest
 
     public void testSetFailure()
     {
-        tCase.addFailure( "messagdeVal", "typeVal" );
+        tCase.addFailure( "messageVal", "typeVal" );
 
         assertEquals( "messageVal", tCase.getFailure().get( "message" ) );
         assertEquals( "typeVal", tCase.getFailure().get( "type" ) );
