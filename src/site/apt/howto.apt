@@ -4,9 +4,9 @@
  Vincent Massol
  <vmassol@apache.org>
  ------
- March 23, 2006
+ April 1st, 2006
 
-Generating a Clover report
+Generating a Clover report when generating the site
 
   Add the Clover report in your <<<pom.xml>>> under the <<<reporting>>> section:
 
@@ -25,10 +25,48 @@ Generating a Clover report
       </plugin>
     </plugins>
   </reporting>
+[...]
 +---------
 
-  Then, to generate the report simply type <<<mvn site:site>>>. 
+  The <<<maven-clover-plugin>>> report will only generate a report out of an existing Clover database
+  so if you don't have a Clover database available you'll need to configure your build to generate one.
+  This is achieved by binding the <<<clover:instrument>>> goal to the <<<pre-site>>> phase so that it
+  executes before the report executes. For example:
+
++--------
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clover-plugin</artifactId>
+        <configuration>
+          [...]
+        </configuration>
+        <executions>
+          <execution>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>instrument</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+[...]
++---------
+
+  Then, to generate the report as part of the site simply type <<<mvn site:site>>>.
   
+Generating a Clover report without modifying your POM
+
+  If you simply want to generate a Clover report on the fly without modifying your POM, simply
+  type <<<mvn clover:instrument clover:clover>>>. Alternatively if you want to aggregate children
+  module reports into a master Clover report, run <<<mvn clover:instrument clover:aggregate clover:clover>>>
+  instead.
+
 Checking test coverage
 
   In order to check for a test coverage percentage and fail the build in case of non-compliance,
@@ -45,7 +83,9 @@ Checking test coverage
         </configuration>
         <executions>
           <execution>
+            <phase>verify</phase>
             <goals>
+              <goal>instrument</goal>
               <goal>check</goal>
             </goals>
           </execution>
@@ -55,9 +95,14 @@ Checking test coverage
   </build>
 +---------
 
-  In this example we've also bound the <<<check>>> goal to the <<<verify>>> phase which means
-  it will be invoked automatically when calling <<<mvn install>>> on your project. You don't need
-  to do this and you can also invoke directly the <<<check>>> goal by running <<<mvn clover:check>>>.
+  In this example you've told Maven to run <<<clover:instrument>>> and <<<clover:check>>> whenever the <<<verify>>>
+  phase is reached (this will be the case if you run <<<mvn install>>> for example). You need to call
+  <<<clover:instrument>>> before the check because <<<clover:check>>> requires an existing Clover datababase to
+  perform the verification.
+
+  If you don't specify a target percentage the default value used is 70%.
+
+  You can also invoke <<<mvn clover:check>>> directly on the command line.
 
 Using Clover with JDK 1.4 and JDK 1.5 keywords
 
@@ -118,7 +163,9 @@ Specifying a custom license file
             <configuration>
               <targetPercentage>50%</targetPercentage>
             </configuration>
+            <phase>verify</phase>
             <goals>
+              <goal>instrument</goal>
               <goal>check</goal>
             </goals>
           </execution>
@@ -135,27 +182,60 @@ Specifying a custom license file
   how to use this last feature, refer to the
   {{{http://maven.apache.org/plugins/maven-checkstyle-plugin/tips.html}Checkstlye plugin documentation}}.
 
-Controlling the master report generation
+Aggregating Clover reports
 
-  By default if you execute <<<mvn clover:clover>>> or <<<mvn site>>> on a multimodule build, the Clover plguin will
-  automatically generate a master report aggregating all individual module reports. To disable this feature, use for
-  example:
+  You can aggregate children modules Clover reports into a single master report by running the <<<clover:aggregate>>>
+  goal. For example if you have the following project layout:
 
 +--------
+myproject/
+  |_ project1/
+    |_ pom.xml
+  |_ project2/
+    |_ pom.xml
+  |_ pom.xml
++---------
+
+  Then, ensure that your <<<myproject/pom.xml>>> contains the following:
+
++--------
+<project>
+  [...]
   <reporting>
+    <plugins>
+      [...]
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clover-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
+  [...]
+  <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clover-plugin</artifactId>
-        <configuration>
-          <aggregate>false</aggregate>
-        </configuration>
+        <executions>
+          <execution>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>instrument</goal>
+              <goal>aggregate</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
-  </reporting>
+  </build>
+[...]
 +---------
 
-  Note that you can control the location of the aggregated Clover database by using the <<<cloverMergeDatabase>>>
+  When you run <<<mvn site>>> in <<<myproject/>>>, the plugin will instrument your sources, run your tests,
+  aggregate the different Clover databases generated for each build module (i.e. <<<project1>>> and <<<project2>>>)
+  and generate a master Clover report in the site for the <<<myproject>>> project.
+
+  Note that you can control the location of the master Clover database by using the <<<cloverMergeDatabase>>>
   configuration property.
 
 Controlling files to instrument
