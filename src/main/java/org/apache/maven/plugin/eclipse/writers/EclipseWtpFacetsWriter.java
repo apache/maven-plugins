@@ -19,13 +19,12 @@ package org.apache.maven.plugin.eclipse.writers;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.EclipseSourceDir;
 import org.apache.maven.plugin.eclipse.Messages;
+import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
@@ -73,13 +72,12 @@ public class EclipseWtpFacetsWriter
      */
     private static final String FILE_FACET_CORE_XML = "org.eclipse.wst.common.project.facet.core.xml"; //$NON-NLS-1$
 
-    public EclipseWtpFacetsWriter( Log log, File eclipseProjectDir, MavenProject project, Collection artifacts )
+    public EclipseWtpFacetsWriter( Log log, File eclipseProjectDir, MavenProject project, IdeDependency[] deps )
     {
-        super( log, eclipseProjectDir, project, artifacts );
+        super( log, eclipseProjectDir, project, deps );
     }
 
-    public void write( List referencedReactorArtifacts, EclipseSourceDir[] sourceDirs,
-                      ArtifactRepository localRepository, File buildOutputDirectory )
+    public void write( EclipseSourceDir[] sourceDirs, ArtifactRepository localRepository, File buildOutputDirectory )
         throws MojoExecutionException
     {
 

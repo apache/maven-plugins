@@ -19,18 +19,15 @@ package org.apache.maven.plugin.eclipse.writers;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.EclipseSourceDir;
-import org.apache.maven.plugin.eclipse.EclipseUtils;
 import org.apache.maven.plugin.eclipse.Messages;
+import org.apache.maven.plugin.ide.IdeDependency;
+import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
@@ -94,20 +91,13 @@ public class EclipseClasspathWriter
      */
     private static final String FILE_DOT_CLASSPATH = ".classpath"; //$NON-NLS-1$
 
-    /**
-     * Dependencies for our project.
-     */
-    private Collection artifacts;
-
-    public EclipseClasspathWriter( Log log, File eclipseProjectDir, MavenProject project, Collection artifacts )
+    public EclipseClasspathWriter( Log log, File eclipseProjectDir, MavenProject project, IdeDependency[] deps )
     {
-        super( log, eclipseProjectDir, project );
-        this.artifacts = artifacts;
+        super( log, eclipseProjectDir, project, deps );
     }
 
-    public void write( File projectBaseDir, List referencedReactorArtifacts, EclipseSourceDir[] sourceDirs,
-                      List classpathContainers, ArtifactRepository localRepository, ArtifactResolver artifactResolver,
-                      ArtifactFactory artifactFactory, File buildOutputDirectory )
+    public void write( File projectBaseDir, EclipseSourceDir[] sourceDirs, List classpathContainers,
+                       ArtifactRepository localRepository, File buildOutputDirectory )
         throws MojoExecutionException
     {
 
@@ -153,8 +143,8 @@ public class EclipseClasspathWriter
 
         writer.startElement( ELT_CLASSPATHENTRY );
         writer.addAttribute( ATTR_KIND, ATTR_OUTPUT );
-        writer.addAttribute( ATTR_PATH, EclipseUtils.toRelativeAndFixSeparator( projectBaseDir, buildOutputDirectory,
-                                                                                false ) );
+        writer.addAttribute( ATTR_PATH, IdeUtils
+            .toRelativeAndFixSeparator( projectBaseDir, buildOutputDirectory, false ) );
         writer.endElement();
 
         // ----------------------------------------------------------------------
@@ -173,13 +163,13 @@ public class EclipseClasspathWriter
         // The dependencies
         // ----------------------------------------------------------------------
 
-        for ( Iterator it = artifacts.iterator(); it.hasNext(); )
+        for ( int j = 0; j < deps.length; j++ )
         {
-            Artifact artifact = (Artifact) it.next();
-            if ( artifact.getArtifactHandler().isAddedToClasspath() )
+            IdeDependency dep = deps[j];
+
+            if ( dep.isAddedToClasspath() )
             {
-                addDependency( writer, artifact, referencedReactorArtifacts, localRepository, artifactResolver,
-                               artifactFactory, projectBaseDir );
+                addDependency( writer, dep, localRepository, projectBaseDir );
             }
         }
 
@@ -189,9 +179,8 @@ public class EclipseClasspathWriter
 
     }
 
-    private void addDependency( XMLWriter writer, Artifact artifact, List referencedReactorArtifacts,
-                               ArtifactRepository localRepository, ArtifactResolver artifactResolver,
-                               ArtifactFactory artifactFactory, File projectBaseDir )
+    private void addDependency( XMLWriter writer, IdeDependency dep, ArtifactRepository localRepository,
+                                File projectBaseDir )
         throws MojoExecutionException
     {
 
@@ -200,29 +189,29 @@ public class EclipseClasspathWriter
         String sourcepath = null;
         String javadocpath = null;
 
-        if ( referencedReactorArtifacts.contains( artifact ) )
+        if ( dep.isReferencedProject() )
         {
-            path = "/" + artifact.getArtifactId(); //$NON-NLS-1$
+            path = "/" + dep.getArtifactId(); //$NON-NLS-1$
             kind = "src"; //$NON-NLS-1$
         }
         else
         {
-            File artifactPath = artifact.getFile();
+            File artifactPath = dep.getFile();
 
             if ( artifactPath == null )
             {
-                getLog().error( Messages.getString( "EclipsePlugin.artifactpathisnull", artifact.getId() ) ); //$NON-NLS-1$
+                getLog().error( Messages.getString( "EclipsePlugin.artifactpathisnull", dep.getId() ) ); //$NON-NLS-1$
                 return;
             }
 
-            if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
+            if ( dep.isSystemScoped() )
             {
-                path = EclipseUtils.toRelativeAndFixSeparator( projectBaseDir, artifactPath, false );
+                path = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, artifactPath, false );
 
                 if ( getLog().isDebugEnabled() )
                 {
                     getLog().debug( Messages.getString( "EclipsePlugin.artifactissystemscoped", //$NON-NLS-1$
-                                                        new Object[] { artifact.getArtifactId(), path } ) );
+                                                        new Object[] { dep.getArtifactId(), path } ) );
                 }
 
                 kind = "lib"; //$NON-NLS-1$
@@ -234,37 +223,20 @@ public class EclipseClasspathWriter
                 String fullPath = artifactPath.getPath();
 
                 path = "M2_REPO/" //$NON-NLS-1$
-                    + EclipseUtils.toRelativeAndFixSeparator( localRepositoryFile, new File( fullPath ), false );
+                    + IdeUtils.toRelativeAndFixSeparator( localRepositoryFile, new File( fullPath ), false );
 
-                Artifact sourceArtifact = EclipseUtils.resolveLocalSourceArtifact( artifact, localRepository,
-                                                                                   artifactResolver, artifactFactory );
-
-                if ( sourceArtifact.isResolved() )
+                if ( dep.getSourceAttachment() != null )
                 {
                     sourcepath = "M2_REPO/" //$NON-NLS-1$
-                        + EclipseUtils.toRelativeAndFixSeparator( localRepositoryFile, sourceArtifact.getFile(), false );
+                        + IdeUtils.toRelativeAndFixSeparator( localRepositoryFile, dep.getSourceAttachment(), false );
                 }
-                else
-                {
 
-                    // if a source artifact is not available, try with a plain javadoc jar
-                    Artifact javadocArtifact = EclipseUtils.resolveLocalJavadocArtifact( artifact, localRepository,
-                                                                                         artifactResolver,
-                                                                                         artifactFactory );
-                    if ( javadocArtifact.isResolved() )
-                    {
-                        try
-                        {
-                            // NB eclipse (3.1) doesn't support variables in javadoc paths, so we need to add the
-                            // full path for the maven repo
-                            javadocpath = StringUtils.replace( javadocArtifact.getFile().getCanonicalPath(), "\\", "/" ); //$NON-NLS-1$ //$NON-NLS-2$
-                        }
-                        catch ( IOException e )
-                        {
-                            // should never happen
-                            throw new MojoExecutionException( e.getMessage(), e );
-                        }
-                    }
+                if ( dep.getJavadocAttachment() != null )
+                {
+                    //                  NB eclipse (3.1) doesn't support variables in javadoc paths, so we need to add the
+                    // full path for the maven repo
+                    javadocpath = StringUtils.replace( IdeUtils.getCanonicalPath( dep.getJavadocAttachment() ),
+                                                       "\\", "/" ); //$NON-NLS-1$ //$NON-NLS-2$
                 }
 
                 kind = "var"; //$NON-NLS-1$
