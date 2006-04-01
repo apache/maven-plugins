@@ -34,12 +34,6 @@ import org.apache.tools.ant.Project;
 public class CloverCheckMojo extends AbstractCloverMojo
 {
     /**
-     * @parameter expression="${project.build.directory}/clover/clover.db"
-     * @required
-     */
-    private String cloverDatabase;
-
-    /**
      * @parameter default-value="70%"
      * @required
      */
@@ -52,14 +46,16 @@ public class CloverCheckMojo extends AbstractCloverMojo
     public void execute()
         throws MojoExecutionException
     {
-        AbstractCloverMojo.waitForFlush( this.waitForFlush, this.flushInterval );
+        super.execute();
+
+        AbstractCloverMojo.waitForFlush( getWaitForFlush(), getFlushInterval() );
 
         Project antProject = registerCloverAntTasks();
 
         getLog().info( "Checking for coverage of " + targetPercentage);
 
         CloverPassTask cloverPassTask = (CloverPassTask) antProject.createTask( "clover-check" );
-        cloverPassTask.setInitString( this.cloverDatabase );
+        cloverPassTask.setInitString( getCloverDatabase() );
         cloverPassTask.setHaltOnFailure( true );
         cloverPassTask.setTarget( new Percentage( this.targetPercentage ) );
         cloverPassTask.setFailureProperty( "clovercheckproperty" );

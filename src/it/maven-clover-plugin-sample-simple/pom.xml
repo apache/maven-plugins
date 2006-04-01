@@ -19,6 +19,14 @@
     <plugins>
       <plugin>
         <artifactId>maven-clover-plugin</artifactId>
+        <configuration>
+
+          <!-- Verify that we can modify the location of the Clover database and that the directory is created if
+               it doesn't exist. Note: we're putting the configuration here and not in the build section because the
+               build section inherits from the reporting section but not the other way around... -->
+          <cloverDatabase>${project.build.directory}/customclover/myclover.db</cloverDatabase>
+
+        </configuration>
       </plugin>
     </plugins>
   </reporting>
@@ -34,11 +42,17 @@
       <plugin>
         <artifactId>maven-clover-plugin</artifactId>
         <configuration>
-          <jdk>1.4</jdk>
+
           <targetPercentage>1%</targetPercentage>
+
+          <!-- Verify that we can specify the JDK version for Clover's instrumentation -->
+          <jdk>1.4</jdk>
+
+          <!-- Verify that we can exclude some files from the instrumentation -->
           <excludes>
             <exclude>**/*Dummy*.java</exclude>
           </excludes>
+
         </configuration>
         <executions>
           <execution>
