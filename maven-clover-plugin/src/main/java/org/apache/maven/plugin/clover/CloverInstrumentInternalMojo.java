@@ -49,14 +49,6 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
     private String cloverOutputDirectory;
 
     /**
-     * The location of the <a href="http://cenqua.com/clover/doc/adv/database.html">Clover database</a>.
-     * 
-     * @parameter
-     * @required
-     */
-    private String cloverDatabase;
-
-    /**
      * @parameter expression="${plugin.artifacts}"
      * @required
      */
@@ -92,8 +84,11 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
     {
         if ( shouldExecute() )
         {
+            // Ensure output directories exist
             new File( this.cloverOutputDirectory ).mkdirs();
             this.cloverOutputSourceDirectory = new File( this.cloverOutputDirectory, "src" ).getPath();
+
+            new File( getCloverDatabase() ).getParentFile().mkdirs();
 
             super.execute();
 
@@ -117,8 +112,8 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
         boolean shouldExecute = true;
 
         // Only execute reports for java projects
-        ArtifactHandler artifactHandler = this.project.getArtifact().getArtifactHandler();
-        File srcDir = new File(this.project.getBuild().getSourceDirectory());
+        ArtifactHandler artifactHandler = getProject().getArtifact().getArtifactHandler();
+        File srcDir = new File( getProject().getBuild().getSourceDirectory() );
 
         if ( !"java".equals( artifactHandler.getLanguage() ) )
         {
@@ -147,34 +142,34 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
     {
         // Explicitely set the output directory to be the Clover one so that all other plugins executing
         // thereafter output files in the Clover output directory and not in the main output directory.
-        this.project.getBuild().setDirectory( this.cloverOutputDirectory );
+        getProject().getBuild().setDirectory( this.cloverOutputDirectory );
 
         // TODO: Ulgy hack below. Changing the directory should be enough for changing the values of all other
         // properties depending on it!
-        this.project.getBuild().setOutputDirectory( new File( this.cloverOutputDirectory, "classes" ).getPath() );
-        this.project.getBuild().setTestOutputDirectory(
+        getProject().getBuild().setOutputDirectory( new File( this.cloverOutputDirectory, "classes" ).getPath() );
+        getProject().getBuild().setTestOutputDirectory(
             new File( this.cloverOutputDirectory, "test-classes" ).getPath() );
     }
 
     private void redirectSourceDirectories()
     {
-        String oldSourceDirectory = this.project.getBuild().getSourceDirectory();
+        String oldSourceDirectory = getProject().getBuild().getSourceDirectory();
 
-        this.project.getBuild().setSourceDirectory( this.cloverOutputSourceDirectory );
+        getProject().getBuild().setSourceDirectory( this.cloverOutputSourceDirectory );
 
         // Maven2 limitation: changing the source directory doesn't change the compile source roots
         // See http://jira.codehaus.org/browse/MNG-1945
-        List sourceRoots = this.project.getCompileSourceRoots();
+        List sourceRoots = getProject().getCompileSourceRoots();
         for (int i = 0; i < sourceRoots.size(); i++)
         {
-            String sourceRoot = (String) this.project.getCompileSourceRoots().get( i );
+            String sourceRoot = (String) getProject().getCompileSourceRoots().get( i );
             if (sourceRoot.equals(oldSourceDirectory))
             {
-                this.project.getCompileSourceRoots().remove( i );
+                getProject().getCompileSourceRoots().remove( i );
 
                 // Note: Ideally we should add the new compile source root at the same place as the
                 // one we're removing but there's no API for this...
-                this.project.addCompileSourceRoot( this.project.getBuild().getSourceDirectory() );
+                getProject().addCompileSourceRoot( getProject().getBuild().getSourceDirectory() );
             }
         }
     }
@@ -203,9 +198,9 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
                                                  cloverArtifact.getType() );
 
         // TODO: use addArtifacts when it's implemented, see http://jira.codehaus.org/browse/MNG-2197
-        Set set = new HashSet( this.project.getArtifacts() );
+        Set set = new HashSet( getProject().getArtifacts() );
         set.add( cloverArtifact );
-        this.project.setDependencyArtifacts( set );
+        getProject().setDependencyArtifacts( set );
     }
 
     /**
@@ -234,7 +229,7 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
         // Note: we shouldn't have to do this but this is a limitation of the Plexus SimpleSourceInclusionScanner
         scanner.addSourceMapping(new SuffixMapping("dummy", "dummy"));
 
-        Iterator roots = this.project.getCompileSourceRoots().iterator();
+        Iterator roots = getProject().getCompileSourceRoots().iterator();
         while (roots.hasNext())
         {
             String sourceRoot = (String) roots.next();
@@ -260,29 +255,29 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
         List parameters = new ArrayList();
 
         parameters.add( "-p" );
-        parameters.add( this.flushPolicy );
+        parameters.add( getFlushPolicy() );
         parameters.add( "-f" );
-        parameters.add( "" + this.flushInterval );
+        parameters.add( "" + getFlushInterval() );
 
         parameters.add( "-i" );
-        parameters.add( this.cloverDatabase );
+        parameters.add( getCloverDatabase() );
 
         parameters.add( "-d" );
         parameters.add( this.cloverOutputSourceDirectory );
 
-        if ( this.jdk != null )
+        if ( getJdk() != null )
         {
-            if ( this.jdk.equals( "1.4" ) )
+            if ( getJdk().equals( "1.4" ) )
             {
                 parameters.add( "-jdk14" );
             }
-            else if ( this.jdk.equals( "1.5" ) )
+            else if ( getJdk().equals( "1.5" ) )
             {
                 parameters.add( "-jdk15" );
             }
             else
             {
-                throw new MojoExecutionException("Unsupported jdk version [" + this.jdk
+                throw new MojoExecutionException("Unsupported jdk version [" + getJdk()
                     + "]. Valid values are [1.4] and [1.5]");
             }
         }
