@@ -24,8 +24,9 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.eclipse.EclipseUtils;
 import org.apache.maven.plugin.eclipse.Messages;
+import org.apache.maven.plugin.ide.IdeDependency;
+import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 
@@ -63,9 +64,9 @@ public class EclipseSettingsWriter
 
     private static final String ARTIFACT_MAVEN_COMPILER_PLUGIN = "maven-compiler-plugin"; //$NON-NLS-1$
 
-    public EclipseSettingsWriter( Log log, File eclipseProjectDir, MavenProject project )
+    public EclipseSettingsWriter( Log log, File eclipseProjectDir, MavenProject project, IdeDependency[] deps )
     {
-        super( log, eclipseProjectDir, project );
+        super( log, eclipseProjectDir, project, deps );
     }
 
     public void write()
@@ -75,10 +76,8 @@ public class EclipseSettingsWriter
         // check if it's necessary to create project specific settings
         Properties coreSettings = new Properties();
 
-        String source = EclipseUtils.getPluginSetting( getProject(), ARTIFACT_MAVEN_COMPILER_PLUGIN, PROPERTY_SOURCE,
-                                                       null );
-        String target = EclipseUtils.getPluginSetting( getProject(), ARTIFACT_MAVEN_COMPILER_PLUGIN, PROPERTY_TARGET,
-                                                       null );
+        String source = IdeUtils.getPluginSetting( getProject(), ARTIFACT_MAVEN_COMPILER_PLUGIN, PROPERTY_SOURCE, null );
+        String target = IdeUtils.getPluginSetting( getProject(), ARTIFACT_MAVEN_COMPILER_PLUGIN, PROPERTY_TARGET, null );
 
         if ( source != null )
         {

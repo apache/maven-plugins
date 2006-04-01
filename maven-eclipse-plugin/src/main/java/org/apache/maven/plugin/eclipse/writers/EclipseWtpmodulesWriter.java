@@ -19,14 +19,13 @@ package org.apache.maven.plugin.eclipse.writers;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.EclipseSourceDir;
-import org.apache.maven.plugin.eclipse.EclipseUtils;
 import org.apache.maven.plugin.eclipse.Messages;
+import org.apache.maven.plugin.ide.IdeDependency;
+import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
@@ -45,13 +44,12 @@ public class EclipseWtpmodulesWriter
 
     protected static final String FILE_DOT_WTPMODULES = ".wtpmodules"; //$NON-NLS-1$
 
-    public EclipseWtpmodulesWriter( Log log, File eclipseProjectDir, MavenProject project, Collection artifacts )
+    public EclipseWtpmodulesWriter( Log log, File eclipseProjectDir, MavenProject project, IdeDependency[] deps )
     {
-        super( log, eclipseProjectDir, project, artifacts );
+        super( log, eclipseProjectDir, project, deps );
     }
 
-    public void write( List referencedReactorArtifacts, EclipseSourceDir[] sourceDirs,
-                      ArtifactRepository localRepository, File buildOutputDirectory )
+    public void write( EclipseSourceDir[] sourceDirs, ArtifactRepository localRepository, File buildOutputDirectory )
         throws MojoExecutionException
     {
         FileWriter w;
@@ -84,19 +82,19 @@ public class EclipseWtpmodulesWriter
         String target = "/"; //$NON-NLS-1$
         if ( "war".equals( getProject().getPackaging() ) ) //$NON-NLS-1$
         {
-            String warSourceDirectory = EclipseUtils.getPluginSetting( getProject(), ARTIFACT_MAVEN_WAR_PLUGIN,
-                                                                       "warSourceDirectory", //$NON-NLS-1$
-                                                                       "/src/main/webapp" ); //$NON-NLS-1$
+            String warSourceDirectory = IdeUtils.getPluginSetting( getProject(), ARTIFACT_MAVEN_WAR_PLUGIN,
+                                                                   "warSourceDirectory", //$NON-NLS-1$
+                                                                   "/src/main/webapp" ); //$NON-NLS-1$
 
             writer.startElement( ELT_WB_RESOURCE );
             writer.addAttribute( ATTR_DEPLOY_PATH, "/" ); //$NON-NLS-1$ 
             writer.addAttribute( ATTR_SOURCE_PATH, "/" //$NON-NLS-1$
-                + EclipseUtils.toRelativeAndFixSeparator( getEclipseProjectDirectory(),
-                                                          new File( getEclipseProjectDirectory(), warSourceDirectory ),
-                                                          false ) );
+                + IdeUtils.toRelativeAndFixSeparator( getEclipseProjectDirectory(),
+                                                      new File( getEclipseProjectDirectory(), warSourceDirectory ),
+                                                      false ) );
             writer.endElement();
 
-            writeWarOrEarResources( writer, getProject(), referencedReactorArtifacts, localRepository );
+            writeWarOrEarResources( writer, getProject(), localRepository );
 
             target = "/WEB-INF/classes"; //$NON-NLS-1$
         }
@@ -107,7 +105,7 @@ public class EclipseWtpmodulesWriter
             writer.addAttribute( ATTR_SOURCE_PATH, "/" ); //$NON-NLS-1$ 
             writer.endElement();
 
-            writeWarOrEarResources( writer, getProject(), referencedReactorArtifacts, localRepository );
+            writeWarOrEarResources( writer, getProject(), localRepository );
         }
 
         for ( int j = 0; j < sourceDirs.length; j++ )
