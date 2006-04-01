@@ -85,7 +85,7 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
 
     /**
      * {@inheritDoc}
-     * @see org.apache.maven.plugin.clover.AbstractCloverMojo#execute()  
+     * @see org.apache.maven.plugin.clover.AbstractCloverMojo#execute()
      */
     public void execute()
         throws MojoExecutionException
@@ -202,8 +202,8 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
                                                  cloverArtifact.getVersion(), Artifact.SCOPE_COMPILE,
                                                  cloverArtifact.getType() );
 
-        // TODO: use addArtifacts
-        Set set = new HashSet( this.project.getDependencyArtifacts() );
+        // TODO: use addArtifacts when it's implemented, see http://jira.codehaus.org/browse/MNG-2197
+        Set set = new HashSet( this.project.getArtifacts() );
         set.add( cloverArtifact );
         this.project.setDependencyArtifacts( set );
     }
