@@ -1,7 +1,5 @@
-package org.apache.maven.plugin.clover;
-
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +13,7 @@ package org.apache.maven.plugin.clover;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.maven.plugin.clover;
 
 import com.cenqua.clover.tasks.CloverLogTask;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -23,27 +22,24 @@ import org.apache.tools.ant.Project;
 /**
  * Provides information on the current Clover database.
  *
+ * @goal log
+ *
  * @author <a href="mailto:vmassol@apache.org">Vincent Massol</a>
  * @version $Id$
- * @goal log
  *
  */
 public class CloverLogMojo
     extends AbstractCloverMojo
 {
-    /**
-     * @parameter expression="${project.build.directory}/clover/clover.db"
-     * @required
-     */
-    protected String cloverDatabase;
-
     public void execute()
         throws MojoExecutionException
     {
+        super.execute();
+
         Project antProject = registerCloverAntTasks();
 
         CloverLogTask cloverLogTask = (CloverLogTask) antProject.createTask( "clover-log" );
-        cloverLogTask.setInitString( this.cloverDatabase );
+        cloverLogTask.setInitString( getCloverDatabase() );
         cloverLogTask.setOutputProperty( "cloverlogproperty" );
         cloverLogTask.execute();
 

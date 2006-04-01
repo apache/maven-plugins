@@ -41,5 +41,6 @@ public class CloverInstrumentMojo extends AbstractCloverMojo
     public void execute()
         throws MojoExecutionException
     {
+        super.execute();
     }
 }

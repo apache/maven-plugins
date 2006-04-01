@@ -29,6 +29,12 @@ import java.io.File;
 public abstract class AbstractCloverMojo extends AbstractMojo
 {
     /**
+     * @parameter expression="${project.build.directory}/clover/clover.db"
+     * @required
+     */
+    private String cloverDatabase;
+
+    /**
      * A Clover license file to be used by the plugin. If not specified, the Clover plugin uses a default evaluation
      * license.
      *
@@ -51,7 +57,7 @@ public abstract class AbstractCloverMojo extends AbstractMojo
      *  
      * @parameter default-value="threaded"
      */
-    protected String flushPolicy;
+    private String flushPolicy;
 
     /**
      * When the Clover Flush Policy is set to "interval" or threaded this value is the minimum period between flush
@@ -59,7 +65,7 @@ public abstract class AbstractCloverMojo extends AbstractMojo
      *
      * @parameter default-value="500"
      */
-    protected int flushInterval;
+    private int flushInterval;
 
     /**
      * If true we'll wait 2*flushInterval to ensure coverage data is flushed to the Clover database before running
@@ -72,7 +78,7 @@ public abstract class AbstractCloverMojo extends AbstractMojo
      * 
      * @parameter default-value="true"
      */
-    protected boolean waitForFlush;
+    private boolean waitForFlush;
 
     /**
      * Whether the Clover instrumentation should use the Clover <code>jdk14</code> or <code>jdk15</code> flags to
@@ -80,13 +86,13 @@ public abstract class AbstractCloverMojo extends AbstractMojo
      *
      * @parameter
      */
-    protected String jdk;
+    private String jdk;
 
     /**
      * @parameter expression="${project}"
      * @required
      */
-    protected MavenProject project;
+    private MavenProject project;
 
     /**
      * Resource locator.
@@ -198,4 +204,34 @@ public abstract class AbstractCloverMojo extends AbstractMojo
     {
         this.licenseLocation = licenseLocation;
     }  
+
+    protected MavenProject getProject()
+    {
+        return this.project;
+    }
+
+    protected boolean getWaitForFlush()
+    {
+        return this.waitForFlush;
+    }
+
+    protected String getJdk()
+    {
+        return this.jdk;
+    }
+
+    protected String getCloverDatabase()
+    {
+        return this.cloverDatabase;
+    }
+
+    protected int getFlushInterval()
+    {
+        return this.flushInterval;
+    }
+
+    protected String getFlushPolicy()
+    {
+        return this.flushPolicy;
+    }
 }
