@@ -25,11 +25,11 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.eclipse.EclipseUtils;
 import org.apache.maven.plugin.eclipse.Messages;
+import org.apache.maven.plugin.ide.IdeDependency;
+import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
@@ -63,13 +63,13 @@ public class EclipseProjectWriter
 
     private static final String FILE_DOT_PROJECT = ".project"; //$NON-NLS-1$
 
-    public EclipseProjectWriter( Log log, File eclipseProjectDir, MavenProject project )
+    public EclipseProjectWriter( Log log, File eclipseProjectDir, MavenProject project, IdeDependency[] deps )
     {
-        super( log, eclipseProjectDir, project );
+        super( log, eclipseProjectDir, project, deps );
     }
 
-    public void write( File projectBaseDir, MavenProject executedProject, List reactorArtifacts,
-                      List addedProjectnatures, List addedBuildCommands )
+    public void write( File projectBaseDir, MavenProject executedProject, List addedProjectnatures,
+                       List addedBuildCommands )
         throws MojoExecutionException
     {
 
@@ -159,8 +159,7 @@ public class EclipseProjectWriter
         writer.endElement();
 
         // TODO: this entire element might be dropped if the comment is null.
-        // but as the maven1 eclipse plugin does it, it's better to be safe than
-        // sorry
+        // but as the maven1 eclipse plugin does it, it's better to be safe than sorry
         // A eclipse developer might want to look at this.
         writer.startElement( "comment" ); //$NON-NLS-1$
 
@@ -173,12 +172,13 @@ public class EclipseProjectWriter
 
         writer.startElement( "projects" ); //$NON-NLS-1$
 
-        if ( reactorArtifacts != null && !reactorArtifacts.isEmpty() )
+        for ( int j = 0; j < deps.length; j++ )
         {
-            for ( Iterator it = reactorArtifacts.iterator(); it.hasNext(); )
+            IdeDependency dep = deps[j];
+            if ( dep.isReferencedProject() )
             {
                 writer.startElement( "project" ); //$NON-NLS-1$
-                writer.writeText( ( (Artifact) it.next() ).getArtifactId() );
+                writer.writeText( dep.getArtifactId() );
                 writer.endElement();
             }
         }
@@ -243,7 +243,7 @@ public class EclipseProjectWriter
             writer.startElement( "link" ); //$NON-NLS-1$
 
             writer.startElement( ELT_NAME );
-            writer.writeText( EclipseUtils.toRelativeAndFixSeparator( projectBaseDir, file, true ) );
+            writer.writeText( IdeUtils.toRelativeAndFixSeparator( projectBaseDir, file, true ) );
             writer.endElement(); // name
 
             writer.startElement( "type" ); //$NON-NLS-1$
@@ -251,15 +251,9 @@ public class EclipseProjectWriter
             writer.endElement(); // type
 
             writer.startElement( "location" ); //$NON-NLS-1$
-            try
-            {
-                writer.writeText( file.getCanonicalPath().replaceAll( "\\\\", "/" ) ); //$NON-NLS-1$ //$NON-NLS-2$
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcanonicalize", file //$NON-NLS-1$
-                    .getAbsolutePath() ), e );
-            }
+
+            writer.writeText( IdeUtils.getCanonicalPath( file ).replaceAll( "\\\\", "/" ) ); //$NON-NLS-1$ //$NON-NLS-2$
+
             writer.endElement(); // location
 
             writer.endElement(); // link
@@ -283,7 +277,7 @@ public class EclipseProjectWriter
                 writer.startElement( "link" ); //$NON-NLS-1$
 
                 writer.startElement( ELT_NAME );
-                writer.writeText( EclipseUtils.toRelativeAndFixSeparator( projectBaseDir, sourceRoot, true ) );
+                writer.writeText( IdeUtils.toRelativeAndFixSeparator( projectBaseDir, sourceRoot, true ) );
                 writer.endElement(); // name
 
                 writer.startElement( "type" ); //$NON-NLS-1$
@@ -291,15 +285,8 @@ public class EclipseProjectWriter
                 writer.endElement(); // type
 
                 writer.startElement( "location" ); //$NON-NLS-1$
-                try
-                {
-                    writer.writeText( sourceRoot.getCanonicalPath().replaceAll( "\\\\", "/" ) ); //$NON-NLS-1$ //$NON-NLS-2$
-                }
-                catch ( IOException e )
-                {
-                    throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcanonicalize", sourceRoot //$NON-NLS-1$
-                        .getAbsolutePath() ), e );
-                }
+
+                writer.writeText( IdeUtils.getCanonicalPath( sourceRoot ).replaceAll( "\\\\", "/" ) ); //$NON-NLS-1$ //$NON-NLS-2$
 
                 writer.endElement(); // location
 
@@ -321,7 +308,7 @@ public class EclipseProjectWriter
                 writer.startElement( "link" ); //$NON-NLS-1$
 
                 writer.startElement( ELT_NAME );
-                writer.writeText( EclipseUtils.toRelativeAndFixSeparator( projectBaseDir, resourceDir, true ) );
+                writer.writeText( IdeUtils.toRelativeAndFixSeparator( projectBaseDir, resourceDir, true ) );
                 writer.endElement(); // name
 
                 writer.startElement( "type" ); //$NON-NLS-1$
@@ -329,15 +316,9 @@ public class EclipseProjectWriter
                 writer.endElement(); // type
 
                 writer.startElement( "location" ); //$NON-NLS-1$
-                try
-                {
-                    writer.writeText( resourceDir.getCanonicalPath().replaceAll( "\\\\", "/" ) ); //$NON-NLS-1$ //$NON-NLS-2$
-                }
-                catch ( IOException e )
-                {
-                    throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcanonicalize", resourceDir //$NON-NLS-1$
-                        .getAbsolutePath() ), e );
-                }
+
+                writer.writeText( IdeUtils.getCanonicalPath( resourceDir ).replaceAll( "\\\\", "/" ) ); //$NON-NLS-1$ //$NON-NLS-2$
+
                 writer.endElement(); // location
 
                 writer.endElement(); // link

@@ -30,6 +30,7 @@ import org.apache.maven.embedder.MavenEmbedderConsoleLogger;
 import org.apache.maven.embedder.PlexusLoggerAdapter;
 import org.apache.maven.monitor.event.DefaultEventMonitor;
 import org.apache.maven.monitor.event.EventMonitor;
+import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.StringUtils;
@@ -83,7 +84,7 @@ public abstract class AbstractEclipsePluginTestCase
 
         EventMonitor eventMonitor = new DefaultEventMonitor( new PlexusLoggerAdapter( new MavenEmbedderConsoleLogger() ) );
 
-        String outputDirPath = EclipseUtils.getPluginSetting( project, "maven-eclipse-plugin", "outputDir", null );
+        String outputDirPath = IdeUtils.getPluginSetting( project, "maven-eclipse-plugin", "outputDir", null );
         File outputDir;
         File projectOutputDir = basedir;
 
