@@ -5,6 +5,7 @@ package org.apache.maven.plugin.eclipse.writers;
 
 import java.io.File;
 
+import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 
@@ -23,16 +24,19 @@ public abstract class AbstractEclipseResourceWriter
 
     private MavenProject project;
 
+    protected IdeDependency[] deps;
+
     /**
      * @param log
      * @param eclipseProjectDir
      * @param project
      */
-    public AbstractEclipseResourceWriter( Log log, File eclipseProjectDir, MavenProject project )
+    public AbstractEclipseResourceWriter( Log log, File eclipseProjectDir, MavenProject project, IdeDependency[] deps )
     {
         this.log = log;
         this.eclipseProjectDir = eclipseProjectDir;
         this.project = project;
+        this.deps = deps;
     }
 
     /**

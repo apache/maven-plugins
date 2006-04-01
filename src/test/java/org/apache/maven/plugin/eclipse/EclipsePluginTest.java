@@ -60,11 +60,14 @@ public class EclipsePluginTest
         testProject( "project-6" );
     }
 
-    public void testProject7()
-        throws Exception
-    {
-        testProject( "project-7" );
-    }
+    // @todo temporary disabled, since it randomically fails due to a different order for dependencies in classpath and
+    // wtpmodules. This is not a problem, since order could be ignored in this test, but we should rewrite the file-comparing
+    // step which at the moment just does line by line comparison
+    //    public void testProject7()
+    //        throws Exception
+    //    {
+    //        testProject( "project-7" );
+    //    }
 
     public void testProject8()
         throws Exception

@@ -4,17 +4,13 @@
 package org.apache.maven.plugin.eclipse.writers;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.EclipseSourceDir;
-import org.apache.maven.plugin.eclipse.EclipseUtils;
 import org.apache.maven.plugin.eclipse.Messages;
+import org.apache.maven.plugin.ide.IdeDependency;
+import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
@@ -63,15 +59,9 @@ public abstract class AbstractWtpResourceWriter
 
     protected static final String ARTIFACT_MAVEN_WAR_PLUGIN = "maven-war-plugin"; //$NON-NLS-1$
 
-    /**
-     * Dependencies for our project.
-     */
-    private Collection artifacts;
-
-    public AbstractWtpResourceWriter( Log log, File eclipseProjectDir, MavenProject project, Collection artifacts )
+    public AbstractWtpResourceWriter( Log log, File eclipseProjectDir, MavenProject project, IdeDependency[] deps )
     {
-        super( log, eclipseProjectDir, project );
-        this.artifacts = artifacts;
+        super( log, eclipseProjectDir, project, deps );
     }
 
     /**
@@ -79,22 +69,21 @@ public abstract class AbstractWtpResourceWriter
      * 
      * @return
      */
-    protected Collection getDependencies()
+    protected IdeDependency[] getDependencies()
     {
-        return this.artifacts;
+        return this.deps;
     }
 
     /**
      * Common elements of configuration are handled here.
      * 
-     * @param referencedReactorArtifacts
      * @param sourceDirs
      * @param localRepository
      * @param buildOutputDirectory
      * @throws MojoExecutionException
      */
-    public abstract void write( List referencedReactorArtifacts, EclipseSourceDir[] sourceDirs,
-                               ArtifactRepository localRepository, File buildOutputDirectory )
+    public abstract void write( EclipseSourceDir[] sourceDirs, ArtifactRepository localRepository,
+                                File buildOutputDirectory )
         throws MojoExecutionException;
 
     /**
@@ -104,7 +93,7 @@ public abstract class AbstractWtpResourceWriter
      * @throws MojoExecutionException
      */
     protected void writeModuleTypeAccordingToPackaging( MavenProject project, XMLWriter writer, String packaging,
-                                                       File buildOutputDirectory )
+                                                        File buildOutputDirectory )
         throws MojoExecutionException
     {
         if ( "war".equals( packaging ) ) //$NON-NLS-1$
@@ -141,7 +130,7 @@ public abstract class AbstractWtpResourceWriter
             writer.startElement( ELT_PROPERTY );
             writer.addAttribute( ATTR_NAME, "java-output-path" ); //$NON-NLS-1$ 
             writer.addAttribute( ATTR_VALUE, "/" + //$NON-NLS-1$ 
-                EclipseUtils.toRelativeAndFixSeparator( getProject().getBasedir(), buildOutputDirectory, false ) );
+                IdeUtils.toRelativeAndFixSeparator( getProject().getBasedir(), buildOutputDirectory, false ) );
             writer.endElement();
 
         }
@@ -161,7 +150,7 @@ public abstract class AbstractWtpResourceWriter
             writer.startElement( ELT_PROPERTY );
             writer.addAttribute( ATTR_NAME, "java-output-path" ); //$NON-NLS-1$ 
             writer.addAttribute( ATTR_VALUE, "/" + //$NON-NLS-1$ 
-                EclipseUtils.toRelativeAndFixSeparator( getProject().getBasedir(), buildOutputDirectory, false ) );
+                IdeUtils.toRelativeAndFixSeparator( getProject().getBasedir(), buildOutputDirectory, false ) );
             writer.endElement();
         }
     }
@@ -171,25 +160,23 @@ public abstract class AbstractWtpResourceWriter
      * 
      * @param writer
      * @param artifact
-     * @param referencedReactorProjects
      * @param localRepository
      * @param basedir
      * @throws MojoExecutionException
      */
-    protected void addDependency( XMLWriter writer, Artifact artifact, List referencedReactorProjects,
-                                 ArtifactRepository localRepository, File basedir )
+    protected void addDependency( XMLWriter writer, IdeDependency dep, ArtifactRepository localRepository, File basedir )
         throws MojoExecutionException
     {
         String handle;
 
-        if ( referencedReactorProjects.contains( artifact ) )
+        if ( dep.isReferencedProject() )
         {
             // <dependent-module deploy-path="/WEB-INF/lib"
             // handle="module:/resource/artifactid/artifactid">
             // <dependency-type>uses</dependency-type>
             // </dependent-module>
 
-            handle = "module:/resource/" + artifact.getArtifactId() + "/" + artifact.getArtifactId(); //$NON-NLS-1$ //$NON-NLS-2$
+            handle = "module:/resource/" + dep.getArtifactId() + "/" + dep.getArtifactId(); //$NON-NLS-1$ //$NON-NLS-2$
         }
         else
         {
@@ -198,28 +185,28 @@ public abstract class AbstractWtpResourceWriter
             // <dependency-type>uses</dependency-type>
             // </dependent-module>
 
-            File artifactPath = artifact.getFile();
+            File artifactPath = dep.getFile();
 
             if ( artifactPath == null )
             {
-                getLog().error( Messages.getString( "EclipsePlugin.artifactpathisnull", artifact.getId() ) ); //$NON-NLS-1$
+                getLog().error( Messages.getString( "EclipsePlugin.artifactpathisnull", dep.getId() ) ); //$NON-NLS-1$
                 return;
             }
 
             String fullPath = artifactPath.getPath();
             File repoFile = new File( fullPath );
 
-            if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
+            if ( dep.isSystemScoped() )
             {
                 handle = "module:/classpath/lib/" //$NON-NLS-1$
-                    + EclipseUtils.toRelativeAndFixSeparator( basedir, repoFile, false );
+                    + IdeUtils.toRelativeAndFixSeparator( basedir, repoFile, false );
             }
             else
             {
                 File localRepositoryFile = new File( localRepository.getBasedir() );
 
                 handle = "module:/classpath/var/M2_REPO/" //$NON-NLS-1$
-                    + EclipseUtils.toRelativeAndFixSeparator( localRepositoryFile, repoFile, false );
+                    + IdeUtils.toRelativeAndFixSeparator( localRepositoryFile, repoFile, false );
             }
         }
 
@@ -235,25 +222,22 @@ public abstract class AbstractWtpResourceWriter
         writer.endElement();
     }
 
-    protected void writeWarOrEarResources( XMLWriter writer, MavenProject project, List referencedReactorArtifacts,
-                                          ArtifactRepository localRepository )
+    protected void writeWarOrEarResources( XMLWriter writer, MavenProject project, ArtifactRepository localRepository )
         throws MojoExecutionException
     {
 
-        ScopeArtifactFilter scopeFilter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
-
         // dependencies
-        for ( Iterator it = artifacts.iterator(); it.hasNext(); )
+        for ( int j = 0; j < deps.length; j++ )
         {
-            Artifact artifact = (Artifact) it.next();
-            String type = artifact.getType();
+            IdeDependency dep = deps[j];
+            String type = dep.getType();
 
-            // NB war is needed for ear projects, we suppose nobody adds a war
-            // dependency to a war/jar project
-            if ( ( scopeFilter.include( artifact ) || Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
+            // NB war is needed for ear projects, we suppose nobody adds a war dependency to a war/jar project
+            // exclude test and provided deps
+            if ( ( !dep.isTestDependency() && !dep.isProvided() )
                 && ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type ) || "war".equals( type ) ) ) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             {
-                addDependency( writer, artifact, referencedReactorArtifacts, localRepository, getProject().getBasedir() );
+                addDependency( writer, dep, localRepository, getProject().getBasedir() );
             }
         }
     }
@@ -262,12 +246,12 @@ public abstract class AbstractWtpResourceWriter
     {
         String[] artifactNames = new String[] { "servlet-api", "servletapi", "geronimo-spec-servlet" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-        String version = EclipseUtils.getDependencyVersion( artifactNames, getProject().getArtifacts(), 3 );
+        String version = IdeUtils.getDependencyVersion( artifactNames, getProject().getArtifacts(), 3 );
         if ( version == null )
         {
             // none of the above specified matched, try geronimo-spec-j2ee
             artifactNames = new String[] { "geronimo-spec-j2ee" }; //$NON-NLS-1$
-            version = EclipseUtils.getDependencyVersion( artifactNames, getProject().getArtifacts(), 3 );
+            version = IdeUtils.getDependencyVersion( artifactNames, getProject().getArtifacts(), 3 );
             if ( version != null )
             {
                 String j2eeMinorVersion = StringUtils.substring( version, 2, 3 );
@@ -294,10 +278,10 @@ public abstract class AbstractWtpResourceWriter
 
     protected String resolveJavaVersion()
     {
-        String version = EclipseUtils.getPluginSetting( getProject(), "maven-compiler-plugin", "target", null ); //$NON-NLS-1$ //$NON-NLS-2$
+        String version = IdeUtils.getPluginSetting( getProject(), "maven-compiler-plugin", "target", null ); //$NON-NLS-1$ //$NON-NLS-2$
         if ( version == null )
         {
-            EclipseUtils.getPluginSetting( getProject(), "maven-compiler-plugin", "source", null ); //$NON-NLS-1$ //$NON-NLS-2$
+            IdeUtils.getPluginSetting( getProject(), "maven-compiler-plugin", "source", null ); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         if ( "1.5".equals( version ) || "5".equals( version ) ) //$NON-NLS-1$ //$NON-NLS-2$

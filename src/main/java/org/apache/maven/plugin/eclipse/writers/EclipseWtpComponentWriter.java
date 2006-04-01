@@ -19,14 +19,13 @@ package org.apache.maven.plugin.eclipse.writers;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.EclipseSourceDir;
-import org.apache.maven.plugin.eclipse.EclipseUtils;
 import org.apache.maven.plugin.eclipse.Messages;
+import org.apache.maven.plugin.ide.IdeDependency;
+import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
@@ -56,13 +55,12 @@ public class EclipseWtpComponentWriter
      */
     private static final String FILE_DOT_COMPONENT = ".component"; //$NON-NLS-1$
 
-    public EclipseWtpComponentWriter( Log log, File eclipseProjectDir, MavenProject project, Collection artifacts )
+    public EclipseWtpComponentWriter( Log log, File eclipseProjectDir, MavenProject project, IdeDependency[] deps )
     {
-        super( log, eclipseProjectDir, project, artifacts );
+        super( log, eclipseProjectDir, project, deps );
     }
 
-    public void write( List referencedReactorArtifacts, EclipseSourceDir[] sourceDirs,
-                       ArtifactRepository localRepository, File buildOutputDirectory )
+    public void write( EclipseSourceDir[] sourceDirs, ArtifactRepository localRepository, File buildOutputDirectory )
         throws MojoExecutionException
     {
 
@@ -83,8 +81,7 @@ public class EclipseWtpComponentWriter
         // create a .component file and write out to it
         XMLWriter writer = new PrettyPrintXMLWriter( w );
         String packaging = getProject().getPackaging();
-        writeModuleTypeComponent( writer, packaging, buildOutputDirectory, sourceDirs, referencedReactorArtifacts,
-                                  localRepository );
+        writeModuleTypeComponent( writer, packaging, buildOutputDirectory, sourceDirs, localRepository );
         IOUtil.close( w );
 
     }
@@ -100,8 +97,7 @@ public class EclipseWtpComponentWriter
      * @throws MojoExecutionException
      */
     private void writeModuleTypeComponent( XMLWriter writer, String packaging, File buildOutputDirectory,
-                                           EclipseSourceDir[] sourceDirs, List referencedReactorArtifacts,
-                                           ArtifactRepository localRepository )
+                                           EclipseSourceDir[] sourceDirs, ArtifactRepository localRepository )
         throws MojoExecutionException
     {
         writer.startElement( ELT_PROJECT_MODULES );
@@ -117,9 +113,9 @@ public class EclipseWtpComponentWriter
         {
             target = "/WEB-INF/classes"; //$NON-NLS-1$
 
-            String warSourceDirectory = EclipseUtils.getPluginSetting( getProject(), ARTIFACT_MAVEN_WAR_PLUGIN,
-                                                                       "warSourceDirectory", //$NON-NLS-1$
-                                                                       "/src/main/webapp" ); //$NON-NLS-1$
+            String warSourceDirectory = IdeUtils.getPluginSetting( getProject(), ARTIFACT_MAVEN_WAR_PLUGIN,
+                                                                   "warSourceDirectory", //$NON-NLS-1$
+                                                                   "/src/main/webapp" ); //$NON-NLS-1$
 
             writer.startElement( ELT_PROPERTY );
             writer.addAttribute( ATTR_CONTEXT_ROOT, getProject().getArtifactId() );
@@ -127,7 +123,7 @@ public class EclipseWtpComponentWriter
 
             writer.startElement( ELT_WB_RESOURCE );
             writer.addAttribute( ATTR_DEPLOY_PATH, "/" ); //$NON-NLS-1$
-            writer.addAttribute( ATTR_SOURCE_PATH, EclipseUtils
+            writer.addAttribute( ATTR_SOURCE_PATH, IdeUtils
                 .toRelativeAndFixSeparator( getProject().getBasedir(), new File( getEclipseProjectDirectory(),
                                                                                  warSourceDirectory ), false ) );
             writer.endElement();
@@ -136,7 +132,7 @@ public class EclipseWtpComponentWriter
             writer.startElement( ELT_PROPERTY );
             writer.addAttribute( ATTR_NAME, "java-output-path" ); //$NON-NLS-1$
             writer.addAttribute( ATTR_VALUE, "/" //$NON-NLS-1$
-                + EclipseUtils.toRelativeAndFixSeparator( getProject().getBasedir(), buildOutputDirectory, false ) );
+                + IdeUtils.toRelativeAndFixSeparator( getProject().getBasedir(), buildOutputDirectory, false ) );
             writer.endElement(); // property
 
         }
@@ -151,7 +147,7 @@ public class EclipseWtpComponentWriter
         if ( "war".equalsIgnoreCase( packaging ) || "ear".equalsIgnoreCase( packaging ) ) //$NON-NLS-1$ //$NON-NLS-2$
         {
             // write out the dependencies.
-            writeWarOrEarResources( writer, getProject(), referencedReactorArtifacts, localRepository );
+            writeWarOrEarResources( writer, getProject(), localRepository );
 
         }
 
