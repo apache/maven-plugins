@@ -36,6 +36,7 @@ import org.dom4j.Element;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -309,14 +310,37 @@ public class IdeaModuleMojo
                 String[] dirs = exclude.split( "[,\\s]+" );
                 for ( int i = 0; i < dirs.length; i++ )
                 {
-                    File excludedDir = new File( dirs[i] );
-                    filteredExcludes.add( getExcludedDirectories( excludedDir, filteredExcludes, sourceFolders ) );
+                    File excludedDir = new File( project.getBasedir(), dirs[i] );
+                    filteredExcludes.addAll( getExcludedDirectories( excludedDir, filteredExcludes, sourceFolders ) );
                 }
             }
 
+            // even though we just ran all the directories in the filteredExcludes List through the intelligent
+            // getExcludedDirectories method, we never actually were guaranteed the order that they were added was
+            // in the order required to make the most optimized exclude list. In addition, the smart logic from
+            // that method is entirely skipped if the directory doesn't currently exist. A simple string matching
+            // will do pretty much the same thing and make the list more concise.
+            ArrayList actuallyExcluded = new ArrayList();
+            Collections.sort( filteredExcludes );
             for ( Iterator i = filteredExcludes.iterator(); i.hasNext(); )
             {
-                addExcludeFolder( content, i.next().toString() );
+                String dirToExclude = i.next().toString();
+                boolean addExclude = true;
+                for ( Iterator iterator = actuallyExcluded.iterator(); iterator.hasNext(); )
+                {
+                    String dir = (String) iterator.next();
+                    if ( dirToExclude.startsWith( dir ) )
+                    {
+                        addExclude = false;
+                        break;
+                    }
+                }
+
+                if ( addExclude )
+                {
+                    actuallyExcluded.add( dirToExclude );
+                    addExcludeFolder( content, dirToExclude );
+                }
             }
 
             removeOldDependencies( component );
