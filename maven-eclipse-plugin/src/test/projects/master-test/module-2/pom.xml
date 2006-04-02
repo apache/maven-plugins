@@ -15,6 +15,14 @@
       <version>1.0</version>
     </dependency>
     <dependency>
+      <!-- module -->
+      <groupId>eclipsetest</groupId>
+      <artifactId>module-1</artifactId>
+      <version>1.0</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>eclipsetest</groupId>
       <artifactId>direct-compile</artifactId>
       <version>1.0</version>
