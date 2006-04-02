@@ -277,18 +277,36 @@ public class IdeaModuleMojo
                 addSourceFolder( content, directory, true );
             }
 
-            List resourceDirectory = new ArrayList();
             for ( Iterator i = project.getBuild().getResources().iterator(); i.hasNext(); )
             {
                 Resource resource = (Resource) i.next();
-                resourceDirectory.add( resource.getDirectory() );
+                String directory = resource.getDirectory();
+                if ( resource.getTargetPath() == null && resource.isFiltering() == false )
+                {
+                    addSourceFolder( content, directory, false );
+                }
+                else
+                {
+                    getLog().info(
+                        "Not adding resource directory as it has an incompatible target path or filtering: " +
+                            directory );
+                }
             }
 
             for ( Iterator i = project.getBuild().getTestResources().iterator(); i.hasNext(); )
             {
                 Resource resource = (Resource) i.next();
                 String directory = resource.getDirectory();
-                addSourceFolder( content, directory, true );
+                if ( resource.getTargetPath() == null && resource.isFiltering() == false )
+                {
+                    addSourceFolder( content, directory, true );
+                }
+                else
+                {
+                    getLog().info(
+                        "Not adding test resource directory as it has an incompatible target path or filtering: " +
+                            directory );
+                }
             }
 
             removeOldElements( content, "excludeFolder" );
@@ -483,15 +501,6 @@ public class IdeaModuleMojo
                         resolveClassifier( createElement( dep, "JAVADOC" ), a, javadocClassifier );
                     }
                 }
-            }
-
-            for ( Iterator resourceDirs = resourceDirectory.iterator(); resourceDirs.hasNext(); )
-            {
-                String resourceDir = (String) resourceDirs.next();
-
-                getLog().info( "Adding resource directory: " + resourceDir );
-
-                addResources( component, resourceDir );
             }
 
             writeXmlDocument( moduleFile, document );
@@ -896,7 +905,6 @@ Can't run this anyway as Xpp3Dom is in both classloaders...
         Element dep = createElement( component, "orderEntry" );
         dep.addAttribute( "type", "module-library" );
         dep = createElement( dep, "library" );
-        dep.addAttribute( "name", "resources" );
 
         Element el = createElement( dep, "CLASSES" );
         el = createElement( el, "root" );
