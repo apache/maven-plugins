@@ -48,9 +48,19 @@ public class EclipseCleanMojo
     private static final String FILE_DOT_PROJECT = ".project"; //$NON-NLS-1$
 
     /**
-     * Web Project definition file for Eclipse Web Tools Project (Release 1.0RC5 compatible).
+     * Web Project definition file for Eclipse Web Tools Project (Release 1.0x).
      */
     private static final String DIR_DOT_SETTINGS = ".settings"; //$NON-NLS-1$
+
+    /**
+     * File name where the WTP component settings will be stored for our Eclipse Project.
+     */
+    private static final String FILE_DOT_COMPONENT = ".settings/.component"; //$NON-NLS-1$
+
+    /**
+     * File name where Eclipse Project's Facet configuration will be stored.
+     */
+    private static final String FILE_FACET_CORE_XML = ".settings/org.eclipse.wst.common.project.facet.core.xml"; //$NON-NLS-1$
 
     /**
      * Packaging for the current project.
@@ -65,6 +75,9 @@ public class EclipseCleanMojo
      */
     private File basedir;
 
+    /**
+     * @see org.apache.maven.plugin.AbstractMojo#execute()
+     */
     public void execute()
         throws MojoExecutionException
     {
@@ -79,16 +92,22 @@ public class EclipseCleanMojo
         delete( new File( basedir, FILE_DOT_PROJECT ) );
         delete( new File( basedir, FILE_DOT_CLASSPATH ) );
         delete( new File( basedir, FILE_DOT_WTPMODULES ) );
-        delete( new File( basedir, DIR_DOT_SETTINGS ) );
+
+        delete( new File( basedir, FILE_DOT_COMPONENT ) );
+        delete( new File( basedir, FILE_FACET_CORE_XML ) );
+
+        File settingsDir = new File( basedir, DIR_DOT_SETTINGS );
+        if ( settingsDir.exists() && settingsDir.isDirectory() && settingsDir.list().length == 0 )
+        {
+            delete( settingsDir );
+        }
     }
 
     /**
      * Delete a file, handling log messages and exceptions
      * 
-     * @param f
-     *            File to be deleted
-     * @throws MojoExecutionException
-     *             only if a file exists and can't be deleted
+     * @param f File to be deleted
+     * @throws MojoExecutionException only if a file exists and can't be deleted
      */
     private void delete( File f )
         throws MojoExecutionException
@@ -118,11 +137,19 @@ public class EclipseCleanMojo
         }
     }
 
+    /**
+     * Getter for <code>basedir</code>.
+     * @return Returns the basedir.
+     */
     public File getBasedir()
     {
-        return basedir;
+        return this.basedir;
     }
 
+    /**
+     * Setter for <code>basedir</code>.
+     * @param basedir The basedir to set.
+     */
     public void setBasedir( File basedir )
     {
         this.basedir = basedir;
