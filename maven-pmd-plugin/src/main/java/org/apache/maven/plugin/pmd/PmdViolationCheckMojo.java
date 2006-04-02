@@ -39,21 +39,10 @@ public class PmdViolationCheckMojo
     extends AbstractMojo
 {
     /**
-     * Specifies the path and filename to save the PMD output.  The format of the output file is
-     * determined by the <code>reportFormat</code>
-     *
-     * @parameter expression="${outputFile}" default-value="${project.build.directory}/site/pmd.xml"
+     * @parameter expression="${project.build.directory}"
      * @required
      */
-    private File outputFile;
-
-    /**
-     * Specifies the format of the output to be used when writing to the output file. Valid values are
-     * "plain" and "xml"
-     *
-     * @parameter expression="${format}" default-value="xml"
-     */
-    private String format;
+    private File targetDirectory;
 
     /**
      * Fail on violation?
@@ -69,12 +58,7 @@ public class PmdViolationCheckMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        if ( !"xml".equals( format ) )
-        {
-            throw new MojoExecutionException(
-                "Output format is '" + format + "', pmd:check requires format to be 'xml'." );
-        }
-
+        File outputFile = new File( targetDirectory, "pmd.xml" );
         if ( outputFile.exists() )
         {
             try
@@ -104,7 +88,7 @@ public class PmdViolationCheckMojo
         }
         else
         {
-            getLog().info( "Unable to perform pmd:check, " + "unable to find pmd:execute outputFile." );
+            throw new MojoFailureException( "Unable to perform pmd:check, " + "unable to find " + outputFile );
         }
     }
 
