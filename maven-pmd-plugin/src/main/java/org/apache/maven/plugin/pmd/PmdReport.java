@@ -30,15 +30,9 @@ import net.sourceforge.pmd.renderers.HTMLRenderer;
 import net.sourceforge.pmd.renderers.Renderer;
 import net.sourceforge.pmd.renderers.TextRenderer;
 import net.sourceforge.pmd.renderers.XMLRenderer;
-import org.apache.maven.artifact.handler.ArtifactHandler;
-import org.apache.maven.model.ReportPlugin;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.doxia.sink.Sink;
-import org.codehaus.doxia.site.renderer.SiteRenderer;
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.PathTool;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
@@ -67,46 +61,13 @@ import java.util.ResourceBundle;
  * @todo needs to support the multiple source roots
  */
 public class PmdReport
-    extends AbstractMavenReport
+    extends AbstractPmdReport
 {
-    /**
-     * @parameter expression="${project.build.directory}"
-     * @required
-     */
-    private File targetDirectory;
-
-    /**
-     * @parameter expression="${project.reporting.outputDirectory}"
-     * @required
-     */
-    private String outputDirectory;
-
-    /**
-     * @component
-     */
-    private SiteRenderer siteRenderer;
-
-    /**
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
-    private MavenProject project;
 
     /**
      * @parameter expression="${targetJdk}
      */
     private String targetJdk;
-
-    /**
-     * Set the output format type, in addition to the HTML report.  Must be one of: "none",
-     * "csv", "xml", "txt" or the full class name of the PMD renderer to use.
-     * See the net.sourceforge.pmd.renderers package javadoc for available renderers.
-     * XML is required if the pmd:check goal is being used.
-     *
-     * @parameter expression="${format}"
-     */
-    private String format = "xml";
 
     /**
      * The PMD rulesets to use.  <a href="http://pmd.sourceforge.net/rules/index.html">Stock Rulesets</a>
@@ -116,21 +77,6 @@ public class PmdReport
      */
     private String[] rulesets =
         new String[]{"/rulesets/basic.xml", "/rulesets/unusedcode.xml", "/rulesets/imports.xml",};
-
-    /**
-     * Link the violation line numbers to the source xref. Defaults to true and will link
-     * automatically if jxr plugin is being used.
-     *
-     * @parameter expression="${linkXRef}" default-value="true"
-     */
-    private boolean linkXRef;
-
-    /**
-     * Location of the Xrefs to link to.
-     *
-     * @parameter default-value="${project.build.directory}/site/xref"
-     */
-    private File xrefLocation;
 
     /**
      * The file encoding to use when reading the java source.
@@ -163,179 +109,121 @@ public class PmdReport
     }
 
     /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getOutputDirectory()
-     */
-    protected String getOutputDirectory()
-    {
-        return outputDirectory;
-    }
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getProject()
-     */
-    protected MavenProject getProject()
-    {
-        return project;
-    }
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getSiteRenderer()
-     */
-    protected SiteRenderer getSiteRenderer()
-    {
-        return siteRenderer;
-    }
-
-    private boolean isHtml()
-    {
-        return "html".equals( format );
-    }
-
-    /**
      * @see org.apache.maven.reporting.AbstractMavenReport#executeReport(java.util.Locale)
      */
     public void executeReport( Locale locale )
         throws MavenReportException
     {
-        Sink sink = getSink();
-
-        PMD pmd = getPMD();
-        RuleContext ruleContext = new RuleContext();
-        Report report = new Report();
-        // TODO: use source roots instead
-        String sourceDirectory = project.getBuild().getSourceDirectory();
-        PmdReportListener reportSink = new PmdReportListener( sink, sourceDirectory, getBundle( locale ) );
-        constructXRefLocation( reportSink );
-
-        report.addListener( reportSink );
-        ruleContext.setReport( report );
-        reportSink.beginDocument();
-
-        List files;
-        try
+        if ( canGenerateReport() )
         {
-            files = getFilesToProcess( "**/*.java", getExclusionsString( excludes ) );
-        }
-        catch ( IOException e )
-        {
-            throw new MavenReportException( "Can't parse " + sourceDirectory, e );
-        }
+            Sink sink = getSink();
 
-        Locator locator = new Locator( getLog() );
-        RuleSetFactory ruleSetFactory = new RuleSetFactory();
-        RuleSet[] sets = new RuleSet[rulesets.length];
-        try
-        {
-            for ( int idx = 0; idx < rulesets.length; idx++ )
+            PMD pmd = getPMD();
+            RuleContext ruleContext = new RuleContext();
+            Report report = new Report();
+            // TODO: use source roots instead
+            String sourceDirectory = project.getBuild().getSourceDirectory();
+            PmdReportListener reportSink = new PmdReportListener( sink, sourceDirectory, getBundle( locale ) );
+            String location = constructXRefLocation();
+            if ( location != null )
             {
-                String set = rulesets[idx];
-                getLog().debug( "Preparing ruleset: " + set );
-                File ruleset = locator.resolveLocation( set, getLocationTemp( set ) );
-                InputStream rulesInput = new FileInputStream( ruleset );
-                sets[idx] = ruleSetFactory.createRuleSet( rulesInput );
+                reportSink.setXrefLocation( location );
             }
-        }
-        catch ( IOException e )
-        {
-            throw new MavenReportException( e.getMessage(), e );
-        }
 
-        boolean hasEncoding = sourceEncoding != null;
+            report.addListener( reportSink );
+            ruleContext.setReport( report );
+            reportSink.beginDocument();
 
-        for ( Iterator i = files.iterator(); i.hasNext(); )
-        {
-            File file = (File) i.next();
-
+            List files;
             try
             {
-                // TODO: lazily call beginFile in case there are no rules
+                files = getFilesToProcess( "**/*.java", getExclusionsString( excludes ) );
+            }
+            catch ( IOException e )
+            {
+                throw new MavenReportException( "Can't parse " + sourceDirectory, e );
+            }
 
-                reportSink.beginFile( file );
-                ruleContext.setSourceCodeFilename( file.getAbsolutePath() );
+            Locator locator = new Locator( getLog() );
+            RuleSetFactory ruleSetFactory = new RuleSetFactory();
+            RuleSet[] sets = new RuleSet[rulesets.length];
+            try
+            {
                 for ( int idx = 0; idx < rulesets.length; idx++ )
                 {
-                    try
-                    {
-                        // PMD closes this Reader even though it did not open it so we have
-                        // to open a new one with every call to processFile().
-                        Reader reader = hasEncoding ? new InputStreamReader( new FileInputStream( file ),
-                                                                             sourceEncoding ) : new FileReader( file );
-                        pmd.processFile( reader, sets[idx], ruleContext );
-                    }
-                    catch ( UnsupportedEncodingException e1 )
-                    {
-                        throw new MavenReportException( "Encoding '" + sourceEncoding + "' is not supported.", e1 );
-                    }
+                    String set = rulesets[idx];
+                    getLog().debug( "Preparing ruleset: " + set );
+                    File ruleset = locator.resolveLocation( set, getLocationTemp( set ) );
+                    InputStream rulesInput = new FileInputStream( ruleset );
+                    sets[idx] = ruleSetFactory.createRuleSet( rulesInput );
                 }
-                reportSink.endFile( file );
             }
-            catch ( PMDException e )
+            catch ( IOException e )
             {
-                Exception ex = e;
-                if ( e.getReason() != null )
+                throw new MavenReportException( e.getMessage(), e );
+            }
+
+            boolean hasEncoding = sourceEncoding != null;
+
+            for ( Iterator i = files.iterator(); i.hasNext(); )
+            {
+                File file = (File) i.next();
+
+                try
                 {
-                    ex = e.getReason();
-                }
-                throw new MavenReportException( "Failure executing PMD for: " + file, ex );
-            }
-            catch ( FileNotFoundException e )
-            {
-                throw new MavenReportException( "Error opening source file: " + file, e );
-            }
-        }
-        reportSink.endDocument();
+                    // TODO: lazily call beginFile in case there are no rules
 
-        if ( !isHtml() )
-        {
-            // Use the PMD renderers to render in any format aside from HTML.
-            Renderer r = createRenderer();
-            String buffer = r.render( report );
-            try
-            {
-                Writer writer = new FileWriter( new File( targetDirectory, "pmd." + format ) );
-                writer.write( buffer, 0, buffer.length() );
-                writer.close();
-            }
-            catch ( IOException ioe )
-            {
-                throw new MavenReportException( ioe.getMessage(), ioe );
-            }
-        }
-    }
-
-    private void constructXRefLocation( PmdReportListener reportSink )
-    {
-        if ( linkXRef )
-        {
-            String relativePath = PathTool.getRelativePath( outputDirectory, xrefLocation.getAbsolutePath() );
-            if ( StringUtils.isEmpty( relativePath ) )
-            {
-                relativePath = ".";
-            }
-            relativePath = relativePath + "/" + xrefLocation.getName();
-            if ( xrefLocation.exists() )
-            {
-                // XRef was already generated by manual execution of a lifecycle binding
-                reportSink.setXrefLocation( relativePath );
-            }
-            else
-            {
-                // Not yet generated - check if the report is on its way
-                for ( Iterator reports = project.getReportPlugins().iterator(); reports.hasNext(); )
-                {
-                    ReportPlugin plugin = (ReportPlugin) reports.next();
-
-                    String artifactId = plugin.getArtifactId();
-                    if ( "maven-jxr-plugin".equals( artifactId ) || "jxr-maven-plugin".equals( artifactId ) )
+                    reportSink.beginFile( file );
+                    ruleContext.setSourceCodeFilename( file.getAbsolutePath() );
+                    for ( int idx = 0; idx < rulesets.length; idx++ )
                     {
-                        reportSink.setXrefLocation( relativePath );
+                        try
+                        {
+                            // PMD closes this Reader even though it did not open it so we have
+                            // to open a new one with every call to processFile().
+                            Reader reader = hasEncoding ? new InputStreamReader( new FileInputStream( file ),
+                                                                                 sourceEncoding )
+                                : new FileReader( file );
+                            pmd.processFile( reader, sets[idx], ruleContext );
+                        }
+                        catch ( UnsupportedEncodingException e1 )
+                        {
+                            throw new MavenReportException( "Encoding '" + sourceEncoding + "' is not supported.", e1 );
+                        }
                     }
+                    reportSink.endFile( file );
+                }
+                catch ( PMDException e )
+                {
+                    Exception ex = e;
+                    if ( e.getReason() != null )
+                    {
+                        ex = e.getReason();
+                    }
+                    throw new MavenReportException( "Failure executing PMD for: " + file, ex );
+                }
+                catch ( FileNotFoundException e )
+                {
+                    throw new MavenReportException( "Error opening source file: " + file, e );
                 }
             }
+            reportSink.endDocument();
 
-            if ( reportSink.getXrefLocation() == null )
+            if ( !isHtml() )
             {
-                getLog().warn( "Unable to locate Source XRef to link to - DISABLED" );
+                // Use the PMD renderers to render in any format aside from HTML.
+                Renderer r = createRenderer();
+                String buffer = r.render( report );
+                try
+                {
+                    Writer writer = new FileWriter( new File( targetDirectory, "pmd." + format ) );
+                    writer.write( buffer, 0, buffer.length() );
+                    writer.close();
+                }
+                catch ( IOException ioe )
+                {
+                    throw new MavenReportException( ioe.getMessage(), ioe );
+                }
             }
         }
     }
@@ -425,21 +313,31 @@ public class PmdReport
         return ResourceBundle.getBundle( "pmd-report", locale, PmdReport.class.getClassLoader() );
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#canGenerateReport()
-     */
-    public boolean canGenerateReport()
+    private String getExclusionsString( String[] exclude )
     {
-        ArtifactHandler artifactHandler = project.getArtifact().getArtifactHandler();
-        return "java".equals( artifactHandler.getLanguage() ) &&
-            new File( project.getBuild().getSourceDirectory() ).exists();
+        StringBuffer excludes = new StringBuffer();
+
+        if ( exclude != null )
+        {
+            for ( int index = 0; index < exclude.length; index++ )
+            {
+                if ( excludes.length() > 0 )
+                {
+                    excludes.append( ',' );
+                }
+                excludes.append( exclude[index] );
+            }
+        }
+
+        return excludes.toString();
     }
 
     /**
      * Create and return the correct renderer for the output type.
      *
      * @return the renderer based on the configured output
-     * @throws MavenReportException if no renderer found for the output type
+     * @throws org.apache.maven.reporting.MavenReportException
+     *          if no renderer found for the output type
      */
     public final Renderer createRenderer()
         throws MavenReportException
@@ -480,24 +378,5 @@ public class PmdReport
         }
 
         return renderer;
-    }
-
-    private String getExclusionsString( String[] exclude )
-    {
-        StringBuffer excludes = new StringBuffer();
-
-        if ( exclude != null )
-        {
-            for ( int index = 0; index < exclude.length; index++ )
-            {
-                if ( excludes.length() > 0 )
-                {
-                    excludes.append( ',' );
-                }
-                excludes.append( exclude[index] );
-            }
-        }
-
-        return excludes.toString();
     }
 }
