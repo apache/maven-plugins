@@ -33,6 +33,7 @@ import org.apache.maven.monitor.event.EventMonitor;
 import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusTestCase;
+import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -44,10 +45,19 @@ public abstract class AbstractEclipsePluginTestCase
     extends PlexusTestCase
 {
 
+    /**
+     * The embedder.
+     */
     protected MavenEmbedder maven;
 
+    /**
+     * Test repository directory.
+     */
     protected File localRepositoryDir = getTestFile( "src/test/m2repo" );
 
+    /**
+     * @see org.codehaus.plexus.PlexusTestCase#setUp()
+     */
     protected void setUp()
         throws Exception
     {
@@ -61,6 +71,9 @@ public abstract class AbstractEclipsePluginTestCase
         super.setUp();
     }
 
+    /**
+     * @see org.codehaus.plexus.PlexusTestCase#tearDown()
+     */
     protected void tearDown()
         throws Exception
     {
@@ -71,10 +84,21 @@ public abstract class AbstractEclipsePluginTestCase
     /**
      * Execute the eclipse:eclipse goal on a test project and verify generated files.
      * @param projectName project directory
-     * @param outputDir output dir (if null it's the same as the project)
      * @throws Exception any exception generated during test
      */
     protected void testProject( String projectName )
+        throws Exception
+    {
+        testProject( projectName, new Properties() );
+    }
+
+    /**
+     * Execute the eclipse:eclipse goal on a test project and verify generated files.
+     * @param projectName project directory
+     * @param properties additional properties
+     * @throws Exception any exception generated during test
+     */
+    protected void testProject( String projectName, Properties properties )
         throws Exception
     {
 
@@ -102,13 +126,17 @@ public abstract class AbstractEclipsePluginTestCase
         this.maven.execute( project, Arrays.asList( new String[] {
             "org.apache.maven.plugins:maven-eclipse-plugin:clean",
             "org.apache.maven.plugins:maven-eclipse-plugin:eclipse" } ), eventMonitor, new ConsoleDownloadMonitor(),
-                            new Properties(), basedir );
+                            properties, basedir );
 
         assertFileEquals( localRepositoryDir.getCanonicalPath(), new File( basedir, "project" ),
                           new File( projectOutputDir, ".project" ) );
 
-        assertFileEquals( localRepositoryDir.getCanonicalPath(), new File( basedir, "classpath" ),
-                          new File( projectOutputDir, ".classpath" ) );
+        File classpathExpectedFile = new File( basedir, "classpath" );
+        if ( classpathExpectedFile.exists() )
+        {
+            assertFileEquals( localRepositoryDir.getCanonicalPath(), classpathExpectedFile, new File( projectOutputDir,
+                                                                                                      ".classpath" ) );
+        }
 
         File wtpModulesExpectedFile = new File( basedir, "wtpmodules" );
         if ( wtpModulesExpectedFile.exists() )
@@ -122,6 +150,14 @@ public abstract class AbstractEclipsePluginTestCase
             assertFileEquals( localRepositoryDir.getCanonicalPath(), new File( basedir, "settings" ),
                               new File( projectOutputDir, ".settings/org.eclipse.jdt.core.prefs" ) );
         }
+
+        File componentExpectedFile = new File( basedir, "component" );
+        if ( componentExpectedFile.exists() )
+        {
+            assertFileEquals( localRepositoryDir.getCanonicalPath(), componentExpectedFile,
+                              new File( projectOutputDir, ".settings/.component" ) );
+        }
+
     }
 
     protected void assertFileEquals( String mavenRepo, File expectedFile, File actualFile )
@@ -210,6 +246,8 @@ public abstract class AbstractEclipsePluginTestCase
         {
             lines.add( line );
         }
+
+        IOUtil.close( reader );
 
         return lines;
     }
