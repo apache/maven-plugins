@@ -137,13 +137,23 @@ public class CloverReportMojo extends AbstractMavenReport
      */
     private void createCloverHtmlReport() throws MavenReportException
     {
-        String[] cliArgs = new String[] {
-            "-t", "Maven Clover report",
-            "-p", (String) this.project.getCompileSourceRoots().get( 0 ),
-            "-i", this.cloverDatabase,
-            "-o", this.outputDirectory.getPath() };
+        List parameters = new ArrayList();
 
-        int result = HtmlReporter.mainImpl( cliArgs );
+        parameters.add( "-t" );
+        parameters.add( "Maven Clover report" );
+        parameters.add( "-p" );
+        parameters.add( this.project.getCompileSourceRoots().get( 0 ) );
+        parameters.add( "-i" );
+        parameters.add( this.cloverDatabase );
+        parameters.add( "-o" );
+        parameters.add( this.outputDirectory.getPath() );
+
+        if ( getLog().isDebugEnabled() )
+        {
+            parameters.add( "-d" );
+        }
+
+        int result = HtmlReporter.mainImpl( (String[]) parameters.toArray(new String[0]) );
         if ( result != 0 )
         {
             throw new MavenReportException( "Clover has failed to create the HTML report" );
