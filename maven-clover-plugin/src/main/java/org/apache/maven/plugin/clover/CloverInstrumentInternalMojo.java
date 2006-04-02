@@ -265,6 +265,11 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
         parameters.add( "-d" );
         parameters.add( this.cloverOutputSourceDirectory );
 
+        if ( getLog().isDebugEnabled() )
+        {
+            parameters.add( "-v" );
+        }
+
         if ( getJdk() != null )
         {
             if ( getJdk().equals( "1.4" ) )
