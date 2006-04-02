@@ -99,8 +99,8 @@ public class PmdReportListener
         {
             public int compare( Object o1, Object o2 )
             {
-                return ( (RuleViolation) o1 ).getNode().getBeginLine() -
-                    ( (RuleViolation) o2 ).getNode().getBeginLine();
+                return ( (RuleViolation) o1 ).getBeginLine() -
+                    ( (RuleViolation) o2 ).getBeginLine();
             }
         } );
 
@@ -114,9 +114,9 @@ public class PmdReportListener
             sink.tableCell_();
             sink.tableCell();
 
-            int beginLine = ruleViolation.getNode().getBeginLine();
+            int beginLine = ruleViolation.getBeginLine();
             outputLineLink( beginLine );
-            int endLine = ruleViolation.getNode().getEndLine();
+            int endLine = ruleViolation.getEndLine();
             if ( endLine != beginLine )
             {
                 sink.text( " - ");
