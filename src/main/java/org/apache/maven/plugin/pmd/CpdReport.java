@@ -2,13 +2,13 @@ package org.apache.maven.plugin.pmd;
 
 /*
  * Copyright 2005 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,25 +16,19 @@ package org.apache.maven.plugin.pmd;
  * limitations under the License.
  */
 
+import net.sourceforge.pmd.cpd.CPD;
+import net.sourceforge.pmd.cpd.CSVRenderer;
+import net.sourceforge.pmd.cpd.JavaLanguage;
+import net.sourceforge.pmd.cpd.Renderer;
+import net.sourceforge.pmd.cpd.XMLRenderer;
+import org.apache.maven.reporting.MavenReportException;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Locale;
 import java.util.ResourceBundle;
-
-import net.sourceforge.pmd.cpd.CPD;
-import net.sourceforge.pmd.cpd.CSVRenderer;
-import net.sourceforge.pmd.cpd.JavaLanguage;
-import net.sourceforge.pmd.cpd.Renderer;
-import net.sourceforge.pmd.cpd.SimpleRenderer;
-import net.sourceforge.pmd.cpd.XMLRenderer;
-
-import org.apache.maven.artifact.handler.ArtifactHandler;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.AbstractMavenReport;
-import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.doxia.site.renderer.SiteRenderer;
 
 /**
  * Report for PMD's CPD tool.  See <a href="http://pmd.sourceforge.net/cpd.html">http://pmd.sourceforge.net/cpd.html</a>
@@ -46,50 +40,8 @@ import org.codehaus.doxia.site.renderer.SiteRenderer;
  * @todo needs to support the multiple source roots
  */
 public class CpdReport
-    extends AbstractMavenReport
+    extends AbstractPmdReport
 {
-    /**
-     * @parameter expression="${project.reporting.outputDirectory}"
-     * @required
-     */
-    private String outputDirectory;
-
-    /**
-     * @component
-     */
-    private SiteRenderer siteRenderer;
-
-    /**
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
-    private MavenProject project;
-
-    /**
-     * Set the output format type.  Defaults to "html".  Must be one of:
-     * "html", "csv", "xml", "txt" or the full class name of the PMD renderer to use.
-     * See the net.sourceforge.pmd.cpd package javadoc for available renderers.
-     * 
-     * @parameter
-     */
-    private String format = "html";
-
-    /**
-     * Link the violation line numbers to the source xref.  See the JXR plugin
-     * for more details.
-     * @parameter expression="${linkXref}" default-value="true"
-     * 
-     * TODO Can we automagically determine if xfer is being run and enable this?
-     */
-    private boolean linkXref;
-
-    /**
-     * The location of the xref pages relative to the location of the CPD report.
-     * @parameter
-     */
-    private String xrefLocation = "xref";
-
     /**
      * @parameter
      */
@@ -112,76 +64,45 @@ public class CpdReport
     }
 
     /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getOutputDirectory()
-     */
-    protected String getOutputDirectory()
-    {
-        return outputDirectory;
-    }
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getProject()
-     */
-    protected MavenProject getProject()
-    {
-        return project;
-    }
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getSiteRenderer()
-     */
-    protected SiteRenderer getSiteRenderer()
-    {
-        return siteRenderer;
-    }
-
-    private boolean isHtml()
-    {
-        return "html".equals( format );
-    }
-
-    /**
      * @see org.apache.maven.reporting.AbstractMavenReport#executeReport(java.util.Locale)
      */
     public void executeReport( Locale locale )
         throws MavenReportException
     {
+        if ( canGenerateReport() )
+        {
+            CPD cpd = new CPD( minimumTokens, new JavaLanguage() );
+            String src = getProject().getBuild().getSourceDirectory();
 
-        CPD cpd = new CPD( minimumTokens, new JavaLanguage() );
-        String src = getProject().getBuild().getSourceDirectory();
-        if ( !new File( src ).exists() ) 
-        {
-            return;
-        }
-        
-        try
-        {
-            // TODO: use source roots instead
-            cpd.addRecursively( src );
-        }
-        catch ( IOException e )
-        {
-            throw new MavenReportException( e.getMessage(), e );
-        }
-        cpd.go();
-
-        CpdReportGenerator gen = new CpdReportGenerator( getSink(), src, getBundle( locale ), linkXref ? xrefLocation
-                                                                                                      : null );
-        gen.generate( cpd.getMatches() );
-
-        if ( !isHtml() )
-        {
-            Renderer r = createRenderer();
-            String buffer = r.render( cpd.getMatches() );
             try
             {
-                Writer writer = new FileWriter( new File( this.getReportOutputDirectory(), "cpd." + format ) );
-                writer.write( buffer, 0, buffer.length() );
-                writer.close();
+                // TODO: use source roots instead
+                cpd.addRecursively( src );
             }
-            catch ( IOException ioe )
+            catch ( IOException e )
             {
-                throw new MavenReportException( ioe.getMessage(), ioe );
+                throw new MavenReportException( e.getMessage(), e );
+            }
+            cpd.go();
+
+            CpdReportGenerator gen =
+                new CpdReportGenerator( getSink(), src, getBundle( locale ), constructXRefLocation() );
+            gen.generate( cpd.getMatches() );
+
+            if ( !isHtml() )
+            {
+                Renderer r = createRenderer();
+                String buffer = r.render( cpd.getMatches() );
+                try
+                {
+                    Writer writer = new FileWriter( new File( this.getReportOutputDirectory(), "cpd." + format ) );
+                    writer.write( buffer, 0, buffer.length() );
+                    writer.close();
+                }
+                catch ( IOException ioe )
+                {
+                    throw new MavenReportException( ioe.getMessage(), ioe );
+                }
             }
         }
     }
@@ -200,48 +121,42 @@ public class CpdReport
     }
 
     /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#canGenerateReport()
-     */
-    public boolean canGenerateReport()
-    {
-        ArtifactHandler artifactHandler = project.getArtifact().getArtifactHandler();
-        return ( "java".equals( artifactHandler.getLanguage() ) && new File( getProject().getBuild()
-            .getSourceDirectory() ).exists() );
-    }
-
-    /**
      * Create and return the correct renderer for the output type.
+     *
      * @return the renderer based on the configured output
-     * @throws MavenReportException if no renderer found for the output type
+     * @throws org.apache.maven.reporting.MavenReportException
+     *          if no renderer found for the output type
      */
-    public final Renderer createRenderer()
+    public Renderer createRenderer()
         throws MavenReportException
     {
-        if ( format.equals( "xml" ) )
+        Renderer renderer = null;
+        if ( "xml".equals( format ) )
         {
-            return new XMLRenderer();
+            renderer = new XMLRenderer();
         }
-        else if ( format.equals( "txt" ) )
+        else if ( "csv".equals( format ) )
         {
-            return new SimpleRenderer();
+            renderer = new CSVRenderer();
         }
-        else if ( format.equals( "csv" ) )
-        {
-            return new CSVRenderer();
-        }
-        if ( !format.equals( "" ) )
+        else if ( !"".equals( format ) && !"none".equals( format ) )
         {
             try
             {
-                return (Renderer) Class.forName( format ).newInstance();
+                renderer = (Renderer) Class.forName( format ).newInstance();
             }
             catch ( Exception e )
             {
-                throw new MavenReportException( "Can't find the custom format " + format + ": "
-                    + e.getClass().getName() );
+                throw new MavenReportException(
+                    "Can't find the custom format " + format + ": " + e.getClass().getName() );
             }
         }
 
-        throw new MavenReportException( "Can't create report with format of " + format );
+        if ( renderer == null )
+        {
+            throw new MavenReportException( "Can't create report with format of " + format );
+        }
+
+        return renderer;
     }
 }
