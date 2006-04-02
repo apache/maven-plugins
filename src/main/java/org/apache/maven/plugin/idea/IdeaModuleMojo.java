@@ -17,9 +17,9 @@ package org.apache.maven.plugin.idea;
  */
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.manager.WagonManager;
+import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.model.Resource;
@@ -83,7 +83,6 @@ public class IdeaModuleMojo
     private boolean linkModules;
 
     /**
-     *
      * @parameter expression="${deploymentDescriptorFile}"
      */
     private String deploymentDescriptorFile;
@@ -153,6 +152,14 @@ public class IdeaModuleMojo
     private String exclude;
 
     /**
+     * Causes the module libraries to use a short name for all dependencies. This is very convenient but has been
+     * reported to cause problems with IDEA.
+     *
+     * @parameter default-value="true"
+     */
+    private boolean dependenciesAsLibraries;
+
+    /**
      * A temporary cache of artifacts that's already been downloaded or
      * attempted to be downloaded. This is to refrain from trying to download a
      * dependency that we have already tried to download.
@@ -168,7 +175,8 @@ public class IdeaModuleMojo
                            boolean overwrite, MavenProject executedProject, List reactorProjects,
                            WagonManager wagonManager, boolean linkModules, boolean useFullNames,
                            boolean downloadSources, String sourceClassifier, boolean downloadJavadocs,
-                           String javadocClassifier, Library[] libraries, Set macros, String exclude )
+                           String javadocClassifier, Library[] libraries, Set macros, String exclude,
+                           boolean useShortDependencyNames )
     {
         super.initParam( project, artifactFactory, localRepo, artifactResolver, artifactMetadataSource, log,
                          overwrite );
@@ -196,6 +204,8 @@ public class IdeaModuleMojo
         this.macros = macros;
 
         this.exclude = exclude;
+
+        this.dependenciesAsLibraries = useShortDependencyNames;
     }
 
     /**
@@ -401,6 +411,11 @@ public class IdeaModuleMojo
                     removeOldElements( dep, "library" );
                     dep = createElement( dep, "library" );
 
+                    if ( dependenciesAsLibraries )
+                    {
+                        dep.addAttribute( "name", moduleName );
+                    }
+
                     Element el = createElement( dep, "CLASSES" );
                     if ( library != null && library.getSplitClasses().length > 0 )
                     {
@@ -433,7 +448,6 @@ public class IdeaModuleMojo
                             sourceEl.addAttribute( "url", source );
                         }
                     }
-
 
                     if ( !usedSources && downloadSources )
                     {

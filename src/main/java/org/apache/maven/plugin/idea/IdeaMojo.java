@@ -167,6 +167,15 @@ public class IdeaMojo
      */
     private String ideaVersion;
 
+    /**
+     * Causes the module libraries to use a short name for all dependencies. This is very convenient but has been
+     * reported to cause problems with IDEA.
+     *
+     * @parameter default-value="true"
+     */
+    private boolean dependenciesAsLibraries;
+
+
     public void execute()
         throws MojoExecutionException
     {
@@ -197,7 +206,8 @@ public class IdeaMojo
 
         mojo.initParam( project, artifactFactory, localRepo, artifactResolver, artifactMetadataSource, getLog(),
                         overwrite, executedProject, reactorProjects, wagonManager, linkModules, useFullNames,
-                        downloadSources, sourceClassifier, downloadJavadocs, javadocClassifier, libraries, macros, exclude );
+                        downloadSources, sourceClassifier, downloadJavadocs, javadocClassifier, libraries, macros,
+                        exclude, dependenciesAsLibraries );
 
         mojo.rewriteModule();
     }
