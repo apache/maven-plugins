@@ -100,18 +100,19 @@ public class CloverAggregateMojo extends AbstractCloverMojo
     {
         List dbFiles = getChildrenCloverDatabases();
 
-        String[] args = new String[dbFiles.size() + 2];
-        args[0] = "-i";
-        args[1] = this.cloverMergeDatabase;
+        List parameters = new ArrayList();
 
-        int i = 2;
-        for ( Iterator dbs = dbFiles.iterator(); dbs.hasNext(); )
+        parameters.add( "-i" );
+        parameters.add( this.cloverMergeDatabase );
+
+        if ( getLog().isDebugEnabled() )
         {
-            args[i] = (String) dbs.next();
-            i++;
+           parameters.add( "-d" );
         }
 
-        int mergeResult = CloverMerge.mainImpl( args );
+        parameters.addAll( dbFiles );
+
+        int mergeResult = CloverMerge.mainImpl( (String[]) parameters.toArray(new String[0]) );
         if ( mergeResult != 0 )
         {
             throw new MojoExecutionException( "Clover has failed to merge the children module databases" );
