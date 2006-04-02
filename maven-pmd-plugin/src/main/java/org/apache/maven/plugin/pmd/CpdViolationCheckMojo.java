@@ -22,16 +22,16 @@ import org.apache.maven.plugin.MojoFailureException;
 /**
  * Perform a violation check against the last pmd run to see if there are any violations.
  *
- * @goal check
+ * @goal cpd-check
  * @phase verify
- * @execute goal="pmd"
+ * @execute goal="cpd"
  */
-public class PmdViolationCheckMojo
+public class CpdViolationCheckMojo
     extends AbstractPmdViolationCheckMojo
 {
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        executeCheck( "pmd.xml", "violation" );
+        executeCheck( "cpd.xml", "duplication" );
     }
 }
