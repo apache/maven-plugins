@@ -186,6 +186,11 @@ public class EclipsePlugin
     private boolean wtp10;
 
     /**
+     * Not a plugin parameter. Is this a java project?
+     */
+    private boolean isJavaProject;
+
+    /**
      * Getter for <code>buildcommands</code>.
      * @return Returns the buildcommands.
      */
@@ -383,6 +388,8 @@ public class EclipsePlugin
 
         // end validate
 
+        isJavaProject = !"ear".equals( packaging ) && !"pom".equals( packaging );
+
         // defaults
         if ( projectnatures == null )
         {
@@ -438,10 +445,13 @@ public class EclipsePlugin
 
         new EclipseSettingsWriter( getLog(), eclipseProjectDir, project, deps ).write();
 
-        new EclipseClasspathWriter( getLog(), eclipseProjectDir, project, deps ).write( projectBaseDir, sourceDirs,
-                                                                                        classpathContainers,
-                                                                                        localRepository,
-                                                                                        buildOutputDirectory );
+        if ( isJavaProject )
+        {
+            new EclipseClasspathWriter( getLog(), eclipseProjectDir, project, deps ).write( projectBaseDir, sourceDirs,
+                                                                                            classpathContainers,
+                                                                                            localRepository,
+                                                                                            buildOutputDirectory );
+        }
 
         getLog().info( Messages.getString( "EclipsePlugin.wrote", new Object[] { //$NON-NLS-1$
                                            project.getArtifactId(), eclipseProjectDir.getAbsolutePath() } ) );
@@ -465,12 +475,19 @@ public class EclipsePlugin
             projectnatures.add( NATURE_WST_FACET_CORE_NATURE ); // WTP 1.0 nature
         }
 
-        projectnatures.add( NATURE_JDT_CORE_JAVA );
+        if ( isJavaProject )
+        {
+            projectnatures.add( NATURE_JDT_CORE_JAVA );
+        }
 
         if ( wtpR7 || wtp10 )
         {
             projectnatures.add( NATURE_WST_MODULE_CORE_NATURE ); // WTP 0.7/1.0 nature
-            projectnatures.add( NATURE_JEM_WORKBENCH_JAVA_EMF ); // WTP 0.7/1.0 nature
+
+            if ( isJavaProject )
+            {
+                projectnatures.add( NATURE_JEM_WORKBENCH_JAVA_EMF ); // WTP 0.7/1.0 nature
+            }
         }
 
     }
@@ -490,7 +507,10 @@ public class EclipsePlugin
             buildcommands.add( BUILDER_WST_COMPONENT_STRUCTURAL ); // WTP 0.7 builder
         }
 
-        buildcommands.add( BUILDER_JDT_CORE_JAVA );
+        if ( isJavaProject )
+        {
+            buildcommands.add( BUILDER_JDT_CORE_JAVA );
+        }
 
         if ( wtpR7 || wtp10 )
         {
