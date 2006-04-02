@@ -86,11 +86,12 @@ public class IdeUtils
             relative = absolutePath;
         }
 
-        relative = StringUtils.replace( relative, "\\", "/" ); //$NON-NLS-1$ //$NON-NLS-2$
+        relative = StringUtils.replace( relative, '\\', '/' );
 
         if ( replaceSlashesWithDashes )
         {
-            relative = StringUtils.replace( relative, "/", "-" ); //$NON-NLS-1$ //$NON-NLS-2$
+            relative = StringUtils.replace( relative, '/', '-' );
+            relative = StringUtils.replace( relative, ':', '-' ); // remove ":" for absolute paths in windows
         }
 
         return relative;
