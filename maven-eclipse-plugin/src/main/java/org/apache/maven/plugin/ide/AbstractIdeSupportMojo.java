@@ -639,7 +639,7 @@ public abstract class AbstractIdeSupportMojo
         {
             IdeDependency dependency = deps[j];
 
-            if ( dependency.isReferencedProject() )
+            if ( dependency.isReferencedProject() || dependency.isSystemScoped() )
             {
                 // source artifact not needed
                 continue;
