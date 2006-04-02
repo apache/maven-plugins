@@ -16,6 +16,31 @@ package org.apache.maven.plugin.pmd;
  * limitations under the License.
  */
 
+import net.sourceforge.pmd.PMD;
+import net.sourceforge.pmd.PMDException;
+import net.sourceforge.pmd.Report;
+import net.sourceforge.pmd.RuleContext;
+import net.sourceforge.pmd.RuleSet;
+import net.sourceforge.pmd.RuleSetFactory;
+import net.sourceforge.pmd.TargetJDK1_3;
+import net.sourceforge.pmd.TargetJDK1_4;
+import net.sourceforge.pmd.TargetJDK1_5;
+import net.sourceforge.pmd.renderers.CSVRenderer;
+import net.sourceforge.pmd.renderers.HTMLRenderer;
+import net.sourceforge.pmd.renderers.Renderer;
+import net.sourceforge.pmd.renderers.TextRenderer;
+import net.sourceforge.pmd.renderers.XMLRenderer;
+import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.model.ReportPlugin;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.reporting.AbstractMavenReport;
+import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.doxia.sink.Sink;
+import org.codehaus.doxia.site.renderer.SiteRenderer;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.PathTool;
+import org.codehaus.plexus.util.StringUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -33,30 +58,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import net.sourceforge.pmd.PMD;
-import net.sourceforge.pmd.PMDException;
-import net.sourceforge.pmd.Report;
-import net.sourceforge.pmd.RuleContext;
-import net.sourceforge.pmd.RuleSet;
-import net.sourceforge.pmd.RuleSetFactory;
-import net.sourceforge.pmd.TargetJDK1_3;
-import net.sourceforge.pmd.TargetJDK1_4;
-import net.sourceforge.pmd.TargetJDK1_5;
-import net.sourceforge.pmd.renderers.CSVRenderer;
-import net.sourceforge.pmd.renderers.HTMLRenderer;
-import net.sourceforge.pmd.renderers.Renderer;
-import net.sourceforge.pmd.renderers.TextRenderer;
-import net.sourceforge.pmd.renderers.XMLRenderer;
-
-import org.apache.maven.artifact.handler.ArtifactHandler;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.AbstractMavenReport;
-import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.doxia.sink.Sink;
-import org.codehaus.doxia.site.renderer.SiteRenderer;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.StringUtils;
-
 /**
  * Implement the PMD report.
  *
@@ -68,6 +69,12 @@ import org.codehaus.plexus.util.StringUtils;
 public class PmdReport
     extends AbstractMavenReport
 {
+    /**
+     * @parameter expression="${project.build.directory}"
+     * @required
+     */
+    private File targetDirectory;
+
     /**
      * @parameter expression="${project.reporting.outputDirectory}"
      * @required
@@ -92,50 +99,49 @@ public class PmdReport
     private String targetJdk;
 
     /**
-     * Set the output format type.  Defaults to "html".  Must be one of:
-     * "html", "csv", "xml", "txt" or the full class name of the PMD renderer to use.
+     * Set the output format type, in addition to the HTML report.  Must be one of: "none",
+     * "csv", "xml", "txt" or the full class name of the PMD renderer to use.
      * See the net.sourceforge.pmd.renderers package javadoc for available renderers.
-     * 
+     * XML is required if the pmd:check goal is being used.
+     *
      * @parameter expression="${format}"
      */
-    private String format = "html";
+    private String format = "xml";
 
     /**
      * The PMD rulesets to use.  <a href="http://pmd.sourceforge.net/rules/index.html">Stock Rulesets</a>
-     * Defaults to the basic, imports and unusedcode rulesets. 
-     * 
+     * Defaults to the basic, imports and unusedcode rulesets.
+     *
      * @parameter
      */
-    private String[] rulesets = new String[] 
-    {
-        "/rulesets/basic.xml",
-        "/rulesets/unusedcode.xml",
-        "/rulesets/imports.xml",
-    };
+    private String[] rulesets =
+        new String[]{"/rulesets/basic.xml", "/rulesets/unusedcode.xml", "/rulesets/imports.xml",};
 
     /**
-     * Link the violation line numbers to the source xref.
-     * @parameter expression="${linkXref}" default-value="true"
-     * 
-     * TODO Can we automagically determine if xfer is being run and enable this?
+     * Link the violation line numbers to the source xref. Defaults to true and will link
+     * automatically if jxr plugin is being used.
+     *
+     * @parameter expression="${linkXRef}" default-value="true"
      */
-    private boolean linkXref;
+    private boolean linkXRef;
 
     /**
-     * The location of the xref pages relative to the location of the pmd report.
-     * @parameter
+     * Location of the Xrefs to link to.
+     *
+     * @parameter default-value="${project.build.directory}/site/xref"
      */
-    private String xrefLocation = "xref";
+    private File xrefLocation;
 
     /**
      * The file encoding to use when reading the java source.
-     * @parameter 
+     *
+     * @parameter
      */
     private String sourceEncoding;
 
     /**
      * Files to exclude from checking. Can contain wildcards and double wildcards.
-     * 
+     *
      * @parameter
      */
     private String[] excludes;
@@ -197,12 +203,9 @@ public class PmdReport
         RuleContext ruleContext = new RuleContext();
         Report report = new Report();
         // TODO: use source roots instead
-        String sourceDirectory = getProject().getBuild().getSourceDirectory();
+        String sourceDirectory = project.getBuild().getSourceDirectory();
         PmdReportListener reportSink = new PmdReportListener( sink, sourceDirectory, getBundle( locale ) );
-        if ( linkXref )
-        {
-            reportSink.setXrefLocation( xrefLocation );
-        }
+        constructXRefLocation( reportSink );
 
         report.addListener( reportSink );
         ruleContext.setReport( report );
@@ -289,13 +292,50 @@ public class PmdReport
             String buffer = r.render( report );
             try
             {
-                Writer writer = new FileWriter( new File( this.getReportOutputDirectory(), "pmd." + format ) );
+                Writer writer = new FileWriter( new File( targetDirectory, "pmd." + format ) );
                 writer.write( buffer, 0, buffer.length() );
                 writer.close();
             }
             catch ( IOException ioe )
             {
                 throw new MavenReportException( ioe.getMessage(), ioe );
+            }
+        }
+    }
+
+    private void constructXRefLocation( PmdReportListener reportSink )
+    {
+        if ( linkXRef )
+        {
+            String relativePath = PathTool.getRelativePath( outputDirectory, xrefLocation.getAbsolutePath() );
+            if ( StringUtils.isEmpty( relativePath ) )
+            {
+                relativePath = ".";
+            }
+            relativePath = relativePath + "/" + xrefLocation.getName();
+            if ( xrefLocation.exists() )
+            {
+                // XRef was already generated by manual execution of a lifecycle binding
+                reportSink.setXrefLocation( relativePath );
+            }
+            else
+            {
+                // Not yet generated - check if the report is on its way
+                for ( Iterator reports = project.getReportPlugins().iterator(); reports.hasNext(); )
+                {
+                    ReportPlugin plugin = (ReportPlugin) reports.next();
+
+                    String artifactId = plugin.getArtifactId();
+                    if ( "maven-jxr-plugin".equals( artifactId ) || "jxr-maven-plugin".equals( artifactId ) )
+                    {
+                        reportSink.setXrefLocation( relativePath );
+                    }
+                }
+            }
+
+            if ( reportSink.getXrefLocation() == null )
+            {
+                getLog().warn( "Unable to locate Source XRef to link to - DISABLED" );
             }
         }
     }
@@ -354,28 +394,30 @@ public class PmdReport
     private List getFilesToProcess( String includes, String excludes )
         throws IOException
     {
-        File dir = new File( getProject().getBuild().getSourceDirectory() );
-        if ( !dir.exists() )
-        {
-            return Collections.EMPTY_LIST;
-        }
+        List files = Collections.EMPTY_LIST;
 
-        StringBuffer excludesStr = new StringBuffer();
-        if ( StringUtils.isNotEmpty( excludes ) )
+        File dir = new File( project.getBuild().getSourceDirectory() );
+        if ( dir.exists() )
         {
-            excludesStr.append( excludes );
-        }
-        String[] defaultExcludes = FileUtils.getDefaultExcludes();
-        for ( int i = 0; i < defaultExcludes.length; i++ )
-        {
-            if ( excludesStr.length() > 0 )
+
+            StringBuffer excludesStr = new StringBuffer();
+            if ( StringUtils.isNotEmpty( excludes ) )
             {
-                excludesStr.append( "," );
+                excludesStr.append( excludes );
             }
-            excludesStr.append( defaultExcludes[i] );
+            String[] defaultExcludes = FileUtils.getDefaultExcludes();
+            for ( int i = 0; i < defaultExcludes.length; i++ )
+            {
+                if ( excludesStr.length() > 0 )
+                {
+                    excludesStr.append( "," );
+                }
+                excludesStr.append( defaultExcludes[i] );
+            }
+            getLog().debug( "Excluded files: '" + excludesStr + "'" );
+            files = FileUtils.getFiles( dir, includes, excludesStr.toString() );
         }
-        getLog().debug( "Excluded files: '" + excludesStr + "'" );
-        return FileUtils.getFiles( dir, includes, excludesStr.toString() );
+        return files;
     }
 
     private static ResourceBundle getBundle( Locale locale )
@@ -389,69 +431,73 @@ public class PmdReport
     public boolean canGenerateReport()
     {
         ArtifactHandler artifactHandler = project.getArtifact().getArtifactHandler();
-        return ( "java".equals( artifactHandler.getLanguage() ) && new File( getProject().getBuild()
-            .getSourceDirectory() ).exists() );
+        return "java".equals( artifactHandler.getLanguage() ) &&
+            new File( project.getBuild().getSourceDirectory() ).exists();
     }
 
     /**
      * Create and return the correct renderer for the output type.
+     *
      * @return the renderer based on the configured output
      * @throws MavenReportException if no renderer found for the output type
      */
     public final Renderer createRenderer()
         throws MavenReportException
     {
-        if ( format.equals( "xml" ) )
+        Renderer renderer = null;
+        if ( "xml".equals( format ) )
         {
-            return new XMLRenderer();
+            renderer = new XMLRenderer();
         }
-        else if ( format.equals( "txt" ) )
+        else if ( "txt".equals( format ) )
         {
-            return new TextRenderer();
+            renderer = new TextRenderer();
         }
-        else if ( format.equals( "csv" ) )
+        else if ( "csv".equals( format ) )
         {
-            return new CSVRenderer();
+            renderer = new CSVRenderer();
         }
-        else if ( format.equals( "html" ) )
+        else if ( "html".equals( format ) )
         {
-            return new HTMLRenderer();
+            renderer = new HTMLRenderer();
         }
-        if ( !format.equals( "" ) )
+        else if ( !"".equals( format ) && !"none".equals( format ) )
         {
             try
             {
-                return (Renderer) Class.forName( format ).newInstance();
+                renderer = (Renderer) Class.forName( format ).newInstance();
             }
             catch ( Exception e )
             {
-                throw new MavenReportException( "Can't find the custom format " + format + ": "
-                    + e.getClass().getName() );
+                throw new MavenReportException(
+                    "Can't find the custom format " + format + ": " + e.getClass().getName() );
             }
         }
 
-        throw new MavenReportException( "Can't create report with format of " + format );
+        if ( renderer == null )
+        {
+            throw new MavenReportException( "Can't create report with format of " + format );
+        }
+
+        return renderer;
     }
 
     private String getExclusionsString( String[] exclude )
     {
         StringBuffer excludes = new StringBuffer();
-        
-        
-        if ( exclude == null )
+
+        if ( exclude != null )
         {
-            return excludes.toString();
-        }
-        
-        for ( int index = 0; index < exclude.length; index++ )
-        {
-            if ( excludes.length() > 0 )
+            for ( int index = 0; index < exclude.length; index++ )
             {
-                excludes.append( ',' );
+                if ( excludes.length() > 0 )
+                {
+                    excludes.append( ',' );
+                }
+                excludes.append( exclude[index] );
             }
-            excludes.append( exclude[index] );
         }
-        
+
         return excludes.toString();
     }
 }
