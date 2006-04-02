@@ -16,6 +16,8 @@
 
 package org.apache.maven.plugin.eclipse;
 
+import java.util.Properties;
+
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
  * @author <a href="mailto:fgiust@apache.org">Fabrizio Giustina</a>
@@ -91,6 +93,16 @@ public class EclipsePluginTest
         throws Exception
     {
         testProject( "project-11" );
+    }
+
+    /**
+     * Test with ear project
+     * @throws Exception any exception thrown during test
+     */
+    public void testProject12()
+        throws Exception
+    {
+        testProject( "project-12" );
     }
 
 }
