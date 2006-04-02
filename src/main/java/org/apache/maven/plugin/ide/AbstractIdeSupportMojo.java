@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -434,6 +435,9 @@ public abstract class AbstractIdeSupportMojo
                                                e.getGroupId(), e.getArtifactId(), e.getVersion(), e.getMessage() } ) );
             }
 
+            // keep track of added reactor projects in order to avoid duplicates
+            Set emittedReactorProjectId = new HashSet();
+
             for ( Iterator i = artifactResolutionResult.getArtifactResolutionNodes().iterator(); i.hasNext(); )
             {
                 ResolutionNode node = (ResolutionNode) i.next();
@@ -469,14 +473,18 @@ public abstract class AbstractIdeSupportMojo
                     }
                 }
 
-                IdeDependency dep = new IdeDependency( art.getGroupId(), art.getArtifactId(), art.getVersion(),
-                                                       isReactorProject, Artifact.SCOPE_TEST.equals( art.getScope() ),
-                                                       Artifact.SCOPE_SYSTEM.equals( art.getScope() ),
-                                                       Artifact.SCOPE_PROVIDED.equals( art.getScope() ), art
-                                                           .getArtifactHandler().isAddedToClasspath(), art.getFile(),
-                                                       art.getType() );
+                if ( !isReactorProject || emittedReactorProjectId.add( art.getGroupId() + '-' + art.getArtifactId() ) )
+                {
 
-                dependencyList.add( dep );
+                    IdeDependency dep = new IdeDependency( art.getGroupId(), art.getArtifactId(), art.getVersion(),
+                                                           isReactorProject, Artifact.SCOPE_TEST
+                                                               .equals( art.getScope() ), Artifact.SCOPE_SYSTEM
+                                                               .equals( art.getScope() ), Artifact.SCOPE_PROVIDED
+                                                               .equals( art.getScope() ), art.getArtifactHandler()
+                                                               .isAddedToClasspath(), art.getFile(), art.getType() );
+
+                    dependencyList.add( dep );
+                }
 
             }
 
@@ -558,10 +566,7 @@ public abstract class AbstractIdeSupportMojo
                 MavenProject reactorProject = (MavenProject) iter.next();
 
                 if ( reactorProject.getGroupId().equals( artifact.getGroupId() )
-                    && reactorProject.getArtifactId().equals( artifact.getArtifactId() )
-                    && reactorProject.getPackaging().equals( artifact.getType() )
-
-                )
+                    && reactorProject.getArtifactId().equals( artifact.getArtifactId() ) )
                 {
                     if ( reactorProject.getVersion().equals( artifact.getVersion() ) )
                     {
