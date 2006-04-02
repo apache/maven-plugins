@@ -95,7 +95,7 @@ public class CpdReport
                 String buffer = r.render( cpd.getMatches() );
                 try
                 {
-                    Writer writer = new FileWriter( new File( this.getReportOutputDirectory(), "cpd." + format ) );
+                    Writer writer = new FileWriter( new File( targetDirectory, "cpd." + format ) );
                     writer.write( buffer, 0, buffer.length() );
                     writer.close();
                 }
