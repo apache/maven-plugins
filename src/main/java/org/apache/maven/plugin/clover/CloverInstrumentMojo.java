@@ -16,6 +16,7 @@
 package org.apache.maven.plugin.clover;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.clover.internal.AbstractCloverMojo;
 
 /**
  * Instrument all sources using Clover and forks a custom lifecycle to execute project's tests on the instrumented code
@@ -36,7 +37,7 @@ public class CloverInstrumentMojo extends AbstractCloverMojo
 {
     /**
      * {@inheritDoc}
-     * @see org.apache.maven.plugin.clover.AbstractCloverMojo#execute()
+     * @see org.apache.maven.plugin.clover.internal.AbstractCloverMojo#execute()
      */
     public void execute()
         throws MojoExecutionException

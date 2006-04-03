@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.maven.plugin.clover;
+package org.apache.maven.plugin.clover.internal;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.clover.internal.Locator;
+import org.apache.maven.plugin.clover.internal.AbstractCloverMojo;
 import org.jmock.MockObjectTestCase;
 import org.jmock.Mock;
 
 import java.io.File;
 
 /**
- * Unit tests for {@link org.apache.maven.plugin.clover.AbstractCloverMojo}.
+ * Unit tests for {@link org.apache.maven.plugin.clover.internal.AbstractCloverMojo}.
  * 
  * @author <a href="mailto:vmassol@apache.org">Vincent Massol</a>
  * @version $Id$
