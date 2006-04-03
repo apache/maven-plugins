@@ -24,11 +24,13 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -95,7 +97,7 @@ public abstract class AbstractJxrReport
     /**
      * String uses at the bottom of the Xref HTML files.
      *
-     * @parameter expression="Copyright &copy; ${project.inceptionYear} ${project.organization.name}. All Rights Reserved."
+     * @parameter expression="${bottom}" default-value="Copyright &copy; {inceptionYear}-{currentYear} ${project.organization.name}. All Rights Reserved."
      */
     private String bottom;
 
@@ -221,10 +223,31 @@ public abstract class AbstractJxrReport
         jxr.setRevision( "HEAD" );
         jxr.setJavadocLinkDir( getJavadocLocation() );
 
-        jxr.xref( sourceDirs, templateDir, windowTitle, docTitle, bottom );
+        jxr.xref( sourceDirs, templateDir, windowTitle, docTitle, getBottomText( project.getInceptionYear() ) );
 
         // and finally copy the stylesheet
         copyRequiredResources( destinationDirectory );
+    }
+
+    private String getBottomText( String inceptionYear )
+    {
+        int actualYear = Calendar.getInstance().get( Calendar.YEAR );
+        String year = String.valueOf( actualYear );
+
+        String bottom = StringUtils.replace( this.bottom, "{currentYear}", year );
+
+        if ( inceptionYear != null )
+        {
+            if ( inceptionYear.equals( year ) )
+            {
+                bottom = StringUtils.replace( bottom, "{inceptionYear}-", "" );
+            }
+            else
+            {
+                bottom = StringUtils.replace( bottom, "{inceptionYear}", inceptionYear );
+            }
+        }
+        return bottom;
     }
 
     /**
