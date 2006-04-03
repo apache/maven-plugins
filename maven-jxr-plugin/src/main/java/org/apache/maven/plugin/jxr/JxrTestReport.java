@@ -1,7 +1,7 @@
 package org.apache.maven.plugin.jxr;
 
 /*
- * Copyright 2004-2006 The Apache Software Foundation.
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,18 +23,19 @@ import java.util.Locale;
 
 /**
  * Creates an html-based, cross referenced version of Java source code
- * for a project.
+ * for a project's test sources.
  *
  * @author <a href="mailto:bellingard.NO-SPAM@gmail.com">Fabrice Bellingard</a>
- * @goal jxr
+ * @author <a href="mailto:brett@apache.org">Brett Porter</a>
+ * @goal test-jxr
  */
-public class JxrReport
+public class JxrTestReport
     extends AbstractJxrReport
 {
     /**
-     * Source directories of the project.
+     * Test directories of the project.
      *
-     * @parameter expression="${project.compileSourceRoots}"
+     * @parameter expression="${project.testCompileSourceRoots}"
      * @required
      * @readonly
      */
@@ -43,14 +44,9 @@ public class JxrReport
     /**
      * Folder where the Xref files will be copied to.
      *
-     * @parameter expression="${project.build.directory}/site/xref"
+     * @parameter expression="${project.build.directory}/site/xref-test"
      */
     private String destDir;
-
-    protected String getDestinationDirectory()
-    {
-        return destDir;
-    }
 
     protected List getSourceRoots()
     {
@@ -59,7 +55,12 @@ public class JxrReport
 
     protected List getSourceRoots( MavenProject project )
     {
-        return project.getCompileSourceRoots();
+        return project.getTestCompileSourceRoots();
+    }
+
+    protected String getDestinationDirectory()
+    {
+        return destDir;
     }
 
     /**
@@ -69,7 +70,7 @@ public class JxrReport
      */
     public String getDescription( Locale locale )
     {
-        return getBundle( locale ).getString( "report.xref.main.description" );
+        return getBundle( locale ).getString( "report.xref.test.description" );
     }
 
     /**
@@ -79,7 +80,7 @@ public class JxrReport
      */
     public String getName( Locale locale )
     {
-        return getBundle( locale ).getString( "report.xref.main.name" );
+        return getBundle( locale ).getString( "report.xref.test.name" );
     }
 
     /**
@@ -89,7 +90,6 @@ public class JxrReport
      */
     public String getOutputName()
     {
-        return "xref/index";
+        return "xref-test/index";
     }
-
 }
