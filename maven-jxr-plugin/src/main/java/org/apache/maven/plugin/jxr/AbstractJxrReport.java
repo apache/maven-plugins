@@ -79,13 +79,6 @@ public abstract class AbstractJxrReport
     private String outputEncoding;
 
     /**
-     * Folder where Javadoc is generated for this project.
-     *
-     * @parameter expression="${project.build.directory}/site/apidocs"
-     */
-    private String javadocDir;
-
-    /**
      * Title of window of the Xref HTML files.
      *
      * @parameter expression="${project.name} ${project.version} Reference"
@@ -122,12 +115,6 @@ public abstract class AbstractJxrReport
      * @parameter default-value="stylesheet.css"
      */
     private String stylesheet;
-
-    /*
-    * Tells whether Javadoc is part of the reports being generated during the build
-    * TODO: not used as for now, should think about that
-    */
-    private boolean javadocReportGenerated;
 
     /**
      * The projects in the reactor for aggregation report.
@@ -173,7 +160,6 @@ public abstract class AbstractJxrReport
                 ReportPlugin reportPlugin = (ReportPlugin) iter.next();
                 if ( "maven-javadoc-plugin".equals( reportPlugin.getArtifactId() ) )
                 {
-                    javadocReportGenerated = true;
                     break;
                 }
             }
@@ -229,11 +215,11 @@ public abstract class AbstractJxrReport
         JXR jxr = new JXR();
         jxr.setDest( destinationDirectory );
         jxr.setInputEncoding( inputEncoding );
-        jxr.setJavadocLinkDir( javadocDir );
         jxr.setLocale( locale );
         jxr.setLog( new PluginLogAdapter( getLog() ) );
         jxr.setOutputEncoding( outputEncoding );
         jxr.setRevision( "HEAD" );
+        jxr.setJavadocLinkDir( getJavadocLocation() );
 
         jxr.xref( sourceDirs, templateDir, windowTitle, docTitle, bottom );
 
@@ -388,4 +374,6 @@ public abstract class AbstractJxrReport
     protected abstract List getSourceRoots();
 
     protected abstract List getSourceRoots( MavenProject project );
+
+    protected abstract String getJavadocLocation();
 }
