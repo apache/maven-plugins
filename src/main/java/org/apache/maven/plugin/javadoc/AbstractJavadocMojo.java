@@ -287,7 +287,7 @@ public abstract class AbstractJavadocMojo
      * eg. <code>&lt;![CDATA[Copyright 2005, &lt;a href="http://www.mycompany.com">MyCompany, Inc.&lt;a>]]&gt;</code><br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#bottom">bottom</a>.
      *
-     * @parameter expression="${bottom}" default-value="Copyright {inceptionYear}-{currentYear} ${project.organization.name}. All Rights Reserved."
+     * @parameter expression="${bottom}" default-value="Copyright &copy; {inceptionYear}-{currentYear} ${project.organization.name}. All Rights Reserved."
      */
     private String bottom;
 
