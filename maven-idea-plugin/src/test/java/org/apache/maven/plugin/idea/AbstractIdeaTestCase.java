@@ -1,5 +1,21 @@
 package org.apache.maven.plugin.idea;
 
+/*
+ * Copyright 2005-2006 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.DocumentException;
@@ -37,48 +53,6 @@ public abstract class AbstractIdeaTestCase
         assertTrue( "Project file was created", iprFile.exists() );
 
         return readXmlDocument( iprFile );
-    }
-
-    protected void testJdkName( Document document, String jdkLevel, String expected )
-        throws Exception
-    {
-        Element root = document.getRootElement();
-
-        Element component = findComponent( root, "ProjectRootManager" );
-
-        String jdkName = component.attributeValue( "project-jdk-name" );
-
-        if ( jdkLevel == null )
-        {
-            jdkLevel = System.getProperty( "java.specification.version" );
-        }
-
-        if ( jdkLevel.startsWith( "1.4" ) )
-        {
-            assertEquals( "assert-keyword must be true for jdk 1.4",
-                          "true", component.attributeValue( "assert-keyword" ) );
-
-            assertEquals( "jdk-15 must be false for jdk 1.4",
-                          "false", component.attributeValue( "jdk-15") );
-        }
-        else if ( jdkLevel.compareTo( "1.5" ) >= 0 )
-        {
-            assertEquals( "assert-keyword must be true for jdk >= 1.5",
-                          "true", component.attributeValue( "assert-keyword" ) );
-
-            assertEquals( "jdk-15 must be true for jdk >= 1.5",
-                          "true", component.attributeValue( "jdk-15") );
-        }
-        else
-        {
-            assertEquals( "assert-keyword must be true for jdk >= 1.5",
-                          "false", component.attributeValue( "assert-keyword" ) );
-        }
-
-        if ( expected != null )
-        {
-            assertEquals( "Expected jdkName test", jdkName, expected );
-        }
     }
 
     protected Document readXmlDocument( File xmlFile )
