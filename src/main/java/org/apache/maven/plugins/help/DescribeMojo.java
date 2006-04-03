@@ -60,7 +60,7 @@ public class DescribeMojo
 
     /**
      * The plugin/mojo to describe. This must be specified in one of three ways:
-     *
+     * <p/>
      * 1. plugin-prefix
      * 2. groupId:artifactId
      * 3. groupId:artifactId:version
@@ -345,6 +345,12 @@ public class DescribeMojo
                 getLog().debug( "Unable to find plugin version", e );
                 throw new MojoFailureException( e.getMessage() );
             }
+        }
+
+        if ( descriptor == null )
+        {
+            throw new MojoFailureException(
+                "Plugin could not be found. If you believe it is correct, check your pluginGroups setting, and run with -U to update the remote configuration" );
         }
 
         return descriptor;
