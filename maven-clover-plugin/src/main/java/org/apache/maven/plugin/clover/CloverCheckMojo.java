@@ -18,6 +18,7 @@ package org.apache.maven.plugin.clover;
 import com.cenqua.clover.cfg.Percentage;
 import com.cenqua.clover.tasks.CloverPassTask;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.clover.internal.AbstractCloverMojo;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
@@ -41,7 +42,7 @@ public class CloverCheckMojo extends AbstractCloverMojo
 
     /**
      * {@inheritDoc}
-     * @see org.apache.maven.plugin.clover.AbstractCloverMojo#execute()
+     * @see org.apache.maven.plugin.clover.internal.AbstractCloverMojo#execute()
      */
     public void execute()
         throws MojoExecutionException

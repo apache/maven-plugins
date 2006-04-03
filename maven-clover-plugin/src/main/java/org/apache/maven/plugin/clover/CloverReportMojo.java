@@ -16,14 +16,14 @@
 package org.apache.maven.plugin.clover;
 
 import com.cenqua.clover.reporters.html.HtmlReporter;
-import com.cenqua.clover.CloverMerge;
+import com.cenqua.clover.reporters.pdf.PDFReporter;
+import com.cenqua.clover.reporters.xml.XMLReporter;
 
-import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.doxia.sink.Sink;
-import org.codehaus.doxia.site.renderer.SiteRenderer;
+import org.apache.maven.reporting.AbstractMavenReport;
+import org.apache.maven.doxia.siterenderer.Renderer;
+import org.apache.maven.plugin.clover.internal.AbstractCloverMojo;
 
 import java.io.File;
 import java.util.*;
@@ -76,7 +76,7 @@ public class CloverReportMojo extends AbstractMavenReport
      *
      * @parameter default-value="500"
      */
-    protected int flushInterval;
+    private int flushInterval;
 
     /**
      * If true we'll wait 2*flushInterval to ensure coverage data is flushed to the Clover
@@ -90,12 +90,30 @@ public class CloverReportMojo extends AbstractMavenReport
      *
      * @parameter default-value="true"
      */
-    protected boolean waitForFlush;
+    private boolean waitForFlush;
+
+    /**
+     * Decide whether to generate an HTML report
+     * @parameter default-value="true"
+     */
+    private boolean generateHtml;
+
+    /**
+     * Decide whether to generate a PDF report
+     * @parameter default-value="false"
+     */
+    private boolean generatePdf;
+
+    /**
+     * Decide whether to generate a XML report
+     * @parameter default-value="false"
+     */
+    private boolean generateXml;
 
     /**
      * @component
      */
-    private SiteRenderer siteRenderer;
+    private Renderer siteRenderer;
 
     /**
      * The Maven project.
@@ -119,62 +137,145 @@ public class CloverReportMojo extends AbstractMavenReport
      */
     public void executeReport( Locale locale ) throws MavenReportException
     {
+        // Ensure the output directory exists
+        this.outputDirectory.mkdirs();
+
         File singleModuleCloverDatabase = new File( this.cloverDatabase );
         if ( singleModuleCloverDatabase.exists() )
         {
-            createCloverHtmlReport();
+            if ( this.generateHtml )
+            {
+                createHtmlReport();
+            }
+            if ( this.generatePdf )
+            {
+                createPdfReport();
+            }
+            if ( this.generateXml )
+            {
+                createXmlReport();
+            }
         }
 
         File mergedCloverDatabase = new File ( this.cloverMergeDatabase );
         if ( mergedCloverDatabase.exists() )
         {
-            createMasterCloverHtmlReport();
+            if ( this.generateHtml )
+            {
+                createMasterHtmlReport();
+            }
+            if ( this.generatePdf )
+            {
+                createMasterPdfReport();
+            }
+            if ( this.generateXml )
+            {
+                createMasterXmlReport();
+            }
         }
     }
 
-    /**
-     * @todo handle multiple source roots. At the moment only the first source root is instrumented
-     */
-    private void createCloverHtmlReport() throws MavenReportException
+    private List getCommonCliArgs( File reportOutputFile )
     {
         List parameters = new ArrayList();
 
         parameters.add( "-t" );
         parameters.add( "Maven Clover report" );
-        parameters.add( "-p" );
-        parameters.add( this.project.getCompileSourceRoots().get( 0 ) );
         parameters.add( "-i" );
         parameters.add( this.cloverDatabase );
         parameters.add( "-o" );
-        parameters.add( this.outputDirectory.getPath() );
+        parameters.add( reportOutputFile.getPath() );
 
         if ( getLog().isDebugEnabled() )
         {
             parameters.add( "-d" );
         }
 
-        int result = HtmlReporter.mainImpl( (String[]) parameters.toArray(new String[0]) );
+        return parameters;
+    }
+
+    /**
+     * @todo handle multiple source roots. At the moment only the first source root is instrumented
+     */
+    private void createHtmlReport() throws MavenReportException
+    {
+        List parameters = getCommonCliArgs( this.outputDirectory );
+
+        parameters.add( "-p" );
+        parameters.add( this.project.getCompileSourceRoots().get( 0 ) );
+
+        createReport(HtmlReporter.class, parameters, "HTML");
+    }
+
+    private void createPdfReport() throws MavenReportException
+    {
+        createReport(PDFReporter.class, getCommonCliArgs( new File( this.outputDirectory, "clover.pdf" ) ), "PDF");
+    }
+
+    private void createXmlReport() throws MavenReportException
+    {
+        createReport(XMLReporter.class, getCommonCliArgs( new File( this.outputDirectory, "clover.xml" ) ), "XML");
+    }
+
+    private void createReport( Class reportClass, List parameters, String reportType )
+        throws MavenReportException
+    {
+        int result;
+        try
+        {
+            result = ((Integer) reportClass.getMethod( "mainImpl", new Class[]{String[].class}).invoke(null,
+                new Object[]{(String[]) parameters.toArray( new String[0] )} )).intValue();
+        }
+        catch (Exception e)
+        {
+            throw new MavenReportException( "Failed to call [" + reportClass.getName() + ".mainImpl]", e );
+        }
+
         if ( result != 0 )
         {
-            throw new MavenReportException( "Clover has failed to create the HTML report" );
+            throw new MavenReportException( "Clover has failed to create the " + reportType + " report" );
         }
-
     }
 
-    private void createMasterCloverHtmlReport() throws MavenReportException
+    private List getCommonCliArgsForMasterReport( File reportOutputFile )
     {
-        String[] args = new String[] {
-            "-t", "Maven Aggregated Clover report",
-            "-i", this.cloverMergeDatabase,
-            "-o", this.outputDirectory.getPath() };
+        List parameters = new ArrayList();
 
-        int reportResult = HtmlReporter.mainImpl( args );
-        if ( reportResult != 0 )
+        parameters.add( "-t" );
+        parameters.add( "Maven Aggregated Clover report" );
+        parameters.add( "-i" );
+        parameters.add( this.cloverMergeDatabase );
+        parameters.add( "-o" );
+        parameters.add( reportOutputFile );
+
+        if ( getLog().isDebugEnabled() )
         {
-            throw new MavenReportException( "Clover has failed to create the merged HTML report" );
+            parameters.add( "-d" );
         }
+
+        return parameters;
     }
 
+    private void createMasterHtmlReport() throws MavenReportException
+    {
+        createReport(HtmlReporter.class, getCommonCliArgsForMasterReport( this.outputDirectory ), "merged HTML");
+    }
+
+    private void createMasterPdfReport() throws MavenReportException
+    {
+        createReport(PDFReporter.class, getCommonCliArgsForMasterReport(
+            new File( this.outputDirectory, "cloverMerged.pdf" ) ), "merged PDF");
+    }
+
+    private void createMasterXmlReport() throws MavenReportException
+    {
+        createReport(XMLReporter.class, getCommonCliArgsForMasterReport(
+            new File( this.outputDirectory, "cloverMerged.xml" ) ), "merged XML");
+    }
+
+    /**
+     * @see org.apache.maven.reporting.MavenReport#getOutputName()
+     */
     public String getOutputName()
     {
         return "clover/index";
@@ -204,7 +305,7 @@ public class CloverReportMojo extends AbstractMavenReport
     /**
      * @see org.apache.maven.reporting.AbstractMavenReport#getSiteRenderer()
      */
-    protected SiteRenderer getSiteRenderer()
+    protected Renderer getSiteRenderer()
     {
         return this.siteRenderer;
     }
@@ -223,15 +324,6 @@ public class CloverReportMojo extends AbstractMavenReport
     public String getName( Locale locale )
     {
         return getBundle( locale ).getString( "report.clover.name" );
-    }
-
-    /**
-     * @see org.apache.maven.reporting.MavenReport#generate(org.codehaus.doxia.sink.Sink, java.util.Locale)
-     */
-    public void generate( Sink sink, Locale locale )
-        throws MavenReportException
-    {
-        executeReport( locale );
     }
 
     /**
@@ -260,7 +352,10 @@ public class CloverReportMojo extends AbstractMavenReport
 
         if (singleModuleCloverDatabase.exists() || mergedCloverDatabase.exists() )
         {
-            canGenerate = true;
+            if ( this.generateHtml || this.generatePdf || this.generateXml )
+            {
+                canGenerate = true;
+            }
         }
         else
         {

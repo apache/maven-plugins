@@ -2,6 +2,7 @@ package org.apache.maven.plugin.clover;
 
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.clover.internal.AbstractCloverMojo;
 
 import java.io.File;
 import java.util.*;
@@ -38,7 +39,7 @@ public class CloverAggregateMojo extends AbstractCloverMojo
 
     /**
      * {@inheritDoc}
-     * @see org.apache.maven.plugin.clover.AbstractCloverMojo#execute()
+     * @see org.apache.maven.plugin.clover.internal.AbstractCloverMojo#execute()
      */
     public void execute()
         throws MojoExecutionException

@@ -17,6 +17,7 @@ package org.apache.maven.plugin.clover;
 
 import com.cenqua.clover.tasks.CloverLogTask;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.clover.internal.AbstractCloverMojo;
 import org.apache.tools.ant.Project;
 
 /**
