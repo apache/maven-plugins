@@ -67,6 +67,70 @@ Generating a Clover report without modifying your POM
   module reports into a master Clover report, run <<<mvn clover:instrument clover:aggregate clover:clover>>>
   instead.
 
+Generating HTML, XML and PDF reports
+
+  By default the Clover plugin will generate a HTML report. If you want to generate a PDF or XML report, or
+  if you simply do not want to generate the HTML report use the <<<generateHtml>>>, <<<generatePdf>>> and
+  <<<generateXml>>> configuration elements. By default the <<<generateHtml>>> element is set to true.
+  For example if you wish to generate the PDF and XML reports you would use:
+
++--------
+[...]
+  <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-clover-plugin</artifactId>
+    <configuration>
+      <generatePdf>true</generatePdf>
+      <generateXml>true</generateXml>
+    </configuration>
+  </plugin>
+[...]
++---------
+
+  Note that only the HTML report gets a link in the "Project Reports" section in generated menu on the site. If
+  you want to link the PDF or XML reports you'll need to do that by modifying your <<<site.xml>>>. For example:
+
++--------
+[...]
+  <menu name="Other Reports">
+    <item name="Clover PDF" href="clover/clover.pdf"/>
+    <item name="Clover XML" href="clover/clover.xml"/>
+  </menu>
+[...]
++---------
+
+  If you do not want to generate the HTML report then you should not configure the Clover plugin in the
+  <<<reporting>>> section as this section is for plugins which generate HTML reports. In that case, simply
+  bind the <<<clover:clover>>> goal to the <<<site>>> phase in the <<<build>>> section. For example:
+
++--------
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clover-plugin</artifactId>
+        <configuration>
+          <generateHtml>false</generateHtml>
+          <generatePdf>true</generatePdf>
+          <generateXml>true</generateXml>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>site</phase>
+            <goals>
+              <goal>instrument</goal>
+              <goal>clover</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+[...]
++---------
+
 Checking test coverage
 
   In order to check for a test coverage percentage and fail the build in case of non-compliance,

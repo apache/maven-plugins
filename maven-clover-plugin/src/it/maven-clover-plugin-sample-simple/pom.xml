@@ -27,6 +27,10 @@
                build section inherits from the reporting section but not the other way around... -->
           <cloverDatabase>${project.build.directory}/customclover/myclover.db</cloverDatabase>
 
+          <generateHtml>true</generateHtml>
+          <generatePdf>true</generatePdf>
+          <generateXml>true</generateXml>
+
         </configuration>
       </plugin>
     </plugins>
