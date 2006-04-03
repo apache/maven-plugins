@@ -16,15 +16,16 @@ package org.apache.maven.plugin.idea;
  * limitations under the License.
  */
 
-import org.apache.maven.plugin.idea.stubs.SimpleMavenProjectStub;
+import org.apache.maven.plugin.idea.stubs.TestCounter;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.dom4j.io.SAXReader;
-import org.dom4j.DocumentException;
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
 
 import java.io.File;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author Edwin Punzalan
@@ -57,6 +58,12 @@ public class IdeaProjectTest
 
         assertEquals( "Default jdkName should be from System.Properties",
                       jdkName, "java version &quot;" + javaVersion + "&quot;" );
+
+        component = findComponent( root, "CompilerConfiguration" );
+
+        Element patterns = findElementByNameAttribute( component, "wildcardResourcePatterns", null );
+
+        findElementByNameAttribute( patterns, "entry", "!?*.java" );
     }
 
     public void testIdeaProjectJdk11()
@@ -75,6 +82,40 @@ public class IdeaProjectTest
         testJdkName( iprDocument, "1.5", "java version 1.5" );
     }
 
+    public void testIdeaProjectWithModules()
+        throws Exception
+    {
+        Document iprDocument = executeMojo( "src/test/plugin-configs/plugin-config-modules.xml" );
+
+        Element component = findComponent( iprDocument.getRootElement(), "ProjectModuleManager" );
+
+        Element el = findElementByNameAttribute( component, "modules", null );
+
+        List modules = findElementsByName( el, "module" );
+
+        assertEquals( "Must have 4 modules", 4, modules.size() );
+
+        el = (Element) modules.get( 0 );
+        assertEquals( "Test project module",
+                      "$PROJECT_DIR$/plugin-test-" + TestCounter.currentCount() + ".iml",
+                      el.attributeValue( "filepath" ) );
+
+        el = (Element) modules.get( 1 );
+        assertEquals( "Test module 1",
+                      "$PROJECT_DIR$/module-1/module-1.iml",
+                      el.attributeValue( "filepath" ) );
+
+        el = (Element) modules.get( 2 );
+        assertEquals( "Test module 2",
+                      "$PROJECT_DIR$/module-2/module-2.iml",
+                      el.attributeValue( "filepath" ) );
+
+        el = (Element) modules.get( 3 );
+        assertEquals( "Test module 3",
+                      "$PROJECT_DIR$/module-3/module-3.iml",
+                      el.attributeValue( "filepath" ) );
+    }
+
     private Document executeMojo( String pluginXml )
         throws Exception
     {
@@ -86,7 +127,7 @@ public class IdeaProjectTest
 
         mojo.execute();
 
-        int testCounter = SimpleMavenProjectStub.getUsageCounter();
+        int testCounter = TestCounter.currentCount();
 
         File iprFile = new File( "target/test-harness/" + testCounter + "/plugin-test-" + testCounter + ".ipr" );
 
@@ -148,20 +189,44 @@ public class IdeaProjectTest
     private Element findComponent( Element module, String name )
         throws Exception
     {
-        return findElement( module, "component", name );
+        return findElementByNameAttribute( module, "component", name );
     }
 
-    private Element findElement( Element element, String elementName, String attributeName )
+    private Element findElementByNameAttribute( Element element, String elementName, String nameAttribute )
         throws Exception
     {
+        Element e = null;
+
         for ( Iterator children = element.elementIterator( elementName ); children.hasNext(); )
         {
             Element child = (Element) children.next();
-            if ( attributeName.equals( child.attributeValue( "name" ) ) )
+            if ( nameAttribute == null )
             {
-                return child;
+                e = child;
+            }
+            else if ( nameAttribute.equals( child.attributeValue( "name" ) ) )
+            {
+                e = child;
             }
         }
-        throw new Exception( "Expected element not found: " + elementName );
+
+        if ( e == null)
+        {
+            if ( nameAttribute == null )
+            {
+                fail( "Element " + elementName + " not found." );
+            }
+            else
+            {
+                fail( "Attribute " + nameAttribute + " not found in elements " + elementName + "." );
+            }
+        }
+
+        return e;
+    }
+
+    private List findElementsByName( Element element, String elementName )
+    {
+        return element.elements( elementName );
     }
 }

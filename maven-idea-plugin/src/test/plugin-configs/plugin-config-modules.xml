@@ -4,10 +4,9 @@
       <plugin>
         <artifactId>maven-idea-plugin</artifactId>
         <configuration>
-          <project implementation="org.apache.maven.plugin.idea.stubs.SimpleMavenProjectStub"/>
+          <project implementation="org.apache.maven.plugin.idea.stubs.MavenProjectWithModulesStub"/>
           <localRepo>${localRepository}</localRepo>
           <ideaVersion>4</ideaVersion>
-          <wildcardResourcePatterns>!?*.java</wildcardResourcePatterns>
         </configuration>
       </plugin>
     </plugins>

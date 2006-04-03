@@ -31,18 +31,11 @@ import java.util.List;
 public class SimpleMavenProjectStub
     extends MavenProjectStub
 {
-    private static int usageCounter;
-
     private List collectedProjects;
 
     public SimpleMavenProjectStub()
     {
-        usageCounter++;
-    }
-
-    public static int getUsageCounter()
-    {
-        return usageCounter;
+        TestCounter.nextCount();
     }
 
     public String getGroupId()
@@ -52,17 +45,17 @@ public class SimpleMavenProjectStub
 
     public String getArtifactId()
     {
-        return "plugin-test-" + usageCounter;
+        return "plugin-test-" + TestCounter.currentCount();
     }
 
     public String getVersion()
     {
-        return String.valueOf( usageCounter );
+        return String.valueOf( TestCounter.currentCount() );
     }
 
     public File getBasedir()
     {
-        File basedir = new File( "target/test-harness/" + usageCounter );
+        File basedir = new File( "target/test-harness/" + TestCounter.currentCount() );
 
         if ( !basedir.exists() )
         {
