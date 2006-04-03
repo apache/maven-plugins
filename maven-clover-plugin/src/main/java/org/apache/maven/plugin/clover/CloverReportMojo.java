@@ -246,7 +246,7 @@ public class CloverReportMojo extends AbstractMavenReport
         parameters.add( "-i" );
         parameters.add( this.cloverMergeDatabase );
         parameters.add( "-o" );
-        parameters.add( reportOutputFile );
+        parameters.add( reportOutputFile.getPath() );
 
         if ( getLog().isDebugEnabled() )
         {
