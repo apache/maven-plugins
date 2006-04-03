@@ -108,4 +108,46 @@ public class IdeaProjectTest
                       "$PROJECT_DIR$/module-3/module-3.iml",
                       el.attributeValue( "filepath" ) );
     }
+
+    private void testJdkName( Document document, String jdkLevel, String expected )
+        throws Exception
+    {
+        Element root = document.getRootElement();
+
+        Element component = findComponent( root, "ProjectRootManager" );
+
+        String jdkName = component.attributeValue( "project-jdk-name" );
+
+        if ( jdkLevel == null )
+        {
+            jdkLevel = System.getProperty( "java.specification.version" );
+        }
+
+        if ( jdkLevel.startsWith( "1.4" ) )
+        {
+            assertEquals( "assert-keyword must be true for jdk 1.4",
+                          "true", component.attributeValue( "assert-keyword" ) );
+
+            assertEquals( "jdk-15 must be false for jdk 1.4",
+                          "false", component.attributeValue( "jdk-15") );
+        }
+        else if ( jdkLevel.compareTo( "1.5" ) >= 0 )
+        {
+            assertEquals( "assert-keyword must be true for jdk >= 1.5",
+                          "true", component.attributeValue( "assert-keyword" ) );
+
+            assertEquals( "jdk-15 must be true for jdk >= 1.5",
+                          "true", component.attributeValue( "jdk-15") );
+        }
+        else
+        {
+            assertEquals( "assert-keyword must be true for jdk >= 1.5",
+                          "false", component.attributeValue( "assert-keyword" ) );
+        }
+
+        if ( expected != null )
+        {
+            assertEquals( "Expected jdkName test", jdkName, expected );
+        }
+    }
 }
