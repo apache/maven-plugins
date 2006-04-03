@@ -92,4 +92,10 @@ public class JxrTestReport
     {
         return "xref-test/index";
     }
+
+    protected String getJavadocLocation()
+    {
+        // Don't link Javadoc
+        return null;
+    }
 }
