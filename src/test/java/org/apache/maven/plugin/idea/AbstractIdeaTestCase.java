@@ -108,4 +108,16 @@ public abstract class AbstractIdeaTestCase
     {
         return element.elements( elementName );
     }
+
+    protected Element findElement( Element component, String name )
+    {
+        Element element = component.element( name );
+
+        if ( element == null )
+        {
+            fail( "Element " + name + " not found." );
+        }
+        
+        return element;
+    }
 }
