@@ -692,13 +692,7 @@ public class IdeaModuleMojo
 
             Element containerElement = createElement( component, "containerElement" );
 
-            boolean linkAsModule = false;
-            if ( linkModules )
-            {
-                linkAsModule = isReactorProject( artifact.getGroupId(), artifact.getArtifactId() );
-            }
-
-            if ( linkAsModule )
+            if ( linkModules && isReactorProject( artifact.getGroupId(), artifact.getArtifactId() ) )
             {
                 containerElement.addAttribute( "type", "module" );
                 containerElement.addAttribute( "name", artifact.getArtifactId() );
