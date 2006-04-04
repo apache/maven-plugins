@@ -96,7 +96,7 @@ public class EclipsePluginTest
     }
 
     /**
-     * Test with ear project
+     * Ear packaging
      * @throws Exception any exception thrown during test
      */
     public void testProject12()
@@ -105,4 +105,13 @@ public class EclipsePluginTest
         testProject( "project-12" );
     }
 
+    /**
+     * Dependency range - MECLIPSE-96
+     * @throws Exception any exception thrown during test
+     */
+    public void testProject13()
+        throws Exception
+    {
+        testProject( "project-13" );
+    }
 }
