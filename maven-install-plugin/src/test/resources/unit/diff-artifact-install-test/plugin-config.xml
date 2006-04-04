@@ -1,0 +1,16 @@
+<project>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-install-plugin</artifactId>
+		<configuration>
+		  <pomFile>${basedir}/src/test/resources/unit/diff-artifact-install-test/plugin-config.xml</pomFile>
+		  <packaging>jar</packaging>
+		  <artifact implementation="org.apache.maven.plugin.install.stubs.InstallArtifactStub2" />
+		  <attachedArtifacts />
+          <localRepository>${localRepository}</localRepository>
+		</configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
