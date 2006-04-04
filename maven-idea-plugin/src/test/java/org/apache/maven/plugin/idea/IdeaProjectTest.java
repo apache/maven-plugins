@@ -31,7 +31,7 @@ public class IdeaProjectTest
     public void testIdeaProjectTestEnvironment()
         throws Exception
     {
-        Document iprDocument = executeMojo( "src/test/plugin-configs/min-plugin-config.xml" );
+        Document iprDocument = executeMojo( "src/test/project-plugin-configs/min-plugin-config.xml" );
 
         testJdkName( iprDocument, null, null );
     }
@@ -39,7 +39,7 @@ public class IdeaProjectTest
     public void testIdeaProjectVersion4()
         throws Exception
     {
-        Document iprDocument = executeMojo( "src/test/plugin-configs/plugin-config-idea4.xml" );
+        Document iprDocument = executeMojo( "src/test/project-plugin-configs/plugin-config-idea4.xml" );
 
         Element root = iprDocument.getRootElement();
 
@@ -62,7 +62,7 @@ public class IdeaProjectTest
     public void testIdeaProjectJdk11()
         throws Exception
     {
-        Document iprDocument = executeMojo( "src/test/plugin-configs/plugin-config-jdk11.xml" );
+        Document iprDocument = executeMojo( "src/test/project-plugin-configs/plugin-config-jdk11.xml" );
 
         testJdkName( iprDocument, "1.1", "java version 1.1" );
     }
@@ -70,7 +70,7 @@ public class IdeaProjectTest
     public void testIdeaProjectJdk15()
         throws Exception
     {
-        Document iprDocument = executeMojo( "src/test/plugin-configs/plugin-config-jdk15.xml" );
+        Document iprDocument = executeMojo( "src/test/project-plugin-configs/plugin-config-jdk15.xml" );
 
         testJdkName( iprDocument, "1.5", "java version 1.5" );
     }
@@ -78,7 +78,7 @@ public class IdeaProjectTest
     public void testIdeaProjectWithModules()
         throws Exception
     {
-        Document iprDocument = executeMojo( "src/test/plugin-configs/plugin-config-modules.xml" );
+        Document iprDocument = executeMojo( "src/test/project-plugin-configs/plugin-config-modules.xml" );
 
         Element component = findComponent( iprDocument.getRootElement(), "ProjectModuleManager" );
 
@@ -149,5 +149,11 @@ public class IdeaProjectTest
         {
             assertEquals( "Expected jdkName test", jdkName, expected );
         }
+    }
+
+    protected Document executeMojo( String pluginXml )
+        throws Exception
+    {
+        return super.executeMojo( "project", pluginXml, "ipr" );
     }
 }

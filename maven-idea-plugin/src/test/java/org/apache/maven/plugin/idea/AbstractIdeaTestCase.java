@@ -22,6 +22,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.io.SAXReader;
 import org.apache.maven.plugin.idea.stubs.TestCounter;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.plugin.Mojo;
 
 import java.io.File;
 import java.util.Iterator;
@@ -33,26 +34,27 @@ import java.util.List;
 public abstract class AbstractIdeaTestCase
     extends AbstractMojoTestCase
 {
-    protected IdeaProjectMojo mojo;
+    protected Mojo mojo;
 
-    protected Document executeMojo( String pluginXml )
+    protected Document executeMojo( String goal, String pluginXml, String targetExtension )
         throws Exception
     {
         File pluginXmlFile = new File( getBasedir(), pluginXml );
 
-        mojo = (IdeaProjectMojo) lookupMojo( "project", pluginXmlFile );
+        mojo = lookupMojo( goal, pluginXmlFile );
 
-        assertNotNull( "Get project mojo instance using " + pluginXmlFile.getAbsolutePath() , mojo );
+        assertNotNull( "Get mojo instance using " + pluginXmlFile.getAbsolutePath() , mojo );
 
         mojo.execute();
 
         int testCounter = TestCounter.currentCount();
 
-        File iprFile = new File( "target/test-harness/" + testCounter + "/plugin-test-" + testCounter + ".ipr" );
+        File outputFile = new File( "target/test-harness/" + testCounter +
+                                 "/plugin-test-" + testCounter + "." + targetExtension );
 
-        assertTrue( "Project file was created", iprFile.exists() );
+        assertTrue( "Target file was created", outputFile.exists() );
 
-        return readXmlDocument( iprFile );
+        return readXmlDocument( outputFile );
     }
 
     protected Document readXmlDocument( File xmlFile )
