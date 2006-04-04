@@ -181,7 +181,7 @@ public class IdeaMojo
     {
         try
         {
-            doDependencyResolution( project, localRepo );
+            doDependencyResolution( executedProject, localRepo );
         }
         catch ( Exception e )
         {
@@ -191,7 +191,7 @@ public class IdeaMojo
         Set macros = new HashSet();
         rewriteModule( macros );
 
-        if ( project.isExecutionRoot() )
+        if ( executedProject.isExecutionRoot() )
         {
             rewriteProject( macros );
 
@@ -204,7 +204,7 @@ public class IdeaMojo
     {
         IdeaModuleMojo mojo = new IdeaModuleMojo();
 
-        mojo.initParam( project, artifactFactory, localRepo, artifactResolver, artifactMetadataSource, getLog(),
+        mojo.initParam( executedProject, artifactFactory, localRepo, artifactResolver, artifactMetadataSource, getLog(),
                         overwrite, executedProject, reactorProjects, wagonManager, linkModules, useFullNames,
                         downloadSources, sourceClassifier, downloadJavadocs, javadocClassifier, libraries, macros,
                         exclude, dependenciesAsLibraries );
@@ -217,7 +217,7 @@ public class IdeaMojo
     {
         IdeaProjectMojo mojo = new IdeaProjectMojo();
 
-        mojo.initParam( project, artifactFactory, localRepo, artifactResolver, artifactMetadataSource, getLog(),
+        mojo.initParam( executedProject, artifactFactory, localRepo, artifactResolver, artifactMetadataSource, getLog(),
                         overwrite, jdkName, jdkLevel, wildcardResourcePatterns, ideaVersion, macros );
 
         mojo.rewriteProject();
@@ -228,7 +228,7 @@ public class IdeaMojo
     {
         IdeaWorkspaceMojo mojo = new IdeaWorkspaceMojo();
 
-        mojo.initParam( project, artifactFactory, localRepo, artifactResolver, artifactMetadataSource, getLog(),
+        mojo.initParam( executedProject, artifactFactory, localRepo, artifactResolver, artifactMetadataSource, getLog(),
                         overwrite );
 
         mojo.rewriteWorkspace();
@@ -236,6 +236,6 @@ public class IdeaMojo
 
     public void setProject( MavenProject project )
     {
-        this.project = project;
+        this.executedProject = project;
     }
 }

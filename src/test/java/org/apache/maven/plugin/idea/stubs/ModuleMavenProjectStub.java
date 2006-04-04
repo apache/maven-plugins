@@ -23,14 +23,14 @@ import java.io.File;
 /**
  * @author Edwin Punzalan
  */
-public class MavenProjectModuleStub
+public class ModuleMavenProjectStub
     extends MavenProjectStub
 {
     private File basedir;
 
     private String artifactId;
 
-    public MavenProjectModuleStub( String artifactId, File basedir )
+    public ModuleMavenProjectStub( String artifactId, File basedir )
     {
         super();
 

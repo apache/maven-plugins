@@ -34,7 +34,7 @@ public class IdeaCleanMojo
     extends AbstractMojo
 {
     /**
-     * @parameter expression="${project}"
+     * @parameter expression="${executedProject}"
      * @required
      */
     private MavenProject project;

@@ -54,13 +54,6 @@ public class IdeaModuleMojo
     extends AbstractIdeaMojo
 {
     /**
-     * The Maven Project.
-     *
-     * @parameter expression="${executedProject}"
-     */
-    private MavenProject executedProject;
-
-    /**
      * The reactor projects in a multi-module build.
      *
      * @parameter expression="${reactorProjects}"
@@ -182,8 +175,6 @@ public class IdeaModuleMojo
         super.initParam( project, artifactFactory, localRepo, artifactResolver, artifactMetadataSource, log,
                          overwrite );
 
-        this.executedProject = executedProject;
-
         this.reactorProjects = reactorProjects;
 
         this.wagonManager = wagonManager;
@@ -220,7 +211,7 @@ public class IdeaModuleMojo
     {
         try
         {
-            doDependencyResolution( project, localRepo );
+            doDependencyResolution( executedProject, localRepo );
         }
         catch ( Exception e )
         {
@@ -233,7 +224,7 @@ public class IdeaModuleMojo
     public void rewriteModule()
         throws MojoExecutionException
     {
-        File moduleFile = new File( project.getBasedir(), project.getArtifactId() + ".iml" );
+        File moduleFile = new File( executedProject.getBasedir(), executedProject.getArtifactId() + ".iml" );
         try
         {
             Document document = readXmlDocument( moduleFile, "module.xml" );
@@ -242,25 +233,25 @@ public class IdeaModuleMojo
 
             // TODO: how can we let the WAR/EJBs plugin hook in and provide this?
             // TODO: merge in ejb-module, etc.
-            if ( "war".equals( project.getPackaging() ) )
+            if ( "war".equals( executedProject.getPackaging() ) )
             {
                 addWebModule( module );
             }
-            else if ( "ejb".equals( project.getPackaging() ) )
+            else if ( "ejb".equals( executedProject.getPackaging() ) )
             {
                 addEjbModule( module );
             }
-            else if ( "ear".equals( project.getPackaging() ) )
+            else if ( "ear".equals( executedProject.getPackaging() ) )
             {
                 addEarModule( module );
             }
 
             Element component = findComponent( module, "NewModuleRootManager" );
             Element output = findElement( component, "output" );
-            output.addAttribute( "url", getModuleFileUrl( project.getBuild().getOutputDirectory() ) );
+            output.addAttribute( "url", getModuleFileUrl( executedProject.getBuild().getOutputDirectory() ) );
 
             Element outputTest = findElement( component, "output-test" );
-            outputTest.addAttribute( "url", getModuleFileUrl( project.getBuild().getTestOutputDirectory() ) );
+            outputTest.addAttribute( "url", getModuleFileUrl( executedProject.getBuild().getTestOutputDirectory() ) );
 
             Element content = findElement( component, "content" );
 
@@ -277,7 +268,7 @@ public class IdeaModuleMojo
                 addSourceFolder( content, directory, true );
             }
 
-            for ( Iterator i = project.getBuild().getResources().iterator(); i.hasNext(); )
+            for ( Iterator i = executedProject.getBuild().getResources().iterator(); i.hasNext(); )
             {
                 Resource resource = (Resource) i.next();
                 String directory = resource.getDirectory();
@@ -293,7 +284,7 @@ public class IdeaModuleMojo
                 }
             }
 
-            for ( Iterator i = project.getBuild().getTestResources().iterator(); i.hasNext(); )
+            for ( Iterator i = executedProject.getBuild().getTestResources().iterator(); i.hasNext(); )
             {
                 Resource resource = (Resource) i.next();
                 String directory = resource.getDirectory();
@@ -312,9 +303,9 @@ public class IdeaModuleMojo
             removeOldElements( content, "excludeFolder" );
 
             //For excludeFolder
-            File target = new File( project.getBuild().getDirectory() );
-            File classes = new File( project.getBuild().getOutputDirectory() );
-            File testClasses = new File( project.getBuild().getTestOutputDirectory() );
+            File target = new File( executedProject.getBuild().getDirectory() );
+            File classes = new File( executedProject.getBuild().getOutputDirectory() );
+            File testClasses = new File( executedProject.getBuild().getTestOutputDirectory() );
 
             List sourceFolders = content.elements( "sourceFolder" );
 
@@ -328,7 +319,7 @@ public class IdeaModuleMojo
                 String[] dirs = exclude.split( "[,\\s]+" );
                 for ( int i = 0; i < dirs.length; i++ )
                 {
-                    File excludedDir = new File( project.getBasedir(), dirs[i] );
+                    File excludedDir = new File( executedProject.getBasedir(), dirs[i] );
                     filteredExcludes.addAll( getExcludedDirectories( excludedDir, filteredExcludes, sourceFolders ) );
                 }
             }
@@ -363,7 +354,7 @@ public class IdeaModuleMojo
 
             removeOldDependencies( component );
 
-            List testClasspathElements = project.getTestArtifacts();
+            List testClasspathElements = executedProject.getTestArtifacts();
             for ( Iterator i = testClasspathElements.iterator(); i.hasNext(); )
             {
                 Artifact a = (Artifact) i.next();
@@ -520,14 +511,14 @@ public class IdeaModuleMojo
         module.addAttribute( "type", "J2EE_APPLICATION_MODULE" );
         Element component = findComponent( module, "ApplicationModuleProperties" );
         addDeploymentDescriptor( component, "application.xml", "1.3",
-                                 project.getBuild().getDirectory() + "/application.xml" );
+                                 executedProject.getBuild().getDirectory() + "/application.xml" );
     }
 
     private void addEjbModule( Element module )
     {
         module.addAttribute( "type", "J2EE_EJB_MODULE" );
 
-        String explodedDir = project.getBuild().getDirectory() + "/" + project.getArtifactId();
+        String explodedDir = executedProject.getBuild().getDirectory() + "/" + executedProject.getArtifactId();
 
         Element component = findComponent( module, "EjbModuleBuildComponent" );
 
@@ -538,7 +529,7 @@ public class IdeaModuleMojo
         addDeploymentDescriptor( component, "ejb-jar.xml", "2.x", "src/main/resources/META-INF/ejb-jar.xml" );
 
         removeOldElements( component, "containerElement" );
-        List artifacts = project.getTestArtifacts();
+        List artifacts = executedProject.getTestArtifacts();
         for ( Iterator i = artifacts.iterator(); i.hasNext(); )
         {
             Artifact artifact = (Artifact) i.next();
@@ -681,26 +672,7 @@ public class IdeaModuleMojo
         //   --> this is where the OGNL out of a plugin would be helpful as we could run package first and
         //       grab stuff from the mojo
 
-/*
-Can't run this anyway as Xpp3Dom is in both classloaders...
-                Xpp3Dom configuration = project.getGoalConfiguration( "maven-war-plugin", "war" );
-                String warWebapp = configuration.getChild( "webappDirectory" ).getValue();
-                if ( warWebapp == null )
-                {
-                    warWebapp = project.getBuild().getDirectory() + "/" + project.getArtifactId();
-                }
-                String warSrc = configuration.getChild( "warSrc" ).getValue();
-                if ( warSrc == null )
-                {
-                    warSrc = "src/main/webapp";
-                }
-                String webXml = configuration.getChild( "webXml" ).getValue();
-                if ( webXml == null )
-                {
-                    webXml = warSrc + "/WEB-INF/web.xml";
-                }
-*/
-        String warWebapp = project.getBuild().getDirectory() + "/" + project.getArtifactId();
+        String warWebapp = executedProject.getBuild().getDirectory() + "/" + executedProject.getArtifactId();
         String warSrc = "src/main/webapp";
         String webXml = warSrc + "/WEB-INF/web.xml";
 
@@ -713,7 +685,7 @@ Can't run this anyway as Xpp3Dom is in both classloaders...
         component = findComponent( module, "WebModuleProperties" );
 
         removeOldElements( component, "containerElement" );
-        List artifacts = project.getTestArtifacts();
+        List artifacts = executedProject.getTestArtifacts();
         for ( Iterator i = artifacts.iterator(); i.hasNext(); )
         {
             Artifact artifact = (Artifact) i.next();
@@ -776,7 +748,7 @@ Can't run this anyway as Xpp3Dom is in both classloaders...
 
     private String getModuleFileUrl( String file )
     {
-        return getModuleFileUrl( project.getBasedir(), file );
+        return getModuleFileUrl( executedProject.getBasedir(), file );
     }
 
     /**
@@ -869,7 +841,7 @@ Can't run this anyway as Xpp3Dom is in both classloaders...
             return null;
         }
 
-        List remoteRepos = project.getRemoteArtifactRepositories();
+        List remoteRepos = executedProject.getRemoteArtifactRepositories();
         try
         {
             Artifact classifiedArtifact = artifactFactory.createArtifactWithClassifier( artifact.getGroupId(),

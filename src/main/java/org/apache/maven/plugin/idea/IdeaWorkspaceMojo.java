@@ -43,7 +43,7 @@ public class IdeaWorkspaceMojo
     {
         try
         {
-            doDependencyResolution( project, localRepo );
+            doDependencyResolution( executedProject, localRepo );
         }
         catch ( Exception e )
         {
@@ -56,7 +56,7 @@ public class IdeaWorkspaceMojo
     public void rewriteWorkspace()
         throws MojoExecutionException
     {
-        File workspaceFile = new File( project.getBasedir(), project.getArtifactId() + ".iws" );
+        File workspaceFile = new File( executedProject.getBasedir(), executedProject.getArtifactId() + ".iws" );
 
         try
         {
@@ -105,17 +105,17 @@ public class IdeaWorkspaceMojo
     {
         String scmType;
 
-        if ( project.getScm() == null )
+        if ( executedProject.getScm() == null )
         {
             return null;
         }
-        scmType = getScmType( project.getScm().getConnection() );
+        scmType = getScmType( executedProject.getScm().getConnection() );
 
         if ( scmType != null )
         {
             return scmType;
         }
-        scmType = getScmType( project.getScm().getDeveloperConnection() );
+        scmType = getScmType( executedProject.getScm().getDeveloperConnection() );
 
         return scmType;
     }

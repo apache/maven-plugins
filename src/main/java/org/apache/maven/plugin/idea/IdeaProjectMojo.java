@@ -113,7 +113,7 @@ public class IdeaProjectMojo
     {
         try
         {
-            doDependencyResolution( project, localRepo );
+            doDependencyResolution( executedProject, localRepo );
         }
         catch ( Exception e )
         {
@@ -126,7 +126,7 @@ public class IdeaProjectMojo
     public void rewriteProject()
         throws MojoExecutionException
     {
-        File projectFile = new File( project.getBasedir(), project.getArtifactId() + ".ipr" );
+        File projectFile = new File( executedProject.getBasedir(), executedProject.getArtifactId() + ".ipr" );
 
         try
         {
@@ -163,28 +163,28 @@ public class IdeaProjectMojo
 
             removeOldElements( modules, "module" );
 
-            if ( project.getCollectedProjects().size() > 0 )
+            if ( executedProject.getCollectedProjects().size() > 0 )
             {
                 Element m = createElement( modules, "module" );
                 String projectPath =
-                    new File( project.getBasedir(), project.getArtifactId() + ".iml" ).getAbsolutePath();
-                m.addAttribute( "filepath", "$PROJECT_DIR$/" + toRelative( project.getBasedir(), projectPath ) );
+                    new File( executedProject.getBasedir(), executedProject.getArtifactId() + ".iml" ).getAbsolutePath();
+                m.addAttribute( "filepath", "$PROJECT_DIR$/" + toRelative( executedProject.getBasedir(), projectPath ) );
 
-                for ( Iterator i = project.getCollectedProjects().iterator(); i.hasNext(); )
+                for ( Iterator i = executedProject.getCollectedProjects().iterator(); i.hasNext(); )
                 {
                     MavenProject p = (MavenProject) i.next();
 
                     m = createElement( modules, "module" );
                     String modulePath = new File( p.getBasedir(), p.getArtifactId() + ".iml" ).getAbsolutePath();
-                    m.addAttribute( "filepath", "$PROJECT_DIR$/" + toRelative( project.getBasedir(), modulePath ) );
+                    m.addAttribute( "filepath", "$PROJECT_DIR$/" + toRelative( executedProject.getBasedir(), modulePath ) );
                 }
             }
             else
             {
                 Element m = createElement( modules, "module" );
                 String modulePath =
-                    new File( project.getBasedir(), project.getArtifactId() + ".iml" ).getAbsolutePath();
-                m.addAttribute( "filepath", "$PROJECT_DIR$/" + toRelative( project.getBasedir(), modulePath ) );
+                    new File( executedProject.getBasedir(), executedProject.getArtifactId() + ".iml" ).getAbsolutePath();
+                m.addAttribute( "filepath", "$PROJECT_DIR$/" + toRelative( executedProject.getBasedir(), modulePath ) );
             }
 
             // add any PathMacros we've come across

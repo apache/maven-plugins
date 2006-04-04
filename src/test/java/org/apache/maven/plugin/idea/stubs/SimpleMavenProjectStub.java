@@ -18,6 +18,7 @@ package org.apache.maven.plugin.idea.stubs;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Build;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 
 import java.io.File;
@@ -33,9 +34,18 @@ public class SimpleMavenProjectStub
 {
     private List collectedProjects;
 
+    private Build build;
+
+    private List testArtifacts;
+
     public SimpleMavenProjectStub()
     {
         TestCounter.nextCount();
+
+        build = new Build();
+        build.setDirectory( getBasedir().getAbsolutePath() + "/target" );
+        build.setOutputDirectory( getBasedir().getAbsolutePath() + "/target/classes" );
+        build.setTestOutputDirectory( getBasedir().getAbsolutePath() + "/target/test-classes" );
     }
 
     public String getGroupId()
@@ -106,8 +116,51 @@ public class SimpleMavenProjectStub
         return artifact;
     }
 
+    public Build getBuild()
+    {
+        return build;
+    }
+
     public List getRemoteArtifactRepositories()
     {
         return Collections.EMPTY_LIST;
+    }
+
+    public List getCompileSourceRoots()
+    {
+        return Collections.singletonList( getBasedir().getAbsolutePath() + "/src/main/java" );
+    }
+
+    public List getTestArtifacts()
+    {
+        if ( testArtifacts == null )
+        {
+            testArtifacts = new ArrayList();
+
+            testArtifacts.add( createArtifact( "junit", "junit", "1.0.4" ) );
+        }
+
+        return testArtifacts;
+    }
+
+    public void setTestArtifacts( List artifacts )
+    {
+        testArtifacts = artifacts;
+    }
+
+    public List getTestCompileSourceRoots()
+    {
+        return Collections.singletonList( getBasedir().getAbsolutePath() + "/src/test/java" );
+    }
+
+    private Artifact createArtifact( String groupId, String artifactId, String version )
+    {
+        Artifact artifact = new IdeaArtifactStub();
+
+        artifact.setGroupId( groupId );
+        artifact.setArtifactId( artifactId );
+        artifact.setVersion( version );
+
+        return artifact;
     }
 }
