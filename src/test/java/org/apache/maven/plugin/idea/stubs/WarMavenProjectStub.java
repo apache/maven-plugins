@@ -1,7 +1,5 @@
 package org.apache.maven.plugin.idea.stubs;
 
-import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
-
 /*
  *  Copyright 2005-2006 The Apache Software Foundation.
  *
@@ -21,37 +19,11 @@ import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 /**
  * @author Edwin Punzalan
  */
-public class ReactorMavenProjectStub
-    extends MavenProjectStub
+public class WarMavenProjectStub
+    extends SimpleMavenProjectStub
 {
-    private static int reactorProjectCounter = 0;
-
-    private String artifactId;
-
-    public ReactorMavenProjectStub()
+    public String getPackaging()
     {
-        reactorProjectCounter++;
-
-        setArtifactId( "plugin-reactor-project-" + reactorProjectCounter );
-    }
-
-    public void setArtifactId( String artifactId )
-    {
-        this.artifactId = artifactId;
-    }
-
-    public String getArtifactId()
-    {
-        return artifactId;
-    }
-
-    public String getGroupId()
-    {
-        return "org.apache.maven.plugin.test";
-    }
-
-    public String getVersion()
-    {
-        return "1.0";
+        return "war";
     }
 }

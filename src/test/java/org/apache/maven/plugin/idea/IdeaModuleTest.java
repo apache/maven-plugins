@@ -29,7 +29,7 @@ import java.util.ArrayList;
 public class IdeaModuleTest
     extends AbstractIdeaTestCase
 {
-    public void testMinConfig()
+    public void testJarMinConfig()
         throws Exception
     {
         List expectedDeps = new ArrayList();
@@ -59,6 +59,18 @@ public class IdeaModuleTest
                 expectedDeps.remove( root.attributeValue( "url" ) );
             }
         }
+
+        assertTrue( "All dependencies are present", expectedDeps.size() == 0 );
+    }
+
+    public void nottestWarMinConfig()
+        throws Exception
+    {
+        List expectedDeps = new ArrayList();
+        expectedDeps.add( "jar://E:/localRepository/org.apache.maven/maven-model/2.0.1/maven-model-2.0.1.jar!/" );
+        expectedDeps.add( "jar://E:/localRepository/junit/junit/3.8.1/junit-3.8.1.jar!/" );
+
+        Document imlDocument = executeMojo( "src/test/module-plugin-configs/min-war-plugin-config.xml" );
 
         assertTrue( "All dependencies are present", expectedDeps.size() == 0 );
     }
