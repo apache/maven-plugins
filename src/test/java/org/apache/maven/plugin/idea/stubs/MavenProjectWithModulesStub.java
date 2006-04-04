@@ -41,6 +41,6 @@ public class MavenProjectWithModulesStub
 
     private MavenProject createModule( String artifactId )
     {
-        return new MavenProjectModuleStub( artifactId, new File( getBasedir(), artifactId ) );
+        return new ModuleMavenProjectStub( artifactId, new File( getBasedir(), artifactId ) );
     }
 }
