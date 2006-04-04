@@ -19,6 +19,7 @@ package org.apache.maven.plugin.idea.stubs;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Build;
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 
 import java.io.File;
@@ -43,9 +44,19 @@ public class SimpleMavenProjectStub
         TestCounter.nextCount();
 
         build = new Build();
-        build.setDirectory( getBasedir().getAbsolutePath() + "/target" );
-        build.setOutputDirectory( getBasedir().getAbsolutePath() + "/target/classes" );
-        build.setTestOutputDirectory( getBasedir().getAbsolutePath() + "/target/test-classes" );
+        build.setDirectory( "target" );
+        build.setOutputDirectory( "target/classes" );
+        build.setTestOutputDirectory( "target/test-classes" );
+
+        Resource resource = new Resource();
+        resource.setDirectory( "src/main/resources" );
+        resource.setFiltering( false );
+        build.setResources( Collections.singletonList( resource ) );
+
+        resource = new Resource();
+        resource.setFiltering( false );
+        resource.setDirectory( "src/test/resources" );
+        build.setTestResources( Collections.singletonList( resource ) );
     }
 
     public String getGroupId()
@@ -100,6 +111,13 @@ public class SimpleMavenProjectStub
         dep.setScope( Artifact.SCOPE_COMPILE );
         dependencies.add( dep );
 
+        dep = new Dependency();
+        dep.setGroupId( "junit" );
+        dep.setArtifactId( "junit" );
+        dep.setVersion( "3.8.1" );
+        dep.setScope( Artifact.SCOPE_TEST );
+        dependencies.add( dep );
+
         return dependencies;
     }
 
@@ -128,7 +146,11 @@ public class SimpleMavenProjectStub
 
     public List getCompileSourceRoots()
     {
-        return Collections.singletonList( getBasedir().getAbsolutePath() + "/src/main/java" );
+        File src = new File( getBasedir().getAbsolutePath() + "/src/main/java" );
+
+        src.mkdirs();
+
+        return Collections.singletonList( src.getAbsolutePath() );
     }
 
     public List getTestArtifacts()
@@ -137,7 +159,9 @@ public class SimpleMavenProjectStub
         {
             testArtifacts = new ArrayList();
 
-            testArtifacts.add( createArtifact( "junit", "junit", "1.0.4" ) );
+            testArtifacts.add( createArtifact( "org.apache.maven", "maven-model", "2.0.1" ) );
+
+            testArtifacts.add( createArtifact( "junit", "junit", "3.8.1" ) );
         }
 
         return testArtifacts;
@@ -150,7 +174,11 @@ public class SimpleMavenProjectStub
 
     public List getTestCompileSourceRoots()
     {
-        return Collections.singletonList( getBasedir().getAbsolutePath() + "/src/test/java" );
+        File src = new File( getBasedir().getAbsolutePath() + "/src/test/java" );
+
+        src.mkdirs();
+
+        return Collections.singletonList( src.getAbsolutePath() );
     }
 
     private Artifact createArtifact( String groupId, String artifactId, String version )
@@ -160,6 +188,8 @@ public class SimpleMavenProjectStub
         artifact.setGroupId( groupId );
         artifact.setArtifactId( artifactId );
         artifact.setVersion( version );
+        artifact.setFile( new File( "/localRepository/" + artifact.getId().replace( ':', '/' ) +
+                          "/" + artifact.getArtifactId() + "-" + artifact.getVersion() + ".jar" ) );
 
         return artifact;
     }
