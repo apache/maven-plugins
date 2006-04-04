@@ -171,7 +171,7 @@ public class IdeaMojo
      * Causes the module libraries to use a short name for all dependencies. This is very convenient but has been
      * reported to cause problems with IDEA.
      *
-     * @parameter default-value="true"
+     * @parameter default-value="false"
      */
     private boolean dependenciesAsLibraries;
 
