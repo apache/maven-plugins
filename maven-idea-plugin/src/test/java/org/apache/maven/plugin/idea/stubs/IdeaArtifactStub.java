@@ -21,6 +21,8 @@ import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.OverConstrainedVersionException;
 import org.apache.maven.plugin.testing.stubs.ArtifactStub;
 
+import java.io.File;
+
 /**
  * @author Edwin Punzalan
  */
@@ -32,6 +34,8 @@ public class IdeaArtifactStub
     private String artifactId;
 
     private String version;
+
+    private File file;
 
 
     public void setGroupId( String groupId )
@@ -64,9 +68,24 @@ public class IdeaArtifactStub
         return version;
     }
 
+    public File getFile()
+    {
+        return file;
+    }
+
+    public void setFile( File file )
+    {
+        this.file = file;
+    }
+
     public ArtifactVersion getSelectedVersion()
         throws OverConstrainedVersionException
     {
         return new DefaultArtifactVersion( getVersion() );
+    }
+
+    public String getId()
+    {
+        return getGroupId() + ":" + getArtifactId() + ":" + getVersion();
     }
 }
