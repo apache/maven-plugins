@@ -488,11 +488,13 @@ public abstract class AbstractSiteRenderingMojo
         {
             context.addSiteDirectory( new File( siteDirectory, locale.getLanguage() ) );
             context.addModuleDirectory( new File( xdocDirectory, locale.getLanguage() ), "xdoc" );
+            context.addModuleDirectory( new File( xdocDirectory, locale.getLanguage() ), "fml" );
         }
         else
         {
             context.addSiteDirectory( siteDirectory );
             context.addModuleDirectory( xdocDirectory, "xdoc" );
+            context.addModuleDirectory( xdocDirectory, "fml" );
         }
 
         context.addSiteDirectory( generatedSiteDirectory );
