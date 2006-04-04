@@ -13,6 +13,10 @@ Introduction
 
    * pmd:cpd - run PMD's Copy/Paste Detector tool and generate a report
 
+   * pmd:pmd-check - verify the PMD report is empty and fail the build if it is not
+
+   * pmd:cpd-check - verify the CPD report is empty and fail the build if it is not
+
 Configuration
 
   The PMD and CPD reports share the same configuration.  For example, the following
@@ -56,3 +60,29 @@ Configuration
     </reporting>
 +---------
 
+Violation Checking
+
+  The pmd-check and cpd-check will scan for the PMD or CPD report output respectively and throw an exception
+  if the report contains any entries.  This allows you to configure your build to fail if the check goal fails
+  and, in doing so, enforce your own custom code quality rules.
+
+  TODO Please give example of how to configure build element to run CPD and PMD check goals.  Something like this:
+  
++--------
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>cpd</goal>
+                            <goal>cpd-check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+			</plugin>
+		</plugins>
+	</build>
++---------
