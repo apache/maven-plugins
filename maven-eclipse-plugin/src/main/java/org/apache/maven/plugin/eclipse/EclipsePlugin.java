@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.writers.EclipseClasspathWriter;
@@ -388,7 +389,9 @@ public class EclipsePlugin
 
         // end validate
 
-        isJavaProject = !"ear".equals( packaging ) && !"pom".equals( packaging );
+        ArtifactHandler artifactHandler = this.project.getArtifact().getArtifactHandler();
+        // ear projects don't contain java sources
+        isJavaProject = "java".equals( artifactHandler.getLanguage() ) && !"ear".equals( packaging );
 
         // defaults
         if ( projectnatures == null )
