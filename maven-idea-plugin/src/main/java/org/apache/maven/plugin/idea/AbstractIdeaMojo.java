@@ -65,11 +65,11 @@ public abstract class AbstractIdeaMojo
     /**
      * The Maven Project.
      *
-     * @parameter expression="${project}"
+     * @parameter expression="${executedProject}"
      * @required
      * @readonly
      */
-    protected MavenProject project;
+    protected MavenProject executedProject;
 
     /* holder for the log object only */
     protected Log log;
@@ -109,7 +109,7 @@ public abstract class AbstractIdeaMojo
                            ArtifactResolver artifactResolver, ArtifactMetadataSource artifactMetadataSource, Log log,
                            boolean overwrite )
     {
-        this.project = project;
+        this.executedProject = project;
 
         this.log = log;
 
@@ -134,7 +134,7 @@ public abstract class AbstractIdeaMojo
         }
         else
         {
-            File altFile = new File( project.getBasedir(), "src/main/idea/" + altFilename );
+            File altFile = new File( executedProject.getBasedir(), "src/main/idea/" + altFilename );
             if ( altFile.exists() )
             {
                 return reader.read( altFile );
@@ -297,7 +297,7 @@ public abstract class AbstractIdeaMojo
     {
         Set artifacts = new HashSet();
 
-        for ( Iterator dependencies = project.getDependencies().iterator(); dependencies.hasNext(); )
+        for ( Iterator dependencies = executedProject.getDependencies().iterator(); dependencies.hasNext(); )
         {
             Dependency dep = (Dependency) dependencies.next();
 
