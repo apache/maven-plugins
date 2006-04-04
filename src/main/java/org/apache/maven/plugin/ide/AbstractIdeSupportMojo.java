@@ -501,8 +501,10 @@ public abstract class AbstractIdeSupportMojo
      * Returns the list of project artifacts. Also artifacts generated from referenced projects will be added, but with
      * the <code>resolved</code> property set to true.
      * @return list of projects artifacts
+     * @throws MojoExecutionException if unable to parse dependency versions
      */
     private Set getProjectArtifacts()
+        throws MojoExecutionException
     {
         // keep it sorted, this should avoid random classpath order in tests
         Set artifacts = new TreeSet();
@@ -513,7 +515,20 @@ public abstract class AbstractIdeSupportMojo
 
             String groupId = dependency.getGroupId();
             String artifactId = dependency.getArtifactId();
-            VersionRange versionRange = VersionRange.createFromVersion( dependency.getVersion() );
+            VersionRange versionRange;
+            try
+            {
+                versionRange = VersionRange.createFromVersionSpec( dependency.getVersion() );
+            }
+            catch ( InvalidVersionSpecificationException e )
+            {
+                throw new MojoExecutionException( Messages.getString( "unabletoparseversion", new Object[] { //$NON-NLS-1$
+                                                                          dependency.getArtifactId(),
+                                                                          dependency.getVersion(),
+                                                                          dependency.getManagementKey(),
+                                                                          e.getMessage() } ), e );
+            }
+
             String type = dependency.getType();
             if ( type == null )
             {
