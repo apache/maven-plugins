@@ -114,4 +114,14 @@ public class EclipsePluginTest
     {
         testProject( "project-13" );
     }
+
+    /**
+     * Additional natures and builders - MECLIPSE-64
+     * @throws Exception any exception thrown during test
+     */
+    public void testProject14()
+        throws Exception
+    {
+        testProject( "project-14" );
+    }
 }
