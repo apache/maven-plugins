@@ -94,7 +94,7 @@ public class EclipsePlugin
     /**
      * List of eclipse project natures. By default the
      * <code>org.eclipse.jdt.core.javanature</code> nature plus the needed WTP
-     * natures are added.
+     * natures are added. Natures added using this property <strong>replace</strong> the default list.
      * 
      * <pre>
      * &lt;projectnatures&gt;
@@ -108,20 +108,46 @@ public class EclipsePlugin
     private List projectnatures;
 
     /**
+     * List of eclipse project natures to be added to the default ones.
+     * 
+     * <pre>
+     * &lt;additionalProjectnatures&gt;
+     *    &lt;projectnature&gt;org.springframework.ide.eclipse.core.springnature&lt;/projectnature&gt;
+     * &lt;/additionalProjectnatures&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private List additionalProjectnatures;
+
+    /**
      * List of eclipse build commands. By default the <code>org.eclipse.jdt.core.javabuilder</code> builder plus the needed
      * WTP builders are added. Configuration example:
      * 
      * <pre>
      * &lt;buildcommands&gt;
-     *    &lt;java.lang.String&gt;org.eclipse.wst.common.modulecore.ComponentStructuralBuilder&lt;/java.lang.String&gt;
-     *    &lt;java.lang.String&gt;org.eclipse.jdt.core.javabuilder&lt;/java.lang.String&gt;
-     *    &lt;java.lang.String&gt;org.eclipse.wst.common.modulecore.ComponentStructuralBuilderDependencyResolver&lt;/java.lang.String&gt;
+     *    &lt;buildcommand&gt;org.eclipse.wst.common.modulecore.ComponentStructuralBuilder&lt;/buildcommand&gt;
+     *    &lt;buildcommand&gt;org.eclipse.jdt.core.javabuilder&lt;/buildcommand&gt;
+     *    &lt;buildcommand&gt;org.eclipse.wst.common.modulecore.ComponentStructuralBuilderDependencyResolver&lt;/buildcommand&gt;
      * &lt;/buildcommands&gt;
      * </pre>
      * 
      * @parameter
      */
     private List buildcommands;
+
+    /**
+     * List of eclipse build commands to be added to the default ones.
+     * 
+     * <pre>
+     * &lt;additionalBuildcommands&gt;
+     *    &lt;buildcommand&gt;org.springframework.ide.eclipse.core.springbuilder&lt;/buildcommand&gt;
+     * &lt;/additionalBuildcommands&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private List additionalBuildcommands;
 
     /**
      * List of container classpath entries. By default the <code>org.eclipse.jdt.launching.JRE_CONTAINER</code> classpath
@@ -318,6 +344,42 @@ public class EclipsePlugin
     }
 
     /**
+     * Getter for <code>additionalBuildcommands</code>.
+     * @return Returns the additionalBuildcommands.
+     */
+    public List getAdditionalBuildcommands()
+    {
+        return this.additionalBuildcommands;
+    }
+
+    /**
+     * Setter for <code>additionalBuildcommands</code>.
+     * @param additionalBuildcommands The additionalBuildcommands to set.
+     */
+    public void setAdditionalBuildcommands( List additionalBuildcommands )
+    {
+        this.additionalBuildcommands = additionalBuildcommands;
+    }
+
+    /**
+     * Getter for <code>additionalProjectnatures</code>.
+     * @return Returns the additionalProjectnatures.
+     */
+    public List getAdditionalProjectnatures()
+    {
+        return this.additionalProjectnatures;
+    }
+
+    /**
+     * Setter for <code>additionalProjectnatures</code>.
+     * @param additionalProjectnatures The additionalProjectnatures to set.
+     */
+    public void setAdditionalProjectnatures( List additionalProjectnatures )
+    {
+        this.additionalProjectnatures = additionalProjectnatures;
+    }
+
+    /**
      * @see org.apache.maven.plugin.Mojo#execute()
      */
     public boolean setup()
@@ -399,9 +461,19 @@ public class EclipsePlugin
             fillDefaultNatures( packaging );
         }
 
+        if ( additionalProjectnatures != null )
+        {
+            projectnatures.addAll( additionalProjectnatures );
+        }
+
         if ( buildcommands == null )
         {
             fillDefaultBuilders( packaging );
+        }
+
+        if ( additionalBuildcommands != null )
+        {
+            buildcommands.addAll( additionalBuildcommands );
         }
 
         if ( classpathContainers == null )
