@@ -1,0 +1,17 @@
+<project>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-install-plugin</artifactId>
+		<configuration>
+		  <pomFile>${basedir}/src/test/resources/unit/configured-install-test/plugin-config.xml</pomFile>
+		  <packaging>pom</packaging>
+		  <artifact implementation="org.apache.maven.plugin.install.stubs.InstallArtifactStub" />
+		  <updateReleaseInfo>true</updateReleaseInfo>
+		  <attachedArtifacts />
+          <localRepository>${localRepository}</localRepository>
+		</configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
