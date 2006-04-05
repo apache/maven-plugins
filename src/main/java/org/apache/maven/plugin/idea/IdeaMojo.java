@@ -35,13 +35,6 @@ public class IdeaMojo
     extends AbstractIdeaMojo
 {
     /**
-     * The Maven Project.
-     *
-     * @parameter expression="${executedProject}"
-     */
-    private MavenProject executedProject;
-
-    /**
      * The reactor projects in a multi-module build.
      *
      * @parameter expression="${reactorProjects}"
