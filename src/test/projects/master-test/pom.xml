@@ -7,6 +7,17 @@
   <artifactId>master-test</artifactId>
   <version>1.0</version>
   <name>master</name>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <configuration>
+          <workspace>${basedir}</workspace>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
   <modules>
     <module>module-1</module>
     <module>module-2</module>
