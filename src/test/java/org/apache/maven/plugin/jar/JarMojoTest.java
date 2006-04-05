@@ -1,6 +1,6 @@
 package org.apache.maven.plugin.jar;
 
-import org.apache.maven.plugins.testing.AbstractMojoTestCase;
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 import java.io.File;
 
