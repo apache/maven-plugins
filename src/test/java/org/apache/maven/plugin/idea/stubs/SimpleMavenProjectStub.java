@@ -17,8 +17,11 @@ package org.apache.maven.plugin.idea.stubs;
  */
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.model.Dependency;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.repository.DefaultArtifactRepository;
+import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
 import org.apache.maven.model.Build;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 
@@ -38,6 +41,8 @@ public class SimpleMavenProjectStub
     private Build build;
 
     private List testArtifacts;
+
+    private List remoteRepositories;
 
     public SimpleMavenProjectStub()
     {
@@ -141,7 +146,16 @@ public class SimpleMavenProjectStub
 
     public List getRemoteArtifactRepositories()
     {
-        return Collections.EMPTY_LIST;
+        if ( remoteRepositories == null )
+        {
+            File testRepo = new File( "src/test/remote-repo" );
+            ArtifactRepository repository = new DefaultArtifactRepository( "test-repo",
+                                                                           "file://" + testRepo.getAbsolutePath(),
+                                                                           new DefaultRepositoryLayout() );
+            remoteRepositories = Collections.singletonList( repository );
+        }
+
+        return remoteRepositories;
     }
 
     public List getCompileSourceRoots()
@@ -188,7 +202,8 @@ public class SimpleMavenProjectStub
         artifact.setGroupId( groupId );
         artifact.setArtifactId( artifactId );
         artifact.setVersion( version );
-        artifact.setFile( new File( "/localRepository/" + artifact.getId().replace( ':', '/' ) +
+        artifact.setFile( new File( "target/local-repo/" + artifact.getGroupId().replace( '.', '/' ) +
+                          "/" + artifact.getArtifactId() + "/" + artifact.getVersion() +
                           "/" + artifact.getArtifactId() + "-" + artifact.getVersion() + ".jar" ) );
 
         return artifact;

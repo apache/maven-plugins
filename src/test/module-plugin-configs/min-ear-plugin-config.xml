@@ -34,7 +34,7 @@
           <sourceClassifier>sources</sourceClassifier>
           <downloadJavadocs>false</downloadJavadocs>
           <javadocClassifier>javadoc</javadocClassifier>
-          <dependenciesAsLibraries>true</dependenciesAsLibraries>
+          <dependenciesAsLibraries>false</dependenciesAsLibraries>
         </configuration>
       </plugin>
     </plugins>
