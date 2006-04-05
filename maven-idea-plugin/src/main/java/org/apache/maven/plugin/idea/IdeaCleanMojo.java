@@ -34,15 +34,11 @@ public class IdeaCleanMojo
     extends AbstractMojo
 {
     /**
-     * @parameter expression="${executedProject}"
+     * @parameter expression="${project}"
      * @required
+     * @readonly
      */
     private MavenProject project;
-
-    public void initParams( MavenProject project )
-    {
-        this.project = project;
-    }
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
