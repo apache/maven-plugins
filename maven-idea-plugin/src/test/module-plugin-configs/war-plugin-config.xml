@@ -8,7 +8,7 @@
       <plugin>
         <artifactId>maven-idea-plugin</artifactId>
         <configuration>
-          <executedProject implementation="org.apache.maven.plugin.idea.stubs.SimpleMavenProjectStub"/>
+          <executedProject implementation="org.apache.maven.plugin.idea.stubs.WarMavenProjectStub"/>
           <localRepo>${localRepository}</localRepo>
           <overwrite>false</overwrite>
           <reactorProjects>
@@ -22,8 +22,8 @@
           <sourceClassifier>sources</sourceClassifier>
           <downloadJavadocs>false</downloadJavadocs>
           <javadocClassifier>javadoc</javadocClassifier>
-          <dependenciesAsLibraries>true</dependenciesAsLibraries>
-          <exclude>src/main/resources/excluded,src/main/resources/excluded-too,src/main/resources/excluded/sub</exclude>
+          <dependenciesAsLibraries>false</dependenciesAsLibraries>
+          <deploymentDescriptorFile>src/main/web/WEB-INF/web.xml</deploymentDescriptorFile>
         </configuration>
       </plugin>
     </plugins>
