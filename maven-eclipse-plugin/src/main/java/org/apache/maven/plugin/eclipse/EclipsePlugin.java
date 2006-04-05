@@ -190,7 +190,8 @@ public class EclipsePlugin
     /**
      * The default output directory
      * 
-     * @parameter expression="${project.build.outputDirectory}" alias="outputDirectory"
+     * @parameter expression="${outputDirectory}" alias="outputDirectory" default-value="${project.build.outputDirectory}"
+     * @required
      */
     private File buildOutputDirectory;
 

@@ -77,6 +77,10 @@ public class EclipsePluginTest
         testProject( "project-8" );
     }
 
+    /**
+     * Tests with <code>outputDirectory</code> and <code>outputDir</code>
+     * @throws Exception
+     */
     public void testProject9()
         throws Exception
     {
@@ -123,5 +127,17 @@ public class EclipsePluginTest
         throws Exception
     {
         testProject( "project-14" );
+    }
+
+    /**
+     * <code>outputDirectory</code> parameter - MECLIPSE-11
+     * @throws Exception any exception thrown during test
+     */
+    public void testProject15()
+        throws Exception
+    {
+        Properties props = new Properties();
+        props.put( "outputDirectory", "bin" );
+        testProject( "project-15", props );
     }
 }
