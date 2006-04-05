@@ -162,4 +162,14 @@ public class EclipsePluginTest
         testProject( "project-17" );
     }
 
+    /**
+     * relative location of system dependencies - MECLIPSE-89
+     * @throws Exception any exception thrown during test
+     */
+    public void testProject18()
+        throws Exception
+    {
+        testProject( "project-18" );
+    }
+
 }

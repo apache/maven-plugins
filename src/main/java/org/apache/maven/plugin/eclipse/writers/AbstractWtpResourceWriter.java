@@ -199,7 +199,7 @@ public abstract class AbstractWtpResourceWriter
             if ( dep.isSystemScoped() )
             {
                 handle = "module:/classpath/lib/" //$NON-NLS-1$
-                    + IdeUtils.toRelativeAndFixSeparator( basedir, repoFile, false );
+                    + IdeUtils.toRelativeAndFixSeparator( getEclipseProjectDirectory(), repoFile, false );
             }
             else
             {
