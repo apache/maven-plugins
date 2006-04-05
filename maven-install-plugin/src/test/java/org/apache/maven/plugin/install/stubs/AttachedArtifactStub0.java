@@ -1,5 +1,7 @@
 package org.apache.maven.plugin.install.stubs;
 
+import java.io.File;
+
 /*
  * Copyright 2001-2005 The Apache Software Foundation.
  *
@@ -22,5 +24,12 @@ public class AttachedArtifactStub0
     public String getArtifactId()
     {
         return "attached-artifact-test-0";
+    }
+    
+    public File getFile()
+    {
+        return new File( System.getProperty( "basedir" ), 
+            "target/test-classes/unit/basic-install-test-with-attached-artifacts/" +
+            "target/maven-install-test-1.0-SNAPSHOT.jar" ); 
     }
 }
