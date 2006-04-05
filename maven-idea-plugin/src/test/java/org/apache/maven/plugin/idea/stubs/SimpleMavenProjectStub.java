@@ -44,9 +44,9 @@ public class SimpleMavenProjectStub
         TestCounter.nextCount();
 
         build = new Build();
-        build.setDirectory( "target" );
-        build.setOutputDirectory( "target/classes" );
-        build.setTestOutputDirectory( "target/test-classes" );
+        build.setDirectory( getBasedir().getAbsolutePath() + "/target" );
+        build.setOutputDirectory( getBasedir().getAbsolutePath() + "/target/classes" );
+        build.setTestOutputDirectory( getBasedir().getAbsolutePath() + "/target/test-classes" );
 
         Resource resource = new Resource();
         resource.setDirectory( "src/main/resources" );
