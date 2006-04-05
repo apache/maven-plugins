@@ -199,8 +199,8 @@ public class IdeaModuleTest
         throws Exception
     {
         List expectedDeps = new ArrayList();
-        expectedDeps.add( "jar://E:/localRepository/org.apache.maven/maven-model/2.0.1/maven-model-2.0.1.jar!/" );
-        expectedDeps.add( "jar://E:/localRepository/junit/junit/3.8.1/junit-3.8.1.jar!/" );
+        expectedDeps.add( "/org.apache.maven/maven-model/2.0.1/maven-model-2.0.1.jar!/" );
+        expectedDeps.add( "/junit/junit/3.8.1/junit-3.8.1.jar!/" );
 
         Document imlDocument = super.executeMojo( "module", pluginXml, "iml" );
 
@@ -276,9 +276,16 @@ public class IdeaModuleTest
 
                 Element root = (Element) classes.elementIterator( "root" ).next();
 
-                assertTrue( "Dependency is present", expectedDeps.contains( root.attributeValue( "url" ) ) );
+                String depUrl = root.attributeValue( "url" );
 
-                expectedDeps.remove( root.attributeValue( "url" ) );
+                if ( depUrl.endsWith( "/org.apache.maven/maven-model/2.0.1/maven-model-2.0.1.jar!/" ) )
+                {
+                    expectedDeps.remove( "/org.apache.maven/maven-model/2.0.1/maven-model-2.0.1.jar!/" );
+                }
+                else if ( depUrl.endsWith( "/junit/junit/3.8.1/junit-3.8.1.jar!/" ) )
+                {
+                    expectedDeps.remove( "/junit/junit/3.8.1/junit-3.8.1.jar!/" );
+                }
             }
         }
 
