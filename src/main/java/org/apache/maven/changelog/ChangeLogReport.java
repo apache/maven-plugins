@@ -467,7 +467,7 @@ public class ChangeLogReport
         }
         catch ( MojoExecutionException e )
         {
-            throw new MavenReportException( "An erro is occurred durint changelog command : ", e );
+            throw new MavenReportException( "An error is occurred during changelog command : ", e );
         }
     }
 
