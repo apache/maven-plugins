@@ -81,4 +81,9 @@ public class ReportDocumentRenderer
     {
         return renderingContext.getOutputName();
     }
+
+    public RenderingContext getRenderingContext()
+    {
+        return renderingContext;
+    }
 }

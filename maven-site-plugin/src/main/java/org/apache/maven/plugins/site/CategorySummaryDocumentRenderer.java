@@ -158,4 +158,9 @@ public class CategorySummaryDocumentRenderer
     {
         return renderingContext.getOutputName();
     }
+
+    public RenderingContext getRenderingContext()
+    {
+        return renderingContext;
+    }
 }
