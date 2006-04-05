@@ -181,9 +181,9 @@ public class IdeaModuleTest
 
             String excluded = exclude.attributeValue( "url" );
 
-            if ( excluded.equals( "file://$MODULE_DIR$/src/main/excluded" ) )
+            if ( excluded.equals( "file://$MODULE_DIR$/src/main/resources/excluded/sub" ) )
             {
-
+                fail( "A subdirectory of an already excluded directory must be removed" );
             }
 
             if ( expectedExcludes.contains( excluded ) )
