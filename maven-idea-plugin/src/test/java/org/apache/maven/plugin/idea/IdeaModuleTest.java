@@ -6,6 +6,7 @@ import org.dom4j.Element;
 import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
+import java.io.File;
 
 /*
  *  Copyright 2005-2006 The Apache Software Foundation.
@@ -161,18 +162,18 @@ public class IdeaModuleTest
                       deployDescriptor.attributeValue( "url" ) );
     }
 
-    public void testExcludes()
+    public void testGeneralConfigurations()
         throws Exception
     {
-        List expectedExcludes = new ArrayList();
-        expectedExcludes.add( "file://$MODULE_DIR$/src/main/resources/excluded" );
-        expectedExcludes.add( "file://$MODULE_DIR$/src/main/resources/excluded-too" );
-
-        Document imlDocument = executeMojo( "src/test/module-plugin-configs/plugin-config-exclude.xml" );
+        Document imlDocument = executeMojo( "src/test/module-plugin-configs/general-plugin-config.xml" );
 
         Element component = findComponent( imlDocument.getRootElement(), "NewModuleRootManager" );
 
         Element content = findElement( component, "content" );
+
+        List expectedExcludes = new ArrayList();
+        expectedExcludes.add( "file://$MODULE_DIR$/src/main/resources/excluded" );
+        expectedExcludes.add( "file://$MODULE_DIR$/src/main/resources/excluded-too" );
 
         List excludeList = content.elements( "excludeFolder" );
         for ( Iterator excludes = excludeList.iterator(); excludes.hasNext(); )
@@ -191,15 +192,92 @@ public class IdeaModuleTest
                 expectedExcludes.remove( excluded );
             }
         }
-
         assertEquals( "Test all excludes", 0, expectedExcludes.size() );
+
+        List orderEntryList = findElementsByName( component, "orderEntry" );
+        for ( Iterator orderEntries = orderEntryList.iterator(); orderEntries.hasNext(); )
+        {
+            Element orderEntry = (Element) orderEntries.next();
+
+            if (  "module-library".equals( orderEntry.attributeValue( "type" ) ) )
+            {
+                Element library = orderEntry.element( "library" );
+
+                String name = library.attributeValue( "name" );
+                assertTrue( "Test usage of fullnames", name.indexOf( ":" ) > 0 );
+            }
+        }
+
+        File srcFile = new File( "target/local-repo/org/apache/maven/maven-model/2.0.1/maven-model-2.0.1-src.jar" );
+        assertTrue( "Test maven-model source is downloaded", srcFile.exists() );
+        srcFile = new File( "target/local-repo/junit/junit/3.8.1/junit-3.8.1-src.jar" );
+        assertTrue( "Test junit source is downloaded", srcFile.exists() );
+
+        File docFile = new File( "target/local-repo/org/apache/maven/maven-model/2.0.1/maven-model-2.0.1-doc.jar" );
+        assertTrue( "Test maven-model javadoc is downloaded", docFile.exists() );
+    }
+
+    public void testWarConfig()
+        throws Exception
+    {
+        List expectedLibs = new ArrayList();
+        expectedLibs.add( "/WEB-INF/lib/maven-model-2.0.1.jar" );
+        expectedLibs.add( "/WEB-INF/lib/junit-3.8.1.jar" );
+
+        Document imlDocument = executeMojo( "src/test/module-plugin-configs/war-plugin-config.xml" );
+
+        Element root = imlDocument.getRootElement();
+
+        assertEquals( "Test Project type", "J2EE_WEB_MODULE", root.attributeValue( "type" ) );
+
+        Element component = findComponent( root, "WebModuleBuildComponent" );
+
+        Element setting = findElement( component, "setting" );
+        assertTrue( "Test exploded url setting", "EXPLODED_URL".equals( setting.attributeValue( "name" ) ) );
+        assertTrue( "Test exploded url value",
+                    setting.attributeValue( "value" ).startsWith( "file://$MODULE_DIR$/target/" ) );
+
+        component = findComponent( root, "WebModuleProperties" );
+
+        Element deployDescriptor = component.element( "deploymentDescriptor" );
+        assertEquals( "Test deployment descriptor version", "2.3", deployDescriptor.attributeValue( "version" ) );
+        assertEquals( "Test deployment descriptor name", "web.xml", deployDescriptor.attributeValue( "name" ) );
+        assertEquals( "Test deployment descriptor optional", "false", deployDescriptor.attributeValue( "optional" ) );
+        assertEquals( "Test deployment descriptor file",
+                      "file://$MODULE_DIR$/src/main/web/WEB-INF/web.xml",
+                      deployDescriptor.attributeValue( "url" ) );
+
+        Element webroots = component.element( "webroots" );
+        Element webroot = webroots.element( "root" );
+        assertEquals( "Test webroot relative location", "/", webroot.attributeValue( "relative" ) );
+        assertEquals( "Test webroot url", "file://$MODULE_DIR$/src/main/webapp", webroot.attributeValue( "url" ) );
+
+        List containerElementList = findElementsByName( component, "containerElement" );
+        for ( Iterator containerElements = containerElementList.iterator(); containerElements.hasNext(); )
+        {
+            Element containerElement = (Element) containerElements.next();
+
+            assertEquals( "Test container element type", "library", containerElement.attributeValue( "type" ) );
+            assertEquals( "Test container element level", "module", containerElement.attributeValue( "level" ) );
+            assertTrue( "Test library url", containerElement.element( "url" ).getText().startsWith( "jar://" ) );
+
+            Element attribute = findElementByNameAttribute( containerElement, "attribute", "method" );
+            assertEquals( "Test library method", "1", attribute.attributeValue( "value" ) );
+
+            attribute = findElementByNameAttribute( containerElement, "attribute", "URI" );
+            String attributeValue = attribute.attributeValue( "value" );
+            assertTrue( "Test library URI", expectedLibs.contains( attributeValue ) );
+            expectedLibs.remove( attributeValue );
+        }
+
+        assertTrue( "All libraries are present", expectedLibs.size() == 0 );
     }
 
     protected Document executeMojo( String pluginXml )
         throws Exception
     {
         List expectedDeps = new ArrayList();
-        expectedDeps.add( "/org.apache.maven/maven-model/2.0.1/maven-model-2.0.1.jar!/" );
+        expectedDeps.add( "/org/apache/maven/maven-model/2.0.1/maven-model-2.0.1.jar!/" );
         expectedDeps.add( "/junit/junit/3.8.1/junit-3.8.1.jar!/" );
 
         Document imlDocument = super.executeMojo( "module", pluginXml, "iml" );
@@ -278,9 +356,9 @@ public class IdeaModuleTest
 
                 String depUrl = root.attributeValue( "url" );
 
-                if ( depUrl.endsWith( "/org.apache.maven/maven-model/2.0.1/maven-model-2.0.1.jar!/" ) )
+                if ( depUrl.endsWith( "/org/apache/maven/maven-model/2.0.1/maven-model-2.0.1.jar!/" ) )
                 {
-                    expectedDeps.remove( "/org.apache.maven/maven-model/2.0.1/maven-model-2.0.1.jar!/" );
+                    expectedDeps.remove( "/org/apache/maven/maven-model/2.0.1/maven-model-2.0.1.jar!/" );
                 }
                 else if ( depUrl.endsWith( "/junit/junit/3.8.1/junit-3.8.1.jar!/" ) )
                 {
