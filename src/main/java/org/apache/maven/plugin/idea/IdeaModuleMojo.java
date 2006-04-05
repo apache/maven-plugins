@@ -272,7 +272,7 @@ public class IdeaModuleMojo
             {
                 Resource resource = (Resource) i.next();
                 String directory = resource.getDirectory();
-                if ( resource.getTargetPath() == null && resource.isFiltering() == false )
+                if ( resource.getTargetPath() == null && !resource.isFiltering() )
                 {
                     addSourceFolder( content, directory, false );
                 }
@@ -288,7 +288,7 @@ public class IdeaModuleMojo
             {
                 Resource resource = (Resource) i.next();
                 String directory = resource.getDirectory();
-                if ( resource.getTargetPath() == null && resource.isFiltering() == false )
+                if ( resource.getTargetPath() == null && !resource.isFiltering() )
                 {
                     addSourceFolder( content, directory, true );
                 }
@@ -536,13 +536,7 @@ public class IdeaModuleMojo
 
             Element containerElement = createElement( component, "containerElement" );
 
-            boolean linkAsModule = false;
-            if ( linkModules )
-            {
-                linkAsModule = isReactorProject( artifact.getGroupId(), artifact.getArtifactId() );
-            }
-
-            if ( linkAsModule )
+            if ( linkModules && isReactorProject( artifact.getGroupId(), artifact.getArtifactId() ) )
             {
                 containerElement.addAttribute( "type", "module" );
                 containerElement.addAttribute( "name", artifact.getArtifactId() );
@@ -864,17 +858,6 @@ public class IdeaModuleMojo
             getLog().debug( e );
             return null;
         }
-    }
-
-    private void addResources( Element component, String directory )
-    {
-        Element dep = createElement( component, "orderEntry" );
-        dep.addAttribute( "type", "module-library" );
-        dep = createElement( dep, "library" );
-
-        Element el = createElement( dep, "CLASSES" );
-        el = createElement( el, "root" );
-        el.addAttribute( "url", getModuleFileUrl( directory ) );
     }
 
     /**
