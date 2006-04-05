@@ -91,6 +91,76 @@ public class IdeaModuleTest
         assertTrue( "All libraries are present", expectedLibs.size() == 0 );
     }
 
+    public void testEjbMinConfig()
+        throws Exception
+    {
+        List expectedLibs = new ArrayList();
+        expectedLibs.add( "/WEB-INF/lib/maven-model-2.0.1.jar" );
+        expectedLibs.add( "/WEB-INF/lib/junit-3.8.1.jar" );
+
+        Document imlDocument = executeMojo( "src/test/module-plugin-configs/min-ejb-plugin-config.xml" );
+
+        Element root = imlDocument.getRootElement();
+
+        assertEquals( "Test Project type", "J2EE_EJB_MODULE", root.attributeValue( "type" ) );
+
+        Element component = findComponent( root, "EjbModuleBuildComponent" );
+
+        Element setting = findElement( component, "setting" );
+        assertTrue( "Test exploded url setting", "EXPLODED_URL".equals( setting.attributeValue( "name" ) ) );
+        assertTrue( "Test exploded url value",
+                    setting.attributeValue( "value" ).startsWith( "file://$MODULE_DIR$/target/" ) );
+
+        component = findComponent( root, "EjbModuleProperties" );
+
+        Element deployDescriptor = component.element( "deploymentDescriptor" );
+        assertEquals( "Test deployment descriptor version", "2.x", deployDescriptor.attributeValue( "version" ) );
+        assertEquals( "Test deployment descriptor name", "ejb-jar.xml", deployDescriptor.attributeValue( "name" ) );
+        assertEquals( "Test deployment descriptor optional", "false", deployDescriptor.attributeValue( "optional" ) );
+        assertEquals( "Test deployment descriptor file",
+                      "file://$MODULE_DIR$/src/main/resources/META-INF/ejb-jar.xml",
+                      deployDescriptor.attributeValue( "url" ) );
+
+        List containerElementList = findElementsByName( component, "containerElement" );
+        for ( Iterator containerElements = containerElementList.iterator(); containerElements.hasNext(); )
+        {
+            Element containerElement = (Element) containerElements.next();
+
+            assertEquals( "Test container element type", "library", containerElement.attributeValue( "type" ) );
+            assertEquals( "Test container element level", "module", containerElement.attributeValue( "level" ) );
+
+            Element attribute = findElementByNameAttribute( containerElement, "attribute", "method" );
+            assertEquals( "Test library method", "2", attribute.attributeValue( "value" ) );
+
+            attribute = findElementByNameAttribute( containerElement, "attribute", "URI" );
+            String attributeValue = attribute.attributeValue( "value" );
+            assertTrue( "Test library URI", expectedLibs.contains( attributeValue ) );
+            expectedLibs.remove( attributeValue );
+        }
+
+        assertTrue( "All libraries are present", expectedLibs.size() == 0 );
+    }
+
+    public void testEarMinConfig()
+        throws Exception
+    {
+        Document imlDocument = executeMojo( "src/test/module-plugin-configs/min-ear-plugin-config.xml" );
+
+        Element root = imlDocument.getRootElement();
+
+        assertEquals( "Test Project type", "J2EE_APPLICATION_MODULE", root.attributeValue( "type" ) );
+
+        Element component = findComponent( root, "ApplicationModuleProperties" );
+
+        Element deployDescriptor = component.element( "deploymentDescriptor" );
+        assertEquals( "Test deployment descriptor version", "1.3", deployDescriptor.attributeValue( "version" ) );
+        assertEquals( "Test deployment descriptor name", "application.xml", deployDescriptor.attributeValue( "name" ) );
+        assertEquals( "Test deployment descriptor optional", "false", deployDescriptor.attributeValue( "optional" ) );
+        assertEquals( "Test deployment descriptor file",
+                      "file://$MODULE_DIR$/target/application.xml",
+                      deployDescriptor.attributeValue( "url" ) );
+    }
+
     protected Document executeMojo( String pluginXml )
         throws Exception
     {
