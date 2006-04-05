@@ -78,6 +78,11 @@ public class IdeaArtifactStub
         this.file = file;
     }
 
+    public String getType()
+    {
+        return "jar";
+    }
+
     public ArtifactVersion getSelectedVersion()
         throws OverConstrainedVersionException
     {
