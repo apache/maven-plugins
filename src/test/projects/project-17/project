@@ -1,0 +1,14 @@
+<projectDescription>
+  <name>maven-eclipse-plugin-test-project-17</name>
+  <comment>Test of special characters like ö ä ü ß ISO-8859-15 encoded</comment>
+  <projects/>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+      <arguments/>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+  </natures>
+</projectDescription>
