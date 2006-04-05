@@ -17,9 +17,11 @@ package org.apache.maven.plugin.eclipse.writers;
  */
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -139,11 +141,11 @@ public class EclipseProjectWriter
             buildCommands.add( iter.next() );
         }
 
-        FileWriter w;
+        Writer w;
 
         try
         {
-            w = new FileWriter( dotProject );
+            w = new OutputStreamWriter( new FileOutputStream( dotProject ), "UTF-8" );
         }
         catch ( IOException ex )
         {
