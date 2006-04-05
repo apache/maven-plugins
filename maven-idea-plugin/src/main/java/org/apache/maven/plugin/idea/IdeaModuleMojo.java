@@ -334,14 +334,20 @@ public class IdeaModuleMojo
             for ( Iterator i = filteredExcludes.iterator(); i.hasNext(); )
             {
                 String dirToExclude = i.next().toString();
+                String dirToExcludeTemp = dirToExclude.replace( '\\', '/' );
                 boolean addExclude = true;
                 for ( Iterator iterator = actuallyExcluded.iterator(); iterator.hasNext(); )
                 {
-                    String dir = (String) iterator.next();
-                    if ( dirToExclude.startsWith( dir ) )
+                    String dir = iterator.next().toString();
+                    String dirTemp = dir.replace( '\\', '/' );
+                    if ( dirToExcludeTemp.startsWith( dirTemp + "/" ) )
                     {
                         addExclude = false;
                         break;
+                    }
+                    else if ( dir.startsWith( dirToExcludeTemp + "/" ) )
+                    {
+                        actuallyExcluded.remove( dir );
                     }
                 }
 

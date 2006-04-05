@@ -23,7 +23,7 @@
           <downloadJavadocs>false</downloadJavadocs>
           <javadocClassifier>javadoc</javadocClassifier>
           <dependenciesAsLibraries>true</dependenciesAsLibraries>
-          <exclude>src/main/resources/excluded,src/main/resources/excluded-too</exclude>
+          <exclude>src/main/resources/excluded,src/main/resources/excluded-too,src/main/resources/excluded/sub</exclude>
         </configuration>
       </plugin>
     </plugins>
