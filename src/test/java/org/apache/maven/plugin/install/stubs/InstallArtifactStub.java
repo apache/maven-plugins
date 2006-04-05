@@ -33,6 +33,10 @@ public class InstallArtifactStub
 {
     private Map metadataMap;
     
+    private File file;
+    
+    private boolean release;
+    
     public String getArtifactId()
     {
         return "maven-install-test";
@@ -53,11 +57,13 @@ public class InstallArtifactStub
         return getVersion();
     }
     
+    public void setFile( File file )
+    {
+        this.file = file;
+    }
+    
     public File getFile()
     {
-        File file = new File( System.getProperty( "basedir" ) + 
-                              "/target/test-classes/unit/basic-install-test/plugin-config.xml" );
-        
         return file;
     }
     
@@ -93,5 +99,15 @@ public class InstallArtifactStub
     public Collection getMetadataList()
     {
         return metadataMap == null ? Collections.EMPTY_LIST : metadataMap.values();
+    }
+
+    public boolean isRelease()
+    {
+        return release;
+    }
+
+    public void setRelease( boolean release )
+    {
+        this.release = release;
     }
 }
