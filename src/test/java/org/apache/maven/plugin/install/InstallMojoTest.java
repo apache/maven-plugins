@@ -37,6 +37,8 @@ public class InstallMojoTest
    
    InstallArtifactStub artifact; 
    
+   private final String LOCAL_REPO = "target/local-repo/";
+   
    public void setUp()
        throws Exception
    {
@@ -46,9 +48,9 @@ public class InstallMojoTest
        
        String groupId = dotToSlashReplacer( artifact.getGroupId() );
        
-       System.out.println( ">>>Cleaning the test artifacts in local repo..." );
+       System.out.println( ">>>Cleaning the test artifacts in " + LOCAL_REPO + "..." );
        
-       FileUtils.deleteDirectory( System.getProperty( "localRepository" ) + "/" + 
+       FileUtils.deleteDirectory( LOCAL_REPO + 
                                   groupId + "/" + artifact.getArtifactId() );
    }
    
@@ -87,7 +89,7 @@ public class InstallMojoTest
        
        String packaging = getVariableValueFromObject( mojo, "packaging" ).toString();
        
-       File installedArtifact = new File( System.getProperty( "localRepository" ) + "/" + 
+       File installedArtifact = new File( LOCAL_REPO +  
                                           groupId + "/" + artifact.getArtifactId() + "/" +
                                           artifact.getVersion() + "/" + artifact.getArtifactId() + "-" +
                                           artifact.getVersion() + "." + packaging );
@@ -120,7 +122,7 @@ public class InstallMojoTest
        
            groupId = dotToSlashReplacer( attachedArtifact.getGroupId() );                      
            
-           File installedArtifact = new File( System.getProperty( "localRepository" ) + "/" + 
+           File installedArtifact = new File( LOCAL_REPO + 
                                               groupId + "/" + attachedArtifact.getArtifactId() + "/" +
                                               attachedArtifact.getVersion() + "/" + attachedArtifact.getArtifactId() + "-" +
                                               attachedArtifact.getVersion() + "." + packaging );
@@ -201,7 +203,7 @@ public class InstallMojoTest
        
        String groupId = dotToSlashReplacer( artifact.getGroupId() );
        
-       File installedArtifact = new File( System.getProperty( "localRepository" ) + "/" + 
+       File installedArtifact = new File( LOCAL_REPO + 
                                           groupId + "/" + artifact.getArtifactId() + "/" +
                                           artifact.getVersion() + "/" + artifact.getArtifactId() + "-" +
                                           artifact.getVersion() + "." + "jar" );
