@@ -165,8 +165,8 @@ public class IdeaModuleTest
         throws Exception
     {
         List expectedExcludes = new ArrayList();
-        expectedExcludes.add( "src/main/excluded" );
-        expectedExcludes.add( "src/main/excluded-too" );
+        expectedExcludes.add( "file://$MODULE_DIR$/src/main/resources/excluded" );
+        expectedExcludes.add( "file://$MODULE_DIR$/src/main/resources/excluded-too" );
 
         Document imlDocument = executeMojo( "src/test/module-plugin-configs/plugin-config-exclude.xml" );
 
@@ -181,14 +181,18 @@ public class IdeaModuleTest
 
             String excluded = exclude.attributeValue( "url" );
 
+            if ( excluded.equals( "file://$MODULE_DIR$/src/main/excluded" ) )
+            {
+
+            }
+
             if ( expectedExcludes.contains( excluded ) )
             {
                 expectedExcludes.remove( excluded );
             }
         }
 
-        // commented for MIDEA-48
-        //assertTrue( "Test all excludes", expectedExcludes.size() == 0 );
+        assertEquals( "Test all excludes", 0, expectedExcludes.size() );
     }
 
     protected Document executeMojo( String pluginXml )
