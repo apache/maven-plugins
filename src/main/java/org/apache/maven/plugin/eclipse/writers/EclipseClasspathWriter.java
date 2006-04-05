@@ -169,7 +169,7 @@ public class EclipseClasspathWriter
 
             if ( dep.isAddedToClasspath() )
             {
-                addDependency( writer, dep, localRepository, projectBaseDir );
+                addDependency( writer, dep, localRepository );
             }
         }
 
@@ -179,8 +179,7 @@ public class EclipseClasspathWriter
 
     }
 
-    private void addDependency( XMLWriter writer, IdeDependency dep, ArtifactRepository localRepository,
-                                File projectBaseDir )
+    private void addDependency( XMLWriter writer, IdeDependency dep, ArtifactRepository localRepository )
         throws MojoExecutionException
     {
 
@@ -206,7 +205,7 @@ public class EclipseClasspathWriter
 
             if ( dep.isSystemScoped() )
             {
-                path = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, artifactPath, false );
+                path = IdeUtils.toRelativeAndFixSeparator( getEclipseProjectDirectory(), artifactPath, false );
 
                 if ( getLog().isDebugEnabled() )
                 {
