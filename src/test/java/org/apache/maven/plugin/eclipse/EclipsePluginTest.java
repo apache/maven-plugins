@@ -140,4 +140,26 @@ public class EclipsePluginTest
         props.put( "outputDirectory", "bin" );
         testProject( "project-15", props );
     }
+
+    //Commented out: failing due to MNG-2025
+    //    /**
+    //     * UTF8 encoding - MECLIPSE-56
+    //     * @throws Exception any exception thrown during test
+    //     */
+    //    public void testProject16()
+    //        throws Exception
+    //    {
+    //        testProject( "project-16" );
+    //    }
+
+    /**
+     * ISO-8859-15 encoding - MECLIPSE-56
+     * @throws Exception any exception thrown during test
+     */
+    public void testProject17()
+        throws Exception
+    {
+        testProject( "project-17" );
+    }
+
 }
