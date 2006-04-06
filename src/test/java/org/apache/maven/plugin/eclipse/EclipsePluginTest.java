@@ -172,4 +172,14 @@ public class EclipsePluginTest
         testProject( "project-18" );
     }
 
+    /**
+     * Resource targetPath is relative to the project's output directory - MECLIPSE-77
+     * @throws Exception any exception thrown during test
+     */
+    public void testProject19()
+        throws Exception
+    {
+        testProject( "project-19" );
+    }
+
 }

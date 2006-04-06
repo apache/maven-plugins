@@ -116,6 +116,8 @@ public class EclipseClasspathWriter
 
         writer.startElement( ELT_CLASSPATH );
 
+        String defaultOutput = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, buildOutputDirectory, false );
+
         // ----------------------------------------------------------------------
         // Source roots and resources
         // ----------------------------------------------------------------------
@@ -128,7 +130,7 @@ public class EclipseClasspathWriter
 
             writer.addAttribute( ATTR_KIND, "src" ); //$NON-NLS-1$ 
             writer.addAttribute( ATTR_PATH, dir.getPath() );
-            if ( dir.getOutput() != null )
+            if ( dir.getOutput() != null && !defaultOutput.equals( dir.getOutput() ) )
             {
                 writer.addAttribute( ATTR_OUTPUT, dir.getOutput() );
             }
@@ -143,8 +145,7 @@ public class EclipseClasspathWriter
 
         writer.startElement( ELT_CLASSPATHENTRY );
         writer.addAttribute( ATTR_KIND, ATTR_OUTPUT );
-        writer.addAttribute( ATTR_PATH, IdeUtils
-            .toRelativeAndFixSeparator( projectBaseDir, buildOutputDirectory, false ) );
+        writer.addAttribute( ATTR_PATH, defaultOutput );
         writer.endElement();
 
         // ----------------------------------------------------------------------
