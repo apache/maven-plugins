@@ -24,7 +24,7 @@
     <resources>
       <resource>
         <directory>src/main/resources</directory>
-        <targetPath>target/main-resources</targetPath>
+        <targetPath>main-resources</targetPath>
         <includes>
           <include>**/*.xml</include>
         </includes>

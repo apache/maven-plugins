@@ -18,7 +18,7 @@
     <resources>
       <resource>
         <directory>src/main/resources</directory>
-        <targetPath>target/main-resources</targetPath>
+        <targetPath>main-resources</targetPath>
       </resource>
     </resources>
     <plugins>
