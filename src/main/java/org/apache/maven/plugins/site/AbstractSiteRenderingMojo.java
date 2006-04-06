@@ -36,10 +36,11 @@ import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.siterenderer.RendererException;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.reporting.MavenReport;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
@@ -47,9 +48,10 @@ import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -58,6 +60,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 /**
  * Base class for site rendering mojos.
@@ -206,6 +209,13 @@ public abstract class AbstractSiteRenderingMojo
      */
     protected List reactorProjects;
 
+    /**
+     * Project builder
+     *
+     * @component
+     */
+    private MavenProjectBuilder mavenProjectBuilder;
+
     protected DecorationModel getDecorationModel( MavenProject project, Locale locale, Map origProps )
         throws MojoExecutionException
     {
@@ -351,9 +361,11 @@ public abstract class AbstractSiteRenderingMojo
     private void populateProjectParentMenu( DecorationModel decorationModel, Locale locale )
     {
         Menu menu = decorationModel.getMenuRef( "parentProject" );
+
         if ( menu != null )
         {
-            String parentUrl = project.getParent().getUrl();
+            String parentUrl = getParentUrl();
+
             if ( parentUrl != null )
             {
                 if ( parentUrl.endsWith( "/" ) )
@@ -365,6 +377,8 @@ public abstract class AbstractSiteRenderingMojo
                     parentUrl += "/index.html";
                 }
 
+                parentUrl = getRelativePath( parentUrl, project.getUrl() );
+
                 menu.setName( i18n.getString( "site-plugin", locale, "report.menu.parentproject" ) );
 
                 MenuItem item = new MenuItem();
@@ -373,6 +387,51 @@ public abstract class AbstractSiteRenderingMojo
                 menu.addItem( item );
             }
         }
+    }
+
+    /**
+     * Returns the parent POM URL. Attempts to source this value from the reactor env
+     * if available (reactor env model attributes are interpolated), or if the
+     * reactor is unavailable (-N) resorts to the project.getParent().getUrl() value
+     * which will NOT have be interpolated.
+     *
+     * @return parent project URL.
+     */
+    private String getParentUrl()
+    {
+        String url = null;
+
+        if ( project.getParent() != null )
+        {
+            if ( project.getParent().getArtifactId() != null )
+            {
+                String parentArtifactId = project.getParent().getArtifactId();
+
+                Iterator reactorItr = reactorProjects.iterator();
+
+                while ( reactorItr.hasNext() )
+                {
+                    MavenProject reactorProject = (MavenProject) reactorItr.next();
+
+                    String reactorArtifactId = reactorProject.getArtifactId();
+
+                    if ( parentArtifactId.equals( reactorArtifactId ) )
+                    {
+                        url = reactorProject.getUrl();
+                        break;
+                    }
+                }
+            }
+
+            if ( url == null )
+            {
+                // fallback to uninterpolated value
+
+                url = project.getParent().getUrl();
+            }
+        }
+
+        return url;
     }
 
     private File getSkinArtifactFile( DecorationModel decoration )
@@ -554,6 +613,8 @@ public abstract class AbstractSiteRenderingMojo
 
                 if ( projects.size() == 1 )
                 {
+                    getLog().debug( "Attempting to source module information from local filesystem" );
+
                     // Not running reactor - search for the projects manually
                     List models = new ArrayList( project.getModules().size() );
                     for ( Iterator i = project.getModules().iterator(); i.hasNext(); )
@@ -563,28 +624,19 @@ public abstract class AbstractSiteRenderingMojo
                         File f = new File( project.getBasedir(), module + "/pom.xml" );
                         if ( f.exists() )
                         {
-                            MavenXpp3Reader reader = new MavenXpp3Reader();
-                            FileReader fileReader = null;
                             try
                             {
-                                fileReader = new FileReader( f );
-                                model = reader.read( fileReader );
+                                model = mavenProjectBuilder.build( f, localRepository, null ).getModel();
                             }
-                            catch ( IOException e )
+                            catch ( ProjectBuildingException e )
                             {
-                                throw new MojoExecutionException( "Unable to read POM", e );
-                            }
-                            catch ( XmlPullParserException e )
-                            {
-                                throw new MojoExecutionException( "Unable to read POM", e );
-                            }
-                            finally
-                            {
-                                IOUtil.close( fileReader );
+                                throw new MojoExecutionException( "Unable to read local module-POM", e );
                             }
                         }
                         else
                         {
+                            getLog().warn( "No filesystem module-POM available" );
+
                             model = new Model();
                             model.setName( module );
                             model.setUrl( module );
@@ -645,12 +697,16 @@ public abstract class AbstractSiteRenderingMojo
         }
     }
 
-    private static void appendMenuItem( Menu menu, String name, String href )
+    private void appendMenuItem( Menu menu, String name, String href )
     {
         if ( href != null )
         {
             MenuItem item = new MenuItem();
             item.setName( name );
+
+            String baseUrl = project.getUrl();
+            href = getRelativePath( href, baseUrl );
+
             if ( href.endsWith( "/" ) )
             {
                 item.setHref( href + "index.html" );
@@ -873,4 +929,189 @@ public abstract class AbstractSiteRenderingMojo
     {
         return list == null || list.isEmpty();
     }
+
+    private String getRelativePath( String to, String from )
+    {
+        URL toUrl = null;
+        URL fromUrl = null;
+
+        String toPath = to;
+        String fromPath = from;
+
+        try
+        {
+            toUrl = new URL( to );
+        }
+        catch ( MalformedURLException e )
+        {
+        }
+
+        try
+        {
+            fromUrl = new URL( from );
+        }
+        catch ( MalformedURLException e )
+        {
+        }
+
+        if ( toUrl != null && fromUrl != null )
+        {
+            // URLs, determine if they share protocol and domain info
+
+            if ( ( toUrl.getProtocol().equalsIgnoreCase( fromUrl.getProtocol() ) ) &&
+                ( toUrl.getHost().equalsIgnoreCase( fromUrl.getHost() ) ) && ( toUrl.getPort() == fromUrl.getPort() ) )
+            {
+                // shared URL domain details, use URI to determine relative path
+
+                toPath = toUrl.getFile();
+                fromPath = fromUrl.getFile();
+            }
+            else
+            {
+                // dont share basic URL infomation, no relative available
+
+                return to;
+            }
+        }
+        else if ( ( toUrl != null && fromUrl == null ) || ( toUrl == null && fromUrl != null ) )
+        {
+            // one is a URL and the other isnt, no relative available.
+
+            return to;
+        }
+
+        // either the two locations are not URLs or if they are they
+        // share the common protocol and domain info and we are left
+        // with their URI information
+
+        // normalise the path delimters
+
+        toPath = new File( toPath ).getPath();
+        fromPath = new File( fromPath ).getPath();
+
+        // strip any leading slashes if its a windows path
+        if ( toPath.matches( "^\\[a-zA-Z]:" ) )
+        {
+            toPath = toPath.substring( 1 );
+        }
+        if ( fromPath.matches( "^\\[a-zA-Z]:" ) )
+        {
+            fromPath = fromPath.substring( 1 );
+        }
+
+        // lowercase windows drive letters.
+
+        if ( toPath.startsWith( ":", 1 ) )
+        {
+            toPath = toPath.substring( 0, 1 ).toLowerCase() + toPath.substring( 1 );
+        }
+        if ( fromPath.startsWith( ":", 1 ) )
+        {
+            fromPath = fromPath.substring( 0, 1 ).toLowerCase() + fromPath.substring( 1 );
+        }
+
+        // check for the presence of windows drives. No relative way of
+        // traversing from one to the other.
+
+        if ( ( toPath.startsWith( ":", 1 ) && fromPath.startsWith( ":", 1 ) ) &&
+            ( !toPath.substring( 0, 1 ).equals( fromPath.substring( 0, 1 ) ) ) )
+        {
+            // they both have drive path element but they dont match, no
+            // relative path
+
+            return to;
+        }
+
+        if ( ( toPath.startsWith( ":", 1 ) && !fromPath.startsWith( ":", 1 ) ) ||
+            ( !toPath.startsWith( ":", 1 ) && fromPath.startsWith( ":", 1 ) ) )
+        {
+
+            // one has a drive path element and the other doesnt, no relative
+            // path.
+
+            return to;
+
+        }
+
+        // use tokeniser to traverse paths and for lazy checking
+        StringTokenizer toTokeniser = new StringTokenizer( toPath, File.separator );
+        StringTokenizer fromTokeniser = new StringTokenizer( fromPath, File.separator );
+
+        int count = 0;
+
+        // walk along the to path looking for divergence from the from path
+        while ( toTokeniser.hasMoreTokens() && fromTokeniser.hasMoreTokens() )
+        {
+            if ( File.separatorChar == '\\' )
+            {
+                if ( !fromTokeniser.nextToken().equalsIgnoreCase( toTokeniser.nextToken() ) )
+                {
+                    break;
+                }
+            }
+            else
+            {
+                if ( !fromTokeniser.nextToken().equals( toTokeniser.nextToken() ) )
+                {
+                    break;
+                }
+            }
+
+            count++;
+        }
+
+        // reinitialise the tokenisers to count positions to retrieve the
+        // gobbled token
+
+        toTokeniser = new StringTokenizer( toPath, File.separator );
+        fromTokeniser = new StringTokenizer( fromPath, File.separator );
+
+        while ( count-- > 0 )
+        {
+            fromTokeniser.nextToken();
+            toTokeniser.nextToken();
+        }
+
+        String relativePath = "";
+
+        // add back refs for the rest of from location.
+        while ( fromTokeniser.hasMoreTokens() )
+        {
+            fromTokeniser.nextToken();
+
+            relativePath += "..";
+
+            if ( fromTokeniser.hasMoreTokens() )
+            {
+                relativePath += File.separatorChar;
+            }
+        }
+
+        if ( relativePath.length() != 0 && toTokeniser.hasMoreTokens() )
+        {
+            relativePath += File.separatorChar;
+        }
+
+        // add fwd fills for whatevers left of to.
+        while ( toTokeniser.hasMoreTokens() )
+        {
+            relativePath += toTokeniser.nextToken();
+
+            if ( toTokeniser.hasMoreTokens() )
+            {
+                relativePath += File.separatorChar;
+            }
+        }
+
+        if ( !relativePath.equals( to ) )
+        {
+            getLog().debug( "Mapped url: " + to + " to relative path: " + relativePath );
+        }
+
+        return relativePath;
+    }
+
+
 }
+
+
