@@ -195,7 +195,7 @@ public class SimpleMavenProjectStub
         return Collections.singletonList( src.getAbsolutePath() );
     }
 
-    private Artifact createArtifact( String groupId, String artifactId, String version )
+    protected Artifact createArtifact( String groupId, String artifactId, String version )
     {
         Artifact artifact = new IdeaArtifactStub();
 

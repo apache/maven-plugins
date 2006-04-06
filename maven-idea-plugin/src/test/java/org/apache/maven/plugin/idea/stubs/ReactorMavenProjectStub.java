@@ -54,4 +54,9 @@ public class ReactorMavenProjectStub
     {
         return "1.0";
     }
+
+    public static int getCurrentCount()
+    {
+        return reactorProjectCounter;
+    }
 }
