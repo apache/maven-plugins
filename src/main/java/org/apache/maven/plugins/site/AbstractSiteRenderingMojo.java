@@ -276,7 +276,6 @@ public abstract class AbstractSiteRenderingMojo
         }
 
         // Legacy for the old ${parentProject} syntax
-        MavenProject parentProject = project.getParent();
         props.put( "parentProject", "<menu ref=\"parentProject\"/>" );
 
         siteDescriptorContent = StringUtils.interpolate( siteDescriptorContent, props );
@@ -295,9 +294,10 @@ public abstract class AbstractSiteRenderingMojo
             throw new MojoExecutionException( "Error reading site descriptor", e );
         }
 
+        MavenProject parentProject = getParentProject( project );
         if ( parentProject != null && project.getUrl() != null && parentProject.getUrl() != null )
         {
-            populateProjectParentMenu( decoration, locale );
+            populateProjectParentMenu( decoration, locale, parentProject );
         }
 
         if ( parentProject != null && project.getUrl() != null && parentProject.getUrl() != null )
@@ -358,13 +358,13 @@ public abstract class AbstractSiteRenderingMojo
         return result;
     }
 
-    private void populateProjectParentMenu( DecorationModel decorationModel, Locale locale )
+    private void populateProjectParentMenu( DecorationModel decorationModel, Locale locale, MavenProject parentProject )
     {
         Menu menu = decorationModel.getMenuRef( "parentProject" );
 
         if ( menu != null )
         {
-            String parentUrl = getParentUrl();
+            String parentUrl = parentProject.getUrl();
 
             if ( parentUrl != null )
             {
@@ -382,7 +382,7 @@ public abstract class AbstractSiteRenderingMojo
                 menu.setName( i18n.getString( "site-plugin", locale, "report.menu.parentproject" ) );
 
                 MenuItem item = new MenuItem();
-                item.setName( project.getParent().getName() );
+                item.setName( parentProject.getName() );
                 item.setHref( parentUrl );
                 menu.addItem( item );
             }
@@ -397,17 +397,19 @@ public abstract class AbstractSiteRenderingMojo
      * <p/>
      * TODO: once bug is fixed in Maven proper, remove this
      *
+     * @param project
      * @return parent project URL.
      */
-    private String getParentUrl()
+    protected MavenProject getParentProject( MavenProject project )
     {
-        String url = null;
+        MavenProject parentProject = null;
 
-        if ( project.getParent() != null )
+        MavenProject origParent = project.getParent();
+        if ( origParent != null )
         {
-            if ( project.getParent().getArtifactId() != null )
+            if ( origParent.getArtifactId() != null )
             {
-                String parentArtifactId = project.getParent().getArtifactId();
+                String parentArtifactId = origParent.getArtifactId();
 
                 Iterator reactorItr = reactorProjects.iterator();
 
@@ -419,24 +421,24 @@ public abstract class AbstractSiteRenderingMojo
 
                     if ( parentArtifactId.equals( reactorArtifactId ) )
                     {
-                        url = reactorProject.getUrl();
+                        parentProject = reactorProject;
                         break;
                     }
                 }
             }
 
-            if ( url == null )
+            if ( parentProject == null )
             {
                 try
                 {
                     MavenProject mavenProject = mavenProjectBuilder.build(
                         new File( project.getBasedir(), project.getModel().getParent().getRelativePath() ),
                         localRepository, null );
-                    if ( mavenProject.getGroupId().equals( project.getParent().getGroupId() ) &&
-                        mavenProject.getArtifactId().equals( project.getParent().getArtifactId() ) &&
-                        mavenProject.getVersion().equals( project.getParent().getVersion() ) )
+                    if ( mavenProject.getGroupId().equals( origParent.getGroupId() ) &&
+                        mavenProject.getArtifactId().equals( origParent.getArtifactId() ) &&
+                        mavenProject.getVersion().equals( origParent.getVersion() ) )
                     {
-                        url = mavenProject.getUrl();
+                        parentProject = mavenProject;
                     }
                 }
                 catch ( ProjectBuildingException e )
@@ -445,13 +447,13 @@ public abstract class AbstractSiteRenderingMojo
                 }
             }
 
-            if ( url == null )
+            if ( parentProject == null )
             {
                 try
                 {
-                    url = mavenProjectBuilder.buildFromRepository( project.getParentArtifact(),
-                                                                   project.getRemoteArtifactRepositories(),
-                                                                   localRepository ).getUrl();
+                    parentProject = mavenProjectBuilder.buildFromRepository( project.getParentArtifact(),
+                                                                             project.getRemoteArtifactRepositories(),
+                                                                             localRepository );
                 }
                 catch ( ProjectBuildingException e )
                 {
@@ -459,15 +461,14 @@ public abstract class AbstractSiteRenderingMojo
                 }
             }
 
-            if ( url == null )
+            if ( parentProject == null )
             {
                 // fallback to uninterpolated value
 
-                url = project.getParent().getUrl();
+                parentProject = origParent;
             }
         }
-
-        return url;
+        return parentProject;
     }
 
     private File getSkinArtifactFile( DecorationModel decoration )

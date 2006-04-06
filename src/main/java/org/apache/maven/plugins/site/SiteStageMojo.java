@@ -16,9 +16,6 @@ package org.apache.maven.plugins.site;
  * limitations under the License.
  */
 
-import java.io.File;
-import java.util.Iterator;
-
 import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.model.Site;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -38,6 +35,9 @@ import org.apache.maven.wagon.repository.Repository;
 import org.codehaus.plexus.util.PathTool;
 import org.codehaus.plexus.util.StringUtils;
 
+import java.io.File;
+import java.util.Iterator;
+
 /**
  * Staging a site in specific directory.
  * <p>Useful to test the generated site.</p>
@@ -53,7 +53,7 @@ public class SiteStageMojo
     /**
      * Staging directory location.
      *
-     * @parameter expression="${stagingDirectory}"
+     * @parameter expression="${stagingDirectory}" default-value="${project.build.directory}/stage-site"
      * @required
      */
     private File stagingDirectory;
@@ -61,9 +61,8 @@ public class SiteStageMojo
     /**
      * Staging site URL to deploy the staging directory.
      *
-     * @see <a href="http://maven.apache.org/maven-model/maven.html#class_site">MavenModel#class_site</a>
-     *
      * @parameter expression="${stagingSiteURL}"
+     * @see <a href="http://maven.apache.org/maven-model/maven.html#class_site">MavenModel#class_site</a>
      */
     private String stagingSiteURL;
 
@@ -91,18 +90,18 @@ public class SiteStageMojo
 
         outputDirectory = new File( stagingDirectory, structureProject );
 
-        String outputRelativePath = PathTool.getRelativePath( stagingDirectory.getAbsolutePath(),
-                                                              new File( outputDirectory, "dummy.html" )
-                                                                  .getAbsolutePath() );
+        String outputRelativePath = PathTool.getRelativePath( stagingDirectory.getAbsolutePath(), new File(
+            outputDirectory, "dummy.html" ).getAbsolutePath() );
         project.setUrl( outputRelativePath + "/" + structureProject );
 
-        if ( project.getParent() != null )
+        MavenProject parent = getParentProject( project );
+        if ( parent != null )
         {
-            String structureParentProject = getStructure( project.getParent() );
-            project.getParent().setUrl( outputRelativePath + "/" + structureParentProject );
+            String structureParentProject = getStructure( parent );
+            parent.setUrl( outputRelativePath + "/" + structureParentProject );
         }
 
-        if ( ( reactorProjects != null ) && ( reactorProjects.size() > 1 ) )
+        if ( reactorProjects != null && reactorProjects.size() > 1 )
         {
             Iterator reactorItr = reactorProjects.iterator();
 
@@ -110,8 +109,8 @@ public class SiteStageMojo
             {
                 MavenProject reactorProject = (MavenProject) reactorItr.next();
 
-                if ( ( reactorProject != null ) && ( reactorProject.getParent() != null )
-                    && ( project.getArtifactId().equals( reactorProject.getParent().getArtifactId() ) ) )
+                if ( reactorProject != null && reactorProject.getParent() != null &&
+                    project.getArtifactId().equals( reactorProject.getParent().getArtifactId() ) )
                 {
                     String structureReactorProject = getStructure( reactorProject );
                     reactorProject.setUrl( outputRelativePath + "/" + structureReactorProject );
@@ -157,7 +156,7 @@ public class SiteStageMojo
         if ( site == null )
         {
             throw new MojoExecutionException(
-                                              "Missing site information in the distribution management element in the project." );
+                "Missing site information in the distribution management element in the project." );
         }
 
         if ( StringUtils.isEmpty( site.getUrl() ) )
@@ -190,7 +189,7 @@ public class SiteStageMojo
         String id = "stagingSite";
         Repository repository = new Repository( id, stagingSiteURL );
 
-        Wagon wagon = null;
+        Wagon wagon;
         try
         {
             wagon = wagonManager.getWagon( repository.getProtocol() );
@@ -202,8 +201,8 @@ public class SiteStageMojo
 
         if ( !wagon.supportsDirectoryCopy() )
         {
-            throw new MojoExecutionException( "Wagon protocol '" + repository.getProtocol()
-                + "' doesn't support directory copying" );
+            throw new MojoExecutionException(
+                "Wagon protocol '" + repository.getProtocol() + "' doesn't support directory copying" );
         }
 
         try
