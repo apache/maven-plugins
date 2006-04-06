@@ -1,8 +1,12 @@
 package org.apache.maven.plugin.install;
 
 import java.io.File;
+import java.io.FileReader;
 
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.codehaus.plexus.util.FileUtils;
 
 /*
  * Copyright 2001-2006 The Apache Software Foundation.
@@ -21,7 +25,7 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
  */
 
 /**
- * @author aramirez
+ * @author <a href="mailto:aramirez@apache.org">Allan Ramirez</a>
  */
 
 public class InstallFileMojoTest
@@ -38,6 +42,14 @@ public class InstallFileMojoTest
     private File file;
     
     private final String LOCAL_REPO = "target/local-repo/";
+    
+    public void setUp()
+        throws Exception
+    {
+        super.setUp();
+        
+        FileUtils.deleteDirectory( getBasedir() + "/" + LOCAL_REPO );
+    }
     
     public void testInstallFileTestEnvironment()
         throws Exception
@@ -94,6 +106,83 @@ public class InstallFileMojoTest
         assertTrue( ( ( Boolean ) getVariableValueFromObject( mojo, "generatePom" ) ).booleanValue() );
         
         assertTrue( installedArtifact.exists() );
+        
+        File installedPom = new File( LOCAL_REPO + 
+                                           groupId + "/" + artifactId + "/" +
+                                           version + "/" + artifactId + "-" +
+                                           version + "." + "pom" );
+        
+        MavenXpp3Reader reader = new MavenXpp3Reader();
+        
+        Model model = reader.read( new FileReader( installedPom ) );
+        
+        assertEquals( "4.0.0", model.getModelVersion() );
+        
+        assertEquals( ( String ) getVariableValueFromObject( mojo, "groupId" ), model.getGroupId() );
+        
+        assertEquals( artifactId, model.getArtifactId() );
+        
+        assertEquals( version, model.getVersion() );        
+    }
+    
+    public void testInstallFileWithPomFile()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(), 
+                                 "target/test-classes/unit/install-file-with-pomFile-test/plugin-config.xml" );
+    
+        InstallFileMojo mojo = ( InstallFileMojo ) lookupMojo( "install-file", testPom );
+        
+        assertNotNull( mojo );
+        
+        assignValuesForParameter( mojo );
+        
+        mojo.execute();
+        
+        File pomFile = ( File ) getVariableValueFromObject( mojo, "pomFile" );
+        
+        assertTrue( pomFile.exists() );
+        
+        File installedArtifact = new File( LOCAL_REPO + 
+                                           groupId + "/" + artifactId + "/" +
+                                           version + "/" + artifactId + "-" +
+                                           version + "." + packaging );        
+        
+        assertTrue( installedArtifact.exists() );
+        
+        File installedPom = new File( LOCAL_REPO + 
+                                      groupId + "/" + artifactId + "/" +
+                                      version + "/" + artifactId + "-" +
+                                      version + "." + "pom" );   
+        
+        assertTrue( installedPom.exists() );        
+    }
+    
+    public void testInstallFileWithPomAsPackaging()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(), 
+                                 "target/test-classes/unit/install-file-with-pom-as-packaging/" +
+                                 "plugin-config.xml" );
+        
+        InstallFileMojo mojo = ( InstallFileMojo ) lookupMojo( "install-file", testPom );
+        
+        assertNotNull( mojo );
+        
+        assignValuesForParameter( mojo );        
+
+        assertTrue( file.exists() );
+        
+        assertEquals( "pom", packaging );
+        
+        mojo.execute();
+        
+        File installedPom = new File( LOCAL_REPO + 
+                                      groupId + "/" + artifactId + "/" +
+                                      version + "/" + artifactId + "-" +
+                                      version + "." + "pom" );   
+        
+        assertTrue( installedPom.exists() );
     }
     
     private void assignValuesForParameter( Object obj )

@@ -28,7 +28,7 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
- * @author aramirez
+ * @author <a href="mailto:aramirez@apache.org">Allan Ramirez</a>
  */
 
 public class InstallMojoTest
@@ -44,14 +44,9 @@ public class InstallMojoTest
    {
        super.setUp();
        
-       artifact = new InstallArtifactStub();
+       System.out.println( ">>>Cleaning local repo " + getBasedir() + "/" + LOCAL_REPO + "..." );
        
-       String groupId = dotToSlashReplacer( artifact.getGroupId() );
-       
-       System.out.println( ">>>Cleaning the test artifacts in " + LOCAL_REPO + "..." );
-       
-       FileUtils.deleteDirectory( LOCAL_REPO + 
-                                  groupId + "/" + artifact.getArtifactId() );
+       //FileUtils.deleteDirectory( getBasedir() + "/" + LOCAL_REPO  );
    }
    
    public void testInstallTestEnvironment()
