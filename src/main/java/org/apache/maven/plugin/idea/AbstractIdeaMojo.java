@@ -40,12 +40,10 @@ import org.codehaus.plexus.util.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
-import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -149,7 +147,7 @@ public abstract class AbstractIdeaMojo
     protected void writeXmlDocument( File file, Document document )
         throws IOException
     {
-        XMLWriter writer = new XMLWriter( new FileWriter( file ), OutputFormat.createPrettyPrint() );
+        XMLWriter writer = new IdeaXmlWriter( file );
         writer.write( document );
         writer.close();
     }
@@ -317,7 +315,8 @@ public abstract class AbstractIdeaMojo
                 scope = Artifact.SCOPE_COMPILE;
             }
 
-            Artifact artifact = artifactFactory.createDependencyArtifact( groupId, artifactId, versionRange, type, classifier, scope, optional ) ;
+            Artifact artifact = artifactFactory.createDependencyArtifact( groupId, artifactId, versionRange, type,
+                                                                          classifier, scope, optional );
 
             if ( scope.equalsIgnoreCase( Artifact.SCOPE_SYSTEM ) )
             {
