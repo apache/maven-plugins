@@ -273,6 +273,29 @@ public class IdeaModuleTest
         assertTrue( "All libraries are present", expectedLibs.size() == 0 );
     }
 
+    public void testProjectWithModulesConfigurations()
+        throws Exception
+    {
+        Document imlDocument = executeMojo( "src/test/module-plugin-configs/module-plugin-config.xml" );
+
+        Element component = findComponent( imlDocument.getRootElement(), "NewModuleRootManager" );
+
+        boolean moduleFound = false;
+        List orderEntryList = component.elements( "orderEntry" );
+        for ( Iterator orderEntries = orderEntryList.iterator(); orderEntries.hasNext(); )
+        {
+            Element orderEntry = (Element) orderEntries.next();
+            if ( "module".equals( orderEntry.attributeValue( "type" ) ) )
+            {
+                String moduleName = orderEntry.attributeValue( "module-name" );
+                assertTrue( "Test idea module name", moduleName.startsWith( "plugin-reactor-project-" ) );
+                moduleFound = true;
+            }
+        }
+
+        assertTrue( "Test presence of idea module", moduleFound );
+    }
+
     protected Document executeMojo( String pluginXml )
         throws Exception
     {
