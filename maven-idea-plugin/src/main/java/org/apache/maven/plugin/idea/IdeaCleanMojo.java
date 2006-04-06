@@ -43,17 +43,27 @@ public class IdeaCleanMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        File files[] = project.getBasedir().listFiles();
+        File iprFile = getIdeaFile( ".ipr" );
+        deleteFile( iprFile );
 
-        for ( int idx = 0; idx < files.length; idx++ )
+        File imlFile = getIdeaFile( ".iml" );
+        deleteFile( imlFile );
+
+        File iwsFile = getIdeaFile( ".iws" );
+        deleteFile( iwsFile );
+    }
+
+    private File getIdeaFile( String extension )
+    {
+        return new File( project.getBasedir(), project.getArtifactId() + extension );
+    }
+
+    private void deleteFile( File file )
+    {
+        if ( file.exists() )
         {
-            File file = files[ idx ];
-
-            if ( file.getName().endsWith( ".ipr" ) ||
-                 file.getName().endsWith( ".iml" ) ||
-                 file.getName().endsWith( ".iws" ) )
+            if ( !file.isDirectory() )
             {
-                getLog().debug( "Deleting " + file.getAbsolutePath() + "...");
                 FileUtils.fileDelete( file.getAbsolutePath() );
             }
         }
