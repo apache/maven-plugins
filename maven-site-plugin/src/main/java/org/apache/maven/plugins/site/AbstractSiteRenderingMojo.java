@@ -71,15 +71,6 @@ import java.util.StringTokenizer;
 public abstract class AbstractSiteRenderingMojo
     extends AbstractSiteMojo
 {
-
-    /**
-     * Directory containing source for apt, fml and xdoc docs.
-     *
-     * @parameter expression="${basedir}/src/site"
-     * @required
-     */
-    protected File siteDirectory;
-
     /**
      * module type exclusion mappings
      * ex: fml -> **\/*-m1.fml  (excludes -m1.fml files)
