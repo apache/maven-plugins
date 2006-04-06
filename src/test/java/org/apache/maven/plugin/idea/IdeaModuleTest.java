@@ -3,6 +3,7 @@ package org.apache.maven.plugin.idea;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.apache.maven.plugin.idea.stubs.TestCounter;
+import org.codehaus.plexus.PlexusTestCase;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class IdeaModuleTest
     public void testExcludeDirectoryConfig()
         throws Exception
     {
-        File projectBasedir = new File( "target/test-harness/" + ( TestCounter.currentCount() + 1 ) );
+        File projectBasedir = new File( getBasedir(), "target/test-harness/" + ( TestCounter.currentCount() + 1 ) );
 
         projectBasedir.mkdirs();
 
@@ -243,12 +244,12 @@ public class IdeaModuleTest
             }
         }
 
-        File srcFile = new File( "target/local-repo/org/apache/maven/maven-model/2.0.1/maven-model-2.0.1-src.jar" );
+        File srcFile = new File( PlexusTestCase.getBasedir(), "target/local-repo/org/apache/maven/maven-model/2.0.1/maven-model-2.0.1-src.jar" );
         assertTrue( "Test maven-model source is downloaded", srcFile.exists() );
-        srcFile = new File( "target/local-repo/junit/junit/3.8.1/junit-3.8.1-src.jar" );
+        srcFile = new File( PlexusTestCase.getBasedir(), "target/local-repo/junit/junit/3.8.1/junit-3.8.1-src.jar" );
         assertTrue( "Test junit source is downloaded", srcFile.exists() );
 
-        File docFile = new File( "target/local-repo/org/apache/maven/maven-model/2.0.1/maven-model-2.0.1-doc.jar" );
+        File docFile = new File( PlexusTestCase.getBasedir(), "target/local-repo/org/apache/maven/maven-model/2.0.1/maven-model-2.0.1-doc.jar" );
         assertTrue( "Test maven-model javadoc is downloaded", docFile.exists() );
     }
 
