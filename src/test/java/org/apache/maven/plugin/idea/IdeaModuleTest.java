@@ -2,6 +2,7 @@ package org.apache.maven.plugin.idea;
 
 import org.dom4j.Document;
 import org.dom4j.Element;
+import org.apache.maven.plugin.idea.stubs.TestCounter;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -34,6 +35,40 @@ public class IdeaModuleTest
         throws Exception
     {
         executeMojo( "src/test/module-plugin-configs/min-plugin-config.xml" );
+    }
+
+    public void testExcludeDirectoryConfig()
+        throws Exception
+    {
+        File projectBasedir = new File( "target/test-harness/" + ( TestCounter.currentCount() + 1 ) );
+
+        projectBasedir.mkdirs();
+
+        File excluded = new File( projectBasedir, "excluded" );
+        excluded.mkdirs();
+        File sub = new File( excluded, "sub" );
+        sub.mkdirs();
+        File sub2 = new File( excluded, "sub2" );
+        sub2.mkdirs();
+        File subsub1 = new File( sub, "sub1");
+        subsub1.mkdirs();
+
+        Document imlDocument = executeMojo( "src/test/module-plugin-configs/dir-exclusion-plugin-config.xml" );
+
+        Element component = findComponent( imlDocument.getRootElement(), "NewModuleRootManager" );
+
+        boolean excludedDirFound = false;
+        Element content = findElement( component, "content" );
+        for ( Iterator excludes = content.elementIterator( "excludeFolder" ); excludes.hasNext(); )
+        {
+            Element exclude = (Element) excludes.next();
+
+            if ( "file://$MODULE_DIR$/excluded".equals( exclude.attributeValue( "url" ) ) )
+            {
+                excludedDirFound = true;
+            }
+        }
+        assertTrue( "Test excluded dir", excludedDirFound );
     }
 
     public void testWarMinConfig()
