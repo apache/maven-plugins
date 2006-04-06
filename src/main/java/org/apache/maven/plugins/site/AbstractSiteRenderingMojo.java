@@ -394,6 +394,8 @@ public abstract class AbstractSiteRenderingMojo
      * if available (reactor env model attributes are interpolated), or if the
      * reactor is unavailable (-N) resorts to the project.getParent().getUrl() value
      * which will NOT have be interpolated.
+     * <p/>
+     * TODO: once bug is fixed in Maven proper, remove this
      *
      * @return parent project URL.
      */
@@ -420,6 +422,40 @@ public abstract class AbstractSiteRenderingMojo
                         url = reactorProject.getUrl();
                         break;
                     }
+                }
+            }
+
+            if ( url == null )
+            {
+                try
+                {
+                    MavenProject mavenProject = mavenProjectBuilder.build(
+                        new File( project.getBasedir(), project.getModel().getParent().getRelativePath() ),
+                        localRepository, null );
+                    if ( mavenProject.getGroupId().equals( project.getParent().getGroupId() ) &&
+                        mavenProject.getArtifactId().equals( project.getParent().getArtifactId() ) &&
+                        mavenProject.getVersion().equals( project.getParent().getVersion() ) )
+                    {
+                        url = mavenProject.getUrl();
+                    }
+                }
+                catch ( ProjectBuildingException e )
+                {
+                    getLog().warn( "Unable to load parent project from repository: " + e.getMessage() );
+                }
+            }
+
+            if ( url == null )
+            {
+                try
+                {
+                    url = mavenProjectBuilder.buildFromRepository( project.getParentArtifact(),
+                                                                   project.getRemoteArtifactRepositories(),
+                                                                   localRepository ).getUrl();
+                }
+                catch ( ProjectBuildingException e )
+                {
+                    getLog().warn( "Unable to load parent project from repository: " + e.getMessage() );
                 }
             }
 
