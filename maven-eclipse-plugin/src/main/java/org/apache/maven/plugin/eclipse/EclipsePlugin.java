@@ -609,8 +609,10 @@ public class EclipsePlugin
 
         extractSourceDirs( directories, project.getCompileSourceRoots(), basedir, projectBaseDir, false, null );
 
+        String relativeOutput = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, buildOutputDirectory, false );
+
         extractResourceDirs( directories, project.getBuild().getResources(), project, basedir, projectBaseDir, false,
-                             null );
+                             relativeOutput );
 
         // If using the standard output location, don't mix the test output into it.
         String testOutput = null;
@@ -692,11 +694,6 @@ public class EclipsePlugin
             // );
             // }
 
-            if ( !StringUtils.isEmpty( resource.getTargetPath() ) )
-            {
-                output = resource.getTargetPath();
-            }
-
             File resourceDirectory = new File( resource.getDirectory() );
 
             if ( !resourceDirectory.exists() || !resourceDirectory.isDirectory() )
@@ -712,6 +709,14 @@ public class EclipsePlugin
                 File outputFile = new File( projectBaseDir, output );
                 // create output dir if it doesn't exist
                 outputFile.mkdirs();
+
+                if ( !StringUtils.isEmpty( resource.getTargetPath() ) )
+                {
+                    outputFile = new File( outputFile, resource.getTargetPath() );
+                    // create output dir if it doesn't exist
+                    outputFile.mkdirs();
+                }
+
                 output = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, outputFile, false );
             }
 
