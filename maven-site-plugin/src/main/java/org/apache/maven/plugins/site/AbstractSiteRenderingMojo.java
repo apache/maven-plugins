@@ -78,6 +78,14 @@ public abstract class AbstractSiteRenderingMojo
     protected File siteDirectory;
 
     /**
+     * module type exclusion mappings
+     * ex: fml -> **\/*-m1.fml  (excludes -m1.fml files)
+     *
+     * @parameter
+     */
+    protected Map moduleExcludes;
+
+    /**
      * Specifies the output encoding.
      *
      * @parameter expression="${outputEncoding}" default-value="ISO-8859-1"
@@ -495,6 +503,11 @@ public abstract class AbstractSiteRenderingMojo
             context.addSiteDirectory( siteDirectory );
             context.addModuleDirectory( xdocDirectory, "xdoc" );
             context.addModuleDirectory( xdocDirectory, "fml" );
+        }
+
+        if ( moduleExcludes != null )
+        {
+            context.setModuleExcludes( moduleExcludes );
         }
 
         context.addSiteDirectory( generatedSiteDirectory );
