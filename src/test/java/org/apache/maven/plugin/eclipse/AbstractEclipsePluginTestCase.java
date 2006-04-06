@@ -17,8 +17,10 @@ package org.apache.maven.plugin.eclipse;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -238,7 +240,7 @@ public abstract class AbstractEclipsePluginTestCase
     {
         List lines = new ArrayList();
 
-        BufferedReader reader = new BufferedReader( new FileReader( file ) );
+        BufferedReader reader = new BufferedReader( new InputStreamReader( new FileInputStream( file ), "UTF-8" ) );
 
         String line;
 
