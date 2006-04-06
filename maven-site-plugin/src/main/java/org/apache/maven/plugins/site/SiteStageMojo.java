@@ -86,7 +86,7 @@ public class SiteStageMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        String structureProject = getStructure( project );
+        String structureProject = getStructure( project, false );
 
         outputDirectory = new File( stagingDirectory, structureProject );
 
@@ -97,8 +97,11 @@ public class SiteStageMojo
         MavenProject parent = getParentProject( project );
         if ( parent != null )
         {
-            String structureParentProject = getStructure( parent );
-            parent.setUrl( outputRelativePath + "/" + structureParentProject );
+            String structureParentProject = getStructure( parent, true );
+            if ( structureParentProject != null )
+            {
+                parent.setUrl( outputRelativePath + "/" + structureParentProject );
+            }
         }
 
         if ( reactorProjects != null && reactorProjects.size() > 1 )
@@ -112,7 +115,7 @@ public class SiteStageMojo
                 if ( reactorProject != null && reactorProject.getParent() != null &&
                     project.getArtifactId().equals( reactorProject.getParent().getArtifactId() ) )
                 {
-                    String structureReactorProject = getStructure( reactorProject );
+                    String structureReactorProject = getStructure( reactorProject, false );
                     reactorProject.setUrl( outputRelativePath + "/" + structureReactorProject );
                 }
             }
@@ -135,8 +138,8 @@ public class SiteStageMojo
      * @return the structure relative path
      * @throws MojoExecutionException
      */
-    private static String getStructure( MavenProject project )
-        throws MojoExecutionException
+    private static String getStructure( MavenProject project, boolean ignoreMissingSiteUrl )
+        throws MojoExecutionException, MojoFailureException
     {
         if ( project.getDistributionManagement() == null )
         {
@@ -155,13 +158,28 @@ public class SiteStageMojo
         Site site = project.getDistributionManagement().getSite();
         if ( site == null )
         {
-            throw new MojoExecutionException(
-                "Missing site information in the distribution management element in the project." );
+            if ( !ignoreMissingSiteUrl )
+            {
+                throw new MojoFailureException(
+                    "Missing site information in the distribution management element in the project: '" +
+                        project.getName() + "'." );
+            }
+            else
+            {
+                return null;
+            }
         }
 
         if ( StringUtils.isEmpty( site.getUrl() ) )
         {
-            throw new MojoExecutionException( "The URL in the site is missing in the project descriptor." );
+            if ( !ignoreMissingSiteUrl )
+            {
+                throw new MojoFailureException( "The URL in the site is missing in the project descriptor." );
+            }
+            else
+            {
+                return null;
+            }
         }
 
         Repository repository = new Repository( site.getId(), site.getUrl() );
