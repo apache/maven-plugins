@@ -105,6 +105,11 @@ public class SimpleMavenProjectStub
         collectedProjects = list;
     }
 
+    public boolean isExecutionRoot()
+    {
+        return true;
+    }
+
     public List getDependencies()
     {
         List dependencies = new ArrayList();
