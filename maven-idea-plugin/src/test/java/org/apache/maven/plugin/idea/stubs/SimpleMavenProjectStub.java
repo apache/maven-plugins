@@ -24,6 +24,7 @@ import org.apache.maven.model.Build;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
+import org.codehaus.plexus.PlexusTestCase;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -81,7 +82,7 @@ public class SimpleMavenProjectStub
 
     public File getBasedir()
     {
-        File basedir = new File( "target/test-harness/" + TestCounter.currentCount() );
+        File basedir = new File( PlexusTestCase.getBasedir(), "target/test-harness/" + TestCounter.currentCount() );
 
         if ( !basedir.exists() )
         {
@@ -153,7 +154,7 @@ public class SimpleMavenProjectStub
     {
         if ( remoteRepositories == null )
         {
-            File testRepo = new File( "src/test/remote-repo" );
+            File testRepo = new File( PlexusTestCase.getBasedir(), "src/test/remote-repo" );
             ArtifactRepository repository = new DefaultArtifactRepository( "test-repo",
                                                                            "file://" + testRepo.getAbsolutePath(),
                                                                            new DefaultRepositoryLayout() );
@@ -207,7 +208,7 @@ public class SimpleMavenProjectStub
         artifact.setGroupId( groupId );
         artifact.setArtifactId( artifactId );
         artifact.setVersion( version );
-        artifact.setFile( new File( "target/local-repo/" + artifact.getGroupId().replace( '.', '/' ) +
+        artifact.setFile( new File( PlexusTestCase.getBasedir(), "target/local-repo/" + artifact.getGroupId().replace( '.', '/' ) +
                           "/" + artifact.getArtifactId() + "/" + artifact.getVersion() +
                           "/" + artifact.getArtifactId() + "-" + artifact.getVersion() + ".jar" ) );
 

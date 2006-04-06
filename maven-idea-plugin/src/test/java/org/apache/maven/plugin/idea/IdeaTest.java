@@ -42,7 +42,7 @@ public class IdeaTest
 
         mojo.execute();
 
-        File basedir = new File( "target/test-harness/" + TestCounter.currentCount() );
+        File basedir = new File( getBasedir(),  "target/test-harness/" + TestCounter.currentCount() );
 
         String artifactId = "plugin-test-" + TestCounter.currentCount();
 
@@ -67,7 +67,7 @@ public class IdeaTest
 
         int testCounter = TestCounter.currentCount();
 
-        File basedir = new File( "target/test-harness/" + TestCounter.currentCount() );
+        File basedir = new File( getBasedir(), "target/test-harness/" + TestCounter.currentCount() );
 
         String artifactId = "plugin-test-" + testCounter;
 
@@ -80,7 +80,7 @@ public class IdeaTest
         File iwsFile = new File( basedir, artifactId + ".iws" );
         assertTrue( "Test creation of project files", iwsFile.exists() );
 
-        File outputFile = new File( "target/test-harness/" + testCounter + "/plugin-test-" + testCounter + ".ipr" );
+        File outputFile = new File( getBasedir(), "target/test-harness/" + testCounter + "/plugin-test-" + testCounter + ".ipr" );
 
         SAXReader reader = new SAXReader();
 
