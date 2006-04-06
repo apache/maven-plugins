@@ -42,6 +42,7 @@ import java.util.Map;
  * @author <a href="mailto:brett@apache.org">Emmanuel Venisse</a>
  * @version $Id$
  * @goal run
+ * @aggregator
  */
 public class SiteRunMojo
     extends AbstractSiteRenderingMojo
@@ -104,7 +105,7 @@ public class SiteRunMojo
     }
 
     private WebAppContext createWebApplication()
-        throws MojoExecutionException, MojoFailureException
+        throws MojoExecutionException
     {
         File webXml = new File( tempWebappDirectory, "WEB-INF/web.xml" );
         webXml.getParentFile().mkdirs();
