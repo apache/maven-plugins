@@ -292,7 +292,6 @@ public class IdeaModuleTest
                 moduleFound = true;
             }
         }
-
         assertTrue( "Test presence of idea module", moduleFound );
     }
 
@@ -352,6 +351,102 @@ public class IdeaModuleTest
                 }
             }
         }
+    }
+
+    public void testWarProjectWithModulesConfigurations()
+        throws Exception
+    {
+        Document imlDocument = executeMojo( "src/test/module-plugin-configs/war-module-plugin-config.xml" );
+
+        Element component = findComponent( imlDocument.getRootElement(), "NewModuleRootManager" );
+
+        boolean moduleFound = false;
+        List orderEntryList = component.elements( "orderEntry" );
+        for ( Iterator orderEntries = orderEntryList.iterator(); orderEntries.hasNext(); )
+        {
+            Element orderEntry = (Element) orderEntries.next();
+            if ( "module".equals( orderEntry.attributeValue( "type" ) ) )
+            {
+                String moduleName = orderEntry.attributeValue( "module-name" );
+                assertTrue( "Test idea module name", moduleName.startsWith( "plugin-reactor-project-" ) );
+                moduleFound = true;
+            }
+        }
+        assertTrue( "Test presence of idea module", moduleFound );
+
+        component = findComponent( imlDocument.getRootElement(), "WebModuleProperties" );
+
+        boolean webModuleFound = false;
+        for( Iterator elements = component.elementIterator( "containerElement" ); elements.hasNext(); )
+        {
+            Element containerElement = (Element) elements.next();
+
+            if ( "module".equals( containerElement.attributeValue( "type" ) ) )
+            {
+                String name = containerElement.attributeValue( "name" );
+
+                assertTrue( "Module must be from reactor", name.indexOf( "plugin-reactor-project-" ) >= 0 );
+
+                assertNull( "Library url for modules must not be present", containerElement.element( "url" ) );
+
+                Element method = findElementByNameAttribute( containerElement, "attribute", "method" );
+                assertEquals( "Test Library module method", "5", method.attributeValue( "value" )  );
+
+                Element uri = findElementByNameAttribute( containerElement, "attribute", "URI" );
+                assertEquals( "Test Library module method", "/WEB-INF/classes", uri.attributeValue( "value" )  );
+
+                webModuleFound = true;
+            }
+        }
+        assertTrue( "Test WebModuleProperties for module library", webModuleFound );
+    }
+
+    public void testEjbProjectWithModulesConfigurations()
+        throws Exception
+    {
+        Document imlDocument = executeMojo( "src/test/module-plugin-configs/ejb-module-plugin-config.xml" );
+
+        Element component = findComponent( imlDocument.getRootElement(), "NewModuleRootManager" );
+
+        boolean moduleFound = false;
+        List orderEntryList = component.elements( "orderEntry" );
+        for ( Iterator orderEntries = orderEntryList.iterator(); orderEntries.hasNext(); )
+        {
+            Element orderEntry = (Element) orderEntries.next();
+            if ( "module".equals( orderEntry.attributeValue( "type" ) ) )
+            {
+                String moduleName = orderEntry.attributeValue( "module-name" );
+                assertTrue( "Test idea module name", moduleName.startsWith( "plugin-reactor-project-" ) );
+                moduleFound = true;
+            }
+        }
+        assertTrue( "Test presence of idea module", moduleFound );
+
+        component = findComponent( imlDocument.getRootElement(), "EjbModuleProperties" );
+
+        boolean ejbModuleFound = false;
+        for( Iterator elements = component.elementIterator( "containerElement" ); elements.hasNext(); )
+        {
+            Element containerElement = (Element) elements.next();
+
+            if ( "module".equals( containerElement.attributeValue( "type" ) ) )
+            {
+                String name = containerElement.attributeValue( "name" );
+
+                assertTrue( "Module must be from reactor", name.indexOf( "plugin-reactor-project-" ) >= 0 );
+
+                assertNull( "Library url for modules must not be present", containerElement.element( "url" ) );
+
+                Element method = findElementByNameAttribute( containerElement, "attribute", "method" );
+                assertEquals( "Test Library module method", "6", method.attributeValue( "value" )  );
+
+                Element uri = findElementByNameAttribute( containerElement, "attribute", "URI" );
+                assertEquals( "Test Library module method", "/WEB-INF/classes", uri.attributeValue( "value" )  );
+
+                ejbModuleFound = true;
+            }
+        }
+        assertTrue( "Test EjbModuleProperties for module library", ejbModuleFound );
     }
 
     protected Document executeMojo( String pluginXml )
