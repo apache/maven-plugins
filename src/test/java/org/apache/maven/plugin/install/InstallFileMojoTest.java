@@ -48,7 +48,7 @@ public class InstallFileMojoTest
     {
         super.setUp();
         
-        FileUtils.deleteDirectory( getBasedir() + "/" + LOCAL_REPO );
+        FileUtils.deleteDirectory( new File( getBasedir() + "/" + LOCAL_REPO ) );
     }
     
     public void testInstallFileTestEnvironment()
