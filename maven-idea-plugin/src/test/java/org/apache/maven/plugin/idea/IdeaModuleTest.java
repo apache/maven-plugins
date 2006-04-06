@@ -3,10 +3,10 @@ package org.apache.maven.plugin.idea;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
-import java.util.List;
-import java.util.Iterator;
-import java.util.ArrayList;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /*
  *  Copyright 2005-2006 The Apache Software Foundation.
@@ -294,6 +294,64 @@ public class IdeaModuleTest
         }
 
         assertTrue( "Test presence of idea module", moduleFound );
+    }
+
+    public void testProjectWithLibrariesConfigurations()
+        throws Exception
+    {
+        Document imlDocument = executeMojo( "src/test/module-plugin-configs/library-plugin-config.xml" );
+
+        Element component = findComponent( imlDocument.getRootElement(), "NewModuleRootManager" );
+
+        boolean libraryFound = false;
+        for ( Iterator orderEntries = component.elementIterator( "orderEntry" ); orderEntries.hasNext(); )
+        {
+            Element orderEntry = (Element) orderEntries.next();
+            Element library = orderEntry.element( "library" );
+            if ( library != null )
+            {
+                String name = library.attributeValue( "name" );
+                if ( name != null && name.equals( "test-library" ) )
+                {
+                    libraryFound = true;
+
+                    String url = library.element( "CLASSES" ).element( "root" ).attributeValue( "url" );
+                    assertEquals( "Test user provided class path", "file:///user/defined/classes", url );
+
+                    url = library.element( "SOURCES" ).element( "root" ).attributeValue( "url" );
+                    assertEquals( "Test user provided source path", "file:///user/defined/sources", url );
+                }
+            }
+        }
+        assertTrue( "Test if configured library was found", libraryFound );
+    }
+
+    public void testProjectWithLibraryExcludeConfigurations()
+        throws Exception
+    {
+        Document imlDocument = executeMojo( "src/test/module-plugin-configs/library-exclude-plugin-config.xml" );
+
+        Element component = findComponent( imlDocument.getRootElement(), "NewModuleRootManager" );
+
+        for ( Iterator orderEntries = component.elementIterator( "orderEntry" ); orderEntries.hasNext(); )
+        {
+            Element orderEntry = (Element) orderEntries.next();
+            Element library = orderEntry.element( "library" );
+            if ( library != null )
+            {
+                Element classes = library.element( "CLASSES" );
+                if ( classes != null )
+                {
+                    Element root = classes.element( "root" );
+                    String url = root.attributeValue( "url" );
+
+                    if ( url.indexOf( "test-library" ) >= 0 )
+                    {
+                        fail( "test-library must be excluded" );
+                    }
+                }
+            }
+        }
     }
 
     protected Document executeMojo( String pluginXml )
