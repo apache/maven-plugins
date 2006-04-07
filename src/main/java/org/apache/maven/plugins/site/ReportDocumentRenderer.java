@@ -86,4 +86,10 @@ public class ReportDocumentRenderer
     {
         return renderingContext;
     }
+
+    public boolean isOverwrite()
+    {
+        // TODO: would be nice to query the report to see if it is modified
+        return true;
+    }
 }
