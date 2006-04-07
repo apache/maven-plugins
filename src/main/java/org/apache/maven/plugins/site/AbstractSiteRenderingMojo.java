@@ -297,10 +297,7 @@ public abstract class AbstractSiteRenderingMojo
         if ( parentProject != null && project.getUrl() != null && parentProject.getUrl() != null )
         {
             populateProjectParentMenu( decoration, locale, parentProject );
-        }
 
-        if ( parentProject != null && project.getUrl() != null && parentProject.getUrl() != null )
-        {
             DecorationModel parent = getDecorationModel( parentProject, locale, props );
 
             assembler.assembleModelInheritance( project.getName(), decoration, parent, project.getUrl(),
