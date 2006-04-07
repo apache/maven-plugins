@@ -20,7 +20,6 @@ import org.apache.maven.scm.ChangeFile;
 
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 
@@ -38,9 +37,9 @@ public class FileActivityComparator
     {
         int returnValue;
 
-        LinkedList list1 = (LinkedList) o1;
+        List list1 = (List) o1;
 
-        LinkedList list2 = (LinkedList) o2;
+        List list2 = (List) o2;
 
         returnValue = sortByCommits( list1, list2 );
 
@@ -117,7 +116,7 @@ public class FileActivityComparator
             {
                 latest = file.getRevision();
             }
-            else if ( latest.compareTo( file.getRevision() ) > 0 )
+            else if ( latest.compareTo( file.getRevision() ) < 0 )
             {
                 latest = file.getRevision();
             }
