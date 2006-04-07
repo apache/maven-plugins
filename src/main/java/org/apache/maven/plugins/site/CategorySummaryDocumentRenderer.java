@@ -163,4 +163,9 @@ public class CategorySummaryDocumentRenderer
     {
         return renderingContext;
     }
+
+    public boolean isOverwrite()
+    {
+        return true;
+    }
 }
