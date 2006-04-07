@@ -76,7 +76,7 @@ public class InstallFileMojoTest
         
         mojo.execute();
         
-        File installedArtifact = new File( LOCAL_REPO + 
+        File installedArtifact = new File( getBasedir(), LOCAL_REPO +
                                            groupId + "/" + artifactId + "/" +
                                            version + "/" + artifactId + "-" +
                                            version + "." + packaging );
@@ -98,7 +98,7 @@ public class InstallFileMojoTest
         
         mojo.execute();
         
-        File installedArtifact = new File( LOCAL_REPO + 
+        File installedArtifact = new File( getBasedir(), LOCAL_REPO +
                                            groupId + "/" + artifactId + "/" +
                                            version + "/" + artifactId + "-" +
                                            version + "." + packaging );
@@ -107,7 +107,7 @@ public class InstallFileMojoTest
         
         assertTrue( installedArtifact.exists() );
         
-        File installedPom = new File( LOCAL_REPO + 
+        File installedPom = new File( getBasedir(), LOCAL_REPO +
                                            groupId + "/" + artifactId + "/" +
                                            version + "/" + artifactId + "-" +
                                            version + "." + "pom" );
@@ -143,14 +143,14 @@ public class InstallFileMojoTest
         
         assertTrue( pomFile.exists() );
         
-        File installedArtifact = new File( LOCAL_REPO + 
+        File installedArtifact = new File( getBasedir(), LOCAL_REPO +
                                            groupId + "/" + artifactId + "/" +
                                            version + "/" + artifactId + "-" +
                                            version + "." + packaging );        
         
         assertTrue( installedArtifact.exists() );
         
-        File installedPom = new File( LOCAL_REPO + 
+        File installedPom = new File( getBasedir(), LOCAL_REPO +
                                       groupId + "/" + artifactId + "/" +
                                       version + "/" + artifactId + "-" +
                                       version + "." + "pom" );   
@@ -177,11 +177,11 @@ public class InstallFileMojoTest
         
         mojo.execute();
         
-        File installedPom = new File( LOCAL_REPO + 
+        File installedPom = new File( getBasedir(), LOCAL_REPO +
                                       groupId + "/" + artifactId + "/" +
                                       version + "/" + artifactId + "-" +
-                                      version + "." + "pom" );   
-        
+                                      version + "." + "pom" );
+
         assertTrue( installedPom.exists() );
     }
     
