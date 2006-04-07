@@ -34,73 +34,73 @@ import org.codehaus.plexus.util.FileUtils;
 public class InstallMojoTest
     extends AbstractMojoTestCase
 {
-   
-   InstallArtifactStub artifact; 
-   
+
+   InstallArtifactStub artifact;
+
    private final String LOCAL_REPO = "target/local-repo/";
-   
+
    public void setUp()
        throws Exception
    {
        super.setUp();
-       
+
        System.out.println( ">>>Cleaning local repo " + getBasedir() + "/" + LOCAL_REPO + "..." );
-       
+
        FileUtils.deleteDirectory( new File( getBasedir() + "/" + LOCAL_REPO ) );
    }
-   
+
    public void testInstallTestEnvironment()
        throws Exception
    {
-       File testPom = new File( getBasedir(), 
+       File testPom = new File( getBasedir(),
                                 "target/test-classes/unit/basic-install-test/plugin-config.xml" );
-       
+
        InstallMojo mojo = ( InstallMojo ) lookupMojo( "install", testPom );
-       
+
        assertNotNull( mojo );
    }
-   
+
    public void testBasicInstall()
        throws Exception
    {
-       File testPom = new File( getBasedir(), 
+       File testPom = new File( getBasedir(),
                                 "target/test-classes/unit/basic-install-test/plugin-config.xml" );
-       
+
        InstallMojo mojo = ( InstallMojo ) lookupMojo( "install", testPom );
-       
+
        assertNotNull( mojo );
 
-       File file = new File( getBasedir(), 
+       File file = new File( getBasedir(),
                              "target/test-classes/unit/basic-install-test/target/" +
                              "maven-install-test-1.0-SNAPSHOT.jar" );
-       
+
        artifact = ( InstallArtifactStub ) getVariableValueFromObject( mojo, "artifact" );
-       
+
        artifact.setFile( file );
-       
-       mojo.execute();      
-       
+
+       mojo.execute();
+
        String groupId = dotToSlashReplacer( artifact.getGroupId() );
-       
+
        String packaging = getVariableValueFromObject( mojo, "packaging" ).toString();
-       
-       File installedArtifact = new File( LOCAL_REPO +  
+
+       File installedArtifact = new File( getBasedir(), LOCAL_REPO +
                                           groupId + "/" + artifact.getArtifactId() + "/" +
                                           artifact.getVersion() + "/" + artifact.getArtifactId() + "-" +
                                           artifact.getVersion() + "." + packaging );
 
        assertTrue( installedArtifact.exists() );
    }
- 
+
    public void testBasicInstallWithAttachedArtifacts()
        throws Exception
    {
-       File testPom = new File( getBasedir(), 
+       File testPom = new File( getBasedir(),
                                 "target/test-classes/unit/basic-install-test-with-attached-artifacts/" +
                                 "plugin-config.xml" );
-       
+
        InstallMojo mojo = ( InstallMojo ) lookupMojo( "install", testPom );
-       
+
        assertNotNull( mojo );
 
        List attachedArtifacts = ( ArrayList ) getVariableValueFromObject( mojo, "attachedArtifacts" );
@@ -108,67 +108,67 @@ public class InstallMojoTest
        mojo.execute();
 
        String packaging = getVariableValueFromObject( mojo, "packaging" ).toString();
-       
+
        String groupId = "";
-       
+
        for( Iterator iter=attachedArtifacts.iterator(); iter.hasNext(); )
        {
            AttachedArtifactStub0 attachedArtifact = ( AttachedArtifactStub0 ) iter.next();
-       
-           groupId = dotToSlashReplacer( attachedArtifact.getGroupId() );                      
-           
-           File installedArtifact = new File( LOCAL_REPO + 
+
+           groupId = dotToSlashReplacer( attachedArtifact.getGroupId() );
+
+           File installedArtifact = new File( getBasedir(), LOCAL_REPO +
                                               groupId + "/" + attachedArtifact.getArtifactId() + "/" +
                                               attachedArtifact.getVersion() + "/" + attachedArtifact.getArtifactId() + "-" +
                                               attachedArtifact.getVersion() + "." + packaging );
-        
+
            assertTrue( installedArtifact.exists() );
        }
    }
-        
+
    public void testUpdateReleaseParamSetToTrue()
        throws Exception
    {
-       File testPom = new File( getBasedir(), 
+       File testPom = new File( getBasedir(),
                                 "target/test-classes/unit/configured-install-test/plugin-config.xml" );
-       
+
        InstallMojo mojo = ( InstallMojo ) lookupMojo( "install", testPom );
-       
+
        assertNotNull( mojo );
 
-       File file = new File( getBasedir(), 
-                           "target/test-classes/unit/configured-install-test/target/" +
-                           "maven-install-test-1.0-SNAPSHOT.jar" );
-       
+       File file = new File( getBasedir(),
+                             "target/test-classes/unit/configured-install-test/target/" +
+                             "maven-install-test-1.0-SNAPSHOT.jar" );
+
        artifact = ( InstallArtifactStub ) getVariableValueFromObject( mojo, "artifact" );
-       
+
        artifact.setFile( file );
 
        mojo.execute();
 
-       assertTrue( artifact.isRelease() );       
+       assertTrue( artifact.isRelease() );
    }
-  
+
    public void testInstallIfArtifactFileIsNull()
        throws Exception
    {
-       File testPom = new File( getBasedir(), 
+       File testPom = new File( getBasedir(),
                                 "target/test-classes/unit/basic-install-test/plugin-config.xml" );
-       
+
        InstallMojo mojo = ( InstallMojo ) lookupMojo( "install", testPom );
-       
+
        assertNotNull( mojo );
 
        artifact = ( InstallArtifactStub ) getVariableValueFromObject( mojo, "artifact" );
-       
-       artifact.setFile( null );       
-       
+
+       artifact.setFile( null );
+
        assertNull( artifact.getFile() );
-       
+
        try
        {
            mojo.execute();
-           
+
            fail( "Did not throw mojo execution exception" );
        }
        catch( MojoExecutionException e )
@@ -176,36 +176,36 @@ public class InstallMojoTest
            //expected
        }
    }
-   
+
    public void testInstallIfPackagingIsPom()
        throws Exception
    {
-       File testPom = new File( getBasedir(), 
+       File testPom = new File( getBasedir(),
                                 "target/test-classes/unit/basic-install-test-packaging-pom/" +
                                 "plugin-config.xml" );
-       
+
        InstallMojo mojo = ( InstallMojo ) lookupMojo( "install", testPom );
-       
+
        assertNotNull( mojo );
-       
+
        String packaging = ( String ) getVariableValueFromObject( mojo, "packaging" );
-       
+
        assertEquals( "pom", packaging );
-       
+
        artifact = ( InstallArtifactStub ) getVariableValueFromObject( mojo, "artifact" );
-       
+
        mojo.execute();
-       
+
        String groupId = dotToSlashReplacer( artifact.getGroupId() );
-       
-       File installedArtifact = new File( LOCAL_REPO + 
-                                          groupId + "/" + artifact.getArtifactId() + "/" +
-                                          artifact.getVersion() + "/" + artifact.getArtifactId() + "-" +
-                                          artifact.getVersion() + "." + "jar" );
-    
+
+       File installedArtifact = new File( getBasedir(), LOCAL_REPO +
+                                               groupId + "/" + artifact.getArtifactId() + "/" +
+                                               artifact.getVersion() + "/" + artifact.getArtifactId() + "-" +
+                                               artifact.getVersion() + "." + "jar" );
+
        assertTrue( installedArtifact.exists() );
    }
-   
+
    private String dotToSlashReplacer( String parameter )
    {
        return parameter.replace( '.', '/' );
