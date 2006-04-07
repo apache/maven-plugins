@@ -24,15 +24,17 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
+import org.apache.maven.wagon.CommandExecutionException;
+import org.apache.maven.wagon.CommandExecutor;
 import org.apache.maven.wagon.ConnectionException;
 import org.apache.maven.wagon.ResourceDoesNotExistException;
 import org.apache.maven.wagon.TransferFailedException;
 import org.apache.maven.wagon.UnsupportedProtocolException;
 import org.apache.maven.wagon.Wagon;
-import org.apache.maven.wagon.observers.Debug;
-import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.apache.maven.wagon.authentication.AuthenticationException;
 import org.apache.maven.wagon.authorization.AuthorizationException;
+import org.apache.maven.wagon.observers.Debug;
+import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.apache.maven.wagon.repository.Repository;
 
 import java.io.File;
@@ -101,7 +103,7 @@ public class SiteDeployMojo
         if ( site == null )
         {
             throw new MojoExecutionException(
-                                              "Missing site information in the distribution management element in the project.." );
+                "Missing site information in the distribution management element in the project.." );
         }
 
         String url = site.getUrl();
@@ -117,7 +119,7 @@ public class SiteDeployMojo
 
         // TODO: work on moving this into the deployer like the other deploy methods
 
-        Wagon wagon = null;
+        Wagon wagon;
         try
         {
             wagon = wagonManager.getWagon( repository.getProtocol() );
@@ -129,8 +131,8 @@ public class SiteDeployMojo
 
         if ( !wagon.supportsDirectoryCopy() )
         {
-            throw new MojoExecutionException( "Wagon protocol '" + repository.getProtocol()
-                + "' doesn't support directory copying" );
+            throw new MojoExecutionException(
+                "Wagon protocol '" + repository.getProtocol() + "' doesn't support directory copying" );
         }
 
         try
@@ -152,6 +154,14 @@ public class SiteDeployMojo
             }
 
             wagon.putDirectory( inputDirectory, "." );
+
+            // TODO: current wagon uses zip which will use the umask on remote host instead of honouring our settings
+            //  Force group writeable
+            if ( wagon instanceof CommandExecutor )
+            {
+                CommandExecutor exec = (CommandExecutor) wagon;
+                exec.executeCommand( "chmod -R g+w " + repository.getBasedir() );
+            }
         }
         catch ( ResourceDoesNotExistException e )
         {
@@ -170,6 +180,10 @@ public class SiteDeployMojo
             throw new MojoExecutionException( "Error uploading site", e );
         }
         catch ( AuthenticationException e )
+        {
+            throw new MojoExecutionException( "Error uploading site", e );
+        }
+        catch ( CommandExecutionException e )
         {
             throw new MojoExecutionException( "Error uploading site", e );
         }
@@ -195,7 +209,7 @@ public class SiteDeployMojo
     public static ProxyInfo getProxyInfo( Settings settings )
     {
         ProxyInfo proxyInfo = null;
-        if ( ( settings != null ) && ( settings.getActiveProxy() != null ) )
+        if ( settings != null && settings.getActiveProxy() != null )
         {
             Proxy settingsProxy = settings.getActiveProxy();
 
