@@ -107,6 +107,9 @@ public class SiteMojo
     {
         SiteRenderingContext context = createSiteRenderingContext( locale );
 
+        context.setInputEncoding( inputEncoding );
+        context.setOutputEncoding( outputEncoding );
+
         Map documents = locateDocuments( context, reports, locale );
 
         File outputDirectory = getOutputDirectory( locale );
@@ -118,7 +121,7 @@ public class SiteMojo
             report.setReportOutputDirectory( outputDirectory );
         }
 
-        siteRenderer.render( documents.values(), context, outputDirectory, outputEncoding );
+        siteRenderer.render( documents.values(), context, outputDirectory );
     }
 
     private File getOutputDirectory( Locale locale )
