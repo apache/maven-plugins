@@ -711,7 +711,7 @@ public abstract class AbstractSiteRenderingMojo
                     String reactorUrl = reactorProject.getUrl();
                     String name = reactorProject.getName();
 
-                    appendMenuItem( menu, name, reactorUrl );
+                    appendMenuItem( menu, name, reactorUrl, reactorProject.getArtifactId() );
                 }
             }
         }
@@ -730,31 +730,38 @@ public abstract class AbstractSiteRenderingMojo
                 String reactorUrl = model.getUrl();
                 String name = model.getName();
 
-                appendMenuItem( menu, name, reactorUrl );
+                appendMenuItem( menu, name, reactorUrl, model.getArtifactId() );
             }
         }
     }
 
-    private void appendMenuItem( Menu menu, String name, String href )
+    private void appendMenuItem( Menu menu, String name, String href, String defaultHref )
     {
-        if ( href != null )
+        String selectedHref = href;
+
+        if ( selectedHref == null )
         {
-            MenuItem item = new MenuItem();
-            item.setName( name );
-
-            String baseUrl = project.getUrl();
-            href = getRelativePath( href, baseUrl );
-
-            if ( href.endsWith( "/" ) )
-            {
-                item.setHref( href + "index.html" );
-            }
-            else
-            {
-                item.setHref( href + "/index.html" );
-            }
-            menu.addItem( item );
+            selectedHref = defaultHref;
         }
+
+        MenuItem item = new MenuItem();
+        item.setName( name );
+
+        String baseUrl = project.getUrl();
+        if ( baseUrl != null )
+        {
+            selectedHref = getRelativePath( selectedHref, baseUrl );
+        }
+
+        if ( selectedHref.endsWith( "/" ) )
+        {
+            item.setHref( selectedHref + "index.html" );
+        }
+        else
+        {
+            item.setHref( selectedHref + "/index.html" );
+        }
+        menu.addItem( item );
     }
 
     protected Map locateReports( List reports, Map documents, Locale locale )
