@@ -80,6 +80,13 @@ public abstract class AbstractSiteRenderingMojo
     protected Map moduleExcludes;
 
     /**
+     * Specifies the input encoding.
+     *
+     * @parameter expression="${inputEncoding}" default-value="ISO-8859-1"
+     */
+    protected String inputEncoding;
+
+    /**
      * Specifies the output encoding.
      *
      * @parameter expression="${outputEncoding}" default-value="ISO-8859-1"
@@ -244,6 +251,7 @@ public abstract class AbstractSiteRenderingMojo
                 "The site descriptor cannot be resolved from the repository: " + e.getMessage(), e );
         }
 
+        props.put( "inputEncoding", inputEncoding );
         props.put( "outputEncoding", outputEncoding );
 
         // TODO: interpolate ${project.*} in general
@@ -541,6 +549,11 @@ public abstract class AbstractSiteRenderingMojo
         if ( attributes.get( "project" ) == null )
         {
             attributes.put( "project", project );
+        }
+
+        if ( attributes.get( "inputEncoding" ) == null )
+        {
+            attributes.put( "inputEncoding", inputEncoding );
         }
 
         if ( attributes.get( "outputEncoding" ) == null )
