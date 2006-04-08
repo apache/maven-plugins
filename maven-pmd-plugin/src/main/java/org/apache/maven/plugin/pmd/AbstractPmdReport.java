@@ -36,23 +36,31 @@ public abstract class AbstractPmdReport
     extends AbstractMavenReport
 {
     /**
+     * The output directory for the intermediate XML report.
+     *
      * @parameter expression="${project.build.directory}"
      * @required
      */
     protected File targetDirectory;
 
     /**
+     * The output directory for the final HTML report.
+     *
      * @parameter expression="${project.reporting.outputDirectory}"
      * @required
      */
     protected String outputDirectory;
 
     /**
+     * Site rendering component for generating the HTML report.
+     *
      * @component
      */
     private SiteRenderer siteRenderer;
 
     /**
+     * The project to analyse.
+     *
      * @parameter expression="${project}"
      * @required
      * @readonly

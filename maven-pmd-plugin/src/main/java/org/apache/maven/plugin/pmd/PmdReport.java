@@ -65,13 +65,16 @@ public class PmdReport
 {
 
     /**
-     * @parameter expression="${targetJdk}
+     * The target JDK to analyse based on. Should match the target directory for the compiler plugin. Valid values are
+     * currently <code>1.3</code>, <code>1.4</code>, <code>1.5</code>.
+     *
+     * @parameter expression="${targetJdk}"
      */
     private String targetJdk;
 
     /**
-     * The PMD rulesets to use.  <a href="http://pmd.sourceforge.net/rules/index.html">Stock Rulesets</a>
-     * Defaults to the basic, imports and unusedcode rulesets.
+     * The PMD rulesets to use. See the <a href="http://pmd.sourceforge.net/rules/index.html">Stock Rulesets</a> for a
+     * list of some included. Defaults to the basic, imports and unusedcode rulesets.
      *
      * @parameter
      */
@@ -86,7 +89,7 @@ public class PmdReport
     private String sourceEncoding;
 
     /**
-     * Files to exclude from checking. Can contain wildcards and double wildcards.
+     * A list of files to exclude from checking. Can contain wildcards and double wildcards.
      *
      * @parameter
      */
