@@ -442,6 +442,11 @@ public abstract class AbstractAssemblyMojo
 
             File repositoryDirectory = new File( tempRoot, repository.getOutputDirectory() );
 
+            if ( !repositoryDirectory.exists() )
+            {
+                repositoryDirectory.mkdirs();
+            }
+
             repositoryAssembler.assemble( repositoryDirectory, artifacts, project.getRemoteArtifactRepositories() );
 
             if ( includeBaseDirectory )
