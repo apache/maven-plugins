@@ -55,6 +55,7 @@ import java.util.Set;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton </a>
  * @version $Id$
  * @goal dependencies
+ * @requiresDependencyResolution test
  * @plexus.component
  */
 public class DependenciesReport
@@ -744,7 +745,7 @@ public class DependenciesReport
                 {
                     if ( artifact.getScope() == null )
                     {
-                        Artifact parent = (Artifact) parents.get( parents.size() );
+                        Artifact parent = (Artifact) parents.get(  parents.size() - 1 );
 
                         artifact.setScope( parent.getScope() );
                     }
