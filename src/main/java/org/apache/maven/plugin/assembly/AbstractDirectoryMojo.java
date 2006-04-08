@@ -3,7 +3,9 @@ package org.apache.maven.plugin.assembly;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolationException;
+import org.apache.maven.plugin.assembly.repository.RepositoryAssemblyException;
 import org.apache.maven.plugins.assembly.model.Assembly;
+import org.apache.maven.artifact.InvalidRepositoryException;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
@@ -73,6 +75,14 @@ public abstract class AbstractDirectoryMojo
         catch ( XmlPullParserException e )
         {
             throw new MojoExecutionException( "Error creating assembly", e );
+        }
+        catch ( RepositoryAssemblyException e )
+        {
+            throw new MojoExecutionException( "Error creating assembly: " + e.getMessage(), e );
+        }
+        catch ( InvalidRepositoryException e )
+        {
+            throw new MojoExecutionException( "Error creating assembly: " + e.getMessage(), e );
         }
     }
 

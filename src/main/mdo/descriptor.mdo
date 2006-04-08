@@ -47,7 +47,7 @@
           <required>true</required>
           <type>String</type>
           <description>
-            The id of this assembly.  This is a symbolic name for a 
+            The id of this assembly. This is a symbolic name for a
             particular assembly of files from this project.
           </description>
         </field>
@@ -78,10 +78,10 @@
           <type>boolean</type>
           <defaultValue>true</defaultValue>
           <description>
-            Includes a base directory in the final archive.  For example,
+            Includes a base directory in the final archive. For example,
             if you are creating an assembly named "your-app", setting
             includeBaseDirectory to true will create an archive that
-            includes this base directory.  If this option is set to false
+            includes this base directory. If this option is set to false
             the archive created will unzip its content to the current
             directory.
           </description>
@@ -135,7 +135,17 @@
             Specify assembly behavior for sets of dependencies.
           </description>
         </field>
-
+        <field>
+          <name>repositories</name>
+          <version>1.0.0</version>
+          <association>
+            <type>Repository</type>
+            <multiplicity>*</multiplicity>
+          </association>
+          <description>
+            Specify assembly behavior for sets of repositories.
+          </description>
+        </field>
         <field>
           <name>componentDescriptors</name>
           <version>1.0.0</version>
@@ -163,7 +173,7 @@
           <type>String</type>
           <description>
             Specifies the output directory relative to the root
-            of the root directory of the assembly.  For example,
+            of the root directory of the assembly. For example,
             "log" will put the specified files in the log directory.
           </description>
         </field>
@@ -237,7 +247,7 @@
           <version>1.0.0</version>
           <type>String</type>
           <description>
-            Absolute or relative from the module's directory.  For
+            Absolute or relative from the module's directory. For
             example, "src/main/bin" would select this subdirectory
             of the project in which this dependency is defined.
           </description>
@@ -287,7 +297,7 @@
           <required>false</required>
           <description>
             Specifies the output directory relative to the root
-            of the root directory of the assembly.  For example,
+            of the root directory of the assembly. For example,
             "log" will put the specified files in the log directory.
           </description>
         </field>
@@ -296,7 +306,7 @@
           <version>1.0.0</version>
           <type>String</type>
           <description>
-            Destination file name in outputDirectory. 
+            Destination file name in outputDirectory.
             Default is the same name as the source's file.
           </description>
         </field>
@@ -356,7 +366,7 @@
           <type>String</type>
           <defaultValue>${artifactId}-${version}.${extension}</defaultValue>
           <description>
-            Specify the mapping pattern for all dependencies included 
+            Specify the mapping pattern for all dependencies included
             in this assembly.
             Default is ${artifactId}-${version}.${extension}.
           </description>
@@ -367,7 +377,7 @@
           <defaultValue>false</defaultValue>
           <description>
             If set to true, this property will unpack all dependencies
-            into the specified output directory.  When set to false
+            into the specified output directory. When set to false
             dependencies will be includes as archives (jars).
             Default value is false.
           </description>
@@ -385,7 +395,13 @@
         </field>
       </fields>
     </class>
-    
+
+    <class>
+      <name>Repository</name>
+      <version>1.0.0</version>
+      <superClass>SetBase</superClass>
+      <description>Defines a Maven repository to be included in the assembly.</description>
+    </class>
   </classes>
 </model>
 
