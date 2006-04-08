@@ -3,6 +3,7 @@ package org.apache.maven.plugin.idea;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.idea.stubs.TestCounter;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 
@@ -35,7 +36,11 @@ public class IdeaCleanTest
     {
         File pluginXmlFile = new File( getBasedir(), "src/test/clean-plugin-configs/min-plugin-config.xml" );
 
-        File basedir = new File(getBasedir(),  "target/test-harness/" + ( TestCounter.currentCount() + 1 ) );
+        File basedir = new File( getBasedir(), "target/test-harness/" + ( TestCounter.currentCount() + 1 ) );
+        if ( basedir.exists() )
+        {
+            FileUtils.deleteDirectory( basedir );
+        }
         assertTrue( "Prepare test base directory", basedir.mkdirs() );
 
         String artifactId = "plugin-test-" + ( TestCounter.currentCount() + 1 );
