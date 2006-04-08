@@ -43,13 +43,22 @@ public class MavenOnePluginMojo
     private static final String[] DEFAULT_INCLUDES = new String[]{"**/**"};
 
     /**
+     * Base directory.
+     *
+     * @parameter expression="${basedir}"
+     * @required
+     * @readonly
+     */
+    private File basedir;
+
+    /**
      * Directory containing the generated JAR.
      *
      * @parameter expression="${project.build.directory}"
      * @required
      * @readonly
      */
-    private File basedir;
+    private File targetDirectory;
 
     /**
      * Name of the generated JAR.
@@ -95,7 +104,7 @@ public class MavenOnePluginMojo
     public File createArchive()
         throws MojoExecutionException
     {
-        File jarFile = new File( basedir, finalName + ".jar" );
+        File jarFile = new File( targetDirectory, finalName + ".jar" );
 
         MavenArchiver archiver = new MavenArchiver();
 
@@ -110,12 +119,12 @@ public class MavenOnePluginMojo
                 archiver.getArchiver().addDirectory( contentDirectory, DEFAULT_INCLUDES, DEFAULT_EXCLUDES );
             }
 
-            addFile( archiver, new File( "plugin.jelly" ) );
-            addFile( archiver, new File( "plugin.properties" ) );
-            addFile( archiver, new File( "project.properties" ) );
-            addFile( archiver, new File( "build.properties" ) );
-            addFile( archiver, new File( "project.xml" ) );
-            addDirectory( archiver, new File( "src/plugin-resources" ) );
+            addFile( archiver, new File( basedir, "plugin.jelly" ) );
+            addFile( archiver, new File( basedir, "plugin.properties" ) );
+            addFile( archiver, new File( basedir, "project.properties" ) );
+            addFile( archiver, new File( basedir, "build.properties" ) );
+            addFile( archiver, new File( basedir, "project.xml" ) );
+            addDirectory( archiver, new File( basedir, "src/plugin-resources" ) );
 
             archiver.createArchive( project, new MavenArchiveConfiguration() );
 
