@@ -252,14 +252,14 @@ public abstract class AbstractJavadocMojo
     private String source;
 
     /**
-     * Specifies the source path where the subpackages are located.
+     * Specifies the source paths where the subpackages are located. The paths are separated by '<code>;</code>'.
      *
      * @parameter expression="${sourcepath}"
      */
     private String sourcepath;
 
     /**
-     * Specifies the package directory where javadoc will be executed.
+     * Specifies the package directory where javadoc will be executed. The packages are separated by '<code>:</code>'.
      *
      * @parameter expression="${subpackages}"
      */
