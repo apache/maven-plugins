@@ -1,0 +1,26 @@
+<component-set>
+  <components>
+    <component>
+      <role>org.apache.maven.plugin.assembly.repository.RepositoryAssembler</role>
+      <implementation>org.apache.maven.plugin.assembly.repository.DefaultRepositoryAssembler</implementation>
+      <requirements>
+        <requirement>
+          <role>org.apache.maven.artifact.factory.ArtifactFactory</role>
+          <field-name>artifactFactory</field-name>
+        </requirement>
+        <requirement>
+          <role>org.apache.maven.artifact.resolver.ArtifactResolver</role>
+          <field-name>artifactResolver</field-name>
+        </requirement>
+        <requirement>
+          <role>org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout</role>
+          <field-name>repositoryLayout</field-name>
+        </requirement>
+        <requirement>
+          <role>org.apache.maven.artifact.repository.ArtifactRepositoryFactory</role>
+          <field-name>artifactRepositoryFactory</field-name>
+        </requirement>
+      </requirements>
+    </component>
+  </components>
+</component-set>
