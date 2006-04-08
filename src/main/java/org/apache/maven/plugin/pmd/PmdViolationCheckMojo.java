@@ -20,7 +20,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
 /**
- * Perform a violation check against the last pmd run to see if there are any violations.
+ * Fail the build if there were any PMD violations in the source code.
  *
  * @goal check
  * @phase verify

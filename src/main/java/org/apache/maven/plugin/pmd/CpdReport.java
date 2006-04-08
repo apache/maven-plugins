@@ -43,9 +43,11 @@ public class CpdReport
     extends AbstractPmdReport
 {
     /**
-     * @parameter expression="${minimumTokens}"
+     * The minimum number of tokens that need to be duplicated before it causes a violation.
+     *
+     * @parameter expression="${minimumTokens}" default-value="100"
      */
-    private int minimumTokens = 100;
+    private int minimumTokens;
 
     /**
      * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
