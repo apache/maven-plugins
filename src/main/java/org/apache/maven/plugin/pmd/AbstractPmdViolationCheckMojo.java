@@ -13,7 +13,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 /**
- * TODO: Description.
+ * Base class for mojos that check if there were any PMD violations.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
@@ -34,40 +34,61 @@ public abstract class AbstractPmdViolationCheckMojo
      */
     private boolean failOnViolation;
 
+    /**
+     * The project language.
+     *
+     * @parameter expression="${project.artifact.artifactHandler.language}"
+     * @required
+     * @readonly
+     */
+    private String language;
+
+    /**
+     * The project source directory.
+     *
+     * @parameter expression="${project.build.sourceDirectory}"
+     * @required
+     * @readonly
+     */
+    private File sourceDirectory;
+
     protected void executeCheck( String filename, String tagName )
         throws MojoFailureException, MojoExecutionException
     {
-        File outputFile = new File( targetDirectory, filename );
-        if ( outputFile.exists() )
+        if ( "java".equals( language ) && sourceDirectory.exists() )
         {
-            try
+            File outputFile = new File( targetDirectory, filename );
+            if ( outputFile.exists() )
             {
-                XmlPullParser xpp = new MXParser();
-                FileReader freader = new FileReader( outputFile );
-                BufferedReader breader = new BufferedReader( freader );
-                xpp.setInput( breader );
-
-                int violations = countViolations( xpp, tagName );
-                if ( violations > 0 && failOnViolation )
+                try
                 {
-                    throw new MojoFailureException(
-                        "You have " + violations + " violation" + ( violations > 1 ? "s" : "" ) + "." );
+                    XmlPullParser xpp = new MXParser();
+                    FileReader freader = new FileReader( outputFile );
+                    BufferedReader breader = new BufferedReader( freader );
+                    xpp.setInput( breader );
+
+                    int violations = countViolations( xpp, tagName );
+                    if ( violations > 0 && failOnViolation )
+                    {
+                        throw new MojoFailureException(
+                            "You have " + violations + " violation" + ( violations > 1 ? "s" : "" ) + "." );
+                    }
+                }
+                catch ( IOException e )
+                {
+                    throw new MojoExecutionException( "Unable to read PMD results xml: " + outputFile.getAbsolutePath(),
+                                                      e );
+                }
+                catch ( XmlPullParserException e )
+                {
+                    throw new MojoExecutionException( "Unable to read PMD results xml: " + outputFile.getAbsolutePath(),
+                                                      e );
                 }
             }
-            catch ( IOException e )
+            else
             {
-                throw new MojoExecutionException( "Unable to read PMD results xml: " + outputFile.getAbsolutePath(),
-                                                  e );
+                throw new MojoFailureException( "Unable to perform check, " + "unable to find " + outputFile );
             }
-            catch ( XmlPullParserException e )
-            {
-                throw new MojoExecutionException( "Unable to read PMD results xml: " + outputFile.getAbsolutePath(),
-                                                  e );
-            }
-        }
-        else
-        {
-            throw new MojoFailureException( "Unable to perform check, " + "unable to find " + outputFile );
         }
     }
 
