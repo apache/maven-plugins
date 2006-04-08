@@ -43,3 +43,8 @@ Features
   to tamper with your main files.
 
   See the {{{howto.html}Howto}} section to learn how to use these features.
+
+Examples
+
+  Check the {{{http://svn.apache.org/viewcvs.cgi/maven/plugins/trunk/maven-clover-plugin/src/it/}plugin test suite}}
+  for example of how to use this plugin.
