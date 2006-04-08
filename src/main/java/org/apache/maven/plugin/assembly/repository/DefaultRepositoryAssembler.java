@@ -40,7 +40,7 @@ public class DefaultRepositoryAssembler
         {
             Artifact ma = (Artifact) i.next();
 
-            Artifact a = artifactFactory.createBuildArtifact( ma.getGroupId() , ma.getArtifactId(), ma.getVersion(), "jar" );
+            Artifact a = artifactFactory.createBuildArtifact( ma.getGroupId() , ma.getArtifactId(), ma.getVersion(), ma.getType() );
 
             try
             {
