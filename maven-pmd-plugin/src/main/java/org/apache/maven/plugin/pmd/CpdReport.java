@@ -43,7 +43,7 @@ public class CpdReport
     extends AbstractPmdReport
 {
     /**
-     * @parameter
+     * @parameter expression="${minimumTokens}"
      */
     private int minimumTokens = 100;
 
@@ -95,6 +95,7 @@ public class CpdReport
                 String buffer = r.render( cpd.getMatches() );
                 try
                 {
+                    targetDirectory.mkdirs();
                     Writer writer = new FileWriter( new File( targetDirectory, "cpd." + format ) );
                     writer.write( buffer, 0, buffer.length() );
                     writer.close();
