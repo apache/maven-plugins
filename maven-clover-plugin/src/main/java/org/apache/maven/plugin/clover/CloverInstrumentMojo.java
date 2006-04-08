@@ -28,7 +28,7 @@ import org.apache.maven.plugin.clover.internal.AbstractCloverMojo;
  * project as usual and another time for instrumenting the sources with Clover and generating the Clover database.
  *
  * @goal instrument
- * @execute phase="test" lifecycle="clover"
+ * @execute phase="install" lifecycle="clover"
  *
  * @author <a href="mailto:vmassol@apache.org">Vincent Massol</a>
  * @version $Id$

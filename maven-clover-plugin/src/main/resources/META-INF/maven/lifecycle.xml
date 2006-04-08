@@ -16,6 +16,14 @@
           </execution>
         </executions>
       </phase>
+<!--
+      <phase>
+        <id>install</id>
+        <configuration>
+          <classifier>clover</classifier>
+        </configuration>
+      </phase>
+-->      
     </phases>
   </lifecycle>
 </lifecycles>

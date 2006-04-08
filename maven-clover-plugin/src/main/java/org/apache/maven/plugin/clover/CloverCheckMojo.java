@@ -47,27 +47,37 @@ public class CloverCheckMojo extends AbstractCloverMojo
     public void execute()
         throws MojoExecutionException
     {
-        super.execute();
-
-        AbstractCloverMojo.waitForFlush( getWaitForFlush(), getFlushInterval() );
-
-        Project antProject = registerCloverAntTasks();
-
-        getLog().info( "Checking for coverage of " + targetPercentage);
-
-        CloverPassTask cloverPassTask = (CloverPassTask) antProject.createTask( "clover-check" );
-        cloverPassTask.setInitString( getCloverDatabase() );
-        cloverPassTask.setHaltOnFailure( true );
-        cloverPassTask.setTarget( new Percentage( this.targetPercentage ) );
-        cloverPassTask.setFailureProperty( "clovercheckproperty" );
-        try
+        if ( !isInCloverForkedLifecycle() )
         {
-            cloverPassTask.execute();
+            super.execute();
+
+            AbstractCloverMojo.waitForFlush( getWaitForFlush(), getFlushInterval() );
+
+            Project antProject = registerCloverAntTasks();
+
+            getLog().info( "Checking for coverage of " + targetPercentage);
+
+            CloverPassTask cloverPassTask = (CloverPassTask) antProject.createTask( "clover-check" );
+            cloverPassTask.setInitString( getCloverDatabase() );
+            cloverPassTask.setHaltOnFailure( true );
+            cloverPassTask.setTarget( new Percentage( this.targetPercentage ) );
+            cloverPassTask.setFailureProperty( "clovercheckproperty" );
+            try
+            {
+                cloverPassTask.execute();
+            }
+            catch ( BuildException e )
+            {
+                getLog().error( antProject.getProperty( "clovercheckproperty" ) );
+                throw new MojoExecutionException( e.getMessage(), e );
+            }
         }
-        catch ( BuildException e )
-        {
-            getLog().error( antProject.getProperty( "clovercheckproperty" ) );
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
+    }
+
+    private boolean isInCloverForkedLifecycle()
+    {
+        // We know we're in the forked lifecycle if the output directory is set to target/clover...
+        // TODO: Not perfect, need to find a better way. This is a hack!
+        return getProject().getBuild().getDirectory().endsWith( "clover" );
     }
 }
