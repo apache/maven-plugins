@@ -192,8 +192,7 @@ public class DependenciesReport
 
             DependenciesRenderer r = new DependenciesRenderer( getSink(), locale, listener.getDirectDependencies(),
                                                                listener.getTransitiveDependencies(),
-                                                               listener.getOmittedArtifacts(), listener.getDepTree(),
-                                                               listener.getDepMap() );
+                                                               listener.getOmittedArtifacts(), listener.getDepTree() );
 
             r.render();
         }
@@ -271,10 +270,8 @@ public class DependenciesReport
 
         private Map depTree;
 
-        private Map depMap;
-
         public DependenciesRenderer( Sink sink, Locale locale, Map directDependencies, Map transitiveDependencies,
-                                     Map omittedDependencies, Map dependencyTree, Map dependencyMap )
+                                     Map omittedDependencies, Map dependencyTree )
         {
             super( sink );
 
@@ -287,8 +284,6 @@ public class DependenciesReport
             this.omittedDeps = omittedDependencies;
 
             this.depTree = dependencyTree;
-
-            this.depMap = dependencyMap;
         }
 
         public String getTitle()
@@ -318,8 +313,7 @@ public class DependenciesReport
             String groupId = getReportString( "report.dependencies.column.groupId" );
             String artifactId = getReportString( "report.dependencies.column.artifactId" );
             String version = getReportString( "report.dependencies.column.version" );
-            String description = getReportString( "report.dependencies.column.description" );
-            String url = getReportString( "report.dependencies.column.url" );
+            String type = getReportString( "report.dependencies.column.type" );
             String optional = getReportString( "report.dependencies.column.optional" );
 
             // collect dependencies by scope
@@ -353,7 +347,7 @@ public class DependenciesReport
 
                 paragraph( getReportString( "report.dependencies.intro." + scope ) );
                 startTable();
-                tableHeader( new String[]{groupId, artifactId, version, description, url, optional} );
+                tableHeader( new String[]{groupId, artifactId, version, type, optional} );
 
                 // optional at the end + sort group id
                 Collections.sort( artifactsRows, new Comparator()
@@ -363,8 +357,8 @@ public class DependenciesReport
                     {
                         String[] s1 = (String[]) row1;
                         String[] s2 = (String[]) row2;
-                        return s1[0].compareTo( s2[0] ) + ( s1[5] != null ? 1000000 : 0 ) -
-                            ( s2[5] != null ? 1000000 : 0 );
+                        return s1[0].compareTo( s2[0] ) + ( s1[4] != null ? 1000000 : 0 ) -
+                            ( s2[4] != null ? 1000000 : 0 );
                     }
                 } );
 
@@ -395,7 +389,7 @@ public class DependenciesReport
 
                 startTable();
 
-                tableHeader( new String[]{groupId, artifactId, version, description, url, optional} );
+                tableHeader( new String[]{groupId, artifactId, version, type, optional} );
 
                 for ( Iterator i = artifacts.iterator(); i.hasNext(); )
                 {
@@ -409,27 +403,17 @@ public class DependenciesReport
 
             endSection();
 
-            //for Dependencies Graph - Tree
+            //for Dependencies Graph
             startSection( getReportString( "report.dependencies.graph.title" ) );
 
+            //for Dependencies Graph Tree
             startSection( getReportString( "report.dependencies.graph.tree.title" ) );
-
             printDependencyListing( project.getArtifact() );
-
             endSection();
 
-            //for Dependencies Graph - Table Listings
+            //for Artifact Descriptions / URLs
             startSection( getReportString( "report.dependencies.graph.tables.title" ) );
-
-            printDependencyTable( project.getArtifact() );
-
-            for ( Iterator deps = project.getArtifacts().iterator(); deps.hasNext(); )
-            {
-                Artifact dep = (Artifact) deps.next();
-
-                printDependencyTable( dep );
-            }
-
+            printDescriptionsAndURLs( project.getArtifact() );
             endSection();
 
             endSection();
@@ -440,71 +424,15 @@ public class DependenciesReport
             String[] row;
             if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
             {
-                row = new String[]{artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(), null, null,
-                    artifact.isOptional() ? "X" : null};
+                row = new String[]{artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
+                    artifact.getType(), artifact.isOptional() ? "X" : null};
             }
             else
             {
-                String artifactDescription = null;
-                String artifactUrl = null;
-                try
-                {
-                    // TODO: can we use @requiresDependencyResolution instead, and capture the depth of artifacts in the artifact itself?
-                    MavenProject artifactProject = getMavenProjectFromRepository( artifact, localRepository );
-                    artifactDescription = artifactProject.getDescription();
-                    artifactUrl = artifactProject.getUrl();
-                }
-                catch ( ProjectBuildingException e )
-                {
-                    getLog().error( "Can't find a valid Maven project in the repository for the artifact [" +
-                        artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getVersion() + "]." );
-                }
                 row = new String[]{artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
-                    artifactDescription, createLinkPatternedText( artifactUrl, artifactUrl ),
-                    artifact.isOptional() ? "X" : null};
+                    artifact.getType(), artifact.isOptional() ? "X" : null};
             }
             return row;
-        }
-
-        private void printDependencyTable( Artifact artifact )
-        {
-            String id = artifact.getId();
-
-            if ( !omittedDeps.containsKey( id ) && depMap.containsKey( id ) )
-            {
-                sink.anchor( id );
-                startSection( artifact.getArtifactId() );
-                sink.anchor_();
-
-                startTable();
-
-                tableHeader( new String []{getReportString( "report.dependencies.graph.tables.column.groupid" ),
-                    getReportString( "report.dependencies.graph.tables.column.artifactid" ),
-                    getReportString( "report.dependencies.graph.tables.column.version" ),
-                    getReportString( "report.dependencies.graph.tables.column.comments" )} );
-
-                List depList = (List) depMap.get( id );
-                for ( Iterator deps = depList.iterator(); deps.hasNext(); )
-                {
-                    Artifact dep = (Artifact) deps.next();
-
-                    String comment = "";
-                    if ( omittedDeps.containsKey( dep.getId() ) )
-                    {
-                        comment = getReportString( "report.dependencies.graph.tables.notAttached" );
-                    }
-                    else
-                    {
-                        comment = getReportString( "report.dependencies.graph.tables.attached" );
-                    }
-
-                    tableRow( new String[]{dep.getGroupId(), dep.getArtifactId(), dep.getVersion(), comment} );
-                }
-
-                endTable();
-
-                endSection();
-            }
         }
 
         private void printDependencyListing( Artifact artifact )
@@ -516,11 +444,12 @@ public class DependenciesReport
                 sink.list();
                 sink.listItem();
 
+                sink.link( "#" + id );
+                sink.text( id );
+                sink.link_();
+
                 if ( depTree.containsKey( id ) )
                 {
-                    sink.link( "#" + id );
-                    sink.text( id );
-                    sink.link_();
 
                     List depList = (List) depTree.get( id );
                     for ( Iterator deps = depList.iterator(); deps.hasNext(); )
@@ -529,13 +458,83 @@ public class DependenciesReport
                         printDependencyListing( dep );
                     }
                 }
-                else
-                {
-                    sink.text( id );
-                }
 
                 sink.listItem_();
                 sink.list_();
+            }
+        }
+
+        private void printDescriptionsAndURLs( Artifact artifact )
+        {
+            String id = artifact.getId();
+
+            if ( !omittedDeps.containsKey( id ) )
+            {
+                String artifactDescription = null;
+                String artifactUrl = null;
+                try
+                {
+                    MavenProject artifactProject = getMavenProjectFromRepository( artifact, localRepository );
+                    artifactDescription = artifactProject.getDescription();
+                    artifactUrl = artifactProject.getUrl();
+                }
+                catch ( ProjectBuildingException e )
+                {
+                    getLog().debug( e );
+                }
+                if ( artifactDescription == null )
+
+                {
+                    artifactDescription = getReportString( "report.dependencies.graph.description.default" );
+                }
+
+                if ( artifactUrl == null )
+                {
+                    artifactUrl = getReportString( "report.dependencies.graph.url.default" );
+                }
+
+                sink.anchor( id );
+                startSection( id );
+                sink.anchor_();
+
+                sink.paragraph();
+                sink.bold();
+                sink.text( getReportString( "report.dependencies.column.description" ) );
+                sink.bold_();
+                sink.lineBreak();
+                sink.text( artifactDescription );
+                sink.paragraph_();
+
+                sink.paragraph();
+                sink.bold();
+                sink.text( getReportString( "report.dependencies.column.url" ) );
+                sink.bold_();
+                sink.lineBreak();
+
+                if ( artifactUrl != null && artifactUrl.startsWith( "http://" ) )
+                {
+                    sink.link( artifactUrl );
+                    sink.text( artifactUrl );
+                    sink.link_();
+                }
+                else
+                {
+                    sink.text( artifactUrl );
+                }
+                sink.paragraph_();
+
+                endSection();
+            }
+
+            if ( depTree.containsKey( id ) )
+            {
+
+                List depList = (List) depTree.get( id );
+                for ( Iterator deps = depList.iterator(); deps.hasNext(); )
+                {
+                    Artifact dep = (Artifact) deps.next();
+                    printDescriptionsAndURLs( dep );
+                }
             }
         }
 
@@ -704,22 +703,6 @@ public class DependenciesReport
             }
 
             addDependency( kept );
-        }
-
-        private Artifact getDependency( String key )
-        {
-            if ( directDep.containsKey( key ) )
-            {
-                return (Artifact) directDep.get( key );
-            }
-            else if ( transitiveDep.containsKey( key ) )
-            {
-                return (Artifact) transitiveDep.get( key );
-            }
-            else
-            {
-                return null;
-            }
         }
 
         private void addDependency( Artifact artifact )
