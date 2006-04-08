@@ -4,7 +4,7 @@
  Vincent Massol
  <vmassol@apache.org>
  ------
- April 1st, 2006
+ April 8th, 2006
 
 Introduction
 
@@ -26,6 +26,9 @@ Features
 
    * Aggregating Clover databases found in children modules into a single database so that reporting and checking
      for test coverage can be done at the level of the full project.
+
+   * Generation of Clovered artifacts into your local repository, including Clovered EAR, WAR, RAR, etc containing a
+     bundled Clover JAR. This allows including automated functional tests coverage into the Clover reports.
 
    * Generating a report from a {{{http://cenqua.com/clover/doc/adv/database.html}Clover database}}.
 
