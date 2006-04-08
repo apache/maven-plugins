@@ -17,6 +17,8 @@ package org.apache.maven.plugin.clover;
 
 import com.cenqua.clover.CloverInstr;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -60,7 +62,22 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
      * @required
      * @readonly
      */
-    private ArtifactFactory factory;
+    private ArtifactFactory artifactFactory;
+
+    /**
+     * @component role="org.apache.maven.artifact.resolver.ArtifactResolver"
+     * @required
+     * @readonly
+     */
+    private ArtifactResolver artifactResolver;
+
+    /**
+     * Local maven repository.
+     *
+     * @parameter expression="${localRepository}"
+     * @required
+     */
+    private ArtifactRepository localRepository;
 
     /**
      * The list of file to include in the instrumentation.
@@ -83,16 +100,17 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
     public void execute()
         throws MojoExecutionException
     {
-        if ( shouldExecute() )
+        // Ensure output directories exist
+        new File( this.cloverOutputDirectory ).mkdirs();
+        this.cloverOutputSourceDirectory = new File( this.cloverOutputDirectory, "src" ).getPath();
+        new File( getCloverDatabase() ).getParentFile().mkdirs();
+
+        super.execute();
+
+        logArtifacts("before changes");
+
+        if ( isJavaProject() )
         {
-            // Ensure output directories exist
-            new File( this.cloverOutputDirectory ).mkdirs();
-            this.cloverOutputSourceDirectory = new File( this.cloverOutputDirectory, "src" ).getPath();
-
-            new File( getCloverDatabase() ).getParentFile().mkdirs();
-
-            super.execute();
-
             Set filesToInstrument = computeFilesToInstrument();
             if ( filesToInstrument.isEmpty() )
             {
@@ -101,33 +119,35 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
             else
             {
                 instrumentSources( filesToInstrument );
-                addCloverDependencyToCompileClasspath();
-                redirectSourceDirectories();
-                redirectOutputDirectories();
             }
         }
+
+        swizzleCloverDependencies();
+        addCloverDependencyToCompileClasspath();
+        redirectSourceDirectories();
+        redirectOutputDirectories();
+        redirectArtifact();
+
+        logArtifacts("after changes");
     }
 
-    private boolean shouldExecute()
+    private boolean isJavaProject()
     {
-        boolean shouldExecute = true;
+        boolean isJavaProject;
 
-        // Only execute reports for java projects
         ArtifactHandler artifactHandler = getProject().getArtifact().getArtifactHandler();
-        File srcDir = new File( getProject().getBuild().getSourceDirectory() );
 
-        if ( !"java".equals( artifactHandler.getLanguage() ) )
+        if ( "java".equals( artifactHandler.getLanguage() ) )
         {
-            getLog().debug( "Not instrumenting sources with Clover as this is not a Java project." );
-            shouldExecute = false;
+            isJavaProject = true;
         }
-        else if ( !srcDir.exists() )
+        else
         {
-            getLog().debug("No sources found - No Clover instrumentation done");
-            shouldExecute = false;
+            getLog().info( "Not instrumenting sources with Clover as this is not a Java project." );
+            isJavaProject = false;
         }
 
-        return shouldExecute;
+        return isJavaProject;
     }
 
     private void instrumentSources(Set filesToInstrument) throws MojoExecutionException
@@ -145,9 +165,13 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
         // thereafter output files in the Clover output directory and not in the main output directory.
         getProject().getBuild().setDirectory( this.cloverOutputDirectory );
 
-        // TODO: Ulgy hack below. Changing the directory should be enough for changing the values of all other
+        // TODO: Ugly hack below. Changing the directory should be enough for changing the values of all other
         // properties depending on it!
         getProject().getBuild().setOutputDirectory( new File( this.cloverOutputDirectory, "classes" ).getPath() );
+
+        // TODO: This is a hack. Remove this when http://jira.codehaus.org/browse/MINSTALL-18 is fixed.
+        new File( getProject().getBuild().getOutputDirectory() ).mkdirs();
+
         getProject().getBuild().setTestOutputDirectory(
             new File( this.cloverOutputDirectory, "test-classes" ).getPath() );
     }
@@ -156,23 +180,106 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
     {
         String oldSourceDirectory = getProject().getBuild().getSourceDirectory();
 
-        getProject().getBuild().setSourceDirectory( this.cloverOutputSourceDirectory );
+        if ( new File( oldSourceDirectory ).exists() )
+        {
+            getProject().getBuild().setSourceDirectory( this.cloverOutputSourceDirectory );
+        }
+
+        getLog().debug( "Clover source directories before change:" );
+        logSourceDirectories();
 
         // Maven2 limitation: changing the source directory doesn't change the compile source roots
         // See http://jira.codehaus.org/browse/MNG-1945
-        List sourceRoots = getProject().getCompileSourceRoots();
-        for (int i = 0; i < sourceRoots.size(); i++)
-        {
-            String sourceRoot = (String) getProject().getCompileSourceRoots().get( i );
-            if (sourceRoot.equals(oldSourceDirectory))
-            {
-                getProject().getCompileSourceRoots().remove( i );
+        List sourceRoots = new ArrayList( getProject().getCompileSourceRoots() );
 
-                // Note: Ideally we should add the new compile source root at the same place as the
-                // one we're removing but there's no API for this...
+        // Clean all source roots to add them again in order to keep the same original order of source roots.
+        getProject().getCompileSourceRoots().removeAll( sourceRoots );
+
+        for ( Iterator i = sourceRoots.iterator(); i.hasNext(); )
+        {
+            String sourceRoot = (String) i.next();
+            if ( new File( oldSourceDirectory ).exists() && sourceRoot.equals( oldSourceDirectory ) )
+            {
                 getProject().addCompileSourceRoot( getProject().getBuild().getSourceDirectory() );
             }
+            else
+            {
+                getProject().addCompileSourceRoot( sourceRoot );
+            }
         }
+
+        getLog().debug( "Clover source directories after change:" );
+        logSourceDirectories();
+    }
+
+    /**
+     * Modify main artifact to add a "clover" classifier to it so that it's not mixed with the main artifact of
+     * a normal build.
+     */
+    private void redirectArtifact()
+    {
+        // Only redirect main artifact for non-pom projects
+        if ( !getProject().getPackaging().equals("pom") )
+        {
+            Artifact oldArtifact = getProject().getArtifact();
+            Artifact newArtifact = this.artifactFactory.createArtifactWithClassifier( oldArtifact.getGroupId(),
+                oldArtifact.getArtifactId(), oldArtifact.getVersion(), oldArtifact.getType(), "clover" );
+            getProject().setArtifact( newArtifact );
+
+            getProject().getBuild().setFinalName( getProject().getArtifactId() + "-" + getProject().getVersion()
+                + "-clover");
+        }
+    }
+
+    private void logSourceDirectories()
+    {
+        if ( getLog().isDebugEnabled() )
+        {
+            for ( Iterator i = getProject().getCompileSourceRoots().iterator(); i.hasNext(); )
+            {
+                String sourceRoot = (String) i.next();
+                getLog().debug( "[Clover]  source root [" + sourceRoot + "]");
+            }
+        }
+    }
+
+    /**
+     * Browse through all project dependencies and try to find a clovered version of the dependency. If found
+     * replace the main depedencency by the clovered version.
+     */
+    private void swizzleCloverDependencies()
+    {
+        getProject().setDependencyArtifacts(
+            swizzleCloverDependencies( getProject().getDependencyArtifacts() ) );
+        getProject().setArtifacts(
+            swizzleCloverDependencies( getProject().getArtifacts() ) );
+    }
+
+    private Set swizzleCloverDependencies(Set artifacts)
+    {
+        Set resolvedArtifacts = new HashSet();
+        for ( Iterator i = artifacts.iterator(); i.hasNext(); )
+        {
+            Artifact artifact = (Artifact) i.next();
+            Artifact cloverArtifact = this.artifactFactory.createArtifactWithClassifier( artifact.getGroupId(),
+                artifact.getArtifactId(), artifact.getVersion(), artifact.getType(), "clover" );
+
+            try
+            {
+                this.artifactResolver.resolve( cloverArtifact, new ArrayList(), localRepository );
+
+                // Set the same scope as the main artifact as this is not set by createArtifactWithClassifier.
+                cloverArtifact.setScope( artifact.getScope() );
+
+                resolvedArtifacts.add( cloverArtifact );
+            }
+            catch ( Exception e )
+            {
+                resolvedArtifacts.add( artifact );
+            }
+        }
+
+        return resolvedArtifacts;
     }
 
     private void addCloverDependencyToCompileClasspath()
@@ -194,14 +301,34 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
             throw new MojoExecutionException( "Couldn't find 'clover' artifact in plugin dependencies" );
         }
 
-        cloverArtifact = factory.createArtifact( cloverArtifact.getGroupId(), cloverArtifact.getArtifactId(),
-                                                 cloverArtifact.getVersion(), Artifact.SCOPE_COMPILE,
-                                                 cloverArtifact.getType() );
+        cloverArtifact = artifactFactory.createArtifact( cloverArtifact.getGroupId(), cloverArtifact.getArtifactId(),
+            cloverArtifact.getVersion(), Artifact.SCOPE_COMPILE, cloverArtifact.getType() );
 
         // TODO: use addArtifacts when it's implemented, see http://jira.codehaus.org/browse/MNG-2197
-        Set set = new HashSet( getProject().getArtifacts() );
+        Set set = new HashSet( getProject().getDependencyArtifacts() );
         set.add( cloverArtifact );
         getProject().setDependencyArtifacts( set );
+    }
+
+    private void logArtifacts(String message)
+    {
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug("[Clover] List of dependency artifacts " + message + ":");
+            logArtifacts( getProject().getDependencyArtifacts() );
+
+            getLog().debug("[Clover] List of artifacts " + message + ":");
+            logArtifacts( getProject().getArtifacts() );
+        }
+    }
+
+    private void logArtifacts(Set artifacts)
+    {
+        for ( Iterator i = artifacts.iterator(); i.hasNext(); )
+        {
+            Artifact artifact = (Artifact) i.next();
+            getLog().debug("[Clover]   Artifact [" + artifact.getId() + "], scope = [" + artifact.getScope() + "]" );
+        }
     }
 
     /**
@@ -230,17 +357,18 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
         // Note: we shouldn't have to do this but this is a limitation of the Plexus SimpleSourceInclusionScanner
         scanner.addSourceMapping(new SuffixMapping("dummy", "dummy"));
 
-        Iterator roots = getProject().getCompileSourceRoots().iterator();
-        while (roots.hasNext())
+        // Only instrument main sources. Do not instrument other source roots as we don't want to instrument
+        // generates files for example.
+        File sourceDir = new File( getProject().getBuild().getSourceDirectory() );
+        if ( sourceDir.exists() )
         {
-            String sourceRoot = (String) roots.next();
             try
             {
-                filesToInstrument.addAll(scanner.getIncludedSources(new File(sourceRoot), null));
+                filesToInstrument.addAll( scanner.getIncludedSources( sourceDir, null ) );
             }
             catch (InclusionScanException e)
             {
-                getLog().warn("Failed to add sources from [" + sourceRoot + "]", e);
+                getLog().warn("Failed to add sources from [" + getProject().getBuild().getSourceDirectory() + "]", e);
             }
         }
 
