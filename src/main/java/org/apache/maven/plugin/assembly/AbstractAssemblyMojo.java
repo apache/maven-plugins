@@ -20,10 +20,17 @@ import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.artifact.InvalidRepositoryException;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
+import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
+import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ExcludesArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.IncludesArtifactFilter;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.assembly.filter.AssemblyScopeArtifactFilter;
@@ -31,17 +38,23 @@ import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolationExcep
 import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolator;
 import org.apache.maven.plugin.assembly.interpolation.ReflectionProperties;
 import org.apache.maven.plugin.assembly.utils.PropertyUtils;
+import org.apache.maven.plugin.assembly.repository.RepositoryAssembler;
+import org.apache.maven.plugin.assembly.repository.RepositoryAssemblyException;
 import org.apache.maven.plugins.assembly.model.Assembly;
 import org.apache.maven.plugins.assembly.model.Component;
 import org.apache.maven.plugins.assembly.model.DependencySet;
 import org.apache.maven.plugins.assembly.model.FileItem;
 import org.apache.maven.plugins.assembly.model.FileSet;
+import org.apache.maven.plugins.assembly.model.Repository;
 import org.apache.maven.plugins.assembly.model.io.xpp3.AssemblyXpp3Reader;
 import org.apache.maven.plugins.assembly.model.io.xpp3.ComponentXpp3Reader;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.wagon.PathUtils;
 import org.apache.maven.shared.model.fileset.util.FileSetManager;
+import org.apache.maven.model.RepositoryPolicy;
+import org.apache.maven.model.RepositoryBase;
+import org.apache.maven.execution.MavenSession;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
@@ -58,6 +71,7 @@ import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.InterpolationFilterReader;
 import org.codehaus.plexus.util.introspection.ReflectionValueExtractor;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -69,8 +83,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.FileInputStream;
-import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -212,6 +224,11 @@ public abstract class AbstractAssemblyMojo
     private Properties filterProperties;
 
     /**
+     * @component
+     */
+    private RepositoryAssembler repositoryAssembler;
+
+    /**
      * Create the binary distribution.
      *
      * @throws org.apache.maven.plugin.MojoExecutionException
@@ -274,6 +291,14 @@ public abstract class AbstractAssemblyMojo
             {
                 throw new MojoExecutionException( "Error creating assembly: " + e.getMessage(), e );
             }
+            catch ( RepositoryAssemblyException e )
+            {
+                throw new MojoExecutionException( "Error creating assembly: " + e.getMessage(), e );
+            }
+            catch ( InvalidRepositoryException e )
+            {
+                throw new MojoExecutionException( "Error creating assembly: " + e.getMessage(), e );
+            }
 
             if ( appendAssemblyId )
             {
@@ -314,8 +339,9 @@ public abstract class AbstractAssemblyMojo
     }
 
     protected File createArchive( Archiver archiver, Assembly assembly, String filename )
-        throws ArchiverException, IOException, MojoExecutionException, MojoFailureException, XmlPullParserException
+        throws ArchiverException, IOException, MojoExecutionException, MojoFailureException, XmlPullParserException, RepositoryAssemblyException, InvalidRepositoryException
     {
+        processRepositories( archiver, assembly.getRepositories(), assembly.isIncludeBaseDirectory() );
         processDependencySets( archiver, assembly.getDependencySets(), assembly.isIncludeBaseDirectory() );
         processModules( archiver, assembly.getModules(), assembly.isIncludeBaseDirectory() );
         processFileSets( archiver, assembly.getFileSets(), assembly.isIncludeBaseDirectory() );
@@ -380,6 +406,54 @@ public abstract class AbstractAssemblyMojo
         archiver.createArchive();
 
         return destFile;
+    }
+
+    private void processRepositories( Archiver archiver, List modulesList, boolean includeBaseDirectory )
+        throws MojoExecutionException, InvalidRepositoryException, RepositoryAssemblyException, ArchiverException
+    {
+        for ( Iterator i = modulesList.iterator(); i.hasNext(); )
+        {
+            Repository repository = (Repository) i.next();
+
+            Set dependencyArtifacts = getDependencies();
+
+            List artifacts = new ArrayList();
+
+            AndArtifactFilter filter = new AndArtifactFilter();
+
+            if ( !repository.getIncludes().isEmpty() )
+            {
+                filter.add( new IncludesArtifactFilter( repository.getIncludes() ) );
+            }
+            if ( !repository.getExcludes().isEmpty() )
+            {
+                filter.add( new ExcludesArtifactFilter( repository.getExcludes() ) );
+            }
+
+            for ( Iterator j = dependencyArtifacts.iterator(); j.hasNext(); )
+            {
+                Artifact artifact = (Artifact) j.next();
+
+                if ( filter.include( artifact ) )
+                {
+                    artifacts.add( artifact );
+                }
+            }
+
+            File repositoryDirectory = new File( tempRoot, repository.getOutputDirectory() );
+
+            repositoryAssembler.assemble( repositoryDirectory, artifacts, project.getRemoteArtifactRepositories() );
+
+            if ( includeBaseDirectory )
+            {
+                archiver.addDirectory( repositoryDirectory, repository.getOutputDirectory() + "/" );
+            }
+            else
+            {
+                archiver.addDirectory( repositoryDirectory );
+            }
+
+        }
     }
 
     private void processModules( Archiver archiver, List modulesList, boolean includeBaseDirectory )
