@@ -430,9 +430,14 @@ public abstract class AbstractIdeSupportMojo
             catch ( ArtifactResolutionException e )
             {
                 getLog().debug( e.getMessage(), e );
-                getLog()
-                    .warn( Messages.getString( "artifactresolution", new Object[] { //$NON-NLS-1$
-                                               e.getGroupId(), e.getArtifactId(), e.getVersion(), e.getMessage() } ) );
+                getLog().error(
+                                Messages
+                                    .getString( "artifactresolution", new Object[] { //$NON-NLS-1$
+                                                e.getGroupId(), e.getArtifactId(), e.getVersion(), e.getMessage() } ) );
+
+                // if we are here artifactResolutionResult is null, create a project without dependencies but don't fail
+                // (this could be a reactor projects, we don't want to fail everything)
+                return new IdeDependency[0];
             }
 
             // keep track of added reactor projects in order to avoid duplicates
