@@ -96,8 +96,7 @@ public class EarMojo
      * The name of the EAR file to generate.
      *
      * @parameter alias="earName" expression="${project.build.finalName}"
-     * @required
-     * @readonly
+     * @required     
      */
     private String finalName;
 
