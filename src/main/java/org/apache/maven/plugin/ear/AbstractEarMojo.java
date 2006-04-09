@@ -111,6 +111,12 @@ public abstract class AbstractEarMojo
         {
             Artifact artifact = (Artifact) iter.next();
 
+            // If the artifact's type is POM, ignore and continue
+            // since it's used for transitive deps only.
+            if ("pom".equals(artifact.getType())) {
+                continue;
+            }
+
             // Artifact is not yet registered and it has neither test, nor a
             // provided scope, not is it optional
             ScopeArtifactFilter filter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
