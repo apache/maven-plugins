@@ -1,0 +1,35 @@
+ ------
+ Maven 2 Dependency Plugin
+ ------
+
+Maven 2 Dependency Plugin
+
+  This plugin provides the capability to manipulate artifacts. Currently it can copy and/or unpack artifacts from local or remote repositories to a specified location.
+  
+  The plugin has the following {{{index.html}goals}}:
+
+	*{{{copy-mojo.html}copy}}: takes a list of artifacts defined in the plugin configuration section and copies them to a specified location, renaming them or stripping the version if desired. This goal can resolve the artifacts from remote repositories if they don't exist in local.
+
+	*{{{copy-dependencies-mojo.html}copy-dependencies}}: takes the list of direct dependencies and optionally transitive dependencies and copies them to a specified location, stripping the version if desired. This goal can also be run from the command line.
+
+	*{{{unpack-mojo.html}unpack}}: like copy but unpacks.
+
+	*{{{unpack-dependencies-mojo.html}unpack-dependencies}}: like copy-dependencies but unpacks.
+	
+	*{{{resolve-mojo.html}resolve}}: Tells Maven to resolve test scope dependencies and displays the version.
+	
+	*{{{resolve-mojo.html}sources}}: Tells Maven to resolve test scope dependencies and their source attachments, and displays the version.
+	
+	*{{{resolve-plugins-mojo.html}resolve-plugins}}: Tells Maven to resolve plugins and their dependencies.
+
+    *{{{go-offline-mojo.html}go-offline}}: Tells Maven to resolve everything this project is dependent on (dependencies, plugins, reports) in preparation for going offline.
+		
+
+  All goals are able to detect if the artifacts already exist and don't copy/unpack again. 
+  
+  All goals are also able to handle artifacts with classifiers. This enables the capability to manipulate sources and test-jars for example.
+
+  To see examples of how to use the plugin, click {{{howto.html}here}}.
+
+  To see the goal details, click {{{index.html}here}}.
+
