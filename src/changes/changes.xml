@@ -1,0 +1,16 @@
+<document>
+  <properties>
+    <title>Dependency Maven Plugin</title>
+    <author email="brianefox@gmail.com">Brian Fox</author>
+  </properties>
+  <body>
+
+    <release version="1.0" date="01/01/2006">
+      <action dev="brianfox" type="update">
+        Initial Release of Plugin
+      </action>
+      <action dev="brianfox" type="add" issue="MOJO-173"> Issue for initial import of plugin </action>
+      <action dev="brianfox" type="add" issue="MOJO-198"> Add strip version functionality to copyMojo</action>
+    </release>
+   </body>
+</document>
