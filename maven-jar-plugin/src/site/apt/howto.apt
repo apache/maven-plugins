@@ -92,6 +92,9 @@ How to use
 </project>
 -------------------
 
+  If you do not specify the signedjar file, your jar will be signed in-place.
+  If you do specify it, the program will attempt to create the resulting containing directory.
+
 * How to use jar:sign specifying parameters on the command line
 
 -------------------
