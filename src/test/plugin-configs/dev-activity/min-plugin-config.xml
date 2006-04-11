@@ -1,0 +1,41 @@
+<!--
+  ~ Copyright 2001-2006 The Apache Software Foundation.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<project>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-changelog-plugin</artifactId>
+        <configuration>
+          <type>range</type>
+          <range>-1</range>
+          <dateFormat>yyyy-MM-dd</dateFormat>
+          <basedir>${basedir}/src/main/java</basedir>
+          <outputXML>${basedir}/src/test/changelog-xml/min-changelog.xml</outputXML>
+          <outputXMLExpiration>3600</outputXMLExpiration>
+          <outputEncoding>ISO-8859-1</outputEncoding>
+          <scmUrl>scm://</scmUrl>
+          <outputDirectory>site</outputDirectory>
+          <offline>false</offline>
+          <connectionType>connection</connectionType>
+          <project implementation="org.apache.maven.changelog.stubs.MavenProjectStub"/>
+          <settings implementation="org.apache.maven.changelog.stubs.SettingsStub"/>
+          <developers implementation="org.apache.maven.changelog.stubs.DevelopersStub"/>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

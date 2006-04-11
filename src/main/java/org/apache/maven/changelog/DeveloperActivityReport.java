@@ -16,7 +16,6 @@ package org.apache.maven.changelog;
  * limitations under the License.
  */
 
-
 import org.apache.maven.model.Developer;
 import org.apache.maven.scm.ChangeFile;
 import org.apache.maven.scm.ChangeSet;
@@ -210,46 +209,6 @@ public class DeveloperActivityReport
         sink.text( ":" + countFilesChanged( set.getChangeSets() ) );
 
         sink.paragraph_();
-    }
-
-    /**
-     * counts the total commits made to the given sets
-     *
-     * @param sets collection of sets to count all the commits
-     * @return total number of commits for the given sets
-     */
-    private long getCommits( Collection sets )
-    {
-        long commits = 0;
-
-        for ( Iterator i = sets.iterator(); i.hasNext(); )
-        {
-            ChangeLogSet set = (ChangeLogSet) i.next();
-
-            commits += set.getChangeSets().size();
-        }
-
-        return commits;
-    }
-
-    /**
-     * counts the total number of files changed
-     *
-     * @param sets collection of sets to count all the files changed
-     * @return total number of files changed
-     */
-    private long getFilesChanged( Collection sets )
-    {
-        long count = 0;
-
-        for ( Iterator i = sets.iterator(); i.hasNext(); )
-        {
-            ChangeLogSet set = (ChangeLogSet) i.next();
-
-            count += countFilesChanged( set.getChangeSets() );
-        }
-
-        return count;
     }
 
     /**
