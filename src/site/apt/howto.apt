@@ -104,4 +104,10 @@ How to use
   m2 jar:sign-verify [-Djarpath=/path/to/your/signedjar] [-Dverbose=true [-Dcheckcerts=true] ]
 -------------------
 
+* How to disable jar signing
+
+-------------------
+  m2 ... -Dmaven.jar.skip.sign=true
+-------------------
+
   For full documentation, click {{{index.html}here}}.
