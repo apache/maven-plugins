@@ -70,7 +70,7 @@ public class RarMojoTest
         
         File[] fileNames = workDirectory.listFiles();
         
-        assertEquals( 2, fileNames.length );
+        assertEquals( 3, fileNames.length );
         
         assertEquals( "maven-artifact01-1.0-SNAPSHOT.jar", fileNames[0].getName() );
         
