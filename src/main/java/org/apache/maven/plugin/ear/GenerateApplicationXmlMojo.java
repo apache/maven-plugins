@@ -18,10 +18,14 @@ package org.apache.maven.plugin.ear;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.codehaus.plexus.configuration.PlexusConfiguration;
+import org.codehaus.plexus.configuration.PlexusConfigurationException;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A Mojo that generates the application.xml deployment descriptor file.
@@ -82,11 +86,20 @@ public class GenerateApplicationXmlMojo
     private String encoding = UTF_8;
 
     /**
+     * The security-roles to be added to the auto-generated
+     * application.xml file.
+     *
+     * @parameter
+     */
+    private PlexusConfiguration security;
+
+    /**
      * Directory where the application.xml file will be auto-generated.
      *
      * @parameter expression="${project.build.directory}"
      */
     private String generatedDescriptorLocation;
+
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -101,6 +114,7 @@ public class GenerateApplicationXmlMojo
         getLog().debug( "description[" + description + "]" );
         getLog().debug( "encoding[" + encoding + "]" );
         getLog().debug( "generatedDescriptorLocation[" + generatedDescriptorLocation + "]" );
+        getLog().debug( "security[" + security + "]" );
 
         if ( !generateApplicationXml.booleanValue() )
         {
@@ -151,6 +165,48 @@ public class GenerateApplicationXmlMojo
         File descriptor = new File( outputDir, "application.xml" );
 
         ApplicationXmlWriter writer = new ApplicationXmlWriter( version, encoding );
-        writer.write( descriptor, getModules(), displayName, description );
+        writer.write( descriptor, getModules(), buildSecurityRoles(), displayName, description );
+    }
+
+    /**
+     * Builds the security roles based on the configuration.
+     *
+     * @return a list of SecurityRole object(s)
+     * @throws EarPluginException if the configuration is invalid
+     */
+    private List buildSecurityRoles()
+        throws EarPluginException
+    {
+        try
+        {
+            final PlexusConfiguration[] securityRoles = security.getChildren( SecurityRole.SECURITY_ROLE );
+            final List result = new ArrayList();
+            for ( int i = 0; i < securityRoles.length; i++ )
+            {
+                PlexusConfiguration securityRole = securityRoles[i];
+                final String id = securityRole.getAttribute( SecurityRole.ID_ATTRIBUTE );
+                final String roleName = securityRole.getChild( SecurityRole.ROLE_NAME ).getValue();
+                final String roleNameId =
+                    securityRole.getChild( SecurityRole.ROLE_NAME ).getAttribute( SecurityRole.ID_ATTRIBUTE );
+                final String description = securityRole.getChild( SecurityRole.DESCRIPTION ).getValue();
+                final String descriptionId =
+                    securityRole.getChild( SecurityRole.DESCRIPTION ).getAttribute( SecurityRole.ID_ATTRIBUTE );
+
+                if ( roleName == null )
+                {
+                    throw new EarPluginException( "Invalid security-role configuration, role-name could not be null." );
+                }
+                else
+                {
+                    result.add( new SecurityRole( roleName, roleNameId, id, description, descriptionId ) );
+                }
+            }
+            return result;
+        }
+        catch ( PlexusConfigurationException e )
+        {
+            throw new EarPluginException( "Invalid security-role configuration", e );
+        }
+
     }
 }

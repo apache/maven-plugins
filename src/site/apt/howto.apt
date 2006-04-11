@@ -12,9 +12,7 @@ Introduction
   application.xml. This generation is already customized by the goal's parameters,
   see {{{index.html}the goals description}}.  
 
-  Ear modules might be further customized as follows:
-
-   * contextRoot: the custom context root for a web application
+  Any Ear module might be further customized as follows:
 
    * bundleDir: the directory in the EAR structure where the artifact will be stored
 
@@ -22,15 +20,18 @@ Introduction
 
    * uri: the complete path in the EAR structure for the artifact
 
-  Also, a dependency might be excluded from the generated EAR file by specifying the
-  excluded flag.
+   * excluded: excludes the artifact from the generated ear
+
+  The context root of a Web module might be customized using the contextRoot parameter.
 
   Please note that third party libraries are not included in the generated
   application.xml (only ejb-client should be included in a <java> entry). However, a
   jar dependency could be included in the generated application.xml by specifying the
   includeInApplicationXml flag.
 
-  It is also possible to specify a default bundle directory for all third party libraries
+  It is also possible to specify a default bundle directory for all third party libraries.
+
+  The security settings might be specified under the security parameter.
 
 Customizing the context root
 
@@ -209,6 +210,34 @@ Including a third party library in the generated application.xml
                <includeInApplicationXml>true</includeInApplicationXml>
              </javaModule>
           </modules>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
++---------
+
+
+Specifying security roles for the generated application.xml
+
+  Security roles might be specified as follows
+
++--------
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-ear-plugin</artifactId>
+        <configuration>
+           [...]
+           <security>
+            <security-role id="SecurityRole_1234">
+              <role-name>manager</role-name>
+            </security-role>
+            <security-role id="SecurityRole_5678">
+              <description>My cool description</description>
+              <role-name id="RoleName_12">teller</role-name>
+            </security-role>
+          </security>
         </configuration>
       </plugin>
     </plugins>
