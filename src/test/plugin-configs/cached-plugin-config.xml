@@ -13,6 +13,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
+
 <project>
   <build>
     <plugins>
@@ -23,8 +24,8 @@
           <range>-1</range>
           <dateFormat>yyyy-MM-dd</dateFormat>
           <basedir>${basedir}/src/main/java</basedir>
-          <outputXML>changelog.xml</outputXML>
-          <outputXMLExpiration>60</outputXMLExpiration>
+          <outputXML>${basedir}/src/test/changelog-xml/min-changelog.xml</outputXML>
+          <outputXMLExpiration>3600</outputXMLExpiration>
           <outputEncoding>ISO-8859-1</outputEncoding>
           <scmUrl>scm://</scmUrl>
           <outputDirectory>site</outputDirectory>

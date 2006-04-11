@@ -16,38 +16,31 @@ package org.apache.maven.changelog.stubs;
  * limitations under the License.
  */
 
-import org.apache.maven.settings.Settings;
-import org.apache.maven.settings.Server;
-
-/**
+import org.apache.maven.scm.repository.ScmRepository;
+import org.apache.maven.scm.repository.ScmRepositoryException;
+import org.apache.maven.scm.manager.NoSuchScmProviderException;
+import org.apache.maven.scm.provider.ScmProviderRepositoryWithHost;/**
  * @author Edwin Punzalan
  */
-public class SettingsStub
-    extends Settings
+public class ScmManagerWithHostStub
+    extends ScmManagerStub
 {
-    public Server getServer( String serverId )
+    public ScmRepository makeScmRepository( String string )
+        throws ScmRepositoryException, NoSuchScmProviderException
     {
-        return new Server()
+        ScmProviderRepositoryWithHost scmRepository = new ScmProviderRepositoryWithHost()
         {
-            public String getUsername()
+            public String getHost()
             {
-                return "anonymous";
+                return "scmHost";
             }
 
-            public String getPassword()
+            public int getPort()
             {
-                return "password";
-            }
-
-            public String getPassphrase()
-            {
-                return "passphrase";
-            }
-
-            public String getPrivateKey()
-            {
-                return "private-key";
+                return 7777;
             }
         };
+
+        return new ScmRepositoryStub( "ScmRepositoryStubWithHost", scmRepository );
     }
 }

@@ -286,7 +286,8 @@ public class ChangeLogReport
 
         if ( outputXML.exists() )
         {
-            if ( outputXMLExpiration * 60000 > System.currentTimeMillis() - outputXML.lastModified() )
+            if ( outputXMLExpiration > 0 &&
+                 outputXMLExpiration * 60000 > System.currentTimeMillis() - outputXML.lastModified() )
             {
                 try
                 {
@@ -461,7 +462,7 @@ public class ChangeLogReport
             }
             else
             {
-                throw new MavenReportException( "The type'" + type + "' isn't supported." );
+                throw new MavenReportException( "The type '" + type + "' isn't supported." );
             }
 
             return changeSets;

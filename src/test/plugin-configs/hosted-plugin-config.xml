@@ -13,6 +13,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
+
 <project>
   <build>
     <plugins>
@@ -26,12 +27,14 @@
           <outputXML>changelog.xml</outputXML>
           <outputXMLExpiration>60</outputXMLExpiration>
           <outputEncoding>ISO-8859-1</outputEncoding>
-          <scmUrl>scm://</scmUrl>
+          <scmUrl>scm://host:port/context?attribs</scmUrl>
           <outputDirectory>site</outputDirectory>
           <offline>false</offline>
           <connectionType>connection</connectionType>
           <project implementation="org.apache.maven.changelog.stubs.MavenProjectStub"/>
           <settings implementation="org.apache.maven.changelog.stubs.SettingsStub"/>
+          <username>anonymous</username>
+          <password>secret</password>
         </configuration>
       </plugin>
     </plugins>

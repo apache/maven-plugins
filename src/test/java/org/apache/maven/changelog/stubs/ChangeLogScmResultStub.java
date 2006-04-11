@@ -16,12 +16,29 @@ package org.apache.maven.changelog.stubs;
  * limitations under the License.
  */
 
-import org.apache.maven.scm.provider.ScmProviderRepository;
+import org.apache.maven.scm.command.changelog.ChangeLogSet;
+
+import java.util.Collections;
+import java.util.Date;
 
 /**
  * @author Edwin Punzalan
  */
-public class ScmProviderRepositoryStub
-    extends ScmProviderRepository
+public class ChangeLogScmResultStub
+    extends org.apache.maven.scm.command.changelog.ChangeLogScmResult
 {
+    public ChangeLogScmResultStub()
+    {
+        this( "", "", "", true );
+    }
+
+    public ChangeLogScmResultStub( String string, String string1, String string2, boolean b )
+    {
+        super( "", "", "", true );
+    }
+
+    public ChangeLogSet getChangeLog()
+    {
+        return new ChangeLogSet( Collections.EMPTY_LIST, new Date( 360 ), new Date( 720 ) );
+    }
 }

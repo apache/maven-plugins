@@ -1,26 +1,28 @@
 package org.apache.maven.changelog;
 
 /*
- *  Copyright 2001-2006 The Apache Software Foundation.
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.plugin.Mojo;
-import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.changelog.stubs.ScmManagerStub;
+import org.apache.maven.changelog.stubs.FailedScmManagerStub;
+import org.apache.maven.changelog.stubs.ScmManagerWithHostStub;
+import org.apache.maven.plugin.Mojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.scm.manager.ScmManager;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
@@ -33,18 +35,137 @@ public class ChangeLogReportTest
 {
     private ScmManager scmManager;
 
+    public void testNoSource()
+        throws Exception
+    {
+        File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/no-source-plugin-config.xml" );
+
+        Mojo mojo = lookupMojo( "changelog", pluginXmlFile );
+
+        assertNotNull( "Mojo found.", mojo );
+
+        this.setVariableValueToObject( mojo, "manager", scmManager );
+
+        mojo.execute();
+
+        File outputDir = (File) getVariableValueFromObject( mojo, "outputDirectory" );
+
+        File outputHtml = new File( outputDir, "changelog.html" );
+
+        assertTrue( "Test html generated", outputHtml.exists() );
+    }
+
     public void testMinConfig()
         throws Exception
     {
         executeMojo( "src/test/plugin-configs/min-plugin-config.xml" );
     }
 
-    protected void setUp()
+    public void testFailedChangelog()
         throws Exception
     {
-        super.setUp();
+        scmManager = new FailedScmManagerStub();
 
-        scmManager = new ScmManagerStub();
+        try
+        {
+            executeMojo( "src/test/plugin-configs/min-plugin-config.xml" );
+        }
+        catch ( MojoExecutionException e )
+        {
+            assertEquals( "Test thrown exception", "Command failed.", e.getCause().getCause().getMessage() );
+        }
+    }
+
+    public void testUsageOfCachedXml()
+        throws Exception
+    {
+        File cacheFile = new File( getBasedir(), "src/test/changelog-xml/min-changelog.xml" );
+        cacheFile.setLastModified( System.currentTimeMillis() );
+
+        executeMojo( "src/test/plugin-configs/cached-plugin-config.xml" );
+    }
+
+    public void testTypeException()
+        throws Exception
+    {
+        try
+        {
+            executeMojo( "src/test/plugin-configs/inv-type-plugin-config.xml" );
+
+            fail( "Test exception on invalid type" );
+        }
+        catch ( MojoExecutionException e )
+        {
+            assertTrue( "Test thrown exception", e.getCause().getMessage().startsWith( "The type parameter has an invalid value: invalid." ) );
+        }
+    }
+
+    public void testTagType()
+        throws Exception
+    {
+        executeMojo( "src/test/plugin-configs/tag-plugin-config.xml" );
+    }
+
+    public void testTagsType()
+        throws Exception
+    {
+        executeMojo( "src/test/plugin-configs/tags-plugin-config.xml" );
+    }
+
+    public void testDateException()
+        throws Exception
+    {
+        try
+        {
+            executeMojo( "src/test/plugin-configs/inv-date-plugin-config.xml" );
+        }
+        catch ( MojoExecutionException e )
+        {
+            assertTrue( "Test thrown exception",
+                        e.getCause().getCause().getMessage().startsWith( "Please use this date pattern: ") );
+        }
+    }
+
+    public void testDateType()
+        throws Exception
+    {
+        executeMojo( "src/test/plugin-configs/date-plugin-config.xml" );
+    }
+
+    public void testDatesType()
+        throws Exception
+    {
+        executeMojo( "src/test/plugin-configs/dates-plugin-config.xml" );
+    }
+
+    public void testScmRepositoryWithHost()
+        throws Exception
+    {
+        scmManager = new ScmManagerWithHostStub();
+
+        executeMojo( "src/test/plugin-configs/hosted-plugin-config.xml" );
+    }
+
+    public void testScmRepositoryWithHostFromSettings()
+        throws Exception
+    {
+        scmManager = new ScmManagerWithHostStub();
+
+        executeMojo( "src/test/plugin-configs/hosted-with-settings-plugin-config.xml" );
+    }
+
+    public void testNoScmConnection()
+        throws Exception
+    {
+        try
+        {
+            executeMojo( "src/test/plugin-configs/no-scm-plugin-config.xml" );
+        }
+        catch ( MojoExecutionException e )
+        {
+            assertEquals( "Test thrown exception", "SCM Connection is not set.",
+                          e.getCause().getCause().getCause().getMessage() );
+        }
     }
 
     private void executeMojo( String pluginXml )
@@ -69,9 +190,23 @@ public class ChangeLogReportTest
         String changelogXml = FileUtils.fileRead( outputXML );
 
         assertTrue( "Test for xml header", changelogXml.startsWith( "<?xml version=\"1.0\" encoding=\"" +
-                    encoding + "\"?>\n<changelog>" ) );
+                    encoding + "\"?>" ) );
 
-        assertTrue( "Test for xml footer", changelogXml.endsWith( "\n</changelog>" ) );
+        assertTrue( "Test for xml footer", changelogXml.endsWith( "</changelog>" ) );
+
+        File outputDir = (File) getVariableValueFromObject( mojo, "outputDirectory" );
+
+        File outputHtml = new File( outputDir, "changelog.html" );
+
+        assertTrue( "Test html generated", outputHtml.exists() );
+    }
+
+    protected void setUp()
+        throws Exception
+    {
+        super.setUp();
+
+        scmManager = new ScmManagerStub();
     }
 
     protected void tearDown()
