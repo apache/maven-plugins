@@ -367,9 +367,9 @@ public class JarSignMojo
      * @param arguments
      * @param key       the argument name.
      * @param value     the argument value to be added.
-     * @see #addArgIfNotEmpty(java.util.List,String,String,boolean)
+     * @see #addArgIfNotEmpty(java.util.List,String,Object,boolean)
      */
-    private void addArgIfNotEmpty( List arguments, String key, String value )
+    private void addArgIfNotEmpty( List arguments, String key, Object value )
     {
         addArgIfNotEmpty( arguments, key, value, false );
     }
@@ -385,13 +385,13 @@ public class JarSignMojo
      * @param value     the argument value to be added.
      * @param repeatKey repeat or not the key in the command line
      */
-    private void addArgIfNotEmpty( List arguments, String key, String value, boolean repeatKey )
+    private void addArgIfNotEmpty( List arguments, String key, Object value, boolean repeatKey )
     {
-        if ( !StringUtils.isEmpty( value ) )
+        if ( value != null && !StringUtils.isEmpty( value.toString() ) )
         {
             arguments.add( key );
 
-            StringTokenizer token = new StringTokenizer( value, "," );
+            StringTokenizer token = new StringTokenizer( value.toString(), "," );
             while ( token.hasMoreTokens() )
             {
                 String current = token.nextToken().trim();
