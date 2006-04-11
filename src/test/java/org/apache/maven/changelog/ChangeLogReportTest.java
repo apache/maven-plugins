@@ -38,7 +38,7 @@ public class ChangeLogReportTest
     public void testNoSource()
         throws Exception
     {
-        File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/no-source-plugin-config.xml" );
+        File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/changelog/no-source-plugin-config.xml" );
 
         Mojo mojo = lookupMojo( "changelog", pluginXmlFile );
 
@@ -58,7 +58,7 @@ public class ChangeLogReportTest
     public void testMinConfig()
         throws Exception
     {
-        executeMojo( "src/test/plugin-configs/min-plugin-config.xml" );
+        executeMojo( "min-plugin-config.xml" );
     }
 
     public void testFailedChangelog()
@@ -68,7 +68,7 @@ public class ChangeLogReportTest
 
         try
         {
-            executeMojo( "src/test/plugin-configs/min-plugin-config.xml" );
+            executeMojo( "min-plugin-config.xml" );
         }
         catch ( MojoExecutionException e )
         {
@@ -82,7 +82,7 @@ public class ChangeLogReportTest
         File cacheFile = new File( getBasedir(), "src/test/changelog-xml/min-changelog.xml" );
         cacheFile.setLastModified( System.currentTimeMillis() );
 
-        executeMojo( "src/test/plugin-configs/cached-plugin-config.xml" );
+        executeMojo( "cached-plugin-config.xml" );
     }
 
     public void testTypeException()
@@ -90,7 +90,7 @@ public class ChangeLogReportTest
     {
         try
         {
-            executeMojo( "src/test/plugin-configs/inv-type-plugin-config.xml" );
+            executeMojo( "inv-type-plugin-config.xml" );
 
             fail( "Test exception on invalid type" );
         }
@@ -103,13 +103,13 @@ public class ChangeLogReportTest
     public void testTagType()
         throws Exception
     {
-        executeMojo( "src/test/plugin-configs/tag-plugin-config.xml" );
+        executeMojo( "tag-plugin-config.xml" );
     }
 
     public void testTagsType()
         throws Exception
     {
-        executeMojo( "src/test/plugin-configs/tags-plugin-config.xml" );
+        executeMojo( "tags-plugin-config.xml" );
     }
 
     public void testDateException()
@@ -117,7 +117,7 @@ public class ChangeLogReportTest
     {
         try
         {
-            executeMojo( "src/test/plugin-configs/inv-date-plugin-config.xml" );
+            executeMojo( "inv-date-plugin-config.xml" );
         }
         catch ( MojoExecutionException e )
         {
@@ -129,13 +129,13 @@ public class ChangeLogReportTest
     public void testDateType()
         throws Exception
     {
-        executeMojo( "src/test/plugin-configs/date-plugin-config.xml" );
+        executeMojo( "date-plugin-config.xml" );
     }
 
     public void testDatesType()
         throws Exception
     {
-        executeMojo( "src/test/plugin-configs/dates-plugin-config.xml" );
+        executeMojo( "dates-plugin-config.xml" );
     }
 
     public void testScmRepositoryWithHost()
@@ -143,7 +143,7 @@ public class ChangeLogReportTest
     {
         scmManager = new ScmManagerWithHostStub();
 
-        executeMojo( "src/test/plugin-configs/hosted-plugin-config.xml" );
+        executeMojo( "hosted-plugin-config.xml" );
     }
 
     public void testScmRepositoryWithHostFromSettings()
@@ -151,7 +151,7 @@ public class ChangeLogReportTest
     {
         scmManager = new ScmManagerWithHostStub();
 
-        executeMojo( "src/test/plugin-configs/hosted-with-settings-plugin-config.xml" );
+        executeMojo( "hosted-with-settings-plugin-config.xml" );
     }
 
     public void testNoScmConnection()
@@ -159,7 +159,7 @@ public class ChangeLogReportTest
     {
         try
         {
-            executeMojo( "src/test/plugin-configs/no-scm-plugin-config.xml" );
+            executeMojo( "no-scm-plugin-config.xml" );
         }
         catch ( MojoExecutionException e )
         {
@@ -171,7 +171,7 @@ public class ChangeLogReportTest
     private void executeMojo( String pluginXml )
         throws Exception
     {
-        File pluginXmlFile = new File( getBasedir(), pluginXml );
+        File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/changelog/" + pluginXml );
 
         Mojo mojo = lookupMojo( "changelog", pluginXmlFile );
 
