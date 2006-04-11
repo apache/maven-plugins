@@ -13,14 +13,18 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
+
 <project>
   <build>
     <plugins>
       <plugin>
         <artifactId>maven-changelog-plugin</artifactId>
         <configuration>
-          <type>range</type>
-          <range>-1</range>
+          <type>tag</type>
+          <tags>
+            <tag>first</tag>
+            <tag>second</tag>
+          </tags>
           <dateFormat>yyyy-MM-dd</dateFormat>
           <basedir>${basedir}/src/main/java</basedir>
           <outputXML>changelog.xml</outputXML>
