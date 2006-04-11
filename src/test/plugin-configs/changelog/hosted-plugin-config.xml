@@ -27,7 +27,8 @@
           <outputXML>changelog.xml</outputXML>
           <outputXMLExpiration>60</outputXMLExpiration>
           <outputEncoding>ISO-8859-1</outputEncoding>
-          <scmUrl>scm://host:port/context?attribs</scmUrl>
+          <scmUrl>scm:provider://host:port/context?attribs</scmUrl>
+          <displayFileDetailUrl>scm:provider://host:port/context?attribs</displayFileDetailUrl>
           <outputDirectory>site</outputDirectory>
           <offline>false</offline>
           <connectionType>connection</connectionType>
