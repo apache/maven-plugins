@@ -142,7 +142,7 @@ public class JarSignVerifyMojo
         try
         {
             int result = executeCommandLine( commandLine, null, outConsumer, errConsumer );
-            
+
             if ( result != 0 )
             {
                 throw new MojoExecutionException("Result of " + commandLine
@@ -156,18 +156,6 @@ public class JarSignVerifyMojo
         catch ( CommandLineException e )
         {
             throw new MojoExecutionException( "command execution failed", e );
-        }
-    }
-
-    private void createParentDirIfNecessary(final String file) {
-        if ( file != null)
-        {
-            final File fileDir = new File( file ).getParentFile();
-
-            if ( fileDir != null) { // not a relative path
-                boolean mkdirs = fileDir.mkdirs();
-                getLog().debug("mdkirs: " + mkdirs + " " + fileDir);
-            }
         }
     }
 
