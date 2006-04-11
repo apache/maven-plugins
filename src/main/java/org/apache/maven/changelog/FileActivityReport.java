@@ -101,7 +101,7 @@ public class FileActivityReport
      * @param bundle        the resource bundle to retrieve report phrases from
      * @param sink          the report formatting tool
      */
-    protected void doGenerateReport( ChangeLogSet changeLogSets, ResourceBundle bundle, Sink sink )
+    protected void doGenerateReport( List changeLogSets, ResourceBundle bundle, Sink sink )
     {
         sink.head();
         sink.title();
@@ -115,7 +115,11 @@ public class FileActivityReport
         sink.text( bundle.getString( "report.file-activity.mainTitle" ) );
         sink.sectionTitle1_();
 
-        doChangedSets( changeLogSets, bundle, sink );
+        for ( Iterator sets = changeLogSets.iterator(); sets.hasNext(); )
+        {
+            ChangeLogSet set = (ChangeLogSet) sets.next();
+            doChangedSets( set, bundle, sink );
+        }
 
         sink.section1_();
         sink.body_();
