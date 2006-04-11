@@ -179,7 +179,7 @@ public class ChangeLogReport
      *
      * @parameter expression="${project.scm.url}"
      */
-    private String scmUrl;
+    protected String scmUrl;
 
     /**
      * The Maven Project Object
@@ -241,7 +241,7 @@ public class ChangeLogReport
      *
      * @parameter expression="${project.scm.url}"
      */
-    private String displayFileDetailUrl;
+    protected String displayFileDetailUrl;
 
     // temporary field holder while generating the report
     private String rpt_Repository, rpt_OneRepoParam, rpt_MultiRepoParam;
@@ -907,6 +907,8 @@ public class ChangeLogReport
         sink.tableHeaderCell_();
         sink.tableRow_();
 
+        initReportUrls();
+
         for ( Iterator i = entries.iterator(); i.hasNext(); )
         {
             ChangeSet entry = (ChangeSet) i.next();
@@ -937,7 +939,6 @@ public class ChangeLogReport
         sink.tableCell_();
 
         sink.tableCell();
-        initReportUrls();
         //doRevision( entry.getFiles(), bundle, sink );
         doChangedFiles( entry.getFiles(), sink );
         sink.lineBreak();
@@ -974,9 +975,11 @@ public class ChangeLogReport
 
                     if ( idx > 0 )
                     {
-                        displayFileDetailUrl = displayFileDetailUrl.substring( 0, idx );
+                        String fileDetailUrl = displayFileDetailUrl.substring( 0, idx );
 
                         String rpt_TmpMultiRepoParam = displayFileDetailUrl.substring( idx + 1 );
+
+                        displayFileDetailUrl = fileDetailUrl;
 
                         rpt_OneRepoParam = "?" + rpt_TmpMultiRepoParam;
 
@@ -1092,6 +1095,21 @@ public class ChangeLogReport
                     linkRev =
                         rpt_Repository + "?cmd=viewBrowseVersion" + module + "&file=" + name + "&version=" + revision;
                 }
+            }
+            else if ( connection.startsWith( "scm:svn" ))
+            {
+                // idea will be to look for placeholders in URL, then replace them with appropriate values
+                String url = displayFileDetailUrl + rpt_OneRepoParam;
+
+                url = url.replaceFirst( "([&?]path=)([^&]+|$)", "$1" + name );
+                linkFile = url;
+
+                if ( revision != null )
+                {
+                    url = url.replaceFirst( "([&?]rev=)([^&]+|$)", "$1" + revision );
+                    linkRev = url;
+                }
+
             }
             else
             {
