@@ -57,6 +57,8 @@ public class JarSignMojoTest
 
         public Map systemProperties = new HashMap();
 
+        public JarSignVerifyMojo verifyMojo = new JarSignVerifyMojo();
+
         protected int executeCommandLine( Commandline commandLine, InputStream inputStream, StreamConsumer stream1,
                                           StreamConsumer stream2 )
             throws CommandLineException
@@ -67,6 +69,11 @@ public class JarSignMojoTest
                 throw new CommandLineException( failureMsg );
             }
             return executeResult;
+        }
+
+        protected JarSignVerifyMojo createJarSignVerifyMojo()
+        {
+            return verifyMojo;
         }
 
         protected String getSystemProperty( String key )
@@ -96,6 +103,8 @@ public class JarSignMojoTest
         mockArtifact.setType( "jar" );
         project.setArtifact( mockArtifact );
         mojo.setProject( project );
+
+        new File(getNullJar()).delete();
     }
 
     public void tearDown()
@@ -108,6 +117,44 @@ public class JarSignMojoTest
     public void testRunOK()
         throws MojoExecutionException
     {
+        mojo.execute();
+
+        String[] expectedArguments = {"-keystore", "/tmp/keystore", "-keypass", "secretpassword", "-signedjar",
+            "/tmp/signed/file-version.jar", getNullJar(), "alias"};
+
+        checkMojo( expectedArguments );
+    }
+
+    /**
+     * We shouldn't sign the jar twice.
+     * On the second run, we simulated a created and signed jar.
+     */
+    public void testRunTwice()
+        throws MojoExecutionException, IOException
+    {
+        mojo.execute();
+
+        class MyJarSignVerifyMojo
+            extends JarSignVerifyMojo
+        {
+            int nbExecutions;
+
+            public void execute()
+                throws MojoExecutionException
+            {
+                nbExecutions++;
+            }
+
+            public boolean isSigned()
+            {
+                return true;
+            }
+        }
+
+        mojo.verifyMojo = new MyJarSignVerifyMojo();
+
+        new File(getNullJar()).createNewFile();
+
         mojo.execute();
 
         String[] expectedArguments = {"-keystore", "/tmp/keystore", "-keypass", "secretpassword", "-signedjar",
@@ -179,12 +226,7 @@ public class JarSignMojoTest
         assertEquals( 1, mojo.commandLines.size() );
         Commandline commandline = (Commandline) mojo.commandLines.get( 0 );
         String[] arguments = commandline.getArguments();
-        // isn't there an assertEquals for arrays?
-        /*
-         for (int i = 0; i < arguments.length; i++ ) {
-         System.out.println( arguments[ i ] );
-         }
-         */
+
         assertEquals( "Differing number of arguments", expectedCommandLineArguments.length, arguments.length );
         for ( int i = 0; i < arguments.length; i++ )
         {

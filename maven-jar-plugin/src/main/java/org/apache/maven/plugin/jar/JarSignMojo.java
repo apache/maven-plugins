@@ -82,7 +82,7 @@ public class JarSignMojo
     /**
      * Path of the jar to sign. When specified, the finalName is ignored.
      *
-     * @parameter alias="jarpath"
+     * @parameter alias="jarpath" default-value="${project.build.directory}/${project.build.finalName}.${project.packaging}"
      */
     private File jarPath;
 
@@ -118,8 +118,9 @@ public class JarSignMojo
     /**
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
      *
-     * @parameter expression="${signedjar}" default-value="${project.build.directory}/signed/${project.build.finalName}.jar"
-     * @required
+     * Not specifying this argument will sign the jar in-place (your original jar is going to be overwritten).
+     *
+     * @parameter expression="${signedjar}"
      */
     private File signedjar;
 
@@ -185,18 +186,40 @@ public class JarSignMojo
             getLog().info( "Skipping JAR signing for file: " + getJarFile().getAbsolutePath() );
         }
 
+        JarSignVerifyMojo verifyMojo = createJarSignVerifyMojo();
+
+        File signedJarFile = signedjar != null ? signedjar : getJarFile();
+
+        if ( signedJarFile.exists() )
+        {
+            verifyMojo.setWorkingDir( workingDirectory );
+            verifyMojo.setBasedir( basedir );
+            verifyMojo.setJarPath( signedJarFile );
+            verifyMojo.setVerbose( verbose );
+            verifyMojo.setErrorWhenNotSigned( false );
+            verifyMojo.execute();
+        }
+
+        if ( verifyMojo.isSigned() )
+        {
+            getLog().info( "JAR " + getJarFile().getAbsoluteFile() + " is already signed. Skipping.");
+            return;
+        }
+
         signJar();
 
-        if ( verify )
+        if ( this.verify )
         {
-            JarSignVerifyMojo verify = new JarSignVerifyMojo();
-            verify.setWorkingDir( workingDirectory );
-            verify.setBasedir( basedir );
-            verify.setJarPath( getJarFile() );
-            verify.setVerbose( verbose );
-            verify.execute();
+            verifyMojo.setErrorWhenNotSigned( true );
+            verifyMojo.execute();
         }
     }
+
+    protected JarSignVerifyMojo createJarSignVerifyMojo()
+    {
+        return new JarSignVerifyMojo();
+    }
+
 
     File getJarFile()
     {
@@ -227,7 +250,7 @@ public class JarSignMojo
         addArgIfNotEmpty( arguments, "-keystore", this.keystore );
         addArgIfNotEmpty( arguments, "-storepass", this.storepass );
         addArgIfNotEmpty( arguments, "-keypass", this.keypass );
-        addArgIfNotEmpty( arguments, "-signedjar", this.signedjar.getPath() );
+        addArgIfNotEmpty( arguments, "-signedjar", this.signedjar );
         addArgIfNotEmpty( arguments, "-storetype", this.type );
         addArgIfNotEmpty( arguments, "-sigfile", this.sigfile );
 
@@ -244,9 +267,14 @@ public class JarSignMojo
 
         createParentDirIfNecessary( signedjar );
 
+        if ( signedjar == null )
+        {
+            getLog().debug( "Signing JAR in-place (overwritting original JAR)." );
+        }
+
         getLog().debug( "Executing: " + commandLine );
 
-        // jarsigner may ask for some input if the parameters are missing or incorrect. 
+        // jarsigner may ask for some input if the parameters are missing or incorrect.
         // This should take care of it and make it fail gracefully
         final InputStream inputStream = new InputStream()
         {
@@ -284,6 +312,12 @@ public class JarSignMojo
         catch ( CommandLineException e )
         {
             throw new MojoExecutionException( "command execution failed", e );
+        }
+
+        // signed in place, no need to attach
+        if ( signedjar == null )
+        {
+            return;
         }
 
         if ( classifier != null )
@@ -465,7 +499,8 @@ public class JarSignMojo
 
     // hiding for now - I don't think this is required to be seen
     /*
-     public void setFinalName( String finalName ) {
+     public void setFinalName( String finalName )
+     {
      this.finalName = finalName;
      }
      */
