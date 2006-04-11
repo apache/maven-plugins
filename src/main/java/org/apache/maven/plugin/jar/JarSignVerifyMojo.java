@@ -96,16 +96,34 @@ public class JarSignVerifyMojo
      */
     private boolean verbose;
 
-    File getJarFile() {
-        if ( jarPath != null ) {
+    /** When true will make the execute() operation fail, throwing an exception, when verifying a non signed jar
+     * Primarily to keep backwards compatibility with existing code, and allow reusing the
+     * bean in unattended operations when set to false.
+     * @parameter expression="${errorWhenNotSigned}" default-value="true"
+     **/
+    private boolean errorWhenNotSigned = true;
+
+    /**
+     * Is the jar signed ? output property set by the execute call. The value will be accessible
+     * when execute() ends and if errorWhenNotSigned has been set to false.
+     **/
+    private boolean signed;
+
+    File getJarFile()
+    {
+        if ( jarPath != null )
+        {
             return jarPath;
-        } else {
+        }
+        else
+        {
             return AbstractJarMojo.getJarFile( basedir, finalName, null);
         }
     }
 
-    public void execute() throws MojoExecutionException {
-
+    public void execute()
+        throws MojoExecutionException
+    {
         List arguments = new ArrayList();
 
         Commandline commandLine = new Commandline();
@@ -119,7 +137,8 @@ public class JarSignVerifyMojo
 
         arguments.add( getJarFile() );
 
-        for ( Iterator it = arguments.iterator() ; it.hasNext() ; ) {
+        for ( Iterator it = arguments.iterator() ; it.hasNext() ; )
+        {
             commandLine.createArgument().setValue( it.next().toString() );
         }
 
@@ -130,7 +149,8 @@ public class JarSignVerifyMojo
         LineMatcherStreamConsumer outConsumer = new LineMatcherStreamConsumer( "jar verified." );
 
         final StringBuffer errBuffer = new StringBuffer();
-        StreamConsumer errConsumer = new StreamConsumer() {
+        StreamConsumer errConsumer = new StreamConsumer()
+        {
             public void consumeLine(String line)
             {
                  errBuffer.append( line );
@@ -149,7 +169,10 @@ public class JarSignVerifyMojo
                     + " execution is: \'" + result + "\'." );
             }
 
-            if (! outConsumer.matched ) {
+            signed = outConsumer.matched;
+
+            if ( !signed && errorWhenNotSigned )
+            {
                 throw new MojoExecutionException( "Verify failed: " + outConsumer.firstOutLine );
             }
         }
@@ -161,24 +184,26 @@ public class JarSignVerifyMojo
 
     // checks if a consumed line matches
     // also keeps track of the first consumed line.
-    class LineMatcherStreamConsumer implements StreamConsumer
+    class LineMatcherStreamConsumer
+        implements StreamConsumer
     {
         private String toMatch;
         private boolean matched;
         private String firstOutLine;
-        // private String lastOutLine = "";
 
-        LineMatcherStreamConsumer( String toMatch ) {
+        LineMatcherStreamConsumer( String toMatch )
+        {
              this.toMatch = toMatch;
         }
 
         public void consumeLine(String line)
         {
-            if ( firstOutLine == null ) {
+            if ( firstOutLine == null )
+            {
                  firstOutLine = line;
             }
             matched = matched || toMatch.equals( line );
-            // lastOutLine = line;
+
             getLog().info( line );
         }
     }
@@ -196,7 +221,8 @@ public class JarSignVerifyMojo
         return getJDKCommandPath( "jarsigner", getLog() );
     }
 
-    private static String getJDKCommandPath( String command, Log logger ) {
+    private static String getJDKCommandPath( String command, Log logger )
+    {
         String path = getJDKCommandExe(command).getAbsolutePath();
         logger.debug( command + " executable=[" + path + "]" );
         return path;
@@ -301,34 +327,62 @@ public class JarSignVerifyMojo
 
     protected int executeCommandLine( Commandline commandLine, InputStream inputStream,
                                       StreamConsumer systemOut, StreamConsumer systemErr ) 
-             throws CommandLineException {
+        throws CommandLineException
+    {
         return CommandLineUtils.executeCommandLine( commandLine, inputStream, systemOut, systemErr );
     }
 
-    public void setWorkingDir( File workingDir ) {
+    public void setWorkingDir( File workingDir )
+    {
         this.workingDirectory = workingDir;
     }
 
-    public void setBasedir( File basedir ) {
+    public void setBasedir( File basedir )
+    {
         this.basedir = basedir;
     }
 
     // hiding for now - I don't think this is required to be seen
     /*
-    public void setFinalName( String finalName ) {
+    public void setFinalName( String finalName )
+    {
         this.finalName = finalName;
     }
     */
 
-    public void setJarPath( File jarPath ) {
+    public void setJarPath( File jarPath )
+    {
         this.jarPath = jarPath;
     }
 
-    public void setCheckCerts( boolean checkCerts) {
+    public void setCheckCerts( boolean checkCerts )
+    {
         this.checkCerts = checkCerts;
     }
 
-    public void setVerbose( boolean verbose ) {
+    public void setVerbose( boolean verbose )
+    {
         this.verbose = verbose;
+    }
+
+    /**
+     * Is the JAR file signed ? Output property set by the {@link #execute()} call.
+     *
+     * @return <code>true</code> if the jar was signed, <code>false</code> otherwise.
+     */
+    public boolean isSigned()
+    {
+        return signed;
+    }
+
+    /**
+     * Sets a boolean that is to determine if an exception should be thrown when
+     * the JAR file being verified is unsigned. If you just what to check if a
+     * JAR is unsigned and then act on the result, then you probably want to
+     * set this to <code>true</code>.
+     */
+    public void setErrorWhenNotSigned( boolean errorWhenNotSigned )
+    {
+        this.errorWhenNotSigned = errorWhenNotSigned;
     }
 }
