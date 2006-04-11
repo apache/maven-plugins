@@ -52,7 +52,8 @@ public final class ApplicationXmlWriter
         this.encoding = encoding;
     }
 
-    public void write( File destinationFile, List earModules, String displayName, String description )
+    public void write( File destinationFile, List earModules, List securityRoles, String displayName,
+                       String description )
         throws EarPluginException
     {
         FileWriter w;
@@ -70,28 +71,36 @@ public final class ApplicationXmlWriter
         if ( GenerateApplicationXmlMojo.VERSION_1_3.equals( version ) )
         {
             writer = initializeRootElementOneDotThree( w );
-            writeDisplayName(displayName, writer);
-            writeDescription(description, writer);
+            writeDisplayName( displayName, writer );
+            writeDescription( description, writer );
         }
         else if ( GenerateApplicationXmlMojo.VERSION_1_4.equals( version ) )
         {
             writer = initializeRootElementOneDotFour( w );
-            writeDescription(description, writer);
-            writeDisplayName(displayName, writer);
+            writeDescription( description, writer );
+            writeDisplayName( displayName, writer );
         }
 
-        Iterator i = earModules.iterator();
-        while ( i.hasNext() )
+        final Iterator moduleIt = earModules.iterator();
+        while ( moduleIt.hasNext() )
         {
-            EarModule module = (EarModule) i.next();
+            EarModule module = (EarModule) moduleIt.next();
             module.appendModule( writer, version );
         }
+
+        final Iterator securityRoleIt = securityRoles.iterator();
+        while ( securityRoleIt.hasNext() )
+        {
+            SecurityRole securityRole = (SecurityRole) securityRoleIt.next();
+            securityRole.appendSecurityRole( writer );
+        }
+
         writer.endElement();
 
         close( w );
     }
 
-    private void writeDescription(String description, XMLWriter writer)
+    private void writeDescription( String description, XMLWriter writer )
     {
         if ( description != null )
         {
@@ -101,7 +110,7 @@ public final class ApplicationXmlWriter
         }
     }
 
-    private void writeDisplayName(String displayName, XMLWriter writer)
+    private void writeDisplayName( String displayName, XMLWriter writer )
     {
         if ( displayName != null )
         {
