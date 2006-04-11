@@ -279,6 +279,11 @@ public class ChangeLogReport
     {
         List changelogList = null;
 
+        if ( !outputXML.isAbsolute() )
+        {
+            outputXML = new File( project.getBasedir(), outputXML.getPath() );
+        }
+
         if ( outputXML.exists() )
         {
             if ( outputXMLExpiration * 60000 > System.currentTimeMillis() - outputXML.lastModified() )
@@ -1178,6 +1183,11 @@ public class ChangeLogReport
      */
     protected String getOutputDirectory()
     {
+        if ( !outputDirectory.isAbsolute() )
+        {
+            outputDirectory = new File( project.getBasedir(), outputDirectory.getPath() );
+        }
+
         return outputDirectory.getAbsolutePath();
     }
 
