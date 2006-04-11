@@ -1,0 +1,19 @@
+<project>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-rar-plugin</artifactId>
+		<configuration>
+		  <rarSourceDirectory>${basedir}/src/test/resources/unit/basic-rar-test/src/main/rar</rarSourceDirectory>
+		  <raXmlFile>${basedir}/src/test/resources/unit/basic-rar-test/src/main/rar/META-INF/ra.xml</raXmlFile>
+		  <includeJar>true</includeJar>
+		  <manifestFile>${basedir}/src/main/rar/META-INF/MANIFEST.MF</manifestFile>
+		  <workDirectory>${basedir}/target/unit/basic-rar-test/target/rar-test</workDirectory>
+		  <outputDirectory>${basedir}/target/unit/basic-rar-test/target</outputDirectory>
+		  <finalName>test-rar</finalName>
+		  <project implementation="org.apache.maven.plugin.rar.stubs.RarMavenProjectStub" />
+		</configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
