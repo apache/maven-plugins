@@ -24,7 +24,7 @@
           <range>-1</range>
           <dateFormat>yyyy-MM-dd</dateFormat>
           <basedir>${basedir}/src/main/java</basedir>
-          <outputXML>changelog.xml</outputXML>
+          <outputXML>${basedir}/src/test/changelog-xml/min-changelog.xml</outputXML>
           <outputXMLExpiration>60</outputXMLExpiration>
           <outputEncoding>ISO-8859-1</outputEncoding>
           <scmUrl>scm://</scmUrl>
