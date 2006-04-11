@@ -49,6 +49,14 @@ public class JarSignMojo
     extends AbstractMojo
 {
     /**
+     * Set this to <code>true</code> to disable signing.
+     * Useful to speed up build process in development environment.
+     *
+     * @parameter expression="${maven.jar.sign.skip}" default-value="false"
+     */
+    private boolean skip;
+
+    /**
      * @parameter expression="${workingdir}" default-value="${basedir}"
      * @required
      */
@@ -162,7 +170,8 @@ public class JarSignMojo
     private MavenProject project;
 
     /**
-     * Classifier to use for the generated artifact. If not specified, the generated artifact becomes the primary artifact.
+     * Classifier to use for the generated artifact.
+     * If not specified, the generated artifact becomes the primary artifact.
      *
      * @parameter expression="${classifier}"
      */
@@ -171,6 +180,10 @@ public class JarSignMojo
     public void execute()
         throws MojoExecutionException
     {
+        if ( skip )
+        {
+            getLog().info( "Skipping JAR signing for file: " + getJarFile().getAbsolutePath() );
+        }
 
         signJar();
 
