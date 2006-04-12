@@ -39,6 +39,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Collection;
+import java.util.ArrayList;
 
 /**
  * Base routines for assembly and unpack goals.
@@ -122,12 +124,50 @@ public abstract class AbstractUnpackingMojo
      */
     protected MavenProject project;
 
+
     /**
-     * Retrieves all artifact dependencies within the reactor
+     * Retrieves all artifact dependencies.
      *
      * @return A HashSet of artifacts
      */
     protected Set getDependencies()
+        throws MojoExecutionException
+    {
+        return new HashSet( getDependenciesMap().values() );
+    }
+
+    /**
+     * Retrieves an includes list generated from the existing depedencies in a project.
+     *
+     * @return A List of includes
+     * @throws MojoExecutionException
+     */
+    protected List getDependenciesIncludeList()
+        throws MojoExecutionException
+    {
+        List includes = new ArrayList();
+
+        for ( Iterator i = getDependencies().iterator(); i.hasNext(); )
+        {
+            Artifact a = (Artifact) i.next();
+
+            if ( project.getArtifactId().equals( a.getArtifactId() ))
+            {
+                continue;
+            }
+
+            includes.add( a.getGroupId() + ":" + a.getArtifactId() );
+        }
+
+        return includes;
+    }
+
+    /**
+     * Retrieves all artifact dependencies in a Map keyed by conflict id.
+     *
+     * @return A Map of artifacts
+     */
+    protected Map getDependenciesMap()
         throws MojoExecutionException
     {
         Map dependencies = new HashMap();
@@ -175,7 +215,8 @@ public abstract class AbstractUnpackingMojo
                 }
             }
         }
-        return new HashSet( dependencies.values() );
+
+        return dependencies;
     }
 
     protected Set getModules()
