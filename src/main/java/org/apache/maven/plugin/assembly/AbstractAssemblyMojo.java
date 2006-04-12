@@ -417,18 +417,39 @@ public abstract class AbstractAssemblyMojo
 
             Set dependencyArtifacts = getDependencies();
 
-            List artifacts = new ArrayList();
-
             AndArtifactFilter filter = new AndArtifactFilter();
 
-            if ( !repository.getIncludes().isEmpty() )
+            // ----------------------------------------------------------------------------
+            // Includes
+            //
+            // We'll take everything if no includes are specified to try and make this
+            // process more maintainable. Don't want to have to update the assembly
+            // descriptor everytime the POM is updated.
+            // ----------------------------------------------------------------------------
+
+            if ( repository.getIncludes().isEmpty() )
+            {
+                filter.add( new IncludesArtifactFilter( getDependenciesIncludeList() ) );
+            }
+            else
             {
                 filter.add( new IncludesArtifactFilter( repository.getIncludes() ) );
             }
+
+
+            // ----------------------------------------------------------------------------
+            // Excludes
+            //
+            // We still want to make it easy to exclude a few things even if we slurp
+            // up everything.
+            // ----------------------------------------------------------------------------
+
             if ( !repository.getExcludes().isEmpty() )
             {
                 filter.add( new ExcludesArtifactFilter( repository.getExcludes() ) );
             }
+
+            List artifacts = new ArrayList();
 
             for ( Iterator j = dependencyArtifacts.iterator(); j.hasNext(); )
             {
