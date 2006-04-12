@@ -13,9 +13,22 @@ Introduction
 
    * pmd:cpd - run PMD's Copy/Paste Detector tool and generate a report
 
-   * pmd:pmd-check - verify the PMD report is empty and fail the build if it is not
+   * pmd:check - verify the PMD report is empty and fail the build if it is not
 
    * pmd:cpd-check - verify the CPD report is empty and fail the build if it is not
+
+  To include a report with default rule sets and configuration, use:
+
++--------
+<reporting>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-pmd-plugin</artifactId>
+    </plugin>
+  </plugins>
+</reporting>
++--------
 
 Configuration
 
@@ -25,7 +38,7 @@ Configuration
   Note that HTML is always generated in addition to any other alternate format.  Legal formats
   are "html", "csv", "xml" and "txt".
   
-  The reports will link directly to the cross-referenced source if you enable this with the linkXref parameter.
+  The reports will link directly to the cross-referenced source if you enable this with the linkXRef parameter.
   See the {{{http://mojo.codehaus.org/jxr-maven-plugin/}JXR}} plugin for more details.
 
   If your source uses a non-default encoding, you can use the sourceEncoding parameter to tell Maven which
@@ -34,55 +47,55 @@ Configuration
   You can configure the minimum code size which trips the CPD.  The default of 100 tokens cooresponds
   to approxiamately 5-10 lines of code.
   
-  Since PMD parses the Java source, it needs to know which Java version to use.  The default is 1.4.
+  Since PMD parses the Java source, it needs to know which Java version to use.  The default is 1.4. The following is a
+  possible configuration:
 
 +--------
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <configuration>
-                    <rulesets>
-                        <ruleset>/rulesets/basic.xml</ruleset>
-                        <ruleset>/rulesets/controversial.xml</ruleset>
-                        <ruleset>d:\rulesets\strings.xml</ruleset>
-                        <ruleset>http://localhost/design.xml</ruleset>
-                    </rulesets>
-                    <format>xml</format>
-                    <linkXref>true</linkXref>
-                    <sourceEncoding>utf-8</sourceEncoding>
-                    <minimumTokens>100</minimumTokens>
-                    <targetJdk>1.5</targetJdk>
-                </configuration>
-            </plugin>
-        </plugins>
-    </reporting>
+<reporting>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-pmd-plugin</artifactId>
+      <configuration>
+        <rulesets>
+          <ruleset>/rulesets/basic.xml</ruleset>
+          <ruleset>/rulesets/controversial.xml</ruleset>
+          <ruleset>d:\rulesets\strings.xml</ruleset>
+          <ruleset>http://localhost/design.xml</ruleset>
+        </rulesets>
+        <sourceEncoding>utf-8</sourceEncoding>
+        <minimumTokens>100</minimumTokens>
+        <targetJdk>1.5</targetJdk>
+      </configuration>
+    </plugin>
+  </plugins>
+</reporting>
 +---------
 
 Violation Checking
 
-  The pmd-check and cpd-check will scan for the PMD or CPD report output respectively and throw an exception
+  The pmd:check and pmd:cpd-check goals will scan for the PMD or CPD report output respectively and throw an exception
   if the report contains any entries.  This allows you to configure your build to fail if the check goal fails
   and, in doing so, enforce your own custom code quality rules.
 
   TODO Please give example of how to configure build element to run CPD and PMD check goals.  Something like this:
   
 +--------
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>cpd</goal>
-                            <goal>cpd-check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-			</plugin>
-		</plugins>
-	</build>
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-pmd-plugin</artifactId>
+      <executions>
+        <execution>
+          <goals>
+            <goal>check</goal>
+            <goal>cpd-check</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+  </plugins>
+</build>
 +---------
+
