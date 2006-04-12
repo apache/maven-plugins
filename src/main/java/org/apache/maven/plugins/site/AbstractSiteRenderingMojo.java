@@ -275,7 +275,7 @@ public abstract class AbstractSiteRenderingMojo
         }
 
         // Legacy for the old ${parentProject} syntax
-        props.put( "parentProject", "<menu ref=\"parentProject\"/>" );
+        props.put( "parentProject", "<menu ref=\"parent\"/>" );
 
         siteDescriptorContent = StringUtils.interpolate( siteDescriptorContent, props );
 
@@ -356,7 +356,7 @@ public abstract class AbstractSiteRenderingMojo
 
     private void populateProjectParentMenu( DecorationModel decorationModel, Locale locale, MavenProject parentProject )
     {
-        Menu menu = decorationModel.getMenuRef( "parentProject" );
+        Menu menu = decorationModel.getMenuRef( "parent" );
 
         if ( menu != null )
         {
@@ -381,6 +381,10 @@ public abstract class AbstractSiteRenderingMojo
                 item.setName( parentProject.getName() );
                 item.setHref( parentUrl );
                 menu.addItem( item );
+            }
+            else
+            {
+                decorationModel.removeMenuRef( "parent" );
             }
         }
     }
