@@ -27,7 +27,11 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <skip>true</skip>
+          <excludes>
+            <exclude>**/Abstract*Test.java</exclude>
+            <exclude>**/Abstract*TestCase.java</exclude>
+            <exclude>**/*ReportTest.java</exclude>
+          </excludes>
         </configuration>
       </plugin>
     </plugins>
