@@ -40,5 +40,4 @@ public class DirectoryMojo
     {
         return executedProject;
     }
-
 }
