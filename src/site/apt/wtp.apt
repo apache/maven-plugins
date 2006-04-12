@@ -20,18 +20,18 @@ WTP support
  <<This means that only project-dependencies (in a multi-module build) will work, but any other dependency in the POM
  will be ignored when running the web application inside eclipse>>
  
- Apart from this, WTP 1.0 also has a grave performance regression which makes internal server pretty unusable, so we suggest
- to avoid using the 1.0 release.
+ This bug has been fixed in release 1.0.1, so if you are still using WTP 1.0 be sure to update it to the 1.0.1 (or newer)
+ release.
  
- The bug is now fixed for the 1.0.1 release, expected for February, 2006. You can already download a working copy of WTP
- from {{{http://download.eclipse.org/webtools/downloads/}http://download.eclipse.org/webtools/downloads/}}
- ("Released Maintenance" for Eclipse 3.1 or "Integration Build" for Eclipse 3.2)
+ You can download a working copy of WTP from {{{http://download.eclipse.org/webtools/downloads/}http://download.eclipse.org/webtools/downloads/}}
 
 * WTP versions
  
  In order to create a configuration for WTP you <always> need to specify the version of WTP you are using.
  
- The plugin actually supports WTP R7 and 1.0 (actually, 1.0 means you need 1.0.1 according to the above note).
+ The plugin actually supports creating WTP R7 and 1.0 configuration files (and WTP 1.5 builds, since configuration files
+ are not changed after 1.0)
+ 
  Note that R7/1.0 configuration files are totally different, so be sure to check the version you are using.
 
  In order to generate WTP configuration files simply run:
