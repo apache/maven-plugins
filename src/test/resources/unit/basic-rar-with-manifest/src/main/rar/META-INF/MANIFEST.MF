@@ -1,0 +1,12 @@
+Manifest-Version: test
+Archiver-Version: test
+Created-By: Apache Maven
+Built-By: aqr
+Build-Jdk: 1.4.2_11
+Extension-Name: maven-rar-test
+Specification-Title: Test description
+Specification-Vendor: organization
+Implementation-Vendor: organization
+Implementation-Title: maven-rar-test
+Implementation-Version: 1.0-SNAPSHOT
+
