@@ -8,7 +8,7 @@
 		  <raXmlFile>${basedir}/src/test/resources/unit/basic-rar-with-manifest/src/main/rar/META-INF/ra.xml</raXmlFile>
 		  <includeJar>false</includeJar>
 		  <manifestFile>${basedir}/src/test/resources/unit/basic-rar-with-manifest/src/main/rar/META-INF/MANIFEST.MF</manifestFile>
-		  <workDirectory>${basedir}/target/unit/basic-rar-with-manifest/target/rar-test-with-descriptor</workDirectory>
+		  <workDirectory>${basedir}/target/unit/basic-rar-with-manifest/target/rar-test-with-manifest</workDirectory>
 		  <outputDirectory>${basedir}/target/unit/basic-rar-with-manifest/target</outputDirectory>
 		  <finalName>test-rar-with-manifest</finalName>
 		  <project implementation="org.apache.maven.plugin.rar.stubs.RarMavenProjectStub3" />
