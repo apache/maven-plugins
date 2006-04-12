@@ -436,7 +436,6 @@ public abstract class AbstractAssemblyMojo
                 filter.add( new IncludesArtifactFilter( repository.getIncludes() ) );
             }
 
-
             // ----------------------------------------------------------------------------
             // Excludes
             //
@@ -468,7 +467,10 @@ public abstract class AbstractAssemblyMojo
                 repositoryDirectory.mkdirs();
             }
 
-            repositoryAssembler.assemble( repositoryDirectory, artifacts, project.getRemoteArtifactRepositories() );
+            repositoryAssembler.assemble( repositoryDirectory,
+                                          artifacts,
+                                          project.getRemoteArtifactRepositories(),
+                                          repository.isIncludeMetadata() );
 
             if ( includeBaseDirectory )
             {
