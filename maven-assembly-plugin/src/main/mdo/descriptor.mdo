@@ -401,6 +401,18 @@
       <version>1.0.0</version>
       <superClass>SetBase</superClass>
       <description>Defines a Maven repository to be included in the assembly.</description>
+      <fields>
+        <field>
+          <name>includeMetadata</name>
+          <type>boolean</type>
+          <defaultValue>false</defaultValue>
+          <description>
+            If set to true, this property will trigger the creation of repository
+            metadata which will allow the repository to be used as a functional remote
+            repository.
+          </description>
+        </field>
+      </fields>
     </class>
   </classes>
 </model>

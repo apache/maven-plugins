@@ -151,7 +151,7 @@ public abstract class AbstractUnpackingMojo
         {
             Artifact a = (Artifact) i.next();
 
-            if ( project.getArtifactId().equals( a.getArtifactId() ))
+            if ( project.getGroupId().equals( a.getGroupId() ) && project.getArtifactId().equals( a.getArtifactId() ))
             {
                 continue;
             }
