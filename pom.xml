@@ -11,6 +11,11 @@
   <name>Maven PMD Plugin</name>
   <version>2.0-SNAPSHOT</version>
   <inceptionYear>2005</inceptionYear>
+  <description>
+    A Maven plugin for the PMD toolkit, that produces a report on both code rule violations and detected copy and paste
+    fragments,
+    as well as being able to fail the build based on these metrics.
+  </description>
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
