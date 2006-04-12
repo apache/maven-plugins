@@ -24,6 +24,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.artifact.Artifact;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.DirectoryScanner;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,6 +46,7 @@ public class RarMojo
 {
     public static final String RA_XML_URI = "META-INF/ra.xml";
 
+    private static final String[] DEFAULT_INCLUDES = {"**/**"};
 
     /**
      * Single directory for extra files to include in the RAR.
@@ -186,10 +188,34 @@ public class RarMojo
             if ( rarSourceDir.exists() )
             {
                 getLog().info( "Copy rar resources to " + getBuildDir().getAbsolutePath() );
-                FileUtils.copyDirectoryStructure( rarSourceDir, getBuildDir() );
+
+                DirectoryScanner scanner = new DirectoryScanner();
+                scanner.setBasedir( rarSourceDir.getAbsolutePath() );
+                scanner.setIncludes( DEFAULT_INCLUDES );
+                scanner.addDefaultExcludes();
+                scanner.scan();
+
+                String[] dirs = scanner.getIncludedDirectories();
+
+                for ( int j = 0; j < dirs.length; j++ )
+                {
+                    new File( getBuildDir(), dirs[j] ).mkdirs();
+                }
+
+                String[] files = scanner.getIncludedFiles();
+
+                for ( int j = 0; j < files.length; j++ )
+                {
+                    File targetFile = new File( getBuildDir(), files[j] );
+
+                    targetFile.getParentFile().mkdirs();
+
+                    File file = new File( rarSourceDir, files[j] );
+                    FileUtils.copyFileToDirectory( file, targetFile.getParentFile() );
+                }
             }
         }
-        catch ( IOException e )
+        catch ( Exception e )
         {
             throw new MojoExecutionException( "Error copying RAR resources", e );
         }
@@ -243,6 +269,7 @@ public class RarMojo
     }
 
     private void includeCustomManifestFile()
+        throws IOException
     {
         File customManifestFile = manifestFile;
         if ( !customManifestFile.exists() )
@@ -253,6 +280,8 @@ public class RarMojo
         {
             getLog().info( "Including custom manifest file[" + customManifestFile + "]" );
             archive.setManifestFile( customManifestFile );
+            File metaInfDir = new File(getBuildDir(), "META-INF");
+            FileUtils.copyFileToDirectory( customManifestFile, metaInfDir );
         }
     }
 
