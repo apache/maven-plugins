@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.apache.maven</groupId>
@@ -38,6 +38,7 @@
     <module>maven-clean-plugin</module>
     <module>maven-clover-plugin</module>
     <module>maven-compiler-plugin</module>
+    <module>maven-dependency-plugin</module>
     <module>maven-deploy-plugin</module>
     <module>maven-eclipse-plugin</module>
     <module>maven-ear-plugin</module>
@@ -53,7 +54,7 @@
     <module>maven-project-info-reports-plugin</module>
     <module>maven-rar-plugin</module>
     <module>maven-release-plugin</module>
-    <module>maven-repository-plugin</module>    
+    <module>maven-repository-plugin</module>
     <module>maven-resources-plugin</module>
     <module>maven-site-plugin</module>
     <module>maven-source-plugin</module>
