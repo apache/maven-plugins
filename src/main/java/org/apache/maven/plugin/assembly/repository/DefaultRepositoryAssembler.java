@@ -62,7 +62,7 @@ public class DefaultRepositoryAssembler
 
                 if ( includeMetadata )
                 {
-                    File metadataFile = new File( a.getFile().getParent(), "maven-metadata.xml" );
+                    File metadataFile = new File( a.getFile().getParentFile().getParent(), "maven-metadata.xml" );
 
                     Metadata m = new Metadata();
 
