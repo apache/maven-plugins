@@ -219,19 +219,33 @@ public abstract class AbstractSiteRenderingMojo
     {
         Map props = new HashMap( origProps );
 
-        // TODO: we should use a workspace API that would know if it was in the repository already or not
-        File siteDescriptor = getSiteDescriptorFile( project.getBasedir(), locale );
-
-        String siteDescriptorContent;
-
-        try
+        File siteDescriptor;
+        if ( project.getBasedir() == null )
         {
-            if ( !siteDescriptor.exists() )
+            // POM is in the repository, look there for site descriptor
+            try
             {
-                // try the repository
                 siteDescriptor = getSiteDescriptorFromRepository( project, locale );
             }
+            catch ( ArtifactResolutionException e )
+            {
+                throw new MojoExecutionException(
+                    "The site descriptor cannot be resolved from the repository: " + e.getMessage(), e );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException(
+                    "The site descriptor cannot be resolved from the repository: " + e.getMessage(), e );
+            }
+        }
+        else
+        {
+            siteDescriptor = getSiteDescriptorFile( project.getBasedir(), locale );
+        }
 
+        String siteDescriptorContent;
+        try
+        {
             if ( siteDescriptor != null && siteDescriptor.exists() )
             {
                 siteDescriptorContent = FileUtils.fileRead( siteDescriptor );
@@ -244,11 +258,6 @@ public abstract class AbstractSiteRenderingMojo
         catch ( IOException e )
         {
             throw new MojoExecutionException( "The site descriptor cannot be read!", e );
-        }
-        catch ( ArtifactResolutionException e )
-        {
-            throw new MojoExecutionException(
-                "The site descriptor cannot be resolved from the repository: " + e.getMessage(), e );
         }
 
         props.put( "inputEncoding", inputEncoding );
@@ -308,7 +317,7 @@ public abstract class AbstractSiteRenderingMojo
     }
 
     private File getSiteDescriptorFromRepository( MavenProject project, Locale locale )
-        throws ArtifactResolutionException
+        throws ArtifactResolutionException, IOException
     {
         File result = null;
 
@@ -325,32 +334,69 @@ public abstract class AbstractSiteRenderingMojo
     }
 
     private File resolveSiteDescriptor( MavenProject project, Locale locale )
-        throws ArtifactResolutionException, ArtifactNotFoundException
+        throws IOException, ArtifactResolutionException, ArtifactNotFoundException
     {
         File result;
 
+        // TODO: this is a bit crude - proper type, or proper handling as metadata rather than an artifact in 2.1?
+        Artifact artifact = artifactFactory.createArtifactWithClassifier( project.getGroupId(), project.getArtifactId(),
+                                                                          project.getVersion(), "xml",
+                                                                          "site_" + locale.getLanguage() );
+
+        boolean found = false;
         try
         {
-            // TODO: this is a bit crude - proper type, or proper handling as metadata rather than an artifact in 2.1?
-            Artifact artifact = artifactFactory.createArtifactWithClassifier( project.getGroupId(),
-                                                                              project.getArtifactId(),
-                                                                              project.getVersion(), "xml",
-                                                                              "site_" + locale.getLanguage() );
             artifactResolver.resolve( artifact, repositories, localRepository );
 
             result = artifact.getFile();
+
+            // we use zero length files to avoid re-resolution (see below)
+            if ( result.length() > 0 )
+            {
+                found = true;
+            }
+            else
+            {
+                getLog().debug( "Skipped locale's site descriptor" );
+            }
         }
         catch ( ArtifactNotFoundException e )
         {
-            getLog().debug( "Unable to locate site descriptor: " + e );
+            getLog().debug( "Unable to locate locale's site descriptor: " + e );
 
-            Artifact artifact = artifactFactory.createArtifactWithClassifier( project.getGroupId(),
-                                                                              project.getArtifactId(),
-                                                                              project.getVersion(), "xml", "site" );
-            artifactResolver.resolve( artifact, repositories, localRepository );
+            // we can afford to write an empty descriptor here as we don't expect it to turn up later in the remote
+            // repository, because the parent was already released (and snapshots are updated automatically if changed)
+            result = new File( localRepository.getBasedir(), localRepository.pathOf( artifact ) );
+            result.createNewFile();
+        }
+
+        if ( !found )
+        {
+            artifact = artifactFactory.createArtifactWithClassifier( project.getGroupId(), project.getArtifactId(),
+                                                                     project.getVersion(), "xml", "site" );
+            try
+            {
+                artifactResolver.resolve( artifact, repositories, localRepository );
+            }
+            catch ( ArtifactNotFoundException e )
+            {
+                // see above regarding this zero length file
+                result = new File( localRepository.getBasedir(), localRepository.pathOf( artifact ) );
+                result.createNewFile();
+
+                throw e;
+            }
 
             result = artifact.getFile();
+
+            // we use zero length files to avoid re-resolution (see below)
+            if ( result.length() == 0 )
+            {
+                getLog().debug( "Skipped remote site descriptor check" );
+                result = null;
+            }
         }
+
         return result;
     }
 
