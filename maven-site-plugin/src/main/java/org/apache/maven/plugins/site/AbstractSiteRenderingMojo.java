@@ -407,23 +407,18 @@ public abstract class AbstractSiteRenderingMojo
         MavenProject origParent = project.getParent();
         if ( origParent != null )
         {
-            if ( origParent.getArtifactId() != null )
+            Iterator reactorItr = reactorProjects.iterator();
+
+            while ( reactorItr.hasNext() )
             {
-                String parentArtifactId = origParent.getArtifactId();
+                MavenProject reactorProject = (MavenProject) reactorItr.next();
 
-                Iterator reactorItr = reactorProjects.iterator();
-
-                while ( reactorItr.hasNext() )
+                if ( reactorProject.getGroupId().equals( origParent.getGroupId() ) &&
+                    reactorProject.getArtifactId().equals( origParent.getArtifactId() ) &&
+                    reactorProject.getVersion().equals( origParent.getVersion() ) )
                 {
-                    MavenProject reactorProject = (MavenProject) reactorItr.next();
-
-                    String reactorArtifactId = reactorProject.getArtifactId();
-
-                    if ( parentArtifactId.equals( reactorArtifactId ) )
-                    {
-                        parentProject = reactorProject;
-                        break;
-                    }
+                    parentProject = reactorProject;
+                    break;
                 }
             }
 
