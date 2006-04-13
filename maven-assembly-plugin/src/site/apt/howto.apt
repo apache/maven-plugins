@@ -50,28 +50,31 @@ How to Use
 
  You can also configure this plugin inside your pom.xml.  To run use "mvn assembly:assembly".
 
--------------------
+-----
+
 <project>
-   ...
-      <build>
-         ...
-        <plugins>
-            <plugin>
-             <artifactId>maven-assembly-plugin</artifactId>
-             <version>2.0-beta-1</version>
-                 <configuration>
-                       <descriptor>path/to/descriptor.xml</descriptor>
-                       <finalName>final_name</finalName>
-                       <outputDirectory>output/directory</outputDirectory>
-                       <workDirectory>target/assembly/work</workDirectory>
-                 </configuration>
-            </plugin>
-         </plugins>
-         ...
-      </build>
+  ...
+  <build>
+    ...
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.0-beta-1</version>
+        <configuration>
+          <descriptor>path/to/descriptor.xml</descriptor>
+          <finalName>final_name</finalName>
+          <outputDirectory>output/directory</outputDirectory>
+          <workDirectory>target/assembly/work</workDirectory>
+        </configuration>
+      </plugin>
+     </plugins>
+     ...
+   </build>
    ...
 </project>
--------------------
+
+-----
+
 
 * How to use assembly:unpack
 
@@ -83,3 +86,52 @@ How to Use
 -----
 
   For full documentation of plugin's goals and parameters, click {{{index.html}here}}.
+
+* How to assemble a repository
+
+ The simplest descriptor you can create for assembly a repository would be something like the following:
+
+-----
+
+<assembly>
+  <id>bin</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <repositories>
+    <repository>
+      <outputDirectory>repository</outputDirectory>
+    </repository>
+  </repositories>
+</assembly>
+
+-----
+
+ With no <<<includes>>> or <<<excludes>>> specified all dependencies are used to create a repository. In fact when you
+ specify no <<<includes>>> the default will be to include them all, but you can still specify <<<excludes>>> if you need
+ to keep certain artifacts from making it into the repository you're trying to assemble.
+
+ By default no repository metadata is generated when the repository is assembled. If you are trying to create a repository
+ that is going to be used as a remote repository then you will need to have the metadata generated in order to for it
+ to function properly as a remote repository. To do this just enable repository metadata generation by using the
+ <<<includeMetadata>>> element:
+
+-----
+
+<assembly>
+  <id>bin</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <repositories>
+    <repository>
+      <outputDirectory>repository</outputDirectory>
+      <includeMetadata>true</includeMetadata>
+    </repository>
+  </repositories>
+</assembly>
+
+-----
+
+ Keep in mind that any dependencies specified in the POM will have their transitive dependencies placed in the
+ assembly as well.
