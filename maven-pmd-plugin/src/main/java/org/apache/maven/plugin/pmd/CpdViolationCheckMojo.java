@@ -32,6 +32,6 @@ public class CpdViolationCheckMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        executeCheck( "cpd.xml", "duplication" );
+        executeCheck( "cpd.xml", "duplication", "CPD duplication" );
     }
 }
