@@ -422,7 +422,7 @@ public abstract class AbstractSiteRenderingMojo
                 }
             }
 
-            if ( parentProject == null )
+            if ( parentProject == null && project.getBasedir() != null )
             {
                 try
                 {
