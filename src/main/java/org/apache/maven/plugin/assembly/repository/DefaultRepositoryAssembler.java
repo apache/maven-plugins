@@ -73,9 +73,13 @@ public class DefaultRepositoryAssembler
             Artifact a = artifactFactory.createBuildArtifact( ma.getGroupId(), ma.getArtifactId(), ma.getVersion(),
                                                               ma.getType() );
 
+            Artifact pa = artifactFactory.createProjectArtifact( ma.getGroupId(), ma.getArtifactId(), ma.getVersion() );
+
             try
             {
                 artifactResolver.resolveAlways( a, remoteRepositories, localRepository );
+
+                artifactResolver.resolveAlways( pa, remoteRepositories, localRepository );
 
                 if ( includeMetadata )
                 {
