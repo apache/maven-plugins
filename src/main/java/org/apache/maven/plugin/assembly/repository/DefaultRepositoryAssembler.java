@@ -91,6 +91,8 @@ public class DefaultRepositoryAssembler
 
                     v.setRelease( a.getVersion() );
 
+                    v.setLatest( a.getVersion() );
+
                     v.addVersion( a.getVersion() );
 
                     m.setVersioning( v );
