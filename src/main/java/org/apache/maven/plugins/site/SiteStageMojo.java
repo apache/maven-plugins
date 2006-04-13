@@ -53,7 +53,7 @@ public class SiteStageMojo
     /**
      * Staging directory location.
      *
-     * @parameter expression="${stagingDirectory}" default-value="${project.build.directory}/stage-site"
+     * @parameter expression="${stagingDirectory}" default-value="${project.build.directory}/staging"
      * @required
      */
     private File stagingDirectory;
@@ -61,7 +61,7 @@ public class SiteStageMojo
     /**
      * Staging site URL to deploy the staging directory.
      *
-     * @parameter expression="${stagingSiteURL}"
+     * @parameter expression="${stagingSiteURL}" default-value="${project.distributionManagement.site.url}/staging"
      * @see <a href="http://maven.apache.org/maven-model/maven.html#class_site">MavenModel#class_site</a>
      */
     private String stagingSiteURL;
