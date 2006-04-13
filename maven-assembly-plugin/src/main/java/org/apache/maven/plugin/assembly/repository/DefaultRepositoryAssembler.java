@@ -15,6 +15,7 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -23,6 +24,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.Date;
+import java.util.Map;
+import java.util.HashMap;
 import java.text.SimpleDateFormat;
 import java.text.DateFormat;
 
@@ -45,16 +48,30 @@ public class DefaultRepositoryAssembler
 
     protected ArtifactRepositoryFactory artifactRepositoryFactory;
 
-    public void assemble( File outputDirectory, List artifacts, List remoteRepositories, boolean includeMetadata )
+    public void assemble( File outputDirectory,
+                          List artifacts,
+                          List remoteRepositories,
+                          List versionAlignments,
+                          boolean includeMetadata )
         throws RepositoryAssemblyException
     {
+        Map versionAlignmentMap = createVersionAlignmentMap( versionAlignments );
+
         ArtifactRepository localRepository = createLocalRepository( outputDirectory );
 
         for ( Iterator i = artifacts.iterator(); i.hasNext(); )
         {
             Artifact ma = (Artifact) i.next();
 
-            Artifact a = artifactFactory.createBuildArtifact( ma.getGroupId() , ma.getArtifactId(), ma.getVersion(), ma.getType() );
+            String alignmentVersion = (String) versionAlignmentMap.get( ma.getGroupId() );
+
+            if ( alignmentVersion != null )
+            {
+                ma.setVersion( alignmentVersion );
+            }
+
+            Artifact a = artifactFactory.createBuildArtifact( ma.getGroupId(), ma.getArtifactId(), ma.getVersion(),
+                                                              ma.getType() );
 
             try
             {
@@ -78,7 +95,7 @@ public class DefaultRepositoryAssembler
 
                     m.setVersioning( v );
 
-                    v.setLastUpdated( getUtcDateFormatter().format( new Date() ));
+                    v.setLastUpdated( getUtcDateFormatter().format( new Date() ) );
 
                     MetadataXpp3Writer metadataWriter = new MetadataXpp3Writer();
 
@@ -100,7 +117,24 @@ public class DefaultRepositoryAssembler
         }
     }
 
-    public static DateFormat getUtcDateFormatter()
+    protected Map createVersionAlignmentMap( List versionAlignments )
+    {
+        Map m = new HashMap();
+
+        for ( Iterator i = versionAlignments.iterator(); i.hasNext(); )
+        {
+            String alignment = (String) i.next();
+
+            // split into groupId and version
+            String[] s = StringUtils.split( alignment, ":" );
+
+            m.put( s[0], s[1] );
+        }
+
+        return m;
+    }
+
+    protected static DateFormat getUtcDateFormatter()
     {
         DateFormat utcDateFormatter = new SimpleDateFormat( UTC_TIMESTAMP_PATTERN );
         utcDateFormatter.setTimeZone( UTC_TIME_ZONE );
@@ -108,7 +142,7 @@ public class DefaultRepositoryAssembler
     }
 
 
-    public ArtifactRepository createLocalRepository( File directory )
+    protected ArtifactRepository createLocalRepository( File directory )
     {
         String localRepositoryUrl = directory.getAbsolutePath();
 
@@ -117,7 +151,8 @@ public class DefaultRepositoryAssembler
             localRepositoryUrl = "file://" + localRepositoryUrl;
         }
 
-        return createRepository( "local", localRepositoryUrl, false, true, ArtifactRepositoryPolicy.CHECKSUM_POLICY_WARN );
+        return createRepository( "local", localRepositoryUrl, false, true,
+                                 ArtifactRepositoryPolicy.CHECKSUM_POLICY_WARN );
     }
 
     public ArtifactRepository createRepository( String repositoryId,
