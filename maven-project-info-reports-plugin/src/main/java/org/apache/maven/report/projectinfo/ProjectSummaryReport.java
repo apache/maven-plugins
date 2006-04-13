@@ -18,20 +18,19 @@ package org.apache.maven.report.projectinfo;
 
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.siterenderer.Renderer;
+import org.apache.maven.model.Organization;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.apache.maven.reporting.MavenReportException;
-import org.apache.maven.model.Organization;
 import org.codehaus.plexus.i18n.I18N;
 
 import java.util.Locale;
 
 /**
+ * @author Edwin Punzalan
  * @goal summary
  * @plexus.component
- *
- * @author Edwin Punzalan
  */
 public class ProjectSummaryReport
     extends AbstractMavenReport
@@ -169,10 +168,11 @@ public class ProjectSummaryReport
 
             startSection( getReportString( "report.summary.general.title" ) );
             startTable();
-            tableHeader( new String[] { getReportString( "Field" ), getReportString( "Value" ) } );
-            tableRow( new String[] { getReportString( "report.summary.general.name" ), name } );
-            tableRow( new String[] { getReportString( "report.summary.general.description" ), description } );
-            tableRowWithLink( new String[] { getReportString( "report.summary.general.homepage" ), homepage } );
+            tableHeader(
+                new String[]{getReportString( "report.summary.field" ), getReportString( "report.summary.value" )} );
+            tableRow( new String[]{getReportString( "report.summary.general.name" ), name} );
+            tableRow( new String[]{getReportString( "report.summary.general.description" ), description} );
+            tableRowWithLink( new String[]{getReportString( "report.summary.general.homepage" ), homepage} );
             endTable();
             endSection();
 
@@ -191,13 +191,15 @@ public class ProjectSummaryReport
                 }
                 if ( organization.getUrl() == null )
                 {
-                    organization.setUrl( "") ;
+                    organization.setUrl( "" );
                 }
 
                 startTable();
-                tableHeader( new String[] { getReportString( "Field" ), getReportString( "Value" ) } );
-                tableRow( new String[] { getReportString( "report.summary.organization.name" ), organization.getName() } );
-                tableRowWithLink( new String[] { getReportString( "report.summary.organization.url" ), organization.getUrl() } );
+                tableHeader( new String[]{getReportString( "report.summary.field" ),
+                    getReportString( "report.summary.value" )} );
+                tableRow( new String[]{getReportString( "report.summary.organization.name" ), organization.getName()} );
+                tableRowWithLink(
+                    new String[]{getReportString( "report.summary.organization.url" ), organization.getUrl()} );
                 endTable();
             }
             endSection();
@@ -205,11 +207,12 @@ public class ProjectSummaryReport
             //build section
             startSection( getReportString( "report.summary.build.title" ) );
             startTable();
-            tableHeader( new String[] { getReportString( "Field" ), getReportString( "Value" ) } );
-            tableRow( new String[] { getReportString( "report.summary.build.groupid" ), project.getGroupId() } );
-            tableRow( new String[] { getReportString( "report.summary.build.artifactid" ), project.getArtifactId() } );
-            tableRow( new String[] { getReportString( "report.summary.build.version" ), project.getVersion() } );
-            tableRow( new String[] { getReportString( "report.summary.build.type" ), project.getPackaging() } );
+            tableHeader(
+                new String[]{getReportString( "report.summary.field" ), getReportString( "report.summary.value" )} );
+            tableRow( new String[]{getReportString( "report.summary.build.groupid" ), project.getGroupId()} );
+            tableRow( new String[]{getReportString( "report.summary.build.artifactid" ), project.getArtifactId()} );
+            tableRow( new String[]{getReportString( "report.summary.build.version" ), project.getVersion()} );
+            tableRow( new String[]{getReportString( "report.summary.build.type" ), project.getPackaging()} );
             endTable();
             endSection();
 
@@ -227,7 +230,7 @@ public class ProjectSummaryReport
 
             for ( int ctr = 0; ctr < content.length; ctr++ )
             {
-                String cell = content[ ctr ];
+                String cell = content[ctr];
                 if ( cell == null )
                 {
                     cell = "";
@@ -235,7 +238,7 @@ public class ProjectSummaryReport
 
                 sink.tableCell();
 
-                if ( ctr == content.length -1 && cell.length() > 0 )
+                if ( ctr == content.length - 1 && cell.length() > 0 )
                 {
                     sink.link( cell );
                     sink.text( cell );
