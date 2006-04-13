@@ -32,6 +32,6 @@ public class PmdViolationCheckMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        executeCheck( "pmd.xml", "violation" );
+        executeCheck( "pmd.xml", "violation", "PMD violation" );
     }
 }
