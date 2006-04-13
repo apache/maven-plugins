@@ -120,9 +120,10 @@ public class CheckstyleViolationCheckMojo
         int count = 0;
 
         int eventType = xpp.getEventType();
-        while ( ( eventType != XmlPullParser.END_DOCUMENT ) )
+        while ( eventType != XmlPullParser.END_DOCUMENT )
         {
-            if ( ( eventType == XmlPullParser.START_TAG ) && "error".equals( xpp.getName() ) )
+            if ( eventType == XmlPullParser.START_TAG && "error".equals( xpp.getName() ) &&
+                "error".equals( xpp.getAttributeValue( "", "severity" ) ) )
             {
                 count++;
             }
