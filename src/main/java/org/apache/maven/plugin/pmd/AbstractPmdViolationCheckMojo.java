@@ -54,7 +54,7 @@ public abstract class AbstractPmdViolationCheckMojo
      */
     private File sourceDirectory;
 
-    protected void executeCheck( String filename, String tagName )
+    protected void executeCheck( String filename, String tagName, String key )
         throws MojoFailureException, MojoExecutionException
     {
         if ( "java".equals( language ) && sourceDirectory.exists() )
@@ -73,7 +73,7 @@ public abstract class AbstractPmdViolationCheckMojo
                     if ( violations > 0 && failOnViolation )
                     {
                         throw new MojoFailureException(
-                            "You have " + violations + " violation" + ( violations > 1 ? "s" : "" ) + "." );
+                            "You have " + violations + " " + key + ( violations > 1 ? "s" : "" ) + "." );
                     }
                 }
                 catch ( IOException e )
