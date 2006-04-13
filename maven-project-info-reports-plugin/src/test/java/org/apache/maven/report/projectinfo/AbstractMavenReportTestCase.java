@@ -261,7 +261,7 @@ public abstract class AbstractMavenReportTestCase
 
         cmd.setWorkingDirectory( workingDir.getAbsolutePath() );
 
-        cmd.setExecutable( "m2" );
+        cmd.setExecutable( "mvn" );
         cmd.createArgument().setValue( "clean:clean" );
         if ( !StringUtils.isEmpty( goal ) )
         {
