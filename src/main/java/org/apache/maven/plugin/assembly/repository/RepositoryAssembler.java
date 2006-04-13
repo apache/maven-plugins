@@ -10,6 +10,10 @@ public interface RepositoryAssembler
 {
     String ROLE = RepositoryAssembler.class.getName();
 
-    public void assemble( File outputDirectory, List artifacts, List remoteRepositories, boolean includeMetadata )
+    public void assemble( File outputDirectory,
+                          List artifacts,
+                          List remoteRepositories,
+                          List versionAlignments,
+                          boolean includeMetadata )
         throws RepositoryAssemblyException;
 }

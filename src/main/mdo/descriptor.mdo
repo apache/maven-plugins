@@ -384,7 +384,7 @@
         </field>
         <field>
           <name>scope</name>
-          <version>1.0.0</version>
+          <version>1.0.0</version>              
           <type>String</type>
           <defaultValue>runtime</defaultValue>
           <required>true</required>
@@ -404,6 +404,7 @@
       <fields>
         <field>
           <name>includeMetadata</name>
+          <version>1.0.0</version>
           <type>boolean</type>
           <defaultValue>false</defaultValue>
           <description>
@@ -411,6 +412,15 @@
             metadata which will allow the repository to be used as a functional remote
             repository.
           </description>
+        </field>
+        <field>
+          <name>versionAlignments</name>
+          <version>1.0.0</version>
+          <description>Align a group to a version or an individual artifact.</description>
+          <association>
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
         </field>
       </fields>
     </class>

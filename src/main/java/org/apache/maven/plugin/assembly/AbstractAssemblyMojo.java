@@ -470,6 +470,7 @@ public abstract class AbstractAssemblyMojo
             repositoryAssembler.assemble( repositoryDirectory,
                                           artifacts,
                                           project.getRemoteArtifactRepositories(),
+                                          repository.getVersionAlignments(),
                                           repository.isIncludeMetadata() );
 
             if ( includeBaseDirectory )
