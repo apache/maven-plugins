@@ -20,6 +20,15 @@
           <role>org.apache.maven.artifact.repository.ArtifactRepositoryFactory</role>
           <field-name>artifactRepositoryFactory</field-name>
         </requirement>
+        <requirement>
+          <role>org.apache.maven.artifact.metadata.ArtifactMetadataSource</role>
+          <role-hint>maven</role-hint>
+          <field-name>metadataSource</field-name>
+        </requirement>
+        <requirement>
+          <role>org.apache.maven.project.MavenProjectBuilder</role>
+          <field-name>projectBuilder</field-name>
+        </requirement>
       </requirements>
     </component>
   </components>
