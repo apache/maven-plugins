@@ -22,6 +22,8 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.configuration.PlexusConfiguration;
+import org.codehaus.plexus.configuration.PlexusConfigurationException;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -60,6 +62,13 @@ public abstract class AbstractEarMojo
     private EarModule[] modules;
 
     /**
+     * The artifact type mappings.
+     *
+     * @parameter
+     */
+    protected PlexusConfiguration artifactTypeMappings;
+
+    /**
      * The default bundle dir for Java modules.
      *
      * @parameter
@@ -81,50 +90,65 @@ public abstract class AbstractEarMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        getLog().debug( "Resolving ear modules ..." );
-
-        allModules = new ArrayList();
-
-        if ( modules != null && modules.length > 0 )
+        getLog().debug( "Resolving artifact type mappings ...");
+        try
         {
-            // Let's validate user-defined modules
-            EarModule module = null;
-            try
+            ArtifactTypeMappingService.getInstance().configure( artifactTypeMappings);
+        }
+        catch ( EarPluginException e )
+        {
+            throw new MojoExecutionException( "Failed to initialize artifact type mappings", e );
+        }
+        catch ( PlexusConfigurationException e )
+        {
+            throw new MojoExecutionException( "Invalid artifact type mappings configuration", e );
+        }
+
+        getLog().debug( "Resolving ear modules ..." );
+        allModules = new ArrayList();
+        try
+        {
+            if ( modules != null && modules.length > 0 )
             {
+                // Let's validate user-defined modules
+                EarModule module = null;
+
                 for ( int i = 0; i < modules.length; i++ )
                 {
-                    module = (EarModule) modules[i];
+                    module = modules[i];
                     getLog().debug( "Resolving ear module[" + module + "]" );
                     module.resolveArtifact( project.getArtifacts(), defaultJavaBundleDir );
                     allModules.add( module );
                 }
             }
-            catch ( EarPluginException e )
+
+            // Let's add other modules
+            Set artifacts = project.getArtifacts();
+            for ( Iterator iter = artifacts.iterator(); iter.hasNext(); )
             {
-                throw new MojoExecutionException( "Failed to initialize ear modules", e );
+                Artifact artifact = (Artifact) iter.next();
+
+                // If the artifact's type is POM, ignore and continue
+                // since it's used for transitive deps only.
+                if ( "pom".equals( artifact.getType() ) )
+                {
+                    continue;
+                }
+
+                // Artifact is not yet registered and it has neither test, nor a
+                // provided scope, not is it optional
+                ScopeArtifactFilter filter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
+                if ( !isArtifactRegistered( artifact, allModules ) && !artifact.isOptional() &&
+                    filter.include( artifact ) )
+                {
+                    EarModule module = EarModuleFactory.newEarModule( artifact, defaultJavaBundleDir );
+                    allModules.add( module );
+                }
             }
         }
-
-        // Let's add other modules
-        Set artifacts = project.getArtifacts();
-        for ( Iterator iter = artifacts.iterator(); iter.hasNext(); )
+        catch ( EarPluginException e )
         {
-            Artifact artifact = (Artifact) iter.next();
-
-            // If the artifact's type is POM, ignore and continue
-            // since it's used for transitive deps only.
-            if ("pom".equals(artifact.getType())) {
-                continue;
-            }
-
-            // Artifact is not yet registered and it has neither test, nor a
-            // provided scope, not is it optional
-            ScopeArtifactFilter filter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
-            if ( !isArtifactRegistered( artifact, allModules ) && !artifact.isOptional() && filter.include( artifact ) )
-            {
-                EarModule module = EarModuleFactory.newEarModule( artifact, defaultJavaBundleDir );
-                allModules.add( module );
-            }
+            throw new MojoExecutionException( "Failed to initialize ear modules", e );
         }
 
         // Now we have everything let's built modules which have not been excluded

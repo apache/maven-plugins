@@ -35,3 +35,25 @@ Supported artifacts
 
   * wsr
 
+
+  If you need to map a custom artifact type to one of those types, use the 'customArtifactTypeMappings'.
+
+  For instance, to map a custom 'my-rar' to the 'rar' standard artifact's type, add the following to
+  the pom's configuration:
+
++--------
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-ear-plugin</artifactId>
+        <configuration>
+          <artifactTypeMappings>
+            <artifactTypeMapping type="my-rar" mapping="rar"/>
+          </artifactTypeMappings>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
++---------
+
