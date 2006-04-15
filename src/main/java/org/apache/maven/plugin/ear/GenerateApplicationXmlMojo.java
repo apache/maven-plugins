@@ -177,10 +177,15 @@ public class GenerateApplicationXmlMojo
     private List buildSecurityRoles()
         throws EarPluginException
     {
+        final List result = new ArrayList();
+        if ( security == null )
+        {
+            return result;
+        }
         try
         {
             final PlexusConfiguration[] securityRoles = security.getChildren( SecurityRole.SECURITY_ROLE );
-            final List result = new ArrayList();
+
             for ( int i = 0; i < securityRoles.length; i++ )
             {
                 PlexusConfiguration securityRole = securityRoles[i];
