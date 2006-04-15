@@ -62,7 +62,7 @@ public class JavaModule
     }
 
     public void resolveArtifact( Set artifacts, String defaultJavaBundleDir )
-        throws MojoFailureException
+        throws EarPluginException , MojoFailureException
     {
         // Let's resolve the artifact
         super.resolveArtifact( artifacts, defaultJavaBundleDir );

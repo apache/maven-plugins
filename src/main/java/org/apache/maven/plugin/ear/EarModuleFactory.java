@@ -18,6 +18,9 @@ package org.apache.maven.plugin.ear;
 
 import org.apache.maven.artifact.Artifact;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Builds an {@link EarModule} based on an <tt>Artifact</tt>.
  *
@@ -26,6 +29,20 @@ import org.apache.maven.artifact.Artifact;
  */
 public final class EarModuleFactory
 {
+    public final static List standardArtifactTypes = new ArrayList();
+
+    static
+    {
+        standardArtifactTypes.add( "jar" );
+        standardArtifactTypes.add( "ejb" );
+        standardArtifactTypes.add( "ejb3" );
+        standardArtifactTypes.add( "par" );
+        standardArtifactTypes.add( "ejb-client" );
+        standardArtifactTypes.add( "rar" );
+        standardArtifactTypes.add( "war" );
+        standardArtifactTypes.add( "sar" );
+        standardArtifactTypes.add( "wsr" );
+    }
 
     /**
      * Creates a new {@link EarModule} based on the
@@ -36,48 +53,75 @@ public final class EarModuleFactory
      * @param defaultJavaBundleDir the default bundle dir for {@link JavaModule}
      * @return an ear module for this artifact
      */
-    public static final EarModule newEarModule( Artifact artifact, String defaultJavaBundleDir )
+    public static EarModule newEarModule( Artifact artifact, String defaultJavaBundleDir )
+        throws UnknownArtifactTypeException
     {
-        if ( "jar".equals( artifact.getType() ) )
+        // Get the standard artifact type based on default config and user-defined mapping(s)
+        final String artifactType =
+            ArtifactTypeMappingService.getInstance().getStandardType( artifact.getType());
+
+        if ( "jar".equals( artifactType ) )
         {
             return new JavaModule( artifact, defaultJavaBundleDir );
         }
-        else if ( "ejb".equals( artifact.getType() ) )
+        else if ( "ejb".equals( artifactType ) )
         {
             return new EjbModule( artifact );
         }
-        else if ( "ejb3".equals( artifact.getType() ) )
+        else if ( "ejb3".equals( artifactType ) )
         {
             return new Ejb3Module( artifact );
         }
-        else if ( "par".equals( artifact.getType() ) )
+        else if ( "par".equals( artifactType ) )
         {
             return new ParModule( artifact );
         }
-        else if ( "ejb-client".equals( artifact.getType() ) )
+        else if ( "ejb-client".equals( artifactType ) )
         {
             return new EjbClientModule( artifact );
         }
-        else if ( "rar".equals( artifact.getType() ) )
+        else if ( "rar".equals( artifactType ) )
         {
             return new RarModule( artifact );
         }
-        else if ( "war".equals( artifact.getType() ) )
+        else if ( "war".equals( artifactType ) )
         {
             return new WebModule( artifact );
         }
-        else if ( "sar".equals( artifact.getType() ) )
+        else if ( "sar".equals( artifactType ) )
         {
             return new SarModule( artifact );
         }
-        else if ( "wsr".equals( artifact.getType() ) )
+        else if ( "wsr".equals( artifactType ) )
         {
             return new WsrModule( artifact );
         }
         else
         {
-            throw new IllegalStateException( "Could not handle artifact type[" + artifact.getType() + "]" );
+            throw new IllegalStateException( "Could not handle artifact type[" + artifactType + "]" );
         }
+    }
+
+    /**
+     * Returns a list of standard artifact types.
+     *
+     * @return the standard artifact types
+     */
+    public static List getStandardArtifactTypes()
+    {
+        return standardArtifactTypes;
+    }
+
+    /**
+     * Specify whether the specified type is standard artifact
+     * type.
+     *
+     * @param type the type to check
+     * @return true if the specified type is a standard artifact type
+     */
+    public static boolean isStandardArtifactType( final String type )
+    {
+        return standardArtifactTypes.contains( type );
     }
 
 }
