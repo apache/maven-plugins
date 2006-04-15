@@ -72,7 +72,7 @@ public abstract class AbstractEarModule
     }
 
     public void resolveArtifact( Set artifacts, String defaultJavaBundleDir )
-        throws MojoFailureException
+        throws EarPluginException, MojoFailureException
     {
         if ( artifact == null )
         {
@@ -87,7 +87,7 @@ public abstract class AbstractEarModule
             {
                 Artifact a = (Artifact) i.next();
                 if ( a.getGroupId().equals( groupId ) && a.getArtifactId().equals( artifactId ) &&
-                    a.getType().equals( getType() ) )
+                    ArtifactTypeMappingService.getInstance().isMappedToType( getType(), a.getType() ) )
                 {
                     artifact = a;
                     return;
