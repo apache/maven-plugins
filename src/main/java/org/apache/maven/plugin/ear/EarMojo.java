@@ -28,9 +28,9 @@ import org.codehaus.plexus.util.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Arrays;
 
 /**
  * Builds J2EE Enteprise Archive (EAR) files.
@@ -96,7 +96,7 @@ public class EarMojo
      * The name of the EAR file to generate.
      *
      * @parameter alias="earName" expression="${project.build.finalName}"
-     * @required     
+     * @required
      */
     private String finalName;
 
@@ -105,7 +105,7 @@ public class EarMojo
      *
      * @parameter expression="${project.build.outputDirectory}"
      * @required
-     * @deprecated 
+     * @deprecated
      */
     private File resourcesDir;
 
@@ -130,14 +130,6 @@ public class EarMojo
     {
         // Initializes ear modules
         super.execute();
-
-        getLog().debug( " ======= EarMojo settings =======" );
-        getLog().debug( "earSourceDirectory[" + earSourceDirectory + "]" );
-        getLog().debug( "manifestLocation[" + manifestFile + "]" );
-        getLog().debug( "applicationXml[" + getApplicationXml() + "]" );
-        getLog().debug( "workDirectory[" + getWorkDirectory() + "]" );
-        getLog().debug( "outputDirectory[" + outputDirectory + "]" );
-        getLog().debug( "finalName[" + finalName + "]" );
 
         // Copy modules
         try

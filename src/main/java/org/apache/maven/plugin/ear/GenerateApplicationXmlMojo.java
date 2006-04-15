@@ -107,15 +107,6 @@ public class GenerateApplicationXmlMojo
         // Initializes ear modules
         super.execute();
 
-        getLog().debug( " ======= GenerateApplicationXmlMojo settings =======" );
-        getLog().debug( "generateApplicationXml[" + generateApplicationXml + "]" );
-        getLog().debug( "version[" + version + "]" );
-        getLog().debug( "displayName[" + displayName + "]" );
-        getLog().debug( "description[" + description + "]" );
-        getLog().debug( "encoding[" + encoding + "]" );
-        getLog().debug( "generatedDescriptorLocation[" + generatedDescriptorLocation + "]" );
-        getLog().debug( "security[" + security + "]" );
-
         if ( !generateApplicationXml.booleanValue() )
         {
             getLog().debug( "Generation of application.xml is disabled" );
