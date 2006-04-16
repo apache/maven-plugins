@@ -248,6 +248,11 @@ Specifying a custom license file
 
 Aggregating Clover reports
 
+  <<Note: There's currently a {{{http://jira.codehaus.org/browse/MCLOVER-34}bug in Maven2}} which results in the clover
+  aggregation not working properly. More specifically the aggregate goal requires an existing Clover database and
+  thus the first time your run "mvn site" the aggregated report won't be generated. It'll work the second time
+  though. Just ensure that you run the aggregate goal after you've generated the children Clover databases.>>
+
   You can aggregate children modules Clover reports into a single master report by running the <<<clover:aggregate>>>
   goal. For example if you have the following project layout:
 
