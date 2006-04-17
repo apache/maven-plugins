@@ -117,7 +117,7 @@ public class JarSignMojo
 
     /**
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
-     *
+     * <p/>
      * Not specifying this argument will sign the jar in-place (your original jar is going to be overwritten).
      *
      * @parameter expression="${signedjar}"
@@ -186,23 +186,29 @@ public class JarSignMojo
             getLog().info( "Skipping JAR signing for file: " + getJarFile().getAbsolutePath() );
         }
 
+        // we use this mojo to check if there's a need to sign.
+        // If we sign and if we need to verify, we reuse it to check the signature
         JarSignVerifyMojo verifyMojo = createJarSignVerifyMojo();
+
+        verifyMojo.setWorkingDir( workingDirectory );
+
+        verifyMojo.setBasedir( basedir );
 
         File signedJarFile = signedjar != null ? signedjar : getJarFile();
 
+        verifyMojo.setVerbose( verbose );
+
+        verifyMojo.setJarPath( signedJarFile );
+
         if ( signedJarFile.exists() )
         {
-            verifyMojo.setWorkingDir( workingDirectory );
-            verifyMojo.setBasedir( basedir );
-            verifyMojo.setJarPath( signedJarFile );
-            verifyMojo.setVerbose( verbose );
             verifyMojo.setErrorWhenNotSigned( false );
             verifyMojo.execute();
         }
 
         if ( verifyMojo.isSigned() )
         {
-            getLog().info( "JAR " + getJarFile().getAbsoluteFile() + " is already signed. Skipping.");
+            getLog().info( "JAR " + signedJarFile.getAbsoluteFile() + " is already signed. Skipping." );
             return;
         }
 

@@ -104,7 +104,7 @@ public class JarSignMojoTest
         project.setArtifact( mockArtifact );
         mojo.setProject( project );
 
-        new File(getNullJar()).delete();
+        new File( getDummyNonSignedJarPath() ).delete();
     }
 
     public void tearDown()
@@ -117,12 +117,65 @@ public class JarSignMojoTest
     public void testRunOK()
         throws MojoExecutionException
     {
+        JarSignVerifyMojoTest.MockJarSignVerifyMojo mockJarSignVerifyMojo =
+            new JarSignVerifyMojoTest.MockJarSignVerifyMojo();
+        mojo.verifyMojo = mockJarSignVerifyMojo;
+
         mojo.execute();
 
         String[] expectedArguments = {"-keystore", "/tmp/keystore", "-keypass", "secretpassword", "-signedjar",
-            "/tmp/signed/file-version.jar", getNullJar(), "alias"};
+            "/tmp/signed/file-version.jar", getDummyNonSignedJarPath(), "alias"};
 
         checkMojo( expectedArguments );
+
+        assertEquals( "sign operation wasn't verified", 0, mockJarSignVerifyMojo.commandLines.size() );
+    }
+
+    /**
+     */
+    public void testVerifyJarGeneratedBySignOperation()
+        throws MojoExecutionException
+    {
+        JarSignVerifyMojoTest.MockJarSignVerifyMojo mockJarSignVerifyMojo =
+            new JarSignVerifyMojoTest.MockJarSignVerifyMojo();
+        mojo.verifyMojo = mockJarSignVerifyMojo;
+        mojo.setVerify( true );
+        mockJarSignVerifyMojo.lastOutLine = "jar verified.";
+
+        mojo.execute();
+
+        String[] expectedArguments = {"-keystore", "/tmp/keystore", "-keypass", "secretpassword", "-signedjar",
+            "/tmp/signed/file-version.jar", getDummyNonSignedJarPath(), "alias"};
+
+        checkMojo( expectedArguments );
+
+        String[] expectedVerifyArguments = {"-verify", "/tmp/signed/file-version.jar"};
+
+        JarSignVerifyMojoTest.checkMojo( mockJarSignVerifyMojo, expectedVerifyArguments );
+    }
+
+    /**
+     */
+    public void testVerifyInPlaceSignedJar()
+        throws MojoExecutionException
+    {
+        JarSignVerifyMojoTest.MockJarSignVerifyMojo mockJarSignVerifyMojo =
+            new JarSignVerifyMojoTest.MockJarSignVerifyMojo();
+        mojo.verifyMojo = mockJarSignVerifyMojo;
+        mojo.setSignedJar( null );
+        mojo.setVerify( true );
+        mockJarSignVerifyMojo.lastOutLine = "jar verified.";
+
+        mojo.execute();
+
+        String[] expectedArguments =
+            {"-keystore", "/tmp/keystore", "-keypass", "secretpassword", getDummyNonSignedJarPath(), "alias"};
+
+        checkMojo( expectedArguments );
+
+        String[] expectedVerifyArguments = {"-verify", getDummyNonSignedJarPath()};
+
+        JarSignVerifyMojoTest.checkMojo( mockJarSignVerifyMojo, expectedVerifyArguments );
     }
 
     /**
@@ -153,12 +206,12 @@ public class JarSignMojoTest
 
         mojo.verifyMojo = new MyJarSignVerifyMojo();
 
-        new File(getNullJar()).createNewFile();
+        new File( getDummyNonSignedJarPath() ).createNewFile();
 
         mojo.execute();
 
         String[] expectedArguments = {"-keystore", "/tmp/keystore", "-keypass", "secretpassword", "-signedjar",
-            "/tmp/signed/file-version.jar", getNullJar(), "alias"};
+            "/tmp/signed/file-version.jar", getDummyNonSignedJarPath(), "alias"};
 
         checkMojo( expectedArguments );
     }
@@ -167,6 +220,10 @@ public class JarSignMojoTest
      */
     public void testRunFailure()
     {
+        JarSignVerifyMojoTest.MockJarSignVerifyMojo mockJarSignVerifyMojo =
+            new JarSignVerifyMojoTest.MockJarSignVerifyMojo();
+        mojo.verifyMojo = mockJarSignVerifyMojo;
+
         mojo.executeResult = 1;
 
         // any missing argument should produce this. Let's simulate a missing alias
@@ -183,12 +240,14 @@ public class JarSignMojoTest
         }
 
         String[] expectedArguments = {"-keystore", "/tmp/keystore", "-keypass", "secretpassword", "-signedjar",
-            "/tmp/signed/file-version.jar", getNullJar()};
+            "/tmp/signed/file-version.jar", getDummyNonSignedJarPath()};
 
         checkMojo( expectedArguments );
+
+        assertEquals( "sign operation wasn't verified", 0, mockJarSignVerifyMojo.commandLines.size() );
     }
 
-    private String getNullJar()
+    private String getDummyNonSignedJarPath()
     {
         String value = System.getProperty( "java.io.tmpdir" );
         if ( !value.endsWith( "\\" ) && !value.endsWith( "/" ) )
@@ -216,7 +275,7 @@ public class JarSignMojoTest
         }
 
         String[] expectedArguments = {"-keystore", "/tmp/keystore", "-keypass", "secretpassword", "-signedjar",
-            "/tmp/signed/file-version.jar", getNullJar(), "alias"};
+            "/tmp/signed/file-version.jar", getDummyNonSignedJarPath(), "alias"};
 
         checkMojo( expectedArguments );
     }
