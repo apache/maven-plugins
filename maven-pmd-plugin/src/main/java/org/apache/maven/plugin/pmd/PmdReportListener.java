@@ -120,7 +120,7 @@ public class PmdReportListener
             if ( endLine != beginLine )
             {
                 sink.text( " - ");
-                outputLineLink( beginLine );
+                outputLineLink( endLine );
             }
 
             sink.tableCell_();
