@@ -105,7 +105,7 @@ public class CpdReportGenerator
 
             if ( xrefLocation != null )
             {
-                sink.link( xrefLocation + "/" + filename1.replaceAll( "\\.java$", ".html" ) + "#" + line1 );
+                sink.link( xrefLocation + "/" + filename1.replaceAll( "\\.java$", ".html" ).replace( '\\', '/' ) + "#" + line1 );
             }
             sink.text( String.valueOf( line1 ) );
             if ( xrefLocation != null )
@@ -124,7 +124,7 @@ public class CpdReportGenerator
             sink.tableCell();
             if ( xrefLocation != null )
             {
-                sink.link( xrefLocation + "/" + filename2.replaceAll( "\\.java$", ".html" ) + "#" + line2 );
+                sink.link( xrefLocation + "/" + filename2.replaceAll( "\\.java$", ".html" ).replace( '\\', '/' ) + "#" + line2 );
             }
             sink.text( String.valueOf( line2 ) );
             if ( xrefLocation != null )
