@@ -1,0 +1,15 @@
+<project>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <configuration>
+          <outputDirectory>target/test-harness/dependency-convergence</outputDirectory>
+          <project implementation="org.apache.maven.report.projectinfo.stubs.ProjectInfoProjectStub"/>
+          <reactorProjects>
+          </reactorProjects>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
