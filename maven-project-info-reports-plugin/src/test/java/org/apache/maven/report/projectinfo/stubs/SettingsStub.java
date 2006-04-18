@@ -1,4 +1,6 @@
-package org.apache.maven.report.projectinfo;
+package org.apache.maven.report.projectinfo.stubs;
+
+import org.apache.maven.settings.Settings;
 
 /*
  * Copyright 2004-2005 The Apache Software Foundation.
@@ -19,12 +21,7 @@ package org.apache.maven.report.projectinfo;
 /**
  * @author Edwin Punzalan
  */
-public class DependenciesReportTest
-    extends AbstractProjectInfoTestCase
+public class SettingsStub
+    extends Settings
 {
-    public void testReport()
-        throws Exception
-    {
-        generateReport( "dependencies", "dependencies-plugin-config.xml" );
-    }
 }

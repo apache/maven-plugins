@@ -19,12 +19,12 @@ package org.apache.maven.report.projectinfo;
 /**
  * @author Edwin Punzalan
  */
-public class DependenciesReportTest
+public class ProjectSummaryReportTest
     extends AbstractProjectInfoTestCase
 {
     public void testReport()
         throws Exception
     {
-        generateReport( "dependencies", "dependencies-plugin-config.xml" );
+        generateReport( "summary", "summary-plugin-config.xml" );
     }
 }
