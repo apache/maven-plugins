@@ -35,14 +35,12 @@ public class SourceBundlerTest
 
         Archiver archiver = (Archiver) lookup( Archiver.ROLE, "jar" );
 
-        File outputFile = getTestFile( "target/source-bundler-test/normal.jar" );
+        File outputFile = getTestFile( "target/test/unit/default-configuration/default-configuration.jar" );
 
-        File sourceDirectories[] = {
-            getTestFile( "src/test/projects/normal/src/main/java" ),
-            getTestFile( "src/test/projects/normal/src/main/resources" ),
-            getTestFile( "src/test/projects/normal/src/test/java" ),
-            getTestFile( "src/test/projects/normal/src/test/resources" ),
-        };
+        File sourceDirectories[] = {getTestFile( "src/test/resources/unit/default-configuration/src/main/java" ),
+            getTestFile( "src/test/resources/unit/default-configuration/src/main/resources" ),
+            getTestFile( "src/test/resources/unit/default-configuration/src/test/java" ),
+            getTestFile( "src/test/resources/unit/default-configuration/src/test/resources" ),};
 
         if ( outputFile.exists() )
         {
