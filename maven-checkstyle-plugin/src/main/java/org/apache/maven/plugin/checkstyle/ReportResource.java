@@ -1,7 +1,7 @@
 package org.apache.maven.plugin.checkstyle;
 
 /*
- * Copyright 2004-2005 The Apache Software Foundation.
+ * Copyright 2004-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@ package org.apache.maven.plugin.checkstyle;
  * limitations under the License.
  */
 
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
@@ -31,8 +29,6 @@ import java.net.URL;
  */
 public class ReportResource
 {
-    private Log log;
-
     private String resourcePathBase;
 
     private File outputDirectory;
@@ -48,20 +44,6 @@ public class ReportResource
     {
         URL url = Thread.currentThread().getContextClassLoader().getResource( resourcePathBase + "/" + resourceName );
         FileUtils.copyURLToFile( url, new File( outputDirectory, resourceName ) );
-    }
-
-    public Log getLog()
-    {
-        if ( this.log == null )
-        {
-            this.log = new SystemStreamLog();
-        }
-        return log;
-    }
-
-    public void setLog( Log log )
-    {
-        this.log = log;
     }
 
     public File getOutputDirectory()
