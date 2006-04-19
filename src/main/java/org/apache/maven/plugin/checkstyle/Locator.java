@@ -41,7 +41,7 @@ public class Locator
     /**
      * Create a Locator object.
      *
-     * @param logger       the logger object to log with.
+     * @param log       the logger object to log with.
      * @param resolveToDir the directory to resolve resources into.
      */
     public Locator( Log log, File resolveToDir )
