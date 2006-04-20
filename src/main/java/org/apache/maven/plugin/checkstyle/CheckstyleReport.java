@@ -809,7 +809,7 @@ public class CheckstyleReport
             parentFile.mkdirs();
         }
 
-        FileOutputStream fileOutputStream = null;
+        FileOutputStream fileOutputStream;
         try
         {
             fileOutputStream = new FileOutputStream( file );
@@ -822,7 +822,7 @@ public class CheckstyleReport
     }
 
     private File[] getFilesToProcess( String includes, String excludes )
-        throws MavenReportException, IOException
+        throws IOException
     {
         StringBuffer excludesStr = new StringBuffer();
 
