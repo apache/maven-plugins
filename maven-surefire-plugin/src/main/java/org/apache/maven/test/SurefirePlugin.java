@@ -139,6 +139,7 @@ public class SurefirePlugin
 
     /**
      * List of System properties to pass to the JUnit tests.
+     * A property called basedir will be always added with the path of the Maven project folder.
      *
      * @parameter
      */
@@ -176,7 +177,8 @@ public class SurefirePlugin
     private boolean useFile;
 
     /**
-     * Option to specify the forking mode. Can be "none", "once" or "pertest".
+     * Option to specify the forking mode. Can be "none" (not fork), "once"
+     * (fork a new JVM for all the tests) or "pertest" (fork a new JVM for each test).
      *
      * @parameter expression="${forkMode}"
      * default-value="none"
@@ -184,8 +186,8 @@ public class SurefirePlugin
     private String forkMode;
 
     /**
-     * Option to specify the jvm (or path to the java executable) to use with
-     * the forking options. For the default we will assume that java is in the path.
+     * Option to specify the path to the java executable to use when
+     * forking. For the default we will assume that java is in the path.
      *
      * @parameter expression="${jvm}"
      * default-value="java"
@@ -193,21 +195,22 @@ public class SurefirePlugin
     private String jvm;
 
     /**
-     * Arbitrary options to set on the command line.
+     * Arbitrary options to set on the command line of the new JVM when forking.
      *
      * @parameter expression="${argLine}"
      */
     private String argLine;
 
     /**
-     * Additional environments to set on the command line.
+     * Additional environment variables to set on the new JVM when forking.
      *
      * @parameter 
      */
     private Map environmentVariables = new HashMap();
     
     /**
-     * Command line working directory.
+     * Working directory of the new JVM when forking. If not set Maven will launch the new
+     * process in the same workingDirectory as the current process.
      *
      * @parameter 
      */
