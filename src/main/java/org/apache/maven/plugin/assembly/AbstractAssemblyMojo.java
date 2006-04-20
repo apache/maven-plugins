@@ -119,6 +119,13 @@ public abstract class AbstractAssemblyMojo
     private String[] descriptorRefs;
 
     /**
+     * directory to scan for descriptor files in
+     *
+     * @parameter
+     */
+    private File descriptorSourceDirectory;
+
+    /**
      * This is the base directory from which archive files are created.
      * This base directory pre-pended to any <code>&lt;directory&gt;</code>
      * specifications in the assembly descriptor.  This is an optional
@@ -572,6 +579,23 @@ public abstract class AbstractAssemblyMojo
             for ( int i = 0; i < descriptorRefs.length; i++ )
             {
                 assemblies.add( getAssembly( descriptorRefs[i] ) );
+            }
+        }
+
+        if ( descriptorSourceDirectory != null && descriptorSourceDirectory.isDirectory() )
+        {
+            try
+            {
+                List descriptorList = FileUtils.getFiles( descriptorSourceDirectory, "**/*.xml", null );
+
+                for (Iterator iter = descriptorList.iterator(); iter.hasNext(); )
+                {                                        
+                   assemblies.add( getAssembly( (File)iter.next() ) );
+                }
+            }
+            catch ( IOException e )
+            {
+                throw new MojoFailureException( "error discovering descriptor files: " + e.getMessage() );
             }
         }
 
