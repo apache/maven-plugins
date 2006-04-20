@@ -16,10 +16,11 @@ package org.apache.maven.plugin.checkstyle;
  * limitations under the License.
  */
 
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.reporting.MavenReport;
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 
@@ -61,6 +62,24 @@ public class CheckstyleReportTest
         throws Exception
     {
         File htmlFile = generateReport( "useFile-plugin-config.xml" );
+    }
+
+    public void testNoRulesSummary()
+        throws Exception
+    {
+        File htmlFile = generateReport( "no-rules-plugin-config.xml" );
+    }
+
+    public void testNoSeveritySummary()
+        throws Exception
+    {
+        File htmlFile = generateReport( "no-severity-plugin-config.xml" );
+    }
+
+    public void testNoFilesSummary()
+        throws Exception
+    {
+        File htmlFile = generateReport( "no-files-plugin-config.xml" );
     }
 
     public void testFailOnError()
@@ -134,6 +153,40 @@ public class CheckstyleReportTest
         String filename = reportMojo.getOutputName() + ".html";
         File outputHtml = new File( outputDir, filename );
         assertTrue( "Test output html file exists", outputHtml.exists() );
+        String htmlString = FileUtils.fileRead( outputHtml );
+
+        boolean searchHeaderFound = ( htmlString.indexOf( "<h2>Rules</h2>" ) > 0 );
+        Boolean rules = (Boolean) getVariableValueFromObject( mojo, "enableRulesSummary" );
+        if ( rules.booleanValue() )
+        {
+            assertTrue( "Test for Rules Summary", searchHeaderFound );
+        }
+        else
+        {
+            assertFalse( "Test for Rules Summary", searchHeaderFound );
+        }
+
+        searchHeaderFound = ( htmlString.indexOf( "<h2>Summary</h2>" ) > 0 );
+        Boolean severity = (Boolean) getVariableValueFromObject( mojo, "enableSeveritySummary" );
+        if ( severity.booleanValue() )
+        {
+            assertTrue( "Test for Severity Summary", searchHeaderFound );
+        }
+        else
+        {
+            assertFalse( "Test for Severity Summary", searchHeaderFound );
+        }
+
+        searchHeaderFound = ( htmlString.indexOf( "<h2>Files</h2>" ) > 0 );
+        Boolean files = (Boolean) getVariableValueFromObject( mojo, "enableFilesSummary" );
+        if ( files.booleanValue() )
+        {
+            assertTrue( "Test for Files Summary", searchHeaderFound );
+        }
+        else
+        {
+            assertFalse( "Test for Files Summary", searchHeaderFound );
+        }
 
         return outputHtml;
     }
