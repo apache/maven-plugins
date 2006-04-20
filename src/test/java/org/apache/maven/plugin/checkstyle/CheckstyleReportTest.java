@@ -16,9 +16,10 @@ package org.apache.maven.plugin.checkstyle;
  * limitations under the License.
  */
 
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.Mojo;
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.reporting.MavenReport;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 
 import java.io.File;
 
@@ -28,10 +29,69 @@ import java.io.File;
 public class CheckstyleReportTest
     extends AbstractMojoTestCase
 {
+    public void testNoSource()
+        throws Exception
+    {
+        File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/no-source-plugin-config.xml" );
+
+        Mojo mojo = lookupMojo( "checkstyle", pluginXmlFile );
+
+        assertNotNull( "Mojo found.", mojo );
+
+        mojo.execute();
+
+        File outputFile = (File) getVariableValueFromObject( mojo, "outputFile" );
+        assertNotNull( "Test output file", outputFile );
+        assertFalse( "Test output file exists", outputFile.exists() );
+    }
+
     public void testMinConfiguration()
         throws Exception
     {
         File htmlFile = generateReport( "min-plugin-config.xml" );
+    }
+
+    public void testCustomConfiguration()
+        throws Exception
+    {
+        File htmlFile = generateReport( "custom-plugin-config.xml" );
+    }
+
+    public void testUseFile()
+        throws Exception
+    {
+        File htmlFile = generateReport( "useFile-plugin-config.xml" );
+    }
+
+    public void testFailOnError()
+    {
+        try
+        {
+            File htmlFile = generateReport( "fail-on-error-plugin-config.xml" );
+
+            fail( "Must throw exception on errors" );
+        }
+        catch ( Exception e )
+        {
+            //expected
+        }
+    }
+
+    public void testDependencyResolutionException()
+    {
+        try
+        {
+            File htmlFile = generateReport( "dep-resolution-exception-plugin-config.xml" );
+
+            fail( "Must throw exception on errors" );
+        }
+        catch ( Exception e )
+        {
+            if ( !( e.getCause().getCause() instanceof DependencyResolutionRequiredException ) )
+            {
+                fail( "Must throw exception on errors" );
+            }
+        }
     }
 
     private File generateReport( String pluginXml )
@@ -50,8 +110,10 @@ public class CheckstyleReportTest
         assertTrue( "Test output file exists", outputFile.exists() );
 
         String cacheFile = (String) getVariableValueFromObject( mojo, "cacheFile" );
-        assertNotNull( "Test cache file", cacheFile );
-        assertTrue( "Test cache file exists", new File( cacheFile ).exists() );
+        if ( cacheFile != null )
+        {
+            assertTrue( "Test cache file exists", new File( cacheFile ).exists() );
+        }
 
         MavenReport reportMojo = (MavenReport) mojo;
         File outputDir = reportMojo.getReportOutputDirectory();
@@ -61,6 +123,12 @@ public class CheckstyleReportTest
         {
             File rssFile = new File( outputDir, "checkstyle.rss" );
             assertTrue( "Test rss file exists", rssFile.exists() );
+        }
+
+        File useFile = (File) getVariableValueFromObject( mojo, "useFile" );
+        if ( useFile != null )
+        {
+            assertTrue( "Test useFile exists", useFile.exists() );
         }
 
         String filename = reportMojo.getOutputName() + ".html";

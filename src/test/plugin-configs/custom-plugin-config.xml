@@ -20,24 +20,26 @@
       <plugin>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <configuration>
-          <outputDirectory>${basedir}/target/test-harness/checkstyle/min</outputDirectory>
+          <outputDirectory>${basedir}/target/test-harness/checkstyle/custom</outputDirectory>
           <enableRulesSummary>true</enableRulesSummary>
           <enableSeveritySummary>true</enableSeveritySummary>
           <enableFilesSummary>true</enableFilesSummary>
           <enableRSS>true</enableRSS>
           <includes>**/*.java</includes>
           <configLocation>config/sun_checks.xml</configLocation>
-          <format>sun</format>
-          <headerLocation>${basedir}/src/test/test-sources/LICENSE.txt</headerLocation>
-          <cacheFile>${basedir}/target/test-harness/checkstyle/min/checkstyle-cachefile</cacheFile>
-          <outputFile>${basedir}/target/test-harness/checkstyle/min/checkstyle-result.xml</outputFile>
-          <outputFileFormat>xml</outputFileFormat>
+          <format>maven</format>
+          <headerLocation>LICENSE.txt</headerLocation>
+          <headerFile>${basedir}/src/test/test-sources/LICENSE.txt</headerFile>
+          <cacheFile>${basedir}/target/test-harness/checkstyle/custom/checkstyle-cachefile</cacheFile>
+          <outputFile>${basedir}/target/test-harness/checkstyle/custom/checkstyle-result.xml</outputFile>
+          <outputFileFormat>plain</outputFileFormat>
           <failsOnError>false</failsOnError>
           <sourceDirectory>${basedir}/src/test/test-sources</sourceDirectory>
-          <project implementation="org.apache.maven.plugin.checkstyle.stubs.MinMavenProjectStub"/>
-          <consoleOutput>false</consoleOutput>
+          <project implementation="org.apache.maven.plugin.checkstyle.stubs.MavenProjectWithNoJxrPluginStub"/>
+          <consoleOutput>true</consoleOutput>
           <linkXRef>true</linkXRef>
-          <xrefLocation>${basedir}/target/site/xref</xrefLocation>
+          <!-- value not really important, just point to an existing dir -->
+          <xrefLocation>${basedir}/target/test-harness/checkstyle/custom</xrefLocation>
         </configuration>
       </plugin>
     </plugins>
