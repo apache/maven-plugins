@@ -18,6 +18,7 @@ package org.apache.maven.plugin.checkstyle.stubs;
 
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Organization;
+import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.codehaus.plexus.PlexusTestCase;
 
@@ -34,7 +35,7 @@ public class MinMavenProjectStub
     public List getCompileClasspathElements()
         throws DependencyResolutionRequiredException
     {
-        return Collections.EMPTY_LIST;
+        return Collections.singletonList( PlexusTestCase.getBasedir() + "/target/classes" );
     }
 
     public File getBasedir()
@@ -44,7 +45,11 @@ public class MinMavenProjectStub
 
     public List getReportPlugins()
     {
-        return Collections.EMPTY_LIST;
+        ReportPlugin jxrPlugin = new ReportPlugin();
+
+        jxrPlugin.setArtifactId( "maven-jxr-plugin" );
+
+        return Collections.singletonList( jxrPlugin );
     }
 
     public Organization getOrganization()
