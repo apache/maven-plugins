@@ -2,7 +2,7 @@
   <body>
     <menu name="Overview">
       <item name="How to Use" href="howto.html"/>
-      <item name="Sample Report" href="sample-surefire-report.html"/>
+      <item name="Sample Report" href="surefire-report.html"/>
     </menu>
     ${reports}
   </body>
