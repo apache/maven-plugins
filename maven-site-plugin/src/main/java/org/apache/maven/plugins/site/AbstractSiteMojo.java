@@ -56,6 +56,14 @@ public abstract class AbstractSiteMojo
      */
     protected I18N i18n;
 
+     /**
+     * Directory containing source for apt, fml and xdoc docs.
+     *
+     * @parameter expression="${basedir}/src/site"
+     * @required
+     */
+    protected File siteDirectory;
+
     /**
      * Init the <code>localesList</code> variable.
      * <p>If <code>locales</code> variable is available, the first valid token will be the <code>defaultLocale</code>
