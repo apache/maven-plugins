@@ -1,8 +1,9 @@
 <project>
   <body>
-    <menu name="Surefire Plugin Quickstart">
-      <item name="Overview" href="howto.html"/>
+    <menu name="Overview">
+      <item name="How to Use" href="howto.html"/>
       <item name="Sample Report" href="sample-surefire-report.html"/>
     </menu>
+    ${reports}
   </body>
 </project>
