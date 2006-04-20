@@ -20,7 +20,7 @@
       <plugin>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <configuration>
-          <outputDirectory>${basedir}/target/test-harness/checkstyle/min</outputDirectory>
+          <outputDirectory>${basedir}/target/test-harness/checkstyle/useFile</outputDirectory>
           <enableRulesSummary>true</enableRulesSummary>
           <enableSeveritySummary>true</enableSeveritySummary>
           <enableFilesSummary>true</enableFilesSummary>
@@ -29,15 +29,16 @@
           <configLocation>config/sun_checks.xml</configLocation>
           <format>sun</format>
           <headerLocation>${basedir}/src/test/test-sources/LICENSE.txt</headerLocation>
-          <cacheFile>${basedir}/target/test-harness/checkstyle/min/checkstyle-cachefile</cacheFile>
-          <outputFile>${basedir}/target/test-harness/checkstyle/min/checkstyle-result.xml</outputFile>
+          <cacheFile>${basedir}/target/test-harness/checkstyle/useFile/checkstyle-cachefile</cacheFile>
+          <outputFile>${basedir}/target/test-harness/checkstyle/useFile/checkstyle-result.xml</outputFile>
           <outputFileFormat>xml</outputFileFormat>
           <failsOnError>false</failsOnError>
           <sourceDirectory>${basedir}/src/test/test-sources</sourceDirectory>
           <project implementation="org.apache.maven.plugin.checkstyle.stubs.MinMavenProjectStub"/>
-          <consoleOutput>false</consoleOutput>
+          <consoleOutput>true</consoleOutput>
           <linkXRef>true</linkXRef>
           <xrefLocation>${basedir}/target/site/xref</xrefLocation>
+          <useFile>${basedir}target/test-harness/checkstyle/useFile/checkstyle-output.txt</useFile>
         </configuration>
       </plugin>
     </plugins>
