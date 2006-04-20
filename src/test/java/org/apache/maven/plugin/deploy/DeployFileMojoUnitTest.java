@@ -29,7 +29,7 @@ import java.io.File;
  * @author <a href="jerome@coffeebreaks.org">Jerome Lacoste</a>
  * @version $Id$
  */
-public class DeployFileMojoTest
+public class DeployFileMojoUnitTest
     extends TestCase
 {
     public static void main( String[] args )
@@ -39,7 +39,7 @@ public class DeployFileMojoTest
 
     public static Test suite()
     {
-        TestSuite suite = new TestSuite( DeployFileMojoTest.class );
+        TestSuite suite = new TestSuite( DeployFileMojoUnitTest.class );
 
         return suite;
     }
