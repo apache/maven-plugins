@@ -9,6 +9,9 @@
   <packaging>maven-plugin</packaging>
   <name>Maven Surefire Report Plugin</name>
   <version>2.0</version>
+  <prerequisites>
+    <maven>2.0.3</maven>
+  </prerequisites>
   <developers>
     <developer>
       <id>jruiz</id>
