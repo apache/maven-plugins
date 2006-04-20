@@ -57,14 +57,6 @@ public abstract class AbstractSiteMojo
     protected I18N i18n;
 
     /**
-     * Directory containing source for apt, fml and xdoc docs.
-     *
-     * @parameter expression="${basedir}/src/site"
-     * @required
-     */
-    protected File siteDirectory;
-
-    /**
      * Init the <code>localesList</code> variable.
      * <p>If <code>locales</code> variable is available, the first valid token will be the <code>defaultLocale</code>
      * for this instance of the Java Virtual Machine.</p>
@@ -186,10 +178,13 @@ public abstract class AbstractSiteMojo
      */
     protected File getSiteDescriptorFile( File basedir, Locale locale )
     {
-        File siteDescriptor = new File( siteDirectory, "site_" + locale.getLanguage() + ".xml" );
+        // TODO: get proper siteDirectory from site configuration of the project this relates to
+
+        File siteDescriptor = new File( basedir, "src/site/site_" + locale.getLanguage() + ".xml" );
+
         if ( !siteDescriptor.exists() )
         {
-            siteDescriptor = new File( siteDirectory, "site.xml" );
+            siteDescriptor = new File( basedir, "src/site/site.xml" );
         }
         return siteDescriptor;
     }
