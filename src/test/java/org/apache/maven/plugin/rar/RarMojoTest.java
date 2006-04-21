@@ -80,13 +80,33 @@ public class RarMojoTest
 
         File[] fileNames = workDirectory.listFiles();
 
-        assertEquals( 3, fileNames.length );
+        List expectedFiles = new ArrayList();
+        
+        expectedFiles.add( "maven-artifact01-1.0-SNAPSHOT.jar" );
+        expectedFiles.add( "maven-artifact02-1.0-SNAPSHOT.jar" );
+        expectedFiles.add( "test-rar.jar" );
+        
+        assertEquals( "Files in working directory", expectedFiles.size(), fileNames.length );
 
-        assertEquals( "maven-artifact01-1.0-SNAPSHOT.jar", fileNames[0].getName() );
+        
+        for( int i=0; i<fileNames.length; i++ )
+        {
+            String fileName = fileNames[i].getName();
+            
+            assertTrue( expectedFiles.contains( fileName ) );
+            
+            if( expectedFiles.contains( fileName ) )
+            {
+                expectedFiles.remove( fileName );
+                assertFalse( expectedFiles.contains( fileName ) );
+            }
+            else
+            {
+                fail( fileName + " is not included in expected files." );
+            }
+        }
 
-        assertEquals( "maven-artifact02-1.0-SNAPSHOT.jar", fileNames[1].getName() );
-
-        assertEquals( "test-rar.jar", fileNames[2].getName() );
+        assertEquals( 0, expectedFiles.size() );
 
         //check the generated rar file
         File rarFile = new File( outputDir, finalName + ".rar" );
@@ -94,7 +114,7 @@ public class RarMojoTest
         assertTrue( rarFile.exists() );
 
         //expected files/directories inside the rar file
-        List expectedFiles = new ArrayList();
+        expectedFiles = new ArrayList();
 
         expectedFiles.add( "META-INF/maven/org.apache.maven.test/maven-rar-test/pom.properties" );
         expectedFiles.add( "META-INF/maven/org.apache.maven.test/maven-rar-test/pom.xml" );
