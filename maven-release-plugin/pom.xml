@@ -55,42 +55,42 @@
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-api</artifactId>
-      <version>1.0-beta-3-SNAPSHOT</version>
+      <version>1.0-beta-3</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-manager-plexus</artifactId>
-      <version>1.0-beta-3-SNAPSHOT</version>
+      <version>1.0-beta-3</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-provider-bazaar</artifactId>
-      <version>1.0-beta-3-SNAPSHOT</version>
+      <version>1.0-beta-3</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-provider-clearcase</artifactId>
-      <version>1.0-beta-3-SNAPSHOT</version>
+      <version>1.0-beta-3</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-provider-cvsexe</artifactId>
-      <version>1.0-beta-3-SNAPSHOT</version>
+      <version>1.0-beta-3</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-provider-perforce</artifactId>
-      <version>1.0-beta-3-SNAPSHOT</version>
+      <version>1.0-beta-3</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-provider-starteam</artifactId>
-      <version>1.0-beta-3-SNAPSHOT</version>
+      <version>1.0-beta-3</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-provider-svnexe</artifactId>
-      <version>1.0-beta-3-SNAPSHOT</version>
+      <version>1.0-beta-3</version>
     </dependency>
     <dependency>
       <groupId>jmock</groupId>
@@ -101,7 +101,7 @@
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-test</artifactId>
-      <version>1.0-beta-3-SNAPSHOT</version>
+      <version>1.0-beta-3</version>
       <scope>test</scope>
     </dependency>
     
