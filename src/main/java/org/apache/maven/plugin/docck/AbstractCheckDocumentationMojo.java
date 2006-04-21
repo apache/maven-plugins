@@ -3,6 +3,8 @@ package org.apache.maven.plugin.docck;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -179,6 +181,8 @@ public abstract class AbstractCheckDocumentationMojo
 
     private List checkProject( MavenProject project )
     {
+        getLog().info( "Checking project: " + project.getName() );
+        
         List errors = new ArrayList();
 
         // check for licenses
@@ -195,33 +199,64 @@ public abstract class AbstractCheckDocumentationMojo
                 License license = (License) it.next();
 
                 String url = license.getUrl();
-
-                HeadMethod headMethod = new HeadMethod( url );
-                headMethod.setFollowRedirects( true );
-                headMethod.setDoAuthentication( false );
-
+                
+                String protocol = null;
+                
                 try
                 {
-                    if ( httpClient.executeMethod( headMethod ) != 200 )
+                    URL licenseUrl = new URL( url );
+                    
+                    protocol = licenseUrl.getProtocol();
+                    
+                    if ( protocol != null )
                     {
-                        errors.add( "Cannot reach license: " + license.getName() + " with URL: \'" + url + "\'." );
+                        protocol = protocol.toLowerCase();
                     }
                 }
-                catch ( HttpException e )
+                catch ( MalformedURLException e )
                 {
-                    errors.add( "Cannot reach license: " + license.getName() + " with URL: \'" + url + "\'.\nError: "
-                        + e.getMessage() );
+                    getLog().debug( "License: " + license.getName() + " with appears to have an invalid URL: \'" + url + "\'.\nError: "
+                                + e.getMessage() + "\n\nTrying to access it as a file instead." );
                 }
-                catch ( IOException e )
+
+                if ( protocol != null && protocol.startsWith( "http" ) )
                 {
-                    errors.add( "Cannot reach license: " + license.getName() + " with URL: \'" + url + "\'.\nError: "
-                        + e.getMessage() );
-                }
-                finally
-                {
-                    if ( headMethod != null )
+                    HeadMethod headMethod = new HeadMethod( url );
+                    headMethod.setFollowRedirects( true );
+                    headMethod.setDoAuthentication( false );
+                    
+                    try
                     {
-                        headMethod.releaseConnection();
+                        if ( httpClient.executeMethod( headMethod ) != 200 )
+                        {
+                            errors.add( "Cannot reach license: " + license.getName() + " with URL: \'" + url + "\'." );
+                        }
+                    }
+                    catch ( HttpException e )
+                    {
+                        errors.add( "Cannot reach license: " + license.getName() + " with URL: \'" + url
+                            + "\'.\nError: " + e.getMessage() );
+                    }
+                    catch ( IOException e )
+                    {
+                        errors.add( "Cannot reach license: " + license.getName() + " with URL: \'" + url
+                            + "\'.\nError: " + e.getMessage() );
+                    }
+                    finally
+                    {
+                        if ( headMethod != null )
+                        {
+                            headMethod.releaseConnection();
+                        }
+                    }
+                }
+                else
+                {
+                    // try looking for the file.
+                    File licenseFile = new File( url );
+                    if ( !licenseFile.exists() )
+                    {
+                        errors.add( "License file: \'" + licenseFile.getPath() + " does not exist." );
                     }
                 }
             }
