@@ -16,36 +16,38 @@ package org.apache.maven.plugins.release.versions;
  * limitations under the License.
  */
 
+/**
+ * @todo this has an overlap with ArtifactVersion in maven-artifact - would be good to migrate this there.
+ */
 public interface VersionInfo
     extends Comparable
 {
-    /** Returns a string representing the version without modification.
-     * 
-     * @return
-     */
-    public String getVersionString();
 
-    /** Returns a string representing the version with a snapshot specification
-     * 
+    /**
+     * Returns a string representing the version with a snapshot specification
+     *
      * @return
      */
-    public String getSnapshotVersionString();
+    String getSnapshotVersionString();
 
-    /** Returns a string representing the version without a snapshot specification.
-     * 
+    /**
+     * Returns a string representing the version without a snapshot specification.
+     *
      * @return
      */
-    public String getReleaseVersionString();
+    String getReleaseVersionString();
 
-    /** Returns a {@link VersionInfo} object which represents the next version of this object.
-     * 
+    /**
+     * Returns a {@link VersionInfo} object which represents the next version of this object.
+     *
      * @return
      */
-    public VersionInfo getNextVersion();
+    VersionInfo getNextVersion();
 
-    /** Returns whether this represents a snapshot version. ("xxx-SNAPSHOT");
-     * 
+    /**
+     * Returns whether this represents a snapshot version. ("xxx-SNAPSHOT");
+     *
      * @return
      */
-    public boolean isSnapshot();
+    boolean isSnapshot();
 }
