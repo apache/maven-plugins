@@ -38,7 +38,7 @@
           <consoleOutput>true</consoleOutput>
           <linkXRef>true</linkXRef>
           <xrefLocation>${basedir}/target/site/xref</xrefLocation>
-          <useFile>${basedir}target/test-harness/checkstyle/useFile/checkstyle-output.txt</useFile>
+          <useFile>${basedir}/target/test-harness/checkstyle/useFile/checkstyle-output.txt</useFile>
         </configuration>
       </plugin>
     </plugins>
