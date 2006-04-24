@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>external</groupId>
+  <artifactId>plugin-artifactId</artifactId>
+  <version>1.0</version>
+  <versioning>
+    <versions>
+      <version>1.0</version>
+      <version>1.0-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20060424081618</lastUpdated>
+  </versioning>
+</metadata>

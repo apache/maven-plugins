@@ -134,6 +134,7 @@ public class ScmCheckModificationsPhase
     public void simulate( ReleaseConfiguration releaseConfiguration )
         throws ReleaseExecutionException
     {
+        // It makes no modifications, so simulate is the same as execute
         execute( releaseConfiguration );
     }
 }

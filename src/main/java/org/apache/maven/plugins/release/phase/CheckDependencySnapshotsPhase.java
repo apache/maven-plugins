@@ -16,10 +16,21 @@ package org.apache.maven.plugins.release.phase;
  * limitations under the License.
  */
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.ArtifactUtils;
+import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.project.MavenProject;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
- * TODO: Description.
+ * Check the dependencies of all projects being released to see if there are any unreleased snapshots.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
@@ -27,14 +38,131 @@ public class CheckDependencySnapshotsPhase
     implements ReleasePhase
 {
     public void execute( ReleaseConfiguration releaseConfiguration )
+        throws ReleaseExecutionException
     {
-        // TODO: implement
+        List reactorProjects = releaseConfiguration.getReactorProjects();
+        Set reactorProjectKeys = createReactorProjectSet( reactorProjects );
 
+        for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+        {
+            MavenProject project = (MavenProject) i.next();
+
+            checkProject( project, reactorProjectKeys );
+        }
+    }
+
+    private void checkProject( MavenProject project, Set reactorProjectKeys )
+        throws ReleaseExecutionException
+    {
+        Set snapshotDependencies = new HashSet();
+
+        if ( project.getParentArtifact() != null )
+        {
+            if ( checkArtifact( project.getParentArtifact(), reactorProjectKeys ) )
+            {
+                snapshotDependencies.add( project.getParentArtifact() );
+            }
+        }
+
+        for ( Iterator i = project.getArtifacts().iterator(); i.hasNext(); )
+        {
+            Artifact artifact = (Artifact) i.next();
+
+            if ( checkArtifact( artifact, reactorProjectKeys ) )
+            {
+                snapshotDependencies.add( artifact );
+            }
+        }
+
+        for ( Iterator i = project.getPluginArtifacts().iterator(); i.hasNext(); )
+        {
+            Artifact artifact = (Artifact) i.next();
+
+            // TODO: make sure to test what happens if no version was given, but the release version is resolved to a snapshot
+            if ( checkArtifact( artifact, reactorProjectKeys ) )
+            {
+                snapshotDependencies.add( artifact );
+            }
+        }
+
+        for ( Iterator i = project.getReportArtifacts().iterator(); i.hasNext(); )
+        {
+            Artifact artifact = (Artifact) i.next();
+
+            // TODO: make sure to test what happens if no version was given, but the release version is resolved to a snapshot
+            if ( checkArtifact( artifact, reactorProjectKeys ) )
+            {
+                snapshotDependencies.add( artifact );
+            }
+        }
+
+        for ( Iterator i = project.getExtensionArtifacts().iterator(); i.hasNext(); )
+        {
+            Artifact artifact = (Artifact) i.next();
+
+            if ( checkArtifact( artifact, reactorProjectKeys ) )
+            {
+                snapshotDependencies.add( artifact );
+            }
+        }
+
+        if ( !snapshotDependencies.isEmpty() )
+        {
+            List snapshotsList = new ArrayList( snapshotDependencies );
+
+            Collections.sort( snapshotsList );
+
+            StringBuffer message = new StringBuffer();
+
+            for ( Iterator i = snapshotsList.iterator(); i.hasNext(); )
+            {
+                Artifact artifact = (Artifact) i.next();
+
+                message.append( "    " );
+
+                message.append( artifact );
+
+                message.append( "\n" );
+            }
+
+            throw new ReleaseExecutionException(
+                "Can't release project due to non released dependencies :\n" + message );
+        }
+    }
+
+    private static boolean checkArtifact( Artifact artifact, Set reactorProjectKeys )
+    {
+        String versionlessArtifactKey = ArtifactUtils.versionlessKey( artifact.getGroupId(), artifact.getArtifactId() );
+
+        // We are only looking at dependencies external to the project - ignore anything found in the reactor as
+        // it's version will be updated
+        // TODO: will it? what if it is a different snapshot version to the one being updated in the reactor?
+        return !reactorProjectKeys.contains( versionlessArtifactKey ) &&
+            ArtifactUtils.isSnapshot( artifact.getVersion() );
     }
 
     public void simulate( ReleaseConfiguration releaseConfiguration )
+        throws ReleaseExecutionException
     {
-        // TODO: implement
-
+        // It makes no modifications, so simulate is the same as execute
+        execute( releaseConfiguration );
     }
+
+    private static Set createReactorProjectSet( List reactorProjects )
+    {
+        Set reactorProjectSet = new HashSet();
+
+        for ( Iterator it = reactorProjects.iterator(); it.hasNext(); )
+        {
+            MavenProject project = (MavenProject) it.next();
+
+            String versionlessArtifactKey =
+                ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
+
+            reactorProjectSet.add( versionlessArtifactKey );
+        }
+
+        return reactorProjectSet;
+    }
+
 }
