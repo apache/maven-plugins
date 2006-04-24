@@ -19,6 +19,7 @@ package org.apache.maven.plugins.release.phase;
 import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 import org.apache.maven.plugins.release.scm.ReleaseScmCommandException;
+import org.apache.maven.plugins.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.plugins.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFile;
@@ -73,7 +74,7 @@ public class ScmCheckModificationsPhase
         }
         catch ( ScmRepositoryException e )
         {
-            throw new ReleaseExecutionException( "Unable to configure SCM repository: " + e.getMessage(), e );
+            throw new ReleaseScmRepositoryException( e.getMessage(), e.getValidationMessages() );
         }
         catch ( NoSuchScmProviderException e )
         {

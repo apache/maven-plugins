@@ -30,9 +30,6 @@ import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.StringUtils;
 
-import java.util.Iterator;
-import java.util.List;
-
 /**
  * Tool that gets a configured SCM repository from release configuration.
  *
@@ -58,29 +55,7 @@ public class DefaultScmRepositoryConfigurator
 
         ScmRepository repository;
 
-        try
-        {
-            repository = scmManager.makeScmRepository( url );
-        }
-        catch ( ScmRepositoryException e )
-        {
-            // TODO: would rather move to other catcher - but don't want to double up so consider a custom exception
-            List messages = e.getValidationMessages();
-
-            if ( messages != null )
-            {
-                Iterator iter = messages.iterator();
-
-                while ( iter.hasNext() )
-                {
-                    getLogger().error( iter.next().toString() );
-                }
-            }
-
-            getLogger().error( "Invalid SCM URL connection: '" + url + "'." );
-
-            throw e;
-        }
+        repository = scmManager.makeScmRepository( url );
 
         ScmProviderRepository scmRepo = repository.getProviderRepository();
 
