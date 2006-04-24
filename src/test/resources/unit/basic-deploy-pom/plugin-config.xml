@@ -1,0 +1,18 @@
+<project>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-deploy-plugin</artifactId>
+		<configuration>
+		  <pomFile>${basedir}/src/test/resources/unit/basic-deploy-pom/plugin-config.xml</pomFile>
+		  <packaging>pom</packaging>
+		  <artifact implementation="org.apache.maven.plugin.deploy.stubs.DeployArtifactStub" />
+		  <attachedArtifacts />
+          <localRepository>${localRepository}</localRepository>
+		  <deploymentRepository implementation="org.apache.maven.plugin.deploy.stubs.ArtifactRepositoryStub" />
+		  <updateReleaseInfo>true</updateReleaseInfo>
+		</configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
