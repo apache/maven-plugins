@@ -65,6 +65,30 @@
     </component>
     <component>
       <role>org.apache.maven.plugins.release.ReleaseManager</role>
+      <role-hint>test-no-resume</role-hint>
+      <implementation>org.apache.maven.plugins.release.DefaultReleaseManager</implementation>
+      <requirements>
+        <requirement>
+          <role>org.apache.maven.plugins.release.phase.ReleasePhase</role>
+          <field-name>releasePhases</field-name>
+        </requirement>
+        <requirement>
+          <role>org.apache.maven.plugins.release.config.ReleaseConfigurationStore</role>
+          <role-hint>stub</role-hint>
+          <field-name>configStore</field-name>
+        </requirement>
+      </requirements>
+      <configuration>
+        <phases>
+          <phase>step1</phase>
+          <phase>step2</phase>
+          <phase>step3</phase>
+        </phases>
+        <resume>false</resume>
+      </configuration>
+    </component>
+    <component>
+      <role>org.apache.maven.plugins.release.ReleaseManager</role>
       <role-hint>bad-phase-configured</role-hint>
       <implementation>org.apache.maven.plugins.release.DefaultReleaseManager</implementation>
       <requirements>

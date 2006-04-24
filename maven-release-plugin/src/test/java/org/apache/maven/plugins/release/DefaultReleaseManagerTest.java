@@ -57,15 +57,17 @@ public class DefaultReleaseManagerTest
         ReleaseConfiguration releaseConfiguration = configStore.read();
         releaseConfiguration.setCompletedPhase( null );
 
-        releaseManager.prepare( releaseConfiguration );
+        releaseManager.prepare( new ReleaseConfiguration() );
 
         Map phases = container.lookupMap( ReleasePhase.ROLE );
 
         ReleasePhaseStub phase = (ReleasePhaseStub) phases.get( "step1" );
         assertTrue( "step1 executed", phase.isExecuted() );
         assertFalse( "step1 not simulated", phase.isSimulated() );
+        phase = (ReleasePhaseStub) phases.get( "step2" );
         assertTrue( "step2 executed", phase.isExecuted() );
         assertFalse( "step2 not simulated", phase.isSimulated() );
+        phase = (ReleasePhaseStub) phases.get( "step3" );
         assertTrue( "step3 executed", phase.isExecuted() );
         assertFalse( "step3 not simulated", phase.isSimulated() );
     }
@@ -78,12 +80,35 @@ public class DefaultReleaseManagerTest
         ReleaseConfiguration releaseConfiguration = configStore.read();
         releaseConfiguration.setCompletedPhase( "step1" );
 
-        releaseManager.prepare( releaseConfiguration );
+        releaseManager.prepare( new ReleaseConfiguration() );
 
         Map phases = container.lookupMap( ReleasePhase.ROLE );
 
         ReleasePhaseStub phase = (ReleasePhaseStub) phases.get( "step1" );
         assertFalse( "step1 not executed", phase.isExecuted() );
+        assertFalse( "step1 not simulated", phase.isSimulated() );
+        phase = (ReleasePhaseStub) phases.get( "step2" );
+        assertTrue( "step2 executed", phase.isExecuted() );
+        assertFalse( "step2 not simulated", phase.isSimulated() );
+        phase = (ReleasePhaseStub) phases.get( "step3" );
+        assertTrue( "step3 executed", phase.isExecuted() );
+        assertFalse( "step3 not simulated", phase.isSimulated() );
+    }
+
+    public void testPrepareCompletedPhaseNoResume()
+        throws Exception
+    {
+        ReleaseManager releaseManager = (ReleaseManager) lookup( ReleaseManager.ROLE, "test-no-resume" );
+
+        ReleaseConfiguration releaseConfiguration = configStore.read();
+        releaseConfiguration.setCompletedPhase( "step1" );
+
+        releaseManager.prepare( new ReleaseConfiguration() );
+
+        Map phases = container.lookupMap( ReleasePhase.ROLE );
+
+        ReleasePhaseStub phase = (ReleasePhaseStub) phases.get( "step1" );
+        assertTrue( "step1 executed", phase.isExecuted() );
         assertFalse( "step1 not simulated", phase.isSimulated() );
         phase = (ReleasePhaseStub) phases.get( "step2" );
         assertTrue( "step2 executed", phase.isExecuted() );
@@ -101,7 +126,7 @@ public class DefaultReleaseManagerTest
         ReleaseConfiguration releaseConfiguration = configStore.read();
         releaseConfiguration.setCompletedPhase( "step3" );
 
-        releaseManager.prepare( releaseConfiguration );
+        releaseManager.prepare( new ReleaseConfiguration() );
 
         Map phases = container.lookupMap( ReleasePhase.ROLE );
 
@@ -124,7 +149,7 @@ public class DefaultReleaseManagerTest
         ReleaseConfiguration releaseConfiguration = configStore.read();
         releaseConfiguration.setCompletedPhase( "foo" );
 
-        releaseManager.prepare( releaseConfiguration );
+        releaseManager.prepare( new ReleaseConfiguration() );
 
         Map phases = container.lookupMap( ReleasePhase.ROLE );
 
@@ -147,15 +172,17 @@ public class DefaultReleaseManagerTest
         ReleaseConfiguration releaseConfiguration = configStore.read();
         releaseConfiguration.setCompletedPhase( null );
 
-        releaseManager.prepare( releaseConfiguration );
+        releaseManager.prepare( new ReleaseConfiguration() );
 
         Map phases = container.lookupMap( ReleasePhase.ROLE );
 
         ReleasePhaseStub phase = (ReleasePhaseStub) phases.get( "step1" );
         assertTrue( "step1 simulated", phase.isSimulated() );
         assertFalse( "step1 not executed", phase.isExecuted() );
+        phase = (ReleasePhaseStub) phases.get( "step2" );
         assertTrue( "step2 simulated", phase.isSimulated() );
         assertFalse( "step2 not executed", phase.isExecuted() );
+        phase = (ReleasePhaseStub) phases.get( "step3" );
         assertTrue( "step3 simulated", phase.isSimulated() );
         assertFalse( "step3 not executed", phase.isExecuted() );
     }
@@ -168,7 +195,7 @@ public class DefaultReleaseManagerTest
         ReleaseConfiguration releaseConfiguration = configStore.read();
         releaseConfiguration.setCompletedPhase( "step1" );
 
-        releaseManager.prepare( releaseConfiguration );
+        releaseManager.prepare( new ReleaseConfiguration() );
 
         Map phases = container.lookupMap( ReleasePhase.ROLE );
 
@@ -191,7 +218,7 @@ public class DefaultReleaseManagerTest
         ReleaseConfiguration releaseConfiguration = configStore.read();
         releaseConfiguration.setCompletedPhase( "step3" );
 
-        releaseManager.prepare( releaseConfiguration );
+        releaseManager.prepare( new ReleaseConfiguration() );
 
         Map phases = container.lookupMap( ReleasePhase.ROLE );
 
@@ -214,7 +241,7 @@ public class DefaultReleaseManagerTest
         ReleaseConfiguration releaseConfiguration = configStore.read();
         releaseConfiguration.setCompletedPhase( "foo" );
 
-        releaseManager.prepare( releaseConfiguration );
+        releaseManager.prepare( new ReleaseConfiguration() );
 
         Map phases = container.lookupMap( ReleasePhase.ROLE );
 
