@@ -33,6 +33,8 @@ import java.util.Set;
  * Check the dependencies of all projects being released to see if there are any unreleased snapshots.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
+ * @todo plugins with no version will be resolved to RELEASE which is not a snapshot, but remains unresolved to this point. This is a potential hole in the check, and should be revisited after the release pom writing is done and resolving versions to verify whether it is.
+ * @todo plugins injected by the lifecycle are not tested here. They will be injected with a RELEASE version so are covered under the above point.
  */
 public class CheckDependencySnapshotsPhase
     implements ReleasePhase
@@ -78,7 +80,6 @@ public class CheckDependencySnapshotsPhase
         {
             Artifact artifact = (Artifact) i.next();
 
-            // TODO: make sure to test what happens if no version was given, but the release version is resolved to a snapshot
             if ( checkArtifact( artifact, reactorProjectKeys ) )
             {
                 snapshotDependencies.add( artifact );
@@ -89,7 +90,6 @@ public class CheckDependencySnapshotsPhase
         {
             Artifact artifact = (Artifact) i.next();
 
-            // TODO: make sure to test what happens if no version was given, but the release version is resolved to a snapshot
             if ( checkArtifact( artifact, reactorProjectKeys ) )
             {
                 snapshotDependencies.add( artifact );
