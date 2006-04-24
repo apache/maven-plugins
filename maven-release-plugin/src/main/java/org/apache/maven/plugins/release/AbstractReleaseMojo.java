@@ -1,14 +1,14 @@
 package org.apache.maven.plugins.release;
 
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
- * 
+ * Copyright 2005-2006 The Apache Software Foundation.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -111,6 +111,7 @@ public abstract class AbstractReleaseMojo
 
     /**
      * Set the SCM Helper
+     *
      * @param scmHelper
      */
     protected void setScmHelper( ScmHelper scmHelper )
@@ -119,7 +120,8 @@ public abstract class AbstractReleaseMojo
     }
 
     /**
-     * Get the SCM Manager 
+     * Get the SCM Manager
+     *
      * @return
      */
     private ScmManager getScmManager()
@@ -129,6 +131,7 @@ public abstract class AbstractReleaseMojo
 
     /**
      * Set the SCM Manager
+     *
      * @param scmManager
      */
     public void setScmManager( ScmManager scmManager )
@@ -151,7 +154,7 @@ public abstract class AbstractReleaseMojo
 
             try
             {
-                repository = getScmManager().makeScmRepository( scmHelper.getUrl() );
+                repository = scmManager.makeScmRepository( scmHelper.getUrl() );
             }
             catch ( ScmRepositoryException e )
             {
