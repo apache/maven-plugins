@@ -22,8 +22,10 @@ import org.codehaus.plexus.util.IOUtil;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Properties;
 
 /**
@@ -74,8 +76,12 @@ public class PropertiesReleaseConfigurationStore
 
         ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
         releaseConfiguration.setCompletedPhase( properties.getProperty( "completedPhase" ) );
-
-        // TODO: populate from properties
+        releaseConfiguration.setUrl( properties.getProperty( "scm.url" ) );
+        releaseConfiguration.setUsername( properties.getProperty( "scm.username" ) );
+        releaseConfiguration.setPassword( properties.getProperty( "scm.password" ) );
+        releaseConfiguration.setPrivateKey( properties.getProperty( "scm.privateKey" ) );
+        releaseConfiguration.setPassphrase( properties.getProperty( "scm.passphrase" ) );
+        releaseConfiguration.setTagBase( properties.getProperty( "scm.tagBase" ) );
 
         if ( mergeConfiguration != null )
         {
@@ -86,8 +92,35 @@ public class PropertiesReleaseConfigurationStore
     }
 
     public void write( ReleaseConfiguration config )
+        throws ReleaseConfigurationStoreException
     {
-        // TODO: implement
+        Properties properties = new Properties();
+        properties.setProperty( "completedPhase", config.getCompletedPhase() );
+        properties.setProperty( "scm.url", config.getUrl() );
+        properties.setProperty( "scm.username", config.getUsername() );
+        properties.setProperty( "scm.password", config.getPassword() );
+        properties.setProperty( "scm.privateKey", config.getPrivateKey() );
+        properties.setProperty( "scm.passphrase", config.getPassphrase() );
+        properties.setProperty( "scm.tagBase", config.getTagBase() );
+
+        OutputStream outStream = null;
+        //noinspection OverlyBroadCatchBlock
+        try
+        {
+            outStream = new FileOutputStream( propertiesFile );
+
+            properties.store( outStream, "release configuration" );
+        }
+        catch ( IOException e )
+        {
+            throw new ReleaseConfigurationStoreException(
+                "Error writing properties file '" + propertiesFile.getName() + "': " + e.getMessage(), e );
+        }
+        finally
+        {
+            IOUtil.close( outStream );
+        }
+
     }
 
     public ReleaseConfiguration read()

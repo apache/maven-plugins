@@ -106,7 +106,15 @@ public class DefaultReleaseManager
             }
 
             config.setCompletedPhase( name );
-            configStore.write( config );
+            try
+            {
+                configStore.write( config );
+            }
+            catch ( ReleaseConfigurationStoreException e )
+            {
+                // TODO: rollback?
+                throw new ReleaseExecutionException( "Error writing release properties after completing phase", e );
+            }
         }
     }
 

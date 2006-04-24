@@ -51,5 +51,6 @@ public interface ReleaseConfigurationStore
      *
      * @param config the configuration
      */
-    void write( ReleaseConfiguration config );
+    void write( ReleaseConfiguration config )
+        throws ReleaseConfigurationStoreException;
 }
