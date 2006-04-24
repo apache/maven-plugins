@@ -17,19 +17,38 @@ package org.apache.maven.plugins.release.scm;
  */
 
 import org.apache.maven.plugins.release.ReleaseExecutionException;
-import org.apache.maven.scm.ScmResult;
+
+import java.util.Iterator;
+import java.util.List;
 
 /**
- * Exception occurring during an SCM operation.
+ * Exception occurring during an SCM repository operation.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class ReleaseScmCommandException
+public class ReleaseScmRepositoryException
     extends ReleaseExecutionException
 {
-    public ReleaseScmCommandException( String message, ScmResult result )
+    public ReleaseScmRepositoryException( String message, List validationMessages )
     {
-        super( message + "\nProvider message:\n" + result.getProviderMessage() + "\nCommand output:\n" +
-            result.getCommandOutput() );
+        super( message + listValidationMessages( validationMessages ) );
+    }
+
+    private static String listValidationMessages( List messages )
+    {
+        StringBuffer buffer = new StringBuffer();
+
+        if ( messages != null )
+        {
+            Iterator iter = messages.iterator();
+
+            while ( iter.hasNext() )
+            {
+                buffer.append( iter.next().toString() );
+                buffer.append( "\n" );
+            }
+        }
+
+        return buffer.toString();
     }
 }
