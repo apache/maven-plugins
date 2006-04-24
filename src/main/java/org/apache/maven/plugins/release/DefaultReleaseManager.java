@@ -59,22 +59,27 @@ public class DefaultReleaseManager
      */
     private ReleaseConfigurationStore configStore;
 
-    // TODO: config - release pom generation, interactive, username, password, tag, tagBase, use edit mode
-    // TODO: validate config - scm url; probably omit as they might not necessarily correspond
+    // TODO: config - release pom generation, interactive, tag, use edit mode
+    // TODO: SCM URL is coming from the store but it probably needs to be read from every project instead
 
     public void prepare( ReleaseConfiguration releaseConfiguration )
         throws ReleaseExecutionException
     {
-        // TODO: how to balance with injected configuration from the mojo? Will it ever override?
-        //  Try to stick to overriding from CLI, but not POM. Perhaps never override to make that easier
         ReleaseConfiguration config;
-        try
+        if ( resume )
         {
-            config = configStore.read( releaseConfiguration );
+            try
+            {
+                config = configStore.read( releaseConfiguration );
+            }
+            catch ( ReleaseConfigurationStoreException e )
+            {
+                throw new ReleaseExecutionException( "Error reading stored configuration: " + e.getMessage(), e );
+            }
         }
-        catch ( ReleaseConfigurationStoreException e )
+        else
         {
-            throw new ReleaseExecutionException( "Error reading stored configuration: " + e.getMessage(), e );
+            config = releaseConfiguration;
         }
 
         // TODO: move these to phases? Into the rewriting, or as a separate phase? Separate phase sounds best to be able to rearrange
