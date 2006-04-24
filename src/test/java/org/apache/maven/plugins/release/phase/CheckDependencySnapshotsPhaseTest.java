@@ -563,8 +563,6 @@ public class CheckDependencySnapshotsPhaseTest
         assertTrue( true );
     }
 
-    // TODO: test implicit plugins (eg jar)
-
     private Map createManagedVersionMap( String projectId, DependencyManagement dependencyManagement,
                                          ArtifactFactory artifactFactory )
         throws ProjectBuildingException
@@ -639,6 +637,7 @@ public class CheckDependencySnapshotsPhaseTest
             MavenProject project = (MavenProject) i.next();
 
             project.setRemoteArtifactRepositories( repos );
+            project.setPluginArtifactRepositories( repos );
 
             Artifact projectArtifact = project.getArtifact();
 
