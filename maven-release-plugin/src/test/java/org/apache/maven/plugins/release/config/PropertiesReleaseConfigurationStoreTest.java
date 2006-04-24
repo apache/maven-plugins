@@ -30,6 +30,13 @@ public class PropertiesReleaseConfigurationStoreTest
 {
     private PropertiesReleaseConfigurationStore store;
 
+    protected void setUp()
+        throws Exception
+    {
+        super.setUp();
+        store = (PropertiesReleaseConfigurationStore) lookup( ReleaseConfigurationStore.ROLE, "properties" );
+    }
+
     public void testReadFromFile()
         throws ReleaseConfigurationStoreException
     {
@@ -38,8 +45,14 @@ public class PropertiesReleaseConfigurationStoreTest
 
         ReleaseConfiguration config = store.read();
         assertEquals( "Expected completedPhase of 'step1'", "step1", config.getCompletedPhase() );
-
-        // TODO: assert other contents
+        assertEquals( "Expected url of 'scm-url'", "scm-url", config.getUrl() );
+        assertEquals( "Expected username of 'username'", "username", config.getUsername() );
+        assertEquals( "Expected password of 'password'", "password", config.getPassword() );
+        assertEquals( "Expected private key of 'private-key'", "private-key", config.getPrivateKey() );
+        assertEquals( "Expected passphrase of 'passphrase'", "passphrase", config.getPassphrase() );
+        assertEquals( "Expected tag base of 'tagBase'", "tagBase", config.getTagBase() );
+        assertNull( "Expected no workingDirectory", config.getWorkingDirectory() );
+        assertNull( "Expected no settings", config.getSettings() );
     }
 
     public void testReadFromEmptyFile()
@@ -88,18 +101,65 @@ public class PropertiesReleaseConfigurationStoreTest
         assertEquals( "Check configurations merged", mergeConfiguration, config );
     }
 
+    public void testWriteToNewFile()
+        throws ReleaseConfigurationStoreException
+    {
+        File file = getTestFile( "target/test-classes/new-release.properties" );
+        file.delete();
+        assertFalse( "Check file doesn't exist", file.exists() );
+        store.setPropertiesFile( file );
+
+        ReleaseConfiguration config = new ReleaseConfiguration();
+        config.setCompletedPhase( "completed-phase-write" );
+        config.setUrl( "url-write" );
+        config.setUsername( "username-write" );
+        config.setPassword( "password-write" );
+        config.setPrivateKey( "private-key-write" );
+        config.setPassphrase( "passphrase-write" );
+        config.setTagBase( "tag-base" );
+
+        store.write( config );
+
+        ReleaseConfiguration rereadConfiguration = store.read();
+
+        assertEquals( "compare configuration", config, rereadConfiguration );
+    }
+
+    public void testOverwriteFile()
+        throws ReleaseConfigurationStoreException
+    {
+        File file = getTestFile( "target/test-classes/rewrite-release.properties" );
+        assertTrue( "Check file already exists", file.exists() );
+        store.setPropertiesFile( file );
+
+        ReleaseConfiguration config = new ReleaseConfiguration();
+        config.setCompletedPhase( "completed-phase-write" );
+        config.setUrl( "url-write" );
+        config.setUsername( "username-write" );
+        config.setPassword( "password-write" );
+        config.setPrivateKey( "private-key-write" );
+        config.setPassphrase( "passphrase-write" );
+        config.setTagBase( "tag-base" );
+
+        store.write( config );
+
+        ReleaseConfiguration rereadConfiguration = store.read();
+
+        assertEquals( "compare configuration", config, rereadConfiguration );
+    }
+
     private static void assertDefaultReleaseConfiguration( ReleaseConfiguration config )
     {
         assertNull( "Expected no completedPhase", config.getCompletedPhase() );
+        assertNull( "Expected no url", config.getUrl() );
+        assertNull( "Expected no username", config.getUsername() );
+        assertNull( "Expected no password", config.getPassword() );
+        assertNull( "Expected no privateKey", config.getPrivateKey() );
+        assertNull( "Expected no passphrase", config.getPassphrase() );
+        assertNull( "Expected no tagBase", config.getTagBase() );
 
-        // TODO: assert other default contents
-    }
-
-    protected void setUp()
-        throws Exception
-    {
-        super.setUp();
-        store = (PropertiesReleaseConfigurationStore) lookup( ReleaseConfigurationStore.ROLE, "properties" );
+        assertNull( "Expected no workingDirectory", config.getWorkingDirectory() );
+        assertNull( "Expected no settings", config.getSettings() );
     }
 
     public ReleaseConfiguration createMergeConfiguration()

@@ -215,10 +215,10 @@ public class ReleaseConfiguration
         result = 29 * result + ( tagBase != null ? tagBase.hashCode() : 0 );
         result = 29 * result + ( username != null ? username.hashCode() : 0 );
         result = 29 * result + ( password != null ? password.hashCode() : 0 );
-        result = 29 * result + url.hashCode();
+        result = 29 * result + ( url != null ? url.hashCode() : 0 );
         result = 29 * result + ( privateKey != null ? privateKey.hashCode() : 0 );
         result = 29 * result + ( passphrase != null ? passphrase.hashCode() : 0 );
-        result = 29 * result + workingDirectory.hashCode();
+        result = 29 * result + ( workingDirectory != null ? workingDirectory.hashCode() : 0 );
         return result;
     }
 
@@ -259,7 +259,7 @@ public class ReleaseConfiguration
         {
             return false;
         }
-        if ( !url.equals( that.url ) )
+        if ( url != null ? !url.equals( that.url ) : that.url != null )
         {
             return false;
         }
@@ -268,7 +268,8 @@ public class ReleaseConfiguration
             return false;
         }
         //noinspection RedundantIfStatement
-        if ( !workingDirectory.equals( that.workingDirectory ) )
+        if ( workingDirectory != null ? !workingDirectory.equals( that.workingDirectory )
+            : that.workingDirectory != null )
         {
             return false;
         }
