@@ -1,7 +1,7 @@
 package org.apache.maven.plugins.release.helpers;
 
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Copyright 2005-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ public class ProjectScmRewriter
         }
     }
 
-    public void restoreScmInfo( Model model ) 
+    public void restoreScmInfo( Model model )
         throws MojoExecutionException
     {
         Scm scm = model.getScm();
@@ -55,12 +55,13 @@ public class ProjectScmRewriter
             {
                 groupId = model.getParent().getGroupId();
             }
-            
-            if ( groupId == null ) 
+
+            if ( groupId == null )
             {
-                throw new MojoExecutionException("Unable to determine groupId for artifact: " + model.getArtifactId() );
+                throw new MojoExecutionException(
+                    "Unable to determine groupId for artifact: " + model.getArtifactId() );
             }
-            
+
             String projectId = ArtifactUtils.versionlessKey( groupId, model.getArtifactId() );
 
             releaseProgress.restoreScmInfo( projectId, scm );
