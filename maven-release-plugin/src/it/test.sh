@@ -15,10 +15,10 @@ fi
 
 name=project
 
-svn import $name file://${dir}/target/svnroot/trunk/$name -m "import."
-svn mkdir file://${dir}/target/svnroot/tags -m "Creating tags dir."
+svn import $name file://localhost/${dir}/target/svnroot/trunk/$name -m "import."
+svn mkdir file://localhost/${dir}/target/svnroot/tags -m "Creating tags dir."
 
-svn co file://${dir}/target/svnroot/trunk/$name target/project.checkout
+svn co file://localhost/${dir}/target/svnroot/trunk/$name target/project.checkout
 
 cd target/project.checkout
 
