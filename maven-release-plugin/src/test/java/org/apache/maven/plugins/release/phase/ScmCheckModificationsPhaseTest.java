@@ -20,6 +20,7 @@ import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 import org.apache.maven.plugins.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.plugins.release.scm.ReleaseScmCommandException;
+import org.apache.maven.plugins.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.plugins.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFile;
@@ -122,9 +123,9 @@ public class ScmCheckModificationsPhaseTest
 
             fail( "Status check should have failed" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseScmRepositoryException e )
         {
-            assertEquals( "check cause", ScmRepositoryException.class, e.getCause().getClass() );
+            assertNull( "Check no additional cause", e.getCause() );
         }
 
         try
@@ -133,9 +134,9 @@ public class ScmCheckModificationsPhaseTest
 
             fail( "Status check should have failed" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseScmRepositoryException e )
         {
-            assertEquals( "check cause", ScmRepositoryException.class, e.getCause().getClass() );
+            assertNull( "Check no additional cause", e.getCause() );
         }
     }
 
