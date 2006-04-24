@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 
 import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Model;
@@ -99,9 +100,10 @@ public class PrepareReleaseMojoTest
         Contributor readContributor = (Contributor) readModel.getContributors().get( 0 );
         
         String msg = "POM is written in a wrong encoding: \n"
-            + "Expected bytes: " + contributor.getName().getBytes() + "\n"
-            + "Returned bytes: " + readContributor.getName().getBytes() + "\n"
-            + "JVM default charset: " + Charset.defaultCharset() + "\n";
+            + "Expected bytes: " + Arrays.toString( contributor.getName().getBytes() ) + "\n"
+            + "Returned bytes: " + Arrays.toString( readContributor.getName().getBytes() ) + "\n"
+            + "JVM default charset: " + Charset.defaultCharset() + "\n"
+            + "System property file.encoding: " + System.getProperty("file.encoding") + "\n";
         assertEquals( msg, contributor.getName(), readContributor.getName() );
 
         scmHelperMock.verify();
