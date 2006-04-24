@@ -20,7 +20,6 @@
           <phase>check-poms</phase>
           <phase>scm-check-modifications</phase>
           <phase>check-dependency-snapshots</phase>
-          <phase>check-plugin-snapshots</phase>
           <phase>rewrite-poms-for-release</phase>
           <phase>run-tests</phase>
           <phase>run-preparation-goals</phase>
@@ -50,11 +49,6 @@
       <role>org.apache.maven.plugins.release.phase.ReleasePhase</role>
       <role-hint>check-dependency-snapshots</role-hint>
       <implementation>org.apache.maven.plugins.release.phase.CheckDependencySnapshotsPhase</implementation>
-    </component>
-    <component>
-      <role>org.apache.maven.plugins.release.phase.ReleasePhase</role>
-      <role-hint>check-plugin-snapshots</role-hint>
-      <implementation>org.apache.maven.plugins.release.phase.CheckPluginSnapshotsPhase</implementation>
     </component>
     <component>
       <role>org.apache.maven.plugins.release.phase.ReleasePhase</role>

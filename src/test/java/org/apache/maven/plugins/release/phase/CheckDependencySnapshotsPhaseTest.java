@@ -51,7 +51,6 @@ import java.util.Stack;
  * Test the dependency snapshot check phase.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
- * @todo should plugins, etc be split into separate phases as originally anticipated?
  */
 public class CheckDependencySnapshotsPhaseTest
     extends PlexusTestCase
