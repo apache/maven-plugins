@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.maven.plugin.release.it</groupId>
   <artifactId>test-project-one</artifactId>
@@ -16,8 +16,9 @@
     </dependency>
   </dependencies>
   <scm>
-    <connection>scm:svn:file://${project.file.parentFile.parentFile}/target/svnroot/trunk/project</connection>
-    <developerConnection>scm:svn:file://${project.file.parentFile.parentFile}/target/svnroot/trunk/project</developerConnection>
+    <connection>scm:svn:file://localhost/${project.file.parentFile.parentFile}/target/svnroot/trunk/project</connection>
+    <developerConnection>
+      scm:svn:file://localhost/${project.file.parentFile.parentFile}/target/svnroot/trunk/project</developerConnection>
   </scm>
   <build>
     <pluginManagement>
@@ -25,7 +26,7 @@
         <plugin>
           <artifactId>maven-release-plugin</artifactId>
           <configuration>
-            <tagBase>file://${project.file.parentFile.parentFile}/target/svnroot/tags</tagBase>
+            <tagBase>file://localhost/${project.file.parentFile.parentFile}/target/svnroot/tags</tagBase>
           </configuration>
         </plugin>
       </plugins>
