@@ -1,7 +1,7 @@
 package org.apache.maven.plugins.release;
 
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Copyright 2005-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import org.apache.maven.plugins.release.helpers.ReleaseProgressTracker;
 import org.apache.maven.plugins.release.helpers.ScmHelper;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
@@ -32,8 +31,8 @@ import org.codehaus.plexus.util.cli.StreamConsumer;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -50,17 +49,19 @@ public class PerformReleaseMojo
     extends AbstractReleaseMojo
 {
     /**
-     * Comma or space separated goals 
+     * Comma or space separated goals
+     *
      * @parameter expression="${goals}"
      */
     private String goals = "deploy";
 
     /**
-     * Comma or space separated arguments such as 
+     * Comma or space separated arguments such as
+     *
      * @parameter expression="${arguments}"
      */
     private String arguments;
-    
+
     /**
      * @parameter expression="${project.build.directory}/checkout"
      * @required
@@ -80,14 +81,14 @@ public class PerformReleaseMojo
      * @readonly
      */
     private boolean interactive;
-    
+
     /**
      * @parameter expression="${releasePom}"
      */
     private String releasePom;
 
     private ReleaseProgressTracker releaseProgress;
-    
+
     private final static String MAVEN_TEST_SKIP = "maven.test.skip";
 
     public void execute()
@@ -130,7 +131,7 @@ public class PerformReleaseMojo
         {
             addSystemEnvironment( cl );
         }
-        catch( Exception e )
+        catch ( Exception e )
         {
             throw new MojoExecutionException( "Can't add system environment variables to mvn command line.", e );
         }
@@ -147,8 +148,8 @@ public class PerformReleaseMojo
         {
             // accept both space and comma, so the old way still work
             String [] tokens = StringUtils.split( this.goals, ", " );
-            
-            for ( int i = 0 ; i < tokens.length ; ++i )
+
+            for ( int i = 0; i < tokens.length; ++i )
             {
                 cl.createArgument().setValue( tokens[i] );
             }
@@ -157,20 +158,20 @@ public class PerformReleaseMojo
         if ( this.arguments != null )
         {
             String [] tokens = StringUtils.split( this.arguments, ", " );
-            
-            for ( int i = 0 ; i < tokens.length ; ++i )
+
+            for ( int i = 0; i < tokens.length; ++i )
             {
                 cl.createArgument().setValue( tokens[i] );
             }
         }
-        
+
         cl.createArgument().setLine( "--no-plugin-updates" );
 
         if ( !interactive )
         {
             cl.createArgument().setLine( "--batch-mode" );
         }
-        
+
         if ( StringUtils.isNotEmpty( System.getProperty( MAVEN_TEST_SKIP ) ) )
         {
             cl.createArgument().setLine( "-D" + MAVEN_TEST_SKIP + "=" + System.getProperty( MAVEN_TEST_SKIP ) );
@@ -182,7 +183,7 @@ public class PerformReleaseMojo
 
             releasePom = pomFile.getName();
         }
-        
+
         if ( releasePom.equals( Maven.RELEASE_POMv4 ) && interactive )
         {
             StringBuffer warning = new StringBuffer();
@@ -190,15 +191,15 @@ public class PerformReleaseMojo
             warning.append( "\nYou have chosen to use the fully resolved release-POM to deploy this project." );
             warning.append( "\n" );
             warning.append( "\nNOTE: Deploying artifacts using the fully resolved release-POM " );
-            warning.append( "\nwill result in loss of any version ranges specified for your");
+            warning.append( "\nwill result in loss of any version ranges specified for your" );
             warning.append( "\nproject's dependencies." );
             warning.append( "\n" );
             warning.append( "\nAre you sure you want to do this?" );
             warning.append( "\n" );
             warning.append( "\n*******************************************************************************\n" );
-            
+
             getLog().warn( warning );
-            
+
             getLog().info( "Enter the POM filename to use for deployment: [" + releasePom + "] " );
 
             try
@@ -215,11 +216,11 @@ public class PerformReleaseMojo
                 throw new MojoExecutionException( "An error has occurred while reading the pom file location.", e );
             }
         }
-        
+
         getLog().info( "Releasing project based on POM: " + releasePom + " in working directory: " + workingDirectory );
-        
+
         cl.createArgument().setLine( "-f " + releasePom );
-        
+
         List profiles = project.getActiveProfiles();
 
         if ( profiles != null && !profiles.isEmpty() )
@@ -245,7 +246,7 @@ public class PerformReleaseMojo
         try
         {
             this.getLog().info( cl.toString() );
-            
+
             int result = CommandLineUtils.executeCommandLine( cl, consumer, consumer );
 
             if ( result != 0 )
@@ -319,7 +320,7 @@ public class PerformReleaseMojo
         //If this is windows set the shell to command.com or cmd.exe with correct arguments.
         if ( os.indexOf( "windows" ) != -1 )
         {
-            if (os.indexOf("95") != -1 || os.indexOf("98") != -1 || os.indexOf("Me") != -1)
+            if ( os.indexOf( "95" ) != -1 || os.indexOf( "98" ) != -1 || os.indexOf( "Me" ) != -1 )
             {
                 p = r.exec( "command.com /c set" );
             }
@@ -337,7 +338,7 @@ public class PerformReleaseMojo
 
         String line;
 
-        while( ( line = br.readLine() ) != null )
+        while ( ( line = br.readLine() ) != null )
         {
             int idx = line.indexOf( '=' );
 
