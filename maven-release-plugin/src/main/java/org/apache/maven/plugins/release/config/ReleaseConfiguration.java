@@ -19,6 +19,7 @@ package org.apache.maven.plugins.release.config;
 import org.apache.maven.settings.Settings;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * Configuration used for the release.
@@ -71,6 +72,11 @@ public class ReleaseConfiguration
      * Where the release is executed.
      */
     private File workingDirectory;
+
+    /**
+     * The projects being operated on.
+     */
+    private List reactorProjects;
 
     public String getCompletedPhase()
     {
@@ -162,6 +168,16 @@ public class ReleaseConfiguration
         this.workingDirectory = workingDirectory;
     }
 
+    public List getReactorProjects()
+    {
+        return reactorProjects;
+    }
+
+    public void setReactorProjects( List reactorProjects )
+    {
+        this.reactorProjects = reactorProjects;
+    }
+
     /**
      * Merge two configurations together. All SCM settings are overridden by the merge configuration, as are the
      * <code>settings</code> and <code>workingDirectory</code> fields. The <code>completedPhase</code> field is used as
@@ -180,12 +196,18 @@ public class ReleaseConfiguration
         this.privateKey = mergeOverride( this.privateKey, mergeConfiguration.privateKey );
         this.passphrase = mergeOverride( this.passphrase, mergeConfiguration.passphrase );
 
-        // These must be overridden, as they are generally not stored
+        // These must be overridden, as they are not stored
         this.settings = mergeOverride( this.settings, mergeConfiguration.settings );
         this.workingDirectory = mergeOverride( this.workingDirectory, mergeConfiguration.workingDirectory );
+        this.reactorProjects = mergeOverride( this.reactorProjects, mergeConfiguration.reactorProjects );
 
         // Not overridden - not configured from caller
         this.completedPhase = mergeDefault( this.completedPhase, mergeConfiguration.completedPhase );
+    }
+
+    private List mergeOverride( List thisValue, List mergeValue )
+    {
+        return mergeValue != null ? mergeValue : thisValue;
     }
 
     private static File mergeOverride( File thisValue, File mergeValue )
@@ -219,6 +241,7 @@ public class ReleaseConfiguration
         result = 29 * result + ( privateKey != null ? privateKey.hashCode() : 0 );
         result = 29 * result + ( passphrase != null ? passphrase.hashCode() : 0 );
         result = 29 * result + ( workingDirectory != null ? workingDirectory.hashCode() : 0 );
+        result = 29 * result + ( reactorProjects != null ? reactorProjects.hashCode() : 0 );
         return result;
     }
 
@@ -264,6 +287,10 @@ public class ReleaseConfiguration
             return false;
         }
         if ( username != null ? !username.equals( that.username ) : that.username != null )
+        {
+            return false;
+        }
+        if ( reactorProjects != null ? !reactorProjects.equals( that.reactorProjects ) : that.reactorProjects != null )
         {
             return false;
         }
