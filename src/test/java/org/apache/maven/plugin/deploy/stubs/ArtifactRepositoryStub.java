@@ -12,26 +12,33 @@ public class ArtifactRepositoryStub
 {
     private boolean blacklisted;
     
-    private ArtifactRepositoryLayout layout = new DefaultRepositoryLayout();
+    private ArtifactRepositoryLayout layout;
+    
+    private String url;
     
     public String pathOf( Artifact artifact )
     {
-        return layout.pathOf( artifact );
+        return getLayout().pathOf( artifact );
     }
     
     public String pathOfRemoteRepositoryMetadata( ArtifactMetadata artifactMetadata )
     {
-        return layout.pathOfRemoteRepositoryMetadata( artifactMetadata );
+        return getLayout().pathOfRemoteRepositoryMetadata( artifactMetadata );
     }
     
     public String pathOfLocalRepositoryMetadata( ArtifactMetadata metadata, ArtifactRepository repository )
     {
-        return layout.pathOfLocalRepositoryMetadata( metadata, repository );
+        return getLayout().pathOfLocalRepositoryMetadata( metadata, repository );
     }
     
     public String getUrl()
     {
-        return "file://" + System.getProperty( "basedir" ) + "/target/remote-repo";
+        return url;
+    }
+    
+    public void setAppendToUrl( String dir )
+    {
+        this.url = "file://" + System.getProperty( "basedir" ) + "/target/remote-repo/" + dir;
     }
     
     public String getBasedir()
@@ -63,7 +70,14 @@ public class ArtifactRepositoryStub
     
     public ArtifactRepositoryLayout getLayout()
     {
-        return layout;
+        if( layout != null )
+        {
+            return layout;
+        }
+        else
+        {
+            return new DefaultRepositoryLayout();
+        }
     }
     
     public String getKey()
@@ -85,5 +99,4 @@ public class ArtifactRepositoryStub
     {
         return blacklisted;
     }
-    
 }
