@@ -20,6 +20,8 @@ public class DeployArtifactStub
     
     private boolean release;
     
+    private String extension;
+    
     public String getArtifactId()
     {
         return "maven-deploy-test";
@@ -56,9 +58,18 @@ public class DeployArtifactStub
         {
             public String getExtension()
             {
-                return "jar";
+                if( extension == null )
+                {
+                    extension = "jar";
+                }
+                return extension;
             }
         };
+    }
+    
+    public void setArtifactHandlerExtension( String extension )
+    {
+        this.extension = extension;
     }
     
     public void addMetadata( ArtifactMetadata metadata )
