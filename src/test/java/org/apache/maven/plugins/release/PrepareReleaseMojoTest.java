@@ -16,6 +16,11 @@ package org.apache.maven.plugins.release;
  * limitations under the License.
  */
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.nio.charset.Charset;
+
 import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -30,10 +35,6 @@ import org.jmock.core.constraint.IsAnything;
 import org.jmock.core.matcher.MethodNameMatcher;
 import org.jmock.core.stub.ReturnStub;
 import org.jmock.core.stub.ThrowStub;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 
 /**
  * Test for PrepareReleaseMojo
@@ -75,10 +76,14 @@ public class PrepareReleaseMojoTest
     public void testWritePom()
         throws Exception
     {
+        System.out.println( Charset.defaultCharset().name() );
+        System.out.println( System.getProperty("file.encoding") );
+
         Model model = new Model();
         Contributor contributor = new Contributor();
         /* hack to avoid problems with sources encoding, this string contains accentuated "aeiou" */
-        String s = new String( new byte[]{-31, -23, -19, -13, -6} );
+        String s = new String( new byte[] { -61, -95, -61, -87, -61, -83, -61, -77, -61, -70 }, "UTF-8" );
+
         contributor.setName( s );
         model.addContributor( contributor );
         File file = new File( mojo.basedir, "testWritePom.xml" );
@@ -92,7 +97,12 @@ public class PrepareReleaseMojoTest
 
         Model readModel = pomReader.read( new BufferedReader( new FileReader( file ) ) );
         Contributor readContributor = (Contributor) readModel.getContributors().get( 0 );
-        assertEquals( "POM is written in a wrong encoding", contributor.getName(), readContributor.getName() );
+        
+        String msg = "POM is written in a wrong encoding: \n"
+            + "Expected bytes: " + contributor.getName().getBytes() + "\n"
+            + "Returned bytes: " + readContributor.getName().getBytes() + "\n"
+            + "JVM default charset: " + Charset.defaultCharset() + "\n";
+        assertEquals( msg, contributor.getName(), readContributor.getName() );
 
         scmHelperMock.verify();
     }
