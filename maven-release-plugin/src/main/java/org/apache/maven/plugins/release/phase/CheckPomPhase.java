@@ -16,10 +16,12 @@ package org.apache.maven.plugins.release.phase;
  * limitations under the License.
  */
 
+import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
- * TODO: Description.
+ * Phase that checks the validity of the POM before release.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
@@ -27,14 +29,21 @@ public class CheckPomPhase
     implements ReleasePhase
 {
     public void execute( ReleaseConfiguration releaseConfiguration )
+        throws ReleaseExecutionException
     {
-        // TODO: implement
-
+        // TODO: SCM URL is coming from the store but it probably needs to be read from every project instead
+        // TODO: prepare release mojo needs to set this correct to either connection or developerConnection as appropriate - new version doesn't handle it
+        if ( StringUtils.isEmpty( releaseConfiguration.getUrl() ) )
+        {
+            throw new ReleaseExecutionException(
+                "Missing required setting: scm connection or developerConnection must be specified." );
+        }
     }
 
     public void simulate( ReleaseConfiguration releaseConfiguration )
+        throws ReleaseExecutionException
     {
-        // TODO: implement
-
+        // It makes no modifications, so simulate is the same as execute
+        execute( releaseConfiguration );
     }
 }
