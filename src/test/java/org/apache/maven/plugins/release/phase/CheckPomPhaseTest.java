@@ -16,9 +16,13 @@ package org.apache.maven.plugins.release.phase;
  * limitations under the License.
  */
 
+import org.apache.maven.model.Model;
 import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusTestCase;
+
+import java.util.Collections;
 
 /**
  * Test the POM verification check phase.
@@ -43,6 +47,7 @@ public class CheckPomPhaseTest
     {
         ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
         releaseConfiguration.setUrl( "scm-url" );
+        releaseConfiguration.setReactorProjects( Collections.singletonList( createProject( "1.0-SNAPSHOT" ) ) );
 
         phase.execute( releaseConfiguration );
 
@@ -56,6 +61,7 @@ public class CheckPomPhaseTest
         throws Exception
     {
         ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
+        releaseConfiguration.setReactorProjects( Collections.singletonList( createProject( "1.0-SNAPSHOT" ) ) );
 
         try
         {
@@ -77,5 +83,45 @@ public class CheckPomPhaseTest
         {
             assertNull( "Check no cause", e.getCause() );
         }
+    }
+
+    public void testReleasingNonSnapshot()
+        throws Exception
+    {
+        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
+        releaseConfiguration.setUrl( "scm-url" );
+        releaseConfiguration.setReactorProjects( Collections.singletonList( createProject( "1.0" ) ) );
+
+        try
+        {
+            phase.execute( releaseConfiguration );
+
+            fail( "Should have failed to execute" );
+        }
+        catch ( ReleaseExecutionException e )
+        {
+            assertNull( "Check no cause", e.getCause() );
+        }
+        try
+        {
+            phase.simulate( releaseConfiguration );
+
+            fail( "Should have failed to simulate" );
+        }
+        catch ( ReleaseExecutionException e )
+        {
+            assertNull( "Check no cause", e.getCause() );
+        }
+    }
+
+    private static MavenProject createProject( String version )
+    {
+        Model model = new Model();
+
+        model.setArtifactId( "artifactId" );
+        model.setGroupId( "groupId" );
+        model.setVersion( version );
+
+        return new MavenProject( model );
     }
 }

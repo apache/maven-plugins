@@ -16,9 +16,14 @@ package org.apache.maven.plugins.release.phase;
  * limitations under the License.
  */
 
+import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
+
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Phase that checks the validity of the POM before release.
@@ -37,6 +42,20 @@ public class CheckPomPhase
         {
             throw new ReleaseExecutionException(
                 "Missing required setting: scm connection or developerConnection must be specified." );
+        }
+
+        List reactorProjects = releaseConfiguration.getReactorProjects();
+        for ( Iterator it = reactorProjects.iterator(); it.hasNext(); )
+        {
+            MavenProject project = (MavenProject) it.next();
+
+            String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
+
+            if ( !ArtifactUtils.isSnapshot( project.getVersion() ) )
+            {
+                throw new ReleaseExecutionException(
+                    "The project " + projectId + " isn't a snapshot (" + project.getVersion() + ")." );
+            }
         }
     }
 
