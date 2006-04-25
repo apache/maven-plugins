@@ -1,7 +1,7 @@
 package org.apache.maven.plugins.surefire.report;
 
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -129,7 +129,14 @@ public class ReportTestSuite
 
                 testCase.setClassName( name );
 
-                Number time = numberFormat.parse( attributes.getValue( "time" ) );
+                String timeAsString = attributes.getValue( "time" );
+
+                Number time = new Integer( 0 );
+
+                if ( timeAsString != null )
+                {
+                    time = numberFormat.parse( timeAsString );
+                }
 
                 testCase.setTime( time.floatValue() );
 
