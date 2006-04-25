@@ -60,7 +60,6 @@ public class DefaultReleaseManager
     private ReleaseConfigurationStore configStore;
 
     // TODO: config - release pom generation, interactive, tag, use edit mode
-    // TODO: SCM URL is coming from the store but it probably needs to be read from every project instead
 
     public void prepare( ReleaseConfiguration releaseConfiguration )
         throws ReleaseExecutionException
