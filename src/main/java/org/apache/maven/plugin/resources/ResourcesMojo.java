@@ -193,8 +193,10 @@ public class ResourcesMojo
     private void initializeFiltering()
         throws MojoExecutionException
     {
+        filterProperties = new Properties();
+        
         // System properties
-        filterProperties = new Properties( System.getProperties() );
+        filterProperties.putAll( System.getProperties() );
         
         // Project properties
         filterProperties.putAll( project.getProperties() );
