@@ -19,6 +19,8 @@ package org.apache.maven.plugin.deploy.stubs;
 public class ArtifactRepositoryStub2
     extends ArtifactRepositoryStub
 {
+    private String protocol;
+    
     public String getUrl()
     {
         return "file://" + System.getProperty( "basedir" ) + "/target/remote-repo/basic-deploy-scp";
@@ -31,6 +33,15 @@ public class ArtifactRepositoryStub2
     
     public String getProtocol()
     {
-        return "scp";
+        if( this.protocol == null || this.protocol.equals("") )
+        {
+            this.protocol = "scp";
+        }
+        return this.protocol;
+    }
+    
+    public void setProtocol( String protocol )
+    {
+        this.protocol = protocol;
     }
 }
