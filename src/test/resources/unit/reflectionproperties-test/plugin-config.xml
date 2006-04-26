@@ -1,0 +1,14 @@
+<project>
+  <description>c:\root\home\my_dir</description>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <configuration>
+            <encoding>UTF-8</encoding>
+            <outputDirectory>${basedir}\target\test-classes\unit\reflectionproperties-test</outputDirectory>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
