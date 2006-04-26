@@ -18,6 +18,8 @@
       <configuration>
         <phases>
           <phase>check-poms</phase>
+          <phase>map-release-versions</phase>
+          <phase>map-development-versions</phase>
           <phase>scm-check-modifications</phase>
           <phase>check-dependency-snapshots</phase>
           <phase>rewrite-poms-for-release</phase>
@@ -34,6 +36,32 @@
       <role>org.apache.maven.plugins.release.phase.ReleasePhase</role>
       <role-hint>check-poms</role-hint>
       <implementation>org.apache.maven.plugins.release.phase.CheckPomPhase</implementation>
+    </component>
+    <component>
+      <role>org.apache.maven.plugins.release.phase.ReleasePhase</role>
+      <role-hint>map-release-versions</role-hint>
+      <implementation>org.apache.maven.plugins.release.phase.MapVersionsPhase</implementation>
+      <configuration>
+        <convertToSnapshot>false</convertToSnapshot>
+      </configuration>
+      <requirements>
+        <requirement>
+          <role>org.codehaus.plexus.components.interactivity.Prompter</role>
+        </requirement>
+      </requirements>
+    </component>
+    <component>
+      <role>org.apache.maven.plugins.release.phase.ReleasePhase</role>
+      <role-hint>map-development-versions</role-hint>
+      <implementation>org.apache.maven.plugins.release.phase.MapVersionsPhase</implementation>
+      <configuration>
+        <convertToSnapshot>true</convertToSnapshot>
+      </configuration>
+      <requirements>
+        <requirement>
+          <role>org.codehaus.plexus.components.interactivity.Prompter</role>
+        </requirement>
+      </requirements>
     </component>
     <component>
       <role>org.apache.maven.plugins.release.phase.ReleasePhase</role>

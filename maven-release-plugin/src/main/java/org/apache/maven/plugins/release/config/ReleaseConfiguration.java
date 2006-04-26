@@ -19,7 +19,10 @@ package org.apache.maven.plugins.release.config;
 import org.apache.maven.settings.Settings;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Configuration used for the release.
@@ -94,6 +97,32 @@ public class ReleaseConfiguration
      * Whether to generate release POMs.
      */
     private boolean generateReleasePoms;
+
+    /**
+     * Whether the release process is interactive and the release manager should be prompted to confirm values, or
+     * whether the defaults are used regardless.
+     */
+    private boolean interactive = true;
+
+    /**
+     * A map of projects to versions to use when releasing the given projects.
+     */
+    private Map releaseVersions = new HashMap();
+
+    /**
+     * A map of projects to versions to use when moving the given projects back into devlopment after release.
+     */
+    private Map developmentVersions = new HashMap();
+
+    public boolean isInteractive()
+    {
+        return interactive;
+    }
+
+    public void setInteractive( boolean interactive )
+    {
+        this.interactive = interactive;
+    }
 
     public boolean isGenerateReleasePoms()
     {
@@ -225,6 +254,16 @@ public class ReleaseConfiguration
         this.generateReleasePoms = generateReleasePoms;
     }
 
+    public Map getReleaseVersions()
+    {
+        return Collections.unmodifiableMap( releaseVersions );
+    }
+
+    public Map getDevelopmentVersions()
+    {
+        return Collections.unmodifiableMap( developmentVersions );
+    }
+
     /**
      * Merge two configurations together. All SCM settings are overridden by the merge configuration, as are the
      * <code>settings</code> and <code>workingDirectory</code> fields. The <code>completedPhase</code> field is used as
@@ -245,6 +284,7 @@ public class ReleaseConfiguration
         this.useEditMode = mergeConfiguration.useEditMode;
         this.addSchema = mergeConfiguration.addSchema;
         this.generateReleasePoms = mergeConfiguration.generateReleasePoms;
+        this.interactive = mergeConfiguration.interactive;
 
         // These must be overridden, as they are not stored
         this.settings = mergeOverride( this.settings, mergeConfiguration.settings );
@@ -253,6 +293,8 @@ public class ReleaseConfiguration
 
         // Not overridden - not configured from caller
         this.completedPhase = mergeDefault( this.completedPhase, mergeConfiguration.completedPhase );
+
+        // The version maps are never merged
     }
 
     private List mergeOverride( List thisValue, List mergeValue )
@@ -280,24 +322,6 @@ public class ReleaseConfiguration
         return thisValue != null ? thisValue : mergeValue;
     }
 
-    public int hashCode()
-    {
-        int result = completedPhase != null ? completedPhase.hashCode() : 0;
-        result = 29 * result + ( settings != null ? settings.hashCode() : 0 );
-        result = 29 * result + ( tagBase != null ? tagBase.hashCode() : 0 );
-        result = 29 * result + ( username != null ? username.hashCode() : 0 );
-        result = 29 * result + ( password != null ? password.hashCode() : 0 );
-        result = 29 * result + ( url != null ? url.hashCode() : 0 );
-        result = 29 * result + ( privateKey != null ? privateKey.hashCode() : 0 );
-        result = 29 * result + ( passphrase != null ? passphrase.hashCode() : 0 );
-        result = 29 * result + ( workingDirectory != null ? workingDirectory.hashCode() : 0 );
-        result = 29 * result + ( reactorProjects != null ? reactorProjects.hashCode() : 0 );
-        result = 29 * result + ( useEditMode ? 1 : 0 );
-        result = 29 * result + ( addSchema ? 1 : 0 );
-        result = 29 * result + ( generateReleasePoms ? 1 : 0 );
-        return result;
-    }
-
     public boolean equals( Object obj )
     {
         if ( this == obj )
@@ -315,15 +339,24 @@ public class ReleaseConfiguration
         {
             return false;
         }
-        if ( useEditMode != that.useEditMode )
-        {
-            return false;
-        }
         if ( generateReleasePoms != that.generateReleasePoms )
         {
             return false;
         }
+        if ( interactive != that.interactive )
+        {
+            return false;
+        }
+        if ( useEditMode != that.useEditMode )
+        {
+            return false;
+        }
         if ( completedPhase != null ? !completedPhase.equals( that.completedPhase ) : that.completedPhase != null )
+        {
+            return false;
+        }
+        if ( developmentVersions != null ? !developmentVersions.equals( that.developmentVersions )
+            : that.developmentVersions != null )
         {
             return false;
         }
@@ -340,6 +373,10 @@ public class ReleaseConfiguration
             return false;
         }
         if ( reactorProjects != null ? !reactorProjects.equals( that.reactorProjects ) : that.reactorProjects != null )
+        {
+            return false;
+        }
+        if ( releaseVersions != null ? !releaseVersions.equals( that.releaseVersions ) : that.releaseVersions != null )
         {
             return false;
         }
@@ -367,5 +404,52 @@ public class ReleaseConfiguration
         }
 
         return true;
+    }
+
+    public int hashCode()
+    {
+        int result = completedPhase != null ? completedPhase.hashCode() : 0;
+        result = 29 * result + ( settings != null ? settings.hashCode() : 0 );
+        result = 29 * result + ( tagBase != null ? tagBase.hashCode() : 0 );
+        result = 29 * result + ( username != null ? username.hashCode() : 0 );
+        result = 29 * result + ( password != null ? password.hashCode() : 0 );
+        result = 29 * result + ( url != null ? url.hashCode() : 0 );
+        result = 29 * result + ( privateKey != null ? privateKey.hashCode() : 0 );
+        result = 29 * result + ( passphrase != null ? passphrase.hashCode() : 0 );
+        result = 29 * result + ( workingDirectory != null ? workingDirectory.hashCode() : 0 );
+        result = 29 * result + ( reactorProjects != null ? reactorProjects.hashCode() : 0 );
+        result = 29 * result + ( useEditMode ? 1 : 0 );
+        result = 29 * result + ( addSchema ? 1 : 0 );
+        result = 29 * result + ( generateReleasePoms ? 1 : 0 );
+        result = 29 * result + ( interactive ? 1 : 0 );
+        result = 29 * result + ( releaseVersions != null ? releaseVersions.hashCode() : 0 );
+        result = 29 * result + ( developmentVersions != null ? developmentVersions.hashCode() : 0 );
+        return result;
+    }
+
+    /**
+     * Map a given project to a specified version from when it is released.
+     *
+     * @param projectId   the project's group and artifact ID
+     * @param nextVersion the version to map to
+     */
+    public void mapReleaseVersion( String projectId, String nextVersion )
+    {
+        assert !releaseVersions.containsKey( projectId );
+
+        releaseVersions.put( projectId, nextVersion );
+    }
+
+    /**
+     * Map a given project to a specified version from when it is incremented and placed back into development.
+     *
+     * @param projectId   the project's group and artifact ID
+     * @param nextVersion the version to map to
+     */
+    public void mapDevelopmentVersion( String projectId, String nextVersion )
+    {
+        assert !developmentVersions.containsKey( projectId );
+
+        developmentVersions.put( projectId, nextVersion );
     }
 }

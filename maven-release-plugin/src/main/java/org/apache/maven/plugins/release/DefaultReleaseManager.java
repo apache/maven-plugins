@@ -59,7 +59,7 @@ public class DefaultReleaseManager
      */
     private ReleaseConfigurationStore configStore;
 
-    // TODO: config - release pom generation, interactive, tag, use edit mode
+    // TODO: config - tag
 
     public void prepare( ReleaseConfiguration releaseConfiguration )
         throws ReleaseExecutionException
@@ -80,10 +80,6 @@ public class DefaultReleaseManager
         {
             config = releaseConfiguration;
         }
-
-        // TODO: move these to phases? Into the rewriting, or as a separate phase? Separate phase sounds best to be able to rearrange
-        // - walk through modules, map out values, prompt as necessary - for development versions
-        // - walk through modules, map out values, prompt as necessary - for release versions
 
         // Later, it would be a good idea to introduce a proper workflow tool so that the release can be made up of a
         // more flexible set of steps.
