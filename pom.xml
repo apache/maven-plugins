@@ -104,6 +104,20 @@
       <version>1.0-beta-3</version>
       <scope>test</scope>
     </dependency>
-    
+    <dependency>
+      <groupId>dom4j</groupId>
+      <artifactId>dom4j</artifactId>
+      <version>1.6.1</version>
+    </dependency>
   </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <childDelegation>false</childDelegation>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

@@ -78,6 +78,28 @@ public class ReleaseConfiguration
      */
     private List reactorProjects;
 
+    /**
+     * Whether to use edit mode when making SCM modifications. This setting is disregarded if the SCM does not support
+     * edit mode, or if edit mode is compulsory for the given SCM.
+     */
+    private boolean useEditMode;
+
+    /**
+     * Whether to add the model schema to the top of the rewritten POM if it wasn't there already. If <code>false</code>
+     * then the root element will remain untouched.
+     */
+    private boolean addSchema;
+
+    /**
+     * Whether to generate release POMs.
+     */
+    private boolean generateReleasePoms;
+
+    public boolean isGenerateReleasePoms()
+    {
+        return generateReleasePoms;
+    }
+
     public String getCompletedPhase()
     {
         return completedPhase;
@@ -178,6 +200,31 @@ public class ReleaseConfiguration
         this.reactorProjects = reactorProjects;
     }
 
+    public boolean isUseEditMode()
+    {
+        return useEditMode;
+    }
+
+    public boolean isAddSchema()
+    {
+        return addSchema;
+    }
+
+    public void setUseEditMode( boolean useEditMode )
+    {
+        this.useEditMode = useEditMode;
+    }
+
+    public void setAddSchema( boolean addSchema )
+    {
+        this.addSchema = addSchema;
+    }
+
+    public void setGenerateReleasePoms( boolean generateReleasePoms )
+    {
+        this.generateReleasePoms = generateReleasePoms;
+    }
+
     /**
      * Merge two configurations together. All SCM settings are overridden by the merge configuration, as are the
      * <code>settings</code> and <code>workingDirectory</code> fields. The <code>completedPhase</code> field is used as
@@ -195,6 +242,9 @@ public class ReleaseConfiguration
         this.password = mergeOverride( this.password, mergeConfiguration.password );
         this.privateKey = mergeOverride( this.privateKey, mergeConfiguration.privateKey );
         this.passphrase = mergeOverride( this.passphrase, mergeConfiguration.passphrase );
+        this.useEditMode = mergeConfiguration.useEditMode;
+        this.addSchema = mergeConfiguration.addSchema;
+        this.generateReleasePoms = mergeConfiguration.generateReleasePoms;
 
         // These must be overridden, as they are not stored
         this.settings = mergeOverride( this.settings, mergeConfiguration.settings );
@@ -242,6 +292,9 @@ public class ReleaseConfiguration
         result = 29 * result + ( passphrase != null ? passphrase.hashCode() : 0 );
         result = 29 * result + ( workingDirectory != null ? workingDirectory.hashCode() : 0 );
         result = 29 * result + ( reactorProjects != null ? reactorProjects.hashCode() : 0 );
+        result = 29 * result + ( useEditMode ? 1 : 0 );
+        result = 29 * result + ( addSchema ? 1 : 0 );
+        result = 29 * result + ( generateReleasePoms ? 1 : 0 );
         return result;
     }
 
@@ -258,6 +311,18 @@ public class ReleaseConfiguration
 
         ReleaseConfiguration that = (ReleaseConfiguration) obj;
 
+        if ( addSchema != that.addSchema )
+        {
+            return false;
+        }
+        if ( useEditMode != that.useEditMode )
+        {
+            return false;
+        }
+        if ( generateReleasePoms != that.generateReleasePoms )
+        {
+            return false;
+        }
         if ( completedPhase != null ? !completedPhase.equals( that.completedPhase ) : that.completedPhase != null )
         {
             return false;
@@ -274,6 +339,10 @@ public class ReleaseConfiguration
         {
             return false;
         }
+        if ( reactorProjects != null ? !reactorProjects.equals( that.reactorProjects ) : that.reactorProjects != null )
+        {
+            return false;
+        }
         if ( settings != null ? !settings.equals( that.settings ) : that.settings != null )
         {
             return false;
@@ -287,10 +356,6 @@ public class ReleaseConfiguration
             return false;
         }
         if ( username != null ? !username.equals( that.username ) : that.username != null )
-        {
-            return false;
-        }
-        if ( reactorProjects != null ? !reactorProjects.equals( that.reactorProjects ) : that.reactorProjects != null )
         {
             return false;
         }
