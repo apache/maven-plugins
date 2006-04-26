@@ -26,6 +26,7 @@ import org.apache.maven.plugin.deploy.DeployMojo;
 import org.apache.maven.plugin.deploy.stubs.ArtifactRepositoryStub;
 import org.apache.maven.plugin.deploy.stubs.AttachedArtifactStub;
 import org.apache.maven.plugin.deploy.stubs.DeployArtifactStub;
+import org.apache.maven.plugin.deploy.stubs.ArtifactDeployerStub;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -370,7 +371,7 @@ public class DeployMojoTest
         assertEquals( 0, getSizeOfExpectedFiles( fileList, expectedFiles ) );               
     }
     
-/*
+
     public void testBasicDeployWithScpAsProtocol()
         throws Exception
     {
@@ -380,6 +381,10 @@ public class DeployMojoTest
         DeployMojo mojo = ( DeployMojo ) lookupMojo( "deploy", testPom );
         
         assertNotNull( mojo );
+        
+        ArtifactDeployerStub deployer = new ArtifactDeployerStub();
+        
+        setVariableValueToObject( mojo, "deployer", deployer );
         
         File file = new File( getBasedir(),
                               "target/test-classes/unit/basic-deploy-scp/target/" +
@@ -398,23 +403,14 @@ public class DeployMojoTest
         {
             FileUtils.deleteDirectory( sshFile );
         }
-        
-        try
-        {
-            mojo.execute();
-            
-            fail( "failure" );
-        }
-        catch( Exception e )
-        {
-            //expected
-        }
 
+        mojo.execute();
+            
         assertTrue( sshFile.exists() );
         
         FileUtils.deleteDirectory( sshFile );
     }
-*/
+
     
     private void addFileToList( File file, List fileList )
     {
