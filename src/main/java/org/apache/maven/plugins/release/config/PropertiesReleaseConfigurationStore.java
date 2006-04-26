@@ -26,6 +26,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -83,6 +85,23 @@ public class PropertiesReleaseConfigurationStore
         releaseConfiguration.setPassphrase( properties.getProperty( "scm.passphrase" ) );
         releaseConfiguration.setTagBase( properties.getProperty( "scm.tagBase" ) );
 
+        // boolean properties are not written to the properties file because the value from the caller is always used
+
+        for ( Iterator i = properties.keySet().iterator(); i.hasNext(); )
+        {
+            String property = (String) i.next();
+            if ( property.startsWith( "project.rel." ) )
+            {
+                releaseConfiguration.mapReleaseVersion( property.substring( "project.rel.".length() ),
+                                                        properties.getProperty( property ) );
+            }
+            else if ( property.startsWith( "project.dev." ) )
+            {
+                releaseConfiguration.mapDevelopmentVersion( property.substring( "project.dev.".length() ),
+                                                            properties.getProperty( property ) );
+            }
+        }
+
         if ( mergeConfiguration != null )
         {
             releaseConfiguration.merge( mergeConfiguration );
@@ -102,6 +121,20 @@ public class PropertiesReleaseConfigurationStore
         properties.setProperty( "scm.privateKey", config.getPrivateKey() );
         properties.setProperty( "scm.passphrase", config.getPassphrase() );
         properties.setProperty( "scm.tagBase", config.getTagBase() );
+
+        // boolean properties are not written to the properties file because the value from the caller is always used
+
+        for ( Iterator i = config.getReleaseVersions().entrySet().iterator(); i.hasNext(); )
+        {
+            Map.Entry entry = (Map.Entry) i.next();
+            properties.setProperty( "project.rel." + entry.getKey(), (String) entry.getValue() );
+        }
+
+        for ( Iterator i = config.getDevelopmentVersions().entrySet().iterator(); i.hasNext(); )
+        {
+            Map.Entry entry = (Map.Entry) i.next();
+            properties.setProperty( "project.dev." + entry.getKey(), (String) entry.getValue() );
+        }
 
         OutputStream outStream = null;
         //noinspection OverlyBroadCatchBlock

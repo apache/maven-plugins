@@ -19,6 +19,7 @@ package org.apache.maven.plugins.release.config;
 import org.codehaus.plexus.PlexusTestCase;
 
 import java.io.File;
+import java.util.Map;
 
 /**
  * Test the properties store.
@@ -53,6 +54,24 @@ public class PropertiesReleaseConfigurationStoreTest
         assertEquals( "Expected tag base of 'tagBase'", "tagBase", config.getTagBase() );
         assertNull( "Expected no workingDirectory", config.getWorkingDirectory() );
         assertNull( "Expected no settings", config.getSettings() );
+        assertFalse( "Expected default generateReleasePoms", config.isGenerateReleasePoms() );
+        assertFalse( "Expected default useEditMode", config.isUseEditMode() );
+        assertTrue( "Expected default interactive", config.isInteractive() );
+        assertFalse( "Expected default addScema", config.isAddSchema() );
+
+        Map versions = config.getReleaseVersions();
+        assertEquals( "Expected 2 version mappings", 2, versions.size() );
+        assertTrue( "missing project mapping", versions.containsKey( "groupId:artifactId1" ) );
+        assertEquals( "Incorrect version mapping", "2.0", versions.get( "groupId:artifactId1" ) );
+        assertTrue( "missing project mapping", versions.containsKey( "groupId:artifactId2" ) );
+        assertEquals( "Incorrect version mapping", "3.0", versions.get( "groupId:artifactId2" ) );
+
+        versions = config.getDevelopmentVersions();
+        assertEquals( "Expected 2 version mappings", 2, versions.size() );
+        assertTrue( "missing project mapping", versions.containsKey( "groupId:artifactId1" ) );
+        assertEquals( "Incorrect version mapping", "2.1-SNAPSHOT", versions.get( "groupId:artifactId1" ) );
+        assertTrue( "missing project mapping", versions.containsKey( "groupId:artifactId2" ) );
+        assertEquals( "Incorrect version mapping", "3.0.1-SNAPSHOT", versions.get( "groupId:artifactId2" ) );
     }
 
     public void testReadFromEmptyFile()
@@ -109,14 +128,7 @@ public class PropertiesReleaseConfigurationStoreTest
         assertFalse( "Check file doesn't exist", file.exists() );
         store.setPropertiesFile( file );
 
-        ReleaseConfiguration config = new ReleaseConfiguration();
-        config.setCompletedPhase( "completed-phase-write" );
-        config.setUrl( "url-write" );
-        config.setUsername( "username-write" );
-        config.setPassword( "password-write" );
-        config.setPrivateKey( "private-key-write" );
-        config.setPassphrase( "passphrase-write" );
-        config.setTagBase( "tag-base" );
+        ReleaseConfiguration config = createReleaseConfigurationForWriting();
 
         store.write( config );
 
@@ -132,6 +144,17 @@ public class PropertiesReleaseConfigurationStoreTest
         assertTrue( "Check file already exists", file.exists() );
         store.setPropertiesFile( file );
 
+        ReleaseConfiguration config = createReleaseConfigurationForWriting();
+
+        store.write( config );
+
+        ReleaseConfiguration rereadConfiguration = store.read();
+
+        assertEquals( "compare configuration", config, rereadConfiguration );
+    }
+
+    private ReleaseConfiguration createReleaseConfigurationForWriting()
+    {
         ReleaseConfiguration config = new ReleaseConfiguration();
         config.setCompletedPhase( "completed-phase-write" );
         config.setUrl( "url-write" );
@@ -141,11 +164,10 @@ public class PropertiesReleaseConfigurationStoreTest
         config.setPassphrase( "passphrase-write" );
         config.setTagBase( "tag-base" );
 
-        store.write( config );
+        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        config.mapDevelopmentVersion( "groupId:artifactId", "1.1-SNAPSHOT" );
 
-        ReleaseConfiguration rereadConfiguration = store.read();
-
-        assertEquals( "compare configuration", config, rereadConfiguration );
+        return config;
     }
 
     private static void assertDefaultReleaseConfiguration( ReleaseConfiguration config )
@@ -160,6 +182,14 @@ public class PropertiesReleaseConfigurationStoreTest
 
         assertNull( "Expected no workingDirectory", config.getWorkingDirectory() );
         assertNull( "Expected no settings", config.getSettings() );
+
+        assertFalse( "Expected no generateReleasePoms", config.isGenerateReleasePoms() );
+        assertFalse( "Expected no useEditMode", config.isUseEditMode() );
+        assertTrue( "Expected default interactive", config.isInteractive() );
+        assertFalse( "Expected no addScema", config.isAddSchema() );
+
+        assertTrue( "Expected no release version mappings", config.getReleaseVersions().isEmpty() );
+        assertTrue( "Expected no dev version mappings", config.getDevelopmentVersions().isEmpty() );
     }
 
     public ReleaseConfiguration createMergeConfiguration()
