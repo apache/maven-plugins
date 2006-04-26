@@ -1,0 +1,27 @@
+<project>
+  <name>test1</name>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <configuration>
+          <outputDirectory>/test-classes/unit/resources-test</outputDirectory>
+        </configuration>
+      </plugin>
+    </plugins>
+    <resources>
+      <resource>
+        <filtering>false</filtering>
+        <directory>/test/resources/unit/test-dir</directory>
+        <includes>
+          **/*.include 
+          **/*.test
+        </includes>
+        <excludes>
+          **/**.exclude 
+          **/*.nottest
+        </excludes>
+      </resource>      
+    </resources>
+  </build>
+</project>
