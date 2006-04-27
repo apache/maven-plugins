@@ -23,6 +23,8 @@ import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.util.Enumeration;
+import java.util.Set;
+import java.util.HashSet;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
@@ -58,57 +60,24 @@ public class JavadocJarTest
 
         //validate contents of jar file
         ZipFile jar = new ZipFile( generatedFile );
-        Enumeration entries = jar.getEntries();
-        assertTrue( entries.hasMoreElements() );
-
-        while ( entries.hasMoreElements() )
+        Set set = new HashSet();
+        for( Enumeration entries = jar.getEntries(); entries.hasMoreElements(); )
         {
-            ZipEntry entry = (ZipEntry) entries.nextElement();
-            if( entry.getName().equals( "stylesheet.css" ) )
-            {
-                assertTrue( true );
-            }
-            else if( entry.getName().equals( "resources/inherit.gif" ) )
-            {
-                assertTrue( true );
-            }
-            else if( entry.getName().equals( "javadocjar/def/package-use.html" ) )
-            {
-                assertTrue( true );
-            }
-            else if( entry.getName().equals( "javadocjar/def/package-tree.html" ) )
-            {
-                assertTrue( true );
-            }
-            else if( entry.getName().equals( "javadocjar/def/package-summary.html" ) )
-            {
-                assertTrue( true );
-            }
-            else if( entry.getName().equals( "javadocjar/def/package-frame.html" ) )
-            {
-                assertTrue( true );
-            }
-            else if( entry.getName().equals( "javadocjar/def/class-use/AppSample.html" ) )
-            {
-                assertTrue( true );
-            }
-            else if( entry.getName().equals( "index.html" ) )
-            {
-                assertTrue( true );
-            }
-            else if( entry.getName().equals( "javadocjar/def/App.html" ) )
-            {
-                assertTrue( true );
-            }
-            else if( entry.getName().equals( "javadocjar/def/AppSample.html" ) )
-            {
-                assertTrue( true );
-            }
-            else if( entry.getName().equals( "javadocjar/def/class-use/App.html" ) )
-            {
-                assertTrue( true );
-            }
+            ZipEntry entry = ( ZipEntry ) entries.nextElement();
+            set.add( entry.getName() );
         }
+
+        assertTrue( set.contains( "stylesheet.css" ) );
+        assertTrue( set.contains( "resources/inherit.gif" ) );
+        assertTrue( set.contains( "javadocjar/def/package-use.html" ) );
+        assertTrue( set.contains( "javadocjar/def/package-tree.html" ) );
+        assertTrue( set.contains( "javadocjar/def/package-summary.html" ) );
+        assertTrue( set.contains( "javadocjar/def/package-frame.html" ) );
+        assertTrue( set.contains( "javadocjar/def/class-use/AppSample.html" ) );
+        assertTrue( set.contains( "index.html" ) );
+        assertTrue( set.contains( "javadocjar/def/App.html" ) );
+        assertTrue( set.contains( "javadocjar/def/AppSample.html" ) );
+        assertTrue( set.contains( "javadocjar/def/class-use/App.html" ) );
 
         //check if the javadoc files were created
         generatedFile =
