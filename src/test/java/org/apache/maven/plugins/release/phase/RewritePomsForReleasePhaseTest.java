@@ -27,6 +27,7 @@ import org.jmock.core.stub.ThrowStub;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -65,6 +66,47 @@ public class RewritePomsForReleasePhaseTest
         ReleaseConfiguration config = createConfigurationFromProjects( "pom-with-parent" );
 
         config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        config.mapReleaseVersion( "groupId:subproject1", "2.0" );
+
+        phase.execute( config );
+
+        assertTrue( compareFiles( config.getReactorProjects() ) );
+    }
+
+    public void testRewritePomWithUnmappedParent()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromProjects( "pom-with-parent" );
+
+        // remove parent from processing so it fails when looking at the parent of the child instead
+        for ( Iterator i = config.getReactorProjects().iterator(); i.hasNext(); )
+        {
+            MavenProject project = (MavenProject) i.next();
+            if ( "subproject1".equals( project.getArtifactId() ) )
+            {
+                config.setReactorProjects( Collections.singletonList( project ) );
+            }
+        }
+
+        config.mapReleaseVersion( "groupId:subproject1", "2.0" );
+
+        try
+        {
+            phase.execute( config );
+
+            fail( "Should have thrown an exception" );
+        }
+        catch ( ReleaseExecutionException e )
+        {
+            assertNull( "Check no cause", e.getCause() );
+        }
+    }
+
+    public void testRewritePomWithReleasedParent()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromProjects( "pom-with-released-parent" );
+
         config.mapReleaseVersion( "groupId:subproject1", "2.0" );
 
         phase.execute( config );
