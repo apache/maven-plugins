@@ -39,6 +39,7 @@ import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.jdom.filter.ElementFilter;
 import org.jdom.input.SAXBuilder;
+import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
 import java.io.File;
@@ -88,7 +89,10 @@ public class RewritePomsForReleasePhase
 
                 // rewrite DOM as a string to find differences, since text outside the root element is not tracked
                 StringWriter w = new StringWriter();
-                new XMLOutputter().output( document.getRootElement(), w );
+                Format format = Format.getRawFormat();
+	        format.setLineSeparator( System.getProperty( "line.separator" ) );
+                XMLOutputter out = new XMLOutputter( format );
+	        out.output( document.getRootElement(), w );
 
                 int index = content.indexOf( w.toString() );
                 if ( index > 0 )
@@ -372,7 +376,10 @@ public class RewritePomsForReleasePhase
                 writer.write( intro );
             }
 
-            new XMLOutputter().output( document.getRootElement(), writer );
+            Format format = Format.getRawFormat();
+	    format.setLineSeparator( System.getProperty( "line.separator" ) );
+            XMLOutputter out = new XMLOutputter( format );
+	    out.output( document.getRootElement(), writer );
 
             if ( outtro != null )
             {
