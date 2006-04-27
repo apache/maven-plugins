@@ -67,7 +67,7 @@ public class RewritePomsForReleasePhaseTest
     public void testRewriteBasicPom()
         throws ReleaseExecutionException, ProjectBuildingException, IOException
     {
-        File testFile = getCopiedTestFile( "rewrite-for-release/basic-pom.xml" );
+        File testFile = getCopiedTestFile( "basic-pom/pom.xml" );
         MavenProject project = projectBuilder.build( testFile, localRepository, null );
 
         ReleaseConfiguration config = createReleaseConfiguration( Collections.singletonList( project ) );
@@ -75,15 +75,15 @@ public class RewritePomsForReleasePhaseTest
 
         phase.execute( config );
 
-        String expected = readTestProjectFile( "rewrite-for-release/expected-basic-pom.xml" );
-        String actual = readTestProjectFile( "rewrite-for-release/basic-pom.xml" );
+        String expected = readTestProjectFile( "basic-pom/expected-pom.xml" );
+        String actual = readTestProjectFile( "basic-pom/pom.xml" );
         assertEquals( "Check the transformed POM", expected, actual );
     }
 
     public void testRewriteBasicPomWithEditMode()
         throws Exception
     {
-        File testFile = getCopiedTestFile( "rewrite-for-release/basic-pom.xml" );
+        File testFile = getCopiedTestFile( "basic-pom/pom.xml" );
         MavenProject project = projectBuilder.build( testFile, localRepository, null );
 
         ReleaseConfiguration config = createReleaseConfiguration( Collections.singletonList( project ) );
@@ -92,15 +92,15 @@ public class RewritePomsForReleasePhaseTest
 
         phase.execute( config );
 
-        String expected = readTestProjectFile( "rewrite-for-release/expected-basic-pom.xml" );
-        String actual = readTestProjectFile( "rewrite-for-release/basic-pom.xml" );
+        String expected = readTestProjectFile( "basic-pom/expected-pom.xml" );
+        String actual = readTestProjectFile( "basic-pom/pom.xml" );
         assertEquals( "Check the transformed POM", expected, actual );
     }
 
     public void testRewriteBasicPomWithEditModeFailure()
         throws Exception
     {
-        File testFile = getCopiedTestFile( "rewrite-for-release/basic-pom.xml" );
+        File testFile = getCopiedTestFile( "basic-pom/pom.xml" );
         MavenProject project = projectBuilder.build( testFile, localRepository, null );
 
         ReleaseConfiguration config = createReleaseConfiguration( Collections.singletonList( project ) );
@@ -127,7 +127,7 @@ public class RewritePomsForReleasePhaseTest
     public void testRewriteBasicPomWithEditModeException()
         throws Exception
     {
-        File testFile = getCopiedTestFile( "rewrite-for-release/basic-pom.xml" );
+        File testFile = getCopiedTestFile( "basic-pom/pom.xml" );
         MavenProject project = projectBuilder.build( testFile, localRepository, null );
 
         ReleaseConfiguration config = createReleaseConfiguration( Collections.singletonList( project ) );
@@ -156,7 +156,7 @@ public class RewritePomsForReleasePhaseTest
     public void testRewriteAddSchema()
         throws ReleaseExecutionException, ProjectBuildingException, IOException
     {
-        File testFile = getCopiedTestFile( "rewrite-for-release/basic-pom.xml" );
+        File testFile = getCopiedTestFile( "basic-pom/pom.xml" );
         MavenProject project = projectBuilder.build( testFile, localRepository, null );
         ReleaseConfiguration config = createReleaseConfiguration( Collections.singletonList( project ) );
         config.mapReleaseVersion( project.getGroupId() + ":" + project.getArtifactId(), "1.0" );
@@ -167,8 +167,8 @@ public class RewritePomsForReleasePhaseTest
         {
             phase.execute( config );
 
-            String expected = readTestProjectFile( "rewrite-for-release/expected-basic-pom-with-schema.xml" );
-            String actual = readTestProjectFile( "rewrite-for-release/basic-pom.xml" );
+            String expected = readTestProjectFile( "basic-pom/expected-pom-with-schema.xml" );
+            String actual = readTestProjectFile( "basic-pom/pom.xml" );
             assertEquals( "Check the transformed POM", expected, actual );
         }
     }
@@ -176,7 +176,7 @@ public class RewritePomsForReleasePhaseTest
     public void testRewriteUnmappedPom()
         throws ReleaseExecutionException, ProjectBuildingException, IOException
     {
-        File testFile = getCopiedTestFile( "rewrite-for-release/basic-pom.xml" );
+        File testFile = getCopiedTestFile( "basic-pom/pom.xml" );
         MavenProject project = projectBuilder.build( testFile, localRepository, null );
 
         ReleaseConfiguration config = createReleaseConfiguration( Collections.singletonList( project ) );
@@ -196,7 +196,7 @@ public class RewritePomsForReleasePhaseTest
     public void testRewriteBasicPomWithScmRepoException()
         throws Exception
     {
-        File testFile = getCopiedTestFile( "rewrite-for-release/basic-pom.xml" );
+        File testFile = getCopiedTestFile( "basic-pom/pom.xml" );
         MavenProject project = projectBuilder.build( testFile, localRepository, null );
 
         ReleaseConfiguration config = createReleaseConfiguration( Collections.singletonList( project ) );
@@ -227,7 +227,7 @@ public class RewritePomsForReleasePhaseTest
     public void testRewriteBasicPomWithNoSuchProviderException()
         throws Exception
     {
-        File testFile = getCopiedTestFile( "rewrite-for-release/basic-pom.xml" );
+        File testFile = getCopiedTestFile( "basic-pom/pom.xml" );
         MavenProject project = projectBuilder.build( testFile, localRepository, null );
 
         ReleaseConfiguration config = createReleaseConfiguration( Collections.singletonList( project ) );
@@ -251,22 +251,22 @@ public class RewritePomsForReleasePhaseTest
         }
         catch ( ReleaseExecutionException e )
         {
-            assertEquals( "Check cause", NoSuchScmProviderException.class,  e.getCause().getClass() );
+            assertEquals( "Check cause", NoSuchScmProviderException.class, e.getCause().getClass() );
         }
     }
 
     private static File getCopiedTestFile( String fileName )
         throws IOException
     {
-        File testFile = getTestFile( "target/test-classes/projects/" + fileName );
-        FileUtils.copyFile( getTestFile( "src/test/resources/projects/" + fileName ), testFile );
+        File testFile = getTestFile( "target/test-classes/projects/rewrite-for-release/" + fileName );
+        FileUtils.copyFile( getTestFile( "src/test/resources/projects/rewrite-for-release/" + fileName ), testFile );
         return testFile;
     }
 
     private static String readTestProjectFile( String fileName )
         throws IOException
     {
-        return FileUtils.fileRead( getTestFile( "target/test-classes/projects/" + fileName ) );
+        return FileUtils.fileRead( getTestFile( "target/test-classes/projects/rewrite-for-release/" + fileName ) );
     }
 
     private static ReleaseConfiguration createReleaseConfiguration( List reactorProjects )
