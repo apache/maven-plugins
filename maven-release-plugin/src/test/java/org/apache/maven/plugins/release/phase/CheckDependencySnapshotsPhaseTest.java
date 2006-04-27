@@ -63,6 +63,34 @@ public class CheckDependencySnapshotsPhaseTest
         assertTrue( true );
     }
 
+    public void testSnapshotDependenciesInProjectOnlyMismatchedVersion()
+        throws Exception
+    {
+        ReleaseConfiguration releaseConfiguration = createConfigurationFromProjects( "internal-differing-snapshot-dependencies" );
+
+        try
+        {
+            phase.execute( releaseConfiguration );
+
+            fail( "Should have failed execution" );
+        }
+        catch ( ReleaseExecutionException e )
+        {
+            assertNull( "Check no other cause", e.getCause() );
+        }
+
+        try
+        {
+            phase.simulate( releaseConfiguration );
+
+            fail( "Should have failed execution" );
+        }
+        catch ( ReleaseExecutionException e )
+        {
+            assertNull( "Check no other cause", e.getCause() );
+        }
+    }
+
     public void testSnapshotManagedDependenciesInProjectOnly()
         throws Exception
     {

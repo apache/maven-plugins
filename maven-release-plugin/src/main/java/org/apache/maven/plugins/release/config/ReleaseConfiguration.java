@@ -16,11 +16,14 @@ package org.apache.maven.plugins.release.config;
  * limitations under the License.
  */
 
+import org.apache.maven.artifact.ArtifactUtils;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 
 import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -113,6 +116,11 @@ public class ReleaseConfiguration
      * A map of projects to versions to use when moving the given projects back into devlopment after release.
      */
     private Map developmentVersions = new HashMap();
+
+    /**
+     * A map of projects to original versions before any transformation.
+     */
+    private Map originalVersions;
 
     public boolean isInteractive()
     {
@@ -227,6 +235,7 @@ public class ReleaseConfiguration
     public void setReactorProjects( List reactorProjects )
     {
         this.reactorProjects = reactorProjects;
+        this.originalVersions = null;
     }
 
     public boolean isUseEditMode()
@@ -451,5 +460,24 @@ public class ReleaseConfiguration
         assert !developmentVersions.containsKey( projectId );
 
         developmentVersions.put( projectId, nextVersion );
+    }
+
+    /**
+     * Retrieve the original version map, before transformation, keyed by project's versionless identifier.
+     * @return the map of project IDs to versions.
+     */
+    public synchronized Map getOriginalVersions()
+    {
+        if ( originalVersions == null )
+        {
+            originalVersions = new HashMap();
+            for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+            {
+                MavenProject project = (MavenProject) i.next();
+                originalVersions.put( ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() ),
+                                      project.getVersion() );
+            }
+        }
+        return originalVersions;
     }
 }
