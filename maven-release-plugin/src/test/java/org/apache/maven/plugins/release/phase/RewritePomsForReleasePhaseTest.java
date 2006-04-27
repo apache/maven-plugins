@@ -19,8 +19,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Test the SCM modification check phase.
@@ -55,11 +53,15 @@ public class RewritePomsForReleasePhaseTest
     {
         File testFile = getCopiedTestFile( "rewrite-for-release/basic-pom.xml" );
         MavenProject project = projectBuilder.build( testFile, localRepository, null );
+
         ReleaseConfiguration config = createReleaseConfiguration( Collections.singletonList( project ) );
+        config.mapReleaseVersion( project.getGroupId() + ":" + project.getArtifactId(), "1.0" );
 
         phase.execute( config );
 
-        // TODO: assertions
+        String expected = readTestProjectFile( "rewrite-for-release/expected-basic-pom.xml" );
+        String actual = readTestProjectFile( "rewrite-for-release/basic-pom.xml" );
+        assertEquals( "Check the transformed POM", expected, actual );
     }
 
     public void testRewriteAddSchema()
@@ -68,6 +70,7 @@ public class RewritePomsForReleasePhaseTest
         File testFile = getCopiedTestFile( "rewrite-for-release/basic-pom.xml" );
         MavenProject project = projectBuilder.build( testFile, localRepository, null );
         ReleaseConfiguration config = createReleaseConfiguration( Collections.singletonList( project ) );
+        config.mapReleaseVersion( project.getGroupId() + ":" + project.getArtifactId(), "1.0" );
         config.setAddSchema( true );
 
         // Run a second time to check they are not duplicated
@@ -75,20 +78,9 @@ public class RewritePomsForReleasePhaseTest
         {
             phase.execute( config );
 
-            String content = FileUtils.fileRead( testFile ).replace( '\n', ' ' );
-            Matcher m = Pattern.compile( "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"" ).matcher( content );
-            assertTrue( "check for schema location", m.find() );
-            assertFalse( "check schema location is not duplicated", m.find() );
-
-            m = Pattern.compile(
-                "xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\"" ).matcher(
-                content );
-            assertTrue( "check for schema", m.find() );
-            assertFalse( "check for duplicated schema", m.find() );
-
-            m = Pattern.compile( "xmlns=\"http://maven.apache.org/POM/4.0.0\"" ).matcher( content );
-            assertTrue( "check for namespace", m.find() );
-            assertFalse( "check for duplicated namespace", m.find() );
+            String expected = readTestProjectFile( "rewrite-for-release/expected-basic-pom-with-schema.xml" );
+            String actual = readTestProjectFile( "rewrite-for-release/basic-pom.xml" );
+            assertEquals( "Check the transformed POM", expected, actual );
         }
     }
 
@@ -98,6 +90,12 @@ public class RewritePomsForReleasePhaseTest
         File testFile = getTestFile( "target/test-classes/projects/" + fileName );
         FileUtils.copyFile( getTestFile( "src/test/resources/projects/" + fileName ), testFile );
         return testFile;
+    }
+
+    private static String readTestProjectFile( String fileName )
+        throws IOException
+    {
+        return FileUtils.fileRead( getTestFile( "target/test-classes/projects/" + fileName ) );
     }
 
     private static ReleaseConfiguration createReleaseConfiguration( List reactorProjects )
