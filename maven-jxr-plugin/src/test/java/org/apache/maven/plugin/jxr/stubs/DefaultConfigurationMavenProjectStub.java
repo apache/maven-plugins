@@ -1,16 +1,5 @@
 package org.apache.maven.plugin.jxr.stubs;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.ReportPlugin;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
-
-import java.io.File;
-import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 /*
  * Copyright 2005-2006 The Apache Software Foundation.
  *
@@ -27,12 +16,20 @@ import java.util.List;
  * limitations under the License.
  */
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.ReportPlugin;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
+
+import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 /**
- * Created by IntelliJ IDEA.
- * User: Odea
- * Date: Apr 25, 2006
- * Time: 5:45:36 PM
- * To change this template use File | Settings | File Templates.
+ * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
  */
 public class DefaultConfigurationMavenProjectStub
     extends MavenProjectStub
