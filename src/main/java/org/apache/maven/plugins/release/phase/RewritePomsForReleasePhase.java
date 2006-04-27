@@ -31,20 +31,25 @@ import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
+import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Element;
-import org.dom4j.Namespace;
-import org.dom4j.QName;
-import org.dom4j.io.SAXReader;
-import org.dom4j.io.XMLWriter;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.Namespace;
+import org.jdom.filter.ElementFilter;
+import org.jdom.input.SAXBuilder;
+import org.jdom.output.XMLOutputter;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Rewrite POMs for release.
@@ -60,8 +65,6 @@ public class RewritePomsForReleasePhase
      */
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
-    // TODO: separate release POM generation?
-
     public void execute( ReleaseConfiguration releaseConfiguration )
         throws ReleaseExecutionException
     {
@@ -73,12 +76,43 @@ public class RewritePomsForReleasePhase
 
             getLogger().info( "Transforming " + projectId + " to release" );
 
-            Document document = readPom( project.getFile() );
+            Document document;
+            String intro = null;
+            String outtro = null;
+            try
+            {
+                String content = FileUtils.fileRead( project.getFile() );
 
-            transformPomToReleaseVersionPom();
+                SAXBuilder builder = new SAXBuilder();
+                document = builder.build( new StringReader( content ) );
 
-            writePom( project.getFile(), releaseConfiguration, document, project.getModelVersion() );
+                // rewrite DOM as a string to find differences, since text outside the root element is not tracked
+                StringWriter w = new StringWriter();
+                new XMLOutputter().output( document.getRootElement(), w );
+
+                int index = content.indexOf( w.toString() );
+                if ( index > 0 )
+                {
+                    intro = content.substring( 0, index );
+                    outtro = content.substring( index + w.toString().length() );
+                }
+            }
+            catch ( JDOMException e )
+            {
+                throw new ReleaseExecutionException( "Error reading POM: " + e.getMessage(), e );
+            }
+            catch ( IOException e )
+            {
+                throw new ReleaseExecutionException( "Error reading POM: " + e.getMessage(), e );
+            }
+
+            transformPomToReleaseVersionPom( projectId, document.getRootElement(),
+                                             releaseConfiguration.getReleaseVersions() );
+
+            writePom( project.getFile(), releaseConfiguration, document, intro, outtro, project.getModelVersion() );
         }
+
+        // TODO: separate release POM generation into a separate phase?
 
         if ( releaseConfiguration.isGenerateReleasePoms() )
         {
@@ -87,26 +121,18 @@ public class RewritePomsForReleasePhase
 
     }
 
-    private Document readPom( File file )
+    private void transformPomToReleaseVersionPom( String projectId, Element rootElement, Map mappedVersions )
         throws ReleaseExecutionException
     {
-        Document document;
-
-        SAXReader reader = new SAXReader();
-        try
+        // TODO: what about if version is inherited? shouldn't prompt...
+        Element versionElement = rootElement.getChild( "version", rootElement.getNamespace() );
+        String version = (String) mappedVersions.get( projectId );
+        if ( version == null )
         {
-            document = reader.read( file );
+            throw new ReleaseExecutionException( "Version for '" + projectId + "' was not mapped" );
         }
-        catch ( DocumentException e )
-        {
-            throw new ReleaseExecutionException( "Error reading POM: " + e.getMessage(), e );
-        }
+        versionElement.setText( version );
 
-        return document;
-    }
-
-    private void transformPomToReleaseVersionPom()
-    {
         // TODO: rewrite parent
         // TODO: rewrite SCM
         // TODO: rewrite dependencies
@@ -271,8 +297,8 @@ public class RewritePomsForReleasePhase
 
     }
 
-    private void writePom( File pomFile, ReleaseConfiguration releaseConfiguration, Document document,
-                           String modelVersion )
+    private void writePom( File pomFile, ReleaseConfiguration releaseConfiguration, Document document, String intro,
+                           String outtro, String modelVersion )
         throws ReleaseExecutionException
     {
         ScmRepository repository;
@@ -314,24 +340,39 @@ public class RewritePomsForReleasePhase
 
         if ( releaseConfiguration.isAddSchema() )
         {
-            rootElement.setQName( QName.get( "project", Namespace.get( "", "http://maven.apache.org/POM/4.0.0" ) ) );
+            Namespace pomNamespace = Namespace.getNamespace( "", "http://maven.apache.org/POM/" + modelVersion );
+            rootElement.setNamespace( pomNamespace );
+            Namespace xsiNamespace = Namespace.getNamespace( "xsi", "http://www.w3.org/2001/XMLSchema-instance" );
+            rootElement.addNamespaceDeclaration( xsiNamespace );
 
-            rootElement.addNamespace( "xsi", "http://www.w3.org/2001/XMLSchema-instance" );
-
-            if ( rootElement.attributeValue( "schemaLocation" ) == null )
+            if ( rootElement.getAttribute( "schemaLocation", xsiNamespace ) == null )
             {
-                rootElement.addAttribute( "xsi:schemaLocation", "http://maven.apache.org/POM/" + modelVersion +
-                    " http://maven.apache.org/maven-v" + modelVersion.replace( '.', '_' ) + ".xsd" );
+                rootElement.setAttribute( "schemaLocation", "http://maven.apache.org/POM/" + modelVersion +
+                    " http://maven.apache.org/maven-v" + modelVersion.replace( '.', '_' ) + ".xsd", xsiNamespace );
+            }
+
+            // the empty namespace is considered equal to the POM namespace, so match them up to avoid extra xmlns=""
+            List elements = rootElement.getContent( new ElementFilter( Namespace.getNamespace( "" ) ) );
+            for ( Iterator i = elements.iterator(); i.hasNext(); )
+            {
+                Element e = (Element) i.next();
+                e.setNamespace( pomNamespace );
             }
         }
 
         Writer writer = null;
         try
         {
+            // TODO: better handling of encoding. Currently the definition is not written out and is embedded in the intro if it already existed
+            // TODO: the XMLOutputter and Writer need to have their encodings aligned
             writer = new FileWriter( pomFile );
 
-            XMLWriter xmlWriter = new XMLWriter( writer );
-            xmlWriter.write( document );
+            writer.write( intro );
+
+            XMLOutputter outp = new XMLOutputter();
+            outp.output( document.getRootElement(), writer );
+
+            writer.write( outtro );
         }
         catch ( IOException e )
         {
