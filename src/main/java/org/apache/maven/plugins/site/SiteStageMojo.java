@@ -88,10 +88,22 @@ public class SiteStageMojo
     {
         String structureProject = getStructure( project, false );
 
+        if ( structureProject == null )
+        {
+            throw new MojoExecutionException( "Missing site information." );
+        }
+
         outputDirectory = new File( stagingDirectory, structureProject );
 
-        String outputRelativePath = PathTool.getRelativePath( stagingDirectory.getAbsolutePath(), new File(
-            outputDirectory, "dummy.html" ).getAbsolutePath() );
+        // Safety
+        if ( !outputDirectory.exists() )
+        {
+            outputDirectory.mkdirs();
+        }
+
+        String outputRelativePath = PathTool.getRelativePath( stagingDirectory.getAbsolutePath(),
+                                                              new File( outputDirectory, "dummy.html" )
+                                                                  .getAbsolutePath() );
         project.setUrl( outputRelativePath + "/" + structureProject );
 
         MavenProject parent = getParentProject( project );
@@ -112,8 +124,8 @@ public class SiteStageMojo
             {
                 MavenProject reactorProject = (MavenProject) reactorItr.next();
 
-                if ( reactorProject != null && reactorProject.getParent() != null &&
-                    project.getArtifactId().equals( reactorProject.getParent().getArtifactId() ) )
+                if ( reactorProject != null && reactorProject.getParent() != null
+                    && project.getArtifactId().equals( reactorProject.getParent().getArtifactId() ) )
                 {
                     String structureReactorProject = getStructure( reactorProject, false );
                     reactorProject.setUrl( outputRelativePath + "/" + structureReactorProject );
@@ -127,7 +139,6 @@ public class SiteStageMojo
         {
             deployStagingSite();
         }
-
     }
 
     /**
@@ -135,11 +146,12 @@ public class SiteStageMojo
      * distributionManagement elements from the pom.xml.
      *
      * @param project
+     * @param ignoreMissingSiteUrl
      * @return the structure relative path
-     * @throws MojoExecutionException
+     * @throws MojoFailureException if any
      */
     private static String getStructure( MavenProject project, boolean ignoreMissingSiteUrl )
-        throws MojoExecutionException, MojoFailureException
+        throws MojoFailureException
     {
         if ( project.getDistributionManagement() == null )
         {
@@ -161,13 +173,11 @@ public class SiteStageMojo
             if ( !ignoreMissingSiteUrl )
             {
                 throw new MojoFailureException(
-                    "Missing site information in the distribution management element in the project: '" +
-                        project.getName() + "'." );
+                                                "Missing site information in the distribution management element in the project: '"
+                                                    + project.getName() + "'." );
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
 
         if ( StringUtils.isEmpty( site.getUrl() ) )
@@ -176,10 +186,8 @@ public class SiteStageMojo
             {
                 throw new MojoFailureException( "The URL in the site is missing in the project descriptor." );
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
 
         Repository repository = new Repository( site.getId(), site.getUrl() );
@@ -200,9 +208,10 @@ public class SiteStageMojo
      * Deploy the staging directory using the stagingSiteURL.
      *
      * @throws MojoExecutionException if any
+     * @throws MojoFailureException if any
      */
     private void deployStagingSite()
-        throws MojoExecutionException
+        throws MojoExecutionException, MojoFailureException
     {
         String id = "stagingSite";
         Repository repository = new Repository( id, stagingSiteURL );
@@ -219,8 +228,8 @@ public class SiteStageMojo
 
         if ( !wagon.supportsDirectoryCopy() )
         {
-            throw new MojoExecutionException(
-                "Wagon protocol '" + repository.getProtocol() + "' doesn't support directory copying" );
+            throw new MojoExecutionException( "Wagon protocol '" + repository.getProtocol()
+                + "' doesn't support directory copying" );
         }
 
         try
@@ -241,7 +250,7 @@ public class SiteStageMojo
                 wagon.connect( repository, wagonManager.getAuthenticationInfo( id ) );
             }
 
-            wagon.putDirectory( stagingDirectory, "." );
+            wagon.putDirectory( new File( stagingDirectory, getStructure( project, false ) ), "." );
         }
         catch ( ResourceDoesNotExistException e )
         {
