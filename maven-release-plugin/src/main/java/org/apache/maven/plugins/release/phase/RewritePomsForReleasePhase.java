@@ -90,12 +90,12 @@ public class RewritePomsForReleasePhase
                 // rewrite DOM as a string to find differences, since text outside the root element is not tracked
                 StringWriter w = new StringWriter();
                 Format format = Format.getRawFormat();
-	        format.setLineSeparator( System.getProperty( "line.separator" ) );
+                format.setLineSeparator( System.getProperty( "line.separator" ) );
                 XMLOutputter out = new XMLOutputter( format );
-	        out.output( document.getRootElement(), w );
+                out.output( document.getRootElement(), w );
 
                 int index = content.indexOf( w.toString() );
-                if ( index > 0 )
+                if ( index >= 0 )
                 {
                     intro = content.substring( 0, index );
                     outtro = content.substring( index + w.toString().length() );
@@ -110,7 +110,7 @@ public class RewritePomsForReleasePhase
                 throw new ReleaseExecutionException( "Error reading POM: " + e.getMessage(), e );
             }
 
-            transformPomToReleaseVersionPom( projectId, document.getRootElement(),
+            transformPomToReleaseVersionPom( project, document.getRootElement(),
                                              releaseConfiguration.getReleaseVersions() );
 
             writePom( project.getFile(), releaseConfiguration, document, intro, outtro, project.getModelVersion() );
@@ -125,19 +125,33 @@ public class RewritePomsForReleasePhase
 
     }
 
-    private void transformPomToReleaseVersionPom( String projectId, Element rootElement, Map mappedVersions )
+    private void transformPomToReleaseVersionPom( MavenProject project, Element rootElement, Map mappedVersions )
         throws ReleaseExecutionException
     {
         // TODO: what about if version is inherited? shouldn't prompt...
         Element versionElement = rootElement.getChild( "version", rootElement.getNamespace() );
-        String version = (String) mappedVersions.get( projectId );
+        String version = (String) mappedVersions.get(
+            ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() ) );
         if ( version == null )
         {
-            throw new ReleaseExecutionException( "Version for '" + projectId + "' was not mapped" );
+            throw new ReleaseExecutionException( "Version for '" + project.getName() + "' was not mapped" );
         }
         versionElement.setText( version );
 
-        // TODO: rewrite parent
+        if ( project.hasParent() )
+        {
+            Element parentElement = rootElement.getChild( "parent", rootElement.getNamespace() );
+            versionElement = parentElement.getChild( "version", rootElement.getNamespace() );
+            MavenProject parent = project.getParent();
+            version = (String) mappedVersions.get(
+                ArtifactUtils.versionlessKey( parent.getGroupId(), parent.getArtifactId() ) );
+            if ( version == null )
+            {
+                throw new ReleaseExecutionException( "Version for parent '" + parent.getName() + "' was not mapped" );
+            }
+            versionElement.setText( version );
+        }
+
         // TODO: rewrite SCM
         // TODO: rewrite dependencies
         // TODO: rewrite dependency management
@@ -377,9 +391,9 @@ public class RewritePomsForReleasePhase
             }
 
             Format format = Format.getRawFormat();
-	    format.setLineSeparator( System.getProperty( "line.separator" ) );
+            format.setLineSeparator( System.getProperty( "line.separator" ) );
             XMLOutputter out = new XMLOutputter( format );
-	    out.output( document.getRootElement(), writer );
+            out.output( document.getRootElement(), writer );
 
             if ( outtro != null )
             {

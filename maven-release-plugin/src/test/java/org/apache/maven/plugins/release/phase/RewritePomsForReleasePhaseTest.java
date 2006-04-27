@@ -4,9 +4,6 @@ package org.apache.maven.plugins.release.phase;
  * Copyright 2005-2006 The Apache Software Foundation.  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at       http://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.DefaultArtifactRepository;
-import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 import org.apache.maven.plugins.release.scm.DefaultScmRepositoryConfigurator;
@@ -14,8 +11,6 @@ import org.apache.maven.plugins.release.scm.ReleaseScmCommandException;
 import org.apache.maven.plugins.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.plugins.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectBuilder;
-import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.command.edit.EditScmResult;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
@@ -24,7 +19,6 @@ import org.apache.maven.scm.manager.ScmManagerStub;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.provider.ScmProviderStub;
 import org.apache.maven.scm.repository.ScmRepositoryException;
-import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.FileUtils;
 import org.jmock.cglib.Mock;
 import org.jmock.core.constraint.IsEqual;
@@ -33,7 +27,7 @@ import org.jmock.core.stub.ThrowStub;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -42,13 +36,9 @@ import java.util.List;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class RewritePomsForReleasePhaseTest
-    extends PlexusTestCase
+    extends AbstractReleaseTestCase
 {
     private ReleasePhase phase;
-
-    private MavenProjectBuilder projectBuilder;
-
-    private ArtifactRepository localRepository;
 
     protected void setUp()
         throws Exception
@@ -56,56 +46,50 @@ public class RewritePomsForReleasePhaseTest
         super.setUp();
 
         phase = (ReleasePhase) lookup( ReleasePhase.ROLE, "rewrite-poms-for-release" );
-
-        projectBuilder = (MavenProjectBuilder) lookup( MavenProjectBuilder.ROLE );
-
-        ArtifactRepositoryLayout layout = (ArtifactRepositoryLayout) lookup( ArtifactRepositoryLayout.ROLE, "default" );
-        String localRepoPath = getTestFile( "target/local-repository" ).getAbsolutePath().replace( '\\', '/' );
-        localRepository = new DefaultArtifactRepository( "local", "file://" + localRepoPath, layout );
     }
 
     public void testRewriteBasicPom()
-        throws ReleaseExecutionException, ProjectBuildingException, IOException
+        throws Exception
     {
-        File testFile = getCopiedTestFile( "basic-pom/pom.xml" );
-        MavenProject project = projectBuilder.build( testFile, localRepository, null );
-
-        ReleaseConfiguration config = createReleaseConfiguration( Collections.singletonList( project ) );
-        config.mapReleaseVersion( project.getGroupId() + ":" + project.getArtifactId(), "1.0" );
+        ReleaseConfiguration config = createConfigurationFromProjects( "basic-pom" );
+        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
 
         phase.execute( config );
 
-        String expected = readTestProjectFile( "basic-pom/expected-pom.xml" );
-        String actual = readTestProjectFile( "basic-pom/pom.xml" );
-        assertEquals( "Check the transformed POM", expected, actual );
+        assertTrue( compareFiles( config.getReactorProjects() ) );
+    }
+
+    public void testRewritePomWithParent()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromProjects( "pom-with-parent" );
+
+        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        config.mapReleaseVersion( "groupId:subproject1", "2.0" );
+
+        phase.execute( config );
+
+        assertTrue( compareFiles( config.getReactorProjects() ) );
     }
 
     public void testRewriteBasicPomWithEditMode()
         throws Exception
     {
-        File testFile = getCopiedTestFile( "basic-pom/pom.xml" );
-        MavenProject project = projectBuilder.build( testFile, localRepository, null );
-
-        ReleaseConfiguration config = createReleaseConfiguration( Collections.singletonList( project ) );
+        ReleaseConfiguration config = createConfigurationFromProjects( "basic-pom" );
         config.setUseEditMode( true );
-        config.mapReleaseVersion( project.getGroupId() + ":" + project.getArtifactId(), "1.0" );
+        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
 
         phase.execute( config );
 
-        String expected = readTestProjectFile( "basic-pom/expected-pom.xml" );
-        String actual = readTestProjectFile( "basic-pom/pom.xml" );
-        assertEquals( "Check the transformed POM", expected, actual );
+        assertTrue( compareFiles( config.getReactorProjects() ) );
     }
 
     public void testRewriteBasicPomWithEditModeFailure()
         throws Exception
     {
-        File testFile = getCopiedTestFile( "basic-pom/pom.xml" );
-        MavenProject project = projectBuilder.build( testFile, localRepository, null );
-
-        ReleaseConfiguration config = createReleaseConfiguration( Collections.singletonList( project ) );
+        ReleaseConfiguration config = createConfigurationFromProjects( "basic-pom" );
         config.setUseEditMode( true );
-        config.mapReleaseVersion( project.getGroupId() + ":" + project.getArtifactId(), "1.0" );
+        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
 
         ScmManager scmManager = (ScmManager) lookup( ScmManager.ROLE );
         ScmProviderStub providerStub = (ScmProviderStub) scmManager.getProviderByUrl( config.getUrl() );
@@ -127,12 +111,9 @@ public class RewritePomsForReleasePhaseTest
     public void testRewriteBasicPomWithEditModeException()
         throws Exception
     {
-        File testFile = getCopiedTestFile( "basic-pom/pom.xml" );
-        MavenProject project = projectBuilder.build( testFile, localRepository, null );
-
-        ReleaseConfiguration config = createReleaseConfiguration( Collections.singletonList( project ) );
+        ReleaseConfiguration config = createConfigurationFromProjects( "basic-pom" );
         config.setUseEditMode( true );
-        config.mapReleaseVersion( project.getGroupId() + ":" + project.getArtifactId(), "1.0" );
+        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
 
         Mock scmProviderMock = new Mock( ScmProvider.class );
         scmProviderMock.expects( new InvokeAtLeastOnceMatcher() ).method( "edit" ).will(
@@ -154,12 +135,10 @@ public class RewritePomsForReleasePhaseTest
     }
 
     public void testRewriteAddSchema()
-        throws ReleaseExecutionException, ProjectBuildingException, IOException
+        throws Exception
     {
-        File testFile = getCopiedTestFile( "basic-pom/pom.xml" );
-        MavenProject project = projectBuilder.build( testFile, localRepository, null );
-        ReleaseConfiguration config = createReleaseConfiguration( Collections.singletonList( project ) );
-        config.mapReleaseVersion( project.getGroupId() + ":" + project.getArtifactId(), "1.0" );
+        ReleaseConfiguration config = createConfigurationFromProjects( "basic-pom" );
+        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
         config.setAddSchema( true );
 
         // Run a second time to check they are not duplicated
@@ -174,12 +153,9 @@ public class RewritePomsForReleasePhaseTest
     }
 
     public void testRewriteUnmappedPom()
-        throws ReleaseExecutionException, ProjectBuildingException, IOException
+        throws Exception
     {
-        File testFile = getCopiedTestFile( "basic-pom/pom.xml" );
-        MavenProject project = projectBuilder.build( testFile, localRepository, null );
-
-        ReleaseConfiguration config = createReleaseConfiguration( Collections.singletonList( project ) );
+        ReleaseConfiguration config = createConfigurationFromProjects( "basic-pom" );
 
         try
         {
@@ -196,12 +172,9 @@ public class RewritePomsForReleasePhaseTest
     public void testRewriteBasicPomWithScmRepoException()
         throws Exception
     {
-        File testFile = getCopiedTestFile( "basic-pom/pom.xml" );
-        MavenProject project = projectBuilder.build( testFile, localRepository, null );
-
-        ReleaseConfiguration config = createReleaseConfiguration( Collections.singletonList( project ) );
+        ReleaseConfiguration config = createConfigurationFromProjects( "basic-pom" );
         config.setUseEditMode( true );
-        config.mapReleaseVersion( project.getGroupId() + ":" + project.getArtifactId(), "1.0" );
+        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
 
         Mock scmManagerMock = new Mock( ScmManager.class );
         scmManagerMock.expects( new InvokeAtLeastOnceMatcher() ).method( "makeScmRepository" ).with(
@@ -227,12 +200,9 @@ public class RewritePomsForReleasePhaseTest
     public void testRewriteBasicPomWithNoSuchProviderException()
         throws Exception
     {
-        File testFile = getCopiedTestFile( "basic-pom/pom.xml" );
-        MavenProject project = projectBuilder.build( testFile, localRepository, null );
-
-        ReleaseConfiguration config = createReleaseConfiguration( Collections.singletonList( project ) );
+        ReleaseConfiguration config = createConfigurationFromProjects( "basic-pom" );
         config.setUseEditMode( true );
-        config.mapReleaseVersion( project.getGroupId() + ":" + project.getArtifactId(), "1.0" );
+        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
 
         Mock scmManagerMock = new Mock( ScmManager.class );
         scmManagerMock.expects( new InvokeAtLeastOnceMatcher() ).method( "makeScmRepository" ).with(
@@ -255,26 +225,33 @@ public class RewritePomsForReleasePhaseTest
         }
     }
 
-    private static File getCopiedTestFile( String fileName )
-        throws IOException
-    {
-        File testFile = getTestFile( "target/test-classes/projects/rewrite-for-release/" + fileName );
-        FileUtils.copyFile( getTestFile( "src/test/resources/projects/rewrite-for-release/" + fileName ), testFile );
-        return testFile;
-    }
-
     private static String readTestProjectFile( String fileName )
         throws IOException
     {
         return FileUtils.fileRead( getTestFile( "target/test-classes/projects/rewrite-for-release/" + fileName ) );
     }
 
-    private static ReleaseConfiguration createReleaseConfiguration( List reactorProjects )
+    private ReleaseConfiguration createConfigurationFromProjects( String path )
+        throws Exception
     {
-        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
+        ReleaseConfiguration releaseConfiguration = createConfigurationFromProjects( "rewrite-for-release/", path );
         releaseConfiguration.setUrl( "scm:svn:file://localhost/tmp/scm-repo" );
         releaseConfiguration.setWorkingDirectory( getTestFile( "target/test/checkout" ) );
-        releaseConfiguration.setReactorProjects( reactorProjects );
+
         return releaseConfiguration;
+    }
+
+    private boolean compareFiles( List reactorProjects )
+        throws IOException
+    {
+        for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+        {
+            MavenProject project = (MavenProject) i.next();
+
+            String actual = FileUtils.fileRead( project.getFile() );
+            String expected = FileUtils.fileRead( new File( project.getFile().getParentFile(), "expected-pom.xml" ) );
+            assertEquals( "Check the transformed POM", expected, actual );
+        }
+        return true;
     }
 }
