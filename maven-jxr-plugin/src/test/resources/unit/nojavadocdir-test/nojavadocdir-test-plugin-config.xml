@@ -1,0 +1,43 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>nojavadocdir.test</groupId>
+  <artifactId>nojavadocdir-test</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <inceptionYear>2006</inceptionYear>
+  <name>Maven Jxr Plugin No Existing Javadoc Directory Test</name>
+  <url>http://maven.apache.org</url>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <configuration>
+          <project implementation="org.apache.maven.plugin.jxr.stubs.NoJavadocDirMavenProjectStub"/>
+          <outputDirectory>${basedir}/target/test/unit/nojavadocdir-test/target/site</outputDirectory>
+          <docTitle>Maven Jxr Plugin No Javadoc Directory Test 1.0-SNAPSHOT Reference</docTitle>
+          <inputEncoding>ISO-8859-1</inputEncoding>
+          <outputEncoding>ISO-8859-1</outputEncoding>
+          <sourceDirs>
+            <value>${basedir}/src/test/resources/unit/nojavadocdir-test</value>
+          </sourceDirs>
+          <destDir>${basedir}/target/test/unit/nojavadocdir-test/target/site/xref</destDir>
+          <javadocDir>${basedir}/target/test/unit/nojavadocdir-test/target/site/apidocs</javadocDir>
+          <linkJavadoc>true</linkJavadoc>
+          <aggregate>false</aggregate>
+          <bottom>Copyright 2006 Apache Foundation</bottom>
+          <templateDir>templates</templateDir>
+          <stylesheet>stylesheet.css</stylesheet>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
+</project>
