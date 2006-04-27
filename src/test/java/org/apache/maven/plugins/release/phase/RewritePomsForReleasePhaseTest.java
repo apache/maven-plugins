@@ -1,9 +1,22 @@
 package org.apache.maven.plugins.release.phase;
 
 /*
- * Copyright 2005-2006 The Apache Software Foundation.  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at       http://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ * Copyright 2005-2006 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
+import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 import org.apache.maven.plugins.release.scm.DefaultScmRepositoryConfigurator;
@@ -28,8 +41,10 @@ import org.jmock.core.stub.ThrowStub;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Test the SCM modification check phase.
@@ -79,15 +94,9 @@ public class RewritePomsForReleasePhaseTest
         ReleaseConfiguration config = createConfigurationFromProjects( "pom-with-parent" );
 
         // remove parent from processing so it fails when looking at the parent of the child instead
-        for ( Iterator i = config.getReactorProjects().iterator(); i.hasNext(); )
-        {
-            MavenProject project = (MavenProject) i.next();
-            if ( "subproject1".equals( project.getArtifactId() ) )
-            {
-                config.setReactorProjects( Collections.singletonList( project ) );
-            }
-        }
-
+        MavenProject project =
+            (MavenProject) getProjectsAsMap( config.getReactorProjects() ).get( "groupId:subproject1" );
+        config.setReactorProjects( Collections.singletonList( project ) );
         config.mapReleaseVersion( "groupId:subproject1", "2.0" );
 
         try
@@ -112,6 +121,78 @@ public class RewritePomsForReleasePhaseTest
         phase.execute( config );
 
         assertTrue( compareFiles( config.getReactorProjects() ) );
+    }
+
+    public void testRewritePomWithInheritedVersion()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromProjects( "pom-with-inherited-version" );
+
+        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        config.mapReleaseVersion( "groupId:subproject1", "1.0" );
+
+        phase.execute( config );
+
+        assertTrue( compareFiles( config.getReactorProjects() ) );
+    }
+
+    public void testRewritePomWithChangedInheritedVersion()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromProjects( "pom-with-inherited-version" );
+
+        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        config.mapReleaseVersion( "groupId:subproject1", "2.0" );
+
+        phase.execute( config );
+
+        MavenProject project =
+            (MavenProject) getProjectsAsMap( config.getReactorProjects() ).get( "groupId:subproject1" );
+
+        String actual = FileUtils.fileRead( project.getFile() );
+        String expected =
+            FileUtils.fileRead( new File( project.getFile().getParentFile(), "expected-pom-version-changed.xml" ) );
+        assertEquals( "Check the transformed POM", expected, actual );
+    }
+
+    public void testRewritePomDependencies()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromProjects( "internal-snapshot-dependencies" );
+
+        config.mapReleaseVersion( "groupId:subproject1", "1.0" );
+        config.mapReleaseVersion( "groupId:subproject2", "1.0" );
+        config.mapReleaseVersion( "groupId:subproject3", "1.0" );
+        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+
+        phase.execute( config );
+
+        assertTrue( compareFiles( config.getReactorProjects() ) );
+    }
+
+    public void testRewritePomUnmappedDependencies()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromProjects( "internal-snapshot-dependencies" );
+
+        MavenProject project =
+            (MavenProject) getProjectsAsMap( config.getReactorProjects() ).get( "groupId:subproject2" );
+        config.setReactorProjects( Collections.singletonList( project ) );
+
+        config.mapReleaseVersion( "groupId:subproject2", "1.0" );
+        config.mapReleaseVersion( "groupId:subproject3", "1.0" );
+        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+
+        try
+        {
+            phase.execute( config );
+
+            fail( "Should have thrown an exception" );
+        }
+        catch ( ReleaseExecutionException e )
+        {
+            assertNull( "Check no cause", e.getCause() );
+        }
     }
 
     public void testRewriteBasicPomWithEditMode()
@@ -295,5 +376,17 @@ public class RewritePomsForReleasePhaseTest
             assertEquals( "Check the transformed POM", expected, actual );
         }
         return true;
+    }
+
+    private static Map getProjectsAsMap( List reactorProjects )
+    {
+        Map map = new HashMap();
+        for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+        {
+            MavenProject project = (MavenProject) i.next();
+
+            map.put( ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() ), project );
+        }
+        return map;
     }
 }
