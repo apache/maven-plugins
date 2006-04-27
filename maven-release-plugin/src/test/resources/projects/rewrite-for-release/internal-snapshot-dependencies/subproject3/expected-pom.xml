@@ -22,7 +22,7 @@
     <version>1.0</version>
   </parent>
 
-  <artifactId>subproject2</artifactId>
+  <artifactId>subproject3</artifactId>
 
   <dependencies>
     <!-- Test different release version remains the same -->

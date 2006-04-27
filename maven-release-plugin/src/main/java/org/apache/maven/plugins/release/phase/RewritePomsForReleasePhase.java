@@ -69,6 +69,9 @@ public class RewritePomsForReleasePhase
      */
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
+    /**
+     * The line separator to use.
+     */
     private static final String LS = System.getProperty( "line.separator" );
 
     public void execute( ReleaseConfiguration releaseConfiguration )
@@ -116,7 +119,8 @@ public class RewritePomsForReleasePhase
             }
 
             transformPomToReleaseVersionPom( project, document.getRootElement(),
-                                             releaseConfiguration.getReleaseVersions() );
+                                             releaseConfiguration.getReleaseVersions(),
+                                             releaseConfiguration.getOriginalVersions() );
 
             writePom( project.getFile(), releaseConfiguration, document, intro, outtro, project.getModelVersion() );
         }
@@ -130,7 +134,8 @@ public class RewritePomsForReleasePhase
 
     }
 
-    private void transformPomToReleaseVersionPom( MavenProject project, Element rootElement, Map mappedVersions )
+    private void transformPomToReleaseVersionPom( MavenProject project, Element rootElement, Map mappedVersions,
+                                                  Map originalVersions )
         throws ReleaseExecutionException
     {
         String parentVersion = null;
@@ -140,8 +145,8 @@ public class RewritePomsForReleasePhase
             Element parentElement = rootElement.getChild( "parent", namespace );
             Element versionElement = parentElement.getChild( "version", namespace );
             MavenProject parent = project.getParent();
-            parentVersion = (String) mappedVersions.get(
-                ArtifactUtils.versionlessKey( parent.getGroupId(), parent.getArtifactId() ) );
+            String key = ArtifactUtils.versionlessKey( parent.getGroupId(), parent.getArtifactId() );
+            parentVersion = (String) mappedVersions.get( key );
             if ( parentVersion == null )
             {
                 throw new ReleaseExecutionException( "Version for parent '" + parent.getName() + "' was not mapped" );
@@ -153,8 +158,8 @@ public class RewritePomsForReleasePhase
         {
             // TODO: what about if version is inherited? shouldn't prompt...
             Element versionElement = rootElement.getChild( "version", namespace );
-            String version = (String) mappedVersions.get(
-                ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() ) );
+            String key = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
+            String version = (String) mappedVersions.get( key );
             if ( version == null )
             {
                 throw new ReleaseExecutionException( "Version for '" + project.getName() + "' was not mapped" );
@@ -180,44 +185,19 @@ public class RewritePomsForReleasePhase
             }
         }
 
-        List dependencies = project.getDependencies();
-        if ( dependencies != null )
+        rewriteDependencies( project.getDependencies(), rootElement, mappedVersions, originalVersions );
+
+        if ( project.getDependencyManagement() != null )
         {
-            for ( Iterator i = dependencies.iterator(); i.hasNext(); )
+            Element dependencyRoot = rootElement.getChild( "dependencyManagement", namespace );
+            if ( dependencyRoot != null )
             {
-                Dependency dep = (Dependency) i.next();
-
-                // Avoid if in dep mgmt
-                if ( dep.getVersion() != null )
-                {
-                    String key = ArtifactUtils.versionlessKey( dep.getGroupId(), dep.getArtifactId() );
-                    String version = (String) mappedVersions.get( key );
-
-                    if ( version == null )
-                    {
-                        throw new ReleaseExecutionException( "Version for dependency '" + key + "' was not mapped" );
-                    }
-
-                    getLogger().debug( "Updating " + dep.getArtifactId() + " to " + version );
-
-                    try
-                    {
-                        XPath xpath = XPath.newInstance( "dependencies/dependency[groupId='" + dep.getGroupId() +
-                            "' and artifactId='" + dep.getArtifactId() + "']" );
-
-                        Element dependency = (Element) xpath.selectSingleNode( rootElement );
-                        dependency.getChild( "version" ).setText( version );
-                    }
-                    catch ( JDOMException e )
-                    {
-                        throw new ReleaseExecutionException( "Unable to locate dependency to process in document", e );
-                    }
-                }
+                rewriteDependencies( project.getDependencyManagement().getDependencies(), dependencyRoot,
+                                     mappedVersions, originalVersions );
             }
         }
 
         // TODO: rewrite SCM
-        // TODO: rewrite dependency management
         // TODO: rewrite extensions
         // TODO: rewrite plugins, plugin management
         // TODO: rewrite reporting plugins
@@ -313,35 +293,58 @@ public class RewritePomsForReleasePhase
                 }
             }
         }
-            //Rewrite dependencyManagement section
-            List dependencies =
-                model.getDependencyManagement() != null ? model.getDependencyManagement().getDependencies() : null;
-
-            if ( dependencies != null )
-            {
-                for ( Iterator i = dependencies.iterator(); i.hasNext(); )
-                {
-                    Dependency dep = (Dependency) i.next();
-
-                    // If our dependency specifies an explicit released version, do NOT update
-                    // it to the latest released version.  If we depend on a SNAPSHOT that is
-                    // being released, we update the version to reflect the newly released version.
-                    // TODO Cleaner way to determine snapshot?
-                    if ( dep.getVersion() != null && dep.getVersion().endsWith( "-SNAPSHOT" ) )
-                    {
-                        String version = versionResolver.getResolvedVersion( dep.getGroupId(), dep.getArtifactId() );
-
-                        if ( version != null )
-                        {
-                            getLog().info( "Updating DepMgmt " + dep.getArtifactId() + " to " + version );
-                            dep.setVersion( version );
-                        }
-                    }
-                }
-            }
 
 */
 
+    }
+
+    private void rewriteDependencies( List dependencies, Element dependencyRoot, Map mappedVersions,
+                                      Map originalVersions )
+        throws ReleaseExecutionException
+    {
+        if ( dependencies != null )
+        {
+            for ( Iterator i = dependencies.iterator(); i.hasNext(); )
+            {
+                Dependency dep = (Dependency) i.next();
+
+                String key = ArtifactUtils.versionlessKey( dep.getGroupId(), dep.getArtifactId() );
+                String version = (String) mappedVersions.get( key );
+
+                if ( version != null && dep.getVersion().equals( originalVersions.get( key ) ) )
+                {
+                    getLogger().debug( "Updating " + dep.getArtifactId() + " to " + version );
+
+                    try
+                    {
+                        XPath xpath = XPath.newInstance( "./dependencies/dependency[groupId='" + dep.getGroupId() +
+                            "' and artifactId='" + dep.getArtifactId() + "']" );
+
+                        Element dependency = (Element) xpath.selectSingleNode( dependencyRoot );
+                        Element versionElement = dependency.getChild( "version" );
+
+                        // avoid if in dependency management
+                        if ( versionElement != null )
+                        {
+                            versionElement.setText( version );
+                        }
+                    }
+                    catch ( JDOMException e )
+                    {
+                        throw new ReleaseExecutionException( "Unable to locate dependency to process in document", e );
+                    }
+                }
+                else
+                {
+                    // We can ignore dependencies we don't know of, unless they are snapshots
+                    if ( ArtifactUtils.isSnapshot( dep.getVersion() ) )
+                    {
+                        throw new ReleaseExecutionException(
+                            "Version '" + dep.getVersion() + "' for dependency '" + key + "' was not mapped" );
+                    }
+                }
+            }
+        }
     }
 
     private void writePom( File pomFile, ReleaseConfiguration releaseConfiguration, Document document, String intro,

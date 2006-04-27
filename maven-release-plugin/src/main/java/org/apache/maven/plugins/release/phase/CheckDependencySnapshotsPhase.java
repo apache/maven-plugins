@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -43,24 +44,24 @@ public class CheckDependencySnapshotsPhase
         throws ReleaseExecutionException
     {
         List reactorProjects = releaseConfiguration.getReactorProjects();
-        Set reactorProjectKeys = createReactorProjectSet( reactorProjects );
+        Map originalVersions = releaseConfiguration.getOriginalVersions();
 
         for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
         {
             MavenProject project = (MavenProject) i.next();
 
-            checkProject( project, reactorProjectKeys );
+            checkProject( project, originalVersions );
         }
     }
 
-    private void checkProject( MavenProject project, Set reactorProjectKeys )
+    private void checkProject( MavenProject project, Map originalVersions )
         throws ReleaseExecutionException
     {
         Set snapshotDependencies = new HashSet();
 
         if ( project.getParentArtifact() != null )
         {
-            if ( checkArtifact( project.getParentArtifact(), reactorProjectKeys ) )
+            if ( checkArtifact( project.getParentArtifact(), originalVersions ) )
             {
                 snapshotDependencies.add( project.getParentArtifact() );
             }
@@ -70,7 +71,7 @@ public class CheckDependencySnapshotsPhase
         {
             Artifact artifact = (Artifact) i.next();
 
-            if ( checkArtifact( artifact, reactorProjectKeys ) )
+            if ( checkArtifact( artifact, originalVersions ) )
             {
                 snapshotDependencies.add( artifact );
             }
@@ -80,7 +81,7 @@ public class CheckDependencySnapshotsPhase
         {
             Artifact artifact = (Artifact) i.next();
 
-            if ( checkArtifact( artifact, reactorProjectKeys ) )
+            if ( checkArtifact( artifact, originalVersions ) )
             {
                 snapshotDependencies.add( artifact );
             }
@@ -90,7 +91,7 @@ public class CheckDependencySnapshotsPhase
         {
             Artifact artifact = (Artifact) i.next();
 
-            if ( checkArtifact( artifact, reactorProjectKeys ) )
+            if ( checkArtifact( artifact, originalVersions ) )
             {
                 snapshotDependencies.add( artifact );
             }
@@ -100,7 +101,7 @@ public class CheckDependencySnapshotsPhase
         {
             Artifact artifact = (Artifact) i.next();
 
-            if ( checkArtifact( artifact, reactorProjectKeys ) )
+            if ( checkArtifact( artifact, originalVersions ) )
             {
                 snapshotDependencies.add( artifact );
             }
@@ -130,14 +131,13 @@ public class CheckDependencySnapshotsPhase
         }
     }
 
-    private static boolean checkArtifact( Artifact artifact, Set reactorProjectKeys )
+    private static boolean checkArtifact( Artifact artifact, Map originalVersions )
     {
         String versionlessArtifactKey = ArtifactUtils.versionlessKey( artifact.getGroupId(), artifact.getArtifactId() );
 
         // We are only looking at dependencies external to the project - ignore anything found in the reactor as
         // it's version will be updated
-        // TODO: will it? what if it is a different snapshot version to the one being updated in the reactor?
-        return !reactorProjectKeys.contains( versionlessArtifactKey ) &&
+        return !artifact.getVersion().equals( originalVersions.get( versionlessArtifactKey ) ) &&
             ArtifactUtils.isSnapshot( artifact.getVersion() );
     }
 
@@ -146,23 +146,6 @@ public class CheckDependencySnapshotsPhase
     {
         // It makes no modifications, so simulate is the same as execute
         execute( releaseConfiguration );
-    }
-
-    private static Set createReactorProjectSet( List reactorProjects )
-    {
-        Set reactorProjectSet = new HashSet();
-
-        for ( Iterator it = reactorProjects.iterator(); it.hasNext(); )
-        {
-            MavenProject project = (MavenProject) it.next();
-
-            String versionlessArtifactKey =
-                ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
-
-            reactorProjectSet.add( versionlessArtifactKey );
-        }
-
-        return reactorProjectSet;
     }
 
 }
