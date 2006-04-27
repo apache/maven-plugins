@@ -1,7 +1,5 @@
 package org.apache.maven.plugins.release;
 
-import org.apache.maven.plugins.release.config.ReleaseConfiguration;
-
 /*
  * Copyright 2005-2006 The Apache Software Foundation.
  *
@@ -17,6 +15,8 @@ import org.apache.maven.plugins.release.config.ReleaseConfiguration;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 
 /**
  * Release management classes.

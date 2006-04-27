@@ -17,6 +17,7 @@ package org.apache.maven.plugins.release.phase;
  */
 
 import org.apache.maven.artifact.ArtifactUtils;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 import org.apache.maven.plugins.release.scm.ReleaseScmCommandException;
@@ -37,10 +38,12 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.Namespace;
+import org.jdom.Text;
 import org.jdom.filter.ElementFilter;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
+import org.jdom.xpath.XPath;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -66,6 +69,8 @@ public class RewritePomsForReleasePhase
      */
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
+    private static final String LS = System.getProperty( "line.separator" );
+
     public void execute( ReleaseConfiguration releaseConfiguration )
         throws ReleaseExecutionException
     {
@@ -90,7 +95,7 @@ public class RewritePomsForReleasePhase
                 // rewrite DOM as a string to find differences, since text outside the root element is not tracked
                 StringWriter w = new StringWriter();
                 Format format = Format.getRawFormat();
-                format.setLineSeparator( System.getProperty( "line.separator" ) );
+                format.setLineSeparator( LS );
                 XMLOutputter out = new XMLOutputter( format );
                 out.output( document.getRootElement(), w );
 
@@ -128,35 +133,90 @@ public class RewritePomsForReleasePhase
     private void transformPomToReleaseVersionPom( MavenProject project, Element rootElement, Map mappedVersions )
         throws ReleaseExecutionException
     {
+        String parentVersion = null;
+        Namespace namespace = rootElement.getNamespace();
+        if ( project.hasParent() && project.getParentArtifact().isSnapshot() )
+        {
+            Element parentElement = rootElement.getChild( "parent", namespace );
+            Element versionElement = parentElement.getChild( "version", namespace );
+            MavenProject parent = project.getParent();
+            parentVersion = (String) mappedVersions.get(
+                ArtifactUtils.versionlessKey( parent.getGroupId(), parent.getArtifactId() ) );
+            if ( parentVersion == null )
+            {
+                throw new ReleaseExecutionException( "Version for parent '" + parent.getName() + "' was not mapped" );
+            }
+            versionElement.setText( parentVersion );
+        }
+
         if ( project.getArtifact().isSnapshot() )
         {
             // TODO: what about if version is inherited? shouldn't prompt...
-            Element versionElement = rootElement.getChild( "version", rootElement.getNamespace() );
+            Element versionElement = rootElement.getChild( "version", namespace );
             String version = (String) mappedVersions.get(
                 ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() ) );
             if ( version == null )
             {
                 throw new ReleaseExecutionException( "Version for '" + project.getName() + "' was not mapped" );
             }
-            versionElement.setText( version );
+
+            if ( versionElement == null )
+            {
+                if ( !version.equals( parentVersion ) )
+                {
+                    // we will add this after artifactId
+                    Element artifactIdElement = rootElement.getChild( "artifactId", namespace );
+                    int index = rootElement.indexOf( artifactIdElement );
+
+                    versionElement = new Element( "version", namespace );
+                    versionElement.setText( version );
+                    rootElement.addContent( index + 1, new Text( "\n  " ) );
+                    rootElement.addContent( index + 2, versionElement );
+                }
+            }
+            else
+            {
+                versionElement.setText( version );
+            }
         }
 
-        if ( project.hasParent() && project.getParentArtifact().isSnapshot() )
+        List dependencies = project.getDependencies();
+        if ( dependencies != null )
         {
-            Element parentElement = rootElement.getChild( "parent", rootElement.getNamespace() );
-            Element versionElement = parentElement.getChild( "version", rootElement.getNamespace() );
-            MavenProject parent = project.getParent();
-            String version = (String) mappedVersions.get(
-                ArtifactUtils.versionlessKey( parent.getGroupId(), parent.getArtifactId() ) );
-            if ( version == null )
+            for ( Iterator i = dependencies.iterator(); i.hasNext(); )
             {
-                throw new ReleaseExecutionException( "Version for parent '" + parent.getName() + "' was not mapped" );
+                Dependency dep = (Dependency) i.next();
+
+                // Avoid if in dep mgmt
+                if ( dep.getVersion() != null )
+                {
+                    String key = ArtifactUtils.versionlessKey( dep.getGroupId(), dep.getArtifactId() );
+                    String version = (String) mappedVersions.get( key );
+
+                    if ( version == null )
+                    {
+                        throw new ReleaseExecutionException( "Version for dependency '" + key + "' was not mapped" );
+                    }
+
+                    getLogger().debug( "Updating " + dep.getArtifactId() + " to " + version );
+
+                    try
+                    {
+                        XPath xpath = XPath.newInstance( "dependencies/dependency[groupId='" + dep.getGroupId() +
+                            "' and artifactId='" + dep.getArtifactId() + "']" );
+
+                        Element dependency = (Element) xpath.selectSingleNode( rootElement );
+                        dependency.getChild( "version" ).setText( version );
+                    }
+                    catch ( JDOMException e )
+                    {
+                        throw new ReleaseExecutionException( "Unable to locate dependency to process in document", e );
+                    }
+                }
             }
-            versionElement.setText( version );
         }
 
         // TODO: rewrite SCM
-        // TODO: rewrite dependencies
         // TODO: rewrite dependency management
         // TODO: rewrite extensions
         // TODO: rewrite plugins, plugin management
@@ -166,30 +226,7 @@ public class RewritePomsForReleasePhase
         ProjectScmRewriter scmRewriter = getScmRewriter();
         scmRewriter.rewriteScmInfo( model, projectId, getTagLabel() );
 
-        //Rewrite dependencies section
-        List dependencies = model.getDependencies();
-
         ProjectVersionResolver versionResolver = getVersionResolver();
-        if ( dependencies != null )
-        {
-            for ( Iterator i = dependencies.iterator(); i.hasNext(); )
-            {
-                Dependency dep = (Dependency) i.next();
-                // Avoid in dep mgmt
-                if ( dep.getVersion() != null )
-                {
-                    String resolvedVersion =
-                        versionResolver.getResolvedVersion( dep.getGroupId(), dep.getArtifactId() );
-
-                    if ( resolvedVersion != null )
-                    {
-                        getLog().info( "Updating " + dep.getArtifactId() + " to " + resolvedVersion );
-                        dep.setVersion( resolvedVersion );
-                    }
-                }
-            }
-        }
-
         Build build = model.getBuild();
 
         if ( build != null )
@@ -383,7 +420,7 @@ public class RewritePomsForReleasePhase
             }
 
             Format format = Format.getRawFormat();
-            format.setLineSeparator( System.getProperty( "line.separator" ) );
+            format.setLineSeparator( LS );
             XMLOutputter out = new XMLOutputter( format );
             out.output( document.getRootElement(), writer );
 
@@ -687,7 +724,7 @@ public class RewritePomsForReleasePhase
 */
     }
 
-    /*
+/*
     private String resolveVersion( Artifact artifact, String artifactUsage, List pluginArtifactRepositories )
         throws MojoExecutionException
     {
