@@ -21,11 +21,7 @@ import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.testing.stubs.ArtifactStub;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Odea
- * Date: Apr 26, 2006
- * Time: 11:40:41 AM
- * To change this template use File | Settings | File Templates.
+ * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
  */
 public class JxrPluginArtifactStub
     extends ArtifactStub

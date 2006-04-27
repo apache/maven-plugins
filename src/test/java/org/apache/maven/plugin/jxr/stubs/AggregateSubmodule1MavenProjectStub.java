@@ -1,10 +1,5 @@
 package org.apache.maven.plugin.jxr.stubs;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
-
-import java.util.ArrayList;
-import java.util.List;
 /*
  * Copyright 2005-2006 The Apache Software Foundation.
  *
@@ -20,6 +15,12 @@ import java.util.List;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
