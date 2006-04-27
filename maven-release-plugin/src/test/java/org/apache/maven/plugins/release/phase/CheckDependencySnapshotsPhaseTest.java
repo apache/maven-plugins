@@ -601,7 +601,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         Stack projectFiles = new Stack();
-        projectFiles.push( getTestFile( "target/test-classes/projects/" + path + "/pom.xml" ) );
+        projectFiles.push( getTestFile( "target/test-classes/projects/check-dependencies/" + path + "/pom.xml" ) );
 
         List projects = new ArrayList();
         while ( !projectFiles.isEmpty() )
