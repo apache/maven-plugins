@@ -128,22 +128,25 @@ public class RewritePomsForReleasePhase
     private void transformPomToReleaseVersionPom( MavenProject project, Element rootElement, Map mappedVersions )
         throws ReleaseExecutionException
     {
-        // TODO: what about if version is inherited? shouldn't prompt...
-        Element versionElement = rootElement.getChild( "version", rootElement.getNamespace() );
-        String version = (String) mappedVersions.get(
-            ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() ) );
-        if ( version == null )
+        if ( project.getArtifact().isSnapshot() )
         {
-            throw new ReleaseExecutionException( "Version for '" + project.getName() + "' was not mapped" );
+            // TODO: what about if version is inherited? shouldn't prompt...
+            Element versionElement = rootElement.getChild( "version", rootElement.getNamespace() );
+            String version = (String) mappedVersions.get(
+                ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() ) );
+            if ( version == null )
+            {
+                throw new ReleaseExecutionException( "Version for '" + project.getName() + "' was not mapped" );
+            }
+            versionElement.setText( version );
         }
-        versionElement.setText( version );
 
-        if ( project.hasParent() )
+        if ( project.hasParent() && project.getParentArtifact().isSnapshot() )
         {
             Element parentElement = rootElement.getChild( "parent", rootElement.getNamespace() );
-            versionElement = parentElement.getChild( "version", rootElement.getNamespace() );
+            Element versionElement = parentElement.getChild( "version", rootElement.getNamespace() );
             MavenProject parent = project.getParent();
-            version = (String) mappedVersions.get(
+            String version = (String) mappedVersions.get(
                 ArtifactUtils.versionlessKey( parent.getGroupId(), parent.getArtifactId() ) );
             if ( version == null )
             {
@@ -162,17 +165,6 @@ public class RewritePomsForReleasePhase
 /*
         ProjectScmRewriter scmRewriter = getScmRewriter();
         scmRewriter.rewriteScmInfo( model, projectId, getTagLabel() );
-
-        //Rewrite parent version
-        if ( model.getParent() != null )
-        {
-            if ( ArtifactUtils.isSnapshot( parentArtifact.getBaseVersion() ) )
-            {
-                String version = resolveVersion( parentArtifact, "parent", pluginArtifactRepositories );
-
-                model.getParent().setVersion( version );
-            }
-        }
 
         //Rewrite dependencies section
         List dependencies = model.getDependencies();
