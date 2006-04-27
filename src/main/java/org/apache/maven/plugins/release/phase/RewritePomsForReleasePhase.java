@@ -367,12 +367,17 @@ public class RewritePomsForReleasePhase
             // TODO: the XMLOutputter and Writer need to have their encodings aligned
             writer = new FileWriter( pomFile );
 
-            writer.write( intro );
+            if ( intro != null )
+            {
+                writer.write( intro );
+            }
 
-            XMLOutputter outp = new XMLOutputter();
-            outp.output( document.getRootElement(), writer );
+            new XMLOutputter().output( document.getRootElement(), writer );
 
-            writer.write( outtro );
+            if ( outtro != null )
+            {
+                writer.write( outtro );
+            }
         }
         catch ( IOException e )
         {
