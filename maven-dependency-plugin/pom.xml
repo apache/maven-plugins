@@ -73,16 +73,17 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>[1.1,]</version>
+      <version>1.1</version>
     </dependency>
   </dependencies>
   <reporting>
     <plugins>
       <plugin>
-        <groupId>org.apache.mojo</groupId>
+        <groupId>org.codehaus.mojo</groupId>
         <artifactId>changes-maven-plugin</artifactId>
         <version>2.0-beta-1</version>
       </plugin>
     </plugins>
   </reporting>
+    
 </project>
