@@ -1,3 +1,4 @@
+
 /*
  *  Copyright 2005-2006 Brian Fox (brianefox@gmail.com)
  *
@@ -116,7 +117,7 @@ public abstract class AbstractFromConfigurationMojo
 
     /**
      * Resolves the Artifact from the remote repository if nessessary. If no version is specified, it will
-     * be retrieved from the DependencyManagement section of the pom.
+     * be retrieved from the dependency list or from the DependencyManagement section of the pom.
      *
      * @param artifactItem 
      *          containing information about artifact from plugin configuration.
@@ -133,12 +134,12 @@ public abstract class AbstractFromConfigurationMojo
 
         if ( artifactItem.getVersion() == null )
         {
-            fillArtifactVersionFromDependencyManagement( artifactItem );
+            fillMissingArtifactVersion( artifactItem );
 
             if ( artifactItem.getVersion() == null )
             {
                 throw new MojoExecutionException( "Unable to find artifact version of " + artifactItem.getGroupId()
-                    + ":" + artifactItem.getArtifactId() + " in project's dependency management." );
+                    + ":" + artifactItem.getArtifactId() + " in either dependency list or in project's dependency management." );
             }
 
         }
@@ -175,15 +176,15 @@ public abstract class AbstractFromConfigurationMojo
     }
 
     /**
-     * Tries to find missing version from dependancy management. If found, the artifact is updated with
-     * the correct version.
+     * Tries to find missing version from dependancy list and dependency management. 
+     * If found, the artifact is updated with the correct version.
      * @param artifact representing configured file.
      */
-    private void fillArtifactVersionFromDependencyManagement( ArtifactItem artifact )
+    private void fillMissingArtifactVersion( ArtifactItem artifact )
     {
-        this.getLog().debug( "Attempting to find missing version from dependency management." );
+        this.getLog().debug( "Attempting to find missing version in " + artifact.getGroupId() + ":" + artifact.getArtifactId() );
 
-        List list = this.project.getDependencyManagement().getDependencies();
+        List list = this.project.getDependencies();
 
         for ( int i = 0; i < list.size(); ++i )
         {
@@ -193,10 +194,29 @@ public abstract class AbstractFromConfigurationMojo
                 && dependency.getArtifactId().equals( artifact.getArtifactId() )
                 && dependency.getType().equals( artifact.getType() ) )
             {
-                this.getLog().debug( "Found missing version: " + dependency.getVersion() );
+                this.getLog().debug( "Found missing version: " + dependency.getVersion() + " in dependency list." );
+
+                artifact.setVersion( dependency.getVersion() );
+                
+                return;
+            }
+        }
+        
+        list = this.project.getDependencyManagement().getDependencies();
+
+        for ( int i = 0; i < list.size(); ++i )
+        {
+            Dependency dependency = (Dependency) list.get( i );
+
+            if ( dependency.getGroupId().equals( artifact.getGroupId() )
+                && dependency.getArtifactId().equals( artifact.getArtifactId() )
+                && dependency.getType().equals( artifact.getType() ) )
+            {
+                this.getLog().debug( "Found missing version: " + dependency.getVersion() + " in dependency management list" );
 
                 artifact.setVersion( dependency.getVersion() );
             }
         }
     }
 }
+
