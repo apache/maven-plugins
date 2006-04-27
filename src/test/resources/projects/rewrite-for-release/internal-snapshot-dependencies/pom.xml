@@ -24,5 +24,6 @@
   <modules>
     <module>subproject1</module>
     <module>subproject2</module>
+    <module>subproject3</module>
   </modules>
 </project>

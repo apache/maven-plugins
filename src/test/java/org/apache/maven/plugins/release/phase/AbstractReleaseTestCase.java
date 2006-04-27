@@ -52,7 +52,7 @@ import java.util.Stack;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class AbstractReleaseTestCase
+public abstract class AbstractReleaseTestCase
     extends PlexusTestCase
 {
     protected MavenProjectBuilder projectBuilder;
