@@ -9,11 +9,27 @@ import org.apache.maven.artifact.repository.DefaultArtifactRepository;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.plugins.release.scm.DefaultScmRepositoryConfigurator;
+import org.apache.maven.plugins.release.scm.ReleaseScmCommandException;
+import org.apache.maven.plugins.release.scm.ReleaseScmRepositoryException;
+import org.apache.maven.plugins.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.scm.ScmException;
+import org.apache.maven.scm.command.edit.EditScmResult;
+import org.apache.maven.scm.manager.NoSuchScmProviderException;
+import org.apache.maven.scm.manager.ScmManager;
+import org.apache.maven.scm.manager.ScmManagerStub;
+import org.apache.maven.scm.provider.ScmProvider;
+import org.apache.maven.scm.provider.ScmProviderStub;
+import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.FileUtils;
+import org.jmock.cglib.Mock;
+import org.jmock.core.constraint.IsEqual;
+import org.jmock.core.matcher.InvokeAtLeastOnceMatcher;
+import org.jmock.core.stub.ThrowStub;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,6 +80,79 @@ public class RewritePomsForReleasePhaseTest
         assertEquals( "Check the transformed POM", expected, actual );
     }
 
+    public void testRewriteBasicPomWithEditMode()
+        throws Exception
+    {
+        File testFile = getCopiedTestFile( "rewrite-for-release/basic-pom.xml" );
+        MavenProject project = projectBuilder.build( testFile, localRepository, null );
+
+        ReleaseConfiguration config = createReleaseConfiguration( Collections.singletonList( project ) );
+        config.setUseEditMode( true );
+        config.mapReleaseVersion( project.getGroupId() + ":" + project.getArtifactId(), "1.0" );
+
+        phase.execute( config );
+
+        String expected = readTestProjectFile( "rewrite-for-release/expected-basic-pom.xml" );
+        String actual = readTestProjectFile( "rewrite-for-release/basic-pom.xml" );
+        assertEquals( "Check the transformed POM", expected, actual );
+    }
+
+    public void testRewriteBasicPomWithEditModeFailure()
+        throws Exception
+    {
+        File testFile = getCopiedTestFile( "rewrite-for-release/basic-pom.xml" );
+        MavenProject project = projectBuilder.build( testFile, localRepository, null );
+
+        ReleaseConfiguration config = createReleaseConfiguration( Collections.singletonList( project ) );
+        config.setUseEditMode( true );
+        config.mapReleaseVersion( project.getGroupId() + ":" + project.getArtifactId(), "1.0" );
+
+        ScmManager scmManager = (ScmManager) lookup( ScmManager.ROLE );
+        ScmProviderStub providerStub = (ScmProviderStub) scmManager.getProviderByUrl( config.getUrl() );
+
+        providerStub.setEditScmResult( new EditScmResult( "", "", "", false ) );
+
+        try
+        {
+            phase.execute( config );
+
+            fail( "Should have thrown an exception" );
+        }
+        catch ( ReleaseScmCommandException e )
+        {
+            assertNull( "Check no other cause", e.getCause() );
+        }
+    }
+
+    public void testRewriteBasicPomWithEditModeException()
+        throws Exception
+    {
+        File testFile = getCopiedTestFile( "rewrite-for-release/basic-pom.xml" );
+        MavenProject project = projectBuilder.build( testFile, localRepository, null );
+
+        ReleaseConfiguration config = createReleaseConfiguration( Collections.singletonList( project ) );
+        config.setUseEditMode( true );
+        config.mapReleaseVersion( project.getGroupId() + ":" + project.getArtifactId(), "1.0" );
+
+        Mock scmProviderMock = new Mock( ScmProvider.class );
+        scmProviderMock.expects( new InvokeAtLeastOnceMatcher() ).method( "edit" ).will(
+            new ThrowStub( new ScmException( "..." ) ) );
+
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
+
+        try
+        {
+            phase.execute( config );
+
+            fail( "Should have thrown an exception" );
+        }
+        catch ( ReleaseExecutionException e )
+        {
+            assertEquals( "Check cause", ScmException.class, e.getCause().getClass() );
+        }
+    }
+
     public void testRewriteAddSchema()
         throws ReleaseExecutionException, ProjectBuildingException, IOException
     {
@@ -81,6 +170,88 @@ public class RewritePomsForReleasePhaseTest
             String expected = readTestProjectFile( "rewrite-for-release/expected-basic-pom-with-schema.xml" );
             String actual = readTestProjectFile( "rewrite-for-release/basic-pom.xml" );
             assertEquals( "Check the transformed POM", expected, actual );
+        }
+    }
+
+    public void testRewriteUnmappedPom()
+        throws ReleaseExecutionException, ProjectBuildingException, IOException
+    {
+        File testFile = getCopiedTestFile( "rewrite-for-release/basic-pom.xml" );
+        MavenProject project = projectBuilder.build( testFile, localRepository, null );
+
+        ReleaseConfiguration config = createReleaseConfiguration( Collections.singletonList( project ) );
+
+        try
+        {
+            phase.execute( config );
+
+            fail( "Should have thrown an exception" );
+        }
+        catch ( ReleaseExecutionException e )
+        {
+            assertNull( "Check no cause", e.getCause() );
+        }
+    }
+
+    public void testRewriteBasicPomWithScmRepoException()
+        throws Exception
+    {
+        File testFile = getCopiedTestFile( "rewrite-for-release/basic-pom.xml" );
+        MavenProject project = projectBuilder.build( testFile, localRepository, null );
+
+        ReleaseConfiguration config = createReleaseConfiguration( Collections.singletonList( project ) );
+        config.setUseEditMode( true );
+        config.mapReleaseVersion( project.getGroupId() + ":" + project.getArtifactId(), "1.0" );
+
+        Mock scmManagerMock = new Mock( ScmManager.class );
+        scmManagerMock.expects( new InvokeAtLeastOnceMatcher() ).method( "makeScmRepository" ).with(
+            new IsEqual( config.getUrl() ) ).will( new ThrowStub( new ScmRepositoryException( "..." ) ) );
+
+        ScmManager scmManager = (ScmManager) scmManagerMock.proxy();
+        DefaultScmRepositoryConfigurator configurator =
+            (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE );
+        configurator.setScmManager( scmManager );
+
+        try
+        {
+            phase.execute( config );
+
+            fail( "Should have thrown an exception" );
+        }
+        catch ( ReleaseScmRepositoryException e )
+        {
+            assertNull( "Check no additional cause", e.getCause() );
+        }
+    }
+
+    public void testRewriteBasicPomWithNoSuchProviderException()
+        throws Exception
+    {
+        File testFile = getCopiedTestFile( "rewrite-for-release/basic-pom.xml" );
+        MavenProject project = projectBuilder.build( testFile, localRepository, null );
+
+        ReleaseConfiguration config = createReleaseConfiguration( Collections.singletonList( project ) );
+        config.setUseEditMode( true );
+        config.mapReleaseVersion( project.getGroupId() + ":" + project.getArtifactId(), "1.0" );
+
+        Mock scmManagerMock = new Mock( ScmManager.class );
+        scmManagerMock.expects( new InvokeAtLeastOnceMatcher() ).method( "makeScmRepository" ).with(
+            new IsEqual( config.getUrl() ) ).will( new ThrowStub( new NoSuchScmProviderException( "..." ) ) );
+
+        ScmManager scmManager = (ScmManager) scmManagerMock.proxy();
+        DefaultScmRepositoryConfigurator configurator =
+            (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE );
+        configurator.setScmManager( scmManager );
+
+        try
+        {
+            phase.execute( config );
+
+            fail( "Should have thrown an exception" );
+        }
+        catch ( ReleaseExecutionException e )
+        {
+            assertEquals( "Check cause", NoSuchScmProviderException.class,  e.getCause().getClass() );
         }
     }
 
