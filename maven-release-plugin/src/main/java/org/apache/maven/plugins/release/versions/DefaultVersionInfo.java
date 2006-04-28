@@ -49,7 +49,7 @@ import java.util.regex.Pattern;
  * <p/>
  * Leading zeros are significant when performing comparisons.
  * <p/>
- * TODO: remove component - it isn't relevant
+ * TODO: remove component field - it isn't relevant
  * TODO: this parser is better than DefaultArtifactVersion - replace it with this (but align naming) and then remove this from here.
  */
 public class DefaultVersionInfo

@@ -73,7 +73,7 @@ public class DefaultScmRepositoryConfigurator
             Settings settings = releaseConfiguration.getSettings();
             if ( settings != null )
             {
-                // TODO: this is a bit dodgy - id != host, but since we don't have a <host> field we make an assumption
+                // TODO: this is a bit dodgy - id is not host, but since we don't have a <host> field we make an assumption
                 Server server = settings.getServer( host );
 
                 if ( server != null )

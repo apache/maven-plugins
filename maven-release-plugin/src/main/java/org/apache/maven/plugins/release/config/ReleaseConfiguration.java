@@ -305,10 +305,11 @@ public class ReleaseConfiguration
      * a default from the merge configuration, but not overridden if it exists.
      *
      * @param mergeConfiguration the configuration to merge into this configuration
-     * @todo double check if these are the expected behaviours
      */
     public void merge( ReleaseConfiguration mergeConfiguration )
     {
+        // TODO [!]: double check if these are the expected behaviours
+
         // Overridden if configured from the caller
         this.url = mergeOverride( this.url, mergeConfiguration.url );
         this.releaseLabel = mergeOverride( this.releaseLabel, mergeConfiguration.releaseLabel );
