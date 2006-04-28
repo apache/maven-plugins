@@ -35,7 +35,10 @@ public class UnArchiverStub
     {
         File extractedFile = new File( destDir, sourceFile.getName() + ".extracted" );
 
-        extractedFile.createNewFile();
+        if ( !extractedFile.exists() )
+        {
+            extractedFile.createNewFile();
+        }
     }
 
     public File getDestDirectory()
