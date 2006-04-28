@@ -1,5 +1,9 @@
 package org.apache.maven.plugin.assembly.stubs;
 
+import org.codehaus.plexus.archiver.Archiver;
+import org.codehaus.plexus.archiver.UnArchiver;
+import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
+
 /*
  * Copyright 2001-2006 The Apache Software Foundation.
  *
@@ -16,13 +20,21 @@ package org.apache.maven.plugin.assembly.stubs;
  * limitations under the License.
  */
 
-import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
-
 /**
  * @author Edwin Punzalan
  */
-public class ReactorMavenProject
-    extends MavenProjectStub
+public class ArchiverManagerWithExceptionStub
+    extends ArchiverManagerStub
 {
-    
+    public UnArchiver getUnArchiver( String string )
+        throws NoSuchArchiverException
+    {
+        throw new NoSuchArchiverException( "Expected exception" );
+    }
+
+    public Archiver getArchiver( String string )
+        throws NoSuchArchiverException
+    {
+        throw new NoSuchArchiverException( "Expected exception" );
+    }
 }
