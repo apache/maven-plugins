@@ -59,8 +59,6 @@ public class DefaultReleaseManager
      */
     private ReleaseConfigurationStore configStore;
 
-    // TODO: config - tag
-
     public void prepare( ReleaseConfiguration releaseConfiguration )
         throws ReleaseExecutionException
     {

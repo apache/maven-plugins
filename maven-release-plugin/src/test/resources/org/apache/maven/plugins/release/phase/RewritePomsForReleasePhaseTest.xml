@@ -16,10 +16,6 @@
 
 <component-set>
   <components>
-    <component>
-      <role>org.apache.maven.scm.manager.ScmManager</role>
-      <implementation>org.apache.maven.scm.manager.ScmManagerStub</implementation>
-    </component>
     <!-- Turn off info messages -->
     <component>
       <role>org.codehaus.plexus.logging.LoggerManager</role>

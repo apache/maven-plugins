@@ -21,11 +21,13 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Extension;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.ReportPlugin;
+import org.apache.maven.model.Scm;
 import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 import org.apache.maven.plugins.release.scm.ReleaseScmCommandException;
 import org.apache.maven.plugins.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.plugins.release.scm.ScmRepositoryConfigurator;
+import org.apache.maven.plugins.release.scm.ScmTranslator;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
@@ -71,6 +73,11 @@ public class RewritePomsForReleasePhase
      * Tool that gets a configured SCM repository from release configuration.
      */
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
+
+    /**
+     * SCM URL translators mapped by provider name.
+     */
+    private Map scmTranslators;
 
     /**
      * The line separator to use.
@@ -121,11 +128,27 @@ public class RewritePomsForReleasePhase
                 throw new ReleaseExecutionException( "Error reading POM: " + e.getMessage(), e );
             }
 
-            transformPomToReleaseVersionPom( project, document.getRootElement(),
-                                             releaseConfiguration.getReleaseVersions(),
-                                             releaseConfiguration.getOriginalVersions() );
+            ScmRepository scmRepository;
+            ScmProvider provider;
+            try
+            {
+                scmRepository = scmRepositoryConfigurator.getConfiguredRepository( releaseConfiguration );
 
-            writePom( project.getFile(), releaseConfiguration, document, intro, outtro, project.getModelVersion() );
+                provider = scmRepositoryConfigurator.getRepositoryProvider( scmRepository );
+            }
+            catch ( ScmRepositoryException e )
+            {
+                throw new ReleaseScmRepositoryException( e.getMessage(), e.getValidationMessages() );
+            }
+            catch ( NoSuchScmProviderException e )
+            {
+                throw new ReleaseExecutionException( "Unable to configure SCM repository: " + e.getMessage(), e );
+            }
+
+            transformPomToReleaseVersion( project, document, releaseConfiguration, scmRepository );
+
+            writePom( project.getFile(), releaseConfiguration, document, intro, outtro, project.getModelVersion(),
+                      scmRepository, provider );
         }
 
         // TODO: separate release POM generation into a separate phase?
@@ -137,10 +160,13 @@ public class RewritePomsForReleasePhase
 
     }
 
-    private void transformPomToReleaseVersionPom( MavenProject project, Element rootElement, Map mappedVersions,
-                                                  Map originalVersions )
+    private void transformPomToReleaseVersion( MavenProject project, Document document,
+                                               ReleaseConfiguration releaseConfiguration, ScmRepository scmRepository )
         throws ReleaseExecutionException
     {
+        Element rootElement = document.getRootElement();
+        Map mappedVersions = releaseConfiguration.getReleaseVersions();
+        Map originalVersions = releaseConfiguration.getOriginalVersions();
         String parentVersion = null;
         Namespace namespace = rootElement.getNamespace();
         if ( project.hasParent() && project.getParentArtifact().isSnapshot() )
@@ -157,12 +183,12 @@ public class RewritePomsForReleasePhase
             versionElement.setText( parentVersion );
         }
 
+        String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
         if ( project.getArtifact().isSnapshot() )
         {
             // TODO: what about if version is inherited? shouldn't prompt...
             Element versionElement = rootElement.getChild( "version", namespace );
-            String key = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
-            String version = (String) mappedVersions.get( key );
+            String version = (String) mappedVersions.get( projectId );
             if ( version == null )
             {
                 throw new ReleaseExecutionException( "Version for '" + project.getName() + "' was not mapped" );
@@ -228,13 +254,43 @@ public class RewritePomsForReleasePhase
             }
         }
 
-        // TODO: rewrite SCM
+        // If SCM is null in original model, it is inherited, no mods needed
+        if ( project.getScm() != null )
+        {
+            Element scmRoot = rootElement.getChild( "scm", namespace );
+            if ( scmRoot != null )
+            {
+                releaseConfiguration.mapOriginalScmInfo( projectId, project.getScm() );
 
-/*
-        ProjectScmRewriter scmRewriter = getScmRewriter();
-        scmRewriter.rewriteScmInfo( model, projectId, getTagLabel() );
-*/
+                ScmTranslator translator = (ScmTranslator) scmTranslators.get( scmRepository.getProvider() );
+                if ( translator != null )
+                {
+                    rewriteScm( project.getScm(), releaseConfiguration.getReleaseLabel(), scmRoot, namespace,
+                                translator );
+                }
+                else
+                {
+                    getLogger().debug( "No SCM translator found - skipping rewrite" );
+                }
+            }
+        }
+    }
 
+    private void rewriteScm( Scm scm, String tag, Element scmRoot, Namespace namespace, ScmTranslator translator )
+    {
+        scmRoot.getChild( "connection", namespace ).setText( translator.translateTagUrl( scm.getConnection(), tag ) );
+
+        Element devConnection = scmRoot.getChild( "developerConnection", namespace );
+        if ( devConnection != null )
+        {
+            devConnection.setText( translator.translateTagUrl( scm.getDeveloperConnection(), tag ) );
+        }
+
+        Element url = scmRoot.getChild( "url", namespace );
+        if ( url != null )
+        {
+            url.setText( translator.translateTagUrl( scm.getUrl(), tag ) );
+        }
     }
 
     private void rewriteDependencies( List dependencies, Element dependencyRoot, Map mappedVersions,
@@ -348,26 +404,9 @@ public class RewritePomsForReleasePhase
     }
 
     private void writePom( File pomFile, ReleaseConfiguration releaseConfiguration, Document document, String intro,
-                           String outtro, String modelVersion )
+                           String outtro, String modelVersion, ScmRepository repository, ScmProvider provider )
         throws ReleaseExecutionException
     {
-        ScmRepository repository;
-        ScmProvider provider;
-        try
-        {
-            repository = scmRepositoryConfigurator.getConfiguredRepository( releaseConfiguration );
-
-            provider = scmRepositoryConfigurator.getRepositoryProvider( repository );
-        }
-        catch ( ScmRepositoryException e )
-        {
-            throw new ReleaseScmRepositoryException( e.getMessage(), e.getValidationMessages() );
-        }
-        catch ( NoSuchScmProviderException e )
-        {
-            throw new ReleaseExecutionException( "Unable to configure SCM repository: " + e.getMessage(), e );
-        }
-
         try
         {
             if ( releaseConfiguration.isUseEditMode() || provider.requiresEditMode() )
@@ -402,8 +441,8 @@ public class RewritePomsForReleasePhase
             }
 
             // the empty namespace is considered equal to the POM namespace, so match them up to avoid extra xmlns=""
-            List elements = rootElement.getContent( new ElementFilter( Namespace.getNamespace( "" ) ) );
-            for ( Iterator i = elements.iterator(); i.hasNext(); )
+            ElementFilter elementFilter = new ElementFilter( Namespace.getNamespace( "" ) );
+            for ( Iterator i = rootElement.getDescendants( elementFilter ); i.hasNext(); )
             {
                 Element e = (Element) i.next();
                 e.setNamespace( pomNamespace );
@@ -770,80 +809,6 @@ public class RewritePomsForReleasePhase
     }
 */
 
-    /**
-     * Returns the tag name to be used when tagging the release in the scm repository.
-     * <p/>
-     * If the userTag is already assigned, that value is returned.
-     * Else if the releaseProperties already has the value, then use that value.
-     * Else if we are interactive then prompt the user for a tag name.
-     */
-/*
-    private String getTagLabel()
-        throws MojoExecutionException
-    {
-        if ( userTag == null )
-        {
-            if ( StringUtils.isNotEmpty( releaseProgress.getScmTag() ) )
-            {
-                userTag = releaseProgress.getScmTag();
-            }
-            else
-            {
-                try
-                {
-                    if ( tag == null && interactive )
-                    {
-                        String prompt = "What tag name should be used? ";
-
-                        String defaultTag = getDefaultReleaseTag();
-
-                        if ( defaultTag != null )
-                        {
-                            prompt = prompt + "[" + defaultTag + "]";
-                        }
-
-                        getLog().info( prompt );
-
-                        String inputTag = getInputHandler().readLine();
-
-                        userTag = ( StringUtils.isEmpty( inputTag ) ) ? defaultTag : inputTag;
-                    }
-                    else
-                    {
-                        userTag = tag;
-                    }
-                }
-                catch ( IOException e )
-                {
-                    throw new MojoExecutionException( "An error has occurred while reading user input.", e );
-                }
-
-                // If we were able to get a userTag from the user, save it to our release.properties file
-                if ( userTag != null )
-                {
-                    ReleaseProgressTracker releaseProgress = getReleaseProgress();
-                    releaseProgress.setScmTag( userTag );
-                    try
-                    {
-                        releaseProgress.store();
-                    }
-                    catch ( IOException e )
-                    {
-                        getLog().warn( "An error occurred while saving the release progress file", e );
-                    }
-
-                }
-            }
-        }
-
-        if ( userTag == null )
-        {
-            throw new MojoExecutionException( "A release tag must be specified" );
-        }
-
-        return userTag;
-    }
-*/
     public void simulate( ReleaseConfiguration releaseConfiguration )
     {
         // TODO: implement

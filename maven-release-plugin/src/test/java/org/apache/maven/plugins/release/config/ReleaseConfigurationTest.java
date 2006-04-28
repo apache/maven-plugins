@@ -78,6 +78,7 @@ public class ReleaseConfigurationTest
         mergeConfiguration.setPrivateKey( "private-key-merge" );
         mergeConfiguration.setSettings( settings );
         mergeConfiguration.setTagBase( "tag-base-merge" );
+        mergeConfiguration.setReleaseLabel( "tag-merge" );
         mergeConfiguration.setUsername( "username-merge" );
         mergeConfiguration.setWorkingDirectory( workingDirectory );
         return mergeConfiguration;
@@ -101,6 +102,7 @@ public class ReleaseConfigurationTest
         releaseConfiguration.setPrivateKey( "private-key" );
         releaseConfiguration.setSettings( settings );
         releaseConfiguration.setTagBase( "tag-base" );
+        releaseConfiguration.setReleaseLabel( "tag" );
         releaseConfiguration.setUsername( "username" );
         releaseConfiguration.setWorkingDirectory( workingDirectory );
         return releaseConfiguration;

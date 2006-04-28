@@ -16,6 +16,7 @@ package org.apache.maven.plugins.release.config;
  * limitations under the License.
  */
 
+import org.apache.maven.model.Scm;
 import org.codehaus.plexus.PlexusTestCase;
 
 import java.io.File;
@@ -52,6 +53,7 @@ public class PropertiesReleaseConfigurationStoreTest
         assertEquals( "Expected private key of 'private-key'", "private-key", config.getPrivateKey() );
         assertEquals( "Expected passphrase of 'passphrase'", "passphrase", config.getPassphrase() );
         assertEquals( "Expected tag base of 'tagBase'", "tagBase", config.getTagBase() );
+        assertEquals( "Expected tag 'tag'", "tag", config.getReleaseLabel() );
         assertNull( "Expected no workingDirectory", config.getWorkingDirectory() );
         assertNull( "Expected no settings", config.getSettings() );
         assertFalse( "Expected default generateReleasePoms", config.isGenerateReleasePoms() );
@@ -72,6 +74,21 @@ public class PropertiesReleaseConfigurationStoreTest
         assertEquals( "Incorrect version mapping", "2.1-SNAPSHOT", versions.get( "groupId:artifactId1" ) );
         assertTrue( "missing project mapping", versions.containsKey( "groupId:artifactId2" ) );
         assertEquals( "Incorrect version mapping", "3.0.1-SNAPSHOT", versions.get( "groupId:artifactId2" ) );
+
+        versions = config.getOriginalScmInfo();
+        assertEquals( "Expected 2 SCM mappings", 2, versions.size() );
+        assertTrue( "missing project mapping", versions.containsKey( "groupId:artifactId1" ) );
+        Scm scm = (Scm) versions.get( "groupId:artifactId1" );
+        assertEquals( "Incorrect SCM mapping", "connection", scm.getConnection() );
+        assertEquals( "Incorrect SCM mapping", "developerConnection", scm.getDeveloperConnection() );
+        assertEquals( "Incorrect SCM mapping", "url", scm.getUrl() );
+        assertEquals( "Incorrect SCM mapping", "tag", scm.getTag() );
+        assertTrue( "missing project mapping", versions.containsKey( "groupId:artifactId2" ) );
+        scm = (Scm) versions.get( "groupId:artifactId2" );
+        assertEquals( "Incorrect SCM mapping", "connection2", scm.getConnection() );
+        assertNull( "Incorrect SCM mapping", scm.getDeveloperConnection() );
+        assertEquals( "Incorrect SCM mapping", "url2", scm.getUrl() );
+        assertNull( "Incorrect SCM mapping", scm.getTag() );
     }
 
     public void testReadFromEmptyFile()
@@ -163,9 +180,17 @@ public class PropertiesReleaseConfigurationStoreTest
         config.setPrivateKey( "private-key-write" );
         config.setPassphrase( "passphrase-write" );
         config.setTagBase( "tag-base" );
+        config.setReleaseLabel( "tag" );
 
         config.mapReleaseVersion( "groupId:artifactId", "1.0" );
         config.mapDevelopmentVersion( "groupId:artifactId", "1.1-SNAPSHOT" );
+
+        Scm scm = new Scm();
+        scm.setConnection( "connection-write" );
+        scm.setDeveloperConnection( "developerConnection-write" );
+        scm.setUrl( "url-write" );
+        scm.setTag( "tag-write" );
+        config.mapOriginalScmInfo( "groupId:artifactId", scm );
 
         return config;
     }
@@ -179,6 +204,7 @@ public class PropertiesReleaseConfigurationStoreTest
         assertNull( "Expected no privateKey", config.getPrivateKey() );
         assertNull( "Expected no passphrase", config.getPassphrase() );
         assertNull( "Expected no tagBase", config.getTagBase() );
+        assertNull( "Expected no tag", config.getReleaseLabel() );
 
         assertNull( "Expected no workingDirectory", config.getWorkingDirectory() );
         assertNull( "Expected no settings", config.getSettings() );
@@ -190,6 +216,7 @@ public class PropertiesReleaseConfigurationStoreTest
 
         assertTrue( "Expected no release version mappings", config.getReleaseVersions().isEmpty() );
         assertTrue( "Expected no dev version mappings", config.getDevelopmentVersions().isEmpty() );
+        assertTrue( "Expected no scm mappings", config.getOriginalScmInfo().isEmpty() );
     }
 
     public ReleaseConfiguration createMergeConfiguration()

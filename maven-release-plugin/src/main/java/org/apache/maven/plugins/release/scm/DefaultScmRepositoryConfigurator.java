@@ -53,9 +53,7 @@ public class DefaultScmRepositoryConfigurator
         String privateKey = releaseConfiguration.getPrivateKey();
         String passphrase = releaseConfiguration.getPassphrase();
 
-        ScmRepository repository;
-
-        repository = scmManager.makeScmRepository( url );
+        ScmRepository repository = scmManager.makeScmRepository( url );
 
         ScmProviderRepository scmRepo = repository.getProviderRepository();
 
