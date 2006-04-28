@@ -78,10 +78,7 @@ public class RewritePomsForReleasePhaseTest
     public void testRewritePomWithParent()
         throws Exception
     {
-        ReleaseConfiguration config = createConfigurationFromProjects( "pom-with-parent" );
-
-        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
-        config.mapReleaseVersion( "groupId:subproject1", "2.0" );
+        ReleaseConfiguration config = createConfigurationForPomWithParent( "pom-with-parent", "2.0" );
 
         phase.execute( config );
 
@@ -126,10 +123,7 @@ public class RewritePomsForReleasePhaseTest
     public void testRewritePomWithInheritedVersion()
         throws Exception
     {
-        ReleaseConfiguration config = createConfigurationFromProjects( "pom-with-inherited-version" );
-
-        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
-        config.mapReleaseVersion( "groupId:subproject1", "1.0" );
+        ReleaseConfiguration config = createConfigurationForPomWithParent( "pom-with-inherited-version", "1.0" );
 
         phase.execute( config );
 
@@ -139,10 +133,7 @@ public class RewritePomsForReleasePhaseTest
     public void testRewritePomWithChangedInheritedVersion()
         throws Exception
     {
-        ReleaseConfiguration config = createConfigurationFromProjects( "pom-with-inherited-version" );
-
-        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
-        config.mapReleaseVersion( "groupId:subproject1", "2.0" );
+        ReleaseConfiguration config = createConfigurationForPomWithParent( "pom-with-inherited-version", "2.0" );
 
         phase.execute( config );
 
@@ -158,13 +149,7 @@ public class RewritePomsForReleasePhaseTest
     public void testRewritePomDependencies()
         throws Exception
     {
-        ReleaseConfiguration config = createConfigurationFromProjects( "internal-snapshot-dependencies" );
-
-        config.mapReleaseVersion( "groupId:subproject1", "1.0" );
-        config.mapReleaseVersion( "groupId:subproject2", "1.0" );
-        config.mapReleaseVersion( "groupId:subproject3", "1.0" );
-        config.mapReleaseVersion( "groupId:subproject4", "1.0" );
-        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        ReleaseConfiguration config = createDefaultConfiguration( "internal-snapshot-dependencies" );
 
         phase.execute( config );
 
@@ -174,15 +159,7 @@ public class RewritePomsForReleasePhaseTest
     public void testRewritePomUnmappedDependencies()
         throws Exception
     {
-        ReleaseConfiguration config = createConfigurationFromProjects( "internal-snapshot-dependencies" );
-
-        MavenProject project =
-            (MavenProject) getProjectsAsMap( config.getReactorProjects() ).get( "groupId:subproject2" );
-        config.setReactorProjects( Collections.singletonList( project ) );
-
-        config.mapReleaseVersion( "groupId:subproject2", "1.0" );
-        config.mapReleaseVersion( "groupId:subproject3", "1.0" );
-        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        ReleaseConfiguration config = createUnmappedConfiguration( "internal-snapshot-dependencies" );
 
         try
         {
@@ -199,11 +176,7 @@ public class RewritePomsForReleasePhaseTest
     public void testRewritePomDependenciesDifferentVersion()
         throws Exception
     {
-        ReleaseConfiguration config = createConfigurationFromProjects( "internal-differing-snapshot-dependencies" );
-
-        config.mapReleaseVersion( "groupId:subproject1", "1.0" );
-        config.mapReleaseVersion( "groupId:subproject2", "1.0" );
-        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        ReleaseConfiguration config = createDifferingVersionConfiguration( "internal-differing-snapshot-dependencies" );
 
         try
         {
@@ -220,12 +193,7 @@ public class RewritePomsForReleasePhaseTest
     public void testRewriteManagedPomDependencies()
         throws Exception
     {
-        ReleaseConfiguration config = createConfigurationFromProjects( "internal-managed-snapshot-dependency" );
-
-        config.mapReleaseVersion( "groupId:subproject1", "1.0" );
-        config.mapReleaseVersion( "groupId:subproject2", "1.0" );
-        config.mapReleaseVersion( "groupId:subproject3", "1.0" );
-        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        ReleaseConfiguration config = createMappedConfiguration( "internal-managed-snapshot-dependency" );
 
         phase.execute( config );
 
@@ -235,15 +203,7 @@ public class RewritePomsForReleasePhaseTest
     public void testRewriteManagedPomUnmappedDependencies()
         throws Exception
     {
-        ReleaseConfiguration config = createConfigurationFromProjects( "internal-managed-snapshot-dependency" );
-
-        MavenProject project =
-            (MavenProject) getProjectsAsMap( config.getReactorProjects() ).get( "groupId:subproject2" );
-        config.setReactorProjects( Collections.singletonList( project ) );
-
-        config.mapReleaseVersion( "groupId:subproject2", "1.0" );
-        config.mapReleaseVersion( "groupId:subproject3", "1.0" );
-        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        ReleaseConfiguration config = createUnmappedConfiguration( "internal-managed-snapshot-dependency" );
 
         try
         {
@@ -260,13 +220,7 @@ public class RewritePomsForReleasePhaseTest
     public void testRewritePomPlugins()
         throws Exception
     {
-        ReleaseConfiguration config = createConfigurationFromProjects( "internal-snapshot-plugins" );
-
-        config.mapReleaseVersion( "groupId:subproject1", "1.0" );
-        config.mapReleaseVersion( "groupId:subproject2", "1.0" );
-        config.mapReleaseVersion( "groupId:subproject3", "1.0" );
-        config.mapReleaseVersion( "groupId:subproject4", "1.0" );
-        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        ReleaseConfiguration config = createDefaultConfiguration( "internal-snapshot-plugins" );
 
         phase.execute( config );
 
@@ -276,15 +230,7 @@ public class RewritePomsForReleasePhaseTest
     public void testRewritePomUnmappedPlugins()
         throws Exception
     {
-        ReleaseConfiguration config = createConfigurationFromProjects( "internal-snapshot-plugins" );
-
-        MavenProject project =
-            (MavenProject) getProjectsAsMap( config.getReactorProjects() ).get( "groupId:subproject2" );
-        config.setReactorProjects( Collections.singletonList( project ) );
-
-        config.mapReleaseVersion( "groupId:subproject2", "1.0" );
-        config.mapReleaseVersion( "groupId:subproject3", "1.0" );
-        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        ReleaseConfiguration config = createUnmappedConfiguration( "internal-snapshot-plugins" );
 
         try
         {
@@ -301,11 +247,7 @@ public class RewritePomsForReleasePhaseTest
     public void testRewritePomPluginsDifferentVersion()
         throws Exception
     {
-        ReleaseConfiguration config = createConfigurationFromProjects( "internal-differing-snapshot-plugins" );
-
-        config.mapReleaseVersion( "groupId:subproject1", "1.0" );
-        config.mapReleaseVersion( "groupId:subproject2", "1.0" );
-        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        ReleaseConfiguration config = createDifferingVersionConfiguration( "internal-differing-snapshot-plugins" );
 
         try
         {
@@ -322,12 +264,7 @@ public class RewritePomsForReleasePhaseTest
     public void testRewriteManagedPomPlugins()
         throws Exception
     {
-        ReleaseConfiguration config = createConfigurationFromProjects( "internal-managed-snapshot-plugin" );
-
-        config.mapReleaseVersion( "groupId:subproject1", "1.0" );
-        config.mapReleaseVersion( "groupId:subproject2", "1.0" );
-        config.mapReleaseVersion( "groupId:subproject3", "1.0" );
-        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        ReleaseConfiguration config = createMappedConfiguration( "internal-managed-snapshot-plugin" );
 
         phase.execute( config );
 
@@ -337,15 +274,7 @@ public class RewritePomsForReleasePhaseTest
     public void testRewriteManagedPomUnmappedPlugins()
         throws Exception
     {
-        ReleaseConfiguration config = createConfigurationFromProjects( "internal-managed-snapshot-plugin" );
-
-        MavenProject project =
-            (MavenProject) getProjectsAsMap( config.getReactorProjects() ).get( "groupId:subproject2" );
-        config.setReactorProjects( Collections.singletonList( project ) );
-
-        config.mapReleaseVersion( "groupId:subproject2", "1.0" );
-        config.mapReleaseVersion( "groupId:subproject3", "1.0" );
-        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        ReleaseConfiguration config = createUnmappedConfiguration( "internal-managed-snapshot-plugin" );
 
         try
         {
@@ -362,13 +291,7 @@ public class RewritePomsForReleasePhaseTest
     public void testRewritePomReportPlugins()
         throws Exception
     {
-        ReleaseConfiguration config = createConfigurationFromProjects( "internal-snapshot-report-plugins" );
-
-        config.mapReleaseVersion( "groupId:subproject1", "1.0" );
-        config.mapReleaseVersion( "groupId:subproject2", "1.0" );
-        config.mapReleaseVersion( "groupId:subproject3", "1.0" );
-        config.mapReleaseVersion( "groupId:subproject4", "1.0" );
-        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        ReleaseConfiguration config = createDefaultConfiguration( "internal-snapshot-report-plugins" );
 
         phase.execute( config );
 
@@ -378,15 +301,7 @@ public class RewritePomsForReleasePhaseTest
     public void testRewritePomUnmappedReportPlugins()
         throws Exception
     {
-        ReleaseConfiguration config = createConfigurationFromProjects( "internal-snapshot-report-plugins" );
-
-        MavenProject project =
-            (MavenProject) getProjectsAsMap( config.getReactorProjects() ).get( "groupId:subproject2" );
-        config.setReactorProjects( Collections.singletonList( project ) );
-
-        config.mapReleaseVersion( "groupId:subproject2", "1.0" );
-        config.mapReleaseVersion( "groupId:subproject3", "1.0" );
-        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        ReleaseConfiguration config = createUnmappedConfiguration( "internal-snapshot-report-plugins" );
 
         try
         {
@@ -403,11 +318,7 @@ public class RewritePomsForReleasePhaseTest
     public void testRewritePomReportPluginsDifferentVersion()
         throws Exception
     {
-        ReleaseConfiguration config = createConfigurationFromProjects( "internal-differing-snapshot-report-plugins" );
-
-        config.mapReleaseVersion( "groupId:subproject1", "1.0" );
-        config.mapReleaseVersion( "groupId:subproject2", "1.0" );
-        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        ReleaseConfiguration config = createDifferingVersionConfiguration( "internal-differing-snapshot-report-plugins" );
 
         try
         {
@@ -424,13 +335,7 @@ public class RewritePomsForReleasePhaseTest
     public void testRewritePomExtension()
         throws Exception
     {
-        ReleaseConfiguration config = createConfigurationFromProjects( "internal-snapshot-extension" );
-
-        config.mapReleaseVersion( "groupId:subproject1", "1.0" );
-        config.mapReleaseVersion( "groupId:subproject2", "1.0" );
-        config.mapReleaseVersion( "groupId:subproject3", "1.0" );
-        config.mapReleaseVersion( "groupId:subproject4", "1.0" );
-        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        ReleaseConfiguration config = createDefaultConfiguration( "internal-snapshot-extension" );
 
         phase.execute( config );
 
@@ -440,15 +345,7 @@ public class RewritePomsForReleasePhaseTest
     public void testRewritePomUnmappedExtension()
         throws Exception
     {
-        ReleaseConfiguration config = createConfigurationFromProjects( "internal-snapshot-extension" );
-
-        MavenProject project =
-            (MavenProject) getProjectsAsMap( config.getReactorProjects() ).get( "groupId:subproject2" );
-        config.setReactorProjects( Collections.singletonList( project ) );
-
-        config.mapReleaseVersion( "groupId:subproject2", "1.0" );
-        config.mapReleaseVersion( "groupId:subproject3", "1.0" );
-        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        ReleaseConfiguration config = createUnmappedConfiguration( "internal-snapshot-extension" );
 
         try
         {
@@ -465,11 +362,7 @@ public class RewritePomsForReleasePhaseTest
     public void testRewritePomExtensionDifferentVersion()
         throws Exception
     {
-        ReleaseConfiguration config = createConfigurationFromProjects( "internal-differing-snapshot-extension" );
-
-        config.mapReleaseVersion( "groupId:subproject1", "1.0" );
-        config.mapReleaseVersion( "groupId:subproject2", "1.0" );
-        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        ReleaseConfiguration config = createDifferingVersionConfiguration( "internal-differing-snapshot-extension" );
 
         try
         {
@@ -591,10 +484,7 @@ public class RewritePomsForReleasePhaseTest
         scmManagerMock.expects( new InvokeAtLeastOnceMatcher() ).method( "makeScmRepository" ).with(
             new IsEqual( config.getUrl() ) ).will( new ThrowStub( new ScmRepositoryException( "..." ) ) );
 
-        ScmManager scmManager = (ScmManager) scmManagerMock.proxy();
-        DefaultScmRepositoryConfigurator configurator =
-            (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE );
-        configurator.setScmManager( scmManager );
+        setMockScmManager( scmManagerMock );
 
         try
         {
@@ -619,10 +509,7 @@ public class RewritePomsForReleasePhaseTest
         scmManagerMock.expects( new InvokeAtLeastOnceMatcher() ).method( "makeScmRepository" ).with(
             new IsEqual( config.getUrl() ) ).will( new ThrowStub( new NoSuchScmProviderException( "..." ) ) );
 
-        ScmManager scmManager = (ScmManager) scmManagerMock.proxy();
-        DefaultScmRepositoryConfigurator configurator =
-            (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE );
-        configurator.setScmManager( scmManager );
+        setMockScmManager( scmManagerMock );
 
         try
         {
@@ -679,4 +566,66 @@ public class RewritePomsForReleasePhaseTest
         }
         return map;
     }
+
+    private ReleaseConfiguration createUnmappedConfiguration( String path )
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromProjects( path );
+
+        MavenProject project =
+            (MavenProject) getProjectsAsMap( config.getReactorProjects() ).get( "groupId:subproject2" );
+        config.setReactorProjects( Collections.singletonList( project ) );
+
+        config.mapReleaseVersion( "groupId:subproject2", "1.0" );
+        config.mapReleaseVersion( "groupId:subproject3", "1.0" );
+        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        return config;
+    }
+
+    private ReleaseConfiguration createDefaultConfiguration( String path )
+        throws Exception
+    {
+        ReleaseConfiguration config = createMappedConfiguration( path );
+
+        config.mapReleaseVersion( "groupId:subproject4", "1.0" );
+        return config;
+    }
+
+    private ReleaseConfiguration createMappedConfiguration( String path )
+        throws Exception
+    {
+        ReleaseConfiguration config = createDifferingVersionConfiguration( path );
+
+        config.mapReleaseVersion( "groupId:subproject3", "1.0" );
+        return config;
+    }
+
+    private ReleaseConfiguration createDifferingVersionConfiguration( String path )
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationForPomWithParent( path, "1.0" );
+
+        config.mapReleaseVersion( "groupId:subproject2", "1.0" );
+        return config;
+    }
+
+    private ReleaseConfiguration createConfigurationForPomWithParent( String path, String nextVersion )
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromProjects( path );
+
+        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        config.mapReleaseVersion( "groupId:subproject1", nextVersion );
+        return config;
+    }
+
+    private void setMockScmManager( Mock scmManagerMock )
+        throws Exception
+    {
+        ScmManager scmManager = (ScmManager) scmManagerMock.proxy();
+        DefaultScmRepositoryConfigurator configurator =
+            (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE );
+        configurator.setScmManager( scmManager );
+    }
+
 }
