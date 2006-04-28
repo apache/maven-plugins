@@ -1,7 +1,7 @@
 package org.apache.maven.plugin.assembly;
 
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ public class UnpackMojo
 
             String name = artifact.getFile().getName();
 
-            File tempLocation = new File( workDirectory, name.substring( 0, name.length() - 4 ) );
+            File tempLocation = new File( workDirectory, name.substring( 0, name.lastIndexOf( '.' ) ) );
             boolean process = false;
             if ( !tempLocation.exists() )
             {
