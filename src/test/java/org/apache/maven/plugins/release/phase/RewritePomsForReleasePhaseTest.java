@@ -36,6 +36,7 @@ import org.codehaus.plexus.util.FileUtils;
 import org.jmock.cglib.Mock;
 import org.jmock.core.constraint.IsEqual;
 import org.jmock.core.matcher.InvokeAtLeastOnceMatcher;
+import org.jmock.core.matcher.TestFailureMatcher;
 import org.jmock.core.stub.ThrowStub;
 
 import java.io.File;
@@ -461,6 +462,46 @@ public class RewritePomsForReleasePhaseTest
             String actual = readTestProjectFile( "basic-pom/pom.xml" );
             assertEquals( "Check the transformed POM", expected, actual );
         }
+    }
+
+    public void testSimulateRewrite()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromProjects( "basic-pom" );
+        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+
+        String expected = readTestProjectFile( "basic-pom/pom.xml" );
+
+        phase.simulate( config );
+
+        String actual = readTestProjectFile( "basic-pom/pom.xml" );
+        assertEquals( "Check the original POM untouched", expected, actual );
+
+        expected = readTestProjectFile( "basic-pom/expected-pom.xml" );
+        actual = readTestProjectFile( "basic-pom/pom.xml.tag" );
+        assertEquals( "Check the transformed POM", expected, actual );
+    }
+
+    public void testSimulateRewriteEditModeSkipped()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromProjects( "basic-pom" );
+        config.setUseEditMode( true );
+        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+
+        Mock scmProviderMock = new Mock( ScmProvider.class );
+        scmProviderMock.expects( new TestFailureMatcher( "edit should not be called" ) ).method( "edit" );
+
+        ScmManagerStub scmManager = new ScmManagerStub();
+        DefaultScmRepositoryConfigurator configurator =
+            (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE );
+        configurator.setScmManager( scmManager );
+        scmManager.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
+
+        phase.simulate( config );
+
+        // Getting past mock is success
+        assertTrue( true );
     }
 
     public void testRewriteUnmappedPom()

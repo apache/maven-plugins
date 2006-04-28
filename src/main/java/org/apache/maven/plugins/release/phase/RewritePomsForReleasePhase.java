@@ -87,6 +87,12 @@ public class RewritePomsForReleasePhase
     public void execute( ReleaseConfiguration releaseConfiguration )
         throws ReleaseExecutionException
     {
+        transform( releaseConfiguration, false );
+    }
+
+    private void transform( ReleaseConfiguration releaseConfiguration, boolean simulate )
+        throws ReleaseExecutionException
+    {
         for ( Iterator it = releaseConfiguration.getReactorProjects().iterator(); it.hasNext(); )
         {
             MavenProject project = (MavenProject) it.next();
@@ -147,8 +153,16 @@ public class RewritePomsForReleasePhase
 
             transformPomToReleaseVersion( project, document, releaseConfiguration, scmRepository );
 
-            writePom( project.getFile(), releaseConfiguration, document, intro, outtro, project.getModelVersion(),
-                      scmRepository, provider );
+            if ( simulate )
+            {
+                File outputFile = new File( project.getFile().getParentFile(), project.getFile().getName() + ".tag" );
+                writePom( outputFile, document, releaseConfiguration, project.getModelVersion(), intro, outtro );
+            }
+            else
+            {
+                writePom( project.getFile(), document, releaseConfiguration, project.getModelVersion(), intro, outtro,
+                          scmRepository, provider );
+            }
         }
     }
 
@@ -395,8 +409,9 @@ public class RewritePomsForReleasePhase
         }
     }
 
-    private void writePom( File pomFile, ReleaseConfiguration releaseConfiguration, Document document, String intro,
-                           String outtro, String modelVersion, ScmRepository repository, ScmProvider provider )
+    private void writePom( File pomFile, Document document, ReleaseConfiguration releaseConfiguration,
+                           String modelVersion, String intro, String outtro, ScmRepository repository,
+                           ScmProvider provider )
         throws ReleaseExecutionException
     {
         try
@@ -417,6 +432,13 @@ public class RewritePomsForReleasePhase
             throw new ReleaseExecutionException( "An error occurred enabling edit mode: " + e.getMessage(), e );
         }
 
+        writePom( pomFile, document, releaseConfiguration, modelVersion, intro, outtro );
+    }
+
+    private void writePom( File pomFile, Document document, ReleaseConfiguration releaseConfiguration,
+                           String modelVersion, String intro, String outtro )
+        throws ReleaseExecutionException
+    {
         Element rootElement = document.getRootElement();
 
         if ( releaseConfiguration.isAddSchema() )
@@ -474,8 +496,8 @@ public class RewritePomsForReleasePhase
     }
 
     public void simulate( ReleaseConfiguration releaseConfiguration )
+        throws ReleaseExecutionException
     {
-        // TODO: implement
-
+        transform( releaseConfiguration, true );
     }
 }
