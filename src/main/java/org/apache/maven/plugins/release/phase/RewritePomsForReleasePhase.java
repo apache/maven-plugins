@@ -247,41 +247,8 @@ public class RewritePomsForReleasePhase
             {
                 Dependency dep = (Dependency) i.next();
 
-                String key = ArtifactUtils.versionlessKey( dep.getGroupId(), dep.getArtifactId() );
-                String version = (String) mappedVersions.get( key );
-
-                if ( version != null && dep.getVersion().equals( originalVersions.get( key ) ) )
-                {
-                    getLogger().debug( "Updating " + dep.getArtifactId() + " to " + version );
-
-                    try
-                    {
-                        XPath xpath = XPath.newInstance( "./dependencies/dependency[groupId='" + dep.getGroupId() +
-                            "' and artifactId='" + dep.getArtifactId() + "']" );
-
-                        Element dependency = (Element) xpath.selectSingleNode( dependencyRoot );
-                        Element versionElement = dependency.getChild( "version" );
-
-                        // avoid if in dependency management
-                        if ( versionElement != null )
-                        {
-                            versionElement.setText( version );
-                        }
-                    }
-                    catch ( JDOMException e )
-                    {
-                        throw new ReleaseExecutionException( "Unable to locate dependency to process in document", e );
-                    }
-                }
-                else
-                {
-                    // We can ignore dependencies we don't know of, unless they are snapshots
-                    if ( ArtifactUtils.isSnapshot( dep.getVersion() ) )
-                    {
-                        throw new ReleaseExecutionException(
-                            "Version '" + dep.getVersion() + "' for dependency '" + key + "' was not mapped" );
-                    }
-                }
+                updateDomVersion( dep.getGroupId(), dep.getArtifactId(), mappedVersions, dep.getVersion(),
+                                  originalVersions, "dependencies", "dependency", dependencyRoot );
             }
         }
     }
@@ -298,47 +265,14 @@ public class RewritePomsForReleasePhase
                 // We can ignore plugins whose version is assumed, they are only written into the release pom
                 if ( plugin.getVersion() != null )
                 {
-                    String key = ArtifactUtils.versionlessKey( plugin.getGroupId(), plugin.getArtifactId() );
-                    String version = (String) mappedVersions.get( key );
-
-                    if ( version != null && plugin.getVersion().equals( originalVersions.get( key ) ) )
-                    {
-                        getLogger().debug( "Updating " + plugin.getArtifactId() + " to " + version );
-
-                        try
-                        {
-                            XPath xpath = XPath.newInstance( "./plugins/plugin[groupId='" + plugin.getGroupId() +
-                                "' and artifactId='" + plugin.getArtifactId() + "']" );
-
-                            Element dependency = (Element) xpath.selectSingleNode( pluginRoot );
-                            Element versionElement = dependency.getChild( "version" );
-
-                            // avoid if in plugin management
-                            if ( versionElement != null )
-                            {
-                                versionElement.setText( version );
-                            }
-                        }
-                        catch ( JDOMException e )
-                        {
-                            throw new ReleaseExecutionException( "Unable to locate plugin to process in document", e );
-                        }
-                    }
-                    else
-                    {
-                        // We can ignore plugins we don't know of, unless they are snapshots
-                        if ( ArtifactUtils.isSnapshot( plugin.getVersion() ) )
-                        {
-                            throw new ReleaseExecutionException(
-                                "Version '" + plugin.getVersion() + "' for plugin '" + key + "' was not mapped" );
-                        }
-                    }
+                    updateDomVersion( plugin.getGroupId(), plugin.getArtifactId(), mappedVersions, plugin.getVersion(),
+                                      originalVersions, "plugins", "plugin", pluginRoot );
                 }
             }
         }
     }
 
-    private void rewriteExtensions( List extensions, Element pluginRoot, Map mappedVersions, Map originalVersions )
+    private void rewriteExtensions( List extensions, Element extensionRoot, Map mappedVersions, Map originalVersions )
         throws ReleaseExecutionException
     {
         if ( extensions != null )
@@ -347,37 +281,8 @@ public class RewritePomsForReleasePhase
             {
                 Extension extension = (Extension) i.next();
 
-                String key = ArtifactUtils.versionlessKey( extension.getGroupId(), extension.getArtifactId() );
-                String version = (String) mappedVersions.get( key );
-
-                if ( version != null && extension.getVersion().equals( originalVersions.get( key ) ) )
-                {
-                    getLogger().debug( "Updating " + extension.getArtifactId() + " to " + version );
-
-                    try
-                    {
-                        XPath xpath = XPath.newInstance( "./extensions/extension[groupId='" + extension.getGroupId() +
-                            "' and artifactId='" + extension.getArtifactId() + "']" );
-
-                        Element dependency = (Element) xpath.selectSingleNode( pluginRoot );
-                        Element versionElement = dependency.getChild( "version" );
-
-                        versionElement.setText( version );
-                    }
-                    catch ( JDOMException e )
-                    {
-                        throw new ReleaseExecutionException( "Unable to locate extension to process in document", e );
-                    }
-                }
-                else
-                {
-                    // We can ignore extensions we don't know of, unless they are snapshots
-                    if ( ArtifactUtils.isSnapshot( extension.getVersion() ) )
-                    {
-                        throw new ReleaseExecutionException(
-                            "Version '" + extension.getVersion() + "' for extension '" + key + "' was not mapped" );
-                    }
-                }
+                updateDomVersion( extension.getGroupId(), extension.getArtifactId(), mappedVersions,
+                                  extension.getVersion(), originalVersions, "extensions", "extension", extensionRoot );
             }
         }
     }
@@ -394,43 +299,50 @@ public class RewritePomsForReleasePhase
                 // We can ignore plugins whose version is assumed, they are only written into the release pom
                 if ( plugin.getVersion() != null )
                 {
-                    String key = ArtifactUtils.versionlessKey( plugin.getGroupId(), plugin.getArtifactId() );
-                    String version = (String) mappedVersions.get( key );
-
-                    if ( version != null && plugin.getVersion().equals( originalVersions.get( key ) ) )
-                    {
-                        getLogger().debug( "Updating " + plugin.getArtifactId() + " to " + version );
-
-                        try
-                        {
-                            XPath xpath = XPath.newInstance( "./plugins/plugin[groupId='" + plugin.getGroupId() +
-                                "' and artifactId='" + plugin.getArtifactId() + "']" );
-
-                            Element dependency = (Element) xpath.selectSingleNode( pluginRoot );
-                            Element versionElement = dependency.getChild( "version" );
-
-                            // avoid if in plugin management
-                            if ( versionElement != null )
-                            {
-                                versionElement.setText( version );
-                            }
-                        }
-                        catch ( JDOMException e )
-                        {
-                            throw new ReleaseExecutionException(
-                                "Unable to locate report plugin to process in document", e );
-                        }
-                    }
-                    else
-                    {
-                        // We can ignore plugins we don't know of, unless they are snapshots
-                        if ( ArtifactUtils.isSnapshot( plugin.getVersion() ) )
-                        {
-                            throw new ReleaseExecutionException( "Version '" + plugin.getVersion() +
-                                "' for report plugin '" + key + "' was not mapped" );
-                        }
-                    }
+                    updateDomVersion( plugin.getGroupId(), plugin.getArtifactId(), mappedVersions, plugin.getVersion(),
+                                      originalVersions, "plugins", "plugin", pluginRoot );
                 }
+            }
+        }
+    }
+
+    private void updateDomVersion( String groupId, String artifactId, Map mappedVersions, String version,
+                                   Map originalVersions, String groupTagName, String tagName, Element dependencyRoot )
+        throws ReleaseExecutionException
+    {
+        String key = ArtifactUtils.versionlessKey( groupId, artifactId );
+        String mappedVersion = (String) mappedVersions.get( key );
+
+        if ( mappedVersion != null && version.equals( originalVersions.get( key ) ) )
+        {
+            getLogger().debug( "Updating " + artifactId + " to " + mappedVersion );
+
+            try
+            {
+                XPath xpath = XPath.newInstance( "./" + groupTagName + "/" + tagName + "[groupId='" + groupId +
+                    "' and artifactId='" + artifactId + "']" );
+
+                Element dependency = (Element) xpath.selectSingleNode( dependencyRoot );
+                Element versionElement = dependency.getChild( "version" );
+
+                // avoid if in management
+                if ( versionElement != null )
+                {
+                    versionElement.setText( mappedVersion );
+                }
+            }
+            catch ( JDOMException e )
+            {
+                throw new ReleaseExecutionException( "Unable to locate " + tagName + " to process in document", e );
+            }
+        }
+        else
+        {
+            // We can ignore those we don't know of, unless they are snapshots
+            if ( ArtifactUtils.isSnapshot( version ) )
+            {
+                throw new ReleaseExecutionException(
+                    "Version '" + version + "' for " + tagName + " '" + key + "' was not mapped" );
             }
         }
     }
