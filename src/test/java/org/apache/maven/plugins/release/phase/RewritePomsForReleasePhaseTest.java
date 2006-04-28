@@ -171,15 +171,17 @@ public class RewritePomsForReleasePhaseTest
         assertTrue( compareFiles( config.getReactorProjects() ) );
     }
 
-    public void testRewritePomDependenciesDifferentVersion()
+    public void testRewritePomUnmappedDependencies()
         throws Exception
     {
-        ReleaseConfiguration config = createConfigurationFromProjects( "internal-differing-snapshot-dependencies" );
+        ReleaseConfiguration config = createConfigurationFromProjects( "internal-snapshot-dependencies" );
 
-        config.mapReleaseVersion( "groupId:subproject1", "1.0" );
+        MavenProject project =
+            (MavenProject) getProjectsAsMap( config.getReactorProjects() ).get( "groupId:subproject2" );
+        config.setReactorProjects( Collections.singletonList( project ) );
+
         config.mapReleaseVersion( "groupId:subproject2", "1.0" );
         config.mapReleaseVersion( "groupId:subproject3", "1.0" );
-        config.mapReleaseVersion( "groupId:subproject4", "1.0" );
         config.mapReleaseVersion( "groupId:artifactId", "1.0" );
 
         try
@@ -194,17 +196,13 @@ public class RewritePomsForReleasePhaseTest
         }
     }
 
-    public void testRewritePomUnmappedDependencies()
+    public void testRewritePomDependenciesDifferentVersion()
         throws Exception
     {
-        ReleaseConfiguration config = createConfigurationFromProjects( "internal-snapshot-dependencies" );
+        ReleaseConfiguration config = createConfigurationFromProjects( "internal-differing-snapshot-dependencies" );
 
-        MavenProject project =
-            (MavenProject) getProjectsAsMap( config.getReactorProjects() ).get( "groupId:subproject2" );
-        config.setReactorProjects( Collections.singletonList( project ) );
-
+        config.mapReleaseVersion( "groupId:subproject1", "1.0" );
         config.mapReleaseVersion( "groupId:subproject2", "1.0" );
-        config.mapReleaseVersion( "groupId:subproject3", "1.0" );
         config.mapReleaseVersion( "groupId:artifactId", "1.0" );
 
         try
@@ -245,6 +243,170 @@ public class RewritePomsForReleasePhaseTest
 
         config.mapReleaseVersion( "groupId:subproject2", "1.0" );
         config.mapReleaseVersion( "groupId:subproject3", "1.0" );
+        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+
+        try
+        {
+            phase.execute( config );
+
+            fail( "Should have thrown an exception" );
+        }
+        catch ( ReleaseExecutionException e )
+        {
+            assertNull( "Check no cause", e.getCause() );
+        }
+    }
+
+    public void testRewritePomPlugins()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromProjects( "internal-snapshot-plugins" );
+
+        config.mapReleaseVersion( "groupId:subproject1", "1.0" );
+        config.mapReleaseVersion( "groupId:subproject2", "1.0" );
+        config.mapReleaseVersion( "groupId:subproject3", "1.0" );
+        config.mapReleaseVersion( "groupId:subproject4", "1.0" );
+        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+
+        phase.execute( config );
+
+        assertTrue( compareFiles( config.getReactorProjects() ) );
+    }
+
+    public void testRewritePomUnmappedPlugins()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromProjects( "internal-snapshot-plugins" );
+
+        MavenProject project =
+            (MavenProject) getProjectsAsMap( config.getReactorProjects() ).get( "groupId:subproject2" );
+        config.setReactorProjects( Collections.singletonList( project ) );
+
+        config.mapReleaseVersion( "groupId:subproject2", "1.0" );
+        config.mapReleaseVersion( "groupId:subproject3", "1.0" );
+        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+
+        try
+        {
+            phase.execute( config );
+
+            fail( "Should have thrown an exception" );
+        }
+        catch ( ReleaseExecutionException e )
+        {
+            assertNull( "Check no cause", e.getCause() );
+        }
+    }
+
+    public void testRewritePomPluginsDifferentVersion()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromProjects( "internal-differing-snapshot-plugins" );
+
+        config.mapReleaseVersion( "groupId:subproject1", "1.0" );
+        config.mapReleaseVersion( "groupId:subproject2", "1.0" );
+        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+
+        try
+        {
+            phase.execute( config );
+
+            fail( "Should have thrown an exception" );
+        }
+        catch ( ReleaseExecutionException e )
+        {
+            assertNull( "Check no cause", e.getCause() );
+        }
+    }
+
+    public void testRewriteManagedPomPlugins()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromProjects( "internal-managed-snapshot-plugin" );
+
+        config.mapReleaseVersion( "groupId:subproject1", "1.0" );
+        config.mapReleaseVersion( "groupId:subproject2", "1.0" );
+        config.mapReleaseVersion( "groupId:subproject3", "1.0" );
+        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+
+        phase.execute( config );
+
+        assertTrue( compareFiles( config.getReactorProjects() ) );
+    }
+
+    public void testRewriteManagedPomUnmappedPlugins()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromProjects( "internal-managed-snapshot-plugin" );
+
+        MavenProject project =
+            (MavenProject) getProjectsAsMap( config.getReactorProjects() ).get( "groupId:subproject2" );
+        config.setReactorProjects( Collections.singletonList( project ) );
+
+        config.mapReleaseVersion( "groupId:subproject2", "1.0" );
+        config.mapReleaseVersion( "groupId:subproject3", "1.0" );
+        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+
+        try
+        {
+            phase.execute( config );
+
+            fail( "Should have thrown an exception" );
+        }
+        catch ( ReleaseExecutionException e )
+        {
+            assertNull( "Check no cause", e.getCause() );
+        }
+    }
+
+    public void testRewritePomReportPlugins()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromProjects( "internal-snapshot-report-plugins" );
+
+        config.mapReleaseVersion( "groupId:subproject1", "1.0" );
+        config.mapReleaseVersion( "groupId:subproject2", "1.0" );
+        config.mapReleaseVersion( "groupId:subproject3", "1.0" );
+        config.mapReleaseVersion( "groupId:subproject4", "1.0" );
+        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+
+        phase.execute( config );
+
+        assertTrue( compareFiles( config.getReactorProjects() ) );
+    }
+
+    public void testRewritePomUnmappedReportPlugins()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromProjects( "internal-snapshot-report-plugins" );
+
+        MavenProject project =
+            (MavenProject) getProjectsAsMap( config.getReactorProjects() ).get( "groupId:subproject2" );
+        config.setReactorProjects( Collections.singletonList( project ) );
+
+        config.mapReleaseVersion( "groupId:subproject2", "1.0" );
+        config.mapReleaseVersion( "groupId:subproject3", "1.0" );
+        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+
+        try
+        {
+            phase.execute( config );
+
+            fail( "Should have thrown an exception" );
+        }
+        catch ( ReleaseExecutionException e )
+        {
+            assertNull( "Check no cause", e.getCause() );
+        }
+    }
+
+    public void testRewritePomReportPluginsDifferentVersion()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromProjects( "internal-differing-snapshot-report-plugins" );
+
+        config.mapReleaseVersion( "groupId:subproject1", "1.0" );
+        config.mapReleaseVersion( "groupId:subproject2", "1.0" );
         config.mapReleaseVersion( "groupId:artifactId", "1.0" );
 
         try
@@ -439,7 +601,7 @@ public class RewritePomsForReleasePhaseTest
             String actual = FileUtils.fileRead( actualFile );
             File expectedFile = new File( actualFile.getParentFile(), "expected-pom.xml" );
             String expected = FileUtils.fileRead( expectedFile );
-            assertEquals( "Check the transformed POM: " + expectedFile + " vs " + actualFile, expected, actual );
+            assertEquals( "Check the transformed POM", expected, actual );
         }
         return true;
     }
