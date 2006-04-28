@@ -421,6 +421,68 @@ public class RewritePomsForReleasePhaseTest
         }
     }
 
+    public void testRewritePomExtension()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromProjects( "internal-snapshot-extension" );
+
+        config.mapReleaseVersion( "groupId:subproject1", "1.0" );
+        config.mapReleaseVersion( "groupId:subproject2", "1.0" );
+        config.mapReleaseVersion( "groupId:subproject3", "1.0" );
+        config.mapReleaseVersion( "groupId:subproject4", "1.0" );
+        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+
+        phase.execute( config );
+
+        assertTrue( compareFiles( config.getReactorProjects() ) );
+    }
+
+    public void testRewritePomUnmappedExtension()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromProjects( "internal-snapshot-extension" );
+
+        MavenProject project =
+            (MavenProject) getProjectsAsMap( config.getReactorProjects() ).get( "groupId:subproject2" );
+        config.setReactorProjects( Collections.singletonList( project ) );
+
+        config.mapReleaseVersion( "groupId:subproject2", "1.0" );
+        config.mapReleaseVersion( "groupId:subproject3", "1.0" );
+        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+
+        try
+        {
+            phase.execute( config );
+
+            fail( "Should have thrown an exception" );
+        }
+        catch ( ReleaseExecutionException e )
+        {
+            assertNull( "Check no cause", e.getCause() );
+        }
+    }
+
+    public void testRewritePomExtensionDifferentVersion()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromProjects( "internal-differing-snapshot-extension" );
+
+        config.mapReleaseVersion( "groupId:subproject1", "1.0" );
+        config.mapReleaseVersion( "groupId:subproject2", "1.0" );
+        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
+
+        try
+        {
+            phase.execute( config );
+
+            fail( "Should have thrown an exception" );
+        }
+        catch ( ReleaseExecutionException e )
+        {
+            assertNull( "Check no cause", e.getCause() );
+        }
+    }
+
     public void testRewriteBasicPomWithEditMode()
         throws Exception
     {

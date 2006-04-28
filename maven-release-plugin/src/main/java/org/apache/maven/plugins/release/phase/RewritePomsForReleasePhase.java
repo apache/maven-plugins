@@ -18,6 +18,7 @@ package org.apache.maven.plugins.release.phase;
 
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Extension;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.plugins.release.ReleaseExecutionException;
@@ -215,7 +216,7 @@ public class RewritePomsForReleasePhase
                     }
                 }
             }
-            // TODO: rewrite extensions
+            rewriteExtensions( project.getBuildExtensions(), pluginsRoot, mappedVersions, originalVersions );
         }
 
         if ( project.getReporting() != null )
@@ -232,28 +233,6 @@ public class RewritePomsForReleasePhase
 /*
         ProjectScmRewriter scmRewriter = getScmRewriter();
         scmRewriter.rewriteScmInfo( model, projectId, getTagLabel() );
-
-        ProjectVersionResolver versionResolver = getVersionResolver();
-        Build build = model.getBuild();
-
-        if ( build != null )
-        {
-            //Rewrite extensions section
-            List extensions = build.getExtensions();
-
-            for ( Iterator i = extensions.iterator(); i.hasNext(); )
-            {
-                Extension ext = (Extension) i.next();
-
-                String resolvedVersion = versionResolver
-                    .getResolvedVersion( ext.getGroupId(), ext.getArtifactId() );
-
-                if ( resolvedVersion != null )
-                {
-                    ext.setVersion( resolvedVersion );
-                }
-            }
-        }
 */
 
     }
@@ -342,18 +321,61 @@ public class RewritePomsForReleasePhase
                         }
                         catch ( JDOMException e )
                         {
-                            throw new ReleaseExecutionException( "Unable to locate plugin to process in document",
-                                                                 e );
+                            throw new ReleaseExecutionException( "Unable to locate plugin to process in document", e );
                         }
                     }
                     else
                     {
-                        // We can ignore dependencies we don't know of, unless they are snapshots
+                        // We can ignore plugins we don't know of, unless they are snapshots
                         if ( ArtifactUtils.isSnapshot( plugin.getVersion() ) )
                         {
                             throw new ReleaseExecutionException(
                                 "Version '" + plugin.getVersion() + "' for plugin '" + key + "' was not mapped" );
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    private void rewriteExtensions( List extensions, Element pluginRoot, Map mappedVersions, Map originalVersions )
+        throws ReleaseExecutionException
+    {
+        if ( extensions != null )
+        {
+            for ( Iterator i = extensions.iterator(); i.hasNext(); )
+            {
+                Extension extension = (Extension) i.next();
+
+                String key = ArtifactUtils.versionlessKey( extension.getGroupId(), extension.getArtifactId() );
+                String version = (String) mappedVersions.get( key );
+
+                if ( version != null && extension.getVersion().equals( originalVersions.get( key ) ) )
+                {
+                    getLogger().debug( "Updating " + extension.getArtifactId() + " to " + version );
+
+                    try
+                    {
+                        XPath xpath = XPath.newInstance( "./extensions/extension[groupId='" + extension.getGroupId() +
+                            "' and artifactId='" + extension.getArtifactId() + "']" );
+
+                        Element dependency = (Element) xpath.selectSingleNode( pluginRoot );
+                        Element versionElement = dependency.getChild( "version" );
+
+                        versionElement.setText( version );
+                    }
+                    catch ( JDOMException e )
+                    {
+                        throw new ReleaseExecutionException( "Unable to locate extension to process in document", e );
+                    }
+                }
+                else
+                {
+                    // We can ignore extensions we don't know of, unless they are snapshots
+                    if ( ArtifactUtils.isSnapshot( extension.getVersion() ) )
+                    {
+                        throw new ReleaseExecutionException(
+                            "Version '" + extension.getVersion() + "' for extension '" + key + "' was not mapped" );
                     }
                 }
             }
@@ -395,17 +417,17 @@ public class RewritePomsForReleasePhase
                         }
                         catch ( JDOMException e )
                         {
-                            throw new ReleaseExecutionException( "Unable to locate report plugin to process in document",
-                                                                 e );
+                            throw new ReleaseExecutionException(
+                                "Unable to locate report plugin to process in document", e );
                         }
                     }
                     else
                     {
-                        // We can ignore dependencies we don't know of, unless they are snapshots
+                        // We can ignore plugins we don't know of, unless they are snapshots
                         if ( ArtifactUtils.isSnapshot( plugin.getVersion() ) )
                         {
-                            throw new ReleaseExecutionException(
-                                "Version '" + plugin.getVersion() + "' for report plugin '" + key + "' was not mapped" );
+                            throw new ReleaseExecutionException( "Version '" + plugin.getVersion() +
+                                "' for report plugin '" + key + "' was not mapped" );
                         }
                     }
                 }
