@@ -40,6 +40,7 @@
           <phase>scm-check-modifications</phase>
           <phase>check-dependency-snapshots</phase>
           <phase>rewrite-poms-for-release</phase>
+          <phase>generate-release-poms</phase>
           <phase>run-tests</phase>
           <phase>run-preparation-goals</phase>
           <phase>scm-commit</phase>
@@ -118,6 +119,11 @@
           <field-name>scmTranslators</field-name>
         </requirement>
       </requirements>
+    </component>
+    <component>
+      <role>org.apache.maven.plugins.release.phase.ReleasePhase</role>
+      <role-hint>generate-release-poms</role-hint>
+      <implementation>org.apache.maven.plugins.release.phase.GenerateReleasePomsPhase</implementation>
     </component>
     <component>
       <role>org.apache.maven.plugins.release.phase.ReleasePhase</role>
