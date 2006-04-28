@@ -16,22 +16,6 @@
 
 <component-set>
   <components>
-    <component>
-      <role>org.apache.maven.plugins.release.phase.ReleasePhase</role>
-      <role-hint>test-map-development-versions</role-hint>
-      <implementation>org.apache.maven.plugins.release.phase.MapVersionsPhase</implementation>
-      <configuration>
-        <convertToSnapshot>true</convertToSnapshot>
-      </configuration>
-    </component>
-    <component>
-      <role>org.apache.maven.plugins.release.phase.ReleasePhase</role>
-      <role-hint>test-map-release-versions</role-hint>
-      <implementation>org.apache.maven.plugins.release.phase.MapVersionsPhase</implementation>
-      <configuration>
-        <convertToSnapshot>false</convertToSnapshot>
-      </configuration>
-    </component>
     <!-- Turn off info messages -->
     <component>
       <role>org.codehaus.plexus.logging.LoggerManager</role>
