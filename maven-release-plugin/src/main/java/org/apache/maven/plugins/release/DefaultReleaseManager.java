@@ -121,14 +121,14 @@ public class DefaultReleaseManager
 
     public void perform()
     {
-        //To change body of implemented methods use File | Settings | File Templates. TODO
+        //To change body of implemented methods use File | Settings | File Templates. TODO [!]
 
         clean();
     }
 
     public void clean()
     {
-        //To change body of implemented methods use File | Settings | File Templates. TODO
+        //To change body of implemented methods use File | Settings | File Templates. TODO [!]
     }
 
     void setConfigStore( ReleaseConfigurationStore configStore )

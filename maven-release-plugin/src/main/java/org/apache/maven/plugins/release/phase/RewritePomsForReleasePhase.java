@@ -467,7 +467,7 @@ public class RewritePomsForReleasePhase
         try
         {
             // TODO: better handling of encoding. Currently the definition is not written out and is embedded in the intro if it already existed
-            // TODO: the XMLOutputter and Writer need to have their encodings aligned
+            // TODO: the XMLOutputter and Writer need to have their encodings aligned.
             writer = new FileWriter( pomFile );
 
             if ( intro != null )

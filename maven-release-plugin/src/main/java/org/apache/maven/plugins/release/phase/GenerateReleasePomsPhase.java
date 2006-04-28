@@ -40,7 +40,7 @@ public class GenerateReleasePomsPhase
 
     private void generateReleasePoms()
     {
-/* TODO
+/* TODO [!]: implement
         String canonicalBasedir;
 
         try
@@ -368,7 +368,7 @@ public class GenerateReleasePomsPhase
 
     public void simulate( ReleaseConfiguration releaseConfiguration )
     {
-        // TODO: implement
+        // TODO [!]: implement
 
     }
 }
