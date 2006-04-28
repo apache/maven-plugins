@@ -318,7 +318,8 @@ public class RewritePomsForReleasePhaseTest
     public void testRewritePomReportPluginsDifferentVersion()
         throws Exception
     {
-        ReleaseConfiguration config = createDifferingVersionConfiguration( "internal-differing-snapshot-report-plugins" );
+        ReleaseConfiguration config =
+            createDifferingVersionConfiguration( "internal-differing-snapshot-report-plugins" );
 
         try
         {
@@ -395,9 +396,12 @@ public class RewritePomsForReleasePhaseTest
         config.setUseEditMode( true );
         config.mapReleaseVersion( "groupId:artifactId", "1.0" );
 
-        ScmManager scmManager = (ScmManager) lookup( ScmManager.ROLE );
-        ScmProviderStub providerStub = (ScmProviderStub) scmManager.getProviderByUrl( config.getUrl() );
+        ScmManagerStub scmManager = new ScmManagerStub();
+        DefaultScmRepositoryConfigurator configurator =
+            (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE );
+        configurator.setScmManager( scmManager );
 
+        ScmProviderStub providerStub = (ScmProviderStub) scmManager.getProviderByUrl( config.getUrl() );
         providerStub.setEditScmResult( new EditScmResult( "", "", "", false ) );
 
         try
@@ -423,8 +427,11 @@ public class RewritePomsForReleasePhaseTest
         scmProviderMock.expects( new InvokeAtLeastOnceMatcher() ).method( "edit" ).will(
             new ThrowStub( new ScmException( "..." ) ) );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
-        stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
+        ScmManagerStub scmManager = new ScmManagerStub();
+        DefaultScmRepositoryConfigurator configurator =
+            (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE );
+        configurator.setScmManager( scmManager );
+        scmManager.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
 
         try
         {
@@ -534,6 +541,7 @@ public class RewritePomsForReleasePhaseTest
     {
         ReleaseConfiguration releaseConfiguration = createConfigurationFromProjects( "rewrite-for-release/", path );
         releaseConfiguration.setUrl( "scm:svn:file://localhost/tmp/scm-repo" );
+        releaseConfiguration.setReleaseLabel( "release-label" );
         releaseConfiguration.setWorkingDirectory( getTestFile( "target/test/checkout" ) );
 
         return releaseConfiguration;
