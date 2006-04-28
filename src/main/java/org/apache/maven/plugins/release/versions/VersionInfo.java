@@ -45,7 +45,7 @@ public interface VersionInfo
     VersionInfo getNextVersion();
 
     /**
-     * Returns whether this represents a snapshot version. ("xxx-SNAPSHOT");
+     * Returns whether this represents a snapshot version.
      *
      * @return
      */

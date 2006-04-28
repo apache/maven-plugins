@@ -47,7 +47,7 @@ public class PropertiesReleaseConfigurationStore
 
     public PropertiesReleaseConfigurationStore()
     {
-        // TODO: set properties file somehow
+        // TODO [!]: set properties file somehow
         propertiesFile = new File( "release.properties" );
     }
 

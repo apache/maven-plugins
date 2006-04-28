@@ -99,7 +99,7 @@ public class ScmCheckModificationsPhase
 
         List changedFiles = result.getChangedFiles();
 
-        // TODO: would be nice for SCM status command to do this for me
+        // TODO: would be nice for SCM status command to do this for me.
         for ( Iterator i = changedFiles.iterator(); i.hasNext(); )
         {
             ScmFile f = (ScmFile) i.next();

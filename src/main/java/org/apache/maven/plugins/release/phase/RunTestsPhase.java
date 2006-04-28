@@ -19,7 +19,7 @@ package org.apache.maven.plugins.release.phase;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 
 /**
- * TODO: Description.
+ * TODO [!]: Description.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
@@ -28,13 +28,13 @@ public class RunTestsPhase
 {
     public void execute( ReleaseConfiguration releaseConfiguration )
     {
-        // TODO: implement
+        // TODO [!]: implement
 
     }
 
     public void simulate( ReleaseConfiguration releaseConfiguration )
     {
-        // TODO: implement
+        // TODO [!]: implement
 
     }
 }

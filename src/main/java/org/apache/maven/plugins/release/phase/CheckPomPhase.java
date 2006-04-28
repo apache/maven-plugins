@@ -36,8 +36,8 @@ public class CheckPomPhase
     public void execute( ReleaseConfiguration releaseConfiguration )
         throws ReleaseExecutionException
     {
-        // TODO: SCM URL is coming from the store but it probably needs to be read from every project instead
-        // TODO: prepare release mojo needs to set this correct to either connection or developerConnection as appropriate - new version doesn't handle it
+        // TODO [!]: SCM URL is coming from the store but it probably needs to be read from every project instead
+        // TODO [!]: prepare release mojo needs to set this correct to either connection or developerConnection as appropriate - new version doesn't handle it
         if ( StringUtils.isEmpty( releaseConfiguration.getUrl() ) )
         {
             throw new ReleaseExecutionException(

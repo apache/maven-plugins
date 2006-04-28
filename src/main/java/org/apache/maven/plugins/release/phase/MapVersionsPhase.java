@@ -65,7 +65,7 @@ public class MapVersionsPhase
             VersionInfo version = null;
             try
             {
-                // TODO: make sure to test inherited version
+                // TODO [!]: make sure to test inherited version
                 version = new DefaultVersionInfo( project.getVersion() );
             }
             catch ( VersionParseException e )

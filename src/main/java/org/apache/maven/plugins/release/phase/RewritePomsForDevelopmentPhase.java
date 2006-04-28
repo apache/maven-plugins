@@ -19,23 +19,22 @@ package org.apache.maven.plugins.release.phase;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 
 /**
- * TODO: Description.
+ * TODO [!]: Description.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class RewritePomsForDevelopmentPhase
     implements ReleasePhase
 {
-    // TODO: include dependencies, dependency management (only rewrite when it was already there, use dom4j)
     // TODO: separate release POM removal?
 
     public void execute( ReleaseConfiguration releaseConfiguration )
     {
-        // TODO
+        // TODO [!]: implement
     }
 
     public void simulate( ReleaseConfiguration releaseConfiguration )
     {
-        // TODO
+        // TODO [!]: implement
     }
 }
