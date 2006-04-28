@@ -17,6 +17,7 @@ package org.apache.maven.plugins.release.config;
  */
 
 import org.apache.maven.artifact.ArtifactUtils;
+import org.apache.maven.model.Scm;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 
@@ -118,9 +119,19 @@ public class ReleaseConfiguration
     private Map developmentVersions = new HashMap();
 
     /**
+     * A map of projects to original SCM information;
+     */
+    private Map originalScmInfo = new HashMap();
+
+    /**
      * A map of projects to original versions before any transformation.
      */
     private Map originalVersions;
+
+    /**
+     * The SCM release tag or label to use.
+     */
+    private String releaseLabel;
 
     public boolean isInteractive()
     {
@@ -273,6 +284,21 @@ public class ReleaseConfiguration
         return Collections.unmodifiableMap( developmentVersions );
     }
 
+    public Map getOriginalScmInfo()
+    {
+        return Collections.unmodifiableMap( originalScmInfo );
+    }
+
+    public void setReleaseLabel( String releaseLabel )
+    {
+        this.releaseLabel = releaseLabel;
+    }
+
+    public String getReleaseLabel()
+    {
+        return releaseLabel;
+    }
+
     /**
      * Merge two configurations together. All SCM settings are overridden by the merge configuration, as are the
      * <code>settings</code> and <code>workingDirectory</code> fields. The <code>completedPhase</code> field is used as
@@ -285,6 +311,7 @@ public class ReleaseConfiguration
     {
         // Overridden if configured from the caller
         this.url = mergeOverride( this.url, mergeConfiguration.url );
+        this.releaseLabel = mergeOverride( this.releaseLabel, mergeConfiguration.releaseLabel );
         this.tagBase = mergeOverride( this.tagBase, mergeConfiguration.tagBase );
         this.username = mergeOverride( this.username, mergeConfiguration.username );
         this.password = mergeOverride( this.password, mergeConfiguration.password );
@@ -369,6 +396,10 @@ public class ReleaseConfiguration
         {
             return false;
         }
+        if ( originalScmInfo != null ? !compareScmCollections( that.originalScmInfo ) : that.originalScmInfo != null )
+        {
+            return false;
+        }
         if ( passphrase != null ? !passphrase.equals( that.passphrase ) : that.passphrase != null )
         {
             return false;
@@ -382,6 +413,10 @@ public class ReleaseConfiguration
             return false;
         }
         if ( reactorProjects != null ? !reactorProjects.equals( that.reactorProjects ) : that.reactorProjects != null )
+        {
+            return false;
+        }
+        if ( releaseLabel != null ? !releaseLabel.equals( that.releaseLabel ) : that.releaseLabel != null )
         {
             return false;
         }
@@ -415,10 +450,54 @@ public class ReleaseConfiguration
         return true;
     }
 
+    private boolean compareScmCollections( Map that )
+    {
+        // Must manuall compare as Scm doesn't have an equals method
+        if ( that.size() != originalScmInfo.size() )
+        {
+            return false;
+        }
+
+        for ( Iterator i = originalScmInfo.entrySet().iterator(); i.hasNext(); )
+        {
+            Map.Entry entry = (Map.Entry) i.next();
+
+            Scm thatScm = (Scm) that.get( entry.getKey() );
+
+            if ( thatScm == null )
+            {
+                return false;
+            }
+
+            Scm thisScm = (Scm) entry.getValue();
+            if ( thisScm.getConnection() != null ? !thisScm.getConnection().equals( thatScm.getConnection() )
+                : thatScm.getConnection() != null )
+            {
+                return false;
+            }
+            if ( thisScm.getDeveloperConnection() != null ? !thisScm.getDeveloperConnection().equals(
+                thatScm.getDeveloperConnection() ) : thatScm.getDeveloperConnection() != null )
+            {
+                return false;
+            }
+            if ( thisScm.getUrl() != null ? !thisScm.getUrl().equals( thatScm.getUrl() ) : thatScm.getUrl() != null )
+            {
+                return false;
+            }
+            if ( thisScm.getTag() != null ? !thisScm.getTag().equals( thatScm.getTag() ) : thatScm.getTag() != null )
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public int hashCode()
     {
         int result = completedPhase != null ? completedPhase.hashCode() : 0;
         result = 29 * result + ( settings != null ? settings.hashCode() : 0 );
+        result = 29 * result + ( releaseLabel != null ? releaseLabel.hashCode() : 0 );
         result = 29 * result + ( tagBase != null ? tagBase.hashCode() : 0 );
         result = 29 * result + ( username != null ? username.hashCode() : 0 );
         result = 29 * result + ( password != null ? password.hashCode() : 0 );
@@ -433,6 +512,7 @@ public class ReleaseConfiguration
         result = 29 * result + ( interactive ? 1 : 0 );
         result = 29 * result + ( releaseVersions != null ? releaseVersions.hashCode() : 0 );
         result = 29 * result + ( developmentVersions != null ? developmentVersions.hashCode() : 0 );
+        result = 29 * result + ( originalScmInfo != null ? originalScmInfo.hashCode() : 0 );
         return result;
     }
 
@@ -463,7 +543,21 @@ public class ReleaseConfiguration
     }
 
     /**
+     * Map a given project to a specified set of SCM information.
+     *
+     * @param projectId the project's group and artifact ID
+     * @param scm       the original SCM information to store
+     */
+    public void mapOriginalScmInfo( String projectId, Scm scm )
+    {
+        assert !originalScmInfo.containsKey( projectId );
+
+        originalScmInfo.put( projectId, scm );
+    }
+
+    /**
      * Retrieve the original version map, before transformation, keyed by project's versionless identifier.
+     *
      * @return the map of project IDs to versions.
      */
     public synchronized Map getOriginalVersions()

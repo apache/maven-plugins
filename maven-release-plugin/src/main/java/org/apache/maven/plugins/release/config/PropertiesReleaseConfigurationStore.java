@@ -16,6 +16,7 @@ package org.apache.maven.plugins.release.config;
  * limitations under the License.
  */
 
+import org.apache.maven.model.Scm;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.IOUtil;
 
@@ -84,6 +85,7 @@ public class PropertiesReleaseConfigurationStore
         releaseConfiguration.setPrivateKey( properties.getProperty( "scm.privateKey" ) );
         releaseConfiguration.setPassphrase( properties.getProperty( "scm.passphrase" ) );
         releaseConfiguration.setTagBase( properties.getProperty( "scm.tagBase" ) );
+        releaseConfiguration.setReleaseLabel( properties.getProperty( "scm.tag" ) );
 
         // boolean properties are not written to the properties file because the value from the caller is always used
 
@@ -99,6 +101,23 @@ public class PropertiesReleaseConfigurationStore
             {
                 releaseConfiguration.mapDevelopmentVersion( property.substring( "project.dev.".length() ),
                                                             properties.getProperty( property ) );
+            }
+            else if ( property.startsWith( "project.scm." ) )
+            {
+                int index = property.indexOf( '.', "project.scm.".length() );
+                if ( index > 0 )
+                {
+                    String key = property.substring( "project.scm.".length(), index );
+
+                    Scm scm = new Scm();
+                    scm.setConnection( properties.getProperty( "project.scm." + key + ".connection" ) );
+                    scm.setDeveloperConnection(
+                        properties.getProperty( "project.scm." + key + ".developerConnection" ) );
+                    scm.setUrl( properties.getProperty( "project.scm." + key + ".url" ) );
+                    scm.setTag( properties.getProperty( "project.scm." + key + ".tag" ) );
+
+                    releaseConfiguration.mapOriginalScmInfo( key, scm );
+                }
             }
         }
 
@@ -121,6 +140,7 @@ public class PropertiesReleaseConfigurationStore
         properties.setProperty( "scm.privateKey", config.getPrivateKey() );
         properties.setProperty( "scm.passphrase", config.getPassphrase() );
         properties.setProperty( "scm.tagBase", config.getTagBase() );
+        properties.setProperty( "scm.tag", config.getReleaseLabel() );
 
         // boolean properties are not written to the properties file because the value from the caller is always used
 
@@ -134,6 +154,17 @@ public class PropertiesReleaseConfigurationStore
         {
             Map.Entry entry = (Map.Entry) i.next();
             properties.setProperty( "project.dev." + entry.getKey(), (String) entry.getValue() );
+        }
+
+        for ( Iterator i = config.getOriginalScmInfo().entrySet().iterator(); i.hasNext(); )
+        {
+            Map.Entry entry = (Map.Entry) i.next();
+            Scm scm = (Scm) entry.getValue();
+            properties.setProperty( "project.scm." + entry.getKey() + ".connection", scm.getConnection() );
+            properties.setProperty( "project.scm." + entry.getKey() + ".developerConnection",
+                                    scm.getDeveloperConnection() );
+            properties.setProperty( "project.scm." + entry.getKey() + ".url", scm.getUrl() );
+            properties.setProperty( "project.scm." + entry.getKey() + ".tag", scm.getTag() );
         }
 
         OutputStream outStream = null;
