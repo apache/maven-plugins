@@ -18,6 +18,8 @@ package org.apache.maven.plugins.release.phase;
 
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Plugin;
+import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 import org.apache.maven.plugins.release.scm.ReleaseScmCommandException;
@@ -197,10 +199,35 @@ public class RewritePomsForReleasePhase
             }
         }
 
+        if ( project.getBuild() != null )
+        {
+            Element pluginsRoot = rootElement.getChild( "build", namespace );
+            if ( pluginsRoot != null )
+            {
+                rewritePlugins( project.getBuildPlugins(), pluginsRoot, mappedVersions, originalVersions );
+                if ( project.getPluginManagement() != null )
+                {
+                    pluginsRoot = pluginsRoot.getChild( "pluginManagement", namespace );
+                    if ( pluginsRoot != null )
+                    {
+                        rewritePlugins( project.getPluginManagement().getPlugins(), pluginsRoot, mappedVersions,
+                                        originalVersions );
+                    }
+                }
+            }
+            // TODO: rewrite extensions
+        }
+
+        if ( project.getReporting() != null )
+        {
+            Element pluginsRoot = rootElement.getChild( "reporting", namespace );
+            if ( pluginsRoot != null )
+            {
+                rewriteReportPlugins( project.getReportPlugins(), pluginsRoot, mappedVersions, originalVersions );
+            }
+        }
+
         // TODO: rewrite SCM
-        // TODO: rewrite extensions
-        // TODO: rewrite plugins, plugin management
-        // TODO: rewrite reporting plugins
 
 /*
         ProjectScmRewriter scmRewriter = getScmRewriter();
@@ -211,51 +238,6 @@ public class RewritePomsForReleasePhase
 
         if ( build != null )
         {
-            //Rewrite plugins section
-            List plugins = build.getPlugins();
-
-            if ( plugins != null )
-            {
-                for ( Iterator i = plugins.iterator(); i.hasNext(); )
-                {
-                    Plugin plugin = (Plugin) i.next();
-
-                    // Avoid in plugin mgmt
-                    if ( plugin.getVersion() != null )
-                    {
-                        String resolvedVersion =
-                            versionResolver.getResolvedVersion( plugin.getGroupId(), plugin.getArtifactId() );
-
-                        if ( resolvedVersion != null )
-                        {
-                            plugin.setVersion( resolvedVersion );
-                        }
-                    }
-                }
-            }
-
-            PluginManagement pluginManagement = build.getPluginManagement();
-            plugins = pluginManagement != null ? pluginManagement.getPlugins() : null;
-
-            if ( plugins != null )
-            {
-                for ( Iterator i = plugins.iterator(); i.hasNext(); )
-                {
-                    Plugin plugin = (Plugin) i.next();
-
-                    if ( plugin.getVersion() != null )
-                    {
-                        String resolvedVersion =
-                            versionResolver.getResolvedVersion( plugin.getGroupId(), plugin.getArtifactId() );
-
-                        if ( resolvedVersion != null )
-                        {
-                            plugin.setVersion( resolvedVersion );
-                        }
-                    }
-                }
-            }
-
             //Rewrite extensions section
             List extensions = build.getExtensions();
 
@@ -272,28 +254,6 @@ public class RewritePomsForReleasePhase
                 }
             }
         }
-
-        Reporting reporting = model.getReporting();
-
-        if ( reporting != null )
-        {
-            //Rewrite reports section
-            List reports = reporting.getPlugins();
-
-            for ( Iterator i = reports.iterator(); i.hasNext(); )
-            {
-                ReportPlugin plugin = (ReportPlugin) i.next();
-
-                String resolvedVersion =
-                    versionResolver.getResolvedVersion( plugin.getGroupId(), plugin.getArtifactId() );
-
-                if ( resolvedVersion != null )
-                {
-                    plugin.setVersion( resolvedVersion );
-                }
-            }
-        }
-
 */
 
     }
@@ -341,6 +301,112 @@ public class RewritePomsForReleasePhase
                     {
                         throw new ReleaseExecutionException(
                             "Version '" + dep.getVersion() + "' for dependency '" + key + "' was not mapped" );
+                    }
+                }
+            }
+        }
+    }
+
+    private void rewritePlugins( List plugins, Element pluginRoot, Map mappedVersions, Map originalVersions )
+        throws ReleaseExecutionException
+    {
+        if ( plugins != null )
+        {
+            for ( Iterator i = plugins.iterator(); i.hasNext(); )
+            {
+                Plugin plugin = (Plugin) i.next();
+
+                // We can ignore plugins whose version is assumed, they are only written into the release pom
+                if ( plugin.getVersion() != null )
+                {
+                    String key = ArtifactUtils.versionlessKey( plugin.getGroupId(), plugin.getArtifactId() );
+                    String version = (String) mappedVersions.get( key );
+
+                    if ( version != null && plugin.getVersion().equals( originalVersions.get( key ) ) )
+                    {
+                        getLogger().debug( "Updating " + plugin.getArtifactId() + " to " + version );
+
+                        try
+                        {
+                            XPath xpath = XPath.newInstance( "./plugins/plugin[groupId='" + plugin.getGroupId() +
+                                "' and artifactId='" + plugin.getArtifactId() + "']" );
+
+                            Element dependency = (Element) xpath.selectSingleNode( pluginRoot );
+                            Element versionElement = dependency.getChild( "version" );
+
+                            // avoid if in plugin management
+                            if ( versionElement != null )
+                            {
+                                versionElement.setText( version );
+                            }
+                        }
+                        catch ( JDOMException e )
+                        {
+                            throw new ReleaseExecutionException( "Unable to locate plugin to process in document",
+                                                                 e );
+                        }
+                    }
+                    else
+                    {
+                        // We can ignore dependencies we don't know of, unless they are snapshots
+                        if ( ArtifactUtils.isSnapshot( plugin.getVersion() ) )
+                        {
+                            throw new ReleaseExecutionException(
+                                "Version '" + plugin.getVersion() + "' for plugin '" + key + "' was not mapped" );
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void rewriteReportPlugins( List plugins, Element pluginRoot, Map mappedVersions, Map originalVersions )
+        throws ReleaseExecutionException
+    {
+        if ( plugins != null )
+        {
+            for ( Iterator i = plugins.iterator(); i.hasNext(); )
+            {
+                ReportPlugin plugin = (ReportPlugin) i.next();
+
+                // We can ignore plugins whose version is assumed, they are only written into the release pom
+                if ( plugin.getVersion() != null )
+                {
+                    String key = ArtifactUtils.versionlessKey( plugin.getGroupId(), plugin.getArtifactId() );
+                    String version = (String) mappedVersions.get( key );
+
+                    if ( version != null && plugin.getVersion().equals( originalVersions.get( key ) ) )
+                    {
+                        getLogger().debug( "Updating " + plugin.getArtifactId() + " to " + version );
+
+                        try
+                        {
+                            XPath xpath = XPath.newInstance( "./plugins/plugin[groupId='" + plugin.getGroupId() +
+                                "' and artifactId='" + plugin.getArtifactId() + "']" );
+
+                            Element dependency = (Element) xpath.selectSingleNode( pluginRoot );
+                            Element versionElement = dependency.getChild( "version" );
+
+                            // avoid if in plugin management
+                            if ( versionElement != null )
+                            {
+                                versionElement.setText( version );
+                            }
+                        }
+                        catch ( JDOMException e )
+                        {
+                            throw new ReleaseExecutionException( "Unable to locate report plugin to process in document",
+                                                                 e );
+                        }
+                    }
+                    else
+                    {
+                        // We can ignore dependencies we don't know of, unless they are snapshots
+                        if ( ArtifactUtils.isSnapshot( plugin.getVersion() ) )
+                        {
+                            throw new ReleaseExecutionException(
+                                "Version '" + plugin.getVersion() + "' for report plugin '" + key + "' was not mapped" );
+                        }
                     }
                 }
             }
