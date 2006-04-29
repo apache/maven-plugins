@@ -16,17 +16,21 @@ package org.apache.maven.plugins.release.phase;
  * limitations under the License.
  */
 
+import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.codehaus.plexus.logging.AbstractLogEnabled;
 
 /**
- * TODO [!]: Description.
+ * Remove release POMs.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class RewritePomsForDevelopmentPhase
+public class RemoveReleasePomsPhase
+    extends AbstractLogEnabled
     implements ReleasePhase
 {
     public void execute( ReleaseConfiguration releaseConfiguration )
+        throws ReleaseExecutionException
     {
         // TODO [!]: implement
     }
@@ -34,5 +38,6 @@ public class RewritePomsForDevelopmentPhase
     public void simulate( ReleaseConfiguration releaseConfiguration )
     {
         // TODO [!]: implement
+
     }
 }
