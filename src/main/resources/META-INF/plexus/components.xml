@@ -46,6 +46,7 @@
           <phase>scm-commit</phase>
           <phase>scm-tag</phase>
           <phase>rewrite-poms-for-development</phase>
+          <phase>remove-release-poms</phase>
           <phase>scm-commit</phase>
         </phases>
       </configuration>
@@ -124,6 +125,11 @@
       <role>org.apache.maven.plugins.release.phase.ReleasePhase</role>
       <role-hint>generate-release-poms</role-hint>
       <implementation>org.apache.maven.plugins.release.phase.GenerateReleasePomsPhase</implementation>
+    </component>
+    <component>
+      <role>org.apache.maven.plugins.release.phase.ReleasePhase</role>
+      <role-hint>remove-release-poms</role-hint>
+      <implementation>org.apache.maven.plugins.release.phase.RemoveReleasePomsPhase</implementation>
     </component>
     <component>
       <role>org.apache.maven.plugins.release.phase.ReleasePhase</role>
