@@ -27,8 +27,6 @@ import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 public class CheckDependencySnapshotsPhaseTest
     extends AbstractReleaseTestCase
 {
-    private ReleasePhase phase;
-
     protected void setUp()
         throws Exception
     {
