@@ -16,23 +16,71 @@ package org.apache.maven.plugins.release.phase;
  * limitations under the License.
  */
 
+import org.apache.maven.model.Scm;
+import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.scm.repository.ScmRepository;
+import org.jdom.Element;
+import org.jdom.Namespace;
+
+import java.util.Map;
 
 /**
- * TODO [!]: Description.
+ * Rewrite POMs for future development
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class RewritePomsForDevelopmentPhase
-    implements ReleasePhase
+    extends AbstractRewritePomsPhase
 {
-    public void execute( ReleaseConfiguration releaseConfiguration )
+    protected String getPomSuffix()
     {
-        // TODO [!]: implement
+        return "next";
     }
 
-    public void simulate( ReleaseConfiguration releaseConfiguration )
+    protected void transformScm( MavenProject project, Element rootElement, Namespace namespace,
+                                 ReleaseConfiguration releaseConfiguration, String projectId,
+                                 ScmRepository scmRepository )
+        throws ReleaseExecutionException
     {
-        // TODO [!]: implement
+        // If SCM is null in original model, it is inherited, no mods needed
+        if ( project.getScm() != null )
+        {
+            Element scmRoot = rootElement.getChild( "scm", namespace );
+            if ( scmRoot != null )
+            {
+                Scm scm = (Scm) releaseConfiguration.getOriginalScmInfo().get( projectId );
+                if ( scm == null )
+                {
+                    throw new ReleaseExecutionException(
+                        "Unable to find original SCM info for '" + project.getName() + "'" );
+                }
+
+                scmRoot.getChild( "connection", namespace ).setText( scm.getConnection() );
+
+                Element devConnection = scmRoot.getChild( "developerConnection", namespace );
+                if ( devConnection != null )
+                {
+                    devConnection.setText( scm.getDeveloperConnection() );
+                }
+
+                Element url = scmRoot.getChild( "url", namespace );
+                if ( url != null )
+                {
+                    url.setText( scm.getUrl() );
+                }
+            }
+        }
+    }
+
+    protected Map getOriginalVersionMap( ReleaseConfiguration releaseConfiguration )
+    {
+        return releaseConfiguration.getReleaseVersions();
+    }
+
+    protected Map getNextVersionMap( ReleaseConfiguration releaseConfiguration )
+    {
+        return releaseConfiguration.getDevelopmentVersions();
     }
 }
