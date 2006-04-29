@@ -89,6 +89,31 @@ mvn -Dmaven.test.skip=true install
 </project>
 -----
 
+ You may need to fork due to an issue with java.lang.LinkageError: loader constraints violated when linking
+ system classes - e.g. javax.*. If this happens you need to fork and you need to disable childDelegation.
+
+----
+<project>
+  ...
+  <build>
+    ...
+
+    <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <forkMode>once</forkMode>
+          <testFailureIgnore>true</testFailureIgnore>
+          <childDelegation>false</childDelegation>
+        </configuration>       
+
+      </plugin>
+  ...
+  </build>
+  ...
+</project>
+----
+
 * Tests Inclusion and Exclusion
 
   The following are the sample test classes.
