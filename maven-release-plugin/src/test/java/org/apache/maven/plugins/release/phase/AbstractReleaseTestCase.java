@@ -31,14 +31,19 @@ import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.plugins.release.scm.DefaultScmRepositoryConfigurator;
+import org.apache.maven.plugins.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectSorter;
+import org.apache.maven.scm.manager.ScmManager;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.FileUtils;
+import org.jmock.cglib.Mock;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -58,6 +63,8 @@ public abstract class AbstractReleaseTestCase
     protected MavenProjectBuilder projectBuilder;
 
     protected ArtifactRepository localRepository;
+
+    protected ReleasePhase phase;
 
     protected void setUp()
         throws Exception
@@ -176,5 +183,42 @@ public abstract class AbstractReleaseTestCase
         releaseConfiguration.setReactorProjects( projects );
 
         return releaseConfiguration;
+    }
+
+    protected void setMockScmManager( Mock scmManagerMock )
+        throws Exception
+    {
+        ScmManager scmManager = (ScmManager) scmManagerMock.proxy();
+        DefaultScmRepositoryConfigurator configurator =
+            (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE );
+        configurator.setScmManager( scmManager );
+    }
+
+    protected static Map getProjectsAsMap( List reactorProjects )
+    {
+        Map map = new HashMap();
+        for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+        {
+            MavenProject project = (MavenProject) i.next();
+
+            map.put( ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() ), project );
+        }
+        return map;
+    }
+
+    protected boolean compareFiles( List reactorProjects )
+        throws IOException
+    {
+        for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+        {
+            MavenProject project = (MavenProject) i.next();
+
+            File actualFile = project.getFile();
+            String actual = FileUtils.fileRead( actualFile );
+            File expectedFile = new File( actualFile.getParentFile(), "expected-pom.xml" );
+            String expected = FileUtils.fileRead( expectedFile );
+            assertEquals( "Check the transformed POM", expected, actual );
+        }
+        return true;
     }
 }
