@@ -109,14 +109,17 @@ public class PropertiesReleaseConfigurationStore
                 {
                     String key = property.substring( "project.scm.".length(), index );
 
-                    Scm scm = new Scm();
-                    scm.setConnection( properties.getProperty( "project.scm." + key + ".connection" ) );
-                    scm.setDeveloperConnection(
-                        properties.getProperty( "project.scm." + key + ".developerConnection" ) );
-                    scm.setUrl( properties.getProperty( "project.scm." + key + ".url" ) );
-                    scm.setTag( properties.getProperty( "project.scm." + key + ".tag" ) );
+                    if ( !releaseConfiguration.getOriginalScmInfo().containsKey( key ) )
+                    {
+                        Scm scm = new Scm();
+                        scm.setConnection( properties.getProperty( "project.scm." + key + ".connection" ) );
+                        scm.setDeveloperConnection(
+                            properties.getProperty( "project.scm." + key + ".developerConnection" ) );
+                        scm.setUrl( properties.getProperty( "project.scm." + key + ".url" ) );
+                        scm.setTag( properties.getProperty( "project.scm." + key + ".tag" ) );
 
-                    releaseConfiguration.mapOriginalScmInfo( key, scm );
+                        releaseConfiguration.mapOriginalScmInfo( key, scm );
+                    }
                 }
             }
         }
