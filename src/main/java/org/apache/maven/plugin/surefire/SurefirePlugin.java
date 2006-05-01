@@ -668,7 +668,7 @@ public class SurefirePlugin
             systemProperties = new Properties();
         }
 
-        originalSystemProperties = (Properties) systemProperties.clone();
+        originalSystemProperties = (Properties) System.getProperties().clone();
 
         systemProperties.setProperty( "basedir", basedir.getAbsolutePath() );
 
