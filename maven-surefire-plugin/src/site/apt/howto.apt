@@ -1,0 +1,244 @@
+ ------
+ Maven 2 Surefire Plugin 
+ ------
+ Johnny R. Ruiz III <jruiz@exist.com>
+ Allan Ramirez <aramirez@apache.org>
+ ------
+ September 20, 2005
+
+How to Use
+
+* Skipping Tests
+
+ These example shows how to skip test when using m2:
+
+-----
+<project>
+  ...
+  <build>
+    ...
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-surefire-plugin</artifactId>
+      <configuration>
+        <skip>true</skip>
+      </configuration>
+    </plugin>
+    ...
+  </build>
+  ...
+</project>
+-----
+
+ Alternatively, you can execute the following on the command line to skip tests:
+
+-----
+mvn -Dmaven.test.skip=true install
+-----
+
+* Using System Properties
+
+ To add a System property, you can try this one.
+
+-----
+<project>
+  ...
+  <build>
+    ...
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-surefire-plugin</artifactId>
+      <configuration>
+        <systemProperties>
+          <property>
+            <name>propertyName</name>
+            <value>propertyValue</value>
+          </property>
+        </systemProperties>
+      </configuration>
+    </plugin>
+    ...
+  </build>
+  ...
+</project>
+-----
+
+* Forking
+
+ If you need to run your tests in a new JVM process you can use the <<<forkMode>>> option to start a new
+ JVM process once for all your tests, or start a new JVM process for each of your tests. You can also set
+ any arbitrary options like <<<-enableassertions>>> or any other JVM options. Here's an example of what
+ this might look like:
+
+-----
+<project>
+  ...
+  <build>
+    ...
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-surefire-plugin</artifactId>
+      <configuration>
+        <forkMode>once|pertest</forkMode>
+        <argLine>-enableassertions</argLine>
+      </configuration>
+    </plugin>
+    ...
+  </build>
+  ...
+</project>
+-----
+
+ You may need to fork due to an issue with java.lang.LinkageError: loader constraints violated when linking
+ system classes - e.g. javax.*. If this happens you need to fork and you need to disable childDelegation.
+
+----
+<project>
+  ...
+  <build>
+    ...
+
+    <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <forkMode>once</forkMode>
+          <testFailureIgnore>true</testFailureIgnore>
+          <childDelegation>false</childDelegation>
+        </configuration>       
+
+      </plugin>
+  ...
+  </build>
+  ...
+</project>
+----
+
+* Tests Inclusion and Exclusion
+
+  The following are the sample test classes.
+
+  TestCircle.java.\
+  TestRectangle.java.\
+  TestSquare.java.\
+  TestTriangle.java.\
+  PentagonTest.java.\
+  HeptagonTest.java.\
+  OctagonTest.java.\
+  Sample.java.
+
+** Inclusions
+  
+  By default, the surefire plugin will automatically include all test classes with the following wildcard patterns
+
+  <"**/Test*.java"> - includes all of its subdirectory and all java filename that starts with "Test".\
+  <"**/*Test.java"> - includes all of its subdirectory and all java filename that ends with "Test".\
+  <"**/*TestCase.java"> - includes all of its subdirectory and all java filename that ends with "TestCase".
+
+  If your test classes does not go with the naming convention, then configure surefire plugin and include your test.
+
++---+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <includes>
+            <include>Sample.java</include>
+          </includes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++---+  
+
+  Another scenario to use inclusion is when you most of your test classes should be excluded and only few of them are 
+  need to be included.
+
++---+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>**/*.java</exclude>
+          </excludes>
+          <includes>
+            <include>PentagonTest.java</include>
+            <include>OctagonTest.java</include>
+          </includes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++---+  
+
+
+** Exclusions
+
+  There are certain times that some tests are causing the build to fail. If the bad test classes are only few 
+  we may exclude them to continue the build. Exclusions can be done by the following:
+
+  * Excluding per java file.
+  
++---+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>TestCircle.java</exclude>
+            <exclude>TestSquare.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++---+
+  
+  The above example will exclude TestCircle.java and TestSquare.java from the unit testing of surefire plugin.
+ 
+  * Excluding test using wildcards.
+
++---+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>**/Test*.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++---+
+
+  The above example will exclude all its subfolders and java files that starts with "Test".
+
+ There are other parameters that you can configure like testFailureIgnore, reportsDirectory, test , etc.
+ For full documentation, click {{{index.html}here}}.
+ 
