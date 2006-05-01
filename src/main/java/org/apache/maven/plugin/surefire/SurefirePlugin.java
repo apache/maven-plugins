@@ -331,6 +331,8 @@ public class SurefirePlugin
 
     private static final String PLAIN_REPORT_FORMAT = "plain";
 
+    private Properties originalSystemProperties;
+
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -368,6 +370,12 @@ public class SurefirePlugin
             catch ( SurefireExecutionException e )
             {
                 throw new MojoExecutionException( e.getMessage(), e );
+            }
+
+            if ( originalSystemProperties != null )
+            {
+                // restore system properties
+                System.setProperties( originalSystemProperties );
             }
 
             if ( !success )
@@ -414,7 +422,9 @@ public class SurefirePlugin
                 VersionRange range = VersionRange.createFromVersionSpec( "[4.7-SNAPSHOT,)" );
                 if ( !range.containsVersion( testNgArtifact.getSelectedVersion() ) )
                 {
-                    throw new MojoFailureException( "TestNG support requires version 4.7 or above. You have declared version " + testNgArtifact.getVersion() );
+                    throw new MojoFailureException(
+                        "TestNG support requires version 4.7 or above. You have declared version " +
+                            testNgArtifact.getVersion() );
                 }
 
                 // The plugin uses a JDK based profile to select the right testng. We might be explicity using a
@@ -437,8 +447,7 @@ public class SurefirePlugin
         }
         catch ( InvalidVersionSpecificationException e )
         {
-            throw new MojoExecutionException(
-                "Error determining the TestNG version requested: " + e.getMessage(), e );
+            throw new MojoExecutionException( "Error determining the TestNG version requested: " + e.getMessage(), e );
         }
         catch ( ArtifactResolutionException e )
         {
@@ -557,7 +566,7 @@ public class SurefirePlugin
 
         fork.setForkMode( forkMode );
 
-        processSystemProperties( fork.isForking() );
+        processSystemProperties( !fork.isForking() );
 
         if ( getLog().isDebugEnabled() )
         {
@@ -658,6 +667,8 @@ public class SurefirePlugin
         {
             systemProperties = new Properties();
         }
+
+        originalSystemProperties = (Properties) systemProperties.clone();
 
         systemProperties.setProperty( "basedir", basedir.getAbsolutePath() );
 
