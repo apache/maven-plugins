@@ -594,8 +594,6 @@ public class SurefirePlugin
 
             fork.setEnvironmentVariables( environmentVariables );
 
-            fork.setChildDelegation( childDelegation );
-
             if ( getLog().isDebugEnabled() )
             {
                 showMap( environmentVariables, "environment variable" );
@@ -605,6 +603,8 @@ public class SurefirePlugin
         }
 
         surefireBooter.setForkConfiguration( fork );
+
+        surefireBooter.setChildDelegation( childDelegation );
 
         addReporters( surefireBooter, fork.isForking() );
 
