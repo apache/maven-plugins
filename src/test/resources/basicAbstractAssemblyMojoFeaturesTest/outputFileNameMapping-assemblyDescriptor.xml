@@ -1,0 +1,13 @@
+<assembly>
+  <id>outputFileNameMapping</id>
+  <formats>
+    <format>dir</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>/dependencies/</outputDirectory>
+      <outputFileNameMapping>${artifactId}.${extension}</outputFileNameMapping>
+    </dependencySet>
+  </dependencySets>
+</assembly>
