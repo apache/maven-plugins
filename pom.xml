@@ -124,12 +124,6 @@
           <target>1.4</target>
         </configuration>
       </plugin>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <childDelegation>false</childDelegation>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
 </project>
