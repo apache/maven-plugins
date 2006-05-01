@@ -308,6 +308,13 @@ public class SurefirePlugin
     private boolean parallel;
 
     /**
+     * Whether to trim the stack trace in the reports to just the lines within the test, or show the full trace.
+     *
+     * @parameter expression="${trimStackTrace}" default-value="true"
+     */
+    private boolean trimStackTrace;
+
+    /**
      * @component
      */
     private ArtifactResolver artifactResolver;
@@ -700,41 +707,44 @@ public class SurefirePlugin
      */
     private void addReporters( SurefireBooter surefireBooter, boolean forking )
     {
+        Boolean trimStackTrace = Boolean.valueOf( this.trimStackTrace );
         if ( useFile )
         {
             if ( printSummary )
             {
                 if ( forking )
                 {
-                    surefireBooter.addReport( ForkingConsoleReporter.class.getName() );
+                    surefireBooter.addReport( ForkingConsoleReporter.class.getName(), new Object[]{trimStackTrace} );
                 }
                 else
                 {
-                    surefireBooter.addReport( ConsoleReporter.class.getName() );
+                    surefireBooter.addReport( ConsoleReporter.class.getName(), new Object[]{trimStackTrace} );
                 }
             }
 
             if ( BRIEF_REPORT_FORMAT.equals( reportFormat ) )
             {
-                surefireBooter.addReport( BriefFileReporter.class.getName(), new Object[]{reportsDirectory} );
+                surefireBooter.addReport( BriefFileReporter.class.getName(),
+                                          new Object[]{reportsDirectory, trimStackTrace} );
             }
             else if ( PLAIN_REPORT_FORMAT.equals( reportFormat ) )
             {
-                surefireBooter.addReport( FileReporter.class.getName(), new Object[]{reportsDirectory} );
+                surefireBooter.addReport( FileReporter.class.getName(),
+                                          new Object[]{reportsDirectory, trimStackTrace} );
             }
         }
         else
         {
             if ( BRIEF_REPORT_FORMAT.equals( reportFormat ) )
             {
-                surefireBooter.addReport( BriefConsoleReporter.class.getName() );
+                surefireBooter.addReport( BriefConsoleReporter.class.getName(), new Object[]{trimStackTrace} );
             }
             else if ( PLAIN_REPORT_FORMAT.equals( reportFormat ) )
             {
-                surefireBooter.addReport( DetailedConsoleReporter.class.getName() );
+                surefireBooter.addReport( DetailedConsoleReporter.class.getName(), new Object[]{trimStackTrace} );
             }
         }
 
-        surefireBooter.addReport( XMLReporter.class.getName(), new Object[]{reportsDirectory} );
+        surefireBooter.addReport( XMLReporter.class.getName(), new Object[]{reportsDirectory, trimStackTrace} );
     }
 }
