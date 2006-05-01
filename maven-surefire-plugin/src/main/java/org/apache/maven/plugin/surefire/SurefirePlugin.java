@@ -543,13 +543,7 @@ public class SurefirePlugin
 
         getLog().debug( "Test Classpath :" );
 
-        getLog().debug( "  " + testClassesDirectory.getPath() );
-
-        surefireBooter.addClassPathUrl( testClassesDirectory.getPath() );
-
-        getLog().debug( "  " + classesDirectory.getPath() );
-
-        surefireBooter.addClassPathUrl( classesDirectory.getPath() );
+        // no need to add classes/test classes directory here - they are in the classpath elements already
 
         for ( Iterator i = classpathElements.iterator(); i.hasNext(); )
         {
