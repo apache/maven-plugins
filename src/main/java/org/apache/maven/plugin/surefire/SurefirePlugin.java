@@ -407,6 +407,7 @@ public class SurefirePlugin
         SurefireBooter surefireBooter = new SurefireBooter();
 
         Artifact surefireArtifact = (Artifact) pluginArtifactMap.get( "org.apache.maven.surefire:surefire-booter" );
+        surefireArtifact.isSnapshot(); // TODO: this is ridiculous, but it fixes getBaseVersion to be -SNAPSHOT if needed
 
         if ( surefireArtifact == null )
         {
@@ -426,7 +427,7 @@ public class SurefirePlugin
 
             if ( testNgArtifact != null )
             {
-                VersionRange range = VersionRange.createFromVersionSpec( "[4.7-SNAPSHOT,)" );
+                VersionRange range = VersionRange.createFromVersionSpec( "[4.7,)" );
                 if ( !range.containsVersion( testNgArtifact.getSelectedVersion() ) )
                 {
                     throw new MojoFailureException(
