@@ -112,7 +112,7 @@ public abstract class AbstractReleaseTestCase
         return map;
     }
 
-    protected ReleaseConfiguration createConfigurationFromProjects( String path, String subpath )
+    protected ReleaseConfiguration createConfigurationFromProjects( String path, String subpath, boolean copyFiles )
         throws Exception
     {
         File testFile = getTestFile( "target/test-classes/projects/" + path + subpath + "/pom.xml" );

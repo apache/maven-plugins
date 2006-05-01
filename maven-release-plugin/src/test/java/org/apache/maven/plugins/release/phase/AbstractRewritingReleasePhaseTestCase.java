@@ -118,7 +118,8 @@ public abstract class AbstractRewritingReleasePhaseTestCase
     public void testRewritePomWithChangedInheritedVersion()
         throws Exception
     {
-        ReleaseConfiguration config = createConfigurationForPomWithParentAlternateNextVersion( "pom-with-inherited-version" );
+        ReleaseConfiguration config =
+            createConfigurationForPomWithParentAlternateNextVersion( "pom-with-inherited-version" );
 
         phase.execute( config );
 
@@ -408,18 +409,22 @@ public abstract class AbstractRewritingReleasePhaseTestCase
     public void testRewriteAddSchema()
         throws Exception
     {
-        ReleaseConfiguration config = createConfigurationFromBasicPom();
-        mapNextVersion( config, "groupId:artifactId" );
-        config.setAddSchema( true );
+        boolean copyFiles = true;
 
         // Run a second time to check they are not duplicated
         for ( int i = 0; i < 2; i++ )
         {
+            ReleaseConfiguration config = createConfigurationFromBasicPom( copyFiles );
+            mapNextVersion( config, "groupId:artifactId" );
+            config.setAddSchema( true );
+
             phase.execute( config );
 
             String expected = readTestProjectFile( "basic-pom/expected-pom-with-schema.xml" );
             String actual = readTestProjectFile( "basic-pom/pom.xml" );
             assertEquals( "Check the transformed POM", expected, actual );
+
+            copyFiles = false;
         }
     }
 
@@ -524,6 +529,12 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         return config;
     }
 
+    protected ReleaseConfiguration createConfigurationFromProjects( String path )
+        throws Exception
+    {
+        return createConfigurationFromProjects( path, true );
+    }
+
     private ReleaseConfiguration createDefaultConfiguration( String path )
         throws Exception
     {
@@ -551,6 +562,12 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         return config;
     }
 
+    protected ReleaseConfiguration createConfigurationFromBasicPom()
+        throws Exception
+    {
+        return createConfigurationFromBasicPom( true );
+    }
+
     protected abstract ReleaseConfiguration createConfigurationForWithParentNextVersion( String path )
         throws Exception;
 
@@ -558,10 +575,10 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
     protected abstract void mapNextVersion( ReleaseConfiguration config, String projectId );
 
-    protected abstract ReleaseConfiguration createConfigurationFromProjects( String path )
+    protected abstract ReleaseConfiguration createConfigurationFromProjects( String path, boolean copyFiles )
         throws Exception;
 
-    protected abstract ReleaseConfiguration createConfigurationFromBasicPom()
+    protected abstract ReleaseConfiguration createConfigurationFromBasicPom( boolean copyFiles )
         throws Exception;
 
     protected abstract String readTestProjectFile( String fileName )
