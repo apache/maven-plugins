@@ -41,10 +41,11 @@ public class RewritePomsForReleasePhaseTest
         phase = (ReleasePhase) lookup( ReleasePhase.ROLE, "rewrite-poms-for-release" );
     }
 
-    protected ReleaseConfiguration createConfigurationFromProjects( String path )
+    protected ReleaseConfiguration createConfigurationFromProjects( String path, boolean copyFiles )
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration = createConfigurationFromProjects( "rewrite-for-release/", path );
+        ReleaseConfiguration releaseConfiguration = createConfigurationFromProjects( "rewrite-for-release/", path,
+                                                                                     copyFiles );
         releaseConfiguration.setUrl( "scm:svn:file://localhost/tmp/scm-repo" );
         releaseConfiguration.setReleaseLabel( "release-label" );
         releaseConfiguration.setWorkingDirectory( getTestFile( "target/test/checkout" ) );
@@ -58,10 +59,10 @@ public class RewritePomsForReleasePhaseTest
         return FileUtils.fileRead( getTestFile( "target/test-classes/projects/rewrite-for-release/" + fileName ) );
     }
 
-    protected ReleaseConfiguration createConfigurationFromBasicPom()
+    protected ReleaseConfiguration createConfigurationFromBasicPom( boolean copyFiles )
         throws Exception
     {
-        return createConfigurationFromProjects( "basic-pom" );
+        return createConfigurationFromProjects( "basic-pom", copyFiles );
     }
 
     public void testSimulateRewrite()

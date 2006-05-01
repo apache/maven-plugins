@@ -52,20 +52,21 @@ public class RewritePomsForDevelopmentPhaseTest
         return FileUtils.fileRead( getTestFile( "target/test-classes/projects/rewrite-for-development/" + fileName ) );
     }
 
-    protected ReleaseConfiguration createConfigurationFromProjects( String path )
+    protected ReleaseConfiguration createConfigurationFromProjects( String path, boolean copyFiles )
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration = createConfigurationFromProjects( "rewrite-for-development/", path );
+        ReleaseConfiguration releaseConfiguration =
+            createConfigurationFromProjects( "rewrite-for-development/", path, copyFiles );
         releaseConfiguration.setUrl( "scm:svn:file://localhost/tmp/scm-repo" );
         releaseConfiguration.setWorkingDirectory( getTestFile( "target/test/checkout" ) );
 
         return releaseConfiguration;
     }
 
-    protected ReleaseConfiguration createConfigurationFromBasicPom()
+    protected ReleaseConfiguration createConfigurationFromBasicPom( boolean copyFiles )
         throws Exception
     {
-        ReleaseConfiguration config = createConfigurationFromProjects( "basic-pom" );
+        ReleaseConfiguration config = createConfigurationFromProjects( "basic-pom", copyFiles );
 
         mapScm( config );
 

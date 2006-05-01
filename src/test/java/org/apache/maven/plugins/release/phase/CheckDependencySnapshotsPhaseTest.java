@@ -554,7 +554,7 @@ public class CheckDependencySnapshotsPhaseTest
     private ReleaseConfiguration createConfigurationFromProjects( String path )
         throws Exception
     {
-        return createConfigurationFromProjects( "check-dependencies/", path );
+        return createConfigurationFromProjects( "check-dependencies/", path, true );
     }
 
 }
