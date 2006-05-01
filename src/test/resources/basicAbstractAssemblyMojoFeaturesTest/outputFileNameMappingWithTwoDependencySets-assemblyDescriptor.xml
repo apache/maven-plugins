@@ -1,0 +1,27 @@
+<assembly>
+  <id>outputFileNameMapping</id>
+  <formats>
+    <format>dir</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <dependencySets>
+    <dependencySet>
+      <excludes>
+        <exclude>second:second</exclude>
+        <exclude>org.test.3:test3</exclude>
+        <exclude>org.test.4:test4</exclude>
+      </excludes>
+      <outputDirectory>/dependencies/</outputDirectory>
+      <outputFileNameMapping>${artifactId}.${extension}</outputFileNameMapping>
+    </dependencySet>
+    <dependencySet>
+      <excludes>
+        <exclude>first:first</exclude>
+        <exclude>org.test:test</exclude>
+        <exclude>org.test.2:test2</exclude>
+      </excludes>
+      <outputDirectory>/dependencies/</outputDirectory>
+      <outputFileNameMapping>${artifactId}-${version}.${extension}</outputFileNameMapping>
+    </dependencySet>
+  </dependencySets>
+</assembly>
