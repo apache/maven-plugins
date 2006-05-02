@@ -138,6 +138,11 @@
       <role>org.apache.maven.plugins.release.phase.ReleasePhase</role>
       <role-hint>run-tests</role-hint>
       <implementation>org.apache.maven.plugins.release.phase.RunTestsPhase</implementation>
+      <requirements>
+        <requirement>
+          <role>org.apache.maven.plugins.release.exec.MavenExecutor</role>
+        </requirement>
+      </requirements>
     </component>
     <component>
       <role>org.apache.maven.plugins.release.phase.ReleasePhase</role>
@@ -185,6 +190,14 @@
       <role>org.apache.maven.plugins.release.scm.ScmTranslator</role>
       <role-hint>svn</role-hint>
       <implementation>org.apache.maven.plugins.release.scm.SubversionScmTranslator</implementation>
+    </component>
+    <component>
+      <role>org.apache.maven.plugins.release.exec.MavenExecutor</role>
+      <implementation>org.apache.maven.plugins.release.exec.ForkedMavenExecutor</implementation>
+    </component>
+    <component>
+      <role>org.apache.maven.plugins.release.exec.CommandLineFactory</role>
+      <implementation>org.apache.maven.plugins.release.exec.DefaultCommandLineFactory</implementation>
     </component>
   </components>
 </component-set>
