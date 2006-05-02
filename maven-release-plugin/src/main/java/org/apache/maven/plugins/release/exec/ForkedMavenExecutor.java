@@ -42,7 +42,8 @@ public class ForkedMavenExecutor
     /**
      * @noinspection UseOfSystemOutOrSystemErr
      */
-    public void executeGoals( File workingDirectory, String goals, boolean interactive, String arguments )
+    public void executeGoals( File workingDirectory, String goals, boolean interactive, String pomFileName,
+                              String additionalArguments )
         throws MavenExecutorException
     {
         Commandline cl = commandLineFactory.createCommandLine( "mvn" );
@@ -50,6 +51,11 @@ public class ForkedMavenExecutor
         cl.setWorkingDirectory( workingDirectory.getAbsolutePath() );
 
         cl.addEnvironment( "MAVEN_TERMINATE_CMD", "on" );
+
+        if ( pomFileName != null )
+        {
+            cl.createArgument().setLine( "-f " + pomFileName );
+        }
 
         if ( goals != null )
         {
@@ -69,9 +75,9 @@ public class ForkedMavenExecutor
             cl.createArgument().setValue( "--batch-mode" );
         }
 
-        if ( !StringUtils.isEmpty( arguments ) )
+        if ( !StringUtils.isEmpty( additionalArguments ) )
         {
-            cl.createArgument().setLine( arguments );
+            cl.createArgument().setLine( additionalArguments );
         }
 
         /* TODO [!]
@@ -121,7 +127,7 @@ public class ForkedMavenExecutor
     public void executeGoals( File workingDirectory, String goals, boolean interactive )
         throws MavenExecutorException
     {
-        executeGoals( workingDirectory, goals, interactive, null );
+        executeGoals( workingDirectory, goals, interactive, null, null );
     }
 
     public void setCommandLineFactory( CommandLineFactory commandLineFactory )

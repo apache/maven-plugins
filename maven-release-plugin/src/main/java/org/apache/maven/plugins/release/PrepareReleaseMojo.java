@@ -105,7 +105,6 @@ public class PrepareReleaseMojo
         config.setUseEditMode( useEditMode );
         // TODO [!]: prep goals not configurable
         // TODO [!]: resume not configured
-        // TODO: move to abstract?
 
         try
         {
