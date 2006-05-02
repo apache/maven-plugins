@@ -39,11 +39,6 @@ public class RewritePomsForReleasePhase
      */
     private Map scmTranslators;
 
-    protected String getPomSuffix()
-    {
-        return "tag";
-    }
-
     protected void transformScm( MavenProject project, Element rootElement, Namespace namespace,
                                  ReleaseConfiguration releaseConfiguration, String projectId,
                                  ScmRepository scmRepository )
