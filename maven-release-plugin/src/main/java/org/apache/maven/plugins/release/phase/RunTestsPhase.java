@@ -16,25 +16,51 @@ package org.apache.maven.plugins.release.phase;
  * limitations under the License.
  */
 
+import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.plugins.release.exec.MavenExecutor;
+import org.apache.maven.plugins.release.exec.MavenExecutorException;
+import org.codehaus.plexus.logging.AbstractLogEnabled;
 
 /**
- * TODO [!]: Description.
+ * Run the integration tests for the project to verify that it builds before committing.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class RunTestsPhase
+    extends AbstractLogEnabled
     implements ReleasePhase
 {
-    public void execute( ReleaseConfiguration releaseConfiguration )
-    {
-        // TODO [!]: implement
+    /**
+     * Component to assist in executing Maven.
+     */
+    private MavenExecutor mavenExecutor;
 
+    public void execute( ReleaseConfiguration releaseConfiguration )
+        throws ReleaseExecutionException
+    {
+        try
+        {
+            mavenExecutor.executeGoals( releaseConfiguration.getWorkingDirectory(), "clean integration-test",
+                                        releaseConfiguration.isInteractive() );
+        }
+        catch ( MavenExecutorException e )
+        {
+            throw new ReleaseExecutionException( e.getMessage(), e );
+        }
     }
 
     public void simulate( ReleaseConfiguration releaseConfiguration )
+        throws ReleaseExecutionException
     {
-        // TODO [!]: implement
+        getLogger().info(
+            "Executing tests - since this is simulation mode it is testing the original project, not the rewritten ones" );
 
+        execute( releaseConfiguration );
+    }
+
+    public void setMavenExecutor( MavenExecutor mavenExecutor )
+    {
+        this.mavenExecutor = mavenExecutor;
     }
 }
