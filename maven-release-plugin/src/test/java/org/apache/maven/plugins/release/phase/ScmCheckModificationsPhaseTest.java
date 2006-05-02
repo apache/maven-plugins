@@ -231,7 +231,7 @@ public class ScmCheckModificationsPhaseTest
         ReleaseConfiguration releaseConfiguration = createReleaseConfiguration();
 
         setChangedFiles( releaseConfiguration, Arrays.asList( new String[]{"release.properties", "pom.xml",
-            "pom.xml.backup", "module/pom.xml", "pom.xml.tag", "pom.xml.release"} ) );
+            "pom.xml.backup", "module/pom.xml", "pom.xml.tag", "pom.xml.next"} ) );
 
         phase.execute( releaseConfiguration );
 

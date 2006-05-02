@@ -57,7 +57,7 @@ public class ScmCheckModificationsPhase
      * @todo proper construction of filenames, especially release properties
      */
     private Set excludedFiles = new HashSet( Arrays.asList(
-        new String[]{"pom.xml", "pom.xml.backup", "pom.xml.tag", "pom.xml.release", "release.properties"} ) );
+        new String[]{"pom.xml", "pom.xml.backup", "pom.xml.tag", "pom.xml.next", "release.properties"} ) );
 
     public void execute( ReleaseConfiguration releaseConfiguration )
         throws ReleaseExecutionException
