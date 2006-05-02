@@ -17,12 +17,12 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugins.assembly.model.Repository;
+import org.apache.maven.plugins.assembly.model.GroupVersionAlignment;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.DefaultMavenProjectBuilder;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -36,6 +36,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.Set;
+import java.util.HashSet;
 import java.lang.reflect.Field;
 
 /**
@@ -63,14 +65,16 @@ public class DefaultRepositoryAssembler
 
     protected MavenProjectBuilder projectBuilder;
 
-    private Map versionAlignmentMap;
+    private Map groupVersionAlignments;
+
+    private Set groupVersionAlignmentExcludes;
 
     public void assemble( File repositoryDirectory,
                           Repository repository,
                           MavenProject project )
         throws RepositoryAssemblyException
     {
-        versionAlignmentMap = createVersionAlignmentMap( repository.getVersionAlignments() );
+        createGroupVersionAlignments( repository.getGroupVersionAlignments() );
 
         ArtifactRepository localRepository = createLocalRepository( repositoryDirectory );
 
@@ -80,11 +84,12 @@ public class DefaultRepositoryAssembler
             // to align everything. If I use a filter to change the version on the fly then I get the
             // I get JARs but no POMs, and in some directories POMs with no JARs.
 
+            // I'm not getting runtime dependencies here
+
             ArtifactResolutionResult result = artifactResolver.resolveTransitively( project.getDependencyArtifacts(),
                                                                                     project.getArtifact(),
                                                                                     project.getRemoteArtifactRepositories(),
-                                                                                    localRepository,
-                                                                                    metadataSource );
+                                                                                    localRepository, metadataSource );
 
             // Now that we have the graph, let's try to align it to versions that we want and remove
             // the repository we previously populated.
@@ -99,9 +104,9 @@ public class DefaultRepositoryAssembler
             {
                 Artifact a = (Artifact) i.next();
 
-                String alignedVersion = (String) versionAlignmentMap.get( a.getGroupId() );
+                String alignedVersion = (String) groupVersionAlignments.get( a.getGroupId() );
 
-                if ( alignedVersion != null )
+                if ( alignedVersion != null && !groupVersionAlignmentExcludes.contains( a.getArtifactId() ) )
                 {
                     a.setVersion( alignedVersion );
                 }
@@ -122,7 +127,8 @@ public class DefaultRepositoryAssembler
                 {
                     Artifact a = (Artifact) i.next();
 
-                    File metadataFile = new File( a.getFile().getParentFile().getParent(), "maven-metadata-central.xml" );
+                    File metadataFile =
+                        new File( a.getFile().getParentFile().getParent(), "maven-metadata-central.xml" );
 
                     Metadata m = new Metadata();
 
@@ -178,21 +184,23 @@ public class DefaultRepositoryAssembler
         }
     }
 
-    protected Map createVersionAlignmentMap( List versionAlignments )
+    protected void createGroupVersionAlignments( List versionAlignments )
     {
-        Map m = new HashMap();
+        groupVersionAlignments = new HashMap();
+
+        groupVersionAlignmentExcludes = new HashSet();
 
         for ( Iterator i = versionAlignments.iterator(); i.hasNext(); )
         {
-            String alignment = (String) i.next();
+            GroupVersionAlignment alignment = (GroupVersionAlignment) i.next();
 
-            // split into groupId and version
-            String[] s = StringUtils.split( alignment, ":" );
+            groupVersionAlignments.put( alignment.getId(), alignment.getVersion() );
 
-            m.put( s[0], s[1] );
+            if ( !alignment.getExcludes().isEmpty() )
+            {
+                groupVersionAlignmentExcludes.addAll( alignment.getExcludes() );
+            }
         }
-
-        return m;
     }
 
     protected static DateFormat getUtcDateFormatter()
