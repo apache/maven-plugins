@@ -183,7 +183,7 @@ public abstract class AbstractRewritePomsPhase
 
         String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
 
-        rewriteVersion( rootElement, namespace, mappedVersions, originalVersions, projectId, project, parentVersion );
+        rewriteVersion( rootElement, namespace, mappedVersions, projectId, project, parentVersion );
 
         rewriteDependencies( project.getDependencies(), rootElement, mappedVersions, originalVersions );
 
@@ -228,11 +228,10 @@ public abstract class AbstractRewritePomsPhase
         transformScm( project, rootElement, namespace, releaseConfiguration, projectId, scmRepository );
     }
 
-    private void rewriteVersion( Element rootElement, Namespace namespace, Map mappedVersions, Map originalVersions,
-                                 String projectId, MavenProject project, String parentVersion )
+    private void rewriteVersion( Element rootElement, Namespace namespace, Map mappedVersions, String projectId,
+                                 MavenProject project, String parentVersion )
         throws ReleaseExecutionException
     {
-        // TODO: what about if version is inherited? shouldn't prompt...
         Element versionElement = rootElement.getChild( "version", namespace );
         String version = (String) mappedVersions.get( projectId );
         if ( version == null )
