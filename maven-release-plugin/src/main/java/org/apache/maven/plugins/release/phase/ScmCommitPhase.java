@@ -92,11 +92,11 @@ public class ScmCommitPhase
         }
         catch ( ScmException e )
         {
-            throw new ReleaseExecutionException( "An error is occurred in the checkin process.", e );
+            throw new ReleaseExecutionException( "An error is occurred in the checkin process: " + e.getMessage(), e );
         }
         if ( !result.isSuccess() )
         {
-            throw new ReleaseScmCommandException( "Unable to check for local modifications", result );
+            throw new ReleaseScmCommandException( "Unable to commit files", result );
         }
     }
 
@@ -106,7 +106,7 @@ public class ScmCommitPhase
         validateConfiguration( releaseConfiguration );
 
         Collection pomFiles = createPomFiles( releaseConfiguration.getReactorProjects() );
-        getLogger().info( "Expected to be checking in " + pomFiles.size() + " files with message: '" +
+        getLogger().info( "Full run would be checking in " + pomFiles.size() + " files with message: '" +
             createMessage( releaseConfiguration ) + "'" );
     }
 

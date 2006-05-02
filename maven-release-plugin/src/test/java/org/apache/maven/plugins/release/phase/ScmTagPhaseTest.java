@@ -25,7 +25,7 @@ import org.apache.maven.plugins.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
-import org.apache.maven.scm.command.checkin.CheckInScmResult;
+import org.apache.maven.scm.command.tag.TagScmResult;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.manager.ScmManagerStub;
@@ -36,39 +36,30 @@ import org.jmock.cglib.Mock;
 import org.jmock.core.Constraint;
 import org.jmock.core.constraint.IsAnything;
 import org.jmock.core.constraint.IsEqual;
-import org.jmock.core.constraint.IsNull;
 import org.jmock.core.matcher.InvokeOnceMatcher;
 import org.jmock.core.matcher.TestFailureMatcher;
 import org.jmock.core.stub.ReturnStub;
 import org.jmock.core.stub.ThrowStub;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 
 /**
- * Test the SCM commit phase.
+ * Test the SCM tag phase.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class ScmCommitPhaseTest
+public class ScmTagPhaseTest
     extends AbstractReleaseTestCase
 {
-    private static final String PREFIX = "[maven-release-plugin] prepare release ";
-
-    private static final File[] EMPTY_FILE_ARRAY = new File[0];
-
     protected void setUp()
         throws Exception
     {
         super.setUp();
 
-        phase = (ReleasePhase) lookup( ReleasePhase.ROLE, "scm-commit-release" );
+        phase = (ReleasePhase) lookup( ReleasePhase.ROLE, "scm-tag" );
     }
 
-    public void testCommit()
+    public void testTag()
         throws Exception
     {
         ReleaseConfiguration config = createConfigurationFromProjects( "scm-commit/", "single-pom", false );
@@ -77,13 +68,13 @@ public class ScmCommitPhaseTest
         config.setWorkingDirectory( rootProject.getFile().getParentFile() );
         config.setReleaseLabel( "release-label" );
 
-        ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile(), rootProject.getFile() );
+        ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile() );
 
         Mock scmProviderMock = new Mock( ScmProvider.class );
-        Constraint[] arguments = new Constraint[]{new IsAnything(), new IsScmFileSetEquals( fileSet ), new IsNull(),
-            new IsEqual( PREFIX + "release-label" )};
-        scmProviderMock.expects( new InvokeOnceMatcher() ).method( "checkIn" ).with( arguments ).will(
-            new ReturnStub( new CheckInScmResult( "...", Collections.singletonList( rootProject.getFile() ) ) ) );
+        Constraint[] arguments =
+            new Constraint[]{new IsAnything(), new IsScmFileSetEquals( fileSet ), new IsEqual( "release-label" )};
+        scmProviderMock.expects( new InvokeOnceMatcher() ).method( "tag" ).with( arguments ).will(
+            new ReturnStub( new TagScmResult( "...", Collections.singletonList( rootProject.getFile() ) ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
@@ -102,20 +93,13 @@ public class ScmCommitPhaseTest
         config.setWorkingDirectory( rootProject.getFile().getParentFile() );
         config.setReleaseLabel( "release-label" );
 
-        List poms = new ArrayList();
-        for ( Iterator i = config.getReactorProjects().iterator(); i.hasNext(); )
-        {
-            MavenProject project = (MavenProject) i.next();
-            poms.add( project.getFile() );
-        }
-        ScmFileSet fileSet =
-            new ScmFileSet( rootProject.getFile().getParentFile(), (File[]) poms.toArray( EMPTY_FILE_ARRAY ) );
+        ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile() );
 
         Mock scmProviderMock = new Mock( ScmProvider.class );
-        Constraint[] arguments = new Constraint[]{new IsAnything(), new IsScmFileSetEquals( fileSet ), new IsNull(),
-            new IsEqual( PREFIX + "release-label" )};
-        scmProviderMock.expects( new InvokeOnceMatcher() ).method( "checkIn" ).with( arguments ).will(
-            new ReturnStub( new CheckInScmResult( "...", Collections.singletonList( rootProject.getFile() ) ) ) );
+        Constraint[] arguments =
+            new Constraint[]{new IsAnything(), new IsScmFileSetEquals( fileSet ), new IsEqual( "release-label" )};
+        scmProviderMock.expects( new InvokeOnceMatcher() ).method( "tag" ).with( arguments ).will(
+            new ReturnStub( new TagScmResult( "...", Collections.singletonList( rootProject.getFile() ) ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
@@ -125,34 +109,7 @@ public class ScmCommitPhaseTest
         assertTrue( true );
     }
 
-    public void testCommitDevelopment()
-        throws Exception
-    {
-        phase = (ReleasePhase) lookup( ReleasePhase.ROLE, "scm-commit-development" );
-
-        ReleaseConfiguration config = createConfigurationFromProjects( "scm-commit/", "single-pom", false );
-        config.setUrl( "scm-url" );
-        MavenProject rootProject = (MavenProject) config.getReactorProjects().get( 0 );
-        config.setWorkingDirectory( rootProject.getFile().getParentFile() );
-        config.setReleaseLabel( "release-label" );
-
-        ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile(), rootProject.getFile() );
-
-        Mock scmProviderMock = new Mock( ScmProvider.class );
-        Constraint[] arguments = new Constraint[]{new IsAnything(), new IsScmFileSetEquals( fileSet ), new IsNull(),
-            new IsEqual( "[maven-release-plugin] prepare for next development iteration" )};
-        scmProviderMock.expects( new InvokeOnceMatcher() ).method( "checkIn" ).with( arguments ).will(
-            new ReturnStub( new CheckInScmResult( "...", Collections.singletonList( rootProject.getFile() ) ) ) );
-
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
-        stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
-
-        phase.execute( config );
-
-        assertTrue( true );
-    }
-
-    public void testCommitNoReleaseLabel()
+    public void testTagNoReleaseLabel()
         throws Exception
     {
         ReleaseConfiguration config = createConfigurationFromProjects( "scm-commit/", "single-pom", false );
@@ -168,7 +125,7 @@ public class ScmCommitPhaseTest
         }
     }
 
-    public void testSimulateCommit()
+    public void testSimulateTag()
         throws Exception
     {
         ReleaseConfiguration config = createConfigurationFromProjects( "scm-commit/", "single-pom", false );
@@ -178,7 +135,7 @@ public class ScmCommitPhaseTest
         config.setReleaseLabel( "release-label" );
 
         Mock scmProviderMock = new Mock( ScmProvider.class );
-        scmProviderMock.expects( new TestFailureMatcher( "Shouldn't have called checkIn" ) ).method( "checkIn" );
+        scmProviderMock.expects( new TestFailureMatcher( "Shouldn't have called tag" ) ).method( "tag" );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
@@ -188,7 +145,7 @@ public class ScmCommitPhaseTest
         assertTrue( true );
     }
 
-    public void testSimulateCommitNoReleaseLabel()
+    public void testSimulateTagNoReleaseLabel()
         throws Exception
     {
         ReleaseConfiguration config = createConfigurationFromProjects( "scm-commit/", "single-pom", false );
@@ -262,7 +219,7 @@ public class ScmCommitPhaseTest
         ReleaseConfiguration releaseConfiguration = createReleaseConfiguration();
 
         Mock scmProviderMock = new Mock( ScmProvider.class );
-        scmProviderMock.expects( new InvokeOnceMatcher() ).method( "checkIn" ).will(
+        scmProviderMock.expects( new InvokeOnceMatcher() ).method( "tag" ).will(
             new ThrowStub( new ScmException( "..." ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
@@ -288,7 +245,7 @@ public class ScmCommitPhaseTest
         ScmManager scmManager = (ScmManager) lookup( ScmManager.ROLE );
         ScmProviderStub providerStub = (ScmProviderStub) scmManager.getProviderByUrl( releaseConfiguration.getUrl() );
 
-        providerStub.setCheckInScmResult( new CheckInScmResult( "", "", "", false ) );
+        providerStub.setTagScmResult( new TagScmResult( "", "", "", false ) );
 
         try
         {
