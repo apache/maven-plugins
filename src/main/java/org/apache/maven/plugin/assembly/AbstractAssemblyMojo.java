@@ -21,40 +21,33 @@ import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.InvalidRepositoryException;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
-import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
-import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ExcludesArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.IncludesArtifactFilter;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.model.License;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.assembly.filter.AssemblyScopeArtifactFilter;
 import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolationException;
 import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolator;
 import org.apache.maven.plugin.assembly.interpolation.ReflectionProperties;
-import org.apache.maven.plugin.assembly.utils.PropertyUtils;
 import org.apache.maven.plugin.assembly.repository.RepositoryAssembler;
 import org.apache.maven.plugin.assembly.repository.RepositoryAssemblyException;
+import org.apache.maven.plugin.assembly.utils.PropertyUtils;
 import org.apache.maven.plugins.assembly.model.Assembly;
 import org.apache.maven.plugins.assembly.model.Component;
 import org.apache.maven.plugins.assembly.model.DependencySet;
 import org.apache.maven.plugins.assembly.model.FileItem;
 import org.apache.maven.plugins.assembly.model.FileSet;
+import org.apache.maven.plugins.assembly.model.InstallerConfiguration;
 import org.apache.maven.plugins.assembly.model.Repository;
 import org.apache.maven.plugins.assembly.model.io.xpp3.AssemblyXpp3Reader;
 import org.apache.maven.plugins.assembly.model.io.xpp3.ComponentXpp3Reader;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-import org.apache.maven.wagon.PathUtils;
 import org.apache.maven.shared.model.fileset.util.FileSetManager;
-import org.apache.maven.model.RepositoryPolicy;
-import org.apache.maven.model.RepositoryBase;
-import org.apache.maven.execution.MavenSession;
+import org.apache.maven.wagon.PathUtils;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
@@ -64,14 +57,17 @@ import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.archiver.tar.TarArchiver;
 import org.codehaus.plexus.archiver.tar.TarLongFileMode;
 import org.codehaus.plexus.archiver.war.WarArchiver;
+import org.codehaus.plexus.installer.Installer;
+import org.codehaus.plexus.installer.InstallerException;
+import org.codehaus.plexus.installer.InstallerManager;
+import org.codehaus.plexus.installer.NoSuchInstallerException;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.InterpolationFilterReader;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.introspection.ReflectionValueExtractor;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -84,14 +80,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Writer;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.MissingResourceException;
 import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -217,6 +216,11 @@ public abstract class AbstractAssemblyMojo
     protected boolean appendAssemblyId;
 
     private ComponentsXmlArchiverFileFilter componentsXmlFilter = new ComponentsXmlArchiverFileFilter();
+    
+    /**
+     * @component
+     */
+    private InstallerManager installerManager;
 
     /**
      * @parameter
@@ -269,56 +273,244 @@ public abstract class AbstractAssemblyMojo
     {
         String fullName = getDistributionName( assembly );
 
-        for ( Iterator i = assembly.getFormats().iterator(); i.hasNext(); )
+        List formats = assembly.getFormats();
+        
+        if ( formats != null && !formats.isEmpty() )
         {
-            String format = (String) i.next();
-
-            String filename = fullName + "." + format;
-
-            File destFile;
+            for ( Iterator i = assembly.getFormats().iterator(); i.hasNext(); )
+            {
+                String format = (String) i.next();
+                
+                Archiver archiver;
+                try
+                {
+                    archiver = createArchiver( format );
+                }
+                catch ( ArchiverException e )
+                {
+                    throw new MojoExecutionException( "Error creating assembly: " + e.getMessage(), e );
+                }
+                catch ( NoSuchArchiverException e )
+                {
+                    throw new MojoFailureException( "Unable to obtain archiver for extension '" + format + "'" );
+                }
+                
+                createArchiveAssemblyForFormat( assembly, format, fullName, archiver );
+            }
+        }
+        
+        List installers = assembly.getInstallers();
+        if ( installers != null && !installers.isEmpty() )
+        {
+            File licensesFile;
             try
             {
-                Archiver archiver = createArchiver( format );
-
-                destFile = createArchive( archiver, assembly, filename );
-            }
-            catch ( NoSuchArchiverException e )
-            {
-                throw new MojoFailureException( "Unable to obtain archiver for extension '" + format + "'" );
-            }
-            catch ( ArchiverException e )
-            {
-                throw new MojoExecutionException( "Error creating assembly: " + e.getMessage(), e );
+                licensesFile = createLicensesFile( project );
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException( "Error creating assembly: " + e.getMessage(), e );
+                throw new MojoExecutionException( "Unable to generate project licenses file. Reason: " + e.getMessage(), e );
             }
-            catch ( XmlPullParserException e )
+            
+            for ( Iterator it = installers.iterator(); it.hasNext(); )
             {
-                throw new MojoExecutionException( "Error creating assembly: " + e.getMessage(), e );
+                InstallerConfiguration installerConfig = (InstallerConfiguration) it.next();
+                
+                Installer installer;
+                try
+                {
+                    installer = createInstaller( fullName, licensesFile, installerConfig );
+                }
+                catch ( NoSuchInstallerException e )
+                {
+                    MojoFailureException error = new MojoFailureException( "Unable to obtain installer for id: '" + installerConfig.getId() + "'" );
+                    error.initCause( e );
+                    throw error;
+                }
+                catch ( InstallerException e )
+                {
+                    MojoFailureException error = new MojoFailureException( "Unable to configure installer for id: '" + installerConfig.getId() + "'. Reason: " + e.getMessage() );
+                    error.initCause( e );
+                    throw error;
+                }
+                
+                
+                createArchiveAssemblyForFormat( assembly, installerConfig.getId(), fullName, installer );
             }
-            catch ( RepositoryAssemblyException e )
+        }
+    }
+
+    private Installer createInstaller( String fullName, File licensesFile, InstallerConfiguration installerConfig ) 
+        throws NoSuchInstallerException, InstallerException
+    {
+        Installer installer = installerManager.getInstaller( installerConfig.getId() );
+        
+        String compiler = installerConfig.getCompiler();
+        
+        if ( StringUtils.isNotEmpty( compiler ) )
+        {
+            installer.setCompiler( new File( compiler ) );
+        }
+        
+        String template = installerConfig.getTemplate();
+        Properties templateProperties = installerConfig.getTemplateProperties();
+        
+        if ( StringUtils.isNotEmpty( template ) )
+        {
+            installer.setTemplate( new File( template ), templateProperties );
+        }
+        
+        installer.setInstallerName( fullName );
+        installer.setProductName( fullName );
+        
+        installer.setProductVersion( project.getVersion() );
+        
+        if ( project.getOrganization() != null )
+        {
+            installer.setProductCompany( project.getOrganization().getName() );
+        }
+        
+        installer.setProductURL( project.getUrl() );
+        
+        installer.setProductLicense( licensesFile );
+        
+        return installer;
+    }
+
+    /**
+     * Generate a new License file containing all licenses defined in the project.
+     * <p>It will be used by the installer</p>
+     *
+     * @param project
+     * @return a temporary LICENSES.TXT containing all licenses
+     * @throws IOException if any
+     */
+    private File createLicensesFile( MavenProject project )
+        throws IOException
+    {
+        File licenses = null;
+
+        if ( !project.getLicenses().isEmpty() )
+        {
+            StringBuffer licenseContent = new StringBuffer();
+            licenses = FileUtils.createTempFile( "LICENSES", ".TXT", null );
+
+            for ( Iterator it = project.getLicenses().iterator(); it.hasNext(); )
             {
-                throw new MojoExecutionException( "Error creating assembly: " + e.getMessage(), e );
-            }
-            catch ( InvalidRepositoryException e )
-            {
-                throw new MojoExecutionException( "Error creating assembly: " + e.getMessage(), e );
+                License license = (License) it.next();
+
+                String url = license.getUrl();
+                URL licenseUrl = null;
+
+                if ( url.indexOf( "://" ) < 0 )
+                {
+                    File licenseFile = new File( project.getBasedir(), url );
+                    if ( !licenseFile.exists() )
+                    {
+                        licenseFile = new File( url );
+                    }
+                    if ( !licenseFile.exists() )
+                    {
+                        throw new IOException( "Maven can't find the file " + licenseFile + " on the system." );
+                    }
+                    try
+                    {
+                        licenseUrl = licenseFile.toURL();
+                    }
+                    catch ( MalformedURLException e )
+                    {
+                        throw new IOException( "The license url [" + url + "] seems to be invalid: " + e.getMessage() );
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        licenseUrl = new URL( url );
+                    }
+                    catch ( MalformedURLException e )
+                    {
+                        throw new IOException( "The license url [" + url + "] seems to be invalid: " + e.getMessage() );
+                    }
+                }
+
+                InputStream in = null;
+                try
+                {
+                    in = licenseUrl.openStream();
+                    licenseContent.append( IOUtil.toString( in, "ISO-8859-1" ) );
+                }
+                catch ( IOException e )
+                {
+                    throw new MissingResourceException( "Can't read the url [" + url + "] : " + e.getMessage(), null,
+                                                        null );
+                }
+                finally
+                {
+                    IOUtil.close( in );
+                }
+
+                if ( it.hasNext() )
+                {
+                    licenseContent.append( '\n' );
+                    licenseContent.append( '\n' );
+                    for ( int i = 0; i < 80; i++ )
+                    {
+                        licenseContent.append( '-' );
+                    }
+                    licenseContent.append( '\n' );
+                    licenseContent.append( '\n' );
+                }
             }
 
-            if ( appendAssemblyId )
-            {
-                projectHelper.attachArtifact( project, format, assembly.getId(), destFile );
-            }
-            else if ( classifier != null )
-            {
-                projectHelper.attachArtifact( project, format, classifier, destFile );
-            }
-            else
-            {
-                projectHelper.attachArtifact( project, format, null, destFile );
-            }
+            FileUtils.fileWrite( licenses.getAbsolutePath(), licenseContent.toString() );
+        }
+
+        return licenses;
+    }
+    
+    private void createArchiveAssemblyForFormat( Assembly assembly, String format, String fullName, Archiver archiver ) 
+        throws MojoExecutionException, MojoFailureException
+    {
+        String filename = fullName + "." + format;
+
+        File destFile;
+        try
+        {
+            destFile = createArchive( archiver, assembly, filename );
+        }
+        catch ( ArchiverException e )
+        {
+            throw new MojoExecutionException( "Error creating assembly: " + e.getMessage(), e );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Error creating assembly: " + e.getMessage(), e );
+        }
+        catch ( XmlPullParserException e )
+        {
+            throw new MojoExecutionException( "Error creating assembly: " + e.getMessage(), e );
+        }
+        catch ( RepositoryAssemblyException e )
+        {
+            throw new MojoExecutionException( "Error creating assembly: " + e.getMessage(), e );
+        }
+        catch ( InvalidRepositoryException e )
+        {
+            throw new MojoExecutionException( "Error creating assembly: " + e.getMessage(), e );
+        }
+
+        if ( appendAssemblyId )
+        {
+            projectHelper.attachArtifact( project, format, assembly.getId(), destFile );
+        }
+        else if ( classifier != null )
+        {
+            projectHelper.attachArtifact( project, format, classifier, destFile );
+        }
+        else
+        {
+            projectHelper.attachArtifact( project, format, null, destFile );
         }
     }
 

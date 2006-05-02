@@ -54,7 +54,7 @@
         <field>
           <name>formats</name>
           <version>1.0.0</version>
-          <required>true</required>
+          <required>false</required>
           <association>
             <type>String</type>
             <multiplicity>*</multiplicity>
@@ -72,6 +72,16 @@
             </ul>
             ]]>
           </description>
+        </field>
+        <field>
+          <name>installers</name>
+          <version>1.0.0</version>
+          <required>false</required>
+          <description>The set of installers used to compile the assembly into installable binaries.</description>
+          <association>
+            <type>InstallerConfiguration</type>
+            <multiplicity>*</multiplicity>
+          </association>
         </field>
         <field>
           <name>includeBaseDirectory</name>
@@ -414,10 +424,82 @@
           </description>
         </field>
         <field>
-          <name>versionAlignments</name>
+          <name>groupVersionAlignments</name>
           <version>1.0.0</version>
           <description>Align a group to a version or an individual artifact.</description>
           <association>
+            <type>GroupVersionAlignment</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+      </fields>
+    </class>
+    <class>
+      <name>GroupVersionAlignment</name>
+      <version>1.0.0</version>
+      <description>Defines a Maven repository to be included in the assembly.</description>
+      <fields>
+        <field>
+          <name>id</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <description>The groupId for which you want to align the versions.</description>
+        </field>
+        <field>
+          <name>version</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <description>The version you want to align this group to.</description>
+        </field>
+        <field>
+          <name>excludes</name>
+          <version>1.0.0</version>
+          <description>Artifact Ids of the artifacts you want excluded from version alignment.</description>
+          <association>
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+      </fields>
+    </class>
+    <class>
+      <name>InstallerConfiguration</name>
+      <version>1.0.0</version>
+      <description>Configuration options for creating an installer based on this assembly.</description>
+      <fields>
+        <field>
+          <name>id</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <required>true</required>
+          <description>
+            <![CDATA[
+            The installer id, for looking up from the installer manager. For example:
+            <ul>
+              <li>nsi (NSIS Installer)</li>
+              <li>iis (InnoSetup Installer)</li>
+            </ul>
+            ]]>
+          </description>
+        </field>
+        <field>
+          <name>compiler</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <description>The installer's compiler location on the local filesystem (This is a file path).</description>
+        </field>
+        <field>
+          <name>template</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <description>The installer's configuration template location, usually relative ${basedir} (Another file path).</description>
+        </field>
+        <field>
+          <name>templateProperties</name>
+          <version>1.0.0</version>
+          <description><![CDATA[The installer's configuration template properties. Specified using <key>value</key> syntax.]]></description>
+          <type>Properties</type>
+          <association xml.mapStyle="inline">
             <type>String</type>
             <multiplicity>*</multiplicity>
           </association>
