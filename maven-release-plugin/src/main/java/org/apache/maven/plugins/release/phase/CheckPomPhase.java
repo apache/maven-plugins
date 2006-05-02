@@ -36,12 +36,27 @@ public class CheckPomPhase
     public void execute( ReleaseConfiguration releaseConfiguration )
         throws ReleaseExecutionException
     {
-        // TODO [!]: SCM URL is coming from the store but it probably needs to be read from every project instead
-        // TODO [!]: prepare release mojo needs to set this correct to either connection or developerConnection as appropriate - new version doesn't handle it
+        // Currently, we don't deal with multiple SCM locations in a multiproject
         if ( StringUtils.isEmpty( releaseConfiguration.getUrl() ) )
         {
-            throw new ReleaseExecutionException(
-                "Missing required setting: scm connection or developerConnection must be specified." );
+            MavenProject rootProject = (MavenProject) releaseConfiguration.getReactorProjects().get( 0 );
+            if ( rootProject != null && rootProject.getScm() != null )
+            {
+                if ( rootProject.getScm().getDeveloperConnection() != null )
+                {
+                    releaseConfiguration.setUrl( rootProject.getScm().getDeveloperConnection() );
+                }
+                else if ( rootProject.getScm().getConnection() != null )
+                {
+                    releaseConfiguration.setUrl( rootProject.getScm().getConnection() );
+                }
+            }
+
+            if ( StringUtils.isEmpty( releaseConfiguration.getUrl() ) )
+            {
+                throw new ReleaseExecutionException(
+                    "Missing required setting: scm connection or developerConnection must be specified." );
+            }
         }
 
         List reactorProjects = releaseConfiguration.getReactorProjects();
