@@ -89,7 +89,7 @@ public class ForkedMavenExecutorTest
 
         executor.setCommandLineFactory( (CommandLineFactory) mock.proxy() );
 
-        executor.executeGoals( workingDirectory, "clean integration-test", false, arguments );
+        executor.executeGoals( workingDirectory, "clean integration-test", false, null, arguments );
 
         assertTrue( true );
     }

@@ -206,54 +206,9 @@ public class DefaultReleaseManager
             throw new ReleaseScmCommandException( "Unable to checkout from SCM", result );
         }
 
-/* TODO [!]
-        if ( StringUtils.isEmpty( releasePom ) )
-        {
-            File pomFile = project.getFile();
-
-            releasePom = pomFile.getName();
-        }
-
-        if ( releasePom.equals( Maven.RELEASE_POMv4 ) && interactive )
-        {
-            StringBuffer warning = new StringBuffer();
-            warning.append( "\n*******************************************************************************\n" );
-            warning.append( "\nYou have chosen to use the fully resolved release-POM to deploy this project." );
-            warning.append( "\n" );
-            warning.append( "\nNOTE: Deploying artifacts using the fully resolved release-POM " );
-            warning.append( "\nwill result in loss of any version ranges specified for your" );
-            warning.append( "\nproject's dependencies." );
-            warning.append( "\n" );
-            warning.append( "\nAre you sure you want to do this?" );
-            warning.append( "\n" );
-            warning.append( "\n*******************************************************************************\n" );
-
-            getLog().warn( warning );
-
-            getLog().info( "Enter the POM filename to use for deployment: [" + releasePom + "] " );
-
-            try
-            {
-                String input = getInputHandler().readLine();
-
-                if ( !StringUtils.isEmpty( input ) )
-                {
-                    releasePom = input;
-                }
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "An error has occurred while reading the pom file location.", e );
-            }
-        }
-
-        getLog().info( "Releasing project based on POM: " + releasePom + " in working directory: " + checkoutDirectory );
-
-        cl.createArgument().setLine( "-f " + releasePom );
-*/
         try
         {
-            mavenExecutor.executeGoals( checkoutDirectory, goals, config.isInteractive(),
+            mavenExecutor.executeGoals( checkoutDirectory, goals, config.isInteractive(), config.getPomFileName(),
                                         config.getAdditionalArguments() );
         }
         catch ( MavenExecutorException e )
