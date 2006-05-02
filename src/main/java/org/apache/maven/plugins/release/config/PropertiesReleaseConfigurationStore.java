@@ -88,6 +88,7 @@ public class PropertiesReleaseConfigurationStore
         releaseConfiguration.setReleaseLabel( properties.getProperty( "scm.tag" ) );
         releaseConfiguration.setAdditionalArguments( properties.getProperty( "exec.additionalArguments" ) );
         releaseConfiguration.setPomFileName( properties.getProperty( "exec.pomFileName" ) );
+        releaseConfiguration.setPreparationGoals( properties.getProperty( "preparationGoals" ) );
 
         // boolean properties are not written to the properties file because the value from the caller is always used
 
@@ -171,6 +172,10 @@ public class PropertiesReleaseConfigurationStore
         if ( config.getPomFileName() != null )
         {
             properties.setProperty( "exec.pomFileName", config.getPomFileName() );
+        }
+        if ( config.getPreparationGoals() != null )
+        {
+            properties.setProperty( "preparationGoals", config.getPreparationGoals() );
         }
 
         // boolean properties are not written to the properties file because the value from the caller is always used

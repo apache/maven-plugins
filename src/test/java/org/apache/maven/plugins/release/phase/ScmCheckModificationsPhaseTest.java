@@ -17,6 +17,7 @@ package org.apache.maven.plugins.release.phase;
  */
 
 import org.apache.maven.plugins.release.ReleaseExecutionException;
+import org.apache.maven.plugins.release.ReleaseFailureException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 import org.apache.maven.plugins.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.plugins.release.scm.ReleaseScmCommandException;
@@ -254,10 +255,9 @@ public class ScmCheckModificationsPhaseTest
 
             fail( "Status check should have failed" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            // verify no cause as an extra check that it is the right exception
-            assertNull( "check no cause", e.getCause() );
+            assertTrue( true );
         }
 
         try
@@ -266,10 +266,9 @@ public class ScmCheckModificationsPhaseTest
 
             fail( "Status check should have failed" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            // verify no cause as an extra check that it is the right exception
-            assertNull( "check no cause", e.getCause() );
+            assertTrue( true );
         }
     }
 
@@ -287,10 +286,9 @@ public class ScmCheckModificationsPhaseTest
 
             fail( "Status check should have failed" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            // verify no cause as an extra check that it is the right exception
-            assertNull( "check no cause", e.getCause() );
+            assertTrue( true );
         }
 
         try
@@ -299,10 +297,9 @@ public class ScmCheckModificationsPhaseTest
 
             fail( "Status check should have failed" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            // verify no cause as an extra check that it is the right exception
-            assertNull( "check no cause", e.getCause() );
+            assertTrue( true );
         }
     }
 

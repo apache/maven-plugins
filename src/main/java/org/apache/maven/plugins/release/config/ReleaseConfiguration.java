@@ -143,6 +143,21 @@ public class ReleaseConfiguration
      */
     private String pomFileName;
 
+    /**
+     * The goals to execute in preparation for the release.
+     */
+    private String preparationGoals;
+
+    public String getPreparationGoals()
+    {
+        return preparationGoals;
+    }
+
+    public void setPreparationGoals( String preparationGoals )
+    {
+        this.preparationGoals = preparationGoals;
+    }
+
     public void setPomFileName( String pomFileName )
     {
         this.pomFileName = pomFileName;
@@ -347,6 +362,7 @@ public class ReleaseConfiguration
         this.privateKey = mergeOverride( this.privateKey, mergeConfiguration.privateKey );
         this.passphrase = mergeOverride( this.passphrase, mergeConfiguration.passphrase );
         this.additionalArguments = mergeOverride( this.additionalArguments, mergeConfiguration.additionalArguments );
+        this.preparationGoals = mergeOverride( this.preparationGoals, mergeConfiguration.preparationGoals );
         this.pomFileName = mergeOverride( this.pomFileName, mergeConfiguration.pomFileName );
         this.useEditMode = mergeConfiguration.useEditMode;
         this.addSchema = mergeConfiguration.addSchema;
@@ -433,6 +449,11 @@ public class ReleaseConfiguration
         }
         if ( additionalArguments != null ? !additionalArguments.equals( that.additionalArguments )
             : that.additionalArguments != null )
+        {
+            return false;
+        }
+        if ( preparationGoals != null ? !preparationGoals.equals( that.preparationGoals )
+            : that.preparationGoals != null )
         {
             return false;
         }
@@ -539,6 +560,7 @@ public class ReleaseConfiguration
         result = 29 * result + ( settings != null ? settings.hashCode() : 0 );
         result = 29 * result + ( releaseLabel != null ? releaseLabel.hashCode() : 0 );
         result = 29 * result + ( additionalArguments != null ? additionalArguments.hashCode() : 0 );
+        result = 29 * result + ( preparationGoals != null ? preparationGoals.hashCode() : 0 );
         result = 29 * result + ( pomFileName != null ? pomFileName.hashCode() : 0 );
         result = 29 * result + ( tagBase != null ? tagBase.hashCode() : 0 );
         result = 29 * result + ( username != null ? username.hashCode() : 0 );

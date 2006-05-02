@@ -82,27 +82,27 @@ public class PrepareReleaseMojo
      */
     private boolean addSchema;
 
+    /**
+     * Goals to run as part of the preparation step, after transformation but before committing.
+     * Space delimited.
+     *
+     * @parameter expression="${preparationGoals}" default-value="clean integration-test"
+     */
+    private String preparationGoals;
+
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        if ( dryRun )
-        {
-            getLog().info( "\n*****\n" + "Warning, release:perform is run in TEST MODE.\n" +
-                "Nothing will be committed or tagged in the repository, but you pom files will be updated!\n" +
-                "*****" );
-        }
-
         ReleaseConfiguration config = createReleaseConfiguration();
         config.setAddSchema( addSchema );
         config.setGenerateReleasePoms( generateReleasePoms );
         config.setReactorProjects( reactorProjects );
         config.setUseEditMode( useEditMode );
-        // TODO [!]: prep goals not configurable
-        // TODO [!]: resume not configured
+        config.setPreparationGoals( preparationGoals );
 
         try
         {
-            releaseManager.prepare( config );
+            releaseManager.prepare( config, resume, dryRun );
         }
         catch ( ReleaseExecutionException e )
         {

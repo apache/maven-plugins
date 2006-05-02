@@ -37,20 +37,15 @@ public class RunGoalsPhase
      */
     private MavenExecutor mavenExecutor;
 
-    /**
-     * The goals to run.
-     */
-    private String goals;
-
     public void execute( ReleaseConfiguration releaseConfiguration )
         throws ReleaseExecutionException
     {
         try
         {
+            String goals = releaseConfiguration.getPreparationGoals();
             if ( !StringUtils.isEmpty( goals ) )
             {
-                // TODO [!]: fix logging
-                getLogger().info( "Executing goals '" + goals + "'..." );
+                getLogger().info( "Executing preparation goals '" + goals + "'..." );
 
                 mavenExecutor.executeGoals( releaseConfiguration.getWorkingDirectory(), goals,
                                             releaseConfiguration.isInteractive() );
@@ -65,9 +60,8 @@ public class RunGoalsPhase
     public void simulate( ReleaseConfiguration releaseConfiguration )
         throws ReleaseExecutionException
     {
-        // TODO [!]: fix logging
         getLogger().info(
-            "Executing tests - since this is simulation mode it is testing the original project, not the rewritten ones" );
+            "Executing preparation goals - since this is simulation mode it is running against the original project, not the rewritten ones" );
 
         execute( releaseConfiguration );
     }

@@ -56,6 +56,8 @@ public class PropertiesReleaseConfigurationStoreTest
         assertEquals( "Expected tag 'tag'", "tag", config.getReleaseLabel() );
         assertEquals( "Expected additional arguments 'additional-arguments'", "additional-arguments",
                       config.getAdditionalArguments() );
+        assertEquals( "Expected preparation goals 'preparation-goals'", "preparation-goals",
+                      config.getPreparationGoals() );
         assertEquals( "Expected POM file name 'my-pom.xml'", "pom-file-name", config.getPomFileName() );
         assertNull( "Expected no workingDirectory", config.getWorkingDirectory() );
         assertNull( "Expected no settings", config.getSettings() );
@@ -204,6 +206,7 @@ public class PropertiesReleaseConfigurationStoreTest
         config.setTagBase( "tag-base-write" );
         config.setReleaseLabel( "tag-write" );
         config.setAdditionalArguments( "additional-args-write" );
+        config.setPreparationGoals( "preparation-goals-write" );
         config.setPomFileName( "pom-file-name-write" );
 
         config.mapReleaseVersion( "groupId:artifactId", "1.0" );
@@ -235,6 +238,7 @@ public class PropertiesReleaseConfigurationStoreTest
         assertNull( "Expected no tagBase", config.getTagBase() );
         assertNull( "Expected no tag", config.getReleaseLabel() );
         assertNull( "Expected no additional arguments", config.getAdditionalArguments() );
+        assertNull( "Expected no preparation goals", config.getPreparationGoals() );
         assertNull( "Expected no pom file name", config.getPomFileName() );
 
         assertNull( "Expected no workingDirectory", config.getWorkingDirectory() );

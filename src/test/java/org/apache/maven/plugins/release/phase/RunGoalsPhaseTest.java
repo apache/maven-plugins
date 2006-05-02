@@ -45,7 +45,7 @@ public class RunGoalsPhaseTest
     {
         super.setUp();
 
-        phase = (RunGoalsPhase) lookup( ReleasePhase.ROLE, "run-tests" );
+        phase = (RunGoalsPhase) lookup( ReleasePhase.ROLE, "run-preparation-goals" );
     }
 
     public void testExecute()
@@ -95,6 +95,7 @@ public class RunGoalsPhaseTest
         File testFile = getTestFile( "target/working-directory" );
 
         ReleaseConfiguration config = new ReleaseConfiguration();
+        config.setPreparationGoals( "clean integration-test" );
         config.setWorkingDirectory( testFile );
 
         Mock mock = new Mock( MavenExecutor.class );
@@ -122,6 +123,7 @@ public class RunGoalsPhaseTest
         File testFile = getTestFile( "target/working-directory" );
 
         ReleaseConfiguration config = new ReleaseConfiguration();
+        config.setPreparationGoals( "clean integration-test" );
         config.setWorkingDirectory( testFile );
 
         Mock mock = new Mock( MavenExecutor.class );
@@ -144,12 +146,9 @@ public class RunGoalsPhaseTest
         }
     }
 
-    public void testPreparationGoals()
+    public void testEmptyGoals()
         throws Exception
     {
-        // this has no goals by default
-        phase = (RunGoalsPhase) lookup( ReleasePhase.ROLE, "run-preparation-goals" );
-
         File testFile = getTestFile( "target/working-directory" );
 
         ReleaseConfiguration config = new ReleaseConfiguration();

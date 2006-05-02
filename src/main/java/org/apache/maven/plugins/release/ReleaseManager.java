@@ -43,6 +43,18 @@ public interface ReleaseManager
         throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
+     * Prepare a release.
+     *
+     * @param releaseConfiguration the configuration to pass to the preparation steps
+     * @param resume               resume a previous release, if the properties file exists
+     * @param dryRun               do not commit any changes to the file system or SCM
+     * @throws ReleaseExecutionException if there is a problem performing the release
+     * @throws ReleaseFailureException   if there is a problem performing the release
+     */
+    void prepare( ReleaseConfiguration releaseConfiguration, boolean resume, boolean dryRun )
+        throws ReleaseExecutionException, ReleaseFailureException;
+
+    /**
      * Perform a release.
      *
      * @param releaseConfiguration the configuration to use for release

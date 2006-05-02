@@ -18,9 +18,12 @@ package org.apache.maven.plugins.release;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.profiles.Profile;
 import org.apache.maven.settings.Settings;
 
 import java.io.File;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Base class with shared configuration.
@@ -75,6 +78,13 @@ public abstract class AbstractReleaseMojo
     private Settings settings;
 
     /**
+     * @parameter expression="${project}"
+     * @required
+     * @readonly
+     */
+    private Settings project;
+
+    /**
      * @component
      */
     protected ReleaseManager releaseManager;
@@ -96,7 +106,6 @@ public abstract class AbstractReleaseMojo
     protected ReleaseConfiguration createReleaseConfiguration()
     {
         ReleaseConfiguration config = new ReleaseConfiguration();
-        config.setAdditionalArguments( arguments );
         config.setInteractive( settings.isInteractiveMode() );
         config.setPassword( password );
         config.setReleaseLabel( tag );
@@ -105,6 +114,27 @@ public abstract class AbstractReleaseMojo
         config.setUsername( username );
         config.setWorkingDirectory( basedir );
         config.setPomFileName( pomFileName );
+
+        List profiles = project.getActiveProfiles();
+
+        String arguments = this.arguments;
+        if ( profiles != null && !profiles.isEmpty() )
+        {
+            arguments += "-P ";
+
+            for ( Iterator it = profiles.iterator(); it.hasNext(); )
+            {
+                Profile profile = (Profile) it.next();
+
+                arguments += profile.getId();
+                if ( it.hasNext() )
+                {
+                    arguments += ",";
+                }
+            }
+        }
+        config.setAdditionalArguments( arguments );
+
         return config;
     }
 }
