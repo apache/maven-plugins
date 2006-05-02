@@ -17,6 +17,7 @@ package org.apache.maven.plugins.release.phase;
  */
 
 import org.apache.maven.plugins.release.ReleaseExecutionException;
+import org.apache.maven.plugins.release.ReleaseFailureException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 import org.apache.maven.plugins.release.scm.ReleaseScmCommandException;
 import org.apache.maven.plugins.release.scm.ReleaseScmRepositoryException;
@@ -60,7 +61,7 @@ public class ScmCheckModificationsPhase
         new String[]{"pom.xml", "pom.xml.backup", "pom.xml.tag", "pom.xml.next", "release.properties"} ) );
 
     public void execute( ReleaseConfiguration releaseConfiguration )
-        throws ReleaseExecutionException
+        throws ReleaseExecutionException, ReleaseFailureException
     {
         getLogger().info( "Verifying that there are no local modifications..." );
 
@@ -126,13 +127,13 @@ public class ScmCheckModificationsPhase
                 message.append( "\n" );
             }
 
-            throw new ReleaseExecutionException(
+            throw new ReleaseFailureException(
                 "Cannot prepare the release because you have local modifications : \n" + message );
         }
     }
 
     public void simulate( ReleaseConfiguration releaseConfiguration )
-        throws ReleaseExecutionException
+        throws ReleaseExecutionException, ReleaseFailureException
     {
         // It makes no modifications, so simulate is the same as execute
         execute( releaseConfiguration );
