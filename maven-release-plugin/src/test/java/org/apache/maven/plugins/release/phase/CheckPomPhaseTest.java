@@ -17,7 +17,7 @@ package org.apache.maven.plugins.release.phase;
  */
 
 import org.apache.maven.model.Model;
-import org.apache.maven.plugins.release.ReleaseExecutionException;
+import org.apache.maven.plugins.release.ReleaseFailureException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusTestCase;
@@ -69,19 +69,20 @@ public class CheckPomPhaseTest
 
             fail( "Should have failed to execute" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no cause", e.getCause() );
+            assertTrue( true );
         }
+
         try
         {
             phase.simulate( releaseConfiguration );
 
             fail( "Should have failed to simulate" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no cause", e.getCause() );
+            assertTrue( true );
         }
     }
 
@@ -98,19 +99,20 @@ public class CheckPomPhaseTest
 
             fail( "Should have failed to execute" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no cause", e.getCause() );
+            assertTrue( true );
         }
+
         try
         {
             phase.simulate( releaseConfiguration );
 
             fail( "Should have failed to simulate" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no cause", e.getCause() );
+            assertTrue( true );
         }
     }
 

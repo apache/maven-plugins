@@ -80,28 +80,6 @@ public class ForkedMavenExecutor
             cl.createArgument().setLine( additionalArguments );
         }
 
-        /* TODO [!]
-        List profiles = project.getActiveProfiles();
-
-        if ( profiles != null && !profiles.isEmpty() )
-        {
-            StringBuffer buffer = new StringBuffer();
-
-            buffer.append( "-P " );
-
-            for ( Iterator it = profiles.iterator(); it.hasNext(); )
-            {
-                Profile profile = (Profile) it.next();
-
-                buffer.append( profile.getId() ).append( "," );
-            }
-
-            buffer.setLength( buffer.length() - 1 );
-
-            cl.createArgument().setLine( buffer.toString() );
-        }
-*/
-
         StreamConsumer stdOut = new TeeConsumer( System.out );
 
         StreamConsumer stdErr = new TeeConsumer( System.err );

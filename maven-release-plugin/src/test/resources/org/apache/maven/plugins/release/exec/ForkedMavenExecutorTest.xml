@@ -14,10 +14,16 @@
   ~ limitations under the License.
   -->
 
-<project>
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>groupId</groupId>
-  <artifactId>parent-external</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <packaging>pom</packaging>
-</project>
+<component-set>
+  <components>
+    <!-- Turn off info messages -->
+    <component>
+      <role>org.codehaus.plexus.logging.LoggerManager</role>
+      <implementation>org.codehaus.plexus.logging.console.ConsoleLoggerManager</implementation>
+      <lifecycle-handler>basic</lifecycle-handler>
+      <configuration>
+        <threshold>ERROR</threshold>
+      </configuration>
+    </component>
+  </components>
+</component-set>
