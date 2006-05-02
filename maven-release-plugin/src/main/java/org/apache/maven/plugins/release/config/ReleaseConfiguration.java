@@ -133,6 +133,26 @@ public class ReleaseConfiguration
      */
     private String releaseLabel;
 
+    /**
+     * Additional arguments to pass to any executed Maven process.
+     */
+    private String additionalArguments;
+
+    /**
+     * The file name of the POM to pass to any executed Maven process.
+     */
+    private String pomFileName;
+
+    public void setPomFileName( String pomFileName )
+    {
+        this.pomFileName = pomFileName;
+    }
+
+    public String getPomFileName()
+    {
+        return pomFileName;
+    }
+
     public boolean isInteractive()
     {
         return interactive;
@@ -299,6 +319,16 @@ public class ReleaseConfiguration
         return releaseLabel;
     }
 
+    public String getAdditionalArguments()
+    {
+        return additionalArguments;
+    }
+
+    public void setAdditionalArguments( String additionalArguments )
+    {
+        this.additionalArguments = additionalArguments;
+    }
+
     /**
      * Merge two configurations together. All SCM settings are overridden by the merge configuration, as are the
      * <code>settings</code> and <code>workingDirectory</code> fields. The <code>completedPhase</code> field is used as
@@ -308,8 +338,6 @@ public class ReleaseConfiguration
      */
     public void merge( ReleaseConfiguration mergeConfiguration )
     {
-        // TODO [!]: double check if these are the expected behaviours
-
         // Overridden if configured from the caller
         this.url = mergeOverride( this.url, mergeConfiguration.url );
         this.releaseLabel = mergeOverride( this.releaseLabel, mergeConfiguration.releaseLabel );
@@ -318,6 +346,8 @@ public class ReleaseConfiguration
         this.password = mergeOverride( this.password, mergeConfiguration.password );
         this.privateKey = mergeOverride( this.privateKey, mergeConfiguration.privateKey );
         this.passphrase = mergeOverride( this.passphrase, mergeConfiguration.passphrase );
+        this.additionalArguments = mergeOverride( this.additionalArguments, mergeConfiguration.additionalArguments );
+        this.pomFileName = mergeOverride( this.pomFileName, mergeConfiguration.pomFileName );
         this.useEditMode = mergeConfiguration.useEditMode;
         this.addSchema = mergeConfiguration.addSchema;
         this.generateReleasePoms = mergeConfiguration.generateReleasePoms;
@@ -398,6 +428,15 @@ public class ReleaseConfiguration
             return false;
         }
         if ( originalScmInfo != null ? !compareScmCollections( that.originalScmInfo ) : that.originalScmInfo != null )
+        {
+            return false;
+        }
+        if ( additionalArguments != null ? !additionalArguments.equals( that.additionalArguments )
+            : that.additionalArguments != null )
+        {
+            return false;
+        }
+        if ( pomFileName != null ? !pomFileName.equals( that.pomFileName ) : that.pomFileName != null )
         {
             return false;
         }
@@ -499,6 +538,8 @@ public class ReleaseConfiguration
         int result = completedPhase != null ? completedPhase.hashCode() : 0;
         result = 29 * result + ( settings != null ? settings.hashCode() : 0 );
         result = 29 * result + ( releaseLabel != null ? releaseLabel.hashCode() : 0 );
+        result = 29 * result + ( additionalArguments != null ? additionalArguments.hashCode() : 0 );
+        result = 29 * result + ( pomFileName != null ? pomFileName.hashCode() : 0 );
         result = 29 * result + ( tagBase != null ? tagBase.hashCode() : 0 );
         result = 29 * result + ( username != null ? username.hashCode() : 0 );
         result = 29 * result + ( password != null ? password.hashCode() : 0 );

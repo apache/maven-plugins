@@ -18,6 +18,8 @@ package org.apache.maven.plugins.release;
 
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 
+import java.io.File;
+
 /**
  * Release management classes.
  *
@@ -40,8 +42,14 @@ public interface ReleaseManager
 
     /**
      * Perform a release.
+     *
+     * @param releaseConfiguration the configuration to use for release
+     * @param checkoutDirectory    the location to checkout to and build from
+     * @param goals                the goals to execute
+     * @throws ReleaseExecutionException if there is a problem performing the release
      */
-    void perform();
+    void perform( ReleaseConfiguration releaseConfiguration, File checkoutDirectory, String goals )
+        throws ReleaseExecutionException;
 
     /**
      * Clean a release.

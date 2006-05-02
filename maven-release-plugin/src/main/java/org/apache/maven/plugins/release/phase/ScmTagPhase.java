@@ -49,7 +49,7 @@ public class ScmTagPhase
     {
         validateConfiguration( releaseConfiguration );
 
-        getLogger().info( "Tagging release with the label " + releaseConfiguration.getReleaseLabel() + "." );
+        getLogger().info( "Tagging release with the label " + releaseConfiguration.getReleaseLabel() + "..." );
 
         ScmRepository repository;
         ScmProvider provider;

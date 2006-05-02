@@ -86,6 +86,8 @@ public class PropertiesReleaseConfigurationStore
         releaseConfiguration.setPassphrase( properties.getProperty( "scm.passphrase" ) );
         releaseConfiguration.setTagBase( properties.getProperty( "scm.tagBase" ) );
         releaseConfiguration.setReleaseLabel( properties.getProperty( "scm.tag" ) );
+        releaseConfiguration.setAdditionalArguments( properties.getProperty( "exec.additionalArguments" ) );
+        releaseConfiguration.setPomFileName( properties.getProperty( "exec.pomFileName" ) );
 
         // boolean properties are not written to the properties file because the value from the caller is always used
 
@@ -138,12 +140,38 @@ public class PropertiesReleaseConfigurationStore
         Properties properties = new Properties();
         properties.setProperty( "completedPhase", config.getCompletedPhase() );
         properties.setProperty( "scm.url", config.getUrl() );
-        properties.setProperty( "scm.username", config.getUsername() );
-        properties.setProperty( "scm.password", config.getPassword() );
-        properties.setProperty( "scm.privateKey", config.getPrivateKey() );
-        properties.setProperty( "scm.passphrase", config.getPassphrase() );
-        properties.setProperty( "scm.tagBase", config.getTagBase() );
-        properties.setProperty( "scm.tag", config.getReleaseLabel() );
+        if ( config.getUsername() != null )
+        {
+            properties.setProperty( "scm.username", config.getUsername() );
+        }
+        if ( config.getPassword() != null )
+        {
+            properties.setProperty( "scm.password", config.getPassword() );
+        }
+        if ( config.getPrivateKey() != null )
+        {
+            properties.setProperty( "scm.privateKey", config.getPrivateKey() );
+        }
+        if ( config.getPassphrase() != null )
+        {
+            properties.setProperty( "scm.passphrase", config.getPassphrase() );
+        }
+        if ( config.getTagBase() != null )
+        {
+            properties.setProperty( "scm.tagBase", config.getTagBase() );
+        }
+        if ( config.getReleaseLabel() != null )
+        {
+            properties.setProperty( "scm.tag", config.getReleaseLabel() );
+        }
+        if ( config.getAdditionalArguments() != null )
+        {
+            properties.setProperty( "exec.additionalArguments", config.getAdditionalArguments() );
+        }
+        if ( config.getPomFileName() != null )
+        {
+            properties.setProperty( "exec.pomFileName", config.getPomFileName() );
+        }
 
         // boolean properties are not written to the properties file because the value from the caller is always used
 
@@ -164,10 +192,19 @@ public class PropertiesReleaseConfigurationStore
             Map.Entry entry = (Map.Entry) i.next();
             Scm scm = (Scm) entry.getValue();
             properties.setProperty( "project.scm." + entry.getKey() + ".connection", scm.getConnection() );
-            properties.setProperty( "project.scm." + entry.getKey() + ".developerConnection",
-                                    scm.getDeveloperConnection() );
-            properties.setProperty( "project.scm." + entry.getKey() + ".url", scm.getUrl() );
-            properties.setProperty( "project.scm." + entry.getKey() + ".tag", scm.getTag() );
+            if ( scm.getDeveloperConnection() != null )
+            {
+                properties.setProperty( "project.scm." + entry.getKey() + ".developerConnection",
+                                        scm.getDeveloperConnection() );
+            }
+            if ( scm.getUrl() != null )
+            {
+                properties.setProperty( "project.scm." + entry.getKey() + ".url", scm.getUrl() );
+            }
+            if ( scm.getTag() != null )
+            {
+                properties.setProperty( "project.scm." + entry.getKey() + ".tag", scm.getTag() );
+            }
         }
 
         OutputStream outStream = null;

@@ -33,6 +33,52 @@ public class RemoveReleasePomsPhase
         throws ReleaseExecutionException
     {
         // TODO [!]: implement
+        getLogger().info( "Removing release POMs..." );
+
+/*
+        File currentReleasePomFile = null;
+
+        try
+        {
+            String canonicalBasedir = trimPathForScmCalculation( basedir );
+
+            for ( Iterator it = reactorProjects.iterator(); it.hasNext(); )
+            {
+                MavenProject project = (MavenProject) it.next();
+
+                currentReleasePomFile = new File( project.getFile().getParentFile(), RELEASE_POM );
+
+                String releasePomPath = trimPathForScmCalculation( currentReleasePomFile );
+
+                releasePomPath = releasePomPath.substring( canonicalBasedir.length() + 1 );
+
+                ScmHelper scm = getScm( basedir.getAbsolutePath() );
+                if ( !dryRun )
+                {
+                    scm.remove( "Removing for next development iteration.", releasePomPath );
+                }
+                else
+                {
+                    getLog().info( "[TESTMODE] Removing for next development iteration. " + releasePomPath );
+                }
+
+                pomFiles.remove( currentReleasePomFile );
+
+                currentReleasePomFile.delete();
+            }
+        }
+        catch ( ScmException e )
+        {
+            throw new MojoExecutionException( "Cannot remove " + currentReleasePomFile + " from development HEAD.",
+                                                                      e );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Cannot remove " + currentReleasePomFile + " from development HEAD.",
+                                              e );
+        }
+
+*/
     }
 
     public void simulate( ReleaseConfiguration releaseConfiguration )
