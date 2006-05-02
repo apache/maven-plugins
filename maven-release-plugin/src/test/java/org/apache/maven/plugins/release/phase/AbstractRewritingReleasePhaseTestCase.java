@@ -17,6 +17,7 @@ package org.apache.maven.plugins.release.phase;
  */
 
 import org.apache.maven.plugins.release.ReleaseExecutionException;
+import org.apache.maven.plugins.release.ReleaseFailureException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 import org.apache.maven.plugins.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.plugins.release.scm.ReleaseScmCommandException;
@@ -83,9 +84,9 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
             fail( "Should have thrown an exception" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no cause", e.getCause() );
+            assertTrue( true );
         }
     }
 
@@ -156,9 +157,9 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
             fail( "Should have thrown an exception" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no cause", e.getCause() );
+            assertTrue( true );
         }
     }
 
@@ -193,9 +194,9 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
             fail( "Should have thrown an exception" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no cause", e.getCause() );
+            assertTrue( true );
         }
     }
 
@@ -220,9 +221,9 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
             fail( "Should have thrown an exception" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no cause", e.getCause() );
+            assertTrue( true );
         }
     }
 
@@ -257,9 +258,9 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
             fail( "Should have thrown an exception" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no cause", e.getCause() );
+            assertTrue( true );
         }
     }
 
@@ -284,9 +285,9 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
             fail( "Should have thrown an exception" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no cause", e.getCause() );
+            assertTrue( true );
         }
     }
 
@@ -322,9 +323,9 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
             fail( "Should have thrown an exception" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no cause", e.getCause() );
+            assertTrue( true );
         }
     }
 
@@ -461,9 +462,9 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
             fail( "Should have thrown an exception" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no cause", e.getCause() );
+            assertTrue( true );
         }
     }
 

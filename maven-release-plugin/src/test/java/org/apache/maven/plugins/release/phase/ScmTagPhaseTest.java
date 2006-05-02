@@ -17,6 +17,7 @@ package org.apache.maven.plugins.release.phase;
  */
 
 import org.apache.maven.plugins.release.ReleaseExecutionException;
+import org.apache.maven.plugins.release.ReleaseFailureException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 import org.apache.maven.plugins.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.plugins.release.scm.ReleaseScmCommandException;
@@ -119,9 +120,9 @@ public class ScmTagPhaseTest
             phase.execute( config );
             fail( "Should have thrown an exception" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no other cause", e.getCause() );
+            assertTrue( true );
         }
     }
 
@@ -155,9 +156,9 @@ public class ScmTagPhaseTest
             phase.simulate( config );
             fail( "Should have thrown an exception" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no other cause", e.getCause() );
+            assertTrue( true );
         }
     }
 

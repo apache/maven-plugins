@@ -16,7 +16,7 @@ package org.apache.maven.plugins.release.phase;
  * limitations under the License.
  */
 
-import org.apache.maven.plugins.release.ReleaseExecutionException;
+import org.apache.maven.plugins.release.ReleaseFailureException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 
 /**
@@ -64,7 +64,8 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotDependenciesInProjectOnlyMismatchedVersion()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration = createConfigurationFromProjects( "internal-differing-snapshot-dependencies" );
+        ReleaseConfiguration releaseConfiguration =
+            createConfigurationFromProjects( "internal-differing-snapshot-dependencies" );
 
         try
         {
@@ -72,9 +73,9 @@ public class CheckDependencySnapshotsPhaseTest
 
             fail( "Should have failed execution" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no other cause", e.getCause() );
+            assertTrue( true );
         }
 
         try
@@ -83,9 +84,9 @@ public class CheckDependencySnapshotsPhaseTest
 
             fail( "Should have failed execution" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no other cause", e.getCause() );
+            assertTrue( true );
         }
     }
 
@@ -143,9 +144,9 @@ public class CheckDependencySnapshotsPhaseTest
 
             fail( "Should have failed execution" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no other cause", e.getCause() );
+            assertTrue( true );
         }
 
         try
@@ -154,9 +155,9 @@ public class CheckDependencySnapshotsPhaseTest
 
             fail( "Should have failed execution" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no other cause", e.getCause() );
+            assertTrue( true );
         }
     }
 
@@ -171,9 +172,9 @@ public class CheckDependencySnapshotsPhaseTest
 
             fail( "Should have failed execution" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no other cause", e.getCause() );
+            assertTrue( true );
         }
 
         try
@@ -182,9 +183,9 @@ public class CheckDependencySnapshotsPhaseTest
 
             fail( "Should have failed execution" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no other cause", e.getCause() );
+            assertTrue( true );
         }
     }
 
@@ -200,9 +201,9 @@ public class CheckDependencySnapshotsPhaseTest
 
             fail( "Should have failed execution" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no other cause", e.getCause() );
+            assertTrue( true );
         }
 
         try
@@ -211,9 +212,9 @@ public class CheckDependencySnapshotsPhaseTest
 
             fail( "Should have failed execution" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no other cause", e.getCause() );
+            assertTrue( true );
         }
     }
 
@@ -256,9 +257,9 @@ public class CheckDependencySnapshotsPhaseTest
 
             fail( "Should have failed execution" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no other cause", e.getCause() );
+            assertTrue( true );
         }
 
         try
@@ -267,9 +268,9 @@ public class CheckDependencySnapshotsPhaseTest
 
             fail( "Should have failed execution" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no other cause", e.getCause() );
+            assertTrue( true );
         }
     }
 
@@ -285,9 +286,9 @@ public class CheckDependencySnapshotsPhaseTest
 
             fail( "Should have failed execution" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no other cause", e.getCause() );
+            assertTrue( true );
         }
 
         try
@@ -296,9 +297,9 @@ public class CheckDependencySnapshotsPhaseTest
 
             fail( "Should have failed execution" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no other cause", e.getCause() );
+            assertTrue( true );
         }
     }
 
@@ -382,9 +383,9 @@ public class CheckDependencySnapshotsPhaseTest
 
             fail( "Should have failed execution" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no other cause", e.getCause() );
+            assertTrue( true );
         }
 
         try
@@ -393,9 +394,9 @@ public class CheckDependencySnapshotsPhaseTest
 
             fail( "Should have failed execution" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no other cause", e.getCause() );
+            assertTrue( true );
         }
     }
 
@@ -410,9 +411,9 @@ public class CheckDependencySnapshotsPhaseTest
 
             fail( "Should have failed execution" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no other cause", e.getCause() );
+            assertTrue( true );
         }
 
         try
@@ -421,9 +422,9 @@ public class CheckDependencySnapshotsPhaseTest
 
             fail( "Should have failed execution" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no other cause", e.getCause() );
+            assertTrue( true );
         }
     }
 
@@ -439,9 +440,9 @@ public class CheckDependencySnapshotsPhaseTest
 
             fail( "Should have failed execution" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no other cause", e.getCause() );
+            assertTrue( true );
         }
 
         try
@@ -450,9 +451,9 @@ public class CheckDependencySnapshotsPhaseTest
 
             fail( "Should have failed execution" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no other cause", e.getCause() );
+            assertTrue( true );
         }
     }
 
@@ -467,9 +468,9 @@ public class CheckDependencySnapshotsPhaseTest
 
             fail( "Should have failed execution" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no other cause", e.getCause() );
+            assertTrue( true );
         }
 
         try
@@ -478,9 +479,9 @@ public class CheckDependencySnapshotsPhaseTest
 
             fail( "Should have failed execution" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no other cause", e.getCause() );
+            assertTrue( true );
         }
     }
 
@@ -508,9 +509,9 @@ public class CheckDependencySnapshotsPhaseTest
 
             fail( "Should have failed execution" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no other cause", e.getCause() );
+            assertTrue( true );
         }
 
         try
@@ -519,9 +520,9 @@ public class CheckDependencySnapshotsPhaseTest
 
             fail( "Should have failed execution" );
         }
-        catch ( ReleaseExecutionException e )
+        catch ( ReleaseFailureException e )
         {
-            assertNull( "Check no other cause", e.getCause() );
+            assertTrue( true );
         }
     }
 

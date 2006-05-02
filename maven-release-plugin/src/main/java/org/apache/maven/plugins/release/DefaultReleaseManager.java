@@ -50,16 +50,6 @@ public class DefaultReleaseManager
     implements ReleaseManager
 {
     /**
-     * Whether to only step through and state the tasks, or to execute them.
-     */
-    private boolean dryRun;
-
-    /**
-     * Whether to resume a previous release, if it was in progress. Defaults to true.
-     */
-    private boolean resume = true;
-
-    /**
      * The phases of release to run, and in what order.
      */
     private List phases;
@@ -85,6 +75,12 @@ public class DefaultReleaseManager
     private MavenExecutor mavenExecutor;
 
     public void prepare( ReleaseConfiguration releaseConfiguration )
+        throws ReleaseExecutionException, ReleaseFailureException
+    {
+        prepare( releaseConfiguration, true, false );
+    }
+
+    public void prepare( ReleaseConfiguration releaseConfiguration, boolean resume, boolean dryRun )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseConfiguration config;

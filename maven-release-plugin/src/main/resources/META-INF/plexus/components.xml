@@ -47,7 +47,6 @@
           <phase>check-dependency-snapshots</phase>
           <phase>rewrite-poms-for-release</phase>
           <phase>generate-release-poms</phase>
-          <phase>run-tests</phase>
           <phase>run-preparation-goals</phase>
           <phase>scm-commit-release</phase>
           <phase>scm-tag</phase>
@@ -139,19 +138,6 @@
       <role>org.apache.maven.plugins.release.phase.ReleasePhase</role>
       <role-hint>remove-release-poms</role-hint>
       <implementation>org.apache.maven.plugins.release.phase.RemoveReleasePomsPhase</implementation>
-    </component>
-    <component>
-      <role>org.apache.maven.plugins.release.phase.ReleasePhase</role>
-      <role-hint>run-tests</role-hint>
-      <implementation>org.apache.maven.plugins.release.phase.RunGoalsPhase</implementation>
-      <requirements>
-        <requirement>
-          <role>org.apache.maven.plugins.release.exec.MavenExecutor</role>
-        </requirement>
-      </requirements>
-      <configuration>
-        <goals>clean integration-test</goals>
-      </configuration>
     </component>
     <component>
       <role>org.apache.maven.plugins.release.phase.ReleasePhase</role>

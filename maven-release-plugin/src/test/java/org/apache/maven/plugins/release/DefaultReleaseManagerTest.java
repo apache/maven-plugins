@@ -98,12 +98,12 @@ public class DefaultReleaseManagerTest
     public void testPrepareCompletedPhaseNoResume()
         throws Exception
     {
-        ReleaseManager releaseManager = (ReleaseManager) lookup( ReleaseManager.ROLE, "test-no-resume" );
+        ReleaseManager releaseManager = (ReleaseManager) lookup( ReleaseManager.ROLE, "test" );
 
         ReleaseConfiguration releaseConfiguration = configStore.read();
         releaseConfiguration.setCompletedPhase( "step1" );
 
-        releaseManager.prepare( new ReleaseConfiguration() );
+        releaseManager.prepare( new ReleaseConfiguration(), false, false );
 
         Map phases = container.lookupMap( ReleasePhase.ROLE );
 
@@ -167,12 +167,12 @@ public class DefaultReleaseManagerTest
     public void testPrepareSimulateNoCompletedPhase()
         throws Exception
     {
-        ReleaseManager releaseManager = (ReleaseManager) lookup( ReleaseManager.ROLE, "test-dryRun" );
+        ReleaseManager releaseManager = (ReleaseManager) lookup( ReleaseManager.ROLE, "test" );
 
         ReleaseConfiguration releaseConfiguration = configStore.read();
         releaseConfiguration.setCompletedPhase( null );
 
-        releaseManager.prepare( new ReleaseConfiguration() );
+        releaseManager.prepare( new ReleaseConfiguration(), true, true );
 
         Map phases = container.lookupMap( ReleasePhase.ROLE );
 
@@ -190,12 +190,12 @@ public class DefaultReleaseManagerTest
     public void testPrepareSimulateCompletedPhase()
         throws Exception
     {
-        ReleaseManager releaseManager = (ReleaseManager) lookup( ReleaseManager.ROLE, "test-dryRun" );
+        ReleaseManager releaseManager = (ReleaseManager) lookup( ReleaseManager.ROLE, "test" );
 
         ReleaseConfiguration releaseConfiguration = configStore.read();
         releaseConfiguration.setCompletedPhase( "step1" );
 
-        releaseManager.prepare( new ReleaseConfiguration() );
+        releaseManager.prepare( new ReleaseConfiguration(), true, true );
 
         Map phases = container.lookupMap( ReleasePhase.ROLE );
 
@@ -213,12 +213,12 @@ public class DefaultReleaseManagerTest
     public void testPrepareSimulateCompletedAllPhases()
         throws Exception
     {
-        ReleaseManager releaseManager = (ReleaseManager) lookup( ReleaseManager.ROLE, "test-dryRun" );
+        ReleaseManager releaseManager = (ReleaseManager) lookup( ReleaseManager.ROLE, "test" );
 
         ReleaseConfiguration releaseConfiguration = configStore.read();
         releaseConfiguration.setCompletedPhase( "step3" );
 
-        releaseManager.prepare( new ReleaseConfiguration() );
+        releaseManager.prepare( new ReleaseConfiguration(), true, true );
 
         Map phases = container.lookupMap( ReleasePhase.ROLE );
 
@@ -236,12 +236,12 @@ public class DefaultReleaseManagerTest
     public void testPrepareSimulateInvalidCompletedPhase()
         throws Exception
     {
-        ReleaseManager releaseManager = (ReleaseManager) lookup( ReleaseManager.ROLE, "test-dryRun" );
+        ReleaseManager releaseManager = (ReleaseManager) lookup( ReleaseManager.ROLE, "test" );
 
         ReleaseConfiguration releaseConfiguration = configStore.read();
         releaseConfiguration.setCompletedPhase( "foo" );
 
-        releaseManager.prepare( new ReleaseConfiguration() );
+        releaseManager.prepare( new ReleaseConfiguration(), true, true );
 
         Map phases = container.lookupMap( ReleasePhase.ROLE );
 
