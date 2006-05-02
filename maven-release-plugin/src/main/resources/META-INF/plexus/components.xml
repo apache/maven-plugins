@@ -43,11 +43,11 @@
           <phase>generate-release-poms</phase>
           <phase>run-tests</phase>
           <phase>run-preparation-goals</phase>
-          <phase>scm-commit</phase>
+          <phase>scm-commit-release</phase>
           <phase>scm-tag</phase>
           <phase>rewrite-poms-for-development</phase>
           <phase>remove-release-poms</phase>
-          <phase>scm-commit</phase>
+          <phase>scm-commit-development</phase>
         </phases>
       </configuration>
     </component>
@@ -159,8 +159,29 @@
     </component>
     <component>
       <role>org.apache.maven.plugins.release.phase.ReleasePhase</role>
-      <role-hint>scm-commit</role-hint>
+      <role-hint>scm-commit-release</role-hint>
       <implementation>org.apache.maven.plugins.release.phase.ScmCommitPhase</implementation>
+      <requirements>
+        <requirement>
+          <role>org.apache.maven.plugins.release.scm.ScmRepositoryConfigurator</role>
+        </requirement>
+      </requirements>
+      <configuration>
+        <messageFormat>[maven-release-plugin] prepare release {0}</messageFormat>
+      </configuration>
+    </component>
+    <component>
+      <role>org.apache.maven.plugins.release.phase.ReleasePhase</role>
+      <role-hint>scm-commit-development</role-hint>
+      <implementation>org.apache.maven.plugins.release.phase.ScmCommitPhase</implementation>
+      <requirements>
+        <requirement>
+          <role>org.apache.maven.plugins.release.scm.ScmRepositoryConfigurator</role>
+        </requirement>
+      </requirements>
+      <configuration>
+        <messageFormat>[maven-release-plugin] prepare for next development iteration</messageFormat>
+      </configuration>
     </component>
     <component>
       <role>org.apache.maven.plugins.release.phase.ReleasePhase</role>
