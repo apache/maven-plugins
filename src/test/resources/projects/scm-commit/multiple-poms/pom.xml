@@ -19,4 +19,10 @@
   <groupId>groupId</groupId>
   <artifactId>artifactId</artifactId>
   <version>1.0</version>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>subproject1</module>
+    <module>subproject2</module>
+  </modules>
 </project>
