@@ -62,7 +62,7 @@ public class ScmCommitPhase
     {
         validateConfiguration( releaseConfiguration );
 
-        getLogger().info( "Checking in modified POMs" );
+        getLogger().info( "Checking in modified POMs..." );
 
         ScmRepository repository;
         ScmProvider provider;

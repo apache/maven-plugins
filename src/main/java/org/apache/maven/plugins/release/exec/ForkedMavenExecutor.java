@@ -34,8 +34,14 @@ public class ForkedMavenExecutor
     extends AbstractLogEnabled
     implements MavenExecutor
 {
+    /**
+     * Command line factory.
+     */
     private CommandLineFactory commandLineFactory;
 
+    /**
+     * @noinspection UseOfSystemOutOrSystemErr
+     */
     public void executeGoals( File workingDirectory, String goals, boolean interactive, String arguments )
         throws MavenExecutorException
     {
@@ -63,7 +69,6 @@ public class ForkedMavenExecutor
             cl.createArgument().setValue( "--batch-mode" );
         }
 
-        // TODO [!] check that callers split parameters that could formerly be comma-separated
         if ( !StringUtils.isEmpty( arguments ) )
         {
             cl.createArgument().setLine( arguments );
@@ -91,14 +96,13 @@ public class ForkedMavenExecutor
         }
 */
 
-        // TODO: do these still stream?
-        StreamConsumer stdOut = new CommandLineUtils.StringStreamConsumer();
+        StreamConsumer stdOut = new TeeConsumer( System.out );
 
-        StreamConsumer stdErr = new CommandLineUtils.StringStreamConsumer();
+        StreamConsumer stdErr = new TeeConsumer( System.err );
 
         try
         {
-            getLogger().debug( cl.toString() );
+            getLogger().info( "Executing: " + cl.toString() );
 
             int result = CommandLineUtils.executeCommandLine( cl, stdOut, stdErr );
 

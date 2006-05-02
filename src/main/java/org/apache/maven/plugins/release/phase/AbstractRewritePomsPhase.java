@@ -95,9 +95,7 @@ public abstract class AbstractRewritePomsPhase
         {
             MavenProject project = (MavenProject) it.next();
 
-            String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
-
-            getLogger().info( "Transforming " + projectId + " to release" );
+            getLogger().info( "Transforming '" + project.getName() + "'..." );
 
             transformProject( project, releaseConfiguration, simulate );
         }
