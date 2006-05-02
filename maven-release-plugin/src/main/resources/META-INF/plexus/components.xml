@@ -30,6 +30,12 @@
           <role-hint>properties</role-hint>
           <field-name>configStore</field-name>
         </requirement>
+        <requirement>
+          <role>org.apache.maven.plugins.release.scm.ScmRepositoryConfigurator</role>
+        </requirement>
+        <requirement>
+          <role>org.apache.maven.plugins.release.exec.MavenExecutor</role>
+        </requirement>
       </requirements>
       <configuration>
         <phases>
@@ -228,6 +234,11 @@
     <component>
       <role>org.apache.maven.plugins.release.exec.MavenExecutor</role>
       <implementation>org.apache.maven.plugins.release.exec.ForkedMavenExecutor</implementation>
+      <requirements>
+        <requirement>
+          <role>org.apache.maven.plugins.release.exec.CommandLineFactory</role>
+        </requirement>
+      </requirements>
     </component>
     <component>
       <role>org.apache.maven.plugins.release.exec.CommandLineFactory</role>

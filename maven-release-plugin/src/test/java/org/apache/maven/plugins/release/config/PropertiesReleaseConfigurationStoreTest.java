@@ -54,6 +54,9 @@ public class PropertiesReleaseConfigurationStoreTest
         assertEquals( "Expected passphrase of 'passphrase'", "passphrase", config.getPassphrase() );
         assertEquals( "Expected tag base of 'tagBase'", "tagBase", config.getTagBase() );
         assertEquals( "Expected tag 'tag'", "tag", config.getReleaseLabel() );
+        assertEquals( "Expected additional arguments 'additional-arguments'", "additional-arguments",
+                      config.getAdditionalArguments() );
+        assertEquals( "Expected POM file name 'my-pom.xml'", "pom-file-name", config.getPomFileName() );
         assertNull( "Expected no workingDirectory", config.getWorkingDirectory() );
         assertNull( "Expected no settings", config.getSettings() );
         assertFalse( "Expected default generateReleasePoms", config.isGenerateReleasePoms() );
@@ -154,6 +157,25 @@ public class PropertiesReleaseConfigurationStoreTest
         assertEquals( "compare configuration", config, rereadConfiguration );
     }
 
+    public void testWriteToNewFileRequiredOnly()
+        throws ReleaseConfigurationStoreException
+    {
+        File file = getTestFile( "target/test-classes/new-release.properties" );
+        file.delete();
+        assertFalse( "Check file doesn't exist", file.exists() );
+        store.setPropertiesFile( file );
+
+        ReleaseConfiguration config = new ReleaseConfiguration();
+        config.setCompletedPhase( "completed-phase-write" );
+        config.setUrl( "url-write" );
+
+        store.write( config );
+
+        ReleaseConfiguration rereadConfiguration = store.read();
+
+        assertEquals( "compare configuration", config, rereadConfiguration );
+    }
+
     public void testOverwriteFile()
         throws ReleaseConfigurationStoreException
     {
@@ -179,8 +201,10 @@ public class PropertiesReleaseConfigurationStoreTest
         config.setPassword( "password-write" );
         config.setPrivateKey( "private-key-write" );
         config.setPassphrase( "passphrase-write" );
-        config.setTagBase( "tag-base" );
-        config.setReleaseLabel( "tag" );
+        config.setTagBase( "tag-base-write" );
+        config.setReleaseLabel( "tag-write" );
+        config.setAdditionalArguments( "additional-args-write" );
+        config.setPomFileName( "pom-file-name-write" );
 
         config.mapReleaseVersion( "groupId:artifactId", "1.0" );
         config.mapDevelopmentVersion( "groupId:artifactId", "1.1-SNAPSHOT" );
@@ -191,6 +215,11 @@ public class PropertiesReleaseConfigurationStoreTest
         scm.setUrl( "url-write" );
         scm.setTag( "tag-write" );
         config.mapOriginalScmInfo( "groupId:artifactId", scm );
+
+        scm = new Scm();
+        scm.setConnection( "connection-write" );
+        // omit optional elements
+        config.mapOriginalScmInfo( "groupId:subproject1", scm );
 
         return config;
     }
@@ -205,6 +234,8 @@ public class PropertiesReleaseConfigurationStoreTest
         assertNull( "Expected no passphrase", config.getPassphrase() );
         assertNull( "Expected no tagBase", config.getTagBase() );
         assertNull( "Expected no tag", config.getReleaseLabel() );
+        assertNull( "Expected no additional arguments", config.getAdditionalArguments() );
+        assertNull( "Expected no pom file name", config.getPomFileName() );
 
         assertNull( "Expected no workingDirectory", config.getWorkingDirectory() );
         assertNull( "Expected no settings", config.getSettings() );

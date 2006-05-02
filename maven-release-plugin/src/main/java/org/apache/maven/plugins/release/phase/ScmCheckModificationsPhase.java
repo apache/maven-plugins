@@ -62,7 +62,7 @@ public class ScmCheckModificationsPhase
     public void execute( ReleaseConfiguration releaseConfiguration )
         throws ReleaseExecutionException
     {
-        getLogger().info( "Verifying that there are no local modifications" );
+        getLogger().info( "Verifying that there are no local modifications..." );
 
         ScmRepository repository;
         ScmProvider provider;

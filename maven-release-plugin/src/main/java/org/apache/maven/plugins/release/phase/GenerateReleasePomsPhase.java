@@ -34,6 +34,8 @@ public class GenerateReleasePomsPhase
     {
         if ( releaseConfiguration.isGenerateReleasePoms() )
         {
+            getLogger().info( "Generating release POMs..." );
+
             generateReleasePoms();
         }
     }
