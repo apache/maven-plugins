@@ -325,7 +325,7 @@ public class SurefirePlugin
     private ArtifactFactory artifactFactory;
 
     /**
-     * @parameter expression="${project.remoteArtifactRepositories}"
+     * @parameter expression="${project.pluginArtifactRepositories}"
      */
     private List remoteRepositories;
 
