@@ -34,11 +34,6 @@ import java.util.Map;
 public class RewritePomsForDevelopmentPhase
     extends AbstractRewritePomsPhase
 {
-    protected String getPomSuffix()
-    {
-        return "next";
-    }
-
     protected void transformScm( MavenProject project, Element rootElement, Namespace namespace,
                                  ReleaseConfiguration releaseConfiguration, String projectId,
                                  ScmRepository scmRepository )

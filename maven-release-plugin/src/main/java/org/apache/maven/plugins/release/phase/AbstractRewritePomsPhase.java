@@ -59,7 +59,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * XXX: this base class could instead be a single instance, and the variations described through composition instead
+ * Base class for rewriting phases.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
@@ -76,6 +76,11 @@ public abstract class AbstractRewritePomsPhase
      * The line separator to use.
      */
     private static final String LS = System.getProperty( "line.separator" );
+
+    /**
+     * Configuration item for the suffix to add to rewritten POMs when simulating.
+     */
+    private String pomSuffix;
 
     public void execute( ReleaseConfiguration releaseConfiguration )
         throws ReleaseExecutionException
@@ -156,7 +161,7 @@ public abstract class AbstractRewritePomsPhase
         if ( simulate )
         {
             File outputFile =
-                new File( project.getFile().getParentFile(), project.getFile().getName() + "." + getPomSuffix() );
+                new File( project.getFile().getParentFile(), project.getFile().getName() + "." + pomSuffix );
             writePom( outputFile, document, releaseConfiguration, project.getModelVersion(), intro, outtro );
         }
         else
@@ -165,8 +170,6 @@ public abstract class AbstractRewritePomsPhase
                       scmRepository, provider );
         }
     }
-
-    protected abstract String getPomSuffix();
 
     private void transformDocument( MavenProject project, Element rootElement,
                                     ReleaseConfiguration releaseConfiguration, ScmRepository scmRepository )
