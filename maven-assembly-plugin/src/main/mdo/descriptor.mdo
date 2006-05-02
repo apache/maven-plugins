@@ -414,9 +414,37 @@
           </description>
         </field>
         <field>
-          <name>versionAlignments</name>
+          <name>groupVersionAlignments</name>
           <version>1.0.0</version>
           <description>Align a group to a version or an individual artifact.</description>
+          <association>
+            <type>GroupVersionAlignment</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+      </fields>
+    </class>
+    <class>
+      <name>GroupVersionAlignment</name>
+      <version>1.0.0</version>
+      <description>Defines a Maven repository to be included in the assembly.</description>
+      <fields>
+        <field>
+          <name>id</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <description>The groupId for which you want to align the versions.</description>
+        </field>
+        <field>
+          <name>version</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <description>The version you want to align this group to.</description>
+        </field>
+        <field>
+          <name>excludes</name>
+          <version>1.0.0</version>
+          <description>Artifact Ids of the artifacts you want excluded from version alignment.</description>
           <association>
             <type>String</type>
             <multiplicity>*</multiplicity>
