@@ -19,6 +19,7 @@ package org.apache.maven.plugins.release.phase;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.plugins.release.ReleaseExecutionException;
+import org.apache.maven.plugins.release.ReleaseFailureException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
@@ -43,7 +44,7 @@ public class CheckDependencySnapshotsPhase
     implements ReleasePhase
 {
     public void execute( ReleaseConfiguration releaseConfiguration )
-        throws ReleaseExecutionException
+        throws ReleaseExecutionException, ReleaseFailureException
     {
         getLogger().info( "Checking dependencies and plugins for snapshots ..." );
 
@@ -59,7 +60,7 @@ public class CheckDependencySnapshotsPhase
     }
 
     private void checkProject( MavenProject project, Map originalVersions )
-        throws ReleaseExecutionException
+        throws ReleaseExecutionException, ReleaseFailureException
     {
         Set snapshotDependencies = new HashSet();
 
@@ -130,8 +131,7 @@ public class CheckDependencySnapshotsPhase
                 message.append( "\n" );
             }
 
-            throw new ReleaseExecutionException(
-                "Can't release project due to non released dependencies :\n" + message );
+            throw new ReleaseFailureException( "Can't release project due to non released dependencies :\n" + message );
         }
     }
 
@@ -146,7 +146,7 @@ public class CheckDependencySnapshotsPhase
     }
 
     public void simulate( ReleaseConfiguration releaseConfiguration )
-        throws ReleaseExecutionException
+        throws ReleaseExecutionException, ReleaseFailureException
     {
         // It makes no modifications, so simulate is the same as execute
         execute( releaseConfiguration );

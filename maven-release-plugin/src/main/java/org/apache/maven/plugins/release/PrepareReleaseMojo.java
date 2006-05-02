@@ -76,11 +76,6 @@ public class PrepareReleaseMojo
     private boolean dryRun;
 
     /**
-     * @component
-     */
-    private ReleaseManager releaseManager;
-
-    /**
      * Whether to add a schema to the POM if it was previously missing on release.
      *
      * @parameter expression="${addSchema}" default-value="true"
@@ -92,10 +87,9 @@ public class PrepareReleaseMojo
     {
         if ( dryRun )
         {
-            getLog()
-                .info( "\n*****\n" + "Warning, release:perform is run in TEST MODE.\n" +
-                    "Nothing will be committed or tagged in the repository, but you pom files will be updated!\n" +
-                    "*****" );
+            getLog().info( "\n*****\n" + "Warning, release:perform is run in TEST MODE.\n" +
+                "Nothing will be committed or tagged in the repository, but you pom files will be updated!\n" +
+                "*****" );
         }
 
         ReleaseConfiguration config = createReleaseConfiguration();
@@ -108,12 +102,15 @@ public class PrepareReleaseMojo
 
         try
         {
-            // TODO [!]: differentiate failures from exceptions
             releaseManager.prepare( config );
         }
         catch ( ReleaseExecutionException e )
         {
             throw new MojoExecutionException( e.getMessage(), e );
+        }
+        catch ( ReleaseFailureException e )
+        {
+            throw new MojoFailureException( e.getMessage() );
         }
     }
 

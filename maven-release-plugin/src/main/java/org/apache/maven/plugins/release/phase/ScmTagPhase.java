@@ -17,6 +17,7 @@ package org.apache.maven.plugins.release.phase;
  */
 
 import org.apache.maven.plugins.release.ReleaseExecutionException;
+import org.apache.maven.plugins.release.ReleaseFailureException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 import org.apache.maven.plugins.release.scm.ReleaseScmCommandException;
 import org.apache.maven.plugins.release.scm.ReleaseScmRepositoryException;
@@ -45,7 +46,7 @@ public class ScmTagPhase
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
     public void execute( ReleaseConfiguration releaseConfiguration )
-        throws ReleaseExecutionException
+        throws ReleaseExecutionException, ReleaseFailureException
     {
         validateConfiguration( releaseConfiguration );
 
@@ -87,7 +88,7 @@ public class ScmTagPhase
     }
 
     public void simulate( ReleaseConfiguration releaseConfiguration )
-        throws ReleaseExecutionException
+        throws ReleaseExecutionException, ReleaseFailureException
     {
         validateConfiguration( releaseConfiguration );
 
@@ -96,11 +97,11 @@ public class ScmTagPhase
     }
 
     private static void validateConfiguration( ReleaseConfiguration releaseConfiguration )
-        throws ReleaseExecutionException
+        throws ReleaseFailureException
     {
         if ( releaseConfiguration.getReleaseLabel() == null )
         {
-            throw new ReleaseExecutionException( "A release label is required for committing" );
+            throw new ReleaseFailureException( "A release label is required for committing" );
         }
     }
 }

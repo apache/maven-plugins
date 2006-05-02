@@ -85,7 +85,7 @@ public class DefaultReleaseManager
     private MavenExecutor mavenExecutor;
 
     public void prepare( ReleaseConfiguration releaseConfiguration )
-        throws ReleaseExecutionException
+        throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseConfiguration config;
         if ( resume )
@@ -145,7 +145,7 @@ public class DefaultReleaseManager
     }
 
     public void perform( ReleaseConfiguration releaseConfiguration, File checkoutDirectory, String goals )
-        throws ReleaseExecutionException
+        throws ReleaseExecutionException, ReleaseFailureException
     {
         getLogger().info( "Checking out the project to perform the release ..." );
 

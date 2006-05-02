@@ -22,6 +22,7 @@ import org.apache.maven.model.Extension;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.plugins.release.ReleaseExecutionException;
+import org.apache.maven.plugins.release.ReleaseFailureException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 import org.apache.maven.plugins.release.scm.ReleaseScmCommandException;
 import org.apache.maven.plugins.release.scm.ReleaseScmRepositoryException;
@@ -83,13 +84,13 @@ public abstract class AbstractRewritePomsPhase
     private String pomSuffix;
 
     public void execute( ReleaseConfiguration releaseConfiguration )
-        throws ReleaseExecutionException
+        throws ReleaseExecutionException, ReleaseFailureException
     {
         transform( releaseConfiguration, false );
     }
 
     private void transform( ReleaseConfiguration releaseConfiguration, boolean simulate )
-        throws ReleaseExecutionException
+        throws ReleaseExecutionException, ReleaseFailureException
     {
         for ( Iterator it = releaseConfiguration.getReactorProjects().iterator(); it.hasNext(); )
         {
@@ -102,7 +103,7 @@ public abstract class AbstractRewritePomsPhase
     }
 
     private void transformProject( MavenProject project, ReleaseConfiguration releaseConfiguration, boolean simulate )
-        throws ReleaseExecutionException
+        throws ReleaseExecutionException, ReleaseFailureException
     {
         Document document;
         String intro = null;
@@ -171,7 +172,7 @@ public abstract class AbstractRewritePomsPhase
 
     private void transformDocument( MavenProject project, Element rootElement,
                                     ReleaseConfiguration releaseConfiguration, ScmRepository scmRepository )
-        throws ReleaseExecutionException
+        throws ReleaseExecutionException, ReleaseFailureException
     {
         Namespace namespace = rootElement.getNamespace();
         Map mappedVersions = getNextVersionMap( releaseConfiguration );
@@ -228,13 +229,13 @@ public abstract class AbstractRewritePomsPhase
 
     private void rewriteVersion( Element rootElement, Namespace namespace, Map mappedVersions, String projectId,
                                  MavenProject project, String parentVersion )
-        throws ReleaseExecutionException
+        throws ReleaseFailureException
     {
         Element versionElement = rootElement.getChild( "version", namespace );
         String version = (String) mappedVersions.get( projectId );
         if ( version == null )
         {
-            throw new ReleaseExecutionException( "Version for '" + project.getName() + "' was not mapped" );
+            throw new ReleaseFailureException( "Version for '" + project.getName() + "' was not mapped" );
         }
         else
         {
@@ -262,7 +263,7 @@ public abstract class AbstractRewritePomsPhase
 
     private String rewriteParent( MavenProject project, Element rootElement, Namespace namespace, Map mappedVersions,
                                   Map originalVersions )
-        throws ReleaseExecutionException
+        throws ReleaseFailureException
     {
         String parentVersion = null;
         if ( project.hasParent() )
@@ -276,8 +277,7 @@ public abstract class AbstractRewritePomsPhase
             {
                 if ( parent.getVersion().equals( originalVersions.get( key ) ) )
                 {
-                    throw new ReleaseExecutionException(
-                        "Version for parent '" + parent.getName() + "' was not mapped" );
+                    throw new ReleaseFailureException( "Version for parent '" + parent.getName() + "' was not mapped" );
                 }
             }
             else
@@ -290,7 +290,7 @@ public abstract class AbstractRewritePomsPhase
 
     private void rewriteDependencies( List dependencies, Element dependencyRoot, Map mappedVersions,
                                       Map originalVersions )
-        throws ReleaseExecutionException
+        throws ReleaseExecutionException, ReleaseFailureException
     {
         if ( dependencies != null )
         {
@@ -305,7 +305,7 @@ public abstract class AbstractRewritePomsPhase
     }
 
     private void rewritePlugins( List plugins, Element pluginRoot, Map mappedVersions, Map originalVersions )
-        throws ReleaseExecutionException
+        throws ReleaseExecutionException, ReleaseFailureException
     {
         if ( plugins != null )
         {
@@ -324,7 +324,7 @@ public abstract class AbstractRewritePomsPhase
     }
 
     private void rewriteExtensions( List extensions, Element extensionRoot, Map mappedVersions, Map originalVersions )
-        throws ReleaseExecutionException
+        throws ReleaseExecutionException, ReleaseFailureException
     {
         if ( extensions != null )
         {
@@ -339,7 +339,7 @@ public abstract class AbstractRewritePomsPhase
     }
 
     private void rewriteReportPlugins( List plugins, Element pluginRoot, Map mappedVersions, Map originalVersions )
-        throws ReleaseExecutionException
+        throws ReleaseExecutionException, ReleaseFailureException
     {
         if ( plugins != null )
         {
@@ -359,7 +359,7 @@ public abstract class AbstractRewritePomsPhase
 
     private void updateDomVersion( String groupId, String artifactId, Map mappedVersions, String version,
                                    Map originalVersions, String groupTagName, String tagName, Element dependencyRoot )
-        throws ReleaseExecutionException
+        throws ReleaseExecutionException, ReleaseFailureException
     {
         String key = ArtifactUtils.versionlessKey( groupId, artifactId );
         String mappedVersion = (String) mappedVersions.get( key );
@@ -391,7 +391,7 @@ public abstract class AbstractRewritePomsPhase
             }
             else
             {
-                throw new ReleaseExecutionException(
+                throw new ReleaseFailureException(
                     "Version '" + version + "' for " + tagName + " '" + key + "' was not mapped" );
             }
         }
@@ -400,7 +400,7 @@ public abstract class AbstractRewritePomsPhase
     private void writePom( File pomFile, Document document, ReleaseConfiguration releaseConfiguration,
                            String modelVersion, String intro, String outtro, ScmRepository repository,
                            ScmProvider provider )
-        throws ReleaseExecutionException
+        throws ReleaseExecutionException, ReleaseScmCommandException
     {
         try
         {
@@ -484,7 +484,7 @@ public abstract class AbstractRewritePomsPhase
     }
 
     public void simulate( ReleaseConfiguration releaseConfiguration )
-        throws ReleaseExecutionException
+        throws ReleaseExecutionException, ReleaseFailureException
     {
         transform( releaseConfiguration, true );
     }
