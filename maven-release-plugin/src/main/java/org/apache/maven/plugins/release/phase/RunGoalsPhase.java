@@ -21,13 +21,14 @@ import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 import org.apache.maven.plugins.release.exec.MavenExecutor;
 import org.apache.maven.plugins.release.exec.MavenExecutorException;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Run the integration tests for the project to verify that it builds before committing.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class RunTestsPhase
+public class RunGoalsPhase
     extends AbstractLogEnabled
     implements ReleasePhase
 {
@@ -36,13 +37,21 @@ public class RunTestsPhase
      */
     private MavenExecutor mavenExecutor;
 
+    /**
+     * The goals to run.
+     */
+    private String goals;
+
     public void execute( ReleaseConfiguration releaseConfiguration )
         throws ReleaseExecutionException
     {
         try
         {
-            mavenExecutor.executeGoals( releaseConfiguration.getWorkingDirectory(), "clean integration-test",
-                                        releaseConfiguration.isInteractive() );
+            if ( !StringUtils.isEmpty( goals ) )
+            {
+                mavenExecutor.executeGoals( releaseConfiguration.getWorkingDirectory(), goals,
+                                            releaseConfiguration.isInteractive() );
+            }
         }
         catch ( MavenExecutorException e )
         {
