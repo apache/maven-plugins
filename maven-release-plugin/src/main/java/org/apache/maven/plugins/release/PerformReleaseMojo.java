@@ -17,6 +17,7 @@ package org.apache.maven.plugins.release;
  */
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 
 import java.io.File;
@@ -56,7 +57,7 @@ public class PerformReleaseMojo
     private String scmUrl;
 
     public void execute()
-        throws MojoExecutionException
+        throws MojoExecutionException, MojoFailureException
     {
         try
         {
@@ -67,12 +68,15 @@ public class PerformReleaseMojo
                 releaseConfiguration.setUrl( scmUrl );
             }
 
-            // TODO [!]: differentiate failures from exceptions
             releaseManager.perform( releaseConfiguration, workingDirectory, goals );
         }
         catch ( ReleaseExecutionException e )
         {
             throw new MojoExecutionException( e.getMessage(), e );
+        }
+        catch ( ReleaseFailureException e )
+        {
+            throw new MojoFailureException( e.getMessage() );
         }
     }
 

@@ -17,6 +17,7 @@ package org.apache.maven.plugins.release.phase;
  */
 
 import org.apache.maven.plugins.release.ReleaseExecutionException;
+import org.apache.maven.plugins.release.ReleaseFailureException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 
 /**
@@ -36,16 +37,18 @@ public interface ReleasePhase
      *
      * @param releaseConfiguration the configuration to use
      * @throws ReleaseExecutionException an exception during the execution of the phase
+     * @throws ReleaseFailureException   a failure during the execution of the phase
      */
     void execute( ReleaseConfiguration releaseConfiguration )
-        throws ReleaseExecutionException;
+        throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
      * Simulate the phase, but don't make any changes to the project.
      *
      * @param releaseConfiguration the configuration to use
      * @throws ReleaseExecutionException an exception during the execution of the phase
+     * @throws ReleaseFailureException   a failure during the execution of the phase
      */
     void simulate( ReleaseConfiguration releaseConfiguration )
-        throws ReleaseExecutionException;
+        throws ReleaseExecutionException, ReleaseFailureException;
 }

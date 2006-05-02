@@ -35,10 +35,12 @@ public interface ReleaseManager
     /**
      * Prepare a release.
      *
-     * @param releaseConfiguration
+     * @param releaseConfiguration the configuration to pass to the preparation steps
+     * @throws ReleaseExecutionException if there is a problem performing the release
+     * @throws ReleaseFailureException   if there is a problem performing the release
      */
     void prepare( ReleaseConfiguration releaseConfiguration )
-        throws ReleaseExecutionException;
+        throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
      * Perform a release.
@@ -47,9 +49,10 @@ public interface ReleaseManager
      * @param checkoutDirectory    the location to checkout to and build from
      * @param goals                the goals to execute
      * @throws ReleaseExecutionException if there is a problem performing the release
+     * @throws ReleaseFailureException   if there is a problem performing the release
      */
     void perform( ReleaseConfiguration releaseConfiguration, File checkoutDirectory, String goals )
-        throws ReleaseExecutionException;
+        throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
      * Clean a release.

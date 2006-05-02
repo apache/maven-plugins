@@ -18,6 +18,7 @@ package org.apache.maven.plugins.release.phase;
 
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.plugins.release.ReleaseExecutionException;
+import org.apache.maven.plugins.release.ReleaseFailureException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
@@ -34,7 +35,7 @@ public class CheckPomPhase
     implements ReleasePhase
 {
     public void execute( ReleaseConfiguration releaseConfiguration )
-        throws ReleaseExecutionException
+        throws ReleaseExecutionException, ReleaseFailureException
     {
         // Currently, we don't deal with multiple SCM locations in a multiproject
         if ( StringUtils.isEmpty( releaseConfiguration.getUrl() ) )
@@ -54,7 +55,7 @@ public class CheckPomPhase
 
             if ( StringUtils.isEmpty( releaseConfiguration.getUrl() ) )
             {
-                throw new ReleaseExecutionException(
+                throw new ReleaseFailureException(
                     "Missing required setting: scm connection or developerConnection must be specified." );
             }
         }
@@ -68,14 +69,14 @@ public class CheckPomPhase
 
             if ( !ArtifactUtils.isSnapshot( project.getVersion() ) )
             {
-                throw new ReleaseExecutionException(
+                throw new ReleaseFailureException(
                     "The project " + projectId + " isn't a snapshot (" + project.getVersion() + ")." );
             }
         }
     }
 
     public void simulate( ReleaseConfiguration releaseConfiguration )
-        throws ReleaseExecutionException
+        throws ReleaseExecutionException, ReleaseFailureException
     {
         // It makes no modifications, so simulate is the same as execute
         execute( releaseConfiguration );

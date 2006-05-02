@@ -1,4 +1,4 @@
-package org.apache.maven.plugins.release.scm;
+package org.apache.maven.plugins.release;
 
 /*
  * Copyright 2005-2006 The Apache Software Foundation.
@@ -16,20 +16,16 @@ package org.apache.maven.plugins.release.scm;
  * limitations under the License.
  */
 
-import org.apache.maven.plugins.release.ReleaseFailureException;
-import org.apache.maven.scm.ScmResult;
-
 /**
- * Exception occurring during an SCM operation.
+ * A failure during the release process.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class ReleaseScmCommandException
-    extends ReleaseFailureException
+public class ReleaseFailureException
+    extends Exception
 {
-    public ReleaseScmCommandException( String message, ScmResult result )
+    public ReleaseFailureException( String message )
     {
-        super( message + "\nProvider message:\n" + result.getProviderMessage() + "\nCommand output:\n" +
-            result.getCommandOutput() );
+        super( message );
     }
 }

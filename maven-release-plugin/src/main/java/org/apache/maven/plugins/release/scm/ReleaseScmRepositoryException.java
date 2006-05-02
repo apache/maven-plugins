@@ -16,7 +16,7 @@ package org.apache.maven.plugins.release.scm;
  * limitations under the License.
  */
 
-import org.apache.maven.plugins.release.ReleaseExecutionException;
+import org.apache.maven.plugins.release.ReleaseFailureException;
 
 import java.util.Iterator;
 import java.util.List;
@@ -27,7 +27,7 @@ import java.util.List;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class ReleaseScmRepositoryException
-    extends ReleaseExecutionException
+    extends ReleaseFailureException
 {
     public ReleaseScmRepositoryException( String message, List validationMessages )
     {
