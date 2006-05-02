@@ -25,6 +25,7 @@ import org.jmock.cglib.Mock;
 import org.jmock.core.constraint.IsEqual;
 import org.jmock.core.constraint.IsSame;
 import org.jmock.core.matcher.InvokeOnceMatcher;
+import org.jmock.core.matcher.TestFailureMatcher;
 import org.jmock.core.stub.ThrowStub;
 
 import java.io.File;
@@ -34,17 +35,17 @@ import java.io.File;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class RunTestsPhaseTest
+public class RunGoalsPhaseTest
     extends PlexusTestCase
 {
-    private RunTestsPhase phase;
+    private RunGoalsPhase phase;
 
     protected void setUp()
         throws Exception
     {
         super.setUp();
 
-        phase = (RunTestsPhase) lookup( ReleasePhase.ROLE, "run-tests" );
+        phase = (RunGoalsPhase) lookup( ReleasePhase.ROLE, "run-tests" );
     }
 
     public void testExecute()
@@ -141,5 +142,27 @@ public class RunTestsPhaseTest
         {
             assertEquals( "Check cause", MavenExecutorException.class, e.getCause().getClass() );
         }
+    }
+
+    public void testPreparationGoals()
+        throws Exception
+    {
+        // this has no goals by default
+        phase = (RunGoalsPhase) lookup( ReleasePhase.ROLE, "run-preparation-goals" );
+
+        File testFile = getTestFile( "target/working-directory" );
+
+        ReleaseConfiguration config = new ReleaseConfiguration();
+        config.setWorkingDirectory( testFile );
+
+        Mock mock = new Mock( MavenExecutor.class );
+        mock.expects( new TestFailureMatcher( "Shouldn't invoke executeGoals" ) ) .method( "executeGoals" );
+
+        phase.setMavenExecutor( (MavenExecutor) mock.proxy() );
+
+        phase.execute( config );
+
+        // just needs to survive the mock
+        assertTrue( true );
     }
 }

@@ -137,17 +137,25 @@
     <component>
       <role>org.apache.maven.plugins.release.phase.ReleasePhase</role>
       <role-hint>run-tests</role-hint>
-      <implementation>org.apache.maven.plugins.release.phase.RunTestsPhase</implementation>
+      <implementation>org.apache.maven.plugins.release.phase.RunGoalsPhase</implementation>
       <requirements>
         <requirement>
           <role>org.apache.maven.plugins.release.exec.MavenExecutor</role>
         </requirement>
       </requirements>
+      <configuration>
+        <goals>clean integration-test</goals>
+      </configuration>
     </component>
     <component>
       <role>org.apache.maven.plugins.release.phase.ReleasePhase</role>
       <role-hint>run-preparation-goals</role-hint>
-      <implementation>org.apache.maven.plugins.release.phase.RunPreparationGoalsPhase</implementation>
+      <implementation>org.apache.maven.plugins.release.phase.RunGoalsPhase</implementation>
+      <requirements>
+        <requirement>
+          <role>org.apache.maven.plugins.release.exec.MavenExecutor</role>
+        </requirement>
+      </requirements>
     </component>
     <component>
       <role>org.apache.maven.plugins.release.phase.ReleasePhase</role>
