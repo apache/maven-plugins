@@ -111,6 +111,9 @@
       <role>org.apache.maven.plugins.release.phase.ReleasePhase</role>
       <role-hint>rewrite-poms-for-release</role-hint>
       <implementation>org.apache.maven.plugins.release.phase.RewritePomsForReleasePhase</implementation>
+      <configuration>
+        <pomSuffix>tag</pomSuffix>
+      </configuration>
       <requirements>
         <requirement>
           <role>org.apache.maven.plugins.release.scm.ScmRepositoryConfigurator</role>
@@ -155,6 +158,9 @@
       <role>org.apache.maven.plugins.release.phase.ReleasePhase</role>
       <role-hint>rewrite-poms-for-development</role-hint>
       <implementation>org.apache.maven.plugins.release.phase.RewritePomsForDevelopmentPhase</implementation>
+      <configuration>
+        <pomSuffix>next</pomSuffix>
+      </configuration>
       <requirements>
         <requirement>
           <role>org.apache.maven.plugins.release.scm.ScmRepositoryConfigurator</role>
