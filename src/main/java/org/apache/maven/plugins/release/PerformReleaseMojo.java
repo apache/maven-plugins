@@ -29,6 +29,7 @@ import java.io.File;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
  * @aggregator
+ * @requiresProject false
  * @goal perform
  */
 public class PerformReleaseMojo
@@ -53,9 +54,9 @@ public class PerformReleaseMojo
      * The SCM URL to checkout from. If omitted, the one from the release.properties file is used, followed by the URL
      * from the current POM.
      *
-     * @parameter expression="${scmUrl}"
+     * @parameter expression="${connectionUrl}"
      */
-    private String scmUrl;
+    private String connectionUrl;
 
     /**
      * Whether to use the release profile that adds sources and javadocs to the released artifact, if appropriate.
@@ -71,9 +72,9 @@ public class PerformReleaseMojo
         {
             // Note that the working directory here is not the same as in the release configuration, so don't reuse that
             ReleaseConfiguration releaseConfiguration = createReleaseConfiguration();
-            if ( scmUrl != null )
+            if ( connectionUrl != null )
             {
-                releaseConfiguration.setUrl( scmUrl );
+                releaseConfiguration.setUrl( connectionUrl );
             }
 
             releaseManager.perform( releaseConfiguration, workingDirectory, goals, useReleaseProfile );
