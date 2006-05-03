@@ -38,7 +38,7 @@ public class PerformReleaseMojo
      *
      * @parameter expression="${goals}"
      */
-    private String goals = "deploy";
+    private String goals = "deploy site-deploy";
 
     /**
      * The checkout directory.
