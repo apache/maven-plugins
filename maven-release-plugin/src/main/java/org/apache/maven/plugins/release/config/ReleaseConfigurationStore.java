@@ -39,14 +39,6 @@ public interface ReleaseConfigurationStore
         throws ReleaseConfigurationStoreException;
 
     /**
-     * Read a configuration.
-     *
-     * @return the configuration
-     */
-    ReleaseConfiguration read()
-        throws ReleaseConfigurationStoreException;
-
-    /**
      * Save a configuration.
      *
      * @param config the configuration
