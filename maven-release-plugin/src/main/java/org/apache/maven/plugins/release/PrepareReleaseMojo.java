@@ -28,6 +28,7 @@ import java.util.List;
  * @author <a href="mailto:jdcasey@apache.org">John Casey</a>
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @author <a href="mailto:jason@maven.org">Jason van Zyl</a>
+ * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
  * @aggregator
  * @goal prepare

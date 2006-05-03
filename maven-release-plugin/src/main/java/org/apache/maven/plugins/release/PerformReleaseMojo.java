@@ -26,6 +26,7 @@ import java.io.File;
  * Perform a release from SCM
  *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
+ * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
  * @aggregator
  * @goal perform
@@ -43,7 +44,7 @@ public class PerformReleaseMojo
     /**
      * The checkout directory.
      *
-     * @parameter expression="${project.build.directory}/checkout"
+     * @parameter default-value="${project.build.directory}/checkout"
      * @required
      */
     private File workingDirectory;
@@ -86,5 +87,4 @@ public class PerformReleaseMojo
             throw new MojoFailureException( e.getMessage() );
         }
     }
-
 }
