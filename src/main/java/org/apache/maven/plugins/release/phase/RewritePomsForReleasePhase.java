@@ -54,7 +54,7 @@ public class RewritePomsForReleasePhase
                 ScmTranslator translator = (ScmTranslator) scmTranslators.get( scmRepository.getProvider() );
                 if ( translator != null )
                 {
-                    Scm scm = project.getScm();
+                    Scm scm = project.getOriginalModel().getScm();
                     String tag = releaseConfiguration.getReleaseLabel();
                     scmRoot.getChild( "connection", namespace ).setText(
                         translator.translateTagUrl( scm.getConnection(), tag ) );
@@ -69,6 +69,29 @@ public class RewritePomsForReleasePhase
                     if ( url != null )
                     {
                         url.setText( translator.translateTagUrl( scm.getUrl(), tag ) );
+                    }
+
+                    String resolvedTag = translator.resolveTag( scm.getTag(), tag );
+                    Element tagElement = scmRoot.getChild( "tag", namespace );
+                    if ( tagElement != null )
+                    {
+                        if ( resolvedTag != null )
+                        {
+                            tagElement.setText( resolvedTag );
+                        }
+                        else
+                        {
+                            tagElement.getParentElement().removeChild( "tag", namespace );
+                        }
+                    }
+                    else
+                    {
+                        if ( resolvedTag != null )
+                        {
+                            Element element = new Element( "tag", namespace );
+                            element.setText( resolvedTag );
+                            scmRoot.addContent( "  " ).addContent( element ).addContent( "\n  " );
+                        }
                     }
                 }
                 else

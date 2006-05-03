@@ -17,6 +17,7 @@ package org.apache.maven.plugins.release.phase;
  */
 
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
@@ -47,7 +48,17 @@ public class RewritePomsForReleasePhaseTest
     {
         ReleaseConfiguration releaseConfiguration =
             createConfigurationFromProjects( "rewrite-for-release/", path, copyFiles );
-        releaseConfiguration.setUrl( "scm:svn:file://localhost/tmp/scm-repo" );
+
+        MavenProject rootProject = (MavenProject) releaseConfiguration.getReactorProjects().get( 0 );
+        if ( rootProject.getScm() == null )
+        {
+            releaseConfiguration.setUrl( "scm:svn:file://localhost/tmp/scm-repo/trunk" );
+        }
+        else
+        {
+            releaseConfiguration.setUrl( rootProject.getScm().getConnection() );
+        }
+
         releaseConfiguration.setReleaseLabel( "release-label" );
         releaseConfiguration.setWorkingDirectory( getTestFile( "target/test/checkout" ) );
 
@@ -163,5 +174,16 @@ public class RewritePomsForReleasePhaseTest
     protected void unmapNextVersion( ReleaseConfiguration config, String projectId )
     {
         // nothing to do
+    }
+
+    public void testRewriteBasicPomWithCvs()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromProjects( "basic-pom-with-cvs" );
+        mapNextVersion( config, "groupId:artifactId" );
+
+        phase.execute( config );
+
+        assertTrue( compareFiles( config.getReactorProjects() ) );
     }
 }
