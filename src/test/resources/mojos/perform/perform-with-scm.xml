@@ -24,7 +24,7 @@
           <project implementation="org.apache.maven.plugin.testing.stubs.MavenProjectStub"/>
           <workingDirectory>${basedir}/target/checkout</workingDirectory>
           <useReleaseProfile>true</useReleaseProfile>
-          <scmUrl>scm-url</scmUrl>
+          <connectionUrl>scm-url</connectionUrl>
         </configuration>
       </plugin>
     </plugins>
