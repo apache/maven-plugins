@@ -19,6 +19,7 @@ package org.apache.maven.plugins.release.phase;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 import org.codehaus.plexus.util.FileUtils;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -81,6 +82,42 @@ public class RewritePomsForReleasePhaseTest
         expected = readTestProjectFile( "basic-pom/expected-pom.xml" );
         actual = readTestProjectFile( "basic-pom/pom.xml.tag" );
         assertEquals( "Check the transformed POM", expected, actual );
+    }
+
+    public void testClean()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromBasicPom();
+        config.mapReleaseVersion( "groupId:artifactId", NEXT_VERSION );
+
+        File testFile =
+            getTestFile( "target/test-classes/projects/rewrite-for-development/" + "basic-pom/pom.xml.tag" );
+        testFile.delete();
+        assertFalse( testFile.exists() );
+
+        phase.simulate( config );
+
+        assertTrue( testFile.exists() );
+
+        phase.clean( config );
+
+        assertFalse( testFile.exists() );
+    }
+
+    public void testCleanNotExists()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromBasicPom();
+        config.mapReleaseVersion( "groupId:artifactId", NEXT_VERSION );
+
+        File testFile =
+            getTestFile( "target/test-classes/projects/rewrite-for-development/" + "basic-pom/pom.xml.tag" );
+        testFile.delete();
+        assertFalse( testFile.exists() );
+
+        phase.clean( config );
+
+        assertFalse( testFile.exists() );
     }
 
     protected void mapAlternateNextVersion( ReleaseConfiguration config, String projectId )
