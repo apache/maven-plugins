@@ -34,6 +34,7 @@ import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -151,7 +152,8 @@ public class DefaultReleaseManager
         }
     }
 
-    public void perform( ReleaseConfiguration releaseConfiguration, File checkoutDirectory, String goals )
+    public void perform( ReleaseConfiguration releaseConfiguration, File checkoutDirectory, String goals,
+                         boolean useReleaseProfile )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         getLogger().info( "Checking out the project to perform the release ..." );
@@ -219,10 +221,24 @@ public class DefaultReleaseManager
             throw new ReleaseScmCommandException( "Unable to checkout from SCM", result );
         }
 
+        String additionalArguments = config.getAdditionalArguments();
+
+        if ( useReleaseProfile )
+        {
+            if ( !StringUtils.isEmpty( additionalArguments ) )
+            {
+                additionalArguments = additionalArguments + " -DperformRelease=true";
+            }
+            else
+            {
+                additionalArguments = "-DperformRelease=true";
+            }
+        }
+
         try
         {
             mavenExecutor.executeGoals( checkoutDirectory, goals, config.isInteractive(), config.getPomFileName(),
-                                        config.getAdditionalArguments() );
+                                        additionalArguments );
         }
         catch ( MavenExecutorException e )
         {
