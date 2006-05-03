@@ -1,0 +1,33 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>custom.configuration</groupId>
+  <artifactId>custom-configuration</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <inceptionYear>2006</inceptionYear>
+  <name>Maven PMD Violation Check Custom Configuration Test</name>
+  <url>http://maven.apache.org</url>
+  <build>
+    <finalName>custom-configuration</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <configuration>          
+          <sourceDirectory>${basedir}/src/test/resources/unit/custom-configuration</sourceDirectory>
+          <targetDirectory>${basedir}/target/test/unit/custom-configuration/target</targetDirectory>
+          <failOnViolation>false</failOnViolation>
+          <language>java</language>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
+</project>
