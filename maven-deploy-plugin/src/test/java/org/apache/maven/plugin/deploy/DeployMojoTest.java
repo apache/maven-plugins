@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.deploy.DeployMojo;
@@ -375,6 +376,19 @@ public class DeployMojoTest
     public void testBasicDeployWithScpAsProtocol()
         throws Exception
     {
+        String originalUserHome = System.getProperty( "user.home" );
+        
+        // FIX THE DAMN user.home BEFORE YOU DELETE IT!!!
+        File altHome = new File( getBasedir(), "target/ssh-user-home" );
+        altHome.mkdirs();
+        
+        System.out.println( "Testing user.home value for .ssh dir: " + altHome.getCanonicalPath() );
+        
+        Properties props = System.getProperties();
+        props.setProperty( "user.home", altHome.getCanonicalPath() );
+        
+        System.setProperties( props );
+        
         File testPom = new File( getBasedir(),
                                  "target/test-classes/unit/basic-deploy-scp/plugin-config.xml" );
         
@@ -396,7 +410,17 @@ public class DeployMojoTest
         
         artifact.setFile( file );
         
-        File sshFile = new File( System.getProperty( "user.home" ), ".ssh" );
+        String altUserHome = System.getProperty( "user.home" );
+        
+        if ( altUserHome.equals( originalUserHome ) )
+        {
+            // this is *very* bad!
+            throw new IllegalStateException( "Setting 'user.home' system property to alternate value did NOT work. Aborting test." );
+        }
+        
+        File sshFile = new File( altUserHome, ".ssh" );
+        
+        System.out.println( "Testing .ssh dir: " + sshFile.getCanonicalPath() );
         
         //delete first the .ssh folder if existing before executing the mojo
         if( sshFile.exists() )
