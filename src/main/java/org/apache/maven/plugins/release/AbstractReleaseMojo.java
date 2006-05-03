@@ -94,7 +94,7 @@ public abstract class AbstractReleaseMojo
     /**
      * Additional arguments to pass to the Maven executions, separated by spaces.
      *
-     * @parameter expression="${arguments}"
+     * @parameter expression="${arguments}" alias="prepareVerifyArgs"
      */
     private String arguments;
 
