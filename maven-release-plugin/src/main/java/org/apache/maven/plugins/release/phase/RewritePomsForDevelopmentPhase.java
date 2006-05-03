@@ -19,10 +19,12 @@ package org.apache.maven.plugins.release.phase;
 import org.apache.maven.model.Scm;
 import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.plugins.release.scm.ScmTranslator;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.jdom.Element;
 import org.jdom.Namespace;
+import org.jdom.Text;
 
 import java.util.Map;
 
@@ -34,6 +36,11 @@ import java.util.Map;
 public class RewritePomsForDevelopmentPhase
     extends AbstractRewritePomsPhase
 {
+    /**
+     * SCM URL translators mapped by provider name.
+     */
+    private Map scmTranslators;
+
     protected void transformScm( MavenProject project, Element rootElement, Namespace namespace,
                                  ReleaseConfiguration releaseConfiguration, String projectId,
                                  ScmRepository scmRepository )
@@ -64,6 +71,46 @@ public class RewritePomsForDevelopmentPhase
                 if ( url != null )
                 {
                     url.setText( scm.getUrl() );
+                }
+
+                ScmTranslator translator = (ScmTranslator) scmTranslators.get( scmRepository.getProvider() );
+                if ( translator != null )
+                {
+                    String resolvedTag = translator.resolveTag( null, scm.getTag() );
+
+                    Element tagElement = scmRoot.getChild( "tag", namespace );
+                    if ( tagElement != null )
+                    {
+                        if ( resolvedTag != null )
+                        {
+                            tagElement.setText( resolvedTag );
+                        }
+                        else
+                        {
+                            int index = scmRoot.indexOf( tagElement );
+                            scmRoot.removeContent( index );
+                            for ( int i = index - 1; i >= 0; i-- )
+                            {
+                                if ( scmRoot.getContent( i ) instanceof Text )
+                                {
+                                    scmRoot.removeContent( i );
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if ( resolvedTag != null )
+                        {
+                            Element element = new Element( "tag", namespace );
+                            element.setText( resolvedTag );
+                            scmRoot.addContent( "  " ).addContent( element ).addContent( "\n  " );
+                        }
+                    }
                 }
             }
         }
