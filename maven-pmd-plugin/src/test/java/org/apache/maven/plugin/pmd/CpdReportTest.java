@@ -60,10 +60,10 @@ public class CpdReportTest
         //check the contents of cpd.html
         String str =
             readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/cpd.html" ) );
-        assertTrue( str.toLowerCase().indexOf( "def\\configuration\\AppSample.java".toLowerCase() ) != -1 );
+        assertTrue( str.toLowerCase().indexOf( "def/configuration/AppSample.java".toLowerCase() ) != -1 );
 
         str = readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/cpd.html" ) );
-        assertTrue( str.toLowerCase().indexOf( "def\\configuration\\App.java".toLowerCase() ) != -1 );
+        assertTrue( str.toLowerCase().indexOf( "def/configuration/App.java".toLowerCase() ) != -1 );
 
         str = readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/cpd.html" ) );
         assertTrue( str.toLowerCase().indexOf( "public String dup( String str )".toLowerCase() ) != -1 );
