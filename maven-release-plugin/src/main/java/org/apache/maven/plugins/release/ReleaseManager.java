@@ -68,6 +68,8 @@ public interface ReleaseManager
 
     /**
      * Clean a release.
+     *
+     * @param releaseConfiguration the configuration to use for release
      */
-    void clean();
+    void clean( ReleaseConfiguration releaseConfiguration );
 }

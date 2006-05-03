@@ -53,6 +53,7 @@
           <phase>rewrite-poms-for-development</phase>
           <phase>remove-release-poms</phase>
           <phase>scm-commit-development</phase>
+          <phase>end-release</phase>
         </phases>
       </configuration>
     </component>
@@ -229,6 +230,11 @@
     <component>
       <role>org.apache.maven.plugins.release.exec.CommandLineFactory</role>
       <implementation>org.apache.maven.plugins.release.exec.DefaultCommandLineFactory</implementation>
+    </component>
+    <component>
+      <role>org.apache.maven.plugins.release.phase.ReleasePhase</role>
+      <role-hint>end-release</role-hint>
+      <implementation>org.apache.maven.plugins.release.phase.EndReleasePhase</implementation>
     </component>
   </components>
 </component-set>

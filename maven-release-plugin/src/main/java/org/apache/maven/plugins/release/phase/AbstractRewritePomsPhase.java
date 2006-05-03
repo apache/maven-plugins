@@ -35,7 +35,6 @@ import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
-import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.jdom.Document;
@@ -65,8 +64,7 @@ import java.util.Map;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public abstract class AbstractRewritePomsPhase
-    extends AbstractLogEnabled
-    implements ReleasePhase
+    extends AbstractReleasePhase
 {
     /**
      * Tool that gets a configured SCM repository from release configuration.
@@ -487,6 +485,22 @@ public abstract class AbstractRewritePomsPhase
         throws ReleaseExecutionException, ReleaseFailureException
     {
         transform( releaseConfiguration, true );
+    }
+
+    public void clean( ReleaseConfiguration config )
+    {
+        super.clean( config );
+
+        for ( Iterator i = config.getReactorProjects().iterator(); i.hasNext(); )
+        {
+            MavenProject project = (MavenProject) i.next();
+
+            File file = new File( project.getFile().getParentFile(), project.getFile().getName() + "." + pomSuffix );
+            if ( file.exists() )
+            {
+                file.delete();
+            }
+        }
     }
 
     protected abstract Map getOriginalVersionMap( ReleaseConfiguration releaseConfiguration );

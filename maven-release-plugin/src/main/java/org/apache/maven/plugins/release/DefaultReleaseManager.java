@@ -37,6 +37,7 @@ import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -165,6 +166,13 @@ public class DefaultReleaseManager
             throw new ReleaseExecutionException( "Error reading stored configuration: " + e.getMessage(), e );
         }
 
+        // if we stopped mid-way through preparation - don't perform
+        if ( config.getCompletedPhase() != null && !"end-release".equals( config.getCompletedPhase() ) )
+        {
+            throw new ReleaseFailureException(
+                "Cannot perform release - the preparation step was stopped mid-way. Please re-run release:prepare to continue, or perform the release from an SCM tag." );
+        }
+
         ScmRepository repository;
         ScmProvider provider;
         try
@@ -221,20 +229,21 @@ public class DefaultReleaseManager
             throw new ReleaseExecutionException( "Error executing Maven: " + e.getMessage(), e );
         }
 
-        clean();
+        clean( config );
     }
 
-    public void clean()
+    public void clean( ReleaseConfiguration releaseConfiguration )
     {
-        // TODO: this, tag, next, backup poms [!] -- test backup pom is generated
-/*
-        File releaseProperties = new File( basedir, "release.properties" );
+        getLogger().info( "Cleaning up after release..." );
 
-        if ( releaseProperties.exists() )
+        configStore.delete( releaseConfiguration );
+
+        for ( Iterator i = releasePhases.values().iterator(); i.hasNext(); )
         {
-            releaseProperties.delete();
+            ReleasePhase phase = (ReleasePhase) i.next();
+
+            phase.clean( releaseConfiguration );
         }
-*/
     }
 
     void setConfigStore( ReleaseConfigurationStore configStore )

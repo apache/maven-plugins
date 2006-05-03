@@ -20,7 +20,6 @@ import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 import org.apache.maven.plugins.release.exec.MavenExecutor;
 import org.apache.maven.plugins.release.exec.MavenExecutorException;
-import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -29,8 +28,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class RunGoalsPhase
-    extends AbstractLogEnabled
-    implements ReleasePhase
+    extends AbstractReleasePhase
 {
     /**
      * Component to assist in executing Maven.
