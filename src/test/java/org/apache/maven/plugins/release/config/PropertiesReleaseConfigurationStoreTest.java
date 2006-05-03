@@ -43,9 +43,8 @@ public class PropertiesReleaseConfigurationStoreTest
         throws ReleaseConfigurationStoreException
     {
         File file = getTestFile( "target/test-classes/release.properties" );
-        store.setPropertiesFile( file );
 
-        ReleaseConfiguration config = store.read();
+        ReleaseConfiguration config = store.read( file );
         assertEquals( "Expected completedPhase of 'step1'", "step1", config.getCompletedPhase() );
         assertEquals( "Expected url of 'scm-url'", "scm-url", config.getUrl() );
         assertEquals( "Expected username of 'username'", "username", config.getUsername() );
@@ -100,9 +99,8 @@ public class PropertiesReleaseConfigurationStoreTest
         throws ReleaseConfigurationStoreException
     {
         File file = getTestFile( "target/test-classes/empty-release.properties" );
-        store.setPropertiesFile( file );
 
-        ReleaseConfiguration config = store.read();
+        ReleaseConfiguration config = store.read( file );
 
         assertDefaultReleaseConfiguration( config );
     }
@@ -111,9 +109,8 @@ public class PropertiesReleaseConfigurationStoreTest
         throws ReleaseConfigurationStoreException
     {
         File file = getTestFile( "target/test-classes/no-release.properties" );
-        store.setPropertiesFile( file );
 
-        ReleaseConfiguration config = store.read();
+        ReleaseConfiguration config = store.read( file );
 
         assertDefaultReleaseConfiguration( config );
     }
@@ -122,10 +119,9 @@ public class PropertiesReleaseConfigurationStoreTest
         throws ReleaseConfigurationStoreException
     {
         File file = getTestFile( "target/test-classes/empty-release.properties" );
-        store.setPropertiesFile( file );
 
         ReleaseConfiguration mergeConfiguration = createMergeConfiguration();
-        ReleaseConfiguration config = store.read( mergeConfiguration );
+        ReleaseConfiguration config = store.read( mergeConfiguration, file );
 
         assertEquals( "Check configurations merged", mergeConfiguration, config );
     }
@@ -134,10 +130,9 @@ public class PropertiesReleaseConfigurationStoreTest
         throws ReleaseConfigurationStoreException
     {
         File file = getTestFile( "target/test-classes/no-release.properties" );
-        store.setPropertiesFile( file );
 
         ReleaseConfiguration mergeConfiguration = createMergeConfiguration();
-        ReleaseConfiguration config = store.read( mergeConfiguration );
+        ReleaseConfiguration config = store.read( mergeConfiguration, file );
 
         assertEquals( "Check configurations merged", mergeConfiguration, config );
     }
@@ -148,13 +143,12 @@ public class PropertiesReleaseConfigurationStoreTest
         File file = getTestFile( "target/test-classes/new-release.properties" );
         file.delete();
         assertFalse( "Check file doesn't exist", file.exists() );
-        store.setPropertiesFile( file );
 
         ReleaseConfiguration config = createReleaseConfigurationForWriting();
 
-        store.write( config );
+        store.write( config, file );
 
-        ReleaseConfiguration rereadConfiguration = store.read();
+        ReleaseConfiguration rereadConfiguration = store.read( file );
 
         assertEquals( "compare configuration", config, rereadConfiguration );
     }
@@ -165,15 +159,14 @@ public class PropertiesReleaseConfigurationStoreTest
         File file = getTestFile( "target/test-classes/new-release.properties" );
         file.delete();
         assertFalse( "Check file doesn't exist", file.exists() );
-        store.setPropertiesFile( file );
 
         ReleaseConfiguration config = new ReleaseConfiguration();
         config.setCompletedPhase( "completed-phase-write" );
         config.setUrl( "url-write" );
 
-        store.write( config );
+        store.write( config, file );
 
-        ReleaseConfiguration rereadConfiguration = store.read();
+        ReleaseConfiguration rereadConfiguration = store.read( file );
 
         assertEquals( "compare configuration", config, rereadConfiguration );
     }
@@ -183,13 +176,12 @@ public class PropertiesReleaseConfigurationStoreTest
     {
         File file = getTestFile( "target/test-classes/rewrite-release.properties" );
         assertTrue( "Check file already exists", file.exists() );
-        store.setPropertiesFile( file );
 
         ReleaseConfiguration config = createReleaseConfigurationForWriting();
 
-        store.write( config );
+        store.write( config, file );
 
-        ReleaseConfiguration rereadConfiguration = store.read();
+        ReleaseConfiguration rereadConfiguration = store.read( file );
 
         assertEquals( "compare configuration", config, rereadConfiguration );
     }

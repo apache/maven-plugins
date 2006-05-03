@@ -35,14 +35,13 @@ public class ReleaseConfigurationStoreStub
         return releaseConfiguration;
     }
 
-    public ReleaseConfiguration read()
-        throws ReleaseConfigurationStoreException
-    {
-        return releaseConfiguration;
-    }
-
     public void write( ReleaseConfiguration config )
     {
         this.releaseConfiguration = config;
+    }
+
+    public ReleaseConfiguration getReleaseConfiguration()
+    {
+        return releaseConfiguration;
     }
 }

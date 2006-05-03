@@ -40,18 +40,19 @@ public class PropertiesReleaseConfigurationStore
     extends AbstractLogEnabled
     implements ReleaseConfigurationStore
 {
-    /**
-     * The properties file to read and write.
-     */
-    private File propertiesFile;
-
-    public PropertiesReleaseConfigurationStore()
+    public ReleaseConfiguration read( ReleaseConfiguration mergeConfiguration )
+        throws ReleaseConfigurationStoreException
     {
-        // TODO [!]: set properties file somehow
-        propertiesFile = new File( "release.properties" );
+        return read( mergeConfiguration, getDefaultReleasePropertiesFile( mergeConfiguration ) );
     }
 
-    public ReleaseConfiguration read( ReleaseConfiguration mergeConfiguration )
+    public ReleaseConfiguration read( File file )
+        throws ReleaseConfigurationStoreException
+    {
+        return read( null, file );
+    }
+
+    public ReleaseConfiguration read( ReleaseConfiguration mergeConfiguration, File file )
         throws ReleaseConfigurationStoreException
     {
         Properties properties = new Properties();
@@ -59,18 +60,18 @@ public class PropertiesReleaseConfigurationStore
         InputStream inStream = null;
         try
         {
-            inStream = new FileInputStream( propertiesFile );
+            inStream = new FileInputStream( file );
 
             properties.load( inStream );
         }
         catch ( FileNotFoundException e )
         {
-            getLogger().debug( propertiesFile.getName() + " not found - using empty properties" );
+            getLogger().debug( file.getName() + " not found - using empty properties" );
         }
         catch ( IOException e )
         {
             throw new ReleaseConfigurationStoreException(
-                "Error reading properties file '" + propertiesFile.getName() + "': " + e.getMessage(), e );
+                "Error reading properties file '" + file.getName() + "': " + e.getMessage(), e );
         }
         finally
         {
@@ -136,6 +137,12 @@ public class PropertiesReleaseConfigurationStore
     }
 
     public void write( ReleaseConfiguration config )
+        throws ReleaseConfigurationStoreException
+    {
+        write( config, getDefaultReleasePropertiesFile( config ) );
+    }
+
+    public void write( ReleaseConfiguration config, File file )
         throws ReleaseConfigurationStoreException
     {
         Properties properties = new Properties();
@@ -216,14 +223,14 @@ public class PropertiesReleaseConfigurationStore
         //noinspection OverlyBroadCatchBlock
         try
         {
-            outStream = new FileOutputStream( propertiesFile );
+            outStream = new FileOutputStream( file );
 
             properties.store( outStream, "release configuration" );
         }
         catch ( IOException e )
         {
             throw new ReleaseConfigurationStoreException(
-                "Error writing properties file '" + propertiesFile.getName() + "': " + e.getMessage(), e );
+                "Error writing properties file '" + file.getName() + "': " + e.getMessage(), e );
         }
         finally
         {
@@ -232,14 +239,8 @@ public class PropertiesReleaseConfigurationStore
 
     }
 
-    public ReleaseConfiguration read()
-        throws ReleaseConfigurationStoreException
+    private static File getDefaultReleasePropertiesFile( ReleaseConfiguration mergeConfiguration )
     {
-        return read( null );
-    }
-
-    public void setPropertiesFile( File propertiesFile )
-    {
-        this.propertiesFile = propertiesFile;
+        return new File( mergeConfiguration.getWorkingDirectory(), "release.properties" );
     }
 }

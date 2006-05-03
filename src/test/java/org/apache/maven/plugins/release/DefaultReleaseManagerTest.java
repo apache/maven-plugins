@@ -19,6 +19,7 @@ package org.apache.maven.plugins.release;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 import org.apache.maven.plugins.release.config.ReleaseConfigurationStore;
 import org.apache.maven.plugins.release.config.ReleaseConfigurationStoreException;
+import org.apache.maven.plugins.release.config.ReleaseConfigurationStoreStub;
 import org.apache.maven.plugins.release.phase.ReleasePhase;
 import org.apache.maven.plugins.release.phase.ReleasePhaseStub;
 import org.codehaus.plexus.PlexusTestCase;
@@ -38,7 +39,7 @@ import java.util.Map;
 public class DefaultReleaseManagerTest
     extends PlexusTestCase
 {
-    private ReleaseConfigurationStore configStore;
+    private ReleaseConfigurationStoreStub configStore;
 
 
     protected void setUp()
@@ -46,7 +47,7 @@ public class DefaultReleaseManagerTest
     {
         super.setUp();
 
-        configStore = (ReleaseConfigurationStore) lookup( ReleaseConfigurationStore.ROLE, "stub" );
+        configStore = (ReleaseConfigurationStoreStub) lookup( ReleaseConfigurationStore.ROLE, "stub" );
     }
 
     public void testPrepareNoCompletedPhase()
@@ -54,7 +55,7 @@ public class DefaultReleaseManagerTest
     {
         ReleaseManager releaseManager = (ReleaseManager) lookup( ReleaseManager.ROLE, "test" );
 
-        ReleaseConfiguration releaseConfiguration = configStore.read();
+        ReleaseConfiguration releaseConfiguration = configStore.getReleaseConfiguration();
         releaseConfiguration.setCompletedPhase( null );
 
         releaseManager.prepare( new ReleaseConfiguration() );
@@ -77,7 +78,7 @@ public class DefaultReleaseManagerTest
     {
         ReleaseManager releaseManager = (ReleaseManager) lookup( ReleaseManager.ROLE, "test" );
 
-        ReleaseConfiguration releaseConfiguration = configStore.read();
+        ReleaseConfiguration releaseConfiguration = configStore.getReleaseConfiguration();
         releaseConfiguration.setCompletedPhase( "step1" );
 
         releaseManager.prepare( new ReleaseConfiguration() );
@@ -100,7 +101,7 @@ public class DefaultReleaseManagerTest
     {
         ReleaseManager releaseManager = (ReleaseManager) lookup( ReleaseManager.ROLE, "test" );
 
-        ReleaseConfiguration releaseConfiguration = configStore.read();
+        ReleaseConfiguration releaseConfiguration = configStore.getReleaseConfiguration();
         releaseConfiguration.setCompletedPhase( "step1" );
 
         releaseManager.prepare( new ReleaseConfiguration(), false, false );
@@ -123,7 +124,7 @@ public class DefaultReleaseManagerTest
     {
         ReleaseManager releaseManager = (ReleaseManager) lookup( ReleaseManager.ROLE, "test" );
 
-        ReleaseConfiguration releaseConfiguration = configStore.read();
+        ReleaseConfiguration releaseConfiguration = configStore.getReleaseConfiguration();
         releaseConfiguration.setCompletedPhase( "step3" );
 
         releaseManager.prepare( new ReleaseConfiguration() );
@@ -146,7 +147,7 @@ public class DefaultReleaseManagerTest
     {
         ReleaseManager releaseManager = (ReleaseManager) lookup( ReleaseManager.ROLE, "test" );
 
-        ReleaseConfiguration releaseConfiguration = configStore.read();
+        ReleaseConfiguration releaseConfiguration = configStore.getReleaseConfiguration();
         releaseConfiguration.setCompletedPhase( "foo" );
 
         releaseManager.prepare( new ReleaseConfiguration() );
@@ -169,7 +170,7 @@ public class DefaultReleaseManagerTest
     {
         ReleaseManager releaseManager = (ReleaseManager) lookup( ReleaseManager.ROLE, "test" );
 
-        ReleaseConfiguration releaseConfiguration = configStore.read();
+        ReleaseConfiguration releaseConfiguration = configStore.getReleaseConfiguration();
         releaseConfiguration.setCompletedPhase( null );
 
         releaseManager.prepare( new ReleaseConfiguration(), true, true );
@@ -192,7 +193,7 @@ public class DefaultReleaseManagerTest
     {
         ReleaseManager releaseManager = (ReleaseManager) lookup( ReleaseManager.ROLE, "test" );
 
-        ReleaseConfiguration releaseConfiguration = configStore.read();
+        ReleaseConfiguration releaseConfiguration = configStore.getReleaseConfiguration();
         releaseConfiguration.setCompletedPhase( "step1" );
 
         releaseManager.prepare( new ReleaseConfiguration(), true, true );
@@ -215,7 +216,7 @@ public class DefaultReleaseManagerTest
     {
         ReleaseManager releaseManager = (ReleaseManager) lookup( ReleaseManager.ROLE, "test" );
 
-        ReleaseConfiguration releaseConfiguration = configStore.read();
+        ReleaseConfiguration releaseConfiguration = configStore.getReleaseConfiguration();
         releaseConfiguration.setCompletedPhase( "step3" );
 
         releaseManager.prepare( new ReleaseConfiguration(), true, true );
@@ -238,7 +239,7 @@ public class DefaultReleaseManagerTest
     {
         ReleaseManager releaseManager = (ReleaseManager) lookup( ReleaseManager.ROLE, "test" );
 
-        ReleaseConfiguration releaseConfiguration = configStore.read();
+        ReleaseConfiguration releaseConfiguration = configStore.getReleaseConfiguration();
         releaseConfiguration.setCompletedPhase( "foo" );
 
         releaseManager.prepare( new ReleaseConfiguration(), true, true );

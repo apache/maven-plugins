@@ -217,7 +217,7 @@ public class DefaultReleaseManager
 
     public void clean()
     {
-        // TODO: tag, next poms [!]
+        // TODO: this, tag, next, backup poms [!] -- test backup pom is generated
 /*
         File releaseProperties = new File( basedir, "release.properties" );
 
