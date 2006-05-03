@@ -19,6 +19,7 @@ package org.apache.maven.plugins.release;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 import org.apache.maven.profiles.Profile;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 
 import java.io.File;
@@ -82,7 +83,7 @@ public abstract class AbstractReleaseMojo
      * @required
      * @readonly
      */
-    private Settings project;
+    private MavenProject project;
 
     /**
      * @component
