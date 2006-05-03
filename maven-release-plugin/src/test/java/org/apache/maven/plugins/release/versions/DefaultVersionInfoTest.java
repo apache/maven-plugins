@@ -24,7 +24,7 @@ public class DefaultVersionInfoTest
     public void testParse()
         throws Exception
     {
-        checkParsing( "1.0", null, "1.0", null, null, null );
+        checkParsing( "1.0", "1.0", null, null, null );
     }
 
     public void testParseWithBadVersion()
@@ -32,7 +32,7 @@ public class DefaultVersionInfoTest
     {
         try
         {
-            checkParsing( "foo", null, null, null, null, "foo" );
+            checkParsing( "foo", null, null, null, "foo" );
             fail( "version is incorrect, must fail." );
         }
         catch ( VersionParseException e )
@@ -43,117 +43,93 @@ public class DefaultVersionInfoTest
     public void testParseMultiDigit()
         throws Exception
     {
-        checkParsing( "99.99", null, "99.99", null, null, null );
-        checkParsing( "990.990.990", null, "990.990.990", null, null, null );
-    }
-
-    public void testParseComponent()
-        throws Exception
-    {
-        checkParsing( "my-component-99.99", "my-component", "99.99", null, null, null );
-        checkParsing( "my-component_99.99", "my-component", "99.99", null, null, null );
-        checkParsing( "my-component1.2.3", "my-component", "1.2.3", null, null, null );
-        checkParsing( "my-component11.22.33", "my-component", "11.22.33", null, null, null );
+        checkParsing( "99.99", "99.99", null, null, null );
+        checkParsing( "990.990.990", "990.990.990", null, null, null );
     }
 
     public void testParseSnapshotVersion()
         throws Exception
     {
-        checkParsing( "1.0-beta-4-SNAPSHOT", null, "1.0", "beta", "4", "SNAPSHOT" );
-        checkParsing( "1.0-beta-4_SNAPSHOT", null, "1.0", "beta", "4", "SNAPSHOT" );
+        checkParsing( "1.0-beta-4-SNAPSHOT", "1.0", "beta", "4", "SNAPSHOT" );
+        checkParsing( "1.0-beta-4_SNAPSHOT", "1.0", "beta", "4", "SNAPSHOT" );
     }
 
     public void testParseAnnotationVersion()
         throws Exception
     {
-        checkParsing( "1.0-beta-4-SNAPSHOT", null, "1.0", "beta", "4", "SNAPSHOT" );
-        checkParsing( "1.0-beta-4", null, "1.0", "beta", "4", null );
-        checkParsing( "1.2.3-beta-99", null, "1.2.3", "beta", "99", null );
-        checkParsing( "1.2.3-beta99", null, "1.2.3", "beta", "99", null );
-        checkParsing( "1.2.3-beta99-SNAPSHOT", null, "1.2.3", "beta", "99", "SNAPSHOT" );
-        checkParsing( "1.2.3-RC4", null, "1.2.3", "RC", "4", null );
+        checkParsing( "1.0-beta-4-SNAPSHOT", "1.0", "beta", "4", "SNAPSHOT" );
+        checkParsing( "1.0-beta-4", "1.0", "beta", "4", null );
+        checkParsing( "1.2.3-beta-99", "1.2.3", "beta", "99", null );
+        checkParsing( "1.2.3-beta99", "1.2.3", "beta", "99", null );
+        checkParsing( "1.2.3-beta99-SNAPSHOT", "1.2.3", "beta", "99", "SNAPSHOT" );
+        checkParsing( "1.2.3-RC4", "1.2.3", "RC", "4", null );
     }
 
     public void testParseSeparators()
         throws Exception
     {
-        checkParsing( "log4j-1.2.9-beta-9-SNAPSHOT", "log4j", "1.2.9", "beta", "9", "SNAPSHOT" );
-        checkParsing( "log4j1.2.9beta9SNAPSHOT", "log4j", "1.2.9", "beta", "9", "SNAPSHOT" );
-        checkParsing( "log4j1.2.9beta-9SNAPSHOT", "log4j", "1.2.9", "beta", "9", "SNAPSHOT" );
-        checkParsing( "log4j_1.2.9_beta_9_SNAPSHOT", "log4j", "1.2.9", "beta", "9", "SNAPSHOT" );
+        checkParsing( "1.2.9-beta-9-SNAPSHOT", "1.2.9", "beta", "9", "SNAPSHOT" );
+        checkParsing( "1.2.9beta9SNAPSHOT", "1.2.9", "beta", "9", "SNAPSHOT" );
+        checkParsing( "1.2.9beta-9SNAPSHOT", "1.2.9", "beta", "9", "SNAPSHOT" );
+        checkParsing( "1.2.9_beta_9_SNAPSHOT", "1.2.9", "beta", "9", "SNAPSHOT" );
     }
 
     public void testParseAnnotationNoVersionButSnapshot()
         throws Exception
     {
-        checkParsing( "1.0-beta-SNAPSHOT", null, "1.0", "beta", null, "SNAPSHOT" );
-        checkParsing( "1.2.3-beta99", null, "1.2.3", "beta", "99", null );
-        checkParsing( "1.2.3-RC4-SNAPSHOT", null, "1.2.3", "RC", "4", "SNAPSHOT" );
+        checkParsing( "1.0-beta-SNAPSHOT", "1.0", "beta", null, "SNAPSHOT" );
+        checkParsing( "1.2.3-beta99", "1.2.3", "beta", "99", null );
+        checkParsing( "1.2.3-RC4-SNAPSHOT", "1.2.3", "RC", "4", "SNAPSHOT" );
     }
 
     public void testParseAnnotationVersionWithRevision()
         throws Exception
     {
-        checkParsing( "1.0-beta-4-SNAPSHOT", null, "1.0", "beta", "4", "SNAPSHOT" );
-        checkParsing( "1.0-beta-4", null, "1.0", "beta", "4", null );
-        checkParsing( "1.2.3-beta-99", null, "1.2.3", "beta", "99", null );
-        checkParsing( "1.2.3-beta99", null, "1.2.3", "beta", "99", null );
-        checkParsing( "1.2.3-RC4", null, "1.2.3", "RC", "4", null );
+        checkParsing( "1.0-beta-4-SNAPSHOT", "1.0", "beta", "4", "SNAPSHOT" );
+        checkParsing( "1.0-beta-4", "1.0", "beta", "4", null );
+        checkParsing( "1.2.3-beta-99", "1.2.3", "beta", "99", null );
+        checkParsing( "1.2.3-beta99", "1.2.3", "beta", "99", null );
+        checkParsing( "1.2.3-RC4", "1.2.3", "RC", "4", null );
 
-        checkParsing( "mycomponent-1.2.3-RC4", "mycomponent", "1.2.3", "RC", "4", null );
-        checkParsing( "mycomponent-1.2.3-RC4", "mycomponent", "1.2.3", "RC", "4", null );
-        checkParsing( "log4j-1.2.9", "log4j", "1.2.9", null, null, null );
+        checkParsing( "1.2.9", "1.2.9", null, null, null );
     }
 
     public void testParseAnnotationVersionWithoutRevision()
         throws Exception
     {
-        checkParsing( "1.0-beta", null, "1.0", "beta", null, null );
-        checkParsing( "1.0-beta-SNAPSHOT", null, "1.0", "beta", null, "SNAPSHOT" );
+        checkParsing( "1.0-beta", "1.0", "beta", null, null );
+        checkParsing( "1.0-beta-SNAPSHOT", "1.0", "beta", null, "SNAPSHOT" );
     }
 
     public void testParseAnnotationRevisionOnly()
         throws Exception
     {
-        checkParsing( "1.0-4", null, "1.0", null, "4", null );
+        checkParsing( "1.0-4", "1.0", null, "4", null );
     }
 
     public void testParseLeadingZeros()
         throws Exception
     {
-        checkParsing( "1.01-beta-04-SNAPSHOT", null, "1.01", "beta", "04", "SNAPSHOT" );
-        checkParsing( "01.01.001-beta-04-SNAPSHOT", null, "01.01.001", "beta", "04", "SNAPSHOT" );
+        checkParsing( "1.01-beta-04-SNAPSHOT", "1.01", "beta", "04", "SNAPSHOT" );
+        checkParsing( "01.01.001-beta-04-SNAPSHOT", "01.01.001", "beta", "04", "SNAPSHOT" );
     }
 
     public void testParseBuildNumber()
         throws Exception
     {
-        checkParsing( "plexus-logging-provider-test-1.0-alpha-2-20051013.095555-2", "plexus-logging-provider-test",
-                      "1.0", "alpha", "2", "20051013.095555-2" );
+        checkParsing( "1.0-alpha-2-20051013.095555-2", "1.0", "alpha", "2", "20051013.095555-2" );
     }
 
     public void testNextVersion()
         throws Exception
     {
+        checkNextVersion( "1", "2" );
         checkNextVersion( "1.01", "1.02" );
         checkNextVersion( "1.9", "1.10" );
         checkNextVersion( "1.09", "1.10" );
         checkNextVersion( "1.009", "1.010" );
 
         checkNextVersion( "1.99", "1.100" );
-    }
-
-    public void testInvalidComponentComparison()
-        throws VersionParseException
-    {
-        try
-        {
-            checkVersionLessThanVersion( "foo-1.0", "bar-1.0" );
-            fail( "Should have failed" );
-        }
-        catch ( IllegalArgumentException e )
-        {
-        }
     }
 
     public void testNextAnnotationRevision()
@@ -220,6 +196,9 @@ public class DefaultVersionInfoTest
     public void testGetReleaseVersion()
         throws Exception
     {
+        checkGetReleaseVersion( "1-SNAPSHOT", "1" );
+        checkGetReleaseVersion( "1", "1" );
+
         checkGetReleaseVersion( "1.01", "1.01" );
         checkGetReleaseVersion( "1.01-beta", "1.01-beta" );
         checkGetReleaseVersion( "1.01-beta-04", "1.01-beta-04" );
@@ -231,6 +210,7 @@ public class DefaultVersionInfoTest
     public void testGetSnapshotVersion()
         throws Exception
     {
+        checkGetSnapshotVersion( "1", "1-SNAPSHOT" );
         checkGetSnapshotVersion( "1.01", "1.01-SNAPSHOT" );
         checkGetSnapshotVersion( "1.01-beta", "1.01-beta-SNAPSHOT" );
         checkGetSnapshotVersion( "1.01-beta-04", "1.01-beta-04-SNAPSHOT" );
@@ -269,14 +249,13 @@ public class DefaultVersionInfoTest
         assertEquals( expected, v.getSnapshotVersionString() );
     }
 
-    private static void checkParsing( String strVersion, String component, String digits, String annotation,
-                                      String annotationRevision, String buildSpecifier )
+    private static void checkParsing( String strVersion, String digits, String annotation, String annotationRevision,
+                                      String buildSpecifier )
         throws Exception
     {
         DefaultVersionInfo v = new DefaultVersionInfo( strVersion );
 
         assertEquals( strVersion, v.toString() );
-        assertEquals( component, v.getComponent() );
         assertEquals( digits, DefaultVersionInfo.joinDigitString( v.getDigits() ) );
         assertEquals( annotation, v.getAnnotation() );
         assertEquals( annotationRevision, v.getAnnotationRevision() );
