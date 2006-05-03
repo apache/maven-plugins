@@ -22,6 +22,10 @@
   <artifactId>artifactId</artifactId>
   <version>1.0-SNAPSHOT</version>
 
+  <prerequisites>
+    <maven>2.0.4</maven>
+  </prerequisites>
+
   <scm>
     <connection>scm:svn:file://localhost/tmp/scm-repo/trunk</connection>
     <developerConnection>scm:svn:file://localhost/tmp/scm-repo/trunk</developerConnection>
