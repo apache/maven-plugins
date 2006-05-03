@@ -146,4 +146,9 @@ public abstract class AbstractReleaseMojo
 
         return config;
     }
+
+    void setReleaseManager( ReleaseManager releaseManager )
+    {
+        this.releaseManager = releaseManager;
+    }
 }
