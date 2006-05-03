@@ -16,56 +16,42 @@ package org.apache.maven.plugins.release.exec;
  * limitations under the License.
  */
 
-import org.codehaus.plexus.util.cli.StreamConsumer;
+import junit.framework.TestCase;
 
+import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 /**
- * Consumer that both funnels to System.out/err, and stores in an internal buffer.
+ * Test the consumer that tees output both to a stream and into an internal buffer for later.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class TeeConsumer
-    implements StreamConsumer
+public class TeeConsumerTest
+    extends TestCase
 {
-    private PrintStream stream;
+    private TeeConsumer consumer;
 
-    /**
-     * @noinspection StringBufferField
-     */
-    private StringBuffer content = new StringBuffer();
+    private ByteArrayOutputStream out;
 
     private static final String LS = System.getProperty( "line.separator" );
 
-    private String indent;
-
-    public TeeConsumer( PrintStream stream )
+    protected void setUp()
+        throws Exception
     {
-        this( stream, "    " );
+        super.setUp();
+
+        out = new ByteArrayOutputStream();
+        consumer = new TeeConsumer( new PrintStream( out ), "xxx " );
     }
 
-    public TeeConsumer( PrintStream stream, String indent )
+    public void testConsumeLine()
     {
-        this.stream = stream;
+        consumer.consumeLine( "line" );
 
-        this.indent = indent;
-    }
+        assertEquals( "Check output", "xxx line" + LS, out.toString() );
 
-    public void consumeLine( String line )
-    {
-        stream.println( indent + line );
+        assertEquals( "Check content", "line" + LS, consumer.getContent() );
 
-        content.append( line );
-        content.append( LS );
-    }
-
-    public String getContent()
-    {
-        return content.toString();
-    }
-
-    public String toString()
-    {
-        return getContent();
+        assertEquals( "Check toString", "line" + LS, consumer.toString() );
     }
 }
