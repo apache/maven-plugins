@@ -106,6 +106,16 @@ public class DefaultReleaseManager
         String completedPhase = config.getCompletedPhase();
         int index = phases.indexOf( completedPhase );
 
+        if ( index == phases.size() - 1 )
+        {
+            getLogger().info(
+                "Release preparation already completed. You can now continue with release:perform, or start again using the -Dresume=false flag" );
+        }
+        else if ( index >= 0 )
+        {
+            getLogger().info( "Resuming release from phase '" + phases.get( index + 1 ) + "'" );
+        }
+
         // start from next phase
         for ( int i = index + 1; i < phases.size(); i++ )
         {
