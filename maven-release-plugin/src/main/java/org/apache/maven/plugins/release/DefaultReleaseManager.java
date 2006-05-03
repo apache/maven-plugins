@@ -254,9 +254,11 @@ public class DefaultReleaseManager
 
         configStore.delete( releaseConfiguration );
 
-        for ( Iterator i = releasePhases.values().iterator(); i.hasNext(); )
+        for ( Iterator i = phases.iterator(); i.hasNext(); )
         {
-            ReleasePhase phase = (ReleasePhase) i.next();
+            String name = (String) i.next();
+
+            ReleasePhase phase = (ReleasePhase) releasePhases.get( name );
 
             phase.clean( releaseConfiguration );
         }
@@ -265,5 +267,10 @@ public class DefaultReleaseManager
     void setConfigStore( ReleaseConfigurationStore configStore )
     {
         this.configStore = configStore;
+    }
+
+    void setMavenExecutor( MavenExecutor mavenExecutor )
+    {
+        this.mavenExecutor = mavenExecutor;
     }
 }
