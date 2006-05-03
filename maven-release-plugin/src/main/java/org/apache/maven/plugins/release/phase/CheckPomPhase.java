@@ -20,7 +20,11 @@ import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.ReleaseFailureException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.plugins.release.scm.ReleaseScmRepositoryException;
+import org.apache.maven.plugins.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.scm.manager.NoSuchScmProviderException;
+import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.util.Iterator;
@@ -34,6 +38,11 @@ import java.util.List;
 public class CheckPomPhase
     extends AbstractReleasePhase
 {
+    /**
+     * Retrieve an SCM repository, useful for validating an URL.
+     */
+    private ScmRepositoryConfigurator scmRepositoryConfigurator;
+
     public void execute( ReleaseConfiguration releaseConfiguration )
         throws ReleaseExecutionException, ReleaseFailureException
     {
@@ -57,6 +66,20 @@ public class CheckPomPhase
             {
                 throw new ReleaseFailureException(
                     "Missing required setting: scm connection or developerConnection must be specified." );
+            }
+
+            try
+            {
+                scmRepositoryConfigurator.getConfiguredRepository( releaseConfiguration );
+            }
+            catch ( ScmRepositoryException e )
+            {
+                throw new ReleaseScmRepositoryException( e.getMessage(), e.getValidationMessages() );
+            }
+            catch ( NoSuchScmProviderException e )
+            {
+                throw new ReleaseFailureException(
+                    "The provider given in the SCM URL could not be found: " + e.getMessage() );
             }
         }
 
