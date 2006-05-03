@@ -60,10 +60,12 @@ public interface ReleaseManager
      * @param releaseConfiguration the configuration to use for release
      * @param checkoutDirectory    the location to checkout to and build from
      * @param goals                the goals to execute
+     * @param useReleaseProfile    whether to use the release profile from the super POM or not
      * @throws ReleaseExecutionException if there is a problem performing the release
      * @throws ReleaseFailureException   if there is a problem performing the release
      */
-    void perform( ReleaseConfiguration releaseConfiguration, File checkoutDirectory, String goals )
+    void perform( ReleaseConfiguration releaseConfiguration, File checkoutDirectory, String goals,
+                  boolean useReleaseProfile )
         throws ReleaseExecutionException, ReleaseFailureException;
 
     /**

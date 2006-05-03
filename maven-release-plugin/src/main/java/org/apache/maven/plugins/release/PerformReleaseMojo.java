@@ -56,6 +56,13 @@ public class PerformReleaseMojo
      */
     private String scmUrl;
 
+    /**
+     * Whether to use the release profile that adds sources and javadocs to the released artifact, if appropriate.
+     *
+     * @parameter expression="${useReleaseProfile}" default-value="true"
+     */
+    private boolean useReleaseProfile;
+
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -68,7 +75,7 @@ public class PerformReleaseMojo
                 releaseConfiguration.setUrl( scmUrl );
             }
 
-            releaseManager.perform( releaseConfiguration, workingDirectory, goals );
+            releaseManager.perform( releaseConfiguration, workingDirectory, goals, useReleaseProfile );
         }
         catch ( ReleaseExecutionException e )
         {
