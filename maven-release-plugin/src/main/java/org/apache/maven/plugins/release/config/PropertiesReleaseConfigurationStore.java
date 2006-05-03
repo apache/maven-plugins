@@ -108,8 +108,8 @@ public class PropertiesReleaseConfigurationStore
             }
             else if ( property.startsWith( "project.scm." ) )
             {
-                int index = property.indexOf( '.', "project.scm.".length() );
-                if ( index > 0 )
+                int index = property.lastIndexOf( '.' );
+                if ( index > "project.scm.".length() )
                 {
                     String key = property.substring( "project.scm.".length(), index );
 
