@@ -16,11 +16,12 @@ package org.apache.maven.plugins.release;
  * limitations under the License.
  */
 
+import org.apache.maven.model.Profile;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
-import org.apache.maven.profiles.Profile;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.util.Iterator;
@@ -121,7 +122,14 @@ public abstract class AbstractReleaseMojo
         String arguments = this.arguments;
         if ( profiles != null && !profiles.isEmpty() )
         {
-            arguments += "-P ";
+            if ( !StringUtils.isEmpty( arguments ) )
+            {
+                arguments += " -P ";
+            }
+            else
+            {
+                arguments = "-P ";
+            }
 
             for ( Iterator it = profiles.iterator(); it.hasNext(); )
             {
