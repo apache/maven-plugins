@@ -14,6 +14,10 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -22,7 +26,25 @@ import java.util.regex.Pattern;
 public class AssemblyInterpolator
     extends AbstractLogEnabled
 {
+    private static final Pattern ELEMENT_PATTERN = Pattern.compile( "\\<([^> ]+)[^>]*>([^<]+)" );
     private static final Pattern EXPRESSION_PATTERN = Pattern.compile( "\\$\\{(pom\\.|project\\.|env\\.)?([^}]+)\\}" );
+    
+    private static final Map INTERPOLATION_BLACKLIST;
+    
+    static
+    {
+        Map blacklist = new HashMap();
+        
+        List ofnmBlacklistings = new ArrayList();
+        
+        ofnmBlacklistings.add( "groupId" );
+        ofnmBlacklistings.add( "artifactId" );
+        ofnmBlacklistings.add( "version" );
+        
+        blacklist.put( "outputFileNameMapping", ofnmBlacklistings );
+        
+        INTERPOLATION_BLACKLIST = blacklist;
+    }
 
     private Properties envars;
 
@@ -80,17 +102,61 @@ public class AssemblyInterpolator
             throw new AssemblyInterpolationException(
                 "Cannot read assembly descriptor from interpolating filter of serialized version.", e );
         }
+        
         return assembly;
     }
 
-    private String interpolateInternal( String result, Assembly assembly, Model model, Map context )
+    private String interpolateInternal( String src, Assembly assembly, Model model, Map context )
         throws AssemblyInterpolationException
     {
+        String result = src;
+        
+        Matcher elementMatcher = ELEMENT_PATTERN.matcher( result );
+        
+        while( elementMatcher.find() )
+        {
+            String element = elementMatcher.group( 0 );
+            
+            String elementName = elementMatcher.group( 1 );
+            String value = elementMatcher.group( 2 );
+            
+            // only attempt to interpolate if the following is met:
+            // 1. the element is not in the interpolation blacklist.
+            // 2. the value is not empty (otherwise there's nothing to interpolate)
+            // 3. the value contains a "${" (a pretty good clue that there's an expression in it)
+            if ( StringUtils.isNotEmpty( value ) && value.indexOf( "${" ) > -1 )
+            {
+                List blacklistedExpressions = (List) INTERPOLATION_BLACKLIST.get( elementName );
+                if ( blacklistedExpressions == null )
+                {
+                    blacklistedExpressions = Collections.EMPTY_LIST;
+                }
+                
+                String interpolatedValue = interpolateElementValue( value, assembly, model, context, blacklistedExpressions );
+                
+                String modifiedElement = StringUtils.replace( element, value, interpolatedValue );
+                result = StringUtils.replace( result, element, modifiedElement );
+            }
+        }
+        
+        return result;
+    }
+    
+    private String interpolateElementValue( String src, Assembly assembly, Model model, Map context, List blacklistedExpressions ) 
+        throws AssemblyInterpolationException
+    {
+        String result = src;
+        
         Matcher matcher = EXPRESSION_PATTERN.matcher( result );
         while ( matcher.find() )
         {
             String wholeExpr = matcher.group( 0 );
-            String realExpr = parseExpression( wholeExpr );
+            String realExpr = matcher.group( 2 );
+            
+            if ( blacklistedExpressions.contains( realExpr ) )
+            {
+                continue;
+            }
 
             Object value = context.get( realExpr );
 
@@ -137,15 +203,5 @@ public class AssemblyInterpolator
             }
         }
         return result;
-    }
-
-    private String parseExpression( String expression )
-    {
-        int startIndex = expression.indexOf( "{" );
-        int endIndex = expression.indexOf( "}" );
-
-        expression = expression.substring( startIndex + 1, endIndex );
-
-        return expression;
     }
 }

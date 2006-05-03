@@ -1168,7 +1168,7 @@ public abstract class AbstractAssemblyMojo
             String left = evaluateFileNameMapping( mat.group( 1 ), artifact );
             try
             {
-                middle = ReflectionValueExtractor.evaluate( "dep." + mat.group( 2 ), artifact );
+                middle = ReflectionValueExtractor.evaluate( mat.group( 2 ), artifact, false );
             }
             catch ( Exception e )
             {
