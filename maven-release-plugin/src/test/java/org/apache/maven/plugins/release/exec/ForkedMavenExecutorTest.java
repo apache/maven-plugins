@@ -68,6 +68,32 @@ public class ForkedMavenExecutorTest
         assertTrue( true );
     }
 
+    public void testExecutionWithCustomPomFile()
+        throws MavenExecutorException
+    {
+        File workingDirectory = getTestFile( "target/working-directory" );
+
+        Process process = createMockProcess( 0 );
+
+        Mock commandLineMock = createMockCommandLine( workingDirectory, process );
+        expectDefaultArguments( commandLineMock );
+
+        String arguments = "-f my-pom.xml";
+        commandLineMock.expects( new InvokeOnceMatcher() ).method( "createArgument" ).will(
+            new ReturnStub( createArgumentLineMock( arguments ) ) );
+
+        Mock mock = new Mock( CommandLineFactory.class );
+
+        mock.expects( new InvokeOnceMatcher() ).method( "createCommandLine" ).with( new IsEqual( "mvn" ) ).will(
+            new ReturnStub( commandLineMock.proxy() ) );
+
+        executor.setCommandLineFactory( (CommandLineFactory) mock.proxy() );
+
+        executor.executeGoals( workingDirectory, "clean integration-test", false, "my-pom.xml", null );
+
+        assertTrue( true );
+    }
+
     public void testExecutionWithArguments()
         throws MavenExecutorException
     {
