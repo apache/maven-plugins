@@ -22,7 +22,7 @@
           <xrefLocation>${basedir}/target/test/unit/custom-configuration/target/site/xref</xrefLocation>
           <sourceEncoding>ISO-8859-1</sourceEncoding>
           <rulesets>
-            <ruleset>${basedir}\\src\\test\\resources\\unit\\custom-configuration\\resources\\rulesets\\custom.xml</ruleset>
+            <ruleset>${basedir}/src/test/resources/unit/custom-configuration/resources/rulesets/custom.xml</ruleset>
             <ruleset>rulesets/basic.xml</ruleset>
             <ruleset>rulesets/unusedcode.xml</ruleset>
             <ruleset>rulesets/imports.xml</ruleset>
