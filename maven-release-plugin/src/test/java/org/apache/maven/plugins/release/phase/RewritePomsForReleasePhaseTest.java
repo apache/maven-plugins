@@ -90,8 +90,7 @@ public class RewritePomsForReleasePhaseTest
         ReleaseConfiguration config = createConfigurationFromBasicPom();
         config.mapReleaseVersion( "groupId:artifactId", NEXT_VERSION );
 
-        File testFile =
-            getTestFile( "target/test-classes/projects/rewrite-for-development/" + "basic-pom/pom.xml.tag" );
+        File testFile = getTestFile( "target/test-classes/projects/rewrite-for-release/basic-pom/pom.xml.tag" );
         testFile.delete();
         assertFalse( testFile.exists() );
 
@@ -110,8 +109,7 @@ public class RewritePomsForReleasePhaseTest
         ReleaseConfiguration config = createConfigurationFromBasicPom();
         config.mapReleaseVersion( "groupId:artifactId", NEXT_VERSION );
 
-        File testFile =
-            getTestFile( "target/test-classes/projects/rewrite-for-development/" + "basic-pom/pom.xml.tag" );
+        File testFile = getTestFile( "target/test-classes/projects/rewrite-for-release/basic-pom/pom.xml.tag" );
         testFile.delete();
         assertFalse( testFile.exists() );
 
