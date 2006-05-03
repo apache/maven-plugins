@@ -20,7 +20,6 @@ import org.apache.maven.model.Scm;
 import org.codehaus.plexus.PlexusTestCase;
 
 import java.io.File;
-import java.util.Map;
 
 /**
  * Test the properties store.
@@ -45,54 +44,23 @@ public class PropertiesReleaseConfigurationStoreTest
         File file = getTestFile( "target/test-classes/release.properties" );
 
         ReleaseConfiguration config = store.read( file );
-        assertEquals( "Expected completedPhase of 'step1'", "step1", config.getCompletedPhase() );
-        assertEquals( "Expected url of 'scm-url'", "scm-url", config.getUrl() );
-        assertEquals( "Expected username of 'username'", "username", config.getUsername() );
-        assertEquals( "Expected password of 'password'", "password", config.getPassword() );
-        assertEquals( "Expected private key of 'private-key'", "private-key", config.getPrivateKey() );
-        assertEquals( "Expected passphrase of 'passphrase'", "passphrase", config.getPassphrase() );
-        assertEquals( "Expected tag base of 'tagBase'", "tagBase", config.getTagBase() );
-        assertEquals( "Expected tag 'tag'", "tag", config.getReleaseLabel() );
-        assertEquals( "Expected additional arguments 'additional-arguments'", "additional-arguments",
-                      config.getAdditionalArguments() );
-        assertEquals( "Expected preparation goals 'preparation-goals'", "preparation-goals",
-                      config.getPreparationGoals() );
-        assertEquals( "Expected POM file name 'my-pom.xml'", "pom-file-name", config.getPomFileName() );
-        assertNull( "Expected no workingDirectory", config.getWorkingDirectory() );
-        assertNull( "Expected no settings", config.getSettings() );
-        assertFalse( "Expected default generateReleasePoms", config.isGenerateReleasePoms() );
-        assertFalse( "Expected default useEditMode", config.isUseEditMode() );
-        assertTrue( "Expected default interactive", config.isInteractive() );
-        assertFalse( "Expected default addScema", config.isAddSchema() );
 
-        Map versions = config.getReleaseVersions();
-        assertEquals( "Expected 2 version mappings", 2, versions.size() );
-        assertTrue( "missing project mapping", versions.containsKey( "groupId:artifactId1" ) );
-        assertEquals( "Incorrect version mapping", "2.0", versions.get( "groupId:artifactId1" ) );
-        assertTrue( "missing project mapping", versions.containsKey( "groupId:artifactId2" ) );
-        assertEquals( "Incorrect version mapping", "3.0", versions.get( "groupId:artifactId2" ) );
+        ReleaseConfiguration expected = createExcpectedReleaseConfiguration();
 
-        versions = config.getDevelopmentVersions();
-        assertEquals( "Expected 2 version mappings", 2, versions.size() );
-        assertTrue( "missing project mapping", versions.containsKey( "groupId:artifactId1" ) );
-        assertEquals( "Incorrect version mapping", "2.1-SNAPSHOT", versions.get( "groupId:artifactId1" ) );
-        assertTrue( "missing project mapping", versions.containsKey( "groupId:artifactId2" ) );
-        assertEquals( "Incorrect version mapping", "3.0.1-SNAPSHOT", versions.get( "groupId:artifactId2" ) );
+        assertEquals( "check matches", expected, config );
+    }
 
-        versions = config.getOriginalScmInfo();
-        assertEquals( "Expected 2 SCM mappings", 2, versions.size() );
-        assertTrue( "missing project mapping", versions.containsKey( "groupId:artifactId1" ) );
-        Scm scm = (Scm) versions.get( "groupId:artifactId1" );
-        assertEquals( "Incorrect SCM mapping", "connection", scm.getConnection() );
-        assertEquals( "Incorrect SCM mapping", "developerConnection", scm.getDeveloperConnection() );
-        assertEquals( "Incorrect SCM mapping", "url", scm.getUrl() );
-        assertEquals( "Incorrect SCM mapping", "tag", scm.getTag() );
-        assertTrue( "missing project mapping", versions.containsKey( "groupId:artifactId2" ) );
-        scm = (Scm) versions.get( "groupId:artifactId2" );
-        assertEquals( "Incorrect SCM mapping", "connection2", scm.getConnection() );
-        assertNull( "Incorrect SCM mapping", scm.getDeveloperConnection() );
-        assertEquals( "Incorrect SCM mapping", "url2", scm.getUrl() );
-        assertNull( "Incorrect SCM mapping", scm.getTag() );
+    public void testReadFromFileUsingWorkingDirectory()
+        throws ReleaseConfigurationStoreException
+    {
+        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
+        releaseConfiguration.setWorkingDirectory( getTestFile( "target/test-classes" ) );
+        ReleaseConfiguration config = store.read( releaseConfiguration );
+
+        ReleaseConfiguration expected = createExcpectedReleaseConfiguration();
+        expected.setWorkingDirectory( releaseConfiguration.getWorkingDirectory() );
+
+        assertEquals( "check matches", expected, config );
     }
 
     public void testReadFromEmptyFile()
@@ -286,4 +254,44 @@ public class PropertiesReleaseConfigurationStoreTest
 
         return releaseConfiguration;
     }
+
+    private ReleaseConfiguration createExcpectedReleaseConfiguration()
+    {
+        ReleaseConfiguration expected = new ReleaseConfiguration();
+        expected.setCompletedPhase( "step1" );
+        expected.setUrl( "scm-url" );
+        expected.setUsername( "username" );
+        expected.setPassword( "password" );
+        expected.setPrivateKey( "private-key" );
+        expected.setPassphrase( "passphrase" );
+        expected.setTagBase( "tagBase" );
+        expected.setReleaseLabel( "tag" );
+        expected.setAdditionalArguments( "additional-arguments" );
+        expected.setPreparationGoals( "preparation-goals" );
+        expected.setPomFileName( "pom-file-name" );
+        expected.setWorkingDirectory( null );
+        expected.setSettings( null );
+        expected.setGenerateReleasePoms( false );
+        expected.setUseEditMode( false );
+        expected.setInteractive( true );
+        expected.setAddSchema( false );
+        expected.mapReleaseVersion( "groupId:artifactId1", "2.0" );
+        expected.mapReleaseVersion( "groupId:artifactId2", "3.0" );
+        expected.mapDevelopmentVersion( "groupId:artifactId1", "2.1-SNAPSHOT" );
+        expected.mapDevelopmentVersion( "groupId:artifactId2", "3.0.1-SNAPSHOT" );
+        Scm scm = new Scm();
+        scm.setConnection( "connection" );
+        scm.setDeveloperConnection( "developerConnection" );
+        scm.setUrl( "url" );
+        scm.setTag( "tag" );
+        expected.mapOriginalScmInfo( "groupId:artifactId1", scm );
+        scm = new Scm();
+        scm.setConnection( "connection2" );
+        scm.setUrl( "url2" );
+        scm.setTag( null );
+        scm.setDeveloperConnection( null );
+        expected.mapOriginalScmInfo( "groupId:artifactId2", scm );
+        return expected;
+    }
+
 }
