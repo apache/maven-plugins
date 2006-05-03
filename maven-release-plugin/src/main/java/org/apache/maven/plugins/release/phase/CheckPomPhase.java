@@ -32,7 +32,7 @@ import java.util.List;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class CheckPomPhase
-    implements ReleasePhase
+    extends AbstractReleasePhase
 {
     public void execute( ReleaseConfiguration releaseConfiguration )
         throws ReleaseExecutionException, ReleaseFailureException

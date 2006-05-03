@@ -40,6 +40,10 @@ public class ReleaseConfigurationStoreStub
         this.releaseConfiguration = config;
     }
 
+    public void delete( ReleaseConfiguration config )
+    {
+    }
+
     public ReleaseConfiguration getReleaseConfiguration()
     {
         return releaseConfiguration;

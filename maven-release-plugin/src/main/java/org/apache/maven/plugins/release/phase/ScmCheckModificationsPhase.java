@@ -30,7 +30,6 @@ import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
-import org.codehaus.plexus.logging.AbstractLogEnabled;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -44,8 +43,7 @@ import java.util.Set;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class ScmCheckModificationsPhase
-    extends AbstractLogEnabled
-    implements ReleasePhase
+    extends AbstractReleasePhase
 {
     /**
      * Tool that gets a configured SCM repository from release configuration.

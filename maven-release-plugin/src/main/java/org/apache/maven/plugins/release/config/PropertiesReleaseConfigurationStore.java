@@ -142,6 +142,15 @@ public class PropertiesReleaseConfigurationStore
         write( config, getDefaultReleasePropertiesFile( config ) );
     }
 
+    public void delete( ReleaseConfiguration config )
+    {
+        File file = getDefaultReleasePropertiesFile( config );
+        if ( file.exists() )
+        {
+            file.delete();
+        }
+    }
+
     public void write( ReleaseConfiguration config, File file )
         throws ReleaseConfigurationStoreException
     {

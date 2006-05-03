@@ -16,63 +16,28 @@ package org.apache.maven.plugins.release.phase;
  * limitations under the License.
  */
 
+import org.apache.maven.plugins.release.ReleaseExecutionException;
+import org.apache.maven.plugins.release.ReleaseFailureException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 
 /**
- * Test stub for testing if a phase is executed.
+ * Finalise release preparation so it can be flagged complete..
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class ReleasePhaseStub
-    implements ReleasePhase
+public class EndReleasePhase
+    extends AbstractReleasePhase
 {
-    /**
-     * Whether the phase was simulated.
-     */
-    private boolean simulated;
-
-    /**
-     * Whether the phase was executed.
-     */
-    private boolean executed;
-
-    /**
-     * The name of the phase stubbed.
-     */
-    private String name;
-
-    /**
-     * Whether the phase was cleaned.
-     */
-    private boolean cleaned;
 
     public void execute( ReleaseConfiguration releaseConfiguration )
+        throws ReleaseExecutionException, ReleaseFailureException
     {
-        executed = true;
+        getLogger().info( "Release preparation complete." );
     }
 
     public void simulate( ReleaseConfiguration releaseConfiguration )
+        throws ReleaseExecutionException, ReleaseFailureException
     {
-        simulated = true;
-    }
-
-    public void clean( ReleaseConfiguration config )
-    {
-        cleaned = true;
-    }
-
-    public boolean isExecuted()
-    {
-        return executed;
-    }
-
-    public boolean isSimulated()
-    {
-        return simulated;
-    }
-
-    public boolean isCleaned()
-    {
-        return cleaned;
+        getLogger().info( "Release preparation simulation complete." );
     }
 }

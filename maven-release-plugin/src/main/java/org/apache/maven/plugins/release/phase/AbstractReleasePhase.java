@@ -17,62 +17,19 @@ package org.apache.maven.plugins.release.phase;
  */
 
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.codehaus.plexus.logging.AbstractLogEnabled;
 
 /**
- * Test stub for testing if a phase is executed.
+ * Base class for all phases.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class ReleasePhaseStub
+public abstract class AbstractReleasePhase
+    extends AbstractLogEnabled
     implements ReleasePhase
 {
-    /**
-     * Whether the phase was simulated.
-     */
-    private boolean simulated;
-
-    /**
-     * Whether the phase was executed.
-     */
-    private boolean executed;
-
-    /**
-     * The name of the phase stubbed.
-     */
-    private String name;
-
-    /**
-     * Whether the phase was cleaned.
-     */
-    private boolean cleaned;
-
-    public void execute( ReleaseConfiguration releaseConfiguration )
-    {
-        executed = true;
-    }
-
-    public void simulate( ReleaseConfiguration releaseConfiguration )
-    {
-        simulated = true;
-    }
-
     public void clean( ReleaseConfiguration config )
     {
-        cleaned = true;
-    }
-
-    public boolean isExecuted()
-    {
-        return executed;
-    }
-
-    public boolean isSimulated()
-    {
-        return simulated;
-    }
-
-    public boolean isCleaned()
-    {
-        return cleaned;
+        // nothing to do by default
     }
 }
