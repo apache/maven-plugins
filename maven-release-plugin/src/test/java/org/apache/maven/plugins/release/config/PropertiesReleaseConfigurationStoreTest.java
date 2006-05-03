@@ -20,6 +20,7 @@ import org.apache.maven.model.Scm;
 import org.codehaus.plexus.PlexusTestCase;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Test the properties store.
@@ -121,6 +122,25 @@ public class PropertiesReleaseConfigurationStoreTest
         assertEquals( "compare configuration", config, rereadConfiguration );
     }
 
+    public void testWriteToWorkingDirectory()
+        throws ReleaseConfigurationStoreException
+    {
+        File file = getTestFile( "target/test-classes/new/release.properties" );
+        file.delete();
+        assertFalse( "Check file doesn't exist", file.exists() );
+        file.getParentFile().mkdirs();
+
+        ReleaseConfiguration config = createReleaseConfigurationForWriting();
+        config.setWorkingDirectory( file.getParentFile() );
+
+        store.write( config );
+
+        ReleaseConfiguration rereadConfiguration = store.read( file );
+        rereadConfiguration.setWorkingDirectory( file.getParentFile() );
+
+        assertEquals( "compare configuration", config, rereadConfiguration );
+    }
+
     public void testWriteToNewFileRequiredOnly()
         throws ReleaseConfigurationStoreException
     {
@@ -180,6 +200,38 @@ public class PropertiesReleaseConfigurationStoreTest
         ReleaseConfiguration rereadConfiguration = store.read( file );
 
         assertEquals( "compare configuration", config, rereadConfiguration );
+    }
+
+    public void testDeleteFile()
+        throws ReleaseConfigurationStoreException, IOException
+    {
+        File file = getTestFile( "target/test-classes/delete/release.properties" );
+        file.getParentFile().mkdirs();
+        file.createNewFile();
+        assertTrue( "Check file already exists", file.exists() );
+
+        ReleaseConfiguration config = createReleaseConfigurationForWriting();
+        config.setWorkingDirectory( file.getParentFile() );
+
+        store.delete( config );
+
+        assertFalse( "Check file already exists", file.exists() );
+    }
+
+    public void testMissingDeleteFile()
+        throws ReleaseConfigurationStoreException, IOException
+    {
+        File file = getTestFile( "target/test-classes/delete/release.properties" );
+        file.getParentFile().mkdirs();
+        file.delete();
+        assertFalse( "Check file already exists", file.exists() );
+
+        ReleaseConfiguration config = createReleaseConfigurationForWriting();
+        config.setWorkingDirectory( file.getParentFile() );
+
+        store.delete( config );
+
+        assertFalse( "Check file already exists", file.exists() );
     }
 
     private ReleaseConfiguration createReleaseConfigurationForWriting()
