@@ -49,15 +49,12 @@ import java.util.regex.Pattern;
  * <p/>
  * Leading zeros are significant when performing comparisons.
  * <p/>
- * TODO: remove component field - it isn't relevant
  * TODO: this parser is better than DefaultArtifactVersion - replace it with this (but align naming) and then remove this from here.
  */
 public class DefaultVersionInfo
     implements VersionInfo
 {
     private final String strVersion;
-
-    private final String component;
 
     private final List digits;
 
@@ -67,40 +64,32 @@ public class DefaultVersionInfo
 
     private final String buildSpecifier;
 
-    private final String digitSeparator;
-
     private String annotationSeparator;
 
     private String annotationRevSeparator;
 
     private final String buildSeparator;
 
-    private static final int COMPONENT_INDEX = 1;
+    private static final int DIGITS_INDEX = 1;
 
-    private static final int DIGIT_SEPARATOR_INDEX = 2;
+    private static final int ANNOTATION_SEPARATOR_INDEX = 2;
 
-    private static final int DIGITS_INDEX = 3;
+    private static final int ANNOTATION_INDEX = 3;
 
-    private static final int ANNOTATION_SEPARATOR_INDEX = 4;
+    private static final int ANNOTATION_REV_SEPARATOR_INDEX = 4;
 
-    private static final int ANNOTATION_INDEX = 5;
+    private static final int ANNOTATION_REVISION_INDEX = 5;
 
-    private static final int ANNOTATION_REV_SEPARATOR_INDEX = 6;
+    private static final int BUILD_SEPARATOR_INDEX = 6;
 
-    private static final int ANNOTATION_REVISION_INDEX = 7;
-
-    private static final int BUILD_SEPARATOR_INDEX = 8;
-
-    private static final int BUILD_SPECIFIER_INDEX = 9;
+    private static final int BUILD_SPECIFIER_INDEX = 7;
 
     private static final String SNAPSHOT_IDENTIFIER = "SNAPSHOT";
 
     private static final String DIGIT_SEPARATOR_STRING = ".";
 
-    private static final Pattern STANDARD_PATTERN =
-        Pattern.compile( "^(.*?)" +                  // non greedy .* to grab the component.
-            "([-_])?" +                 // optional - or _  (digits separator)
-            "((?:\\d+[.])+\\d+)" +      // digit(s) and '.' repeated - followed by digit (version digits 1.22.0, etc)
+    private static final Pattern STANDARD_PATTERN = Pattern.compile(
+        "^((?:\\d+\\.)*\\d+)" +      // digit(s) and '.' repeated - followed by digit (version digits 1.22.0, etc)
             "([-_])?" +                 // optional - or _  (annotation separator)
             "([a-zA-Z]*)" +             // alpha characters (looking for annotation - alpha, beta, RC, etc.)
             "([-_])?" +                 // optional - or _  (annotation revision separator)
@@ -121,10 +110,8 @@ public class DefaultVersionInfo
         if ( "SNAPSHOT".equals( version ) )
         {
             annotation = null;
-            component = null;
             digits = null;
             buildSpecifier = "SNAPSHOT";
-            digitSeparator = null;
             buildSeparator = null;
             return;
         }
@@ -132,8 +119,6 @@ public class DefaultVersionInfo
         Matcher m = STANDARD_PATTERN.matcher( strVersion );
         if ( m.matches() )
         {
-            component = nullIfEmpty( m.group( COMPONENT_INDEX ) );
-            digitSeparator = m.group( DIGIT_SEPARATOR_INDEX );
             digits = parseDigits( m.group( DIGITS_INDEX ) );
             if ( !SNAPSHOT_IDENTIFIER.equals( m.group( ANNOTATION_INDEX ) ) )
             {
@@ -169,16 +154,13 @@ public class DefaultVersionInfo
         }
     }
 
-    public DefaultVersionInfo( String component, List digits, String annotation, String annotationRevision,
-                               String buildSpecifier, String digitSeparator, String annotationSeparator,
-                               String annotationRevSeparator, String buildSeparator )
+    public DefaultVersionInfo( List digits, String annotation, String annotationRevision, String buildSpecifier,
+                               String annotationSeparator, String annotationRevSeparator, String buildSeparator )
     {
-        this.component = component;
         this.digits = digits;
         this.annotation = annotation;
         this.annotationRevision = annotationRevision;
         this.buildSpecifier = buildSpecifier;
-        this.digitSeparator = digitSeparator;
         this.annotationSeparator = annotationSeparator;
         this.annotationRevSeparator = annotationRevSeparator;
         this.buildSeparator = buildSeparator;
@@ -212,8 +194,8 @@ public class DefaultVersionInfo
             digits.set( digits.size() - 1, incrementVersionString( (String) digits.get( digits.size() - 1 ) ) );
         }
 
-        return new DefaultVersionInfo( component, digits, annotation, annotationRevision, buildSpecifier,
-                                       digitSeparator, annotationSeparator, annotationRevSeparator, buildSeparator );
+        return new DefaultVersionInfo( digits, annotation, annotationRevision, buildSpecifier, annotationSeparator,
+                                       annotationRevSeparator, buildSeparator );
     }
 
     /**
@@ -227,12 +209,6 @@ public class DefaultVersionInfo
     public int compareTo( Object obj )
     {
         DefaultVersionInfo that = (DefaultVersionInfo) obj;
-
-        if ( !StringUtils.equals( this.component, that.component ) )
-        {
-            throw new IllegalArgumentException( "Cannot perform comparison on different components: \"" + this
-                .component + "\" compared to \"" + that.component + "\"" );
-        }
 
         int result;
         // TODO: this is a workaround for a bug in DefaultArtifactVersion - fix there - 1.01 < 1.01.01
@@ -326,14 +302,8 @@ public class DefaultVersionInfo
     {
         StringBuffer sb = new StringBuffer();
 
-        if ( StringUtils.isNotEmpty( info.component ) )
-        {
-            sb.append( info.component );
-        }
-
         if ( info.digits != null )
         {
-            sb.append( StringUtils.defaultString( info.digitSeparator ) );
             sb.append( joinDigitString( info.digits ) );
         }
 
@@ -393,11 +363,6 @@ public class DefaultVersionInfo
     private static String nullIfEmpty( String s )
     {
         return StringUtils.isEmpty( s ) ? null : s;
-    }
-
-    public String getComponent()
-    {
-        return component;
     }
 
     public List getDigits()
