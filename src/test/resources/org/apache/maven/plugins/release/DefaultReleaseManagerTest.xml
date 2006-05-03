@@ -89,5 +89,14 @@
         <name>step3</name>
       </configuration>
     </component>
+    <!-- Turn off info messages -->
+    <component>
+      <role>org.codehaus.plexus.logging.LoggerManager</role>
+      <implementation>org.codehaus.plexus.logging.console.ConsoleLoggerManager</implementation>
+      <lifecycle-handler>basic</lifecycle-handler>
+      <configuration>
+        <threshold>ERROR</threshold>
+      </configuration>
+    </component>
   </components>
 </component-set>

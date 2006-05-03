@@ -171,6 +171,34 @@ public class PropertiesReleaseConfigurationStoreTest
         assertEquals( "compare configuration", config, rereadConfiguration );
     }
 
+    public void testWriteToNewFileDottedIds()
+        throws ReleaseConfigurationStoreException
+    {
+        File file = getTestFile( "target/test-classes/new-release.properties" );
+        file.delete();
+        assertFalse( "Check file doesn't exist", file.exists() );
+
+        ReleaseConfiguration config = new ReleaseConfiguration();
+        config.setCompletedPhase( "completed-phase-write" );
+        config.setUrl( "url-write" );
+
+        config.mapReleaseVersion( "group.id:artifact.id", "1.1" );
+        config.mapDevelopmentVersion( "group.id:artifact.id", "1.2-SNAPSHOT" );
+
+        Scm scm = new Scm();
+        scm.setConnection( "connection" );
+        scm.setDeveloperConnection( "devConnection" );
+        scm.setTag( "tag" );
+        scm.setUrl( "url" );
+        config.mapOriginalScmInfo( "group.id:artifact.id", scm );
+
+        store.write( config, file );
+
+        ReleaseConfiguration rereadConfiguration = store.read( file );
+
+        assertEquals( "compare configuration", config, rereadConfiguration );
+    }
+
     public void testOverwriteFile()
         throws ReleaseConfigurationStoreException
     {
