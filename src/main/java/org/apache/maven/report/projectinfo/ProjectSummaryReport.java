@@ -28,6 +28,8 @@ import org.codehaus.plexus.i18n.I18N;
 import java.util.Locale;
 
 /**
+ * Generates the project information reports summary.
+ *
  * @author Edwin Punzalan
  * @goal summary
  * @plexus.component
