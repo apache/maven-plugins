@@ -183,7 +183,7 @@ public abstract class AbstractRewritePomsPhase
 
         rewriteVersion( rootElement, namespace, mappedVersions, projectId, project, parentVersion );
 
-        rewriteDependencies( project.getDependencies(), rootElement, mappedVersions, originalVersions );
+        rewriteDependencies( project.getDependencies(), rootElement, mappedVersions, originalVersions, projectId );
 
         if ( project.getDependencyManagement() != null )
         {
@@ -191,27 +191,28 @@ public abstract class AbstractRewritePomsPhase
             if ( dependencyRoot != null )
             {
                 rewriteDependencies( project.getDependencyManagement().getDependencies(), dependencyRoot,
-                                     mappedVersions, originalVersions );
+                                     mappedVersions, originalVersions, projectId );
             }
         }
 
         if ( project.getBuild() != null )
         {
-            Element pluginsRoot = rootElement.getChild( "build", namespace );
-            if ( pluginsRoot != null )
+            Element buildRoot = rootElement.getChild( "build", namespace );
+            if ( buildRoot != null )
             {
-                rewritePlugins( project.getBuildPlugins(), pluginsRoot, mappedVersions, originalVersions );
+                rewritePlugins( project.getBuildPlugins(), buildRoot, mappedVersions, originalVersions, projectId );
                 if ( project.getPluginManagement() != null )
                 {
-                    pluginsRoot = pluginsRoot.getChild( "pluginManagement", namespace );
+                    Element pluginsRoot = buildRoot.getChild( "pluginManagement", namespace );
                     if ( pluginsRoot != null )
                     {
                         rewritePlugins( project.getPluginManagement().getPlugins(), pluginsRoot, mappedVersions,
-                                        originalVersions );
+                                        originalVersions, projectId );
                     }
                 }
+                rewriteExtensions( project.getBuildExtensions(), buildRoot, mappedVersions, originalVersions,
+                                   projectId );
             }
-            rewriteExtensions( project.getBuildExtensions(), pluginsRoot, mappedVersions, originalVersions );
         }
 
         if ( project.getReporting() != null )
@@ -219,7 +220,8 @@ public abstract class AbstractRewritePomsPhase
             Element pluginsRoot = rootElement.getChild( "reporting", namespace );
             if ( pluginsRoot != null )
             {
-                rewriteReportPlugins( project.getReportPlugins(), pluginsRoot, mappedVersions, originalVersions );
+                rewriteReportPlugins( project.getReportPlugins(), pluginsRoot, mappedVersions, originalVersions,
+                                      projectId );
             }
         }
 
@@ -236,27 +238,24 @@ public abstract class AbstractRewritePomsPhase
         {
             throw new ReleaseFailureException( "Version for '" + project.getName() + "' was not mapped" );
         }
+
+        if ( versionElement == null )
+        {
+            if ( !version.equals( parentVersion ) )
+            {
+                // we will add this after artifactId, since it was missing but different from the inherited version
+                Element artifactIdElement = rootElement.getChild( "artifactId", namespace );
+                int index = rootElement.indexOf( artifactIdElement );
+
+                versionElement = new Element( "version", namespace );
+                versionElement.setText( version );
+                rootElement.addContent( index + 1, new Text( "\n  " ) );
+                rootElement.addContent( index + 2, versionElement );
+            }
+        }
         else
         {
-
-            if ( versionElement == null )
-            {
-                if ( !version.equals( parentVersion ) )
-                {
-                    // we will add this after artifactId, since it was missing but different from the inherited version
-                    Element artifactIdElement = rootElement.getChild( "artifactId", namespace );
-                    int index = rootElement.indexOf( artifactIdElement );
-
-                    versionElement = new Element( "version", namespace );
-                    versionElement.setText( version );
-                    rootElement.addContent( index + 1, new Text( "\n  " ) );
-                    rootElement.addContent( index + 2, versionElement );
-                }
-            }
-            else
-            {
-                versionElement.setText( version );
-            }
+            versionElement.setText( version );
         }
     }
 
@@ -288,7 +287,7 @@ public abstract class AbstractRewritePomsPhase
     }
 
     private void rewriteDependencies( List dependencies, Element dependencyRoot, Map mappedVersions,
-                                      Map originalVersions )
+                                      Map originalVersions, String projectId )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         if ( dependencies != null )
@@ -298,12 +297,13 @@ public abstract class AbstractRewritePomsPhase
                 Dependency dep = (Dependency) i.next();
 
                 updateDomVersion( dep.getGroupId(), dep.getArtifactId(), mappedVersions, dep.getVersion(),
-                                  originalVersions, "dependencies", "dependency", dependencyRoot );
+                                  originalVersions, "dependencies", "dependency", dependencyRoot, projectId );
             }
         }
     }
 
-    private void rewritePlugins( List plugins, Element pluginRoot, Map mappedVersions, Map originalVersions )
+    private void rewritePlugins( List plugins, Element pluginRoot, Map mappedVersions, Map originalVersions,
+                                 String projectId )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         if ( plugins != null )
@@ -316,13 +316,14 @@ public abstract class AbstractRewritePomsPhase
                 if ( plugin.getVersion() != null )
                 {
                     updateDomVersion( plugin.getGroupId(), plugin.getArtifactId(), mappedVersions, plugin.getVersion(),
-                                      originalVersions, "plugins", "plugin", pluginRoot );
+                                      originalVersions, "plugins", "plugin", pluginRoot, projectId );
                 }
             }
         }
     }
 
-    private void rewriteExtensions( List extensions, Element extensionRoot, Map mappedVersions, Map originalVersions )
+    private void rewriteExtensions( List extensions, Element extensionRoot, Map mappedVersions, Map originalVersions,
+                                    String projectId )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         if ( extensions != null )
@@ -332,12 +333,14 @@ public abstract class AbstractRewritePomsPhase
                 Extension extension = (Extension) i.next();
 
                 updateDomVersion( extension.getGroupId(), extension.getArtifactId(), mappedVersions,
-                                  extension.getVersion(), originalVersions, "extensions", "extension", extensionRoot );
+                                  extension.getVersion(), originalVersions, "extensions", "extension", extensionRoot,
+                                  projectId );
             }
         }
     }
 
-    private void rewriteReportPlugins( List plugins, Element pluginRoot, Map mappedVersions, Map originalVersions )
+    private void rewriteReportPlugins( List plugins, Element pluginRoot, Map mappedVersions, Map originalVersions,
+                                       String projectId )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         if ( plugins != null )
@@ -350,20 +353,22 @@ public abstract class AbstractRewritePomsPhase
                 if ( plugin.getVersion() != null )
                 {
                     updateDomVersion( plugin.getGroupId(), plugin.getArtifactId(), mappedVersions, plugin.getVersion(),
-                                      originalVersions, "plugins", "plugin", pluginRoot );
+                                      originalVersions, "plugins", "plugin", pluginRoot, projectId );
                 }
             }
         }
     }
 
     private void updateDomVersion( String groupId, String artifactId, Map mappedVersions, String version,
-                                   Map originalVersions, String groupTagName, String tagName, Element dependencyRoot )
+                                   Map originalVersions, String groupTagName, String tagName, Element dependencyRoot,
+                                   String projectId )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         String key = ArtifactUtils.versionlessKey( groupId, artifactId );
         String mappedVersion = (String) mappedVersions.get( key );
 
-        if ( version.equals( originalVersions.get( key ) ) )
+        Object originalVersion = originalVersions.get( key );
+        if ( version.equals( originalVersion ) )
         {
             if ( mappedVersion != null )
             {
@@ -380,7 +385,12 @@ public abstract class AbstractRewritePomsPhase
                     // avoid if in management
                     if ( versionElement != null )
                     {
-                        versionElement.setText( mappedVersion );
+                        // avoid if it was not originally set to the original value (it may be an expression), unless mapped version differs
+                        if ( originalVersion.equals( versionElement.getTextTrim() ) ||
+                            !mappedVersion.equals( mappedVersions.get( projectId ) ) )
+                        {
+                            versionElement.setText( mappedVersion );
+                        }
                     }
                 }
                 catch ( JDOMException e )

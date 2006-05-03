@@ -22,6 +22,7 @@ import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 
 /**
  * Test the SCM modification check phase.
@@ -196,5 +197,43 @@ public class RewritePomsForReleasePhaseTest
         phase.execute( config );
 
         assertTrue( compareFiles( config.getReactorProjects() ) );
+    }
+
+    public void testRewriteInterpolatedVersions()
+        throws Exception
+    {
+        ReleaseConfiguration config = createMappedConfiguration( "interpolated-versions" );
+
+        phase.execute( config );
+
+        assertTrue( compareFiles( config.getReactorProjects() ) );
+    }
+
+    public void testRewriteInterpolatedVersionsDifferentVersion()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromProjects( "interpolated-versions" );
+
+        config.mapReleaseVersion( "groupId:artifactId", NEXT_VERSION );
+        config.mapReleaseVersion( "groupId:subproject1", ALTERNATIVE_NEXT_VERSION );
+        config.mapReleaseVersion( "groupId:subproject2", NEXT_VERSION );
+        config.mapReleaseVersion( "groupId:subproject3", NEXT_VERSION );
+
+        phase.execute( config );
+
+        for ( Iterator i = config.getReactorProjects().iterator(); i.hasNext(); )
+        {
+            MavenProject project = (MavenProject) i.next();
+
+            // skip subproject1 - we don't need to worry about its version mapping change, it has no deps of any kind
+            if ( !"groupId".equals( project.getGroupId() ) || !"subproject1".equals( project.getArtifactId() ) )
+            {
+                File actualFile = project.getFile();
+                String actual = FileUtils.fileRead( actualFile );
+                File expectedFile = new File( actualFile.getParentFile(), "expected-pom-different-version.xml" );
+                String expected = FileUtils.fileRead( expectedFile );
+                assertEquals( "Check the transformed POM", expected, actual );
+            }
+        }
     }
 }
