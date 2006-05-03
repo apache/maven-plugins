@@ -39,7 +39,7 @@ public class Locator
     /**
      * Create a Locator object.
      * 
-     * @param logger the logger object to log with.
+     * @param log the logger object to log with.
      */
     public Locator( Log log )
     {
