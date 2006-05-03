@@ -55,7 +55,7 @@ public class ScmCheckModificationsPhase
     /**
      * The files to exclude from the status check.
      *
-     * @todo [!] proper construction of filenames, especially release properties
+     * @todo proper construction of filenames, especially release properties
      */
     private Set excludedFiles = new HashSet( Arrays.asList(
         new String[]{"pom.xml", "pom.xml.backup", "pom.xml.tag", "pom.xml.next", "release.properties"} ) );
