@@ -491,14 +491,18 @@ public abstract class AbstractRewritePomsPhase
     {
         super.clean( config );
 
-        for ( Iterator i = config.getReactorProjects().iterator(); i.hasNext(); )
+        if ( config.getReactorProjects() != null )
         {
-            MavenProject project = (MavenProject) i.next();
-
-            File file = new File( project.getFile().getParentFile(), project.getFile().getName() + "." + pomSuffix );
-            if ( file.exists() )
+            for ( Iterator i = config.getReactorProjects().iterator(); i.hasNext(); )
             {
-                file.delete();
+                MavenProject project = (MavenProject) i.next();
+
+                File file =
+                    new File( project.getFile().getParentFile(), project.getFile().getName() + "." + pomSuffix );
+                if ( file.exists() )
+                {
+                    file.delete();
+                }
             }
         }
     }
