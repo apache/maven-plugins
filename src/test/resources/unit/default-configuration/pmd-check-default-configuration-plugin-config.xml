@@ -1,0 +1,33 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>def.configuration</groupId>
+  <artifactId>default-configuration</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <inceptionYear>2006</inceptionYear>
+  <name>Maven PMD Plugin Default Configuration Test</name>
+  <url>http://maven.apache.org</url>
+  <build>
+    <finalName>default-configuration</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <configuration>          
+          <sourceDirectory>${basedir}/src/test/resources/unit/default-configuration</sourceDirectory>
+          <targetDirectory>${basedir}/target/test/unit/default-configuration/target</targetDirectory>
+          <failOnViolation>true</failOnViolation>
+          <language>java</language>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
+</project>

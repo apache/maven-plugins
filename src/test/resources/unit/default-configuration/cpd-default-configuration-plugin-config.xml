@@ -1,0 +1,36 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>def.configuration</groupId>
+  <artifactId>default-configuration</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <inceptionYear>2006</inceptionYear>
+  <name>Maven CPD Plugin Default Configuration Test</name>
+  <url>http://maven.apache.org</url>
+  <build>
+    <finalName>default-configuration</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <configuration>
+          <project implementation="org.apache.maven.plugin.pmd.stubs.DefaultConfigurationMavenProjectStub"/>
+          <outputDirectory>${basedir}/target/test/unit/default-configuration/target/site</outputDirectory>
+          <targetDirectory>${basedir}/target/test/unit/default-configuration/target</targetDirectory>
+          <format>xml</format>
+          <linkXRef>false</linkXRef>
+          <xrefLocation>${basedir}/target/test/unit/default-configuration/target/site/xref</xrefLocation>
+          <minimumTokens>100</minimumTokens>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
+</project>

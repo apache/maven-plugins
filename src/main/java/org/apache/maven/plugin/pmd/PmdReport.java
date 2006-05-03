@@ -79,7 +79,7 @@ public class PmdReport
      * @parameter
      */
     private String[] rulesets =
-        new String[]{"/rulesets/basic.xml", "/rulesets/unusedcode.xml", "/rulesets/imports.xml",};
+        new String[]{"rulesets/basic.xml", "rulesets/unusedcode.xml", "rulesets/imports.xml",};
 
     /**
      * The file encoding to use when reading the java source.

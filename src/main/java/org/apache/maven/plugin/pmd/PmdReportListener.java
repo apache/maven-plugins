@@ -201,6 +201,7 @@ public class PmdReportListener
         }
     }
 
+    /*
     private void processMetrics()
     {
         if ( metrics.size() == 0 )
@@ -256,6 +257,7 @@ public class PmdReportListener
         sink.table_();
         sink.section1_();
     }
+    */
 
     public void endDocument()
     {
