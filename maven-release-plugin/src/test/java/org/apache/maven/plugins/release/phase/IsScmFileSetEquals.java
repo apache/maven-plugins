@@ -27,12 +27,12 @@ import java.util.Arrays;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @todo add an equals() method
  */
-class IsScmFileSetEquals
+public class IsScmFileSetEquals
     implements Constraint
 {
     private final ScmFileSet fileSet;
 
-    IsScmFileSetEquals( ScmFileSet fileSet )
+    public IsScmFileSetEquals( ScmFileSet fileSet )
     {
         this.fileSet = fileSet;
     }

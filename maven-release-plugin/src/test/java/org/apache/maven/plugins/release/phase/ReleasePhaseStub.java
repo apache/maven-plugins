@@ -37,11 +37,6 @@ public class ReleasePhaseStub
     private boolean executed;
 
     /**
-     * The name of the phase stubbed.
-     */
-    private String name;
-
-    /**
      * Whether the phase was cleaned.
      */
     private boolean cleaned;
