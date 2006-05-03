@@ -526,6 +526,19 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         }
     }
 
+    public void testCleanNoProjects()
+        throws Exception
+    {
+        // This occurs when it is release:perform run standalone. Just check there are no errors.
+        ReleaseConfiguration config = new ReleaseConfiguration();
+        config.setUrl( "scm:svn:file://localhost/tmp/scm-repo" );
+        config.setWorkingDirectory( getTestFile( "target/test/checkout" ) );
+
+        phase.clean( config );
+
+        assertTrue( true );
+    }
+
     private ReleaseConfiguration createUnmappedConfiguration( String path )
         throws Exception
     {
