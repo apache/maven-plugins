@@ -13,6 +13,7 @@
 		  <url>file://${basedir}/target/remote-repo/deploy-file-test</url>
 		  <uniqueVersion>true</uniqueVersion>
 		  <localRepository>${localRepository}</localRepository>
+          <repositoryLayout>default</repositoryLayout>
 		</configuration>
       </plugin>
     </plugins>

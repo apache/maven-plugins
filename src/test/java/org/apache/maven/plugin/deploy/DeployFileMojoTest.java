@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Model;
 import org.codehaus.plexus.util.FileUtils;
 
@@ -98,7 +99,7 @@ public class DeployFileMojoTest
         assertEquals( "deploy-test", repositoryId );
 
         assertEquals( "file://" + getBasedir() + "/target/remote-repo/deploy-file-test", url );
-
+        
         mojo.execute();
 
         //check the generated pom
