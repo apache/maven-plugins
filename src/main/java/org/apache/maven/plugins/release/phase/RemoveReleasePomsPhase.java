@@ -18,7 +18,6 @@ package org.apache.maven.plugins.release.phase;
 
 import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
-import org.codehaus.plexus.logging.AbstractLogEnabled;
 
 /**
  * Remove release POMs.
@@ -26,8 +25,7 @@ import org.codehaus.plexus.logging.AbstractLogEnabled;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class RemoveReleasePomsPhase
-    extends AbstractLogEnabled
-    implements ReleasePhase
+    extends AbstractReleasePhase
 {
     public void execute( ReleaseConfiguration releaseConfiguration )
         throws ReleaseExecutionException

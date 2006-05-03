@@ -22,7 +22,6 @@ import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.ReleaseFailureException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.logging.AbstractLogEnabled;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,8 +39,7 @@ import java.util.Set;
  * @todo plugins injected by the lifecycle are not tested here. They will be injected with a RELEASE version so are covered under the above point.
  */
 public class CheckDependencySnapshotsPhase
-    extends AbstractLogEnabled
-    implements ReleasePhase
+    extends AbstractReleasePhase
 {
     public void execute( ReleaseConfiguration releaseConfiguration )
         throws ReleaseExecutionException, ReleaseFailureException

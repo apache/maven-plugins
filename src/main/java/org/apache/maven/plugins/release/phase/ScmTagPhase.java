@@ -29,7 +29,6 @@ import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
-import org.codehaus.plexus.logging.AbstractLogEnabled;
 
 /**
  * Tag the SCM repository after committing the release.
@@ -37,8 +36,7 @@ import org.codehaus.plexus.logging.AbstractLogEnabled;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class ScmTagPhase
-    extends AbstractLogEnabled
-    implements ReleasePhase
+    extends AbstractReleasePhase
 {
     /**
      * Tool that gets a configured SCM repository from release configuration.

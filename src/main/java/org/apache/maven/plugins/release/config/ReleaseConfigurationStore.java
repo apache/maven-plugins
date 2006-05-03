@@ -45,4 +45,11 @@ public interface ReleaseConfigurationStore
      */
     void write( ReleaseConfiguration config )
         throws ReleaseConfigurationStoreException;
+
+    /**
+     * Remove a configuration.
+     *
+     * @param config the location of the configuration
+     */
+    void delete( ReleaseConfiguration config );
 }

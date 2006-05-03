@@ -51,4 +51,11 @@ public interface ReleasePhase
      */
     void simulate( ReleaseConfiguration releaseConfiguration )
         throws ReleaseExecutionException, ReleaseFailureException;
+
+    /**
+     * Clean up after a phase if it leaves any additional files in the checkout.
+     *
+     * @param config the configuration to use
+     */
+    void clean( ReleaseConfiguration config );
 }
