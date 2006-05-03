@@ -14,6 +14,7 @@
 		  <uniqueVersion>true</uniqueVersion>
 		  <localRepository>${localRepository}</localRepository>
 		  <classifier>bin</classifier>
+          <repositoryLayout>default</repositoryLayout>
 		</configuration>
       </plugin>
     </plugins>
