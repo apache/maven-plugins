@@ -29,7 +29,7 @@ public class CvsScmTranslator
         return url;
     }
 
-    public String resolveTag( String sourceTag, String tag )
+    public String resolveTag( String tag )
     {
         if ( !"HEAD".equals( tag ) )
         {

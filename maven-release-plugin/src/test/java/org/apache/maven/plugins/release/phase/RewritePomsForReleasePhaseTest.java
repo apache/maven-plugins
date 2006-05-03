@@ -186,4 +186,15 @@ public class RewritePomsForReleasePhaseTest
 
         assertTrue( compareFiles( config.getReactorProjects() ) );
     }
+
+    public void testRewriteBasicPomWithCvsFromTag()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromProjects( "basic-pom-with-cvs-from-tag" );
+        mapNextVersion( config, "groupId:artifactId" );
+
+        phase.execute( config );
+
+        assertTrue( compareFiles( config.getReactorProjects() ) );
+    }
 }

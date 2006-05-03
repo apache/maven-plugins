@@ -40,9 +40,9 @@ public interface ScmTranslator
 
     /**
      * Determine what tag should be added to the POM given the original tag and the new one.
-     * @param sourceTag the original tag
+     *
      * @param tag the new tag
      * @return the tag to use, or <code>null</code> if the provider does not use tags
      */
-    String resolveTag( String sourceTag, String tag );
+    String resolveTag( String tag );
 }
