@@ -44,8 +44,8 @@ public class ReleaseScmRepositoryException
 
             while ( iter.hasNext() )
             {
+                buffer.append( "\n  - " );
                 buffer.append( iter.next().toString() );
-                buffer.append( "\n" );
             }
         }
 

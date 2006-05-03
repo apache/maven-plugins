@@ -61,6 +61,11 @@
       <role>org.apache.maven.plugins.release.phase.ReleasePhase</role>
       <role-hint>check-poms</role-hint>
       <implementation>org.apache.maven.plugins.release.phase.CheckPomPhase</implementation>
+      <requirements>
+        <requirement>
+          <role>org.apache.maven.plugins.release.scm.ScmRepositoryConfigurator</role>
+        </requirement>
+      </requirements>
     </component>
     <component>
       <role>org.apache.maven.plugins.release.phase.ReleasePhase</role>
