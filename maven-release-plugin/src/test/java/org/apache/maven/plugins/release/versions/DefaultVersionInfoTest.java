@@ -50,6 +50,7 @@ public class DefaultVersionInfoTest
     public void testParseSnapshotVersion()
         throws Exception
     {
+        checkParsing( "SNAPSHOT", null, null, null, "SNAPSHOT" );
         checkParsing( "1.0-beta-4-SNAPSHOT", "1.0", "beta", "4", "SNAPSHOT" );
         checkParsing( "1.0-beta-4_SNAPSHOT", "1.0", "beta", "4", "SNAPSHOT" );
     }
@@ -123,6 +124,9 @@ public class DefaultVersionInfoTest
     public void testNextVersion()
         throws Exception
     {
+        VersionInfo v = new DefaultVersionInfo( "SNAPSHOT" );
+        assertNull( v.getNextVersion() );
+
         checkNextVersion( "1", "2" );
         checkNextVersion( "1.01", "1.02" );
         checkNextVersion( "1.9", "1.10" );

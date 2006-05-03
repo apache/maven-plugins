@@ -183,19 +183,24 @@ public class DefaultVersionInfo
 
     public VersionInfo getNextVersion()
     {
-        List digits = new ArrayList( this.digits );
-        String annotationRevision = this.annotationRevision;
-        if ( StringUtils.isNumeric( annotationRevision ) )
+        DefaultVersionInfo version = null;
+        if ( digits != null )
         {
-            annotationRevision = incrementVersionString( annotationRevision );
-        }
-        else
-        {
-            digits.set( digits.size() - 1, incrementVersionString( (String) digits.get( digits.size() - 1 ) ) );
-        }
+            List digits = new ArrayList( this.digits );
+            String annotationRevision = this.annotationRevision;
+            if ( StringUtils.isNumeric( annotationRevision ) )
+            {
+                annotationRevision = incrementVersionString( annotationRevision );
+            }
+            else
+            {
+                digits.set( digits.size() - 1, incrementVersionString( (String) digits.get( digits.size() - 1 ) ) );
+            }
 
-        return new DefaultVersionInfo( digits, annotation, annotationRevision, buildSpecifier, annotationSeparator,
-                                       annotationRevSeparator, buildSeparator );
+            version = new DefaultVersionInfo( digits, annotation, annotationRevision, buildSpecifier,
+                                              annotationSeparator, annotationRevSeparator, buildSeparator );
+        }
+        return version;
     }
 
     /**
@@ -342,7 +347,7 @@ public class DefaultVersionInfo
      */
     protected static String joinDigitString( List digits )
     {
-        return StringUtils.join( digits.iterator(), DIGIT_SEPARATOR_STRING );
+        return digits != null ? StringUtils.join( digits.iterator(), DIGIT_SEPARATOR_STRING ) : null;
     }
 
     /**
