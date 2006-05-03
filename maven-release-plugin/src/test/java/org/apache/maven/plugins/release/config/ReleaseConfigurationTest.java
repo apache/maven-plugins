@@ -50,9 +50,7 @@ public class ReleaseConfigurationTest
 
         releaseConfiguration.merge( new ReleaseConfiguration() );
 
-        ReleaseConfiguration expectedConfiguration = createReleaseConfiguration( releaseConfiguration.getSettings(),
-                                                                                 releaseConfiguration.getWorkingDirectory(),
-                                                                                 releaseConfiguration.getReactorProjects() );
+        ReleaseConfiguration expectedConfiguration = copyReleaseConfiguration( releaseConfiguration );
         assertEquals( "Check merge", expectedConfiguration, releaseConfiguration );
     }
 
@@ -77,27 +75,19 @@ public class ReleaseConfigurationTest
     public void testEquals()
     {
         ReleaseConfiguration originalReleaseConfiguration = createReleaseConfiguration();
-        ReleaseConfiguration releaseConfiguration = createReleaseConfiguration(
-            originalReleaseConfiguration.getSettings(), originalReleaseConfiguration.getWorkingDirectory(),
-            originalReleaseConfiguration.getReactorProjects() );
+        ReleaseConfiguration releaseConfiguration = copyReleaseConfiguration( originalReleaseConfiguration );
         doEqualsAssertions( releaseConfiguration, originalReleaseConfiguration, "other", Collections.EMPTY_LIST,
                             new File( "f" ), new Settings() );
         originalReleaseConfiguration = createReleaseConfiguration();
-        releaseConfiguration = createReleaseConfiguration( originalReleaseConfiguration.getSettings(),
-                                                           originalReleaseConfiguration.getWorkingDirectory(),
-                                                           originalReleaseConfiguration.getReactorProjects() );
+        releaseConfiguration = copyReleaseConfiguration( originalReleaseConfiguration );
         doEqualsAssertions( originalReleaseConfiguration, releaseConfiguration, "other", Collections.EMPTY_LIST,
                             new File( "f" ), new Settings() );
 
         originalReleaseConfiguration = createReleaseConfiguration();
-        releaseConfiguration = createReleaseConfiguration( originalReleaseConfiguration.getSettings(),
-                                                           originalReleaseConfiguration.getWorkingDirectory(),
-                                                           originalReleaseConfiguration.getReactorProjects() );
+        releaseConfiguration = copyReleaseConfiguration( originalReleaseConfiguration );
         doEqualsAssertions( releaseConfiguration, originalReleaseConfiguration, null, null, null, null );
         originalReleaseConfiguration = createReleaseConfiguration();
-        releaseConfiguration = createReleaseConfiguration( originalReleaseConfiguration.getSettings(),
-                                                           originalReleaseConfiguration.getWorkingDirectory(),
-                                                           originalReleaseConfiguration.getReactorProjects() );
+        releaseConfiguration = copyReleaseConfiguration( originalReleaseConfiguration );
         doEqualsAssertions( originalReleaseConfiguration, releaseConfiguration, null, null, null, null );
 
         assertEquals( "test ==", releaseConfiguration, releaseConfiguration );
@@ -109,147 +99,136 @@ public class ReleaseConfigurationTest
                                             ReleaseConfiguration originalReleaseConfiguration, String other,
                                             List reactorProjects, File otherFile, Settings otherSettings )
     {
+        ReleaseConfiguration origConfig = originalReleaseConfiguration;
         ReleaseConfiguration config = releaseConfiguration;
-        assertEquals( "Check original comparison", config, originalReleaseConfiguration );
+        assertEquals( "Check original comparison", config, origConfig );
 
         config.setUrl( other );
-        assertFalse( "Check original comparison", config.equals( originalReleaseConfiguration ) );
-        config.setUrl( originalReleaseConfiguration.getUrl() );
+        assertFalse( "Check original comparison", config.equals( origConfig ) );
+        config.setUrl( origConfig.getUrl() );
 
         config.setAdditionalArguments( other );
-        assertFalse( "Check original comparison", config.equals( originalReleaseConfiguration ) );
-        config.setAdditionalArguments( originalReleaseConfiguration.getAdditionalArguments() );
+        assertFalse( "Check original comparison", config.equals( origConfig ) );
+        config.setAdditionalArguments( origConfig.getAdditionalArguments() );
 
-        config.setAddSchema( !originalReleaseConfiguration.isAddSchema() );
-        assertFalse( "Check original comparison", config.equals( originalReleaseConfiguration ) );
-        config.setAddSchema( originalReleaseConfiguration.isAddSchema() );
+        config.setAddSchema( !origConfig.isAddSchema() );
+        assertFalse( "Check original comparison", config.equals( origConfig ) );
+        config.setAddSchema( origConfig.isAddSchema() );
 
-        config.setGenerateReleasePoms( !originalReleaseConfiguration.isAddSchema() );
-        assertFalse( "Check original comparison", config.equals( originalReleaseConfiguration ) );
-        config.setGenerateReleasePoms( originalReleaseConfiguration.isGenerateReleasePoms() );
+        config.setGenerateReleasePoms( !origConfig.isAddSchema() );
+        assertFalse( "Check original comparison", config.equals( origConfig ) );
+        config.setGenerateReleasePoms( origConfig.isGenerateReleasePoms() );
 
-        config.setUseEditMode( !originalReleaseConfiguration.isUseEditMode() );
-        assertFalse( "Check original comparison", config.equals( originalReleaseConfiguration ) );
-        config.setUseEditMode( originalReleaseConfiguration.isUseEditMode() );
+        config.setUseEditMode( !origConfig.isUseEditMode() );
+        assertFalse( "Check original comparison", config.equals( origConfig ) );
+        config.setUseEditMode( origConfig.isUseEditMode() );
 
-        config.setInteractive( !originalReleaseConfiguration.isInteractive() );
-        assertFalse( "Check original comparison", config.equals( originalReleaseConfiguration ) );
-        config.setInteractive( originalReleaseConfiguration.isInteractive() );
+        config.setInteractive( !origConfig.isInteractive() );
+        assertFalse( "Check original comparison", config.equals( origConfig ) );
+        config.setInteractive( origConfig.isInteractive() );
 
         config.setCompletedPhase( other );
-        assertFalse( "Check original comparison", config.equals( originalReleaseConfiguration ) );
-        config.setCompletedPhase( originalReleaseConfiguration.getCompletedPhase() );
+        assertFalse( "Check original comparison", config.equals( origConfig ) );
+        config.setCompletedPhase( origConfig.getCompletedPhase() );
 
         config.setPassphrase( other );
-        assertFalse( "Check original comparison", config.equals( originalReleaseConfiguration ) );
-        config.setPassphrase( originalReleaseConfiguration.getPassphrase() );
+        assertFalse( "Check original comparison", config.equals( origConfig ) );
+        config.setPassphrase( origConfig.getPassphrase() );
 
         config.setPassword( other );
-        assertFalse( "Check original comparison", config.equals( originalReleaseConfiguration ) );
-        config.setPassword( originalReleaseConfiguration.getPassword() );
+        assertFalse( "Check original comparison", config.equals( origConfig ) );
+        config.setPassword( origConfig.getPassword() );
 
         config.setUsername( other );
-        assertFalse( "Check original comparison", config.equals( originalReleaseConfiguration ) );
-        config.setUsername( originalReleaseConfiguration.getUsername() );
+        assertFalse( "Check original comparison", config.equals( origConfig ) );
+        config.setUsername( origConfig.getUsername() );
 
         config.setPrivateKey( other );
-        assertFalse( "Check original comparison", config.equals( originalReleaseConfiguration ) );
-        config.setPrivateKey( originalReleaseConfiguration.getPrivateKey() );
+        assertFalse( "Check original comparison", config.equals( origConfig ) );
+        config.setPrivateKey( origConfig.getPrivateKey() );
 
         config.setPomFileName( other );
-        assertFalse( "Check original comparison", config.equals( originalReleaseConfiguration ) );
-        config.setPomFileName( originalReleaseConfiguration.getPomFileName() );
+        assertFalse( "Check original comparison", config.equals( origConfig ) );
+        config.setPomFileName( origConfig.getPomFileName() );
 
         config.setPreparationGoals( other );
-        assertFalse( "Check original comparison", config.equals( originalReleaseConfiguration ) );
-        config.setPreparationGoals( originalReleaseConfiguration.getPreparationGoals() );
+        assertFalse( "Check original comparison", config.equals( origConfig ) );
+        config.setPreparationGoals( origConfig.getPreparationGoals() );
 
         config.setReactorProjects( reactorProjects );
-        assertFalse( "Check original comparison", config.equals( originalReleaseConfiguration ) );
-        config.setReactorProjects( originalReleaseConfiguration.getReactorProjects() );
+        assertFalse( "Check original comparison", config.equals( origConfig ) );
+        config.setReactorProjects( origConfig.getReactorProjects() );
 
         config.setSettings( otherSettings );
-        assertFalse( "Check original comparison", config.equals( originalReleaseConfiguration ) );
-        config.setSettings( originalReleaseConfiguration.getSettings() );
+        assertFalse( "Check original comparison", config.equals( origConfig ) );
+        config.setSettings( origConfig.getSettings() );
 
         config.setReleaseLabel( other );
-        assertFalse( "Check original comparison", config.equals( originalReleaseConfiguration ) );
-        config.setReleaseLabel( originalReleaseConfiguration.getReleaseLabel() );
+        assertFalse( "Check original comparison", config.equals( origConfig ) );
+        config.setReleaseLabel( origConfig.getReleaseLabel() );
 
         config.setTagBase( other );
-        assertFalse( "Check original comparison", config.equals( originalReleaseConfiguration ) );
-        config.setTagBase( originalReleaseConfiguration.getTagBase() );
+        assertFalse( "Check original comparison", config.equals( origConfig ) );
+        config.setTagBase( origConfig.getTagBase() );
 
         config.setWorkingDirectory( otherFile );
-        assertFalse( "Check original comparison", config.equals( originalReleaseConfiguration ) );
-        config.setWorkingDirectory( originalReleaseConfiguration.getWorkingDirectory() );
+        assertFalse( "Check original comparison", config.equals( origConfig ) );
+        config.setWorkingDirectory( origConfig.getWorkingDirectory() );
 
         // sanity check the test was resetting correctly
-        assertEquals( "Check original comparison", config, originalReleaseConfiguration );
+        assertEquals( "Check original comparison", config, origConfig );
 
         config.mapDevelopmentVersion( "groupId:artifactId", "1.0-SNAPSHOT" );
-        assertFalse( "Check original comparison", config.equals( originalReleaseConfiguration ) );
-        config = createReleaseConfiguration( originalReleaseConfiguration.getSettings(),
-                                             originalReleaseConfiguration.getWorkingDirectory(),
-                                             originalReleaseConfiguration.getReactorProjects() );
+        assertFalse( "Check original comparison", config.equals( origConfig ) );
+        config = copyReleaseConfiguration( origConfig );
 
         config.mapReleaseVersion( "groupId:artifactId", "1.0" );
-        assertFalse( "Check original comparison", config.equals( originalReleaseConfiguration ) );
-        config = createReleaseConfiguration( originalReleaseConfiguration.getSettings(),
-                                             originalReleaseConfiguration.getWorkingDirectory(),
-                                             originalReleaseConfiguration.getReactorProjects() );
+        assertFalse( "Check original comparison", config.equals( origConfig ) );
+        config = copyReleaseConfiguration( origConfig );
 
         config.mapOriginalScmInfo( "groupId:artifactId", new Scm() );
-        assertFalse( "Check original comparison", config.equals( originalReleaseConfiguration ) );
-        config = createReleaseConfiguration( originalReleaseConfiguration.getSettings(),
-                                             originalReleaseConfiguration.getWorkingDirectory(),
-                                             originalReleaseConfiguration.getReactorProjects() );
+        assertFalse( "Check original comparison", config.equals( origConfig ) );
+        config = copyReleaseConfiguration( origConfig );
 
         config.mapOriginalScmInfo( "groupId:artifactId", new Scm() );
-        originalReleaseConfiguration.mapOriginalScmInfo( "foo", new Scm() );
-        assertFalse( "Check original comparison", config.equals( originalReleaseConfiguration ) );
-        config = createReleaseConfiguration( originalReleaseConfiguration.getSettings(),
-                                             originalReleaseConfiguration.getWorkingDirectory(),
-                                             originalReleaseConfiguration.getReactorProjects() );
+        origConfig.mapOriginalScmInfo( "foo", new Scm() );
+        assertFalse( "Check original comparison", config.equals( origConfig ) );
+        origConfig = createReleaseConfiguration();
+        config = copyReleaseConfiguration( origConfig );
 
         config.mapOriginalScmInfo( "groupId:artifactId", new Scm() );
-        originalReleaseConfiguration.mapOriginalScmInfo( "groupId:artifactId", new Scm() );
-        assertFalse( "Check original comparison", config.equals( originalReleaseConfiguration ) );
-        config = createReleaseConfiguration( originalReleaseConfiguration.getSettings(),
-                                             originalReleaseConfiguration.getWorkingDirectory(),
-                                             originalReleaseConfiguration.getReactorProjects() );
+        origConfig.mapOriginalScmInfo( "groupId:artifactId", new Scm() );
+        assertEquals( "Check original comparison", config, origConfig );
+        origConfig = createReleaseConfiguration();
+        config = copyReleaseConfiguration( origConfig );
 
         config.mapOriginalScmInfo( "groupId:artifactId", getScm( "conn", "dev", "url", "tag" ) );
-        originalReleaseConfiguration.mapOriginalScmInfo( "groupId:artifactId", getScm( "conn", "dev", "url", "tag" ) );
-        assertFalse( "Check original comparison", config.equals( originalReleaseConfiguration ) );
-        config = createReleaseConfiguration( originalReleaseConfiguration.getSettings(),
-                                             originalReleaseConfiguration.getWorkingDirectory(),
-                                             originalReleaseConfiguration.getReactorProjects() );
+        origConfig.mapOriginalScmInfo( "groupId:artifactId", getScm( "conn", "dev", "url", "tag" ) );
+        assertEquals( "Check original comparison", config, origConfig );
+        origConfig = createReleaseConfiguration();
+        config = copyReleaseConfiguration( origConfig );
 
         config.mapOriginalScmInfo( "groupId:artifactId", getScm( "-", "dev", "url", "tag" ) );
-        originalReleaseConfiguration.mapOriginalScmInfo( "groupId:artifactId", getScm( "conn", "dev", "url", "tag" ) );
-        assertFalse( "Check original comparison", config.equals( originalReleaseConfiguration ) );
-        config = createReleaseConfiguration( originalReleaseConfiguration.getSettings(),
-                                             originalReleaseConfiguration.getWorkingDirectory(),
-                                             originalReleaseConfiguration.getReactorProjects() );
+        origConfig.mapOriginalScmInfo( "groupId:artifactId", getScm( "conn", "dev", "url", "tag" ) );
+        assertFalse( "Check original comparison", config.equals( origConfig ) );
+        origConfig = createReleaseConfiguration();
+        config = copyReleaseConfiguration( origConfig );
 
         config.mapOriginalScmInfo( "groupId:artifactId", getScm( "conn", "-", "url", "tag" ) );
-        originalReleaseConfiguration.mapOriginalScmInfo( "groupId:artifactId", getScm( "conn", "dev", "url", "tag" ) );
-        assertFalse( "Check original comparison", config.equals( originalReleaseConfiguration ) );
-        config = createReleaseConfiguration( originalReleaseConfiguration.getSettings(),
-                                             originalReleaseConfiguration.getWorkingDirectory(),
-                                             originalReleaseConfiguration.getReactorProjects() );
+        origConfig.mapOriginalScmInfo( "groupId:artifactId", getScm( "conn", "dev", "url", "tag" ) );
+        assertFalse( "Check original comparison", config.equals( origConfig ) );
+        origConfig = createReleaseConfiguration();
+        config = copyReleaseConfiguration( origConfig );
 
         config.mapOriginalScmInfo( "groupId:artifactId", getScm( "conn", "dev", "-", "tag" ) );
-        originalReleaseConfiguration.mapOriginalScmInfo( "groupId:artifactId", getScm( "conn", "dev", "url", "tag" ) );
-        assertFalse( "Check original comparison", config.equals( originalReleaseConfiguration ) );
-        config = createReleaseConfiguration( originalReleaseConfiguration.getSettings(),
-                                             originalReleaseConfiguration.getWorkingDirectory(),
-                                             originalReleaseConfiguration.getReactorProjects() );
+        origConfig.mapOriginalScmInfo( "groupId:artifactId", getScm( "conn", "dev", "url", "tag" ) );
+        assertFalse( "Check original comparison", config.equals( origConfig ) );
+        origConfig = createReleaseConfiguration();
+        config = copyReleaseConfiguration( origConfig );
 
         config.mapOriginalScmInfo( "groupId:artifactId", getScm( "conn", "dev", "url", "-" ) );
-        originalReleaseConfiguration.mapOriginalScmInfo( "groupId:artifactId", getScm( "conn", "dev", "url", "tag" ) );
-        assertFalse( "Check original comparison", config.equals( originalReleaseConfiguration ) );
+        origConfig.mapOriginalScmInfo( "groupId:artifactId", getScm( "conn", "dev", "url", "tag" ) );
+        assertFalse( "Check original comparison", config.equals( origConfig ) );
     }
 
     public void testHashCode()
@@ -258,6 +237,13 @@ public class ReleaseConfigurationTest
         assertEquals( "Check hash code", releaseConfiguration.hashCode(), createReleaseConfiguration(
             releaseConfiguration.getSettings(), releaseConfiguration.getWorkingDirectory(),
             releaseConfiguration.getReactorProjects() ).hashCode() );
+    }
+
+    private static ReleaseConfiguration copyReleaseConfiguration( ReleaseConfiguration originalReleaseConfiguration )
+    {
+        return createReleaseConfiguration( originalReleaseConfiguration.getSettings(),
+                                           originalReleaseConfiguration.getWorkingDirectory(),
+                                           originalReleaseConfiguration.getReactorProjects() );
     }
 
     private static Scm getScm( String connection, String developerConnection, String url, String tag )
