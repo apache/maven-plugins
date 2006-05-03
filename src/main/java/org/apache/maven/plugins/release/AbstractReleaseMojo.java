@@ -151,4 +151,9 @@ public abstract class AbstractReleaseMojo
     {
         this.releaseManager = releaseManager;
     }
+
+    Settings getSettings()
+    {
+        return settings;
+    }
 }
