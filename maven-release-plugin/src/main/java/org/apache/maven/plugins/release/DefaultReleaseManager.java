@@ -190,8 +190,7 @@ public class DefaultReleaseManager
         CheckOutScmResult result;
         try
         {
-            result = provider.checkOut( repository, new ScmFileSet( releaseConfiguration.getWorkingDirectory() ),
-                                        config.getReleaseLabel() );
+            result = provider.checkOut( repository, new ScmFileSet( checkoutDirectory ), config.getReleaseLabel() );
         }
         catch ( ScmException e )
         {
