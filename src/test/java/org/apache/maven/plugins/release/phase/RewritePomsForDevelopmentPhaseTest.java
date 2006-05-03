@@ -17,9 +17,11 @@ package org.apache.maven.plugins.release.phase;
  */
 
 import org.apache.maven.model.Scm;
+import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 import org.codehaus.plexus.util.FileUtils;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -44,6 +46,82 @@ public class RewritePomsForDevelopmentPhaseTest
         super.setUp();
 
         phase = (ReleasePhase) lookup( ReleasePhase.ROLE, "rewrite-poms-for-development" );
+    }
+
+    public void testSimulateRewrite()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromBasicPom();
+        config.mapReleaseVersion( "groupId:artifactId", RELEASE_VERSION );
+        config.mapDevelopmentVersion( "groupId:artifactId", NEXT_VERSION );
+
+        String expected = readTestProjectFile( "basic-pom/pom.xml" );
+
+        phase.simulate( config );
+
+        String actual = readTestProjectFile( "basic-pom/pom.xml" );
+        assertEquals( "Check the original POM untouched", expected, actual );
+
+        expected = readTestProjectFile( "basic-pom/expected-pom.xml" );
+        actual = readTestProjectFile( "basic-pom/pom.xml.next" );
+        assertEquals( "Check the transformed POM", expected, actual );
+    }
+
+    public void testClean()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromBasicPom();
+        config.mapReleaseVersion( "groupId:artifactId", RELEASE_VERSION );
+        config.mapDevelopmentVersion( "groupId:artifactId", NEXT_VERSION );
+
+        File testFile =
+            getTestFile( "target/test-classes/projects/rewrite-for-development/" + "basic-pom/pom.xml.next" );
+        testFile.delete();
+        assertFalse( testFile.exists() );
+
+        phase.simulate( config );
+
+        assertTrue( testFile.exists() );
+
+        phase.clean( config );
+
+        assertFalse( testFile.exists() );
+    }
+
+    public void testCleanNotExists()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromBasicPom();
+        config.mapReleaseVersion( "groupId:artifactId", RELEASE_VERSION );
+        config.mapDevelopmentVersion( "groupId:artifactId", NEXT_VERSION );
+
+        File testFile =
+            getTestFile( "target/test-classes/projects/rewrite-for-development/" + "basic-pom/pom.xml.next" );
+        testFile.delete();
+        assertFalse( testFile.exists() );
+
+        phase.clean( config );
+
+        assertFalse( testFile.exists() );
+    }
+
+    public void testRewriteBasicPomUnmappedScm()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromProjects( "basic-pom", true );
+
+        mapNextVersion( config, "groupId:artifactId" );
+
+        try
+        {
+            phase.execute( config );
+
+            fail( "Expected failure" );
+        }
+        catch ( ReleaseExecutionException e )
+        {
+            assertTrue( true );
+        }
     }
 
     protected String readTestProjectFile( String fileName )
@@ -80,25 +158,6 @@ public class RewritePomsForDevelopmentPhaseTest
         scm.setDeveloperConnection( "scm:svn:file://localhost/tmp/scm-repo/trunk" );
         scm.setUrl( "file://localhost/tmp/scm-repo/trunk" );
         config.mapOriginalScmInfo( "groupId:artifactId", scm );
-    }
-
-    public void testSimulateRewrite()
-        throws Exception
-    {
-        ReleaseConfiguration config = createConfigurationFromBasicPom();
-        config.mapReleaseVersion( "groupId:artifactId", RELEASE_VERSION );
-        config.mapDevelopmentVersion( "groupId:artifactId", NEXT_VERSION );
-
-        String expected = readTestProjectFile( "basic-pom/pom.xml" );
-
-        phase.simulate( config );
-
-        String actual = readTestProjectFile( "basic-pom/pom.xml" );
-        assertEquals( "Check the original POM untouched", expected, actual );
-
-        expected = readTestProjectFile( "basic-pom/expected-pom.xml" );
-        actual = readTestProjectFile( "basic-pom/pom.xml.next" );
-        assertEquals( "Check the transformed POM", expected, actual );
     }
 
     protected void mapAlternateNextVersion( ReleaseConfiguration config, String projectId )

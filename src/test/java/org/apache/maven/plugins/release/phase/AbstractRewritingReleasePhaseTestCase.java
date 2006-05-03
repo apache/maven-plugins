@@ -41,6 +41,9 @@ import org.jmock.core.stub.ThrowStub;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Base class with tests for rewriting POMs.
@@ -75,6 +78,11 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         throws Exception
     {
         ReleaseConfiguration config = createConfigurationFromProjects( "pom-with-parent" );
+
+        // Process the child first
+        List reactorProjects = new ArrayList( config.getReactorProjects() );
+        Collections.reverse( reactorProjects );
+        config.setReactorProjects( reactorProjects );
 
         mapAlternateNextVersion( config, "groupId:subproject1" );
 
