@@ -1,0 +1,28 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>invalid.format</groupId>
+  <artifactId>invalid-format</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <inceptionYear>2006</inceptionYear>
+  <name>Maven PMD Plugin Invalid Format Test</name>
+  <url>http://maven.apache.org</url>
+  <build>
+    <finalName>default-configuration</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <configuration>
+          <project implementation="org.apache.maven.plugin.pmd.stubs.InvalidFormatMavenProjectStub"/>
+          <outputDirectory>${basedir}/target/test/unit/invalid-format/target/site</outputDirectory>
+          <targetDirectory>${basedir}/target/test/unit/invalid-format/target</targetDirectory>
+          <format>xhtml</format>
+          <linkXRef>false</linkXRef>
+          <xrefLocation>${basedir}/target/test/unit/invalid-format/target/site/xref</xrefLocation>
+          <sourceEncoding>ISO-8859-1</sourceEncoding>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
