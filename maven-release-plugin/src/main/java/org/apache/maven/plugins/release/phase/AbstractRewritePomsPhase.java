@@ -27,6 +27,7 @@ import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 import org.apache.maven.plugins.release.scm.ReleaseScmCommandException;
 import org.apache.maven.plugins.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.plugins.release.scm.ScmRepositoryConfigurator;
+import org.apache.maven.plugins.release.scm.ScmTranslator;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
@@ -515,4 +516,42 @@ public abstract class AbstractRewritePomsPhase
                                           ReleaseConfiguration releaseConfiguration, String projectId,
                                           ScmRepository scmRepository )
         throws ReleaseExecutionException;
+
+    protected void rewriteTagElement( ScmTranslator translator, String tag, Element scmRoot, Namespace namespace )
+    {
+        String resolvedTag = translator.resolveTag( tag );
+        Element tagElement = scmRoot.getChild( "tag", namespace );
+        if ( tagElement != null )
+        {
+            if ( resolvedTag != null )
+            {
+                tagElement.setText( resolvedTag );
+            }
+            else
+            {
+                int index = scmRoot.indexOf( tagElement );
+                scmRoot.removeContent( index );
+                for ( int i = index - 1; i >= 0; i-- )
+                {
+                    if ( scmRoot.getContent( i ) instanceof Text )
+                    {
+                        scmRoot.removeContent( i );
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+        else
+        {
+            if ( resolvedTag != null )
+            {
+                Element element = new Element( "tag", namespace );
+                element.setText( resolvedTag );
+                scmRoot.addContent( "  " ).addContent( element ).addContent( "\n  " );
+            }
+        }
+    }
 }

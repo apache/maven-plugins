@@ -71,28 +71,7 @@ public class RewritePomsForReleasePhase
                         url.setText( translator.translateTagUrl( scm.getUrl(), tag ) );
                     }
 
-                    String resolvedTag = translator.resolveTag( scm.getTag(), tag );
-                    Element tagElement = scmRoot.getChild( "tag", namespace );
-                    if ( tagElement != null )
-                    {
-                        if ( resolvedTag != null )
-                        {
-                            tagElement.setText( resolvedTag );
-                        }
-                        else
-                        {
-                            tagElement.getParentElement().removeChild( "tag", namespace );
-                        }
-                    }
-                    else
-                    {
-                        if ( resolvedTag != null )
-                        {
-                            Element element = new Element( "tag", namespace );
-                            element.setText( resolvedTag );
-                            scmRoot.addContent( "  " ).addContent( element ).addContent( "\n  " );
-                        }
-                    }
+                    rewriteTagElement( translator, tag, scmRoot, namespace );
                 }
                 else
                 {
