@@ -95,10 +95,10 @@ public class CpdReportTest
 
         //check the contents of cpd.html
         String str = readFile( new File( getBasedir(), "target/test/unit/custom-configuration/target/site/cpd.html" ) );
-        assertTrue( str.toLowerCase().indexOf( "custom\\configuration\\Sample.java".toLowerCase() ) != -1 );
+        assertTrue( str.toLowerCase().indexOf( "custom/configuration/Sample.java".toLowerCase() ) != -1 );
 
         str = readFile( new File( getBasedir(), "target/test/unit/custom-configuration/target/site/cpd.html" ) );
-        assertTrue( str.toLowerCase().indexOf( "custom\\configuration\\AnotherSample.java".toLowerCase() ) != -1 );
+        assertTrue( str.toLowerCase().indexOf( "custom/configuration/AnotherSample.java".toLowerCase() ) != -1 );
 
         str = readFile( new File( getBasedir(), "target/test/unit/custom-configuration/target/site/cpd.html" ) );
         assertTrue( str.toLowerCase().indexOf( "public void duplicateMethod( int i )".toLowerCase() ) != -1 );
