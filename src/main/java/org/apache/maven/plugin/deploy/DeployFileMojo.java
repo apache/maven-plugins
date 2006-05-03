@@ -23,12 +23,14 @@ import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
@@ -92,6 +94,22 @@ public class DeployFileMojo
      * @required
      */
     private String repositoryId;
+    
+    /**
+     * The type of remote repository layout to deploy to. Try <i>legacy</i> for a Maven 1.x-style repository layout.
+     * @parameter expression="${repositoryLayout}" default-value="default"
+     * @required
+     */
+    private String repositoryLayout;
+    
+    /**
+     * Current session, for looking up repository layout instances, etc.
+     * 
+     * @parameter default-value="${session}"
+     * @required
+     * @readonly
+     */
+    private MavenSession session;
 
     /**
      * URL where the artifact will be deployed. <br/>
@@ -106,16 +124,19 @@ public class DeployFileMojo
      * @component
      */
     private ArtifactFactory artifactFactory;
-
-    /**
-     * @component
-     */
-    private ArtifactRepositoryLayout layout;
-
+    
     /**
      * @component
      */
     private ArtifactRepositoryFactory repositoryFactory;
+    
+    /**
+     * This is a concession to keep the unit tests running.
+     * @todo REMOVE!
+     * 
+     * @component
+     */
+    private ArtifactRepositoryLayout defaultLayout;
 
     /**
      * @parameter expression="${pomFile}"
@@ -174,6 +195,26 @@ public class DeployFileMojo
         if ( !file.exists() )
         {
             throw new MojoExecutionException( file.getPath() + " not found." );
+        }
+        
+        ArtifactRepositoryLayout layout;
+        
+        // FIXME: We shouldn't have to do this, since the session is @required, but the testing harness cannot populate it...
+        if ( session != null )
+        {
+            try
+            {
+                System.out.println( "Session is: " + session );
+                layout = (ArtifactRepositoryLayout) session.lookup( ArtifactRepositoryLayout.ROLE, repositoryLayout );
+            }
+            catch ( ComponentLookupException e )
+            {
+                throw new MojoExecutionException( "Failed to lookup repository layout: \'" + repositoryLayout + "\'. Perhaps you meant 'default' or 'legacy'? Error: " + e.getMessage(), e );
+            }
+        }
+        else
+        {
+            layout = defaultLayout;
         }
 
         ArtifactRepository deploymentRepository =
