@@ -31,7 +31,7 @@ public class SubversionScmTranslator
         return SvnTagBranchUtils.resolveTagUrl( url, tag );
     }
 
-    public String resolveTag( String sourceTag, String tag )
+    public String resolveTag( String tag )
     {
         return null;
     }

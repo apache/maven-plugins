@@ -230,4 +230,22 @@ public class RewritePomsForDevelopmentPhaseTest
 
         assertTrue( compareFiles( config.getReactorProjects() ) );
     }
+
+    public void testRewriteBasicPomWithCvsFromTag()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromProjects( "basic-pom-with-cvs-from-tag" );
+        mapNextVersion( config, "groupId:artifactId" );
+
+        Scm scm = new Scm();
+        scm.setConnection( "scm:cvs:pserver:anoncvs@localhost:/tmp/scm-repo:module" );
+        scm.setDeveloperConnection( "scm:cvs:ext:${username}@localhost:/tmp/scm-repo:module" );
+        scm.setUrl( "http://localhost/viewcvs.cgi/module" );
+        scm.setTag( "original-label" );
+        config.mapOriginalScmInfo( "groupId:artifactId", scm );
+
+        phase.execute( config );
+
+        assertTrue( compareFiles( config.getReactorProjects() ) );
+    }
 }
