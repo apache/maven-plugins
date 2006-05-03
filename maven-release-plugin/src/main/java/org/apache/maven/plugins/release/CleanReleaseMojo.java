@@ -47,4 +47,9 @@ public class CleanReleaseMojo
         releaseConfiguration.setReactorProjects( reactorProjects );
         releaseManager.clean( releaseConfiguration );
     }
+
+    List getReactorProjects()
+    {
+        return reactorProjects;
+    }
 }
