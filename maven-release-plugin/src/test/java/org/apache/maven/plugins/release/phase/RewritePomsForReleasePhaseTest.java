@@ -188,6 +188,18 @@ public class RewritePomsForReleasePhaseTest
         assertTrue( compareFiles( config.getReactorProjects() ) );
     }
 
+    public void testRewriteBasicPomWithTagBase()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromProjects( "basic-pom-with-tag-base" );
+        config.setTagBase( "file://localhost/tmp/scm-repo/releases" );
+        mapNextVersion( config, "groupId:artifactId" );
+
+        phase.execute( config );
+
+        assertTrue( compareFiles( config.getReactorProjects() ) );
+    }
+
     public void testRewriteBasicPomWithCvsFromTag()
         throws Exception
     {

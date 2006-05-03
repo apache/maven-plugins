@@ -26,9 +26,9 @@ import org.apache.maven.scm.provider.svn.SvnTagBranchUtils;
 public class SubversionScmTranslator
     implements ScmTranslator
 {
-    public String translateTagUrl( String url, String tag )
+    public String translateTagUrl( String url, String tag, String tagBase )
     {
-        return SvnTagBranchUtils.resolveTagUrl( url, tag );
+        return SvnTagBranchUtils.resolveUrl( url, tagBase, SvnTagBranchUtils.SVN_TAGS, tag );
     }
 
     public String resolveTag( String tag )

@@ -32,11 +32,12 @@ public interface ScmTranslator
     /**
      * Take an URL and find the correct replacement URL for a given tag.
      *
-     * @param url the source URL
-     * @param tag the tag
+     * @param url     the source URL
+     * @param tag     the tag
+     * @param tagBase the tag base for providers that support it
      * @return the replacement URL
      */
-    String translateTagUrl( String url, String tag );
+    String translateTagUrl( String url, String tag, String tagBase );
 
     /**
      * Determine what tag should be added to the POM given the original tag and the new one.

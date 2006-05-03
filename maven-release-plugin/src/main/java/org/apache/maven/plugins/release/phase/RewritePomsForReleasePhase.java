@@ -56,19 +56,29 @@ public class RewritePomsForReleasePhase
                 {
                     Scm scm = project.getOriginalModel().getScm();
                     String tag = releaseConfiguration.getReleaseLabel();
+                    String tagBase = releaseConfiguration.getTagBase();
+
+                    // TODO: svn utils should take care of prepending this
+                    if ( tagBase != null )
+                    {
+                        tagBase = "scm:svn:" + tagBase;
+                    }
                     scmRoot.getChild( "connection", namespace ).setText(
-                        translator.translateTagUrl( scm.getConnection(), tag ) );
+                        translator.translateTagUrl( scm.getConnection(), tag, tagBase ) );
 
                     Element devConnection = scmRoot.getChild( "developerConnection", namespace );
                     if ( devConnection != null )
                     {
-                        devConnection.setText( translator.translateTagUrl( scm.getDeveloperConnection(), tag ) );
+                        devConnection.setText(
+                            translator.translateTagUrl( scm.getDeveloperConnection(), tag, tagBase ) );
                     }
 
                     Element url = scmRoot.getChild( "url", namespace );
                     if ( url != null )
                     {
-                        url.setText( translator.translateTagUrl( scm.getUrl(), tag ) );
+                        // use original tag base without protocol
+                        url.setText(
+                            translator.translateTagUrl( scm.getUrl(), tag, releaseConfiguration.getTagBase() ) );
                     }
 
                     rewriteTagElement( translator, tag, scmRoot, namespace );

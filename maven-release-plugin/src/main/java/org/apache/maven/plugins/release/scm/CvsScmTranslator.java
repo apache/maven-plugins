@@ -24,7 +24,7 @@ package org.apache.maven.plugins.release.scm;
 public class CvsScmTranslator
     implements ScmTranslator
 {
-    public String translateTagUrl( String url, String tag )
+    public String translateTagUrl( String url, String tag, String tagBase )
     {
         return url;
     }
