@@ -19,6 +19,7 @@ package org.apache.maven.plugins.release.phase;
 import org.apache.maven.model.Scm;
 import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
@@ -133,7 +134,17 @@ public class RewritePomsForDevelopmentPhaseTest
     {
         ReleaseConfiguration releaseConfiguration =
             createConfigurationFromProjects( "rewrite-for-development/", path, copyFiles );
-        releaseConfiguration.setUrl( "scm:svn:file://localhost/tmp/scm-repo" );
+
+        MavenProject rootProject = (MavenProject) releaseConfiguration.getReactorProjects().get( 0 );
+        if ( rootProject.getScm() == null )
+        {
+            releaseConfiguration.setUrl( "scm:svn:file://localhost/tmp/scm-repo/trunk" );
+        }
+        else
+        {
+            releaseConfiguration.setUrl( rootProject.getScm().getConnection() );
+        }
+
         releaseConfiguration.setWorkingDirectory( getTestFile( "target/test/checkout" ) );
 
         return releaseConfiguration;
@@ -201,5 +212,22 @@ public class RewritePomsForDevelopmentPhaseTest
         mapScm( config );
 
         return config;
+    }
+
+    public void testRewriteBasicPomWithCvs()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromProjects( "basic-pom-with-cvs" );
+        mapNextVersion( config, "groupId:artifactId" );
+
+        Scm scm = new Scm();
+        scm.setConnection( "scm:cvs:pserver:anoncvs@localhost:/tmp/scm-repo:module" );
+        scm.setDeveloperConnection( "scm:cvs:ext:${username}@localhost:/tmp/scm-repo:module" );
+        scm.setUrl( "http://localhost/viewcvs.cgi/module" );
+        config.mapOriginalScmInfo( "groupId:artifactId", scm );
+
+        phase.execute( config );
+
+        assertTrue( compareFiles( config.getReactorProjects() ) );
     }
 }

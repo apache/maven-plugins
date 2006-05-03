@@ -16,23 +16,28 @@ package org.apache.maven.plugins.release.scm;
  * limitations under the License.
  */
 
-import org.apache.maven.scm.provider.svn.SvnTagBranchUtils;
-
 /**
  * Subversion tag translator.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class SubversionScmTranslator
+public class CvsScmTranslator
     implements ScmTranslator
 {
     public String translateTagUrl( String url, String tag )
     {
-        return SvnTagBranchUtils.resolveTagUrl( url, tag );
+        return url;
     }
 
     public String resolveTag( String sourceTag, String tag )
     {
-        return null;
+        if ( !"HEAD".equals( tag ) )
+        {
+            return tag;
+        }
+        else
+        {
+            return null;
+        }
     }
 }
