@@ -34,6 +34,7 @@ public class PmdReportTest
         throws Exception
     {
         super.setUp();
+        FileUtils.deleteDirectory( new File( getBasedir(), "target/test/unit" ) );
     }
 
     public void testDefaultConfiguration()

@@ -55,8 +55,14 @@ public class CpdViolationCheckMojoTest
     public void testNotFailOnViolation()
         throws Exception
     {
+
         File testPom = new File( getBasedir(),
-                                 "src/test/resources/unit/default-configuration/pmd-check-notfailonviolation-plugin-config.xml" );
+                                 "src/test/resources/unit/default-configuration/cpd-default-configuration-plugin-config.xml" );
+        CpdReport mojo = (CpdReport) lookupMojo( "cpd", testPom );
+        mojo.execute();
+
+        testPom = new File( getBasedir(),
+                            "src/test/resources/unit/default-configuration/pmd-check-notfailonviolation-plugin-config.xml" );
         CpdViolationCheckMojo cpdViolationMojo = (CpdViolationCheckMojo) lookupMojo( "cpd-check", testPom );
         cpdViolationMojo.execute();
 
@@ -86,5 +92,4 @@ public class CpdViolationCheckMojoTest
     {
 
     }
-
 }
