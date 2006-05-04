@@ -29,7 +29,7 @@
           <classifier></classifier>
           <project implementation="org.apache.maven.plugin.assembly.stubs.AssemblyMavenProjectStub" />
           <descriptorRefs>
-            <descriptorRef>simple</descriptorRef>
+            <descriptorRef>bin</descriptorRef>
           </descriptorRefs>
           <tarLongFileMode>warn</tarLongFileMode>
           <basedir>${basedir}</basedir>

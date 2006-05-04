@@ -30,6 +30,14 @@
             <depTwoGroupId>org.test.2</depTwoGroupId>
             <depTwoVersion>2</depTwoVersion>
           </project>
+          <executedProject implementation="org.apache.maven.plugin.assembly.BasicAbstractAssemblyMojoFeaturesTest$TwoDependencyReactorProjectStub">
+            <depOneArtifactId>test</depOneArtifactId>
+            <depOneGroupId>org.test</depOneGroupId>
+            <depOneVersion>1</depOneVersion>
+            <depTwoArtifactId>test2</depTwoArtifactId>
+            <depTwoGroupId>org.test.2</depTwoGroupId>
+            <depTwoVersion>2</depTwoVersion>
+          </executedProject>
           <descriptors>
             <descriptor>${basedir}/src/test/resources/basicAbstractAssemblyMojoFeaturesTest/outputFileNameMappingWithTwoDependencySets-assemblyDescriptor.xml</descriptor>
           </descriptors>
@@ -61,7 +69,6 @@
               <depTwoVersion>4</depTwoVersion>
             </reactorProject>
           </reactorProjects>
-          <classifier></classifier>
         </configuration>
       </plugin>
     </plugins>

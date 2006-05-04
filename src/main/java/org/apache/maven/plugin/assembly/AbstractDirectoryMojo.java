@@ -55,6 +55,7 @@ public abstract class AbstractDirectoryMojo
 
         try
         {
+            System.out.println( "archiver manager is: " + archiverManager );
             Archiver archiver = this.archiverManager.getArchiver( "dir" );
 
             createArchive( archiver, assembly, fullName );
