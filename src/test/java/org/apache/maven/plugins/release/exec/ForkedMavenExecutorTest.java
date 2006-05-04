@@ -228,11 +228,11 @@ public class ForkedMavenExecutorTest
         mockProcess.expects( new InvokeOnceMatcher() ).method( "getErrorStream" ).will(
             new ReturnStub( new StringInputStream( "" ) ) );
         mockProcess.expects( new InvokeOnceMatcher() ).method( "waitFor" ).will(
-            new ReturnStub( Integer.valueOf( exitCode ) ) );
+            new ReturnStub( new Integer( exitCode ) ) );
         if ( exitCode != 0 )
         {
             mockProcess.expects( new InvokeOnceMatcher() ).method( "exitValue" ).will(
-                new ReturnStub( Integer.valueOf( exitCode ) ) );
+                new ReturnStub( new Integer( exitCode ) ) );
         }
         return (Process) mockProcess.proxy();
     }
