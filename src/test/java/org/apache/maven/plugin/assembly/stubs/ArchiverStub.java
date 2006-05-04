@@ -88,7 +88,7 @@ public class ArchiverStub
     public void addFile( File file, String string, int i )
         throws ArchiverException
     {
-        addDirectory( file );
+        addFile( file, string );
     }
 
     public File getDestFile()
