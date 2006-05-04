@@ -56,11 +56,6 @@ public class ArchiverStub
     {
         System.out.println( "Adding dir " + file.getPath() );
 
-        if ( !file.exists() )
-        {
-            file.mkdirs();
-        }
-
         files.put( file.getPath(), file );
     }
 
@@ -86,18 +81,6 @@ public class ArchiverStub
         throws ArchiverException
     {
         System.out.println( "Adding file " + file.getPath() );
-
-        if ( !file.exists() )
-        {
-            try
-            {
-                file.createNewFile();
-            }
-            catch ( IOException e )
-            {
-                e.printStackTrace();
-            }
-        }
 
         files.put( file.getPath(), file );
     }
