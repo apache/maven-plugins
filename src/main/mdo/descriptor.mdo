@@ -402,6 +402,35 @@
       <superClass>SetBase</superClass>
       <fields>
         <field>
+          <name>includeSources</name>
+          <version>1.0.0</version>
+          <type>boolean</type>
+          <defaultValue>false</defaultValue>
+          <description>
+            When set to true, the plugin will include the source files for modules included in this
+            set. Otherwise, it will only include binaries.
+          </description>
+        </field>
+        <field>
+          <name>sourceOutputDirectory</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <description>
+            The output directory in the assembly for the module-sources included by this set.
+          </description>
+        </field>
+        <field>
+          <name>includeBinaries</name>
+          <version>1.0.0</version>
+          <type>boolean</type>
+          <defaultValue>true</defaultValue>
+          <description>
+            When set to true, the plugin will include the binaries for the included modules, according to other 
+            configuration in this set. This includes the module artifacts, along with the dependency artifacts 
+            (optionally).
+          </description>
+        </field>
+        <field>
           <name>includeDependencies</name>
           <version>1.0.0</version>
           <type>boolean</type>

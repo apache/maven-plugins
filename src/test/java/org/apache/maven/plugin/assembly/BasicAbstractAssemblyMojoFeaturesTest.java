@@ -6,19 +6,18 @@ import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.stubs.ArchiverManagerStub;
 import org.apache.maven.plugin.assembly.stubs.ArchiverStub;
 import org.apache.maven.plugin.assembly.stubs.ArtifactStub;
-import org.apache.maven.plugin.assembly.stubs.ReactorMavenProjectStub;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 
 import java.io.File;
-import java.net.URL;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -46,32 +45,16 @@ public class BasicAbstractAssemblyMojoFeaturesTest
         testDependencyMapping( pluginConfig, requiredDependencies );
     }
 
-    public void testOutputFileNameMappingWithTwoDependencySets() throws Exception
-    {
-        String pluginConfig = "outputFileNameMappingWithTwoDependencySets-pluginConfig.xml";
-        
-        List requiredDependencies = new ArrayList();
-        
-        requiredDependencies.add( "dependencies/test.jar" );
-        requiredDependencies.add( "dependencies/test2.jar" );
-        requiredDependencies.add( "dependencies/test3-3.jar" );
-        requiredDependencies.add( "dependencies/test4-4.jar" );
-        
-        testDependencyMapping( pluginConfig, requiredDependencies );
-    }
-
     private void testDependencyMapping( String pluginConfig, List requiredDependencies ) throws Exception
     {
-        ClassLoader cloader = Thread.currentThread().getContextClassLoader();
-        
         String pluginConfigResource = "basicAbstractAssemblyMojoFeaturesTest/" + pluginConfig;
         
-        URL resource = cloader.getResource( pluginConfigResource );
+        File pluginConfigFile = new File( getBasedir(), "src/test/plugin-configs/" + pluginConfigResource );
         
-        assertNotNull( "Cannot find plugin-configuration: \'" + pluginConfigResource + "\' in context-classloader\'s classpath.", resource );
+        assertTrue( "Cannot find plugin-configuration: \'" + pluginConfigResource + "\' in context-classloader\'s classpath.", pluginConfigFile.exists() );
         
         // TODO: Need to replace this with test-only mojos...
-        DirectoryMojo mojo = (DirectoryMojo) lookupMojo( "directory", resource.getPath() );
+        DirectoryMojo mojo = (DirectoryMojo) lookupMojo( "directory", pluginConfigFile.getAbsolutePath() );
 
         FileLoggingArchiverManagerStub archiverManager = (FileLoggingArchiverManagerStub) getVariableValueFromObject( mojo, "archiverManager" );
         archiverManager.clearArchiver();
@@ -93,7 +76,7 @@ public class BasicAbstractAssemblyMojoFeaturesTest
     }
 
     public static final class FileLoggingArchiverManagerStub
-        extends ArchiverManagerStub
+        implements ArchiverManager
     {
         private FileLoggingArchiverStub archiverStub;
 
@@ -111,10 +94,16 @@ public class BasicAbstractAssemblyMojoFeaturesTest
         {
             archiverStub = null;
         }
+
+        public UnArchiver getUnArchiver( String arg0 ) throws NoSuchArchiverException
+        {
+            // TODO Auto-generated method stub
+            return null;
+        }
     }
 
     public static final class FileLoggingArchiverStub
-        extends ArchiverStub
+        implements Archiver
     {
 
         private Set files = new LinkedHashSet();
@@ -132,6 +121,90 @@ public class BasicAbstractAssemblyMojoFeaturesTest
         public Set getAddedFiles()
         {
             return files;
+        }
+
+        public void addDirectory( File arg0 ) throws ArchiverException
+        {
+            // TODO Auto-generated method stub
+            
+        }
+
+        public void addDirectory( File arg0, String arg1 ) throws ArchiverException
+        {
+            // TODO Auto-generated method stub
+            
+        }
+
+        public void addDirectory( File arg0, String[] arg1, String[] arg2 ) throws ArchiverException
+        {
+            // TODO Auto-generated method stub
+            
+        }
+
+        public void addDirectory( File arg0, String arg1, String[] arg2, String[] arg3 ) throws ArchiverException
+        {
+            // TODO Auto-generated method stub
+            
+        }
+
+        public void createArchive() throws ArchiverException, IOException
+        {
+            // TODO Auto-generated method stub
+            
+        }
+
+        public int getDefaultDirectoryMode()
+        {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        public int getDefaultFileMode()
+        {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        public File getDestFile()
+        {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        public Map getFiles()
+        {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        public boolean getIncludeEmptyDirs()
+        {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        public void setDefaultDirectoryMode( int arg0 )
+        {
+            // TODO Auto-generated method stub
+            
+        }
+
+        public void setDefaultFileMode( int arg0 )
+        {
+            // TODO Auto-generated method stub
+            
+        }
+
+        public void setDestFile( File arg0 )
+        {
+            // TODO Auto-generated method stub
+            
+        }
+
+        public void setIncludeEmptyDirs( boolean arg0 )
+        {
+            // TODO Auto-generated method stub
+            
         }
 
     }
