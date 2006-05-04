@@ -134,8 +134,7 @@ public class JavadocReport
         }
         return canGenerate;
     }
-
-
+    
     public String getCategoryName()
     {
         return CATEGORY_PROJECT_REPORTS;

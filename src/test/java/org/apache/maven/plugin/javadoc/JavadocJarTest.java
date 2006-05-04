@@ -89,6 +89,7 @@ public class JavadocJarTest
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
     }
+      
 
     /**
      * Test when the specified destDir parameter has an invalid value
