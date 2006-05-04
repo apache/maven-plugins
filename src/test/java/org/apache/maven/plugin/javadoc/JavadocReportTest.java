@@ -336,6 +336,37 @@ public class JavadocReportTest
 
     }
 
+    public void testExceptions()
+        throws Exception
+    {
+
+        try
+        {
+            File testPom =
+                new File( getBasedir(), "src/test/resources/unit/default-configuration/exception-test-plugin-config.xml" );
+            JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+            mojo.execute();
+
+            fail( "Must throw exception." );
+
+        }
+        catch ( Exception e )
+        {
+            assertTrue( true );
+
+            try
+            {
+                FileUtils.deleteDirectory( new File( getBasedir(), "exception") );
+            }
+            catch( IOException ie )
+            {
+                
+            }
+        }
+
+    }
+
+
     protected void tearDown()
         throws Exception
     {
