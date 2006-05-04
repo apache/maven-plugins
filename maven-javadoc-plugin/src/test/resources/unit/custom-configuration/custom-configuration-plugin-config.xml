@@ -17,7 +17,7 @@
           <localRepository>${localRepository}</localRepository>
           <outputDirectory>${basedir}/target/test/unit/custom-configuration/target/site/apidocs</outputDirectory>
           <breakiterator>false</breakiterator>
-          <old>false</old>
+          <old>true</old>
           <show>private</show>
           <quiet>true</quiet>
           <verbose>false</verbose>
@@ -77,6 +77,8 @@
           </offlineLinks>
           <header>MAVEN JAVADOC PLUGIN TEST</header>
           <footer>MAVEN JAVADOC PLUGIN TEST FOOTER</footer>
+          <locale>en_US</locale>
+          <isOffline>true</isOffline>
         </configuration>
       </plugin>
     </plugins>
