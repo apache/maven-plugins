@@ -17,12 +17,13 @@ package org.apache.maven.plugin.assembly.stubs;
  */
 
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.artifact.Artifact;
 
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Set;
 import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Edwin Punzalan
@@ -32,12 +33,19 @@ public class ReactorMavenProjectStub
 {
     public static List reactorProjects = new ArrayList();
 
+    private MavenProject parent;
+
     public Set getArtifacts()
     {
         return Collections.EMPTY_SET;
     }
 
     public ReactorMavenProjectStub()
+    {
+        this( "jar" );
+    }
+
+    public ReactorMavenProjectStub( String packaging )
     {
         super();
 
@@ -46,9 +54,19 @@ public class ReactorMavenProjectStub
         setGroupId( "assembly" );
         setArtifactId( "reactor-project-" + reactorProjects.size() );
         setVersion( "1.0" );
-        setPackaging( "jar" );
+        setPackaging( packaging );
 
         setArtifact( new ArtifactStub( getGroupId(), getArtifactId(),
                                        getVersion(), getPackaging(), Artifact.SCOPE_COMPILE ) );
+    }
+
+    public void setParent( MavenProject parent )
+    {
+        this.parent = parent;
+    }
+
+    public MavenProject getParent()
+    {
+        return parent;
     }
 }
