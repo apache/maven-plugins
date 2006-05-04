@@ -19,6 +19,7 @@ package org.apache.maven.plugin.assembly.stubs;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.artifact.versioning.VersionRange;
+import org.codehaus.plexus.PlexusTestCase;
 
 import java.io.File;
 
@@ -36,7 +37,7 @@ public class ArtifactStub
 
     public File getFile()
     {
-        return new File( getArtifactId() + "-" + getVersion() + "." + getType() )
+        return new File( PlexusTestCase.getBasedir() + "/target/local-repo", getArtifactId() + "-" + getVersion() + "." + getType() )
         {
             public long lastModified()
             {
