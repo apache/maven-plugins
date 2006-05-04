@@ -35,6 +35,7 @@ public class CpdReportTest
         throws Exception
     {
         super.setUp();
+        FileUtils.deleteDirectory( new File( getBasedir(), "target/test/unit" ) );
     }
 
     /**
@@ -163,4 +164,6 @@ public class CpdReportTest
 
         return str;
     }
+
+
 }
