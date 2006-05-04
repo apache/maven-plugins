@@ -253,6 +253,24 @@ public class JxrReportTest
 
     }
 
+    public void testExceptions()
+        throws Exception
+    {
+        try
+        {
+            File testPom =
+                new File( getBasedir(), "src/test/resources/unit/default-configuration/exception-test-plugin-config.xml" );
+            JxrReport mojo = (JxrReport) lookupMojo( "jxr", testPom );
+            mojo.execute();
+
+            fail( "Must throw exception");
+        }
+        catch ( Exception e )
+        {
+            assertTrue( true );
+        }
+    }
+
     protected void tearDown()
         throws Exception
     {
