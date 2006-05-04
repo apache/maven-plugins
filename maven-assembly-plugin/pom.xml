@@ -10,11 +10,6 @@
   <name>Maven Assembly Plugin</name>
   <version>2.1-SNAPSHOT</version>
   <build>
-    <!--testResources>
-      <testResource>
-        <directory>src/test/plugin-configs</directory>
-      </testResource>
-    </testResources-->
     <plugins>
       <plugin>
         <groupId>org.codehaus.modello</groupId>
