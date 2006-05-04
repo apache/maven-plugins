@@ -36,6 +36,12 @@ public class ArtifactStub
 
     public File getFile()
     {
-        return new File( getArtifactId() + "-" + getVersion() + "." + getType() );
+        return new File( getArtifactId() + "-" + getVersion() + "." + getType() )
+        {
+            public long lastModified()
+            {
+                return System.currentTimeMillis();
+            }
+        };
     }
 }
