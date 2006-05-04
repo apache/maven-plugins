@@ -19,14 +19,25 @@
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
-          <outputDirectory>${basedir}/target/test-harness/unpack/archiver-manager-exception/target</outputDirectory>
-          <finalName>unpack-min</finalName>
-          <workDirectory>${basedir}/target/test-harness/unpack/archiver-manager-exception/work</workDirectory>
-          <archiverManager implementation="org.apache.maven.plugin.assembly.stubs.ArchiverManagerWithExceptionStub" />
+          <outputDirectory>${basedir}/target/test-harness/assembly/min/target</outputDirectory>
+          <finalName>assembly</finalName>
+          <workDirectory>${basedir}/target/test-harness/assembly/min/work</workDirectory>
+          <archiverManager implementation="org.apache.maven.plugin.assembly.stubs.ArchiverManagerStub" />
           <localRepository>${localRepository}</localRepository>
           <reactorProjects></reactorProjects>
           <classifier></classifier>
           <project implementation="org.apache.maven.plugin.assembly.stubs.AssemblyMavenProjectStub" />
+          <executedProject implementation="org.apache.maven.plugin.assembly.stubs.AssemblyMavenProjectStub" />
+          <descriptorRefs>
+            <descriptorRef>simple</descriptorRef>
+          </descriptorRefs>
+          <tarLongFileMode>warn</tarLongFileMode>
+          <basedir>${basedir}</basedir>
+          <tempRoot>${basedir}/target/test-harness/assembly/min/archive-tmp</tempRoot>
+          <tempFile>${basedir}/target/test-harness/assembly/min/tempFile</tempFile>
+          <siteDirectory>${basedir}/target/test-harness/assembly/min/site</siteDirectory>
+          <includeSite>false</includeSite>
+          <appendAssemblyId>true</appendAssemblyId>
         </configuration>
       </plugin>
     </plugins>

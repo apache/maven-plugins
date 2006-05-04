@@ -35,7 +35,6 @@
           </descriptors>
           <outputDirectory>${project.build.directory}/test-harness/basicAbstractAssemblyMojoFeaturesTest/outputFileNameMapping/target</outputDirectory>
           <finalName>basicAbstractAssemblyMojoFeaturesTest-ouputFileNameMapping</finalName>
-          <projectModulesOnly>false</projectModulesOnly>
           <workDirectory>${project.build.directory}/test-harness/basicAbstractAssemblyMojoFeaturesTest/outputFileNameMapping/work</workDirectory>
           <archiverManager implementation="org.apache.maven.plugin.assembly.BasicAbstractAssemblyMojoFeaturesTest$FileLoggingArchiverManagerStub" />
           <localRepository>${localRepository}</localRepository>
