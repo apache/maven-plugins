@@ -13,20 +13,32 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
+
 <project>
   <build>
     <plugins>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
-          <outputDirectory>${basedir}/target/test-harness/unpack/min/target</outputDirectory>
-          <finalName>unpack-min</finalName>
-          <workDirectory>${basedir}/target/test-harness/unpack/min/work</workDirectory>
+          <outputDirectory>${basedir}/target/test-harness/assembly/depSet-scoped/target</outputDirectory>
+          <finalName>assembly</finalName>
+          <workDirectory>${basedir}/target/test-harness/assembly/depSet-scoped/work</workDirectory>
           <archiverManager implementation="org.apache.maven.plugin.assembly.stubs.ArchiverManagerStub" />
           <localRepository>${localRepository}</localRepository>
           <reactorProjects></reactorProjects>
           <classifier></classifier>
-          <project implementation="org.apache.maven.plugin.assembly.stubs.AssemblyMavenProjectStub" />
+          <project implementation="org.apache.maven.plugin.assembly.stubs.MavenProjectWithArtifactsStub" />
+          <executedProject implementation="org.apache.maven.plugin.assembly.stubs.MavenProjectWithArtifactsStub" />
+          <descriptorRefs>
+            <descriptorRef>dependencySet-scoped</descriptorRef>
+          </descriptorRefs>
+          <tarLongFileMode>warn</tarLongFileMode>
+          <basedir>${basedir}</basedir>
+          <tempRoot>${basedir}/target/test-harness/assembly/depSet-scoped/archive-tmp</tempRoot>
+          <tempFile>${basedir}/target/test-harness/assembly/depSet-scoped/tempFile</tempFile>
+          <siteDirectory>${basedir}/target/test-harness/assembly/depSet-scoped/site</siteDirectory>
+          <includeSite>false</includeSite>
+          <appendAssemblyId>true</appendAssemblyId>
         </configuration>
       </plugin>
     </plugins>

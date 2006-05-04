@@ -32,8 +32,8 @@ public class MavenProjectWithArtifactsStub
         Set artifacts = new HashSet();
 
         artifacts.add( new ArtifactStub( "assembly", "dependency-artifact1", "1.0", "jar", Artifact.SCOPE_COMPILE ) );
-        artifacts.add( new ArtifactStub( "assembly", "dependency-artifact2", "1.0", "jar", Artifact.SCOPE_COMPILE ) );
-        artifacts.add( new ArtifactStub( "assembly", "dependency-artifact3", "1.0", "jar", Artifact.SCOPE_COMPILE ) );
+        artifacts.add( new ArtifactStub( "assembly", "dependency-artifact2", "1.0", "jar", Artifact.SCOPE_RUNTIME ) );
+        artifacts.add( new ArtifactStub( "assembly", "dependency-artifact3", "1.0", "jar", Artifact.SCOPE_TEST ) );
 
         setArtifacts( artifacts );
     }

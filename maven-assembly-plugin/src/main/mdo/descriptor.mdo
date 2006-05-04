@@ -92,10 +92,10 @@
           <defaultValue>false</defaultValue>
         </field>
         <field>
-          <name>modules</name>
+          <name>moduleSets</name>
           <version>1.0.0</version>
           <association>
-            <type>String</type>
+            <type>ModuleSet</type>
             <multiplicity>*</multiplicity>
           </association>
           <description>
@@ -391,6 +391,47 @@
           <description>
             Specifies the dependency scope for this dependencySet.
             Default scope value is "runtime".
+          </description>
+        </field>
+      </fields>
+    </class>
+
+    <class>
+      <name>ModuleSet</name>
+      <version>1.0.0</version>
+      <superClass>SetBase</superClass>
+      <fields>
+        <field>
+          <name>includeDependencies</name>
+          <version>1.0.0</version>
+          <type>boolean</type>
+          <defaultValue>false</defaultValue>
+          <description>
+            If set to true, the plugin will include the direct and transitive dependencies of
+            of the project modules included here.  Otherwise, it will only include the module
+            packages only. Default value is false.
+          </description>
+        </field>
+        <field>
+          <name>unpack</name>
+          <type>boolean</type>
+          <defaultValue>true</defaultValue>
+          <description>
+            If set to true, this property will unpack all module packages
+            into the specified output directory. When set to false
+            module packages will be included as archives (jars).
+            Default value is true.
+          </description>
+        </field>
+        <field>
+          <name>outputFileNameMapping</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <defaultValue>${artifactId}-${version}.${extension}</defaultValue>
+          <description>
+            Specify the mapping pattern for all dependencies included
+            in this assembly.
+            Default is ${artifactId}-${version}.${extension}.
           </description>
         </field>
       </fields>
