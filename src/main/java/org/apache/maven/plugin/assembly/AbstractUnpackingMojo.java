@@ -131,11 +131,27 @@ public abstract class AbstractUnpackingMojo
     protected Set getDependencies()
         throws MojoExecutionException
     {
-        return new HashSet( getDependenciesMap().values() );
+        MavenProject project = getExecutedProject();
+
+        Set dependenciesSet = new HashSet();
+
+        if ( project.getArtifact() != null && project.getArtifact().getFile() != null )
+        {
+            dependenciesSet.add( project.getArtifact() );
+        }
+
+        Set projectArtifacts = project.getArtifacts();
+        if ( projectArtifacts != null )
+        {
+            dependenciesSet.addAll( projectArtifacts );
+        }
+
+        return dependenciesSet;
     }
 
     /**
      * Retrieves an includes list generated from the existing depedencies in a project.
+     * @todo should be moved to AbstractAssemblyMojo bec unpack doesn't use this
      *
      * @return A List of includes
      * @throws MojoExecutionException
@@ -160,63 +176,37 @@ public abstract class AbstractUnpackingMojo
         return includes;
     }
 
-    /**
-     * Retrieves all artifact dependencies in a Map keyed by conflict id.
-     *
-     * @return A Map of artifacts
-     */
-    protected Map getDependenciesMap()
-        throws MojoExecutionException
+    private boolean isReactorProjectIncluded( String parentId, MavenProject reactorProject )
     {
-        Map dependencies = new HashMap();
-
-        MavenProject project = getExecutedProject();
-
-        // TODO: this is not mediating dependencies versions - first wins. Is there a way we can do that properly from here?
-        if ( project != null )
+        System.out.println( "TESTING: " + reactorProject.getId() );
+        if ( reactorProject.getArtifact() != null &&
+             parentId.equals( reactorProject.getArtifact().getDependencyConflictId() ) )
         {
-            Artifact artifact = project.getArtifact();
-
-            if ( artifact.getFile() != null )
-            {
-                String key = artifact.getDependencyConflictId();
-
-                dependencies.put( key, artifact );
-            }
+            return true;
         }
 
-        for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+        MavenProject parent = reactorProject.getParent();
+        if ( parent != null )
         {
-            MavenProject reactorProject = (MavenProject) i.next();
-
-            Artifact artifact = reactorProject.getArtifact();
-
-            if ( artifact.getFile() != null )
+            Artifact projectArtifact = parent.getArtifact();
+            if ( projectArtifact != null )
             {
-                String key = artifact.getDependencyConflictId();
-
-                if ( !dependencies.containsKey( key ) )
+                if ( projectArtifact.getDependencyConflictId().equals( parentId ) )
                 {
-                    dependencies.put( key, artifact );
+                    return true;
                 }
             }
 
-            for ( Iterator j = reactorProject.getArtifacts().iterator(); j.hasNext(); )
+            if ( parent.getParent() != null )
             {
-                artifact = (Artifact) j.next();
-
-                String key = artifact.getDependencyConflictId();
-
-                if ( !dependencies.containsKey( key ) )
-                {
-                    dependencies.put( key, artifact );
-                }
+                return isReactorProjectIncluded( parentId, parent );
             }
         }
 
-        return dependencies;
+        return false;
     }
 
+    //todo should be moved to AbstractAssemblyMojo bec unpack doesn't use this
     protected Set getModules()
         throws MojoExecutionException, MojoFailureException
     {
@@ -273,6 +263,7 @@ public abstract class AbstractUnpackingMojo
         return new HashSet( dependencies.values() );
     }
 
+    //todo should be moved along with getModules()
     private void addModuleArtifact( Map dependencies, Artifact artifact )
     {
         String key = artifact.getDependencyConflictId();
