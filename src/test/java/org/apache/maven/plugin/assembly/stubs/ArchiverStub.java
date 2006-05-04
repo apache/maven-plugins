@@ -21,6 +21,7 @@ import org.codehaus.plexus.archiver.ArchiverException;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -29,79 +30,126 @@ import java.util.Map;
 public class ArchiverStub
     implements Archiver
 {
+    private Map files = new HashMap();
+
+    private File destFile;
+
+    private int fileMode = 0;
+
+    private int dirMode = 0;
+
+    private boolean includeEmptyDirs = false;
+
     public void createArchive()
         throws ArchiverException, IOException
     {
+        destFile.getParentFile().mkdirs();
+
+        if ( !destFile.createNewFile() )
+        {
+            throw new ArchiverException( "Unable to create archive file" );
+        }
     }
 
     public void addDirectory( File file )
         throws ArchiverException
     {
+        System.out.println( "Adding dir " + file.getPath() );
+
+        if ( !file.exists() )
+        {
+            file.mkdirs();
+        }
+
+        files.put( file.getPath(), file );
     }
 
     public void addDirectory( File file, String string )
         throws ArchiverException
     {
+        addDirectory( file );
     }
 
     public void addDirectory( File file, String[] strings, String[] strings1 )
         throws ArchiverException
     {
+        addDirectory( file );
     }
 
     public void addDirectory( File file, String string, String[] strings, String[] strings1 )
         throws ArchiverException
     {
+        addDirectory( file );
     }
 
     public void addFile( File file, String string )
         throws ArchiverException
     {
+        System.out.println( "Adding file " + file.getPath() );
+
+        if ( !file.exists() )
+        {
+            try
+            {
+                file.createNewFile();
+            }
+            catch ( IOException e )
+            {
+                e.printStackTrace();
+            }
+        }
+
+        files.put( file.getPath(), file );
     }
 
     public void addFile( File file, String string, int i )
         throws ArchiverException
     {
+        addDirectory( file );
     }
 
     public File getDestFile()
     {
-        return null;
+        return destFile;
     }
 
     public void setDestFile( File file )
     {
+        destFile = file;
     }
 
     public void setDefaultFileMode( int i )
     {
+        fileMode = i;
     }
 
     public int getDefaultFileMode()
     {
-        return 0;
+        return fileMode;
     }
 
     public void setDefaultDirectoryMode( int i )
     {
+        dirMode = i;
     }
 
     public int getDefaultDirectoryMode()
     {
-        return 0;
+        return dirMode;
     }
 
     public boolean getIncludeEmptyDirs()
     {
-        return false;
+        return includeEmptyDirs;
     }
 
     public void setIncludeEmptyDirs( boolean b )
     {
+        includeEmptyDirs = b;
     }
 
     public Map getFiles()
     {
-        return null;
+        return files;
     }
 }

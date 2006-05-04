@@ -31,6 +31,13 @@ public class ArchiverManagerStub
 
     public static UnArchiverStub unArchiverStub;
 
+    public ArchiverManagerStub()
+    {
+        archiverStub = null;
+
+        unArchiverStub = null;
+    }
+
     public Archiver getArchiver( String string )
         throws NoSuchArchiverException
     {
@@ -42,6 +49,11 @@ public class ArchiverManagerStub
         return archiverStub;
     }
 
+    public void setArchiver( ArchiverStub archiver )
+    {
+        archiverStub = archiver;
+    }
+
     public UnArchiver getUnArchiver( String string )
         throws NoSuchArchiverException
     {
@@ -51,5 +63,10 @@ public class ArchiverManagerStub
         }
 
         return unArchiverStub;
+    }
+
+    public void setUnArchiver( UnArchiverStub unArchiver )
+    {
+        unArchiverStub = unArchiver;
     }
 }

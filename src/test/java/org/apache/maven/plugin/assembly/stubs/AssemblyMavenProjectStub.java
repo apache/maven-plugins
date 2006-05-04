@@ -19,6 +19,9 @@ package org.apache.maven.plugin.assembly.stubs;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.artifact.Artifact;
 
+import java.util.Set;
+import java.util.Collections;
+
 /**
  * @author Edwin Punzalan
  */
@@ -28,6 +31,8 @@ public class AssemblyMavenProjectStub
     private String groupId, artifactId, version;
 
     private Artifact artifact;
+
+    private Set artifacts;
 
     public AssemblyMavenProjectStub()
     {
@@ -44,5 +49,20 @@ public class AssemblyMavenProjectStub
         }
 
         return artifact;
+    }
+
+    public Set getArtifacts()
+    {
+        if ( artifacts == null )
+        {
+            artifacts = Collections.EMPTY_SET;
+        }
+
+        return artifacts;
+    }
+
+    public void setArtifacts( Set artifacts )
+    {
+        this.artifacts = artifacts;
     }
 }
