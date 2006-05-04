@@ -43,7 +43,14 @@ public class ArchiverManagerStub
     {
         if ( archiverStub == null )
         {
-            archiverStub = new ArchiverStub();
+            if( string.equals( "dir" ) )
+            {
+                archiverStub = new DirectoryArchiverStub();
+            }
+            else
+            {
+                archiverStub = new ArchiverStub();
+            }
         }
 
         return archiverStub;
