@@ -21,7 +21,6 @@
         <configuration>
           <outputDirectory>${basedir}/target/test-harness/unpack/with-reactor-projects/target</outputDirectory>
           <finalName>unpack-min</finalName>
-          <projectModulesOnly>false</projectModulesOnly>
           <workDirectory>${basedir}/target/test-harness/unpack/with-reactor-projects/work</workDirectory>
           <archiverManager implementation="org.apache.maven.plugin.assembly.stubs.ArchiverManagerStub" />
           <localRepository>${localRepository}</localRepository>

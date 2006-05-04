@@ -47,22 +47,22 @@ public class ArchiverStub
 
         if ( !destFile.createNewFile() )
         {
-            throw new ArchiverException( "Unable to create archive file" );
+            throw new ArchiverException( "Unable to create archive file: " + destFile.getAbsolutePath() );
         }
     }
 
     public void addDirectory( File file )
         throws ArchiverException
     {
-        System.out.println( "Adding dir " + file.getPath() );
-
-        files.put( file.getPath(), file );
+        addDirectory( file, "" );
     }
 
     public void addDirectory( File file, String string )
         throws ArchiverException
     {
-        addDirectory( file );
+        System.out.println( "Adding dir " + file.getPath() );
+
+        files.put( file, string );
     }
 
     public void addDirectory( File file, String[] strings, String[] strings1 )
@@ -82,7 +82,7 @@ public class ArchiverStub
     {
         System.out.println( "Adding file " + file.getPath() );
 
-        files.put( file.getPath(), file );
+        files.put( file, string );
     }
 
     public void addFile( File file, String string, int i )

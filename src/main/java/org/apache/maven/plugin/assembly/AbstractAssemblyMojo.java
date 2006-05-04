@@ -21,40 +21,31 @@ import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.InvalidRepositoryException;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
-import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
-import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ExcludesArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.IncludesArtifactFilter;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.assembly.filter.AssemblyScopeArtifactFilter;
 import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolationException;
 import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolator;
 import org.apache.maven.plugin.assembly.interpolation.ReflectionProperties;
-import org.apache.maven.plugin.assembly.utils.PropertyUtils;
 import org.apache.maven.plugin.assembly.repository.RepositoryAssembler;
 import org.apache.maven.plugin.assembly.repository.RepositoryAssemblyException;
+import org.apache.maven.plugin.assembly.utils.PropertyUtils;
 import org.apache.maven.plugins.assembly.model.Assembly;
 import org.apache.maven.plugins.assembly.model.Component;
 import org.apache.maven.plugins.assembly.model.DependencySet;
 import org.apache.maven.plugins.assembly.model.FileItem;
 import org.apache.maven.plugins.assembly.model.FileSet;
+import org.apache.maven.plugins.assembly.model.ModuleSet;
 import org.apache.maven.plugins.assembly.model.Repository;
 import org.apache.maven.plugins.assembly.model.io.xpp3.AssemblyXpp3Reader;
 import org.apache.maven.plugins.assembly.model.io.xpp3.ComponentXpp3Reader;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-import org.apache.maven.wagon.PathUtils;
 import org.apache.maven.shared.model.fileset.util.FileSetManager;
-import org.apache.maven.model.RepositoryPolicy;
-import org.apache.maven.model.RepositoryBase;
-import org.apache.maven.execution.MavenSession;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
@@ -67,11 +58,10 @@ import org.codehaus.plexus.archiver.war.WarArchiver;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.InterpolationFilterReader;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.introspection.ReflectionValueExtractor;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -90,8 +80,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -350,7 +340,7 @@ public abstract class AbstractAssemblyMojo
     {
         processRepositories( archiver, assembly.getRepositories(), assembly.isIncludeBaseDirectory() );
         processDependencySets( archiver, assembly.getDependencySets(), assembly.isIncludeBaseDirectory() );
-        processModules( archiver, assembly.getModules(), assembly.isIncludeBaseDirectory() );
+        processModules( archiver, assembly.getModuleSets(), assembly.isIncludeBaseDirectory() );
         processFileSets( archiver, assembly.getFileSets(), assembly.isIncludeBaseDirectory() );
         processFileList( archiver, assembly.getFiles(), assembly.isIncludeBaseDirectory() );
 
@@ -416,7 +406,7 @@ public abstract class AbstractAssemblyMojo
     }
 
     private void processRepositories( Archiver archiver, List modulesList, boolean includeBaseDirectory )
-        throws MojoExecutionException, InvalidRepositoryException, RepositoryAssemblyException, ArchiverException
+        throws MojoExecutionException, RepositoryAssemblyException, ArchiverException
     {
         for ( Iterator i = modulesList.iterator(); i.hasNext(); )
         {
@@ -484,71 +474,207 @@ public abstract class AbstractAssemblyMojo
             {
                 archiver.addDirectory( repositoryDirectory );
             }
-
         }
     }
 
-    private void processModules( Archiver archiver, List modulesList, boolean includeBaseDirectory )
-        throws IOException, ArchiverException, XmlPullParserException
+    private void processModules( Archiver archiver, List moduleSets, boolean includeBaseDirectory )
+        throws IOException, ArchiverException, XmlPullParserException, MojoExecutionException
     {
-        if ( reactorProjects != null )
+        for ( Iterator i = moduleSets.iterator(); i.hasNext(); )
         {
-            List moduleFileSets = new ArrayList();
+            ModuleSet moduleSet = (ModuleSet) i.next();
+            String output = moduleSet.getOutputDirectory();
+            output = getOutputDirectory( output, includeBaseDirectory );
 
-            for ( Iterator modules = modulesList.iterator(); modules.hasNext(); )
+            archiver.setDefaultDirectoryMode( Integer.parseInt( moduleSet.getDirectoryMode(), 8 ) );
+
+            archiver.setDefaultFileMode( Integer.parseInt( moduleSet.getFileMode(), 8 ) );
+
+            getLog().debug( "ModuleSet[" + output + "]" + " dir perms: " +
+                Integer.toString( archiver.getDefaultDirectoryMode(), 8 ) + " file perms: " +
+                Integer.toString( archiver.getDefaultFileMode(), 8 ) );
+
+            AndArtifactFilter filter = new AndArtifactFilter();
+
+            if ( !moduleSet.getIncludes().isEmpty() )
             {
-                String module = (String) modules.next();
-
-                MavenProject reactorProject = getModuleFromReactor( module );
-
-                if ( reactorProject != null )
-                {
-                    FileSet moduleFileSet = new FileSet();
-
-                    moduleFileSet.setDirectory( reactorProject.getBasedir().getAbsolutePath() );
-                    moduleFileSet.setOutputDirectory( module );
-
-                    List excludesList = new ArrayList();
-                    excludesList.add( PathUtils.toRelative( reactorProject.getBasedir(), reactorProject.getBuild().getDirectory() ) + "/**" );
-                    excludesList.add( PathUtils.toRelative( reactorProject.getBasedir(), reactorProject.getBuild().getOutputDirectory() ) + "/**" );
-                    excludesList.add( PathUtils.toRelative( reactorProject.getBasedir(), reactorProject.getBuild().getTestOutputDirectory() ) + "/**" );
-                    excludesList.add( PathUtils.toRelative( reactorProject.getBasedir(), reactorProject.getReporting().getOutputDirectory() ) + "/**" );
-                    moduleFileSet.setExcludes( excludesList );
-
-                    moduleFileSets.add( moduleFileSet );
-                }
+                filter.add( new IncludesArtifactFilter( moduleSet.getIncludes() ) );
+            }
+            if ( !moduleSet.getExcludes().isEmpty() )
+            {
+                filter.add( new ExcludesArtifactFilter( moduleSet.getExcludes() ) );
             }
 
-            processFileSets( archiver, moduleFileSets, includeBaseDirectory );
+            Set set = getModulesFromReactor( getExecutedProject() );
+
+            // TODO: includes and excludes
+            for ( Iterator j = set.iterator(); j.hasNext(); )
+            {
+                MavenProject reactorProject = (MavenProject) j.next();
+
+                Artifact artifact = reactorProject.getArtifact();
+
+                if ( filter.include( artifact ) && artifact.getFile() != null )
+                {
+                    String name = artifact.getFile().getName();
+
+                    if ( moduleSet.isUnpack() )
+                    {
+                        // TODO: something like zipfileset in plexus-archiver
+                        //                        archiver.addJar(  )
+
+                        // TODO refactor into the AbstractUnpackMojo
+                        File tempLocation = new File( workDirectory, name.substring( 0, name.lastIndexOf( '.' ) ) );
+                        boolean process = false;
+                        if ( !tempLocation.exists() )
+                        {
+                            tempLocation.mkdirs();
+                            process = true;
+                        }
+                        else if ( artifact.getFile().lastModified() > tempLocation.lastModified() )
+                        {
+                            process = true;
+                        }
+
+                        if ( process )
+                        {
+                            try
+                            {
+                                unpack( artifact.getFile(), tempLocation );
+
+                                if ( moduleSet.isIncludeDependencies() )
+                                {
+                                    Set artifactSet = reactorProject.getArtifacts();
+
+                                    for ( Iterator artifacts = artifactSet.iterator(); artifacts.hasNext(); )
+                                    {
+                                        Artifact dependencyArtifact = (Artifact) artifacts.next();
+
+                                        unpack( dependencyArtifact.getFile(), tempLocation );
+                                    }
+                                }
+
+                                /*
+                                 * If the assembly is 'jar-with-dependencies', remove the security files in all dependencies
+                                 * that will prevent the uberjar to execute.  Please see MASSEMBLY-64 for details.
+                                 */
+                                if ( archiver instanceof JarArchiver )
+                                {
+                                    String[] securityFiles = { "*.RSA", "*.DSA", "*.SF", "*.rsa", "*.dsa", "*.sf" };
+                                    org.apache.maven.shared.model.fileset.FileSet securityFileSet = new org.apache.maven.shared.model.fileset.FileSet();
+                                    securityFileSet.setDirectory(tempLocation.getAbsolutePath() + "/META-INF/" );
+
+                                    for ( int sfsi = 0; sfsi < securityFiles.length; sfsi++ )
+                                    {
+                                        securityFileSet.addInclude( securityFiles[sfsi] );
+                                    }
+
+                                    FileSetManager fsm = new FileSetManager( getLog() );
+                                    try
+                                    {
+                                        fsm.delete( securityFileSet );
+                                    }
+                                    catch ( IOException e )
+                                    {
+                                        throw new MojoExecutionException("Failed to delete security files: " + e.getMessage(), e);
+                                    }
+                                }
+                            }
+                            catch ( NoSuchArchiverException e )
+                            {
+                                throw new MojoExecutionException(
+                                    "Unable to obtain unarchiver for file '" + artifact.getFile() + "'" );
+                            }
+                        }
+
+                        addDirectory( archiver, tempLocation, output, null, FileUtils.getDefaultExcludesAsList() );
+                    }
+                    else
+                    {
+                        String outputFileNameMapping = moduleSet.getOutputFileNameMapping();
+
+                        //insert the classifier if exist
+                        if ( !StringUtils.isEmpty( artifact.getClassifier() ) )
+                        {
+                            int dotIdx = outputFileNameMapping.lastIndexOf( "." );
+
+                            String extension =
+                                outputFileNameMapping.substring( dotIdx + 1, outputFileNameMapping.length() );
+                            String artifactWithoutExt = outputFileNameMapping.substring( 0, dotIdx );
+
+                            outputFileNameMapping =
+                                artifactWithoutExt + "-" + artifact.getClassifier() + "." + extension;
+                        }
+
+                        archiver.addFile( artifact.getFile(),
+                                          output + evaluateFileNameMapping( outputFileNameMapping, artifact ) );
+
+                        if ( moduleSet.isIncludeDependencies() )
+                        {
+                            Set artifactSet = reactorProject.getArtifacts();
+
+                            for ( Iterator artifacts = artifactSet.iterator(); artifacts.hasNext(); )
+                            {
+                                Artifact dependencyArtifact = (Artifact) artifacts.next();
+
+                                File artifactFile = dependencyArtifact.getFile();
+
+                                archiver.addFile( artifactFile, artifactFile.getName() );
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    // would be better to have a way to find out when a specified include or exclude
+                    // is never triggered and warn() it.
+                    getLog().debug( "artifact: " + artifact + " not included" );
+                }
+            }
         }
     }
 
-    private MavenProject getModuleFromReactor( String module )
+    private Set getModulesFromReactor( MavenProject parent )
     {
-        MavenProject reactorProject = null;
+        return getModulesFromReactor( parent, false );
+    }
 
-        if ( reactorProjects != null )
+    private Set getModulesFromReactor( MavenProject parent, boolean recurse )
+    {
+        Set modules = new HashSet();
+
+        String parentId = parent.getId();
+
+        for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
         {
-            File executedProjectDir = getExecutedProject().getFile().getParentFile();
-            File moduleDir = new File( executedProjectDir, module );
-            String modulePath = moduleDir.getAbsolutePath();
+            MavenProject reactorProject = (MavenProject) i.next();
 
-            for ( Iterator projects = reactorProjects.iterator(); projects.hasNext(); )
+            if ( isProjectModule( parentId, reactorProject, recurse ) )
             {
-                MavenProject project = (MavenProject) projects.next();
-
-                String projectPath = project.getFile().getParentFile().getAbsolutePath();
-
-                if ( modulePath.equals( projectPath ) )
-                {
-                    reactorProject = project;
-
-                    break;
-                }
+                modules.add( reactorProject );
             }
         }
 
-        return reactorProject;
+        return modules;
+    }
+
+    private boolean isProjectModule( String parentId, MavenProject reactorProject, boolean recurse )
+    {
+        MavenProject parent = reactorProject.getParent();
+
+        if ( parent != null )
+        {
+            if ( parent.getId().equals( parentId ) )
+            {
+                return true;
+            }
+            else if ( recurse )
+            {
+                isProjectModule( parentId, parent, true );
+            }
+        }
+
+        return false;
     }
 
     protected List readAssemblies()
@@ -833,19 +959,7 @@ public abstract class AbstractAssemblyMojo
                 filter.add( new ExcludesArtifactFilter( dependencySet.getExcludes() ) );
             }
 
-            Set set;
-
-            if ( projectModulesOnly )
-            {
-                set = getModules();
-            }
-            else
-            {
-                set = getDependencies();
-            }
-
-            // TODO: includes and excludes
-            for ( Iterator j = set.iterator(); j.hasNext(); )
+            for ( Iterator j = getDependencies().iterator(); j.hasNext(); )
             {
                 Artifact artifact = (Artifact) j.next();
 
@@ -939,6 +1053,42 @@ public abstract class AbstractAssemblyMojo
                     getLog().debug( "artifact: " + artifact + " not included" );
                 }
             }
+        }
+    }
+
+    /**
+     * Retrieves an includes list generated from the existing depedencies in a project.
+     *
+     * @return A List of includes
+     * @throws MojoExecutionException
+     */
+    private List getDependenciesIncludeList()
+        throws MojoExecutionException
+    {
+        List includes = new ArrayList();
+
+        for ( Iterator i = getDependencies().iterator(); i.hasNext(); )
+        {
+            Artifact a = (Artifact) i.next();
+
+            if ( project.getGroupId().equals( a.getGroupId() ) && project.getArtifactId().equals( a.getArtifactId() ))
+            {
+                continue;
+            }
+
+            includes.add( a.getGroupId() + ":" + a.getArtifactId() );
+        }
+
+        return includes;
+    }
+
+    private void addModuleArtifact( Map dependencies, Artifact artifact )
+    {
+        String key = artifact.getDependencyConflictId();
+
+        if ( !dependencies.containsKey( key ) )
+        {
+            dependencies.put( key, artifact );
         }
     }
 
