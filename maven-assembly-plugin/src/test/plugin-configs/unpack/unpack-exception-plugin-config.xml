@@ -19,10 +19,10 @@
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
-          <outputDirectory>${basedir}/target/test-harness/unpack/archiver-manager-exception/target</outputDirectory>
+          <outputDirectory>${basedir}/target/test-harness/unpack/unpack-exception/target</outputDirectory>
           <finalName>unpack-min</finalName>
-          <workDirectory>${basedir}/target/test-harness/unpack/archiver-manager-exception/work</workDirectory>
-          <archiverManager implementation="org.apache.maven.plugin.assembly.stubs.ArchiverManagerWithExceptionStub" />
+          <workDirectory>${basedir}/target/test-harness/unpack/unpack-exception/work</workDirectory>
+          <archiverManager implementation="org.apache.maven.plugin.assembly.stubs.ArchiverManagerStub" />
           <localRepository>${localRepository}</localRepository>
           <reactorProjects></reactorProjects>
           <classifier></classifier>

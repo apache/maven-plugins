@@ -19,14 +19,25 @@
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
-          <outputDirectory>${basedir}/target/test-harness/unpack/min/target</outputDirectory>
-          <finalName>unpack-min</finalName>
-          <workDirectory>${basedir}/target/test-harness/unpack/min/work</workDirectory>
+          <outputDirectory>${basedir}/target/test-harness/assembly/depSet-default/target</outputDirectory>
+          <finalName>assembly</finalName>
+          <workDirectory>${basedir}/target/test-harness/assembly/depSet-default/work</workDirectory>
           <archiverManager implementation="org.apache.maven.plugin.assembly.stubs.ArchiverManagerStub" />
           <localRepository>${localRepository}</localRepository>
           <reactorProjects></reactorProjects>
           <classifier></classifier>
-          <project implementation="org.apache.maven.plugin.assembly.stubs.AssemblyMavenProjectStub" />
+          <project implementation="org.apache.maven.plugin.assembly.stubs.MavenProjectWithArtifactsStub" />
+          <executedProject implementation="org.apache.maven.plugin.assembly.stubs.MavenProjectWithArtifactsStub" />
+          <descriptorRefs>
+            <descriptorRef>dependencySet-default</descriptorRef>
+          </descriptorRefs>
+          <tarLongFileMode>warn</tarLongFileMode>
+          <basedir>${basedir}</basedir>
+          <tempRoot>${basedir}/target/test-harness/assembly/depSet-default/archive-tmp</tempRoot>
+          <tempFile>${basedir}/target/test-harness/assembly/depSet-default/tempFile</tempFile>
+          <siteDirectory>${basedir}/target/test-harness/assembly/depSet-default/site</siteDirectory>
+          <includeSite>false</includeSite>
+          <appendAssemblyId>true</appendAssemblyId>
         </configuration>
       </plugin>
     </plugins>
