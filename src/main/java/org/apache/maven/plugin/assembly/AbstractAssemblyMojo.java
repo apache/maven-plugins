@@ -506,6 +506,8 @@ public abstract class AbstractAssemblyMojo
             }
 
             Set set = getModulesFromReactor( getExecutedProject() );
+            
+            getLog().debug( "Got modules: " + set );
 
             // TODO: includes and excludes
             for ( Iterator j = set.iterator(); j.hasNext(); )
@@ -513,9 +515,14 @@ public abstract class AbstractAssemblyMojo
                 MavenProject reactorProject = (MavenProject) j.next();
 
                 Artifact artifact = reactorProject.getArtifact();
-
-                if ( filter.include( artifact ) && artifact.getFile() != null )
+                
+                if ( filter.include( artifact ) )
                 {
+                    if ( artifact.getFile() == null )
+                    {
+                        throw new MojoExecutionException( "Module: " + reactorProject.getId() + " has not been built yet. It's artifact's file is null." );
+                    }
+                    
                     String name = artifact.getFile().getName();
 
                     if ( moduleSet.isUnpack() )
