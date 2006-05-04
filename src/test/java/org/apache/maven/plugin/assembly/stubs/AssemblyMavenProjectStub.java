@@ -18,9 +18,11 @@ package org.apache.maven.plugin.assembly.stubs;
 
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.Model;
 
 import java.util.Set;
 import java.util.Collections;
+import java.util.Properties;
 
 /**
  * @author Edwin Punzalan
@@ -49,6 +51,21 @@ public class AssemblyMavenProjectStub
         }
 
         return artifact;
+    }
+
+    public Model getModel()
+    {
+        Model model = new Model();
+
+        model.setProperties( new Properties() );
+
+        model.setGroupId( getGroupId() );
+
+        model.setArtifactId( getArtifactId() );
+
+        model.setVersion( getVersion() );
+
+        return model;
     }
 
     public Set getArtifacts()

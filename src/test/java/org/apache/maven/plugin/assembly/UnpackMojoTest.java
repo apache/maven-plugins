@@ -16,15 +16,15 @@ package org.apache.maven.plugin.assembly;
  * limitations under the License.
  */
 
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.assembly.stubs.ArchiverManagerStub;
+import org.apache.maven.plugin.assembly.stubs.UnArchiverWithException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.artifact.Artifact;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 
 import java.io.File;
-import java.util.List;
-import java.util.Iterator;
 
 /**
  * @author Edwin Punzalan
@@ -33,6 +33,12 @@ public class UnpackMojoTest
     extends AbstractMojoTestCase
 {
     public void testMinConfiguration()
+        throws Exception
+    {
+        executeMojo( "min-plugin-config.xml" );
+    }
+
+    public void testMinConfigurationAgainWithoutClean()
         throws Exception
     {
         executeMojo( "min-plugin-config.xml" );
@@ -49,10 +55,7 @@ public class UnpackMojoTest
     {
         try
         {
-            String pluginXml = "archiver-manager-exception-plugin-config.xml";
-
-            UnpackMojo mojo = (UnpackMojo) lookupMojo( "unpack", PlexusTestCase.getBasedir() +
-                                                       "/src/test/plugin-configs/unpack/" + pluginXml );
+            UnpackMojo mojo = getMojo( "archiver-manager-exception-plugin-config.xml" );
 
             mojo.execute();
 
@@ -71,11 +74,37 @@ public class UnpackMojoTest
         }
     }
 
+    public void testUnpackException()
+        throws Exception
+    {
+        try
+        {
+            UnpackMojo mojo = getMojo( "unpack-exception-plugin-config.xml" );
+
+            ArchiverManagerStub archiverManager = (ArchiverManagerStub) getVariableValueFromObject( mojo, "archiverManager" );
+            archiverManager.setUnArchiver( new UnArchiverWithException() );
+
+            mojo.execute();
+
+            fail( "Expected exception not thrown" );
+        }
+        catch ( MojoExecutionException e )
+        {
+            //expected
+        }
+    }
+
+    public UnpackMojo getMojo( String pluginXml )
+        throws Exception
+    {
+        return (UnpackMojo) lookupMojo( "unpack", PlexusTestCase.getBasedir() +
+                                                   "/src/test/plugin-configs/unpack/" + pluginXml );
+    }
+
     public void executeMojo( String pluginXml )
         throws Exception
     {
-        UnpackMojo mojo = (UnpackMojo) lookupMojo( "unpack", PlexusTestCase.getBasedir() +
-                                                   "/src/test/plugin-configs/unpack/" + pluginXml );
+        UnpackMojo mojo = getMojo( pluginXml );
 
         mojo.execute();
 
@@ -87,30 +116,5 @@ public class UnpackMojoTest
         File unpacked = new File( unpackDir, filename + ".extracted" );
 
         assertTrue( "Test extracted project artifact", unpacked.exists() );
-
-        List reactorProjectList = (List) getVariableValueFromObject( mojo, "reactorProjects" );
-        for ( Iterator reactorProjects = reactorProjectList.iterator(); reactorProjects.hasNext(); )
-        {
-            MavenProject reactorProject = (MavenProject) reactorProjects.next();
-
-            filename = reactorProject.getArtifact().getFile().getName();
-            dir = filename.substring( 0, filename.lastIndexOf( '.' ) );
-            unpackDir = new File( workDir, dir );
-            unpacked = new File( unpackDir, filename + ".extracted" );
-
-            assertTrue( "Test reactor project was extracted", unpacked.exists() );
-
-            for ( Iterator artifacts = reactorProject.getArtifacts().iterator(); artifacts.hasNext(); )
-            {
-                Artifact artifact = (Artifact) artifacts.next();
-
-                filename = artifact.getFile().getName();
-                dir = filename.substring( 0, filename.lastIndexOf( '.' ) );
-                unpackDir = new File( workDir, dir );
-                unpacked = new File( unpackDir, filename + ".extracted" );
-
-                assertTrue( "Test reactor project artifact was extracted", unpacked.exists() );
-            }
-        }
     }
 }

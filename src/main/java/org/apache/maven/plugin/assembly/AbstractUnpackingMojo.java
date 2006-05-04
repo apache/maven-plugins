@@ -16,14 +16,10 @@ package org.apache.maven.plugin.assembly;
  * limitations under the License.
  */
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
@@ -33,12 +29,8 @@ import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -66,11 +58,6 @@ public abstract class AbstractUnpackingMojo
      * @required
      */
     protected String finalName;
-
-    /**
-     * @parameter expression="${projectModulesOnly}" default-value="false"
-     */
-    protected boolean projectModulesOnly = false;
 
     /**
      * Directory to unpack JARs into if needed
@@ -131,156 +118,22 @@ public abstract class AbstractUnpackingMojo
     protected Set getDependencies()
         throws MojoExecutionException
     {
-        return new HashSet( getDependenciesMap().values() );
-    }
-
-    /**
-     * Retrieves an includes list generated from the existing depedencies in a project.
-     *
-     * @return A List of includes
-     * @throws MojoExecutionException
-     */
-    protected List getDependenciesIncludeList()
-        throws MojoExecutionException
-    {
-        List includes = new ArrayList();
-
-        for ( Iterator i = getDependencies().iterator(); i.hasNext(); )
-        {
-            Artifact a = (Artifact) i.next();
-
-            if ( project.getGroupId().equals( a.getGroupId() ) && project.getArtifactId().equals( a.getArtifactId() ))
-            {
-                continue;
-            }
-
-            includes.add( a.getGroupId() + ":" + a.getArtifactId() );
-        }
-
-        return includes;
-    }
-
-    /**
-     * Retrieves all artifact dependencies in a Map keyed by conflict id.
-     *
-     * @return A Map of artifacts
-     */
-    protected Map getDependenciesMap()
-        throws MojoExecutionException
-    {
-        Map dependencies = new HashMap();
-
         MavenProject project = getExecutedProject();
 
-        // TODO: this is not mediating dependencies versions - first wins. Is there a way we can do that properly from here?
-        if ( project != null )
+        Set dependenciesSet = new HashSet();
+
+        if ( project.getArtifact() != null && project.getArtifact().getFile() != null )
         {
-            Artifact artifact = project.getArtifact();
-
-            if ( artifact.getFile() != null )
-            {
-                String key = artifact.getDependencyConflictId();
-
-                dependencies.put( key, artifact );
-            }
+            dependenciesSet.add( project.getArtifact() );
         }
 
-        for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+        Set projectArtifacts = project.getArtifacts();
+        if ( projectArtifacts != null )
         {
-            MavenProject reactorProject = (MavenProject) i.next();
-
-            Artifact artifact = reactorProject.getArtifact();
-
-            if ( artifact.getFile() != null )
-            {
-                String key = artifact.getDependencyConflictId();
-
-                if ( !dependencies.containsKey( key ) )
-                {
-                    dependencies.put( key, artifact );
-                }
-            }
-
-            for ( Iterator j = reactorProject.getArtifacts().iterator(); j.hasNext(); )
-            {
-                artifact = (Artifact) j.next();
-
-                String key = artifact.getDependencyConflictId();
-
-                if ( !dependencies.containsKey( key ) )
-                {
-                    dependencies.put( key, artifact );
-                }
-            }
+            dependenciesSet.addAll( projectArtifacts );
         }
 
-        return dependencies;
-    }
-
-    protected Set getModules()
-        throws MojoExecutionException, MojoFailureException
-    {
-        Map dependencies = new HashMap();
-
-        for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
-        {
-            MavenProject reactorProject = (MavenProject) i.next();
-
-            Artifact artifact = reactorProject.getArtifact();
-
-            try
-            {
-                artifactResolver.resolve( artifact, project.getRemoteArtifactRepositories(), localRepository );
-            }
-            catch ( ArtifactNotFoundException e )
-            {
-                //TODO: Is there a better way to get the artifact if it is not yet installed in the repo?
-                //reactorProject.getArtifact().getFile() is returning null
-                //tried also the project.getArtifact().getFile() but returning same result
-                File fileArtifact = new File( reactorProject.getBuild().getDirectory() + File.separator +
-                    reactorProject.getBuild().getFinalName() + "." + reactorProject.getPackaging() );
-
-                getLog().info( "Artifact ( " + artifact.getFile().getName() + " ) not found " +
-                    "in any repository, resolving thru modules..." );
-
-                artifact.setFile( fileArtifact );
-
-                if ( fileArtifact.exists() )
-                {
-                    if ( artifact.getType().equals( "pom" ) )
-                    {
-                        continue;
-                    }
-
-                    addModuleArtifact( dependencies, artifact );
-                }
-            }
-            catch ( ArtifactResolutionException e )
-            {
-                throw new MojoExecutionException( "Failed to resolve artifact", e );
-            }
-
-            if ( artifact.getFile() != null )
-            {
-                if ( artifact.getType().equals( "pom" ) )
-                {
-                    continue;
-                }
-
-                addModuleArtifact( dependencies, artifact );
-            }
-        }
-        return new HashSet( dependencies.values() );
-    }
-
-    private void addModuleArtifact( Map dependencies, Artifact artifact )
-    {
-        String key = artifact.getDependencyConflictId();
-
-        if ( !dependencies.containsKey( key ) )
-        {
-            dependencies.put( key, artifact );
-        }
+        return dependenciesSet;
     }
 
     protected abstract MavenProject getExecutedProject();
