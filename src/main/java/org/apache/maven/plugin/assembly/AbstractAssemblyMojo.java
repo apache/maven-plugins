@@ -39,7 +39,9 @@ import org.apache.maven.plugins.assembly.model.Component;
 import org.apache.maven.plugins.assembly.model.DependencySet;
 import org.apache.maven.plugins.assembly.model.FileItem;
 import org.apache.maven.plugins.assembly.model.FileSet;
+import org.apache.maven.plugins.assembly.model.ModuleBinaries;
 import org.apache.maven.plugins.assembly.model.ModuleSet;
+import org.apache.maven.plugins.assembly.model.ModuleSources;
 import org.apache.maven.plugins.assembly.model.Repository;
 import org.apache.maven.plugins.assembly.model.io.xpp3.AssemblyXpp3Reader;
 import org.apache.maven.plugins.assembly.model.io.xpp3.ComponentXpp3Reader;
@@ -300,6 +302,7 @@ public abstract class AbstractAssemblyMojo
 
             if ( appendAssemblyId )
             {
+                System.out.println( "Project: " + project );
                 projectHelper.attachArtifact( project, format, assembly.getId(), destFile );
             }
             else if ( classifier != null )
@@ -481,22 +484,11 @@ public abstract class AbstractAssemblyMojo
     private void processModules( Archiver archiver, List moduleSets, boolean includeBaseDirectory )
         throws IOException, ArchiverException, XmlPullParserException, MojoExecutionException
     {
+        System.out.println( "Got " + moduleSets.size() + " module sets" );
+        
         for ( Iterator i = moduleSets.iterator(); i.hasNext(); )
         {
             ModuleSet moduleSet = (ModuleSet) i.next();
-            String output = moduleSet.getOutputDirectory();
-            output = getOutputDirectory( output, includeBaseDirectory );
-            
-            String sourceOutput = moduleSet.getSourceOutputDirectory();
-            sourceOutput = getOutputDirectory( sourceOutput, includeBaseDirectory );
-
-            archiver.setDefaultDirectoryMode( Integer.parseInt( moduleSet.getDirectoryMode(), 8 ) );
-
-            archiver.setDefaultFileMode( Integer.parseInt( moduleSet.getFileMode(), 8 ) );
-
-            getLog().debug( "ModuleSet[" + output + "]" + " dir perms: " +
-                Integer.toString( archiver.getDefaultDirectoryMode(), 8 ) + " file perms: " +
-                Integer.toString( archiver.getDefaultFileMode(), 8 ) );
 
             AndArtifactFilter filter = new AndArtifactFilter();
 
@@ -516,6 +508,8 @@ public abstract class AbstractAssemblyMojo
             for ( Iterator j = set.iterator(); j.hasNext(); )
             {
                 MavenProject reactorProject = (MavenProject) j.next();
+                
+                System.out.println( "Processing module: " + reactorProject.getId() );
 
                 Artifact artifact = reactorProject.getArtifact();
 
@@ -523,12 +517,17 @@ public abstract class AbstractAssemblyMojo
                 {
                     String name = artifact.getFile().getName();
                     
-                    if ( moduleSet.isIncludeSources() )
+                    ModuleSources sources = moduleSet.getSources();
+                    
+                    if ( sources != null )
                     {
+                        String output = sources.getOutputDirectory();
+                        output = getOutputDirectory( output, includeBaseDirectory );
+                        
                         FileSet moduleFileSet = new FileSet();
 
                         moduleFileSet.setDirectory( reactorProject.getBasedir().getAbsolutePath() );
-                        moduleFileSet.setOutputDirectory( sourceOutput );
+                        moduleFileSet.setOutputDirectory( output );
 
                         List excludesList = new ArrayList();
                         excludesList.add( PathUtils.toRelative( reactorProject.getBasedir(), reactorProject.getBuild().getDirectory() ) + "/**" );
@@ -540,9 +539,22 @@ public abstract class AbstractAssemblyMojo
                         moduleFileSets.add( moduleFileSet );
                     }
                     
-                    if ( moduleSet.isIncludeBinaries() )
+                    ModuleBinaries binaries = moduleSet.getBinaries();
+                    
+                    if ( binaries != null )
                     {
-                        if ( moduleSet.isUnpack() )
+                        String output = binaries.getOutputDirectory();
+                        output = getOutputDirectory( output, includeBaseDirectory );
+                        
+                        archiver.setDefaultDirectoryMode( Integer.parseInt( binaries.getDirectoryMode(), 8 ) );
+
+                        archiver.setDefaultFileMode( Integer.parseInt( binaries.getFileMode(), 8 ) );
+
+                        getLog().debug( "ModuleSet[" + output + "]" + " dir perms: " +
+                            Integer.toString( archiver.getDefaultDirectoryMode(), 8 ) + " file perms: " +
+                            Integer.toString( archiver.getDefaultFileMode(), 8 ) );
+                        
+                        if ( binaries.isUnpack() )
                         {
                             // TODO: something like zipfileset in plexus-archiver
                             //                        archiver.addJar(  )
@@ -566,7 +578,7 @@ public abstract class AbstractAssemblyMojo
                                 {
                                     unpack( artifact.getFile(), tempLocation );
 
-                                    if ( moduleSet.isIncludeDependencies() )
+                                    if ( binaries.isIncludeDependencies() )
                                     {
                                         Set artifactSet = reactorProject.getArtifacts();
 
@@ -615,25 +627,11 @@ public abstract class AbstractAssemblyMojo
                         }
                         else
                         {
-                            String outputFileNameMapping = moduleSet.getOutputFileNameMapping();
+                            String outputFileNameMapping = binaries.getOutputFileNameMapping();
 
-                            //insert the classifier if exist
-                            if ( !StringUtils.isEmpty( artifact.getClassifier() ) )
-                            {
-                                int dotIdx = outputFileNameMapping.lastIndexOf( "." );
+                            addArtifactToArchive( archiver, artifact, output, outputFileNameMapping );
 
-                                String extension =
-                                    outputFileNameMapping.substring( dotIdx + 1, outputFileNameMapping.length() );
-                                String artifactWithoutExt = outputFileNameMapping.substring( 0, dotIdx );
-
-                                outputFileNameMapping =
-                                    artifactWithoutExt + "-" + artifact.getClassifier() + "." + extension;
-                            }
-
-                            archiver.addFile( artifact.getFile(),
-                                              output + evaluateFileNameMapping( outputFileNameMapping, artifact ) );
-
-                            if ( moduleSet.isIncludeDependencies() )
+                            if ( binaries.isIncludeDependencies() )
                             {
                                 Set artifactSet = reactorProject.getArtifacts();
 
@@ -641,9 +639,7 @@ public abstract class AbstractAssemblyMojo
                                 {
                                     Artifact dependencyArtifact = (Artifact) artifacts.next();
 
-                                    File artifactFile = dependencyArtifact.getFile();
-
-                                    archiver.addFile( artifactFile, artifactFile.getName() );
+                                    addArtifactToArchive( archiver, dependencyArtifact, output, outputFileNameMapping );
                                 }
                             }
                         }
@@ -663,6 +659,26 @@ public abstract class AbstractAssemblyMojo
                 }
             }
         }
+    }
+
+    private void addArtifactToArchive( Archiver archiver, Artifact artifact, String outputDirectory, String mapping ) 
+        throws MojoExecutionException, ArchiverException
+    {
+        //insert the classifier if exist
+        if ( !StringUtils.isEmpty( artifact.getClassifier() ) )
+        {
+            int dotIdx = mapping.lastIndexOf( "." );
+
+            String extension =
+                mapping.substring( dotIdx + 1, mapping.length() );
+            String artifactWithoutExt = mapping.substring( 0, dotIdx );
+
+            mapping =
+                artifactWithoutExt + "-" + artifact.getClassifier() + "." + extension;
+        }
+
+        archiver.addFile( artifact.getFile(),
+                          outputDirectory + evaluateFileNameMapping( mapping, artifact ) );
     }
 
     private Set getModulesFromReactor( MavenProject parent )
@@ -969,6 +985,8 @@ public abstract class AbstractAssemblyMojo
             DependencySet dependencySet = (DependencySet) i.next();
             String output = dependencySet.getOutputDirectory();
             output = getOutputDirectory( output, includeBaseDirectory );
+            
+            System.out.println( "Dependency-set output directory: " + output);
 
             archiver.setDefaultDirectoryMode( Integer.parseInt( dependencySet.getDirectoryMode(), 8 ) );
 
@@ -989,13 +1007,18 @@ public abstract class AbstractAssemblyMojo
             {
                 filter.add( new ExcludesArtifactFilter( dependencySet.getExcludes() ) );
             }
+            
+            System.out.println( "Got: " + getDependencies().size() + " dependencies of project: " + project.getId() );
 
             for ( Iterator j = getDependencies().iterator(); j.hasNext(); )
             {
                 Artifact artifact = (Artifact) j.next();
+                
+                System.out.println( "Processing dependency: " + artifact.getId() );
 
                 if ( filter.include( artifact ) )
                 {
+                    System.out.println( "Processing: " + artifact.getId() );
                     String name = artifact.getFile().getName();
 
                     if ( dependencySet.isUnpack() )
@@ -1060,21 +1083,8 @@ public abstract class AbstractAssemblyMojo
                     else
                     {
                         String outputFileNameMapping = dependencySet.getOutputFileNameMapping();
-
-                        //insert the classifier if exist
-                        if ( artifact.getClassifier() != null && !artifact.getClassifier().equals( "" ) )
-                        {
-                            int dotIdx = outputFileNameMapping.lastIndexOf( "." );
-
-                            String extension =
-                                outputFileNameMapping.substring( dotIdx + 1, outputFileNameMapping.length() );
-                            String artifactWithoutExt = outputFileNameMapping.substring( 0, dotIdx );
-
-                            outputFileNameMapping =
-                                artifactWithoutExt + "-" + artifact.getClassifier() + "." + extension;
-                        }
-                        archiver.addFile( artifact.getFile(),
-                                          output + evaluateFileNameMapping( outputFileNameMapping, artifact ) );
+                        
+                        addArtifactToArchive( archiver, artifact, output, outputFileNameMapping );
                     }
                 }
                 else

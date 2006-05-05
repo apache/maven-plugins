@@ -399,37 +399,69 @@
     <class>
       <name>ModuleSet</name>
       <version>1.0.0</version>
-      <superClass>SetBase</superClass>
       <fields>
         <field>
-          <name>includeSources</name>
+          <name>includes</name>
           <version>1.0.0</version>
-          <type>boolean</type>
-          <defaultValue>false</defaultValue>
           <description>
-            When set to true, the plugin will include the source files for modules included in this
-            set. Otherwise, it will only include binaries.
+            This is a list of &lt;include&gt; elements, each containing a module reference of the type groupId:artifactId.
+            Modules matching these elements will be included in this set.
           </description>
+          <association>
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
         </field>
         <field>
-          <name>sourceOutputDirectory</name>
+          <name>excludes</name>
           <version>1.0.0</version>
-          <type>String</type>
           <description>
-            The output directory in the assembly for the module-sources included by this set.
+            This is a list of &lt;exclude&gt; elements, each containing a module reference of the type groupId:artifactId.
+            Modules matching these elements will be excluded from this set.
           </description>
+          <association>
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
         </field>
         <field>
-          <name>includeBinaries</name>
+          <name>sources</name>
           <version>1.0.0</version>
-          <type>boolean</type>
-          <defaultValue>true</defaultValue>
           <description>
-            When set to true, the plugin will include the binaries for the included modules, according to other 
-            configuration in this set. This includes the module artifacts, along with the dependency artifacts 
-            (optionally).
+            When this is configured, the plugin will include the source files of the included modules from this set in 
+            the resulting assembly, according to the configuration.
           </description>
+          <association>
+            <type>ModuleSources</type>
+          </association>
         </field>
+        <field>
+          <name>binaries</name>
+          <version>1.0.0</version>
+          <description>
+            When this is configured, the plugin will include the binaries of the included modules from this set in 
+            the resulting assembly, according to the configuration.
+          </description>
+          <association>
+            <type>ModuleBinaries</type>
+          </association>
+        </field>
+      </fields>
+    </class>
+    
+    <class>
+      <name>ModuleSources</name>
+      <version>1.0.0</version>
+      <superClass>SetBase</superClass>
+      <description>Configuration for including the source files for a Module in an assembly.</description>
+    </class>
+
+    <class>
+      <name>ModuleBinaries</name>
+      <version>1.0.0</version>
+      <superClass>SetBase</superClass>
+      <description>Configuration for including the binary files for a Module in an assembly.</description>
+      <fields>
         <field>
           <name>includeDependencies</name>
           <version>1.0.0</version>
@@ -465,7 +497,7 @@
         </field>
       </fields>
     </class>
-
+    
     <class>
       <name>Repository</name>
       <version>1.0.0</version>

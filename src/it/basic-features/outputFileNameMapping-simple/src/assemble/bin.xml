@@ -1,16 +1,15 @@
+
 <assembly>
-  <id>outputFileNameMapping</id>
+  <id>bindir</id>
+  <includeBaseDirectory>false</includeBaseDirectory>
   <formats>
     <format>dir</format>
   </formats>
-  <includeBaseDirectory>false</includeBaseDirectory>
   <dependencySets>
     <dependencySet>
       <includes>
-        <include>org.test:test</include>
-        <include>org.test.2:test2</include>
+        <include>commons-logging:commons-logging</include>
       </includes>
-      <outputDirectory>/dependencies/</outputDirectory>
       <outputFileNameMapping>${artifactId}.${extension}</outputFileNameMapping>
     </dependencySet>
   </dependencySets>

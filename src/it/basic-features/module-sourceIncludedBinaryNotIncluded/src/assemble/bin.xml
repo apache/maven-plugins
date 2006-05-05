@@ -1,0 +1,15 @@
+
+<assembly>
+  <id>bin</id>
+  <formats>
+    <format>jar</format>
+  </formats>
+  <moduleSets>
+    <moduleSet>
+      <outputDirectory>modules</outputDirectory>
+      <includes>
+        <include>org.test:child1</include>
+      </includes>
+    </moduleSet>
+  </moduleSets>
+</assembly>
