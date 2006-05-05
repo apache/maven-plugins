@@ -322,12 +322,12 @@ public class BasicAbstractAssemblyMojoFeaturesTest
         private String depTwoType = "jar";
         private String depTwoScope = "compile";
         private File depTwoFile;
-        private LinkedHashSet artifacts = new LinkedHashSet();
+        private LinkedHashSet artifacts;
         
         public Set getArtifacts()
         {
-            Set artifacts = new LinkedHashSet();
-            
+            artifacts = new LinkedHashSet();
+
             addArtifact( depOneGroupId, depOneArtifactId, depOneVersion, depOneType, depOneScope, depOneFile );
             addArtifact( depTwoGroupId, depTwoArtifactId, depTwoVersion, depTwoType, depTwoScope, depTwoFile );
             
