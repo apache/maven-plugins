@@ -22,18 +22,9 @@
         <inherited>false</inherited>
         <configuration>
           <descriptors>
-            <descriptor>src/assemble/src.xml</descriptor>
+            <descriptor>src/assemble/bin.xml</descriptor>
           </descriptors>
         </configuration>
-        <executions>
-          <execution>
-            <id>assembly</id>
-            <phase>package</phase>
-            <goals>
-              <goal>directory-inline</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>

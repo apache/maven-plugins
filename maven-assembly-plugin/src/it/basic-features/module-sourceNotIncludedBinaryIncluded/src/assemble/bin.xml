@@ -1,5 +1,6 @@
+
 <assembly>
-  <id>src</id>
+  <id>bin</id>
   <formats>
     <format>dir</format>
   </formats>
@@ -9,9 +10,11 @@
       <includes>
         <include>org.test:child1</include>
       </includes>
-      <sources>
-        <outputDirectory>sources/${artifactId}</outputDirectory>
-      </sources>
+      <binaries>
+        <outputDirectory>modules/${artifactId}</outputDirectory>
+        <includeDependencies>true</includeDependencies>
+        <unpack>true</unpack>
+      </binaries>
     </moduleSet>
   </moduleSets>
 </assembly>
