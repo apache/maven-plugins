@@ -34,21 +34,21 @@ public class ReflectionProperties
 
     boolean escapedBackslashesInFilePath;
 
-    public ReflectionProperties( MavenProject aProject, boolean escapedBackslashesInFilePath ) 
+    public ReflectionProperties( MavenProject aProject, boolean escapedBackslashesInFilePath )
     {
-       super();
+        super();
 
-       project = aProject;
+        project = aProject;
 
-       this.escapedBackslashesInFilePath = escapedBackslashesInFilePath;
+        this.escapedBackslashesInFilePath = escapedBackslashesInFilePath;
     }
-    
+
     public Object get( Object key )
     {
         Object value = null;
-        try 
+        try
         {
-            value = ReflectionValueExtractor.evaluate( "" + key , project );
+            value = ReflectionValueExtractor.evaluate( "" + key, project );
 
             if ( escapedBackslashesInFilePath && value != null &&
                 "java.lang.String".equals( value.getClass().getName() ) )
@@ -58,15 +58,15 @@ public class ReflectionProperties
                 // Check if it's a windows path
                 if ( val.indexOf( ":\\" ) == 1 )
                 {
-                    value = StringUtils.replace( (String)value, "\\", "\\\\" );
-                    value = StringUtils.replace( (String)value, ":", "\\:" );
+                    value = StringUtils.replace( (String) value, "\\", "\\\\" );
+                    value = StringUtils.replace( (String) value, ":", "\\:" );
                 }
             }
         }
-        catch ( Exception e ) 
+        catch ( Exception e )
         {
             //TODO: remove the try-catch block when ReflectionValueExtractor.evaluate() throws no more exceptions
-        } 
+        }
         return value;
     }
 }
