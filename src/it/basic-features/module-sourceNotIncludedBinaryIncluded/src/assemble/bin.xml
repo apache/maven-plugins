@@ -13,7 +13,7 @@
       <binaries>
         <outputDirectory>modules/${artifactId}</outputDirectory>
         <includeDependencies>true</includeDependencies>
-        <unpack>true</unpack>
+        <unpack>false</unpack>
       </binaries>
     </moduleSet>
   </moduleSets>
