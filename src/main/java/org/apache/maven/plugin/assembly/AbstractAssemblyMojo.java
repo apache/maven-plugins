@@ -46,6 +46,7 @@ import org.apache.maven.plugins.assembly.model.io.xpp3.ComponentXpp3Reader;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.shared.model.fileset.util.FileSetManager;
+import org.apache.maven.wagon.PathUtils;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
@@ -485,6 +486,9 @@ public abstract class AbstractAssemblyMojo
             ModuleSet moduleSet = (ModuleSet) i.next();
             String output = moduleSet.getOutputDirectory();
             output = getOutputDirectory( output, includeBaseDirectory );
+            
+            String sourceOutput = moduleSet.getSourceOutputDirectory();
+            sourceOutput = getOutputDirectory( sourceOutput, includeBaseDirectory );
 
             archiver.setDefaultDirectoryMode( Integer.parseInt( moduleSet.getDirectoryMode(), 8 ) );
 
@@ -507,7 +511,8 @@ public abstract class AbstractAssemblyMojo
 
             Set set = getModulesFromReactor( getExecutedProject() );
 
-            // TODO: includes and excludes
+            List moduleFileSets = new ArrayList();
+
             for ( Iterator j = set.iterator(); j.hasNext(); )
             {
                 MavenProject reactorProject = (MavenProject) j.next();
@@ -517,118 +522,144 @@ public abstract class AbstractAssemblyMojo
                 if ( filter.include( artifact ) && artifact.getFile() != null )
                 {
                     String name = artifact.getFile().getName();
-
-                    if ( moduleSet.isUnpack() )
+                    
+                    if ( moduleSet.isIncludeSources() )
                     {
-                        // TODO: something like zipfileset in plexus-archiver
-                        //                        archiver.addJar(  )
+                        FileSet moduleFileSet = new FileSet();
 
-                        // TODO refactor into the AbstractUnpackMojo
-                        File tempLocation = new File( workDirectory, name.substring( 0, name.lastIndexOf( '.' ) ) );
-                        boolean process = false;
-                        if ( !tempLocation.exists() )
-                        {
-                            tempLocation.mkdirs();
-                            process = true;
-                        }
-                        else if ( artifact.getFile().lastModified() > tempLocation.lastModified() )
-                        {
-                            process = true;
-                        }
+                        moduleFileSet.setDirectory( reactorProject.getBasedir().getAbsolutePath() );
+                        moduleFileSet.setOutputDirectory( sourceOutput );
 
-                        if ( process )
+                        List excludesList = new ArrayList();
+                        excludesList.add( PathUtils.toRelative( reactorProject.getBasedir(), reactorProject.getBuild().getDirectory() ) + "/**" );
+                        excludesList.add( PathUtils.toRelative( reactorProject.getBasedir(), reactorProject.getBuild().getOutputDirectory() ) + "/**" );
+                        excludesList.add( PathUtils.toRelative( reactorProject.getBasedir(), reactorProject.getBuild().getTestOutputDirectory() ) + "/**" );
+                        excludesList.add( PathUtils.toRelative( reactorProject.getBasedir(), reactorProject.getReporting().getOutputDirectory() ) + "/**" );
+                        moduleFileSet.setExcludes( excludesList );
+
+                        moduleFileSets.add( moduleFileSet );
+                    }
+                    
+                    if ( moduleSet.isIncludeBinaries() )
+                    {
+                        if ( moduleSet.isUnpack() )
                         {
-                            try
+                            // TODO: something like zipfileset in plexus-archiver
+                            //                        archiver.addJar(  )
+
+                            // TODO refactor into the AbstractUnpackMojo
+                            File tempLocation = new File( workDirectory, name.substring( 0, name.lastIndexOf( '.' ) ) );
+                            boolean process = false;
+                            if ( !tempLocation.exists() )
                             {
-                                unpack( artifact.getFile(), tempLocation );
+                                tempLocation.mkdirs();
+                                process = true;
+                            }
+                            else if ( artifact.getFile().lastModified() > tempLocation.lastModified() )
+                            {
+                                process = true;
+                            }
 
-                                if ( moduleSet.isIncludeDependencies() )
+                            if ( process )
+                            {
+                                try
                                 {
-                                    Set artifactSet = reactorProject.getArtifacts();
+                                    unpack( artifact.getFile(), tempLocation );
 
-                                    for ( Iterator artifacts = artifactSet.iterator(); artifacts.hasNext(); )
+                                    if ( moduleSet.isIncludeDependencies() )
                                     {
-                                        Artifact dependencyArtifact = (Artifact) artifacts.next();
+                                        Set artifactSet = reactorProject.getArtifacts();
 
-                                        unpack( dependencyArtifact.getFile(), tempLocation );
+                                        for ( Iterator artifacts = artifactSet.iterator(); artifacts.hasNext(); )
+                                        {
+                                            Artifact dependencyArtifact = (Artifact) artifacts.next();
+
+                                            unpack( dependencyArtifact.getFile(), tempLocation );
+                                        }
+                                    }
+
+                                    /*
+                                     * If the assembly is 'jar-with-dependencies', remove the security files in all dependencies
+                                     * that will prevent the uberjar to execute.  Please see MASSEMBLY-64 for details.
+                                     */
+                                    if ( archiver instanceof JarArchiver )
+                                    {
+                                        String[] securityFiles = { "*.RSA", "*.DSA", "*.SF", "*.rsa", "*.dsa", "*.sf" };
+                                        org.apache.maven.shared.model.fileset.FileSet securityFileSet = new org.apache.maven.shared.model.fileset.FileSet();
+                                        securityFileSet.setDirectory(tempLocation.getAbsolutePath() + "/META-INF/" );
+
+                                        for ( int sfsi = 0; sfsi < securityFiles.length; sfsi++ )
+                                        {
+                                            securityFileSet.addInclude( securityFiles[sfsi] );
+                                        }
+
+                                        FileSetManager fsm = new FileSetManager( getLog() );
+                                        try
+                                        {
+                                            fsm.delete( securityFileSet );
+                                        }
+                                        catch ( IOException e )
+                                        {
+                                            throw new MojoExecutionException("Failed to delete security files: " + e.getMessage(), e);
+                                        }
                                     }
                                 }
-
-                                /*
-                                 * If the assembly is 'jar-with-dependencies', remove the security files in all dependencies
-                                 * that will prevent the uberjar to execute.  Please see MASSEMBLY-64 for details.
-                                 */
-                                if ( archiver instanceof JarArchiver )
+                                catch ( NoSuchArchiverException e )
                                 {
-                                    String[] securityFiles = { "*.RSA", "*.DSA", "*.SF", "*.rsa", "*.dsa", "*.sf" };
-                                    org.apache.maven.shared.model.fileset.FileSet securityFileSet = new org.apache.maven.shared.model.fileset.FileSet();
-                                    securityFileSet.setDirectory(tempLocation.getAbsolutePath() + "/META-INF/" );
-
-                                    for ( int sfsi = 0; sfsi < securityFiles.length; sfsi++ )
-                                    {
-                                        securityFileSet.addInclude( securityFiles[sfsi] );
-                                    }
-
-                                    FileSetManager fsm = new FileSetManager( getLog() );
-                                    try
-                                    {
-                                        fsm.delete( securityFileSet );
-                                    }
-                                    catch ( IOException e )
-                                    {
-                                        throw new MojoExecutionException("Failed to delete security files: " + e.getMessage(), e);
-                                    }
+                                    throw new MojoExecutionException(
+                                        "Unable to obtain unarchiver for file '" + artifact.getFile() + "'" );
                                 }
                             }
-                            catch ( NoSuchArchiverException e )
+
+                            addDirectory( archiver, tempLocation, output, null, FileUtils.getDefaultExcludesAsList() );
+                        }
+                        else
+                        {
+                            String outputFileNameMapping = moduleSet.getOutputFileNameMapping();
+
+                            //insert the classifier if exist
+                            if ( !StringUtils.isEmpty( artifact.getClassifier() ) )
                             {
-                                throw new MojoExecutionException(
-                                    "Unable to obtain unarchiver for file '" + artifact.getFile() + "'" );
+                                int dotIdx = outputFileNameMapping.lastIndexOf( "." );
+
+                                String extension =
+                                    outputFileNameMapping.substring( dotIdx + 1, outputFileNameMapping.length() );
+                                String artifactWithoutExt = outputFileNameMapping.substring( 0, dotIdx );
+
+                                outputFileNameMapping =
+                                    artifactWithoutExt + "-" + artifact.getClassifier() + "." + extension;
                             }
-                        }
 
-                        addDirectory( archiver, tempLocation, output, null, FileUtils.getDefaultExcludesAsList() );
-                    }
-                    else
-                    {
-                        String outputFileNameMapping = moduleSet.getOutputFileNameMapping();
+                            archiver.addFile( artifact.getFile(),
+                                              output + evaluateFileNameMapping( outputFileNameMapping, artifact ) );
 
-                        //insert the classifier if exist
-                        if ( !StringUtils.isEmpty( artifact.getClassifier() ) )
-                        {
-                            int dotIdx = outputFileNameMapping.lastIndexOf( "." );
-
-                            String extension =
-                                outputFileNameMapping.substring( dotIdx + 1, outputFileNameMapping.length() );
-                            String artifactWithoutExt = outputFileNameMapping.substring( 0, dotIdx );
-
-                            outputFileNameMapping =
-                                artifactWithoutExt + "-" + artifact.getClassifier() + "." + extension;
-                        }
-
-                        archiver.addFile( artifact.getFile(),
-                                          output + evaluateFileNameMapping( outputFileNameMapping, artifact ) );
-
-                        if ( moduleSet.isIncludeDependencies() )
-                        {
-                            Set artifactSet = reactorProject.getArtifacts();
-
-                            for ( Iterator artifacts = artifactSet.iterator(); artifacts.hasNext(); )
+                            if ( moduleSet.isIncludeDependencies() )
                             {
-                                Artifact dependencyArtifact = (Artifact) artifacts.next();
+                                Set artifactSet = reactorProject.getArtifacts();
 
-                                File artifactFile = dependencyArtifact.getFile();
+                                for ( Iterator artifacts = artifactSet.iterator(); artifacts.hasNext(); )
+                                {
+                                    Artifact dependencyArtifact = (Artifact) artifacts.next();
 
-                                archiver.addFile( artifactFile, artifactFile.getName() );
+                                    File artifactFile = dependencyArtifact.getFile();
+
+                                    archiver.addFile( artifactFile, artifactFile.getName() );
+                                }
                             }
                         }
                     }
+
                 }
                 else
                 {
                     // would be better to have a way to find out when a specified include or exclude
                     // is never triggered and warn() it.
                     getLog().debug( "artifact: " + artifact + " not included" );
+                }
+                
+                if ( !moduleFileSets.isEmpty() )
+                {
+                    processFileSets( archiver, moduleFileSets, includeBaseDirectory );            // TODO: includes and excludes
                 }
             }
         }
