@@ -25,7 +25,7 @@ import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
 import org.apache.maven.artifact.repository.DefaultArtifactRepository;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
-import org.apache.maven.artifact.repository.metadata.Metadata;
+import org.apache.maven.artifact.repository.metadata.ArtifactRepositoryMetadata;
 import org.apache.maven.artifact.repository.metadata.Versioning;
 import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Writer;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
@@ -39,6 +39,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -85,13 +86,15 @@ public class DefaultRepositoryAssembler
 
     private Set groupVersionAlignmentExcludes;
 
-    public void assemble( File repositoryDirectory, Repository repository, MavenProject project )
+    public void assemble( File repositoryDirectory, Repository repository, MavenProject project,
+                          ArtifactRepository localRepository )
         throws RepositoryAssemblyException
     {
         createGroupVersionAlignments( repository.getGroupVersionAlignments() );
 
-        ArtifactRepository localRepository = createLocalRepository( repositoryDirectory );
+        ArtifactRepository targetRepository = createLocalRepository( repositoryDirectory );
 
+        ArtifactResolutionResult result;
         try
         {
             // i have to get everything first as a filter or transformation here doesn't seem to work
@@ -100,19 +103,36 @@ public class DefaultRepositoryAssembler
 
             // I'm not getting runtime dependencies here
 
-            ArtifactResolutionResult result = artifactResolver.resolveTransitively( project.getDependencyArtifacts(),
-                                                                                    project.getArtifact(),
-                                                                                    project.getRemoteArtifactRepositories(),
-                                                                                    localRepository, metadataSource );
+            result = artifactResolver.resolveTransitively( project.getDependencyArtifacts(), project.getArtifact(),
+                                                           project.getRemoteArtifactRepositories(), localRepository,
+                                                           metadataSource );
+        }
+        catch ( ArtifactResolutionException e )
+        {
+            throw new RepositoryAssemblyException( "Error resolving artifacts: " + e.getMessage(), e );
+        }
+        catch ( ArtifactNotFoundException e )
+        {
+            throw new RepositoryAssemblyException( "Error resolving artifacts: " + e.getMessage(), e );
+        }
 
+        try
+        {
+            // Blow the cache in the project builder so that we get POMs again on this next download
+            invalidateProccessedProjectCache();
+        }
+        catch ( Exception e )
+        {
+            throw new RepositoryAssemblyException( "Error invalidating the processed project cache.", e );
+        }
+
+        try
+        {
             // Now that we have the graph, let's try to align it to versions that we want and remove
             // the repository we previously populated.
             FileUtils.deleteDirectory( repositoryDirectory );
 
             FileUtils.mkdir( repositoryDirectory.getAbsolutePath() );
-
-            // Blow the cache in the project builder so that we get POMs again on this next download
-            invalidateProccessedProjectCache();
 
             for ( Iterator i = result.getArtifacts().iterator(); i.hasNext(); )
             {
@@ -128,63 +148,34 @@ public class DefaultRepositoryAssembler
                 // We need to flip it back to not being resolved so we can look for it again!
                 a.setResolved( false );
 
-                artifactResolver.resolveAlways( a, project.getRemoteArtifactRepositories(), localRepository );
+                artifactResolver.resolve( a, project.getRemoteArtifactRepositories(), localRepository );
 
-                // The correct metadata does not get pulled down unless this is used. Not
-                // sure what the problem is.
-                metadataSource.retrieve( a, localRepository, project.getRemoteArtifactRepositories() );
-            }
+                File targetFile = new File( targetRepository.getBasedir(), targetRepository.pathOf( a ) );
+                FileUtils.copyFile( a.getFile(), targetFile );
 
-            if ( repository.isIncludeMetadata() )
-            {
-                for ( Iterator i = result.getArtifacts().iterator(); i.hasNext(); )
+                if ( !"pom".equals( a.getType() ) )
                 {
-                    Artifact a = (Artifact) i.next();
+                    // The correct metadata does not get pulled down unless this is used. Not
+                    // sure what the problem is.
+                    metadataSource.retrieve( a, localRepository, project.getRemoteArtifactRepositories() );
 
-                    File metadataFile =
-                        new File( a.getFile().getParentFile().getParent(), "maven-metadata-central.xml" );
-
-                    Metadata m = new Metadata();
-
-                    m.setGroupId( a.getGroupId() );
-
-                    m.setArtifactId( a.getArtifactId() );
-
-                    Versioning v = new Versioning();
-
-                    v.setRelease( a.getVersion() );
-
-                    v.setLatest( a.getVersion() );
-
-                    v.addVersion( a.getVersion() );
-
-                    m.setVersioning( v );
-
-                    v.setLastUpdated( getUtcDateFormatter().format( new Date() ) );
-
-                    MetadataXpp3Writer metadataWriter = new MetadataXpp3Writer();
-
-                    Writer writer = new FileWriter( metadataFile );
-
-                    metadataWriter.write( writer, m );
-
-                    writer.close();
-
-                    File metadataFileRemote = new File( a.getFile().getParentFile().getParent(), "maven-metadata.xml" );
-
-                    FileUtils.copyFile( metadataFile, metadataFileRemote );
+                    Artifact pomArtifact =
+                        artifactFactory.createProjectArtifact( a.getGroupId(), a.getArtifactId(), a.getVersion() );
+                    File sourceFile = new File( localRepository.getBasedir(), localRepository.pathOf( pomArtifact ) );
+                    targetFile = new File( targetRepository.getBasedir(), targetRepository.pathOf( pomArtifact ) );
+                    FileUtils.copyFile( sourceFile, targetFile );
                 }
             }
         }
         catch ( ArtifactResolutionException e )
         {
-            throw new RepositoryAssemblyException( "Error resolving artifacts.", e );
-        }
-        catch ( ArtifactMetadataRetrievalException e )
-        {
-            throw new RepositoryAssemblyException( "Error resolving artifacts.", e );
+            throw new RepositoryAssemblyException( "Error resolving artifacts: " + e.getMessage(), e );
         }
         catch ( ArtifactNotFoundException e )
+        {
+            throw new RepositoryAssemblyException( "Error resolving artifacts: " + e.getMessage(), e );
+        }
+        catch ( ArtifactMetadataRetrievalException e )
         {
             throw new RepositoryAssemblyException( "Error resolving artifacts.", e );
         }
@@ -192,9 +183,67 @@ public class DefaultRepositoryAssembler
         {
             throw new RepositoryAssemblyException( "Error writing artifact metdata.", e );
         }
-        catch ( Exception e )
+
+        ArtifactRepository centralRepository = null;
+        for ( Iterator i = project.getRemoteArtifactRepositories().iterator(); i.hasNext(); )
         {
-            throw new RepositoryAssemblyException( "Error invalidating the processed project cache.", e );
+            ArtifactRepository r = (ArtifactRepository) i.next();
+            if ( "central".equals( r.getId() ) )
+            {
+                centralRepository = r;
+            }
+        }
+
+        if ( repository.isIncludeMetadata() )
+        {
+            for ( Iterator i = result.getArtifacts().iterator(); i.hasNext(); )
+            {
+                Artifact a = (Artifact) i.next();
+
+                Versioning v = new Versioning();
+
+                v.setRelease( a.getVersion() );
+
+                v.setLatest( a.getVersion() );
+
+                v.addVersion( a.getVersion() );
+
+                v.setLastUpdated( getUtcDateFormatter().format( new Date() ) );
+
+                ArtifactRepositoryMetadata metadata = new ArtifactRepositoryMetadata( a, v );
+                String path = targetRepository.pathOfLocalRepositoryMetadata( metadata, centralRepository );
+                File metadataFile = new File( targetRepository.getBasedir(), path );
+
+                MetadataXpp3Writer metadataWriter = new MetadataXpp3Writer();
+
+                Writer writer = null;
+                try
+                {
+                    writer = new FileWriter( metadataFile );
+
+                    metadataWriter.write( writer, metadata.getMetadata() );
+                }
+                catch ( IOException e )
+                {
+                    throw new RepositoryAssemblyException( "Error writing artifact metdata.", e );
+                }
+                finally
+                {
+                    IOUtil.close( writer );
+                }
+
+                File metadataFileRemote = new File( targetRepository.getBasedir(),
+                                                    targetRepository.pathOfRemoteRepositoryMetadata( metadata ) );
+
+                try
+                {
+                    FileUtils.copyFile( metadataFile, metadataFileRemote );
+                }
+                catch ( IOException e )
+                {
+                    throw new RepositoryAssemblyException( "Error writing artifact metdata.", e );
+                }
+            }
         }
     }
 
@@ -223,7 +272,6 @@ public class DefaultRepositoryAssembler
         utcDateFormatter.setTimeZone( UTC_TIME_ZONE );
         return utcDateFormatter;
     }
-
 
     protected ArtifactRepository createLocalRepository( File directory )
     {
