@@ -1,7 +1,7 @@
 package org.apache.maven.plugin.assembly;
 
 /*
- * Copyright 2001-2006 The Apache Software Foundation.
+ * Copyright 2001-2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,6 +62,46 @@ public class DirectoryMojoTest
         assertEquals( 1, files.size() );
     }
 
+    public void testAssemblyDirectoryWithAppendAssemblyIdAsFalse()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(),
+                                 "src/test/plugin-configs/directory/appendAssemblyId-false-plugin-config.xml" );
+
+        DirectoryMojo mojo = ( DirectoryMojo ) lookupMojo( "directory", testPom );
+
+        assertNotNull( mojo );
+
+        String classifier = ( String ) getVariableValueFromObject( mojo, "classifier" );
+
+        String finalName = ( String ) getVariableValueFromObject( mojo, "finalName" );
+
+        File outputDir = ( File ) getVariableValueFromObject( mojo, "outputDirectory" );
+
+        MavenProject project = ( MavenProject ) getVariableValueFromObject( mojo, "executedProject" );
+
+        Set artifacts = project.getArtifacts();
+
+        mojo.execute();
+
+        File dir = new File( outputDir, finalName + "-" + classifier );
+
+        assertTrue( dir.exists() );
+
+        Map filesArchived = ArchiverManagerStub.archiverStub.getFiles();
+
+        Set files = filesArchived.keySet();
+
+        for( Iterator iter = artifacts.iterator(); iter.hasNext(); )
+        {
+            Artifact artifact = ( Artifact ) iter.next();
+
+            assertTrue( files.contains( artifact.getFile() ) );
+            assertTrue( artifact.getFile().getName().endsWith( ".jar" ) );
+        }
+
+        assertTrue( "Test project is in archive", files.contains( project.getArtifact().getFile() ) );
+    }
 
     public void testAssemblyDirectoryWithDependencySet()
         throws Exception
@@ -92,5 +132,27 @@ public class DirectoryMojoTest
         }
 
         assertTrue( "Test project is in archive", files.contains( project.getArtifact().getFile() ) );
+    }
+
+    public void testAssemblyDirectoryToThrowNoSuchArchiverException()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(),
+                                 "src/test/plugin-configs/directory/min-plugin-config-with-exceptions.xml" );
+
+        DirectoryMojo mojo = ( DirectoryMojo ) lookupMojo( "directory", testPom );
+
+        assertNotNull( mojo );
+
+        try
+        {
+            mojo.execute();
+
+            fail( "Failure Expected" );
+        }
+        catch( Exception e )
+        {
+            //expected
+        }
     }
 }
