@@ -1,5 +1,21 @@
 package org.apache.maven.plugin.assembly.repository;
 
+/*
+ * Copyright 2001-2005 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataRetrievalException;
@@ -16,11 +32,11 @@ import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.plugins.assembly.model.Repository;
 import org.apache.maven.plugins.assembly.model.GroupVersionAlignment;
+import org.apache.maven.plugins.assembly.model.Repository;
+import org.apache.maven.project.DefaultMavenProjectBuilder;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
-import org.apache.maven.project.DefaultMavenProjectBuilder;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.FileUtils;
 
@@ -28,17 +44,17 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.Set;
-import java.util.HashSet;
-import java.lang.reflect.Field;
+import java.util.TimeZone;
 
 /**
  * @author Jason van Zyl
@@ -69,9 +85,7 @@ public class DefaultRepositoryAssembler
 
     private Set groupVersionAlignmentExcludes;
 
-    public void assemble( File repositoryDirectory,
-                          Repository repository,
-                          MavenProject project )
+    public void assemble( File repositoryDirectory, Repository repository, MavenProject project )
         throws RepositoryAssemblyException
     {
         createGroupVersionAlignments( repository.getGroupVersionAlignments() );
@@ -224,11 +238,8 @@ public class DefaultRepositoryAssembler
                                  ArtifactRepositoryPolicy.CHECKSUM_POLICY_WARN );
     }
 
-    public ArtifactRepository createRepository( String repositoryId,
-                                                String repositoryUrl,
-                                                boolean offline,
-                                                boolean updateSnapshots,
-                                                String globalChecksumPolicy )
+    public ArtifactRepository createRepository( String repositoryId, String repositoryUrl, boolean offline,
+                                                boolean updateSnapshots, String globalChecksumPolicy )
     {
         ArtifactRepository localRepository =
             new DefaultArtifactRepository( repositoryId, repositoryUrl, repositoryLayout );
