@@ -1,5 +1,21 @@
 package org.apache.maven.plugin.assembly.interpolation;
 
+/*
+ * Copyright 2001-2005 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import org.apache.maven.model.Model;
 import org.apache.maven.plugins.assembly.model.Assembly;
 import org.apache.maven.plugins.assembly.model.io.xpp3.AssemblyXpp3Reader;
@@ -27,22 +43,23 @@ public class AssemblyInterpolator
     extends AbstractLogEnabled
 {
     private static final Pattern ELEMENT_PATTERN = Pattern.compile( "\\<([^> ]+)[^>]*>([^<]+)" );
+
     private static final Pattern EXPRESSION_PATTERN = Pattern.compile( "\\$\\{(pom\\.|project\\.|env\\.)?([^}]+)\\}" );
-    
+
     private static final Map INTERPOLATION_BLACKLIST;
-    
+
     static
     {
         Map blacklist = new HashMap();
-        
+
         List ofnmBlacklistings = new ArrayList();
-        
+
         ofnmBlacklistings.add( "groupId" );
         ofnmBlacklistings.add( "artifactId" );
         ofnmBlacklistings.add( "version" );
-        
+
         blacklist.put( "outputFileNameMapping", ofnmBlacklistings );
-        
+
         INTERPOLATION_BLACKLIST = blacklist;
     }
 
@@ -102,7 +119,7 @@ public class AssemblyInterpolator
             throw new AssemblyInterpolationException(
                 "Cannot read assembly descriptor from interpolating filter of serialized version.", e );
         }
-        
+
         return assembly;
     }
 
@@ -110,16 +127,16 @@ public class AssemblyInterpolator
         throws AssemblyInterpolationException
     {
         String result = src;
-        
+
         Matcher elementMatcher = ELEMENT_PATTERN.matcher( result );
-        
-        while( elementMatcher.find() )
+
+        while ( elementMatcher.find() )
         {
             String element = elementMatcher.group( 0 );
-            
+
             String elementName = elementMatcher.group( 1 );
             String value = elementMatcher.group( 2 );
-            
+
             // only attempt to interpolate if the following is met:
             // 1. the element is not in the interpolation blacklist.
             // 2. the value is not empty (otherwise there's nothing to interpolate)
@@ -131,28 +148,30 @@ public class AssemblyInterpolator
                 {
                     blacklistedExpressions = Collections.EMPTY_LIST;
                 }
-                
-                String interpolatedValue = interpolateElementValue( value, assembly, model, context, blacklistedExpressions );
-                
+
+                String interpolatedValue =
+                    interpolateElementValue( value, assembly, model, context, blacklistedExpressions );
+
                 String modifiedElement = StringUtils.replace( element, value, interpolatedValue );
                 result = StringUtils.replace( result, element, modifiedElement );
             }
         }
-        
+
         return result;
     }
-    
-    private String interpolateElementValue( String src, Assembly assembly, Model model, Map context, List blacklistedExpressions ) 
+
+    private String interpolateElementValue( String src, Assembly assembly, Model model, Map context,
+                                            List blacklistedExpressions )
         throws AssemblyInterpolationException
     {
         String result = src;
-        
+
         Matcher matcher = EXPRESSION_PATTERN.matcher( result );
         while ( matcher.find() )
         {
             String wholeExpr = matcher.group( 0 );
             String realExpr = matcher.group( 2 );
-            
+
             if ( blacklistedExpressions.contains( realExpr ) )
             {
                 continue;
