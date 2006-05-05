@@ -1,0 +1,2 @@
+basic-features/outputFileNameMapping-simple
+basic-features/module-sourceIncludedBinaryNotIncluded
