@@ -19,7 +19,6 @@
             <id>descriptor</id>
             <goals>
               <goal>xpp3-reader</goal>
-              <goal>xpp3-writer</goal>
               <goal>java</goal>
               <goal>xsd</goal>
             </goals>
