@@ -467,7 +467,7 @@ public abstract class AbstractAssemblyMojo
                 repositoryDirectory.mkdirs();
             }
 
-            repositoryAssembler.assemble( repositoryDirectory, repository, project );
+            repositoryAssembler.assemble( repositoryDirectory, repository, project, localRepository );
 
             if ( includeBaseDirectory )
             {
