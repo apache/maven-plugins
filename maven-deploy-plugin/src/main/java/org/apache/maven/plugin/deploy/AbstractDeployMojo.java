@@ -22,7 +22,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 
 public abstract class AbstractDeployMojo
-	extends AbstractMojo
+    extends AbstractMojo
 {
     /**
      * @parameter expression="${component.org.apache.maven.artifact.deployer.ArtifactDeployer}"
@@ -37,29 +37,29 @@ public abstract class AbstractDeployMojo
      * @readonly
      */
     private ArtifactRepository localRepository;
-	
-	public abstract void execute() 
-		throws MojoExecutionException;
-	
-	/* Setters and Getters */
+    
+    public abstract void execute() 
+        throws MojoExecutionException;
+    
+    /* Setters and Getters */
 
-	public ArtifactDeployer getDeployer()
-	{
-		return deployer;
-	}
+    public ArtifactDeployer getDeployer()
+    {
+        return deployer;
+    }
 
-	public void setDeployer(ArtifactDeployer deployer)
-	{
-		this.deployer = deployer;
-	}
+    public void setDeployer(ArtifactDeployer deployer)
+    {
+        this.deployer = deployer;
+    }
 
-	public ArtifactRepository getLocalRepository()
-	{
-		return localRepository;
-	}
+    public ArtifactRepository getLocalRepository()
+    {
+        return localRepository;
+    }
 
-	public void setLocalRepository(ArtifactRepository localRepository)
-	{
-		this.localRepository = localRepository;
-	}
+    public void setLocalRepository(ArtifactRepository localRepository)
+    {
+        this.localRepository = localRepository;
+    }
 }
