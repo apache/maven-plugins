@@ -1,7 +1,5 @@
 package org.apache.maven.plugin.assembly;
 
-import org.apache.maven.project.MavenProject;
-
 /*
  * Copyright 2001-2005 The Apache Software Foundation.
  *
@@ -18,6 +16,7 @@ import org.apache.maven.project.MavenProject;
  * limitations under the License.
  */
 
+import org.apache.maven.project.MavenProject;
 
 /**
  * Assemble an application bundle or distribution from an assembly descriptor without
