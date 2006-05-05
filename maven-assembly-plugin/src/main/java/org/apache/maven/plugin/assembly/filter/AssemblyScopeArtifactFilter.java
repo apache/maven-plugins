@@ -1,7 +1,7 @@
 package org.apache.maven.plugin.assembly.filter;
 
 /*
- * Copyright 2001-2006 The Apache Software Foundation.
+ * Copyright 2001-2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,9 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 
+/**
+ * TODO: include in maven-artifact in future
+ */
 public class AssemblyScopeArtifactFilter
     implements ArtifactFilter
 {
