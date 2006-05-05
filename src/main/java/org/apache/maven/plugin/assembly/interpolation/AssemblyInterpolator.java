@@ -60,6 +60,19 @@ public class AssemblyInterpolator
 
         blacklist.put( "outputFileNameMapping", ofnmBlacklistings );
 
+        
+        List odBlacklist = new ArrayList();
+        
+        odBlacklist.add( "groupId" );
+        odBlacklist.add( "artifactId" );
+        odBlacklist.add( "version" );
+        odBlacklist.add( "build.finalName" );
+        
+        // wouldn't work, but just to future-proof this...
+        odBlacklist.add( "finalName" );
+        
+        blacklist.put( "outputDirectory", odBlacklist );
+        
         INTERPOLATION_BLACKLIST = blacklist;
     }
 
