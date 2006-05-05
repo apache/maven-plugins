@@ -40,8 +40,8 @@ public final class PropertyUtils
     /**
      * Reads a property file, resolving all internal variables.
      *
-     * @param propfile The property file to load
-     * @param fail wheter to throw an exception when the file cannot be loaded or to return null
+     * @param propfile       The property file to load
+     * @param fail           wheter to throw an exception when the file cannot be loaded or to return null
      * @param useSystemProps wheter to incorporate System.getProperties settings into the returned Properties object.
      * @return the loaded and fully resolved Properties object
      */
@@ -85,7 +85,7 @@ public final class PropertyUtils
     /**
      * Retrieves a property value, replacing values like ${token}
      * using the Properties to look them up.
-     *
+     * <p/>
      * It will leave unresolved properties alone, trying for System
      * properties, and implements reparsing (in the case that
      * the value of a property contains a key), and will
