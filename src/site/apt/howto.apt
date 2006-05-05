@@ -109,7 +109,7 @@ mvn -Dmaven.test.skip=true install
       <groupId>org.apache.maven.plugins</groupId>
       <artifactId>maven-surefire-plugin</artifactId>
       <configuration>
-        <forkMode>once|pertest</forkMode>
+        <forkMode>pertest</forkMode>
         <argLine>-enableassertions</argLine>
       </configuration>
     </plugin>
@@ -122,11 +122,13 @@ mvn -Dmaven.test.skip=true install
  <<Note:>> You do not need to manually enable assertions if you are using them in your unit tests - Surefire enables
  them on your test classes automatically under JDK 1.4+.
 
+ The default setting is <<<once>>>. It can also be set to <<<never>>> to run in process for a small performance improvement.
+
 * Class Loading Issues
 
- By default, Surefire loads classes "child first", like a web application - meaning your dependencies take precedence over those
- in the JDK. With endorsed APIs like XML parsers, this may cause problems. You can either make sure you provide a full, compatible
- implementation, or revert to "parent first" class loading by setting the <<<childDelegation>>> flag to <<<false>>>:
+ By default, Surefire loads classes using the default Java mechanism. However, it can be set to use "child first" classloading, like 
+ a web application - meaning your dependencies take precedence over those in the JDK.
+ If you find this is necessary, you can do so by setting the <<<childDelegation>>> flag to <<<true>>>:
 
 ----
 <project>
@@ -138,7 +140,7 @@ mvn -Dmaven.test.skip=true install
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <childDelegation>false</childDelegation>
+          <childDelegation>true</childDelegation>
         </configuration>       
 
       </plugin>
