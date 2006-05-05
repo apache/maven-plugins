@@ -32,7 +32,7 @@ public class ArtifactStub
     public ArtifactStub( String groupId, String artifactId, String version, String packaging, String scope )
     {
         super( groupId, artifactId, VersionRange.createFromVersion( version ), scope, packaging,
-               null, new DefaultArtifactHandler(), false );
+               null, new DefaultArtifactHandler( packaging ), false );
     }
 
     public File getFile()

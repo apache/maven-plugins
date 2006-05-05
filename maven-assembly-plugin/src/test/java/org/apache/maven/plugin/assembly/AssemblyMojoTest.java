@@ -167,18 +167,27 @@ public class AssemblyMojoTest
         {
             Artifact dependency = (Artifact) artifacts.next();
 
-            String name = dependency.getArtifactId() + "-" + dependency.getVersion();
+            String name = dependency.getArtifactId() + "-" + dependency.getVersion() + "." + dependency.getType();
             File workPath = new File( workDir, name );
+
+            System.out.println( "WORK PATH: " + workPath.getAbsolutePath() );
 
             assertTrue( "Test if expected dependency is unpacked", workPath.exists() && workPath.isDirectory() );
             assertTrue( "Test if expected dependency is in the archive", archivedFileSet.contains( workPath ) );
         }
 
-        String name = project.getArtifact().getArtifactId() + "-" + project.getArtifact().getVersion();
+        String name = project.getArtifact().getArtifactId() + "-" + project.getArtifact().getVersion() +
+                      "." + project.getArtifact().getType();
         File workPath = new File( workDir, name );
 
         assertTrue( "Test if project is unpacked", workPath.exists() && workPath.isDirectory() );
         assertTrue( "Test if project is in the archive", archivedFileSet.contains( workPath ) );
+    }
+
+    public void testFileSet()
+        throws Exception
+    {
+        AssemblyMojo mojo = executeMojo( "fileSet-plugin-config.xml" );
     }
 
     private AssemblyMojo getMojo( String pluginXml )
