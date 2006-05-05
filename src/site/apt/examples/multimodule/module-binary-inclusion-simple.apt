@@ -1,0 +1,147 @@
+  ---
+  Assembly Plugin Example - Including Module Artifacts
+  ---
+  John Casey
+  ---
+  05-May-2006
+  ---
+  
+~~ Copyright 2006 The Apache Software Foundation.
+~~
+~~ Licensed under the Apache License, Version 2.0 (the "License");
+~~ you may not use this file except in compliance with the License.
+~~ You may obtain a copy of the License at
+~~
+~~      http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing, software
+~~ distributed under the License is distributed on an "AS IS" BASIS,
+~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~ See the License for the specific language governing permissions and
+~~ limitations under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/guides/mini/guide-apt-format.html
+                                                                                                                        
+Assembly Plugin Example - Including Module Artifacts
+
+* Introduction
+
+  It is common practice to create an assembly using the parent POM of a
+  multimodule build. At times, you may want to ensure that this assembly also
+  includes one or more of the module artifacts.
+  
+  This example demonstrates how to include the artifact and dependencies of a 
+  module, under the directory <<<modules/\<module-name\>>>>.
+  
+* The Assembly Descriptor
+
+  First, let's write an assembly descriptor to create this assembly. For the
+  sake of clarity, this descriptor will be as simple as possible, only
+  demonstrating the features described by this example.
+  
++---+
+<assembly>
+  <id>bin</id>
+  <formats>
+    <format>dir</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <moduleSets>
+    <moduleSet>
+      <includes>
+        <include>org.test:child1</include>
+      </includes>
+      <binaries>
+        <outputDirectory>modules/${artifactId}</outputDirectory>
+        <includeDependencies>true</includeDependencies>
+        <unpack>false</unpack>
+      </binaries>
+    </moduleSet>
+  </moduleSets>
+</assembly>
++---+
+
+  This descriptor states that the assembly id should be <<<bin>>>, that the
+  output format is a directory, and that the contents of the assembly should
+  <<not>> be contained within a directory named after the finalName of the 
+  top-level project.
+  
+  Furthermore, it states that we wish to include the artifact files for the module
+  with a groupId of <<<org.test>>> and an artifactId of <<<child1>>>, along with
+  its dependency artifacts. These artifacts should be contained within the 
+  directory structure <<<modules/child1>>> for this module, since the 
+  outputDirectory expression will be interpolated on a module-by-module basis.
+  
+* The POM
+
+  Now, let's review the POM configuration necessary to enable the building of
+  this assembly via the <assembly:directory> mojo:
+  
++---+
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.test</groupId>
+  <artifactId>parent</artifactId>
+  <version>1.0</version>
+  
+  <packaging>pom</packaging>
+  
+  <name>Parent</name>
+
+  <modules>
+    <module>child1</module>
+    <module>child2</module>
+    <module>child3</module>
+  </modules>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptors>
+            <descriptor>src/assemble/bin.xml</descriptor>
+          </descriptors>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
++---+
+
+  This POM simply directs the assembly plugin to use the <<<bin.xml>>>
+  assembly descriptor when executing.
+  
+* Execute!
+
+  To build the assembly, we issue the following command:
+  
++---+
+mvn clean package assembly:directory
++---+
+
+  This will ensure that the output directory (normally, <<<target>>>), is
+  removed before building the assembly directory. 
+  
+  <<NOTE:>> Because of a quirk in Maven 2.0's execution model relating to 
+  aggregator mojos and the inheritance hierarchy, we need to explicitly execute 
+  the package phase ahead of the assembly invocation, to ensure all modules have 
+  been built.
+  
+* Examining the Output
+
+  When the Maven execution completes, the following directory structure should
+  be left:
+  
++---+
+target/parent-1.0-bin
+`-- modules
+    `-- child1
+        |-- child1-1.0.jar
+        `-- junit-3.8.1.jar
++---+
+
