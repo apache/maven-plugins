@@ -217,7 +217,7 @@ public class SurefirePlugin
      * Option to specify the forking mode. Can be "never" (default), "once" or "always".
      * "none" and "pertest" are also accepted for backwards compatibility.
      *
-     * @parameter expression="${forkMode}" default-value="never"
+     * @parameter expression="${forkMode}" default-value="once"
      */
     private String forkMode;
 
@@ -258,7 +258,7 @@ public class SurefirePlugin
      * xml parsers in the classpath and the Java 5 provider parser.
      *
      * @parameter expression="${childDelegation}"
-     * default-value="true"
+     * default-value="false"
      */
     private boolean childDelegation;
 
