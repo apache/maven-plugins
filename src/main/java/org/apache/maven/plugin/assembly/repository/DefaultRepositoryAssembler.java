@@ -34,6 +34,7 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
+import org.apache.maven.plugin.assembly.utils.DigestUtils;
 import org.apache.maven.plugins.assembly.model.GroupVersionAlignment;
 import org.apache.maven.plugins.assembly.model.Repository;
 import org.apache.maven.project.DefaultMavenProjectBuilder;
@@ -48,6 +49,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Field;
+import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -87,6 +89,8 @@ public class DefaultRepositoryAssembler
     private Map groupVersionAlignments;
 
     private Set groupVersionAlignmentExcludes;
+
+    private DigestUtils digester = new DigestUtils();
 
     public void assemble( File repositoryDirectory, Repository repository, MavenProject project,
                           ArtifactRepository localRepository )
@@ -158,6 +162,8 @@ public class DefaultRepositoryAssembler
                     File targetFile = new File( targetRepository.getBasedir(), targetRepository.pathOf( a ) );
                     FileUtils.copyFile( a.getFile(), targetFile );
 
+                    writeChecksums( targetFile );
+
                     if ( !"pom".equals( a.getType() ) )
                     {
                         // The correct metadata does not get pulled down unless this is used. Not
@@ -169,7 +175,10 @@ public class DefaultRepositoryAssembler
                         File sourceFile =
                             new File( localRepository.getBasedir(), localRepository.pathOf( pomArtifact ) );
                         targetFile = new File( targetRepository.getBasedir(), targetRepository.pathOf( pomArtifact ) );
+
                         FileUtils.copyFile( sourceFile, targetFile );
+
+                        writeChecksums( targetFile );
                     }
                 }
             }
@@ -241,12 +250,23 @@ public class DefaultRepositoryAssembler
                         IOUtil.close( writer );
                     }
 
-                    File metadataFileRemote = new File( targetRepository.getBasedir(),
-                                                        targetRepository.pathOfRemoteRepositoryMetadata( metadata ) );
-
                     try
                     {
+                        writeChecksums( metadataFile );
+
+                        File metadataFileRemote = new File( targetRepository.getBasedir(),
+                                                            targetRepository.pathOfRemoteRepositoryMetadata(
+                                                                metadata ) );
+
                         FileUtils.copyFile( metadataFile, metadataFileRemote );
+
+                        FileUtils.copyFile( new File( metadataFile.getParentFile(), metadataFile.getName() + ".sha1" ),
+                                            new File( metadataFileRemote.getParentFile(),
+                                                      metadataFileRemote.getName() + ".sha1" ) );
+
+                        FileUtils.copyFile( new File( metadataFile.getParentFile(), metadataFile.getName() + ".md5" ),
+                                            new File( metadataFileRemote.getParentFile(),
+                                                      metadataFileRemote.getName() + ".md5" ) );
                     }
                     catch ( IOException e )
                     {
@@ -254,6 +274,23 @@ public class DefaultRepositoryAssembler
                     }
                 }
             }
+        }
+    }
+
+    private void writeChecksums( File file )
+        throws IOException, RepositoryAssemblyException
+    {
+        try
+        {
+            String md5 = digester.createChecksum( file, "MD5" );
+            String sha1 = digester.createChecksum( file, "SHA-1" );
+
+            FileUtils.fileWrite( new File( file.getParentFile(), file.getName() + ".md5" ).getAbsolutePath(), md5 );
+            FileUtils.fileWrite( new File( file.getParentFile(), file.getName() + ".sha1" ).getAbsolutePath(), sha1 );
+        }
+        catch ( NoSuchAlgorithmException e )
+        {
+            throw new RepositoryAssemblyException( "Unable to get write checksums: " + e.getMessage(), e );
         }
     }
 
