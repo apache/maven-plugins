@@ -23,6 +23,7 @@ import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.InvalidRepositoryException;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
+import org.apache.maven.model.Build;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.assembly.filter.AssemblyIncludesArtifactFilter;
@@ -504,38 +505,29 @@ public abstract class AbstractAssemblyMojo
 
             for ( Iterator j = set.iterator(); j.hasNext(); )
             {
-                MavenProject reactorProject = (MavenProject) j.next();
+                MavenProject moduleProject = (MavenProject) j.next();
 
-                Artifact artifact = reactorProject.getArtifact();
-
-                if ( filter.include( artifact ) && artifact.getFile() != null )
+                if ( filter.include( moduleProject.getArtifact() ) )
                 {
-                    String name = artifact.getFile().getName();
+                    String name = moduleProject.getBuild().getFinalName();
 
                     ModuleSources sources = moduleSet.getSources();
 
                     if ( sources != null )
                     {
                         String output = sources.getOutputDirectory();
-                        output = getOutputDirectory( output, includeBaseDirectory );
+                        output = getOutputDirectory( output, moduleProject, includeBaseDirectory );
 
                         FileSet moduleFileSet = new FileSet();
 
-                        moduleFileSet.setDirectory( reactorProject.getBasedir().getAbsolutePath() );
+                        moduleFileSet.setDirectory( moduleProject.getBasedir().getAbsolutePath() );
                         moduleFileSet.setOutputDirectory( output );
 
                         List excludesList = new ArrayList();
-                        excludesList.add( PathUtils.toRelative( reactorProject.getBasedir(),
-                                                                reactorProject.getBuild().getDirectory() ) + "/**" );
-                        excludesList.add( PathUtils.toRelative( reactorProject.getBasedir(),
-                                                                reactorProject.getBuild().getOutputDirectory() ) +
-                            "/**" );
-                        excludesList.add( PathUtils.toRelative( reactorProject.getBasedir(),
-                                                                reactorProject.getBuild().getTestOutputDirectory() ) +
-                            "/**" );
-                        excludesList.add( PathUtils.toRelative( reactorProject.getBasedir(),
-                                                                reactorProject.getReporting().getOutputDirectory() ) +
-                            "/**" );
+                        excludesList.add( PathUtils.toRelative( moduleProject.getBasedir(), moduleProject.getBuild().getDirectory() ) + "/**" );
+                        excludesList.add( PathUtils.toRelative( moduleProject.getBasedir(), moduleProject.getBuild().getOutputDirectory() ) + "/**" );
+                        excludesList.add( PathUtils.toRelative( moduleProject.getBasedir(), moduleProject.getBuild().getTestOutputDirectory() ) + "/**" );
+                        excludesList.add( PathUtils.toRelative( moduleProject.getBasedir(), moduleProject.getReporting().getOutputDirectory() ) + "/**" );
                         moduleFileSet.setExcludes( excludesList );
 
                         moduleFileSets.add( moduleFileSet );
@@ -545,8 +537,18 @@ public abstract class AbstractAssemblyMojo
 
                     if ( binaries != null )
                     {
+                        Artifact artifact = moduleProject.getArtifact();
+                        
+                        if ( artifact.getFile() == null )
+                        {
+                            throw new MojoExecutionException(
+                                "Included module: "
+                                    + moduleProject.getId()
+                                    + " does not have an artifact with a file. Please ensure the package phase is run before the assembly is generated." );
+                        }
+                        
                         String output = binaries.getOutputDirectory();
-                        output = getOutputDirectory( output, includeBaseDirectory );
+                        output = getOutputDirectory( output, moduleProject, includeBaseDirectory );
 
                         archiver.setDefaultDirectoryMode( Integer.parseInt( binaries.getDirectoryMode(), 8 ) );
 
@@ -582,7 +584,7 @@ public abstract class AbstractAssemblyMojo
 
                                     if ( binaries.isIncludeDependencies() )
                                     {
-                                        Set artifactSet = reactorProject.getArtifacts();
+                                        Set artifactSet = moduleProject.getArtifacts();
 
                                         for ( Iterator artifacts = artifactSet.iterator(); artifacts.hasNext(); )
                                         {
@@ -638,7 +640,7 @@ public abstract class AbstractAssemblyMojo
 
                             if ( binaries.isIncludeDependencies() )
                             {
-                                Set artifactSet = reactorProject.getArtifacts();
+                                Set artifactSet = moduleProject.getArtifacts();
 
                                 for ( Iterator artifacts = artifactSet.iterator(); artifacts.hasNext(); )
                                 {
@@ -656,7 +658,7 @@ public abstract class AbstractAssemblyMojo
                 {
                     // would be better to have a way to find out when a specified include or exclude
                     // is never triggered and warn() it.
-                    getLog().debug( "artifact: " + artifact + " not included" );
+                    getLog().debug( "module: " + moduleProject.getId() + " not included" );
                 }
 
                 if ( !moduleFileSets.isEmpty() )
@@ -996,7 +998,7 @@ public abstract class AbstractAssemblyMojo
         {
             DependencySet dependencySet = (DependencySet) i.next();
             String output = dependencySet.getOutputDirectory();
-            output = getOutputDirectory( output, includeBaseDirectory );
+            output = getOutputDirectory( output, project, includeBaseDirectory );
 
             archiver.setDefaultDirectoryMode( Integer.parseInt( dependencySet.getDirectoryMode(), 8 ) );
 
@@ -1212,7 +1214,7 @@ public abstract class AbstractAssemblyMojo
                     output = directory;
                 }
             }
-            output = getOutputDirectory( output, includeBaseDirecetory );
+            output = getOutputDirectory( output, project, includeBaseDirecetory );
 
             String[] includes = (String[]) fileSet.getIncludes().toArray( EMPTY_STRING_ARRAY );
             if ( includes.length == 0 )
@@ -1322,7 +1324,7 @@ public abstract class AbstractAssemblyMojo
                 source = this.tempFile;
             }
 
-            outputDirectory = getOutputDirectory( outputDirectory, includeBaseDirecetory );
+            outputDirectory = getOutputDirectory( outputDirectory, project, includeBaseDirecetory );
 
             // omit the last char if ends with / or \\
             if ( outputDirectory.endsWith( "/" ) || outputDirectory.endsWith( "\\" ) )
@@ -1401,6 +1403,11 @@ public abstract class AbstractAssemblyMojo
      */
     private String getOutputDirectory( String output, boolean includeBaseDirectory )
     {
+        return getOutputDirectory( output, null, includeBaseDirectory );
+    }
+    
+    private String getOutputDirectory( String output, MavenProject project, boolean includeBaseDirectory )
+    {
         String value = output;
         if ( value == null )
         {
@@ -1430,6 +1437,27 @@ public abstract class AbstractAssemblyMojo
                 value = value.substring( 1 );
             }
         }
+        
+        if ( project != null )
+        {
+            value = StringUtils.replace( value, "${groupId}", project.getGroupId() );
+            value = StringUtils.replace( value, "${artifactId}", project.getArtifactId() );
+            value = StringUtils.replace( value, "${version}", project.getVersion() );
+            
+            Build build = project.getBuild();
+            if ( build != null )
+            {
+                value = StringUtils.replace( value, "${build.finalName}", build.getFinalName() );
+                value = StringUtils.replace( value, "${finalName}", build.getFinalName() );
+            }
+            else
+            {
+                getLog().warn(
+                    "Project build section is null (must be a unit test, this is impossible in a real build). "
+                        + "Skipping build.finalName and finalName substitution." );
+            }
+        }
+        
         return value;
     }
 
