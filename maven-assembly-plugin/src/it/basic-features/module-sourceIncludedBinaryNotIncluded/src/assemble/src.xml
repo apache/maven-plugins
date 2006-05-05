@@ -1,0 +1,17 @@
+<assembly>
+  <id>src</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+
+  <moduleSets>
+    <moduleSet>
+      <includes>
+        <include>org.test:child1</include>
+      </includes>
+      <sources>
+        <outputDirectory>sources</outputDirectory>
+      </sources>
+    </moduleSet>
+  </moduleSets>
+</assembly>
