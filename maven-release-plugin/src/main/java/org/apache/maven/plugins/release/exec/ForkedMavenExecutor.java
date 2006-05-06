@@ -42,8 +42,8 @@ public class ForkedMavenExecutor
     /**
      * @noinspection UseOfSystemOutOrSystemErr
      */
-    public void executeGoals( File workingDirectory, String goals, boolean interactive, String pomFileName,
-                              String additionalArguments )
+    public void executeGoals( File workingDirectory, String goals, boolean interactive, String additionalArguments,
+                              String pomFileName )
         throws MavenExecutorException
     {
         Commandline cl = commandLineFactory.createCommandLine( "mvn" );
@@ -102,10 +102,10 @@ public class ForkedMavenExecutor
         }
     }
 
-    public void executeGoals( File workingDirectory, String goals, boolean interactive )
+    public void executeGoals( File workingDirectory, String goals, boolean interactive, String arguments )
         throws MavenExecutorException
     {
-        executeGoals( workingDirectory, goals, interactive, null, null );
+        executeGoals( workingDirectory, goals, interactive, arguments, null );
     }
 
     public void setCommandLineFactory( CommandLineFactory commandLineFactory )

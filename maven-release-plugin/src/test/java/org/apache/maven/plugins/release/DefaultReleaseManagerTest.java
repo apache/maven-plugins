@@ -391,7 +391,7 @@ public class DefaultReleaseManagerTest
 
         Mock mock = new Mock( MavenExecutor.class );
         Constraint[] constraints = new Constraint[]{new IsSame( checkoutDirectory ), new IsEqual( "goal1 goal2" ),
-            new IsEqual( Boolean.TRUE ), new IsNull(), new IsEqual( "-DperformRelease=true" )};
+            new IsEqual( Boolean.TRUE ), new IsEqual( "-DperformRelease=true" ), new IsNull()};
         mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( constraints );
         releaseManager.setMavenExecutor( (MavenExecutor) mock.proxy() );
 
@@ -450,7 +450,7 @@ public class DefaultReleaseManagerTest
 
         Mock mock = new Mock( MavenExecutor.class );
         Constraint[] constraints = new Constraint[]{new IsSame( checkoutDirectory ), new IsEqual( "goal1 goal2" ),
-            new IsEqual( Boolean.TRUE ), new IsNull(), new IsEqual( "-Dmaven.test.skip=true -DperformRelease=true" )};
+            new IsEqual( Boolean.TRUE ), new IsEqual( "-Dmaven.test.skip=true -DperformRelease=true" ), new IsNull()};
         mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( constraints );
         releaseManager.setMavenExecutor( (MavenExecutor) mock.proxy() );
 
@@ -480,7 +480,7 @@ public class DefaultReleaseManagerTest
 
         Mock mock = new Mock( MavenExecutor.class );
         Constraint[] constraints = new Constraint[]{new IsSame( checkoutDirectory ), new IsEqual( "goal1 goal2" ),
-            new IsEqual( Boolean.TRUE ), new IsNull(), new IsEqual( "-Dmaven.test.skip=true" )};
+            new IsEqual( Boolean.TRUE ), new IsEqual( "-Dmaven.test.skip=true" ), new IsNull()};
         mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( constraints );
         releaseManager.setMavenExecutor( (MavenExecutor) mock.proxy() );
 
@@ -509,7 +509,7 @@ public class DefaultReleaseManagerTest
 
         Mock mock = new Mock( MavenExecutor.class );
         Constraint[] constraints = new Constraint[]{new IsSame( checkoutDirectory ), new IsEqual( "goal1 goal2" ),
-            new IsEqual( Boolean.TRUE ), new IsNull(), new IsEqual( "-DperformRelease=true" )};
+            new IsEqual( Boolean.TRUE ), new IsEqual( "-DperformRelease=true" ), new IsNull()};
         mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( constraints );
         releaseManager.setMavenExecutor( (MavenExecutor) mock.proxy() );
 
@@ -709,7 +709,7 @@ public class DefaultReleaseManagerTest
 
         Mock mock = new Mock( MavenExecutor.class );
         Constraint[] constraints = new Constraint[]{new IsSame( checkoutDirectory ), new IsEqual( "goal1 goal2" ),
-            new IsEqual( Boolean.TRUE ), new IsNull(), new IsEqual( "-DperformRelease=true" )};
+            new IsEqual( Boolean.TRUE ), new IsEqual( "-DperformRelease=true" ), new IsNull()};
         mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( constraints ).will(
             new ThrowStub( new MavenExecutorException( "...", 1, "stdOut", "stdErr" ) ) );
         releaseManager.setMavenExecutor( (MavenExecutor) mock.proxy() );

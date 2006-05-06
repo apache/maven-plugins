@@ -63,7 +63,7 @@ public class ForkedMavenExecutorTest
 
         executor.setCommandLineFactory( (CommandLineFactory) mock.proxy() );
 
-        executor.executeGoals( workingDirectory, "clean integration-test", false );
+        executor.executeGoals( workingDirectory, "clean integration-test", false, null );
 
         assertTrue( true );
     }
@@ -89,7 +89,7 @@ public class ForkedMavenExecutorTest
 
         executor.setCommandLineFactory( (CommandLineFactory) mock.proxy() );
 
-        executor.executeGoals( workingDirectory, "clean integration-test", false, "my-pom.xml", null );
+        executor.executeGoals( workingDirectory, "clean integration-test", false, null, "my-pom.xml" );
 
         assertTrue( true );
     }
@@ -115,7 +115,7 @@ public class ForkedMavenExecutorTest
 
         executor.setCommandLineFactory( (CommandLineFactory) mock.proxy() );
 
-        executor.executeGoals( workingDirectory, "clean integration-test", false, null, arguments );
+        executor.executeGoals( workingDirectory, "clean integration-test", false, arguments, null );
 
         assertTrue( true );
     }
@@ -140,7 +140,7 @@ public class ForkedMavenExecutorTest
 
         try
         {
-            executor.executeGoals( workingDirectory, "clean integration-test", false );
+            executor.executeGoals( workingDirectory, "clean integration-test", false, null );
 
             fail( "Should have thrown an exception" );
         }
@@ -174,7 +174,7 @@ public class ForkedMavenExecutorTest
 
         try
         {
-            executor.executeGoals( workingDirectory, "clean integration-test", false );
+            executor.executeGoals( workingDirectory, "clean integration-test", false, null );
 
             fail( "Should have thrown an exception" );
         }
