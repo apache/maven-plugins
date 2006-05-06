@@ -148,6 +148,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         throws Exception
     {
         ReleaseConfiguration config = createDefaultConfiguration( "internal-snapshot-dependencies" );
+        mapNextVersion( config, "groupId:subsubproject" );
 
         phase.execute( config );
 
@@ -605,4 +606,14 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
     protected abstract String readTestProjectFile( String fileName )
         throws IOException;
+
+    public void testRewritePomDependenciesWithNamespace()
+        throws Exception
+    {
+        ReleaseConfiguration config = createDefaultConfiguration( "pom-with-namespace" );
+
+        phase.execute( config );
+
+        assertTrue( compareFiles( config.getReactorProjects() ) );
+    }
 }
