@@ -248,4 +248,14 @@ public class RewritePomsForDevelopmentPhaseTest
 
         assertTrue( compareFiles( config.getReactorProjects() ) );
     }
+
+    public void testRewritePomDependenciesWithNamespace()
+        throws Exception
+    {
+        ReleaseConfiguration config = createDefaultConfiguration( "pom-with-namespace" );
+
+        phase.execute( config );
+
+        assertTrue( compareFiles( config.getReactorProjects() ) );
+    }
 }
