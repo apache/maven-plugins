@@ -129,6 +129,8 @@ public class CheckDependencySnapshotsPhase
                 message.append( "\n" );
             }
 
+            message.append( "in project '" + project.getName() + "' (" + project.getId() + ")" );
+
             throw new ReleaseFailureException( "Can't release project due to non released dependencies :\n" + message );
         }
     }
