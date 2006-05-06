@@ -557,7 +557,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         return createConfigurationFromProjects( path, true );
     }
 
-    private ReleaseConfiguration createDefaultConfiguration( String path )
+    protected ReleaseConfiguration createDefaultConfiguration( String path )
         throws Exception
     {
         ReleaseConfiguration config = createMappedConfiguration( path );
