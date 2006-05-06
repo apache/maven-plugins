@@ -111,6 +111,8 @@ public abstract class AbstractRewritePomsPhase
         try
         {
             String content = FileUtils.fileRead( project.getFile() );
+            // we need to eliminate any extra whitespace inside elements, as JDOM will nuke it
+            content = content.replaceAll( "<([^!][^>]*?)\\s{2,}([^>]*?)>", "<$1 $2>" );
 
             SAXBuilder builder = new SAXBuilder();
             document = builder.build( new StringReader( content ) );
@@ -377,7 +379,7 @@ public abstract class AbstractRewritePomsPhase
 
                 try
                 {
-                    XPath xpath = null;
+                    XPath xpath;
                     if ( !StringUtils.isEmpty( dependencyRoot.getNamespaceURI() ) )
                     {
                         xpath = XPath.newInstance( "./pom:" + groupTagName + "/pom:" + tagName + "[pom:groupId='" +
@@ -391,16 +393,20 @@ public abstract class AbstractRewritePomsPhase
                     }
 
                     Element dependency = (Element) xpath.selectSingleNode( dependencyRoot );
-                    Element versionElement = dependency.getChild( "version", dependencyRoot.getNamespace() );
-
-                    // avoid if in management
-                    if ( versionElement != null )
+                    // If it was inherited, nothing to do
+                    if ( dependency != null )
                     {
-                        // avoid if it was not originally set to the original value (it may be an expression), unless mapped version differs
-                        if ( originalVersion.equals( versionElement.getTextTrim() ) ||
-                            !mappedVersion.equals( mappedVersions.get( projectId ) ) )
+                        Element versionElement = dependency.getChild( "version", dependencyRoot.getNamespace() );
+
+                        // avoid if in management
+                        if ( versionElement != null )
                         {
-                            versionElement.setText( mappedVersion );
+                            // avoid if it was not originally set to the original value (it may be an expression), unless mapped version differs
+                            if ( originalVersion.equals( versionElement.getTextTrim() ) ||
+                                !mappedVersion.equals( mappedVersions.get( projectId ) ) )
+                            {
+                                versionElement.setText( mappedVersion );
+                            }
                         }
                     }
                 }
