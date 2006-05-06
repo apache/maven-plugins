@@ -38,6 +38,7 @@ import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -376,11 +377,21 @@ public abstract class AbstractRewritePomsPhase
 
                 try
                 {
-                    XPath xpath = XPath.newInstance( "./" + groupTagName + "/" + tagName + "[groupId='" + groupId +
-                        "' and artifactId='" + artifactId + "']" );
+                    XPath xpath = null;
+                    if ( !StringUtils.isEmpty( dependencyRoot.getNamespaceURI() ) )
+                    {
+                        xpath = XPath.newInstance( "./pom:" + groupTagName + "/pom:" + tagName + "[pom:groupId='" +
+                            groupId + "' and pom:artifactId='" + artifactId + "']" );
+                        xpath.addNamespace( "pom", dependencyRoot.getNamespaceURI() );
+                    }
+                    else
+                    {
+                        xpath = XPath.newInstance( "./" + groupTagName + "/" + tagName + "[groupId='" + groupId +
+                            "' and artifactId='" + artifactId + "']" );
+                    }
 
                     Element dependency = (Element) xpath.selectSingleNode( dependencyRoot );
-                    Element versionElement = dependency.getChild( "version" );
+                    Element versionElement = dependency.getChild( "version", dependencyRoot.getNamespace() );
 
                     // avoid if in management
                     if ( versionElement != null )
