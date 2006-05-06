@@ -55,12 +55,14 @@ public class RunGoalsPhaseTest
         File testFile = getTestFile( "target/working-directory" );
 
         ReleaseConfiguration config = new ReleaseConfiguration();
+        config.setPreparationGoals( "clean integration-test" );
         config.setWorkingDirectory( testFile );
 
         Mock mock = new Mock( MavenExecutor.class );
         mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( new IsSame( testFile ),
                                                                                new IsEqual( "clean integration-test" ),
-                                                                               new IsEqual( Boolean.TRUE ) );
+                                                                               new IsEqual( Boolean.TRUE ),
+                                                                               new IsNull() );
 
         phase.setMavenExecutor( (MavenExecutor) mock.proxy() );
 
@@ -76,12 +78,14 @@ public class RunGoalsPhaseTest
         File testFile = getTestFile( "target/working-directory" );
 
         ReleaseConfiguration config = new ReleaseConfiguration();
+        config.setPreparationGoals( "clean integration-test" );
         config.setWorkingDirectory( testFile );
 
         Mock mock = new Mock( MavenExecutor.class );
         mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( new IsSame( testFile ),
                                                                                new IsEqual( "clean integration-test" ),
-                                                                               new IsEqual( Boolean.TRUE ) );
+                                                                               new IsEqual( Boolean.TRUE ),
+                                                                               new IsNull() );
 
         phase.setMavenExecutor( (MavenExecutor) mock.proxy() );
 
@@ -155,6 +159,7 @@ public class RunGoalsPhaseTest
         File testFile = getTestFile( "target/working-directory" );
 
         ReleaseConfiguration config = new ReleaseConfiguration();
+        config.setPreparationGoals( "" );
         config.setWorkingDirectory( testFile );
 
         Mock mock = new Mock( MavenExecutor.class );
