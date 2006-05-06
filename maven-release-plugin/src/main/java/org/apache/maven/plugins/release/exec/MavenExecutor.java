@@ -36,22 +36,23 @@ public interface MavenExecutor
      * @param workingDirectory    the directory to execute in
      * @param goals               the goals to run (space delimited)
      * @param interactive         whether to execute in interactive mode, or the default batch mode
-     * @param pomFileName         the file name of the POM to execute on
      * @param additionalArguments additional arguments to pass to the Maven command
+     * @param pomFileName         the file name of the POM to execute on
      * @throws MavenExecutorException if an error occurred executing Maven
      */
-    void executeGoals( File workingDirectory, String goals, boolean interactive, String pomFileName,
-                       String additionalArguments )
+    void executeGoals( File workingDirectory, String goals, boolean interactive, String additionalArguments,
+                       String pomFileName )
         throws MavenExecutorException;
 
     /**
      * Execute goals using Maven.
      *
-     * @param workingDirectory the directory to execute in
-     * @param goals            the goals to run (space delimited)
-     * @param interactive      whether to execute in interactive mode, or the default batch mode
+     * @param workingDirectory    the directory to execute in
+     * @param goals               the goals to run (space delimited)
+     * @param interactive         whether to execute in interactive mode, or the default batch mode
+     * @param additionalArguments additional arguments to pass to the Maven command
      * @throws MavenExecutorException if an error occurred executing Maven
      */
-    void executeGoals( File workingDirectory, String goals, boolean interactive )
+    void executeGoals( File workingDirectory, String goals, boolean interactive, String additionalArguments )
         throws MavenExecutorException;
 }

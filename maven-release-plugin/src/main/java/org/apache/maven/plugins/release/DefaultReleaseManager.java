@@ -237,8 +237,8 @@ public class DefaultReleaseManager
 
         try
         {
-            mavenExecutor.executeGoals( checkoutDirectory, goals, config.isInteractive(), config.getPomFileName(),
-                                        additionalArguments );
+            mavenExecutor.executeGoals( checkoutDirectory, goals, config.isInteractive(), additionalArguments,
+                                        config.getPomFileName() );
         }
         catch ( MavenExecutorException e )
         {

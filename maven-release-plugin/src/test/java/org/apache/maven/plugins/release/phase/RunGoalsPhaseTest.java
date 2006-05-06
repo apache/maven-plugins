@@ -23,6 +23,7 @@ import org.apache.maven.plugins.release.exec.MavenExecutorException;
 import org.codehaus.plexus.PlexusTestCase;
 import org.jmock.cglib.Mock;
 import org.jmock.core.constraint.IsEqual;
+import org.jmock.core.constraint.IsNull;
 import org.jmock.core.constraint.IsSame;
 import org.jmock.core.matcher.InvokeOnceMatcher;
 import org.jmock.core.matcher.TestFailureMatcher;
@@ -101,7 +102,8 @@ public class RunGoalsPhaseTest
         Mock mock = new Mock( MavenExecutor.class );
         mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( new IsSame( testFile ),
                                                                                new IsEqual( "clean integration-test" ),
-                                                                               new IsEqual( Boolean.TRUE ) ).will(
+                                                                               new IsEqual( Boolean.TRUE ),
+                                                                               new IsNull() ).will(
             new ThrowStub( new MavenExecutorException( "...", new Exception() ) ) );
 
         phase.setMavenExecutor( (MavenExecutor) mock.proxy() );
@@ -129,7 +131,8 @@ public class RunGoalsPhaseTest
         Mock mock = new Mock( MavenExecutor.class );
         mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( new IsSame( testFile ),
                                                                                new IsEqual( "clean integration-test" ),
-                                                                               new IsEqual( Boolean.TRUE ) ).will(
+                                                                               new IsEqual( Boolean.TRUE ),
+                                                                               new IsNull() ).will(
             new ThrowStub( new MavenExecutorException( "...", new Exception() ) ) );
 
         phase.setMavenExecutor( (MavenExecutor) mock.proxy() );

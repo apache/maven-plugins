@@ -46,7 +46,8 @@ public class RunGoalsPhase
                 getLogger().info( "Executing preparation goals '" + goals + "'..." );
 
                 mavenExecutor.executeGoals( releaseConfiguration.getWorkingDirectory(), goals,
-                                            releaseConfiguration.isInteractive() );
+                                            releaseConfiguration.isInteractive(),
+                                            releaseConfiguration.getAdditionalArguments() );
             }
         }
         catch ( MavenExecutorException e )
