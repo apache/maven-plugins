@@ -187,6 +187,29 @@ public class PropertiesReleaseConfigurationStoreTest
         assertEquals( "compare configuration", config, rereadConfiguration );
     }
 
+    public void testWriteToNewFileNullMappedScm()
+        throws ReleaseConfigurationStoreException
+    {
+        File file = getTestFile( "target/test-classes/new-release.properties" );
+        file.delete();
+        assertFalse( "Check file doesn't exist", file.exists() );
+
+        ReleaseConfiguration config = new ReleaseConfiguration();
+        config.setCompletedPhase( "completed-phase-write" );
+        config.setUrl( "url-write" );
+
+        config.mapReleaseVersion( "group.id:artifact.id", "1.1" );
+        config.mapDevelopmentVersion( "group.id:artifact.id", "1.2-SNAPSHOT" );
+
+        config.mapOriginalScmInfo( "group.id:artifact.id", null );
+
+        store.write( config, file );
+
+        ReleaseConfiguration rereadConfiguration = store.read( file );
+
+        assertEquals( "compare configuration", config, rereadConfiguration );
+    }
+
     public void testOverwriteFile()
         throws ReleaseConfigurationStoreException
     {
