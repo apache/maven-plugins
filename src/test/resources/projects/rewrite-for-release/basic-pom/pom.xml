@@ -31,4 +31,9 @@
     <developerConnection>scm:svn:file://localhost/tmp/scm-repo/trunk</developerConnection>
     <url>file://localhost/tmp/scm-repo/trunk</url>
   </scm>
+
+  <!--
+  a multi-line
+  comment
+  -->
 </project>

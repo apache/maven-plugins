@@ -31,4 +31,9 @@
     <developerConnection>scm:svn:file://localhost/tmp/scm-repo/tags/release-label</developerConnection>
     <url>file://localhost/tmp/scm-repo/tags/release-label</url>
   </scm>
+
+  <!--
+  a multi-line
+  comment
+  -->
 </project>
