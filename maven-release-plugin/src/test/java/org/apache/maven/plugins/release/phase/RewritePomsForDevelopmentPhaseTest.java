@@ -256,9 +256,13 @@ public class RewritePomsForDevelopmentPhaseTest
 
         config.mapReleaseVersion( "groupId:artifactId", RELEASE_VERSION );
         config.mapDevelopmentVersion( "groupId:artifactId", NEXT_VERSION );
-        config.mapReleaseVersion( "groupId:subproject1", ALTERNATIVE_RELEASE_VERSION );
-        config.mapDevelopmentVersion( "groupId:subproject1", ALTERNATIVE_NEXT_VERSION );
+        config.mapReleaseVersion( "groupId:subproject1", RELEASE_VERSION );
+        config.mapDevelopmentVersion( "groupId:subproject1", NEXT_VERSION );
+        config.mapReleaseVersion( "groupId:subsubproject", RELEASE_VERSION );
+        config.mapDevelopmentVersion( "groupId:subsubproject", NEXT_VERSION );
         config.mapOriginalScmInfo( "groupId:artifactId", null );
+        config.mapOriginalScmInfo( "groupId:subproject1", null );
+        config.mapOriginalScmInfo( "groupId:subsubproject", null );
 
         phase.execute( config );
 

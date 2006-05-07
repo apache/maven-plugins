@@ -48,20 +48,20 @@ public class RewritePomsForDevelopmentPhase
         // If SCM is null in original model, it is inherited, no mods needed
         if ( project.getScm() != null )
         {
-            ScmTranslator translator = (ScmTranslator) scmTranslators.get( scmRepository.getProvider() );
-            if ( translator != null )
+            Element scmRoot = rootElement.getChild( "scm", namespace );
+            if ( scmRoot != null )
             {
-                Element scmRoot = rootElement.getChild( "scm", namespace );
-                if ( scmRoot != null )
+                Map originalScmInfo = releaseConfiguration.getOriginalScmInfo();
+                // check containsKey, not == null, as we store null as a value
+                if ( !originalScmInfo.containsKey( projectId ) )
                 {
-                    Map originalScmInfo = releaseConfiguration.getOriginalScmInfo();
-                    // check containsKey, not == null, as we store null as a value
-                    if ( !originalScmInfo.containsKey( projectId ) )
-                    {
-                        throw new ReleaseExecutionException(
-                            "Unable to find original SCM info for '" + project.getName() + "'" );
-                    }
+                    throw new ReleaseExecutionException(
+                        "Unable to find original SCM info for '" + project.getName() + "'" );
+                }
 
+                ScmTranslator translator = (ScmTranslator) scmTranslators.get( scmRepository.getProvider() );
+                if ( translator != null )
+                {
                     Scm scm = (Scm) originalScmInfo.get( projectId );
 
                     if ( scm != null )
@@ -77,10 +77,10 @@ public class RewritePomsForDevelopmentPhase
                         rewriteElement( "scm", null, rootElement, namespace );
                     }
                 }
-            }
-            else
-            {
-                getLogger().debug( "No SCM translator found - skipping rewrite" );
+                else
+                {
+                    getLogger().debug( "No SCM translator found - skipping rewrite" );
+                }
             }
         }
     }
