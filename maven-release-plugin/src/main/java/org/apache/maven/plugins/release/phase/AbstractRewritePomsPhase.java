@@ -27,7 +27,6 @@ import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 import org.apache.maven.plugins.release.scm.ReleaseScmCommandException;
 import org.apache.maven.plugins.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.plugins.release.scm.ScmRepositoryConfigurator;
-import org.apache.maven.plugins.release.scm.ScmTranslator;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
@@ -544,25 +543,24 @@ public abstract class AbstractRewritePomsPhase
                                           ScmRepository scmRepository )
         throws ReleaseExecutionException;
 
-    protected void rewriteTagElement( ScmTranslator translator, String tag, Element scmRoot, Namespace namespace )
+    protected Element rewriteElement( String name, String value, Element root, Namespace namespace )
     {
-        String resolvedTag = translator.resolveTag( tag );
-        Element tagElement = scmRoot.getChild( "tag", namespace );
+        Element tagElement = root.getChild( name, namespace );
         if ( tagElement != null )
         {
-            if ( resolvedTag != null )
+            if ( value != null )
             {
-                tagElement.setText( resolvedTag );
+                tagElement.setText( value );
             }
             else
             {
-                int index = scmRoot.indexOf( tagElement );
-                scmRoot.removeContent( index );
+                int index = root.indexOf( tagElement );
+                root.removeContent( index );
                 for ( int i = index - 1; i >= 0; i-- )
                 {
-                    if ( scmRoot.getContent( i ) instanceof Text )
+                    if ( root.getContent( i ) instanceof Text )
                     {
-                        scmRoot.removeContent( i );
+                        root.removeContent( i );
                     }
                     else
                     {
@@ -573,12 +571,14 @@ public abstract class AbstractRewritePomsPhase
         }
         else
         {
-            if ( resolvedTag != null )
+            if ( value != null )
             {
-                Element element = new Element( "tag", namespace );
-                element.setText( resolvedTag );
-                scmRoot.addContent( "  " ).addContent( element ).addContent( "\n  " );
+                Element element = new Element( name, namespace );
+                element.setText( value );
+                root.addContent( "  " ).addContent( element ).addContent( "\n  " );
+                tagElement = element;
             }
         }
+        return tagElement;
     }
 }

@@ -48,35 +48,39 @@ public class RewritePomsForDevelopmentPhase
         // If SCM is null in original model, it is inherited, no mods needed
         if ( project.getScm() != null )
         {
-            Element scmRoot = rootElement.getChild( "scm", namespace );
-            if ( scmRoot != null )
+            ScmTranslator translator = (ScmTranslator) scmTranslators.get( scmRepository.getProvider() );
+            if ( translator != null )
             {
-                Scm scm = (Scm) releaseConfiguration.getOriginalScmInfo().get( projectId );
-                if ( scm == null )
+                Element scmRoot = rootElement.getChild( "scm", namespace );
+                if ( scmRoot != null )
                 {
-                    throw new ReleaseExecutionException(
-                        "Unable to find original SCM info for '" + project.getName() + "'" );
-                }
+                    Map originalScmInfo = releaseConfiguration.getOriginalScmInfo();
+                    // check containsKey, not == null, as we store null as a value
+                    if ( !originalScmInfo.containsKey( projectId ) )
+                    {
+                        throw new ReleaseExecutionException(
+                            "Unable to find original SCM info for '" + project.getName() + "'" );
+                    }
 
-                scmRoot.getChild( "connection", namespace ).setText( scm.getConnection() );
+                    Scm scm = (Scm) originalScmInfo.get( projectId );
 
-                Element devConnection = scmRoot.getChild( "developerConnection", namespace );
-                if ( devConnection != null )
-                {
-                    devConnection.setText( scm.getDeveloperConnection() );
+                    if ( scm != null )
+                    {
+                        rewriteElement( "connection", scm.getConnection(), scmRoot, namespace );
+                        rewriteElement( "developerConnection", scm.getDeveloperConnection(), scmRoot, namespace );
+                        rewriteElement( "url", scm.getUrl(), scmRoot, namespace );
+                        rewriteElement( "tag", translator.resolveTag( scm.getTag() ), scmRoot, namespace );
+                    }
+                    else
+                    {
+                        // cleanly remove the SCM element
+                        rewriteElement( "scm", null, rootElement, namespace );
+                    }
                 }
-
-                Element url = scmRoot.getChild( "url", namespace );
-                if ( url != null )
-                {
-                    url.setText( scm.getUrl() );
-                }
-
-                ScmTranslator translator = (ScmTranslator) scmTranslators.get( scmRepository.getProvider() );
-                if ( translator != null )
-                {
-                    rewriteTagElement( translator, scm.getTag(), scmRoot, namespace );
-                }
+            }
+            else
+            {
+                getLogger().debug( "No SCM translator found - skipping rewrite" );
             }
         }
     }
