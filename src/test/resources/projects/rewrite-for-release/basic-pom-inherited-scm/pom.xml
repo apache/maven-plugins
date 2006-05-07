@@ -31,4 +31,9 @@
   <prerequisites>
     <maven>2.0.4</maven>
   </prerequisites>
+
+  <modules>
+    <module>subproject1</module>
+  </modules>
 </project>
+

@@ -252,8 +252,8 @@ public class RewritePomsForReleasePhaseTest
     public void testRewriteBasicPomWithInheritedScm()
         throws Exception
     {
-        ReleaseConfiguration config =
-            createConfigurationForPomWithParentAlternateNextVersion( "basic-pom-inherited-scm" );
+        ReleaseConfiguration config = createConfigurationForWithParentNextVersion( "basic-pom-inherited-scm" );
+        config.mapReleaseVersion( "groupId:subsubproject", NEXT_VERSION );
 
         phase.execute( config );
 

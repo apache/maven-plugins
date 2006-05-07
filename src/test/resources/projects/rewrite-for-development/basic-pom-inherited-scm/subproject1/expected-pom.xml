@@ -19,20 +19,14 @@
 <project>
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>external</groupId>
-    <artifactId>parent-artifactId</artifactId>
-    <version>1</version>
+    <groupId>groupId</groupId>
+    <artifactId>artifactId</artifactId>
+    <version>1.1-SNAPSHOT</version>
   </parent>
 
-  <groupId>groupId</groupId>
-  <artifactId>artifactId</artifactId>
-  <version>1.1-SNAPSHOT</version>
-
-  <prerequisites>
-    <maven>2.0.4</maven>
-  </prerequisites>
+  <artifactId>subproject1</artifactId>
 
   <modules>
-    <module>subproject1</module>
+    <module>subsubproject</module>
   </modules>
 </project>
