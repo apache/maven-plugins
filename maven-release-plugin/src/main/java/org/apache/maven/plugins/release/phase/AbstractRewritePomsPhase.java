@@ -38,11 +38,13 @@ import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
+import org.jdom.Comment;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.jdom.Text;
+import org.jdom.filter.ContentFilter;
 import org.jdom.filter.ElementFilter;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
@@ -116,6 +118,9 @@ public abstract class AbstractRewritePomsPhase
             SAXBuilder builder = new SAXBuilder();
             document = builder.build( new StringReader( content ) );
 
+            // Normalise line endings. For some reason, JDOM replaces \r\n inside a comment with \n.
+            normaliseLineEndings( document );
+
             // rewrite DOM as a string to find differences, since text outside the root element is not tracked
             StringWriter w = new StringWriter();
             Format format = Format.getRawFormat();
@@ -168,6 +173,15 @@ public abstract class AbstractRewritePomsPhase
         {
             writePom( project.getFile(), document, releaseConfiguration, project.getModelVersion(), intro, outtro,
                       scmRepository, provider );
+        }
+    }
+
+    private void normaliseLineEndings( Document document )
+    {
+        for ( Iterator i = document.getDescendants( new ContentFilter( ContentFilter.COMMENT ) ); i.hasNext(); )
+        {
+            Comment c = (Comment) i.next();
+            c.setText( c.getText().replaceAll( "\n", LS ) );
         }
     }
 
