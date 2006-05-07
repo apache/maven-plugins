@@ -207,6 +207,9 @@ public class PropertiesReleaseConfigurationStoreTest
 
         ReleaseConfiguration rereadConfiguration = store.read( file );
 
+        assertNull( "check null scm is mapped correctly",
+                    rereadConfiguration.getOriginalScmInfo().get( "group.id:artifact.id" ) );
+
         assertEquals( "compare configuration", config, rereadConfiguration );
     }
 
