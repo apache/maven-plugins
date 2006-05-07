@@ -525,12 +525,20 @@ public class ReleaseConfiguration
 
             Scm thatScm = (Scm) that.get( entry.getKey() );
 
-            if ( thatScm == null )
+            Scm thisScm = (Scm) entry.getValue();
+            if ( thatScm == null && thisScm == null )
+            {
+                return true;
+            }
+            else if ( thatScm == null )
             {
                 return false;
             }
+            else if ( thisScm == null )
+            {
+                return true;
+            }
 
-            Scm thisScm = (Scm) entry.getValue();
             if ( thisScm.getConnection() != null ? !thisScm.getConnection().equals( thatScm.getConnection() )
                 : thatScm.getConnection() != null )
             {
