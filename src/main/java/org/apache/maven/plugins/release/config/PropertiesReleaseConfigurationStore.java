@@ -212,19 +212,26 @@ public class PropertiesReleaseConfigurationStore
         {
             Map.Entry entry = (Map.Entry) i.next();
             Scm scm = (Scm) entry.getValue();
-            properties.setProperty( "project.scm." + entry.getKey() + ".connection", scm.getConnection() );
-            if ( scm.getDeveloperConnection() != null )
+            String prefix = "project.scm." + entry.getKey();
+            if ( scm != null )
             {
-                properties.setProperty( "project.scm." + entry.getKey() + ".developerConnection",
-                                        scm.getDeveloperConnection() );
+                properties.setProperty( prefix + ".connection", scm.getConnection() );
+                if ( scm.getDeveloperConnection() != null )
+                {
+                    properties.setProperty( prefix + ".developerConnection", scm.getDeveloperConnection() );
+                }
+                if ( scm.getUrl() != null )
+                {
+                    properties.setProperty( prefix + ".url", scm.getUrl() );
+                }
+                if ( scm.getTag() != null )
+                {
+                    properties.setProperty( prefix + ".tag", scm.getTag() );
+                }
             }
-            if ( scm.getUrl() != null )
+            else
             {
-                properties.setProperty( "project.scm." + entry.getKey() + ".url", scm.getUrl() );
-            }
-            if ( scm.getTag() != null )
-            {
-                properties.setProperty( "project.scm." + entry.getKey() + ".tag", scm.getTag() );
+                properties.setProperty( prefix + ".empty", "true" );
             }
         }
 
