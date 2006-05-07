@@ -16,7 +16,9 @@ package org.apache.maven.plugins.release;
  * limitations under the License.
  */
 
+import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Profile;
+import org.apache.maven.model.Site;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
@@ -42,8 +44,7 @@ public class PerformReleaseMojoTest
     public void testPerform()
         throws Exception
     {
-        PerformReleaseMojo mojo = (PerformReleaseMojo) lookupMojo( "perform", getTestFile(
-            "target/test-classes/mojos/perform/perform.xml" ) );
+        PerformReleaseMojo mojo = getMojoWithProjectSite( "perform.xml" );
 
         ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
         releaseConfiguration.setSettings( mojo.getSettings() );
@@ -60,11 +61,45 @@ public class PerformReleaseMojoTest
         assertTrue( true );
     }
 
-    public void testPerformWithExecutionException()
+    public void testPerformWithoutSite()
         throws Exception
     {
         PerformReleaseMojo mojo = (PerformReleaseMojo) lookupMojo( "perform", getTestFile(
-            "target/test-classes/mojos/perform/perform.xml" ) );
+            "target/test-classes/mojos/perform/" + "perform.xml" ) );
+
+        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
+        releaseConfiguration.setSettings( mojo.getSettings() );
+
+        Mock mock = new Mock( ReleaseManager.class );
+        Constraint[] constraints = new Constraint[]{new IsEqual( releaseConfiguration ),
+            new IsEqual( new File( getBasedir(), "target/checkout" ) ), new IsEqual( "deploy" ),
+            new IsEqual( Boolean.TRUE )};
+        mock.expects( new InvokeOnceMatcher() ).method( "perform" ).with( constraints );
+        mojo.setReleaseManager( (ReleaseManager) mock.proxy() );
+
+        mojo.execute();
+
+        assertTrue( true );
+    }
+
+    private PerformReleaseMojo getMojoWithProjectSite( String fileName )
+        throws Exception
+    {
+        PerformReleaseMojo mojo = (PerformReleaseMojo) lookupMojo( "perform", getTestFile(
+            "target/test-classes/mojos/perform/" + fileName ) );
+
+        MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+        DistributionManagement distributionManagement = new DistributionManagement();
+        distributionManagement.setSite( new Site() );
+        project.setDistributionManagement( distributionManagement );
+
+        return mojo;
+    }
+
+    public void testPerformWithExecutionException()
+        throws Exception
+    {
+        PerformReleaseMojo mojo = getMojoWithProjectSite( "perform.xml" );
 
         ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
         releaseConfiguration.setSettings( mojo.getSettings() );
@@ -92,8 +127,7 @@ public class PerformReleaseMojoTest
     public void testPerformWithExecutionFailure()
         throws Exception
     {
-        PerformReleaseMojo mojo = (PerformReleaseMojo) lookupMojo( "perform", getTestFile(
-            "target/test-classes/mojos/perform/perform.xml" ) );
+        PerformReleaseMojo mojo = getMojoWithProjectSite( "perform.xml" );
 
         ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
         releaseConfiguration.setSettings( mojo.getSettings() );
@@ -121,8 +155,7 @@ public class PerformReleaseMojoTest
     public void testPerformWithScm()
         throws Exception
     {
-        PerformReleaseMojo mojo = (PerformReleaseMojo) lookupMojo( "perform", getTestFile(
-            "target/test-classes/mojos/perform/perform-with-scm.xml" ) );
+        PerformReleaseMojo mojo = getMojoWithProjectSite( "perform-with-scm.xml" );
 
         ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
         releaseConfiguration.setSettings( mojo.getSettings() );
@@ -143,8 +176,7 @@ public class PerformReleaseMojoTest
     public void testPerformWithProfiles()
         throws Exception
     {
-        PerformReleaseMojo mojo = (PerformReleaseMojo) lookupMojo( "perform", getTestFile(
-            "target/test-classes/mojos/perform/perform.xml" ) );
+        PerformReleaseMojo mojo = getMojoWithProjectSite( "perform.xml" );
 
         ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
         releaseConfiguration.setSettings( mojo.getSettings() );
@@ -172,8 +204,7 @@ public class PerformReleaseMojoTest
     public void testPerformWithProfilesAndArguments()
         throws Exception
     {
-        PerformReleaseMojo mojo = (PerformReleaseMojo) lookupMojo( "perform", getTestFile(
-            "target/test-classes/mojos/perform/perform-with-args.xml" ) );
+        PerformReleaseMojo mojo = getMojoWithProjectSite( "perform-with-args.xml" );
 
         ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
         releaseConfiguration.setSettings( mojo.getSettings() );

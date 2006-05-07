@@ -84,7 +84,7 @@ public abstract class AbstractReleaseMojo
      * @required
      * @readonly
      */
-    private MavenProject project;
+    protected MavenProject project;
 
     /**
      * @component

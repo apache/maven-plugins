@@ -21,7 +21,7 @@
         <artifactId>maven-release-plugin</artifactId>
         <configuration>
           <settings implementation="org.apache.maven.settings.Settings"/>
-          <project implementation="org.apache.maven.plugin.testing.stubs.MavenProjectStub"/>
+          <project implementation="org.apache.maven.plugins.release.stubs.MavenProjectStub"/>
           <workingDirectory>${basedir}/target/checkout</workingDirectory>
           <useReleaseProfile>true</useReleaseProfile>
           <arguments>-Dmaven.test.skip=true</arguments>
