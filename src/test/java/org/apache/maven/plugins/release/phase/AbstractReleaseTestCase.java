@@ -30,9 +30,13 @@ import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
+import org.apache.maven.model.Profile;
+import org.apache.maven.model.Repository;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 import org.apache.maven.plugins.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.plugins.release.scm.ScmRepositoryConfigurator;
+import org.apache.maven.profiles.DefaultProfileManager;
+import org.apache.maven.profiles.ProfileManager;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
@@ -119,6 +123,21 @@ public abstract class AbstractReleaseTestCase
         Stack projectFiles = new Stack();
         projectFiles.push( testFile );
 
+        String url = getTestFile( "src/test/remote-repository" ).toURL().toExternalForm();
+        List repos =
+            Collections.singletonList( new DefaultArtifactRepository( "central", url, new DefaultRepositoryLayout() ) );
+
+        Repository repository = new Repository();
+        repository.setId( "central" );
+        repository.setUrl( url );
+
+        ProfileManager profileManager = new DefaultProfileManager( getContainer() );
+        Profile profile = new Profile();
+        profile.setId( "profile" );
+        profile.addRepository( repository );
+        profileManager.addProfile( profile );
+        profileManager.activateAsDefault( profile.getId() );
+
         List projects = new ArrayList();
         while ( !projectFiles.isEmpty() )
         {
@@ -132,7 +151,7 @@ public abstract class AbstractReleaseTestCase
             FileUtils.copyFile( getTestFile( "src/test/resources/" + filePath ),
                                 getTestFile( "target/test-classes/" + filePath ) );
 
-            MavenProject project = projectBuilder.build( file, localRepository, null );
+            MavenProject project = projectBuilder.build( file, localRepository, profileManager );
 
             for ( Iterator i = project.getModules().iterator(); i.hasNext(); )
             {
@@ -143,9 +162,6 @@ public abstract class AbstractReleaseTestCase
 
             projects.add( project );
         }
-
-        List repos = Collections.singletonList( new DefaultArtifactRepository( "central", getTestFile(
-            "src/test/remote-repository" ).toURL().toExternalForm(), new DefaultRepositoryLayout() ) );
 
         ProjectSorter sorter = new ProjectSorter( projects );
 

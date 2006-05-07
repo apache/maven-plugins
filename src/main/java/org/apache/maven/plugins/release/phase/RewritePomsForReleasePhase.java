@@ -16,6 +16,7 @@ package org.apache.maven.plugins.release.phase;
  * limitations under the License.
  */
 
+import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Scm;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 import org.apache.maven.plugins.release.scm.ScmTranslator;
@@ -46,48 +47,77 @@ public class RewritePomsForReleasePhase
         // If SCM is null in original model, it is inherited, no mods needed
         if ( project.getScm() != null )
         {
-            Element scmRoot = rootElement.getChild( "scm", namespace );
-            if ( scmRoot != null )
+            ScmTranslator translator = (ScmTranslator) scmTranslators.get( scmRepository.getProvider() );
+            if ( translator != null )
             {
-                releaseConfiguration.mapOriginalScmInfo( projectId, project.getScm() );
-
-                ScmTranslator translator = (ScmTranslator) scmTranslators.get( scmRepository.getProvider() );
-                if ( translator != null )
+                Element scmRoot = rootElement.getChild( "scm", namespace );
+                if ( scmRoot != null )
                 {
-                    Scm scm = project.getOriginalModel().getScm();
-                    String tag = releaseConfiguration.getReleaseLabel();
-                    String tagBase = releaseConfiguration.getTagBase();
+                    releaseConfiguration.mapOriginalScmInfo( projectId, project.getScm() );
 
-                    // TODO: svn utils should take care of prepending this
-                    if ( tagBase != null )
-                    {
-                        tagBase = "scm:svn:" + tagBase;
-                    }
-                    scmRoot.getChild( "connection", namespace ).setText(
-                        translator.translateTagUrl( scm.getConnection(), tag, tagBase ) );
-
-                    Element devConnection = scmRoot.getChild( "developerConnection", namespace );
-                    if ( devConnection != null )
-                    {
-                        devConnection.setText(
-                            translator.translateTagUrl( scm.getDeveloperConnection(), tag, tagBase ) );
-                    }
-
-                    Element url = scmRoot.getChild( "url", namespace );
-                    if ( url != null )
-                    {
-                        // use original tag base without protocol
-                        url.setText(
-                            translator.translateTagUrl( scm.getUrl(), tag, releaseConfiguration.getTagBase() ) );
-                    }
-
-                    rewriteTagElement( translator, tag, scmRoot, namespace );
+                    translateScm( project, releaseConfiguration, translator, scmRoot, namespace );
                 }
-                else
+                else if ( project.getParent() != null )
                 {
-                    getLogger().debug( "No SCM translator found - skipping rewrite" );
+                    // If the SCM element is not present, only add it if the parent was not mapped (ie, it's external to
+                    // the release process and so has not been modified, so the values will not be correct on the tag)
+                    String parentId = ArtifactUtils.versionlessKey( project.getParent().getGroupId(),
+                                                                    project.getParent().getArtifactId() );
+                    if ( !releaseConfiguration.getOriginalScmInfo().containsKey( parentId ) )
+                    {
+                        // we need to add it, since it has changed from the inherited value
+                        releaseConfiguration.mapOriginalScmInfo( projectId, null );
+
+                        scmRoot = new Element( "scm" );
+                        scmRoot.addContent( "\n  " );
+                        rootElement.addContent( "\n  " ).addContent( scmRoot ).addContent( "\n" );
+
+                        translateScm( project, releaseConfiguration, translator, scmRoot, namespace );
+                    }
                 }
             }
+            else
+            {
+                getLogger().debug( "No SCM translator found - skipping rewrite" );
+            }
+        }
+    }
+
+    private void translateScm( MavenProject project, ReleaseConfiguration releaseConfiguration,
+                               ScmTranslator translator, Element scmRoot, Namespace namespace )
+    {
+        Scm scm = project.getScm();
+        String tag = releaseConfiguration.getReleaseLabel();
+        String tagBase = releaseConfiguration.getTagBase();
+
+        // TODO: svn utils should take care of prepending this
+        if ( tagBase != null )
+        {
+            tagBase = "scm:svn:" + tagBase;
+        }
+        String value = translator.translateTagUrl( scm.getConnection(), tag, tagBase );
+        if ( !value.equals( scm.getConnection() ) )
+        {
+            rewriteElement( "connection", value, scmRoot, namespace );
+        }
+
+        value = translator.translateTagUrl( scm.getDeveloperConnection(), tag, tagBase );
+        if ( !value.equals( scm.getDeveloperConnection() ) )
+        {
+            rewriteElement( "developerConnection", value, scmRoot, namespace );
+        }
+
+        // use original tag base without protocol
+        value = translator.translateTagUrl( scm.getUrl(), tag, releaseConfiguration.getTagBase() );
+        if ( !value.equals( scm.getUrl() ) )
+        {
+            rewriteElement( "url", value, scmRoot, namespace );
+        }
+
+        value = translator.resolveTag( tag );
+        if ( value != null && !value.equals( scm.getTag() ) )
+        {
+            rewriteElement( "tag", value, scmRoot, namespace );
         }
     }
 

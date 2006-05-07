@@ -248,4 +248,15 @@ public class RewritePomsForReleasePhaseTest
             }
         }
     }
+
+    public void testRewriteBasicPomWithInheritedScm()
+        throws Exception
+    {
+        ReleaseConfiguration config =
+            createConfigurationForPomWithParentAlternateNextVersion( "basic-pom-inherited-scm" );
+
+        phase.execute( config );
+
+        assertTrue( compareFiles( config.getReactorProjects() ) );
+    }
 }

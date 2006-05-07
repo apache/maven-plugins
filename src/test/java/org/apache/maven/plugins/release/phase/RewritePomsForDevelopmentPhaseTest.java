@@ -248,4 +248,20 @@ public class RewritePomsForDevelopmentPhaseTest
 
         assertTrue( compareFiles( config.getReactorProjects() ) );
     }
+
+    public void testRewriteBasicPomWithInheritedScm()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromProjects( "basic-pom-inherited-scm" );
+
+        config.mapReleaseVersion( "groupId:artifactId", RELEASE_VERSION );
+        config.mapDevelopmentVersion( "groupId:artifactId", NEXT_VERSION );
+        config.mapReleaseVersion( "groupId:subproject1", ALTERNATIVE_RELEASE_VERSION );
+        config.mapDevelopmentVersion( "groupId:subproject1", ALTERNATIVE_NEXT_VERSION );
+        config.mapOriginalScmInfo( "groupId:artifactId", null );
+
+        phase.execute( config );
+
+        assertTrue( compareFiles( config.getReactorProjects() ) );
+    }
 }
