@@ -40,7 +40,7 @@ public class PerformReleaseMojo
      *
      * @parameter expression="${goals}"
      */
-    private String goals = "deploy site-deploy";
+    private String goals;
 
     /**
      * The checkout directory.
@@ -75,6 +75,17 @@ public class PerformReleaseMojo
             if ( connectionUrl != null )
             {
                 releaseConfiguration.setUrl( connectionUrl );
+            }
+
+            if ( goals == null )
+            {
+                // set default
+                goals = "deploy";
+                if ( project.getDistributionManagement() != null &&
+                    project.getDistributionManagement().getSite() != null )
+                {
+                    goals += " site-deploy";
+                }
             }
 
             releaseManager.perform( releaseConfiguration, workingDirectory, goals, useReleaseProfile );
