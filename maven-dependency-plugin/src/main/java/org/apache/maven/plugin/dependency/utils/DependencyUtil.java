@@ -125,13 +125,11 @@ public class DependencyUtil
         throws MojoExecutionException
     {
 
-        String archiveExt = FileUtils.getExtension( file.getAbsolutePath() ).toLowerCase();
-
         try
         {
             UnArchiver unArchiver;
 
-            unArchiver = archiverManager.getUnArchiver( archiveExt );
+            unArchiver = archiverManager.getUnArchiver( file );
 
             unArchiver.setSourceFile( file );
 
