@@ -442,6 +442,13 @@ public class AssemblyMojoTest
         }
     }
 
+    public void testFileSetDirectoryDoesntExist()
+        throws Exception
+    {
+        executeMojo( "fileSet-doesnt-exist-plugin-config.xml" );
+        assertTrue( true );
+    }
+
     private AssemblyMojo getMojo( String pluginXml )
         throws Exception
     {
