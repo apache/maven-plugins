@@ -538,7 +538,7 @@ public abstract class AbstractAssemblyMojo
                     if ( binaries != null )
                     {
                         Artifact artifact = moduleProject.getArtifact();
-                        
+
                         if ( artifact.getFile() == null )
                         {
                             throw new MojoExecutionException(
@@ -546,7 +546,7 @@ public abstract class AbstractAssemblyMojo
                                     + moduleProject.getId()
                                     + " does not have an artifact with a file. Please ensure the package phase is run before the assembly is generated." );
                         }
-                        
+
                         String output = binaries.getOutputDirectory();
                         output = getOutputDirectory( output, moduleProject, includeBaseDirectory );
 
@@ -1405,7 +1405,7 @@ public abstract class AbstractAssemblyMojo
     {
         return getOutputDirectory( output, null, includeBaseDirectory );
     }
-    
+
     private String getOutputDirectory( String output, MavenProject project, boolean includeBaseDirectory )
     {
         String value = output;
@@ -1437,27 +1437,18 @@ public abstract class AbstractAssemblyMojo
                 value = value.substring( 1 );
             }
         }
-        
+
         if ( project != null )
         {
             value = StringUtils.replace( value, "${groupId}", project.getGroupId() );
             value = StringUtils.replace( value, "${artifactId}", project.getArtifactId() );
             value = StringUtils.replace( value, "${version}", project.getVersion() );
-            
+
             Build build = project.getBuild();
-            if ( build != null )
-            {
-                value = StringUtils.replace( value, "${build.finalName}", build.getFinalName() );
-                value = StringUtils.replace( value, "${finalName}", build.getFinalName() );
-            }
-            else
-            {
-                getLog().warn(
-                    "Project build section is null (must be a unit test, this is impossible in a real build). "
-                        + "Skipping build.finalName and finalName substitution." );
-            }
+            value = StringUtils.replace( value, "${build.finalName}", build.getFinalName() );
+            value = StringUtils.replace( value, "${finalName}", build.getFinalName() );
         }
-        
+
         return value;
     }
 
