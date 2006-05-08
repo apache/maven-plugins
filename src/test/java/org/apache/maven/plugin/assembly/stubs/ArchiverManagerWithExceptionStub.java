@@ -1,5 +1,7 @@
 package org.apache.maven.plugin.assembly.stubs;
 
+import java.io.File;
+
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
@@ -33,6 +35,18 @@ public class ArchiverManagerWithExceptionStub
     }
 
     public Archiver getArchiver( String string )
+        throws NoSuchArchiverException
+    {
+        throw new NoSuchArchiverException( "Expected exception" );
+    }
+
+    public UnArchiver getUnArchiver( File string )
+        throws NoSuchArchiverException
+    {
+        throw new NoSuchArchiverException( "Expected exception" );
+    }
+
+    public Archiver getArchiver( File string )
         throws NoSuchArchiverException
     {
         throw new NoSuchArchiverException( "Expected exception" );
