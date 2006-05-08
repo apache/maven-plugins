@@ -80,6 +80,12 @@ public final class ApplicationXmlWriter
             writeDescription( description, writer );
             writeDisplayName( displayName, writer );
         }
+        else if ( GenerateApplicationXmlMojo.VERSION_5.equals( version ) )
+        {
+            writer = initializeRootElementFive( w );
+            writeDescription( description, writer );
+            writeDisplayName( displayName, writer );
+        }
 
         final Iterator moduleIt = earModules.iterator();
         while ( moduleIt.hasNext() )
@@ -153,6 +159,18 @@ public final class ApplicationXmlWriter
         writer.addAttribute( "xsi:schemaLocation",
                              "http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/application_1_4.xsd" );
         writer.addAttribute( "version", "1.4" );
+        return writer;
+    }
+
+    private XMLWriter initializeRootElementFive( FileWriter w )
+    {
+        XMLWriter writer = new PrettyPrintXMLWriter( w, encoding, null );
+        writer.startElement( APPLICATION_ELEMENT );
+        writer.addAttribute( "xmlns", "http://java.sun.com/xml/ns/javaee" );
+        writer.addAttribute( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" );
+        writer.addAttribute( "xsi:schemaLocation",
+                             "http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/application_5.xsd" );
+        writer.addAttribute( "version", "5" );
         return writer;
     }
 }
