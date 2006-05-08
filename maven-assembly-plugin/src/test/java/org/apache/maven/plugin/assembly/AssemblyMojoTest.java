@@ -25,8 +25,10 @@ import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,6 +38,8 @@ import java.util.Set;
 public class AssemblyMojoTest
     extends AbstractMojoTestCase
 {
+    private String basedir = PlexusTestCase.getBasedir();
+
     public void testMinConfiguration()
         throws Exception
     {
@@ -193,27 +197,246 @@ public class AssemblyMojoTest
     public void testFileSet()
         throws Exception
     {
+        generateTestFileSets( "\r\n" );
+
         AssemblyMojo mojo = executeMojo( "fileSet-plugin-config.xml" );
 
         Map archiverFiles = ArchiverManagerStub.archiverStub.getFiles();
 
         assertEquals( "Test archive adds", archiverFiles.size(), 1 );
 
-        File key = new File( PlexusTestCase.getBasedir(), "target/test-classes/fileSet" );
+        File key = new File( basedir, "target/test-classes/fileSet" );
         ArchiverStub.ArchiverFile file = (ArchiverStub.ArchiverFile) archiverFiles.get( key );
 
         assertNotNull( "Test expected FileSet", file );
         assertNull( "Test includes", file.getIncludes() );
-
-        String[] excludes = file.getExcludes();
         assertTrue( "Test excludes", assertEquals( FileUtils.getDefaultExcludesAsList().toArray( new String[0] ),
                                                    file.getExcludes() ) );
+    }
+
+    public void testFileSetWithArchiveBaseDir()
+        throws Exception
+    {
+        generateTestFileSets( "\r\n" );
+
+        AssemblyMojo mojo = executeMojo( "fileSet-archiveBaseDir-plugin-config.xml" );
+
+        Map archiverFiles = ArchiverManagerStub.archiverStub.getFiles();
+
+        assertEquals( "Test archive adds", archiverFiles.size(), 1 );
+
+        File key = new File( basedir, "target/test-classes/fileSet" );
+        ArchiverStub.ArchiverFile file = (ArchiverStub.ArchiverFile) archiverFiles.get( key );
+
+        assertNotNull( "Test expected FileSet", file );
+        assertNull( "Test includes", file.getIncludes() );
+        assertTrue( "Test excludes", assertEquals( FileUtils.getDefaultExcludesAsList().toArray( new String[0] ),
+                                                   file.getExcludes() ) );
+    }
+
+    public void testFileSetIncludesExcludes()
+        throws Exception
+    {
+        generateTestFileSets( "\r\n" );
+
+        AssemblyMojo mojo = executeMojo( "fileSet-includes-excludes-plugin-config.xml" );
+
+        Map archiverFiles = ArchiverManagerStub.archiverStub.getFiles();
+
+        assertEquals( "Test archive adds", archiverFiles.size(), 1 );
+
+        File key = new File( basedir, "target/test-classes/fileSet" );
+        ArchiverStub.ArchiverFile file = (ArchiverStub.ArchiverFile) archiverFiles.get( key );
+
+        assertNotNull( "Test expected FileSet", file );
+        assertTrue( "Test includes", assertEquals( new String[] { "**/*.txt" }, file.getIncludes() ) );
+
+        List excludesList = new ArrayList();
+        excludesList.add( "**/*.xml" );
+        excludesList.addAll( FileUtils.getDefaultExcludesAsList() );
+
+        assertTrue( "Test excludes", assertEquals( excludesList.toArray( new String[0] ), file.getExcludes() ) );
+    }
+
+    public void testFileSetUnixLineEndings()
+        throws Exception
+    {
+        generateTestFileSets( "\r\n" );
+
+        AssemblyMojo mojo = executeMojo( "fileSet-unix-lineEndings-plugin-config.xml" );
+
+        Map archiverFiles = ArchiverManagerStub.archiverStub.getFiles();
+
+        assertEquals( "Test archive adds", archiverFiles.size(), 1 );
+
+        File key = new File( basedir, "target/test-classes/fileSet" );
+        ArchiverStub.ArchiverFile file = (ArchiverStub.ArchiverFile) archiverFiles.get( key );
+        assertNull( "Test original FileSet is not in archive", file );
+
+        File tempRoot = (File) getVariableValueFromObject( mojo, "tempRoot" );
+        File tempDir = (File) archiverFiles.keySet().iterator().next();
+        assertTrue( "Test if dir is in tempRoot", tempDir.getAbsolutePath().startsWith( tempRoot.getAbsolutePath() ) );
+
+        String newFile = tempDir.getAbsolutePath() + "/hibernate.hbm.xml";
+        String unixContents = FileUtils.fileRead( newFile );
+        assertTrue( "Test if modified file exists in tempRoot", FileUtils.fileExists( newFile ) );
+        assertTrue( "Test if all \\r\\n are replaced", unixContents.indexOf( "\r\n" ) < 0 );
+
+        newFile = tempDir.getAbsolutePath() + "/LICENSE.txt";
+        unixContents = FileUtils.fileRead( newFile );
+        assertTrue( "Test if modified file exists in tempRoot", FileUtils.fileExists( newFile ) );
+        assertTrue( "Test if all \\r\\n are replaced", unixContents.indexOf( "\r\n" ) < 0 );
+
+        newFile = tempDir.getAbsolutePath() + "/README.txt";
+        unixContents = FileUtils.fileRead( newFile );
+        assertTrue( "Test if modified file exists in tempRoot", FileUtils.fileExists( newFile ) );
+        assertTrue( "Test if all \\r\\n are replaced", unixContents.indexOf( "\r\n" ) < 0 );
+
+        newFile = tempDir.getAbsolutePath() + "/configs/config.txt";
+        unixContents = FileUtils.fileRead( newFile );
+        assertTrue( "Test if modified file exists in tempRoot", FileUtils.fileExists( newFile ) );
+        assertTrue( "Test if all \\r\\n are replaced", unixContents.indexOf( "\r\n" ) < 0 );
+    }
+
+    public void testFileSetLFLineEndings()
+        throws Exception
+    {
+        generateTestFileSets( "\r\n" );
+
+        AssemblyMojo mojo = executeMojo( "fileSet-lf-lineEndings-plugin-config.xml" );
+
+        Map archiverFiles = ArchiverManagerStub.archiverStub.getFiles();
+
+        assertEquals( "Test archive adds", archiverFiles.size(), 1 );
+
+        File key = new File( basedir, "target/test-classes/fileSet" );
+        ArchiverStub.ArchiverFile file = (ArchiverStub.ArchiverFile) archiverFiles.get( key );
+        assertNull( "Test original FileSet is not in archive", file );
+
+        File tempRoot = (File) getVariableValueFromObject( mojo, "tempRoot" );
+        File tempDir = (File) archiverFiles.keySet().iterator().next();
+        assertTrue( "Test if dir is in tempRoot", tempDir.getAbsolutePath().startsWith( tempRoot.getAbsolutePath() ) );
+
+        String newFile = tempDir.getAbsolutePath() + "/hibernate.hbm.xml";
+        String unixContents = FileUtils.fileRead( newFile );
+        assertTrue( "Test if modified file exists in tempRoot", FileUtils.fileExists( newFile ) );
+        assertTrue( "Test if all \\r\\n are replaced", unixContents.indexOf( "\r\n" ) < 0 );
+
+        newFile = tempDir.getAbsolutePath() + "/LICENSE.txt";
+        unixContents = FileUtils.fileRead( newFile );
+        assertTrue( "Test if modified file exists in tempRoot", FileUtils.fileExists( newFile ) );
+        assertTrue( "Test if all \\r\\n are replaced", unixContents.indexOf( "\r\n" ) < 0 );
+
+        newFile = tempDir.getAbsolutePath() + "/README.txt";
+        unixContents = FileUtils.fileRead( newFile );
+        assertTrue( "Test if modified file exists in tempRoot", FileUtils.fileExists( newFile ) );
+        assertTrue( "Test if all \\r\\n are replaced", unixContents.indexOf( "\r\n" ) < 0 );
+
+        newFile = tempDir.getAbsolutePath() + "/configs/config.txt";
+        unixContents = FileUtils.fileRead( newFile );
+        assertTrue( "Test if modified file exists in tempRoot", FileUtils.fileExists( newFile ) );
+        assertTrue( "Test if all \\r\\n are replaced", unixContents.indexOf( "\r\n" ) < 0 );
+    }
+
+    public void testFileSetDOSLineEndings()
+        throws Exception
+    {
+        generateTestFileSets( "\n" );
+
+        AssemblyMojo mojo = executeMojo( "fileSet-dos-lineEndings-plugin-config.xml" );
+
+        Map archiverFiles = ArchiverManagerStub.archiverStub.getFiles();
+
+        assertEquals( "Test archive adds", archiverFiles.size(), 1 );
+
+        File key = new File( basedir, "target/test-classes/fileSet" );
+        ArchiverStub.ArchiverFile file = (ArchiverStub.ArchiverFile) archiverFiles.get( key );
+        assertNull( "Test original FileSet is not in archive", file );
+
+        File tempRoot = (File) getVariableValueFromObject( mojo, "tempRoot" );
+        File tempDir = (File) archiverFiles.keySet().iterator().next();
+        assertTrue( "Test if dir is in tempRoot", tempDir.getAbsolutePath().startsWith( tempRoot.getAbsolutePath() ) );
+
+        String newFile = tempDir.getAbsolutePath() + "/hibernate.hbm.xml";
+        String unixContents = FileUtils.fileRead( newFile );
+        assertTrue( "Test if modified file exists in tempRoot", FileUtils.fileExists( newFile ) );
+        assertTrue( "Test if all \\r\\n are replaced", unixContents.indexOf( "\r\n" ) >= 0 );
+
+        newFile = tempDir.getAbsolutePath() + "/LICENSE.txt";
+        unixContents = FileUtils.fileRead( newFile );
+        assertTrue( "Test if modified file exists in tempRoot", FileUtils.fileExists( newFile ) );
+        assertTrue( "Test if all \\r\\n are replaced", unixContents.indexOf( "\r\n" ) >= 0 );
+
+        newFile = tempDir.getAbsolutePath() + "/README.txt";
+        unixContents = FileUtils.fileRead( newFile );
+        assertTrue( "Test if modified file exists in tempRoot", FileUtils.fileExists( newFile ) );
+        assertTrue( "Test if all \\r\\n are replaced", unixContents.indexOf( "\r\n" ) >= 0 );
+
+        newFile = tempDir.getAbsolutePath() + "/configs/config.txt";
+        unixContents = FileUtils.fileRead( newFile );
+        assertTrue( "Test if modified file exists in tempRoot", FileUtils.fileExists( newFile ) );
+        assertTrue( "Test if all \\r\\n are replaced", unixContents.indexOf( "\r\n" ) >= 0 );
+    }
+
+    public void testFileSetCRLFLineEndings()
+        throws Exception
+    {
+        generateTestFileSets( "\n" );
+
+        AssemblyMojo mojo = executeMojo( "fileSet-crlf-lineEndings-plugin-config.xml" );
+
+        Map archiverFiles = ArchiverManagerStub.archiverStub.getFiles();
+
+        assertEquals( "Test archive adds", archiverFiles.size(), 1 );
+
+        File key = new File( basedir, "target/test-classes/fileSet" );
+        ArchiverStub.ArchiverFile file = (ArchiverStub.ArchiverFile) archiverFiles.get( key );
+        assertNull( "Test original FileSet is not in archive", file );
+
+        File tempRoot = (File) getVariableValueFromObject( mojo, "tempRoot" );
+        File tempDir = (File) archiverFiles.keySet().iterator().next();
+        assertTrue( "Test if dir is in tempRoot", tempDir.getAbsolutePath().startsWith( tempRoot.getAbsolutePath() ) );
+
+        String newFile = tempDir.getAbsolutePath() + "/hibernate.hbm.xml";
+        String unixContents = FileUtils.fileRead( newFile );
+        assertTrue( "Test if modified file exists in tempRoot", FileUtils.fileExists( newFile ) );
+        assertTrue( "Test if all \\r\\n are replaced", unixContents.indexOf( "\r\n" ) >= 0 );
+
+        newFile = tempDir.getAbsolutePath() + "/LICENSE.txt";
+        unixContents = FileUtils.fileRead( newFile );
+        assertTrue( "Test if modified file exists in tempRoot", FileUtils.fileExists( newFile ) );
+        assertTrue( "Test if all \\r\\n are replaced", unixContents.indexOf( "\r\n" ) >= 0 );
+
+        newFile = tempDir.getAbsolutePath() + "/README.txt";
+        unixContents = FileUtils.fileRead( newFile );
+        assertTrue( "Test if modified file exists in tempRoot", FileUtils.fileExists( newFile ) );
+        assertTrue( "Test if all \\r\\n are replaced", unixContents.indexOf( "\r\n" ) >= 0 );
+
+        newFile = tempDir.getAbsolutePath() + "/configs/config.txt";
+        unixContents = FileUtils.fileRead( newFile );
+        assertTrue( "Test if modified file exists in tempRoot", FileUtils.fileExists( newFile ) );
+        assertTrue( "Test if all \\r\\n are replaced", unixContents.indexOf( "\r\n" ) >= 0 );
+    }
+
+    public void testFileSetInvalidLineEndings()
+        throws Exception
+    {
+        try
+        {
+            executeMojo( "fileSet-crlf-lineEndings-plugin-config.xml" );
+
+            fail( "Expected exception not thrown" );
+        }
+        catch( Exception e )
+        {
+            //expected
+        }
     }
 
     private AssemblyMojo getMojo( String pluginXml )
         throws Exception
     {
-        return (AssemblyMojo) lookupMojo( "assembly", PlexusTestCase.getBasedir() +
+        return (AssemblyMojo) lookupMojo( "assembly", basedir +
                                         "/src/test/plugin-configs/assembly/" + pluginXml );
     }
 
@@ -247,5 +470,46 @@ public class AssemblyMojoTest
         }
 
         return equal;
+    }
+
+    private void generateTestFileSets( String lineEnding )
+        throws Exception
+    {
+        String fileSetDir = basedir + "/target/test-classes/fileSet";
+
+        FileUtils.mkdir( fileSetDir + "/configs" );
+
+        String fileContents =
+            "<hibernate>" + lineEnding +
+            "  <hibernate-mapping>" + lineEnding +
+            "    <class/>" + lineEnding +
+            "  </hibernate-mapping>" + lineEnding +
+            "</hibernate>";
+        FileUtils.fileWrite( fileSetDir + "/hibernate.hbm.xml", fileContents );
+
+        fileContents =
+            "Copyright 2001-2006 The Apache Software Foundation." + lineEnding +
+            lineEnding +
+            "Licensed under the Apache License, Version 2.0 (the \"License\");" + lineEnding +
+            "you may not use this file except in compliance with the License." + lineEnding +
+            "You may obtain a copy of the License at" + lineEnding +
+            lineEnding +
+            "     http://www.apache.org/licenses/LICENSE-2.0" + lineEnding +
+            lineEnding +
+            "Unless required by applicable law or agreed to in writing, software" + lineEnding +
+            "distributed under the License is distributed on an \"AS IS\" BASIS," + lineEnding +
+            "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied." + lineEnding +
+            "See the License for the specific language governing permissions and" + lineEnding +
+            "limitations under the License.";
+        FileUtils.fileWrite( fileSetDir + "/LICENSE.txt", fileContents );
+
+        fileContents = "Readme file with only one line";
+        FileUtils.fileWrite( fileSetDir + "/README.txt", fileContents );
+
+        fileContents = "sample configuration file line 1" + lineEnding +
+                       "sample configuration file line 2" + lineEnding +
+                       "sample configuration file line 3" + lineEnding +
+                       "sample configuration file line 4";
+        FileUtils.fileWrite( fileSetDir + "/configs/config.txt", fileContents );
     }
 }
