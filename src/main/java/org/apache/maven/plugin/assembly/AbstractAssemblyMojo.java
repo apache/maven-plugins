@@ -1253,14 +1253,17 @@ public abstract class AbstractAssemblyMojo
                 archiveBaseDir = new File( basedir, directory );
             }
 
-            if ( lineEnding != null )
+            if ( archiveBaseDir.exists() )
             {
-                copySetReplacingLineEndings( archiveBaseDir, tmpDir, includes, excludes, lineEnding );
+                if ( lineEnding != null )
+                {
+                    copySetReplacingLineEndings( archiveBaseDir, tmpDir, includes, excludes, lineEnding );
 
-                archiveBaseDir = tmpDir;
+                    archiveBaseDir = tmpDir;
+                }
+                getLog().debug( "Archive base directory: '" + archiveBaseDir.getAbsolutePath() + "'" );
+                addDirectory( archiver, archiveBaseDir, output, includes, excludesList );
             }
-            getLog().debug( "Archive base directory: '" + archiveBaseDir.getAbsolutePath() + "'" );
-            addDirectory( archiver, archiveBaseDir, output, includes, excludesList );
         }
     }
 
