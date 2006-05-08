@@ -44,6 +44,7 @@ public class ArchiverStub
         throws ArchiverException, IOException
     {
         destFile.getParentFile().mkdirs();
+        destFile.delete();
 
         if ( !destFile.createNewFile() )
         {
