@@ -40,11 +40,11 @@
       <configuration>
         <phases>
           <phase>check-poms</phase>
+          <phase>scm-check-modifications</phase>
+          <phase>check-dependency-snapshots</phase>
           <phase>map-release-versions</phase>
           <phase>input-variables</phase>
           <phase>map-development-versions</phase>
-          <phase>scm-check-modifications</phase>
-          <phase>check-dependency-snapshots</phase>
           <phase>rewrite-poms-for-release</phase>
           <phase>generate-release-poms</phase>
           <phase>run-preparation-goals</phase>
