@@ -97,7 +97,7 @@ public class BasicAbstractAssemblyMojoFeaturesTest
     {
         FileLoggingArchiverManagerStub archiverManager = (FileLoggingArchiverManagerStub) getVariableValueFromObject( mojo, "archiverManager" );
         
-        FileLoggingArchiverStub archiver = (FileLoggingArchiverStub) archiverManager.getArchiver( null );
+        FileLoggingArchiverStub archiver = (FileLoggingArchiverStub) archiverManager.getArchiver( (File)null );
         
         Set addedFiles = archiver.getAddedFiles();
         
@@ -154,6 +154,18 @@ public class BasicAbstractAssemblyMojoFeaturesTest
             // TODO Auto-generated method stub
             return null;
         }
+        
+        public UnArchiver getUnArchiver( File arg0 ) throws NoSuchArchiverException
+        {
+            // TODO Auto-generated method stub
+            return null;
+        } 
+        
+        public Archiver getArchiver( File arg0 ) throws NoSuchArchiverException
+        {
+            // TODO Auto-generated method stub
+            return null;
+        }         
     }
 
     public static final class FileLoggingArchiverStub
