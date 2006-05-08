@@ -25,7 +25,6 @@ import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
-import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -146,11 +145,9 @@ public abstract class AbstractUnpackingMojo
     protected void unpack( File file, File location )
         throws MojoExecutionException, NoSuchArchiverException
     {
-        String archiveExt = FileUtils.getExtension( file.getAbsolutePath() ).toLowerCase();
-
         try
         {
-            UnArchiver unArchiver = this.archiverManager.getUnArchiver( archiveExt );
+            UnArchiver unArchiver = this.archiverManager.getUnArchiver( file );
 
             unArchiver.setSourceFile( file );
 
