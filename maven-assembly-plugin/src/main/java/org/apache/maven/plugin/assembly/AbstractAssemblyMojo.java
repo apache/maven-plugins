@@ -26,6 +26,7 @@ import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.assembly.filter.AssemblyExcludesArtifactFilter;
 import org.apache.maven.plugin.assembly.filter.AssemblyIncludesArtifactFilter;
 import org.apache.maven.plugin.assembly.filter.AssemblyScopeArtifactFilter;
 import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolationException;
@@ -446,7 +447,7 @@ public abstract class AbstractAssemblyMojo
 
             if ( !repository.getExcludes().isEmpty() )
             {
-                filter.add( new AssemblyIncludesArtifactFilter( repository.getExcludes() ) );
+                filter.add( new AssemblyExcludesArtifactFilter( repository.getExcludes() ) );
             }
 
             List artifacts = new ArrayList();
@@ -496,7 +497,7 @@ public abstract class AbstractAssemblyMojo
             }
             if ( !moduleSet.getExcludes().isEmpty() )
             {
-                filter.add( new AssemblyIncludesArtifactFilter( moduleSet.getExcludes() ) );
+                filter.add( new AssemblyExcludesArtifactFilter( moduleSet.getExcludes() ) );
             }
 
             Set set = getModulesFromReactor( getExecutedProject() );
@@ -524,10 +525,17 @@ public abstract class AbstractAssemblyMojo
                         moduleFileSet.setOutputDirectory( output );
 
                         List excludesList = new ArrayList();
-                        excludesList.add( PathUtils.toRelative( moduleProject.getBasedir(), moduleProject.getBuild().getDirectory() ) + "/**" );
-                        excludesList.add( PathUtils.toRelative( moduleProject.getBasedir(), moduleProject.getBuild().getOutputDirectory() ) + "/**" );
-                        excludesList.add( PathUtils.toRelative( moduleProject.getBasedir(), moduleProject.getBuild().getTestOutputDirectory() ) + "/**" );
-                        excludesList.add( PathUtils.toRelative( moduleProject.getBasedir(), moduleProject.getReporting().getOutputDirectory() ) + "/**" );
+                        excludesList.add( PathUtils.toRelative( moduleProject.getBasedir(),
+                                                                moduleProject.getBuild().getDirectory() ) + "/**" );
+                        excludesList.add( PathUtils.toRelative( moduleProject.getBasedir(),
+                                                                moduleProject.getBuild().getOutputDirectory() ) +
+                            "/**" );
+                        excludesList.add( PathUtils.toRelative( moduleProject.getBasedir(),
+                                                                moduleProject.getBuild().getTestOutputDirectory() ) +
+                            "/**" );
+                        excludesList.add( PathUtils.toRelative( moduleProject.getBasedir(),
+                                                                moduleProject.getReporting().getOutputDirectory() ) +
+                            "/**" );
                         moduleFileSet.setExcludes( excludesList );
 
                         moduleFileSets.add( moduleFileSet );
@@ -541,10 +549,8 @@ public abstract class AbstractAssemblyMojo
 
                         if ( artifact.getFile() == null )
                         {
-                            throw new MojoExecutionException(
-                                "Included module: "
-                                    + moduleProject.getId()
-                                    + " does not have an artifact with a file. Please ensure the package phase is run before the assembly is generated." );
+                            throw new MojoExecutionException( "Included module: " + moduleProject.getId() +
+                                " does not have an artifact with a file. Please ensure the package phase is run before the assembly is generated." );
                         }
 
                         String output = binaries.getOutputDirectory();
@@ -1017,7 +1023,7 @@ public abstract class AbstractAssemblyMojo
             }
             if ( !dependencySet.getExcludes().isEmpty() )
             {
-                filter.add( new AssemblyIncludesArtifactFilter( dependencySet.getExcludes() ) );
+                filter.add( new AssemblyExcludesArtifactFilter( dependencySet.getExcludes() ) );
             }
 
             for ( Iterator j = getDependencies().iterator(); j.hasNext(); )
