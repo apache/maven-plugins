@@ -60,21 +60,21 @@ public class ArchiverStub
     public void addDirectory( File file, String string )
         throws ArchiverException
     {
-        System.out.println( "Adding dir " + file.getPath() );
-
-        files.put( file, string );
+        addDirectory( file, string, null, null );
     }
 
     public void addDirectory( File file, String[] strings, String[] strings1 )
         throws ArchiverException
     {
-        addDirectory( file );
+        addDirectory( file, file.getName(), strings, strings1 );
     }
 
-    public void addDirectory( File file, String string, String[] strings, String[] strings1 )
+    public void addDirectory( File file, String string, String[] includes, String[] excludes )
         throws ArchiverException
     {
-        addDirectory( file );
+        System.out.println( "Adding dir " + file.getPath() );
+
+        files.put( file, new ArchiverFile( file, string, includes, excludes ) );
     }
 
     public void addFile( File file, String string )
@@ -82,7 +82,7 @@ public class ArchiverStub
     {
         System.out.println( "Adding file " + file.getPath() );
 
-        files.put( file, string );
+        files.put( file, new ArchiverFile( file, string, null, null ) );
     }
 
     public void addFile( File file, String string, int i )
@@ -134,5 +134,62 @@ public class ArchiverStub
     public Map getFiles()
     {
         return files;
+    }
+
+    public class ArchiverFile
+    {
+        private File file;
+
+        private String outputName;
+
+        private String[] includes, excludes;
+
+        private ArchiverFile( File file, String outputName, String[] includes, String[] excludes )
+        {
+            this.file = file;
+            this.outputName = outputName;
+            this.includes = includes;
+            this.excludes = excludes;
+        }
+
+        public File getFile()
+        {
+            return file;
+        }
+
+        public void setFile( File file )
+        {
+            this.file = file;
+        }
+
+        public String getOutputName()
+        {
+            return outputName;
+        }
+
+        public void setOutputName( String outputName )
+        {
+            this.outputName = outputName;
+        }
+
+        public String[] getIncludes()
+        {
+            return includes;
+        }
+
+        public void setIncludes( String[] includes )
+        {
+            this.includes = includes;
+        }
+
+        public String[] getExcludes()
+        {
+            return excludes;
+        }
+
+        public void setExcludes( String[] excludes )
+        {
+            this.excludes = excludes;
+        }
     }
 }

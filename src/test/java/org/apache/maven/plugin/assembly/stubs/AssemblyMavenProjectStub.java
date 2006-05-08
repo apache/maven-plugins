@@ -19,6 +19,7 @@ package org.apache.maven.plugin.assembly.stubs;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Build;
 
 import java.util.Set;
 import java.util.Collections;
@@ -35,6 +36,13 @@ public class AssemblyMavenProjectStub
     private Artifact artifact;
 
     private Set artifacts;
+
+    private Model model;
+
+    public Build getBuild()
+    {
+        return model.getBuild();
+    }
 
     public AssemblyMavenProjectStub()
     {
@@ -55,15 +63,22 @@ public class AssemblyMavenProjectStub
 
     public Model getModel()
     {
-        Model model = new Model();
+        if ( model == null )
+        {
+            model = new Model();
 
-        model.setProperties( new Properties() );
+            model.setProperties( new Properties() );
 
-        model.setGroupId( getGroupId() );
+            model.setGroupId( getGroupId() );
 
-        model.setArtifactId( getArtifactId() );
+            model.setArtifactId( getArtifactId() );
 
-        model.setVersion( getVersion() );
+            model.setVersion( getVersion() );
+
+            Build build = new Build();
+            build.setFinalName( getArtifactId() + "-" + getVersion() );
+            model.setBuild( build );
+        }
 
         return model;
     }
