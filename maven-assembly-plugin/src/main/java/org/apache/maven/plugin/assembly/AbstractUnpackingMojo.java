@@ -116,7 +116,6 @@ public abstract class AbstractUnpackingMojo
      * @return A HashSet of artifacts
      */
     protected Set getDependencies()
-        throws MojoExecutionException
     {
         MavenProject project = getExecutedProject();
 
