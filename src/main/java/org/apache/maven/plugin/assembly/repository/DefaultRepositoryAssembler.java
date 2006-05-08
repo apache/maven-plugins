@@ -18,7 +18,6 @@ package org.apache.maven.plugin.assembly.repository;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.metadata.ArtifactMetadataRetrievalException;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
@@ -40,6 +39,7 @@ import org.apache.maven.plugins.assembly.model.Repository;
 import org.apache.maven.project.DefaultMavenProjectBuilder;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuildingException;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
@@ -166,19 +166,34 @@ public class DefaultRepositoryAssembler
 
                     if ( !"pom".equals( a.getType() ) )
                     {
-                        // The correct metadata does not get pulled down unless this is used. Not
-                        // sure what the problem is.
-                        metadataSource.retrieve( a, localRepository, project.getRemoteArtifactRepositories() );
+                        a = artifactFactory.createProjectArtifact( a.getGroupId(), a.getArtifactId(), a.getVersion() );
 
-                        Artifact pomArtifact =
-                            artifactFactory.createProjectArtifact( a.getGroupId(), a.getArtifactId(), a.getVersion() );
-                        File sourceFile =
-                            new File( localRepository.getBasedir(), localRepository.pathOf( pomArtifact ) );
-                        targetFile = new File( targetRepository.getBasedir(), targetRepository.pathOf( pomArtifact ) );
+                        MavenProject p = projectBuilder.buildFromRepository( a, project.getRemoteArtifactRepositories(),
+                                                                             localRepository );
 
-                        FileUtils.copyFile( sourceFile, targetFile );
+                        do
+                        {
+                            a = artifactFactory.createProjectArtifact( p.getGroupId(), p.getArtifactId(),
+                                                                       p.getVersion() );
 
-                        writeChecksums( targetFile );
+                            alignedVersion = (String) groupVersionAlignments.get( a.getGroupId() );
+
+                            if ( alignedVersion != null &&
+                                !groupVersionAlignmentExcludes.contains( a.getArtifactId() ) )
+                            {
+                                a.setVersion( alignedVersion );
+                            }
+
+                            File sourceFile = new File( localRepository.getBasedir(), localRepository.pathOf( a ) );
+                            targetFile = new File( targetRepository.getBasedir(), targetRepository.pathOf( a ) );
+
+                            FileUtils.copyFile( sourceFile, targetFile );
+
+                            writeChecksums( targetFile );
+
+                            p = p.getParent();
+                        }
+                        while ( p != null );
                     }
                 }
             }
@@ -191,13 +206,13 @@ public class DefaultRepositoryAssembler
         {
             throw new RepositoryAssemblyException( "Error resolving artifacts: " + e.getMessage(), e );
         }
-        catch ( ArtifactMetadataRetrievalException e )
-        {
-            throw new RepositoryAssemblyException( "Error resolving artifacts.", e );
-        }
         catch ( IOException e )
         {
             throw new RepositoryAssemblyException( "Error writing artifact metdata.", e );
+        }
+        catch ( ProjectBuildingException e )
+        {
+            throw new RepositoryAssemblyException( "Error reading POM.", e );
         }
 
         ArtifactRepository centralRepository = null;
