@@ -96,33 +96,45 @@ public class RewritePomsForReleasePhase
             {
                 tagBase = "scm:svn:" + tagBase;
             }
-            String value = translator.translateTagUrl( scm.getConnection(), tag, tagBase );
-            if ( !value.equals( scm.getConnection() ) )
+            if ( scm.getConnection() != null )
             {
-                rewriteElement( "connection", value, scmRoot, namespace );
-                result = true;
+                String value = translator.translateTagUrl( scm.getConnection(), tag, tagBase );
+                if ( !value.equals( scm.getConnection() ) )
+                {
+                    rewriteElement( "connection", value, scmRoot, namespace );
+                    result = true;
+                }
             }
 
-            value = translator.translateTagUrl( scm.getDeveloperConnection(), tag, tagBase );
-            if ( !value.equals( scm.getDeveloperConnection() ) )
+            if ( scm.getDeveloperConnection() != null )
             {
-                rewriteElement( "developerConnection", value, scmRoot, namespace );
-                result = true;
+                String value = translator.translateTagUrl( scm.getDeveloperConnection(), tag, tagBase );
+                if ( !value.equals( scm.getDeveloperConnection() ) )
+                {
+                    rewriteElement( "developerConnection", value, scmRoot, namespace );
+                    result = true;
+                }
             }
 
-            // use original tag base without protocol
-            value = translator.translateTagUrl( scm.getUrl(), tag, releaseConfiguration.getTagBase() );
-            if ( !value.equals( scm.getUrl() ) )
+            if ( scm.getUrl() != null )
             {
-                rewriteElement( "url", value, scmRoot, namespace );
-                result = true;
+                // use original tag base without protocol
+                String value = translator.translateTagUrl( scm.getUrl(), tag, releaseConfiguration.getTagBase() );
+                if ( !value.equals( scm.getUrl() ) )
+                {
+                    rewriteElement( "url", value, scmRoot, namespace );
+                    result = true;
+                }
             }
 
-            value = translator.resolveTag( tag );
-            if ( value != null && !value.equals( scm.getTag() ) )
+            if ( tag != null )
             {
-                rewriteElement( "tag", value, scmRoot, namespace );
-                result = true;
+                String value = translator.resolveTag( tag );
+                if ( value != null && !value.equals( scm.getTag() ) )
+                {
+                    rewriteElement( "tag", value, scmRoot, namespace );
+                    result = true;
+                }
             }
         }
         else

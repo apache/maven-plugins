@@ -211,6 +211,17 @@ public class RewritePomsForReleasePhaseTest
         assertTrue( compareFiles( config.getReactorProjects() ) );
     }
 
+    public void testRewriteBasicPomWithEmptyScm()
+        throws Exception
+    {
+        ReleaseConfiguration config = createConfigurationFromProjects( "basic-pom-with-empty-scm" );
+        mapNextVersion( config, "groupId:artifactId" );
+
+        phase.execute( config );
+
+        assertTrue( compareFiles( config.getReactorProjects() ) );
+    }
+
     public void testRewriteInterpolatedVersions()
         throws Exception
     {
