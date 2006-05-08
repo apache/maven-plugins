@@ -16,16 +16,13 @@ package org.apache.maven.plugin.assembly;
  * limitations under the License.
  */
 
-import org.apache.maven.artifact.InvalidRepositoryException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolationException;
 import org.apache.maven.plugin.assembly.repository.RepositoryAssemblyException;
 import org.apache.maven.plugins.assembly.model.Assembly;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -34,20 +31,10 @@ import java.util.List;
 public abstract class AbstractDirectoryMojo
     extends AbstractAssemblyMojo
 {
-
-
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        List assemblies;
-        try
-        {
-            assemblies = readAssemblies();
-        }
-        catch ( AssemblyInterpolationException e )
-        {
-            throw new MojoExecutionException( "Failed to interpolate assembly descriptor", e );
-        }
+        List assemblies = readAssemblies();
         for ( Iterator i = assemblies.iterator(); i.hasNext(); )
         {
             Assembly assembly = (Assembly) i.next();
@@ -88,15 +75,7 @@ public abstract class AbstractDirectoryMojo
         {
             throw new MojoExecutionException( "Error creating assembly", e );
         }
-        catch ( XmlPullParserException e )
-        {
-            throw new MojoExecutionException( "Error creating assembly", e );
-        }
         catch ( RepositoryAssemblyException e )
-        {
-            throw new MojoExecutionException( "Error creating assembly: " + e.getMessage(), e );
-        }
-        catch ( InvalidRepositoryException e )
         {
             throw new MojoExecutionException( "Error creating assembly: " + e.getMessage(), e );
         }

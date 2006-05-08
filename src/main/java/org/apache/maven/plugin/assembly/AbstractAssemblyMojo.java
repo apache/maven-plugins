@@ -20,7 +20,6 @@ import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
-import org.apache.maven.artifact.InvalidRepositoryException;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.model.Build;
@@ -229,6 +228,8 @@ public abstract class AbstractAssemblyMojo
      */
     private RepositoryAssembler repositoryAssembler;
 
+    private static final String LS = System.getProperty( "line.separator" );
+
     /**
      * Create the binary distribution.
      *
@@ -238,15 +239,7 @@ public abstract class AbstractAssemblyMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        List assemblies;
-        try
-        {
-            assemblies = readAssemblies();
-        }
-        catch ( AssemblyInterpolationException e )
-        {
-            throw new MojoExecutionException( "Failed to interpolate assembly descriptor", e );
-        }
+        List assemblies = readAssemblies();
 
         // TODO: include dependencies marked for distribution under certain formats
         // TODO: how, might we plug this into an installer, such as NSIS?
@@ -288,15 +281,7 @@ public abstract class AbstractAssemblyMojo
             {
                 throw new MojoExecutionException( "Error creating assembly: " + e.getMessage(), e );
             }
-            catch ( XmlPullParserException e )
-            {
-                throw new MojoExecutionException( "Error creating assembly: " + e.getMessage(), e );
-            }
             catch ( RepositoryAssemblyException e )
-            {
-                throw new MojoExecutionException( "Error creating assembly: " + e.getMessage(), e );
-            }
-            catch ( InvalidRepositoryException e )
             {
                 throw new MojoExecutionException( "Error creating assembly: " + e.getMessage(), e );
             }
@@ -340,8 +325,7 @@ public abstract class AbstractAssemblyMojo
     }
 
     protected File createArchive( Archiver archiver, Assembly assembly, String filename )
-        throws ArchiverException, IOException, MojoExecutionException, MojoFailureException, XmlPullParserException,
-        RepositoryAssemblyException, InvalidRepositoryException
+        throws MojoExecutionException, MojoFailureException, IOException, ArchiverException, RepositoryAssemblyException
     {
         processRepositories( archiver, assembly.getRepositories(), assembly.isIncludeBaseDirectory() );
         processDependencySets( archiver, assembly.getDependencySets(), assembly.isIncludeBaseDirectory() );
@@ -364,7 +348,7 @@ public abstract class AbstractAssemblyMojo
             {
                 try
                 {
-                    Manifest manifest = null;
+                    Manifest manifest;
                     File manifestFile = archive.getManifestFile();
 
                     if ( manifestFile != null )
@@ -411,13 +395,11 @@ public abstract class AbstractAssemblyMojo
     }
 
     private void processRepositories( Archiver archiver, List modulesList, boolean includeBaseDirectory )
-        throws MojoExecutionException, RepositoryAssemblyException, ArchiverException
+        throws RepositoryAssemblyException, MojoExecutionException
     {
         for ( Iterator i = modulesList.iterator(); i.hasNext(); )
         {
             Repository repository = (Repository) i.next();
-
-            Set dependencyArtifacts = getDependencies();
 
             AndArtifactFilter filter = new AndArtifactFilter();
 
@@ -450,18 +432,6 @@ public abstract class AbstractAssemblyMojo
                 filter.add( new AssemblyExcludesArtifactFilter( repository.getExcludes() ) );
             }
 
-            List artifacts = new ArrayList();
-
-            for ( Iterator j = dependencyArtifacts.iterator(); j.hasNext(); )
-            {
-                Artifact artifact = (Artifact) j.next();
-
-                if ( filter.include( artifact ) )
-                {
-                    artifacts.add( artifact );
-                }
-            }
-
             File repositoryDirectory = new File( tempRoot, repository.getOutputDirectory() );
 
             if ( !repositoryDirectory.exists() )
@@ -471,19 +441,26 @@ public abstract class AbstractAssemblyMojo
 
             repositoryAssembler.assemble( repositoryDirectory, repository, project, localRepository );
 
-            if ( includeBaseDirectory )
+            try
             {
-                archiver.addDirectory( repositoryDirectory, repository.getOutputDirectory() + "/" );
+                if ( includeBaseDirectory )
+                {
+                    archiver.addDirectory( repositoryDirectory, repository.getOutputDirectory() + "/" );
+                }
+                else
+                {
+                    archiver.addDirectory( repositoryDirectory );
+                }
             }
-            else
+            catch ( ArchiverException e )
             {
-                archiver.addDirectory( repositoryDirectory );
+                throw new MojoExecutionException( "Error adding directory to archive: " + e.getMessage(), e );
             }
         }
     }
 
     private void processModules( Archiver archiver, List moduleSets, boolean includeBaseDirectory )
-        throws IOException, ArchiverException, XmlPullParserException, MojoExecutionException
+        throws MojoFailureException, MojoExecutionException
     {
         for ( Iterator i = moduleSets.iterator(); i.hasNext(); )
         {
@@ -599,39 +576,39 @@ public abstract class AbstractAssemblyMojo
                                             unpack( dependencyArtifact.getFile(), tempLocation );
                                         }
                                     }
-
-                                    /*
-                                     * If the assembly is 'jar-with-dependencies', remove the security files in all dependencies
-                                     * that will prevent the uberjar to execute.  Please see MASSEMBLY-64 for details.
-                                     */
-                                    if ( archiver instanceof JarArchiver )
-                                    {
-                                        String[] securityFiles = {"*.RSA", "*.DSA", "*.SF", "*.rsa", "*.dsa", "*.sf"};
-                                        org.apache.maven.shared.model.fileset.FileSet securityFileSet =
-                                            new org.apache.maven.shared.model.fileset.FileSet();
-                                        securityFileSet.setDirectory( tempLocation.getAbsolutePath() + "/META-INF/" );
-
-                                        for ( int sfsi = 0; sfsi < securityFiles.length; sfsi++ )
-                                        {
-                                            securityFileSet.addInclude( securityFiles[sfsi] );
-                                        }
-
-                                        FileSetManager fsm = new FileSetManager( getLog() );
-                                        try
-                                        {
-                                            fsm.delete( securityFileSet );
-                                        }
-                                        catch ( IOException e )
-                                        {
-                                            throw new MojoExecutionException(
-                                                "Failed to delete security files: " + e.getMessage(), e );
-                                        }
-                                    }
                                 }
                                 catch ( NoSuchArchiverException e )
                                 {
-                                    throw new MojoExecutionException(
-                                        "Unable to obtain unarchiver for file '" + artifact.getFile() + "'" );
+                                    throw new MojoExecutionException( "Unable to obtain unarchiver: " + e.getMessage(),
+                                                                      e );
+                                }
+
+                                /*
+                                * If the assembly is 'jar-with-dependencies', remove the security files in all dependencies
+                                * that will prevent the uberjar to execute.  Please see MASSEMBLY-64 for details.
+                                */
+                                if ( archiver instanceof JarArchiver )
+                                {
+                                    String[] securityFiles = {"*.RSA", "*.DSA", "*.SF", "*.rsa", "*.dsa", "*.sf"};
+                                    org.apache.maven.shared.model.fileset.FileSet securityFileSet =
+                                        new org.apache.maven.shared.model.fileset.FileSet();
+                                    securityFileSet.setDirectory( tempLocation.getAbsolutePath() + "/META-INF/" );
+
+                                    for ( int sfsi = 0; sfsi < securityFiles.length; sfsi++ )
+                                    {
+                                        securityFileSet.addInclude( securityFiles[sfsi] );
+                                    }
+
+                                    FileSetManager fsm = new FileSetManager( getLog() );
+                                    try
+                                    {
+                                        fsm.delete( securityFileSet );
+                                    }
+                                    catch ( IOException e )
+                                    {
+                                        throw new MojoExecutionException(
+                                            "Failed to delete security files: " + e.getMessage(), e );
+                                    }
                                 }
                             }
 
@@ -639,22 +616,30 @@ public abstract class AbstractAssemblyMojo
                         }
                         else
                         {
-                            String outputFileNameMapping = binaries.getOutputFileNameMapping();
-
-                            archiver.addFile( artifact.getFile(),
-                                              output + evaluateFileNameMapping( artifact, outputFileNameMapping ) );
-
-                            if ( binaries.isIncludeDependencies() )
+                            try
                             {
-                                Set artifactSet = moduleProject.getArtifacts();
+                                String outputFileNameMapping = binaries.getOutputFileNameMapping();
 
-                                for ( Iterator artifacts = artifactSet.iterator(); artifacts.hasNext(); )
+                                archiver.addFile( artifact.getFile(),
+                                                  output + evaluateFileNameMapping( artifact, outputFileNameMapping ) );
+
+                                if ( binaries.isIncludeDependencies() )
                                 {
-                                    Artifact dependencyArtifact = (Artifact) artifacts.next();
+                                    Set artifactSet = moduleProject.getArtifacts();
 
-                                    archiver.addFile( dependencyArtifact.getFile(), output +
-                                        evaluateFileNameMapping( dependencyArtifact, outputFileNameMapping ) );
+                                    for ( Iterator artifacts = artifactSet.iterator(); artifacts.hasNext(); )
+                                    {
+                                        Artifact dependencyArtifact = (Artifact) artifacts.next();
+
+                                        archiver.addFile( dependencyArtifact.getFile(), output +
+                                            evaluateFileNameMapping( dependencyArtifact, outputFileNameMapping ) );
+                                    }
                                 }
+                            }
+                            catch ( ArchiverException e )
+                            {
+                                throw new MojoExecutionException( "Error adding file to archive: " + e.getMessage(),
+                                                                  e );
                             }
                         }
                     }
@@ -679,26 +664,26 @@ public abstract class AbstractAssemblyMojo
     private static String evaluateFileNameMapping( Artifact artifact, String mapping )
         throws MojoExecutionException
     {
+        String fileNameMapping = mapping;
         //insert the classifier if exist
         if ( !StringUtils.isEmpty( artifact.getClassifier() ) )
         {
-            int dotIdx = mapping.lastIndexOf( "." );
+            int dotIdx = fileNameMapping.lastIndexOf( "." );
 
             if ( dotIdx >= 0 )
             {
-                String extension = mapping.substring( dotIdx + 1, mapping.length() );
-                String artifactWithoutExt = mapping.substring( 0, dotIdx );
+                String extension = fileNameMapping.substring( dotIdx + 1, fileNameMapping.length() );
+                String artifactWithoutExt = fileNameMapping.substring( 0, dotIdx );
 
-                mapping = artifactWithoutExt + "-" + artifact.getClassifier() + "." + extension;
+                fileNameMapping = artifactWithoutExt + "-" + artifact.getClassifier() + "." + extension;
             }
             else
             {
-                mapping = mapping + "-" + artifact.getClassifier();
+                fileNameMapping = fileNameMapping + "-" + artifact.getClassifier();
             }
         }
 
-        String path = evaluateFileNameMapping( mapping, artifact );
-        return path;
+        return evaluateFileNameMapping( fileNameMapping, artifact );
     }
 
     private Set getModulesFromReactor( MavenProject parent )
@@ -745,7 +730,7 @@ public abstract class AbstractAssemblyMojo
     }
 
     protected List readAssemblies()
-        throws MojoFailureException, MojoExecutionException, AssemblyInterpolationException
+        throws MojoFailureException, MojoExecutionException
     {
         List assemblies = new ArrayList();
 
@@ -812,7 +797,7 @@ public abstract class AbstractAssemblyMojo
     }
 
     private Assembly getAssembly( String ref )
-        throws MojoFailureException, MojoExecutionException, AssemblyInterpolationException
+        throws MojoFailureException, MojoExecutionException
     {
         InputStream resourceAsStream = getClass().getResourceAsStream( "/assemblies/" + ref + ".xml" );
         if ( resourceAsStream == null )
@@ -823,7 +808,7 @@ public abstract class AbstractAssemblyMojo
     }
 
     private Assembly getAssembly( File file )
-        throws MojoFailureException, MojoExecutionException, AssemblyInterpolationException
+        throws MojoFailureException, MojoExecutionException
     {
         Reader r;
         try
@@ -839,7 +824,7 @@ public abstract class AbstractAssemblyMojo
     }
 
     private Assembly getAssembly( Reader reader )
-        throws MojoFailureException, MojoExecutionException, AssemblyInterpolationException
+        throws MojoFailureException, MojoExecutionException
     {
         Assembly assembly;
 
@@ -861,6 +846,10 @@ public abstract class AbstractAssemblyMojo
         catch ( XmlPullParserException e )
         {
             throw new MojoExecutionException( "Error reading descriptor", e );
+        }
+        catch ( AssemblyInterpolationException e )
+        {
+            throw new MojoExecutionException( "Error reading descriptor: " + e.getMessage(), e );
         }
         finally
         {
@@ -902,11 +891,8 @@ public abstract class AbstractAssemblyMojo
      *
      * @param assembly
      * @param component
-     * @throws MojoFailureException
-     * @throws MojoExecutionException
      */
     private void appendComponent( Assembly assembly, Component component )
-        throws MojoFailureException, MojoExecutionException
     {
         List dependencySetList = component.getDependencySets();
 
@@ -938,9 +924,8 @@ public abstract class AbstractAssemblyMojo
      * @throws MojoFailureException
      * @throws MojoExecutionException
      */
-
     private Component getComponent( String filePath )
-        throws MojoFailureException, MojoExecutionException
+        throws MojoExecutionException, MojoFailureException
     {
         File componentDescriptor = new File( this.project.getBasedir() + "/" + filePath );
 
@@ -962,8 +947,6 @@ public abstract class AbstractAssemblyMojo
      * Load the Component via a Reader
      *
      * @param reader
-     * @return
-     * @throws MojoExecutionException
      */
     private Component getComponent( Reader reader )
         throws MojoExecutionException
@@ -998,7 +981,7 @@ public abstract class AbstractAssemblyMojo
      * @param includeBaseDirectory
      */
     protected void processDependencySets( Archiver archiver, List dependencySets, boolean includeBaseDirectory )
-        throws ArchiverException, IOException, MojoExecutionException, MojoFailureException, XmlPullParserException
+        throws MojoExecutionException
     {
         for ( Iterator i = dependencySets.iterator(); i.hasNext(); )
         {
@@ -1056,39 +1039,39 @@ public abstract class AbstractAssemblyMojo
                             try
                             {
                                 unpack( artifact.getFile(), tempLocation );
-
-                                /*
-                                 * If the assembly is 'jar-with-dependencies', remove the security files in all dependencies
-                                 * that will prevent the uberjar to execute.  Please see MASSEMBLY-64 for details.
-                                 */
-                                if ( archiver instanceof JarArchiver )
-                                {
-                                    String[] securityFiles = {"*.RSA", "*.DSA", "*.SF", "*.rsa", "*.dsa", "*.sf"};
-                                    org.apache.maven.shared.model.fileset.FileSet securityFileSet =
-                                        new org.apache.maven.shared.model.fileset.FileSet();
-                                    securityFileSet.setDirectory( tempLocation.getAbsolutePath() + "/META-INF/" );
-
-                                    for ( int sfsi = 0; sfsi < securityFiles.length; sfsi++ )
-                                    {
-                                        securityFileSet.addInclude( securityFiles[sfsi] );
-                                    }
-
-                                    FileSetManager fsm = new FileSetManager( getLog() );
-                                    try
-                                    {
-                                        fsm.delete( securityFileSet );
-                                    }
-                                    catch ( IOException e )
-                                    {
-                                        throw new MojoExecutionException(
-                                            "Failed to delete security files: " + e.getMessage(), e );
-                                    }
-                                }
                             }
                             catch ( NoSuchArchiverException e )
                             {
                                 throw new MojoExecutionException(
                                     "Unable to obtain unarchiver for file '" + artifact.getFile() + "'" );
+                            }
+
+                            /*
+                            * If the assembly is 'jar-with-dependencies', remove the security files in all dependencies
+                            * that will prevent the uberjar to execute.  Please see MASSEMBLY-64 for details.
+                            */
+                            if ( archiver instanceof JarArchiver )
+                            {
+                                String[] securityFiles = {"*.RSA", "*.DSA", "*.SF", "*.rsa", "*.dsa", "*.sf"};
+                                org.apache.maven.shared.model.fileset.FileSet securityFileSet =
+                                    new org.apache.maven.shared.model.fileset.FileSet();
+                                securityFileSet.setDirectory( tempLocation.getAbsolutePath() + "/META-INF/" );
+
+                                for ( int sfsi = 0; sfsi < securityFiles.length; sfsi++ )
+                                {
+                                    securityFileSet.addInclude( securityFiles[sfsi] );
+                                }
+
+                                FileSetManager fsm = new FileSetManager( getLog() );
+                                try
+                                {
+                                    fsm.delete( securityFileSet );
+                                }
+                                catch ( IOException e )
+                                {
+                                    throw new MojoExecutionException(
+                                        "Failed to delete security files: " + e.getMessage(), e );
+                                }
                             }
                         }
 
@@ -1096,8 +1079,15 @@ public abstract class AbstractAssemblyMojo
                     }
                     else
                     {
-
-                        archiver.addFile( artifact.getFile(), output + fileNameMapping );
+                        try
+                        {
+                            archiver.addFile( artifact.getFile(), output + fileNameMapping );
+                        }
+                        catch ( ArchiverException e )
+                        {
+                            throw new MojoExecutionException(
+                                "Error adding file '" + artifact.getFile() + "' to archive: " + e.getMessage(), e );
+                        }
                     }
                 }
                 else
@@ -1114,10 +1104,8 @@ public abstract class AbstractAssemblyMojo
      * Retrieves an includes list generated from the existing depedencies in a project.
      *
      * @return A List of includes
-     * @throws MojoExecutionException
      */
     private List getDependenciesIncludeList()
-        throws MojoExecutionException
     {
         List includes = new ArrayList();
 
@@ -1125,29 +1113,18 @@ public abstract class AbstractAssemblyMojo
         {
             Artifact a = (Artifact) i.next();
 
-            if ( project.getGroupId().equals( a.getGroupId() ) && project.getArtifactId().equals( a.getArtifactId() ) )
+            if ( !project.getGroupId().equals( a.getGroupId() ) ||
+                !project.getArtifactId().equals( a.getArtifactId() ) )
             {
-                continue;
+                includes.add( a.getGroupId() + ":" + a.getArtifactId() );
             }
-
-            includes.add( a.getGroupId() + ":" + a.getArtifactId() );
         }
 
         return includes;
     }
 
-    private void addModuleArtifact( Map dependencies, Artifact artifact )
-    {
-        String key = artifact.getDependencyConflictId();
-
-        if ( !dependencies.containsKey( key ) )
-        {
-            dependencies.put( key, artifact );
-        }
-    }
-
     private void addDirectory( Archiver archiver, File directory, String output, String[] includes, List excludes )
-        throws IOException, XmlPullParserException, ArchiverException
+        throws MojoExecutionException
     {
         if ( directory.exists() )
         {
@@ -1157,13 +1134,31 @@ public abstract class AbstractAssemblyMojo
             File componentsXml = new File( directory, ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH );
             if ( componentsXml.exists() )
             {
-                componentsXmlFilter.addComponentsXml( componentsXml );
+                try
+                {
+                    componentsXmlFilter.addComponentsXml( componentsXml );
+                }
+                catch ( IOException e )
+                {
+                    throw new MojoExecutionException( "Error reading components.xml to merge: " + e.getMessage(), e );
+                }
+                catch ( XmlPullParserException e )
+                {
+                    throw new MojoExecutionException( "Error reading components.xml to merge: " + e.getMessage(), e );
+                }
                 adaptedExcludes = new ArrayList( excludes );
                 adaptedExcludes.add( ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH );
             }
 
-            archiver.addDirectory( directory, output, includes,
-                                   (String[]) adaptedExcludes.toArray( EMPTY_STRING_ARRAY ) );
+            try
+            {
+                archiver.addDirectory( directory, output, includes,
+                                       (String[]) adaptedExcludes.toArray( EMPTY_STRING_ARRAY ) );
+            }
+            catch ( ArchiverException e )
+            {
+                throw new MojoExecutionException( "Error adding directory to archive: " + e.getMessage(), e );
+            }
         }
     }
 
@@ -1173,11 +1168,9 @@ public abstract class AbstractAssemblyMojo
      * @param archiver
      * @param fileSets
      * @param includeBaseDirecetory
-     * @throws org.codehaus.plexus.archiver.ArchiverException
-     *
      */
     protected void processFileSets( Archiver archiver, List fileSets, boolean includeBaseDirecetory )
-        throws ArchiverException, IOException, XmlPullParserException
+        throws MojoExecutionException, MojoFailureException
     {
         for ( Iterator i = fileSets.iterator(); i.hasNext(); )
         {
@@ -1243,13 +1236,13 @@ public abstract class AbstractAssemblyMojo
             {
                 if ( ! archiveBaseDirectory.exists() )
                 {
-                    throw new IOException(
+                    throw new MojoFailureException(
                         "The archive base directory '" + archiveBaseDirectory.getAbsolutePath() + "' does not exist" );
                 }
                 if ( ! archiveBaseDirectory.isDirectory() )
                 {
-                    throw new IOException( "The archive base directory '" + archiveBaseDirectory.getAbsolutePath() +
-                        "' exists, but it is not a directory" );
+                    throw new MojoFailureException( "The archive base directory '" +
+                        archiveBaseDirectory.getAbsolutePath() + "' exists, but it is not a directory" );
                 }
                 archiveBaseDir = new File( archiveBaseDirectory, directory );
             }
@@ -1276,15 +1269,11 @@ public abstract class AbstractAssemblyMojo
      *
      * @param archiver
      * @param fileList
-     * @throws org.codehaus.plexus.archiver.ArchiverException
-     *
      */
     protected void processFileList( Archiver archiver, List fileList, boolean includeBaseDirecetory )
-        throws ArchiverException, IOException, MojoExecutionException
+        throws MojoExecutionException, MojoFailureException
     {
-        File source = null;
-        File filteredFile = null;
-        File sourceFileItem = null;
+        String sourceFileItem = null;
 
         for ( Iterator i = fileList.iterator(); i.hasNext(); )
         {
@@ -1292,23 +1281,16 @@ public abstract class AbstractAssemblyMojo
 
             if ( fileItem.isFiltered() )
             {
-                sourceFileItem = new File( fileItem.getSource() );
+                sourceFileItem = fileItem.getSource();
 
-                try
-                {
-                    filteredFile = filterFile( sourceFileItem );
+                File filteredFile = filterFile( new File( sourceFileItem ) );
 
-                    fileItem.setSource( filteredFile.getAbsolutePath() );
-                }
-                catch ( Exception e )
-                {
-                    throw new MojoExecutionException( "Failed to interpolate resource " + sourceFileItem.getName(), e );
-                }
+                fileItem.setSource( filteredFile.getAbsolutePath() );
             }
 
             String outputDirectory = fileItem.getOutputDirectory();
 
-            source = new File( fileItem.getSource() );
+            File source = new File( fileItem.getSource() );
 
             if ( outputDirectory == null )
             {
@@ -1326,7 +1308,15 @@ public abstract class AbstractAssemblyMojo
 
             if ( lineEnding != null )
             {
-                this.copyReplacingLineEndings( source, this.tempFile, lineEnding );
+                try
+                {
+                    copyReplacingLineEndings( source, this.tempFile, lineEnding );
+                }
+                catch ( IOException e )
+                {
+                    throw new MojoExecutionException( "Error replacing line endings: " + e.getMessage(), e );
+                }
+
                 source = this.tempFile;
             }
 
@@ -1338,12 +1328,20 @@ public abstract class AbstractAssemblyMojo
                 outputDirectory = outputDirectory.substring( 0, outputDirectory.length() - 1 );
             }
 
-            archiver.addFile( source, outputDirectory + "/" + destName, Integer.parseInt( fileItem.getFileMode() ) );
+            try
+            {
+                archiver.addFile( source, outputDirectory + "/" + destName,
+                                  Integer.parseInt( fileItem.getFileMode() ) );
+            }
+            catch ( ArchiverException e )
+            {
+                throw new MojoExecutionException( "Error adding file to archive: " + e.getMessage(), e );
+            }
 
             // return to original source
             if ( fileItem.isFiltered() )
             {
-                fileItem.setSource( sourceFileItem.getAbsolutePath() );
+                fileItem.setSource( sourceFileItem );
             }
         }
     }
@@ -1376,7 +1374,8 @@ public abstract class AbstractAssemblyMojo
             }
             catch ( Exception e )
             {
-                throw new MojoExecutionException( "Cannot evaluate filenameMapping", e );
+                throw new MojoExecutionException(
+                    "Cannot evaluate filenameMapping: '" + mat.group( 1 ) + "': " + e.getMessage(), e );
             }
             String right = mat.group( 3 );
 
@@ -1399,17 +1398,6 @@ public abstract class AbstractAssemblyMojo
         }
 
         return value;
-    }
-
-    /**
-     * Get the Output Directory by parsing the String output directory.
-     *
-     * @param output               The string representation of the output directory.
-     * @param includeBaseDirectory True if base directory is to be included in the assembled file.
-     */
-    private String getOutputDirectory( String output, boolean includeBaseDirectory )
-    {
-        return getOutputDirectory( output, null, includeBaseDirectory );
     }
 
     private String getOutputDirectory( String output, MavenProject project, boolean includeBaseDirectory )
@@ -1498,7 +1486,11 @@ public abstract class AbstractAssemblyMojo
                 }
                 tarArchiver.setCompression( tarCompressionMethod );
 
-                tarArchiver.setLongfile( getTarLongFileMode() );
+                TarLongFileMode tarFileMode = new TarLongFileMode();
+
+                tarFileMode.setValue( tarLongFileMode );
+
+                tarArchiver.setLongfile( tarFileMode );
             }
         }
         else if ( "war".equals( format ) )
@@ -1514,44 +1506,42 @@ public abstract class AbstractAssemblyMojo
         return archiver;
     }
 
-    private TarLongFileMode getTarLongFileMode()
-        throws ArchiverException
-    {
-        TarLongFileMode tarFileMode = new TarLongFileMode();
-
-        tarFileMode.setValue( tarLongFileMode );
-
-        return tarFileMode;
-    }
-
     private void copyReplacingLineEndings( File source, File dest, String lineEndings )
         throws IOException
     {
         getLog().debug( "Copying while replacing line endings: " + source + " to " + dest );
 
         BufferedReader in = new BufferedReader( new FileReader( source ) );
-        BufferedWriter out = new BufferedWriter( new FileWriter( dest ) );
-
-        String line;
-
-        do
+        BufferedWriter out = null;
+        try
         {
-            line = in.readLine();
-            if ( line != null )
-            {
-                out.write( line );
-                out.write( lineEndings );
-            }
-        }
-        while ( line != null );
+            out = new BufferedWriter( new FileWriter( dest ) );
 
-        out.flush();
-        out.close();
+            String line;
+
+            do
+            {
+                line = in.readLine();
+                if ( line != null )
+                {
+                    out.write( line );
+                    out.write( lineEndings );
+                }
+            }
+            while ( line != null );
+
+            out.flush();
+        }
+        finally
+        {
+            IOUtil.close( out );
+            IOUtil.close( in );
+        }
     }
 
     private void copySetReplacingLineEndings( File archiveBaseDir, File tmpDir, String[] includes, String[] excludes,
                                               String lineEnding )
-        throws ArchiverException
+        throws MojoExecutionException
     {
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir( archiveBaseDir.getAbsolutePath() );
@@ -1580,14 +1570,14 @@ public abstract class AbstractAssemblyMojo
             }
             catch ( IOException e )
             {
-                throw new ArchiverException( "Error copying file '" + files[j] + "' to '" + targetFile + "'", e );
+                throw new MojoExecutionException( "Error copying file '" + files[j] + "' to '" + targetFile + "'", e );
             }
         }
 
     }
 
     private static String getLineEndingCharacters( String lineEnding )
-        throws ArchiverException
+        throws MojoFailureException
     {
         String value = lineEnding;
         if ( lineEnding != null )
@@ -1606,7 +1596,7 @@ public abstract class AbstractAssemblyMojo
             }
             else
             {
-                throw new ArchiverException( "Illlegal lineEnding specified: '" + lineEnding + "'" );
+                throw new MojoFailureException( "Illlegal lineEnding specified: '" + lineEnding + "'" );
             }
         }
 
@@ -1614,11 +1604,11 @@ public abstract class AbstractAssemblyMojo
     }
 
     private void includeSiteInAssembly( Assembly assembly )
-        throws MojoExecutionException
+        throws MojoFailureException
     {
         if ( !siteDirectory.exists() )
         {
-            throw new MojoExecutionException(
+            throw new MojoFailureException(
                 "site did not exist in the target directory - please run site:site before creating the assembly" );
         }
 
@@ -1665,46 +1655,64 @@ public abstract class AbstractAssemblyMojo
     }
 
     private File filterFile( File file )
-        throws IOException, MojoExecutionException
+        throws MojoExecutionException
     {
         initializeFiltering();
 
-        BufferedReader fileReader = new BufferedReader( new FileReader( file ) );
-        //Writer fileWriter = new FileWriter( file );
-
-        // support ${token}
-        Reader reader = new InterpolationFilterReader( fileReader, filterProperties, "${", "}" );
-
-        boolean isPropertiesFile = false;
-
-        if ( file.isFile() && file.getName().endsWith( ".properties" ) )
-        {
-            isPropertiesFile = true;
-        }
-        reader =
-            new InterpolationFilterReader( reader, new ReflectionProperties( project, isPropertiesFile ), "${", "}" );
-
         File tempFilterFile = new File( tempRoot + "/" + file.getName() );
 
-        tempFilterFile.getParentFile().mkdirs();
-        tempFilterFile.createNewFile();
-
-        Writer fileWriter = new FileWriter( tempFilterFile );
-
-        String line = null;
-
-        BufferedReader in = new BufferedReader( reader );
-
-        while ( ( line = in.readLine() ) != null )
+        Reader fileReader = null;
+        try
         {
-            fileWriter.write( line );
-            fileWriter.write( System.getProperty( "line.separator" ) );
-        }
+            fileReader = new BufferedReader( new FileReader( file ) );
 
-        fileWriter.flush();
-        fileWriter.close();
-        in.close();
-        fileReader.close();
+            boolean isPropertiesFile = false;
+
+            if ( file.isFile() && file.getName().endsWith( ".properties" ) )
+            {
+                isPropertiesFile = true;
+            }
+
+            tempFilterFile.getParentFile().mkdirs();
+
+            // support ${token}
+            Reader reader = new InterpolationFilterReader( fileReader, filterProperties, "${", "}" );
+
+            BufferedReader in = new BufferedReader( new InterpolationFilterReader( reader, new ReflectionProperties(
+                project, isPropertiesFile ), "${", "}" ) );
+
+            Writer fileWriter = null;
+            try
+            {
+                fileWriter = new FileWriter( tempFilterFile );
+
+                String line;
+
+                while ( ( line = in.readLine() ) != null )
+                {
+                    fileWriter.write( line );
+                    fileWriter.write( LS );
+                }
+
+                fileWriter.flush();
+            }
+            finally
+            {
+                IOUtil.close( fileWriter );
+            }
+        }
+        catch ( FileNotFoundException e )
+        {
+            throw new MojoExecutionException( "File to filter not found: " + e.getMessage(), e );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Error filtering file '" + file + "': " + e.getMessage(), e );
+        }
+        finally
+        {
+            IOUtil.close( fileReader );
+        }
 
         return tempFilterFile;
     }
