@@ -44,6 +44,8 @@ public class GenerateApplicationXmlMojo
 
     public static final String VERSION_1_4 = "1.4";
 
+    public static final String VERSION_5 = "5";
+
     public static final String UTF_8 = "UTF-8";
 
 
@@ -56,7 +58,7 @@ public class GenerateApplicationXmlMojo
 
     /**
      * The version of the application.xml to generate. Valid values
-     * are 1.3 and 1.4.
+     * are 1.3, 1.4 and 5.
      *
      * @parameter
      */
@@ -114,7 +116,7 @@ public class GenerateApplicationXmlMojo
         }
 
         // Check version
-        if ( !version.equals( VERSION_1_3 ) && !version.equals( VERSION_1_4 ) )
+        if ( !version.equals( VERSION_1_3 ) && !version.equals( VERSION_1_4 ) && !version.equals( VERSION_5 ) )
         {
             throw new MojoExecutionException( "Invalid version[" + version + "]" );
         }
