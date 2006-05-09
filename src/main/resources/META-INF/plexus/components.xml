@@ -117,6 +117,11 @@
       <role>org.apache.maven.plugins.release.phase.ReleasePhase</role>
       <role-hint>check-dependency-snapshots</role-hint>
       <implementation>org.apache.maven.plugins.release.phase.CheckDependencySnapshotsPhase</implementation>
+      <requirements>
+        <requirement>
+          <role>org.codehaus.plexus.components.interactivity.Prompter</role>
+        </requirement>
+      </requirements>
     </component>
     <component>
       <role>org.apache.maven.plugins.release.phase.ReleasePhase</role>
