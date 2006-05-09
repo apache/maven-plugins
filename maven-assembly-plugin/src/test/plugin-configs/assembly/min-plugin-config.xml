@@ -34,7 +34,6 @@
           <tarLongFileMode>warn</tarLongFileMode>
           <basedir>${basedir}</basedir>
           <tempRoot>${basedir}/target/test-harness/assembly/min/archive-tmp</tempRoot>
-          <tempFile>${basedir}/target/test-harness/assembly/min/tempFile</tempFile>
           <siteDirectory>${basedir}/target/test-harness/assembly/min/site</siteDirectory>
           <includeSite>false</includeSite>
           <appendAssemblyId>true</appendAssemblyId>

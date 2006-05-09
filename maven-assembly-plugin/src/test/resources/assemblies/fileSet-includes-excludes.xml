@@ -15,7 +15,7 @@
   -->
 
 <assembly>
-  <id>simple</id>
+  <id>fileSet</id>
   <formats>
     <format>zip</format>
   </formats>
