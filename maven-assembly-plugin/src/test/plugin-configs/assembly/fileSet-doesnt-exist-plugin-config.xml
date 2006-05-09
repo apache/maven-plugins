@@ -35,7 +35,6 @@
           <tarLongFileMode>warn</tarLongFileMode>
           <basedir>${basedir}</basedir>
           <tempRoot>${basedir}/target/test-harness/assembly/fileSet-doesnt-exist/archive-tmp</tempRoot>
-          <tempFile>${basedir}/target/test-harness/assembly/fileSet-doesnt-exist/tempFile</tempFile>
           <siteDirectory>${basedir}/target/test-harness/assembly/fileSet-doesnt-exist/site</siteDirectory>
           <includeSite>false</includeSite>
           <appendAssemblyId>true</appendAssemblyId>
