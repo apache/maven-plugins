@@ -549,6 +549,27 @@ public class AssemblyMojoTest
         assertTrue( "Test file line endings", contents.indexOf( "\r\n" ) < 0 );
     }
 
+    public void testFileItemFileMode()
+        throws Exception
+    {
+        generateTestFileSets( "\r\n" );
+
+        executeMojo( "fileItem-fileMode-plugin-config.xml" );
+
+        Map archiverFiles = ArchiverManagerStub.archiverStub.getFiles();
+
+        assertEquals( "Test archive files", 1, archiverFiles.size() );
+
+        File archivedFile = (File) archiverFiles.keySet().iterator().next();
+
+        assertTrue( "Test if archived file exists", archivedFile.exists() );
+
+        ArchiverStub.ArchiverFile file = (ArchiverStub.ArchiverFile) archiverFiles.get( archivedFile );
+
+        assertEquals( "Test file mode", 777, file.getFileMode() );
+    }
+
+
     private AssemblyMojo getMojo( String pluginXml )
         throws Exception
     {
