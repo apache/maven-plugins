@@ -20,9 +20,9 @@
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
-          <outputDirectory>${basedir}/target/test-harness/assembly/fileSet-lf-lineEndings/target</outputDirectory>
+          <outputDirectory>${basedir}/target/test-harness/assembly/fileItem/target</outputDirectory>
           <finalName>assembly</finalName>
-          <workDirectory>${basedir}/target/test-harness/assembly/fileSet-lf-lineEndings/work</workDirectory>
+          <workDirectory>${basedir}/target/test-harness/assembly/fileItem/work</workDirectory>
           <archiverManager implementation="org.apache.maven.plugin.assembly.stubs.ArchiverManagerStub" />
           <localRepository>${localRepository}</localRepository>
           <reactorProjects></reactorProjects>
@@ -30,12 +30,12 @@
           <project implementation="org.apache.maven.plugin.assembly.stubs.AssemblyMavenProjectStub" />
           <executedProject implementation="org.apache.maven.plugin.assembly.stubs.AssemblyMavenProjectStub" />
           <descriptorRefs>
-            <descriptorRef>fileSet-lf-lineEndings</descriptorRef>
+            <descriptorRef>fileItem</descriptorRef>
           </descriptorRefs>
           <tarLongFileMode>warn</tarLongFileMode>
           <basedir>${basedir}</basedir>
-          <tempRoot>${basedir}/target/test-harness/assembly/fileSet-lf-lineEndings/archive-tmp</tempRoot>
-          <siteDirectory>${basedir}/target/test-harness/assembly/fileSet-lf-lineEndings/site</siteDirectory>
+          <tempRoot>${basedir}/target/test-harness/assembly/fileItem/archive-tmp</tempRoot>
+          <siteDirectory>${basedir}/target/test-harness/assembly/fileItem/site</siteDirectory>
           <includeSite>false</includeSite>
           <appendAssemblyId>true</appendAssemblyId>
         </configuration>

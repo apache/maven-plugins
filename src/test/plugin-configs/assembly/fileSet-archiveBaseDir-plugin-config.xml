@@ -35,7 +35,6 @@
           <tarLongFileMode>warn</tarLongFileMode>
           <basedir>${basedir}</basedir>
           <tempRoot>${basedir}/target/test-harness/assembly/fileSet-archiveBaseDir/archive-tmp</tempRoot>
-          <tempFile>${basedir}/target/test-harness/assembly/fileSet-archiveBaseDir/tempFile</tempFile>
           <siteDirectory>${basedir}/target/test-harness/assembly/fileSet-archiveBaseDir/site</siteDirectory>
           <includeSite>false</includeSite>
           <appendAssemblyId>true</appendAssemblyId>

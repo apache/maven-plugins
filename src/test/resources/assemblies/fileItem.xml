@@ -15,14 +15,16 @@
   -->
 
 <assembly>
-  <id>fileSet</id>
+  <id>fileItem</id>
   <formats>
     <format>zip</format>
   </formats>
-  <fileSets>
-    <fileSet>
-      <directory>target/test-classes/fileSet</directory>
-      <lineEnding>invalid</lineEnding>
-    </fileSet>
-  </fileSets>
+  <files>
+    <file>
+      <source>target/test-classes/fileSet/README.txt</source>
+    </file>
+    <file>
+      <source>target/test-classes/fileSet/LICENSE.txt</source>
+    </file>
+  </files>
 </assembly>

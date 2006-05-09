@@ -449,6 +449,106 @@ public class AssemblyMojoTest
         assertTrue( true );
     }
 
+    public void testFileItem()
+        throws Exception
+    {
+        generateTestFileSets( "\r\n" );
+
+        AssemblyMojo mojo = executeMojo( "fileItem-plugin-config.xml" );
+
+        Map archiverFiles = ArchiverManagerStub.archiverStub.getFiles();
+
+        assertEquals( "Test archive files", 2, archiverFiles.size() );
+
+        Iterator files = archiverFiles.keySet().iterator();
+
+        File archivedFile = (File) files.next();
+
+        assertTrue( "Test if archived file exists", archivedFile.exists() );
+
+        if ( "README.txt".equals( archivedFile.getName() ) )
+        {
+            String contents = FileUtils.fileRead( archivedFile.getAbsolutePath() );
+
+            assertTrue( "Test if file filtering is disabled", contents.indexOf( "${project.artifactId}" ) >= 0 );
+        }
+
+        archivedFile = (File) files.next();
+
+        assertTrue( "Test if archived file exists", archivedFile.exists() );
+
+        if ( "README.txt".equals( archivedFile.getName() ) )
+        {
+            String contents = FileUtils.fileRead( archivedFile.getAbsolutePath() );
+
+            assertTrue( "Test if file filtering is disabled", contents.indexOf( "${project.artifactId}" ) >= 0 );
+        }
+    }
+
+    public void testFileItemWithOutputName()
+        throws Exception
+    {
+        generateTestFileSets( "\r\n" );
+
+        AssemblyMojo mojo = executeMojo( "fileItem-output-name-plugin-config.xml" );
+
+        Map archiverFiles = ArchiverManagerStub.archiverStub.getFiles();
+
+        assertEquals( "Test archive files", 1, archiverFiles.size() );
+
+        File archivedFile = (File) archiverFiles.keySet().iterator().next();
+
+        ArchiverStub.ArchiverFile file = (ArchiverStub.ArchiverFile) archiverFiles.get( archivedFile );
+
+        assertEquals( "Test archive file path", "assembly/output/READTHIS.txt", file.getOutputName() );
+
+        assertTrue( "Test if archived file exists", archivedFile.exists() );
+
+        String contents = FileUtils.fileRead( archivedFile.getAbsolutePath() );
+
+        assertTrue( "Test if file filtering is disabled", contents.indexOf( "${project.artifactId}" ) >= 0 );
+    }
+
+    public void testFileItemWithFiltering()
+        throws Exception
+    {
+        generateTestFileSets( "\r\n" );
+
+        executeMojo( "fileItem-filtered-plugin-config.xml" );
+
+        Map archiverFiles = ArchiverManagerStub.archiverStub.getFiles();
+
+        assertEquals( "Test archive files", 1, archiverFiles.size() );
+
+        File archivedFile = (File) archiverFiles.keySet().iterator().next();
+
+        assertTrue( "Test if archived file exists", archivedFile.exists() );
+
+        String contents = FileUtils.fileRead( archivedFile.getAbsolutePath() );
+
+        assertTrue( "Test if file filtering is enabled", contents.indexOf( "${project.artifactId}" ) < 0 );
+    }
+
+    public void testFileItemLineEndings()
+        throws Exception
+    {
+        generateTestFileSets( "\r\n" );
+
+        executeMojo( "fileItem-lineEndings-plugin-config.xml" );
+
+        Map archiverFiles = ArchiverManagerStub.archiverStub.getFiles();
+
+        assertEquals( "Test archive files", 1, archiverFiles.size() );
+
+        File archivedFile = (File) archiverFiles.keySet().iterator().next();
+
+        assertTrue( "Test if archived file exists", archivedFile.exists() );
+
+        String contents = FileUtils.fileRead( archivedFile.getAbsolutePath() );
+
+        assertTrue( "Test file line endings", contents.indexOf( "\r\n" ) < 0 );
+    }
+
     private AssemblyMojo getMojo( String pluginXml )
         throws Exception
     {
@@ -510,7 +610,7 @@ public class AssemblyMojoTest
             "limitations under the License.";
         FileUtils.fileWrite( fileSetDir + "/LICENSE.txt", fileContents );
 
-        fileContents = "Readme file with only one line";
+        fileContents = "Readme file with only one line for ${project.artifactId}.";
         FileUtils.fileWrite( fileSetDir + "/README.txt", fileContents );
 
         fileContents = "sample configuration file line 1" + lineEnding + "sample configuration file line 2" +
