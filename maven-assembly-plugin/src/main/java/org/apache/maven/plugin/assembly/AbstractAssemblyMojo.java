@@ -538,7 +538,7 @@ public abstract class AbstractAssemblyMojo
                             //                        archiver.addJar(  )
 
                             // TODO refactor into the AbstractUnpackMojo
-                            File tempLocation = new File( workDirectory, name.substring( 0, name.lastIndexOf( '.' ) ) );
+                            File tempLocation = new File( workDirectory, name );
                             boolean process = false;
                             if ( !tempLocation.exists() )
                             {
@@ -1339,6 +1339,7 @@ public abstract class AbstractAssemblyMojo
                 throw new MojoExecutionException( "Error adding file to archive: " + e.getMessage(), e );
             }
 
+            // @todo delete this part
             // return to original source
             if ( fileItem.isFiltered() )
             {

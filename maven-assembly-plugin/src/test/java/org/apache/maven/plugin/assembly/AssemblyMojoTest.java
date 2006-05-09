@@ -20,6 +20,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.assembly.stubs.ArchiverManagerStub;
 import org.apache.maven.plugin.assembly.stubs.ArchiverStub;
+import org.apache.maven.plugin.assembly.stubs.ReactorMavenProjectStub;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusTestCase;
@@ -569,6 +570,159 @@ public class AssemblyMojoTest
         assertEquals( "Test file mode", 777, file.getFileMode() );
     }
 
+    public void testModuleSet()
+        throws Exception
+    {
+        AssemblyMojo mojo = getMojo( "moduleSet-plugin-config.xml" );
+
+        MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "executedProject" );
+
+        List reactorProjectsList = (List) getVariableValueFromObject( mojo, "reactorProjects" );
+
+        for ( Iterator reactorProjects = reactorProjectsList.iterator(); reactorProjects.hasNext(); )
+        {
+            MavenProject reactorProject = (MavenProject) reactorProjects.next();
+
+            reactorProject.setParent( project );
+        }
+
+        mojo.execute();
+
+        File workDir = (File) getVariableValueFromObject( mojo, "workDirectory" );
+
+        Map archiverFiles = ArchiverManagerStub.archiverStub.getFiles();
+
+        for ( Iterator reactorProjects = reactorProjectsList.iterator(); reactorProjects.hasNext(); )
+        {
+            MavenProject reactorProject = (MavenProject) reactorProjects.next();
+
+            File unpacked = new File( workDir, reactorProject.getBuild().getFinalName() );
+            assertTrue( "Test if reactor project was unpacked in work directory", unpacked.exists() );
+            assertTrue( "Test if unpacked directory is in the archive", archiverFiles.containsKey( unpacked ) );
+            archiverFiles.remove( unpacked );
+
+            File srcDir = reactorProject.getBasedir();
+            assertTrue( "Test if reactor sources is in the archive", archiverFiles.containsKey( srcDir ) );
+            archiverFiles.remove( srcDir );
+        }
+
+        assertEquals( "Test that there are no other archive files added", 0, archiverFiles.size() );
+    }
+
+    public void testModuleSetIncludes()
+        throws Exception
+    {
+        ReactorMavenProjectStub.reactorProjects.clear();
+
+        AssemblyMojo mojo = getMojo( "moduleSet-includes-plugin-config.xml" );
+
+        MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "executedProject" );
+
+        List reactorProjectsList = (List) getVariableValueFromObject( mojo, "reactorProjects" );
+
+        for ( Iterator reactorProjects = reactorProjectsList.iterator(); reactorProjects.hasNext(); )
+        {
+            MavenProject reactorProject = (MavenProject) reactorProjects.next();
+
+            reactorProject.setParent( project );
+        }
+
+        mojo.execute();
+
+        Map archiverFiles = ArchiverManagerStub.archiverStub.getFiles();
+
+        File workDir = (File) getVariableValueFromObject( mojo, "workDirectory" );
+
+        File unpacked = new File( workDir, "reactor-project-1-1.0.jar" );
+
+        assertTrue( "Test if reactor project was unpacked in work directory", unpacked.exists() );
+        assertTrue( "Test if unpacked directory is in the archive", archiverFiles.containsKey( unpacked ) );
+        archiverFiles.remove( unpacked );
+
+        File srcDir = new File( workDir.getParentFile(), "reactor-project-1" );
+        assertTrue( "Test if reactor project sources is in the archive", archiverFiles.containsKey( srcDir ) );
+        archiverFiles.remove( srcDir );
+
+        assertEquals( "Test that there are no other archive files added", 0, archiverFiles.size() );
+    }
+
+    public void testModuleSetExcludes()
+        throws Exception
+    {
+        ReactorMavenProjectStub.reactorProjects.clear();
+
+        AssemblyMojo mojo = getMojo( "moduleSet-excludes-plugin-config.xml" );
+
+        MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "executedProject" );
+
+        List reactorProjectsList = (List) getVariableValueFromObject( mojo, "reactorProjects" );
+
+        for ( Iterator reactorProjects = reactorProjectsList.iterator(); reactorProjects.hasNext(); )
+        {
+            MavenProject reactorProject = (MavenProject) reactorProjects.next();
+
+            reactorProject.setParent( project );
+        }
+
+        mojo.execute();
+
+        Map archiverFiles = ArchiverManagerStub.archiverStub.getFiles();
+
+        File workDir = (File) getVariableValueFromObject( mojo, "workDirectory" );
+
+        File unpacked = new File( workDir, "reactor-project-2-1.0.jar" );
+
+        assertTrue( "Test if reactor project was unpacked in work directory", unpacked.exists() );
+        assertTrue( "Test if unpacked directory is in the archive", archiverFiles.containsKey( unpacked ) );
+        archiverFiles.remove( unpacked );
+
+        File srcDir = new File( workDir.getParentFile(), "reactor-project-2" );
+        assertTrue( "Test if reactor project sources is in the archive", archiverFiles.containsKey( srcDir ) );
+        archiverFiles.remove( srcDir );
+
+        assertEquals( "Test that there are no other archive files added", 0, archiverFiles.size() );
+    }
+
+    public void testModuleSetIncludeDependencies()
+        throws Exception
+    {
+        AssemblyMojo mojo = getMojo( "moduleSet-include-dependencies-plugin-config.xml" );
+
+        MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "executedProject" );
+
+        List reactorProjectsList = (List) getVariableValueFromObject( mojo, "reactorProjects" );
+
+        for ( Iterator reactorProjects = reactorProjectsList.iterator(); reactorProjects.hasNext(); )
+        {
+            MavenProject reactorProject = (MavenProject) reactorProjects.next();
+
+            reactorProject.setParent( project );
+        }
+
+        mojo.execute();
+
+        File workDir = (File) getVariableValueFromObject( mojo, "workDirectory" );
+
+        Map archiverFiles = ArchiverManagerStub.archiverStub.getFiles();
+
+        for ( Iterator reactorProjects = reactorProjectsList.iterator(); reactorProjects.hasNext(); )
+        {
+            MavenProject reactorProject = (MavenProject) reactorProjects.next();
+
+            File unpacked = new File( workDir, reactorProject.getBuild().getFinalName() );
+            assertTrue( "Test if reactor project is unpacked in work directory", unpacked.exists() );
+            File dependency = new File( unpacked, "reactor-dependency-1.0.jar.extracted" );
+            assertTrue( "Test if reactor dependency is also unpacked", dependency.exists() );
+            assertTrue( "Test if unpacked directory is in the archive", archiverFiles.containsKey( unpacked ) );
+            archiverFiles.remove( unpacked );
+
+            File srcDir = reactorProject.getBasedir();
+            assertTrue( "Test if reactor sources is in the archive", archiverFiles.containsKey( srcDir ) );
+            archiverFiles.remove( srcDir );
+        }
+
+        assertEquals( "Test that there are no other archive files added", 0, archiverFiles.size() );
+    }
 
     private AssemblyMojo getMojo( String pluginXml )
         throws Exception

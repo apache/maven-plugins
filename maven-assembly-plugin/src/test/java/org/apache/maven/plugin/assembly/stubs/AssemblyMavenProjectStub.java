@@ -24,6 +24,7 @@ import org.apache.maven.model.Build;
 import java.util.Set;
 import java.util.Collections;
 import java.util.Properties;
+import java.io.File;
 
 /**
  * @author Edwin Punzalan
@@ -39,6 +40,8 @@ public class AssemblyMavenProjectStub
 
     private Model model;
 
+    private File basedir;
+
     public Build getBuild()
     {
         return model.getBuild();
@@ -49,6 +52,11 @@ public class AssemblyMavenProjectStub
         groupId = "assembly";
         artifactId = "test-project";
         version = "1.0";
+    }
+
+    public File getBasedir()
+    {
+        return basedir;
     }
 
     public Artifact getArtifact()
