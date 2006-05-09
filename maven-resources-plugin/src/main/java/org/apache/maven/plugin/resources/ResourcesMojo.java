@@ -23,7 +23,7 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.InterpolationFilterReader;
+import org.apache.maven.plugin.resources.util.InterpolationFilterReader;
 
 import java.io.BufferedReader;
 import java.io.File;
