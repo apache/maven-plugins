@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -358,147 +359,7 @@ public class IdeaModuleMojo
                 }
             }
 
-            removeOldDependencies( component );
-
-            List testClasspathElements = executedProject.getTestArtifacts();
-            for ( Iterator i = testClasspathElements.iterator(); i.hasNext(); )
-            {
-                Artifact a = (Artifact) i.next();
-
-                Library library = findLibrary( a );
-                if ( library != null && library.isExclude() )
-                {
-                    continue;
-                }
-
-                String moduleName;
-                if ( useFullNames )
-                {
-                    moduleName = a.getGroupId() + ':' + a.getArtifactId() + ':' + a.getType() + ':' + a.getVersion();
-                }
-                else
-                {
-                    moduleName = a.getArtifactId();
-                }
-
-                Element dep = null;
-
-                for ( Iterator children = component.elementIterator( "orderEntry" ); children.hasNext(); )
-                {
-                    Element orderEntry = (Element) children.next();
-
-                    if ( orderEntry.attributeValue( "type" ).equals( "module" ) )
-                    {
-                        if ( orderEntry.attributeValue( "module-name" ).equals( moduleName ) )
-                        {
-                            dep = orderEntry;
-                            break;
-                        }
-                    }
-                    else if ( orderEntry.attributeValue( "type" ).equals( "module-library" ) )
-                    {
-                        Element lib = orderEntry.element( "library" );
-                        String name = lib.attributeValue( "name" );
-                        if ( name != null )
-                        {
-                            if ( name.equals( moduleName ) )
-                            {
-                                dep = orderEntry;
-                                break;
-                            }
-                        }
-                        else
-                        {
-                            Element classesChild = lib.element( "CLASSES" );
-                            if ( classesChild != null )
-                            {
-                                Element rootChild = classesChild.element( "root" );
-                                if ( rootChild != null )
-                                {
-                                    String url = getLibraryUrl( a );
-                                    if ( url.equals( rootChild.getText() ) )
-                                    {
-                                        dep = orderEntry;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if ( dep == null )
-                {
-                    dep = createElement( component, "orderEntry" );
-                }
-
-                boolean isIdeaModule = false;
-                if ( linkModules )
-                {
-                    isIdeaModule = isReactorProject( a.getGroupId(), a.getArtifactId() );
-
-                    if ( isIdeaModule )
-                    {
-                        dep.addAttribute( "type", "module" );
-                        dep.addAttribute( "module-name", moduleName );
-                    }
-                }
-
-                if ( a.getFile() != null && !isIdeaModule )
-                {
-                    dep.addAttribute( "type", "module-library" );
-                    removeOldElements( dep, "library" );
-                    dep = createElement( dep, "library" );
-
-                    if ( dependenciesAsLibraries )
-                    {
-                        dep.addAttribute( "name", moduleName );
-                    }
-
-                    Element el = createElement( dep, "CLASSES" );
-                    if ( library != null && library.getSplitClasses().length > 0 )
-                    {
-                        dep.addAttribute( "name", moduleName );
-                        String[] libraryClasses = library.getSplitClasses();
-                        for ( int k = 0; k < libraryClasses.length; k++ )
-                        {
-                            String classpath = libraryClasses[k];
-                            extractMacro( classpath );
-                            Element classEl = createElement( el, "root" );
-                            classEl.addAttribute( "url", classpath );
-                        }
-                    }
-                    else
-                    {
-                        createElement( el, "root" ).addAttribute( "url", getLibraryUrl( a ) );
-                    }
-
-                    boolean usedSources = false;
-                    if ( library != null && library.getSplitSources().length > 0 )
-                    {
-                        Element sourcesElement = createElement( dep, "SOURCES" );
-                        usedSources = true;
-                        String[] sources = library.getSplitSources();
-                        for ( int k = 0; k < sources.length; k++ )
-                        {
-                            String source = sources[k];
-                            extractMacro( source );
-                            Element sourceEl = createElement( sourcesElement, "root" );
-                            sourceEl.addAttribute( "url", source );
-                        }
-                    }
-
-                    if ( !usedSources && downloadSources )
-                    {
-                        resolveClassifier( createElement( dep, "SOURCES" ), a, sourceClassifier );
-                    }
-
-                    if ( downloadJavadocs )
-                    {
-                        resolveClassifier( createElement( dep, "JAVADOC" ), a, javadocClassifier );
-                    }
-                }
-            }
+            rewriteDependencies( component );
 
             writeXmlDocument( moduleFile, document );
         }
@@ -510,6 +371,181 @@ public class IdeaModuleMojo
         {
             throw new MojoExecutionException( "Error parsing existing IML file " + moduleFile.getAbsolutePath(), e );
         }
+    }
+
+    private void rewriteDependencies( Element component )
+    {
+        Map modulesByName = new HashMap();
+        Map modulesByUrl = new HashMap();
+        Set unusedModules = new HashSet();
+        for ( Iterator children = component.elementIterator( "orderEntry" ); children.hasNext(); )
+        {
+            Element orderEntry = (Element) children.next();
+
+            String type = orderEntry.attributeValue( "type" );
+            if ( "module".equals( type ) )
+            {
+                modulesByName.put( orderEntry.attributeValue( "module-name" ), orderEntry );
+            }
+            else if ( "module-library".equals( type ) )
+            {
+                // keep track for later so we know what is left
+                unusedModules.add( orderEntry );
+
+                Element lib = orderEntry.element( "library" );
+                String name = lib.attributeValue( "name" );
+                if ( name != null )
+                {
+                    modulesByName.put( name, orderEntry );
+                }
+                else
+                {
+                    Element classesChild = lib.element( "CLASSES" );
+                    if ( classesChild != null )
+                    {
+                        Element rootChild = classesChild.element( "root" );
+                        if ( rootChild != null )
+                        {
+                            String url = rootChild.attributeValue( "url" );
+                            if ( url != null )
+                            {
+                                // Need to ignore case because of Windows drive letters
+                                modulesByUrl.put( url.toLowerCase(), orderEntry );
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        List testClasspathElements = executedProject.getTestArtifacts();
+        for ( Iterator i = testClasspathElements.iterator(); i.hasNext(); )
+        {
+            Artifact a = (Artifact) i.next();
+
+            Library library = findLibrary( a );
+            if ( library != null && library.isExclude() )
+            {
+                continue;
+            }
+
+            String moduleName;
+            if ( useFullNames )
+            {
+                moduleName = a.getGroupId() + ':' + a.getArtifactId() + ':' + a.getType() + ':' + a.getVersion();
+            }
+            else
+            {
+                moduleName = a.getArtifactId();
+            }
+
+            Element dep = (Element) modulesByName.get( moduleName );
+
+            if ( dep == null )
+            {
+                // Need to ignore case because of Windows drive letters
+                dep = (Element) modulesByUrl.get( getLibraryUrl( a ).toLowerCase() );
+            }
+
+            if ( dep != null )
+            {
+                unusedModules.remove( dep );
+            }
+            else
+            {
+                dep = createElement( component, "orderEntry" );
+            }
+
+            boolean isIdeaModule = false;
+            if ( linkModules )
+            {
+                isIdeaModule = isReactorProject( a.getGroupId(), a.getArtifactId() );
+
+                if ( isIdeaModule )
+                {
+                    dep.addAttribute( "type", "module" );
+                    dep.addAttribute( "module-name", moduleName );
+                }
+            }
+
+            if ( a.getFile() != null && !isIdeaModule )
+            {
+                dep.addAttribute( "type", "module-library" );
+
+                Element lib = dep.element( "library" );
+
+                if ( lib == null )
+                {
+                    lib = createElement( dep, "library" );
+                }
+
+                if ( dependenciesAsLibraries )
+                {
+                    lib.addAttribute( "name", moduleName );
+                }
+
+                // replace classes
+                removeOldElements( lib, "CLASSES" );
+                Element classes = createElement( lib, "CLASSES" );
+                if ( library != null && library.getSplitClasses().length > 0 )
+                {
+                    lib.addAttribute( "name", moduleName );
+                    String[] libraryClasses = library.getSplitClasses();
+                    for ( int k = 0; k < libraryClasses.length; k++ )
+                    {
+                        String classpath = libraryClasses[k];
+                        extractMacro( classpath );
+                        Element classEl = createElement( classes, "root" );
+                        classEl.addAttribute( "url", classpath );
+                    }
+                }
+                else
+                {
+                    createElement( classes, "root" ).addAttribute( "url", getLibraryUrl( a ) );
+                }
+
+                if ( library != null && library.getSplitSources().length > 0 )
+                {
+                    removeOldElements( lib, "SOURCES" );
+                    Element sourcesElement = createElement( lib, "SOURCES" );
+                    String[] sources = library.getSplitSources();
+                    for ( int k = 0; k < sources.length; k++ )
+                    {
+                        String source = sources[k];
+                        extractMacro( source );
+                        Element sourceEl = createElement( sourcesElement, "root" );
+                        sourceEl.addAttribute( "url", source );
+                    }
+                }
+                else if ( downloadSources )
+                {
+                    resolveClassifier( createOrGetElement( lib, "SOURCES" ), a, sourceClassifier );
+                }
+
+                if ( downloadJavadocs )
+                {
+                    resolveClassifier( createOrGetElement( lib, "JAVADOC" ), a, javadocClassifier );
+                }
+            }
+        }
+
+        for ( Iterator i = unusedModules.iterator(); i.hasNext(); )
+        {
+            Element orderEntry = (Element) i.next();
+
+            component.remove( orderEntry );
+        }
+    }
+
+    private Element createOrGetElement( Element lib, String name )
+    {
+        Element el = lib.element( "name" );
+
+        if ( el == null )
+        {
+            el = createElement( lib, name );
+        }
+        return el;
     }
 
     private void addEarModule( Element module )
@@ -769,23 +805,6 @@ public class IdeaModuleMojo
         excludeFolder.addAttribute( "url", getModuleFileUrl( directory ) );
     }
 
-    /**
-     * Removes dependencies from Xpp3Dom component.
-     *
-     * @param component Xpp3Dom element
-     */
-    private void removeOldDependencies( Element component )
-    {
-        for ( Iterator children = component.elementIterator(); children.hasNext(); )
-        {
-            Element child = (Element) children.next();
-            if ( "orderEntry".equals( child.getName() ) && "module-library".equals( child.attributeValue( "type" ) ) )
-            {
-                component.remove( child );
-            }
-        }
-    }
-
     private boolean isReactorProject( String groupId, String artifactId )
     {
         if ( reactorProjects != null )
@@ -823,6 +842,7 @@ public class IdeaModuleMojo
         {
             String jarPath = "jar://" + path + "!/";
             getLog().debug( "Setting " + classifier + " for " + id + " to " + jarPath );
+            removeOldElements( element, "root" );
             createElement( element, "root" ).addAttribute( "url", jarPath );
         }
     }
@@ -909,5 +929,4 @@ public class IdeaModuleMojo
 
         return deploymentDescriptor;
     }
-
 }
