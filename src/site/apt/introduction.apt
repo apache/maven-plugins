@@ -1,35 +1,79 @@
  ------
  Maven 2 Release Plugin 
  ------
- Carlos Sanchez
- <carlos@apache.org>
+ Carlos Sanchez <carlos@apache.org>
+ Brett Porter <brett@apache.org>
  ------
  March 28, 2006
 
 Introduction
 
- This plugin allows releasing a maven project, which means:
+ This plugin is used to release a project with Maven, saving a lot of repetitive, manual work.
+ Releasing a project takes two steps: prepare and perform.
 
 Prepare a release
 
- * Check that there's no uncommitted changes in the sources
+  Preparing a release executes the following steps:
+
+   * Check that there's no uncommitted changes in the sources
  
- * Check that there's no SNAPSHOT dependencies
+   * Check that there's no SNAPSHOT dependencies
  
- * Change the version in the poms from x-SNAPSHOT to a new version (the user is asked for the new version) 
+   * Change the version in the poms from x-SNAPSHOT to a new version (you will be prompted for the versions to use)
+
+   * Transform the SCM information in the POM to the final destination of the tag
+
+   * Run the project tests against the modified POMs to confirm everything is in working order
+
+   * Commit the change of versions
  
- * Commit the change of versions
+   * Tag the code in the SCM with a version name (this will be prompted for)
  
- * Tag the code in the SCM with a version name (asked to the user)
+   * Bump the version in the poms to a new value y-SNAPSHOT (these values are prompted also)
  
- * Bump the version in the poms to a new value y-SNAPSHOT
- 
- * Commit the change of versions
+   * Commit the change of versions
+
+  To execute this step, run:
+
+-------
+mvn release:prepare
+-------
+
+  <<Note:>> If an error occurs, or the process is cancelled, then running this will pick up from where the last one
+  left off from. If you wish to start again, use:
+
+-------
+mvn release:prepare -Dresume=false
+-------
+
+  Alternatively, you can use:
+
+-------
+mvn release:clean release:prepare
+-------
+
+  Note that if any changes have been made to your source files they might need to be reverted before you restart the
+  prepare process.
 
 Perform a release
 
- * Ask the user for a tag name
+  Performing a release does the following:
+
+   * Checkout from an SCM URL with optional tag
  
- * Checkout from that tag
- 
- * Run any maven goals defined by the user ( eg. deploy )
+   * Run the predefined maven goals to release the project (by default, <<<deploy site-deploy>>>)
+
+  To execute this step, run:
+
+-------
+mvn release:perform
+-------
+
+  This relies on <<<release.properties>>> being present from a previous release. If this is not the case, you need to
+  give the goal the name of the URL and optional tag to perform the release from. For example:
+
+-------
+mvn release:perform -DconnectionUrl=scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-release-plugin-2.0
+-------
+
+  After the release is complete, the <<<release.properties>> and other release files will be removed from the checkout.
