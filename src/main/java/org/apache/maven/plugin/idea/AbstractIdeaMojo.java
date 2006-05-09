@@ -31,12 +31,14 @@ import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.Exclusion;
+import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -286,6 +288,26 @@ public abstract class AbstractIdeaMojo
 
             getLog().warn( msg );
         }
+    }
+
+    /*
+    * @todo we need a more permanent feature that does this properly
+    */
+    protected String getPluginSetting( String artifactId, String optionName, String defaultValue )
+    {
+        for ( Iterator it = executedProject.getBuildPlugins().iterator(); it.hasNext(); )
+        {
+            Plugin plugin = (Plugin) it.next();
+            if ( plugin.getArtifactId().equals( artifactId ) )
+            {
+                Xpp3Dom o = (Xpp3Dom) plugin.getConfiguration();
+                if ( o != null && o.getChild( optionName ) != null )
+                {
+                    return o.getChild( optionName ).getValue();
+                }
+            }
+        }
+        return defaultValue;
     }
 
     private Set getProjectArtifacts()
