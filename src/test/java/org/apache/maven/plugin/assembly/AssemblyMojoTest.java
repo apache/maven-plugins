@@ -443,15 +443,10 @@ public class AssemblyMojoTest
     }
 
     public void testFileSetDirectoryDoesntExist()
+        throws Exception
     {
-        try
-        {
-            executeMojo( "fileSet-doesnt-exist-plugin-config.xml" );
-        }
-        catch ( Exception e )
-        {
-            fail( "Should not throw an exception on an empty assembly" );
-        }
+        executeMojo( "fileSet-doesnt-exist-plugin-config.xml" );
+        assertTrue( true );
     }
 
     private AssemblyMojo getMojo( String pluginXml )
