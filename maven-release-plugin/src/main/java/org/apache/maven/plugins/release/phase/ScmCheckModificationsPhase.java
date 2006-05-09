@@ -73,7 +73,8 @@ public class ScmCheckModificationsPhase
         }
         catch ( ScmRepositoryException e )
         {
-            throw new ReleaseScmRepositoryException( e.getMessage(), e.getValidationMessages() );
+            throw new ReleaseScmRepositoryException( e.getMessage() + " for URL: " + releaseConfiguration.getUrl(),
+                                                     e.getValidationMessages() );
         }
         catch ( NoSuchScmProviderException e )
         {
