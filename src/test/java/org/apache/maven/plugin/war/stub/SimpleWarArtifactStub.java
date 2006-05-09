@@ -35,13 +35,15 @@ package org.apache.maven.plugin.war.stub;
 import java.io.File;
 
 /**
- *  Stub
- * 
- *
+ * Stub
  */
 public class SimpleWarArtifactStub
     extends AbstractArtifactStub
 {
+
+    private String artifactId;
+
+    private File file;
 
     public SimpleWarArtifactStub( String _basedir )
     {
@@ -55,11 +57,35 @@ public class SimpleWarArtifactStub
 
     public String getArtifactId()
     {
-        return "simple";
+        if ( artifactId == null )
+        {
+            return "simple";
+        }
+        else
+        {
+            return artifactId;
+        }
+    }
+
+    public void setArtifactId( String _artifactId )
+    {
+        artifactId = _artifactId;
     }
 
     public File getFile()
     {
-        return new File( basedir, "/target/test-classes/unit/sample_wars/simple.war" );
+        if ( file == null )
+        {
+            return new File( basedir, "/target/test-classes/unit/sample_wars/simple.war" );
+        }
+        else
+        {
+            return file;
+        }
+    }
+
+    public void setFile( File _file )
+    {
+        file = _file;
     }
 }

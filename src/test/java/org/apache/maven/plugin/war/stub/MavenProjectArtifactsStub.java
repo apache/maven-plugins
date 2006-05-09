@@ -16,10 +16,12 @@ package org.apache.maven.plugin.war.stub;
  * limitations under the License.
  */
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.apache.maven.plugin.testing.stubs.ArtifactStub;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class MavenProjectArtifactsStub
     extends MavenProjectBasicStub
@@ -39,6 +41,20 @@ public class MavenProjectArtifactsStub
 
     public Set getArtifacts()
     {
+        return artifacts;
+    }
+
+    public List getRuntimeClasspathElements()
+    {
+        List artifacts = new ArrayList();
+
+        String basedir = System.getProperty( "basedir" );
+
+        artifacts.add( basedir +
+            "/src/test/resources/unit/manifest/manifest-with-classpath/sample-artifacts/maven-artifact1-1.0-SNAPSHOT.jar" );
+        artifacts.add( basedir +
+            "/src/test/resources/unit/manifest/manifest-with-classpath/sample-artifacts/maven-artifact2-1.0-SNAPSHOT.jar" );
+
         return artifacts;
     }
 }
