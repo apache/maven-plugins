@@ -807,6 +807,9 @@ public abstract class AbstractWarMojo
         Writer fileWriter = null;
         try
         {
+            // fix for MWAR-36, ensures that the parent dir are created first
+            to.getParentFile().mkdirs();
+            
             if ( encoding == null || encoding.length() < 1 )
             {
                 fileReader = new BufferedReader( new FileReader( from ) );
