@@ -178,15 +178,6 @@ public abstract class AbstractAssemblyMojo
     private File tempRoot;
 
     /**
-     * Temporary file for line ending translation.
-     *
-     * @parameter expression="${project.build.directory}/tempFile"
-     * @required
-     * @readonly
-     */
-    private File tempFile;
-
-    /**
      * Directory for site generated.
      *
      * @parameter expression="${project.build.directory}/site"
@@ -1313,14 +1304,21 @@ public abstract class AbstractAssemblyMojo
             {
                 try
                 {
-                    copyReplacingLineEndings( source, this.tempFile, lineEnding );
+                    if ( !tempRoot.exists() )
+                    {
+                        tempRoot.mkdirs();
+                    }
+
+                    File tempRootFile = File.createTempFile( source.getName() + ".", "", tempRoot );
+
+                    copyReplacingLineEndings( source, tempRootFile, lineEnding );
+
+                    source = tempRootFile;
                 }
                 catch ( IOException e )
                 {
                     throw new MojoExecutionException( "Error replacing line endings: " + e.getMessage(), e );
                 }
-
-                source = this.tempFile;
             }
 
             outputDirectory = getOutputDirectory( outputDirectory, project, includeBaseDirecetory );

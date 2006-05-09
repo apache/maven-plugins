@@ -36,7 +36,6 @@
           <tarLongFileMode>warn</tarLongFileMode>
           <basedir>${basedir}</basedir>
           <tempRoot>${basedir}/target/test-harness/assembly/fileSet-lineEndings-exception/archive-tmp</tempRoot>
-          <tempFile>${basedir}/target/test-harness/assembly/fileSet-lineEndings-exception/tempFile</tempFile>
           <siteDirectory>${basedir}/target/test-harness/assembly/fileSet-lineEndings-exception/site</siteDirectory>
           <includeSite>false</includeSite>
           <appendAssemblyId>true</appendAssemblyId>
