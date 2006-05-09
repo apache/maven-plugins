@@ -1310,6 +1310,8 @@ public abstract class AbstractAssemblyMojo
                     }
 
                     File tempRootFile = File.createTempFile( source.getName() + ".", "", tempRoot );
+                    
+                    tempRootFile.deleteOnExit();
 
                     copyReplacingLineEndings( source, tempRootFile, lineEnding );
 
