@@ -1,21 +1,29 @@
  ------
  Maven 2 Release Plugin 
  ------
- Carlos Sanchez
- <carlos@apache.org>
+ Carlos Sanchez <carlos@apache.org>
+ Brett Porter <brett@apache.org>
  ------
  March 28, 2006
 
-How to Use
+How-to
 
-Use a different username in the SCM server than he one in the operating system
+  The following are some common scenarios in preparing a release.
 
-  Run <<<mvn -Duser.name=your_username release:prepare>>>
+* Use a different username in the SCM server than the one in the operating system
 
-Set where to tag the files in the SCM
+  Most of the SCMs are simply executed as an external command as the current user on your system. If this username is
+  not the same as the remote username, you may need to set the following option:
 
-  These example shows how to set the repository location for all tagged files in Subversion,
-  not needed if you use if the svn repository uses the standard layout (branches/tags/trunk)
+------
+mvn -Dusername=your_username release:prepare
+------
+
+* Set where to tag the files in Subversion
+
+  These example shows how to set the repository location for all tags to be created in Subversion.
+  Note that it is not needed if you use the standard SVN layout, where the root project is in <<<trunk>>>, and
+  there is a <<<tags>>> directory immediately above it.
  
 -------------------
 <project>
@@ -26,7 +34,7 @@ Set where to tag the files in the SCM
         <plugin>
           <artifactId>maven-release-plugin</artifactId>
           <configuration>
-            <tagBase>https://svn.apache.org/repos/asf/maven/components/anothertags</tagBase>
+            <tagBase>https://svn.apache.org/repos/asf/maven/components/releases</tagBase>
           </configuration>
         </plugin>
       </plugins>
@@ -35,3 +43,35 @@ Set where to tag the files in the SCM
     ...
 </project>
 -------------------
+
+* Running a Dry Run
+
+  Since the release plugin performs a number of operations that change the project, it may be wise to do a dry run
+  before a big release or on a new project. To do this, commit all of your files as if you were about to run a full
+  release and run:
+
+------
+mvn release:prepare -DdryRun=true
+------
+
+  This will ask all the same questions, run the same tests, and output a copy of how the POMs will look after
+  transformation. You can check the output and review the POMs, then run:
+
+------
+mvn release:clean
+------
+
+  This will remove all of the files created above, and the project will be ready to execute the proper release.
+
+* Running in Batch Mode
+
+  Sometimes it is desirable to do the commit/tag process on a regular interval (eg, to produce nightly or integration
+  builds through a build server). To use the default inputs for the versions and tag information and not prompt for any
+  values, use Maven's <<<--batch-mode>>> setting:
+
+------
+mvn --batch-mode release:prepare
+------
+
+
+
