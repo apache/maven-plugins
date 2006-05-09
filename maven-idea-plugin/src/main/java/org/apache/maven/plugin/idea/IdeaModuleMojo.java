@@ -673,7 +673,7 @@ public class IdeaModuleMojo
         //       grab stuff from the mojo
 
         String warWebapp = executedProject.getBuild().getDirectory() + "/" + executedProject.getArtifactId();
-        String warSrc = "src/main/webapp";
+        String warSrc = getPluginSetting( "maven-war-plugin", "warSourceDirectory", "src/main/webapp" );
         String webXml = warSrc + "/WEB-INF/web.xml";
 
         module.addAttribute( "type", "J2EE_WEB_MODULE" );
