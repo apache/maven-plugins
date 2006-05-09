@@ -245,49 +245,46 @@ public abstract class AbstractIdeaMojo
     protected void doDependencyResolution( MavenProject project, ArtifactRepository localRepo )
         throws InvalidDependencyVersionException, ProjectBuildingException
     {
-        if ( project.getDependencies() != null )
+        Map managedVersions =
+            createManagedVersionMap( artifactFactory, project.getId(), project.getDependencyManagement() );
+
+        try
         {
-            Map managedVersions =
-                createManagedVersionMap( artifactFactory, project.getId(), project.getDependencyManagement() );
+            ArtifactResolutionResult result = artifactResolver.resolveTransitively( getProjectArtifacts(),
+                                                                                    project.getArtifact(),
+                                                                                    managedVersions, localRepo,
+                                                                                    project.getRemoteArtifactRepositories(),
+                                                                                    artifactMetadataSource );
 
-            try
+            project.setArtifacts( result.getArtifacts() );
+        }
+        catch ( ArtifactNotFoundException e )
+        {
+            getLog().debug( e.getMessage(), e );
+
+            StringBuffer msg = new StringBuffer();
+            msg.append( "An error occurred during dependency resolution.\n\n" );
+            msg.append( "    Failed to retrieve " + e.getDownloadUrl() + "\n" );
+            msg.append( "from the following repositories:" );
+            for ( Iterator repositories = e.getRemoteRepositories().iterator(); repositories.hasNext(); )
             {
-                ArtifactResolutionResult result = artifactResolver.resolveTransitively( getProjectArtifacts(),
-                                                                                        project.getArtifact(),
-                                                                                        managedVersions, localRepo,
-                                                                                        project.getRemoteArtifactRepositories(),
-                                                                                        artifactMetadataSource );
-
-                project.setArtifacts( result.getArtifacts() );
+                ArtifactRepository repository = (ArtifactRepository) repositories.next();
+                msg.append( "\n    " + repository.getId() + "(" + repository.getUrl() + ")" );
             }
-            catch ( ArtifactNotFoundException e )
-            {
-                getLog().debug( e.getMessage(), e );
+            msg.append( "\nCaused by: " + e.getMessage() );
 
-                StringBuffer msg = new StringBuffer();
-                msg.append( "An error occurred during dependency resolution.\n\n" );
-                msg.append( "    Failed to retrieve " + e.getDownloadUrl() + "\n" );
-                msg.append( "from the following repositories:" );
-                for ( Iterator repositories = e.getRemoteRepositories().iterator(); repositories.hasNext(); )
-                {
-                    ArtifactRepository repository = (ArtifactRepository) repositories.next();
-                    msg.append( "\n    " + repository.getId() + "(" + repository.getUrl() + ")" );
-                }
-                msg.append( "\nCaused by: " + e.getMessage() );
+            getLog().warn( msg );
+        }
+        catch ( ArtifactResolutionException e )
+        {
+            getLog().debug( e.getMessage(), e );
 
-                getLog().warn( msg );
-            }
-            catch ( ArtifactResolutionException e )
-            {
-                getLog().debug( e.getMessage(), e );
+            StringBuffer msg = new StringBuffer();
+            msg.append( "An error occurred during dependency resolution of the following artifact:\n\n" );
+            msg.append( "    " + e.getGroupId() + ":" + e.getArtifactId() + e.getVersion() + "\n\n" );
+            msg.append( "Caused by: " + e.getMessage() );
 
-                StringBuffer msg = new StringBuffer();
-                msg.append( "An error occurred during dependency resolution of the following artifact:\n\n" );
-                msg.append( "    " + e.getGroupId() + ":" + e.getArtifactId() + e.getVersion() + "\n\n" );
-                msg.append( "Caused by: " + e.getMessage() );
-
-                getLog().warn( msg );
-            }
+            getLog().warn( msg );
         }
     }
 
