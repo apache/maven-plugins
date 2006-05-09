@@ -16,23 +16,13 @@ package org.apache.maven.plugin.idea;
  * limitations under the License.
  */
 
-import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.model.Model;
-import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.idea.stubs.TestCounter;
-import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusTestCase;
-import org.codehaus.plexus.util.FileUtils;
 import org.dom4j.Document;
 import org.dom4j.Element;
-import org.jmock.Mock;
-import org.jmock.core.matcher.InvokeOnceMatcher;
-import org.jmock.core.stub.ReturnStub;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -46,36 +36,6 @@ public class IdeaModuleTest
         throws Exception
     {
         executeMojo( "src/test/module-plugin-configs/min-plugin-config.xml" );
-    }
-
-    public void testRewriteLineEndings()
-        throws Exception
-    {
-        Mojo mojo = new IdeaModuleMojo();
-
-        MavenProject project = new MavenProject( new Model() );
-        project.setArtifactId( "maven-idea-plugin" );
-        String basedir = "target/test-classes/idea-projects/rewrite-line-endings";
-        project.setFile( getTestFile( basedir + "/pom.xml" ) );
-        project.getBuild().setDirectory( "target" );
-        project.getBuild().setOutputDirectory( project.getBuild().getDirectory() + "/classes" );
-        project.getBuild().setTestOutputDirectory( project.getBuild().getDirectory() + "/test-classes" );
-        setVariableValueToObject( mojo, "executedProject", project );
-
-        ArtifactResolutionResult result = new ArtifactResolutionResult();
-        result.setArtifactResolutionNodes( Collections.EMPTY_SET );
-
-        Mock artifactResolver = new Mock( ArtifactResolver.class );
-        artifactResolver.expects( new InvokeOnceMatcher() ).method( "resolveTransitively" ).will(
-            new ReturnStub( result ) );
-
-        setVariableValueToObject( mojo, "artifactResolver", artifactResolver.proxy() );
-
-        String originalContent = FileUtils.fileRead( new File( project.getBasedir(), "maven-idea-plugin.iml" ) );
-        mojo.execute();
-
-        String newContent = FileUtils.fileRead( new File( project.getBasedir(), "maven-idea-plugin.iml" ) );
-        assertEquals( "Check content unchanged", originalContent, newContent );
     }
 
     public void testExcludeDirectoryConfig()
