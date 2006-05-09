@@ -1,0 +1,14 @@
+<project>
+  <name>war-plugin-test</name>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+		  <project implementation="org.apache.maven.plugin.war.stub.MavenProjectBasicStub" />
+          <warSourceDirectory>${basedir}/target/test-classes/unit/manifest/basic-manifest-test/src/main</warSourceDirectory>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

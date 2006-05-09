@@ -23,11 +23,10 @@ import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
+import org.apache.maven.model.Organization;
 
 /**
- *  Stub
- * 
- *
+ * Stub
  */
 public class MavenProjectBasicStub
     extends MavenProjectStub
@@ -56,7 +55,7 @@ public class MavenProjectBasicStub
 
     public File getBasedir()
     {
-        // create an isolated environment 
+        // create an isolated environment
         // see setupTestEnvironment for details
         return new File( testRootDir );
     }
@@ -100,4 +99,21 @@ public class MavenProjectBasicStub
     {
         return properties;
     }
+
+    public String getDescription()
+    {
+        return "Test Description";
+    }
+
+    public Organization getOrganization()
+    {
+        return new Organization()
+        {
+            public String getName()
+            {
+                return "Test Name";
+            }
+        };
+    }
+
 }
