@@ -22,8 +22,11 @@ import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.ReleaseFailureException;
 import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.components.interactivity.Prompter;
+import org.codehaus.plexus.components.interactivity.PrompterException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -41,6 +44,11 @@ import java.util.Set;
 public class CheckDependencySnapshotsPhase
     extends AbstractReleasePhase
 {
+    /**
+     * Component used to prompt for input.
+     */
+    private Prompter prompter;
+
     public void execute( ReleaseConfiguration releaseConfiguration )
         throws ReleaseExecutionException, ReleaseFailureException
     {
@@ -53,12 +61,12 @@ public class CheckDependencySnapshotsPhase
         {
             MavenProject project = (MavenProject) i.next();
 
-            checkProject( project, originalVersions );
+            checkProject( project, originalVersions, releaseConfiguration );
         }
     }
 
-    private void checkProject( MavenProject project, Map originalVersions )
-        throws ReleaseExecutionException, ReleaseFailureException
+    private void checkProject( MavenProject project, Map originalVersions, ReleaseConfiguration releaseConfiguration )
+        throws ReleaseFailureException, ReleaseExecutionException
     {
         Set snapshotDependencies = new HashSet();
 
@@ -86,7 +94,37 @@ public class CheckDependencySnapshotsPhase
 
             if ( checkArtifact( artifact, originalVersions ) )
             {
-                snapshotDependencies.add( artifact );
+                boolean addToFailures = true;
+
+                if ( "org.apache.maven.plugins".equals( artifact.getGroupId() ) &&
+                    "maven-release-plugin".equals( artifact.getArtifactId() ) )
+                {
+                    // It's a snapshot of the release plugin. Maybe just testing - ask
+                    // By default, we fail as for any ohter plugin
+                    if ( releaseConfiguration.isInteractive() )
+                    {
+                        try
+                        {
+                            prompter.showMessage(
+                                "This project relies on a SNAPSHOT of the release plugin. This may be necessary during testing." );
+                            String result = prompter.prompt( "Do you want to continue with the release?",
+                                                             Arrays.asList( new String[]{"yes", "no"} ), "no" );
+                            if ( result.toLowerCase().startsWith( "y" ) )
+                            {
+                                addToFailures = false;
+                            }
+                        }
+                        catch ( PrompterException e )
+                        {
+                            throw new ReleaseExecutionException( e.getMessage(), e );
+                        }
+                    }
+                }
+
+                if ( addToFailures )
+                {
+                    snapshotDependencies.add( artifact );
+                }
             }
         }
 
@@ -152,4 +190,8 @@ public class CheckDependencySnapshotsPhase
         execute( releaseConfiguration );
     }
 
+    public void setPrompter( Prompter prompter )
+    {
+        this.prompter = prompter;
+    }
 }
