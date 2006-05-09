@@ -11,7 +11,7 @@ Introduction
  This plugin is used to release a project with Maven, saving a lot of repetitive, manual work.
  Releasing a project takes two steps: prepare and perform.
 
-Prepare a release
+* Prepare a release
 
   Preparing a release executes the following steps:
 
@@ -55,7 +55,7 @@ mvn release:clean release:prepare
   Note that if any changes have been made to your source files they might need to be reverted before you restart the
   prepare process.
 
-Perform a release
+* Perform a release
 
   Performing a release does the following:
 
@@ -76,4 +76,4 @@ mvn release:perform
 mvn release:perform -DconnectionUrl=scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-release-plugin-2.0
 -------
 
-  After the release is complete, the <<<release.properties>> and other release files will be removed from the checkout.
+  After the release is complete, the <<<release.properties>>> and other release files will be removed from the checkout.
