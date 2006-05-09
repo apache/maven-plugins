@@ -81,15 +81,19 @@ public class ArchiverStub
     public void addFile( File file, String string )
         throws ArchiverException
     {
-        System.out.println( "Adding file " + file.getPath() );
-
-        files.put( file, new ArchiverFile( file, string, null, null ) );
+        addFile( file, string, 0 );
     }
 
     public void addFile( File file, String string, int i )
         throws ArchiverException
     {
-        addFile( file, string );
+        System.out.println( "Adding file " + file.getPath() );
+
+        ArchiverFile archiverFile = new ArchiverFile( file, string, null, null );
+
+        archiverFile.setFileMode( i );
+
+        files.put( file, archiverFile );
     }
 
     public File getDestFile()
@@ -145,6 +149,8 @@ public class ArchiverStub
 
         private String[] includes, excludes;
 
+        private int fileMode;
+
         private ArchiverFile( File file, String outputName, String[] includes, String[] excludes )
         {
             this.file = file;
@@ -191,6 +197,16 @@ public class ArchiverStub
         public void setExcludes( String[] excludes )
         {
             this.excludes = excludes;
+        }
+
+        public int getFileMode()
+        {
+            return fileMode;
+        }
+
+        public void setFileMode( int fileMode )
+        {
+            this.fileMode = fileMode;
         }
     }
 }
