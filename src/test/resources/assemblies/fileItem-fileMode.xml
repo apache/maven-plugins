@@ -22,9 +22,7 @@
   <files>
     <file>
       <source>target/test-classes/fileSet/README.txt</source>
-    </file>
-    <file>
-      <source>target/test-classes/fileSet/LICENSE.txt</source>
+      <fileMode>777</fileMode>
     </file>
   </files>
 </assembly>
