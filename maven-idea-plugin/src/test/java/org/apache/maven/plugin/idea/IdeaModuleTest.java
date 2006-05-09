@@ -1,30 +1,40 @@
 package org.apache.maven.plugin.idea;
 
+/*
+ * Copyright 2004-2006 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.model.Model;
+import org.apache.maven.plugin.Mojo;
+import org.apache.maven.plugin.idea.stubs.TestCounter;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.PlexusTestCase;
+import org.codehaus.plexus.util.FileUtils;
 import org.dom4j.Document;
 import org.dom4j.Element;
-import org.apache.maven.plugin.idea.stubs.TestCounter;
-import org.codehaus.plexus.PlexusTestCase;
+import org.jmock.Mock;
+import org.jmock.core.matcher.InvokeOnceMatcher;
+import org.jmock.core.stub.ReturnStub;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
-/*
- *  Copyright 2005-2006 The Apache Software Foundation.
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
 
 /**
  * @author Edwin Punzalan
@@ -36,6 +46,36 @@ public class IdeaModuleTest
         throws Exception
     {
         executeMojo( "src/test/module-plugin-configs/min-plugin-config.xml" );
+    }
+
+    public void testRewriteLineEndings()
+        throws Exception
+    {
+        Mojo mojo = new IdeaModuleMojo();
+
+        MavenProject project = new MavenProject( new Model() );
+        project.setArtifactId( "maven-idea-plugin" );
+        String basedir = "target/test-classes/idea-projects/rewrite-line-endings";
+        project.setFile( getTestFile( basedir + "/pom.xml" ) );
+        project.getBuild().setDirectory( "target" );
+        project.getBuild().setOutputDirectory( project.getBuild().getDirectory() + "/classes" );
+        project.getBuild().setTestOutputDirectory( project.getBuild().getDirectory() + "/test-classes" );
+        setVariableValueToObject( mojo, "executedProject", project );
+
+        ArtifactResolutionResult result = new ArtifactResolutionResult();
+        result.setArtifactResolutionNodes( Collections.EMPTY_SET );
+
+        Mock artifactResolver = new Mock( ArtifactResolver.class );
+        artifactResolver.expects( new InvokeOnceMatcher() ).method( "resolveTransitively" ).will(
+            new ReturnStub( result ) );
+
+        setVariableValueToObject( mojo, "artifactResolver", artifactResolver.proxy() );
+
+        String originalContent = FileUtils.fileRead( new File( project.getBasedir(), "maven-idea-plugin.iml" ) );
+        mojo.execute();
+
+        String newContent = FileUtils.fileRead( new File( project.getBasedir(), "maven-idea-plugin.iml" ) );
+        assertEquals( "Check content unchanged", originalContent, newContent );
     }
 
     public void testExcludeDirectoryConfig()
@@ -51,7 +91,7 @@ public class IdeaModuleTest
         sub.mkdirs();
         File sub2 = new File( excluded, "sub2" );
         sub2.mkdirs();
-        File subsub1 = new File( sub, "sub1");
+        File subsub1 = new File( sub, "sub1" );
         subsub1.mkdirs();
 
         Document imlDocument = executeMojo( "src/test/module-plugin-configs/dir-exclusion-plugin-config.xml" );
@@ -98,8 +138,7 @@ public class IdeaModuleTest
         assertEquals( "Test deployment descriptor version", "2.3", deployDescriptor.attributeValue( "version" ) );
         assertEquals( "Test deployment descriptor name", "web.xml", deployDescriptor.attributeValue( "name" ) );
         assertEquals( "Test deployment descriptor optional", "false", deployDescriptor.attributeValue( "optional" ) );
-        assertEquals( "Test deployment descriptor file",
-                      "file://$MODULE_DIR$/src/main/webapp/WEB-INF/web.xml",
+        assertEquals( "Test deployment descriptor file", "file://$MODULE_DIR$/src/main/webapp/WEB-INF/web.xml",
                       deployDescriptor.attributeValue( "url" ) );
 
         Element webroots = component.element( "webroots" );
@@ -154,8 +193,7 @@ public class IdeaModuleTest
         assertEquals( "Test deployment descriptor version", "2.x", deployDescriptor.attributeValue( "version" ) );
         assertEquals( "Test deployment descriptor name", "ejb-jar.xml", deployDescriptor.attributeValue( "name" ) );
         assertEquals( "Test deployment descriptor optional", "false", deployDescriptor.attributeValue( "optional" ) );
-        assertEquals( "Test deployment descriptor file",
-                      "file://$MODULE_DIR$/src/main/resources/META-INF/ejb-jar.xml",
+        assertEquals( "Test deployment descriptor file", "file://$MODULE_DIR$/src/main/resources/META-INF/ejb-jar.xml",
                       deployDescriptor.attributeValue( "url" ) );
 
         List containerElementList = findElementsByName( component, "containerElement" );
@@ -193,8 +231,7 @@ public class IdeaModuleTest
         assertEquals( "Test deployment descriptor version", "1.3", deployDescriptor.attributeValue( "version" ) );
         assertEquals( "Test deployment descriptor name", "application.xml", deployDescriptor.attributeValue( "name" ) );
         assertEquals( "Test deployment descriptor optional", "false", deployDescriptor.attributeValue( "optional" ) );
-        assertEquals( "Test deployment descriptor file",
-                      "file://$MODULE_DIR$/target/application.xml",
+        assertEquals( "Test deployment descriptor file", "file://$MODULE_DIR$/target/application.xml",
                       deployDescriptor.attributeValue( "url" ) );
     }
 
@@ -235,7 +272,7 @@ public class IdeaModuleTest
         {
             Element orderEntry = (Element) orderEntries.next();
 
-            if (  "module-library".equals( orderEntry.attributeValue( "type" ) ) )
+            if ( "module-library".equals( orderEntry.attributeValue( "type" ) ) )
             {
                 Element library = orderEntry.element( "library" );
 
@@ -244,12 +281,14 @@ public class IdeaModuleTest
             }
         }
 
-        File srcFile = new File( PlexusTestCase.getBasedir(), "target/local-repo/org/apache/maven/maven-model/2.0.1/maven-model-2.0.1-src.jar" );
+        File srcFile = new File( PlexusTestCase.getBasedir(),
+                                 "target/local-repo/org/apache/maven/maven-model/2.0.1/maven-model-2.0.1-src.jar" );
         assertTrue( "Test maven-model source is downloaded", srcFile.exists() );
         srcFile = new File( PlexusTestCase.getBasedir(), "target/local-repo/junit/junit/3.8.1/junit-3.8.1-src.jar" );
         assertTrue( "Test junit source is downloaded", srcFile.exists() );
 
-        File docFile = new File( PlexusTestCase.getBasedir(), "target/local-repo/org/apache/maven/maven-model/2.0.1/maven-model-2.0.1-doc.jar" );
+        File docFile = new File( PlexusTestCase.getBasedir(),
+                                 "target/local-repo/org/apache/maven/maven-model/2.0.1/maven-model-2.0.1-doc.jar" );
         assertTrue( "Test maven-model javadoc is downloaded", docFile.exists() );
     }
 
@@ -279,8 +318,7 @@ public class IdeaModuleTest
         assertEquals( "Test deployment descriptor version", "2.3", deployDescriptor.attributeValue( "version" ) );
         assertEquals( "Test deployment descriptor name", "web.xml", deployDescriptor.attributeValue( "name" ) );
         assertEquals( "Test deployment descriptor optional", "false", deployDescriptor.attributeValue( "optional" ) );
-        assertEquals( "Test deployment descriptor file",
-                      "file://$MODULE_DIR$/src/main/web/WEB-INF/web.xml",
+        assertEquals( "Test deployment descriptor file", "file://$MODULE_DIR$/src/main/web/WEB-INF/web.xml",
                       deployDescriptor.attributeValue( "url" ) );
 
         Element webroots = component.element( "webroots" );
@@ -413,7 +451,7 @@ public class IdeaModuleTest
         component = findComponent( imlDocument.getRootElement(), "WebModuleProperties" );
 
         boolean webModuleFound = false;
-        for( Iterator elements = component.elementIterator( "containerElement" ); elements.hasNext(); )
+        for ( Iterator elements = component.elementIterator( "containerElement" ); elements.hasNext(); )
         {
             Element containerElement = (Element) elements.next();
 
@@ -426,10 +464,10 @@ public class IdeaModuleTest
                 assertNull( "Library url for modules must not be present", containerElement.element( "url" ) );
 
                 Element method = findElementByNameAttribute( containerElement, "attribute", "method" );
-                assertEquals( "Test Library module method", "5", method.attributeValue( "value" )  );
+                assertEquals( "Test Library module method", "5", method.attributeValue( "value" ) );
 
                 Element uri = findElementByNameAttribute( containerElement, "attribute", "URI" );
-                assertEquals( "Test Library module method", "/WEB-INF/classes", uri.attributeValue( "value" )  );
+                assertEquals( "Test Library module method", "/WEB-INF/classes", uri.attributeValue( "value" ) );
 
                 webModuleFound = true;
             }
@@ -461,7 +499,7 @@ public class IdeaModuleTest
         component = findComponent( imlDocument.getRootElement(), "EjbModuleProperties" );
 
         boolean ejbModuleFound = false;
-        for( Iterator elements = component.elementIterator( "containerElement" ); elements.hasNext(); )
+        for ( Iterator elements = component.elementIterator( "containerElement" ); elements.hasNext(); )
         {
             Element containerElement = (Element) elements.next();
 
@@ -474,10 +512,10 @@ public class IdeaModuleTest
                 assertNull( "Library url for modules must not be present", containerElement.element( "url" ) );
 
                 Element method = findElementByNameAttribute( containerElement, "attribute", "method" );
-                assertEquals( "Test Library module method", "6", method.attributeValue( "value" )  );
+                assertEquals( "Test Library module method", "6", method.attributeValue( "value" ) );
 
                 Element uri = findElementByNameAttribute( containerElement, "attribute", "URI" );
-                assertEquals( "Test Library module method", "/WEB-INF/classes", uri.attributeValue( "value" )  );
+                assertEquals( "Test Library module method", "/WEB-INF/classes", uri.attributeValue( "value" ) );
 
                 ejbModuleFound = true;
             }
@@ -497,10 +535,12 @@ public class IdeaModuleTest
         Element component = findComponent( imlDocument.getRootElement(), "NewModuleRootManager" );
 
         Element output = findElement( component, "output" );
-        assertEquals( "Module output url created.", "file://$MODULE_DIR$/target/classes", output.attributeValue( "url" ) );
+        assertEquals( "Module output url created.", "file://$MODULE_DIR$/target/classes",
+                      output.attributeValue( "url" ) );
 
         Element outputTest = findElement( component, "output-test" );
-        assertEquals( "Module test-output url created.", "file://$MODULE_DIR$/target/test-classes", outputTest.attributeValue( "url" ) );
+        assertEquals( "Module test-output url created.", "file://$MODULE_DIR$/target/test-classes",
+                      outputTest.attributeValue( "url" ) );
 
         Element content = findElement( component, "content" );
 
