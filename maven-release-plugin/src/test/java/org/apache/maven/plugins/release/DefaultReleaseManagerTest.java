@@ -584,6 +584,26 @@ public class DefaultReleaseManagerTest
         }
     }
 
+    public void testNoScmUrlPerform()
+        throws Exception
+    {
+        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
+        releaseConfiguration.setWorkingDirectory( getTestFile( "target/test/checkout" ) );
+
+        DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
+
+        try
+        {
+            releaseManager.perform( releaseConfiguration, null, null, false );
+
+            fail( "perform should have failed" );
+        }
+        catch ( ReleaseFailureException e )
+        {
+            assertNull( "check no cause", e.getCause() );
+        }
+    }
+
     public void testNoSuchScmProviderExceptionThrown()
         throws Exception
     {
