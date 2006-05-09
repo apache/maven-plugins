@@ -427,7 +427,8 @@ public class IdeaModuleTest
                 assertEquals( "Test Library module method", "5", method.attributeValue( "value" ) );
 
                 Element uri = findElementByNameAttribute( containerElement, "attribute", "URI" );
-                assertEquals( "Test Library module method", "/WEB-INF/classes", uri.attributeValue( "value" ) );
+                assertEquals( "Test Library module method", "/WEB-INF/lib/" + name + "-1.0.jar",
+                              uri.attributeValue( "value" ) );
 
                 webModuleFound = true;
             }
