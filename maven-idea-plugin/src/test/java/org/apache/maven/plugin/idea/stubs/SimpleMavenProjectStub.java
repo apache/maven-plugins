@@ -208,10 +208,15 @@ public class SimpleMavenProjectStub
         artifact.setGroupId( groupId );
         artifact.setArtifactId( artifactId );
         artifact.setVersion( version );
-        artifact.setFile( new File( PlexusTestCase.getBasedir(), "target/local-repo/" + artifact.getGroupId().replace( '.', '/' ) +
-                          "/" + artifact.getArtifactId() + "/" + artifact.getVersion() +
-                          "/" + artifact.getArtifactId() + "-" + artifact.getVersion() + ".jar" ) );
+        artifact.setFile( new File( PlexusTestCase.getBasedir(), "target/local-repo/" +
+            artifact.getGroupId().replace( '.', '/' ) + "/" + artifact.getArtifactId() + "/" + artifact.getVersion() +
+            "/" + artifact.getArtifactId() + "-" + artifact.getVersion() + ".jar" ) );
 
         return artifact;
+    }
+
+    public List getBuildPlugins()
+    {
+        return build.getPlugins();
     }
 }
