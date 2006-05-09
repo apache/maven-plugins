@@ -701,7 +701,8 @@ public class IdeaModuleMojo
                 methodAttribute.addAttribute( "value", "5" );
                 Element uriAttribute = createElement( containerElement, "attribute" );
                 uriAttribute.addAttribute( "name", "URI" );
-                uriAttribute.addAttribute( "value", "/WEB-INF/classes" );
+                uriAttribute.addAttribute( "value", "/WEB-INF/lib/" + artifact.getArtifactId() + "-" +
+                    artifact.getVersion() + ".jar" );
             }
             else if ( artifact.getFile() != null )
             {
