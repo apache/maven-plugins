@@ -29,7 +29,11 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -46,6 +50,10 @@ public class DoxiaFilter
 
     private Map documents;
 
+    private File generatedSiteDirectory;
+
+    private List originalSiteDirectories;
+
     public void init( FilterConfig filterConfig )
         throws ServletException
     {
@@ -53,6 +61,8 @@ public class DoxiaFilter
         siteRenderer = (Renderer) servletContext.getAttribute( "siteRenderer" );
         context = (SiteRenderingContext) servletContext.getAttribute( "context" );
         documents = (Map) servletContext.getAttribute( "documents" );
+        generatedSiteDirectory = (File) servletContext.getAttribute( "generatedSiteDirectory" );
+        originalSiteDirectories = new ArrayList( context.getSiteDirectories() );
     }
 
     public void doFilter( ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain )
@@ -74,6 +84,33 @@ public class DoxiaFilter
             catch ( RendererException e )
             {
                 throw new ServletException( e );
+            }
+        }
+        else if ( generatedSiteDirectory != null && generatedSiteDirectory.exists() )
+        {
+            context.getSiteDirectories().clear();
+            context.addSiteDirectory( generatedSiteDirectory );
+            try
+            {
+                Map documents = siteRenderer.locateDocumentFiles( context );
+
+                if ( documents.containsKey( path ) )
+                {
+                    // TODO: documents are not right for the locale
+                    context.setLocale( req.getLocale() );
+
+                    DocumentRenderer renderer = (DocumentRenderer) documents.get( path );
+                    renderer.renderDocument( servletResponse.getWriter(), siteRenderer, context );
+                }
+            }
+            catch ( RendererException e )
+            {
+                throw new ServletException( e );
+            }
+            for ( Iterator i = originalSiteDirectories.iterator(); i.hasNext(); )
+            {
+                File dir = (File) i.next();
+                context.addSiteDirectory( dir );
             }
         }
         else
