@@ -17,13 +17,9 @@ package org.apache.maven.report.projectinfo;
  */
 
 import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.model.Organization;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.plexus.i18n.I18N;
 
 import java.util.Locale;
 
@@ -35,39 +31,8 @@ import java.util.Locale;
  * @plexus.component
  */
 public class ProjectSummaryReport
-    extends AbstractMavenReport
+    extends AbstractProjectInfoReport
 {
-    /**
-     * Report output directory.
-     *
-     * @parameter expression="${project.reporting.outputDirectory}"
-     * @required
-     */
-    private String outputDirectory;
-
-    /**
-     * Doxia Site Renderer.
-     *
-     * @component
-     */
-    private Renderer siteRenderer;
-
-    /**
-     * The Maven Project.
-     *
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
-    private MavenProject project;
-
-    /**
-     * Internationalization.
-     *
-     * @component
-     */
-    private I18N i18n;
-
     protected void executeReport( Locale locale )
         throws MavenReportException
     {
@@ -83,43 +48,11 @@ public class ProjectSummaryReport
     }
 
     /**
-     * @see org.apache.maven.reporting.MavenReport#getCategoryName()
-     */
-    public String getCategoryName()
-    {
-        return CATEGORY_PROJECT_INFORMATION;
-    }
-
-    /**
      * @see org.apache.maven.reporting.MavenReport#getDescription(java.util.Locale)
      */
     public String getDescription( Locale locale )
     {
         return i18n.getString( "project-info-report", locale, "report.summary.description" );
-    }
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getOutputDirectory()
-     */
-    protected String getOutputDirectory()
-    {
-        return outputDirectory;
-    }
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getProject()
-     */
-    protected MavenProject getProject()
-    {
-        return project;
-    }
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getSiteRenderer()
-     */
-    protected Renderer getSiteRenderer()
-    {
-        return siteRenderer;
     }
 
     /**
@@ -133,9 +66,9 @@ public class ProjectSummaryReport
     private class ProjectSummaryRenderer
         extends AbstractMavenReportRenderer
     {
-        private Locale locale;
+        private final Locale locale;
 
-        public ProjectSummaryRenderer( Sink sink, Locale locale )
+        ProjectSummaryRenderer( Sink sink, Locale locale )
         {
             super( sink );
 

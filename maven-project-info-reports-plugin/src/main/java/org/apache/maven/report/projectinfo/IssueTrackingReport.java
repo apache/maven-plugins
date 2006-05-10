@@ -16,13 +16,10 @@ package org.apache.maven.report.projectinfo;
  * limitations under the License.
  */
 
+import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.IssueManagement;
 import org.apache.maven.model.Model;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
-import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.doxia.siterenderer.Renderer;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -36,39 +33,8 @@ import java.util.Locale;
  * @goal issue-tracking
  */
 public class IssueTrackingReport
-    extends AbstractMavenReport
+    extends AbstractProjectInfoReport
 {
-    /**
-     * Report outpur directory.
-     *
-     * @parameter expression="${project.reporting.outputDirectory}"
-     * @required
-     */
-    private String outputDirectory;
-
-    /**
-     * Doxia Site Renderer.
-     *
-     * @component
-     */
-    private Renderer siteRenderer;
-
-    /**
-     * The Maven Project.
-     *
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
-    private MavenProject project;
-
-    /**
-     * Internationalization.
-     *
-     * @component
-     */
-    private I18N i18n;
-
     /**
      * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
      */
@@ -78,43 +44,11 @@ public class IssueTrackingReport
     }
 
     /**
-     * @see org.apache.maven.reporting.MavenReport#getCategoryName()
-     */
-    public String getCategoryName()
-    {
-        return CATEGORY_PROJECT_INFORMATION;
-    }
-
-    /**
      * @see org.apache.maven.reporting.MavenReport#getDescription(java.util.Locale)
      */
     public String getDescription( Locale locale )
     {
         return i18n.getString( "project-info-report", locale, "report.issuetracking.description" );
-    }
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getOutputDirectory()
-     */
-    protected String getOutputDirectory()
-    {
-        return outputDirectory;
-    }
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getProject()
-     */
-    protected MavenProject getProject()
-    {
-        return project;
-    }
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getSiteRenderer()
-     */
-    protected Renderer getSiteRenderer()
-    {
-        return siteRenderer;
     }
 
     /**
@@ -135,7 +69,7 @@ public class IssueTrackingReport
         return "issue-tracking";
     }
 
-    static class IssueTrackingRenderer
+    private static class IssueTrackingRenderer
         extends AbstractMavenReportRenderer
     {
         private Model model;
@@ -144,7 +78,7 @@ public class IssueTrackingReport
 
         private Locale locale;
 
-        public IssueTrackingRenderer( Sink sink, Model model, I18N i18n, Locale locale )
+        IssueTrackingRenderer( Sink sink, Model model, I18N i18n, Locale locale )
         {
             super( sink );
 
@@ -200,7 +134,7 @@ public class IssueTrackingReport
                 linkPatternedText(
                     i18n.getString( "project-info-report", locale, "report.issuetracking.scarab.intro" ) );
             }
-            else if ( ( system == null ) || ( system.trim().equals( "" ) ) )
+            else if ( system == null || "".equals( system.trim() ) )
             {
                 paragraph( i18n.getString( "project-info-report", locale, "report.issuetracking.general.intro" ) );
             }
@@ -241,12 +175,7 @@ public class IssueTrackingReport
                 return false;
             }
 
-            if ( system.toLowerCase().startsWith( im.toLowerCase() ) )
-            {
-                return true;
-            }
-
-            return false;
+            return system.toLowerCase().startsWith( im.toLowerCase() );
         }
     }
 }
