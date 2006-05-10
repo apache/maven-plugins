@@ -56,7 +56,7 @@ public abstract class AbstractSiteMojo
      */
     protected I18N i18n;
 
-     /**
+    /**
      * Directory containing source for apt, fml and xdoc docs.
      *
      * @parameter expression="${basedir}/src/site"
@@ -95,8 +95,8 @@ public abstract class AbstractSiteMojo
                     // Default bundles are in English
                     if ( !locale.getLanguage().equals( DEFAULT_LOCALE.getLanguage() ) )
                     {
-                        if ( !i18n.getBundle( "site-plugin", locale ).getLocale().getLanguage().equals( locale
-                            .getLanguage() ) )
+                        if ( !i18n.getBundle( "site-plugin", locale ).getLocale().getLanguage().equals(
+                            locale.getLanguage() ) )
                         {
                             StringBuffer sb = new StringBuffer();
 
