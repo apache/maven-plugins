@@ -16,13 +16,10 @@ package org.apache.maven.report.projectinfo;
  * limitations under the License.
  */
 
+import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.MailingList;
 import org.apache.maven.model.Model;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
-import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.doxia.siterenderer.Renderer;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -40,39 +37,8 @@ import java.util.Locale;
  * @goal mailing-list
  */
 public class MailingListsReport
-    extends AbstractMavenReport
+    extends AbstractProjectInfoReport
 {
-    /**
-     * Report output directory.
-     *
-     * @parameter expression="${project.reporting.outputDirectory}"
-     * @required
-     */
-    private String outputDirectory;
-
-    /**
-     * Doxia Site Renderer.
-     *
-     * @component
-     */
-    private Renderer siteRenderer;
-
-    /**
-     * The Maven Project.
-     *
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
-    private MavenProject project;
-
-    /**
-     * Internationalization.
-     *
-     * @component
-     */
-    private I18N i18n;
-
     /**
      * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
      */
@@ -82,43 +48,11 @@ public class MailingListsReport
     }
 
     /**
-     * @see org.apache.maven.reporting.MavenReport#getCategoryName()
-     */
-    public String getCategoryName()
-    {
-        return CATEGORY_PROJECT_INFORMATION;
-    }
-
-    /**
      * @see org.apache.maven.reporting.MavenReport#getDescription(java.util.Locale)
      */
     public String getDescription( Locale locale )
     {
         return i18n.getString( "project-info-report", locale, "report.mailing-lists.description" );
-    }
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getOutputDirectory()
-     */
-    protected String getOutputDirectory()
-    {
-        return outputDirectory;
-    }
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getProject()
-     */
-    protected MavenProject getProject()
-    {
-        return project;
-    }
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getSiteRenderer()
-     */
-    protected Renderer getSiteRenderer()
-    {
-        return siteRenderer;
     }
 
     /**
@@ -139,7 +73,7 @@ public class MailingListsReport
         return "mail-lists";
     }
 
-    static class MailingListsRenderer
+    private static class MailingListsRenderer
         extends AbstractMavenReportRenderer
     {
         private Model model;
@@ -148,7 +82,9 @@ public class MailingListsReport
 
         private Locale locale;
 
-        public MailingListsRenderer( Sink sink, Model model, I18N i18n, Locale locale )
+        private static final String[] EMPTY_STRING_ARRAY = new String[0];
+
+        MailingListsRenderer( Sink sink, Model model, I18N i18n, Locale locale )
         {
             super( sink );
 
@@ -174,7 +110,7 @@ public class MailingListsReport
         {
             List mailingLists = model.getMailingLists();
 
-            if ( ( mailingLists == null ) || ( mailingLists.isEmpty() ) )
+            if ( mailingLists == null || mailingLists.isEmpty() )
             {
                 startSection( getTitle() );
 
@@ -198,7 +134,7 @@ public class MailingListsReport
             {
                 MailingList m = (MailingList) i.next();
 
-                if ( ( ( m.getOtherArchives() != null ) ) && ( !m.getOtherArchives().isEmpty() ) )
+                if ( m.getOtherArchives() != null && !m.getOtherArchives().isEmpty() )
                 {
                     otherArchives = true;
                 }
@@ -254,7 +190,7 @@ public class MailingListsReport
                     textRow.add( "-" );
                 }
 
-                if ( ( ( mailingList.getOtherArchives() != null ) ) && ( !mailingList.getOtherArchives().isEmpty() ) )
+                if ( mailingList.getOtherArchives() != null && !mailingList.getOtherArchives().isEmpty() )
                 {
                     // For the first line
                     Iterator it = mailingList.getOtherArchives().iterator();
@@ -262,7 +198,7 @@ public class MailingListsReport
 
                     textRow.add( createLinkPatternedText( getArchiveServer( otherArchive ), otherArchive ) );
 
-                    tableRow( (String[]) textRow.toArray( new String[0] ) );
+                    tableRow( (String[]) textRow.toArray( EMPTY_STRING_ARRAY ) );
 
                     // Other lines...
                     while ( it.hasNext() )
@@ -289,7 +225,7 @@ public class MailingListsReport
 
                         textRow.add( createLinkPatternedText( getArchiveServer( otherArchive ), otherArchive ) );
 
-                        tableRow( (String[]) textRow.toArray( new String[0] ) );
+                        tableRow( (String[]) textRow.toArray( EMPTY_STRING_ARRAY ) );
                     }
                 }
                 else
@@ -299,7 +235,7 @@ public class MailingListsReport
                         textRow.add( null );
                     }
 
-                    tableRow( (String[]) textRow.toArray( new String[0] ) );
+                    tableRow( (String[]) textRow.toArray( EMPTY_STRING_ARRAY ) );
                 }
             }
 
@@ -307,28 +243,37 @@ public class MailingListsReport
 
             endSection();
         }
-    }
 
-    /**
-     * Convenience method to return the name of a web-based mailing list archive
-     * server. <br>
-     * For instance, if the archive uri is
-     * <code>http://www.mail-archive.com/dev@maven.apache.org</code>, this
-     * method return <code>www.mail-archive.com</code>
-     *
-     * @param uri
-     * @return the server name of a web-based mailing list archive server
-     */
-    private static String getArchiveServer( String uri )
-    {
-        if ( StringUtils.isEmpty( uri ) )
+        /**
+         * Convenience method to return the name of a web-based mailing list archive
+         * server. <br>
+         * For instance, if the archive uri is
+         * <code>http://www.mail-archive.com/dev@maven.apache.org</code>, this
+         * method return <code>www.mail-archive.com</code>
+         *
+         * @param uri
+         * @return the server name of a web-based mailing list archive server
+         */
+        private static String getArchiveServer( String uri )
         {
-            return "???UNKNOWN???";
+            if ( StringUtils.isEmpty( uri ) )
+            {
+                return "???UNKNOWN???";
+            }
+
+            int at = uri.indexOf( "//" );
+            int fromIndex;
+            if ( at >= 0 )
+            {
+                fromIndex = uri.lastIndexOf( "/", at - 1 ) >= 0 ? 0 : at + 2;
+            }
+            else
+            {
+                fromIndex = 0;
+            }
+            int from = uri.indexOf( "/", fromIndex );
+
+            return uri.substring( at + 2, from );
         }
-
-        int at = uri.indexOf( "//" );
-        int from = uri.indexOf( "/", at >= 0 ? ( uri.lastIndexOf( "/", at - 1 ) >= 0 ? 0 : at + 2 ) : 0 );
-
-        return uri.substring( at + 2, from );
     }
 }

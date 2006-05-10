@@ -16,14 +16,11 @@ package org.apache.maven.report.projectinfo;
  * limitations under the License.
  */
 
+import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Developer;
 import org.apache.maven.model.Model;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
-import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.doxia.siterenderer.Renderer;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -40,53 +37,14 @@ import java.util.Properties;
  * @goal project-team
  */
 public class TeamListReport
-    extends AbstractMavenReport
+    extends AbstractProjectInfoReport
 {
-    /**
-     * Report output directory.
-     *
-     * @parameter expression="${project.reporting.outputDirectory}"
-     * @required
-     */
-    private String outputDirectory;
-
-    /**
-     * Doxia Site Renderer.
-     *
-     * @component
-     */
-    private Renderer siteRenderer;
-
-    /**
-     * The Maven Project.
-     *
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
-    private MavenProject project;
-
-    /**
-     * Internationalization.
-     *
-     * @component
-     */
-    private I18N i18n;
-
     /**
      * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
      */
     public String getName( Locale locale )
     {
         return i18n.getString( "project-info-report", locale, "report.team-list.name" );
-    }
-
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getCategoryName()
-     */
-    public String getCategoryName()
-    {
-        return CATEGORY_PROJECT_INFORMATION;
     }
 
     /**
@@ -98,35 +56,11 @@ public class TeamListReport
     }
 
     /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getOutputDirectory()
-     */
-    protected String getOutputDirectory()
-    {
-        return outputDirectory;
-    }
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getProject()
-     */
-    protected MavenProject getProject()
-    {
-        return project;
-    }
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getSiteRenderer()
-     */
-    protected Renderer getSiteRenderer()
-    {
-        return siteRenderer;
-    }
-
-    /**
      * @see org.apache.maven.reporting.AbstractMavenReport#executeReport(java.util.Locale)
      */
     public void executeReport( Locale locale )
     {
-        TeamListRenderer r = new TeamListRenderer( getSink(), getProject().getModel(), i18n, locale );
+        TeamListRenderer r = new TeamListRenderer( getSink(), project.getModel(), i18n, locale );
 
         r.render();
     }
@@ -139,7 +73,7 @@ public class TeamListReport
         return "team-list";
     }
 
-    static class TeamListRenderer
+    private static class TeamListRenderer
         extends AbstractMavenReportRenderer
     {
         private Model model;
@@ -148,7 +82,9 @@ public class TeamListReport
 
         private Locale locale;
 
-        public TeamListRenderer( Sink sink, Model model, I18N i18n, Locale locale )
+        private static final String[] EMPTY_STRING_ARRAY = new String[0];
+
+        TeamListRenderer( Sink sink, Model model, I18N i18n, Locale locale )
         {
             super( sink );
 
@@ -175,16 +111,18 @@ public class TeamListReport
             startSection( i18n.getString( "project-info-report", locale, "report.team-list.intro.title" ) );
 
             // To handle JS
-            StringBuffer javascript = new StringBuffer( "function offsetDate(id, offset) {\n" )
-                .append( "    var now = new Date();\n" )
-                .append( "    var nowTime = now.getTime();\n" )
-                .append( "    var localOffset = now.getTimezoneOffset();\n" )
-                .append(
-                    "    var developerTime = nowTime + ( offset * 60 * 60 * 1000 ) + ( localOffset * 60 * 1000 );\n" )
-                .append( "    var developerDate = new Date(developerTime);\n" ).append( "\n" )
-                .append( "    document.getElementById(id).innerHTML = developerDate;\n" ).append( "}\n" )
-                .append( "\n" )
-                .append( "function init(){\n" );
+            StringBuffer javascript = new StringBuffer( "function offsetDate(id, offset) {\n" );
+            javascript.append( "    var now = new Date();\n" );
+            javascript.append( "    var nowTime = now.getTime();\n" );
+            javascript.append( "    var localOffset = now.getTimezoneOffset();\n" );
+            javascript.append(
+                "    var developerTime = nowTime + ( offset * 60 * 60 * 1000 ) + ( localOffset * 60 * 1000 );\n" );
+            javascript.append( "    var developerDate = new Date(developerTime);\n" );
+            javascript.append( "\n" );
+            javascript.append( "    document.getElementById(id).innerHTML = developerDate;\n" );
+            javascript.append( "}\n" );
+            javascript.append( "\n" );
+            javascript.append( "function init(){\n" );
 
             // Intoduction
             paragraph( i18n.getString( "project-info-report", locale, "report.team-list.intro.description1" ) );
@@ -195,7 +133,7 @@ public class TeamListReport
 
             startSection( i18n.getString( "project-info-report", locale, "report.team-list.developers.title" ) );
 
-            if ( ( developers == null ) || ( developers.isEmpty() ) )
+            if ( developers == null || developers.isEmpty() )
             {
                 paragraph( i18n.getString( "project-info-report", locale, "report.team-list.nodeveloper" ) );
             }
@@ -249,7 +187,7 @@ public class TeamListReport
                     if ( developer.getRoles() != null )
                     {
                         // Comma separated roles
-                        tableCell( StringUtils.join( developer.getRoles().toArray( new String[0] ), ", " ) );
+                        tableCell( StringUtils.join( developer.getRoles().toArray( EMPTY_STRING_ARRAY ), ", " ) );
                     }
                     else
                     {
@@ -264,7 +202,7 @@ public class TeamListReport
                     text( developer.getTimezone() );
                     if ( !StringUtils.isEmpty( developer.getTimezone() ) )
                     {
-                        javascript.append( "    offsetDate('developer-" + developersRows + "', '" );
+                        javascript.append( "    offsetDate('developer-" ).append( developersRows ).append( "', '" );
                         javascript.append( developer.getTimezone() );
                         javascript.append( "');\n" );
                     }
@@ -296,7 +234,7 @@ public class TeamListReport
 
             startSection( i18n.getString( "project-info-report", locale, "report.team-list.contributors.title" ) );
 
-            if ( ( contributors == null ) || ( contributors.isEmpty() ) )
+            if ( contributors == null || contributors.isEmpty() )
             {
                 paragraph( i18n.getString( "project-info-report", locale, "report.team-list.nocontributor" ) );
             }
@@ -340,13 +278,13 @@ public class TeamListReport
 
                     tableCell( contributor.getOrganization() );
 
-                    tableCell( createLinkPatternedText( contributor.getOrganizationUrl(), contributor
-                        .getOrganizationUrl() ) );
+                    tableCell(
+                        createLinkPatternedText( contributor.getOrganizationUrl(), contributor.getOrganizationUrl() ) );
 
                     if ( contributor.getRoles() != null )
                     {
                         // Comma separated roles
-                        tableCell( StringUtils.join( contributor.getRoles().toArray( new String[0] ), ", " ) );
+                        tableCell( StringUtils.join( contributor.getRoles().toArray( EMPTY_STRING_ARRAY ), ", " ) );
                     }
                     else
                     {
@@ -361,7 +299,7 @@ public class TeamListReport
                     text( contributor.getTimezone() );
                     if ( !StringUtils.isEmpty( contributor.getTimezone() ) )
                     {
-                        javascript.append( "    offsetDate('contributor-" + contributorsRows + "', '" );
+                        javascript.append( "    offsetDate('contributor-" ).append( contributorsRows ).append( "', '" );
                         javascript.append( contributor.getTimezone() );
                         javascript.append( "');\n" );
                     }
