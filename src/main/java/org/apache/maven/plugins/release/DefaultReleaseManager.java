@@ -175,7 +175,7 @@ public class DefaultReleaseManager
                 "Cannot perform release - the preparation step was stopped mid-way. Please re-run release:prepare to continue, or perform the release from an SCM tag." );
         }
 
-        if ( releaseConfiguration.getUrl() == null )
+        if ( config.getUrl() == null )
         {
             throw new ReleaseFailureException( "No SCM URL was provided to perform the release from" );
         }
