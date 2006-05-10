@@ -16,18 +16,16 @@ package org.apache.maven.report.projectinfo;
  * limitations under the License.
  */
 
-import org.apache.maven.artifact.resolver.ResolutionListener;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.resolver.ResolutionListener;
 import org.apache.maven.artifact.versioning.VersionRange;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Collections;
+import java.util.Map;
+import java.util.Stack;
 
 /**
  * @author Edwin Punzalan
@@ -35,244 +33,140 @@ import java.util.Collections;
 public class ReportResolutionListener
     implements ResolutionListener
 {
-    private Map directDep = new HashMap();
+    private Stack parents = new Stack();
 
-    private Map transitiveDep = new HashMap();
+    private Map artifacts = new HashMap();
 
-    private Map replacedDep = new HashMap();
+    private Node rootNode;
 
-    private List parents = new ArrayList();
-
-    private Map depTree = new HashMap();
-
-    private Map depMap = new HashMap();
-
-    private Map depthMap = new HashMap();
-
-    public void testArtifact( Artifact node )
+    public void testArtifact( Artifact artifact )
     {
-
+        // intentionally blank
     }
 
     public void startProcessChildren( Artifact artifact )
     {
-        parents.add( artifact );
+        Node node = (Node) artifacts.get( artifact.getDependencyConflictId() );
+        if ( parents.isEmpty() )
+        {
+            rootNode = node;
+        }
+
+        parents.push( node );
     }
 
     public void endProcessChildren( Artifact artifact )
     {
-        parents.remove( artifact );
-    }
-
-    public void includeArtifact( Artifact artifact )
-    {
-        addToDepMap( artifact );
-
-        if ( depthMap.containsKey( artifact.getId() ) )
-        {
-            Integer depth = (Integer) depthMap.get( artifact.getId() );
-            if ( depth.intValue() <= parents.size() )
-            {
-                return;
-            }
-        }
-
-        //remove from tree the artifact which is farther down the dependency trail
-        removeFromDepTree( artifact );
-
-        depthMap.put( artifact.getId(), new Integer( parents.size() ) );
-
-        addDependency( artifact );
-
-        addToDepTree( artifact );
-    }
-
-    private void removeFromDepTree( Artifact artifact )
-    {
-        for ( Iterator artifactDeps = depTree.values().iterator(); artifactDeps.hasNext(); )
-        {
-            List depList = (List) artifactDeps.next();
-            for ( Iterator artifacts = depList.iterator(); artifacts.hasNext(); )
-            {
-                Artifact dep = (Artifact) artifacts.next();
-
-                if ( dep.getId().equals( artifact.getId() ) )
-                {
-                    depList.remove( dep );
-                    break;
-                }
-            }
-        }
-    }
-
-    private void addToDepTree( Artifact artifact )
-    {
-        if ( parents.size() > 0 )
-        {
-            Artifact parent = (Artifact) parents.get( parents.size() - 1 );
-
-            if ( depTree.containsKey( parent.getId() ) )
-            {
-                List deps = (List) depTree.get( parent.getId() );
-
-                deps.add( artifact );
-            }
-            else
-            {
-                List deps = new ArrayList();
-                deps.add( artifact );
-                depTree.put( parent.getId(), deps );
-            }
-        }
-    }
-
-    private void addToDepMap( Artifact artifact )
-    {
-        if ( parents.size() > 0 )
-        {
-            Artifact parent = (Artifact) parents.get( parents.size() - 1 );
-
-            if ( depMap.containsKey( parent.getId() ) )
-            {
-                List deps = (List) depMap.get( parent.getId() );
-
-                deps.add( artifact );
-            }
-            else
-            {
-                List deps = new ArrayList();
-                deps.add( artifact );
-                depMap.put( parent.getId(), deps );
-            }
-        }
+        Node check = (Node) parents.pop();
+        assert artifact.equals( check.artifact );
     }
 
     public void omitForNearer( Artifact omitted, Artifact kept )
     {
-        String key = omitted.getId();
+        assert omitted.getDependencyConflictId().equals( kept.getDependencyConflictId() );
 
-        replacedDep.put( key, omitted );
-
-        if ( directDep.containsKey( key ) )
+        Node prev = (Node) artifacts.get( omitted.getDependencyConflictId() );
+        if ( prev != null )
         {
-            directDep.remove( key );
-        }
-        else if ( transitiveDep.containsKey( key ) )
-        {
-            transitiveDep.remove( key );
-        }
-
-        addDependency( kept );
-    }
-
-    private void addDependency( Artifact artifact )
-    {
-        if ( parents.size() == 0 )
-        {
-            //do nothing... artifact is current project
-        }
-        else if ( parents.size() == 1 )
-        {
-            if ( !directDep.containsKey( artifact.getId() ) )
+            if ( prev.parent != null )
             {
-                if ( artifact.getScope() == null )
-                {
-                    artifact.setScope( Artifact.SCOPE_COMPILE );
-                }
-                directDep.put( artifact.getId(), artifact );
+                prev.parent.children.remove( prev );
             }
-        }
-        else
-        {
-            if ( !transitiveDep.containsKey( artifact.getId() ) )
-            {
-                if ( artifact.getScope() == null )
-                {
-                    Artifact parent = (Artifact) parents.get(  parents.size() - 1 );
-
-                    artifact.setScope( parent.getScope() );
-                }
-
-                transitiveDep.put( artifact.getId(), artifact );
-            }
-        }
-    }
-
-    public void updateScope( Artifact artifact, String scope )
-    {
-        if ( directDep.containsKey( artifact.getId() ) )
-        {
-            Artifact depArtifact = (Artifact) directDep.get( artifact.getId() );
-
-            depArtifact.setScope( scope );
+            artifacts.remove( omitted.getDependencyConflictId() );
         }
 
-        if ( transitiveDep.containsKey( artifact.getId() ) )
-        {
-            Artifact depArtifact = (Artifact) transitiveDep.get( artifact.getId() );
-
-            depArtifact.setScope( scope );
-        }
-    }
-
-    public void manageArtifact( Artifact artifact, Artifact replacement )
-    {
-        omitForNearer( artifact, replacement );
+        includeArtifact( kept );
     }
 
     public void omitForCycle( Artifact artifact )
     {
-        replacedDep.put( artifact.getId(), artifact );
+        // intentionally blank
     }
 
-    public void updateScopeCurrentPom( Artifact artifact, String scope )
+    public void includeArtifact( Artifact artifact )
     {
-        updateScope( artifact, scope );
+        if ( artifacts.containsKey( artifact.getDependencyConflictId() ) )
+        {
+            Node prev = (Node) artifacts.get( artifact.getDependencyConflictId() );
+            if ( prev.parent != null )
+            {
+                prev.parent.children.remove( prev );
+            }
+            artifacts.remove( artifact.getDependencyConflictId() );
+        }
+
+        Node node = new Node();
+        node.artifact = artifact;
+        if ( !parents.isEmpty() )
+        {
+            node.parent = (Node) parents.peek();
+            node.parent.children.add( node );
+        }
+        artifacts.put( artifact.getDependencyConflictId(), node );
+    }
+
+    public void updateScope( Artifact artifact, String scope )
+    {
+        Node node = (Node) artifacts.get( artifact.getDependencyConflictId() );
+
+        node.artifact.setScope( scope );
+    }
+
+    public void manageArtifact( Artifact artifact, Artifact replacement )
+    {
+        Node node = (Node) artifacts.get( artifact.getDependencyConflictId() );
+
+        if ( replacement.getVersion() != null )
+        {
+            node.artifact.setVersion( replacement.getVersion() );
+        }
+        if ( replacement.getScope() != null )
+        {
+            node.artifact.setScope( replacement.getScope() );
+        }
+    }
+
+    public void updateScopeCurrentPom( Artifact artifact, String key )
+    {
+        // intentionally blank
     }
 
     public void selectVersionFromRange( Artifact artifact )
     {
-
+        // intentionally blank
     }
 
-    public void restrictRange( Artifact artifact, Artifact replacement, VersionRange newRange )
+    public void restrictRange( Artifact artifact, Artifact artifact1, VersionRange versionRange )
     {
-
+        // intentionally blank
     }
 
-    public Set getArtifacts()
+    public Collection getArtifacts()
     {
-        Set all = new HashSet();
-
-        all.addAll( directDep.values() );
-
-        all.addAll( transitiveDep.values() );
-
-        return all;
+        return artifacts.values();
     }
 
-    public Map getTransitiveDependencies()
+    static class Node
     {
-        return Collections.unmodifiableMap( transitiveDep );
+        private Node parent;
+
+        private List children = new ArrayList();
+
+        private Artifact artifact;
+
+        public List getChildren()
+        {
+            return children;
+        }
+
+        public Artifact getArtifact()
+        {
+            return artifact;
+        }
     }
 
-    public Map getDirectDependencies()
+    public Node getRootNode()
     {
-        return Collections.unmodifiableMap( directDep );
-    }
-
-    public Map getOmittedArtifacts()
-    {
-        return Collections.unmodifiableMap( replacedDep );
-    }
-
-    public Map getDepTree()
-    {
-        return depTree;
-    }
-
-    public Map getDepMap()
-    {
-        return depMap;
+        return rootNode;
     }
 }

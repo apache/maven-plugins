@@ -19,7 +19,7 @@ package org.apache.maven.report.projectinfo;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
+import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
@@ -35,12 +35,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Generates the Project Dependencies report.
@@ -67,6 +65,11 @@ public class DependenciesReport
     protected ArtifactMetadataSource artifactMetadataSource;
 
     /**
+     * @component
+     */
+    private ArtifactCollector collector;
+
+    /**
      * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
      */
     public String getName( Locale locale )
@@ -89,9 +92,7 @@ public class DependenciesReport
     {
         ReportResolutionListener listener = resolveProject();
 
-        DependenciesRenderer r = new DependenciesRenderer( getSink(), locale, listener.getDirectDependencies(),
-                                                           listener.getTransitiveDependencies(),
-                                                           listener.getOmittedArtifacts(), listener.getDepTree() );
+        DependenciesRenderer r = new DependenciesRenderer( getSink(), locale, listener );
 
         r.render();
     }
@@ -112,15 +113,11 @@ public class DependenciesReport
 
         try
         {
-            resolver.resolveTransitively( project.getDependencyArtifacts(), project.getArtifact(), managedVersions,
-                                          localRepository, project.getRemoteArtifactRepositories(),
-                                          artifactMetadataSource, null, Collections.singletonList( listener ) );
+            collector.collect( project.getDependencyArtifacts(), project.getArtifact(), managedVersions,
+                               localRepository, project.getRemoteArtifactRepositories(), artifactMetadataSource, null,
+                               Collections.singletonList( listener ) );
         }
         catch ( ArtifactResolutionException e )
-        {
-            getLog().error( "An error occurred while resolving project dependencies.", e );
-        }
-        catch ( ArtifactNotFoundException e )
         {
             getLog().error( "An error occurred while resolving project dependencies.", e );
         }
@@ -174,28 +171,15 @@ public class DependenciesReport
     {
         private final Locale locale;
 
-        private final Map directDep;
+        private final ReportResolutionListener listener;
 
-        private final Map transitiveDep;
-
-        private final Map omittedDeps;
-
-        private final Map depTree;
-
-        DependenciesRenderer( Sink sink, Locale locale, Map directDependencies, Map transitiveDependencies,
-                              Map omittedDependencies, Map dependencyTree )
+        DependenciesRenderer( Sink sink, Locale locale, ReportResolutionListener listener )
         {
             super( sink );
 
             this.locale = locale;
 
-            this.directDep = Collections.unmodifiableMap( directDependencies );
-
-            this.transitiveDep = Collections.unmodifiableMap( transitiveDependencies );
-
-            this.omittedDeps = Collections.unmodifiableMap( omittedDependencies );
-
-            this.depTree = Collections.unmodifiableMap( dependencyTree );
+            this.listener = listener;
         }
 
         public String getTitle()
@@ -206,7 +190,7 @@ public class DependenciesReport
         public void renderBody()
         {
             // Dependencies report
-            Set dependencies = new HashSet( directDep.values() );
+            List dependencies = listener.getRootNode().getChildren();
 
             if ( dependencies.isEmpty() )
             {
@@ -231,19 +215,7 @@ public class DependenciesReport
             String[] tableHeader = new String[]{groupId, artifactId, version, classifier, type, optional};
 
             // collect dependencies by scope
-            Map dependenciesByScope = new HashMap();
-            for ( Iterator i = dependencies.iterator(); i.hasNext(); )
-            {
-                Artifact artifact = (Artifact) i.next();
-
-                List multiValue = (List) dependenciesByScope.get( artifact.getScope() );
-                if ( multiValue == null )
-                {
-                    multiValue = new ArrayList();
-                }
-                multiValue.add( artifact );
-                dependenciesByScope.put( artifact.getScope(), multiValue );
-            }
+            Map dependenciesByScope = getDependenciesByScope( dependencies );
 
             renderDependenciesForScope( Artifact.SCOPE_COMPILE,
                                         (List) dependenciesByScope.get( Artifact.SCOPE_COMPILE ), tableHeader );
@@ -259,8 +231,8 @@ public class DependenciesReport
             endSection();
 
             // Transitive dependencies
-            List artifacts = new ArrayList( transitiveDep.values() );
-            Collections.sort( artifacts, getArtifactComparator() );
+            List artifacts = new ArrayList( listener.getArtifacts() );
+            artifacts.removeAll( dependencies );
 
             startSection( getReportString( "report.transitivedependencies.title" ) );
 
@@ -272,18 +244,18 @@ public class DependenciesReport
             {
                 paragraph( getReportString( "report.transitivedependencies.intro" ) );
 
-                startTable();
+                dependenciesByScope = getDependenciesByScope( artifacts );
 
-                tableHeader( tableHeader );
-
-                for ( Iterator i = artifacts.iterator(); i.hasNext(); )
-                {
-                    Artifact artifact = (Artifact) i.next();
-
-                    tableRow( getArtifactRow( artifact ) );
-                }
-
-                endTable();
+                renderDependenciesForScope( Artifact.SCOPE_COMPILE,
+                                            (List) dependenciesByScope.get( Artifact.SCOPE_COMPILE ), tableHeader );
+                renderDependenciesForScope( Artifact.SCOPE_RUNTIME,
+                                            (List) dependenciesByScope.get( Artifact.SCOPE_RUNTIME ), tableHeader );
+                renderDependenciesForScope( Artifact.SCOPE_TEST, (List) dependenciesByScope.get( Artifact.SCOPE_TEST ),
+                                            tableHeader );
+                renderDependenciesForScope( Artifact.SCOPE_PROVIDED,
+                                            (List) dependenciesByScope.get( Artifact.SCOPE_PROVIDED ), tableHeader );
+                renderDependenciesForScope( Artifact.SCOPE_SYSTEM,
+                                            (List) dependenciesByScope.get( Artifact.SCOPE_SYSTEM ), tableHeader );
             }
 
             endSection();
@@ -293,15 +265,34 @@ public class DependenciesReport
 
             //for Dependencies Graph Tree
             startSection( getReportString( "report.dependencies.graph.tree.title" ) );
-            printDependencyListing( project.getArtifact() );
+            printDependencyListing( listener.getRootNode() );
             endSection();
 
             //for Artifact Descriptions / URLs
             startSection( getReportString( "report.dependencies.graph.tables.title" ) );
-            printDescriptionsAndURLs( project.getArtifact() );
+            printDescriptionsAndURLs( listener.getRootNode() );
             endSection();
 
             endSection();
+        }
+
+        private Map getDependenciesByScope( List dependencies )
+        {
+            Map dependenciesByScope = new HashMap();
+            for ( Iterator i = dependencies.iterator(); i.hasNext(); )
+            {
+                ReportResolutionListener.Node node = (ReportResolutionListener.Node) i.next();
+                Artifact artifact = node.getArtifact();
+
+                List multiValue = (List) dependenciesByScope.get( artifact.getScope() );
+                if ( multiValue == null )
+                {
+                    multiValue = new ArrayList();
+                }
+                multiValue.add( artifact );
+                dependenciesByScope.put( artifact.getScope(), multiValue );
+            }
+            return dependenciesByScope;
         }
 
         private void renderDependenciesForScope( String scope, List artifacts, String[] tableHeader )
@@ -360,106 +351,92 @@ public class DependenciesReport
                 artifact.getClassifier(), artifact.getType(), artifact.isOptional() ? "(optional)" : " "};
         }
 
-        private void printDependencyListing( Artifact artifact )
+        private void printDependencyListing( ReportResolutionListener.Node node )
         {
-            String id = artifact.getId();
+            Artifact artifact = node.getArtifact();
+            String id = artifact.getDependencyConflictId();
 
-            if ( !omittedDeps.containsKey( id ) )
+            sink.list();
+            sink.listItem();
+
+            sink.link( "#" + id );
+            sink.text( id );
+            sink.link_();
+
+            for ( Iterator deps = node.getChildren().iterator(); deps.hasNext(); )
             {
-                sink.list();
-                sink.listItem();
-
-                sink.link( "#" + id );
-                sink.text( id );
-                sink.link_();
-
-                if ( depTree.containsKey( id ) )
-                {
-
-                    List depList = (List) depTree.get( id );
-                    for ( Iterator deps = depList.iterator(); deps.hasNext(); )
-                    {
-                        Artifact dep = (Artifact) deps.next();
-                        printDependencyListing( dep );
-                    }
-                }
-
-                sink.listItem_();
-                sink.list_();
+                ReportResolutionListener.Node dep = (ReportResolutionListener.Node) deps.next();
+                printDependencyListing( dep );
             }
+
+            sink.listItem_();
+            sink.list_();
         }
 
-        private void printDescriptionsAndURLs( Artifact artifact )
+        private void printDescriptionsAndURLs( ReportResolutionListener.Node node )
         {
-            String id = artifact.getId();
+            Artifact artifact = node.getArtifact();
+            String id = artifact.getDependencyConflictId();
 
-            if ( !omittedDeps.containsKey( id ) )
+            String artifactDescription = null;
+            String artifactUrl = null;
+            try
             {
-                String artifactDescription = null;
-                String artifactUrl = null;
-                try
-                {
-                    MavenProject artifactProject = getMavenProjectFromRepository( artifact, localRepository );
-                    artifactDescription = artifactProject.getDescription();
-                    artifactUrl = artifactProject.getUrl();
-                }
-                catch ( ProjectBuildingException e )
-                {
-                    getLog().debug( e );
-                }
-                if ( artifactDescription == null )
+                MavenProject artifactProject = getMavenProjectFromRepository( artifact, localRepository );
+                artifactDescription = artifactProject.getDescription();
+                artifactUrl = artifactProject.getUrl();
+            }
+            catch ( ProjectBuildingException e )
+            {
+                getLog().debug( e );
+            }
+            if ( artifactDescription == null )
 
-                {
-                    artifactDescription = getReportString( "report.dependencies.graph.description.default" );
-                }
-
-                if ( artifactUrl == null )
-                {
-                    artifactUrl = getReportString( "report.dependencies.graph.url.default" );
-                }
-
-                sink.anchor( id );
-                startSection( id );
-                sink.anchor_();
-
-                sink.paragraph();
-                sink.bold();
-                sink.text( getReportString( "report.dependencies.column.description" ) );
-                sink.bold_();
-                sink.lineBreak();
-                sink.text( artifactDescription );
-                sink.paragraph_();
-
-                sink.paragraph();
-                sink.bold();
-                sink.text( getReportString( "report.dependencies.column.url" ) );
-                sink.bold_();
-                sink.lineBreak();
-
-                if ( artifactUrl != null && artifactUrl.startsWith( "http://" ) )
-                {
-                    sink.link( artifactUrl );
-                    sink.text( artifactUrl );
-                    sink.link_();
-                }
-                else
-                {
-                    sink.text( artifactUrl );
-                }
-                sink.paragraph_();
-
-                endSection();
+            {
+                artifactDescription = getReportString( "report.dependencies.graph.description.default" );
             }
 
-            if ( depTree.containsKey( id ) )
+            if ( artifactUrl == null )
             {
+                artifactUrl = getReportString( "report.dependencies.graph.url.default" );
+            }
 
-                List depList = (List) depTree.get( id );
-                for ( Iterator deps = depList.iterator(); deps.hasNext(); )
-                {
-                    Artifact dep = (Artifact) deps.next();
-                    printDescriptionsAndURLs( dep );
-                }
+            sink.anchor( id );
+            startSection( id );
+            sink.anchor_();
+
+            sink.paragraph();
+            sink.bold();
+            sink.text( getReportString( "report.dependencies.column.description" ) );
+            sink.bold_();
+            sink.lineBreak();
+            sink.text( artifactDescription );
+            sink.paragraph_();
+
+            sink.paragraph();
+            sink.bold();
+            sink.text( getReportString( "report.dependencies.column.url" ) );
+            sink.bold_();
+            sink.lineBreak();
+
+            if ( artifactUrl != null && artifactUrl.startsWith( "http://" ) )
+            {
+                sink.link( artifactUrl );
+                sink.text( artifactUrl );
+                sink.link_();
+            }
+            else
+            {
+                sink.text( artifactUrl );
+            }
+            sink.paragraph_();
+
+            endSection();
+
+            for ( Iterator deps = node.getChildren().iterator(); deps.hasNext(); )
+            {
+                ReportResolutionListener.Node dep = (ReportResolutionListener.Node) deps.next();
+                printDescriptionsAndURLs( dep );
             }
         }
 
