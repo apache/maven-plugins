@@ -265,7 +265,11 @@ public class DependenciesReport
 
             //for Dependencies Graph Tree
             startSection( getReportString( "report.dependencies.graph.tree.title" ) );
+            sink.paragraph();
+            sink.list();
             printDependencyListing( listener.getRootNode() );
+            sink.list_();
+            sink.paragraph_();
             endSection();
 
             //for Artifact Descriptions / URLs
@@ -356,21 +360,26 @@ public class DependenciesReport
             Artifact artifact = node.getArtifact();
             String id = artifact.getDependencyConflictId();
 
-            sink.list();
             sink.listItem();
+            sink.paragraph();
 
             sink.link( "#" + id );
             sink.text( id );
             sink.link_();
 
-            for ( Iterator deps = node.getChildren().iterator(); deps.hasNext(); )
+            if ( !node.getChildren().isEmpty() )
             {
-                ReportResolutionListener.Node dep = (ReportResolutionListener.Node) deps.next();
-                printDependencyListing( dep );
+                sink.list();
+                for ( Iterator deps = node.getChildren().iterator(); deps.hasNext(); )
+                {
+                    ReportResolutionListener.Node dep = (ReportResolutionListener.Node) deps.next();
+                    printDependencyListing( dep );
+                }
+                sink.list_();
             }
 
+            sink.paragraph_();
             sink.listItem_();
-            sink.list_();
         }
 
         private void printDescriptionsAndURLs( ReportResolutionListener.Node node )
@@ -378,60 +387,41 @@ public class DependenciesReport
             Artifact artifact = node.getArtifact();
             String id = artifact.getDependencyConflictId();
 
-            String artifactDescription = null;
-            String artifactUrl = null;
             try
             {
                 MavenProject artifactProject = getMavenProjectFromRepository( artifact, localRepository );
-                artifactDescription = artifactProject.getDescription();
-                artifactUrl = artifactProject.getUrl();
+                String artifactDescription = artifactProject.getDescription();
+                String artifactUrl = artifactProject.getUrl();
+                String artifactName = artifactProject.getName();
+
+                sink.paragraph();
+                sink.anchor( id );
+                sink.bold();
+                sink.text( artifactName );
+                sink.bold_();
+                sink.anchor_();
+                sink.paragraph_();
+
+                if ( artifactDescription != null )
+                {
+                    sink.paragraph();
+                    sink.text( artifactDescription );
+                    sink.paragraph_();
+                }
+
+                if ( artifactUrl != null )
+                {
+                    sink.paragraph();
+                    sink.link( artifactUrl );
+                    sink.text( artifactUrl );
+                    sink.link_();
+                    sink.paragraph_();
+                }
             }
             catch ( ProjectBuildingException e )
             {
                 getLog().debug( e );
             }
-            if ( artifactDescription == null )
-
-            {
-                artifactDescription = getReportString( "report.dependencies.graph.description.default" );
-            }
-
-            if ( artifactUrl == null )
-            {
-                artifactUrl = getReportString( "report.dependencies.graph.url.default" );
-            }
-
-            sink.anchor( id );
-            startSection( id );
-            sink.anchor_();
-
-            sink.paragraph();
-            sink.bold();
-            sink.text( getReportString( "report.dependencies.column.description" ) );
-            sink.bold_();
-            sink.lineBreak();
-            sink.text( artifactDescription );
-            sink.paragraph_();
-
-            sink.paragraph();
-            sink.bold();
-            sink.text( getReportString( "report.dependencies.column.url" ) );
-            sink.bold_();
-            sink.lineBreak();
-
-            if ( artifactUrl != null && artifactUrl.startsWith( "http://" ) )
-            {
-                sink.link( artifactUrl );
-                sink.text( artifactUrl );
-                sink.link_();
-            }
-            else
-            {
-                sink.text( artifactUrl );
-            }
-            sink.paragraph_();
-
-            endSection();
 
             for ( Iterator deps = node.getChildren().iterator(); deps.hasNext(); )
             {
