@@ -16,22 +16,18 @@ package org.apache.maven.report.projectinfo;
  * limitations under the License.
  */
 
+import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Scm;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.manager.ScmManager;
-import org.apache.maven.scm.provider.clearcase.repository.ClearCaseScmProviderRepository;
 import org.apache.maven.scm.provider.cvslib.repository.CvsScmProviderRepository;
 import org.apache.maven.scm.provider.perforce.repository.PerforceScmProviderRepository;
 import org.apache.maven.scm.provider.starteam.repository.StarteamScmProviderRepository;
 import org.apache.maven.scm.provider.svn.repository.SvnScmProviderRepository;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
-import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.doxia.siterenderer.Renderer;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -45,32 +41,8 @@ import java.util.Locale;
  * @goal scm
  */
 public class ScmReport
-    extends AbstractMavenReport
+    extends AbstractProjectInfoReport
 {
-    /**
-     * Report output directory.
-     *
-     * @parameter expression="${project.reporting.outputDirectory}"
-     * @required
-     */
-    private String outputDirectory;
-
-    /**
-     * Doxia Site Renderer.
-     *
-     * @component
-     */
-    private Renderer siteRenderer;
-
-    /**
-     * The Maven Project.
-     *
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
-    private MavenProject project;
-
     /**
      * Maven SCM Manager.
      *
@@ -89,26 +61,11 @@ public class ScmReport
     private String checkoutDirectoryName;
 
     /**
-     * Internationalization.
-     *
-     * @component
-     */
-    private I18N i18n;
-
-    /**
      * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
      */
     public String getName( Locale locale )
     {
         return i18n.getString( "project-info-report", locale, "report.scm.name" );
-    }
-
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getCategoryName()
-     */
-    public String getCategoryName()
-    {
-        return CATEGORY_PROJECT_INFORMATION;
     }
 
     /**
@@ -120,36 +77,12 @@ public class ScmReport
     }
 
     /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getOutputDirectory()
-     */
-    protected String getOutputDirectory()
-    {
-        return outputDirectory;
-    }
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getProject()
-     */
-    protected MavenProject getProject()
-    {
-        return project;
-    }
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getSiteRenderer()
-     */
-    protected Renderer getSiteRenderer()
-    {
-        return siteRenderer;
-    }
-
-    /**
      * @see org.apache.maven.reporting.AbstractMavenReport#executeReport(java.util.Locale)
      */
     public void executeReport( Locale locale )
     {
-        ScmRenderer r = new ScmRenderer( scmManager, getSink(), getProject().getModel(),
-                                         i18n, locale, checkoutDirectoryName );
+        ScmRenderer r =
+            new ScmRenderer( scmManager, getSink(), getProject().getModel(), i18n, locale, checkoutDirectoryName );
 
         r.render();
     }
@@ -162,7 +95,7 @@ public class ScmReport
         return "source-repository";
     }
 
-    static class ScmRenderer
+    private static class ScmRenderer
         extends AbstractMavenReportRenderer
     {
         private Model model;
@@ -182,8 +115,7 @@ public class ScmReport
 
         private String checkoutDirectoryName;
 
-        public ScmRenderer( ScmManager scmManager, Sink sink, Model model, I18N i18n,
-                            Locale locale, String checkoutDirName )
+        ScmRenderer( ScmManager scmManager, Sink sink, Model model, I18N i18n, Locale locale, String checkoutDirName )
         {
             super( sink );
 
@@ -328,26 +260,25 @@ public class ScmReport
          */
         private void renderAnonymousAccessSection( ScmRepository anonymousRepository )
         {
-            if ( ( isScmSystem( anonymousRepository, "clearcase" ) ) ||
-                ( isScmSystem( anonymousRepository, "perforce" ) ) ||
-                ( isScmSystem( anonymousRepository, "starteam" ) ) || ( StringUtils.isEmpty( anonymousConnection ) ) )
+            if ( isScmSystem( anonymousRepository, "clearcase" ) || isScmSystem( anonymousRepository, "perforce" ) ||
+                isScmSystem( anonymousRepository, "starteam" ) || StringUtils.isEmpty( anonymousConnection ) )
             {
                 return;
             }
 
             startSection( i18n.getString( "project-info-report", locale, "report.scm.anonymousaccess.title" ) );
 
-            if ( ( anonymousRepository != null ) && ( isScmSystem( anonymousRepository, "cvs" ) ) )
+            if ( anonymousRepository != null && isScmSystem( anonymousRepository, "cvs" ) )
             {
-                CvsScmProviderRepository cvsRepo = (CvsScmProviderRepository) anonymousRepository
-                    .getProviderRepository();
+                CvsScmProviderRepository cvsRepo =
+                    (CvsScmProviderRepository) anonymousRepository.getProviderRepository();
 
                 anonymousAccessCVS( cvsRepo );
             }
-            else if ( ( anonymousRepository != null ) && ( isScmSystem( anonymousRepository, "svn" ) ) )
+            else if ( anonymousRepository != null && isScmSystem( anonymousRepository, "svn" ) )
             {
-                SvnScmProviderRepository svnRepo = (SvnScmProviderRepository) anonymousRepository
-                    .getProviderRepository();
+                SvnScmProviderRepository svnRepo =
+                    (SvnScmProviderRepository) anonymousRepository.getProviderRepository();
 
                 anonymousAccessSVN( svnRepo );
             }
@@ -381,34 +312,31 @@ public class ScmReport
 
             startSection( i18n.getString( "project-info-report", locale, "report.scm.devaccess.title" ) );
 
-            if ( ( devRepository != null ) && ( isScmSystem( devRepository, "clearcase" ) ) )
+            if ( devRepository != null && isScmSystem( devRepository, "clearcase" ) )
             {
-                ClearCaseScmProviderRepository clearCaseRepo = (ClearCaseScmProviderRepository) devRepository
-                    .getProviderRepository();
-
-                developerAccessClearCase( clearCaseRepo );
+                developerAccessClearCase();
             }
-            else if ( ( devRepository != null ) && ( isScmSystem( devRepository, "cvs" ) ) )
+            else if ( devRepository != null && isScmSystem( devRepository, "cvs" ) )
             {
                 CvsScmProviderRepository cvsRepo = (CvsScmProviderRepository) devRepository.getProviderRepository();
 
                 developerAccessCVS( cvsRepo );
             }
-            else if ( ( devRepository != null ) && ( isScmSystem( devRepository, "perforce" ) ) )
+            else if ( devRepository != null && isScmSystem( devRepository, "perforce" ) )
             {
-                PerforceScmProviderRepository perforceRepo = (PerforceScmProviderRepository) devRepository
-                    .getProviderRepository();
+                PerforceScmProviderRepository perforceRepo =
+                    (PerforceScmProviderRepository) devRepository.getProviderRepository();
 
                 developerAccessPerforce( perforceRepo );
             }
-            else if ( ( devRepository != null ) && ( isScmSystem( devRepository, "starteam" ) ) )
+            else if ( devRepository != null && isScmSystem( devRepository, "starteam" ) )
             {
-                StarteamScmProviderRepository starteamRepo = (StarteamScmProviderRepository) devRepository
-                    .getProviderRepository();
+                StarteamScmProviderRepository starteamRepo =
+                    (StarteamScmProviderRepository) devRepository.getProviderRepository();
 
                 developerAccessStarteam( starteamRepo );
             }
-            else if ( ( devRepository != null ) && ( isScmSystem( devRepository, "svn" ) ) )
+            else if ( devRepository != null && isScmSystem( devRepository, "svn" ) )
             {
                 SvnScmProviderRepository svnRepo = (SvnScmProviderRepository) devRepository.getProviderRepository();
 
@@ -438,7 +366,7 @@ public class ScmReport
         {
             startSection( i18n.getString( "project-info-report", locale, "report.scm.accessbehindfirewall.title" ) );
 
-            if ( ( devRepository != null ) && ( isScmSystem( devRepository, "svn" ) ) )
+            if ( devRepository != null && isScmSystem( devRepository, "svn" ) )
             {
                 SvnScmProviderRepository svnRepo = (SvnScmProviderRepository) devRepository.getProviderRepository();
 
@@ -449,7 +377,7 @@ public class ScmReport
                 sb.append( "$ svn checkout " ).append( svnRepo.getUrl() ).append( " " ).append( checkoutDirectoryName );
                 verbatimText( sb.toString() );
             }
-            else if ( ( devRepository != null ) && ( isScmSystem( devRepository, "cvs" ) ) )
+            else if ( devRepository != null && isScmSystem( devRepository, "cvs" ) )
             {
                 linkPatternedText(
                     i18n.getString( "project-info-report", locale, "report.scm.accessbehindfirewall.cvs.intro" ) );
@@ -471,7 +399,7 @@ public class ScmReport
          */
         private void renderAccessThroughProxySection( ScmRepository anonymousRepository, ScmRepository devRepository )
         {
-            if ( ( isScmSystem( anonymousRepository, "svn" ) ) || ( isScmSystem( devRepository, "svn" ) ) )
+            if ( isScmSystem( anonymousRepository, "svn" ) || isScmSystem( devRepository, "svn" ) )
             {
                 startSection( i18n.getString( "project-info-report", locale, "report.scm.accessthroughtproxy.title" ) );
 
@@ -499,10 +427,8 @@ public class ScmReport
          * Create the documentation to provide an developer access with a <code>Clearcase</code> SCM.
          * For example, generate the following command line:
          * <p>cleartool checkout module</p>
-         *
-         * @param clearCaseRepo
          */
-        private void developerAccessClearCase( ClearCaseScmProviderRepository clearCaseRepo )
+        private void developerAccessClearCase()
         {
             paragraph( i18n.getString( "project-info-report", locale, "report.scm.devaccess.clearcase.intro" ) );
 
@@ -583,7 +509,7 @@ public class ScmReport
             }
             if ( perforceRepo.getPort() > 0 )
             {
-                command.append( " -p " + perforceRepo.getPort() );
+                command.append( " -p " ).append( perforceRepo.getPort() );
             }
             command.append( " -u username" );
             command.append( " -P password" );
@@ -681,23 +607,23 @@ public class ScmReport
          */
         public ScmRepository getScmRepository( String scmUrl )
         {
-            if ( StringUtils.isEmpty( scmUrl ) )
+            ScmRepository repo = null;
+            if ( !StringUtils.isEmpty( scmUrl ) )
             {
-                return null;
+                try
+                {
+                    repo = scmManager.makeScmRepository( scmUrl );
+                }
+                catch ( NoSuchScmProviderException e )
+                {
+                    // ignore
+                }
+                catch ( ScmRepositoryException e )
+                {
+                    // ignore
+                }
             }
-
-            try
-            {
-                return scmManager.makeScmRepository( scmUrl );
-            }
-            catch ( NoSuchScmProviderException e )
-            {
-                return null;
-            }
-            catch ( ScmRepositoryException e )
-            {
-                return null;
-            }
+            return repo;
         }
 
         /**
@@ -716,7 +642,7 @@ public class ScmReport
                 return false;
             }
 
-            if ( ( scmRepository != null ) && ( scmProvider.equalsIgnoreCase( scmRepository.getProvider() ) ) )
+            if ( scmRepository != null && scmProvider.equalsIgnoreCase( scmRepository.getProvider() ) )
             {
                 return true;
             }
