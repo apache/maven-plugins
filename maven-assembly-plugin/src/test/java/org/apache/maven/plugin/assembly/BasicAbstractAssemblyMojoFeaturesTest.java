@@ -680,5 +680,8 @@ public class BasicAbstractAssemblyMojoFeaturesTest
             return 0;
         }
 
+        public void setOptional( boolean optional )
+        {
+        }
     }
 }
