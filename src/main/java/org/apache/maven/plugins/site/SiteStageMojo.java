@@ -101,9 +101,8 @@ public class SiteStageMojo
             outputDirectory.mkdirs();
         }
 
-        String outputRelativePath = PathTool.getRelativePath( stagingDirectory.getAbsolutePath(),
-                                                              new File( outputDirectory, "dummy.html" )
-                                                                  .getAbsolutePath() );
+        String outputRelativePath = PathTool.getRelativePath( stagingDirectory.getAbsolutePath(), new File(
+            outputDirectory, "dummy.html" ).getAbsolutePath() );
         project.setUrl( outputRelativePath + "/" + structureProject );
 
         MavenProject parent = getParentProject( project );
@@ -124,8 +123,8 @@ public class SiteStageMojo
             {
                 MavenProject reactorProject = (MavenProject) reactorItr.next();
 
-                if ( reactorProject != null && reactorProject.getParent() != null
-                    && project.getArtifactId().equals( reactorProject.getParent().getArtifactId() ) )
+                if ( reactorProject != null && reactorProject.getParent() != null &&
+                    project.getArtifactId().equals( reactorProject.getParent().getArtifactId() ) )
                 {
                     String structureReactorProject = getStructure( reactorProject, false );
                     reactorProject.setUrl( outputRelativePath + "/" + structureReactorProject );
@@ -173,8 +172,8 @@ public class SiteStageMojo
             if ( !ignoreMissingSiteUrl )
             {
                 throw new MojoFailureException(
-                                                "Missing site information in the distribution management element in the project: '"
-                                                    + project.getName() + "'." );
+                    "Missing site information in the distribution management element in the project: '" +
+                        project.getName() + "'." );
             }
 
             return null;
@@ -208,7 +207,7 @@ public class SiteStageMojo
      * Deploy the staging directory using the stagingSiteURL.
      *
      * @throws MojoExecutionException if any
-     * @throws MojoFailureException if any
+     * @throws MojoFailureException   if any
      */
     private void deployStagingSite()
         throws MojoExecutionException, MojoFailureException
@@ -228,8 +227,8 @@ public class SiteStageMojo
 
         if ( !wagon.supportsDirectoryCopy() )
         {
-            throw new MojoExecutionException( "Wagon protocol '" + repository.getProtocol()
-                + "' doesn't support directory copying" );
+            throw new MojoExecutionException(
+                "Wagon protocol '" + repository.getProtocol() + "' doesn't support directory copying" );
         }
 
         try
