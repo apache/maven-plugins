@@ -1,0 +1,7 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>assembly</groupId>
+  <artifactId>dependency-artifact</artifactId>
+  <version>1.0</version>
+  <packaging>jar</packaging>
+</project>
