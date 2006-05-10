@@ -16,21 +16,10 @@ package org.apache.maven.plugins.site;
  * limitations under the License.
  */
 
-import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.model.Site;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.settings.Settings;
-import org.apache.maven.wagon.ConnectionException;
-import org.apache.maven.wagon.ResourceDoesNotExistException;
-import org.apache.maven.wagon.TransferFailedException;
-import org.apache.maven.wagon.UnsupportedProtocolException;
-import org.apache.maven.wagon.Wagon;
-import org.apache.maven.wagon.authentication.AuthenticationException;
-import org.apache.maven.wagon.authorization.AuthorizationException;
-import org.apache.maven.wagon.observers.Debug;
-import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.apache.maven.wagon.repository.Repository;
 import org.codehaus.plexus.util.PathTool;
 import org.codehaus.plexus.util.StringUtils;
@@ -56,29 +45,7 @@ public class SiteStageMojo
      * @parameter expression="${stagingDirectory}" default-value="${project.build.directory}/staging"
      * @required
      */
-    private File stagingDirectory;
-
-    /**
-     * Staging site URL to deploy the staging directory.
-     *
-     * @parameter expression="${stagingSiteURL}" default-value="${project.distributionManagement.site.url}/staging"
-     * @see <a href="http://maven.apache.org/maven-model/maven.html#class_site">MavenModel#class_site</a>
-     */
-    private String stagingSiteURL;
-
-    /**
-     * @component
-     */
-    private WagonManager wagonManager;
-
-    /**
-     * The current user system settings for use in Maven.
-     *
-     * @parameter expression="${settings}"
-     * @required
-     * @readonly
-     */
-    private Settings settings;
+    protected File stagingDirectory;
 
     /**
      * @see org.apache.maven.plugin.Mojo#execute()
@@ -133,11 +100,6 @@ public class SiteStageMojo
         }
 
         super.execute();
-
-        if ( !StringUtils.isEmpty( stagingSiteURL ) )
-        {
-            deployStagingSite();
-        }
     }
 
     /**
@@ -149,7 +111,7 @@ public class SiteStageMojo
      * @return the structure relative path
      * @throws MojoFailureException if any
      */
-    private static String getStructure( MavenProject project, boolean ignoreMissingSiteUrl )
+    protected static String getStructure( MavenProject project, boolean ignoreMissingSiteUrl )
         throws MojoFailureException
     {
         if ( project.getDistributionManagement() == null )
@@ -201,86 +163,5 @@ public class SiteStageMojo
         }
 
         return repository.getHost() + "/" + repository.getBasedir();
-    }
-
-    /**
-     * Deploy the staging directory using the stagingSiteURL.
-     *
-     * @throws MojoExecutionException if any
-     * @throws MojoFailureException   if any
-     */
-    private void deployStagingSite()
-        throws MojoExecutionException, MojoFailureException
-    {
-        String id = "stagingSite";
-        Repository repository = new Repository( id, stagingSiteURL );
-
-        Wagon wagon;
-        try
-        {
-            wagon = wagonManager.getWagon( repository.getProtocol() );
-        }
-        catch ( UnsupportedProtocolException e )
-        {
-            throw new MojoExecutionException( "Unsupported protocol: '" + repository.getProtocol() + "'", e );
-        }
-
-        if ( !wagon.supportsDirectoryCopy() )
-        {
-            throw new MojoExecutionException(
-                "Wagon protocol '" + repository.getProtocol() + "' doesn't support directory copying" );
-        }
-
-        try
-        {
-            Debug debug = new Debug();
-
-            wagon.addSessionListener( debug );
-
-            wagon.addTransferListener( debug );
-
-            ProxyInfo proxyInfo = SiteDeployMojo.getProxyInfo( settings );
-            if ( proxyInfo != null )
-            {
-                wagon.connect( repository, wagonManager.getAuthenticationInfo( id ), proxyInfo );
-            }
-            else
-            {
-                wagon.connect( repository, wagonManager.getAuthenticationInfo( id ) );
-            }
-
-            wagon.putDirectory( new File( stagingDirectory, getStructure( project, false ) ), "." );
-        }
-        catch ( ResourceDoesNotExistException e )
-        {
-            throw new MojoExecutionException( "Error uploading site", e );
-        }
-        catch ( TransferFailedException e )
-        {
-            throw new MojoExecutionException( "Error uploading site", e );
-        }
-        catch ( AuthorizationException e )
-        {
-            throw new MojoExecutionException( "Error uploading site", e );
-        }
-        catch ( ConnectionException e )
-        {
-            throw new MojoExecutionException( "Error uploading site", e );
-        }
-        catch ( AuthenticationException e )
-        {
-            throw new MojoExecutionException( "Error uploading site", e );
-        }
-        finally
-        {
-            try
-            {
-                wagon.disconnect();
-            }
-            catch ( ConnectionException e )
-            {
-                getLog().error( "Error disconnecting wagon - ignored", e );
-            }
-        }
     }
 }
