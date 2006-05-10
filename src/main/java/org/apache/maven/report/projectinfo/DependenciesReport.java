@@ -17,24 +17,19 @@ package org.apache.maven.report.projectinfo;
  */
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
-import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
-import org.codehaus.plexus.i18n.I18N;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,82 +50,21 @@ import java.util.Set;
  * @version $Id$
  * @goal dependencies
  * @requiresDependencyResolution test
- * @plexus.component
  */
 public class DependenciesReport
-    extends AbstractMavenReport
+    extends AbstractProjectInfoReport
 {
-    /**
-     * Report output directory.
-     *
-     * @parameter expression="${project.reporting.outputDirectory}"
-     * @required
-     */
-    private String outputDirectory;
-
-    /**
-     * Doxia Site Renderer.
-     *
-     * @component
-     */
-    private Renderer siteRenderer;
-
-    /**
-     * The Maven Project.
-     *
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
-    private MavenProject project;
-
-    /**
-     * Maven ArtifactFactory.
-     *
-     * @parameter expression="${component.org.apache.maven.artifact.factory.ArtifactFactory}"
-     * @required
-     * @readonly
-     */
-    private ArtifactFactory artifactFactory;
-
     /**
      * Maven Project Builder.
      *
-     * @parameter expression="${component.org.apache.maven.project.MavenProjectBuilder}"
-     * @required
-     * @readonly
+     * @component
      */
     private MavenProjectBuilder mavenProjectBuilder;
 
     /**
-     * Maven Artifact Resolver
-     *
-     * @parameter expression="${component.org.apache.maven.artifact.resolver.ArtifactResolver}"
-     * @required
-     * @readonly
-     */
-    private ArtifactResolver artifactResolver;
-
-    /**
-     * @parameter expression="${component.org.apache.maven.artifact.metadata.ArtifactMetadataSource}"
-     */
-    protected ArtifactMetadataSource artifactMetadataSource;
-
-    /**
-     * Local Repository.
-     *
-     * @parameter expression="${localRepository}"
-     * @required
-     * @readonly
-     */
-    private ArtifactRepository localRepository;
-
-    /**
-     * Internationalization.
-     *
      * @component
      */
-    private I18N i18n;
+    protected ArtifactMetadataSource artifactMetadataSource;
 
     /**
      * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
@@ -138,14 +72,6 @@ public class DependenciesReport
     public String getName( Locale locale )
     {
         return i18n.getString( "project-info-report", locale, "report.dependencies.name" );
-    }
-
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getCategoryName()
-     */
-    public String getCategoryName()
-    {
-        return CATEGORY_PROJECT_INFORMATION;
     }
 
     /**
@@ -157,60 +83,47 @@ public class DependenciesReport
     }
 
     /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getOutputDirectory()
-     */
-    protected String getOutputDirectory()
-    {
-        return outputDirectory;
-    }
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getProject()
-     */
-    protected MavenProject getProject()
-    {
-        return project;
-    }
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getSiteRenderer()
-     */
-    protected Renderer getSiteRenderer()
-    {
-        return siteRenderer;
-    }
-
-    /**
      * @see org.apache.maven.reporting.AbstractMavenReport#executeReport(java.util.Locale)
      */
     public void executeReport( Locale locale )
     {
-        try
-        {
-            ReportResolutionListener listener = resolveProject();
+        ReportResolutionListener listener = resolveProject();
 
-            DependenciesRenderer r = new DependenciesRenderer( getSink(), locale, listener.getDirectDependencies(),
-                                                               listener.getTransitiveDependencies(),
-                                                               listener.getOmittedArtifacts(), listener.getDepTree() );
+        DependenciesRenderer r = new DependenciesRenderer( getSink(), locale, listener.getDirectDependencies(),
+                                                           listener.getTransitiveDependencies(),
+                                                           listener.getOmittedArtifacts(), listener.getDepTree() );
 
-            r.render();
-        }
-        catch ( Exception e )
-        {
-            getLog().error( "An error occurred while resolving project dependencies.", e );
-        }
+        r.render();
     }
 
     private ReportResolutionListener resolveProject()
-        throws ArtifactNotFoundException, ArtifactResolutionException, ProjectBuildingException
     {
-        Map managedVersions = createManagedVersionMap( project.getId(), project.getDependencyManagement() );
+        Map managedVersions = null;
+        try
+        {
+            managedVersions = createManagedVersionMap( project.getId(), project.getDependencyManagement() );
+        }
+        catch ( ProjectBuildingException e )
+        {
+            getLog().error( "An error occurred while resolving project dependencies.", e );
+        }
 
         ReportResolutionListener listener = new ReportResolutionListener();
 
-        artifactResolver.resolveTransitively( project.getDependencyArtifacts(), project.getArtifact(), managedVersions,
-                                              localRepository, project.getRemoteArtifactRepositories(),
-                                              artifactMetadataSource, null, Collections.singletonList( listener ) );
+        try
+        {
+            resolver.resolveTransitively( project.getDependencyArtifacts(), project.getArtifact(), managedVersions,
+                                          localRepository, project.getRemoteArtifactRepositories(),
+                                          artifactMetadataSource, null, Collections.singletonList( listener ) );
+        }
+        catch ( ArtifactResolutionException e )
+        {
+            getLog().error( "An error occurred while resolving project dependencies.", e );
+        }
+        catch ( ArtifactNotFoundException e )
+        {
+            getLog().error( "An error occurred while resolving project dependencies.", e );
+        }
 
         return listener;
     }
@@ -229,9 +142,9 @@ public class DependenciesReport
                 try
                 {
                     VersionRange versionRange = VersionRange.createFromVersionSpec( d.getVersion() );
-                    Artifact artifact = artifactFactory.createDependencyArtifact( d.getGroupId(), d.getArtifactId(),
-                                                                                  versionRange, d.getType(),
-                                                                                  d.getClassifier(), d.getScope() );
+                    Artifact artifact = factory.createDependencyArtifact( d.getGroupId(), d.getArtifactId(),
+                                                                          versionRange, d.getType(), d.getClassifier(),
+                                                                          d.getScope() );
                     map.put( d.getManagementKey(), artifact );
                 }
                 catch ( InvalidVersionSpecificationException e )
@@ -259,30 +172,30 @@ public class DependenciesReport
     private class DependenciesRenderer
         extends AbstractMavenReportRenderer
     {
-        private Locale locale;
+        private final Locale locale;
 
-        private Map directDep;
+        private final Map directDep;
 
-        private Map transitiveDep;
+        private final Map transitiveDep;
 
-        private Map omittedDeps;
+        private final Map omittedDeps;
 
-        private Map depTree;
+        private final Map depTree;
 
-        public DependenciesRenderer( Sink sink, Locale locale, Map directDependencies, Map transitiveDependencies,
-                                     Map omittedDependencies, Map dependencyTree )
+        DependenciesRenderer( Sink sink, Locale locale, Map directDependencies, Map transitiveDependencies,
+                              Map omittedDependencies, Map dependencyTree )
         {
             super( sink );
 
             this.locale = locale;
 
-            this.directDep = directDependencies;
+            this.directDep = Collections.unmodifiableMap( directDependencies );
 
-            this.transitiveDep = transitiveDependencies;
+            this.transitiveDep = Collections.unmodifiableMap( transitiveDependencies );
 
-            this.omittedDeps = omittedDependencies;
+            this.omittedDeps = Collections.unmodifiableMap( omittedDependencies );
 
-            this.depTree = dependencyTree;
+            this.depTree = Collections.unmodifiableMap( dependencyTree );
         }
 
         public String getTitle()
@@ -312,69 +225,42 @@ public class DependenciesReport
             String groupId = getReportString( "report.dependencies.column.groupId" );
             String artifactId = getReportString( "report.dependencies.column.artifactId" );
             String version = getReportString( "report.dependencies.column.version" );
+            String classifier = getReportString( "report.dependencies.column.classifier" );
             String type = getReportString( "report.dependencies.column.type" );
             String optional = getReportString( "report.dependencies.column.optional" );
+            String[] tableHeader = new String[]{groupId, artifactId, version, classifier, type, optional};
 
             // collect dependencies by scope
-            Map dependenciesByScope = new HashMap()
-            {
-                public Object put( Object key, Object value )
-                {
-                    List multiValue = (List) get( key );
-                    if ( multiValue == null )
-                    {
-                        multiValue = new ArrayList();
-                    }
-                    multiValue.add( value );
-                    return super.put( key, multiValue );
-                }
-            };
-
+            Map dependenciesByScope = new HashMap();
             for ( Iterator i = dependencies.iterator(); i.hasNext(); )
             {
                 Artifact artifact = (Artifact) i.next();
 
-                dependenciesByScope.put( artifact.getScope(), getArtifactRow( artifact ) );
-            }
-
-            for ( Iterator iter = dependenciesByScope.keySet().iterator(); iter.hasNext(); )
-            {
-                String scope = (String) iter.next();
-                List artifactsRows = (List) dependenciesByScope.get( scope );
-
-                startSection( scope );
-
-                paragraph( getReportString( "report.dependencies.intro." + scope ) );
-                startTable();
-                tableHeader( new String[]{groupId, artifactId, version, type, optional} );
-
-                // optional at the end + sort group id
-                Collections.sort( artifactsRows, new Comparator()
+                List multiValue = (List) dependenciesByScope.get( artifact.getScope() );
+                if ( multiValue == null )
                 {
-
-                    public int compare( Object row1, Object row2 )
-                    {
-                        String[] s1 = (String[]) row1;
-                        String[] s2 = (String[]) row2;
-                        return s1[0].compareTo( s2[0] ) + ( s1[4] != null ? 1000000 : 0 ) -
-                            ( s2[4] != null ? 1000000 : 0 );
-                    }
-                } );
-
-                for ( Iterator iterator = artifactsRows.iterator(); iterator.hasNext(); )
-                {
-                    String[] row = (String[]) iterator.next();
-                    tableRow( row );
+                    multiValue = new ArrayList();
                 }
-                endTable();
-
-                endSection();
+                multiValue.add( artifact );
+                dependenciesByScope.put( artifact.getScope(), multiValue );
             }
+
+            renderDependenciesForScope( Artifact.SCOPE_COMPILE,
+                                        (List) dependenciesByScope.get( Artifact.SCOPE_COMPILE ), tableHeader );
+            renderDependenciesForScope( Artifact.SCOPE_RUNTIME,
+                                        (List) dependenciesByScope.get( Artifact.SCOPE_RUNTIME ), tableHeader );
+            renderDependenciesForScope( Artifact.SCOPE_TEST, (List) dependenciesByScope.get( Artifact.SCOPE_TEST ),
+                                        tableHeader );
+            renderDependenciesForScope( Artifact.SCOPE_PROVIDED,
+                                        (List) dependenciesByScope.get( Artifact.SCOPE_PROVIDED ), tableHeader );
+            renderDependenciesForScope( Artifact.SCOPE_SYSTEM, (List) dependenciesByScope.get( Artifact.SCOPE_SYSTEM ),
+                                        tableHeader );
 
             endSection();
 
             // Transitive dependencies
-            Set artifacts = new HashSet( transitiveDep.values() );
+            List artifacts = new ArrayList( transitiveDep.values() );
+            Collections.sort( artifacts, getArtifactComparator() );
 
             startSection( getReportString( "report.transitivedependencies.title" ) );
 
@@ -388,7 +274,7 @@ public class DependenciesReport
 
                 startTable();
 
-                tableHeader( new String[]{groupId, artifactId, version, type, optional} );
+                tableHeader( tableHeader );
 
                 for ( Iterator i = artifacts.iterator(); i.hasNext(); )
                 {
@@ -418,20 +304,60 @@ public class DependenciesReport
             endSection();
         }
 
+        private void renderDependenciesForScope( String scope, List artifacts, String[] tableHeader )
+        {
+            if ( artifacts != null )
+            {
+                // can't use straight artifact comparison because we want optional last
+                Collections.sort( artifacts, getArtifactComparator() );
+
+                startSection( scope );
+
+                paragraph( getReportString( "report.dependencies.intro." + scope ) );
+                startTable();
+                tableHeader( tableHeader );
+
+                for ( Iterator iterator = artifacts.iterator(); iterator.hasNext(); )
+                {
+                    Artifact artifact = (Artifact) iterator.next();
+                    tableRow( getArtifactRow( artifact ) );
+                }
+                endTable();
+
+                endSection();
+            }
+        }
+
+        private Comparator getArtifactComparator()
+        {
+            return new Comparator()
+            {
+                public int compare( Object o1, Object o2 )
+                {
+                    Artifact a1 = (Artifact) o1;
+                    Artifact a2 = (Artifact) o2;
+
+                    // put optional last
+                    if ( a1.isOptional() && !a2.isOptional() )
+                    {
+                        return +1;
+                    }
+                    else if ( !a1.isOptional() && a2.isOptional() )
+                    {
+                        return -1;
+                    }
+                    else
+                    {
+                        return a1.compareTo( a2 );
+                    }
+                }
+            };
+        }
+
         private String[] getArtifactRow( Artifact artifact )
         {
-            String[] row;
-            if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
-            {
-                row = new String[]{artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
-                    artifact.getType(), artifact.isOptional() ? "X" : null};
-            }
-            else
-            {
-                row = new String[]{artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
-                    artifact.getType(), artifact.isOptional() ? "X" : null};
-            }
-            return row;
+            return new String[]{artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
+                artifact.getClassifier(), artifact.getType(), artifact.isOptional() ? "(optional)" : " "};
         }
 
         private void printDependencyListing( Artifact artifact )
@@ -554,8 +480,8 @@ public class DependenciesReport
             boolean allowStubModel = false;
             if ( !"pom".equals( artifact.getType() ) )
             {
-                projectArtifact = artifactFactory.createProjectArtifact( artifact.getGroupId(), artifact
-                    .getArtifactId(), artifact.getVersion(), artifact.getScope() );
+                projectArtifact = factory.createProjectArtifact( artifact.getGroupId(), artifact.getArtifactId(),
+                                                                 artifact.getVersion(), artifact.getScope() );
                 allowStubModel = true;
             }
 
