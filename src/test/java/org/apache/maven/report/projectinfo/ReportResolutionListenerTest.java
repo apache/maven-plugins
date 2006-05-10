@@ -22,8 +22,10 @@ import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.artifact.versioning.VersionRange;
 
-import java.util.Set;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -34,9 +36,12 @@ public class ReportResolutionListenerTest
 {
     private ReportResolutionListener listener;
 
+    private static final Artifact[] EMPTY_ARTIFACTS = new Artifact[]{};
+
     public void testSimpleDependencyTree()
     {
         Artifact projectArtifact = createArtifact( "test-project", "project-artifact", "1.0" );
+        listener.includeArtifact( projectArtifact );
 
         listener.startProcessChildren( projectArtifact );
 
@@ -51,62 +56,52 @@ public class ReportResolutionListenerTest
 
         listener.endProcessChildren( projectArtifact );
 
-        Set artifacts = listener.getArtifacts();
-        assertEquals( "Test total artifacts", 3, artifacts.size() );
-        assertTrue( "Test dependency one", artifacts.contains( depArtifact01 ) );
-        assertTrue( "Test dependency two", artifacts.contains( depArtifact02 ) );
-        assertTrue( "Test dependency three", artifacts.contains( depArtifact03 ) );
+        Collection artifacts = listener.getArtifacts();
+        assertTrue( "Check artifact lists match", compareNodeListToArtifacts( artifacts, new Artifact[]{depArtifact01,
+            depArtifact02, depArtifact03, projectArtifact} ) );
 
-        Map depMap = listener.getDepMap();
-        assertEquals( "Test total artifacts in dependency map", 1, depMap.size() );
-        assertTrue( "Test dependency map key", depMap.containsKey( projectArtifact.getId() ) );
-        List dependencies = (List) depMap.get( projectArtifact.getId() );
-        assertEquals( "Test dependency total", 3, dependencies.size() );
-        assertTrue( "Test dependency content 1", dependencies.contains( depArtifact01 ) );
-        assertTrue( "Test dependency content 2", dependencies.contains( depArtifact02 ) );
-        assertTrue( "Test dependency content 3", dependencies.contains( depArtifact03 ) );
+        assertEquals( "Test dependency map key", projectArtifact, listener.getRootNode().getArtifact() );
 
-        Map depTree = listener.getDepTree();
-        assertEquals( "Test total artifacts in dependency map", 1, depTree.size() );
-        assertTrue( "Test dependency map key", depTree.containsKey( projectArtifact.getId() ) );
-        dependencies = (List) depTree.get( projectArtifact.getId() );
-        assertEquals( "Test dependency total", 3, dependencies.size() );
-        assertTrue( "Test dependency content 1", dependencies.contains( depArtifact01 ) );
-        assertTrue( "Test dependency content 2", dependencies.contains( depArtifact02 ) );
-        assertTrue( "Test dependency content 3", dependencies.contains( depArtifact03 ) );
+        assertTrue( "Check artifact lists match", compareNodeListToArtifacts( listener.getRootNode().getChildren(),
+                                                                              new Artifact[]{depArtifact01,
+                                                                                  depArtifact02, depArtifact03} ) );
+    }
 
-        Map directDeps = listener.getDirectDependencies();
-        assertEquals( "Test total direct dependencies", 3, directDeps.size() );
-        assertTrue( "Test dependency content 1", directDeps.containsValue( depArtifact01 ) );
-        assertTrue( "Test dependency content 2", directDeps.containsValue( depArtifact02 ) );
-        assertTrue( "Test dependency content 3", directDeps.containsValue( depArtifact03 ) );
+    private boolean compareNodeListToArtifacts( Collection nodes, Artifact[] artifacts )
+    {
+        List artifactsRemaining = new ArrayList( Arrays.asList( artifacts ) );
 
-        Map omittedDeps = listener.getOmittedArtifacts();
-        assertEquals( "Test total omitted dependencies", 0, omittedDeps.size() );
+        for ( Iterator i = nodes.iterator(); i.hasNext(); )
+        {
+            ReportResolutionListener.Node node = (ReportResolutionListener.Node) i.next();
 
-        Map transDeps = listener.getTransitiveDependencies();
-        assertEquals( "Test total transitive dependencies", 0, transDeps.size() );
+            if ( !artifactsRemaining.remove( node.getArtifact() ) )
+            {
+                return false;
+            }
+        }
+        return artifactsRemaining.isEmpty();
     }
 
     public void testSimpleDepTreeWithTransitiveDeps()
     {
         Artifact projectArtifact = createArtifact( "test-project", "project-artifact", "1.0" );
+        listener.includeArtifact( projectArtifact );
 
         listener.startProcessChildren( projectArtifact );
 
         Artifact depArtifact1 = createArtifact( "test-dep", "dependency-one", "1.0" );
         listener.includeArtifact( depArtifact1 );
 
-            listener.startProcessChildren( depArtifact1 );
+        listener.startProcessChildren( depArtifact1 );
 
-            Artifact depArtifact01 = createArtifact( "test-dep", "dependency-zero-one", "1.0" );
-            listener.includeArtifact( depArtifact01 );
+        Artifact depArtifact01 = createArtifact( "test-dep", "dependency-zero-one", "1.0" );
+        listener.includeArtifact( depArtifact01 );
 
-            Artifact depArtifact02 = createArtifact( "test-dep", "dependency-zero-two", "1.0" );
-            listener.includeArtifact( depArtifact02 );
+        Artifact depArtifact02 = createArtifact( "test-dep", "dependency-zero-two", "1.0" );
+        listener.includeArtifact( depArtifact02 );
 
-            listener.endProcessChildren( depArtifact1 );
-
+        listener.endProcessChildren( depArtifact1 );
 
         Artifact depArtifact2 = createArtifact( "test-dep", "dependency-two", "1.0" );
         listener.includeArtifact( depArtifact2 );
@@ -116,167 +111,93 @@ public class ReportResolutionListenerTest
 
         listener.endProcessChildren( projectArtifact );
 
-        Set artifacts = listener.getArtifacts();
-        assertEquals( "Test total artifacts", 5, artifacts.size() );
-        assertTrue( "Test dependency one", artifacts.contains( depArtifact1 ) );
-        assertTrue( "Test dependency two", artifacts.contains( depArtifact2 ) );
-        assertTrue( "Test dependency three", artifacts.contains( depArtifact3 ) );
-        assertTrue( "Test dependency four", artifacts.contains( depArtifact01 ) );
-        assertTrue( "Test dependency five", artifacts.contains( depArtifact02 ) );
+        Collection artifacts = listener.getArtifacts();
+        assertTrue( compareNodeListToArtifacts( artifacts, new Artifact[]{depArtifact1, depArtifact2, depArtifact3,
+            depArtifact01, depArtifact02, projectArtifact} ) );
 
-        Map depMap = listener.getDepMap();
-        assertEquals( "Test total artifacts in dependency map", 2, depMap.size() );
-        assertTrue( "Test dependency map key", depMap.containsKey( projectArtifact.getId() ) );
-        List dependencies = (List) depMap.get( projectArtifact.getId() );
-        assertEquals( "Test dependency total", 3, dependencies.size() );
-        assertTrue( "Test dependency content 1", dependencies.contains( depArtifact1 ) );
-        assertTrue( "Test dependency content 2", dependencies.contains( depArtifact2 ) );
-        assertTrue( "Test dependency content 3", dependencies.contains( depArtifact3 ) );
-        assertTrue( "Test dependency map key", depMap.containsKey( projectArtifact.getId() ) );
-        dependencies = (List) depMap.get( depArtifact1.getId() );
-        assertEquals( "Test dependency total", 2, dependencies.size() );
-        assertTrue( "Test dependency content 1", dependencies.contains( depArtifact01 ) );
-        assertTrue( "Test dependency content 2", dependencies.contains( depArtifact02 ) );
+        assertEquals( "Check root", projectArtifact, listener.getRootNode().getArtifact() );
+        assertTrue( compareNodeListToArtifacts( listener.getRootNode().getChildren(),
+                                                new Artifact[]{depArtifact1, depArtifact2, depArtifact3} ) );
 
-        Map depTree = listener.getDepTree();
-        assertEquals( "Test total artifacts in dependency map", 2, depTree.size() );
-        assertTrue( "Test dependency map key", depTree.containsKey( projectArtifact.getId() ) );
-        dependencies = (List) depTree.get( projectArtifact.getId() );
-        assertEquals( "Test dependency total", 3, dependencies.size() );
-        assertTrue( "Test dependency content 1", dependencies.contains( depArtifact1 ) );
-        assertTrue( "Test dependency content 2", dependencies.contains( depArtifact2 ) );
-        assertTrue( "Test dependency content 3", dependencies.contains( depArtifact3 ) );
-        assertTrue( "Test dependency map key", depTree.containsKey( depArtifact1.getId() ) );
-        dependencies = (List) depTree.get( depArtifact1.getId() );
-        assertEquals( "Test dependency total", 2, dependencies.size() );
-        assertTrue( "Test dependency content 1", dependencies.contains( depArtifact01 ) );
-        assertTrue( "Test dependency content 2", dependencies.contains( depArtifact02 ) );
+        ReportResolutionListener.Node depNode1 = getChild( listener.getRootNode(), depArtifact1 );
+        assertTrue(
+            compareNodeListToArtifacts( depNode1.getChildren(), new Artifact[]{depArtifact01, depArtifact02} ) );
+    }
 
-        Map directDeps = listener.getDirectDependencies();
-        assertEquals( "Test total direct dependencies", 3, directDeps.size() );
-        assertTrue( "Test dependency content 1", directDeps.containsValue( depArtifact1 ) );
-        assertTrue( "Test dependency content 2", directDeps.containsValue( depArtifact2 ) );
-        assertTrue( "Test dependency content 3", directDeps.containsValue( depArtifact3 ) );
-
-        Map omittedDeps = listener.getOmittedArtifacts();
-        assertEquals( "Test total omitted dependencies", 0, omittedDeps.size() );
-
-        Map transDeps = listener.getTransitiveDependencies();
-        assertEquals( "Test total transitive dependencies", 2, transDeps.size() );
-        assertTrue( "Test transitive dependency 1", transDeps.containsValue( depArtifact01 ) );
-        assertTrue( "Test transitive dependency 1", transDeps.containsValue( depArtifact02 ) );
+    private ReportResolutionListener.Node getChild( ReportResolutionListener.Node node, Artifact artifact )
+    {
+        ReportResolutionListener.Node result = null;
+        for ( Iterator i = node.getChildren().iterator(); i.hasNext() && result == null; )
+        {
+            ReportResolutionListener.Node child = (ReportResolutionListener.Node) i.next();
+            if ( child.getArtifact().equals( artifact ) )
+            {
+                result = child;
+            }
+        }
+        return result;
     }
 
     public void testComplexDependencyTree()
     {
         Artifact projectArtifact = createArtifact( "test-project", "project-artifact", "1.0" );
+        listener.includeArtifact( projectArtifact );
 
         listener.startProcessChildren( projectArtifact );
 
         Artifact depArtifact1 = createArtifact( "test-dep", "dependency-one", "1.0", Artifact.SCOPE_COMPILE );
         listener.includeArtifact( depArtifact1 );
 
-            listener.startProcessChildren( depArtifact1 );
+        listener.startProcessChildren( depArtifact1 );
 
-            Artifact depArtifact11 = createArtifact( "test-dep", "dependency-zero-one", "1.0" );
-            listener.includeArtifact( depArtifact11 );
+        Artifact depArtifact11 = createArtifact( "test-dep", "dependency-zero-one", "1.0" );
+        listener.includeArtifact( depArtifact11 );
 
-            Artifact depArtifact12 = createArtifact( "test-dep", "dependency-zero-two", "1.0" );
-            listener.includeArtifact( depArtifact12 );
+        Artifact depArtifact12 = createArtifact( "test-dep", "dependency-zero-two", "1.0" );
+        listener.includeArtifact( depArtifact12 );
 
-                listener.startProcessChildren( depArtifact12 );
+        listener.startProcessChildren( depArtifact12 );
 
-                Artifact depArtifact121 = createArtifact( "test-dep", "dep-zero-two-1", "1.0" );
-                listener.includeArtifact( depArtifact121 );
+        Artifact depArtifact121 = createArtifact( "test-dep", "dep-zero-two-1", "1.0" );
+        listener.includeArtifact( depArtifact121 );
 
-                listener.endProcessChildren( depArtifact12 );
+        listener.endProcessChildren( depArtifact12 );
 
-            listener.endProcessChildren( depArtifact1 );
-
+        listener.endProcessChildren( depArtifact1 );
 
         Artifact depArtifact2 = createArtifact( "test-dep", "dependency-two", "1.0", Artifact.SCOPE_TEST );
         listener.includeArtifact( depArtifact2 );
 
-            listener.startProcessChildren( depArtifact2 );
+        listener.startProcessChildren( depArtifact2 );
 
-            Artifact depArtifact21 = createArtifact( "test-dep", "dep-zero-two-1", "1.0" );
-            listener.includeArtifact( depArtifact21 );
-            listener.omitForNearer( depArtifact121, depArtifact21 );
-            listener.updateScope( depArtifact121, Artifact.SCOPE_TEST );
+        Artifact depArtifact21 = createArtifact( "test-dep", "dep-zero-two-1", "1.0" );
+        listener.includeArtifact( depArtifact21 );
+        listener.omitForNearer( depArtifact121, depArtifact21 );
 
-            listener.endProcessChildren( depArtifact2 );
+        listener.endProcessChildren( depArtifact2 );
 
         Artifact depArtifact3 = createArtifact( "test-dep", "dependency-three", "1.0", Artifact.SCOPE_COMPILE );
         listener.includeArtifact( depArtifact3 );
 
         listener.endProcessChildren( projectArtifact );
 
-        Set artifacts = listener.getArtifacts();
-        assertEquals( "Test total artifacts", 6, artifacts.size() );
-        assertTrue( "Test dependency one", artifacts.contains( depArtifact1 ) );
-        assertTrue( "Test dependency two", artifacts.contains( depArtifact2 ) );
-        assertTrue( "Test dependency three", artifacts.contains( depArtifact3 ) );
-        assertTrue( "Test dependency four", artifacts.contains( depArtifact11 ) );
-        assertTrue( "Test dependency five", artifacts.contains( depArtifact12 ) );
-        assertTrue( "Test dependency six", artifacts.contains( depArtifact21 ) );
+        Collection artifacts = listener.getArtifacts();
+        assertTrue( compareNodeListToArtifacts( artifacts, new Artifact[]{depArtifact1, depArtifact2, depArtifact3,
+            depArtifact11, depArtifact12, depArtifact21, projectArtifact} ) );
 
-        Map depMap = listener.getDepMap();
-        assertEquals( "Test total artifacts in dependency map", 4, depMap.size() );
-        assertTrue( "Test dependency map key", depMap.containsKey( projectArtifact.getId() ) );
-        List dependencies = (List) depMap.get( projectArtifact.getId() );
-        assertEquals( "Test dependency total", 3, dependencies.size() );
-        assertTrue( "Test dependency content 1", dependencies.contains( depArtifact1 ) );
-        assertTrue( "Test dependency content 2", dependencies.contains( depArtifact2 ) );
-        assertTrue( "Test dependency content 3", dependencies.contains( depArtifact3 ) );
-        assertTrue( "Test dependency map key", depMap.containsKey( depArtifact1.getId() ) );
-        dependencies = (List) depMap.get( depArtifact1.getId() );
-        assertEquals( "Test dependency total", 2, dependencies.size() );
-        assertTrue( "Test dependency content 1", dependencies.contains( depArtifact11 ) );
-        assertTrue( "Test dependency content 2", dependencies.contains( depArtifact12 ) );
-        assertTrue( "Test dependency map key", depMap.containsKey( depArtifact12.getId() ) );
-        dependencies = (List) depMap.get( depArtifact12.getId() );
-        assertEquals( "Test dependency total", 1, dependencies.size() );
-        assertTrue( "Test dependency content 1", dependencies.contains( depArtifact121 ) );
-        assertTrue( "Test dependency map key", depMap.containsKey( depArtifact2.getId() ) );
-        dependencies = (List) depMap.get( depArtifact2.getId() );
-        assertEquals( "Test dependency total", 1, dependencies.size() );
-        assertTrue( "Test dependency content 1", dependencies.contains( depArtifact21 ) );
+        assertEquals( projectArtifact, listener.getRootNode().getArtifact() );
 
-        Map depTree = listener.getDepTree();
-        assertEquals( "Test total artifacts in dependency map", 4, depTree.size() );
-        assertTrue( "Test dependency map key", depTree.containsKey( projectArtifact.getId() ) );
-        dependencies = (List) depTree.get( projectArtifact.getId() );
-        assertEquals( "Test dependency total", 3, dependencies.size() );
-        assertTrue( "Test dependency content 1", dependencies.contains( depArtifact1 ) );
-        assertTrue( "Test dependency content 2", dependencies.contains( depArtifact2 ) );
-        assertTrue( "Test dependency content 3", dependencies.contains( depArtifact3 ) );
-        assertTrue( "Test dependency map key", depTree.containsKey( depArtifact1.getId() ) );
-        dependencies = (List) depTree.get( depArtifact1.getId() );
-        assertEquals( "Test dependency total", 2, dependencies.size() );
-        assertTrue( "Test dependency content 1", dependencies.contains( depArtifact11 ) );
-        assertTrue( "Test dependency content 2", dependencies.contains( depArtifact12 ) );
-        assertTrue( "Test dependency map key", depTree.containsKey( depArtifact12.getId() ) );
-        dependencies = (List) depTree.get( depArtifact12.getId() );
-        assertEquals( "Test dependency total", 0, dependencies.size() );
-        assertTrue( "Test dependency map key", depTree.containsKey( depArtifact2.getId() ) );
-        dependencies = (List) depTree.get( depArtifact2.getId() );
-        assertEquals( "Test dependency total", 1, dependencies.size() );
-        assertTrue( "Test dependency content 1", dependencies.contains( depArtifact21 ) );
+        assertTrue( compareNodeListToArtifacts( listener.getRootNode().getChildren(),
+                                                new Artifact[]{depArtifact1, depArtifact2, depArtifact3} ) );
 
-        Map directDeps = listener.getDirectDependencies();
-        assertEquals( "Test total direct dependencies", 3, directDeps.size() );
-        assertTrue( "Test dependency content 1", directDeps.containsValue( depArtifact1 ) );
-        assertTrue( "Test dependency content 2", directDeps.containsValue( depArtifact2 ) );
-        assertTrue( "Test dependency content 3", directDeps.containsValue( depArtifact3 ) );
+        ReportResolutionListener.Node node = getChild( listener.getRootNode(), depArtifact1 );
+        assertTrue( compareNodeListToArtifacts( node.getChildren(), new Artifact[]{depArtifact11, depArtifact12} ) );
 
-        Map omittedDeps = listener.getOmittedArtifacts();
-        assertEquals( "Test total omitted dependencies", 1, omittedDeps.size() );
+        node = getChild( node, depArtifact12 );
+        assertTrue( compareNodeListToArtifacts( node.getChildren(), EMPTY_ARTIFACTS ) );
 
-        Map transDeps = listener.getTransitiveDependencies();
-        assertEquals( "Test total transitive dependencies", 3, transDeps.size() );
-        assertTrue( "Test transitive dependency 1", transDeps.containsValue( depArtifact11 ) );
-        assertTrue( "Test transitive dependency 2", transDeps.containsValue( depArtifact12 ) );
-        assertTrue( "Test transitive dependency 3", transDeps.containsValue( depArtifact21 ) );
+        node = getChild( listener.getRootNode(), depArtifact2 );
+        assertTrue( compareNodeListToArtifacts( node.getChildren(), new Artifact[]{depArtifact21} ) );
     }
 
     private Artifact createArtifact( String groupId, String artifactId, String version )
@@ -288,21 +209,14 @@ public class ReportResolutionListenerTest
     {
         VersionRange versionRange = VersionRange.createFromVersion( version );
 
-        Artifact artifact = new DefaultArtifact( groupId, artifactId, versionRange, scope,
-                                                 "jar", null, new DefaultArtifactHandler(), false );
-
-        return artifact;
+        return new DefaultArtifact( groupId, artifactId, versionRange, scope, "jar", null, new DefaultArtifactHandler(),
+                                    false );
     }
 
     protected void setUp()
         throws Exception
     {
+        super.setUp();
         listener = new ReportResolutionListener();
-    }
-
-    protected void tearDown()
-        throws Exception
-    {
-        listener = null;
     }
 }
