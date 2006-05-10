@@ -18,12 +18,20 @@ package org.apache.maven.plugin.assembly.stubs;
 
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DefaultArtifact;
+import org.apache.maven.artifact.repository.DefaultArtifactRepository;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
+import org.apache.maven.artifact.handler.DefaultArtifactHandler;
+import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Build;
+import org.codehaus.plexus.PlexusTestCase;
 
 import java.util.Set;
 import java.util.Collections;
 import java.util.Properties;
+import java.util.List;
 import java.io.File;
 
 /**
@@ -47,11 +55,28 @@ public class AssemblyMavenProjectStub
         return model.getBuild();
     }
 
+    public List getRemoteArtifactRepositories()
+    {
+        ArtifactRepository repository = new DefaultArtifactRepository( "test-central",
+                                             "file://" + PlexusTestCase.getBasedir() + "/src/test/remote-repo",
+                                             new DefaultRepositoryLayout() );
+
+        return Collections.singletonList( repository );
+    }
+
     public AssemblyMavenProjectStub()
     {
         groupId = "assembly";
         artifactId = "test-project";
         version = "1.0";
+    }
+
+    public Set getDependencyArtifacts()
+    {
+        return Collections.singleton(
+            new DefaultArtifact( "assembly", "dependency-artifact", VersionRange.createFromVersion( "1.0" ),
+                                 Artifact.SCOPE_COMPILE, "jar", null, new DefaultArtifactHandler( "jar" ), false )
+            );
     }
 
     public File getBasedir()
@@ -63,7 +88,7 @@ public class AssemblyMavenProjectStub
     {
         if ( artifact == null )
         {
-            artifact = new ArtifactStub( groupId, artifactId, version, "jar", null );
+            artifact = new ArtifactStub( groupId, artifactId, version, "jar", Artifact.SCOPE_COMPILE );
         }
 
         return artifact;
