@@ -33,7 +33,7 @@
     </contributor>
   </contributors>
   <prerequisites>
-    <maven>2.0.2</maven>
+    <maven>2.0.4</maven>
   </prerequisites>
   <build>
     <plugins>
@@ -57,12 +57,12 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>2.0.2</version>
+      <version>2.0.4</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-api</artifactId>
-      <version>1.0-beta-2</version>
+      <version>1.0-beta-3</version>
     </dependency>
     <dependency>
       <groupId>commons-validator</groupId>
@@ -72,23 +72,17 @@
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-provider-perforce</artifactId>
-      <version>1.0-beta-2</version>
+      <version>1.0-beta-3</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-model</artifactId>
-      <version>2.0.2</version>
+      <version>2.0.4</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-manager-plexus</artifactId>
-      <version>1.0-beta-2</version>
-      <exclusions>
-        <exclusion>
-          <groupId>plexus</groupId>
-          <artifactId>plexus-container-default</artifactId>
-        </exclusion>
-      </exclusions>
+      <version>1.0-beta-3</version>
     </dependency>
     <dependency>
       <groupId>plexus</groupId>
@@ -98,32 +92,37 @@
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-impl</artifactId>
-      <version>2.0.2</version>
+      <version>2.0.4</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-provider-clearcase</artifactId>
-      <version>1.0-beta-2</version>
+      <version>1.0-beta-3</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-provider-starteam</artifactId>
-      <version>1.0-beta-2</version>
+      <version>1.0-beta-3</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
-      <artifactId>maven-scm-provider-svn</artifactId>
-      <version>1.0-beta-2</version>
+      <artifactId>maven-scm-provider-svnexe</artifactId>
+      <version>1.0-beta-3</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
-      <artifactId>maven-scm-provider-cvs</artifactId>
-      <version>1.0-beta-2</version>
+      <artifactId>maven-scm-provider-cvsexe</artifactId>
+      <version>1.0-beta-3</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-settings</artifactId>
-      <version>2.0.2</version>
+      <version>2.0.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-site-renderer</artifactId>
+      <version>1.0-alpha-8-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>httpunit</groupId>
@@ -132,9 +131,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.maven</groupId>
+      <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-plugin-testing-harness</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>1.0-beta-1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
