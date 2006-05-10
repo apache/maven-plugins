@@ -67,7 +67,7 @@ How to use
                <overWriteSnapshots>true</overWriteSnapshots>
             </configuration>
           </execution>
-        </exections>
+        </executions>
       </plugin>
     </plugins>
   </build>
@@ -103,7 +103,7 @@ How to use
                <outputDirectory>some-other-place</outputDirectory>
             </configuration>
           </execution>
-        </exections>
+        </executions>
       </plugin>
     </plugins>
   </build>
@@ -166,7 +166,7 @@ How to use
               <overWriteSnapshots>true</overWriteSnapshots>
             </configuration>
           </execution>
-        </exections>
+        </executions>
       </plugin>
     </plugins>
   </build>
@@ -285,7 +285,7 @@ How to use
               <overWriteSnapshots>true</overWriteSnapshots>
             </configuration>
           </execution>
-        </exections>
+        </executions>
       </plugin>
     </plugins>
   </build>
