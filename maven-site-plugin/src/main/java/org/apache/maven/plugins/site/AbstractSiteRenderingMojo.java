@@ -196,7 +196,7 @@ public abstract class AbstractSiteRenderingMojo
      * @required
      * @todo should we deprecate in favour of reports?
      */
-    private File generatedSiteDirectory;
+    protected File generatedSiteDirectory;
 
     /**
      * The reactor projects.
@@ -652,7 +652,6 @@ public abstract class AbstractSiteRenderingMojo
             context.setModuleExcludes( moduleExcludes );
         }
 
-        context.addSiteDirectory( generatedSiteDirectory );
         return context;
     }
 
