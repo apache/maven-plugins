@@ -588,6 +588,8 @@ public class AssemblyMojoTest
 
         mojo.execute();
 
+        assertTrue( "Test an archive was created", ArchiverManagerStub.archiverStub.getDestFile().exists() );
+
         File workDir = (File) getVariableValueFromObject( mojo, "workDirectory" );
 
         Map archiverFiles = ArchiverManagerStub.archiverStub.getFiles();
@@ -629,6 +631,8 @@ public class AssemblyMojoTest
 
         mojo.execute();
 
+        assertTrue( "Test an archive was created", ArchiverManagerStub.archiverStub.getDestFile().exists() );
+
         Map archiverFiles = ArchiverManagerStub.archiverStub.getFiles();
 
         File workDir = (File) getVariableValueFromObject( mojo, "workDirectory" );
@@ -666,6 +670,8 @@ public class AssemblyMojoTest
 
         mojo.execute();
 
+        assertTrue( "Test an archive was created", ArchiverManagerStub.archiverStub.getDestFile().exists() );
+
         Map archiverFiles = ArchiverManagerStub.archiverStub.getFiles();
 
         File workDir = (File) getVariableValueFromObject( mojo, "workDirectory" );
@@ -701,6 +707,8 @@ public class AssemblyMojoTest
 
         mojo.execute();
 
+        assertTrue( "Test an archive was created", ArchiverManagerStub.archiverStub.getDestFile().exists() );
+
         File workDir = (File) getVariableValueFromObject( mojo, "workDirectory" );
 
         Map archiverFiles = ArchiverManagerStub.archiverStub.getFiles();
@@ -722,6 +730,111 @@ public class AssemblyMojoTest
         }
 
         assertEquals( "Test that there are no other archive files added", 0, archiverFiles.size() );
+    }
+
+    public void testModuleSetPacked()
+        throws Exception
+    {
+        ReactorMavenProjectStub.reactorProjects.clear();
+
+        AssemblyMojo mojo = getMojo( "moduleSet-packed-plugin-config.xml" );
+
+        MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "executedProject" );
+
+        List reactorProjectsList = (List) getVariableValueFromObject( mojo, "reactorProjects" );
+
+        for ( Iterator reactorProjects = reactorProjectsList.iterator(); reactorProjects.hasNext(); )
+        {
+            MavenProject reactorProject = (MavenProject) reactorProjects.next();
+
+            reactorProject.setParent( project );
+        }
+
+        mojo.execute();
+
+        assertTrue( "Test an archive was created", ArchiverManagerStub.archiverStub.getDestFile().exists() );
+
+        Map archiverFiles = ArchiverManagerStub.archiverStub.getFiles();
+
+        File workDir = (File) getVariableValueFromObject( mojo, "workDirectory" );
+
+        for ( Iterator reactorProjects = reactorProjectsList.iterator(); reactorProjects.hasNext(); )
+        {
+            MavenProject reactorProject = (MavenProject) reactorProjects.next();
+
+            assertFalse( "Test if work directory is used", workDir.exists() );
+            File reactorProjectFile = reactorProject.getArtifact().getFile();
+            assertNotNull( "Test if reactor project is in the archive", archiverFiles.remove( reactorProjectFile ) );
+            Artifact artifact = (Artifact) reactorProject.getArtifacts().iterator().next();
+            File depFile = artifact.getFile();
+            assertNull( "Test if reactor dependency is not in the archive", archiverFiles.remove( depFile ) );
+        }
+
+        assertTrue( "Test that there are no other archive files added", archiverFiles.isEmpty() );
+    }
+
+    public void testModuleSetPackedIncludingDependencies()
+        throws Exception
+    {
+        ReactorMavenProjectStub.reactorProjects.clear();
+
+        AssemblyMojo mojo = getMojo( "moduleSet-packed-including-dependencies-plugin-config.xml" );
+
+        MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "executedProject" );
+
+        List reactorProjectsList = (List) getVariableValueFromObject( mojo, "reactorProjects" );
+
+        for ( Iterator reactorProjects = reactorProjectsList.iterator(); reactorProjects.hasNext(); )
+        {
+            MavenProject reactorProject = (MavenProject) reactorProjects.next();
+
+            reactorProject.setParent( project );
+        }
+
+        mojo.execute();
+
+        assertTrue( "Test an archive was created", ArchiverManagerStub.archiverStub.getDestFile().exists() );
+
+        Map archiverFiles = ArchiverManagerStub.archiverStub.getFiles();
+
+        File workDir = (File) getVariableValueFromObject( mojo, "workDirectory" );
+
+        for ( Iterator reactorProjects = reactorProjectsList.iterator(); reactorProjects.hasNext(); )
+        {
+            MavenProject reactorProject = (MavenProject) reactorProjects.next();
+
+            assertFalse( "Test if work directory is used", workDir.exists() );
+            File reactorProjectFile = reactorProject.getArtifact().getFile();
+            assertNotNull( "Test if reactor project is in the archive", archiverFiles.remove( reactorProjectFile ) );
+            Artifact artifact = (Artifact) reactorProject.getArtifacts().iterator().next();
+            File depFile = artifact.getFile();
+            assertNotNull( "Test if reactor dependency is also in the archive", archiverFiles.remove( depFile ) );
+        }
+
+        assertTrue( "Test that there are no other archive files added", archiverFiles.isEmpty() );
+    }
+
+    public void testRepository()
+        throws Exception
+    {
+        AssemblyMojo mojo = executeMojo( "repository-plugin-config.xml" );
+
+        File tempRoot = (File) getVariableValueFromObject( mojo, "tempRoot" );
+
+        File tmpRepositoryDir = new File( tempRoot, "repository" );
+        assertTrue( "Test if repository output directory is used", tmpRepositoryDir.exists() );
+
+        String repoPath = "assembly/dependency-artifact/1.0/dependency-artifact-1.0.";
+
+        File tmpArtifactJar = new File( tmpRepositoryDir, repoPath + "jar" );
+        assertTrue( "Test if dependency artifact is in repository", tmpArtifactJar.exists() );
+        assertTrue( "Test if md5 was generated", new File( tmpRepositoryDir, repoPath + "jar.md5" ).exists() );
+        assertTrue( "Test if sha1 was generated", new File( tmpRepositoryDir, repoPath + "jar.sha1" ).exists() );
+
+        File tmpArtifactPom = new File( tmpRepositoryDir, repoPath + "pom" );
+        assertTrue( "Test if dependency artifact is in repository", tmpArtifactPom.exists() );
+        assertTrue( "Test if md5 was generated", new File( tmpRepositoryDir, repoPath + "pom.md5" ).exists() );
+        assertTrue( "Test if sha1 was generated", new File( tmpRepositoryDir, repoPath + "pom.sha1" ).exists() );
     }
 
     private AssemblyMojo getMojo( String pluginXml )
