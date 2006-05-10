@@ -17,14 +17,12 @@ package org.apache.maven.report.projectinfo;
  */
 
 import org.apache.commons.validator.UrlValidator;
+import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.License;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
-import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.doxia.siterenderer.Renderer;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
@@ -51,32 +49,8 @@ import java.util.regex.Pattern;
  * @goal license
  */
 public class LicenseReport
-    extends AbstractMavenReport
+    extends AbstractProjectInfoReport
 {
-    /**
-     * Report output directory.
-     *
-     * @parameter expression="${project.reporting.outputDirectory}"
-     * @required
-     */
-    private String outputDirectory;
-
-    /**
-     * Doxia Site Renderer.
-     *
-     * @component
-     */
-    private Renderer siteRenderer;
-
-    /**
-     * The Maven Project.
-     *
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
-    private MavenProject project;
-
     /**
      * The Maven Settings.
      *
@@ -94,13 +68,6 @@ public class LicenseReport
     private boolean offline;
 
     /**
-     * Internationalization.
-     *
-     * @component
-     */
-    private I18N i18n;
-
-    /**
      * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
      */
     public String getName( Locale locale )
@@ -109,43 +76,11 @@ public class LicenseReport
     }
 
     /**
-     * @see org.apache.maven.reporting.MavenReport#getCategoryName()
-     */
-    public String getCategoryName()
-    {
-        return CATEGORY_PROJECT_INFORMATION;
-    }
-
-    /**
      * @see org.apache.maven.reporting.MavenReport#getDescription(java.util.Locale)
      */
     public String getDescription( Locale locale )
     {
         return i18n.getString( "project-info-report", locale, "report.license.description" );
-    }
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getOutputDirectory()
-     */
-    protected String getOutputDirectory()
-    {
-        return outputDirectory;
-    }
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getProject()
-     */
-    protected MavenProject getProject()
-    {
-        return project;
-    }
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getSiteRenderer()
-     */
-    protected Renderer getSiteRenderer()
-    {
-        return siteRenderer;
     }
 
     /**
@@ -173,7 +108,7 @@ public class LicenseReport
         return "license";
     }
 
-    static class LicenseRenderer
+    private static class LicenseRenderer
         extends AbstractMavenReportRenderer
     {
         private MavenProject project;
@@ -184,7 +119,7 @@ public class LicenseReport
 
         private Locale locale;
 
-        public LicenseRenderer( Sink sink, MavenProject project, I18N i18n, Locale locale, Settings settings )
+        LicenseRenderer( Sink sink, MavenProject project, I18N i18n, Locale locale, Settings settings )
         {
             super( sink );
 
@@ -250,8 +185,6 @@ public class LicenseReport
 
                 if ( url != null )
                 {
-                    String licenseContent = null;
-
                     URL licenseUrl = null;
                     UrlValidator urlValidator = new UrlValidator( UrlValidator.ALLOW_ALL_SCHEMES );
                     // UrlValidator does not accept file URLs because the file
@@ -294,6 +227,7 @@ public class LicenseReport
 
                     if ( licenseUrl != null )
                     {
+                        String licenseContent = null;
                         try
                         {
                             licenseContent = getLicenseInputStream( licenseUrl );
@@ -302,7 +236,7 @@ public class LicenseReport
                         {
                             paragraph( "Can't read the url [" + licenseUrl + "] : " + e.getMessage() );
                         }
-    
+
                         if ( licenseContent != null )
                         {
                             // TODO: we should check for a text/html mime type instead, and possibly use a html parser to do this a bit more cleanly/reliably.
@@ -314,10 +248,10 @@ public class LicenseReport
                             {
                                 bodyStart = licenseContentLC.indexOf( ">", bodyStart ) + 1;
                                 String body = licenseContent.substring( bodyStart, bodyEnd );
-           
+
                                 link( "[Original text]", licenseUrl.toExternalForm() );
                                 paragraph( "Copy of the license follows." );
-          
+
                                 body = replaceRelativeLinks( body, baseURL( licenseUrl ).toExternalForm() );
                                 sink.rawText( body );
                             }
@@ -367,12 +301,12 @@ public class LicenseReport
                     if ( !StringUtils.isEmpty( host ) )
                     {
                         Properties p = System.getProperties();
-                        p.put( scheme + "proxySet", "true" );
-                        p.put( scheme + "proxyHost", host );
-                        p.put( scheme + "proxyPort", String.valueOf( proxy.getPort() ) );
+                        p.setProperty( scheme + "proxySet", "true" );
+                        p.setProperty( scheme + "proxyHost", host );
+                        p.setProperty( scheme + "proxyPort", String.valueOf( proxy.getPort() ) );
                         if ( !StringUtils.isEmpty( proxy.getNonProxyHosts() ) )
                         {
-                            p.put( scheme + "nonProxyHosts", proxy.getNonProxyHosts() );
+                            p.setProperty( scheme + "nonProxyHosts", proxy.getNonProxyHosts() );
                         }
 
                         final String userName = proxy.getUsername();
@@ -403,80 +337,80 @@ public class LicenseReport
                 IOUtil.close( in );
             }
         }
-    }
 
-    private static URL baseURL( URL aUrl )
-    {
-        String urlTxt = aUrl.toExternalForm();
-        int lastSlash = urlTxt.lastIndexOf( '/' );
-        if ( lastSlash > -1 )
+        private static URL baseURL( URL aUrl )
         {
-            try
+            String urlTxt = aUrl.toExternalForm();
+            int lastSlash = urlTxt.lastIndexOf( '/' );
+            if ( lastSlash > -1 )
             {
-                return new URL( urlTxt.substring( 0, lastSlash + 1 ) );
-            }
-            catch ( MalformedURLException e )
-            {
-                throw new AssertionError( e );
-            }
-        }
-
-        return aUrl;
-    }
-
-    private static String replaceRelativeLinks( String html, String baseURL )
-    {
-        if ( !baseURL.endsWith( "/" ) )
-        {
-            baseURL += "/";
-        }
-
-        String serverURL = baseURL.substring( 0, baseURL.indexOf( '/', baseURL.indexOf( "//" ) + 2 ) );
-
-        html = replaceParts( html, baseURL, serverURL, "[aA]", "[hH][rR][eE][fF]" );
-        html = replaceParts( html, baseURL, serverURL, "[iI][mM][gG]", "[sS][rR][cC]" );
-        return html;
-    }
-
-    private static String replaceParts( String html, String baseURL, String serverURL, String tagPattern,
-                                        String attributePattern )
-    {
-        Pattern anchor = Pattern.compile(
-            "(<\\s*" + tagPattern + "\\s+[^>]*" + attributePattern + "\\s*=\\s*\")([^\"]*)\"([^>]*>)" );
-        StringBuffer sb = new StringBuffer( html );
-
-        int indx = 0;
-        boolean done = false;
-        while ( !done )
-        {
-            Matcher mAnchor = anchor.matcher( sb );
-            if ( mAnchor.find( indx ) )
-            {
-                indx = mAnchor.end( 3 );
-
-                if ( mAnchor.group( 2 ).startsWith( "#" ) )
+                try
                 {
-                    // relative link - don't want to alter this one!
+                    return new URL( urlTxt.substring( 0, lastSlash + 1 ) );
                 }
-                if ( mAnchor.group( 2 ).startsWith( "/" ) )
+                catch ( MalformedURLException e )
                 {
-                    // root link
-                    sb.insert( mAnchor.start( 2 ), serverURL );
-                    indx += serverURL.length();
-                }
-                else if ( mAnchor.group( 2 ).indexOf( ':' ) < 0 )
-                {
-                    // relative link
-                    sb.insert( mAnchor.start( 2 ), baseURL );
-                    indx += baseURL.length();
+                    throw new AssertionError( e );
                 }
             }
-            else
-            {
-                done = true;
-            }
+
+            return aUrl;
         }
 
-        return sb.toString();
+        private static String replaceRelativeLinks( String html, String baseURL )
+        {
+            String url = baseURL;
+            if ( !url.endsWith( "/" ) )
+            {
+                url += "/";
+            }
+
+            String serverURL = url.substring( 0, url.indexOf( '/', url.indexOf( "//" ) + 2 ) );
+
+            String content = replaceParts( html, url, serverURL, "[aA]", "[hH][rR][eE][fF]" );
+            content = replaceParts( content, url, serverURL, "[iI][mM][gG]", "[sS][rR][cC]" );
+            return content;
+        }
+
+        private static String replaceParts( String html, String baseURL, String serverURL, String tagPattern,
+                                            String attributePattern )
+        {
+            Pattern anchor = Pattern.compile(
+                "(<\\s*" + tagPattern + "\\s+[^>]*" + attributePattern + "\\s*=\\s*\")([^\"]*)\"([^>]*>)" );
+            StringBuffer sb = new StringBuffer( html );
+
+            int indx = 0;
+            boolean done = false;
+            while ( !done )
+            {
+                Matcher mAnchor = anchor.matcher( sb );
+                if ( mAnchor.find( indx ) )
+                {
+                    indx = mAnchor.end( 3 );
+
+                    if ( mAnchor.group( 2 ).startsWith( "#" ) )
+                    {
+                        // relative link - don't want to alter this one!
+                    }
+                    if ( mAnchor.group( 2 ).startsWith( "/" ) )
+                    {
+                        // root link
+                        sb.insert( mAnchor.start( 2 ), serverURL );
+                        indx += serverURL.length();
+                    }
+                    else if ( mAnchor.group( 2 ).indexOf( ':' ) < 0 )
+                    {
+                        // relative link
+                        sb.insert( mAnchor.start( 2 ), baseURL );
+                        indx += baseURL.length();
+                    }
+                }
+                else
+                {
+                    done = true;
+                }
+            }
+            return sb.toString();
+        }
     }
 }

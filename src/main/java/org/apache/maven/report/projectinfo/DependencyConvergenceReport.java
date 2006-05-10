@@ -16,13 +16,10 @@ package org.apache.maven.report.projectinfo;
  * limitations under the License.
  */
 
+import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
-import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.doxia.siterenderer.Renderer;
-import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.util.ArrayList;
@@ -42,40 +39,8 @@ import java.util.TreeMap;
  * @aggregator
  */
 public class DependencyConvergenceReport
-    extends AbstractMavenReport
+    extends AbstractProjectInfoReport
 {
-
-    /**
-     * Report output directory.
-     *
-     * @parameter expression="${project.reporting.outputDirectory}"
-     * @required
-     */
-    private String outputDirectory;
-
-    /**
-     * Doxia Site Renderer.
-     *
-     * @component
-     */
-    private Renderer siteRenderer;
-
-    /**
-     * The Maven Project.
-     *
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
-    private MavenProject project;
-
-    /**
-     * Internationalization.
-     *
-     * @component
-     */
-    private I18N i18n;
-
     /**
      * The projects in the current build. The effective-POM for
      * each of these projects will written.
@@ -86,20 +51,7 @@ public class DependencyConvergenceReport
      */
     private List reactorProjects;
 
-    protected Renderer getSiteRenderer()
-    {
-        return siteRenderer;
-    }
-
-    protected String getOutputDirectory()
-    {
-        return outputDirectory;
-    }
-
-    protected MavenProject getProject()
-    {
-        return project;
-    }
+    private static final int PERCENTAGE = 100;
 
     public String getOutputName()
     {
@@ -114,14 +66,6 @@ public class DependencyConvergenceReport
     public String getDescription( Locale locale )
     {
         return getI18nString( locale, "description" );
-    }
-
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getCategoryName()
-     */
-    public String getCategoryName()
-    {
-        return CATEGORY_PROJECT_INFORMATION;
     }
 
     protected void executeReport( Locale locale )
@@ -307,7 +251,6 @@ public class DependencyConvergenceReport
     {
         int depCount = dependencyMap.size();
         int artifactCount = 0;
-        int convergence = 0;
         int snapshotCount = 0;
 
         Iterator it = dependencyMap.values().iterator();
@@ -319,7 +262,7 @@ public class DependencyConvergenceReport
             artifactCount += artifactMap.size();
         }
 
-        convergence = (int) ( ( (double) depCount / (double) artifactCount ) * 100 );
+        int convergence = (int) ( ( (double) depCount / (double) artifactCount ) * PERCENTAGE );
 
         sink.table();
         sink.tableCaption();
@@ -368,7 +311,7 @@ public class DependencyConvergenceReport
         sink.tableHeaderCell_();
         sink.tableCell();
 
-        if ( convergence < 100 )
+        if ( convergence < PERCENTAGE )
         {
             iconError( sink );
         }
@@ -389,8 +332,7 @@ public class DependencyConvergenceReport
         sink.text( getI18nString( locale, "stats.readyrelease" ) + ":" );
         sink.tableHeaderCell_();
         sink.tableCell();
-        boolean readyForRelease = ( ( convergence >= 100 ) && ( snapshotCount <= 0 ) );
-        if ( readyForRelease )
+        if ( convergence >= PERCENTAGE && snapshotCount <= 0 )
         {
             iconSuccess( sink );
             sink.nonBreakingSpace();
@@ -405,7 +347,7 @@ public class DependencyConvergenceReport
             sink.bold();
             sink.text( getI18nString( locale, "stats.readyrelease.error" ) );
             sink.bold_();
-            if ( convergence < 100 )
+            if ( convergence < PERCENTAGE )
             {
                 sink.lineBreak();
                 sink.text( getI18nString( locale, "stats.readyrelease.error.convergence" ) );
@@ -490,13 +432,13 @@ public class DependencyConvergenceReport
         return i18n.getString( "project-info-report", locale, "report.dependency-convergence." + key );
     }
 
-    class ReverseDependencyLink
+    private static class ReverseDependencyLink
     {
         private Dependency dependency;
 
         protected MavenProject project;
 
-        public ReverseDependencyLink( Dependency dependency, MavenProject project )
+        ReverseDependencyLink( Dependency dependency, MavenProject project )
         {
             this.dependency = dependency;
             this.project = project;
@@ -518,13 +460,12 @@ public class DependencyConvergenceReport
         }
     }
 
-    class ProjectComparator
+    private static class ProjectComparator
         implements Comparator
     {
-
         public int compare( Object o1, Object o2 )
         {
-            if ( ( o1 instanceof ReverseDependencyLink ) && ( o2 instanceof ReverseDependencyLink ) )
+            if ( o1 instanceof ReverseDependencyLink && o2 instanceof ReverseDependencyLink )
             {
                 ReverseDependencyLink p1 = (ReverseDependencyLink) o1;
                 ReverseDependencyLink p2 = (ReverseDependencyLink) o2;
