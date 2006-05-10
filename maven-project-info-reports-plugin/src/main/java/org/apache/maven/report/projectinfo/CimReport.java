@@ -16,14 +16,11 @@ package org.apache.maven.report.projectinfo;
  * limitations under the License.
  */
 
+import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.CiManagement;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Notifier;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
-import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.doxia.siterenderer.Renderer;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -39,75 +36,16 @@ import java.util.Locale;
  * @goal cim
  */
 public class CimReport
-    extends AbstractMavenReport
+    extends AbstractProjectInfoReport
 {
-    // ----------------------------------------------------------------------
-    // Parameters
-    // ----------------------------------------------------------------------
-
-    /**
-     * Report output directory.
-     *
-     * @parameter expression="${project.reporting.outputDirectory}"
-     * @required
-     */
-    private String outputDirectory;
-
-    /**
-     * Doxia SiteRender.
-     *
-     * @component
-     */
-    private Renderer siteRenderer;
-
-    /**
-     * The Maven Project.
-     *
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
-    private MavenProject project;
-
-    /**
-     * Internationalization.
-     *
-     * @component
-     */
-    private I18N i18n;
-
-    // ----------------------------------------------------------------------
-    // MavenReport Implementation
-    // ----------------------------------------------------------------------
-
     public String getName( Locale locale )
     {
         return i18n.getString( "project-info-report", locale, "report.cim.name" );
     }
 
-    public String getCategoryName()
-    {
-        return CATEGORY_PROJECT_INFORMATION;
-    }
-
     public String getDescription( Locale locale )
     {
         return i18n.getString( "project-info-report", locale, "report.cim.description" );
-    }
-
-    protected String getOutputDirectory()
-    {
-        return outputDirectory;
-    }
-
-    protected MavenProject getProject()
-    {
-        return project;
-    }
-
-    protected Renderer getSiteRenderer()
-    {
-        return siteRenderer;
     }
 
     public void executeReport( Locale locale )
@@ -126,7 +64,7 @@ public class CimReport
     //
     // ----------------------------------------------------------------------
 
-    static class CimRenderer
+    private static class CimRenderer
         extends AbstractMavenReportRenderer
     {
         private Model model;
@@ -135,7 +73,7 @@ public class CimReport
 
         private Locale locale;
 
-        public CimRenderer( Sink sink, Model model, I18N i18n, Locale locale )
+        CimRenderer( Sink sink, Model model, I18N i18n, Locale locale )
         {
             super( sink );
 
@@ -206,7 +144,7 @@ public class CimReport
             // Notifiers
             startSection( i18n.getString( "project-info-report", locale, "report.cim.notifiers.title" ) );
 
-            if ( ( notifiers == null ) || ( notifiers.isEmpty() ) )
+            if ( notifiers == null || notifiers.isEmpty() )
             {
                 paragraph( i18n.getString( "project-info-report", locale, "report.cim.notifiers.nolist" ) );
             }
@@ -256,12 +194,7 @@ public class CimReport
                 return false;
             }
 
-            if ( connection.toLowerCase().startsWith( cim.toLowerCase() ) )
-            {
-                return true;
-            }
-
-            return false;
+            return connection.toLowerCase().startsWith( cim.toLowerCase() );
         }
     }
 }

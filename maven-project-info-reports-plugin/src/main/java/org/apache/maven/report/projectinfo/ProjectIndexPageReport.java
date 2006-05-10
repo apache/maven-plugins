@@ -17,11 +17,7 @@ package org.apache.maven.report.projectinfo;
  */
 
 import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.doxia.siterenderer.Renderer;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
-import org.codehaus.plexus.i18n.I18N;
 
 import java.util.List;
 import java.util.Locale;
@@ -35,39 +31,8 @@ import java.util.Locale;
  * @goal index
  */
 public class ProjectIndexPageReport
-    extends AbstractMavenReport
+    extends AbstractProjectInfoReport
 {
-    /**
-     * Report output directory.
-     *
-     * @parameter expression="${project.reporting.outputDirectory}"
-     * @required
-     */
-    private String outputDirectory;
-
-    /**
-     * Doxia Site Renderer.
-     *
-     * @component
-     */
-    private Renderer siteRenderer;
-
-    /**
-     * The Maven Project.
-     *
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
-    private MavenProject project;
-
-    /**
-     * Internationalization.
-     *
-     * @component
-     */
-    private I18N i18n;
-
     private List reports;
 
     /**
@@ -76,14 +41,6 @@ public class ProjectIndexPageReport
     public String getName( Locale locale )
     {
         return i18n.getString( "project-info-report", locale, "report.index.title" );
-    }
-
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getCategoryName()
-     */
-    public String getCategoryName()
-    {
-        return CATEGORY_PROJECT_INFORMATION;
     }
 
     /**
@@ -102,30 +59,6 @@ public class ProjectIndexPageReport
             desc = i18n.getString( "project-info-report", locale, "report.index.nodescription" );
         }
         return desc;
-    }
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getOutputDirectory()
-     */
-    protected String getOutputDirectory()
-    {
-        return outputDirectory;
-    }
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getProject()
-     */
-    protected MavenProject getProject()
-    {
-        return project;
-    }
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getSiteRenderer()
-     */
-    protected Renderer getSiteRenderer()
-    {
-        return siteRenderer;
     }
 
     /**
