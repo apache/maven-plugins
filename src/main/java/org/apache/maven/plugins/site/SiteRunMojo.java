@@ -153,8 +153,9 @@ public class SiteRunMojo
             webapp.setAttribute( "context", context );
 
             Map documents = locateDocuments( context, filteredReports, locale );
-
             webapp.setAttribute( "documents", documents );
+
+            webapp.setAttribute( "generatedSiteDirectory", generatedSiteDirectory );
 
             siteRenderer.copyResources( context, new File( siteDirectory, "resources" ), tempWebappDirectory );
         }
