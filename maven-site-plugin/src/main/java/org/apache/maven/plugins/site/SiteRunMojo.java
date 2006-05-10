@@ -39,7 +39,7 @@ import java.util.Map;
 /**
  * Start the site up, rendering documents as requested for fast editing.
  *
- * @author <a href="mailto:brett@apache.org">Emmanuel Venisse</a>
+ * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
  * @goal run
  * @aggregator
@@ -147,7 +147,7 @@ public class SiteRunMojo
 
         try
         {
-            // TODO
+            // TODO: better i18n handling
             Locale locale = Locale.getDefault();
             SiteRenderingContext context = createSiteRenderingContext( locale );
             webapp.setAttribute( "context", context );
@@ -161,7 +161,7 @@ public class SiteRunMojo
         }
         catch ( Exception e )
         {
-            // TODO
+            throw new MojoExecutionException( "Unable to set up webapp", e );
         }
         return webapp;
     }
