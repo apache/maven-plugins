@@ -69,7 +69,14 @@ public class DoxiaFilter
         throws IOException, ServletException
     {
         HttpServletRequest req = (HttpServletRequest) servletRequest;
-        String path = req.getServletPath().substring( 1 );
+
+        String path = req.getServletPath();
+        if ( path.endsWith( "/" ) )
+        {
+            path += "index.html";
+        }
+
+        path = path.substring( 1 );
 
         if ( documents.containsKey( path ) )
         {
