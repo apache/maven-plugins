@@ -13,15 +13,16 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
+
 <project>
   <build>
     <plugins>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
-          <outputDirectory>${basedir}/target/test-harness/assembly/min/target</outputDirectory>
+          <outputDirectory>${basedir}/target/test-harness/assembly/repository-with-metadata/target</outputDirectory>
           <finalName>assembly</finalName>
-          <workDirectory>${basedir}/target/test-harness/assembly/min/work</workDirectory>
+          <workDirectory>${basedir}/target/test-harness/assembly/repository-with-metadata/work</workDirectory>
           <archiverManager implementation="org.apache.maven.plugin.assembly.stubs.ArchiverManagerStub" />
           <localRepository>${localRepository}</localRepository>
           <reactorProjects></reactorProjects>
@@ -29,14 +30,14 @@
           <project implementation="org.apache.maven.plugin.assembly.stubs.AssemblyMavenProjectStub" />
           <executedProject implementation="org.apache.maven.plugin.assembly.stubs.AssemblyMavenProjectStub" />
           <descriptorRefs>
-            <descriptorRef>simple</descriptorRef>
+            <descriptorRef>repository-with-metadata</descriptorRef>
           </descriptorRefs>
           <tarLongFileMode>warn</tarLongFileMode>
           <basedir>${basedir}</basedir>
-          <tempRoot>${basedir}/target/test-harness/assembly/min/archive-tmp</tempRoot>
-          <siteDirectory>${basedir}/target/test-harness/assembly/min/site</siteDirectory>
+          <tempRoot>${basedir}/target/test-harness/assembly/repository-with-metadata/archive-tmp</tempRoot>
+          <siteDirectory>${basedir}/target/test-harness/assembly/repository-with-metadata/site</siteDirectory>
           <includeSite>false</includeSite>
-          <appendAssemblyId>false</appendAssemblyId>
+          <appendAssemblyId>true</appendAssemblyId>
         </configuration>
       </plugin>
     </plugins>
