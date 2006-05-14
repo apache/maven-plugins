@@ -1051,6 +1051,10 @@ public abstract class AbstractJavadocMojo
                 bottom = StringUtils.replace( bottom, "{inceptionYear}", inceptionYear );
             }
         }
+        else
+        {
+		bottom = StringUtils.replace( bottom, "{inceptionYear}-", "" );
+        }
         return bottom;
     }
 
