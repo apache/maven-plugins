@@ -300,8 +300,8 @@ public class DefaultRepositoryAssembler
             String md5 = digester.createChecksum( file, "MD5" );
             String sha1 = digester.createChecksum( file, "SHA-1" );
 
-            FileUtils.fileWrite( new File( file.getParentFile(), file.getName() + ".md5" ).getAbsolutePath(), md5 );
-            FileUtils.fileWrite( new File( file.getParentFile(), file.getName() + ".sha1" ).getAbsolutePath(), sha1 );
+            FileUtils.fileWrite( new File( file.getParentFile(), file.getName() + ".md5" ).getAbsolutePath(), md5.toLowerCase() );
+            FileUtils.fileWrite( new File( file.getParentFile(), file.getName() + ".sha1" ).getAbsolutePath(), sha1.toLowerCase() );
         }
         catch ( NoSuchAlgorithmException e )
         {
