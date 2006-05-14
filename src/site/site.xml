@@ -44,6 +44,7 @@
     <menu name="Overview">
       <item name="i18n" href="/i18n.html"/>
       <item name="How to use" href="howto.html"/>
+      <item name="Creating a Skin" href="creating-a-skin.html"/>
     </menu>
     ${reports}
   </body>
