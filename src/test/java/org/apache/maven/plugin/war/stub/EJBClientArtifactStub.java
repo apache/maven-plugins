@@ -16,38 +16,61 @@ package org.apache.maven.plugin.war.stub;
  * limitations under the License.
  */
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
-import org.apache.maven.plugin.testing.stubs.ArtifactStub;
 
-public abstract class AbstractArtifactStub
-    extends ArtifactStub
+import java.io.File;
+
+public class EJBClientArtifactStub
+    extends AbstractArtifactStub
 {
-    protected String basedir;
+    protected String groupId;
 
-    public AbstractArtifactStub( String _basedir )
+    public EJBClientArtifactStub( String _basedir )
     {
-        basedir = _basedir;
+        super( _basedir );
     }
 
-    public String getVersion()
+    public void setGroupId( String id )
     {
-        return "0.0-Test";
+        groupId = id;
     }
 
-    public String getScope()
+    public String getGroupId()
     {
-        return Artifact.SCOPE_RUNTIME;
+        if ( groupId != null )
+        {
+            return groupId;
+        }
+        else
+        {
+            return "org.sample.ejb";
+        }
     }
 
-    public boolean isOptional()
+    public String getType()
     {
-        return false;
+        return "ejb-client";
+    }
+
+    public String getArtifactId()
+    {
+        return "ejbclientartifact";
+    }
+
+    public File getFile()
+    {
+        return new File( basedir, "/target/test-classes/unit/sample_wars/ejbclient.jar" );
     }
 
     public ArtifactHandler getArtifactHandler()
     {
-        return new DefaultArtifactHandler( getType() );
+        return new DefaultArtifactHandler()
+        {
+            public String getExtension()
+            {
+                return "jar";
+            }
+        };
     }
 }

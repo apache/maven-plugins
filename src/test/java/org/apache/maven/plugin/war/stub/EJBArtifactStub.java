@@ -16,6 +16,9 @@ package org.apache.maven.plugin.war.stub;
  * limitations under the License.
  */
 
+import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.artifact.handler.DefaultArtifactHandler;
+
 import java.io.File;
 
 public class EJBArtifactStub
@@ -58,5 +61,16 @@ public class EJBArtifactStub
     public File getFile()
     {
         return new File( basedir, "/target/test-classes/unit/sample_wars/ejb.jar" );
+    }
+
+    public ArtifactHandler getArtifactHandler()
+    {
+        return new DefaultArtifactHandler()
+        {
+            public String getExtension()
+            {
+                return "jar";
+            }
+        };
     }
 }
