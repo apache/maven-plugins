@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
@@ -9,7 +9,7 @@
   <artifactId>maven-pmd-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Maven PMD Plugin</name>
-  <version>2.0-SNAPSHOT</version>
+  <version>2.0</version>
   <inceptionYear>2005</inceptionYear>
   <description>
     A Maven plugin for the PMD toolkit, that produces a report on both code rule violations and detected copy and paste
@@ -48,4 +48,10 @@
       <name>John Allen</name>
     </contributor>
   </contributors>
+
+  <scm>
+    <connection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-pmd-plugin-2.0</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-pmd-plugin-2.0</developerConnection>
+    <url>https://svn.apache.org/repos/asf/maven/plugins/tags/maven-pmd-plugin-2.0</url>
+  </scm>
 </project>
