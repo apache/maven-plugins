@@ -25,6 +25,7 @@ import org.apache.maven.plugin.war.stub.PARArtifactStub;
 import org.apache.maven.plugin.war.stub.ResourceStub;
 import org.apache.maven.plugin.war.stub.SimpleWarArtifactStub;
 import org.apache.maven.plugin.war.stub.TLDArtifactStub;
+import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.io.FileReader;
@@ -569,19 +570,37 @@ public class WarExplodedMojoTest
 
         // configure mojo
         this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+
+        // destination file is already created manually containing an "error" string
+        // source is newer than the destination file
         mojo.execute();
 
         // validate operation
-        File expectedWebSourceFile = new File( webAppDirectory, "pansit.jsp" );
-        File expectedWebSource2File = new File( webAppDirectory, "org/web/app/last-exile.jsp" );
+
         File expectedWEBINFDir = new File( webAppDirectory, "WEB-INF" );
         File expectedMETAINFDir = new File( webAppDirectory, "META-INF" );
+        File expectedWebSourceFile = new File( webAppDirectory, "pansit.jsp" );
+        File expectedWebSource2File = new File( webAppDirectory, "org/web/app/last-exile.jsp" );
 
         assertTrue( "source files not found: " + expectedWebSourceFile.toString(), expectedWebSourceFile.exists() );
         assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
         assertTrue( "WEB-INF not found", expectedWEBINFDir.exists() );
         assertTrue( "META-INF not found", expectedMETAINFDir.exists() );
+
+        // 1st phase destination is older than source
+        // destination starts with a value of error replaced with a blank source
+        assertFalse( "source files not updated with new copy: " + expectedWebSourceFile.toString(),
+                     "error".equals( FileUtils.fileRead( expectedWebSourceFile ) ) );
+
+// TODO: uncomment when lastModified problem is resolved
+//        FileWriter writer = new FileWriter(expectedWebSourceFile);
+//
+//        // 2nd phase destination is newer than source
+//        // destination should not be replaced with an blank source
+//        writer.write("newdata");
+//        mojo.execute();
+//        reader = new FileReader(expectedWebSourceFile);
+//        reader.read(data);
+//        assertTrue("source file updated with old copy: " +expectedWebSourceFile.toString(),String.valueOf(data).equals("newdata") );    }
     }
-
-
 }

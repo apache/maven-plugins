@@ -16,11 +16,11 @@ package org.apache.maven.plugin.war;
  * limitations under the License.
  */
 
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.util.Properties;
-
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 public class PropertyUtilsTest
     extends AbstractMojoTestCase
@@ -48,7 +48,7 @@ public class PropertyUtilsTest
 
         Properties prop = PropertyUtils.loadPropertyFile( basicProp, false, false );
         assertTrue( prop.getProperty( "key" ).equals( "gani_man" ) );
-        assertTrue( prop.getProperty( "ghost" ).equals("${non_existent}") );
+        assertTrue( prop.getProperty( "ghost" ).equals( "${non_existent}" ) );
     }
 
     public void testSystemProperties()

@@ -50,10 +50,12 @@ public class MavenProjectArtifactsStub
 
         String basedir = System.getProperty( "basedir" );
 
-        artifacts.add( basedir +
-            "/src/test/resources/unit/manifest/manifest-with-classpath/sample-artifacts/maven-artifact1-1.0-SNAPSHOT.jar" );
-        artifacts.add( basedir +
-            "/src/test/resources/unit/manifest/manifest-with-classpath/sample-artifacts/maven-artifact2-1.0-SNAPSHOT.jar" );
+        artifacts
+            .add( basedir +
+                "/src/test/resources/unit/manifest/manifest-with-classpath/sample-artifacts/maven-artifact1-1.0-SNAPSHOT.jar" );
+        artifacts
+            .add( basedir +
+                "/src/test/resources/unit/manifest/manifest-with-classpath/sample-artifacts/maven-artifact2-1.0-SNAPSHOT.jar" );
 
         return artifacts;
     }
