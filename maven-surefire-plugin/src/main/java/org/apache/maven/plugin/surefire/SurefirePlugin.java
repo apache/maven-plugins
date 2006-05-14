@@ -633,24 +633,7 @@ public class SurefirePlugin
         Artifact providerArtifact = artifactFactory.createDependencyArtifact( "org.apache.maven.surefire", provider,
                                                                               VersionRange.createFromVersion( version ),
                                                                               "jar", null, Artifact.SCOPE_TEST );
-        resolveArtifact( providerArtifact, surefireBooter, filteredArtifact );
-    }
-
-    private void resolveArtifact( Artifact providerArtifact, SurefireBooter surefireBooter, Artifact filteredArtifact )
-        throws ArtifactResolutionException, ArtifactNotFoundException
-    {
-        ArtifactFilter filter = null;
-        if ( filteredArtifact != null )
-        {
-            filter = new ExcludesArtifactFilter(
-                Collections.singletonList( filteredArtifact.getGroupId() + ":" + filteredArtifact.getArtifactId() ) );
-        }
-
-        Artifact originatingArtifact = artifactFactory.createBuildArtifact( "dummy", "dummy", "1.0", "jar" );
-
-        ArtifactResolutionResult result = artifactResolver.resolveTransitively(
-            Collections.singleton( providerArtifact ), originatingArtifact, localRepository, remoteRepositories,
-            metadataSource, filter );
+        ArtifactResolutionResult result = resolveArtifact( filteredArtifact, providerArtifact );
 
         for ( Iterator i = result.getArtifacts().iterator(); i.hasNext(); )
         {
@@ -662,10 +645,35 @@ public class SurefirePlugin
         }
     }
 
-    private void addArtifact( SurefireBooter surefireBooter, Artifact artifact )
+    private ArtifactResolutionResult resolveArtifact( Artifact filteredArtifact, Artifact providerArtifact )
+        throws ArtifactResolutionException, ArtifactNotFoundException
+    {
+        ArtifactFilter filter = null;
+        if ( filteredArtifact != null )
+        {
+            filter = new ExcludesArtifactFilter(
+                Collections.singletonList( filteredArtifact.getGroupId() + ":" + filteredArtifact.getArtifactId() ) );
+        }
+
+        Artifact originatingArtifact = artifactFactory.createBuildArtifact( "dummy", "dummy", "1.0", "jar" );
+
+        return artifactResolver.resolveTransitively( Collections.singleton( providerArtifact ), originatingArtifact,
+                                                     localRepository, remoteRepositories, metadataSource, filter );
+    }
+
+    private void addArtifact( SurefireBooter surefireBooter, Artifact surefireArtifact )
         throws ArtifactNotFoundException, ArtifactResolutionException
     {
-        resolveArtifact( artifact, surefireBooter, null );
+        ArtifactResolutionResult result = resolveArtifact( null, surefireArtifact );
+
+        for ( Iterator i = result.getArtifacts().iterator(); i.hasNext(); )
+        {
+            Artifact artifact = (Artifact) i.next();
+
+            getLog().debug( "Adding to surefire booter test classpath: " + artifact.getFile().getAbsolutePath() );
+
+            surefireBooter.addSurefireBootClassPathUrl( artifact.getFile().getAbsolutePath() );
+        }
     }
 
     protected void processSystemProperties( boolean setInSystem )
