@@ -16,13 +16,8 @@ package org.apache.maven.plugin.war;
  * limitations under the License.
  */
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.util.LinkedList;
-import java.util.StringTokenizer;
-
 import org.apache.maven.plugin.war.stub.EJBArtifactStub;
+import org.apache.maven.plugin.war.stub.EJBClientArtifactStub;
 import org.apache.maven.plugin.war.stub.IncludeExcludeWarArtifactStub;
 import org.apache.maven.plugin.war.stub.MavenProjectArtifactsStub;
 import org.apache.maven.plugin.war.stub.MavenProjectBasicStub;
@@ -31,11 +26,17 @@ import org.apache.maven.plugin.war.stub.ResourceStub;
 import org.apache.maven.plugin.war.stub.SimpleWarArtifactStub;
 import org.apache.maven.plugin.war.stub.TLDArtifactStub;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.LinkedList;
+import java.util.StringTokenizer;
+
 public class WarExplodedMojoTest
     extends AbstractWarMojoTest
 {
-    protected static final String pomFilePath = getBasedir()
-        + "/target/test-classes/unit/warexplodedmojo/plugin-config.xml";
+    protected static final String pomFilePath =
+        getBasedir() + "/target/test-classes/unit/warexplodedmojo/plugin-config.xml";
 
     private WarExplodedMojo mojo;
 
@@ -61,7 +62,6 @@ public class WarExplodedMojoTest
     }
 
     /**
-     * 
      * @throws Exception
      */
     public void testSimpleExplodedWar()
@@ -75,7 +75,7 @@ public class WarExplodedMojoTest
         File webAppResource = new File( getTestDirectory(), "resources" );
         File webAppDirectory = new File( getTestDirectory(), testId );
         File sampleResource = new File( webAppResource, "pix/panis_na.jpg" );
-        ResourceStub[] resources = new ResourceStub[] { new ResourceStub() };
+        ResourceStub[] resources = new ResourceStub[]{new ResourceStub()};
 
         createFile( sampleResource );
 
@@ -100,7 +100,6 @@ public class WarExplodedMojoTest
     }
 
     /**
-     * 
      * @throws Exception
      */
     public void testExplodedWar_WithCustomWebXML()
@@ -111,7 +110,7 @@ public class WarExplodedMojoTest
         MavenProjectBasicStub project = new MavenProjectBasicStub();
         File webAppSource = createWebAppSource( testId );
         File classesDir = createClassesDir( testId, true );
-        File xmlSource = createXMLConfigDir( testId, new String[] { "web.xml" } );
+        File xmlSource = createXMLConfigDir( testId, new String[]{"web.xml"} );
         File webAppDirectory = new File( getTestDirectory(), testId );
 
         // configure mojo
@@ -132,7 +131,6 @@ public class WarExplodedMojoTest
     }
 
     /**
-     * 
      * @throws Exception
      */
     public void testExplodedWar_WithContainerConfigXML()
@@ -143,7 +141,7 @@ public class WarExplodedMojoTest
         MavenProjectBasicStub project = new MavenProjectBasicStub();
         File classesDir = createClassesDir( testId, true );
         File webAppSource = createWebAppSource( testId );
-        File xmlSource = createXMLConfigDir( testId, new String[] { "config.xml" } );
+        File xmlSource = createXMLConfigDir( testId, new String[]{"config.xml"} );
         File webAppDirectory = new File( getTestDirectory(), testId );
 
         // configure mojo
@@ -165,7 +163,6 @@ public class WarExplodedMojoTest
     }
 
     /**
-     * 
      * @throws Exception
      */
     public void testExplodedWar_WithSimpleExternalWARFile()
@@ -208,7 +205,6 @@ public class WarExplodedMojoTest
     }
 
     /**
-     * 
      * @throws Exception
      */
     public void testExplodedWar_WithEJB()
@@ -234,7 +230,7 @@ public class WarExplodedMojoTest
         File expectedWebSourceFile = new File( webAppDirectory, "pansit.jsp" );
         File expectedWebSource2File = new File( webAppDirectory, "org/web/app/last-exile.jsp" );
         // final name form is <artifactId>-<version>.<type>
-        File expectedEJBArtifact = new File( webAppDirectory, "WEB-INF/lib/ejbartifact-0.0-Test.ejb" );
+        File expectedEJBArtifact = new File( webAppDirectory, "WEB-INF/lib/ejbartifact-0.0-Test.jar" );
 
         assertTrue( "source files not found: " + expectedWebSourceFile.toString(), expectedWebSourceFile.exists() );
         assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
@@ -242,7 +238,39 @@ public class WarExplodedMojoTest
     }
 
     /**
-     * 
+     * @throws Exception
+     */
+    public void testExplodedWar_WithEJBClient()
+        throws Exception
+    {
+        // setup test data
+        String testId = "ExplodedWar_WithEJB";
+        MavenProjectArtifactsStub project = new MavenProjectArtifactsStub();
+        File webAppDirectory = new File( getTestDirectory(), testId );
+        File webAppSource = createWebAppSource( testId );
+        File classesDir = createClassesDir( testId, true );
+        EJBClientArtifactStub ejbArtifact = new EJBClientArtifactStub( getBasedir() );
+        File ejbFile = ejbArtifact.getFile();
+
+        assertTrue( "ejb jar not found: " + ejbFile.toString(), ejbFile.exists() );
+
+        // configure mojo
+        project.addArtifact( ejbArtifact );
+        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+        mojo.execute();
+
+        // validate operation
+        File expectedWebSourceFile = new File( webAppDirectory, "pansit.jsp" );
+        File expectedWebSource2File = new File( webAppDirectory, "org/web/app/last-exile.jsp" );
+        // final name form is <artifactId>-<version>.<type>
+        File expectedEJBArtifact = new File( webAppDirectory, "WEB-INF/lib/ejbclientartifact-0.0-Test.jar" );
+
+        assertTrue( "source files not found: " + expectedWebSourceFile.toString(), expectedWebSourceFile.exists() );
+        assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
+        assertTrue( "ejb artifact not found: " + expectedEJBArtifact.toString(), expectedEJBArtifact.exists() );
+    }
+
+    /**
      * @throws Exception
      */
     public void testExplodedWar_WithTLD()
@@ -276,7 +304,6 @@ public class WarExplodedMojoTest
     }
 
     /**
-     * 
      * @throws Exception
      */
     public void testExplodedWar_WithPAR()
@@ -310,7 +337,6 @@ public class WarExplodedMojoTest
     }
 
     /**
-     * 
      * @throws Exception
      */
     public void testExplodedWar_WithDuplicateDependencies()
@@ -341,17 +367,17 @@ public class WarExplodedMojoTest
         File expectedWebSourceFile = new File( webAppDirectory, "pansit.jsp" );
         File expectedWebSource2File = new File( webAppDirectory, "org/web/app/last-exile.jsp" );
         // final name form is <artifactId>-<version>.<type>
-        File expectedEJBArtifact = new File( webAppDirectory, "WEB-INF/lib/org.sample.ejb-ejbartifact-0.0-Test.ejb" );
-        File expectedEJBDupArtifact = new File( webAppDirectory, "WEB-INF/lib/org.dup.ejb-ejbartifact-0.0-Test.ejb" );
+        File expectedEJBArtifact = new File( webAppDirectory, "WEB-INF/lib/org.sample.ejb-ejbartifact-0.0-Test.jar" );
+        File expectedEJBDupArtifact = new File( webAppDirectory, "WEB-INF/lib/org.dup.ejb-ejbartifact-0.0-Test.jar" );
 
         assertTrue( "source files not found: " + expectedWebSourceFile.toString(), expectedWebSourceFile.exists() );
         assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
         assertTrue( "ejb artifact not found: " + expectedEJBArtifact.toString(), expectedEJBArtifact.exists() );
-        assertTrue( "ejb dup artifact not found: " + expectedEJBDupArtifact.toString(), expectedEJBDupArtifact.exists() );
+        assertTrue( "ejb dup artifact not found: " + expectedEJBDupArtifact.toString(),
+                    expectedEJBDupArtifact.exists() );
     }
 
     /**
-     * 
      * @throws Exception
      */
     public void testExplodedWar_WithClasses()
@@ -380,7 +406,6 @@ public class WarExplodedMojoTest
     }
 
     /**
-     * 
      * @throws Exception
      */
     public void testExplodedWar_WithResourceFiltering()
@@ -397,7 +422,7 @@ public class WarExplodedMojoTest
         File sampleResourceWDir = new File( webAppResource, "custom-config/custom-setting.cfg" );
         File filterFile = new File( getTestDirectory(), testId + "-test-data/filters/filter.properties" );
         LinkedList filterList = new LinkedList();
-        ResourceStub[] resources = new ResourceStub[] { new ResourceStub() };
+        ResourceStub[] resources = new ResourceStub[]{new ResourceStub()};
 
         createFile( sampleResource );
         createFile( sampleResourceWDir );
@@ -455,8 +480,8 @@ public class WarExplodedMojoTest
         assertTrue( "error in filtering using filter files", token.equals( "resource_key=this_is_filtered" ) );
 
         token = tokenizer.nextToken();
-        assertTrue( "error in filtering using System properties", token.equals( "system_key="
-            + System.getProperty( "user.dir" ) ) );
+        assertTrue( "error in filtering using System properties",
+                    token.equals( "system_key=" + System.getProperty( "user.dir" ) ) );
 
         token = tokenizer.nextToken();
         assertTrue( "error in filtering using project properties", token.equals( "project_key=i_think_so" ) );
@@ -533,30 +558,30 @@ public class WarExplodedMojoTest
     }
 
     public void testExplodedWarWithSourceModificationCheck()
-    throws Exception
-{
-    // setup test data
-    String testId = "ExplodedWarWithSourceModificationCheck";
-    MavenProjectBasicStub project = new MavenProjectBasicStub();
-    File webAppSource = createWebAppSource( testId );
-    File classesDir = createClassesDir( testId, false );
-    File webAppDirectory = new File( getTestDirectory(), testId );
+        throws Exception
+    {
+        // setup test data
+        String testId = "ExplodedWarWithSourceModificationCheck";
+        MavenProjectBasicStub project = new MavenProjectBasicStub();
+        File webAppSource = createWebAppSource( testId );
+        File classesDir = createClassesDir( testId, false );
+        File webAppDirectory = new File( getTestDirectory(), testId );
 
-    // configure mojo
-    this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
-    mojo.execute();
+        // configure mojo
+        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+        mojo.execute();
 
-    // validate operation
-    File expectedWebSourceFile = new File( webAppDirectory, "pansit.jsp" );
-    File expectedWebSource2File = new File( webAppDirectory, "org/web/app/last-exile.jsp" );
-    File expectedWEBINFDir = new File( webAppDirectory, "WEB-INF" );
-    File expectedMETAINFDir = new File( webAppDirectory, "META-INF" );
+        // validate operation
+        File expectedWebSourceFile = new File( webAppDirectory, "pansit.jsp" );
+        File expectedWebSource2File = new File( webAppDirectory, "org/web/app/last-exile.jsp" );
+        File expectedWEBINFDir = new File( webAppDirectory, "WEB-INF" );
+        File expectedMETAINFDir = new File( webAppDirectory, "META-INF" );
 
-    assertTrue( "source files not found: " + expectedWebSourceFile.toString(), expectedWebSourceFile.exists() );
-    assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
-    assertTrue( "WEB-INF not found", expectedWEBINFDir.exists() );
-    assertTrue( "META-INF not found", expectedMETAINFDir.exists() );
-}
-    
-    
+        assertTrue( "source files not found: " + expectedWebSourceFile.toString(), expectedWebSourceFile.exists() );
+        assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
+        assertTrue( "WEB-INF not found", expectedWEBINFDir.exists() );
+        assertTrue( "META-INF not found", expectedMETAINFDir.exists() );
+    }
+
+
 }
