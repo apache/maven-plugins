@@ -24,7 +24,7 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
-import org.jmock.cglib.Mock;
+import org.jmock.Mock;
 import org.jmock.core.constraint.IsAnything;
 import org.jmock.core.constraint.IsEqual;
 import org.jmock.core.constraint.IsNull;

@@ -34,7 +34,7 @@ import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.provider.ScmProviderStub;
 import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.codehaus.plexus.PlexusTestCase;
-import org.jmock.cglib.Mock;
+import org.jmock.Mock;
 import org.jmock.core.constraint.IsEqual;
 import org.jmock.core.matcher.InvokeAtLeastOnceMatcher;
 import org.jmock.core.stub.ThrowStub;

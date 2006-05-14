@@ -21,7 +21,7 @@ import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 import org.apache.maven.plugins.release.exec.MavenExecutor;
 import org.apache.maven.plugins.release.exec.MavenExecutorException;
 import org.codehaus.plexus.PlexusTestCase;
-import org.jmock.cglib.Mock;
+import org.jmock.Mock;
 import org.jmock.core.constraint.IsEqual;
 import org.jmock.core.constraint.IsNull;
 import org.jmock.core.constraint.IsSame;
