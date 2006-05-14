@@ -21,10 +21,14 @@ import org.apache.maven.artifact.metadata.AbstractArtifactMetadata;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.metadata.RepositoryMetadataStoreException;
-import org.codehaus.plexus.util.FileUtils;
+import org.apache.maven.doxia.site.decoration.DecorationModel;
+import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Writer;
+import org.codehaus.plexus.util.IOUtil;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 
 /**
  * Attach a POM to an artifact.
@@ -35,17 +39,16 @@ import java.io.IOException;
 public class SiteDescriptorArtifactMetadata
     extends AbstractArtifactMetadata
 {
+    private final DecorationModel decoration;
+
     private final File file;
 
-    public SiteDescriptorArtifactMetadata( Artifact artifact )
-    {
-        this( artifact, null );
-    }
-
-    public SiteDescriptorArtifactMetadata( Artifact artifact, File file )
+    public SiteDescriptorArtifactMetadata( Artifact artifact, DecorationModel decoration, File file )
     {
         super( artifact );
+
         this.file = file;
+        this.decoration = decoration;
     }
 
     public String getRemoteFilename()
@@ -71,13 +74,19 @@ public class SiteDescriptorArtifactMetadata
 
         destination.getParentFile().mkdirs();
 
+        Writer writer = null;
         try
         {
-            FileUtils.copyFile( file, destination );
+            writer = new FileWriter( destination );
+            new DecorationXpp3Writer().write( writer, decoration );
         }
         catch ( IOException e )
         {
             throw new RepositoryMetadataStoreException( "Error saving in local repository", e );
+        }
+        finally
+        {
+            IOUtil.close( writer );
         }
     }
 

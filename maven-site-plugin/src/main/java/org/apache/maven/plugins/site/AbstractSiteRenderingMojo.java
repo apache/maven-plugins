@@ -18,16 +18,14 @@ package org.apache.maven.plugins.site;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
+import org.apache.maven.doxia.site.decoration.Banner;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
-import org.apache.maven.doxia.site.decoration.Menu;
-import org.apache.maven.doxia.site.decoration.MenuItem;
 import org.apache.maven.doxia.site.decoration.Skin;
 import org.apache.maven.doxia.site.decoration.inheritance.DecorationModelInheritanceAssembler;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
@@ -35,12 +33,9 @@ import org.apache.maven.doxia.siterenderer.DocumentRenderer;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.siterenderer.RendererException;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
-import org.apache.maven.model.Model;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectBuilder;
-import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.reporting.MavenReport;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
@@ -50,17 +45,13 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 /**
  * Base class for site rendering mojos.
@@ -80,29 +71,6 @@ public abstract class AbstractSiteRenderingMojo
     protected Map moduleExcludes;
 
     /**
-     * Specifies the input encoding.
-     *
-     * @parameter expression="${inputEncoding}" default-value="ISO-8859-1"
-     */
-    protected String inputEncoding;
-
-    /**
-     * Specifies the output encoding.
-     *
-     * @parameter expression="${outputEncoding}" default-value="ISO-8859-1"
-     */
-    protected String outputEncoding;
-
-    /**
-     * The maven project.
-     *
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
-    protected MavenProject project;
-
-    /**
      * The component for assembling inheritance.
      *
      * @component
@@ -115,13 +83,6 @@ public abstract class AbstractSiteRenderingMojo
      * @component
      */
     protected ArtifactResolver artifactResolver;
-
-    /**
-     * The local repository.
-     *
-     * @parameter expression="${localRepository}"
-     */
-    protected ArtifactRepository localRepository;
 
     /**
      * Remote repositories used for the project.
@@ -198,22 +159,6 @@ public abstract class AbstractSiteRenderingMojo
      */
     protected File generatedSiteDirectory;
 
-    /**
-     * The reactor projects.
-     *
-     * @parameter expression="${reactorProjects}"
-     * @required
-     * @readonly
-     */
-    protected List reactorProjects;
-
-    /**
-     * Project builder
-     *
-     * @component
-     */
-    private MavenProjectBuilder mavenProjectBuilder;
-
     protected DecorationModel getDecorationModel( MavenProject project, Locale locale, Map origProps )
         throws MojoExecutionException
     {
@@ -243,16 +188,12 @@ public abstract class AbstractSiteRenderingMojo
             siteDescriptor = getSiteDescriptorFile( project.getBasedir(), locale );
         }
 
-        String siteDescriptorContent;
+        String siteDescriptorContent = null;
         try
         {
             if ( siteDescriptor != null && siteDescriptor.exists() )
             {
                 siteDescriptorContent = FileUtils.fileRead( siteDescriptor );
-            }
-            else
-            {
-                siteDescriptorContent = IOUtil.toString( getClass().getResourceAsStream( "/default-site.xml" ) );
             }
         }
         catch ( IOException e )
@@ -260,34 +201,40 @@ public abstract class AbstractSiteRenderingMojo
             throw new MojoExecutionException( "The site descriptor cannot be read!", e );
         }
 
-        props.put( "inputEncoding", inputEncoding );
-        props.put( "outputEncoding", outputEncoding );
-
-        // TODO: interpolate ${project.*} in general
-
-        if ( project.getName() != null )
+        DecorationModel decoration = null;
+        if ( siteDescriptorContent != null )
         {
-            props.put( "project.name", project.getName() );
-        }
-        else
-        {
-            props.put( "project.name", "NO_PROJECT_NAME_SET" );
+            siteDescriptorContent = getInterpolatedSiteDescriptorContent( props, project, siteDescriptorContent );
+
+            decoration = readDecorationModel( siteDescriptorContent );
         }
 
-        if ( project.getUrl() != null )
+        MavenProject parentProject = getParentProject( project );
+        if ( parentProject != null && project.getUrl() != null && parentProject.getUrl() != null )
         {
-            props.put( "project.url", project.getUrl() );
+            DecorationModel parent = getDecorationModel( parentProject, locale, props );
+
+            if ( decoration == null )
+            {
+                decoration = parent;
+            }
+            else
+            {
+                assembler.assembleModelInheritance( project.getName(), decoration, parent, project.getUrl(),
+                                                    parentProject.getUrl() );
+            }
+            if ( decoration != null )
+            {
+                populateProjectParentMenu( decoration, locale, parentProject, true );
+            }
         }
-        else
-        {
-            props.put( "project.url", "NO_PROJECT_URL_SET" );
-        }
 
-        // Legacy for the old ${parentProject} syntax
-        props.put( "parentProject", "<menu ref=\"parent\"/>" );
+        return decoration;
+    }
 
-        siteDescriptorContent = StringUtils.interpolate( siteDescriptorContent, props );
-
+    private DecorationModel readDecorationModel( String siteDescriptorContent )
+        throws MojoExecutionException
+    {
         DecorationModel decoration;
         try
         {
@@ -301,18 +248,6 @@ public abstract class AbstractSiteRenderingMojo
         {
             throw new MojoExecutionException( "Error reading site descriptor", e );
         }
-
-        MavenProject parentProject = getParentProject( project );
-        if ( parentProject != null && project.getUrl() != null && parentProject.getUrl() != null )
-        {
-            populateProjectParentMenu( decoration, locale, parentProject );
-
-            DecorationModel parent = getDecorationModel( parentProject, locale, props );
-
-            assembler.assembleModelInheritance( project.getName(), decoration, parent, project.getUrl(),
-                                                parentProject.getUrl() );
-        }
-
         return decoration;
     }
 
@@ -398,118 +333,6 @@ public abstract class AbstractSiteRenderingMojo
         }
 
         return result;
-    }
-
-    private void populateProjectParentMenu( DecorationModel decorationModel, Locale locale, MavenProject parentProject )
-    {
-        Menu menu = decorationModel.getMenuRef( "parent" );
-
-        if ( menu != null )
-        {
-            String parentUrl = parentProject.getUrl();
-
-            if ( parentUrl != null )
-            {
-                if ( parentUrl.endsWith( "/" ) )
-                {
-                    parentUrl += "index.html";
-                }
-                else
-                {
-                    parentUrl += "/index.html";
-                }
-
-                parentUrl = getRelativePath( parentUrl, project.getUrl() );
-
-                menu.setName( i18n.getString( "site-plugin", locale, "report.menu.parentproject" ) );
-
-                MenuItem item = new MenuItem();
-                item.setName( parentProject.getName() );
-                item.setHref( parentUrl );
-                menu.addItem( item );
-            }
-            else
-            {
-                decorationModel.removeMenuRef( "parent" );
-            }
-        }
-    }
-
-    /**
-     * Returns the parent POM URL. Attempts to source this value from the reactor env
-     * if available (reactor env model attributes are interpolated), or if the
-     * reactor is unavailable (-N) resorts to the project.getParent().getUrl() value
-     * which will NOT have be interpolated.
-     * <p/>
-     * TODO: once bug is fixed in Maven proper, remove this
-     *
-     * @param project
-     * @return parent project URL.
-     */
-    protected MavenProject getParentProject( MavenProject project )
-    {
-        MavenProject parentProject = null;
-
-        MavenProject origParent = project.getParent();
-        if ( origParent != null )
-        {
-            Iterator reactorItr = reactorProjects.iterator();
-
-            while ( reactorItr.hasNext() )
-            {
-                MavenProject reactorProject = (MavenProject) reactorItr.next();
-
-                if ( reactorProject.getGroupId().equals( origParent.getGroupId() ) &&
-                    reactorProject.getArtifactId().equals( origParent.getArtifactId() ) &&
-                    reactorProject.getVersion().equals( origParent.getVersion() ) )
-                {
-                    parentProject = reactorProject;
-                    break;
-                }
-            }
-
-            if ( parentProject == null && project.getBasedir() != null )
-            {
-                try
-                {
-                    MavenProject mavenProject = mavenProjectBuilder.build(
-                        new File( project.getBasedir(), project.getModel().getParent().getRelativePath() ),
-                        localRepository, null );
-                    if ( mavenProject.getGroupId().equals( origParent.getGroupId() ) &&
-                        mavenProject.getArtifactId().equals( origParent.getArtifactId() ) &&
-                        mavenProject.getVersion().equals( origParent.getVersion() ) )
-                    {
-                        parentProject = mavenProject;
-                    }
-                }
-                catch ( ProjectBuildingException e )
-                {
-                    getLog().warn( "Unable to load parent project from repository: " + e.getMessage() );
-                }
-            }
-
-            if ( parentProject == null )
-            {
-                try
-                {
-                    parentProject = mavenProjectBuilder.buildFromRepository( project.getParentArtifact(),
-                                                                             project.getRemoteArtifactRepositories(),
-                                                                             localRepository );
-                }
-                catch ( ProjectBuildingException e )
-                {
-                    getLog().warn( "Unable to load parent project from repository: " + e.getMessage() );
-                }
-            }
-
-            if ( parentProject == null )
-            {
-                // fallback to uninterpolated value
-
-                parentProject = origParent;
-            }
-        }
-        return parentProject;
     }
 
     private File getSkinArtifactFile( DecorationModel decoration )
@@ -665,7 +488,34 @@ public abstract class AbstractSiteRenderingMojo
         props.put( "modules", "<menu ref=\"modules\"/>\n" );
 
         DecorationModel decorationModel = getDecorationModel( project, locale, props );
-        populateModules( decorationModel, locale );
+
+        if ( decorationModel == null )
+        {
+            String siteDescriptorContent;
+
+            try
+            {
+                // Note the default is not a super class - it is used when nothing else is found
+                siteDescriptorContent = IOUtil.toString( getClass().getResourceAsStream( "/default-site.xml" ) );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Error reading default site descriptor: " + e.getMessage(), e );
+            }
+
+            siteDescriptorContent = getInterpolatedSiteDescriptorContent( props, project, siteDescriptorContent );
+
+            decorationModel = readDecorationModel( siteDescriptorContent );
+        }
+        populateModules( decorationModel, locale, true );
+
+        if ( decorationModel.getBannerLeft() == null )
+        {
+            // extra default to set
+            Banner banner = new Banner();
+            banner.setName( project.getName() );
+            decorationModel.setBannerLeft( banner );
+        }
 
         if ( project.getUrl() != null )
         {
@@ -677,135 +527,6 @@ public abstract class AbstractSiteRenderingMojo
         }
 
         return decorationModel;
-    }
-
-    private void populateModules( DecorationModel decorationModel, Locale locale )
-        throws MojoExecutionException
-    {
-        Menu menu = decorationModel.getMenuRef( "modules" );
-
-        if ( menu != null )
-        {
-            // we require child modules and reactors to process module menu
-            if ( project.getModules().size() > 0 )
-            {
-                List projects = this.reactorProjects;
-
-                menu.setName( i18n.getString( "site-plugin", locale, "report.menu.projectmodules" ) );
-
-                if ( projects.size() == 1 )
-                {
-                    getLog().debug( "Attempting to source module information from local filesystem" );
-
-                    // Not running reactor - search for the projects manually
-                    List models = new ArrayList( project.getModules().size() );
-                    for ( Iterator i = project.getModules().iterator(); i.hasNext(); )
-                    {
-                        String module = (String) i.next();
-                        Model model;
-                        File f = new File( project.getBasedir(), module + "/pom.xml" );
-                        if ( f.exists() )
-                        {
-                            try
-                            {
-                                model = mavenProjectBuilder.build( f, localRepository, null ).getModel();
-                            }
-                            catch ( ProjectBuildingException e )
-                            {
-                                throw new MojoExecutionException( "Unable to read local module-POM", e );
-                            }
-                        }
-                        else
-                        {
-                            getLog().warn( "No filesystem module-POM available" );
-
-                            model = new Model();
-                            model.setName( module );
-                            model.setUrl( module );
-                        }
-                        models.add( model );
-                    }
-                    populateModulesMenuItemsFromModels( models, menu );
-                }
-                else
-                {
-                    populateModulesMenuItemsFromReactorProjects( menu );
-                }
-            }
-            else
-            {
-                decorationModel.removeMenuRef( "modules" );
-            }
-        }
-    }
-
-    private void populateModulesMenuItemsFromReactorProjects( Menu menu )
-    {
-        if ( reactorProjects != null && reactorProjects.size() > 1 )
-        {
-            Iterator reactorItr = reactorProjects.iterator();
-
-            while ( reactorItr.hasNext() )
-            {
-                MavenProject reactorProject = (MavenProject) reactorItr.next();
-
-                if ( reactorProject != null && reactorProject.getParent() != null &&
-                    project.getArtifactId().equals( reactorProject.getParent().getArtifactId() ) )
-                {
-                    String reactorUrl = reactorProject.getUrl();
-                    String name = reactorProject.getName();
-
-                    appendMenuItem( menu, name, reactorUrl, reactorProject.getArtifactId() );
-                }
-            }
-        }
-    }
-
-    private void populateModulesMenuItemsFromModels( List models, Menu menu )
-    {
-        if ( models != null && models.size() > 1 )
-        {
-            Iterator reactorItr = models.iterator();
-
-            while ( reactorItr.hasNext() )
-            {
-                Model model = (Model) reactorItr.next();
-
-                String reactorUrl = model.getUrl();
-                String name = model.getName();
-
-                appendMenuItem( menu, name, reactorUrl, model.getArtifactId() );
-            }
-        }
-    }
-
-    private void appendMenuItem( Menu menu, String name, String href, String defaultHref )
-    {
-        String selectedHref = href;
-
-        if ( selectedHref == null )
-        {
-            selectedHref = defaultHref;
-        }
-
-        MenuItem item = new MenuItem();
-        item.setName( name );
-
-        String baseUrl = project.getUrl();
-        if ( baseUrl != null )
-        {
-            selectedHref = getRelativePath( selectedHref, baseUrl );
-        }
-
-        if ( selectedHref.endsWith( "/" ) )
-        {
-            item.setHref( selectedHref + "index.html" );
-        }
-        else
-        {
-            item.setHref( selectedHref + "/index.html" );
-        }
-        menu.addItem( item );
     }
 
     protected Map locateReports( List reports, Map documents, Locale locale )
@@ -834,111 +555,6 @@ public abstract class AbstractSiteRenderingMojo
             }
         }
         return reportsByOutputName;
-    }
-
-    protected void populateReportsMenu( DecorationModel decorationModel, Locale locale, Map categories )
-    {
-        Menu menu = decorationModel.getMenuRef( "reports" );
-
-        if ( menu != null )
-        {
-            if ( menu.getName() == null )
-            {
-                menu.setName( i18n.getString( "site-plugin", locale, "report.menu.projectdocumentation" ) );
-            }
-
-            boolean found = false;
-            if ( menu.getItems().isEmpty() )
-            {
-                List categoryReports = (List) categories.get( MavenReport.CATEGORY_PROJECT_INFORMATION );
-                if ( !isEmptyList( categoryReports ) )
-                {
-                    MenuItem item = createCategoryMenu(
-                        i18n.getString( "site-plugin", locale, "report.menu.projectinformation" ), "/project-info.html",
-                        categoryReports, locale );
-                    menu.getItems().add( item );
-                    found = true;
-                }
-
-                categoryReports = (List) categories.get( MavenReport.CATEGORY_PROJECT_REPORTS );
-                if ( !isEmptyList( categoryReports ) )
-                {
-                    MenuItem item = createCategoryMenu(
-                        i18n.getString( "site-plugin", locale, "report.menu.projectreports" ), "/project-reports.html",
-                        categoryReports, locale );
-                    menu.getItems().add( item );
-                    found = true;
-                }
-            }
-            if ( !found )
-            {
-                decorationModel.removeMenuRef( "reports" );
-            }
-        }
-    }
-
-    private MenuItem createCategoryMenu( String name, String href, List categoryReports, Locale locale )
-    {
-        MenuItem item = new MenuItem();
-        item.setName( name );
-        item.setCollapse( true );
-        item.setHref( href );
-
-        Collections.sort( categoryReports, new ReportComparator( locale ) );
-
-        for ( Iterator k = categoryReports.iterator(); k.hasNext(); )
-        {
-            MavenReport report = (MavenReport) k.next();
-
-            MenuItem subitem = new MenuItem();
-            subitem.setName( report.getName( locale ) );
-            subitem.setHref( report.getOutputName() + ".html" );
-            item.getItems().add( subitem );
-        }
-
-        return item;
-    }
-
-    protected void populateReportItems( DecorationModel decorationModel, Locale locale, Map reportsByOutputName )
-    {
-        for ( Iterator i = decorationModel.getMenus().iterator(); i.hasNext(); )
-        {
-            Menu menu = (Menu) i.next();
-
-            populateItemRefs( menu.getItems(), locale, reportsByOutputName );
-        }
-    }
-
-    private void populateItemRefs( List items, Locale locale, Map reportsByOutputName )
-    {
-        for ( Iterator i = items.iterator(); i.hasNext(); )
-        {
-            MenuItem item = (MenuItem) i.next();
-
-            if ( item.getRef() != null )
-            {
-                if ( reportsByOutputName.containsKey( item.getRef() ) )
-                {
-                    MavenReport report = (MavenReport) reportsByOutputName.get( item.getRef() );
-
-                    if ( item.getName() == null )
-                    {
-                        item.setName( report.getName( locale ) );
-                    }
-
-                    if ( item.getHref() == null || item.getHref().length() == 0 )
-                    {
-                        item.setHref( report.getOutputName() + ".html" );
-                    }
-                }
-                else
-                {
-                    getLog().warn( "Unrecognised reference: '" + item.getRef() + "'" );
-                    i.remove();
-                }
-            }
-            populateItemRefs( item.getItems(), locale, reportsByOutputName );
-        }
     }
 
     protected Map categoriseReports( Collection reports )
@@ -1012,192 +628,6 @@ public abstract class AbstractSiteRenderingMojo
             }
         }
         return documents;
-    }
-
-    private static boolean isEmptyList( List list )
-    {
-        return list == null || list.isEmpty();
-    }
-
-    private String getRelativePath( String to, String from )
-    {
-        URL toUrl = null;
-        URL fromUrl = null;
-
-        String toPath = to;
-        String fromPath = from;
-
-        try
-        {
-            toUrl = new URL( to );
-        }
-        catch ( MalformedURLException e )
-        {
-        }
-
-        try
-        {
-            fromUrl = new URL( from );
-        }
-        catch ( MalformedURLException e )
-        {
-        }
-
-        if ( toUrl != null && fromUrl != null )
-        {
-            // URLs, determine if they share protocol and domain info
-
-            if ( ( toUrl.getProtocol().equalsIgnoreCase( fromUrl.getProtocol() ) ) &&
-                ( toUrl.getHost().equalsIgnoreCase( fromUrl.getHost() ) ) && ( toUrl.getPort() == fromUrl.getPort() ) )
-            {
-                // shared URL domain details, use URI to determine relative path
-
-                toPath = toUrl.getFile();
-                fromPath = fromUrl.getFile();
-            }
-            else
-            {
-                // dont share basic URL infomation, no relative available
-
-                return to;
-            }
-        }
-        else if ( ( toUrl != null && fromUrl == null ) || ( toUrl == null && fromUrl != null ) )
-        {
-            // one is a URL and the other isnt, no relative available.
-
-            return to;
-        }
-
-        // either the two locations are not URLs or if they are they
-        // share the common protocol and domain info and we are left
-        // with their URI information
-
-        // normalise the path delimters
-
-        toPath = new File( toPath ).getPath();
-        fromPath = new File( fromPath ).getPath();
-
-        // strip any leading slashes if its a windows path
-        if ( toPath.matches( "^\\[a-zA-Z]:" ) )
-        {
-            toPath = toPath.substring( 1 );
-        }
-        if ( fromPath.matches( "^\\[a-zA-Z]:" ) )
-        {
-            fromPath = fromPath.substring( 1 );
-        }
-
-        // lowercase windows drive letters.
-
-        if ( toPath.startsWith( ":", 1 ) )
-        {
-            toPath = toPath.substring( 0, 1 ).toLowerCase() + toPath.substring( 1 );
-        }
-        if ( fromPath.startsWith( ":", 1 ) )
-        {
-            fromPath = fromPath.substring( 0, 1 ).toLowerCase() + fromPath.substring( 1 );
-        }
-
-        // check for the presence of windows drives. No relative way of
-        // traversing from one to the other.
-
-        if ( ( toPath.startsWith( ":", 1 ) && fromPath.startsWith( ":", 1 ) ) &&
-            ( !toPath.substring( 0, 1 ).equals( fromPath.substring( 0, 1 ) ) ) )
-        {
-            // they both have drive path element but they dont match, no
-            // relative path
-
-            return to;
-        }
-
-        if ( ( toPath.startsWith( ":", 1 ) && !fromPath.startsWith( ":", 1 ) ) ||
-            ( !toPath.startsWith( ":", 1 ) && fromPath.startsWith( ":", 1 ) ) )
-        {
-
-            // one has a drive path element and the other doesnt, no relative
-            // path.
-
-            return to;
-
-        }
-
-        // use tokeniser to traverse paths and for lazy checking
-        StringTokenizer toTokeniser = new StringTokenizer( toPath, File.separator );
-        StringTokenizer fromTokeniser = new StringTokenizer( fromPath, File.separator );
-
-        int count = 0;
-
-        // walk along the to path looking for divergence from the from path
-        while ( toTokeniser.hasMoreTokens() && fromTokeniser.hasMoreTokens() )
-        {
-            if ( File.separatorChar == '\\' )
-            {
-                if ( !fromTokeniser.nextToken().equalsIgnoreCase( toTokeniser.nextToken() ) )
-                {
-                    break;
-                }
-            }
-            else
-            {
-                if ( !fromTokeniser.nextToken().equals( toTokeniser.nextToken() ) )
-                {
-                    break;
-                }
-            }
-
-            count++;
-        }
-
-        // reinitialise the tokenisers to count positions to retrieve the
-        // gobbled token
-
-        toTokeniser = new StringTokenizer( toPath, File.separator );
-        fromTokeniser = new StringTokenizer( fromPath, File.separator );
-
-        while ( count-- > 0 )
-        {
-            fromTokeniser.nextToken();
-            toTokeniser.nextToken();
-        }
-
-        String relativePath = "";
-
-        // add back refs for the rest of from location.
-        while ( fromTokeniser.hasMoreTokens() )
-        {
-            fromTokeniser.nextToken();
-
-            relativePath += "..";
-
-            if ( fromTokeniser.hasMoreTokens() )
-            {
-                relativePath += File.separatorChar;
-            }
-        }
-
-        if ( relativePath.length() != 0 && toTokeniser.hasMoreTokens() )
-        {
-            relativePath += File.separatorChar;
-        }
-
-        // add fwd fills for whatevers left of to.
-        while ( toTokeniser.hasMoreTokens() )
-        {
-            relativePath += toTokeniser.nextToken();
-
-            if ( toTokeniser.hasMoreTokens() )
-            {
-                relativePath += File.separatorChar;
-            }
-        }
-
-        if ( !relativePath.equals( to ) )
-        {
-            getLog().debug( "Mapped url: " + to + " to relative path: " + relativePath );
-        }
-
-        return relativePath;
     }
 
 
