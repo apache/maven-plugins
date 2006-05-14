@@ -20,7 +20,6 @@ import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -51,12 +50,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Base class with majority of Javadoc functionality.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @requiresDependencyResolution compile
+ * @execute phase="generate-sources"
  */
 public abstract class AbstractJavadocMojo
     extends AbstractMojo
@@ -990,17 +992,45 @@ public abstract class AbstractJavadocMojo
     private String getClasspath()
         throws MavenReportException
     {
-        List compileClasspathElements;
-        try
+        List classpathElements = new ArrayList();
+        Map compileArtifactMap = new HashMap();
+
+        classpathElements.add( project.getBuild().getOutputDirectory() );
+        populateCompileArtifactMap( compileArtifactMap, project.getCompileArtifacts() );
+
+        if ( aggregate && project.isExecutionRoot() )
         {
-            compileClasspathElements = project.getCompileClasspathElements();
-        }
-        catch ( DependencyResolutionRequiredException e )
-        {
-            throw new MavenReportException( "Error in plugin descriptor - compile dependencies were not resolved", e );
+            for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+            {
+                MavenProject subProject = (MavenProject) i.next();
+
+                classpathElements.add( subProject.getBuild().getOutputDirectory() );
+                populateCompileArtifactMap( compileArtifactMap, subProject.getCompileArtifacts() );
+            }
         }
 
-        return StringUtils.join( compileClasspathElements.iterator(), File.pathSeparator );
+        classpathElements.addAll( compileArtifactMap.values() );
+        return StringUtils.join( classpathElements.iterator(), File.pathSeparator );
+    }
+
+    private void populateCompileArtifactMap( Map compileArtifactMap, List artifactList )
+        throws MavenReportException
+    {
+        if ( artifactList != null)
+        {
+        for ( Iterator i = artifactList.iterator(); i.hasNext(); )
+        {
+            Artifact a = (Artifact) i.next();
+
+            File file = a.getFile();
+
+            if ( file == null )
+            {
+                throw new MavenReportException( "Error in plugin descriptor - compile dependencies were not resolved" );
+            }
+            compileArtifactMap.put( a.getDependencyConflictId(), file.getAbsolutePath() );
+        }
+        }
     }
 
     private String getBottomText( String inceptionYear )
@@ -1020,6 +1050,10 @@ public abstract class AbstractJavadocMojo
             {
                 bottom = StringUtils.replace( bottom, "{inceptionYear}", inceptionYear );
             }
+        }
+        else
+        {
+		bottom = StringUtils.replace( bottom, "{inceptionYear}-", "" );
         }
         return bottom;
     }
