@@ -163,6 +163,11 @@ public class IdeaModuleMojo
      */
     private static Map attemptedDownloads = new HashMap();
 
+    /**
+     * @parameter default-value="false"
+     */
+    private boolean ideaPlugin;
+
     private Set macros;
 
     public void initParam( MavenProject project, ArtifactFactory artifactFactory, ArtifactRepository localRepo,
@@ -245,6 +250,10 @@ public class IdeaModuleMojo
             else if ( "ear".equals( executedProject.getPackaging() ) )
             {
                 addEarModule( module );
+            }
+            else if ( ideaPlugin )
+            {
+                addPluginModule( module );
             }
 
             Element component = findComponent( module, "NewModuleRootManager" );
@@ -763,6 +772,15 @@ public class IdeaModuleMojo
         element = createElement( element, "root" );
         element.addAttribute( "relative", "/" );
         element.addAttribute( "url", getModuleFileUrl( warSrc ) );
+    }
+
+    private void addPluginModule( Element module ){
+        module.addAttribute( "type", "PLUGIN_MODULE" );
+
+        // this is where the META-INF/plugin.xml file is located
+        Element pluginDevElement = createElement( module, "component" );
+        pluginDevElement.addAttribute( "name", "DevKit.ModuleBuildProperties" );
+        pluginDevElement.addAttribute( "url", getModuleFileUrl( executedProject.getBasedir(), "src/main/resources" ) );
     }
 
     /**
