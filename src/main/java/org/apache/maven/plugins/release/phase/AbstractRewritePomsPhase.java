@@ -114,6 +114,7 @@ public abstract class AbstractRewritePomsPhase
             String content = FileUtils.fileRead( project.getFile() );
             // we need to eliminate any extra whitespace inside elements, as JDOM will nuke it
             content = content.replaceAll( "<([^!][^>]*?)\\s{2,}([^>]*?)>", "<$1 $2>" );
+            content = content.replaceAll( "(\\s{2,}|[^\\s])/>", "$1 />" );
 
             SAXBuilder builder = new SAXBuilder();
             document = builder.build( new StringReader( content ) );
