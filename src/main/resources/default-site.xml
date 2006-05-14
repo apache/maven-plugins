@@ -7,8 +7,8 @@
     <links>
       <item name="${project.name}" href="${project.url}"/>
     </links>
-    ${parentProject}
-    ${modules}
-    ${reports}
+    <menu ref="parent" />
+    <menu ref="modules" />
+    <menu ref="reports" />
   </body>
 </project>

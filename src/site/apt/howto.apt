@@ -27,7 +27,7 @@ Maven 2 Site Plugin
   To deploy the generated site, just execute the site:deploy goal from your project.
 
 -------------------
-  mvn site:deploy
+  mvn site-deploy
 -------------------
 
 *How to change the site template
@@ -74,7 +74,7 @@ Maven 2 Site Plugin
   parameters.
 
 -------------------
-  mvn site:stage -DstagingDirectory=C:\fullsite \
+  mvn site:stage-deploy -DstagingDirectory=C:\fullsite \
     -DstagingSiteURL=scp://www.mycompany.com/www/project/
 -------------------
 
@@ -95,3 +95,66 @@ Maven 2 Site Plugin
 -------------------
 
   The position could be: left, right, navigation-top, navigation-bottom, bottom.
+
+*Inheritance
+
+  Site descriptors are inherited along the same lines as project descriptors are. When you deploy a project, it's site
+  descriptor is also deployed so that it can be inherited.
+
+  By default, only the basic settings are inherited. From the body, only the links are inherited, and these accumulate
+  to contain all of the descriptor's links.
+
+  However, it is possible to inherit menus as well. To do so, use the <<<inherit>>> flag of the site descriptor. This can
+  be either <<<top>>> or <<<bottom>>>, indicating where in the menu it will be placed after inheritance. For example:
+
+----------
+ ...
+  <menu name="Common Links" inherit="top">
+    ...
+  </menu>
+ ....
+----------
+
+*Including Generated Content
+
+  There are several preset menus that can be used in the site descriptor to include generated content from your project.
+  These are:
+
+    * <<<reports>>> - the reports menu for all of the generated reports from your project
+
+    * <<<parent>>> - a menu with a link to the parent project's site
+
+    * <<<modules>>> - a menu containing the submodules of this project and links to their sites.
+
+  To include a preset menu, use the <<<ref>>> attribute. For example:
+
+----------
+ ...
+  <menu ref="modules" />
+ ....
+----------
+
+*Skinning
+
+  Skins can be created to customise the look and feel of a site in a consistent way. For more information on creating a
+  skin, see {{{creating-a-skin.html}Creating a Skin}}. To reference a skin from your project, you use the <<<skin>>>
+  element of the site descriptor. This is a regular artifact or dependency-like element. For example, to use the Classic
+  Maven skin, you'd include:
+
+----------
+ ...
+  <skin>
+    <groupId>org.apache.maven</groupId>
+    <artifactId>maven-classic-skin</artifactId>
+    <version>1.0</version>
+  </skin>
+ ....
+----------
+
+  Note that the version is optional and, like plugins, if omitted the latest version available will be used.
+
+  This skin will copy the necessary resources including CSS and if necessary use the included alternate Velocity
+  template to render the site.
+
+  
+
