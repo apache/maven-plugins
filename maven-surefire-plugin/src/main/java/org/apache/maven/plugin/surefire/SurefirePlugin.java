@@ -198,7 +198,7 @@ public class SurefirePlugin
     private boolean printSummary;
 
     /**
-     * Selects the formatting for the test report to be generated.  Can be set as brief, plain, or xml.
+     * Selects the formatting for the test report to be generated.  Can be set as brief or plain.
      *
      * @parameter expression="${surefire.reportFormat}"
      * default-value="brief"
@@ -339,6 +339,11 @@ public class SurefirePlugin
     private static final String PLAIN_REPORT_FORMAT = "plain";
 
     private Properties originalSystemProperties;
+
+    /**
+     * @parameter expression="${disableXmlReport}" default-value="false"
+     */
+    private boolean disableXmlReport;
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -740,6 +745,9 @@ public class SurefirePlugin
             }
         }
 
-        surefireBooter.addReport( XMLReporter.class.getName(), new Object[]{reportsDirectory, trimStackTrace} );
+        if ( !disableXmlReport )
+        {
+            surefireBooter.addReport( XMLReporter.class.getName(), new Object[]{reportsDirectory, trimStackTrace} );
+        }
     }
 }
