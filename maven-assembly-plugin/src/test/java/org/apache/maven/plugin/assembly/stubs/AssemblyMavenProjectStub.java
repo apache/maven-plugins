@@ -57,7 +57,7 @@ public class AssemblyMavenProjectStub
 
     public List getRemoteArtifactRepositories()
     {
-        ArtifactRepository repository = new DefaultArtifactRepository( "test-central",
+        ArtifactRepository repository = new DefaultArtifactRepository( "central",
                                              "file://" + PlexusTestCase.getBasedir() + "/src/test/remote-repo",
                                              new DefaultRepositoryLayout() );
 

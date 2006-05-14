@@ -54,11 +54,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TimeZone;
 
 /**
@@ -87,8 +85,6 @@ public class DefaultRepositoryAssembler
     protected MavenProjectBuilder projectBuilder;
 
     private Map groupVersionAlignments;
-
-    private Set groupVersionAlignmentExcludes;
 
     private DigestUtils digester = new DigestUtils();
 
@@ -147,12 +143,7 @@ public class DefaultRepositoryAssembler
 
                 if ( filter.include( a ) )
                 {
-                    String alignedVersion = (String) groupVersionAlignments.get( a.getGroupId() );
-
-                    if ( alignedVersion != null && !groupVersionAlignmentExcludes.contains( a.getArtifactId() ) )
-                    {
-                        a.setVersion( alignedVersion );
-                    }
+                    setAlignment( a );
 
                     // We need to flip it back to not being resolved so we can look for it again!
                     a.setResolved( false );
@@ -176,13 +167,7 @@ public class DefaultRepositoryAssembler
                             a = artifactFactory.createProjectArtifact( p.getGroupId(), p.getArtifactId(),
                                                                        p.getVersion() );
 
-                            alignedVersion = (String) groupVersionAlignments.get( a.getGroupId() );
-
-                            if ( alignedVersion != null &&
-                                !groupVersionAlignmentExcludes.contains( a.getArtifactId() ) )
-                            {
-                                a.setVersion( alignedVersion );
-                            }
+                            setAlignment( a );
 
                             File sourceFile = new File( localRepository.getBasedir(), localRepository.pathOf( a ) );
                             targetFile = new File( targetRepository.getBasedir(), targetRepository.pathOf( a ) );
@@ -313,18 +298,11 @@ public class DefaultRepositoryAssembler
     {
         groupVersionAlignments = new HashMap();
 
-        groupVersionAlignmentExcludes = new HashSet();
-
         for ( Iterator i = versionAlignments.iterator(); i.hasNext(); )
         {
             GroupVersionAlignment alignment = (GroupVersionAlignment) i.next();
 
-            groupVersionAlignments.put( alignment.getId(), alignment.getVersion() );
-
-            if ( !alignment.getExcludes().isEmpty() )
-            {
-                groupVersionAlignmentExcludes.addAll( alignment.getExcludes() );
-            }
+            groupVersionAlignments.put( alignment.getId(), alignment );
         }
     }
 
@@ -385,5 +363,18 @@ public class DefaultRepositoryAssembler
         cache.getClass().getDeclaredMethod( "clear", null ).invoke( cache, null );
 
         field.setAccessible( false );
+    }
+
+    private void setAlignment( Artifact artifact )
+    {
+        GroupVersionAlignment alignment = (GroupVersionAlignment) groupVersionAlignments.get( artifact.getGroupId() );
+
+        if ( alignment != null )
+        {
+            if ( !alignment.getExcludes().contains( artifact.getArtifactId() ) )
+            {
+                artifact.setVersion( alignment.getVersion() );
+            }
+        }
     }
 }
