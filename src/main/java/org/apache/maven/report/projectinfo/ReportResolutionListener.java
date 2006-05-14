@@ -116,13 +116,16 @@ public class ReportResolutionListener
     {
         Node node = (Node) artifacts.get( artifact.getDependencyConflictId() );
 
-        if ( replacement.getVersion() != null )
+        if ( node != null )
         {
-            node.artifact.setVersion( replacement.getVersion() );
-        }
-        if ( replacement.getScope() != null )
-        {
-            node.artifact.setScope( replacement.getScope() );
+            if ( replacement.getVersion() != null )
+            {
+                node.artifact.setVersion( replacement.getVersion() );
+            }
+            if ( replacement.getScope() != null )
+            {
+                node.artifact.setScope( replacement.getScope() );
+            }
         }
     }
 
