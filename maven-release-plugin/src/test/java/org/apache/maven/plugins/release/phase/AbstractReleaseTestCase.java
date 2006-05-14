@@ -44,7 +44,7 @@ import org.apache.maven.project.ProjectSorter;
 import org.apache.maven.scm.manager.ScmManager;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.FileUtils;
-import org.jmock.cglib.Mock;
+import org.jmock.Mock;
 
 import java.io.File;
 import java.io.IOException;
