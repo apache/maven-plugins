@@ -48,6 +48,16 @@ public class AssemblyMojoTest
         executeMojo( "min-plugin-config.xml" );
     }
 
+    public void testProjectWithClassifier()
+        throws Exception
+    {
+        executeMojo( "classifier-plugin-config.xml" );
+
+        File assemblyJar = ArchiverManagerStub.archiverStub.getDestFile();
+
+        assertTrue( "Test if archive ends with the classifier", assemblyJar.getName().endsWith( "test-harness.zip" ) );
+    }
+
     public void testPackedDependencySet()
         throws Exception
     {
@@ -825,6 +835,109 @@ public class AssemblyMojoTest
         assertTrue( "Test if repository output directory is used", tmpRepositoryDir.exists() );
 
         String repoPath = "assembly/dependency-artifact/1.0/dependency-artifact-1.0.";
+
+        File tmpArtifactJar = new File( tmpRepositoryDir, repoPath + "jar" );
+        assertTrue( "Test if dependency artifact is in repository", tmpArtifactJar.exists() );
+        assertTrue( "Test if md5 was generated", new File( tmpRepositoryDir, repoPath + "jar.md5" ).exists() );
+        assertTrue( "Test if sha1 was generated", new File( tmpRepositoryDir, repoPath + "jar.sha1" ).exists() );
+
+        File tmpArtifactPom = new File( tmpRepositoryDir, repoPath + "pom" );
+        assertTrue( "Test if dependency artifact is in repository", tmpArtifactPom.exists() );
+        assertTrue( "Test if md5 was generated", new File( tmpRepositoryDir, repoPath + "pom.md5" ).exists() );
+        assertTrue( "Test if sha1 was generated", new File( tmpRepositoryDir, repoPath + "pom.sha1" ).exists() );
+    }
+
+    public void testRepositoryWithMetadata()
+        throws Exception
+    {
+        AssemblyMojo mojo = executeMojo( "repository-with-metadata-plugin-config.xml" );
+
+        File tempRoot = (File) getVariableValueFromObject( mojo, "tempRoot" );
+
+        File tmpRepositoryDir = new File( tempRoot, "repository" );
+        assertTrue( "Test if repository output directory is used", tmpRepositoryDir.exists() );
+
+        String repoPath = "assembly/dependency-artifact/1.0/dependency-artifact-1.0.";
+
+        File tmpArtifactJar = new File( tmpRepositoryDir, repoPath + "jar" );
+        assertTrue( "Test if dependency artifact is in repository", tmpArtifactJar.exists() );
+        assertTrue( "Test if md5 was generated", new File( tmpRepositoryDir, repoPath + "jar.md5" ).exists() );
+        assertTrue( "Test if sha1 was generated", new File( tmpRepositoryDir, repoPath + "jar.sha1" ).exists() );
+
+        File tmpArtifactPom = new File( tmpRepositoryDir, repoPath + "pom" );
+        assertTrue( "Test if dependency artifact is in repository", tmpArtifactPom.exists() );
+        assertTrue( "Test if md5 was generated", new File( tmpRepositoryDir, repoPath + "pom.md5" ).exists() );
+        assertTrue( "Test if sha1 was generated", new File( tmpRepositoryDir, repoPath + "pom.sha1" ).exists() );
+
+        File tmpArtifactMetadatadir = new File( tmpRepositoryDir, "assembly/dependency-artifact" );
+        File metadataXml = new File( tmpArtifactMetadatadir, "maven-metadata.xml" );
+        assertTrue( "Test if metadata was created", metadataXml.exists() );
+        assertTrue( "Test if metadata md5 was generated", new File( tmpArtifactMetadatadir, "maven-metadata.xml.md5" ).exists() );
+        assertTrue( "Test if metadata md5 was generated", new File( tmpArtifactMetadatadir, "maven-metadata.xml.sha1" ).exists() );
+
+        metadataXml = new File( tmpArtifactMetadatadir, "maven-metadata-central.xml" );
+        assertTrue( "Test if metadata was created", metadataXml.exists() );
+        assertTrue( "Test if metadata md5 was generated", new File( tmpArtifactMetadatadir, "maven-metadata-central.xml.md5" ).exists() );
+        assertTrue( "Test if metadata md5 was generated", new File( tmpArtifactMetadatadir, "maven-metadata-central.xml.sha1" ).exists() );
+    }
+
+    public void testRepositoryGroupVersionAlignment()
+        throws Exception
+    {
+        AssemblyMojo mojo = executeMojo( "repository-groupVersionAlignment-plugin-config.xml" );
+
+        File tempRoot = (File) getVariableValueFromObject( mojo, "tempRoot" );
+
+        File tmpRepositoryDir = new File( tempRoot, "repository" );
+        assertTrue( "Test if repository output directory is used", tmpRepositoryDir.exists() );
+
+        String repoPath = "assembly/dependency-artifact/1.1/dependency-artifact-1.1.";
+
+        File tmpArtifactJar = new File( tmpRepositoryDir, repoPath + "jar" );
+        assertTrue( "Test if dependency artifact is in repository", tmpArtifactJar.exists() );
+        assertTrue( "Test if md5 was generated", new File( tmpRepositoryDir, repoPath + "jar.md5" ).exists() );
+        assertTrue( "Test if sha1 was generated", new File( tmpRepositoryDir, repoPath + "jar.sha1" ).exists() );
+
+        File tmpArtifactPom = new File( tmpRepositoryDir, repoPath + "pom" );
+        assertTrue( "Test if dependency artifact is in repository", tmpArtifactPom.exists() );
+        assertTrue( "Test if md5 was generated", new File( tmpRepositoryDir, repoPath + "pom.md5" ).exists() );
+        assertTrue( "Test if sha1 was generated", new File( tmpRepositoryDir, repoPath + "pom.sha1" ).exists() );
+    }
+
+    public void testRepositoryGroupVersionAlignmentExcludes()
+        throws Exception
+    {
+        AssemblyMojo mojo = executeMojo( "repository-groupVersionAlignment-excludes-plugin-config.xml" );
+
+        File tempRoot = (File) getVariableValueFromObject( mojo, "tempRoot" );
+
+        File tmpRepositoryDir = new File( tempRoot, "repository" );
+        assertTrue( "Test if repository output directory is used", tmpRepositoryDir.exists() );
+
+        String repoPath = "assembly/dependency-artifact/1.0/dependency-artifact-1.0.";
+
+        File tmpArtifactJar = new File( tmpRepositoryDir, repoPath + "jar" );
+        assertTrue( "Test if dependency artifact is in repository", tmpArtifactJar.exists() );
+        assertTrue( "Test if md5 was generated", new File( tmpRepositoryDir, repoPath + "jar.md5" ).exists() );
+        assertTrue( "Test if sha1 was generated", new File( tmpRepositoryDir, repoPath + "jar.sha1" ).exists() );
+
+        File tmpArtifactPom = new File( tmpRepositoryDir, repoPath + "pom" );
+        assertTrue( "Test if dependency artifact is in repository", tmpArtifactPom.exists() );
+        assertTrue( "Test if md5 was generated", new File( tmpRepositoryDir, repoPath + "pom.md5" ).exists() );
+        assertTrue( "Test if sha1 was generated", new File( tmpRepositoryDir, repoPath + "pom.sha1" ).exists() );
+    }
+
+    public void testMASSEMBLY98()
+        throws Exception
+    {
+        AssemblyMojo mojo = executeMojo( "MASSEMBLY-98-plugin-config.xml" );
+
+        File tempRoot = (File) getVariableValueFromObject( mojo, "tempRoot" );
+
+        File tmpRepositoryDir = new File( tempRoot, "repository" );
+        assertTrue( "Test if repository output directory is used", tmpRepositoryDir.exists() );
+
+        String repoPath = "assembly/dependency-artifact/1.1/dependency-artifact-1.1.";
 
         File tmpArtifactJar = new File( tmpRepositoryDir, repoPath + "jar" );
         assertTrue( "Test if dependency artifact is in repository", tmpArtifactJar.exists() );
