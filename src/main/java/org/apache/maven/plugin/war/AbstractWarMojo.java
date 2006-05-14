@@ -809,7 +809,7 @@ public abstract class AbstractWarMojo
         {
             // fix for MWAR-36, ensures that the parent dir are created first
             to.getParentFile().mkdirs();
-            
+
             if ( encoding == null || encoding.length() < 1 )
             {
                 fileReader = new BufferedReader( new FileReader( from ) );
@@ -941,7 +941,8 @@ public abstract class AbstractWarMojo
      */
     private String getDefaultFinalName( Artifact artifact )
     {
-        return artifact.getArtifactId() + "-" + artifact.getVersion() + "." + artifact.getType();
+        return artifact.getArtifactId() + "-" + artifact.getVersion() + "." +
+            artifact.getArtifactHandler().getExtension();
     }
 
 }
