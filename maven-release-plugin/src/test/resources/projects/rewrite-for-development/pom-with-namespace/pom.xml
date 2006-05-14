@@ -22,6 +22,12 @@
   <version>1.0</version>
   <packaging>pom</packaging>
 
+  <!-- empty tag, no space -->
+  <url/>
+
+  <!-- empty tag, space -->
+  <name />
+
   <modules>
     <module>subproject1</module>
     <module>subproject2</module>
