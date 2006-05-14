@@ -16,30 +16,28 @@ package org.apache.maven.plugin.war.stub;
  * limitations under the License.
  */
 
+import org.apache.maven.model.Organization;
+import org.apache.maven.project.MavenProject;
+
 import java.io.File;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
-import org.apache.maven.model.Organization;
-
 /**
  * Stub
  */
 public class MavenProjectBasicStub
-    extends MavenProjectStub
+    extends MavenProject
 {
     protected String testRootDir;
 
     protected Properties properties;
 
-    protected SimpleWarArtifactStub artifact;
-
     public MavenProjectBasicStub()
         throws Exception
     {
+        super( new ModelStub() );
         properties = new Properties();
     }
 
@@ -57,17 +55,8 @@ public class MavenProjectBasicStub
     {
         // create an isolated environment
         // see setupTestEnvironment for details
-        return new File( testRootDir );
-    }
-
-    public void setArtifact( SimpleWarArtifactStub _artifact )
-    {
-        artifact = _artifact;
-    }
-
-    public Artifact getArtifact()
-    {
-        return artifact;
+        //return new File( testRootDir );
+        return null;
     }
 
     public String getGroupId()

@@ -16,17 +16,17 @@ package org.apache.maven.plugin.war;
  * limitations under the License.
  */
 
-import java.io.File;
-import java.util.LinkedList;
-
 import org.apache.maven.plugin.war.stub.MavenProjectBasicStub;
 import org.apache.maven.plugin.war.stub.ResourceStub;
+
+import java.io.File;
+import java.util.LinkedList;
 
 public class WarInPlaceMojoTest
     extends AbstractWarMojoTest
 {
-    protected static final String pomFilePath = getBasedir()
-        + "/target/test-classes/unit/warexplodedinplacemojo/plugin-config.xml";
+    protected static final String pomFilePath =
+        getBasedir() + "/target/test-classes/unit/warexplodedinplacemojo/plugin-config.xml";
 
     protected File getTestDirectory()
         throws Exception
@@ -52,7 +52,6 @@ public class WarInPlaceMojoTest
     }
 
     /**
-     * 
      * @throws Exception
      */
     public void testSimpleExplodedInplaceWar()
@@ -65,7 +64,7 @@ public class WarInPlaceMojoTest
         File classesDir = createClassesDir( testId, true );
         File webAppResource = new File( getTestDirectory(), "resources" );
         File sampleResource = new File( webAppResource, "pix/panis_na.jpg" );
-        ResourceStub[] resources = new ResourceStub[] { new ResourceStub() };
+        ResourceStub[] resources = new ResourceStub[]{new ResourceStub()};
 
         createFile( sampleResource );
 
