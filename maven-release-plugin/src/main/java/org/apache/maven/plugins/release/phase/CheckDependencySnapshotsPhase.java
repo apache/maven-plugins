@@ -179,8 +179,8 @@ public class CheckDependencySnapshotsPhase
 
         // We are only looking at dependencies external to the project - ignore anything found in the reactor as
         // it's version will be updated
-        return !artifact.getVersion().equals( originalVersions.get( versionlessArtifactKey ) ) &&
-            ArtifactUtils.isSnapshot( artifact.getVersion() );
+        return artifact.isSnapshot() &&
+            !artifact.getBaseVersion().equals( originalVersions.get( versionlessArtifactKey ) );
     }
 
     public void simulate( ReleaseConfiguration releaseConfiguration )
