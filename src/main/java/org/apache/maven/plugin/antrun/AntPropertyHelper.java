@@ -65,9 +65,9 @@ public class AntPropertyHelper
         {
             Artifact artifact = (Artifact) it.next();
 
-            String key = "maven.dependency." + artifact.getGroupId() + "." + artifact.getArtifactId() + "." +
-                ( artifact.getClassifier() == null || artifact.getType().equals( artifact.getClassifier() ) ?
-                  artifact.getType() : artifact.getClassifier() ) + ".path";
+            String key = "maven.dependency." + artifact.getGroupId() + "." + artifact.getArtifactId() + 
+                ( artifact.getClassifier() != null ? "." + artifact.getClassifier() : "" ) + 
+                ( artifact.getType() != null ? "." + artifact.getType() : "" ) + ".path";
 
             log.debug( "Storing: " + key + "=" + artifact.getFile().getPath() );
 
