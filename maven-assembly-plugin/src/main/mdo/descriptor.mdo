@@ -404,8 +404,10 @@
           <name>includes</name>
           <version>1.0.0</version>
           <description>
-            This is a list of &lt;include&gt; elements, each containing a module reference of the type groupId:artifactId.
+            <![CDATA[
+            This is a list of <include/> elements, each containing a module reference of the type groupId:artifactId.
             Modules matching these elements will be included in this set.
+            ]]>
           </description>
           <association>
             <type>String</type>
@@ -416,8 +418,10 @@
           <name>excludes</name>
           <version>1.0.0</version>
           <description>
-            This is a list of &lt;exclude&gt; elements, each containing a module reference of the type groupId:artifactId.
+            <![CDATA[
+            This is a list of <exclude/> elements, each containing a module reference of the type groupId:artifactId.
             Modules matching these elements will be excluded from this set.
+            ]]>
           </description>
           <association>
             <type>String</type>
