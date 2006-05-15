@@ -1,0 +1,42 @@
+  ---
+  Assembly Plugin - Overview
+  ---
+  John Casey
+  ---
+  12-May-2006
+
+Assembly Plugin - Overview
+
+* Introduction
+
+  The assembly plugin for Maven 2.0 is primarily intended to allow users to aggregate the project output along with its dependencies, modules, site documentation, and other files into a single distributable archive. 
+  
+  Your project build can build distribution assemblies easily, using one of the convenient, prefabricated assembly descriptors. These descriptors handle many common operations, such as packaging a project's artifact along with its dependencies in a single jar. Alternatively, your project can provide its own descriptor and assume a much higher level of control over how dependencies, modules, file-sets, and individual files are packaged in the assembly.
+
+* Table of Contents
+
+  * {{{features.html}Features}}
+
+  * {{{examples/index.html}Examples}}
+
+  * {{{usage.html}Configuration and Usage}}
+
+  * {{{advanced-configuration.html}Advanced Configuration}} <<[TODO]>>
+  
+  * {{{assembly-descriptor-howto.apt}Descriptor How-To}} <<[TODO]>>
+
+  * {{{assembly.html}Descriptor Reference}}
+
+  * {{{component.html}Reusable Descriptor Component Reference}}
+
+  []
+
+* XML Schema Locations
+
+  * {{{xsd/descriptor.xsd}Assembly Descriptor}}
+  
+  * {{{xsd/component.xsd}Reusable Assembly Component}}
+
+  []
+
+

@@ -1,0 +1,45 @@
+  ---
+  Assembly Plugin - Features
+  ---
+  John Casey
+  ---
+  12-May-2006
+
+Assembly Plugin - Features
+
+* Assembly Plugin Features
+
+  <NOTE: Features with no version information have been present since the first final release of the plugin.>
+
+  * Inclusion of dependencies, modules <[2.1]>, file-sets, and individual files
+  
+  * Inclusion of project website documentation <[2.1]>
+  
+  * Flexible directory structures for assembly elements
+  
+  * All assembly inclusions controlled by include/exclude pattern sets
+
+  * Option to unpack artifact files into the assembly
+
+  * Project modules can be included as source files or in binary form <[2.1]>
+  
+  * Reusable assembly-descriptor components <[2.1]>
+  
+  * Supported archive formats include: tar.gz, tar.bz2, zip, jar
+  
+  * Directory-only assemblies
+  
+  * Filtering and line-ending conversion for file-sets and individual files
+  
+  * Directory and file attributes (<modes>) <[2.1]>
+  
+  * Artifact filename mapping with expression support <[2.1]>
+  
+  * Descriptor interpolation using current project and other assembly descriptor information <[2.1]>
+  
+  * Embedded Maven repository creation with artifact version alignment <[2.1]>
+  
+  * Security / signature information stripped from embedded artifacts prior to inclusion <[2.1]>
+  
+  []
+
