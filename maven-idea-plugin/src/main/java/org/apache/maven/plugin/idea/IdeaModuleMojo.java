@@ -780,7 +780,7 @@ public class IdeaModuleMojo
         // this is where the META-INF/plugin.xml file is located
         Element pluginDevElement = createElement( module, "component" );
         pluginDevElement.addAttribute( "name", "DevKit.ModuleBuildProperties" );
-        pluginDevElement.addAttribute( "url", getModuleFileUrl( executedProject.getBasedir(), "src/main/resources" ) );
+        pluginDevElement.addAttribute( "url", getModuleFileUrl( "src/main/resources/META-INF/plugin.xml" ) );
     }
 
     /**
