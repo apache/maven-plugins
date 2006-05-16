@@ -23,7 +23,7 @@
     <fileSet>
       <directory>target/test-classes/FileSet</directory>
       <includes>
-        <include>META-INF/plexus/components.xml</include>
+        <include>**/components.xml</include>
       </includes>
     </fileSet>
   </fileSets>
