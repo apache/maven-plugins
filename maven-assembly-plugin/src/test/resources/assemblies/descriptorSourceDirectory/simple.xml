@@ -19,10 +19,9 @@
   <formats>
     <format>zip</format>
   </formats>
-  <!--includeBaseDirectory>false</includeBaseDirectory-->
   <fileSets>
     <fileSet>
-      <directory>target/test-harness/assembly/min/target</directory>
+      <directory>target/test-harness/assembly/descriptorSourceDirectory/target</directory>
       <includes>
         <include>*.jar</include>
       </includes>

@@ -33,7 +33,7 @@ public class UnArchiverStub
     public void extract()
         throws ArchiverException, IOException
     {
-        File extractedFile = new File( destDir, sourceFile.getName() + ".extracted" );
+        File extractedFile = new File( getDestDirectory(), getSourceFile().getName() + ".extracted" );
 
         if ( !extractedFile.exists() )
         {
@@ -43,7 +43,7 @@ public class UnArchiverStub
 
     public File getDestDirectory()
     {
-        return null;
+        return destDir;
     }
 
     public void setDestDirectory( File file )
