@@ -15,17 +15,13 @@
   -->
 
 <assembly>
-  <id>simple</id>
+  <id>empty</id>
   <formats>
     <format>zip</format>
   </formats>
-  <!--includeBaseDirectory>false</includeBaseDirectory-->
-  <fileSets>
-    <fileSet>
-      <directory>target/test-harness/assembly/min/target</directory>
-      <includes>
-        <include>*.jar</include>
-      </includes>
-    </fileSet>
-  </fileSets>
+  <componentDescriptors>
+    <componentDescriptor>src/test/resources/assemblies/components/dependencySet.xml</componentDescriptor>
+    <componentDescriptor>src/test/resources/assemblies/components/FileItem.xml</componentDescriptor>
+    <componentDescriptor>src/test/resources/assemblies/components/FileSet.xml</componentDescriptor>
+  </componentDescriptors>
 </assembly>

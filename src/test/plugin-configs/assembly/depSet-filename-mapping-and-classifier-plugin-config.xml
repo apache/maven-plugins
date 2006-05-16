@@ -20,22 +20,24 @@
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
-          <outputDirectory>${basedir}/target/test-harness/assembly/classifier/target</outputDirectory>
+          <outputDirectory>${basedir}/target/test-harness/assembly/depSet-filename-mapping-and-classifier/target</outputDirectory>
           <finalName>assembly</finalName>
-          <workDirectory>${basedir}/target/test-harness/assembly/classifier/work</workDirectory>
+          <workDirectory>${basedir}/target/test-harness/assembly/depSet-filename-mapping-and-classifier/work</workDirectory>
           <archiverManager implementation="org.apache.maven.plugin.assembly.stubs.ArchiverManagerStub" />
           <localRepository>${localRepository}</localRepository>
           <reactorProjects></reactorProjects>
-          <classifier>test-harness</classifier>
-          <project implementation="org.apache.maven.plugin.assembly.stubs.AssemblyMavenProjectStub" />
-          <executedProject implementation="org.apache.maven.plugin.assembly.stubs.AssemblyMavenProjectStub" />
-          <descriptorId>simple</descriptorId>
+          <classifier></classifier>
+          <project implementation="org.apache.maven.plugin.assembly.stubs.MavenProjectWithDependencyClassifierStub" />
+          <executedProject implementation="org.apache.maven.plugin.assembly.stubs.MavenProjectWithDependencyClassifierStub" />
+          <descriptorRefs>
+            <descriptorRef>dependencySet-filename-mapping-and-classifier</descriptorRef>
+          </descriptorRefs>
           <tarLongFileMode>warn</tarLongFileMode>
           <basedir>${basedir}</basedir>
-          <tempRoot>${basedir}/target/test-harness/assembly/classifier/archive-tmp</tempRoot>
-          <siteDirectory>${basedir}/target/test-harness/assembly/classifier/site</siteDirectory>
+          <tempRoot>${basedir}/target/test-harness/assembly/depSet-filename-mapping-and-classifier/archive-tmp</tempRoot>
+          <siteDirectory>${basedir}/target/test-harness/assembly/depSet-filename-mapping-and-classifier/site</siteDirectory>
           <includeSite>false</includeSite>
-          <appendAssemblyId>false</appendAssemblyId>
+          <appendAssemblyId>true</appendAssemblyId>
         </configuration>
       </plugin>
     </plugins>
