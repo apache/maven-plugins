@@ -15,16 +15,15 @@
   -->
 
 <assembly>
-  <id>simple</id>
+  <id>plexus-components</id>
   <formats>
     <format>zip</format>
   </formats>
-  <!--includeBaseDirectory>false</includeBaseDirectory-->
   <fileSets>
     <fileSet>
-      <directory>target/test-harness/assembly/min/target</directory>
+      <directory>target/test-classes/FileSet</directory>
       <includes>
-        <include>*.jar</include>
+        <include>META-INF/plexus/components.xml</include>
       </includes>
     </fileSet>
   </fileSets>

@@ -28,9 +28,7 @@
           <classifier></classifier>
           <project implementation="org.apache.maven.plugin.assembly.stubs.AssemblyMavenProjectStub" />
           <executedProject implementation="org.apache.maven.plugin.assembly.stubs.AssemblyMavenProjectStub" />
-          <descriptorRefs>
-            <descriptorRef>simple</descriptorRef>
-          </descriptorRefs>
+          <descriptor>${basedir}/src/test/resources/assemblies/simple.xml</descriptor>
           <tarLongFileMode>warn</tarLongFileMode>
           <basedir>${basedir}</basedir>
           <tempRoot>${basedir}/target/test-harness/assembly/min/archive-tmp</tempRoot>

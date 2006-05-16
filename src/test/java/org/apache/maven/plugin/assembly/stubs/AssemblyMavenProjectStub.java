@@ -81,6 +81,11 @@ public class AssemblyMavenProjectStub
 
     public File getBasedir()
     {
+        if ( basedir == null )
+        {
+            basedir = new File( PlexusTestCase.getBasedir() );
+        }
+
         return basedir;
     }
 
