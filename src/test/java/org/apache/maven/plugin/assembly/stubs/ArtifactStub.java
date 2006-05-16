@@ -31,8 +31,13 @@ public class ArtifactStub
 {
     public ArtifactStub( String groupId, String artifactId, String version, String packaging, String scope )
     {
+        this( groupId, artifactId, version, packaging, null, scope );
+    }
+
+    public ArtifactStub( String groupId, String artifactId, String version, String packaging, String classifier, String scope )
+    {
         super( groupId, artifactId, VersionRange.createFromVersion( version ), scope, packaging,
-               null, new DefaultArtifactHandler( packaging ), false );
+               classifier, new DefaultArtifactHandler( packaging ), false );
     }
 
     public File getFile()

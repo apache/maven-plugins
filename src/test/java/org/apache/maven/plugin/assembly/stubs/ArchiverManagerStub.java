@@ -16,12 +16,12 @@ package org.apache.maven.plugin.assembly.stubs;
  * limitations under the License.
  */
 
-import java.io.File;
-
-import org.codehaus.plexus.archiver.manager.ArchiverManager;
-import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.UnArchiver;
+import org.codehaus.plexus.archiver.manager.ArchiverManager;
+import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
+
+import java.io.File;
 
 /**
  * @author Edwin Punzalan
@@ -45,9 +45,13 @@ public class ArchiverManagerStub
     {
         if ( archiverStub == null )
         {
-            if( string.equals( "dir" ) )
+            if( "dir".equals( string ) )
             {
                 archiverStub = new DirectoryArchiverStub();
+            }
+            else if ( "jar".equals( string ) )
+            {
+
             }
             else
             {
@@ -68,18 +72,27 @@ public class ArchiverManagerStub
     {
         if ( unArchiverStub == null )
         {
-            unArchiverStub = new UnArchiverStub();
+            if ( "jar".equals( string ) )
+            {
+                unArchiverStub = new SignedUnArchiver();
+            }
+            else
+            {
+                unArchiverStub = new UnArchiverStub();
+            }
         }
 
         return unArchiverStub;
     }
 
-    public UnArchiver getUnArchiver( File string )
+    public UnArchiver getUnArchiver( File file )
         throws NoSuchArchiverException
     {
         if ( unArchiverStub == null )
         {
-            unArchiverStub = new UnArchiverStub();
+            String filename = file.getName();
+
+            unArchiverStub = (UnArchiverStub) getUnArchiver( filename.substring( filename.lastIndexOf( '.' ) + 1 ) );
         }
 
         return unArchiverStub;

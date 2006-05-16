@@ -29,9 +29,9 @@
           <classifier></classifier>
           <project implementation="org.apache.maven.plugin.assembly.stubs.AssemblyMavenProjectStub" />
           <executedProject implementation="org.apache.maven.plugin.assembly.stubs.AssemblyMavenProjectStub" />
-          <descriptorRefs>
-            <descriptorRef>repository</descriptorRef>
-          </descriptorRefs>
+          <descriptors>
+            <descriptor>${basedir}/src/test/resources/assemblies/repository.xml</descriptor>
+          </descriptors>
           <tarLongFileMode>warn</tarLongFileMode>
           <basedir>${basedir}</basedir>
           <tempRoot>${basedir}/target/test-harness/assembly/repository/archive-tmp</tempRoot>

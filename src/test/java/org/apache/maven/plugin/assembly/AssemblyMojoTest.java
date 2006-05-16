@@ -25,8 +25,12 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -56,6 +60,12 @@ public class AssemblyMojoTest
         File assemblyJar = ArchiverManagerStub.archiverStub.getDestFile();
 
         assertTrue( "Test if archive ends with the classifier", assemblyJar.getName().endsWith( "test-harness.zip" ) );
+    }
+
+    public void testDescriptorSourceDirectory()
+        throws Exception
+    {
+        executeMojo( "descriptorSourceDirectory-plugin-config.xml" );
     }
 
     public void testPackedDependencySet()
@@ -122,6 +132,57 @@ public class AssemblyMojoTest
             String expectedName =
                 "libs/" + expected.getVersion() + "-" + expected.getArtifactId() + "-" + expected.getGroupId();
             assertTrue( "Test filename mapping was used", archivePath.equals( expectedName ) );
+            assertFalse( "Test includeBaseDirectory", archivePath.startsWith( "assembly/" ) );
+        }
+
+        assertTrue( "Test project is in archive", archivedFiles.contains( project.getArtifact().getFile() ) );
+        assertTrue( "Test project is not unpacked", project.getArtifact().getFile().getName().endsWith( ".jar" ) );
+
+        ArchiverStub.ArchiverFile archiveFile =
+            (ArchiverStub.ArchiverFile) archiveMap.get( project.getArtifact().getFile() );
+        String archivePath = archiveFile.getOutputName();
+        assertFalse( "Test includeBaseDirectory", archivePath.startsWith( "assembly/" ) );
+    }
+
+    public void testPackedDependencySetWithFilenameMappingAndClassifier()
+        throws Exception
+    {
+        AssemblyMojo mojo = getMojo( "depSet-filename-mapping-and-classifier-plugin-config.xml" );
+
+        MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "executedProject" );
+        Set artifactSet = project.getArtifacts();
+
+        mojo.execute();
+
+        Map archiveMap = ArchiverManagerStub.archiverStub.getFiles();
+        Collection archivedFiles = archiveMap.keySet();
+
+        assertEquals( "Test number of files in archive", artifactSet.size() + 1, archivedFiles.size() );
+
+        for ( Iterator artifacts = artifactSet.iterator(); artifacts.hasNext(); )
+        {
+            Artifact expected = (Artifact) artifacts.next();
+
+            assertTrue( "Test expected dependency artifacts in archive", archivedFiles.contains( expected.getFile() ) );
+            assertTrue( "Test expected dependency is not unpacked", expected.getFile().getName().endsWith( ".jar" ) );
+
+            ArchiverStub.ArchiverFile archiveFile = (ArchiverStub.ArchiverFile) archiveMap.get( expected.getFile() );
+            String archivePath = archiveFile.getOutputName();
+            String expectedName;
+            if ( StringUtils.isEmpty( expected.getClassifier() ) )
+            {
+                expectedName =
+                    "libs/" + expected.getVersion() + "." + expected.getArtifactId() + "." +
+                    expected.getGroupId();
+            }
+            else
+            {
+                expectedName =
+                    "libs/" + expected.getVersion() + "." + expected.getArtifactId() +
+                    "-classifier" + "." + expected.getGroupId();
+
+            }
+            assertEquals( "Test filename mapping was used", archivePath, expectedName );
             assertFalse( "Test includeBaseDirectory", archivePath.startsWith( "assembly/" ) );
         }
 
@@ -613,6 +674,12 @@ public class AssemblyMojoTest
             assertTrue( "Test if unpacked directory is in the archive", archiverFiles.containsKey( unpacked ) );
             archiverFiles.remove( unpacked );
 
+            File metaInf = new File( unpacked, "META-INF" );
+            if ( metaInf.exists() && metaInf.listFiles().length > 0 )
+            {
+                testSignatureFiles( metaInf );
+            }
+
             File srcDir = reactorProject.getBasedir();
             assertTrue( "Test if reactor sources is in the archive", archiverFiles.containsKey( srcDir ) );
             archiverFiles.remove( srcDir );
@@ -653,6 +720,12 @@ public class AssemblyMojoTest
         assertTrue( "Test if unpacked directory is in the archive", archiverFiles.containsKey( unpacked ) );
         archiverFiles.remove( unpacked );
 
+        File metaInf = new File( unpacked, "META-INF" );
+        if ( metaInf.exists() && metaInf.listFiles().length > 0 )
+        {
+            testSignatureFiles( metaInf );
+        }
+
         File srcDir = new File( workDir.getParentFile(), "reactor-project-1" );
         assertTrue( "Test if reactor project sources is in the archive", archiverFiles.containsKey( srcDir ) );
         archiverFiles.remove( srcDir );
@@ -691,6 +764,12 @@ public class AssemblyMojoTest
         assertTrue( "Test if reactor project was unpacked in work directory", unpacked.exists() );
         assertTrue( "Test if unpacked directory is in the archive", archiverFiles.containsKey( unpacked ) );
         archiverFiles.remove( unpacked );
+
+        File metaInf = new File( unpacked, "META-INF" );
+        if ( metaInf.exists() && metaInf.listFiles().length > 0 )
+        {
+            testSignatureFiles( metaInf );
+        }
 
         File srcDir = new File( workDir.getParentFile(), "reactor-project-2" );
         assertTrue( "Test if reactor project sources is in the archive", archiverFiles.containsKey( srcDir ) );
@@ -733,6 +812,12 @@ public class AssemblyMojoTest
             assertTrue( "Test if reactor dependency is also unpacked", dependency.exists() );
             assertTrue( "Test if unpacked directory is in the archive", archiverFiles.containsKey( unpacked ) );
             archiverFiles.remove( unpacked );
+
+            File metaInf = new File( unpacked, "META-INF" );
+            if ( metaInf.exists() && metaInf.listFiles().length > 0 )
+            {
+                testSignatureFiles( metaInf );
+            }
 
             File srcDir = reactorProject.getBasedir();
             assertTrue( "Test if reactor sources is in the archive", archiverFiles.containsKey( srcDir ) );
@@ -950,6 +1035,54 @@ public class AssemblyMojoTest
         assertTrue( "Test if sha1 was generated", new File( tmpRepositoryDir, repoPath + "pom.sha1" ).exists() );
     }
 
+    public void testComponents()
+        throws Exception
+    {
+        AssemblyMojo mojo = executeMojo( "component-plugin-config.xml" );
+
+        Map archivedFiles = ArchiverManagerStub.archiverStub.getFiles();
+
+        MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+        assertNotNull( "Test if project jar is in archive", archivedFiles.remove( project.getArtifact().getFile() ) );
+
+        File fileSetDir = new File( PlexusTestCase.getBasedir(), "target/test-classes/fileSet" );
+        assertNotNull( "Test if FileSet is in the archive", archivedFiles.remove( fileSetDir ) );
+
+        File readme = new File( "target/test-classes/fileSet/README.txt" );
+        assertNotNull( "Test if FileItem README.txt is in the archive", archivedFiles.remove( readme ) );
+
+        File license = new File( "target/test-classes/fileSet/LICENSE.txt" );
+        assertNotNull( "Test if FileItem LICENSE.txt is in the archive", archivedFiles.remove( license ) );
+
+        assertTrue( "Test there are no more files in the archive", archivedFiles.isEmpty() );
+    }
+
+    public void testPlexusComponents()
+        throws Exception
+    {
+        File plexusDir = new File( basedir + "/target/test-classes/fileSet/META-INF/plexus" );
+        plexusDir.mkdirs();
+        String fileContents = "<component-set>\n  <components>\n    <component>\n      <role>class.Role</role>" +
+            "\n      <implementation>class.Implementation</implementation>\n    </component>\n  </components>" +
+            "\n</component-set>";
+        FileUtils.fileWrite( new File( plexusDir, "components.xml" ).getAbsolutePath(), fileContents );
+
+        AssemblyMojo mojo = executeMojo( "plexus-components-plugin-config.xml" );
+
+        Map files = ArchiverManagerStub.archiverStub.getFiles();
+
+        File fileSetDir = new File( PlexusTestCase.getBasedir(), "target/test-classes/fileSet" );
+        assertNotNull( "Test if FileSet is in the archive", files.remove( fileSetDir ) );
+
+        File componentXml = (File) files.keySet().iterator().next();
+        files.remove( componentXml );
+        assertTrue( "Test if componentXml tmp file was created", componentXml.exists() );
+        FileReader fileReader = new FileReader( componentXml );
+        assertNotNull( "Test if componentXml is correctly created", Xpp3DomBuilder.build( fileReader ) );
+
+        assertTrue( "Test there are no more files in the archive", files.isEmpty() );
+    }
+
     private AssemblyMojo getMojo( String pluginXml )
         throws Exception
     {
@@ -1017,5 +1150,30 @@ public class AssemblyMojoTest
         fileContents = "sample configuration file line 1" + lineEnding + "sample configuration file line 2" +
             lineEnding + "sample configuration file line 3" + lineEnding + "sample configuration file line 4";
         FileUtils.fileWrite( fileSetDir + "/configs/config.txt", fileContents );
+    }
+
+    private void testSignatureFiles( File metaInf )
+    {
+        File[] metaInfFiles = metaInf.listFiles(
+            new FilenameFilter()
+            {
+                String[] signatureExt = { ".rsa", ".dsa", ".sf" };
+
+                public boolean accept( File dir, String name )
+                {
+                    for ( int idx = 0; idx < signatureExt.length; idx++ )
+                    {
+                        if ( name.toLowerCase().endsWith( signatureExt[ idx ] ) )
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }
+            }
+        );
+
+        assertEquals( "Test for signature files", 0, metaInfFiles.length );
     }
 }
