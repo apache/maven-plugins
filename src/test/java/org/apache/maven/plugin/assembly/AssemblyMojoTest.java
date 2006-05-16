@@ -19,11 +19,14 @@ package org.apache.maven.plugin.assembly;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.assembly.stubs.ArchiverManagerStub;
-import org.apache.maven.plugin.assembly.stubs.ArchiverStub;
+import org.apache.maven.plugin.assembly.stubs.JarArchiverStub;
 import org.apache.maven.plugin.assembly.stubs.ReactorMavenProjectStub;
+import org.apache.maven.plugin.assembly.stubs.WarArchiverStub;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusTestCase;
+import org.codehaus.plexus.archiver.tar.TarArchiver;
+import org.codehaus.plexus.archiver.tar.TarLongFileMode;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
@@ -90,8 +93,8 @@ public class AssemblyMojoTest
             assertTrue( "Test expected dependency artifacts in archive", archivedFiles.contains( expected.getFile() ) );
             assertTrue( "Test expected dependency is not unpacked", expected.getFile().getName().endsWith( ".jar" ) );
 
-            ArchiverStub.ArchiverFile archiveFile =
-                (ArchiverStub.ArchiverFile) archiveMap.get( project.getArtifact().getFile() );
+            JarArchiverStub.ArchiverFile archiveFile =
+                (JarArchiverStub.ArchiverFile) archiveMap.get( project.getArtifact().getFile() );
             String archivePath = archiveFile.getOutputName();
             assertTrue( "Test includeBaseDirectory", archivePath.startsWith( "assembly/" ) );
         }
@@ -99,8 +102,8 @@ public class AssemblyMojoTest
         assertTrue( "Test project is in archive", archivedFiles.contains( project.getArtifact().getFile() ) );
         assertTrue( "Test project is not unpacked", project.getArtifact().getFile().getName().endsWith( ".jar" ) );
 
-        ArchiverStub.ArchiverFile archiveFile =
-            (ArchiverStub.ArchiverFile) archiveMap.get( project.getArtifact().getFile() );
+        JarArchiverStub.ArchiverFile archiveFile =
+            (JarArchiverStub.ArchiverFile) archiveMap.get( project.getArtifact().getFile() );
         String archivePath = archiveFile.getOutputName();
         assertTrue( "Test includeBaseDirectory", archivePath.startsWith( "assembly/" ) );
     }
@@ -127,7 +130,7 @@ public class AssemblyMojoTest
             assertTrue( "Test expected dependency artifacts in archive", archivedFiles.contains( expected.getFile() ) );
             assertTrue( "Test expected dependency is not unpacked", expected.getFile().getName().endsWith( ".jar" ) );
 
-            ArchiverStub.ArchiverFile archiveFile = (ArchiverStub.ArchiverFile) archiveMap.get( expected.getFile() );
+            JarArchiverStub.ArchiverFile archiveFile = (JarArchiverStub.ArchiverFile) archiveMap.get( expected.getFile() );
             String archivePath = archiveFile.getOutputName();
             String expectedName =
                 "libs/" + expected.getVersion() + "-" + expected.getArtifactId() + "-" + expected.getGroupId();
@@ -138,8 +141,8 @@ public class AssemblyMojoTest
         assertTrue( "Test project is in archive", archivedFiles.contains( project.getArtifact().getFile() ) );
         assertTrue( "Test project is not unpacked", project.getArtifact().getFile().getName().endsWith( ".jar" ) );
 
-        ArchiverStub.ArchiverFile archiveFile =
-            (ArchiverStub.ArchiverFile) archiveMap.get( project.getArtifact().getFile() );
+        JarArchiverStub.ArchiverFile archiveFile =
+            (JarArchiverStub.ArchiverFile) archiveMap.get( project.getArtifact().getFile() );
         String archivePath = archiveFile.getOutputName();
         assertFalse( "Test includeBaseDirectory", archivePath.startsWith( "assembly/" ) );
     }
@@ -166,7 +169,7 @@ public class AssemblyMojoTest
             assertTrue( "Test expected dependency artifacts in archive", archivedFiles.contains( expected.getFile() ) );
             assertTrue( "Test expected dependency is not unpacked", expected.getFile().getName().endsWith( ".jar" ) );
 
-            ArchiverStub.ArchiverFile archiveFile = (ArchiverStub.ArchiverFile) archiveMap.get( expected.getFile() );
+            JarArchiverStub.ArchiverFile archiveFile = (JarArchiverStub.ArchiverFile) archiveMap.get( expected.getFile() );
             String archivePath = archiveFile.getOutputName();
             String expectedName;
             if ( StringUtils.isEmpty( expected.getClassifier() ) )
@@ -189,8 +192,8 @@ public class AssemblyMojoTest
         assertTrue( "Test project is in archive", archivedFiles.contains( project.getArtifact().getFile() ) );
         assertTrue( "Test project is not unpacked", project.getArtifact().getFile().getName().endsWith( ".jar" ) );
 
-        ArchiverStub.ArchiverFile archiveFile =
-            (ArchiverStub.ArchiverFile) archiveMap.get( project.getArtifact().getFile() );
+        JarArchiverStub.ArchiverFile archiveFile =
+            (JarArchiverStub.ArchiverFile) archiveMap.get( project.getArtifact().getFile() );
         String archivePath = archiveFile.getOutputName();
         assertFalse( "Test includeBaseDirectory", archivePath.startsWith( "assembly/" ) );
     }
@@ -219,8 +222,8 @@ public class AssemblyMojoTest
                 assertTrue( "Test expected dependency is not unpacked",
                             expected.getFile().getName().endsWith( ".jar" ) );
 
-                ArchiverStub.ArchiverFile archiveFile =
-                    (ArchiverStub.ArchiverFile) archiveMap.get( project.getArtifact().getFile() );
+                JarArchiverStub.ArchiverFile archiveFile =
+                    (JarArchiverStub.ArchiverFile) archiveMap.get( project.getArtifact().getFile() );
                 String archivePath = archiveFile.getOutputName();
                 assertTrue( "Test includeBaseDirectory", archivePath.startsWith( "assembly/" ) );
             }
@@ -234,8 +237,8 @@ public class AssemblyMojoTest
         assertTrue( "Test project is in archive", archivedFiles.contains( project.getArtifact().getFile() ) );
         assertTrue( "Test project is not unpacked", project.getArtifact().getFile().getName().endsWith( ".jar" ) );
 
-        ArchiverStub.ArchiverFile archiveFile =
-            (ArchiverStub.ArchiverFile) archiveMap.get( project.getArtifact().getFile() );
+        JarArchiverStub.ArchiverFile archiveFile =
+            (JarArchiverStub.ArchiverFile) archiveMap.get( project.getArtifact().getFile() );
         String archivePath = archiveFile.getOutputName();
         assertTrue( "Test includeBaseDirectory", archivePath.startsWith( "assembly/" ) );
     }
@@ -287,7 +290,7 @@ public class AssemblyMojoTest
         assertEquals( "Test archive adds", archiverFiles.size(), 1 );
 
         File key = new File( basedir, "target/test-classes/fileSet" );
-        ArchiverStub.ArchiverFile file = (ArchiverStub.ArchiverFile) archiverFiles.get( key );
+        JarArchiverStub.ArchiverFile file = (JarArchiverStub.ArchiverFile) archiverFiles.get( key );
 
         assertNotNull( "Test expected FileSet", file );
         assertNull( "Test includes", file.getIncludes() );
@@ -307,7 +310,7 @@ public class AssemblyMojoTest
         assertEquals( "Test archive adds", archiverFiles.size(), 1 );
 
         File key = new File( basedir, "target/test-classes/fileSet" );
-        ArchiverStub.ArchiverFile file = (ArchiverStub.ArchiverFile) archiverFiles.get( key );
+        JarArchiverStub.ArchiverFile file = (JarArchiverStub.ArchiverFile) archiverFiles.get( key );
 
         assertNotNull( "Test expected FileSet", file );
         assertNull( "Test includes", file.getIncludes() );
@@ -327,7 +330,7 @@ public class AssemblyMojoTest
         assertEquals( "Test archive adds", archiverFiles.size(), 1 );
 
         File key = new File( basedir, "target/test-classes/fileSet" );
-        ArchiverStub.ArchiverFile file = (ArchiverStub.ArchiverFile) archiverFiles.get( key );
+        JarArchiverStub.ArchiverFile file = (JarArchiverStub.ArchiverFile) archiverFiles.get( key );
 
         assertNotNull( "Test expected FileSet", file );
         assertTrue( "Test includes", assertEquals( new String[]{"**/*.txt"}, file.getIncludes() ) );
@@ -351,7 +354,7 @@ public class AssemblyMojoTest
         assertEquals( "Test archive adds", archiverFiles.size(), 1 );
 
         File key = new File( basedir, "target/test-classes/fileSet" );
-        ArchiverStub.ArchiverFile file = (ArchiverStub.ArchiverFile) archiverFiles.get( key );
+        JarArchiverStub.ArchiverFile file = (JarArchiverStub.ArchiverFile) archiverFiles.get( key );
         assertNull( "Test original FileSet is not in archive", file );
 
         File tempRoot = (File) getVariableValueFromObject( mojo, "tempRoot" );
@@ -391,7 +394,7 @@ public class AssemblyMojoTest
         assertEquals( "Test archive adds", archiverFiles.size(), 1 );
 
         File key = new File( basedir, "target/test-classes/fileSet" );
-        ArchiverStub.ArchiverFile file = (ArchiverStub.ArchiverFile) archiverFiles.get( key );
+        JarArchiverStub.ArchiverFile file = (JarArchiverStub.ArchiverFile) archiverFiles.get( key );
         assertNull( "Test original FileSet is not in archive", file );
 
         File tempRoot = (File) getVariableValueFromObject( mojo, "tempRoot" );
@@ -431,7 +434,7 @@ public class AssemblyMojoTest
         assertEquals( "Test archive adds", archiverFiles.size(), 1 );
 
         File key = new File( basedir, "target/test-classes/fileSet" );
-        ArchiverStub.ArchiverFile file = (ArchiverStub.ArchiverFile) archiverFiles.get( key );
+        JarArchiverStub.ArchiverFile file = (JarArchiverStub.ArchiverFile) archiverFiles.get( key );
         assertNull( "Test original FileSet is not in archive", file );
 
         File tempRoot = (File) getVariableValueFromObject( mojo, "tempRoot" );
@@ -471,7 +474,7 @@ public class AssemblyMojoTest
         assertEquals( "Test archive adds", archiverFiles.size(), 1 );
 
         File key = new File( basedir, "target/test-classes/fileSet" );
-        ArchiverStub.ArchiverFile file = (ArchiverStub.ArchiverFile) archiverFiles.get( key );
+        JarArchiverStub.ArchiverFile file = (JarArchiverStub.ArchiverFile) archiverFiles.get( key );
         assertNull( "Test original FileSet is not in archive", file );
 
         File tempRoot = (File) getVariableValueFromObject( mojo, "tempRoot" );
@@ -570,7 +573,7 @@ public class AssemblyMojoTest
 
         File archivedFile = (File) archiverFiles.keySet().iterator().next();
 
-        ArchiverStub.ArchiverFile file = (ArchiverStub.ArchiverFile) archiverFiles.get( archivedFile );
+        JarArchiverStub.ArchiverFile file = (JarArchiverStub.ArchiverFile) archiverFiles.get( archivedFile );
 
         assertEquals( "Test archive file path", "assembly/output/READTHIS.txt", file.getOutputName() );
 
@@ -636,7 +639,7 @@ public class AssemblyMojoTest
 
         assertTrue( "Test if archived file exists", archivedFile.exists() );
 
-        ArchiverStub.ArchiverFile file = (ArchiverStub.ArchiverFile) archiverFiles.get( archivedFile );
+        JarArchiverStub.ArchiverFile file = (JarArchiverStub.ArchiverFile) archiverFiles.get( archivedFile );
 
         assertEquals( "Test file mode", 777, file.getFileMode() );
     }
@@ -1071,7 +1074,7 @@ public class AssemblyMojoTest
 
         Map files = ArchiverManagerStub.archiverStub.getFiles();
 
-        File fileSetDir = new File( PlexusTestCase.getBasedir(), "target/test-classes/fileSet" );
+        File fileSetDir = new File( PlexusTestCase.getBasedir() + "/target/test-classes/fileSet" );
         assertNotNull( "Test if FileSet is in the archive", files.remove( fileSetDir ) );
 
         File componentXml = (File) files.keySet().iterator().next();
@@ -1081,6 +1084,62 @@ public class AssemblyMojoTest
         assertNotNull( "Test if componentXml is correctly created", Xpp3DomBuilder.build( fileReader ) );
 
         assertTrue( "Test there are no more files in the archive", files.isEmpty() );
+    }
+
+    public void testIncludeSiteDirectory()
+        throws Exception
+    {
+        AssemblyMojo mojo = getMojo( "includeSite-plugin-config.xml" );
+
+        File siteDir = (File) getVariableValueFromObject( mojo, "siteDirectory" );
+
+        siteDir.mkdirs();
+
+        mojo.execute();
+
+        assertTrue( "Test an archive was created", ArchiverManagerStub.archiverStub.getDestFile().exists() );
+
+        Map files = ArchiverManagerStub.archiverStub.getFiles();
+
+        assertTrue( "Test if site directory was added", files.containsKey( siteDir ) );
+    }
+
+    public void testTarGzipArchive()
+        throws Exception
+    {
+        executeMojo( "tar-gz-plugin-config.xml" );
+
+        TarArchiver.TarCompressionMethod method = (TarArchiver.TarCompressionMethod) getVariableValueFromObject( ArchiverManagerStub.archiverStub, "tarCompressionMethod" );
+
+        assertEquals( "Test Tar compression method", "gzip", method.getValue() );
+
+        TarLongFileMode longFileMode = (TarLongFileMode) getVariableValueFromObject( ArchiverManagerStub.archiverStub, "longFileMode" );
+
+        assertTrue( "Test tar long file mode default", longFileMode.isWarnMode() );
+    }
+
+    public void testTarBzip2Archive()
+        throws Exception
+    {
+        executeMojo( "tar-bz2-plugin-config.xml" );
+
+        TarArchiver.TarCompressionMethod method = (TarArchiver.TarCompressionMethod) getVariableValueFromObject( ArchiverManagerStub.archiverStub, "tarCompressionMethod" );
+
+        assertEquals( "Test Tar compression method", "bzip2", method.getValue() );
+
+        TarLongFileMode longFileMode = (TarLongFileMode) getVariableValueFromObject( ArchiverManagerStub.archiverStub, "longFileMode" );
+
+        assertTrue( "Test tar long file mode default", longFileMode.isFailMode() );
+    }
+
+    public void testWarArchive()
+        throws Exception
+    {
+        executeMojo( "war-plugin-config.xml" );
+
+        WarArchiverStub archiver = (WarArchiverStub) ArchiverManagerStub.archiverStub;
+
+        assertFalse( "Test that web.xml is not ignored", archiver.getIgnoreWebxml() );
     }
 
     private AssemblyMojo getMojo( String pluginXml )

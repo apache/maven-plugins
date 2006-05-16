@@ -24,7 +24,7 @@ import java.io.IOException;
  * @author Allan Ramirez
  */
 public class DirectoryArchiverStub
-    extends ArchiverStub
+    extends JarArchiverStub
 {
     public void createArchive()
         throws ArchiverException, IOException
