@@ -21,9 +21,9 @@
   </formats>
   <fileSets>
     <fileSet>
-      <directory>target/test-classes/FileSet</directory>
+      <directory>target/test-classes/fileSet</directory>
       <includes>
-        <include>**/components.xml</include>
+        <include>META-INT/plexus/components.xml</include>
       </includes>
     </fileSet>
   </fileSets>
