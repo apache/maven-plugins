@@ -29,7 +29,7 @@ import java.io.File;
 public class ArchiverManagerStub
     implements ArchiverManager
 {
-    public static ArchiverStub archiverStub;
+    public static Archiver archiverStub;
 
     public static UnArchiverStub unArchiverStub;
 
@@ -49,20 +49,24 @@ public class ArchiverManagerStub
             {
                 archiverStub = new DirectoryArchiverStub();
             }
-            else if ( "jar".equals( string ) )
+            else if ( "tar".equals( string ) )
             {
-
+                archiverStub = new TarArchiverStub();
+            }
+            else if ( "war".equals( string ) )
+            {
+                archiverStub = new WarArchiverStub();
             }
             else
             {
-                archiverStub = new ArchiverStub();
+                archiverStub = new JarArchiverStub();
             }
         }
 
         return archiverStub;
     }
 
-    public void setArchiver( ArchiverStub archiver )
+    public void setArchiver( JarArchiverStub archiver )
     {
         archiverStub = archiver;
     }
@@ -103,7 +107,7 @@ public class ArchiverManagerStub
     {
         if ( archiverStub == null )
         {
-            archiverStub = new ArchiverStub();
+            archiverStub = new JarArchiverStub();
         }
 
         return archiverStub;
