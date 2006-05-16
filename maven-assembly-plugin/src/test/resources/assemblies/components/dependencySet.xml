@@ -14,18 +14,12 @@
   ~ limitations under the License.
   -->
 
-<assembly>
-  <id>simple</id>
-  <formats>
-    <format>zip</format>
-  </formats>
-  <!--includeBaseDirectory>false</includeBaseDirectory-->
-  <fileSets>
-    <fileSet>
-      <directory>target/test-harness/assembly/min/target</directory>
-      <includes>
-        <include>*.jar</include>
-      </includes>
-    </fileSet>
-  </fileSets>
-</assembly>
+<component>
+  <dependencySets>
+    <dependencySet>
+      <unpack>false</unpack>
+      <outputDirectory></outputDirectory>
+      <scope>test</scope>
+    </dependencySet>
+  </dependencySets>
+</component>

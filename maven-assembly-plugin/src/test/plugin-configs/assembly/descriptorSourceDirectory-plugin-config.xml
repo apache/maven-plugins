@@ -20,20 +20,20 @@
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
-          <outputDirectory>${basedir}/target/test-harness/assembly/classifier/target</outputDirectory>
+          <outputDirectory>${basedir}/target/test-harness/assembly/descriptorSourceDirectory/target</outputDirectory>
           <finalName>assembly</finalName>
-          <workDirectory>${basedir}/target/test-harness/assembly/classifier/work</workDirectory>
+          <workDirectory>${basedir}/target/test-harness/assembly/descriptorSourceDirectory/work</workDirectory>
           <archiverManager implementation="org.apache.maven.plugin.assembly.stubs.ArchiverManagerStub" />
           <localRepository>${localRepository}</localRepository>
           <reactorProjects></reactorProjects>
-          <classifier>test-harness</classifier>
+          <classifier></classifier>
           <project implementation="org.apache.maven.plugin.assembly.stubs.AssemblyMavenProjectStub" />
           <executedProject implementation="org.apache.maven.plugin.assembly.stubs.AssemblyMavenProjectStub" />
-          <descriptorId>simple</descriptorId>
+          <descriptorSourceDirectory>${basedir}/src/test/resources/assemblies/descriptorSourceDirectory</descriptorSourceDirectory>
           <tarLongFileMode>warn</tarLongFileMode>
           <basedir>${basedir}</basedir>
-          <tempRoot>${basedir}/target/test-harness/assembly/classifier/archive-tmp</tempRoot>
-          <siteDirectory>${basedir}/target/test-harness/assembly/classifier/site</siteDirectory>
+          <tempRoot>${basedir}/target/test-harness/assembly/descriptorSourceDirectory/archive-tmp</tempRoot>
+          <siteDirectory>${basedir}/target/test-harness/assembly/descriptorSourceDirectory/site</siteDirectory>
           <includeSite>false</includeSite>
           <appendAssemblyId>false</appendAssemblyId>
         </configuration>

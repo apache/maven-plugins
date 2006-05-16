@@ -18,6 +18,7 @@ package org.apache.maven.plugin.assembly.stubs;
 
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.jar.JarArchiver;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +29,7 @@ import java.util.Map;
  * @author Edwin Punzalan
  */
 public class ArchiverStub
-    implements Archiver
+    extends JarArchiver
 {
     private Map files = new HashMap();
 
