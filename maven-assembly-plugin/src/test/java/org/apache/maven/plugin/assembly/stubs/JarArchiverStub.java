@@ -16,7 +16,6 @@ package org.apache.maven.plugin.assembly.stubs;
  * limitations under the License.
  */
 
-import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 
@@ -28,7 +27,7 @@ import java.util.Map;
 /**
  * @author Edwin Punzalan
  */
-public class ArchiverStub
+public class JarArchiverStub
     extends JarArchiver
 {
     private Map files = new HashMap();
