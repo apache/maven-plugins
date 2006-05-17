@@ -17,8 +17,6 @@ package org.apache.maven.plugin.clover.internal;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.clover.internal.DefaultLocator;
-import org.apache.maven.plugin.clover.internal.Locator;
 import org.apache.maven.project.MavenProject;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Taskdef;
@@ -33,6 +31,14 @@ public abstract class AbstractCloverMojo extends AbstractMojo
      * @required
      */
     private String cloverDatabase;
+
+    /**
+     * The location of the merged clover database to create when running a report in a multimodule build.
+     *
+     * @parameter expression="${project.build.directory}/clover/cloverMerge.db"
+     * @required
+     */
+    private String cloverMergeDatabase;
 
     /**
      * A Clover license file to be used by the plugin. If not specified, the Clover plugin uses a default evaluation
@@ -200,6 +206,25 @@ public abstract class AbstractCloverMojo extends AbstractMojo
         }
     }
 
+    /**
+     * Check if a Clover database exists (either a single module Clover database or an aggregated one).
+     * @return true if a Clover database exists.
+     */
+    protected boolean areCloverDatabasesAvailable()
+    {
+        boolean shouldRun = false;
+
+        File singleModuleCloverDatabase = new File( this.cloverDatabase );
+        File mergedCloverDatabase = new File ( this.cloverMergeDatabase );
+
+        if (singleModuleCloverDatabase.exists() || mergedCloverDatabase.exists() )
+        {
+            shouldRun = true;
+        }
+
+        return shouldRun;
+    }
+
     protected void setLicenseLocation(String licenseLocation)
     {
         this.licenseLocation = licenseLocation;
@@ -223,6 +248,11 @@ public abstract class AbstractCloverMojo extends AbstractMojo
     protected String getCloverDatabase()
     {
         return this.cloverDatabase;
+    }
+
+    protected String getCloverMergeDatabase()
+    {
+        return this.cloverMergeDatabase;
     }
 
     protected int getFlushInterval()
