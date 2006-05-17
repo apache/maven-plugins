@@ -18,6 +18,8 @@ package org.apache.maven.plugin.assembly.stubs;
 
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
+import org.codehaus.plexus.archiver.jar.Manifest;
+import org.codehaus.plexus.archiver.jar.ManifestException;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,6 +41,8 @@ public class JarArchiverStub
     private int dirMode = 0;
 
     private boolean includeEmptyDirs = false;
+
+    private Manifest manifest;
 
     public void createArchive()
         throws ArchiverException, IOException
@@ -139,6 +143,17 @@ public class JarArchiverStub
     public Map getFiles()
     {
         return files;
+    }
+
+    public void addConfiguredManifest( Manifest newManifest )
+        throws ManifestException
+    {
+        manifest = newManifest;
+    }
+
+    public Manifest getManifest()
+    {
+        return manifest;
     }
 
     public class ArchiverFile
