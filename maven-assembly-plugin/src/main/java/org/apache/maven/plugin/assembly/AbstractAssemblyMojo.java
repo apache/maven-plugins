@@ -1267,24 +1267,23 @@ public abstract class AbstractAssemblyMojo
     protected void processFileList( Archiver archiver, List fileList, boolean includeBaseDirecetory )
         throws MojoExecutionException, MojoFailureException
     {
-        String sourceFileItem = null;
-
         for ( Iterator i = fileList.iterator(); i.hasNext(); )
         {
             FileItem fileItem = (FileItem) i.next();
 
+            //ensure source file is in absolute path for reactor build to work
+            File source = new File ( fileItem.getSource() );
+            if ( ! source.isAbsolute() )
+            {
+                source =  new File( this.basedir, fileItem.getSource() );
+            }
+            
             if ( fileItem.isFiltered() )
             {
-                sourceFileItem = fileItem.getSource();
-
-                File filteredFile = filterFile( new File( sourceFileItem ) );
-
-                fileItem.setSource( filteredFile.getAbsolutePath() );
+                source = filterFile( source ).getAbsoluteFile();
             }
 
             String outputDirectory = fileItem.getOutputDirectory();
-
-            File source = new File( fileItem.getSource() );
 
             if ( outputDirectory == null )
             {
@@ -1339,13 +1338,6 @@ public abstract class AbstractAssemblyMojo
             catch ( ArchiverException e )
             {
                 throw new MojoExecutionException( "Error adding file to archive: " + e.getMessage(), e );
-            }
-
-            // @todo delete this part
-            // return to original source
-            if ( fileItem.isFiltered() )
-            {
-                fileItem.setSource( sourceFileItem );
             }
         }
     }
