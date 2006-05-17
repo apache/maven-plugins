@@ -663,7 +663,7 @@ public class AssemblyMojoTest
     {
         generateTestFileSets( "\r\n" );
 
-        AssemblyMojo mojo = executeMojo( "fileItem-output-name-plugin-config.xml" );
+        executeMojo( "fileItem-output-name-plugin-config.xml" );
 
         Map archiverFiles = ArchiverManagerStub.archiverStub.getFiles();
 
@@ -678,7 +678,7 @@ public class AssemblyMojoTest
         assertTrue( "Test if archived file exists", archivedFile.exists() );
 
         String contents = FileUtils.fileRead( archivedFile.getAbsolutePath() );
-
+        
         assertTrue( "Test if file filtering is disabled", contents.indexOf( "${project.artifactId}" ) >= 0 );
     }
 
@@ -1148,11 +1148,11 @@ public class AssemblyMojoTest
 
         File fileSetDir = new File( PlexusTestCase.getBasedir(), "target/test-classes/fileSet" );
         assertNotNull( "Test if FileSet is in the archive", archivedFiles.remove( fileSetDir ) );
-
-        File readme = new File( "target/test-classes/fileSet/README.txt" );
+        
+        File readme = new File( PlexusTestCase.getBasedir(), "target/test-classes/fileSet/README.txt" );
         assertNotNull( "Test if FileItem README.txt is in the archive", archivedFiles.remove( readme ) );
 
-        File license = new File( "target/test-classes/fileSet/LICENSE.txt" );
+        File license = new File( PlexusTestCase.getBasedir(), "target/test-classes/fileSet/LICENSE.txt" );
         assertNotNull( "Test if FileItem LICENSE.txt is in the archive", archivedFiles.remove( license ) );
 
         assertTrue( "Test there are no more files in the archive", archivedFiles.isEmpty() );
