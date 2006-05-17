@@ -19,7 +19,7 @@
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
-		  <descriptor>${basedir}/src/test/resources/assemblies/simple.xml</descriptor>
+		  <descriptor>${basedir}/src/test/resources/assemblies/fileSet.xml</descriptor>
 		  <basedir>${basedir}</basedir>
           <project implementation="org.apache.maven.plugin.assembly.stubs.AssemblyMavenProjectStub" />
 		  <executedProject implementation="org.apache.maven.plugin.assembly.stubs.AssemblyMavenProjectStub" />

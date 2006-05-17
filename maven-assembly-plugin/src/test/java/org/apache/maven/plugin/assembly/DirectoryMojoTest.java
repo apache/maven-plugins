@@ -53,6 +53,8 @@ public class DirectoryMojoTest
 
         assertNotNull( mojo );
 
+        AssemblyMojoTest.generateTestFileSets(getBasedir(), "\n");
+        
         mojo.execute();
 
         Map filesArchived = ArchiverManagerStub.archiverStub.getFiles();
