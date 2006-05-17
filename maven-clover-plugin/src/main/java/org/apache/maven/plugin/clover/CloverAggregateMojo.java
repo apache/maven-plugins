@@ -22,14 +22,6 @@ import com.cenqua.clover.CloverMerge;
 public class CloverAggregateMojo extends AbstractCloverMojo
 {
     /**
-     * The location of the merged clover database to create when running a report in a multimodule build.
-     *
-     * @parameter expression="${project.build.directory}/clover/cloverMerge.db"
-     * @required
-     */
-    private String cloverMergeDatabase;
-
-    /**
      * The projects in the reactor for aggregation report.
      *
      * @parameter expression="${reactorProjects}"
@@ -55,7 +47,7 @@ public class CloverAggregateMojo extends AbstractCloverMojo
             if ( getChildrenCloverDatabases().size() > 0 )
             {
                 // Ensure the merged database output directory exists
-                new File( this.cloverMergeDatabase ).getParentFile().mkdirs();
+                new File( getCloverMergeDatabase() ).getParentFile().mkdirs();
 
                 // Merge the databases
                 mergeCloverDatabases();
@@ -104,7 +96,7 @@ public class CloverAggregateMojo extends AbstractCloverMojo
         List parameters = new ArrayList();
 
         parameters.add( "-i" );
-        parameters.add( this.cloverMergeDatabase );
+        parameters.add( getCloverMergeDatabase() );
 
         if ( getLog().isDebugEnabled() )
         {
