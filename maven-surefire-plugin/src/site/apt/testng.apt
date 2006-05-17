@@ -1,16 +1,16 @@
  ------
- Using Test NG
+ Using TestNG
  ------
  Brett Porter <brett@apache.org>
  ------
  2 May 2006
  ------
 
-Using Test NG
+Using TestNG
 
-* Configuring Test NG
+* Configuring TestNG
 
-  To get started with Test NG, include the following dependency in your project:
+  To get started with TestNG, include the following dependency in your project:
 
 -----
 ...
@@ -24,11 +24,11 @@ Using Test NG
 ...
 -----
 
-  <<Note:>> if you are using JDK 1.4 Javadoc annotations for your Test NG tests, replace jdk15 with jdk14 above.
+  <<Note:>> if you are using JDK 1.4 Javadoc annotations for your TestNG tests, replace jdk15 with jdk14 above.
 
   This is the only step that is required to get started - you can now create tests in your test source directory
   (eg, <<<src/test/java>>>, and as long as they are named using the defaults such as *Test.java they will be run
-  by Surefire as Test NG tests.
+  by Surefire as TestNG tests.
 
   If you'd like to use a different naming scheme, you can change the <<<includes>>> parameter, as discussed in the
   {{{howto.html} How to Use}} page.
@@ -56,7 +56,7 @@ Using Test NG
 
 * Using Groups
 
-  Test NG allows you to group your tests. You can then execute a specific group or groups. To do this with Surefire,
+  TestNG allows you to group your tests. You can then execute a specific group or groups. To do this with Surefire,
   use the <<<groups>>> parameter, for example:
 
 -----
@@ -75,7 +75,7 @@ Using Test NG
 
 * Running tests in parallel
 
-  Test NG allows you to run your tests in parallel, including JUnit tests. To do this, you must enable the
+  TestNG allows you to run your tests in parallel, including JUnit tests. To do this, you must enable the
   <<<parallel>>> parameter, and may change the <<<threadCount>>> parameter if the default of 5 is not sufficient.
   For example:
 
@@ -95,6 +95,6 @@ Using Test NG
   This is particularly useful for slow tests that can have high concurrency, or to quickly and roughly assess the independance
   and thread safety of your tests and code.
 
-  For more information on Test NG, see the project {{{http://www.testng.org} web site}}.
+  For more information on TestNG, see the project {{{http://www.testng.org} web site}}.
 
 

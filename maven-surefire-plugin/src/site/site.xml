@@ -35,7 +35,7 @@
     <menu name="Overview">
       <item name="Introduction" href="introduction.html"/>
       <item name="How to Use" href="howto.html"/>
-      <item name="Using Test NG" href="testng.html"/>
+      <item name="Using TestNG" href="testng.html"/>
     </menu>
     ${reports}
   </body>
