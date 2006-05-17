@@ -40,6 +40,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Map;
 
 /**
  * Installs the artifact in the remote repository.
@@ -94,22 +95,18 @@ public class DeployFileMojo
      * @required
      */
     private String repositoryId;
-    
+
     /**
      * The type of remote repository layout to deploy to. Try <i>legacy</i> for a Maven 1.x-style repository layout.
      * @parameter expression="${repositoryLayout}" default-value="default"
      * @required
      */
     private String repositoryLayout;
-    
+
     /**
-     * Current session, for looking up repository layout instances, etc.
-     * 
-     * @parameter default-value="${session}"
-     * @required
-     * @readonly
+     * @component role="org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout"
      */
-    private MavenSession session;
+    private Map repositoryLayouts;
 
     /**
      * URL where the artifact will be deployed. <br/>
@@ -124,19 +121,11 @@ public class DeployFileMojo
      * @component
      */
     private ArtifactFactory artifactFactory;
-    
+
     /**
      * @component
      */
     private ArtifactRepositoryFactory repositoryFactory;
-    
-    /**
-     * This is a concession to keep the unit tests running.
-     * @todo REMOVE!
-     * 
-     * @component
-     */
-    private ArtifactRepositoryLayout defaultLayout;
 
     /**
      * @parameter expression="${pomFile}"
@@ -165,7 +154,6 @@ public class DeployFileMojo
      * @parameter expression="${uniqueVersion}" default-value="true"
      */
     private boolean uniqueVersion;
-
 
     protected void initProperties()
         throws MojoExecutionException
@@ -196,26 +184,10 @@ public class DeployFileMojo
         {
             throw new MojoExecutionException( file.getPath() + " not found." );
         }
-        
+
         ArtifactRepositoryLayout layout;
-        
-        // FIXME: We shouldn't have to do this, since the session is @required, but the testing harness cannot populate it...
-        if ( session != null )
-        {
-            try
-            {
-                System.out.println( "Session is: " + session );
-                layout = (ArtifactRepositoryLayout) session.lookup( ArtifactRepositoryLayout.ROLE, repositoryLayout );
-            }
-            catch ( ComponentLookupException e )
-            {
-                throw new MojoExecutionException( "Failed to lookup repository layout: \'" + repositoryLayout + "\'. Perhaps you meant 'default' or 'legacy'? Error: " + e.getMessage(), e );
-            }
-        }
-        else
-        {
-            layout = defaultLayout;
-        }
+
+        layout = ( ArtifactRepositoryLayout ) repositoryLayouts.get( repositoryLayout );
 
         ArtifactRepository deploymentRepository =
             repositoryFactory.createDeploymentArtifactRepository( repositoryId, url, layout, uniqueVersion );

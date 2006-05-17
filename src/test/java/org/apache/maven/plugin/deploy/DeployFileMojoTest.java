@@ -249,6 +249,62 @@ public class DeployFileMojoTest
         assertTrue( file.exists() );
     }
 
+    public void testDeployIfRepositoryLayoutIsLegacy()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(), "target/test-classes/unit/deploy-file-legacy-repository-layout/plugin-config.xml" );
+
+        DeployFileMojo mojo = (DeployFileMojo) lookupMojo( "deploy-file", testPom );
+
+        assertNotNull( mojo );
+
+        String repositoryLayout = (String) getVariableValueFromObject(  mojo, "repositoryLayout" );
+
+        String groupId = (String) getVariableValueFromObject( mojo, "groupId" );
+
+        String artifactId = (String) getVariableValueFromObject( mojo, "artifactId" );
+
+        String version = (String) getVariableValueFromObject( mojo, "version" );
+
+        assertEquals( "legacy", repositoryLayout );
+
+        mojo.execute();
+
+        File artifactFile = new File( remoteRepo, "deploy-file-legacy-repository-layout/" + groupId + "/jars/" + artifactId + "-" + version + ".jar" );
+
+        assertTrue( artifactFile.exists() );
+
+        //check the remote-repo
+        expectedFiles = new ArrayList();
+        fileList = new ArrayList();
+
+        File repo = new File( remoteRepo, "deploy-file-legacy-repository-layout" );
+
+        File[] files = repo.listFiles();
+
+        for ( int i = 0; i < files.length; i++ )
+        {
+            addFileToList( files[i], fileList );
+        }
+
+        expectedFiles.add( "org.apache.maven.test" );
+        expectedFiles.add( "jars" );
+        expectedFiles.add( "maven-deploy-file-test-1.0.jar" );
+        expectedFiles.add( "maven-deploy-file-test-1.0.jar.md5" );
+        expectedFiles.add( "maven-deploy-file-test-1.0.jar.sha1" );
+        expectedFiles.add( "poms" );
+        expectedFiles.add( "maven-deploy-file-test-1.0.pom" );
+        expectedFiles.add( "maven-deploy-file-test-1.0.pom.md5" );
+        expectedFiles.add( "maven-deploy-file-test-1.0.pom.sha1" );
+        expectedFiles.add( "maven-metadata.xml" );
+        expectedFiles.add( "maven-metadata.xml.md5" );
+        expectedFiles.add( "maven-metadata.xml.sha1" );
+
+        assertEquals( expectedFiles.size(), fileList.size() );
+
+        assertEquals( 0, getSizeOfExpectedFiles( fileList, expectedFiles ) );
+    }
+
     private void addFileToList( File file, List fileList )
     {
         if ( !file.isDirectory() )
