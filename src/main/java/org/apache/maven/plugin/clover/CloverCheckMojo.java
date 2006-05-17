@@ -49,28 +49,41 @@ public class CloverCheckMojo extends AbstractCloverMojo
     {
         if ( !isInCloverForkedLifecycle() )
         {
-            super.execute();
-
-            AbstractCloverMojo.waitForFlush( getWaitForFlush(), getFlushInterval() );
-
-            Project antProject = registerCloverAntTasks();
-
-            getLog().info( "Checking for coverage of " + targetPercentage);
-
-            CloverPassTask cloverPassTask = (CloverPassTask) antProject.createTask( "clover-check" );
-            cloverPassTask.setInitString( getCloverDatabase() );
-            cloverPassTask.setHaltOnFailure( true );
-            cloverPassTask.setTarget( new Percentage( this.targetPercentage ) );
-            cloverPassTask.setFailureProperty( "clovercheckproperty" );
-            try
+            if ( areCloverDatabasesAvailable() )
             {
-                cloverPassTask.execute();
+                super.execute();
+
+                AbstractCloverMojo.waitForFlush( getWaitForFlush(), getFlushInterval() );
+
+                check();
             }
-            catch ( BuildException e )
+            else
             {
-                getLog().error( antProject.getProperty( "clovercheckproperty" ) );
-                throw new MojoExecutionException( e.getMessage(), e );
+                getLog().info("No Clover database found, skipping test coverage verification");
             }
+        }
+    }
+
+    private void check() throws MojoExecutionException
+    {
+        Project antProject = registerCloverAntTasks();
+
+        getLog().info( "Checking for coverage of " + targetPercentage);
+
+        CloverPassTask cloverPassTask = (CloverPassTask) antProject.createTask( "clover-check" );
+        cloverPassTask.setInitString( getCloverDatabase() );
+        cloverPassTask.setHaltOnFailure( true );
+        cloverPassTask.setTarget( new Percentage( this.targetPercentage ) );
+        cloverPassTask.setFailureProperty( "clovercheckproperty" );
+
+        try
+        {
+            cloverPassTask.execute();
+        }
+        catch ( BuildException e )
+        {
+            getLog().error( antProject.getProperty( "clovercheckproperty" ) );
+            throw new MojoExecutionException( e.getMessage(), e );
         }
     }
 

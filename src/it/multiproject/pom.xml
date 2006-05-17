@@ -29,9 +29,19 @@
         <configuration>
           <flushPolicy>threaded</flushPolicy>
           <flushInterval>100</flushInterval>
+          <targetPercentage>1%</targetPercentage>
         </configuration>
         <executions>
           <execution>
+            <id>main</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>instrument</goal>
+              <goal>check</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>site</id>
             <phase>pre-site</phase>
             <goals>
               <goal>instrument</goal>
