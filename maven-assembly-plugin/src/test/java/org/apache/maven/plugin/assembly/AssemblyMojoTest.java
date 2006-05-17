@@ -1316,7 +1316,16 @@ public class AssemblyMojoTest
     private void generateTestFileSets( String lineEnding )
         throws Exception
     {
+        generateTestFileSets( basedir, lineEnding );
+    }
+    
+    static void generateTestFileSets( String basedir, String lineEnding )
+        throws Exception
+    {
         String fileSetDir = basedir + "/target/test-classes/fileSet";
+     
+        /* ensure that we start with a fresh dir, else we get all manner of dross from other tests */
+        FileUtils.deleteDirectory(fileSetDir);
 
         FileUtils.mkdir( fileSetDir + "/configs" );
 
