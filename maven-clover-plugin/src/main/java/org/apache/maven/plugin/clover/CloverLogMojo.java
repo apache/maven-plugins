@@ -20,6 +20,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.clover.internal.AbstractCloverMojo;
 import org.apache.tools.ant.Project;
 
+import java.io.File;
+
 /**
  * Provides information on the current Clover database.
  *
@@ -35,12 +37,46 @@ public class CloverLogMojo
     public void execute()
         throws MojoExecutionException
     {
-        super.execute();
+        if ( areCloverDatabasesAvailable() )
+        {
+            super.execute();
 
+            AbstractCloverMojo.waitForFlush( getWaitForFlush(), getFlushInterval() );
+
+            log();
+        }
+        else
+        {
+            getLog().info("No Clover database found, skipping Clover database logging");
+        }
+    }
+
+    /**
+     * Log information for both the main Clover database and the merged Clover database when they exist.
+     */
+    private void log()
+    {
+        if ( new File( getCloverDatabase() ).exists() )
+        {
+            logDatabase( getCloverDatabase() );
+        }
+        if ( new File( getCloverMergeDatabase() ).exists() )
+        {
+            logDatabase( getCloverMergeDatabase() );
+        }
+    }
+
+    /**
+     * Log information from a Clover database.
+     *
+     * @param database the Clover database to log
+     */
+    private void logDatabase(String database)
+    {
         Project antProject = registerCloverAntTasks();
 
         CloverLogTask cloverLogTask = (CloverLogTask) antProject.createTask( "clover-log" );
-        cloverLogTask.setInitString( getCloverDatabase() );
+        cloverLogTask.setInitString( database );
         cloverLogTask.setOutputProperty( "cloverlogproperty" );
         cloverLogTask.execute();
 
