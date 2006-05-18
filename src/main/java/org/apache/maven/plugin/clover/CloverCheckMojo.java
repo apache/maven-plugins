@@ -25,7 +25,7 @@ import org.apache.tools.ant.Project;
 import java.io.File;
 
 /**
- * Verify test percentage coverage from an existing Clover database and fail the build if it is below the defined
+ * Verify Test Percentage Coverage (TPC) from an existing Clover database and fail the build if it is below the defined
  * threshold. The check is done on main Clover databases and also on merged Clover databases when they exist.
  *
  * @goal check
@@ -45,6 +45,7 @@ public class CloverCheckMojo extends AbstractCloverMojo
     /**
      * {@inheritDoc}
      * @see org.apache.maven.plugin.clover.internal.AbstractCloverMojo#execute()
+     * @throws MojoExecutionException when the TPC is below the threshold
      */
     public void execute()
         throws MojoExecutionException
@@ -66,6 +67,10 @@ public class CloverCheckMojo extends AbstractCloverMojo
         }
     }
 
+    /**
+     * Check both the main Clover database and the merged Clover database when they exist.
+     * @throws MojoExecutionException when the TPC is below the threshold
+     */
     private void check() throws MojoExecutionException
     {
         if ( new File( getCloverDatabase() ).exists() )
@@ -78,6 +83,12 @@ public class CloverCheckMojo extends AbstractCloverMojo
         }
     }
 
+    /**
+     * Check a Clover database and fail the build if the TPC is below the threshold.
+     *
+     * @param database the Clover database to verify
+     * @throws MojoExecutionException when the TPC is below the threshold
+     */
     private void checkDatabase(String database) throws MojoExecutionException
     {
         Project antProject = registerCloverAntTasks();
@@ -102,6 +113,10 @@ public class CloverCheckMojo extends AbstractCloverMojo
 
     }
 
+    /**
+     * @return true if the build is currently inside the custom build lifecycle forked by the
+     *         <code>clover:instrument</code> MOJO.
+     */
     private boolean isInCloverForkedLifecycle()
     {
         // We know we're in the forked lifecycle if the output directory is set to target/clover...
