@@ -18,6 +18,8 @@ package org.apache.maven.plugin.assembly;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.assembly.stubs.ArchiverManagerStub;
 import org.apache.maven.plugin.assembly.stubs.JarArchiverStub;
 import org.apache.maven.plugin.assembly.stubs.ReactorMavenProjectStub;
@@ -28,6 +30,7 @@ import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.archiver.jar.Manifest;
 import org.codehaus.plexus.archiver.tar.TarArchiver;
 import org.codehaus.plexus.archiver.tar.TarLongFileMode;
+import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
@@ -678,7 +681,7 @@ public class AssemblyMojoTest
         assertTrue( "Test if archived file exists", archivedFile.exists() );
 
         String contents = FileUtils.fileRead( archivedFile.getAbsolutePath() );
-        
+
         assertTrue( "Test if file filtering is disabled", contents.indexOf( "${project.artifactId}" ) >= 0 );
     }
 
@@ -700,6 +703,34 @@ public class AssemblyMojoTest
         String contents = FileUtils.fileRead( archivedFile.getAbsolutePath() );
 
         assertTrue( "Test if file filtering is enabled", contents.indexOf( "${project.artifactId}" ) < 0 );
+    }
+
+    public void testFileItemFilteringWithFilterFile()
+        throws Exception
+    {
+        generateTestFileSets( "\n" );
+
+        File filterFile = new File( basedir, "target/test-classes/fileSet/filterFile.properties" );
+
+        String fileContents = "sentence=This sentence came from a filter file.";
+
+        FileUtils.fileWrite( filterFile.getAbsolutePath(), fileContents );
+
+        executeMojo( "fileItem-filter-file-plugin-config.xml" );
+
+        Map archiverFiles = ArchiverManagerStub.archiverStub.getFiles();
+
+        assertEquals( "Test archive files", 1, archiverFiles.size() );
+
+        File archivedFile = (File) archiverFiles.keySet().iterator().next();
+
+        assertTrue( "Test if archived file exists", archivedFile.exists() );
+
+        String contents = FileUtils.fileRead( archivedFile.getAbsolutePath() );
+
+        assertTrue( "Test if file filtering for ${project} is enabled", contents.indexOf( "${project.artifactId}" ) < 0 );
+
+        assertTrue( "Test if file filtering for ${sentence} is enabled", contents.indexOf( "${sentence}" ) < 0 );
     }
 
     public void testFileItemLineEndings()
@@ -1148,7 +1179,7 @@ public class AssemblyMojoTest
 
         File fileSetDir = new File( PlexusTestCase.getBasedir(), "target/test-classes/fileSet" );
         assertNotNull( "Test if FileSet is in the archive", archivedFiles.remove( fileSetDir ) );
-        
+
         File readme = new File( PlexusTestCase.getBasedir(), "target/test-classes/fileSet/README.txt" );
         assertNotNull( "Test if FileItem README.txt is in the archive", archivedFiles.remove( readme ) );
 
@@ -1275,6 +1306,111 @@ public class AssemblyMojoTest
         manifest.write( new PrintWriter( System.out ) );
     }
 
+    public void testManifestFileNotFoundException()
+        throws Exception
+    {
+        try
+        {
+            executeMojo( "manifestFile-FileNotFoundException-plugin-config.xml" );
+
+            fail( "Expected exception not thrown" );
+        }
+        catch ( MojoFailureException e )
+        {
+            assertTrue( "Test for expected exception", e.getMessage().startsWith( "Manifest not found: " ) );
+        }
+    }
+
+    public void testNoSuchArchiverException()
+        throws Exception
+    {
+        try
+        {
+            executeMojo( "NoSuchArchiverException-plugin-config.xml" );
+
+            fail( "Expected exception not thrown" );
+        }
+        catch ( MojoFailureException e )
+        {
+            assertTrue( "Test for expected exception", e.getMessage().startsWith( "Unable to obtain archiver for extension" ) );
+        }
+    }
+
+    public void testArchiverExceptionOnAddDirectoryMethod()
+        throws Exception
+    {
+        generateTestFileSets( "\n" );
+
+        AssemblyMojo mojo = getMojo( "fileSet-plugin-config.xml" );
+
+        ArchiverManagerStub.archiverStub = new JarArchiverStub()
+        {
+            public void addDirectory( File file, String string, String[] includes, String[] excludes )
+                throws ArchiverException
+            {
+                throw new ArchiverException( "Intentional exception" );
+            }
+        };
+
+        try
+        {
+            mojo.execute();
+
+            fail( "Expected exception not thrown" );
+        }
+        catch ( MojoExecutionException e )
+        {
+            assertTrue( "Test thrown exception", e.getMessage().startsWith( "Error adding directory to archive: ") );
+        }
+    }
+
+    public void testArchiverExceptionInModuleSet()
+        throws Exception
+    {
+        AssemblyMojo mojo = getMojo( "moduleSet-plugin-config.xml" );
+
+        MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "executedProject" );
+
+        List reactorProjectsList = (List) getVariableValueFromObject( mojo, "reactorProjects" );
+
+        for ( Iterator reactorProjects = reactorProjectsList.iterator(); reactorProjects.hasNext(); )
+        {
+            MavenProject reactorProject = (MavenProject) reactorProjects.next();
+
+            reactorProject.setParent( project );
+        }
+
+        ArchiverManagerStub.archiverStub = new JarArchiverStub()
+        {
+            public void addDirectory( File file, String string, String[] includes, String[] excludes )
+                throws ArchiverException
+            {
+                throw new ArchiverException( "Intentional exception" );
+            }
+        };
+
+        try
+        {
+            mojo.execute();
+
+            fail( "Expected exception not thrown" );
+        }
+        catch ( MojoExecutionException e )
+        {
+            assertTrue( "Test thrown exception", e.getMessage().startsWith( "Error adding directory to archive: ") );
+        }
+    }
+
+    public void testAttachedMojo()
+        throws Exception
+    {
+        Mojo mojo = lookupMojo( "attached", basedir + "/src/test/plugin-configs/attached/min-plugin-config.xml" );
+
+        mojo.execute();
+
+        assertTrue( "Test an archive was created", ArchiverManagerStub.archiverStub.getDestFile().exists() );
+    }
+
     private AssemblyMojo getMojo( String pluginXml )
         throws Exception
     {
@@ -1318,12 +1454,12 @@ public class AssemblyMojoTest
     {
         generateTestFileSets( basedir, lineEnding );
     }
-    
+
     static void generateTestFileSets( String basedir, String lineEnding )
         throws Exception
     {
         String fileSetDir = basedir + "/target/test-classes/fileSet";
-     
+
         /* ensure that we start with a fresh dir, else we get all manner of dross from other tests */
         FileUtils.deleteDirectory(fileSetDir);
 
@@ -1345,7 +1481,7 @@ public class AssemblyMojoTest
             "limitations under the License.";
         FileUtils.fileWrite( fileSetDir + "/LICENSE.txt", fileContents );
 
-        fileContents = "Readme file with only one line for ${project.artifactId}.";
+        fileContents = "Readme file with only one line for ${project.artifactId}. ${sentence}";
         FileUtils.fileWrite( fileSetDir + "/README.txt", fileContents );
 
         fileContents = "sample configuration file line 1" + lineEnding + "sample configuration file line 2" +

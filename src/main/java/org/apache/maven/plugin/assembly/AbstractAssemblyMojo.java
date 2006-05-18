@@ -1619,6 +1619,7 @@ public abstract class AbstractAssemblyMojo
         assembly.addFileSet( siteFileSet );
     }
 
+    //@todo should only run once or know when it has already initialized
     private void initializeFiltering()
         throws MojoExecutionException
     {
