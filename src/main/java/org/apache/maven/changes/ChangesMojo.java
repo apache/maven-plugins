@@ -79,37 +79,25 @@ public class ChangesMojo
      */
     private String url;
 
+	public boolean canGenerateReport() 
+	{
+        File xmlFile = new File( xmlPath );
+        return xmlFile.exists();
+	}
+
     public void executeReport( Locale locale )
         throws MavenReportException
     {
+		ChangesReportGenerator report = new ChangesReportGenerator( xmlPath );
 
-        File xmlFile = new File( xmlPath );
+		if ( ( url == null ) || ( url.trim().equals( "" ) ) )
+		{
+			getLog().warn( getBundle( locale ).getString( "report.changes.warn.url" ) );
+		}
 
-        if ( !xmlFile.exists() )
-        {
-            getLog().error( getBundle( locale ).getString( "report.changes.error" ) );
-
-            ChangesReportGenerator report = new ChangesReportGenerator();
-
-            report.doGenerateEmptyReport( getBundle( locale ), getSink(), getBundle( locale )
-                .getString( "report.changes.error" ) );
-        }
-        else
-        {
-            ChangesReportGenerator report = new ChangesReportGenerator( xmlPath );
-
-            if ( ( url == null ) || ( url.trim().equals( "" ) ) )
-            {
-                getLog().warn( getBundle( locale ).getString( "report.changes.warn.url" ) );
-            }
-
-            report.setIssueLink( link_template );
-
-            report.setUrl( url );
-
-            report.doGenerateReport( getBundle( locale ), getSink() );
-        }
-
+		report.setIssueLink( link_template );
+		report.setUrl( url );
+		report.doGenerateReport( getBundle( locale ), getSink() );
     }
 
     public String getName( Locale locale )
