@@ -168,6 +168,8 @@ Checking test coverage
 
   You can also invoke <<<mvn clover:check>>> directly on the command line.
 
+  Note: The <<<clover:check>>> goal will also check the test percentage coverage for merged databases if any is found.
+
 Using Clover with JDK 1.4 and JDK 1.5 keywords
 
   If your code is using JDK 1.4 or JDK 1.5 specific keywords, you'll need to configure the Clover
