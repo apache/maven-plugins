@@ -29,7 +29,7 @@
         <configuration>
           <flushPolicy>threaded</flushPolicy>
           <flushInterval>100</flushInterval>
-          <targetPercentage>1%</targetPercentage>
+          <targetPercentage>25%</targetPercentage>
         </configuration>
         <executions>
           <execution>
@@ -37,6 +37,7 @@
             <phase>verify</phase>
             <goals>
               <goal>instrument</goal>
+              <goal>aggregate</goal>
               <goal>check</goal>
             </goals>
           </execution>

@@ -22,9 +22,11 @@ import org.apache.maven.plugin.clover.internal.AbstractCloverMojo;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
+import java.io.File;
+
 /**
  * Verify test percentage coverage from an existing Clover database and fail the build if it is below the defined
- * threshold.
+ * threshold. The check is done on main Clover databases and also on merged Clover databases when they exist.
  *
  * @goal check
  * @phase verify
@@ -66,12 +68,24 @@ public class CloverCheckMojo extends AbstractCloverMojo
 
     private void check() throws MojoExecutionException
     {
+        if ( new File( getCloverDatabase() ).exists() )
+        {
+            checkDatabase( getCloverDatabase() );
+        }
+        if ( new File( getCloverMergeDatabase() ).exists() )
+        {
+            checkDatabase( getCloverMergeDatabase() );
+        }
+    }
+
+    private void checkDatabase(String database) throws MojoExecutionException
+    {
         Project antProject = registerCloverAntTasks();
 
-        getLog().info( "Checking for coverage of " + targetPercentage);
+        getLog().info( "Checking for coverage of [" + targetPercentage + "] for database [" + database + "]");
 
         CloverPassTask cloverPassTask = (CloverPassTask) antProject.createTask( "clover-check" );
-        cloverPassTask.setInitString( getCloverDatabase() );
+        cloverPassTask.setInitString( database );
         cloverPassTask.setHaltOnFailure( true );
         cloverPassTask.setTarget( new Percentage( this.targetPercentage ) );
         cloverPassTask.setFailureProperty( "clovercheckproperty" );
@@ -85,6 +99,7 @@ public class CloverCheckMojo extends AbstractCloverMojo
             getLog().error( antProject.getProperty( "clovercheckproperty" ) );
             throw new MojoExecutionException( e.getMessage(), e );
         }
+
     }
 
     private boolean isInCloverForkedLifecycle()
