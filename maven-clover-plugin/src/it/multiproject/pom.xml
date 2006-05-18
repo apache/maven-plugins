@@ -39,6 +39,7 @@
               <goal>instrument</goal>
               <goal>aggregate</goal>
               <goal>check</goal>
+              <goal>log</goal>
             </goals>
           </execution>
           <execution>
