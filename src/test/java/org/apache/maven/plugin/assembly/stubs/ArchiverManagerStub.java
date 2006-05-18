@@ -57,9 +57,14 @@ public class ArchiverManagerStub
             {
                 archiverStub = new WarArchiverStub();
             }
-            else
+            else if ( "zip".equals( string ) ||
+                      "jar".equals( string ) )
             {
                 archiverStub = new JarArchiverStub();
+            }
+            else
+            {
+                throw new NoSuchArchiverException( string );
             }
         }
 
