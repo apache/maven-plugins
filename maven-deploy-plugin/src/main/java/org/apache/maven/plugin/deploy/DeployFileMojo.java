@@ -23,14 +23,12 @@ import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
-import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
@@ -79,6 +77,13 @@ public class DeployFileMojo
      * @parameter expression="${packaging}"
      */
     private String packaging;
+
+    /**
+     * Description passed to a generated POM file (in case of generatePom=true)
+     *
+     * @parameter expression="${generatePom.description}"
+     */
+    private String description = "POM was created from deploy:deploy-file";
 
     /**
      * File to be deployed.
@@ -315,7 +320,7 @@ public class DeployFileMojo
             model.setArtifactId( artifactId );
             model.setVersion( version );
             model.setPackaging( packaging );
-            model.setDescription( "POM was created from deploy:deploy-file" );
+            model.setDescription( description );
 
             fw = new FileWriter( tempFile );
             new MavenXpp3Writer().write( fw, model );
