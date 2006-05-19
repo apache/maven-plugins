@@ -1411,6 +1411,43 @@ public class AssemblyMojoTest
         assertTrue( "Test an archive was created", ArchiverManagerStub.archiverStub.getDestFile().exists() );
     }
 
+    public void testAttachedMojoDependencySet()
+        throws Exception
+    {
+        Mojo mojo = lookupMojo( "attached", basedir + "/src/test/plugin-configs/attached/depSet-plugin-config.xml" );
+
+        mojo.execute();
+
+        MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+        Set artifactSet = project.getArtifacts();
+
+        Map archiveMap = ArchiverManagerStub.archiverStub.getFiles();
+        Collection archivedFiles = archiveMap.keySet();
+
+        assertEquals( "Test number of files in archive", artifactSet.size() + 1, archivedFiles.size() );
+
+        for ( Iterator artifacts = artifactSet.iterator(); artifacts.hasNext(); )
+        {
+            Artifact expected = (Artifact) artifacts.next();
+
+            assertTrue( "Test expected dependency artifacts in archive", archivedFiles.contains( expected.getFile() ) );
+            assertTrue( "Test expected dependency is not unpacked", expected.getFile().getName().endsWith( ".jar" ) );
+
+            JarArchiverStub.ArchiverFile archiveFile =
+                (JarArchiverStub.ArchiverFile) archiveMap.get( expected.getFile() );
+            String archivePath = archiveFile.getOutputName();
+            assertTrue( "Test includeBaseDirectory", archivePath.startsWith( "assembly/" ) );
+        }
+
+        assertTrue( "Test project is in archive", archivedFiles.contains( project.getArtifact().getFile() ) );
+        assertTrue( "Test project is not unpacked", project.getArtifact().getFile().getName().endsWith( ".jar" ) );
+
+        JarArchiverStub.ArchiverFile archiveFile =
+            (JarArchiverStub.ArchiverFile) archiveMap.get( project.getArtifact().getFile() );
+        String archivePath = archiveFile.getOutputName();
+        assertTrue( "Test includeBaseDirectory", archivePath.startsWith( "assembly/" ) );
+    }
+
     private AssemblyMojo getMojo( String pluginXml )
         throws Exception
     {
