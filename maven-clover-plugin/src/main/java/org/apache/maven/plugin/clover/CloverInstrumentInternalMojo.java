@@ -282,23 +282,32 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
         return resolvedArtifacts;
     }
 
-    private void addCloverDependencyToCompileClasspath()
-        throws MojoExecutionException
+    protected Artifact findCloverArtifact(List pluginArtifacts)
     {
         Artifact cloverArtifact = null;
-        Iterator artifacts = this.pluginArtifacts.iterator();
+        Iterator artifacts = pluginArtifacts.iterator();
         while ( artifacts.hasNext() && cloverArtifact == null )
         {
             Artifact artifact = (Artifact) artifacts.next();
-            if ( "clover".equalsIgnoreCase( artifact.getArtifactId() ) )
+
+            // We identify the clover JAR by checking the groupId and artifactId.
+            if ( "com.cenqua.clover".equals( artifact.getGroupId() )
+                && "clover".equals( artifact.getArtifactId() ) )
             {
                 cloverArtifact = artifact;
             }
         }
+        return cloverArtifact;
+    }
 
+    private void addCloverDependencyToCompileClasspath()
+        throws MojoExecutionException
+    {
+        Artifact cloverArtifact = findCloverArtifact(this.pluginArtifacts);
         if ( cloverArtifact == null )
         {
-            throw new MojoExecutionException( "Couldn't find 'clover' artifact in plugin dependencies" );
+            throw new MojoExecutionException(
+                "Couldn't find [com.cenqua.cover:clover] artifact in plugin dependencies" );
         }
 
         cloverArtifact = artifactFactory.createArtifact( cloverArtifact.getGroupId(), cloverArtifact.getArtifactId(),
