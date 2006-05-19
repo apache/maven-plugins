@@ -2,8 +2,8 @@ package org.apache.maven.plugin.assembly;
 
 import org.apache.maven.plugin.assembly.stubs.ArchiverManagerStub;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.artifact.Artifact;
 
 import java.io.File;
 import java.util.Map;
@@ -46,5 +46,36 @@ extends AbstractMojoTestCase
         Set files = filesArchived.keySet();
 
         assertEquals( 1, files.size() );
+    }
+
+    public void testDependencySet()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(),
+                                 "src/test/plugin-configs/directory-inline/dependency-set-plugin-config.xml" );
+
+        DirectoryInlineMojo mojo = ( DirectoryInlineMojo ) lookupMojo( "directory-inline", testPom );
+
+        assertNotNull( mojo );
+
+        MavenProject project = ( MavenProject ) getVariableValueFromObject( mojo, "project" );
+
+        Set artifacts = project.getArtifacts();
+
+        mojo.execute();
+
+        Map filesArchived = ArchiverManagerStub.archiverStub.getFiles();
+
+        Set files = filesArchived.keySet();
+
+        for( Iterator iter = artifacts.iterator(); iter.hasNext(); )
+        {
+            Artifact artifact = ( Artifact ) iter.next();
+
+            assertTrue( files.contains( artifact.getFile() ) );
+            assertTrue( artifact.getFile().getName().endsWith( ".jar" ) );
+        }
+
+        assertTrue( "Test project is in archive", files.contains( project.getArtifact().getFile() ) );
     }
 }
