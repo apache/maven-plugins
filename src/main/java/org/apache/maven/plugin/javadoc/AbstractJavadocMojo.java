@@ -1456,6 +1456,7 @@ public abstract class AbstractJavadocMojo
             {
                 // handle wildcards (*) in the excludePackageNames
                 String[] excludeName = excludePackages[k].split( "[*]" );
+
                 if ( excludeName.length > 1 )
                 {
                     int u = 0;
@@ -1472,7 +1473,24 @@ public abstract class AbstractJavadocMojo
                 {
                     if ( fileList[j].startsWith( sourceDirectory + File.separatorChar + excludeName[0] ) )
                     {
-                        include = false;
+                        if ( excludeName[0].endsWith( String.valueOf( File.separatorChar ) ) )
+                        {
+                            int i = fileList[j].lastIndexOf( File.separatorChar );
+                            String packageName = fileList[j].substring( 0, i + 1 );
+                            if ( packageName.equals( sourceDirectory + File.separatorChar + excludeName[0] ) &&
+                                fileList[j].substring( i ).indexOf( ".java" ) != -1 )
+                            {
+                                include = true;
+                            }
+                            else
+                            {
+                                include = false;
+                            }
+                        }
+                        else
+                        {
+                            include = false;
+                        }
                     }
                 }
             }
