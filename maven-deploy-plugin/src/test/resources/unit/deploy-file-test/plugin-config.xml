@@ -11,9 +11,10 @@
 		  <file>${basedir}/src/test/resources/unit/deploy-file-test/target/deploy-test-file-1.0-SNAPSHOT.jar</file>
 		  <repositoryId>deploy-test</repositoryId>
 		  <url>file://${basedir}/target/remote-repo/deploy-file-test</url>
+		  <description>POM was created from deploy:deploy-file</description>
 		  <uniqueVersion>true</uniqueVersion>
 		  <localRepository>${localRepository}</localRepository>
-          <repositoryLayout>default</repositoryLayout>
+		  <repositoryLayout>default</repositoryLayout>
 		</configuration>
       </plugin>
     </plugins>
