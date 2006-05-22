@@ -112,11 +112,17 @@ public class JavadocReport
         return "apidocs/index";
     }
 
+    /**
+     * @see org.apache.maven.reporting.MavenReport#isExternalReport()
+     */
     public boolean isExternalReport()
     {
         return true;
     }
 
+    /**
+     * @see org.apache.maven.reporting.MavenReport#canGenerateReport()
+     */
     public boolean canGenerateReport()
     {
         boolean canGenerate;
@@ -135,11 +141,17 @@ public class JavadocReport
         return canGenerate;
     }
     
+    /**
+     * @see org.apache.maven.reporting.MavenReport#getCategoryName()
+     */
     public String getCategoryName()
     {
         return CATEGORY_PROJECT_REPORTS;
     }
 
+    /**
+     * @see org.apache.maven.reporting.MavenReport#getReportOutputDirectory()
+     */
     public File getReportOutputDirectory()
     {
         if ( reportOutputDirectory == null )
@@ -149,11 +161,19 @@ public class JavadocReport
         return reportOutputDirectory;
     }
 
+    /**
+     * Method to set the directory where the generated reports will be put
+     *
+     * @param reportOutputDirectory the directory file to be set
+     */
     public void setReportOutputDirectory( File reportOutputDirectory )
     {
         this.reportOutputDirectory = reportOutputDirectory;
     }
 
+    /**
+     * @see org.apache.maven.reporting.AbstractMavenReport#execute()
+     */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {

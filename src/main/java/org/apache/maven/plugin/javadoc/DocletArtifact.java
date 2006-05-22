@@ -16,6 +16,9 @@ package org.apache.maven.plugin.javadoc;
  * limitations under the License.
  */
 
+/**
+ * This class represents the doclet artifact parameter specified in the plugin configuration.
+ */
 public class DocletArtifact
 {
     private String groupId;
@@ -24,31 +27,61 @@ public class DocletArtifact
 
     private String version;
 
+    /**
+     * Method to get the groupId of the artifact
+     *
+     * @return a String that contains the groupId
+     */
     public String getGroupId()
     {
         return groupId;
     }
 
+    /**
+     * Method to set the groupId of the artifact
+     *
+     * @param groupId the value to be set
+     */
     public void setGroupId( String groupId )
     {
         this.groupId = groupId;
     }
 
+    /**
+     * Method to get the artifactId of the artifact
+     *
+     * @return a String that contains the artifactId
+     */
     public String getArtifactId()
     {
         return artifactId;
     }
 
+    /**
+     * Method to set the artifactId of the artifact
+     *
+     * @param artifactId the value to be set
+     */
     public void setArtifactId( String artifactId )
     {
         this.artifactId = artifactId;
     }
 
+    /**
+     * Method to get the version of the artifact
+     *
+     * @return a String that contains the version
+     */
     public String getVersion()
     {
         return version;
     }
 
+    /**
+     * Method to set the version of the artifact
+     *
+     * @param version the value to be set
+     */
     public void setVersion( String version )
     {
         this.version = version;
