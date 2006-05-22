@@ -851,6 +851,12 @@ public abstract class AbstractJavadocMojo
         }
     }
 
+    /**
+     * Method to get the files on the specified source paths
+     *
+     * @param sourcePaths a List that contains the paths to the source files
+     * @return a List that contains the specific path for every source file
+     */
     protected List getFiles( List sourcePaths )
     {
         List files = new ArrayList();
@@ -867,6 +873,13 @@ public abstract class AbstractJavadocMojo
         return files;
     }
 
+    /**
+     * Method to get the excluded source files from the javadoc and create the argument string
+     * that will be included in the javadoc commandline execution.
+     *
+     * @param sourcePaths the list of paths to the source files
+     * @return a String that contains the exclude argument that will be used by javadoc
+     */
     private String getExcludedPackages( List sourcePaths )
     {
         List excludedNames = null;
@@ -897,6 +910,12 @@ public abstract class AbstractJavadocMojo
         return excludeArg;
     }
 
+    /**
+     * Method to format the specified source paths that will be accepted by the javadoc tool.
+     *
+     * @param sourcePaths the list of paths to the source files that will be included in the javadoc
+     * @return a String that contains the formatted source path argument
+     */
     private String getSourcePath( List sourcePaths )
     {
         String sourcePath = null;
@@ -908,6 +927,12 @@ public abstract class AbstractJavadocMojo
         return sourcePath;
     }
 
+    /**
+     * Method to get the source paths. If no source path is specified in the parameter, the compile source roots
+     * of the project will be used.
+     *
+     * @return a List of the project source paths
+     */
     protected List getSourcePaths()
     {
         List sourcePaths;
@@ -939,6 +964,12 @@ public abstract class AbstractJavadocMojo
         return sourcePaths;
     }
 
+    /**
+     * Method that removes the invalid directories in the specified source directories
+     *
+     * @param sourceDirs the list of source directories that will be validated
+     * @return a List of valid source directories
+     */
     // TODO: could be better aligned with JXR, including getFiles() vs hasSources that finds java files.
     private List pruneSourceDirs( List sourceDirs )
     {
@@ -958,6 +989,15 @@ public abstract class AbstractJavadocMojo
         return pruned;
     }
 
+    /**
+     * Method that gets all the source files to be excluded from the javadoc on the given
+     * source paths.
+     *
+     * @param sourcePaths      the path to the source files
+     * @param subpackagesList  list of subpackages to be included in the javadoc
+     * @param excludedPackages the package names to be excluded in the javadoc
+     * @return a List of the source files to be excluded in the generated javadoc
+     */
     private List getExcludedNames( List sourcePaths, String[] subpackagesList, String[] excludedPackages )
     {
         List excludedNames = new ArrayList();
@@ -973,6 +1013,12 @@ public abstract class AbstractJavadocMojo
         return excludedNames;
     }
 
+    /**
+     * Method to get the packages specified in the excludePackageNames parameter. The packages are split
+     * with ',', ':', or ';' and then formatted.
+     *
+     * @return an array of String objects that contain the package names
+     */
     private String[] getExcludedPackages()
     {
         String[] excludePackages = {};
@@ -989,6 +1035,12 @@ public abstract class AbstractJavadocMojo
         return excludePackages;
     }
 
+    /**
+     * Method that sets the classpath elements that will be specified in the javadoc -classpath parameter.
+     *
+     * @return a String that contains the concatenated classpath elements
+     * @throws MavenReportException
+     */
     private String getClasspath()
         throws MavenReportException
     {
@@ -1013,6 +1065,13 @@ public abstract class AbstractJavadocMojo
         return StringUtils.join( classpathElements.iterator(), File.pathSeparator );
     }
 
+    /**
+     * Method to put the artifacts in the hashmap.
+     *
+     * @param compileArtifactMap the hashmap that will contain the artifacts
+     * @param artifactList       the list of artifacts that will be put in the map
+     * @throws MavenReportException
+     */
     private void populateCompileArtifactMap( Map compileArtifactMap, List artifactList )
         throws MavenReportException
     {
@@ -1033,6 +1092,13 @@ public abstract class AbstractJavadocMojo
         }
     }
 
+    /**
+     * Method that sets the bottom text that will be displayed on the bottom of the
+     * javadocs.
+     *
+     * @param inceptionYear the year when the project was started
+     * @return a String that contains the text that will be displayed at the bottom of the javadoc
+     */
     private String getBottomText( String inceptionYear )
     {
         int actualYear = Calendar.getInstance().get( Calendar.YEAR );
@@ -1058,6 +1124,14 @@ public abstract class AbstractJavadocMojo
         return bottom;
     }
 
+    /**
+     * Method to get the stylesheet file to be used in the javadocs. If a custom stylesheet file is not specified,
+     * either the stylesheet included in the plugin or the stylesheet file used by the javadoc tool
+     * will be used.
+     *
+     * @param javadocDirectory the base directory of the plugin
+     * @return a String that contains the path to the stylesheet file
+     */
     private String getStylesheetFile( File javadocDirectory )
     {
         String stylesheetfile = this.stylesheetfile;
@@ -1071,6 +1145,13 @@ public abstract class AbstractJavadocMojo
         return stylesheetfile;
     }
 
+    /**
+     * Method to get the access level for the classes and members to be shown in the generated javadoc.
+     * If the specified access level is not public, protected, package or private, the access level
+     * is set to protected.
+     *
+     * @return the access level
+     */
     private String getAccessLevel()
     {
         String accessLevel;
@@ -1087,6 +1168,12 @@ public abstract class AbstractJavadocMojo
         return accessLevel;
     }
 
+    /**
+     * Method to get the path to the doclet to be used in the javadoc
+     *
+     * @return the path to the doclet
+     * @throws MavenReportException
+     */
     private String getDocletPath()
         throws MavenReportException
     {
@@ -1116,6 +1203,13 @@ public abstract class AbstractJavadocMojo
         return path;
     }
 
+    /**
+     * Method that adds/sets the java memory parameters in the command line execution.
+     *
+     * @param cmd    the command line execution object where the argument will be added
+     * @param arg    the argument parameter name
+     * @param memory the JVM memory value to be set
+     */
     private void addMemoryArg( Commandline cmd, String arg, String memory )
     {
         if ( !StringUtils.isEmpty( memory ) )
@@ -1424,6 +1518,13 @@ public abstract class AbstractJavadocMojo
         IOUtil.close( w );
     }
 
+    /**
+     * Method that indicates whether the javadoc can be generated or not. If the project does not contain
+     * any source files and no subpackages are specified, the plugin will terminate.
+     *
+     * @param files the project files
+     * @return a boolean that indicates whether javadoc report can be generated or not
+     */
     protected boolean canGenerateReport( List files )
     {
         boolean canGenerate = true;

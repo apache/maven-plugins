@@ -34,6 +34,7 @@
     </links>
 
     <menu name="Overview">
+      <item name="Introduction" href="/introduction.html" />              
       <item name="Configuration" href="/configuration.html"/>
     </menu>
     ${reports}
