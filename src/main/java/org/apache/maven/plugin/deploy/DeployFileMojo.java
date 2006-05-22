@@ -83,7 +83,7 @@ public class DeployFileMojo
      *
      * @parameter expression="${generatePom.description}"
      */
-    private String description = "POM was created from deploy:deploy-file";
+    private String description;
 
     /**
      * File to be deployed.
