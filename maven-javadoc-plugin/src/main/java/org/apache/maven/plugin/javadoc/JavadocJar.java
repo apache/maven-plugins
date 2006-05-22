@@ -46,11 +46,16 @@ public class JavadocJar
     private File destDir;
 
     /**
+     * Specifies the directory where the generated jar file will be put.
+     *
      * @parameter expression="${project.build.directory}"
      */
     private String jarOutputDirectory;
 
     /**
+     * Specified the filename that will be used for the generated jar file. Please note that "-javadoc"
+     * will be appended to the file name.
+     *
      * @parameter expression="${project.build.finalName}"
      */
     private String finalName;
@@ -61,10 +66,15 @@ public class JavadocJar
     private MavenProjectHelper projectHelper;
 
     /**
+     * Specifies whether to attach the generated artifact to the project helper.
+     *
      * @parameter expression="${attach}" default-value="true"
      */
     private boolean attach;
 
+    /**
+     * @see org.apache.maven.reporting.AbstractMavenReport#execute()
+     */
     public void execute()
         throws MojoExecutionException
     {
@@ -121,6 +131,15 @@ public class JavadocJar
         }
     }
 
+    /**
+     * Method that creates the jar file
+     *
+     * @param javadocFiles the directory where the generated jar file will be put
+     * @param target       the filename of the generated jar file
+     * @return a File object that contains the generated jar file
+     * @throws ArchiverException
+     * @throws IOException
+     */
     private File generateArchive( File javadocFiles, String target )
         throws ArchiverException, IOException
     {

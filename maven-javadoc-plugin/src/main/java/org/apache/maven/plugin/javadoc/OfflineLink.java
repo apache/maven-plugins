@@ -18,27 +18,50 @@ package org.apache.maven.plugin.javadoc;
 
 import java.io.File;
 
+/**
+ * This class represents an offline link parameter specfied in the plugin configuration.
+ */
 public class OfflineLink
 {
     private String url;
 
     private File location;
 
+    /**
+     * Method to get the url of the link
+     *
+     * @return a String that contains the url
+     */
     public String getUrl()
     {
         return url;
     }
 
+    /**
+     * Method to set the url of the link
+     *
+     * @param url the value to be set
+     */
     public void setUrl( String url )
     {
         this.url = url;
     }
 
+    /**
+     * Method to get the location of the link
+     *
+     * @return a String that contains the url
+     */
     public File getLocation()
     {
         return location;
     }
 
+    /**
+     * Method to set the location of the link
+     *
+     * @param location the value to be set
+     */
     public void setLocation( File location )
     {
         this.location = location;
