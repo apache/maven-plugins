@@ -15,25 +15,33 @@
  */
 package org.apache.maven.plugin.clover;
 
-import com.cenqua.clover.tasks.CloverLogTask;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.clover.internal.AbstractCloverMojo;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.tools.ant.Project;
+import com.cenqua.clover.tasks.HistoryPointTask;
 
 import java.io.File;
 
 /**
- * Provides information on the current Clover database.
+ * Save a <a href="http://cenqua.com/clover/doc/tutorial/part2.html">Clover history point</a>.
  *
- * @goal log
+ * @goal save-history
  *
  * @author <a href="mailto:vmassol@apache.org">Vincent Massol</a>
  * @version $Id$
- *
  */
-public class CloverLogMojo
-    extends AbstractCloverMojo
+public class CloverSaveHistoryMojo extends AbstractCloverMojo
 {
+    /**
+     * @parameter default-value="${project.build.directory}/clover/history"
+     * @required
+     */
+    private String historyDir;
+
+    /**
+     * {@inheritDoc}
+     * @see org.apache.maven.plugin.clover.internal.AbstractCloverMojo#execute()
+     */
     public void execute()
         throws MojoExecutionException
     {
@@ -43,43 +51,44 @@ public class CloverLogMojo
 
             AbstractCloverMojo.waitForFlush( getWaitForFlush(), getFlushInterval() );
 
-            log();
+            save();
         }
         else
         {
-            getLog().info("No Clover database found, skipping Clover database logging");
+            getLog().info("No Clover database found, skipping the Clover history point save");
         }
     }
 
     /**
-     * Log information for both the main Clover database and the merged Clover database when they exist.
+     * Save a history point for both the main Clover database and the merged Clover database when they exist.
      */
-    private void log()
+    private void save()
     {
         if ( new File( getCloverDatabase() ).exists() )
         {
-            logDatabase( getCloverDatabase() );
+            saveDatabase( getCloverDatabase() );
         }
         if ( new File( getCloverMergeDatabase() ).exists() )
         {
-            logDatabase( getCloverMergeDatabase() );
+            saveDatabase( getCloverMergeDatabase() );
         }
     }
 
     /**
-     * Log information from a Clover database.
+     * Save a history point for a Clover database.
      *
-     * @param database the Clover database to log
+     * @param database the Clover database to save
      */
-    private void logDatabase(String database)
+    private void saveDatabase(String database)
     {
         Project antProject = AbstractCloverMojo.registerCloverAntTasks();
 
-        CloverLogTask cloverLogTask = (CloverLogTask) antProject.createTask( "clover-log" );
-        cloverLogTask.setInitString( database );
-        cloverLogTask.setOutputProperty( "cloverlogproperty" );
-        cloverLogTask.execute();
+        getLog().info( "Saving Clover history point for database [" + database + "] in ["
+            + this.historyDir + "]" );
 
-        getLog().info( antProject.getProperty( "cloverlogproperty" ) );
+        HistoryPointTask cloverHistoryTask = (HistoryPointTask) antProject.createTask( "clover-historypoint" );
+        cloverHistoryTask.setInitString( database );
+        cloverHistoryTask.setHistoryDir( new File( this.historyDir ) );
+        cloverHistoryTask.execute();
     }
 }

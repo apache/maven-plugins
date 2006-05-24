@@ -19,6 +19,9 @@
     <plugins>
       <plugin>
         <artifactId>maven-clover-plugin</artifactId>
+        <configuration>
+          <generateHistorical>true</generateHistorical>
+        </configuration>
       </plugin>
     </plugins>
   </reporting>
@@ -48,6 +51,10 @@
             <goals>
               <goal>instrument</goal>
               <goal>aggregate</goal>
+
+              <!-- We save a history point in order to have data to generate a historical report -->
+              <goal>save-history</goal>
+
             </goals>
           </execution>
         </executions>

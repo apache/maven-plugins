@@ -170,10 +170,13 @@ public abstract class AbstractCloverMojo extends AbstractMojo
      * Register the Clover Ant tasks against a fake Ant {{@link Project}} object so that we can the tasks later on.
      * This is the Java equivalent of the <code>taskdef</code> call that you would need in your Ant
      * <code>build.xml</code> file if you wanted to use the Clover Ant tasks from Ant.
+     * </p>
+     * Note: We're defining this method as static because it is also required in the report mojo and reporting mojos
+     * and main mojos cannot share anything right now. See http://jira.codehaus.org/browse/MNG-1886.
      *
      * @return A {{@link Project}} instance with the Clover Ant tasks registered in it
      */
-    protected Project registerCloverAntTasks()
+    public static Project registerCloverAntTasks()
     {
         Project antProject = new Project();
         antProject.init();

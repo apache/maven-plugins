@@ -91,7 +91,7 @@ public class CloverCheckMojo extends AbstractCloverMojo
      */
     private void checkDatabase(String database) throws MojoExecutionException
     {
-        Project antProject = registerCloverAntTasks();
+        Project antProject = AbstractCloverMojo.registerCloverAntTasks();
 
         getLog().info( "Checking for coverage of [" + targetPercentage + "] for database [" + database + "]");
 

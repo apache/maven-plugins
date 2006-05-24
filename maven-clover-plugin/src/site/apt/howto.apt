@@ -131,6 +131,59 @@ Generating HTML, XML and PDF reports
 [...]
 +---------
 
+Generating historical reports
+
+  This is done in the same manner as you generate a standard Clover report but in addition you need to set the
+  <<<generateHistorical>>> configuration property to true (it's false by default). For example:
+
++--------
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clover-plugin</artifactId>
+        <configuration>
+          <generateHistorical>true</generateHistorical>
+          [...]
+        </configuration>
+[...]
+      </plugin>
+    </plugins>
+  </build>
+[...]
++---------
+
+  Now this will generate a historical report only if you have saved Clover historical savepoints. In order to save a
+  Clover savepoint, run the <<<clover:save-history>>> goal. It's up to you to decide when you want to call this goal.
+  For example you could call it every time a build is executing on your CI server, or you could call it at every
+  project release, etc. The location of the history directory for saving the savepoints is controlled by the
+  <<<historyDir>>> configuration property, which points to <<<${project.build.directory}/clover/history>>> by default.
+  It is recommended to use another location that will not get erased by a <<<mvn clean>>>. For example:
+
++--------
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clover-plugin</artifactId>
+        <configuration>
+          <generateHistorical>true</generateHistorical>
+          <historyDir>${myHistoryDir}</historyDir>
+          [...]
+        </configuration>
+[...]
+      </plugin>
+    </plugins>
+  </build>
+[...]
++---------
+
+  Where <<<myHistoryDir>>> could be a Maven property that you define in a profile.
+
 Checking test coverage
 
   In order to check for a test coverage percentage and fail the build in case of non-compliance,
