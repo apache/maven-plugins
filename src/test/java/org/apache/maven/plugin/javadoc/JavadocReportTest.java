@@ -265,6 +265,20 @@ public class JavadocReportTest
 
         //nohelp == true
         assertTrue( str.toUpperCase().indexOf( "/help-doc.html".toUpperCase() ) == -1 );
+
+        //check the wildcard (*) package exclusions -- excludePackageNames parameter
+        generatedFile = new File( getBasedir(),
+            "target/test/unit/custom-configuration/target/site/apidocs/custom/configuration/exclude1/Exclude1App.html" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        generatedFile = new File( getBasedir(),
+            "target/test/unit/custom-configuration/target/site/apidocs/custom/configuration/exclude1/subexclude/SubexcludeApp.html" );
+        assertTrue( !FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        generatedFile = new File( getBasedir(),
+            "target/test/unit/custom-configuration/target/site/apidocs/custom/configuration/exclude2/Exclude2App.html" );
+        assertTrue( !FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
     }
 
     /**
@@ -332,6 +346,51 @@ public class JavadocReportTest
 
         generatedFile = new File( getBasedir(),
                                   "target/test/unit/aggregate-test/target/site/apidocs/aggregate/test/project2/Project2Test.html" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+    }
+
+    /**
+     * Method to test when the path to the project sources has an apostrophe (')
+     *
+     * @throws Exception
+     */
+    public void testQuotedPath()
+        throws Exception
+    {
+        File testPom =
+            new File( getBasedir(), "src/test/resources/unit/quotedpath'test/quotedpath-test-plugin-config.xml" );
+        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        mojo.execute();
+
+        //package level generated javadoc files
+        File generatedFile = new File( getBasedir(),
+                                       "target/test/unit/quotedpath'test/target/site/apidocs/quotedpath/test/App.html" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        generatedFile = new File( getBasedir(),
+                                  "target/test/unit/quotedpath'test/target/site/apidocs/quotedpath/test/AppSample.html" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        //project level generated javadoc files
+        generatedFile =
+            new File( getBasedir(), "target/test/unit/quotedpath'test/target/site/apidocs/index-all.html" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        generatedFile =
+            new File( getBasedir(), "target/test/unit/quotedpath'test/target/site/apidocs/index.html" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        generatedFile =
+            new File( getBasedir(), "target/test/unit/quotedpath'test/target/site/apidocs/overview-tree.html" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        generatedFile =
+            new File( getBasedir(), "target/test/unit/quotedpath'test/target/site/apidocs/package-list" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        generatedFile =
+            new File( getBasedir(), "target/test/unit/quotedpath'test/target/site/apidocs/stylesheet.css" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
     }
