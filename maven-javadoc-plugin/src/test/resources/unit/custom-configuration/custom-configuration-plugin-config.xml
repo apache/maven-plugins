@@ -79,6 +79,7 @@
           <footer>MAVEN JAVADOC PLUGIN TEST FOOTER</footer>
           <locale>en_US</locale>
           <isOffline>true</isOffline>
+          <excludePackageNames>*.exclude2:custom.configuration.exclude1.*</excludePackageNames>
         </configuration>
       </plugin>
     </plugins>

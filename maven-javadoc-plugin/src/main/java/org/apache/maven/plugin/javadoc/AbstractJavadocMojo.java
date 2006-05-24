@@ -1424,10 +1424,30 @@ public abstract class AbstractJavadocMojo
     private String quotedPathArgument( String value )
     {
         String path = value;
+
         if ( !StringUtils.isEmpty( path ) )
         {
-            path = "'" + path.replace( '\\', '/' ) + "'";
+            path = path.replace( '\\', '/' );
+            if( path.indexOf( "\'" ) != -1 )
+            {
+                String split[] = path.split( "\'" );
+                path = "";
+
+                for( int i = 0; i < split.length; i++ )
+                {
+                    if( i != split.length - 1)
+                    {
+                        path = path + split[i] + "\\'";
+                    }
+                    else
+                    {
+                        path = path + split[i];
+                    }
+                }
+            }
+            path = "'" + path + "'";
         }
+
         return path;
     }
 
