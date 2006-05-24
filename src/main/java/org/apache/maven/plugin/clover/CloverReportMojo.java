@@ -15,15 +15,15 @@
  */
 package org.apache.maven.plugin.clover;
 
-import com.cenqua.clover.reporters.html.HtmlReporter;
-import com.cenqua.clover.reporters.pdf.PDFReporter;
-import com.cenqua.clover.reporters.xml.XMLReporter;
+import com.cenqua.clover.tasks.CloverReportTask;
+import com.cenqua.clover.tasks.CloverFormatType;
 
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugin.clover.internal.AbstractCloverMojo;
+import org.apache.tools.ant.Project;
 
 import java.io.File;
 import java.util.*;
@@ -43,8 +43,8 @@ import java.util.*;
  */
 public class CloverReportMojo extends AbstractMavenReport
 {
-    // TODO: Need some way to share config elements and code between report mojos and main build
-    // mojos. See http://jira.codehaus.org/browse/MNG-1886
+    // TODO: Need some way to share config elements and code between report mojos and main build mojos.
+    // See http://jira.codehaus.org/browse/MNG-1886
 
     /**
      * The location of the <a href="http://cenqua.com/clover/doc/adv/database.html">Clover database</a>.
@@ -71,6 +71,12 @@ public class CloverReportMojo extends AbstractMavenReport
     private File outputDirectory;
 
     /**
+     * @parameter default-value="${project.build.directory}/clover/history"
+     * @required
+     */
+    private String historyDir;
+
+    /**
      * When the Clover Flush Policy is set to "interval" or threaded this value is the minimum
      * period between flush operations (in milliseconds).
      *
@@ -93,22 +99,28 @@ public class CloverReportMojo extends AbstractMavenReport
     private boolean waitForFlush;
 
     /**
-     * Decide whether to generate an HTML report
+     * Decide whether to generate an HTML report.
      * @parameter default-value="true"
      */
     private boolean generateHtml;
 
     /**
-     * Decide whether to generate a PDF report
+     * Decide whether to generate a PDF report.
      * @parameter default-value="false"
      */
     private boolean generatePdf;
 
     /**
-     * Decide whether to generate a XML report
+     * Decide whether to generate a XML report.
      * @parameter default-value="false"
      */
     private boolean generateXml;
+
+    /**
+     * Decide whether to generate a Clover historical report.
+     * @parameter default-value="false"
+     */
+    private boolean generateHistorical;
 
     /**
      * @component
@@ -143,134 +155,137 @@ public class CloverReportMojo extends AbstractMavenReport
         File singleModuleCloverDatabase = new File( this.cloverDatabase );
         if ( singleModuleCloverDatabase.exists() )
         {
-            if ( this.generateHtml )
-            {
-                createHtmlReport();
-            }
-            if ( this.generatePdf )
-            {
-                createPdfReport();
-            }
-            if ( this.generateXml )
-            {
-                createXmlReport();
-            }
+            createAllReportTypes( this.cloverDatabase, "Maven Clover" );
         }
 
         File mergedCloverDatabase = new File ( this.cloverMergeDatabase );
         if ( mergedCloverDatabase.exists() )
         {
-            if ( this.generateHtml )
-            {
-                createMasterHtmlReport();
-            }
-            if ( this.generatePdf )
-            {
-                createMasterPdfReport();
-            }
-            if ( this.generateXml )
-            {
-                createMasterXmlReport();
-            }
+            createAllReportTypes( this.cloverMergeDatabase, "Maven Aggregated Clover" );
         }
-    }
-
-    private List getCommonCliArgs( File reportOutputFile )
-    {
-        List parameters = new ArrayList();
-
-        parameters.add( "-t" );
-        parameters.add( "Maven Clover report" );
-        parameters.add( "-i" );
-        parameters.add( this.cloverDatabase );
-        parameters.add( "-o" );
-        parameters.add( reportOutputFile.getPath() );
-
-        if ( getLog().isDebugEnabled() )
-        {
-            parameters.add( "-d" );
-        }
-
-        return parameters;
     }
 
     /**
-     * @todo handle multiple source roots. At the moment only the first source root is instrumented
+     * Example of title prefixes: "Maven Clover", "Maven Aggregated Clover"
      */
-    private void createHtmlReport() throws MavenReportException
+    private void createAllReportTypes( String database, String titlePrefix )
     {
-        List parameters = getCommonCliArgs( this.outputDirectory );
+        File historyDir = new File( this.outputDirectory, "history" );
 
-        parameters.add( "-p" );
-        parameters.add( this.project.getCompileSourceRoots().get( 0 ) );
-
-        createReport(HtmlReporter.class, parameters, "HTML");
-    }
-
-    private void createPdfReport() throws MavenReportException
-    {
-        createReport(PDFReporter.class, getCommonCliArgs( new File( this.outputDirectory, "clover.pdf" ) ), "PDF");
-    }
-
-    private void createXmlReport() throws MavenReportException
-    {
-        createReport(XMLReporter.class, getCommonCliArgs( new File( this.outputDirectory, "clover.xml" ) ), "XML");
-    }
-
-    private void createReport( Class reportClass, List parameters, String reportType )
-        throws MavenReportException
-    {
-        int result;
-        try
+        if ( this.generateHtml )
         {
-            result = ((Integer) reportClass.getMethod( "mainImpl", new Class[]{String[].class}).invoke(null,
-                new Object[]{(String[]) parameters.toArray( new String[0] )} )).intValue();
+            createReport( database,
+                createCurrentReportForCloverReportTask( titlePrefix + " report", this.outputDirectory, false ),
+                createHistoricalReportForCloverReportTask( titlePrefix + " historical report", historyDir ),
+                createFormatTypeForCloverReportTask( "html" ) );
         }
-        catch (Exception e)
+        if ( this.generatePdf )
         {
-            throw new MavenReportException( "Failed to call [" + reportClass.getName() + ".mainImpl]", e );
+            // Note: PDF reports only support summary reports
+            createReport( database, createCurrentReportForCloverReportTask( titlePrefix + "report",
+                new File( this.outputDirectory, "clover.pdf" ), true ),
+                createHistoricalReportForCloverReportTask( titlePrefix + "Historical report",
+                    new File( historyDir, "clover-history.pdf" ) ),
+                createFormatTypeForCloverReportTask( "pdf" ) );
         }
-
-        if ( result != 0 )
+        if ( this.generateXml )
         {
-            throw new MavenReportException( "Clover has failed to create the " + reportType + " report" );
+            // No historical reports for XML outputs
+            createReport( database,
+                createCurrentReportForCloverReportTask( titlePrefix + "report",
+                    new File( this.outputDirectory, "clover.xml" ), false ),
+                null,
+                createFormatTypeForCloverReportTask( "xml" ) );
         }
     }
 
-    private List getCommonCliArgsForMasterReport( File reportOutputFile )
+    /**
+     * Note: We use Clover's <code>clover-report</code> Ant task instead of the Clover CLI APIs because the CLI
+     * APIs are limited and do not support historical reports.
+     */
+    private void createReport( String database, CloverReportTask.CurrentEx currentEx,
+        CloverReportTask.HistoricalEx historicalEx, CloverFormatType type )
     {
-        List parameters = new ArrayList();
+        Project antProject = AbstractCloverMojo.registerCloverAntTasks();
 
-        parameters.add( "-t" );
-        parameters.add( "Maven Aggregated Clover report" );
-        parameters.add( "-i" );
-        parameters.add( this.cloverMergeDatabase );
-        parameters.add( "-o" );
-        parameters.add( reportOutputFile.getPath() );
+        CloverReportTask cloverReportTask = (CloverReportTask) antProject.createTask( "clover-report" );
+        cloverReportTask.setInitString( database );
 
-        if ( getLog().isDebugEnabled() )
+        // Add current report definition
+        currentEx.addFormat( type );
+        cloverReportTask.addCurrent( currentEx );
+
+        // Add historical report definition
+        if ( historicalEx != null )
         {
-            parameters.add( "-d" );
+            historicalEx.addFormat( type );
+            cloverReportTask.addHistorical( historicalEx );
         }
 
-        return parameters;
+        cloverReportTask.execute();
     }
 
-    private void createMasterHtmlReport() throws MavenReportException
+    private CloverReportTask.CurrentEx createCurrentReportForCloverReportTask( String title, File outFile,
+        boolean isSummaryReport )
     {
-        createReport(HtmlReporter.class, getCommonCliArgsForMasterReport( this.outputDirectory ), "merged HTML");
+        CloverReportTask.CurrentEx currentEx = new CloverReportTask.CurrentEx();
+        currentEx.setTitle( title );
+        currentEx.setAlwaysReport( true );
+        currentEx.setOutFile( outFile );
+        currentEx.setSummary( isSummaryReport );
+
+        return currentEx;
     }
 
-    private void createMasterPdfReport() throws MavenReportException
+    private CloverReportTask.HistoricalEx createHistoricalReportForCloverReportTask( String title, File outFile)
     {
-        createReport(PDFReporter.class, getCommonCliArgsForMasterReport(
-            new File( this.outputDirectory, "cloverMerged.pdf" ) ), "merged PDF");
+        CloverReportTask.HistoricalEx historicalEx = null;
+
+        // Only generate historical reports if the user has asked for it, if the history dir exists and if it contains
+        // historical data.
+        if ( this.generateHistorical && isHistoricalDirectoryValid( outFile ) )
+        {
+            historicalEx = new CloverReportTask.HistoricalEx();
+            historicalEx.setTitle( title );
+            historicalEx.setAlwaysReport( true );
+            historicalEx.setOutFile( outFile );
+            historicalEx.setHistoryDir( new File( this.historyDir ) );
+        }
+
+        return historicalEx;
     }
 
-    private void createMasterXmlReport() throws MavenReportException
+    private boolean isHistoricalDirectoryValid( File outFile )
     {
-        createReport(XMLReporter.class, getCommonCliArgsForMasterReport(
-            new File( this.outputDirectory, "cloverMerged.xml" ) ), "merged XML");
+        boolean isValid = false;
+
+        File dir = new File ( this.historyDir );
+        if ( dir.exists() )
+        {
+            if ( dir.listFiles().length > 0 )
+            {
+                isValid = true;
+            }
+            else
+            {
+                getLog().warn( "No Clover historical data found in [" + this.historyDir + "], skipping Clover "
+                    + "historical report generation ([" + outFile + "])" );
+            }
+        }
+        else
+        {
+            getLog().warn( "Clover historical directory [" + this.historyDir + "] does not exist, skipping Clover "
+                + "historical report generation ([" + outFile + "])" );
+        }
+
+        return isValid;
+    }
+
+    private CloverFormatType createFormatTypeForCloverReportTask( String format )
+    {
+        CloverFormatType type = new CloverFormatType();
+        type.setType( format );
+        return type;
     }
 
     /**
