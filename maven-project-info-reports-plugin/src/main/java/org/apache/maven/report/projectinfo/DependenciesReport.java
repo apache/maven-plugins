@@ -387,46 +387,63 @@ public class DependenciesReport
             Artifact artifact = node.getArtifact();
             String id = artifact.getDependencyConflictId();
 
-            try
+            if ( !Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
             {
-                MavenProject artifactProject = getMavenProjectFromRepository( artifact, localRepository );
-                String artifactDescription = artifactProject.getDescription();
-                String artifactUrl = artifactProject.getUrl();
-                String artifactName = artifactProject.getName();
+                try
+                {
+                    MavenProject artifactProject = getMavenProjectFromRepository( artifact, localRepository );
+                    String artifactDescription = artifactProject.getDescription();
+                    String artifactUrl = artifactProject.getUrl();
+                    String artifactName = artifactProject.getName();
 
+                    sink.paragraph();
+                    sink.anchor( id );
+                    sink.bold();
+                    sink.text( artifactName );
+                    sink.bold_();
+                    sink.anchor_();
+                    sink.paragraph_();
+
+                    if ( artifactDescription != null )
+                    {
+                        sink.paragraph();
+                        sink.text( artifactDescription );
+                        sink.paragraph_();
+                    }
+
+                    if ( artifactUrl != null )
+                    {
+                        sink.paragraph();
+                        sink.link( artifactUrl );
+                        sink.text( artifactUrl );
+                        sink.link_();
+                        sink.paragraph_();
+                    }
+                }
+                catch ( ProjectBuildingException e )
+                {
+                    getLog().debug( e );
+                }
+
+                for ( Iterator deps = node.getChildren().iterator(); deps.hasNext(); )
+                {
+                    ReportResolutionListener.Node dep = (ReportResolutionListener.Node) deps.next();
+                    printDescriptionsAndURLs( dep );
+                }
+            }
+            else
+            {
                 sink.paragraph();
                 sink.anchor( id );
                 sink.bold();
-                sink.text( artifactName );
+                sink.text( id );
                 sink.bold_();
                 sink.anchor_();
                 sink.paragraph_();
 
-                if ( artifactDescription != null )
-                {
-                    sink.paragraph();
-                    sink.text( artifactDescription );
-                    sink.paragraph_();
-                }
-
-                if ( artifactUrl != null )
-                {
-                    sink.paragraph();
-                    sink.link( artifactUrl );
-                    sink.text( artifactUrl );
-                    sink.link_();
-                    sink.paragraph_();
-                }
-            }
-            catch ( ProjectBuildingException e )
-            {
-                getLog().debug( e );
-            }
-
-            for ( Iterator deps = node.getChildren().iterator(); deps.hasNext(); )
-            {
-                ReportResolutionListener.Node dep = (ReportResolutionListener.Node) deps.next();
-                printDescriptionsAndURLs( dep );
+                sink.paragraph();
+                sink.text( artifact.getFile().toString() );
+                sink.paragraph_();
             }
         }
 
