@@ -175,7 +175,7 @@ public class WarMojo
 
         archiver.setOutputFile( warFile );
 
-        warArchiver.addDirectory( getWebappDirectory() );
+        warArchiver.addDirectory( getWebappDirectory(), getIncludes(), getExcludes() );
 
         warArchiver.setWebxml( new File( getWebappDirectory(), "WEB-INF/web.xml" ) );
 
