@@ -21,15 +21,21 @@ import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.installer.ArtifactInstallationException;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Parent;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.FileReader;
+import java.io.FileNotFoundException;
 
 /**
  * Installs a file in local repository.
@@ -45,25 +51,21 @@ public class InstallFileMojo
 {
     /**
      * @parameter expression="${groupId}"
-     * @required
      */
     protected String groupId;
 
     /**
      * @parameter expression="${artifactId}"
-     * @required
      */
     protected String artifactId;
 
     /**
      * @parameter expression="${version}"
-     * @required
      */
     protected String version;
 
     /**
      * @parameter expression="${packaging}"
-     * @required
      */
     protected String packaging;
 
@@ -91,8 +93,6 @@ public class InstallFileMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        Artifact artifact = artifactFactory.createArtifact( groupId, artifactId, version, null, packaging );
-
         ArtifactMetadata metadata = null;
 
         Artifact pomArtifact = null;
@@ -101,8 +101,20 @@ public class InstallFileMojo
 
         if( pomFile != null && pomFile.exists() )
         {
-        	pomArtifact = artifactFactory.createArtifact( groupId, artifactId, version, null, "pom" );
+            processModel( readPom( pomFile ) );
+
+            pomArtifact = artifactFactory.createArtifact( groupId, artifactId, version, null, "pom" );
         }
+        else //if pomFile is not provided check the groupId, artifactId, version and packaging
+        {
+            // Verify arguments
+            if ( groupId == null || artifactId == null || version == null || packaging == null )
+            {
+                throw new MojoExecutionException( "Missing group, artifact, version, or packaging information" );
+            }
+        }
+
+        Artifact artifact = artifactFactory.createArtifact( groupId, artifactId, version, null, packaging );
 
         // TODO: check if it exists first, and default to true if not
         if ( generatePom )
@@ -154,7 +166,7 @@ public class InstallFileMojo
                     {
                         //create checksums for pom and artifact
                         pom = new File( localRepository.getBasedir(),
-                                             localRepository.pathOfLocalRepositoryMetadata( metadata, localRepository ) );
+                                        localRepository.pathOfLocalRepositoryMetadata( metadata, localRepository ) );
 
                         installCheckSum( pom, true );
                     }
@@ -170,7 +182,7 @@ public class InstallFileMojo
                         installCheckSum( pomFile, pomArtifact, false );
                     }
                 }
-            } 
+            }
             else
             {
                 throw new MojoFailureException( "Cannot install artifact. Artifact is already in the local repository.\n\nFile in question is: " + file + "\n" );
@@ -180,6 +192,65 @@ public class InstallFileMojo
         {
             throw new MojoExecutionException(
                 "Error installing artifact '" + artifact.getDependencyConflictId() + "': " + e.getMessage(), e );
+        }
+    }
+
+    private Model readPom( File file )
+        throws MojoExecutionException
+    {
+        Reader reader = null;
+        try
+        {
+            reader = new FileReader( file );
+
+            MavenXpp3Reader mavenReader = new MavenXpp3Reader();
+
+            return mavenReader.read( reader );
+        }
+        catch( FileNotFoundException e )
+        {
+            throw new MojoExecutionException( "File not found " + file, e );
+        }
+        catch( IOException e )
+        {
+            throw new MojoExecutionException( "Error reading pom", e );
+        }
+        catch( XmlPullParserException e )
+        {
+            throw new MojoExecutionException( "Error reading pom", e );
+        }
+        finally
+        {
+            IOUtil.close( reader );
+        }
+    }
+
+    private void processModel( Model model )
+    {
+        Parent parent = model.getParent();
+
+        if ( this.groupId == null )
+        {
+            if ( parent != null && parent.getGroupId() != null )
+            {
+                this.groupId = parent.getGroupId();
+            }
+            if ( model.getGroupId() != null )
+            {
+                this.groupId = model.getGroupId();
+            }
+        }
+        if ( this.artifactId == null && model.getArtifactId() != null )
+        {
+            this.artifactId = model.getArtifactId();
+        }
+        if ( this.version == null && model.getVersion() != null )
+        {
+            this.version = model.getVersion();
+        }
+        if ( this.packaging == null && model.getPackaging() != null )
+        {
+            this.packaging = model.getPackaging();
         }
     }
 }
