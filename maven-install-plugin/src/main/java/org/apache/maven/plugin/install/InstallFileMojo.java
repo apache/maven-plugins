@@ -72,7 +72,7 @@ public class InstallFileMojo
      * @required
      */
     private File file;
-    
+
     /**
      * @parameter expression="${pomFile}"
      */
@@ -93,13 +93,17 @@ public class InstallFileMojo
     {
         Artifact artifact = artifactFactory.createArtifact( groupId, artifactId, version, null, packaging );
 
+        ArtifactMetadata metadata = null;
+
         Artifact pomArtifact = null;
-        
+
+        File pom = null;
+
         if( pomFile != null && pomFile.exists() )
         {
         	pomArtifact = artifactFactory.createArtifact( groupId, artifactId, version, null, "pom" );
         }
-        
+
         // TODO: check if it exists first, and default to true if not
         if ( generatePom )
         {
@@ -119,7 +123,7 @@ public class InstallFileMojo
                 fw = new FileWriter( tempFile );
                 tempFile.deleteOnExit();
                 new MavenXpp3Writer().write( fw, model );
-                ArtifactMetadata metadata = new ProjectArtifactMetadata( artifact, tempFile );
+                metadata = new ProjectArtifactMetadata( artifact, tempFile );
                 artifact.addMetadata( metadata );
             }
             catch ( IOException e )
@@ -143,10 +147,28 @@ public class InstallFileMojo
             if( !file.getPath().equals( destination.getPath() ) )
             {
                 installer.install( file, artifact, localRepository );
-                
+
+                if( createChecksum )
+                {
+                    if( generatePom )
+                    {
+                        //create checksums for pom and artifact
+                        pom = new File( localRepository.getBasedir(),
+                                             localRepository.pathOfLocalRepositoryMetadata( metadata, localRepository ) );
+
+                        installCheckSum( pom, true );
+                    }
+                    installCheckSum( file, artifact , false );
+                }
+
                 if( pomFile != null && pomFile.exists() )
                 {
-                	installer.install( pomFile, pomArtifact, localRepository );
+                    installer.install( pomFile, pomArtifact, localRepository );
+
+                    if( createChecksum )
+                    {
+                        installCheckSum( pomFile, pomArtifact, false );
+                    }
                 }
             } 
             else
