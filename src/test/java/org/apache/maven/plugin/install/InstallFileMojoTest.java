@@ -2,10 +2,14 @@ package org.apache.maven.plugin.install;
 
 import java.io.File;
 import java.io.FileReader;
+import java.util.Iterator;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.metadata.ArtifactMetadata;
+import org.apache.maven.repository.digest.Digester;
 import org.codehaus.plexus.util.FileUtils;
 
 /*
@@ -183,6 +187,51 @@ public class InstallFileMojoTest
                                       version + "." + "pom" );
 
         assertTrue( installedPom.exists() );
+    }
+
+    public void testInstallFileWithChecksum()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(),
+                                 "target/test-classes/unit/install-file-with-checksum/" +
+                                 "plugin-config.xml" );
+
+        InstallFileMojo mojo = ( InstallFileMojo ) lookupMojo( "install-file", testPom );
+
+        assertNotNull( mojo );
+
+        assignValuesForParameter( mojo );
+
+        ArtifactRepository localRepo = (ArtifactRepository) getVariableValueFromObject( mojo, "localRepository" );
+
+        boolean createChecksum = ( (Boolean) getVariableValueFromObject( mojo, "createChecksum" ) ).booleanValue();
+
+        assertTrue( createChecksum );
+
+        mojo.execute();
+
+        //get the actual checksum of the artifact
+        String actualMd5Sum = mojo.getChecksum( file, Digester.MD5 );
+        String actualSha1Sum = mojo.getChecksum( file, Digester.SHA1 );
+
+        String localPath = getBasedir() + "/" + LOCAL_REPO + groupId + "/" + artifactId + "/" +
+                          version + "/" + artifactId + "-" + version;
+
+        File installedArtifact = new File( localPath + "." + "jar" );
+
+        File md5 = new File( localPath + ".jar.md5" );
+        File sha1 = new File( localPath + ".jar.sha1" );
+
+        assertTrue( md5.exists() );
+        assertTrue( sha1.exists() );
+
+        String generatedMd5 = FileUtils.fileRead( md5 );
+        String generatedSha1 = FileUtils.fileRead( sha1 );
+
+        assertEquals( actualMd5Sum, generatedMd5 );
+        assertEquals( actualSha1Sum, generatedSha1 );
+
+        assertTrue( installedArtifact.exists() );
     }
     
     private void assignValuesForParameter( Object obj )

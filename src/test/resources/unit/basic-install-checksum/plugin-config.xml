@@ -1,0 +1,17 @@
+<project>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-install-plugin</artifactId>
+        <configuration>
+          <pomFile>${basedir}/src/test/resources/unit/basic-install-checksum/plugin-config.xml</pomFile>
+          <packaging>jar</packaging>
+          <artifact implementation="org.apache.maven.plugin.install.stubs.InstallArtifactStub" />
+          <attachedArtifacts />
+          <localRepository>${localRepository}</localRepository>
+          <createChecksum>true</createChecksum>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
