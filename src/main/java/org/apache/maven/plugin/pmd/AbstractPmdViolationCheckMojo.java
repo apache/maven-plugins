@@ -31,7 +31,7 @@ public abstract class AbstractPmdViolationCheckMojo
     /**
      * Whether to fail the build if the validation check fails.
      *
-     * @parameter expression="${failOnViolation}" default-value="true"
+     * @parameter expression="${pmd.failOnViolation}" default-value="true"
      * @required
      */
     private boolean failOnViolation;
