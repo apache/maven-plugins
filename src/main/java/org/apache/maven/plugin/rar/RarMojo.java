@@ -99,7 +99,6 @@ public class RarMojo
      *
      * @parameter alias="rarName" expression="${project.build.finalName}"
      * @required
-     * @readonly
      */
     private String finalName;
 
