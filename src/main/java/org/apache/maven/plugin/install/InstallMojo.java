@@ -76,11 +76,7 @@ public class InstallMojo
         // TODO: push into transformation
         boolean isPomArtifact = "pom".equals( packaging );
 
-        if ( !isPomArtifact )
-        {
-            ArtifactMetadata metadata = new ProjectArtifactMetadata( artifact, pomFile );
-            artifact.addMetadata( metadata );
-        }
+        ArtifactMetadata metadata = null;
 
         if ( updateReleaseInfo )
         {
@@ -95,6 +91,9 @@ public class InstallMojo
             }
             else
             {
+                metadata = new ProjectArtifactMetadata( artifact, pomFile );
+                artifact.addMetadata( metadata );
+
                 File file = artifact.getFile();
 
                 // Here, we have a temporary solution to MINSTALL-3 (isDirectory() is true if it went through compile
@@ -102,6 +101,16 @@ public class InstallMojo
                 if ( file != null && !file.isDirectory() )
                 {
                     installer.install( file, artifact, localRepository );
+
+                    if( createChecksum )
+                    {
+                        //create checksums for pom and artifact
+                        File pom = new File( localRepository.getBasedir(),
+                                             localRepository.pathOfLocalRepositoryMetadata( metadata, localRepository ) );
+
+                        installCheckSum( pom, true );
+                        installCheckSum( file, artifact , false );
+                    }
                 }
                 else if ( !attachedArtifacts.isEmpty() )
                 {
@@ -117,7 +126,13 @@ public class InstallMojo
             for ( Iterator i = attachedArtifacts.iterator(); i.hasNext(); )
             {
                 Artifact attached = (Artifact) i.next();
+
                 installer.install( attached.getFile(), attached, localRepository );
+
+                if( createChecksum )
+                {
+                    installCheckSum( attached.getFile(), attached, false );
+                }
             }
         }
         catch ( ArtifactInstallationException e )

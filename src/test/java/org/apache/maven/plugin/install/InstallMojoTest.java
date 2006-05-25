@@ -17,6 +17,7 @@ package org.apache.maven.plugin.install;
  */
 
 import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -25,6 +26,10 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.install.stubs.AttachedArtifactStub0;
 import org.apache.maven.plugin.install.stubs.InstallArtifactStub;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.repository.digest.Digester;
+import org.apache.maven.repository.digest.DefaultDigester;
+import org.apache.maven.artifact.metadata.ArtifactMetadata;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
@@ -202,6 +207,89 @@ public class InstallMojoTest
                                                groupId + "/" + artifact.getArtifactId() + "/" +
                                                artifact.getVersion() + "/" + artifact.getArtifactId() + "-" +
                                                artifact.getVersion() + "." + "jar" );
+
+       assertTrue( installedArtifact.exists() );
+   }
+
+   public void testBasicInstallAndCreateChecksumIsTrue()
+       throws Exception
+   {
+       File testPom = new File( getBasedir(),
+                                "target/test-classes/unit/basic-install-checksum/plugin-config.xml" );
+
+       InstallMojo mojo = ( InstallMojo ) lookupMojo( "install", testPom );
+
+       assertNotNull( mojo );
+
+       File file = new File( getBasedir(),
+                             "target/test-classes/unit/basic-install-checksum/" +
+                             "maven-test-jar.jar" );
+
+       artifact = ( InstallArtifactStub ) getVariableValueFromObject( mojo, "artifact" );
+
+       boolean createChecksum = ( (Boolean) getVariableValueFromObject( mojo, "createChecksum" ) ).booleanValue();
+
+       assertTrue( createChecksum );
+
+       artifact.setFile( file );
+
+       mojo.execute();
+
+       ArtifactMetadata metadata = null;
+       for( Iterator iter = artifact.getMetadataList().iterator(); iter.hasNext(); )
+       {
+           metadata = (ArtifactMetadata) iter.next();
+           if( metadata.getRemoteFilename().endsWith( "pom" ) )
+           {
+               break;
+           }
+       }
+
+       ArtifactRepository localRepo = (ArtifactRepository) getVariableValueFromObject( mojo, "localRepository" );
+
+       File pom = new File( localRepo.getBasedir(),
+                            localRepo.pathOfLocalRepositoryMetadata( metadata, localRepo ) );
+
+       assertTrue( pom.exists() );
+
+       //get the actual checksum of the pom
+       String actualPomMd5Sum = mojo.getChecksum( pom, Digester.MD5 );
+       String actualPomSha1Sum = mojo.getChecksum( pom, Digester.SHA1 );
+
+       //get the actual checksum of the artifact
+       String actualMd5Sum = mojo.getChecksum( file, Digester.MD5 );
+       String actualSha1Sum = mojo.getChecksum( file, Digester.SHA1 );
+
+       String groupId = dotToSlashReplacer( artifact.getGroupId() );
+
+       String packaging = getVariableValueFromObject( mojo, "packaging" ).toString();
+
+       String localPath = getBasedir() + "/" + LOCAL_REPO + groupId + "/" + artifact.getArtifactId() + "/" +
+                          artifact.getVersion() + "/" + artifact.getArtifactId() + "-" +
+                          artifact.getVersion();
+
+       File installedArtifact = new File( localPath + "." + packaging );
+
+       File pomMd5 = new File( localPath + ".pom.md5" );
+       File pomSha1 = new File( localPath + ".pom.sha1" );
+
+       File md5 = new File( localPath + "." + packaging + ".md5" );
+       File sha1 = new File( localPath + "." + packaging + ".sha1" );
+
+       assertTrue( pomMd5.exists() );
+       assertTrue( pomSha1.exists() );
+       assertTrue( md5.exists() );
+       assertTrue( sha1.exists() );
+
+       String generatedMd5 = FileUtils.fileRead( md5 );
+       String generatedSha1 = FileUtils.fileRead( sha1 );
+       String generatedPomMd5 = FileUtils.fileRead( pomMd5 );
+       String generatedPomSha1 = FileUtils.fileRead( pomSha1 );
+
+       assertEquals( actualMd5Sum, generatedMd5 );
+       assertEquals( actualSha1Sum, generatedSha1 );
+       assertEquals( actualPomMd5Sum, generatedPomMd5 );
+       assertEquals( actualPomSha1Sum, generatedPomSha1 );
 
        assertTrue( installedArtifact.exists() );
    }
