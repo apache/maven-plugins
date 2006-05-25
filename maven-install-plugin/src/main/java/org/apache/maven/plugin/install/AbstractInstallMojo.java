@@ -16,9 +16,17 @@ package org.apache.maven.plugin.install;
  * limitations under the License.
  */
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.installer.ArtifactInstaller;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.repository.digest.Digester;
+import org.codehaus.plexus.util.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Common fields for installation mojos.
@@ -42,4 +50,76 @@ public abstract class AbstractInstallMojo
      * @readonly
      */
     protected ArtifactRepository localRepository;
+
+    /**
+     * @component role="org.apache.maven.repository.digest.Digester"
+     */
+    private Digester digester;
+
+    /**
+     * @parameter expression="${createChecksum}" default-value="false"
+     */
+    protected boolean createChecksum;
+
+    protected void installCheckSum( File file, boolean isPom )
+        throws MojoExecutionException
+    {
+        installCheckSum( file, null, isPom );
+    }
+    
+    protected void installCheckSum( File file, Artifact artifact, boolean isPom )
+        throws MojoExecutionException
+    {
+        try
+        {
+            getLog().info( "Creating Checksums..." );
+
+            String md5Sum = getChecksum( file, Digester.MD5 );
+            String sha1Sum = getChecksum( file, Digester.SHA1 );
+
+            File temp= File.createTempFile( "maven-md5-checksum", null );
+            temp.deleteOnExit();
+            FileUtils.fileWrite( temp.getAbsolutePath(), md5Sum );
+
+            File tempSha1 = File.createTempFile( "maven-sha1-checksum", null );
+            tempSha1.deleteOnExit();
+            FileUtils.fileWrite( tempSha1.getAbsolutePath(), sha1Sum );
+
+            File destination = null;
+
+            if( isPom )
+            {
+                destination = file;
+            }
+            else
+            {
+                String localPath = localRepository.pathOf( artifact );
+                destination = new File( localRepository.getBasedir(), localPath );
+            }
+
+            if ( !destination.getParentFile().exists() )
+            {
+                destination.getParentFile().mkdirs();
+            }
+
+            getLog().debug( "Installing checksum for " + destination );
+
+            FileUtils.copyFile( temp, new File( destination + ".md5" ) );
+            FileUtils.copyFile( tempSha1, new File( destination + ".sha1" ) );
+        }
+        catch( IOException e )
+        {
+            throw new MojoExecutionException( "Error creating checksum", e );
+        }
+        catch( NoSuchAlgorithmException e )
+        {
+            throw new MojoExecutionException( "Error in algorithm", e );
+        }
+    }
+
+    protected String getChecksum( File file, String algo )
+        throws NoSuchAlgorithmException, IOException
+    {
+        return digester.createChecksum( file, algo );
+    }
 }
