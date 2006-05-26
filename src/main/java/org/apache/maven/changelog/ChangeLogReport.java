@@ -71,37 +71,39 @@ public class ChangeLogReport
     /**
      * Used to specify whether to build the log from a range, absolute date.
      *
-     * @parameter
+     * @parameter expression="${changelog.type}" default-value="range"
+     * @required
      */
-    private String type = "range";
+    private String type;
 
     /**
      * Used to specify the number of days of log entries to retrieve.
      *
-     * @parameter
+     * @parameter expression="${changelog.range}" default-value="-1"
      */
-    private int range = -1;
+    private int range;
 
     /**
      * Used to specify the absolute date (or list of dates) to start log entries from.
      *
-     * @parameter
+     * @parameter expression="${changelog.dates}"
      */
     private List dates;
 
     /**
      * Used to specify the tag (or list of tags) to start log entries from.
      *
-     * @parameter
+     * @parameter expression="${changelog.tags}"
      */
     private List tags;
 
     /**
-     * Used to specify the date format of log entries to retrieve.
+     * Used to specify the date format of log entries to retrieve. This format will also be reflected in the reports.
      *
-     * @parameter
+     * @parameter expression="${changelog.dateFormat}" default-value="yyyy-MM-dd"
+     * @required
      */
-    private String dateFormat = "yyyy-MM-dd";
+    private String dateFormat;
 
     /**
      * Input dir.  Directory where the sources are located.
@@ -131,15 +133,18 @@ public class ChangeLogReport
      * Comment format string used for interrogating
      * the revision control system.
      * Currently only used by the ClearcaseChangeLogGenerator.
+     *
+     * @parameter expression="${changelog.commentFormat}"
      */
     private String commentFormat;
 
     /**
      * Output encoding for the xml document
      *
-     * @parameter
+     * @parameter expression="${changelog.outputEncoding}" default-value="ISO-8859-1"
+     * @required
      */
-    private String outputEncoding = "ISO-8859-1";
+    private String outputEncoding;
 
     /**
      * The user name (used by svn and starteam protocol).
@@ -911,8 +916,6 @@ public class ChangeLogReport
 
         initReportUrls();
 
-        System.out.println( "ENTRIES FOUND: " + entries.size() );
-
         Collections.sort( new ArrayList( entries ), new Comparator()
         {
             public int compare( Object arg0, Object arg1 )
@@ -921,8 +924,7 @@ public class ChangeLogReport
                 ChangeSet changeSet1 = (ChangeSet) arg1;
                 return changeSet1.getDate().compareTo( changeSet0.getDate() );
             }
-        }
-        );
+        } );
 
         for ( Iterator i = entries.iterator(); i.hasNext(); )
         {
