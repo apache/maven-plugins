@@ -57,6 +57,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
+import java.util.Collections;
+import java.util.Comparator;
 
 
 /**
@@ -908,6 +910,19 @@ public class ChangeLogReport
         sink.tableRow_();
 
         initReportUrls();
+
+        System.out.println( "ENTRIES FOUND: " + entries.size() );
+
+        Collections.sort( new ArrayList( entries ), new Comparator()
+        {
+            public int compare( Object arg0, Object arg1 )
+            {
+                ChangeSet changeSet0 = (ChangeSet) arg0;
+                ChangeSet changeSet1 = (ChangeSet) arg1;
+                return changeSet1.getDate().compareTo( changeSet0.getDate() );
+            }
+        }
+        );
 
         for ( Iterator i = entries.iterator(); i.hasNext(); )
         {
