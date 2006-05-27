@@ -261,19 +261,33 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
         for ( Iterator i = artifacts.iterator(); i.hasNext(); )
         {
             Artifact artifact = (Artifact) i.next();
-            Artifact cloverArtifact = this.artifactFactory.createArtifactWithClassifier( artifact.getGroupId(),
-                artifact.getArtifactId(), artifact.getVersion(), artifact.getType(), "clover" );
 
-            try
+            // Do not try to find Clovered versions for artifacts with classifiers. This is because Maven2 only
+            // supports a single classifier per artifact and thus if we replace the original classifier with
+            // a Clover classifier the artifact will fail to perform properly as intended originally. This is a
+            // limitation.
+            if ( artifact.getClassifier() == null )
             {
-                this.artifactResolver.resolve( cloverArtifact, new ArrayList(), localRepository );
+                Artifact cloveredArtifact = this.artifactFactory.createArtifactWithClassifier( artifact.getGroupId(),
+                    artifact.getArtifactId(), artifact.getVersion(), artifact.getType(), "clover" );
 
-                // Set the same scope as the main artifact as this is not set by createArtifactWithClassifier.
-                cloverArtifact.setScope( artifact.getScope() );
+                // Try to resolve the artifact with a clover classifier. If it doesn't exist, simply add the original
+                // artifact. If found, use the clovered artifact.
+                try
+                {
+                    this.artifactResolver.resolve( cloveredArtifact, new ArrayList(), localRepository );
 
-                resolvedArtifacts.add( cloverArtifact );
+                    // Set the same scope as the main artifact as this is not set by createArtifactWithClassifier.
+                    cloveredArtifact.setScope( artifact.getScope() );
+
+                    resolvedArtifacts.add( cloveredArtifact );
+                }
+                catch ( Exception e )
+                {
+                    resolvedArtifacts.add( artifact );
+                }
             }
-            catch ( Exception e )
+            else
             {
                 resolvedArtifacts.add( artifact );
             }
