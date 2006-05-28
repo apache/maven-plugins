@@ -16,6 +16,11 @@ package org.apache.maven.plugins.site;
  * limitations under the License.
  */
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.maven.artifact.manager.WagonConfigurationException;
 import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Site;
@@ -36,8 +41,16 @@ import org.apache.maven.wagon.authorization.AuthorizationException;
 import org.apache.maven.wagon.observers.Debug;
 import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.apache.maven.wagon.repository.Repository;
-
-import java.io.File;
+import org.codehaus.plexus.PlexusConstants;
+import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
+import org.codehaus.plexus.component.configurator.ComponentConfigurator;
+import org.codehaus.plexus.component.repository.exception.ComponentLifecycleException;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.configuration.PlexusConfiguration;
+import org.codehaus.plexus.context.Context;
+import org.codehaus.plexus.context.ContextException;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 
 /**
  * Deploys website using scp/file protocol.
@@ -52,7 +65,7 @@ import java.io.File;
  * @goal deploy
  */
 public class SiteDeployMojo
-    extends AbstractMojo
+    extends AbstractMojo implements Contextualizable
 {
     /**
      * Directory containing the generated project sites and report distributions.
@@ -82,6 +95,11 @@ public class SiteDeployMojo
      * @readonly
      */
     private Settings settings;
+
+    private PlexusContainer container;
+
+    /** Map( String, XmlPlexusConfiguration ) with the repository id and the wagon configuration */
+    private Map serverConfigurationMap = new HashMap();
 
     public void execute()
         throws MojoExecutionException
@@ -120,13 +138,20 @@ public class SiteDeployMojo
         // TODO: work on moving this into the deployer like the other deploy methods
 
         Wagon wagon;
+
         try
         {
+            // TODO use WagonManager#getWagon(Repository) when available
             wagon = wagonManager.getWagon( repository.getProtocol() );
+            configureWagon( wagon, repository.getId() );
         }
         catch ( UnsupportedProtocolException e )
         {
             throw new MojoExecutionException( "Unsupported protocol: '" + repository.getProtocol() + "'", e );
+        }
+        catch ( WagonConfigurationException e )
+        {
+            throw new MojoExecutionException( "Unable to configure Wagon: '" + repository.getProtocol() + "'", e );
         }
 
         if ( !wagon.supportsDirectoryCopy() )
@@ -224,4 +249,57 @@ public class SiteDeployMojo
 
         return proxyInfo;
     }
+
+    /**
+     * Configure the Wagon with the information from serverConfigurationMap ( which comes from settings.xml )
+     * 
+     * @todo remove when {@link WagonManager#getWagon(Repository) is available}
+     * @param wagon
+     * @param repositoryId
+     * @throws WagonConfigurationException
+     */
+    private void configureWagon( Wagon wagon, String repositoryId )
+        throws WagonConfigurationException
+    {
+        if ( serverConfigurationMap.containsKey( repositoryId ) )
+        {
+            ComponentConfigurator componentConfigurator = null;
+            try
+            {
+                componentConfigurator = (ComponentConfigurator) container.lookup( ComponentConfigurator.ROLE );
+                componentConfigurator.configureComponent( wagon, (PlexusConfiguration) serverConfigurationMap
+                    .get( repositoryId ), container.getContainerRealm() );
+            }
+            catch ( final ComponentLookupException e )
+            {
+                throw new WagonConfigurationException( repositoryId, "Unable to lookup wagon configurator. Wagon configuration cannot be applied.", e );
+            }
+            catch ( ComponentConfigurationException e )
+            {
+                throw new WagonConfigurationException( repositoryId, "Unable to apply wagon configuration.", e );
+            }
+            finally
+            {
+                if ( componentConfigurator != null )
+                {
+                    try
+                    {
+                        container.release( componentConfigurator );
+                    }
+                    catch ( ComponentLifecycleException e )
+                    {
+                        getLog().error( "Problem releasing configurator - ignoring: " + e.getMessage() );
+                    }
+                }
+
+            }
+        }
+    }
+
+    public void contextualize( Context context )
+        throws ContextException
+    {
+        container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
+    }
+
 }
