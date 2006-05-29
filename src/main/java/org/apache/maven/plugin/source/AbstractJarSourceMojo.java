@@ -53,6 +53,8 @@ public abstract class AbstractJarSourceMojo
     private MavenProject executedProject;
 
     /**
+     * Specifies whether or not to attach the artifact to the project
+     *
      * @parameter expression="${attach}" default-value="true"
      */
     private boolean attach = true;
@@ -63,12 +65,18 @@ public abstract class AbstractJarSourceMojo
     private MavenProjectHelper projectHelper;
 
     /**
+     * The directory where the generated archive file will be put
+     *
      * @parameter expression="${project.build.directory}"
      * @required
      */
     protected File outputDirectory;
 
     /**
+     * The filename to be used for the generated archive file.
+     * For the source:jar goal, "-sources" is appended to this filename.
+     * For the source:test-jar goal, "-test-sources" is appended.
+     *
      * @parameter expression="${project.build.finalName}"
      * @required
      */
