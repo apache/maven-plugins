@@ -111,14 +111,14 @@ public class CheckstyleReportGenerator
                 doSeveritySummary( results );
             }
 
-            if ( enableRulesSummary )
-            {
-                doRulesSummary( results );
-            }
-
             if ( enableFilesSummary )
             {
                 doFilesSummary( results );
+            }
+
+            if ( enableRulesSummary )
+            {
+                doRulesSummary( results );
             }
         }
 
