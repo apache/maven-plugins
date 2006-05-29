@@ -214,7 +214,7 @@ public class SurefirePlugin
     private boolean useFile;
 
     /**
-     * Option to specify the forking mode. Can be "never" (default), "once" or "always".
+     * Option to specify the forking mode. Can be "never", "once" or "always".
      * "none" and "pertest" are also accepted for backwards compatibility.
      *
      * @parameter expression="${forkMode}" default-value="once"
