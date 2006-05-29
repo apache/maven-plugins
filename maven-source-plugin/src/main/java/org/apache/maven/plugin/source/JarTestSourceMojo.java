@@ -33,6 +33,9 @@ import java.io.IOException;
 public class JarTestSourceMojo
     extends AbstractJarSourceMojo
 {
+    /**
+     * @see org.apache.maven.plugin.AbstractMojo#execute()
+     */
     public void execute()
         throws MojoExecutionException
     {
