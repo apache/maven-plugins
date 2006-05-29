@@ -24,6 +24,8 @@ import java.io.File;
 import java.io.IOException;
 
 /**
+ * Helper class that generates the jar file
+ *
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
  * @version $Id$
  */
@@ -31,6 +33,15 @@ public class SourceBundler
 {
     private static final String[] DEFAULT_INCLUDES = new String[]{"**/*",};
 
+    /**
+     * Method to create an archive of the specified files
+     *
+     * @param outputFile        the destination file of the generated archive
+     * @param sourceDirectories the directory where the files to be archived are located
+     * @param archiver          the archiver object that will create the archive
+     * @throws ArchiverException
+     * @throws IOException
+     */
     public void makeSourceBundle( File outputFile, File[] sourceDirectories, Archiver archiver )
         throws ArchiverException, IOException
     {
