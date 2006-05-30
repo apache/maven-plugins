@@ -48,7 +48,7 @@
       <date>2005-02-25</date>
       <author>Keogh Edrich Punzalan</author>
       <file>
-        <name>/path/to/file.extension</name>
+        <name>/path/to/file.extension (from /path/to/other/file.extension:45)</name>
         <revision>3</revision>
       </file>
       <msg>Third commit msg</msg>

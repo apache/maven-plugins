@@ -137,7 +137,7 @@ public class ChangeLogHandler
         }
         else if ( "name".equals( qName ) )
         {
-            bufFile.setName( bufData );
+            bufFile.setName( bufData.replaceFirst( " \\(from [^:]+:\\d+\\)", "" ) );
         }
     }
 
