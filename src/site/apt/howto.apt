@@ -137,3 +137,51 @@ How to Use
 
  Keep in mind that any dependencies specified in the POM will have their transitive dependencies placed in the
  assembly as well.
+ 
+ 
+* How to reuse assembly's component
+ 
+   There are situations where your project can produce multiple assemblies with the same set of 
+   denpendencySets, fileSets and/or files. Instead of duplicating those elements in all assembly descriptors, 
+   you can refactor them out into  common component descriptor(s)
+ 
+   Here is an example of assembly descriptor that uses component descriptor(s)
+ 
+-----
+ <assembly>
+   <id>someid</id>
+   <formats>
+     <format>zip</format>
+   </formats>
+   <componentDescriptors>
+     <componentDescriptor>src/main/assembly/component.xml</componentDescriptor>
+   </componentDescriptors>
+ </assembly>
+-----
+ 
+ 
+  and here is an example of component descriptor file
+
+-----
+<component>
+  <dependencySets>
+    <dependencySet>
+       ....
+    </dependencySet>
+    ....
+  </dependencySets>
+  <fileSets>
+    <fileSet>
+      .....
+    </fileSet>
+    .....
+  </fileSets>
+  <files>
+    <file>
+      .....
+    </file>
+  </files>
+</component>
+-----
+ 
+ 
