@@ -28,6 +28,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.TimeZone;
 
 /**
  * Change log generated xml parser.  SAXParser listener for processing a previously generated xml into several
@@ -114,7 +115,7 @@ public class ChangeLogHandler
                 {
                     ms = bufEntry.getDate().getTime();
                 }
-                bufEntry.setDate( new Date( ms + new SimpleDateFormat( currentPattern ).parse( bufData ).getTime() ) );
+                bufEntry.setDate( new Date( ms + new SimpleDateFormat( currentPattern ).parse( bufData ).getTime() + TimeZone.getDefault().getRawOffset()) );
             }
             catch ( ParseException e )
             {
