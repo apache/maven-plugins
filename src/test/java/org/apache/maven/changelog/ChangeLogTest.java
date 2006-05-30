@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Calendar;
 
 /**
  * @author Edwin Punzalan
@@ -47,7 +48,15 @@ public class ChangeLogTest
 
         ChangeSet changeSet = (ChangeSet) changelogSets.getChangeSets().get( 0 );
 
-        assertEquals( "Test changelog 1 set 1 date/time", 239635800000L, changeSet.getDate().getTime() );
+
+        Calendar cal = Calendar.getInstance(); // new cal with default TZ
+
+        cal.set( 1977, 7, 6, 5, 30, 0); // expected date from min-changelog.xml
+
+        cal.set( Calendar.MILLISECOND, 0);
+
+
+        assertEquals( "Test changelog 1 set 1 date/time", cal.getTime().getTime(), changeSet.getDate().getTime() );
 
         assertEquals( "Test changelog 1 set 1 author", "Edwin Punzalan", changeSet.getAuthor() );
 
@@ -64,7 +73,9 @@ public class ChangeLogTest
 
         changeSet = (ChangeSet) changelogSets.getChangeSets().get( 1 );
 
-        assertEquals( "Test changelog 1 set 2 date/time", 1109223000000L, changeSet.getDate().getTime() );
+        cal.set( 2005, 1, 24, 21, 30, 0 );
+
+        assertEquals( "Test changelog 1 set 2 date/time", cal.getTime().getTime(), changeSet.getDate().getTime() );
 
         assertEquals( "Test changelog 1 set 2 author", "Edwin Punzalan", changeSet.getAuthor() );
 
@@ -92,7 +103,9 @@ public class ChangeLogTest
 
         changeSet = (ChangeSet) changelogSets.getChangeSets().get( 0 );
 
-        assertEquals( "Test changelog 2 set 1 date/time", 1109313900000L, changeSet.getDate().getTime() );
+        cal.set( 2005, 1, 25, 22, 45, 0 );
+
+        assertEquals( "Test changelog 2 set 1 date/time", cal.getTime().getTime(), changeSet.getDate().getTime() );
 
         assertEquals( "Test changelog 2 set 1 author", "Keogh Edrich Punzalan", changeSet.getAuthor() );
 
@@ -109,7 +122,9 @@ public class ChangeLogTest
 
         changeSet = (ChangeSet) changelogSets.getChangeSets().get( 1 );
 
-        assertEquals( "Test changelog 2 set 2 date/time", 4107159000000L, changeSet.getDate().getTime() );
+        cal.set( 2100, 1, 25, 5, 30, 0 );
+
+        assertEquals( "Test changelog 2 set 2 date/time", cal.getTime().getTime(), changeSet.getDate().getTime() );
 
         assertEquals( "Test changelog 2 set 2 author", "Keogh Edrich Punzalan", changeSet.getAuthor() );
 
