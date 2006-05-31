@@ -18,13 +18,17 @@ package org.apache.maven.plugin.ejb;
 
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
+import org.codehaus.plexus.archiver.jar.ManifestException;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -221,48 +225,78 @@ public class EjbMojo
             
             // create archive
             archiver.createArchive( project, archive );
+        }
+        catch ( ArchiverException e )
+        {
+            throw new MojoExecutionException( "There was a problem creating the EJB archive: " + e.getMessage() , e );
+        }
+        catch ( ManifestException e )
+        {
+            throw new MojoExecutionException( "There was a problem creating the EJB archive: " + e.getMessage() , e );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "There was a problem creating the EJB archive: " + e.getMessage() , e );
+        }
+        catch ( DependencyResolutionRequiredException e )
+        {
+            throw new MojoExecutionException( "There was a problem creating the EJB archive: " + e.getMessage() , e );
+        }
 
-            project.getArtifact().setFile( jarFile );
+        project.getArtifact().setFile( jarFile );
 
-            if ( new Boolean( generateClient ).booleanValue() )
+        if ( Boolean.parseBoolean( generateClient ) )
+        {
+            getLog().info( "Building ejb client " + jarName + "-client" );
+
+            String[] excludes = DEFAULT_EXCLUDES;
+            String[] includes = DEFAULT_INCLUDES;
+
+            if ( clientIncludes != null && !clientIncludes.isEmpty() )
             {
-                getLog().info( "Building ejb client " + jarName + "-client" );
+                includes = (String[]) clientIncludes.toArray( EMPTY_STRING_ARRAY );
+            }
 
-                String[] excludes = DEFAULT_EXCLUDES;
-                String[] includes = DEFAULT_INCLUDES;
+            if ( clientExcludes != null && !clientExcludes.isEmpty() )
+            {
+                excludes = (String[]) clientExcludes.toArray( EMPTY_STRING_ARRAY );
+            }
 
-                if ( clientIncludes != null && !clientIncludes.isEmpty() )
-                {
-                    includes = (String[]) clientIncludes.toArray( EMPTY_STRING_ARRAY );
-                }
+            File clientJarFile = new File( basedir, jarName + "-client.jar" );
 
-                if ( clientExcludes != null && !clientExcludes.isEmpty() )
-                {
-                    excludes = (String[]) clientExcludes.toArray( EMPTY_STRING_ARRAY );
-                }
+            MavenArchiver clientArchiver = new MavenArchiver();
 
-                File clientJarFile = new File( basedir, jarName + "-client.jar" );
+            clientArchiver.setArchiver( clientJarArchiver );
 
-                MavenArchiver clientArchiver = new MavenArchiver();
+            clientArchiver.setOutputFile( clientJarFile );
 
-                clientArchiver.setArchiver( clientJarArchiver );
-
-                clientArchiver.setOutputFile( clientJarFile );
-
-                clientArchiver.getArchiver().addDirectory(
-                        new File( outputDirectory ), includes, excludes );
+            try
+            {
+                clientArchiver.getArchiver().addDirectory( new File( outputDirectory ), includes, excludes );
 
                 // create archive
                 clientArchiver.createArchive( project, archive );
 
-                // TODO: shouldn't need classifer
-                projectHelper.attachArtifact( project, "ejb-client", "client", clientJarFile );
             }
-        }
-        catch ( Exception e )
-        {
-            // TODO: improve error handling
-            throw new MojoExecutionException( "Error assembling EJB", e );
+            catch ( ArchiverException e )
+            {
+                throw new MojoExecutionException( "There was a problem creating the EJB client archive: " + e.getMessage() , e );
+            }
+            catch ( ManifestException e )
+            {
+                throw new MojoExecutionException( "There was a problem creating the EJB client archive: " + e.getMessage() , e );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "There was a problem creating the EJB client archive: " + e.getMessage() , e );
+            }
+            catch ( DependencyResolutionRequiredException e )
+            {
+                throw new MojoExecutionException( "There was a problem creating the EJB client archive: " + e.getMessage() , e );
+            }
+
+            // TODO: shouldn't need classifer
+            projectHelper.attachArtifact( project, "ejb-client", "client", clientJarFile );
         }
     }
 }
