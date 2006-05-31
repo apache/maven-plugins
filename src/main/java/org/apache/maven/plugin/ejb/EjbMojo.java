@@ -147,6 +147,7 @@ public class EjbMojo
      * <pre>
      * &lt;ejbVersion&gt;3.0&lt;&#47;ejbVersion&gt;
      * </pre>
+     * </p>
      * @parameter default-value="2.1"
      * @required
      */
