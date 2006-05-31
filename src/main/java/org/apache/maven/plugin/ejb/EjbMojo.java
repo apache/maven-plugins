@@ -46,7 +46,7 @@ public class EjbMojo
 
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
-    private static final String ejbJarXmlFile = "META-INF/ejb-jar.xml";
+    private static final String EJB_JAR_XML = "META-INF/ejb-jar.xml";
 
     /**
      * The directory for the generated EJB.
@@ -130,17 +130,20 @@ public class EjbMojo
      * @required
      */
     private JarArchiver jarArchiver;
-
+    
     /**
-     * What EJB version should the ejb-plugin generate? ejbVersion can be "2.x" or "3.x"
-     * (where x is a digit), defaulting to "2.1".  When ejbVersion is "3.x", the
+     * <p>
+     * What EJB version should the ejb-plugin generate? ejbVersion can be "2.x" or "3.x" 
+     * (where x is a digit), defaulting to "2.1".  When ejbVersion is "3.x", the 
      * ejb-jar.xml file is optional.
-     *
-     * <br/>Usage:
+     * </p>
+     * 
+     * <p>
+     * Usage:
      * <pre>
      * &lt;ejbVersion&gt;3.0&lt;&#47;ejbVersion&gt;
      * </pre>
-     * @parameter expression="2.1"
+     * @parameter default-value="2.1"
      * @required
      */
     private String ejbVersion;
@@ -177,7 +180,10 @@ public class EjbMojo
     public void execute()
         throws MojoExecutionException
     {
-        getLog().info( "Building ejb " + jarName + " with ejbVersion " + ejbVersion );
+        if ( getLog().isInfoEnabled() )
+        {
+            getLog().info( "Building ejb " + jarName + " with ejbVersion " + ejbVersion );
+        }
 
         File jarFile = new File( basedir, jarName + ".jar" );
 
@@ -187,25 +193,32 @@ public class EjbMojo
 
         archiver.setOutputFile( jarFile );
 
-        File deploymentDescriptor = new File( outputDirectory, ejbJarXmlFile );
+        File deploymentDescriptor = new File( outputDirectory, EJB_JAR_XML );
 
-        // test EJB version compliance
-        if ( !( ejbVersion.matches( "\\A3\\.[0-9]\\z" ) || deploymentDescriptor.exists() ) )
+        /* test EJB version compliance */
+        if ( !ejbVersion.matches( "\\A[2-3]\\.[0-9]\\z" ) )
         {
-            throw new MojoExecutionException( "Error assembling EJB: META-INF/ejb-jar.xml is required for ejbVersion < 3.0" );
+            throw new MojoExecutionException( "ejbVersion is not valid: " + ejbVersion
+                + ". Must be 2.x or 3.x (where x is a digit)" );
+        }
+
+        if ( ejbVersion.matches( "\\A2\\.[0-9]\\z" ) && !deploymentDescriptor.exists() )
+        {
+            throw new MojoExecutionException( "Error assembling EJB: " + EJB_JAR_XML
+                + " is required for ejbVersion 2.x" );
         }
 
         try
         {
             archiver.getArchiver().addDirectory( new File( outputDirectory ), DEFAULT_INCLUDES,
-                                                 new String[]{ejbJarXmlFile, "**/package.html"} );
+                                                 new String[] { EJB_JAR_XML, "**/package.html" } );
 
-            // possibly require ejb-jar.xml
+
             if ( deploymentDescriptor.exists() )
             {
-                archiver.getArchiver().addFile( deploymentDescriptor, ejbJarXmlFile );
+                archiver.getArchiver().addFile( deploymentDescriptor, EJB_JAR_XML );
             }
-
+            
             // create archive
             archiver.createArchive( project, archive );
 
