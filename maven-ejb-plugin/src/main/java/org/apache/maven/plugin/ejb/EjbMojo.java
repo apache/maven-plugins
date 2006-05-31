@@ -246,7 +246,7 @@ public class EjbMojo
 
         project.getArtifact().setFile( jarFile );
 
-        if ( Boolean.parseBoolean( generateClient ) )
+        if ( new Boolean( generateClient ).booleanValue() )
         {
             getLog().info( "Building ejb client " + jarName + "-client" );
 
