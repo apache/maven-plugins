@@ -16,14 +16,15 @@ package org.apache.maven.plugin.ejb;
  * limitations under the License.
  */
 
-import java.io.File;
-import java.util.LinkedList;
-import java.util.jar.JarFile;
-
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.ejb.stub.MavenProjectResourcesStub;
 import org.apache.maven.plugin.ejb.utils.JarContentChecker;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.codehaus.plexus.util.FileUtils;
+
+import java.io.File;
+import java.util.LinkedList;
+import java.util.jar.JarFile;
 
 
 /**
@@ -97,6 +98,7 @@ public class EjbMojoTest
         setVariableValueToObject( mojo, "clientExcludes", new LinkedList() );
         setVariableValueToObject( mojo, "clientIncludes", new LinkedList() );
         setVariableValueToObject( mojo, "project", project );
+        setVariableValueToObject( mojo, "ejbVersion", "2.1" );
 
         mojo.execute();
 
@@ -144,6 +146,7 @@ public class EjbMojoTest
         setVariableValueToObject( mojo, "clientExcludes", new LinkedList() );
         setVariableValueToObject( mojo, "clientIncludes", new LinkedList() );
         setVariableValueToObject( mojo, "project", project );
+        setVariableValueToObject( mojo, "ejbVersion", "2.1" );
 
         mojo.execute();
 
@@ -194,6 +197,7 @@ public class EjbMojoTest
         setVariableValueToObject( mojo, "clientExcludes", new LinkedList() );
         setVariableValueToObject( mojo, "clientIncludes", new LinkedList() );
         setVariableValueToObject( mojo, "project", project );
+        setVariableValueToObject( mojo, "ejbVersion", "2.1" );
 
         mojo.execute();
 
@@ -254,6 +258,7 @@ public class EjbMojoTest
         setVariableValueToObject( mojo, "clientExcludes", new LinkedList() );
         setVariableValueToObject( mojo, "clientIncludes", new LinkedList() );
         setVariableValueToObject( mojo, "project", project );
+        setVariableValueToObject( mojo, "ejbVersion", "2.1" );
 
         mojo.execute();
 
@@ -320,6 +325,7 @@ public class EjbMojoTest
         setVariableValueToObject( mojo, "clientExcludes", new LinkedList() );
         setVariableValueToObject( mojo, "clientIncludes", inclusions );
         setVariableValueToObject( mojo, "project", project );
+        setVariableValueToObject( mojo, "ejbVersion", "2.1" );
 
         mojo.execute();
 
@@ -386,6 +392,7 @@ public class EjbMojoTest
         setVariableValueToObject( mojo, "clientExcludes", exclusions );
         setVariableValueToObject( mojo, "clientIncludes", new LinkedList() );
         setVariableValueToObject( mojo, "project", project );
+        setVariableValueToObject( mojo, "ejbVersion", "2.1" );
 
         mojo.execute();
 
@@ -409,5 +416,143 @@ public class EjbMojoTest
         assertTrue( FileUtils.fileExists( checkedJarFile ) );
         assertTrue( inclusionChecker.isOK( new JarFile( checkedJarFile ) ) );
         assertFalse( exclusionChecker.isOK( new JarFile( checkedJarFile ) ) );
+    }
+
+    /**
+     * tests if the mojo throws an exception when the EJB version is < 3.0
+     * and no deployment descriptor is present. The case with deployment descriptor
+     * present is covered by the testJarCreation* tests.
+     *
+     * @throws Exception
+     */
+    public void testEjbCompliance_2_1_WithoutDescriptor()
+        throws Exception
+    {
+        File pomFile = new File( getBasedir(), defaultPOMPath );
+        EjbMojo mojo = (EjbMojo) lookupMojo( "ejb", pomFile );
+
+        assertNotNull( mojo );
+
+        // this will automatically create the isolated
+        // test environment
+        MavenProjectResourcesStub project = new MavenProjectResourcesStub( "testEjbCompliance_2_1_WithoutDescriptor" );
+
+        // create the necessary test files
+
+        // put this on the root dir
+        project.addFile( "pom.xml", MavenProjectResourcesStub.ROOT_FILE );
+        // start creating the environment
+        project.setupBuildEnvironment();
+
+        // configure mojo
+        String jarName = "testJar";
+
+        setVariableValueToObject( mojo, "basedir", project.getBuild().getDirectory() );
+        setVariableValueToObject( mojo, "outputDirectory", project.getBuild().getOutputDirectory() );
+        setVariableValueToObject( mojo, "jarName", jarName );
+        setVariableValueToObject( mojo, "generateClient", "false" );
+        setVariableValueToObject( mojo, "clientExcludes", new LinkedList() );
+        setVariableValueToObject( mojo, "clientIncludes", new LinkedList() );
+        setVariableValueToObject( mojo, "project", project );
+        setVariableValueToObject( mojo, "ejbVersion", "2.1" );
+
+        try
+        {
+            mojo.execute();
+            fail( "Exception should be thrown: No deployment descriptor present." );
+        }
+        catch ( MojoExecutionException e )
+        {
+        }
+    }
+
+    /**
+     * Tests if the jar is created under EJB version 3.0 with
+     * deployment descriptor present.
+     *
+     * @throws Exception
+     */
+    public void testEjbCompliance_3_0_WithDescriptor()
+        throws Exception
+    {
+        File pomFile = new File( getBasedir(), defaultPOMPath );
+        EjbMojo mojo = (EjbMojo) lookupMojo( "ejb", pomFile );
+
+        assertNotNull( mojo );
+
+        // this will automatically create the isolated
+        // test environment
+        MavenProjectResourcesStub project = new MavenProjectResourcesStub( "testEjbCompliance_3_0_WithDescriptor" );
+
+        // create the necessary test files
+
+        // put this on the target dir
+        project.addFile( "META-INF/ejb-jar.xml", MavenProjectResourcesStub.OUTPUT_FILE );
+        // put this on the root dir
+        project.addFile( "pom.xml", MavenProjectResourcesStub.ROOT_FILE );
+        // start creating the environment
+        project.setupBuildEnvironment();
+
+        // configure mojo
+        String jarName = "testJar";
+
+        setVariableValueToObject( mojo, "basedir", project.getBuild().getDirectory() );
+        setVariableValueToObject( mojo, "outputDirectory", project.getBuild().getOutputDirectory() );
+        setVariableValueToObject( mojo, "jarName", jarName );
+        setVariableValueToObject( mojo, "generateClient", "false" );
+        setVariableValueToObject( mojo, "clientExcludes", new LinkedList() );
+        setVariableValueToObject( mojo, "clientIncludes", new LinkedList() );
+        setVariableValueToObject( mojo, "project", project );
+        setVariableValueToObject( mojo, "ejbVersion", "3.0" );
+
+        mojo.execute();
+
+        // validate jar creation
+        String checkedJarFile = project.getBuild().getDirectory() + "/" + jarName + ".jar";
+        assertTrue( FileUtils.fileExists( checkedJarFile ) );
+    }
+
+    /**
+     * Tests if the jar is created under EJB version 3.0 without
+     * deployment descriptor present.
+     *
+     * @throws Exception
+     */
+    public void testEjbCompliance_3_0_WithoutDescriptor()
+        throws Exception
+    {
+        File pomFile = new File( getBasedir(), defaultPOMPath );
+        EjbMojo mojo = (EjbMojo) lookupMojo( "ejb", pomFile );
+
+        assertNotNull( mojo );
+
+        // this will automatically create the isolated
+        // test environment
+        MavenProjectResourcesStub project = new MavenProjectResourcesStub( "testEjbCompliance_3_0_WithoutDescriptor" );
+
+        // create the necessary test files
+
+        // put this on the root dir
+        project.addFile( "pom.xml", MavenProjectResourcesStub.ROOT_FILE );
+        // start creating the environment
+        project.setupBuildEnvironment();
+
+        // configure mojo
+        String jarName = "testJar";
+
+        setVariableValueToObject( mojo, "basedir", project.getBuild().getDirectory() );
+        setVariableValueToObject( mojo, "outputDirectory", project.getBuild().getOutputDirectory() );
+        setVariableValueToObject( mojo, "jarName", jarName );
+        setVariableValueToObject( mojo, "generateClient", "false" );
+        setVariableValueToObject( mojo, "clientExcludes", new LinkedList() );
+        setVariableValueToObject( mojo, "clientIncludes", new LinkedList() );
+        setVariableValueToObject( mojo, "project", project );
+        setVariableValueToObject( mojo, "ejbVersion", "3.0" );
+
+        mojo.execute();
+
+        // validate jar creation
+        String checkedJarFile = project.getBuild().getDirectory() + "/" + jarName + ".jar";
+        assertTrue( FileUtils.fileExists( checkedJarFile ) );
     }
 }

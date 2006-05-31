@@ -46,6 +46,8 @@ public class EjbMojo
 
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
+    private static final String ejbJarXmlFile = "META-INF/ejb-jar.xml";
+
     /**
      * The directory for the generated EJB.
      *
@@ -130,6 +132,20 @@ public class EjbMojo
     private JarArchiver jarArchiver;
 
     /**
+     * What EJB version should the ejb-plugin generate? ejbVersion can be "2.x" or "3.x"
+     * (where x is a digit), defaulting to "2.1".  When ejbVersion is "3.x", the
+     * ejb-jar.xml file is optional.
+     *
+     * <br/>Usage:
+     * <pre>
+     * &lt;ejbVersion&gt;3.0&lt;&#47;ejbVersion&gt;
+     * </pre>
+     * @parameter expression="2.1"
+     * @required
+     */
+    private String ejbVersion;
+
+    /**
      * The client Jar archiver.
      *
      * @parameter expression="${component.org.codehaus.plexus.archiver.Archiver#jar}"
@@ -161,7 +177,7 @@ public class EjbMojo
     public void execute()
         throws MojoExecutionException
     {
-        getLog().info( "Building ejb " + jarName );
+        getLog().info( "Building ejb " + jarName + " with ejbVersion " + ejbVersion );
 
         File jarFile = new File( basedir, jarName + ".jar" );
 
@@ -171,14 +187,24 @@ public class EjbMojo
 
         archiver.setOutputFile( jarFile );
 
-        String ejbJarXmlFile = "META-INF/ejb-jar.xml";
+        File deploymentDescriptor = new File( outputDirectory, ejbJarXmlFile );
+
+        // test EJB version compliance
+        if ( !( ejbVersion.matches( "\\A3\\.[0-9]\\z" ) || deploymentDescriptor.exists() ) )
+        {
+            throw new MojoExecutionException( "Error assembling EJB: META-INF/ejb-jar.xml is required for ejbVersion < 3.0" );
+        }
 
         try
         {
             archiver.getArchiver().addDirectory( new File( outputDirectory ), DEFAULT_INCLUDES,
                                                  new String[]{ejbJarXmlFile, "**/package.html"} );
 
-            archiver.getArchiver().addFile( new File( outputDirectory, ejbJarXmlFile ), ejbJarXmlFile );
+            // possibly require ejb-jar.xml
+            if ( deploymentDescriptor.exists() )
+            {
+                archiver.getArchiver().addFile( deploymentDescriptor, ejbJarXmlFile );
+            }
 
             // create archive
             archiver.createArchive( project, archive );
