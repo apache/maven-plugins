@@ -86,14 +86,14 @@ public class ChangeLogReport
     /**
      * Used to specify the absolute date (or list of dates) to start log entries from.
      *
-     * @parameter expression="${changelog.dates}"
+     * @parameter
      */
     private List dates;
 
     /**
      * Used to specify the tag (or list of tags) to start log entries from.
      *
-     * @parameter expression="${changelog.tags}"
+     * @parameter
      */
     private List tags;
 
