@@ -484,6 +484,100 @@ public class IdeaModuleTest
         assertTrue( "Test EjbModuleProperties for module library", ejbModuleFound );
     }
 
+    public void testProjectArtifactsWithVersionRange()
+        throws Exception
+    {
+        List expectedDeps = new ArrayList();
+        expectedDeps.add( "/junit/junit/4.0/junit-4.0.jar!/" );
+
+        Document imlDocument = super.executeMojo( "module", "src/test/module-plugin-configs/artifact-version-range-plugin-config.xml", "iml" );
+
+        Element component = findComponent( imlDocument.getRootElement(), "NewModuleRootManager" );
+
+        Element output = findElement( component, "output" );
+        assertEquals( "Module output url created.", "file://$MODULE_DIR$/target/classes",
+                      output.attributeValue( "url" ) );
+
+        Element outputTest = findElement( component, "output-test" );
+        assertEquals( "Module test-output url created.", "file://$MODULE_DIR$/target/test-classes",
+                      outputTest.attributeValue( "url" ) );
+
+        Element content = findElement( component, "content" );
+
+        List excludeList = content.elements( "excludeFolder" );
+        if ( excludeList.size() == 1 )
+        {
+            Element excl = content.element( "excludeFolder" );
+            assertEquals( "Test default exclude folder", "file://$MODULE_DIR$/target", excl.attributeValue( "url" ) );
+        }
+        else
+        {
+            boolean targetIsExcluded = false;
+            for ( Iterator excludes = excludeList.iterator(); excludes.hasNext(); )
+            {
+                Element excl = (Element) excludes.next();
+
+                if ( "file://$MODULE_DIR$/target".equals( excl.attributeValue( "url" ) ) )
+                {
+                    targetIsExcluded = true;
+                    break;
+                }
+            }
+
+            if ( !targetIsExcluded )
+            {
+                fail( "Default exclude folder 'target' not found" );
+            }
+        }
+
+        List elementList = findElementsByName( content, "sourceFolder" );
+        for ( Iterator sourceFolders = elementList.iterator(); sourceFolders.hasNext(); )
+        {
+            Element sourceFolder = (Element) sourceFolders.next();
+
+            String isTestSource = sourceFolder.attributeValue( "isTestSource" ).toLowerCase();
+            if ( "false".equals( isTestSource ) )
+            {
+                assertTrue( "Main source url",
+                            sourceFolder.attributeValue( "url" ).startsWith( "file://$MODULE_DIR$/src/main" ) );
+            }
+            else if ( "true".equals( isTestSource ) )
+            {
+                assertTrue( "Test source url",
+                            sourceFolder.attributeValue( "url" ).startsWith( "file://$MODULE_DIR$/src/test" ) );
+            }
+            else
+            {
+                fail( "Unknown sourceFolder 'isTestSource' attribute value: " + isTestSource );
+            }
+        }
+
+        List orderEntryList = findElementsByName( component, "orderEntry" );
+
+        for ( Iterator orderEntries = orderEntryList.iterator(); orderEntries.hasNext(); )
+        {
+            Element orderEntry = (Element) orderEntries.next();
+
+            if ( "module-library".equals( orderEntry.attributeValue( "type" ) ) )
+            {
+                Element library = (Element) orderEntry.elementIterator( "library" ).next();
+
+                Element classes = (Element) library.elementIterator( "CLASSES" ).next();
+
+                Element root = (Element) classes.elementIterator( "root" ).next();
+
+                String depUrl = root.attributeValue( "url" );
+
+                if ( depUrl.endsWith( "/junit/junit/4.0/junit-4.0.jar!/" ) )
+                {
+                    expectedDeps.remove( "/junit/junit/4.0/junit-4.0.jar!/" );
+                }
+            }
+        }
+
+        assertTrue( "All dependencies are present", expectedDeps.size() == 0 );
+    }
+
     protected Document executeMojo( String pluginXml )
         throws Exception
     {
