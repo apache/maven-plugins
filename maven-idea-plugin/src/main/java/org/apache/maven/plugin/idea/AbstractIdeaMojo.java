@@ -245,7 +245,7 @@ public abstract class AbstractIdeaMojo
     }
 
     protected void doDependencyResolution( MavenProject project, ArtifactRepository localRepo )
-        throws InvalidDependencyVersionException, ProjectBuildingException
+        throws InvalidDependencyVersionException, ProjectBuildingException, InvalidVersionSpecificationException
     {
         Map managedVersions =
             createManagedVersionMap( artifactFactory, project.getId(), project.getDependencyManagement() );
@@ -311,6 +311,7 @@ public abstract class AbstractIdeaMojo
     }
 
     private Set getProjectArtifacts()
+        throws InvalidVersionSpecificationException
     {
         Set artifacts = new HashSet();
 
@@ -320,7 +321,7 @@ public abstract class AbstractIdeaMojo
 
             String groupId = dep.getGroupId();
             String artifactId = dep.getArtifactId();
-            VersionRange versionRange = VersionRange.createFromVersion( dep.getVersion() );
+            VersionRange versionRange = VersionRange.createFromVersionSpec( dep.getVersion() );
             String type = dep.getType();
             if ( type == null )
             {
