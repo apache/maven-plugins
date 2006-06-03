@@ -71,6 +71,14 @@ public class PmdReport
      * @parameter expression="${targetJdk}"
      */
     private String targetJdk;
+    
+    /**
+     * The rule priority threshold; rules with lower priority
+     * than this will not be evaluated.
+     * 
+     * @parameter expression="${minimumPriority}" default-value="5"
+     */
+    private int minimumPriority = 5;
 
     /**
      * The PMD rulesets to use. See the <a href="http://pmd.sourceforge.net/rules/index.html">Stock Rulesets</a> for a
@@ -149,6 +157,7 @@ public class PmdReport
 
             Locator locator = new Locator( getLog() );
             RuleSetFactory ruleSetFactory = new RuleSetFactory();
+            ruleSetFactory.setMinimumPriority(this.minimumPriority);
             RuleSet[] sets = new RuleSet[rulesets.length];
             try
             {
