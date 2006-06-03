@@ -66,6 +66,7 @@ Configuration
         <sourceEncoding>utf-8</sourceEncoding>
         <minimumTokens>100</minimumTokens>
         <targetJdk>1.5</targetJdk>
+        <minimumPriority>5</minimumPriority>
       </configuration>
     </plugin>
   </plugins>
