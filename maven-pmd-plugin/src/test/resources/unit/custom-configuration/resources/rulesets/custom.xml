@@ -6,5 +6,11 @@
   <rule ref="rulesets/braces.xml">
     <exclude name="WhileLoopsMustUseBracesRule"/>
     <exclude name="IfElseStmtsMustUseBracesRule"/>
+  </rule>   
+  
+  <description>Lowest priority for unnecessary constructor</description>
+  <rule ref="rulesets/controversial.xml/UnnecessaryConstructor" >
+	<priority>5</priority>
   </rule>
+  
 </ruleset>

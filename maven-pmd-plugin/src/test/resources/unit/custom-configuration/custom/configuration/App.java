@@ -9,6 +9,11 @@ public class App
 {
 
     /**
+     * trigger Unnecessary constructor rule 
+     */
+    public App() {}
+    
+    /**
      * The main method
      *
      * @param args  an array of strings that contains the arguments
