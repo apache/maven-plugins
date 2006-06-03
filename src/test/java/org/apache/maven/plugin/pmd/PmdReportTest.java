@@ -70,7 +70,6 @@ public class PmdReportTest
             readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" ) );
         assertTrue( str.toLowerCase().indexOf( "/xref/def/configuration/AppSample.html#31".toLowerCase() ) != -1 );
 
-        str = readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" ) );
         assertTrue( str.toLowerCase().indexOf( "/xref/def/configuration/App.html#12".toLowerCase() ) != -1 );
 
     }
@@ -101,10 +100,12 @@ public class PmdReportTest
         //check if custom ruleset was applied
         String str = readFile( new File( getBasedir(), "target/test/unit/custom-configuration/target/site/pmd.html" ) );
         assertTrue( str.toLowerCase().indexOf( "Avoid using if statements without curly braces".toLowerCase() ) != -1 );
-
-        str = readFile( new File( getBasedir(), "target/test/unit/custom-configuration/target/site/pmd.html" ) );
+        
         assertTrue(
             str.toLowerCase().indexOf( "Avoid using if...else statements without curly braces".toLowerCase() ) != -1 );
+        
+        assertTrue("unnecessary constructor should not be triggered because of low priority",
+            str.toLowerCase().indexOf( "Avoid unnecessary constructors - the compiler will generate these for you".toLowerCase() ) == -1 );
 
     }
 
