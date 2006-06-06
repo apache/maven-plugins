@@ -213,20 +213,21 @@ public class DeployFileMojo
         Artifact artifact =
             artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, packaging, classifier );
         
-        artifact.setFile( file );
-
         // Upload the POM if requested, generating one if need be
         if ( generatePom )
         {
-            pomFile = generatePomFile();
+            ArtifactMetadata metadata = new ProjectArtifactMetadata( artifact, generatePomFile() );
+            artifact.addMetadata( metadata );
+        }
+        else
+        {
+            ArtifactMetadata metadata = new ProjectArtifactMetadata( artifact, pomFile );
+            artifact.addMetadata( metadata );
         }
 
-        ArtifactMetadata metadata = new ProjectArtifactMetadata( artifact, pomFile );
-        artifact.addMetadata( metadata );
-        
         try
         {
-            getDeployer().deploy( pomFile, artifact, deploymentRepository, getLocalRepository() );
+            getDeployer().deploy( file, artifact, deploymentRepository, getLocalRepository() );
         }
         catch ( ArtifactDeploymentException e )
         {
