@@ -14,7 +14,8 @@
 		  <uniqueVersion>true</uniqueVersion>
 		  <localRepository>${localRepository}</localRepository>
 		  <classifier>bin</classifier>
-          <repositoryLayout>default</repositoryLayout>
+      <repositoryLayout>default</repositoryLayout>
+      <generatePom>true</generatePom>
 		</configuration>
       </plugin>
     </plugins>

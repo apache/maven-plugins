@@ -15,6 +15,7 @@
 		  <uniqueVersion>true</uniqueVersion>
 		  <localRepository>${localRepository}</localRepository>
 		  <repositoryLayout>default</repositoryLayout>
+      <generatePom>true</generatePom>
 		</configuration>
       </plugin>
     </plugins>
