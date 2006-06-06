@@ -95,14 +95,17 @@ public class DeployFileMojo
 
     /**
      * Server Id to map on the &lt;id&gt; under &lt;server&gt; section of settings.xml
+     * In most cases, this parameter will be required for authentication.
      *
-     * @parameter expression="${repositoryId}"
+     * @parameter expression="${repositoryId}" default-value="remote-repository"
      * @required
      */
     private String repositoryId;
 
     /**
-     * The type of remote repository layout to deploy to. Try <i>legacy</i> for a Maven 1.x-style repository layout.
+     * The type of remote repository layout to deploy to. Try <i>legacy</i> for 
+     * a Maven 1.x-style repository layout.
+     * 
      * @parameter expression="${repositoryLayout}" default-value="default"
      * @required
      */
@@ -115,7 +118,7 @@ public class DeployFileMojo
 
     /**
      * URL where the artifact will be deployed. <br/>
-     * ie ( file://C:\m2-repo )
+     * ie ( file://C:\m2-repo or scp://host.com/path/to/repo )
      *
      * @parameter expression="${url}"
      * @required
@@ -133,6 +136,9 @@ public class DeployFileMojo
     private ArtifactRepositoryFactory repositoryFactory;
 
     /**
+     * Location of an existing POM file to be deployed alongside the main
+     * artifact, given by the ${file} parameter.
+     * 
      * @parameter expression="${pomFile}"
      */
     private File pomFile;
@@ -141,10 +147,9 @@ public class DeployFileMojo
      * Upload a POM for this artifact.  Will generate a default POM if none is
      * supplied with the pomFile argument.
      *
-     * @parameter expression="${generatePom}"
-     * @readonly
+     * @parameter expression="${generatePom}" default-value="true"
      */
-    private boolean generatePom = true;
+    private boolean generatePom;
 
     /**
      * Add classifier to the artifact
