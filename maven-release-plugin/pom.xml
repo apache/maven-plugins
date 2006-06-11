@@ -41,7 +41,7 @@
         <configuration>
           <version>1.0.0</version>
           <packageWithVersion>false</packageWithVersion>
-          <model>src/main/mdo/release-model.mdo</model>
+          <model>src/main/mdo/release-descriptor.mdo</model>
         </configuration>
       </plugin>
     </plugins>

@@ -91,6 +91,16 @@ public class PrepareReleaseMojo
      */
     private String preparationGoals;
 
+    /**
+     * Whether to generate the release descriptor as part of the preparation process.
+     *
+     * @parameter expression="${generateReleaseDescriptor}" default-value="true"
+     */
+    //TODO:JW add to the release configuration and follow through to the release manager where you can
+    // add a new phase to generate the release descriptor which can optionally send the release descriptor
+    // to continuum via a web service.
+    private boolean generateReleaseDescriptor;
+
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
