@@ -22,10 +22,13 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.archiver.MavenArchiver;
+import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
+import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
@@ -70,6 +73,23 @@ public abstract class AbstractWarMojo
      * @readonly
      */
     private File classesDirectory;
+
+    /**
+     * Whether a JAR file will be created for the classes in the webapp. Using this optional configuration
+     * parameter will make the generated classes to be archived into a jar file
+     * and the classes directory will then be excluded from the webapp.
+     *
+     * @parameter expression="${archiveClasses}" default-value="false"
+     */
+    private boolean archiveClasses;
+
+    /**
+     * The Jar archiver needed for archiving classes directory into jar file under WEB-INF/lib.
+     *
+     * @parameter expression="${component.org.codehaus.plexus.archiver.Archiver#jar}"
+     * @required
+     */
+    private JarArchiver jarArchiver;
 
     /**
      * The directory where the webapp is built.
@@ -167,7 +187,15 @@ public abstract class AbstractWarMojo
      */
     private String dependentWarExcludes;
 
+    /**
+     * The maven archive configuration to use.
+     *
+     * @parameter
+     */
+    protected MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
+
     private static final String[] EMPTY_STRING_ARRAY = {};
+
 
     public MavenProject getProject()
     {
@@ -389,7 +417,9 @@ public abstract class AbstractWarMojo
      * @param filterProperties
      * @throws java.io.IOException if an error occured while copying webResources
      */
-    public void copyResources( Resource resource, File webappDirectory, Properties filterProperties )
+    public void copyResources( Resource resource,
+                               File webappDirectory,
+                               Properties filterProperties )
         throws IOException
     {
         if ( !resource.getDirectory().equals( webappDirectory.getPath() ) )
@@ -428,7 +458,8 @@ public abstract class AbstractWarMojo
      * @param webappDirectory the target directory
      * @throws java.io.IOException if an error occured while copying webResources
      */
-    public void copyResources( File sourceDirectory, File webappDirectory )
+    public void copyResources( File sourceDirectory,
+                               File webappDirectory )
         throws IOException
     {
         if ( !sourceDirectory.equals( webappDirectory ) )
@@ -447,6 +478,37 @@ public abstract class AbstractWarMojo
     }
 
     /**
+     * Generates the JAR.
+     *
+     * @todo Add license files in META-INF directory.
+     */
+    public void createJarArchive( File libDirectory )
+        throws MojoExecutionException
+    {
+        String archiveName = project.getBuild().getFinalName() + ".jar";
+
+        File jarFile = new File( libDirectory, archiveName );
+
+        MavenArchiver archiver = new MavenArchiver();
+
+        archiver.setArchiver( jarArchiver );
+
+        archiver.setOutputFile( jarFile );
+
+        try
+        {
+            archiver.getArchiver().addDirectory( classesDirectory, getIncludes(), getExcludes() );
+
+            archiver.createArchive( getProject(), archive );
+        }
+        catch ( Exception e )
+        {
+            // TODO: improve error handling
+            throw new MojoExecutionException( "Error assembling JAR", e );
+        }
+    }
+
+    /**
      * Builds the webapp for the specified project.
      * <p/>
      * Classes, libraries and tld files are copied to
@@ -456,7 +518,8 @@ public abstract class AbstractWarMojo
      * @param webappDirectory
      * @throws java.io.IOException if an error occured while building the webapp
      */
-    public void buildWebapp( MavenProject project, File webappDirectory )
+    public void buildWebapp( MavenProject project,
+                             File webappDirectory )
         throws MojoExecutionException, IOException
     {
         getLog().info( "Assembling webapp " + project.getArtifactId() + " in " + webappDirectory );
@@ -469,7 +532,14 @@ public abstract class AbstractWarMojo
 
         if ( classesDirectory.exists() && !classesDirectory.equals( webappClassesDirectory ) )
         {
-            copyDirectoryStructureIfModified( classesDirectory, webappClassesDirectory );
+            if ( archiveClasses )
+            {
+                createJarArchive( libDirectory );
+            }
+            else
+            {
+                copyDirectoryStructureIfModified( classesDirectory, webappClassesDirectory );
+            }
         }
 
         Set artifacts = project.getArtifacts();
@@ -619,7 +689,8 @@ public abstract class AbstractWarMojo
      * @param file     File to be unpacked.
      * @param location Location where to put the unpacked files.
      */
-    private void unpack( File file, File location )
+    private void unpack( File file,
+                         File location )
         throws MojoExecutionException, NoSuchArchiverException
     {
         String archiveExt = FileUtils.getExtension( file.getAbsolutePath() ).toLowerCase();
@@ -648,7 +719,8 @@ public abstract class AbstractWarMojo
      * @param srcDir    Directory containing unpacked dependent war contents
      * @param targetDir Directory to overlay srcDir into
      */
-    private void copyDependentWarContents( File srcDir, File targetDir )
+    private void copyDependentWarContents( File srcDir,
+                                           File targetDir )
         throws MojoExecutionException
     {
         DirectoryScanner scanner = new DirectoryScanner();
@@ -756,7 +828,8 @@ public abstract class AbstractWarMojo
      *                                       <p/>
      *                                       TO DO: Remove this method when Maven moves to plexus-utils version 1.4
      */
-    private static void copyFileToDirectoryIfModified( File source, File destinationDirectory )
+    private static void copyFileToDirectoryIfModified( File source,
+                                                       File destinationDirectory )
         throws IOException
     {
         // TO DO: Remove this method and use the method in WarFileUtils when Maven 2 changes
@@ -775,7 +848,8 @@ public abstract class AbstractWarMojo
             // support ${token}
             new FilterWrapper()
             {
-                public Reader getReader( Reader fileReader, Properties filterProperties )
+                public Reader getReader( Reader fileReader,
+                                         Properties filterProperties )
                 {
                     return new InterpolationFilterReader( fileReader, filterProperties, "${", "}" );
                 }
@@ -783,7 +857,8 @@ public abstract class AbstractWarMojo
             // support @token@
             new FilterWrapper()
             {
-                public Reader getReader( Reader fileReader, Properties filterProperties )
+                public Reader getReader( Reader fileReader,
+                                         Properties filterProperties )
                 {
                     return new InterpolationFilterReader( fileReader, filterProperties, "@", "@" );
                 }
@@ -798,7 +873,10 @@ public abstract class AbstractWarMojo
      * @param filterProperties
      * @throws IOException TO DO: Remove this method when Maven moves to plexus-utils version 1.4
      */
-    private static void copyFilteredFile( File from, File to, String encoding, FilterWrapper[] wrappers,
+    private static void copyFilteredFile( File from,
+                                          File to,
+                                          String encoding,
+                                          FilterWrapper[] wrappers,
                                           Properties filterProperties )
         throws IOException
     {
@@ -856,7 +934,8 @@ public abstract class AbstractWarMojo
      *                                       <p/>
      *                                       TO DO: Remove this method when Maven moves to plexus-utils version 1.4
      */
-    private static void copyFileIfModified( File source, File destination )
+    private static void copyFileIfModified( File source,
+                                            File destination )
         throws IOException
     {
         // TO DO: Remove this method and use the method in WarFileUtils when Maven 2 changes
@@ -880,7 +959,8 @@ public abstract class AbstractWarMojo
      * @param destinationDirectory
      * @throws IOException TO DO: Remove this method when Maven moves to plexus-utils version 1.4
      */
-    private static void copyDirectoryStructureIfModified( File sourceDirectory, File destinationDirectory )
+    private static void copyDirectoryStructureIfModified( File sourceDirectory,
+                                                          File destinationDirectory )
         throws IOException
     {
         if ( !sourceDirectory.exists() )
@@ -930,7 +1010,8 @@ public abstract class AbstractWarMojo
      */
     private interface FilterWrapper
     {
-        Reader getReader( Reader fileReader, Properties filterProperties );
+        Reader getReader( Reader fileReader,
+                          Properties filterProperties );
     }
 
     /**
@@ -944,5 +1025,6 @@ public abstract class AbstractWarMojo
         return artifact.getArtifactId() + "-" + artifact.getVersion() + "." +
             artifact.getArtifactHandler().getExtension();
     }
+
 
 }

@@ -16,7 +16,6 @@ package org.apache.maven.plugin.war;
  * limitations under the License.
  */
 
-import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -50,12 +49,6 @@ public class WarManifestMojo
      */
     private WarArchiver warArchiver;
 
-    /**
-     * The maven archive configuration to use.
-     *
-     * @parameter
-     */
-    private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
     /**
      * Executes the WarMojo on the current project.
