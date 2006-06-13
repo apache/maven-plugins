@@ -37,7 +37,7 @@
       <item name="How to Use" href="howto.html"/>
       <item name="Examples" href="examples/index.html"/>
       <item name="Descriptor Format" href="assembly.html"/>
-      <item name="Predefined Descriptors" href="descriptor.html"/>
+      <item name="Predefined Descriptors" href="descriptor-refs.html"/>
     </menu>
     ${reports}
   </body>
