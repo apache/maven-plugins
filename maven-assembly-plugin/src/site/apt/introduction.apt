@@ -31,7 +31,7 @@ Introduction
  For a more detailed, step-by-step 
  introduction to the assembly plugin, read this {{{howto.html}HOW-TO}}.
  
- To write your own custom assembly, you will need to refer to the {{assembly.html}Assembly
+ To write your own custom assembly, you will need to refer to the {{{assembly.html}Assembly
  Descriptor Format}} reference.
  
 What is an Assembly?
