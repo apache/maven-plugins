@@ -91,7 +91,7 @@ public class ScmTagPhase
         validateConfiguration( releaseConfiguration );
 
         getLogger().info( "Full run would be tagging " + releaseConfiguration.getWorkingDirectory() + " with label: '" +
-            releaseConfiguration.getReleaseLabel() );
+            releaseConfiguration.getReleaseLabel() + "'" );
     }
 
     private static void validateConfiguration( ReleaseConfiguration releaseConfiguration )

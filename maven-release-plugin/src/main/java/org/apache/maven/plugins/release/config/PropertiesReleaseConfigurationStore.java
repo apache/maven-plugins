@@ -222,7 +222,10 @@ public class PropertiesReleaseConfigurationStore
             String prefix = "project.scm." + entry.getKey();
             if ( scm != null )
             {
-                properties.setProperty( prefix + ".connection", scm.getConnection() );
+                if ( scm.getConnection() != null )
+                {
+                    properties.setProperty( prefix + ".connection", scm.getConnection() );
+                }
                 if ( scm.getDeveloperConnection() != null )
                 {
                     properties.setProperty( prefix + ".developerConnection", scm.getDeveloperConnection() );
