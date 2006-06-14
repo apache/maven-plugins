@@ -138,7 +138,8 @@ mvn site:site
       </plugins>
     </reporting>
     ...
-</project>-------------------  
+</project>
+-------------------  
   
   and execute the site goal to generate the report.
 
