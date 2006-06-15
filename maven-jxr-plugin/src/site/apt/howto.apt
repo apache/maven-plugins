@@ -12,7 +12,7 @@ Maven 2 JXR Plugin
  
 *Available Configuration Options
  
- You can refer to the {{{jxr-mojo.html}MOJO generated documentation}} to discover the different configuration options for this report.
+ You can refer to the {{{index.html} generated documentation}} to discover the different configuration options for this report.
 
 *How to Use
 
