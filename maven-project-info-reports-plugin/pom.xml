@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
 <!--
   ~ Copyright 2004-2006 The Apache Software Foundation.
   ~
@@ -92,9 +94,9 @@
       <version>1.0-beta-3</version>
     </dependency>
     <dependency>
-      <groupId>plexus</groupId>
+      <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-i18n</artifactId>
-      <version>1.0-beta-5</version>
+      <version>1.0-beta-6</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
