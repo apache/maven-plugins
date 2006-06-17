@@ -377,7 +377,6 @@ public abstract class AbstractJavadocMojo
     /**
      * Creates links to existing javadoc-generated documentation of external referenced classes.
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#link">link</a>.
-     * It is a comma separated String.
      *
      * @parameter expression="${links}"
      */
@@ -386,7 +385,6 @@ public abstract class AbstractJavadocMojo
     /**
      * This option is a variation of -link; they both create links to javadoc-generated documentation for external referenced classes.
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#linkoffline">linkoffline</a>.
-     * It is a comma separated String.
      *
      * @parameter expression="${offlineLinks}"
      */
