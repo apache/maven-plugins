@@ -239,11 +239,11 @@ public abstract class AbstractMavenReportTestCase
 
     /**
      * Convenience method to create a m2 command line from a given working directory.
-     * <p>We suppose that the <code>m2</code> executable is present in the command path</p>.
+     * <p>We suppose that the <code>mvn</code> executable is present in the command path</p>.
      *
      * @param workingDir a not null working directory.
      * @param goal       the wanted goal
-     * @return the m2 command line, eg <code>m2 clean:clean site:site</code>
+     * @return the m2 command line, eg <code>mvn clean:clean site:site</code>
      * @throws IllegalArgumentException if the parameter workingDir is empty or doesnt exist.
      */
     private static Commandline createMaven2CommandLine( File workingDir, String goal )
