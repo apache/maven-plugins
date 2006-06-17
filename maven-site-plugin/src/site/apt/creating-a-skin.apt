@@ -38,5 +38,6 @@ Creating a Skin for the Maven 2 Site Plugin
   <<Details on the velocity template variables and use should be included>>.
 
   The format of the velocity template is currently out of scope for this document. To attempt this, start by copying
-  <<<default-site.vm>>> from the <<<doxia-site-renderer>>> JAR and modify it to your needs.
+  <<<default-site.vm>>> from the <<<doxia-site-renderer>>> JAR to <<<src/main/resources/META-INF/maven/site.vm>>>
+  and modify it to your needs.
 
