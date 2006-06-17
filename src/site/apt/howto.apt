@@ -13,7 +13,7 @@ How to use
   using the command below from your project:
 
 -------------------
-  m2 package
+  mvn package
 -------------------
 
   From your project's target directory you'll able to see the generated jar file.
@@ -98,19 +98,19 @@ How to use
 * How to use jar:sign specifying parameters on the command line
 
 -------------------
-  m2 jar:sign -Dkeystore=/path/to/your/keystore -Dstorepass=yourstorepassword -Dalias=youralias
+  mvn jar:sign -Dkeystore=/path/to/your/keystore -Dstorepass=yourstorepassword -Dalias=youralias
 -------------------
 
 * How to use jar:sign-verify specifying parameters on the command line
 
 -------------------
-  m2 jar:sign-verify [-Djarpath=/path/to/your/signedjar] [-Dverbose=true [-Dcheckcerts=true] ]
+  mvn jar:sign-verify [-Djarpath=/path/to/your/signedjar] [-Dverbose=true [-Dcheckcerts=true] ]
 -------------------
 
 * How to disable jar signing
 
 -------------------
-  m2 ... -Dmaven.jar.skip.sign=true
+  mvn ... -Dmaven.jar.skip.sign=true
 -------------------
 
   For full documentation, click {{{index.html}here}}.
