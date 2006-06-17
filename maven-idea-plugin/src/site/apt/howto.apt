@@ -8,7 +8,7 @@
 
 How to Use
 
-  You can directly use this plugin without configuring anything using the command "m2 idea:idea".   
+  You can directly use this plugin without configuring anything using the command "mvn idea:idea".   
   
   To configure what JDK name  you want to use, you must specify the parameter "jdkName" in the pom.xml  
  

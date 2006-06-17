@@ -15,7 +15,7 @@ How to Use
 *Run All Reports
 
  To include all Project Info Reports in your project, you must configure your pom.xml.
- Use "m2 site:site" to generate the configured reports.
+ Use "mvn site:site" to generate the configured reports.
 
 -------------------
 <project>
@@ -37,7 +37,7 @@ How to Use
 *Run Selective Reports
 
  To run the reports selectively, you can configure it to include only the reports that you prefer.
- Use "m2 site:site" to generate the selected reports.
+ Use "mvn site:site" to generate the selected reports.
 
 -------------------
 
@@ -78,19 +78,19 @@ How to Use
 |<<Report Name>>                  | <<Command Line>>                             |
 |                                 |                                              |
 *---------------------------------+----------------------------------------------+
-|Dependencies Report              | m2 project-info-reports:dependencies         |
+|Dependencies Report              | mvn project-info-reports:dependencies        |
 *---------------------------------+----------------------------------------------+
-|Mailing Lists                    | m2 project-info-reports:mailing-list         |
+|Mailing Lists                    | mvn project-info-reports:mailing-list        |
 *---------------------------------+----------------------------------------------+
-|Continous Integration            | m2 project-info-reports:cim                  |
+|Continous Integration            | mvn project-info-reports:cim                 |
 *---------------------------------+----------------------------------------------+
-|Source Repository                | m2 project-info-reports:scm                  |
+|Source Repository                | mvn project-info-reports:scm                 |
 *---------------------------------+----------------------------------------------+
-|Issue Tracking                   | m2 project-info-reports:issue-tracking       |
+|Issue Tracking                   | mvn project-info-reports:issue-tracking      |
 *---------------------------------+----------------------------------------------+
-|Project Team                     | m2 project-info-reports:project-team         |
+|Project Team                     | mvn project-info-reports:project-team        |
 *---------------------------------+----------------------------------------------+
-|License                          | m2 project-info-reports:license              |
+|License                          | mvn project-info-reports:license             |
 *---------------------------------+----------------------------------------------+
 
 
