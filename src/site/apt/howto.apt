@@ -20,6 +20,6 @@ Introduction
   web application from the current project, one would type
 
 +--------
-  m2 war:exploded
+  mvn war:exploded
 +---------
 
