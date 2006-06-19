@@ -36,8 +36,9 @@ Maven 2 Site Plugin
   In your pom, just add something like this:
 
 -------------------
-  ...
-  <reporting>
+<project>
+  [...]
+  <build>
     <plugins>
       <plugin>
        <groupId>org.apache.maven.plugins</groupId>
@@ -48,8 +49,9 @@ Maven 2 Site Plugin
        </configuration>
       </plugin>
     </plugins>
-  </reporting>
-  ...
+  </build>
+  [...]
+</project>
 -------------------
 
   And execute the site goal from your project.
