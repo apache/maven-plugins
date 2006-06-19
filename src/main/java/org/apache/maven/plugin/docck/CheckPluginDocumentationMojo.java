@@ -41,6 +41,8 @@ public class CheckPluginDocumentationMojo
 {
 
     /**
+     * Plexus component that searches for Mojos
+     *
      * @component
      */
     protected MojoScanner mojoScanner;

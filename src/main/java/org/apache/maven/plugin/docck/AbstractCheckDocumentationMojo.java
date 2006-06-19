@@ -287,11 +287,13 @@ public abstract class AbstractCheckDocumentationMojo
             errors.add( "site.xml is missing." );
         }
 
+        /* disabled bec site:site generates a duplicate file error
         // check for index.(xml|apt|html)
         if ( !findFiles( siteDirectory, "index" ) )
         {
             errors.add( "Missing site index.(html|xml|apt)." );
         }
+        */
 
         // check for usage.(xml|apt|html)
         if ( !findFiles( siteDirectory, "usage" ) )
