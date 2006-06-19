@@ -1,15 +1,20 @@
 package org.apache.maven.plugin.docck;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+/*
+ * Copyright 2001-2005 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
@@ -23,12 +28,22 @@ import org.apache.maven.shared.model.fileset.FileSet;
 import org.apache.maven.shared.model.fileset.util.FileSetManager;
 import org.codehaus.plexus.util.IOUtil;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Performs the heavy lifting for documentation checks. This is designed to be
  * reused for other types of projects, too.
- * 
- * @author jdcasey
  *
+ * @author jdcasey
  */
 public abstract class AbstractCheckDocumentationMojo
     extends AbstractMojo
@@ -43,7 +58,7 @@ public abstract class AbstractCheckDocumentationMojo
 
     /**
      * An optional location where the results should be written.
-     * 
+     *
      * @parameter expression="${output}"
      */
     private File output;
@@ -182,7 +197,7 @@ public abstract class AbstractCheckDocumentationMojo
     private List checkProject( MavenProject project )
     {
         getLog().info( "Checking project: " + project.getName() );
-        
+
         List errors = new ArrayList();
 
         // check for licenses
@@ -199,15 +214,15 @@ public abstract class AbstractCheckDocumentationMojo
                 License license = (License) it.next();
 
                 String url = license.getUrl();
-                
+
                 String protocol = null;
-                
+
                 try
                 {
                     URL licenseUrl = new URL( url );
-                    
+
                     protocol = licenseUrl.getProtocol();
-                    
+
                     if ( protocol != null )
                     {
                         protocol = protocol.toLowerCase();
@@ -215,8 +230,8 @@ public abstract class AbstractCheckDocumentationMojo
                 }
                 catch ( MalformedURLException e )
                 {
-                    getLog().debug( "License: " + license.getName() + " with appears to have an invalid URL: \'" + url + "\'.\nError: "
-                                + e.getMessage() + "\n\nTrying to access it as a file instead." );
+                    getLog().debug( "License: " + license.getName() + " with appears to have an invalid URL: \'" + url +
+                        "\'.\nError: " + e.getMessage() + "\n\nTrying to access it as a file instead." );
                 }
 
                 if ( protocol != null && protocol.startsWith( "http" ) )
@@ -224,7 +239,7 @@ public abstract class AbstractCheckDocumentationMojo
                     HeadMethod headMethod = new HeadMethod( url );
                     headMethod.setFollowRedirects( true );
                     headMethod.setDoAuthentication( false );
-                    
+
                     try
                     {
                         if ( httpClient.executeMethod( headMethod ) != 200 )
@@ -234,13 +249,13 @@ public abstract class AbstractCheckDocumentationMojo
                     }
                     catch ( HttpException e )
                     {
-                        errors.add( "Cannot reach license: " + license.getName() + " with URL: \'" + url
-                            + "\'.\nError: " + e.getMessage() );
+                        errors.add( "Cannot reach license: " + license.getName() + " with URL: \'" + url +
+                            "\'.\nError: " + e.getMessage() );
                     }
                     catch ( IOException e )
                     {
-                        errors.add( "Cannot reach license: " + license.getName() + " with URL: \'" + url
-                            + "\'.\nError: " + e.getMessage() );
+                        errors.add( "Cannot reach license: " + license.getName() + " with URL: \'" + url +
+                            "\'.\nError: " + e.getMessage() );
                     }
                     finally
                     {
@@ -295,7 +310,8 @@ public abstract class AbstractCheckDocumentationMojo
         return errors;
     }
 
-    protected abstract void checkPackagingSpecificDocumentation( MavenProject project, List errors, File siteDirectory );
+    protected abstract void checkPackagingSpecificDocumentation( MavenProject project, List errors,
+                                                                 File siteDirectory );
 
     private boolean findFiles( File siteDirectory, String pattern )
     {

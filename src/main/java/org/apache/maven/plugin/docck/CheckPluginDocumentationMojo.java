@@ -16,10 +16,6 @@ package org.apache.maven.plugin.docck;
  * limitations under the License.
  */
 
-import java.io.File;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.maven.plugin.descriptor.InvalidPluginDescriptorException;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.plugin.descriptor.Parameter;
@@ -28,15 +24,17 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.tools.plugin.extractor.ExtractionException;
 import org.apache.maven.tools.plugin.scanner.MojoScanner;
 
+import java.io.File;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * Checks a plugin's documentation for the standard minimums.
  *
+ * @author jdcasey
  * @goal plugin
  * @aggregator
- * 
  * @phase validate
- *
- * @author jdcasey
  */
 public class CheckPluginDocumentationMojo
     extends AbstractCheckDocumentationMojo
@@ -100,8 +98,8 @@ public class CheckPluginDocumentationMojo
 
                                 if ( paramDescription == null || paramDescription.trim().length() < 1 )
                                 {
-                                    errors.add( "Parameter: \'" + param.getName() + "\' in mojo: \'" + mojo.getGoal()
-                                        + "\' is missing a description." );
+                                    errors.add( "Parameter: \'" + param.getName() + "\' in mojo: \'" + mojo.getGoal() +
+                                        "\' is missing a description." );
                                 }
                             }
                         }
