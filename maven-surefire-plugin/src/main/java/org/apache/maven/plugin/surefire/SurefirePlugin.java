@@ -66,7 +66,7 @@ import java.util.Properties;
 public class SurefirePlugin
     extends AbstractMojo
 {
-    /**
+	/**
      * Set this to 'true' to bypass unit tests entirely. Its use is NOT RECOMMENDED, but quite convenient on occasion.
      *
      * @parameter expression="${maven.test.skip}"
@@ -212,6 +212,15 @@ public class SurefirePlugin
      * default-value="true"
      */
     private boolean useFile;
+
+    /**
+     * When forking, set this to true to redirect the unit test standard output to a file 
+     * (found in reportsDirectory/testName-output.txt)
+     * 
+     * @parameter expression="${maven.test.redirectTestOutputToFile}"
+     * @default-value="false"
+     */
+    private boolean redirectTestOutputToFile;
 
     /**
      * Option to specify the forking mode. Can be "never", "once" or "always".
@@ -607,9 +616,13 @@ public class SurefirePlugin
             }
         }
 
+        surefireBooter.setRedirectTestOutputToFile( redirectTestOutputToFile );
+
         surefireBooter.setForkConfiguration( fork );
 
         surefireBooter.setChildDelegation( childDelegation );
+
+        surefireBooter.setReportsDirectory( reportsDirectory );
 
         addReporters( surefireBooter, fork.isForking() );
 
