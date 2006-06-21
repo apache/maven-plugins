@@ -25,10 +25,13 @@ import org.apache.maven.plugin.docck.reports.DocumentationReporter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.tools.plugin.extractor.ExtractionException;
 import org.apache.maven.tools.plugin.scanner.MojoScanner;
+import org.codehaus.plexus.util.FileUtils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Checks a plugin's documentation for the standard minimums.
@@ -115,11 +118,73 @@ public class CheckPluginDocumentationMojo
         }
 
         checkConfiguredReportPlugins( project, reporter );
+
+        checkProjectSite( project, reporter );
     }
 
     protected boolean approveProjectPackaging( String packaging )
     {
         return "maven-plugin".equals( packaging );
+    }
+
+    private void checkProjectSite( MavenProject project, DocumentationReporter reporter )
+    {
+        // check for site.xml
+        File siteXml = new File( siteDirectory, "site.xml" );
+
+        if ( !siteXml.exists() )
+        {
+            reporter.error( "site.xml is missing." );
+        }
+        else
+        {
+            try
+            {
+                String siteHtml = FileUtils.fileRead( siteXml.getAbsolutePath() );
+
+                if ( siteHtml.indexOf( "href=\"usage.html\"" ) < 0 )
+                {
+                    reporter.error( "site.xml is missing link to: usage.html" );
+                }
+
+                if ( siteHtml.indexOf( "href=\"faq.html\"" ) < 0 )
+                {
+                    reporter.error( "site.xml is missing link to: faq.html" );
+                }
+            }
+            catch ( IOException e )
+            {
+                reporter.error( "Unable to read site.xml file: \'" + siteXml.getAbsolutePath() +
+                    "\'.\nError: " + e.getMessage() );
+            }
+        }
+
+        /* disabled bec site:site generates a duplicate file error
+        // check for index.(xml|apt|html)
+        if ( !findFiles( siteDirectory, "index" ) )
+        {
+            errors.add( "Missing site index.(html|xml|apt)." );
+        }
+        */
+
+        // check for usage.(xml|apt|html)
+        if ( !findFiles( siteDirectory, "usage" ) )
+        {
+            reporter.error( "Missing base usage.(html|xml|apt)." );
+        }
+
+        // check for **/examples/**.(xml|apt|html)
+        if ( !findFiles( siteDirectory, "**/examples/*" ) && !findFiles( siteDirectory, "**/example*" ) )
+        {
+            reporter.error( "Missing examples." );
+        }
+
+        if ( !findFiles( siteDirectory, "faq" ) )
+        {
+            reporter.error( "Missing base FAQ.(fml|html|xml|apt)." );
+        }
+
+        //todo Project Site Descriptor for usage, faq, examples
     }
 
     /**

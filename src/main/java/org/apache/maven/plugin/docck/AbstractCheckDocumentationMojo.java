@@ -74,7 +74,7 @@ public abstract class AbstractCheckDocumentationMojo
      * @parameter expression="${siteDirectory}" default-value="src/site"
      * @todo should be determined programmatically
      */
-    private File siteDirectory;
+    protected File siteDirectory;
 
     /**
      * Sets whether this plugin is running in offline or online mode. Also useful when you don't want
@@ -114,24 +114,25 @@ public abstract class AbstractCheckDocumentationMojo
         {
             MavenProject project = (MavenProject) it.next();
 
-            if ( !approveProjectPackaging( project.getPackaging() ) )
+            if ( approveProjectPackaging( project.getPackaging() ) )
             {
-                getLog().info( "Skipping non-plugin project: " + project.getName() );
-                continue;
+                getLog().info( "Checking project: " + project.getName() );
+
+                DocumentationReporter reporter = new DocumentationReporter();
+
+                checkProject( project, reporter );
+
+                if ( !hasErrors && reporter.hasErrors() )
+                {
+                    hasErrors = true;
+                }
+
+                errors.put( project, reporter );
             }
-
-            getLog().info( "Checking project: " + project.getName() );
-
-            DocumentationReporter reporter = new DocumentationReporter();
-
-            checkProject( project, reporter );
-
-            if ( !hasErrors && reporter.hasErrors() )
+            else
             {
-                hasErrors = true;
+                getLog().info( "Skipping unsupported project: " + project.getName() );
             }
-
-            errors.put( project, reporter );
         }
 
         String messages;
@@ -234,8 +235,6 @@ public abstract class AbstractCheckDocumentationMojo
     private void checkProject( MavenProject project, DocumentationReporter reporter )
     {
         checkPomRequirements( project, reporter );
-
-        checkProjectSite( project, reporter );
 
         checkPackagingSpecificDocumentation( project, reporter );
     }
@@ -344,44 +343,6 @@ public abstract class AbstractCheckDocumentationMojo
         }
 
         //todo plugin report
-    }
-
-    private void checkProjectSite( MavenProject project, DocumentationReporter reporter )
-    {
-        // check for site.xml
-        File siteXml = new File( siteDirectory, "site.xml" );
-
-        if ( !siteXml.exists() )
-        {
-            reporter.error( "site.xml is missing." );
-        }
-
-        /* disabled bec site:site generates a duplicate file error
-        // check for index.(xml|apt|html)
-        if ( !findFiles( siteDirectory, "index" ) )
-        {
-            errors.add( "Missing site index.(html|xml|apt)." );
-        }
-        */
-
-        // check for usage.(xml|apt|html)
-        if ( !findFiles( siteDirectory, "usage" ) )
-        {
-            reporter.error( "Missing base usage.(html|xml|apt)." );
-        }
-
-        // check for **/examples/**.(xml|apt|html)
-        if ( !findFiles( siteDirectory, "**/examples/*" ) && !findFiles( siteDirectory, "**/example*" ) )
-        {
-            reporter.error( "Missing examples." );
-        }
-
-        if ( !findFiles( siteDirectory, "faq" ) )
-        {
-            reporter.error( "Missing base FAQ.(fml|html|xml|apt)." );
-        }
-
-        //todo Project Site Descriptor for usage, faq, examples
     }
 
     private void checkProjectLicenses( MavenProject project, DocumentationReporter reporter )
@@ -501,7 +462,7 @@ public abstract class AbstractCheckDocumentationMojo
 
     protected abstract void checkPackagingSpecificDocumentation( MavenProject project, DocumentationReporter reporter );
 
-    private boolean findFiles( File siteDirectory, String pattern )
+    protected boolean findFiles( File siteDirectory, String pattern )
     {
         FileSet fs = new FileSet();
         fs.setDirectory( siteDirectory.getAbsolutePath() );
