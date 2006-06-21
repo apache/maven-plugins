@@ -548,13 +548,13 @@ public abstract class AbstractAssemblyMojo
                             binaryDepsFilter.add( new AssemblyExcludesArtifactFilter( excludes ) );
                         }
                         
-                        for ( Iterator it = binaryDependencies.iterator(); it.hasNext(); )
+                        for ( Iterator binaryDepIterator = binaryDependencies.iterator(); binaryDepIterator.hasNext(); )
                         {
-                            Artifact binaryDepArtifact = (Artifact) it.next();
+                            Artifact binaryDepArtifact = (Artifact) binaryDepIterator.next();
                             
                             if ( !binaryDepsFilter.include( binaryDepArtifact ) )
                             {
-                                binaryDependencies.remove( binaryDepArtifact );
+                                binaryDepIterator.remove();
                             }
                         }
                         
