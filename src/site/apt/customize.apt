@@ -6,7 +6,8 @@ Customizing the Maven 2 Checkstyle Plugin
 
 * Use a custom Checkstyle checker configuration.
 
-  A custom {{{http://checkstyle.sourceforge.net/config.html#Checker}Checker configuration xml file}} can be defined and then referenced via a URL, File, or build classpath resource reference.
+  A custom {{{http://checkstyle.sourceforge.net/config.html#Checker}Checker configuration xml file}} can
+  be defined and then referenced via a URL, File, or build classpath resource reference.
 
   To reference the a custom Checkstyle Checker configuration, use the <<configLocation>> parameter.
 
@@ -28,9 +29,12 @@ Customizing the Maven 2 Checkstyle Plugin
   </project>
 -------------------
 
-  This example causes the Maven 2 Checkstyle plugin to check for a File named <<checkstyle.xml>> or a resource named <<checkstyle.xml>> within the compile scope of the dependencies or build extensions classpath.
+  This example causes the Maven 2 Checkstyle plugin to check for a File named <<checkstyle.xml>> or a
+  resource named <<checkstyle.xml>> within the compile scope of the dependencies or build extensions
+  classpath.
 
-  There are 4 predefined Checkstyle configuration definitions that ship with the Maven 2 Checkstyle Plugin, the Sun Microsystems Definition is selected by default.
+  There are 4 predefined Checkstyle configuration definitions that ship with the Maven 2 Checkstyle Plugin,
+  the Sun Microsystems Definition is selected by default.
 
   * <<config/sun_checks.xml>> - Sun Microsystems Definition (default).
 
@@ -44,11 +48,15 @@ Customizing the Maven 2 Checkstyle Plugin
 
 * Use custom Checkstyle property expansion definitions.
 
-  A custom {{{http://checkstyle.sourceforge.net/config.html#Properties}property expansion definitions}} for the Checker can be defined.
+  A custom {{{http://checkstyle.sourceforge.net/config.html#Properties}property expansion definitions}}
+  for the Checker can be defined.
 
-  Checkstyle uses the property expansion mechanism to allow injection of specific values into a pre-defined Checker configuration.  Using property expansion alone is an insufficient means to customize the checks performed by Checkstyle.
+  Checkstyle uses the property expansion mechanism to allow injection of specific values into a pre-defined
+  Checker configuration.  Using property expansion alone is an insufficient means to customize the checks
+  performed by Checkstyle.
 
-  Example: <<checkstyle.xml>> - only checks the package name in use to ensure that it conforms to the desired scheme, but allows for users of this Checker to specify their own projectname.
+  Example: <<checkstyle.xml>> - only checks the package name in use to ensure that it conforms to the
+  desired scheme, but allows for users of this Checker to specify their own projectname.
 
 -------------------
 <?xml version="1.0" ?>
@@ -67,7 +75,8 @@ Customizing the Maven 2 Checkstyle Plugin
 </module>
 -------------------
 
-  Example: <<pom.xml>> - Specifies the <<projectname>> property expansion that Checkstyle will use when encountering such a variable in the above Checker configuration.
+  Example: <<pom.xml>> - Specifies the <<projectname>> property expansion that Checkstyle will use when
+  encountering such a variable in the above Checker configuration.
 
 -------------------
   <project>
@@ -90,11 +99,14 @@ Customizing the Maven 2 Checkstyle Plugin
   </project>
 -------------------
 
-  The property expansion information can also come from a location using the <<propertiesLocation>> parameter, which can point to a URL, File, or build classpath resource reference.
+  The property expansion information can also come from a location using the <<propertiesLocation>>
+  parameter, which can point to a URL, File, or build classpath resource reference.
 
 * Using a Suppressions filter.
 
-  Checkstyle allows the definition of a list of files and their line ranges that should be suppressed from reporting any violations (known as a {{{http://checkstyle.sourceforge.net/config.html#Filters}supressions filter}} ).
+  Checkstyle allows the definition of a list of files and their line ranges that should be suppressed
+  from reporting any violations (known as a
+  {{{http://checkstyle.sourceforge.net/config.html#Filters}supressions filter}} ).
 
   Example: <<checkstyle-suppressions.xml>>
 
@@ -140,9 +152,13 @@ Customizing the Maven 2 Checkstyle Plugin
 
   For the really adventurous, custom Checkstyle checks can be used with the Maven 2 Checkstyle Plugin.
 
-  The plugin provides the ability to define the {{{http://checkstyle.sourceforge.net/config.html#Packages}package names definition}} required to reference your custom check modules.
+  The plugin provides the ability to define the
+  {{{http://checkstyle.sourceforge.net/config.html#Packages}package names definition}} required to
+  reference your custom check modules.
 
-  TIP: Create a maven project that produces a jar file of your custom checks, and then include it in your projects using the maven build extension in the pom.xml to avoid them being included in the compile or package phases of your project.
+  TIP: Create a maven project that produces a jar file of your custom checks, and then include it in your
+  projects using the maven build extension in the pom.xml to avoid them being included in the compile or
+  package phases of your project.
 
   Example: <<mycompany-checkstyle-checks-1.0.jar>>.
 
