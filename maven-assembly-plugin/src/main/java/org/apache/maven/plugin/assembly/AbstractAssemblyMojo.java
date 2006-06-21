@@ -457,15 +457,15 @@ public abstract class AbstractAssemblyMojo
         {
             ModuleSet moduleSet = (ModuleSet) i.next();
 
-            AndArtifactFilter filter = new AndArtifactFilter();
+            AndArtifactFilter moduleFilter = new AndArtifactFilter();
 
             if ( !moduleSet.getIncludes().isEmpty() )
             {
-                filter.add( new AssemblyIncludesArtifactFilter( moduleSet.getIncludes() ) );
+                moduleFilter.add( new AssemblyIncludesArtifactFilter( moduleSet.getIncludes() ) );
             }
             if ( !moduleSet.getExcludes().isEmpty() )
             {
-                filter.add( new AssemblyExcludesArtifactFilter( moduleSet.getExcludes() ) );
+                moduleFilter.add( new AssemblyExcludesArtifactFilter( moduleSet.getExcludes() ) );
             }
 
             Set set = getModulesFromReactor( getExecutedProject() );
@@ -476,7 +476,7 @@ public abstract class AbstractAssemblyMojo
             {
                 MavenProject moduleProject = (MavenProject) j.next();
 
-                if ( filter.include( moduleProject.getArtifact() ) )
+                if ( moduleFilter.include( moduleProject.getArtifact() ) )
                 {
                     String name = moduleProject.getBuild().getFinalName();
 
@@ -513,9 +513,9 @@ public abstract class AbstractAssemblyMojo
 
                     if ( binaries != null )
                     {
-                        Artifact artifact = moduleProject.getArtifact();
+                        Artifact moduleArtifact = moduleProject.getArtifact();
 
-                        if ( artifact.getFile() == null )
+                        if ( moduleArtifact.getFile() == null )
                         {
                             throw new MojoExecutionException( "Included module: " + moduleProject.getId() +
                                 " does not have an artifact with a file. Please ensure the package phase is run before the assembly is generated." );
@@ -532,6 +532,32 @@ public abstract class AbstractAssemblyMojo
                             Integer.toString( archiver.getDefaultDirectoryMode(), 8 ) + " file perms: " +
                             Integer.toString( archiver.getDefaultFileMode(), 8 ) );
 
+                        Set binaryDependencies = moduleProject.getArtifacts();
+                        
+                        List includes = binaries.getIncludes();
+                        List excludes = binaries.getExcludes();
+                        
+                        AndArtifactFilter binaryDepsFilter = new AndArtifactFilter();
+
+                        if ( !includes.isEmpty() )
+                        {
+                            binaryDepsFilter.add( new AssemblyIncludesArtifactFilter( includes ) );
+                        }
+                        if ( !excludes.isEmpty() )
+                        {
+                            binaryDepsFilter.add( new AssemblyExcludesArtifactFilter( excludes ) );
+                        }
+                        
+                        for ( Iterator it = binaryDependencies.iterator(); it.hasNext(); )
+                        {
+                            Artifact binaryDepArtifact = (Artifact) it.next();
+                            
+                            if ( !binaryDepsFilter.include( binaryDepArtifact ) )
+                            {
+                                binaryDependencies.remove( binaryDepArtifact );
+                            }
+                        }
+                        
                         if ( binaries.isUnpack() )
                         {
                             // TODO: something like zipfileset in plexus-archiver
@@ -545,7 +571,7 @@ public abstract class AbstractAssemblyMojo
                                 tempLocation.mkdirs();
                                 process = true;
                             }
-                            else if ( artifact.getFile().lastModified() > tempLocation.lastModified() )
+                            else if ( moduleArtifact.getFile().lastModified() > tempLocation.lastModified() )
                             {
                                 process = true;
                             }
@@ -554,15 +580,13 @@ public abstract class AbstractAssemblyMojo
                             {
                                 try
                                 {
-                                    unpack( artifact.getFile(), tempLocation );
+                                    unpack( moduleArtifact.getFile(), tempLocation );
 
                                     if ( binaries.isIncludeDependencies() )
                                     {
-                                        Set artifactSet = moduleProject.getArtifacts();
-
-                                        for ( Iterator artifacts = artifactSet.iterator(); artifacts.hasNext(); )
+                                        for ( Iterator dependencyIterator = binaryDependencies.iterator(); dependencyIterator.hasNext(); )
                                         {
-                                            Artifact dependencyArtifact = (Artifact) artifacts.next();
+                                            Artifact dependencyArtifact = (Artifact) dependencyIterator.next();
 
                                             unpack( dependencyArtifact.getFile(), tempLocation );
                                         }
@@ -611,14 +635,12 @@ public abstract class AbstractAssemblyMojo
                             {
                                 String outputFileNameMapping = binaries.getOutputFileNameMapping();
 
-                                archiver.addFile( artifact.getFile(),
-                                                  output + evaluateFileNameMapping( artifact, outputFileNameMapping ) );
+                                archiver.addFile( moduleArtifact.getFile(),
+                                                  output + evaluateFileNameMapping( moduleArtifact, outputFileNameMapping ) );
 
                                 if ( binaries.isIncludeDependencies() )
                                 {
-                                    Set artifactSet = moduleProject.getArtifacts();
-
-                                    for ( Iterator artifacts = artifactSet.iterator(); artifacts.hasNext(); )
+                                    for ( Iterator artifacts = binaryDependencies.iterator(); artifacts.hasNext(); )
                                     {
                                         Artifact dependencyArtifact = (Artifact) artifacts.next();
 
