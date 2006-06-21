@@ -20,11 +20,11 @@ import org.apache.maven.plugin.descriptor.InvalidPluginDescriptorException;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.plugin.descriptor.Parameter;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
+import org.apache.maven.plugin.docck.reports.DocumentationReporter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.tools.plugin.extractor.ExtractionException;
 import org.apache.maven.tools.plugin.scanner.MojoScanner;
 
-import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
@@ -47,7 +47,7 @@ public class CheckPluginDocumentationMojo
      */
     protected MojoScanner mojoScanner;
 
-    protected void checkPackagingSpecificDocumentation( MavenProject project, List errors, File siteDirectory )
+    protected void checkPackagingSpecificDocumentation( MavenProject project, DocumentationReporter reporter )
     {
         PluginDescriptor descriptor = new PluginDescriptor();
 
@@ -57,12 +57,12 @@ public class CheckPluginDocumentationMojo
         }
         catch ( InvalidPluginDescriptorException e )
         {
-            errors.add( "Failed to parse mojo descriptors.\nError: " + e.getMessage() );
+            reporter.error( "Failed to parse mojo descriptors.\nError: " + e.getMessage() );
             descriptor = null;
         }
         catch ( ExtractionException e )
         {
-            errors.add( "Failed to parse mojo descriptors.\nError: " + e.getMessage() );
+            reporter.error( "Failed to parse mojo descriptors.\nError: " + e.getMessage() );
             descriptor = null;
         }
 
@@ -82,7 +82,7 @@ public class CheckPluginDocumentationMojo
                     // TODO: really a description of length 1 isn't all that helpful...
                     if ( mojoDescription == null || mojoDescription.trim().length() < 1 )
                     {
-                        errors.add( "Mojo: \'" + mojo.getGoal() + "\' is missing a description." );
+                        reporter.error( "Mojo: \'" + mojo.getGoal() + "\' is missing a description." );
                     }
 
                     List params = mojo.getParameters();
@@ -100,7 +100,7 @@ public class CheckPluginDocumentationMojo
 
                                 if ( paramDescription == null || paramDescription.trim().length() < 1 )
                                 {
-                                    errors.add( "Parameter: \'" + param.getName() + "\' in mojo: \'" + mojo.getGoal() +
+                                    reporter.error( "Parameter: \'" + param.getName() + "\' in mojo: \'" + mojo.getGoal() +
                                         "\' is missing a description." );
                                 }
                             }
@@ -115,5 +115,4 @@ public class CheckPluginDocumentationMojo
     {
         return "maven-plugin".equals( packaging );
     }
-
 }

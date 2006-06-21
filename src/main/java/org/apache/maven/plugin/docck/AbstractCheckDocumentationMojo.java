@@ -20,20 +20,26 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.HeadMethod;
 import org.apache.maven.model.License;
+import org.apache.maven.model.IssueManagement;
+import org.apache.maven.model.Prerequisites;
+import org.apache.maven.model.Scm;
+import org.apache.maven.model.Organization;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.docck.reports.DocumentationReporter;
+import org.apache.maven.plugin.docck.reports.DocumentationReport;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.model.fileset.FileSet;
 import org.apache.maven.shared.model.fileset.util.FileSetManager;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -48,7 +54,6 @@ import java.util.Map;
 public abstract class AbstractCheckDocumentationMojo
     extends AbstractMojo
 {
-
     /**
      * @parameter default-value="${reactorProjects}"
      * @readonly
@@ -62,6 +67,22 @@ public abstract class AbstractCheckDocumentationMojo
      * @parameter expression="${output}"
      */
     private File output;
+
+    /**
+     * Directory to search for files used by maven-site-plugin
+     *
+     * @parameter expression="${siteDirectory}" default-value="src/site"
+     * @todo should be determined programmatically
+     */
+    private File siteDirectory;
+
+    /**
+     * Sets whether this plugin is running in offline or online mode. Also useful when you don't want
+     * to verify http URLs.
+     *
+     * @parameter expression="${offline}" default-value="false"
+     */
+    private boolean offline;
 
     private HttpClient httpClient;
 
@@ -99,44 +120,25 @@ public abstract class AbstractCheckDocumentationMojo
                 continue;
             }
 
-            List projectErrors = checkProject( project );
+            getLog().info( "Checking project: " + project.getName() );
 
-            hasErrors = hasErrors || !projectErrors.isEmpty();
+            DocumentationReporter reporter = new DocumentationReporter();
 
-            errors.put( project, projectErrors );
+            checkProject( project, reporter );
+
+            if ( !hasErrors && reporter.hasErrors() )
+            {
+                hasErrors = true;
+            }
+
+            errors.put( project, reporter );
         }
 
         String messages;
 
         if ( hasErrors )
         {
-            StringBuffer buffer = new StringBuffer();
-            buffer.append( "\nThe following documentation problems were found:\n" );
-
-            for ( Iterator it = errors.entrySet().iterator(); it.hasNext(); )
-            {
-                Map.Entry entry = (Map.Entry) it.next();
-
-                MavenProject project = (MavenProject) entry.getKey();
-                List projectErrors = (List) entry.getValue();
-
-                if ( !projectErrors.isEmpty() )
-                {
-                    buffer.append( "\no " ).append( project.getName() );
-                    buffer.append( " (" ).append( projectErrors.size() ).append( " errors)" );
-
-                    for ( Iterator errorIterator = projectErrors.iterator(); errorIterator.hasNext(); )
-                    {
-                        String error = (String) errorIterator.next();
-
-                        buffer.append( "\n\t- " ).append( error );
-                    }
-
-                    buffer.append( "\n" );
-                }
-            }
-
-            messages = buffer.toString();
+            messages = buildErrorMessages( errors );
         }
         else
         {
@@ -168,6 +170,41 @@ public abstract class AbstractCheckDocumentationMojo
         }
     }
 
+    private String buildErrorMessages( Map errors )
+    {
+        String messages;
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "\nThe following documentation problems were found:\n" );
+
+        for ( Iterator it = errors.entrySet().iterator(); it.hasNext(); )
+        {
+            Map.Entry entry = (Map.Entry) it.next();
+
+            MavenProject project = (MavenProject) entry.getKey();
+            DocumentationReporter reporter = (DocumentationReporter) entry.getValue();
+
+            if ( !reporter.getMessages().isEmpty() )
+            {
+                buffer.append( "\no " ).append( project.getName() );
+                buffer.append( " (" ).append( reporter.getMessagesByType( DocumentationReport.TYPE_ERROR ).size() )
+                      .append( " errors," );
+                buffer.append( " " ).append( reporter.getMessagesByType( DocumentationReport.TYPE_WARN ).size() )
+                      .append( " warnings)" );
+                for ( Iterator errorIterator = reporter.getMessages().iterator(); errorIterator.hasNext(); )
+                {
+                    String error = (String) errorIterator.next();
+
+                    buffer.append( "\n\t" ).append( error );
+                }
+
+                buffer.append( "\n" );
+            }
+        }
+
+        messages = buffer.toString();
+        return messages;
+    }
+
     protected abstract boolean approveProjectPackaging( String packaging );
 
     private void writeMessages( String messages )
@@ -194,97 +231,129 @@ public abstract class AbstractCheckDocumentationMojo
         }
     }
 
-    private List checkProject( MavenProject project )
+    private void checkProject( MavenProject project, DocumentationReporter reporter )
     {
-        getLog().info( "Checking project: " + project.getName() );
+        checkPomRequirements( project, reporter );
 
-        List errors = new ArrayList();
+        checkProjectSite( project, reporter );
 
-        // check for licenses
-        List licenses = project.getLicenses();
+        checkPackagingSpecificDocumentation( project, reporter );
+    }
 
-        if ( licenses == null || licenses.isEmpty() )
+    private void checkPomRequirements( MavenProject project, DocumentationReporter reporter )
+    {
+        checkProjectLicenses( project, reporter );
+
+        if ( StringUtils.isEmpty( project.getName() ) )
         {
-            errors.add( "No license(s) specified." );
+            reporter.error( "Missing tag <name>." );
+        }
+
+        if ( StringUtils.isEmpty( project.getDescription() ) )
+        {
+            reporter.error( "Missing tag <description>." );
+        }
+
+        if ( StringUtils.isEmpty( project.getUrl() ) )
+        {
+            reporter.error( "Missing tag <url>." );
         }
         else
         {
-            for ( Iterator it = licenses.iterator(); it.hasNext(); )
+            checkURL( project.getUrl(), "project site", reporter);
+        }
+
+        if ( project.getIssueManagement() == null )
+        {
+            reporter.error( "Missing tag <issueManagement>." );
+        }
+        else
+        {
+            IssueManagement issueMngt = project.getIssueManagement();
+            if ( StringUtils.isEmpty( issueMngt.getUrl() ) )
             {
-                License license = (License) it.next();
-
-                String url = license.getUrl();
-
-                String protocol = null;
-
-                try
-                {
-                    URL licenseUrl = new URL( url );
-
-                    protocol = licenseUrl.getProtocol();
-
-                    if ( protocol != null )
-                    {
-                        protocol = protocol.toLowerCase();
-                    }
-                }
-                catch ( MalformedURLException e )
-                {
-                    getLog().debug( "License: " + license.getName() + " with appears to have an invalid URL: \'" + url +
-                        "\'.\nError: " + e.getMessage() + "\n\nTrying to access it as a file instead." );
-                }
-
-                if ( protocol != null && protocol.startsWith( "http" ) )
-                {
-                    HeadMethod headMethod = new HeadMethod( url );
-                    headMethod.setFollowRedirects( true );
-                    headMethod.setDoAuthentication( false );
-
-                    try
-                    {
-                        if ( httpClient.executeMethod( headMethod ) != 200 )
-                        {
-                            errors.add( "Cannot reach license: " + license.getName() + " with URL: \'" + url + "\'." );
-                        }
-                    }
-                    catch ( HttpException e )
-                    {
-                        errors.add( "Cannot reach license: " + license.getName() + " with URL: \'" + url +
-                            "\'.\nError: " + e.getMessage() );
-                    }
-                    catch ( IOException e )
-                    {
-                        errors.add( "Cannot reach license: " + license.getName() + " with URL: \'" + url +
-                            "\'.\nError: " + e.getMessage() );
-                    }
-                    finally
-                    {
-                        if ( headMethod != null )
-                        {
-                            headMethod.releaseConnection();
-                        }
-                    }
-                }
-                else
-                {
-                    // try looking for the file.
-                    File licenseFile = new File( url );
-                    if ( !licenseFile.exists() )
-                    {
-                        errors.add( "License file: \'" + licenseFile.getPath() + " does not exist." );
-                    }
-                }
+                reporter.error( "Missing <url> tag in <issueManagement>." );
+            }
+            else
+            {
+                checkURL( issueMngt.getUrl(), "Issue Management", reporter );
             }
         }
 
-        File siteDirectory = new File( project.getBasedir(), "src/site" );
+        if ( project.getPrerequisites() == null )
+        {
+            reporter.error( "Missing tag <prerequisites>" );
+        }
+        else
+        {
+            Prerequisites prereq = project.getPrerequisites();
+            if ( StringUtils.isEmpty( prereq.getMaven() ) )
+            {
+                reporter.error( "Missing <maven> tag in <prerequisites>");
+            }
+        }
 
+        if ( StringUtils.isEmpty( project.getInceptionYear() ) )
+        {
+            reporter.error( "Missing tag <inceptionYear>" );
+        }
+
+        if ( project.getMailingLists() == null )
+        {
+            reporter.warn( "Missing tag <mailingList>" );
+        }
+        else if ( project.getMailingLists().size() == 0 )
+        {
+            reporter.warn( "Empty tag <mailingList>" );
+        }
+
+        if ( project.getScm() == null )
+        {
+            reporter.warn( "Missing tag <scm>" );
+        }
+        else
+        {
+            Scm scm = project.getScm();
+            if ( StringUtils.isEmpty( scm.getConnection() ) &&
+                 StringUtils.isEmpty( scm.getDeveloperConnection() ) &&
+                 StringUtils.isEmpty( scm.getUrl() ) )
+            {
+                reporter.warn( "Missing children under the <scm> tag " );
+            }
+            else if ( scm.getUrl() != null )
+            {
+                checkURL( scm.getUrl(), "scm", reporter );
+            }
+        }
+
+        if ( project.getOrganization() == null )
+        {
+            reporter.error( "Missing tag <organization>" );
+        }
+        else
+        {
+            Organization org = project.getOrganization();
+            if ( StringUtils.isEmpty( org.getName() ) )
+            {
+                reporter.error( "Missing <name> tag in <organization>" );
+            }
+            else if ( org.getUrl() != null )
+            {
+                checkURL( org.getUrl(), org.getName() + " site", reporter );
+            }
+        }
+
+        //todo plugin report
+    }
+
+    private void checkProjectSite( MavenProject project, DocumentationReporter reporter )
+    {
         // check for site.xml
         File siteXml = new File( siteDirectory, "site.xml" );
 
         if ( !siteXml.exists() )
         {
-            errors.add( "site.xml is missing." );
+            reporter.error( "site.xml is missing." );
         }
 
         /* disabled bec site:site generates a duplicate file error
@@ -298,22 +367,139 @@ public abstract class AbstractCheckDocumentationMojo
         // check for usage.(xml|apt|html)
         if ( !findFiles( siteDirectory, "usage" ) )
         {
-            errors.add( "Missing base usage.(html|xml|apt)." );
+            reporter.error( "Missing base usage.(html|xml|apt)." );
         }
 
         // check for **/examples/**.(xml|apt|html)
         if ( !findFiles( siteDirectory, "**/examples/*" ) && !findFiles( siteDirectory, "**/example*" ) )
         {
-            errors.add( "Missing examples." );
+            reporter.error( "Missing examples." );
         }
 
-        checkPackagingSpecificDocumentation( project, errors, siteDirectory );
+        if ( !findFiles( siteDirectory, "faq" ) )
+        {
+            reporter.error( "Missing base FAQ.(fml|html|xml|apt)." );
+        }
 
-        return errors;
+        //todo Project Site Descriptor for usage, faq, examples
     }
 
-    protected abstract void checkPackagingSpecificDocumentation( MavenProject project, List errors,
-                                                                 File siteDirectory );
+    private void checkProjectLicenses( MavenProject project, DocumentationReporter reporter )
+    {
+        List licenses = project.getLicenses();
+
+        if ( licenses == null || licenses.isEmpty() )
+        {
+            reporter.error( "No license(s) specified." );
+        }
+        else
+        {
+            for ( Iterator it = licenses.iterator(); it.hasNext(); )
+            {
+                License license = (License) it.next();
+
+                if ( StringUtils.isEmpty( license.getName() ) )
+                {
+                    reporter.error( "Missing <name> tag in <license>" );
+                }
+                else
+                {
+                    String url = license.getUrl();
+                    if ( StringUtils.isEmpty( url ) )
+                    {
+                        reporter.error( "No license URL provided for license " + license.getName() );
+                    }
+                    else
+                    {
+                        checkURL( url, "license " + license.getName(), reporter );
+                    }
+                }
+            }
+        }
+    }
+
+    private String getURLProtocol( String url )
+        throws MalformedURLException
+    {
+        String protocol;
+
+        URL licenseUrl = new URL( url );
+        protocol = licenseUrl.getProtocol();
+
+        if ( protocol != null )
+        {
+            protocol = protocol.toLowerCase();
+        }
+
+        return protocol;
+    }
+
+    private void checkURL( String url, String description, DocumentationReporter reporter )
+    {
+        try
+        {
+            String protocol = getURLProtocol( url );
+
+            if ( protocol.startsWith( "http" ) )
+            {
+                if ( !offline )
+                {
+                    HeadMethod headMethod = new HeadMethod( url );
+                    headMethod.setFollowRedirects( true );
+                    headMethod.setDoAuthentication( false );
+
+                    try
+                    {
+                        getLog().debug( "Verifying http url: " + url );
+                        if ( httpClient.executeMethod( headMethod ) != 200 )
+                        {
+                            reporter.error( "Cannot reach " + description + " with URL: \'" + url + "\'." );
+                        }
+                    }
+                    catch ( HttpException e )
+                    {
+                        reporter.error( "Cannot reach " + description + " with URL: \'" + url +
+                            "\'.\nError: " + e.getMessage() );
+                    }
+                    catch ( IOException e )
+                    {
+                        reporter.error( "Cannot reach " + description + " with URL: \'" + url +
+                            "\'.\nError: " + e.getMessage() );
+                    }
+                    finally
+                    {
+                        headMethod.releaseConnection();
+                    }
+                }
+                else
+                {
+                    reporter.warn( "Cannot verify " + description + " in offline mode with URL: \'" + url + "\'." );
+                }
+            }
+            else
+            {
+                reporter.warn( "Non-HTTP " + description + " URL not verified." );
+            }
+        }
+        catch ( MalformedURLException e )
+        {
+            reporter.warn( description + " appears to have an invalid URL: \'" + url +
+                "\'.\nError: " + e.getMessage() + "\n\nTrying to access it as a file instead." );
+
+            checkFile( url, description, reporter );
+        }
+    }
+
+    private void checkFile( String url, String description, DocumentationReporter reporter )
+    {
+        File licenseFile = new File( url );
+        if ( !licenseFile.exists() )
+        {
+            reporter.error( description + " file: \'" + licenseFile.getPath() + " does not exist." );
+        }
+    }
+
+    protected abstract void checkPackagingSpecificDocumentation( MavenProject project, DocumentationReporter reporter );
 
     private boolean findFiles( File siteDirectory, String pattern )
     {
