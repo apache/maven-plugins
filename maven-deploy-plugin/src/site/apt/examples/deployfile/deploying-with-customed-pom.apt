@@ -1,0 +1,22 @@
+  ----
+  Maven 2 Deploy Plugin - Configurations
+  ------
+  Allan Ramirez
+  ------
+  June 2006
+  ------
+
+Deploying an artifact together with a customed pom
+
+  If there is already an existing pom and want it to be deployed together with the 3rd party artifact,
+  set the <<pomFile>> parameter to the path of the pom.xml.
+
++---+
+mvn deploy:deploy-file -Durl=file://C:\m2-repo \
+                       -DrepositoryId=some.id \
+                       -Dfile=path-to-your-artifact-jar \
+                       -DpomFile=path-to-your-pom.xml
++---+
+
+   Note that the groupId, artifactId, version and packaging informations are automatically retrieved from the
+   given pom.

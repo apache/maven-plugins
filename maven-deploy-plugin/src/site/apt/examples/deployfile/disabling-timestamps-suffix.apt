@@ -1,0 +1,20 @@
+  ----
+  Maven 2 Deploy Plugin - Configurations
+  ------
+  Allan Ramirez
+  ------
+  June 2006
+  ------
+
+Disabling the timestamp suffixed to the deployed artifact
+
+  By default, when a snapshot version of an artifact is deployed to a repository, a timestamp is suffixed to it.
+  To disable the addition of timestamp to the artifact, set the <<uniqueVersion>> parameter to <<<false>>>.
+
++---+
+mvn deploy:deploy-file -Durl=file://C:\m2-repo \
+                       -DrepositoryId=some.id \
+                       -Dfile=your-artifact-1.0.jar \
+                       -DpomFile=your-pom.xml \
+                       -DuniqueVersion=false
++---+

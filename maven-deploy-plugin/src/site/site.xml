@@ -33,11 +33,16 @@
       <item name="Maven 2" href="http://maven.apache.org/maven2/"/>
     </links>
 
-    <menu name="Overview">
-      <item name="Plugin Goals" href="index.html"/>
-      <item name="Introduction" href="introduction.html"/>
-      <item name="How to Use" href="howto.html"/>
-      <item name="Javadoc" href="apidocs/index.html"/>
+    <menu name="Plugin Overview">
+      <item name="Overview" href="overview.html"/>
+      <item name="Usage" href="usage.html"/>
+    </menu>
+    <menu name="Examples for plugin Configuration">
+      <item name="Disable generic pom" href="examples/deployfile/disabling-generic-pom.html"/>
+      <item name="Deploy with customed pom" href="examples/deployfile/deploying-with-customed-pom.html"/>
+      <item name="Deploy with classifier" href="examples/deployfile/deploying-with-classifiers.html"/>
+      <item name="Disable timestamps suffix" href="examples/deployfile/disabling-timestamps-suffix.html"/>
+      <item name="Deploy in legacy" href="examples/deployfile/deploying-in-legacy-layout.html"/>
     </menu>
     ${reports}
   </body>
