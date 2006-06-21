@@ -14,7 +14,6 @@ package org.apache.maven.plugin.checkstyle;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 import org.apache.maven.plugin.AbstractMojo;
@@ -122,8 +121,8 @@ public class CheckstyleViolationCheckMojo
         int eventType = xpp.getEventType();
         while ( eventType != XmlPullParser.END_DOCUMENT )
         {
-            if ( eventType == XmlPullParser.START_TAG && "error".equals( xpp.getName() ) &&
-                "error".equals( xpp.getAttributeValue( "", "severity" ) ) )
+            if ( eventType == XmlPullParser.START_TAG && "error".equals( xpp.getName() )
+                && "error".equals( xpp.getAttributeValue( "", "severity" ) ) )
             {
                 count++;
             }
