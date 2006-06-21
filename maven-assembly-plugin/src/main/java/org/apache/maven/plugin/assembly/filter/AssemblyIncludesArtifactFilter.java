@@ -19,6 +19,7 @@ package org.apache.maven.plugin.assembly.filter;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -32,9 +33,17 @@ public class AssemblyIncludesArtifactFilter
     implements ArtifactFilter
 {
     private final List patterns;
+    private final boolean actTransitively;
 
     public AssemblyIncludesArtifactFilter( List patterns )
     {
+        this.actTransitively = false;
+        this.patterns = Collections.unmodifiableList( patterns );
+    }
+
+    public AssemblyIncludesArtifactFilter( List patterns, boolean actTransitively )
+    {
+        this.actTransitively = actTransitively;
         this.patterns = Collections.unmodifiableList( patterns );
     }
 
@@ -57,6 +66,19 @@ public class AssemblyIncludesArtifactFilter
                 matched = true;
             }
         }
+        
+        if ( !matched && actTransitively )
+        {
+            List depTrail = artifact.getDependencyTrail();
+            if ( depTrail != null && !depTrail.isEmpty() )
+            {
+                depTrail = new ArrayList( depTrail );
+                depTrail.retainAll( patterns );
+                
+                matched = !depTrail.isEmpty();
+            }
+        }
+        
         return matched;
     }
 }

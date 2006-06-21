@@ -33,6 +33,11 @@ public class AssemblyExcludesArtifactFilter
         super( patterns );
     }
 
+    public AssemblyExcludesArtifactFilter( List patterns, boolean actTransitively )
+    {
+        super( patterns, actTransitively );
+    }
+
     public boolean include( Artifact artifact )
     {
         return !super.include( artifact );
