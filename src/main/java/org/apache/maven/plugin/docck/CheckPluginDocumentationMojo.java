@@ -183,8 +183,6 @@ public class CheckPluginDocumentationMojo
         {
             reporter.error( "Missing base FAQ.(fml|html|xml|apt)." );
         }
-
-        //todo Project Site Descriptor for usage, faq, examples
     }
 
     /**

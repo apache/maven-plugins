@@ -341,8 +341,6 @@ public abstract class AbstractCheckDocumentationMojo
                 checkURL( org.getUrl(), org.getName() + " site", reporter );
             }
         }
-
-        //todo plugin report
     }
 
     private void checkProjectLicenses( MavenProject project, DocumentationReporter reporter )
