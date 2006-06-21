@@ -551,8 +551,8 @@ public class CheckstyleReport
     {
         String copyright;
         int currentYear = Calendar.getInstance().get( Calendar.YEAR );
-        if ( StringUtils.isNotEmpty( project.getInceptionYear() ) &&
-            !String.valueOf( currentYear ).equals( project.getInceptionYear() ) )
+        if ( StringUtils.isNotEmpty( project.getInceptionYear() )
+            && !String.valueOf( currentYear ).equals( project.getInceptionYear() ) )
         {
             copyright = project.getInceptionYear() + " - " + currentYear;
         }
@@ -688,14 +688,14 @@ public class CheckstyleReport
             throw new MavenReportException( e.getMessage(), e );
         }
 
-        List URLs = new ArrayList( classPathStrings.size() );
+        List urls = new ArrayList( classPathStrings.size() );
 
         Iterator iter = classPathStrings.iterator();
         while ( iter.hasNext() )
         {
             try
             {
-                URLs.add( new File( ( (String) iter.next() ) ).toURL() );
+                urls.add( new File( ( (String) iter.next() ) ).toURL() );
             }
             catch ( MalformedURLException e )
             {
@@ -703,7 +703,7 @@ public class CheckstyleReport
             }
         }
 
-        URLClassLoader projectClassLoader = new URLClassLoader( (URL[]) URLs.toArray( new URL[URLs.size()] ), null );
+        URLClassLoader projectClassLoader = new URLClassLoader( (URL[]) urls.toArray( new URL[urls.size()] ), null );
         checker.setClassloader( projectClassLoader );
 
         if ( moduleFactory != null )

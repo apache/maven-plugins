@@ -79,13 +79,12 @@ public class VelocityTemplate
      * @param outputFilename the file to be generated.
      * @param template       the velocity template to use.
      * @param context        the velocity context map.
-     * @throws ResourceNotFoundException if the template was not found.
-     * @throws VelocityException         if the
+     * @throws VelocityException if the template was not found or any other Velocity exception.
      * @throws MojoExecutionException
      * @throws IOException
      */
     public void generate( String outputFilename, String template, Context context )
-        throws ResourceNotFoundException, VelocityException, MojoExecutionException, IOException
+        throws VelocityException, MojoExecutionException, IOException
     {
         File f;
 
