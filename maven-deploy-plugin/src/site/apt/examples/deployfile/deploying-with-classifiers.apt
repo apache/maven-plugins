@@ -1,0 +1,37 @@
+  ----
+  Maven 2 Deploy Plugin - Configurations
+  ------
+  Allan Ramirez
+  ------
+  June 2006
+  ------
+
+Deploying an artifact with classifiers
+
+  Classifiers are the additional text given to describe an artifact.
+
++---+
+  artifact-name-1.0-bin.jar
+  artifact-name-1.0-dev.jar
+  artifact-name-1.0-prod.jar
++---+
+
+  From the above artifact names, classifiers can be located between the version and extension name of the artifact.
+
+  *<<<bin>>> is used to describe that the artifact is a binary.
+
+  *<<<dev>>> is used to describe that the artifact is for development.
+
+  *<<<prod>>> is used to describe that the artifact is for production.
+
+  []
+
+  To add classifier into your artifact for your deployment, set the text to the <<classifier>> parameter.
+
++---+
+mvn deploy:deploy-file -Durl=file://C:\m2-repo \
+                       -DrepositoryId=some.id \
+                       -Dfile=path-to-your-artifact-jar \
+                       -DpomFile=path-to-your-pom.xml \
+                       -Dclassifier=bin
++---+
