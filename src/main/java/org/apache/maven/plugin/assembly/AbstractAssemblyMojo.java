@@ -22,6 +22,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
+import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -78,6 +79,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -468,201 +470,176 @@ public abstract class AbstractAssemblyMojo
                 moduleFilter.add( new AssemblyExcludesArtifactFilter( moduleSet.getExcludes() ) );
             }
 
-            Set set = getModulesFromReactor( getExecutedProject() );
+            Set allModuleProjects = getModulesFromReactor( getExecutedProject() );
+            
+            Set moduleProjects = new HashSet( allModuleProjects );
+            
+            filterProjects( moduleProjects, moduleSet.getIncludes(), moduleSet.getExcludes(), false );
 
             List moduleFileSets = new ArrayList();
 
-            for ( Iterator j = set.iterator(); j.hasNext(); )
+            for ( Iterator j = moduleProjects.iterator(); j.hasNext(); )
             {
                 MavenProject moduleProject = (MavenProject) j.next();
 
-                if ( moduleFilter.include( moduleProject.getArtifact() ) )
+                String name = moduleProject.getBuild().getFinalName();
+
+                ModuleSources sources = moduleSet.getSources();
+
+                if ( sources != null )
                 {
-                    String name = moduleProject.getBuild().getFinalName();
+                    String output = sources.getOutputDirectory();
+                    output = getOutputDirectory( output, moduleProject, includeBaseDirectory );
 
-                    ModuleSources sources = moduleSet.getSources();
+                    FileSet moduleFileSet = new FileSet();
 
-                    if ( sources != null )
+                    moduleFileSet.setDirectory( moduleProject.getBasedir().getAbsolutePath() );
+                    moduleFileSet.setOutputDirectory( output );
+
+                    List excludesList = new ArrayList();
+                    excludesList.add( PathUtils.toRelative( moduleProject.getBasedir(),
+                                                            moduleProject.getBuild().getDirectory() ) + "/**" );
+                    excludesList.add( PathUtils.toRelative( moduleProject.getBasedir(),
+                                                            moduleProject.getBuild().getOutputDirectory() ) +
+                        "/**" );
+                    excludesList.add( PathUtils.toRelative( moduleProject.getBasedir(),
+                                                            moduleProject.getBuild().getTestOutputDirectory() ) +
+                        "/**" );
+                    excludesList.add( PathUtils.toRelative( moduleProject.getBasedir(),
+                                                            moduleProject.getReporting().getOutputDirectory() ) +
+                        "/**" );
+                    moduleFileSet.setExcludes( excludesList );
+
+                    moduleFileSets.add( moduleFileSet );
+                }
+
+                ModuleBinaries binaries = moduleSet.getBinaries();
+
+                if ( binaries != null )
+                {
+                    Artifact moduleArtifact = moduleProject.getArtifact();
+
+                    if ( moduleArtifact.getFile() == null )
                     {
-                        String output = sources.getOutputDirectory();
-                        output = getOutputDirectory( output, moduleProject, includeBaseDirectory );
-
-                        FileSet moduleFileSet = new FileSet();
-
-                        moduleFileSet.setDirectory( moduleProject.getBasedir().getAbsolutePath() );
-                        moduleFileSet.setOutputDirectory( output );
-
-                        List excludesList = new ArrayList();
-                        excludesList.add( PathUtils.toRelative( moduleProject.getBasedir(),
-                                                                moduleProject.getBuild().getDirectory() ) + "/**" );
-                        excludesList.add( PathUtils.toRelative( moduleProject.getBasedir(),
-                                                                moduleProject.getBuild().getOutputDirectory() ) +
-                            "/**" );
-                        excludesList.add( PathUtils.toRelative( moduleProject.getBasedir(),
-                                                                moduleProject.getBuild().getTestOutputDirectory() ) +
-                            "/**" );
-                        excludesList.add( PathUtils.toRelative( moduleProject.getBasedir(),
-                                                                moduleProject.getReporting().getOutputDirectory() ) +
-                            "/**" );
-                        moduleFileSet.setExcludes( excludesList );
-
-                        moduleFileSets.add( moduleFileSet );
+                        throw new MojoExecutionException( "Included module: " + moduleProject.getId() +
+                            " does not have an artifact with a file. Please ensure the package phase is run before the assembly is generated." );
                     }
 
-                    ModuleBinaries binaries = moduleSet.getBinaries();
+                    String output = binaries.getOutputDirectory();
+                    output = getOutputDirectory( output, moduleProject, includeBaseDirectory );
 
-                    if ( binaries != null )
+                    archiver.setDefaultDirectoryMode( Integer.parseInt( binaries.getDirectoryMode(), 8 ) );
+
+                    archiver.setDefaultFileMode( Integer.parseInt( binaries.getFileMode(), 8 ) );
+
+                    getLog().debug( "ModuleSet[" + output + "]" + " dir perms: " +
+                        Integer.toString( archiver.getDefaultDirectoryMode(), 8 ) + " file perms: " +
+                        Integer.toString( archiver.getDefaultFileMode(), 8 ) );
+
+                    Set binaryDependencies = moduleProject.getArtifacts();
+                    
+                    List includes = binaries.getIncludes();
+                    List excludes = binaries.getExcludes();
+                    
+                    filterArtifacts( binaryDependencies, includes, excludes, true, Collections.EMPTY_LIST );
+                    
+                    if ( binaries.isUnpack() )
                     {
-                        Artifact moduleArtifact = moduleProject.getArtifact();
+                        // TODO: something like zipfileset in plexus-archiver
+                        //                        archiver.addJar(  )
 
-                        if ( moduleArtifact.getFile() == null )
+                        // TODO refactor into the AbstractUnpackMojo
+                        File tempLocation = new File( workDirectory, name );
+                        boolean process = false;
+                        if ( !tempLocation.exists() )
                         {
-                            throw new MojoExecutionException( "Included module: " + moduleProject.getId() +
-                                " does not have an artifact with a file. Please ensure the package phase is run before the assembly is generated." );
+                            tempLocation.mkdirs();
+                            process = true;
+                        }
+                        else if ( moduleArtifact.getFile().lastModified() > tempLocation.lastModified() )
+                        {
+                            process = true;
                         }
 
-                        String output = binaries.getOutputDirectory();
-                        output = getOutputDirectory( output, moduleProject, includeBaseDirectory );
-
-                        archiver.setDefaultDirectoryMode( Integer.parseInt( binaries.getDirectoryMode(), 8 ) );
-
-                        archiver.setDefaultFileMode( Integer.parseInt( binaries.getFileMode(), 8 ) );
-
-                        getLog().debug( "ModuleSet[" + output + "]" + " dir perms: " +
-                            Integer.toString( archiver.getDefaultDirectoryMode(), 8 ) + " file perms: " +
-                            Integer.toString( archiver.getDefaultFileMode(), 8 ) );
-
-                        Set binaryDependencies = moduleProject.getArtifacts();
-                        
-                        List includes = binaries.getIncludes();
-                        List excludes = binaries.getExcludes();
-                        
-                        AndArtifactFilter binaryDepsFilter = new AndArtifactFilter();
-
-                        if ( !includes.isEmpty() )
-                        {
-                            binaryDepsFilter.add( new AssemblyIncludesArtifactFilter( includes ) );
-                        }
-                        if ( !excludes.isEmpty() )
-                        {
-                            binaryDepsFilter.add( new AssemblyExcludesArtifactFilter( excludes ) );
-                        }
-                        
-                        for ( Iterator binaryDepIterator = binaryDependencies.iterator(); binaryDepIterator.hasNext(); )
-                        {
-                            Artifact binaryDepArtifact = (Artifact) binaryDepIterator.next();
-                            
-                            if ( !binaryDepsFilter.include( binaryDepArtifact ) )
-                            {
-                                binaryDepIterator.remove();
-                            }
-                        }
-                        
-                        if ( binaries.isUnpack() )
-                        {
-                            // TODO: something like zipfileset in plexus-archiver
-                            //                        archiver.addJar(  )
-
-                            // TODO refactor into the AbstractUnpackMojo
-                            File tempLocation = new File( workDirectory, name );
-                            boolean process = false;
-                            if ( !tempLocation.exists() )
-                            {
-                                tempLocation.mkdirs();
-                                process = true;
-                            }
-                            else if ( moduleArtifact.getFile().lastModified() > tempLocation.lastModified() )
-                            {
-                                process = true;
-                            }
-
-                            if ( process )
-                            {
-                                try
-                                {
-                                    unpack( moduleArtifact.getFile(), tempLocation );
-
-                                    if ( binaries.isIncludeDependencies() )
-                                    {
-                                        for ( Iterator dependencyIterator = binaryDependencies.iterator(); dependencyIterator.hasNext(); )
-                                        {
-                                            Artifact dependencyArtifact = (Artifact) dependencyIterator.next();
-
-                                            unpack( dependencyArtifact.getFile(), tempLocation );
-                                        }
-                                    }
-                                }
-                                catch ( NoSuchArchiverException e )
-                                {
-                                    throw new MojoExecutionException( "Unable to obtain unarchiver: " + e.getMessage(),
-                                                                      e );
-                                }
-
-                                /*
-                                * If the assembly is 'jar-with-dependencies', remove the security files in all dependencies
-                                * that will prevent the uberjar to execute.  Please see MASSEMBLY-64 for details.
-                                */
-                                if ( archiver instanceof JarArchiver )
-                                {
-                                    String[] securityFiles = {"*.RSA", "*.DSA", "*.SF", "*.rsa", "*.dsa", "*.sf"};
-                                    org.apache.maven.shared.model.fileset.FileSet securityFileSet =
-                                        new org.apache.maven.shared.model.fileset.FileSet();
-                                    securityFileSet.setDirectory( tempLocation.getAbsolutePath() + "/META-INF/" );
-
-                                    for ( int sfsi = 0; sfsi < securityFiles.length; sfsi++ )
-                                    {
-                                        securityFileSet.addInclude( securityFiles[sfsi] );
-                                    }
-
-                                    FileSetManager fsm = new FileSetManager( getLog() );
-                                    try
-                                    {
-                                        fsm.delete( securityFileSet );
-                                    }
-                                    catch ( IOException e )
-                                    {
-                                        throw new MojoExecutionException(
-                                            "Failed to delete security files: " + e.getMessage(), e );
-                                    }
-                                }
-                            }
-
-                            addDirectory( archiver, tempLocation, output, null, FileUtils.getDefaultExcludesAsList() );
-                        }
-                        else
+                        if ( process )
                         {
                             try
                             {
-                                String outputFileNameMapping = binaries.getOutputFileNameMapping();
-
-                                archiver.addFile( moduleArtifact.getFile(),
-                                                  output + evaluateFileNameMapping( moduleArtifact, outputFileNameMapping ) );
+                                unpack( moduleArtifact.getFile(), tempLocation );
 
                                 if ( binaries.isIncludeDependencies() )
                                 {
-                                    for ( Iterator artifacts = binaryDependencies.iterator(); artifacts.hasNext(); )
+                                    for ( Iterator dependencyIterator = binaryDependencies.iterator(); dependencyIterator.hasNext(); )
                                     {
-                                        Artifact dependencyArtifact = (Artifact) artifacts.next();
+                                        Artifact dependencyArtifact = (Artifact) dependencyIterator.next();
 
-                                        archiver.addFile( dependencyArtifact.getFile(), output +
-                                            evaluateFileNameMapping( dependencyArtifact, outputFileNameMapping ) );
+                                        unpack( dependencyArtifact.getFile(), tempLocation );
                                     }
                                 }
                             }
-                            catch ( ArchiverException e )
+                            catch ( NoSuchArchiverException e )
                             {
-                                throw new MojoExecutionException( "Error adding file to archive: " + e.getMessage(),
+                                throw new MojoExecutionException( "Unable to obtain unarchiver: " + e.getMessage(),
                                                                   e );
                             }
+
+                            /*
+                            * If the assembly is 'jar-with-dependencies', remove the security files in all dependencies
+                            * that will prevent the uberjar to execute.  Please see MASSEMBLY-64 for details.
+                            */
+                            if ( archiver instanceof JarArchiver )
+                            {
+                                String[] securityFiles = {"*.RSA", "*.DSA", "*.SF", "*.rsa", "*.dsa", "*.sf"};
+                                org.apache.maven.shared.model.fileset.FileSet securityFileSet =
+                                    new org.apache.maven.shared.model.fileset.FileSet();
+                                securityFileSet.setDirectory( tempLocation.getAbsolutePath() + "/META-INF/" );
+
+                                for ( int sfsi = 0; sfsi < securityFiles.length; sfsi++ )
+                                {
+                                    securityFileSet.addInclude( securityFiles[sfsi] );
+                                }
+
+                                FileSetManager fsm = new FileSetManager( getLog() );
+                                try
+                                {
+                                    fsm.delete( securityFileSet );
+                                }
+                                catch ( IOException e )
+                                {
+                                    throw new MojoExecutionException(
+                                        "Failed to delete security files: " + e.getMessage(), e );
+                                }
+                            }
+                        }
+
+                        addDirectory( archiver, tempLocation, output, null, FileUtils.getDefaultExcludesAsList() );
+                    }
+                    else
+                    {
+                        try
+                        {
+                            String outputFileNameMapping = binaries.getOutputFileNameMapping();
+
+                            archiver.addFile( moduleArtifact.getFile(),
+                                              output + evaluateFileNameMapping( moduleArtifact, outputFileNameMapping ) );
+
+                            if ( binaries.isIncludeDependencies() )
+                            {
+                                for ( Iterator artifacts = binaryDependencies.iterator(); artifacts.hasNext(); )
+                                {
+                                    Artifact dependencyArtifact = (Artifact) artifacts.next();
+
+                                    archiver.addFile( dependencyArtifact.getFile(), output +
+                                        evaluateFileNameMapping( dependencyArtifact, outputFileNameMapping ) );
+                                }
+                            }
+                        }
+                        catch ( ArchiverException e )
+                        {
+                            throw new MojoExecutionException( "Error adding file to archive: " + e.getMessage(),
+                                                              e );
                         }
                     }
-
-                }
-                else
-                {
-                    // would be better to have a way to find out when a specified include or exclude
-                    // is never triggered and warn() it.
-                    getLog().debug( "module: " + moduleProject.getId() + " not included" );
                 }
 
                 if ( !moduleFileSets.isEmpty() )
@@ -670,6 +647,76 @@ public abstract class AbstractAssemblyMojo
                     // TODO: includes and excludes
                     processFileSets( archiver, moduleFileSets, includeBaseDirectory );
                 }
+            }
+            
+            allModuleProjects.removeAll( moduleProjects );
+            
+            for ( Iterator it = allModuleProjects.iterator(); it.hasNext(); )
+            {
+                MavenProject excludedProject = (MavenProject) it.next();
+                
+                // would be better to have a way to find out when a specified include or exclude
+                // is never triggered and warn() it.
+                getLog().debug( "module: " + excludedProject.getId() + " not included" );
+            }
+        }
+    }
+
+    private void filterProjects( Set moduleProjects, List includes, List excludes, boolean actTransitively )
+    {
+        AndArtifactFilter filter = new AndArtifactFilter();
+
+        if ( !includes.isEmpty() )
+        {
+            filter.add( new AssemblyIncludesArtifactFilter( includes, actTransitively ) );
+        }
+        if ( !excludes.isEmpty() )
+        {
+            filter.add( new AssemblyExcludesArtifactFilter( excludes, actTransitively ) );
+        }
+        
+        for ( Iterator it = moduleProjects.iterator(); it.hasNext(); )
+        {
+            MavenProject project = (MavenProject) it.next();
+            Artifact artifact = project.getArtifact();
+            
+            if ( !filter.include( artifact ) )
+            {
+                it.remove();
+            }
+        }
+    }
+
+    private void filterArtifacts( Set artifacts, List includes, List excludes, boolean actTransitively, List additionalFilters )
+    {
+        AndArtifactFilter filter = new AndArtifactFilter();
+        
+        if ( additionalFilters != null && !additionalFilters.isEmpty() )
+        {
+            for ( Iterator it = additionalFilters.iterator(); it.hasNext(); )
+            {
+                ArtifactFilter additionalFilter = (ArtifactFilter) it.next();
+                
+                filter.add( additionalFilter );
+            }
+        }
+
+        if ( !includes.isEmpty() )
+        {
+            filter.add( new AssemblyIncludesArtifactFilter( includes, actTransitively ) );
+        }
+        if ( !excludes.isEmpty() )
+        {
+            filter.add( new AssemblyExcludesArtifactFilter( excludes, actTransitively ) );
+        }
+        
+        for ( Iterator it = artifacts.iterator(); it.hasNext(); )
+        {
+            Artifact artifact = (Artifact) it.next();
+            
+            if ( !filter.include( artifact ) )
+            {
+                it.remove();
             }
         }
     }
@@ -1010,105 +1057,102 @@ public abstract class AbstractAssemblyMojo
                 Integer.toString( archiver.getDefaultDirectoryMode(), 8 ) + " file perms: " +
                 Integer.toString( archiver.getDefaultFileMode(), 8 ) );
 
-            AndArtifactFilter filter = new AndArtifactFilter();
-            filter.add( new AssemblyScopeArtifactFilter( dependencySet.getScope() ) );
+            Set allDependencyArtifacts = getDependencies();
+            Set dependencyArtifacts = new HashSet( allDependencyArtifacts );
+            
+            AssemblyScopeArtifactFilter scopeFilter = new AssemblyScopeArtifactFilter( dependencySet.getScope() );
+            
+            filterArtifacts( dependencyArtifacts, dependencySet.getIncludes(), dependencySet.getExcludes(), true, Collections.singletonList( scopeFilter ) );
 
-            if ( !dependencySet.getIncludes().isEmpty() )
-            {
-                filter.add( new AssemblyIncludesArtifactFilter( dependencySet.getIncludes() ) );
-            }
-            if ( !dependencySet.getExcludes().isEmpty() )
-            {
-                filter.add( new AssemblyExcludesArtifactFilter( dependencySet.getExcludes() ) );
-            }
-
-            for ( Iterator j = getDependencies().iterator(); j.hasNext(); )
+            for ( Iterator j = dependencyArtifacts.iterator(); j.hasNext(); )
             {
                 Artifact artifact = (Artifact) j.next();
 
-                if ( filter.include( artifact ) )
+                String fileNameMapping =
+                    evaluateFileNameMapping( artifact, dependencySet.getOutputFileNameMapping() );
+                if ( dependencySet.isUnpack() )
                 {
-                    String fileNameMapping =
-                        evaluateFileNameMapping( artifact, dependencySet.getOutputFileNameMapping() );
-                    if ( dependencySet.isUnpack() )
+                    // TODO: something like zipfileset in plexus-archiver
+                    //                        archiver.addJar(  )
+
+                    File tempLocation = new File( workDirectory, fileNameMapping );
+                    boolean process = false;
+                    if ( !tempLocation.exists() )
                     {
-                        // TODO: something like zipfileset in plexus-archiver
-                        //                        archiver.addJar(  )
-
-                        File tempLocation = new File( workDirectory, fileNameMapping );
-                        boolean process = false;
-                        if ( !tempLocation.exists() )
-                        {
-                            tempLocation.mkdirs();
-                            process = true;
-                        }
-                        else if ( artifact.getFile().lastModified() > tempLocation.lastModified() )
-                        {
-                            process = true;
-                        }
-
-                        if ( process )
-                        {
-                            try
-                            {
-                                unpack( artifact.getFile(), tempLocation );
-                            }
-                            catch ( NoSuchArchiverException e )
-                            {
-                                throw new MojoExecutionException(
-                                    "Unable to obtain unarchiver for file '" + artifact.getFile() + "'" );
-                            }
-
-                            /*
-                            * If the assembly is 'jar-with-dependencies', remove the security files in all dependencies
-                            * that will prevent the uberjar to execute.  Please see MASSEMBLY-64 for details.
-                            */
-                            if ( archiver instanceof JarArchiver )
-                            {
-                                String[] securityFiles = {"*.RSA", "*.DSA", "*.SF", "*.rsa", "*.dsa", "*.sf"};
-                                org.apache.maven.shared.model.fileset.FileSet securityFileSet =
-                                    new org.apache.maven.shared.model.fileset.FileSet();
-                                securityFileSet.setDirectory( tempLocation.getAbsolutePath() + "/META-INF/" );
-
-                                for ( int sfsi = 0; sfsi < securityFiles.length; sfsi++ )
-                                {
-                                    securityFileSet.addInclude( securityFiles[sfsi] );
-                                }
-
-                                FileSetManager fsm = new FileSetManager( getLog() );
-                                try
-                                {
-                                    fsm.delete( securityFileSet );
-                                }
-                                catch ( IOException e )
-                                {
-                                    throw new MojoExecutionException(
-                                        "Failed to delete security files: " + e.getMessage(), e );
-                                }
-                            }
-                        }
-
-                        addDirectory( archiver, tempLocation, output, null, FileUtils.getDefaultExcludesAsList() );
+                        tempLocation.mkdirs();
+                        process = true;
                     }
-                    else
+                    else if ( artifact.getFile().lastModified() > tempLocation.lastModified() )
+                    {
+                        process = true;
+                    }
+
+                    if ( process )
                     {
                         try
                         {
-                            archiver.addFile( artifact.getFile(), output + fileNameMapping );
+                            unpack( artifact.getFile(), tempLocation );
                         }
-                        catch ( ArchiverException e )
+                        catch ( NoSuchArchiverException e )
                         {
                             throw new MojoExecutionException(
-                                "Error adding file '" + artifact.getFile() + "' to archive: " + e.getMessage(), e );
+                                "Unable to obtain unarchiver for file '" + artifact.getFile() + "'" );
+                        }
+
+                        /*
+                        * If the assembly is 'jar-with-dependencies', remove the security files in all dependencies
+                        * that will prevent the uberjar to execute.  Please see MASSEMBLY-64 for details.
+                        */
+                        if ( archiver instanceof JarArchiver )
+                        {
+                            String[] securityFiles = {"*.RSA", "*.DSA", "*.SF", "*.rsa", "*.dsa", "*.sf"};
+                            org.apache.maven.shared.model.fileset.FileSet securityFileSet =
+                                new org.apache.maven.shared.model.fileset.FileSet();
+                            securityFileSet.setDirectory( tempLocation.getAbsolutePath() + "/META-INF/" );
+
+                            for ( int sfsi = 0; sfsi < securityFiles.length; sfsi++ )
+                            {
+                                securityFileSet.addInclude( securityFiles[sfsi] );
+                            }
+
+                            FileSetManager fsm = new FileSetManager( getLog() );
+                            try
+                            {
+                                fsm.delete( securityFileSet );
+                            }
+                            catch ( IOException e )
+                            {
+                                throw new MojoExecutionException(
+                                    "Failed to delete security files: " + e.getMessage(), e );
+                            }
                         }
                     }
+
+                    addDirectory( archiver, tempLocation, output, null, FileUtils.getDefaultExcludesAsList() );
                 }
                 else
                 {
-                    // would be better to have a way to find out when a specified include or exclude
-                    // is never triggered and warn() it.
-                    getLog().debug( "artifact: " + artifact + " not included" );
+                    try
+                    {
+                        archiver.addFile( artifact.getFile(), output + fileNameMapping );
+                    }
+                    catch ( ArchiverException e )
+                    {
+                        throw new MojoExecutionException(
+                            "Error adding file '" + artifact.getFile() + "' to archive: " + e.getMessage(), e );
+                    }
                 }
+            }
+            
+            allDependencyArtifacts.removeAll( dependencyArtifacts );
+            
+            for ( Iterator it = allDependencyArtifacts.iterator(); it.hasNext(); )
+            {
+                Artifact artifact = (Artifact) it.next();
+                
+                // would be better to have a way to find out when a specified include or exclude
+                // is never triggered and warn() it.
+                getLog().debug( "artifact: " + artifact + " not included" );
             }
         }
     }
