@@ -1,0 +1,24 @@
+  ----
+  Maven 2 Deploy Plugin - Configurations
+  ------
+  Allan Ramirez
+  ------
+  June 2006
+  ------
+
+Disabling the generation of generic pom on deployment
+
+  By default, If no pom is specified during deployment of your 3rd party artifact, a generic pom will be generated
+  which contains the minimum required elements needed for the pom. In order to disable it, set the
+  <<generatePom>> parameter to <<<false>>>.
+
++---+
+mvn deploy:deploy-file -Durl=file://C:\m2-repo \
+                       -DrepositoryId=some.id \
+                       -Dfile=path-to-your-artifact-jar \
+                       -DgroupId=your.groupId \
+                       -DartifactId=your-artifactId \
+                       -Dversion=version \
+                       -Dpackaging=jar \
+                       -DgeneratePom=false
++---+
