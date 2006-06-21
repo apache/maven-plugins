@@ -16,9 +16,12 @@ package org.apache.maven.plugin.war;
  * limitations under the License.
  */
 
+import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.plugin.testing.stubs.ArtifactStub;
 import org.apache.maven.plugin.war.stub.EJBArtifactStub;
 import org.apache.maven.plugin.war.stub.EJBClientArtifactStub;
 import org.apache.maven.plugin.war.stub.IncludeExcludeWarArtifactStub;
+import org.apache.maven.plugin.war.stub.JarArtifactStub;
 import org.apache.maven.plugin.war.stub.MavenProjectArtifactsStub;
 import org.apache.maven.plugin.war.stub.MavenProjectBasicStub;
 import org.apache.maven.plugin.war.stub.PARArtifactStub;
@@ -236,6 +239,37 @@ public class WarExplodedMojoTest
         assertTrue( "source files not found: " + expectedWebSourceFile.toString(), expectedWebSourceFile.exists() );
         assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
         assertTrue( "ejb artifact not found: " + expectedEJBArtifact.toString(), expectedEJBArtifact.exists() );
+    }
+
+    public void testExplodedWarWithJar()
+        throws Exception
+    {
+        // setup test data
+        String testId = "ExplodedWarWithJar";
+        MavenProjectArtifactsStub project = new MavenProjectArtifactsStub();
+        File webAppDirectory = new File( getTestDirectory(), testId );
+        File webAppSource = createWebAppSource( testId );
+        File classesDir = createClassesDir( testId, true );
+        ArtifactHandler artifactHandler = (ArtifactHandler) lookup( ArtifactHandler.ROLE, "jar" );
+        ArtifactStub jarArtifact = new JarArtifactStub( getBasedir(), artifactHandler );
+        File jarFile = jarArtifact.getFile();
+
+        assertTrue( "jar not found: " + jarFile.toString(), jarFile.exists() );
+
+        // configure mojo
+        project.addArtifact( jarArtifact );
+        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+        mojo.execute();
+
+        // validate operation
+        File expectedWebSourceFile = new File( webAppDirectory, "pansit.jsp" );
+        File expectedWebSource2File = new File( webAppDirectory, "org/web/app/last-exile.jsp" );
+        // final name form is <artifactId>-<version>.<type>
+        File expectedJarArtifact = new File( webAppDirectory, "WEB-INF/lib/jarartifact-0.0-Test.jar" );
+
+        assertTrue( "source files not found: " + expectedWebSourceFile.toString(), expectedWebSourceFile.exists() );
+        assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
+        assertTrue( "jar artifact not found: " + expectedJarArtifact.toString(), expectedJarArtifact.exists() );
     }
 
     /**
