@@ -80,7 +80,7 @@ public abstract class AbstractCheckDocumentationMojo
      * Sets whether this plugin is running in offline or online mode. Also useful when you don't want
      * to verify http URLs.
      *
-     * @parameter expression="${offline}" default-value="false"
+     * @parameter expression="${settings.offline}"
      */
     private boolean offline;
 
