@@ -231,9 +231,19 @@ public class CheckstyleReport
     private String propertyExpansion;
 
     /**
-     * Specifies the location of the License file (a.k.a. the header file)
-     * that is used by Checkstyle to verify that source code has the
-     * correct copyright.
+     * <p>Specifies the location of the License file (a.k.a. the header file)
+     * that can be used by Checkstyle to verify that source code has the
+     * correct copyright.</p>
+     * <p>You need to use ${checkstyle.header.file} in your checkstyle xml configuration
+     * to reference the name of this header file.</p>
+     * <p>For instance:</p>
+     * <p>
+     * <code>
+     * &lt;module name="RegexpHeader">
+     *   &lt;property name="headerFile" value="${checkstyle.header.file}"/>
+     * &lt;/module>
+     * </code>
+     * </p>
      *
      * @parameter expression="${checkstyle.header.file}" default-value="LICENSE.txt"
      * @since 2.0-beta-2
