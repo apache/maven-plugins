@@ -1,0 +1,49 @@
+  ------
+  Maven 2 Deploy Plugin - Examples on using the parameters of the plugin
+  ------
+  Allan Ramirez
+  ------
+  June 2006
+  ------
+
+Deploying the artifact in a legacy layout of repository
+
+  "Legacy" is the layout used in maven 1 repositories while maven 2 uses "default". They are different
+  in terms of directory structure, timestamp of snapshots in default and existence of metadata files in default.
+
+  * legacy layout directory structure:
+
++---+
+  groupId
+  |
+  +--artifactId
+     |
+     +--jars
+        |
+        +--artifact
++---+
+
+  * default layout directory structure:
+
++---+
+  groupId
+  |
+  +--artifactId
+     |
+     +--version
+     |  |
+     |  ---artifact
+     |
+     ---metadata
++---+
+
+  In able to deploy an artifact in a legacy layout
+  of repository, set the <<repositoryLayout>> parameter to <<<legacy>>> value.
+
++---+
+mvn deploy:deploy-file -Durl=file://C:\m2-repo \
+                       -DrepositoryId=some.id \
+                       -Dfile=your-artifact-1.0.jar \
+                       -DpomFile=your-pom.xml \
+                       -DrepositoryLayout=legacy
++---+

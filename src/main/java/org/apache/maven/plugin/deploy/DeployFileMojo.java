@@ -112,6 +112,8 @@ public class DeployFileMojo
     private String repositoryLayout;
 
     /**
+     * Map that contains the layouts
+     *
      * @component role="org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout"
      */
     private Map repositoryLayouts;
@@ -126,11 +128,15 @@ public class DeployFileMojo
     private String url;
 
     /**
+     * Component used to create an artifact
+     *
      * @component
      */
     private ArtifactFactory artifactFactory;
 
     /**
+     * Component used to create a repository
+     *
      * @component
      */
     private ArtifactRepositoryFactory repositoryFactory;
