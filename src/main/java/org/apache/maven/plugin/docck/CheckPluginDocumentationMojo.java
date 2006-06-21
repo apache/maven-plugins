@@ -16,6 +16,7 @@ package org.apache.maven.plugin.docck;
  * limitations under the License.
  */
 
+import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.plugin.descriptor.InvalidPluginDescriptorException;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.plugin.descriptor.Parameter;
@@ -25,6 +26,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.tools.plugin.extractor.ExtractionException;
 import org.apache.maven.tools.plugin.scanner.MojoScanner;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -46,6 +48,9 @@ public class CheckPluginDocumentationMojo
      * @component
      */
     protected MojoScanner mojoScanner;
+
+    // TODO: really a description of length 1 isn't all that helpful...
+    private static final int MIN_DESCRIPTION_LENGTH = 1;
 
     protected void checkPackagingSpecificDocumentation( MavenProject project, DocumentationReporter reporter )
     {
@@ -79,8 +84,7 @@ public class CheckPluginDocumentationMojo
 
                     String mojoDescription = mojo.getDescription();
 
-                    // TODO: really a description of length 1 isn't all that helpful...
-                    if ( mojoDescription == null || mojoDescription.trim().length() < 1 )
+                    if ( mojoDescription == null || mojoDescription.trim().length() < MIN_DESCRIPTION_LENGTH )
                     {
                         reporter.error( "Mojo: \'" + mojo.getGoal() + "\' is missing a description." );
                     }
@@ -94,11 +98,11 @@ public class CheckPluginDocumentationMojo
                         {
                             Parameter param = (Parameter) paramIterator.next();
 
-                            if ( param.isEditable() )
+                            if ( param.getRequirement() == null && param.isEditable() )
                             {
                                 String paramDescription = param.getDescription();
 
-                                if ( paramDescription == null || paramDescription.trim().length() < 1 )
+                                if ( paramDescription == null || paramDescription.trim().length() < MIN_DESCRIPTION_LENGTH )
                                 {
                                     reporter.error( "Parameter: \'" + param.getName() + "\' in mojo: \'" + mojo.getGoal() +
                                         "\' is missing a description." );
@@ -109,10 +113,60 @@ public class CheckPluginDocumentationMojo
                 }
             }
         }
+
+        checkConfiguredReportPlugins( project, reporter );
     }
 
     protected boolean approveProjectPackaging( String packaging )
     {
         return "maven-plugin".equals( packaging );
+    }
+
+    /**
+     * Checks the project configured plugins if the required report plugins are present
+     *
+     * @param project  MavenProject to check
+     * @param reporter listener
+     * @todo maybe this should be checked default for all project?
+     */
+    private void checkConfiguredReportPlugins( MavenProject project, DocumentationReporter reporter )
+    {
+        List expectedPlugins = getRequiredPlugins();
+
+        List reportPlugins = project.getReportPlugins();
+        if ( reportPlugins != null && reportPlugins.size() > 0 )
+        {
+            for ( Iterator plugins = reportPlugins.iterator(); plugins.hasNext(); )
+            {
+                ReportPlugin plugin = (ReportPlugin) plugins.next();
+
+                expectedPlugins.remove( plugin.getArtifactId() );
+            }
+        }
+        else
+        {
+            reporter.error( "No report plugins configured." );
+        }
+
+        for ( Iterator plugins = expectedPlugins.iterator(); plugins.hasNext(); )
+        {
+            reporter.error( "Report plugin not found: " + plugins.next().toString() );
+        }
+    }
+
+    /**
+     * Returns a List of Strings of required report plugins
+     *
+     * @return List of report plugin artifactIds
+     */
+    private List getRequiredPlugins()
+    {
+        List list = new ArrayList();
+
+        list.add( "maven-javadoc-plugin" );
+        list.add( "maven-jxr-plugin" );
+        list.add( "maven-changelog-plugin" );
+
+        return list;
     }
 }
