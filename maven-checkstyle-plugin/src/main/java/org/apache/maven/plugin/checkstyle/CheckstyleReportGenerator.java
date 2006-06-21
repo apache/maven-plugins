@@ -34,8 +34,6 @@ import java.util.ResourceBundle;
 
 public class CheckstyleReportGenerator
 {
-    private static final String EOL = System.getProperty( "line.separator" );
-
     private Log log;
 
     private ResourceBundle bundle;
@@ -615,12 +613,9 @@ public class CheckstyleReportGenerator
             AuditEvent event = (AuditEvent) events.next();
             SeverityLevel level = event.getSeverityLevel();
 
-            if ( getSeverityLevel() != null )
+            if ( ( getSeverityLevel() != null ) && !getSeverityLevel().equals( level ) )
             {
-                if ( !getSeverityLevel().equals( level ) )
-                {
-                    continue;
-                }
+                continue;
             }
 
             sink.tableRow();
