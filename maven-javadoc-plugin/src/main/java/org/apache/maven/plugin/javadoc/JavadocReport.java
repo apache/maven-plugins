@@ -52,6 +52,8 @@ public class JavadocReport
     // ----------------------------------------------------------------------
 
     /**
+     * Generates the site report
+     *
      * @component
      */
     private Renderer siteRenderer;

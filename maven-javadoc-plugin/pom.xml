@@ -9,7 +9,52 @@
   <artifactId>maven-javadoc-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Maven Javadoc Plugin</name>
+  <description>
+    The Maven Javadoc Plugin is a plugin that uses the javadoc tool for generating javadocs for
+    the specified project.
+  </description>
   <version>2.1-SNAPSHOT</version>
+  <url>http://maven.apache.org/plugins/maven-javadoc-plugin</url>
+  <issueManagement>
+    <system>jira</system>
+    <url>http://jira.codehaus.org/browse/MJAVADOC</url>
+  </issueManagement>
+  <inceptionYear>2004</inceptionYear>
+  <mailingLists>
+    <mailingList>
+      <name>Maven User List</name>
+      <subscribe>users-subscribe@maven.apache.org</subscribe>
+      <unsubscribe>users-unsubscribe@maven.apache.org</unsubscribe>
+      <post>users@maven.apache.org</post>
+      <archive>http://mail-archives.apache.org/mod_mbox/maven-users</archive>
+      <otherArchives>
+        <otherArchive>http://www.mail-archive.com/users@maven.apache.org/</otherArchive>
+        <otherArchive>http://www.nabble.com/Maven---Users-f178.html</otherArchive>
+      </otherArchives>
+    </mailingList>
+    <mailingList>
+      <name>Maven Developer List</name>
+      <subscribe>dev-subscribe@maven.apache.org</subscribe>
+      <unsubscribe>dev-unsubscribe@maven.apache.org</unsubscribe>
+      <post>dev@maven.apache.org</post>
+      <archive>http://mail-archives.apache.org/mod_mbox/maven-dev</archive>
+    </mailingList>
+    <mailingList>
+      <name>Maven Commits List</name>
+      <subscribe>commits-subscribe@maven.apache.org</subscribe>
+      <unsubscribe>commits-unsubscribe@maven.apache.org</unsubscribe>
+      <post>commits@maven.apache.org</post>
+      <archive>http://mail-archives.apache.org/mod_mbox/maven-dev</archive>
+    </mailingList>
+  </mailingLists>
+  <scm>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-javadoc-plugin</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-javadoc-plugin</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-javadoc-plugin</url>
+  </scm>
+  <prerequisites>
+    <maven>2.0</maven>
+  </prerequisites>
   <build>
     <plugins>
       <plugin>
@@ -67,4 +112,17 @@
       <version>1.0-beta-1</version>
     </dependency>
   </dependencies>
+  <reporting>
+    <plugins>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <artifactId>maven-jxr-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <artifactId>maven-changelog-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>
