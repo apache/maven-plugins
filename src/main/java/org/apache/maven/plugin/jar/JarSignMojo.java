@@ -22,6 +22,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
@@ -184,6 +185,16 @@ public class JarSignMojo
         if ( skip )
         {
             getLog().info( "Skipping JAR signing for file: " + getJarFile().getAbsolutePath() );
+        }
+
+        if ( project != null )
+        {
+            ArtifactHandler artifactHandler = project.getArtifact().getArtifactHandler();
+            if ( artifactHandler != null && !"java".equals( artifactHandler.getLanguage() ) )
+            {
+                getLog().debug( "Not executing jar:sign as the project is not a Java module" );
+                return;
+            }
         }
 
         // we use this mojo to check if there's a need to sign.
