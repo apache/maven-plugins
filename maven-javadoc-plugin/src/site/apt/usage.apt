@@ -1,0 +1,83 @@
+ ------
+ Configuring Javadoc Report
+ ------
+ Vincent Siveton
+ ------
+ 01 March 2005
+ ------
+
+Usage
+
+ The Javadoc Plugin generates javadocs using the Javadoc tool. Iterated below are the different goals and configuration for
+ generating them using the plugin.
+
+*Generate Javadoc
+
+ To generate javadocs for the project, execute the following command:
+
+--------------------
+mvn javadoc:javadoc
+--------------------
+
+*Generate Javadoc Jar File
+
+ The javadocs are generated first, then it will be packaged in a jar file. The javadoc:javadoc goal need not be
+ executed explicitly, the javadoc:jar goal will execute it and then package the generated javadocs.
+
+ To generate a javadoc jar file for the project, execute the following command:
+
+--------------------
+mvn javadoc:jar
+--------------------
+
+*POM Configuration
+
+ There are two ways to configure the javadoc plugin in your pom. The first one is configuring it on the <build>
+ section of the pom, as shown below. This configuration is viable when you want to explicitly execute the javadoc
+ plugin using 'mvn javadoc:javadoc' or 'mvn javadoc:jar'.
+
+-------------------
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <minmemory>128m</minmemory>
+          <maxmemory>512</maxmemory>
+          ...
+        </configuration>
+      </plugin>
+    </plugins>
+  ...
+  </build>
+  ...
+</project>
+-------------------
+
+ The other way is to configure the plugin in the <reporting> section of the pom as shown below. This generates the project
+ javadocs as part of the site generation (when 'mvn site' is executed).
+
+-------------------
+<project>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <minmemory>128m</minmemory>
+          <maxmemory>512</maxmemory>
+          ...
+        </configuration>
+      </plugin>
+    </plugins>
+  ...
+  </reporting>
+  ...
+</project>
+------------------
+

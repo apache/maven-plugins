@@ -61,6 +61,8 @@ public class JavadocJar
     private String finalName;
 
     /**
+     * Used for attaching the artifact in the project
+     * 
      * @component
      */
     private MavenProjectHelper projectHelper;

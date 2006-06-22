@@ -562,21 +562,29 @@ public abstract class AbstractJavadocMojo
     private String windowtitle;
 
     /**
+     * Used for resolving artifacts
+     *
      * @component
      */
     private ArtifactResolver resolver;
 
     /**
+     * Factory for creating artifact objects
+     *
      * @component
      */
     private ArtifactFactory factory;
 
     /**
+     * The local repository where the artifacts are located
+     *
      * @parameter expression="${localRepository}"
      */
     private ArtifactRepository localRepository;
 
     /**
+     * The remote repositories where artifacts are located
+     *
      * @parameter expression="${project.remoteArtifactRepositories}"
      */
     private List remoteRepositories;
