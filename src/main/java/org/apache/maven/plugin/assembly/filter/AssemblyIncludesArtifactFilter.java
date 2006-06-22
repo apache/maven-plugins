@@ -18,8 +18,8 @@ package org.apache.maven.plugin.assembly.filter;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
+import org.codehaus.plexus.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -72,10 +72,18 @@ public class AssemblyIncludesArtifactFilter
             List depTrail = artifact.getDependencyTrail();
             if ( depTrail != null && !depTrail.isEmpty() )
             {
-                depTrail = new ArrayList( depTrail );
-                depTrail.retainAll( patterns );
+                String trailStr = StringUtils.join( depTrail.iterator(), "," );
                 
-                matched = !depTrail.isEmpty();
+                for ( Iterator it = patterns.iterator(); it.hasNext(); )
+                {
+                    String pattern = (String) it.next();
+                    
+                    if ( trailStr.indexOf( pattern ) > -1 )
+                    {
+                        matched = true;
+                        break;
+                    }
+                }
             }
         }
         
