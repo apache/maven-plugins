@@ -1,0 +1,57 @@
+ ------
+ Using Alternate Doclet
+ ------
+ Maria Odea Ching
+ ------
+ 20 June 2006
+ ------
+
+
+Using Alternate Doclet
+
+ To generate output from an alternate doclet in addition to the project javadocs, add configuration
+ similar to the following to your POM:
+
+------------------
+<project>
+   ...
+   <reporting>
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <reportSets>
+               <reportSet>
+                  <id>uml</id>
+                  <configuration>
+                     <doclet>gr.spinellis.umlgraph.doclet.UmlGraph</doclet>
+                     <docletArtifact>
+                        <groupId>umlgraph</groupId>
+                        <artifactId>UMLGraph</artifactId>
+                        <version>4.2-SNAPSHOT</version>
+                     </docletArtifact>
+                     <additionalparam>-views</additionalparam>
+                     <destDir>target/uml</destDir>
+                     <show>private</show>
+                  </configuration>
+                  <reports>
+                     <report>javadoc</report>
+                  </reports>
+               </reportSet>
+               <reportSet>
+                  <id>html</id>
+                  <configuration>
+                     <show>private</show>
+                  </configuration>
+                  <reports>
+                     <report>javadoc</report>
+                  </reports>
+               </reportSet>
+            </reportSets>
+         </plugin>
+         ...
+      </plugins>
+   </reporting>
+   ...
+</project>
+------------------

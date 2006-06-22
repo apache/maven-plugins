@@ -1,0 +1,40 @@
+ ------
+ Setting Tag Configuration
+ ------
+ Maria Odea Ching
+ ------
+ 20 June 2006
+ ------
+
+
+Setting Tag Configuration
+
+ To set a custom tag used in the javadoc, the following configuration must be set in the pom:
+
+-------------------
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          ...
+          <tags>
+            <tag>
+              <name>todo</name>
+              <!-- Should be a combinaison of the letters Xaoptcmf -->
+              <placement>a</placement>
+              <head>To do something:</head>
+            </tag>
+          </tags>
+          ...
+        </configuration>
+      </plugin>
+    </plugins>
+  ...
+  </build>
+  ...
+</project>
+-------------------
