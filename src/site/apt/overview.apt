@@ -1,0 +1,24 @@
+ ------
+ Overview
+ ------
+ Maria Odea Ching
+ ------
+ 18 May 2006
+ ------
+
+
+
+Overview
+
+
+ The Maven Javadoc Plugin uses the Javadoc tool to generate javadocs for the specified project. It gets the parameter values
+ that will be used from the plugin configuration specified in the pom. When no configuration values are set, the plugin sets
+ default values instead and then executes the Javadoc tool of the default Java installation in your machine. You can also use
+ the plugin to generate javadocs then package them in a jar file.
+
+
+
+
+
+
+
