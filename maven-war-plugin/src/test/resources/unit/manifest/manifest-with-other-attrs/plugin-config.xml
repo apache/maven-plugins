@@ -5,13 +5,16 @@
       <plugin>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
-		  <project implementation="org.apache.maven.plugin.war.stub.MavenProjectBasicStub" />
-          <warSourceDirectory>${basedir}/target/test-classes/unit/manifest/manifest-with-other-attrs/src/main</warSourceDirectory>
-		  <archive>
-		    <manifest>
-			  <addExtensions>true</addExtensions>
-			</manifest>
-		  </archive>
+          <project implementation="org.apache.maven.plugin.war.stub.MavenProjectBasicStub"/>
+          <warSourceDirectory>
+            ${basedir}/target/test-classes/unit/manifest/manifest-with-other-attrs/src/main</warSourceDirectory>
+          <archive>
+            <manifest>
+              <addExtensions>true</addExtensions>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+              <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+            </manifest>
+          </archive>
         </configuration>
       </plugin>
     </plugins>
