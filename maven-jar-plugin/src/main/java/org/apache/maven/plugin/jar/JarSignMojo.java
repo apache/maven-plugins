@@ -278,7 +278,10 @@ public class JarSignMojo
             getLog().debug( "Signing JAR in-place (overwritting original JAR)." );
         }
 
-        getLog().debug( "Executing: " + commandLine );
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug( "Executing: " + purgePassword( commandLine ) );
+        }
 
         // jarsigner may ask for some input if the parameters are missing or incorrect.
         // This should take care of it and make it fail gracefully
@@ -312,7 +315,8 @@ public class JarSignMojo
 
             if ( result != 0 )
             {
-                throw new MojoExecutionException( "Result of " + commandLine + " execution is: \'" + result + "\'." );
+                throw new MojoExecutionException( "Result of " + purgePassword( commandLine ) +
+                    " execution is: \'" + result + "\'." );
             }
         }
         catch ( CommandLineException e )
@@ -334,6 +338,16 @@ public class JarSignMojo
         {
             project.getArtifact().setFile( signedjar );
         }
+    }
+
+    private String purgePassword( Commandline commandLine )
+    {
+        String out = commandLine.toString();
+        if ( keypass != null && out.indexOf( keypass ) != -1 )
+        {
+            out = StringUtils.replace( out, keypass, "******" );
+        }
+        return out;
     }
 
     private void createParentDirIfNecessary( File file )
