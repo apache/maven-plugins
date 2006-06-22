@@ -5,13 +5,14 @@
       <plugin>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
-		  <project implementation="org.apache.maven.plugin.war.stub.MavenProjectArtifactsStub" />
-          <warSourceDirectory>${basedir}/target/test-classes/unit/manifest/manifest-with-classpath/src/main</warSourceDirectory>
-		  <archive>
-		    <manifest>
-			  <addClasspath>true</addClasspath>
-			</manifest>
-		  </archive>
+          <project implementation="org.apache.maven.plugin.war.stub.MavenProjectArtifactsStub"/>
+          <warSourceDirectory>
+            ${basedir}/target/test-classes/unit/manifest/manifest-with-classpath/src/main</warSourceDirectory>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+            </manifest>
+          </archive>
         </configuration>
       </plugin>
     </plugins>
