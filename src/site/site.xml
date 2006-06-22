@@ -34,8 +34,17 @@
     </links>
 
     <menu name="Overview">
-      <item name="Introduction" href="/introduction.html" />              
-      <item name="Configuration" href="/configuration.html"/>
+      <item name="Overview" href="overview.html" />
+      <item name="Usage" href="usage.html"/>
+      <item name="FAQs" href="faq.html" />
+    </menu>
+    <menu name="Examples">
+      <item name="Using Aggregate" href="/examples/aggregate.html" />
+      <item name="Using Alternate Doclet" href="/examples/alternateDoclet.html" />
+      <item name="Excluding Packages" href="/examples/excludePackageNames.html" />
+      <item name="Setting Group Configuration" href="/examples/groupConfiguration.html" />
+      <item name="Setting Stylesheet Configuration" href="/examples/stylesheetConfiguration.html" />
+      <item name="Setting Tag Configuration" href="/examples/tagConfiguration.html" />       
     </menu>
     ${reports}
   </body>
