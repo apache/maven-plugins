@@ -137,13 +137,11 @@ public abstract class AbstractCheckDocumentationMojo
 
         String messages;
 
-        if ( hasErrors )
+        messages = buildErrorMessages( errors );
+
+        if ( !hasErrors )
         {
-            messages = buildErrorMessages( errors );
-        }
-        else
-        {
-            messages = "No documentation errors were found.";
+            messages += "\nNo documentation errors were found.";
         }
 
         try
@@ -468,6 +466,7 @@ public abstract class AbstractCheckDocumentationMojo
 
         fs.addInclude( "apt/" + pattern + ".apt" );
         fs.addInclude( "xdoc/" + pattern + ".xml" );
+        fs.addInclude( "fml/" + pattern + ".fml" );
         fs.addInclude( "resources/" + pattern + ".html" );
 
         String[] includedFiles = fileSetManager.getIncludedFiles( fs );
