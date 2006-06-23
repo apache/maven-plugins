@@ -16,7 +16,25 @@ package org.apache.maven.plugin.assembly.repository;
  * limitations under the License.
  */
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.lang.reflect.Field;
+import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TimeZone;
+
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -31,8 +49,11 @@ import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
+import org.apache.maven.plugin.assembly.filter.AssemblyExcludesArtifactFilter;
+import org.apache.maven.plugin.assembly.filter.AssemblyIncludesArtifactFilter;
 import org.apache.maven.plugin.assembly.utils.DigestUtils;
 import org.apache.maven.plugins.assembly.model.GroupVersionAlignment;
 import org.apache.maven.plugins.assembly.model.Repository;
@@ -43,21 +64,6 @@ import org.apache.maven.project.ProjectBuildingException;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
-import java.lang.reflect.Field;
-import java.security.NoSuchAlgorithmException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
 
 /**
  * @author Jason van Zyl
@@ -128,7 +134,56 @@ public class DefaultRepositoryAssembler
             throw new RepositoryAssemblyException( "Error invalidating the processed project cache.", e );
         }
 
-        ArtifactFilter filter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
+        AndArtifactFilter filter = new AndArtifactFilter();
+
+        ArtifactFilter scopeFilter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
+        filter.add( scopeFilter );
+        
+        // ----------------------------------------------------------------------------
+        // Includes
+        //
+        // We'll take everything if no includes are specified to try and make this
+        // process more maintainable. Don't want to have to update the assembly
+        // descriptor everytime the POM is updated.
+        // ----------------------------------------------------------------------------
+
+        if ( repository.getIncludes().isEmpty() )
+        {
+            List patterns = new ArrayList();
+            
+            Set projectArtifacts = project.getDependencyArtifacts();
+            
+            if ( projectArtifacts != null )
+            {
+                for ( Iterator it = projectArtifacts.iterator(); it.hasNext(); )
+                {
+                    Artifact artifact = (Artifact) it.next();
+                    
+                    patterns.add( artifact.getDependencyConflictId() );
+                }
+            }
+            
+            AssemblyIncludesArtifactFilter includeFilter = new AssemblyIncludesArtifactFilter( patterns, true );
+            
+            filter.add( includeFilter );
+        }
+        else
+        {
+            filter.add( new AssemblyIncludesArtifactFilter( repository.getIncludes(), true ) );
+        }
+
+        // ----------------------------------------------------------------------------
+        // Excludes
+        //
+        // We still want to make it easy to exclude a few things even if we slurp
+        // up everything.
+        // ----------------------------------------------------------------------------
+
+        if ( !repository.getExcludes().isEmpty() )
+        {
+            filter.add( new AssemblyExcludesArtifactFilter( repository.getExcludes(), true ) );
+        }
+
         try
         {
             // Now that we have the graph, let's try to align it to versions that we want and remove
