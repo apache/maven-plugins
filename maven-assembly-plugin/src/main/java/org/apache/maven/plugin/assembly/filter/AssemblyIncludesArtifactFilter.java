@@ -51,12 +51,13 @@ public class AssemblyIncludesArtifactFilter
     {
         String shortId = artifact.getGroupId() + ":" + artifact.getArtifactId();
         String id = artifact.getDependencyConflictId();
-
+        
         boolean matched = false;
         for ( Iterator i = patterns.iterator(); i.hasNext() && !matched; )
         {
             // TODO: what about wildcards? Just specifying groups? versions?
             String pattern = (String) i.next();
+            
             if ( id.equals( pattern ) )
             {
                 matched = true;
