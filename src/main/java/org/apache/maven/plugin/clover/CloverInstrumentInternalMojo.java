@@ -400,7 +400,6 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
 
     /**
      * @return the CLI args to be passed to CloverInstr
-     * @todo handle multiple source roots. At the moment only the first source root is instrumented
      */
     private String[] createCliArgs(Set filesToInstrument) throws MojoExecutionException
     {
@@ -445,7 +444,16 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
             parameters.add( file.getPath() );
         }
 
-        getLog().debug( "Instrumenting using parameters [" + parameters.toString() + "]");
+        // Log parameters
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug("Parameter list being passed to Clover CLI:");
+            for ( Iterator it = parameters.iterator(); it.hasNext(); )
+            {
+                String param = (String) it.next();
+                getLog().debug("  parameter = [" + param + "]");
+            }
+        }
 
         return (String[]) parameters.toArray(new String[0]);
     }
