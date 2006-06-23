@@ -34,6 +34,8 @@ import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolator;
 import org.apache.maven.plugin.assembly.interpolation.ReflectionProperties;
 import org.apache.maven.plugin.assembly.repository.RepositoryAssembler;
 import org.apache.maven.plugin.assembly.repository.RepositoryAssemblyException;
+import org.apache.maven.plugin.assembly.utils.FilterUtils;
+import org.apache.maven.plugin.assembly.utils.ProjectUtils;
 import org.apache.maven.plugin.assembly.utils.PropertyUtils;
 import org.apache.maven.plugins.assembly.model.Assembly;
 import org.apache.maven.plugins.assembly.model.Component;
@@ -394,37 +396,6 @@ public abstract class AbstractAssemblyMojo
         {
             Repository repository = (Repository) i.next();
 
-            AndArtifactFilter filter = new AndArtifactFilter();
-
-            // ----------------------------------------------------------------------------
-            // Includes
-            //
-            // We'll take everything if no includes are specified to try and make this
-            // process more maintainable. Don't want to have to update the assembly
-            // descriptor everytime the POM is updated.
-            // ----------------------------------------------------------------------------
-
-            if ( repository.getIncludes().isEmpty() )
-            {
-                filter.add( new AssemblyIncludesArtifactFilter( getDependenciesIncludeList() ) );
-            }
-            else
-            {
-                filter.add( new AssemblyIncludesArtifactFilter( repository.getIncludes() ) );
-            }
-
-            // ----------------------------------------------------------------------------
-            // Excludes
-            //
-            // We still want to make it easy to exclude a few things even if we slurp
-            // up everything.
-            // ----------------------------------------------------------------------------
-
-            if ( !repository.getExcludes().isEmpty() )
-            {
-                filter.add( new AssemblyExcludesArtifactFilter( repository.getExcludes() ) );
-            }
-
             File repositoryDirectory = new File( tempRoot, repository.getOutputDirectory() );
 
             if ( !repositoryDirectory.exists() )
@@ -432,7 +403,7 @@ public abstract class AbstractAssemblyMojo
                 repositoryDirectory.mkdirs();
             }
 
-            repositoryAssembler.assemble( repositoryDirectory, repository, project, localRepository );
+            repositoryAssembler.assemble( repositoryDirectory, repository, getExecutedProject(), localRepository );
 
             try
             {
@@ -474,7 +445,7 @@ public abstract class AbstractAssemblyMojo
             
             Set moduleProjects = new HashSet( allModuleProjects );
             
-            filterProjects( moduleProjects, moduleSet.getIncludes(), moduleSet.getExcludes(), false );
+            FilterUtils.filterProjects( moduleProjects, moduleSet.getIncludes(), moduleSet.getExcludes(), false );
 
             List moduleFileSets = new ArrayList();
 
@@ -541,7 +512,7 @@ public abstract class AbstractAssemblyMojo
                     List includes = binaries.getIncludes();
                     List excludes = binaries.getExcludes();
                     
-                    filterArtifacts( binaryDependencies, includes, excludes, true, Collections.EMPTY_LIST );
+                    FilterUtils.filterArtifacts( binaryDependencies, includes, excludes, true, Collections.EMPTY_LIST );
                     
                     if ( binaries.isUnpack() )
                     {
@@ -658,65 +629,6 @@ public abstract class AbstractAssemblyMojo
                 // would be better to have a way to find out when a specified include or exclude
                 // is never triggered and warn() it.
                 getLog().debug( "module: " + excludedProject.getId() + " not included" );
-            }
-        }
-    }
-
-    private void filterProjects( Set moduleProjects, List includes, List excludes, boolean actTransitively )
-    {
-        AndArtifactFilter filter = new AndArtifactFilter();
-
-        if ( !includes.isEmpty() )
-        {
-            filter.add( new AssemblyIncludesArtifactFilter( includes, actTransitively ) );
-        }
-        if ( !excludes.isEmpty() )
-        {
-            filter.add( new AssemblyExcludesArtifactFilter( excludes, actTransitively ) );
-        }
-        
-        for ( Iterator it = moduleProjects.iterator(); it.hasNext(); )
-        {
-            MavenProject project = (MavenProject) it.next();
-            Artifact artifact = project.getArtifact();
-            
-            if ( !filter.include( artifact ) )
-            {
-                it.remove();
-            }
-        }
-    }
-
-    private void filterArtifacts( Set artifacts, List includes, List excludes, boolean actTransitively, List additionalFilters )
-    {
-        AndArtifactFilter filter = new AndArtifactFilter();
-        
-        if ( additionalFilters != null && !additionalFilters.isEmpty() )
-        {
-            for ( Iterator it = additionalFilters.iterator(); it.hasNext(); )
-            {
-                ArtifactFilter additionalFilter = (ArtifactFilter) it.next();
-                
-                filter.add( additionalFilter );
-            }
-        }
-
-        if ( !includes.isEmpty() )
-        {
-            filter.add( new AssemblyIncludesArtifactFilter( includes, actTransitively ) );
-        }
-        if ( !excludes.isEmpty() )
-        {
-            filter.add( new AssemblyExcludesArtifactFilter( excludes, actTransitively ) );
-        }
-        
-        for ( Iterator it = artifacts.iterator(); it.hasNext(); )
-        {
-            Artifact artifact = (Artifact) it.next();
-            
-            if ( !filter.include( artifact ) )
-            {
-                it.remove();
             }
         }
     }
@@ -1057,12 +969,12 @@ public abstract class AbstractAssemblyMojo
                 Integer.toString( archiver.getDefaultDirectoryMode(), 8 ) + " file perms: " +
                 Integer.toString( archiver.getDefaultFileMode(), 8 ) );
 
-            Set allDependencyArtifacts = getDependencies();
+            Set allDependencyArtifacts = ProjectUtils.getDependencies( getExecutedProject() );
             Set dependencyArtifacts = new HashSet( allDependencyArtifacts );
             
             AssemblyScopeArtifactFilter scopeFilter = new AssemblyScopeArtifactFilter( dependencySet.getScope() );
             
-            filterArtifacts( dependencyArtifacts, dependencySet.getIncludes(), dependencySet.getExcludes(), true, Collections.singletonList( scopeFilter ) );
+            FilterUtils.filterArtifacts( dependencyArtifacts, dependencySet.getIncludes(), dependencySet.getExcludes(), true, Collections.singletonList( scopeFilter ) );
 
             for ( Iterator j = dependencyArtifacts.iterator(); j.hasNext(); )
             {
@@ -1155,29 +1067,6 @@ public abstract class AbstractAssemblyMojo
                 getLog().debug( "artifact: " + artifact + " not included" );
             }
         }
-    }
-
-    /**
-     * Retrieves an includes list generated from the existing depedencies in a project.
-     *
-     * @return A List of includes
-     */
-    private List getDependenciesIncludeList()
-    {
-        List includes = new ArrayList();
-
-        for ( Iterator i = getDependencies().iterator(); i.hasNext(); )
-        {
-            Artifact a = (Artifact) i.next();
-
-            if ( !project.getGroupId().equals( a.getGroupId() ) ||
-                !project.getArtifactId().equals( a.getArtifactId() ) )
-            {
-                includes.add( a.getGroupId() + ":" + a.getArtifactId() );
-            }
-        }
-
-        return includes;
     }
 
     private void addDirectory( Archiver archiver, File directory, String output, String[] includes, List excludes )
