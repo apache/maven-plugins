@@ -109,32 +109,10 @@ public abstract class AbstractUnpackingMojo
     protected MavenProject project;
 
 
-    /**
-     * Retrieves all artifact dependencies.
-     *
-     * @return A HashSet of artifacts
-     */
-    protected Set getDependencies()
+    protected MavenProject getExecutedProject()
     {
-        MavenProject project = getExecutedProject();
-
-        Set dependenciesSet = new HashSet();
-
-        if ( project.getArtifact() != null && project.getArtifact().getFile() != null )
-        {
-            dependenciesSet.add( project.getArtifact() );
-        }
-
-        Set projectArtifacts = project.getArtifacts();
-        if ( projectArtifacts != null )
-        {
-            dependenciesSet.addAll( projectArtifacts );
-        }
-
-        return dependenciesSet;
+        return project;
     }
-
-    protected abstract MavenProject getExecutedProject();
 
     /**
      * Unpacks the archive file.

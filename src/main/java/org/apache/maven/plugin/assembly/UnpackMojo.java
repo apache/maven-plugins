@@ -19,6 +19,7 @@ package org.apache.maven.plugin.assembly;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.assembly.utils.ProjectUtils;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 
@@ -48,7 +49,7 @@ public class UnpackMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        for ( Iterator j = getDependencies().iterator(); j.hasNext(); )
+        for ( Iterator j = ProjectUtils.getDependencies( project ).iterator(); j.hasNext(); )
         {
             Artifact artifact = (Artifact) j.next();
 
