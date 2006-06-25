@@ -1,0 +1,124 @@
+ ------
+ Maven 2 War Plugin: war:inplace
+ ------
+ Pete Marvin King
+ <pmking@exist.com>
+ ------
+ June 19, 2006
+ 
+ This mode is similar to the exploded mode but the war will ge generated 
+ in the webapp source tree.
+
+Default Phase ( recommended )
+
+ <<package>>
+ 
+Basic Usage
+
+ To explicitly execute the goal
+	 
++-----+
+  m2 war:inplace
++-----+
+	
+ or with the added configuration line on your pom.xml
+	
++----------+
+  <project>
+	  ...
+	  <build>
+	     <plugins>
+	       <plugin>
+	         <groupId>org.apache.maven</groupId>
+	         <artifactId>maven-war-plugin</artifactId>
+	         <version>2.1</version>     
+	         <goals>
+	           <goal>inplace</goal>
+	         </goals>    
+	       </plugin>
+	     <plugins>  
+	     ...
+	     ...
+	  </build>   
+	  ...
+  </project>
++----------+
+	
+ specifying the package phase would achieve the same result
+	
++------+
+  mvn package
++------+
+
+Sample Configuration
+
+ Given the project structure
+	
++-------+
+   /project_root
+   /project_root/pom.xml
+   /project_root/src/main/java/package/source
+   /project_root/src/main/resource/someresource
+   /project_root/src/main/webapp/WEB-INF/jsp/anotherwebsource	 
+   /project_root/src/main/webapp/WEB-INF/somewebsource	
+   /project_root/src/main/webapp/websources
++-------+  
+
+ with pom.xml
+
++--------+
+   <project>
+      <modelVersion>4.0.0</modelVersion>
+      <groupId>com.somecompany.webapp<gropuId>
+      <artifactId>webapp-service</artifactId>
+      <version>0.0</version>
+      <packaging>war</packaging>
+      <name>Some Company Webapp Service</name>
+      <dependencies>
+         <dependency>
+            <groupId>com.closed.package</groupId>
+            <artifactId>runtimedependency</artifactId>
+            <version>0.0</version>
+            <scope>runtime<scope>
+         </dependency>
+         <dependency>
+            <groupId>com.closed.package</groupId>
+            <artifactId>normaldependency</artifactId>
+            <version>0.0</version>
+            <!-- if no scope is defined, it defaults to compile -->
+         </dependency>
+      </dependencies>     
+   </project>	
++--------+
+
+ executing the command
+	
++--------+
+   mvn war:inplace
++--------+
+
+ or specifying the lifecycle phase package
+
++--------+
+   mvn package
++--------+
+
+ would generate the exploded webapp in the source tree
+
++--------+
+ src/main/webapp
+ src/main/webapp/META-INF/maven/com.somecompany.webapp/webapp-service/pom.xml
+ src/main/webapp/META-INF/maven/com.somecompany.webapp/webapp-service/pom.properties
+ src/main/webapp/WEB-INF/lib/runtimedependency-0.0.jar
+ src/main/webapp/WEB-INF/classes/<contents of target/classes>
+ src/main/webapp/WEB-INF/jsp/anotherwebsource
+ src/main/webapp/WEB-INF/somewebsource	         
+ src/main/webapp/websources                              	   	      
++--------+  
+
+ You might wonder why the other dependency is not included in WEB-INF/lib, only dependencies
+ with a runtime scope are included in the war file. 
+ 
+ If you use the lifecycle phase invocation, it will also generate the {{{war.html}war}} 
+ - "target/webapp-service.war".
+ 

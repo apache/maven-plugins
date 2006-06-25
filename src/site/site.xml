@@ -34,8 +34,17 @@
 
     <menu name="Overview">
       <item name="Introduction" href="introduction.html"/>
-      <item name="How to Use" href="howto.html"/>
     </menu>
+    <menu name="WAR Modes" href="usage.html">
+      <item name="war" href="war.html"/>
+      <item name="inplace" href="inplace.html"/>
+      <item name="exploded" href="exploded.html"/>
+    </menu>
+    <menu name="Advance Configuration">
+      <item name="With war dependencies" href="example/example-overlay.html"/>
+      <item name="Filtering war dependencies" href="example-webappdependency-filtering.html"/>
+    </menu>
+    <menu name="FAQ" href="faq.html"/>
     ${reports}
   </body>
 </project>
