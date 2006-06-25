@@ -50,11 +50,13 @@ public class JarMojo
         return classifier;
     }
 
-    /**
-     * Return the main classes directory, so it's used as the root of the jar.
-     */
     protected File getClassesDirectory()
     {
         return classesDirectory;
+    }
+
+    protected void setClassesDirectory( File classesDirectory )
+    {
+        this.classesDirectory = classesDirectory;
     }
 }
