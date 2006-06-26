@@ -48,7 +48,7 @@ DOCCK Plugin - Configuration and Usage
 
 * Using the command-line
 
-  The DOCCK Plugin is easily executed from the command line since it can run at
+  The DOCCK Plugin is easily executed from the command line since it can run
   without any parameter configuration.
 
   To run DOCCK Plugin on a project, use:
