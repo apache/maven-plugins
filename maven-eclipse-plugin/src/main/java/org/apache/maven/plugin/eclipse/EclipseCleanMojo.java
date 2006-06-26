@@ -53,9 +53,14 @@ public class EclipseCleanMojo
     private static final String DIR_DOT_SETTINGS = ".settings"; //$NON-NLS-1$
 
     /**
-     * File name where the WTP component settings will be stored for our Eclipse Project.
+     * File name where the WTP component settings will be stored - WTP 1.0 name.
      */
     private static final String FILE_DOT_COMPONENT = ".settings/.component"; //$NON-NLS-1$
+
+    /**
+     * File name where the WTP component settings will be stored - WTP 1.5 name.
+     */
+    private static final String FILE_DOT_COMPONENT_15 = ".settings/org.eclipse.wst.common.component"; //$NON-NLS-1$
 
     /**
      * File name where Eclipse Project's Facet configuration will be stored.
@@ -94,6 +99,7 @@ public class EclipseCleanMojo
         delete( new File( basedir, FILE_DOT_WTPMODULES ) );
 
         delete( new File( basedir, FILE_DOT_COMPONENT ) );
+        delete( new File( basedir, FILE_DOT_COMPONENT_15 ) );
         delete( new File( basedir, FILE_FACET_CORE_XML ) );
 
         File settingsDir = new File( basedir, DIR_DOT_SETTINGS );
