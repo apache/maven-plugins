@@ -188,10 +188,12 @@ public abstract class AbstractCheckDocumentationMojo
                 if ( !reporter.getMessages().isEmpty() )
                 {
                     buffer.append( "\no " ).append( project.getName() );
-                    buffer.append( " (" ).append( reporter.getMessagesByType( DocumentationReport.TYPE_ERROR ).size() )
-                          .append( " errors," );
-                    buffer.append( " " ).append( reporter.getMessagesByType( DocumentationReport.TYPE_WARN ).size() )
-                          .append( " warnings)" );
+                    int numberOfErrors = reporter.getMessagesByType( DocumentationReport.TYPE_ERROR ).size();
+                    buffer.append( " (" ).append( numberOfErrors )
+                          .append( " error" ).append( numberOfErrors != 1 ? "s" : "" ).append( "," );
+                    int numberOfWarnings = reporter.getMessagesByType( DocumentationReport.TYPE_WARN ).size();
+                    buffer.append( " " ).append( numberOfWarnings )
+                          .append( " warning" ).append( numberOfWarnings != 1 ? "s" : "" ).append( ")" );
                     for ( Iterator errorIterator = reporter.getMessages().iterator(); errorIterator.hasNext(); )
                     {
                         String error = (String) errorIterator.next();
