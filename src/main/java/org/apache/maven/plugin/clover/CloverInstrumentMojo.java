@@ -22,10 +22,11 @@ import org.apache.maven.plugin.clover.internal.AbstractCloverMojo;
  * Instrument all sources using Clover and forks a custom lifecycle to execute project's tests on the instrumented code
  * so that a Clover database is created.
  *
- * Note: We're forking a lifecycle because we don't want the Clover instrumentation to affect the main lifecycle build.
- * This will prevent instrumented sources to be put in production by error. Thus running <code>mvn install</code> on
- * a project where this <code>instrument</code> goal has been specified will run the build twice: once for building the
- * project as usual and another time for instrumenting the sources with Clover and generating the Clover database.
+ * <p>Note: We're forking a lifecycle because we don't want the Clover instrumentation to affect the main lifecycle
+ * build. This will prevent instrumented sources to be put in production by error. Thus running <code>mvn install</code>
+ * on a project where this <code>instrument</code> goal has been specified will run the build twice: once for building
+ * the project as usual and another time for instrumenting the sources with Clover and generating the Clover
+ * database.</p>
  *
  * @goal instrument
  * @execute phase="install" lifecycle="clover"

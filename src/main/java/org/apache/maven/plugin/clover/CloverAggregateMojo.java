@@ -24,6 +24,8 @@ public class CloverAggregateMojo extends AbstractCloverMojo
     /**
      * The projects in the reactor for aggregation report.
      *
+     * <p>Note: This is passed by Maven and must not be configured by the user.</p>
+     *
      * @parameter expression="${reactorProjects}"
      * @readonly
      */
