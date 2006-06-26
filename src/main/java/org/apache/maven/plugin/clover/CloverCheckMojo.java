@@ -37,6 +37,8 @@ import java.io.File;
 public class CloverCheckMojo extends AbstractCloverMojo
 {
     /**
+     * The Test Percentage Coverage (TPC) threshold under which the plugin will report an error and fail the build.
+     *
      * @parameter default-value="70%"
      * @required
      */
