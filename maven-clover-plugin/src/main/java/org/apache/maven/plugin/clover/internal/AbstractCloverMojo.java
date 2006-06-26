@@ -24,9 +24,17 @@ import org.apache.tools.ant.taskdefs.Taskdef;
 import java.io.IOException;
 import java.io.File;
 
+/**
+ * Common code for all Clover plugin build Mojos.
+ *
+ * @author <a href="mailto:vmassol@apache.org">Vincent Massol</a>
+ * @version $Id$
+ */
 public abstract class AbstractCloverMojo extends AbstractMojo
 {
     /**
+     * The location of the <a href="http://cenqua.com/clover/doc/adv/database.html">Clover database</a>.
+     *
      * @parameter expression="${project.build.directory}/clover/clover.db"
      * @required
      */
@@ -77,10 +85,10 @@ public abstract class AbstractCloverMojo extends AbstractMojo
      * If true we'll wait 2*flushInterval to ensure coverage data is flushed to the Clover database before running
      * any query on it.
      * 
-     * Note: The only use case where you would want to turn this off is if you're running your tests in a separate JVM.
-     * In that case the coverage data will be flushed by default upon the JVM shutdown and there would be no need to
-     * wait for the data to be flushed. As we can't control whether users want to fork their tests or not, we're
-     * offering this parameter to them.
+     * <p>Note: The only use case where you would want to turn this off is if you're running your tests in a separate
+     * JVM. In that case the coverage data will be flushed by default upon the JVM shutdown and there would be no need
+     * to wait for the data to be flushed. As we can't control whether users want to fork their tests or not, we're
+     * offering this parameter to them.</p>
      * 
      * @parameter default-value="true"
      */
@@ -95,6 +103,10 @@ public abstract class AbstractCloverMojo extends AbstractMojo
     private String jdk;
 
     /**
+     * The Maven project instance for the executing project.
+     *
+     * <p>Note: This is passed by Maven and must not be configured by the user.</p>
+     *
      * @parameter expression="${project}"
      * @required
      */

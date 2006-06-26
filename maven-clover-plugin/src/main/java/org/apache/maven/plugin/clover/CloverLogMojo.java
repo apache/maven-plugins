@@ -29,10 +29,8 @@ import java.io.File;
  *
  * @author <a href="mailto:vmassol@apache.org">Vincent Massol</a>
  * @version $Id$
- *
  */
-public class CloverLogMojo
-    extends AbstractCloverMojo
+public class CloverLogMojo extends AbstractCloverMojo
 {
     public void execute()
         throws MojoExecutionException

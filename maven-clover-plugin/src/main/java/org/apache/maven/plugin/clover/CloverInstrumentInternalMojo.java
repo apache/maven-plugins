@@ -34,7 +34,8 @@ import java.util.*;
 /**
  * Instrument source roots.
  *
- * Note: Do not call this MOJO directly. It is meant to be called in a forked lifecycle by the other MOJOs.
+ * <p><b>Note: Do not call this MOJO directly. It is meant to be called in a custom forked lifecycle by the other
+ * MOJOs.</b></p>
  *
  * @goal instrumentInternal
  * @phase generate-sources

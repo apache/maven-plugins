@@ -33,6 +33,11 @@ import java.io.File;
 public class CloverSaveHistoryMojo extends AbstractCloverMojo
 {
     /**
+     * The location where historical Clover data will be saved.
+     *
+     * <p>Note: It's recommended to modify the location of this directory so that it points to a more permanent
+     * location as the <code>${project.build.directory}</code> directory is erased when the project is cleaned.</p>
+     *
      * @parameter default-value="${project.build.directory}/clover/history"
      * @required
      */
