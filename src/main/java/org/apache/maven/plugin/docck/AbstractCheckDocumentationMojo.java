@@ -299,13 +299,9 @@ public abstract class AbstractCheckDocumentationMojo
             reporter.error( "Missing tag <inceptionYear>" );
         }
 
-        if ( project.getMailingLists() == null )
+        if ( project.getMailingLists().size() == 0 )
         {
-            reporter.warn( "Missing tag <mailingList>" );
-        }
-        else if ( project.getMailingLists().size() == 0 )
-        {
-            reporter.warn( "Empty tag <mailingList>" );
+            reporter.warn( "No <mailingList> specified" );
         }
 
         if ( project.getScm() == null )
