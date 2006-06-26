@@ -19,11 +19,11 @@ package org.apache.maven.plugin.docck;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.HeadMethod;
-import org.apache.maven.model.License;
 import org.apache.maven.model.IssueManagement;
+import org.apache.maven.model.License;
+import org.apache.maven.model.Organization;
 import org.apache.maven.model.Prerequisites;
 import org.apache.maven.model.Scm;
-import org.apache.maven.model.Organization;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -173,30 +173,34 @@ public abstract class AbstractCheckDocumentationMojo
     {
         String messages;
         StringBuffer buffer = new StringBuffer();
-        buffer.append( "\nThe following documentation problems were found:\n" );
 
-        for ( Iterator it = errors.entrySet().iterator(); it.hasNext(); )
+        if ( errors.size() > 0 )
         {
-            Map.Entry entry = (Map.Entry) it.next();
+            buffer.append( "\nThe following documentation problems were found:\n" );
 
-            MavenProject project = (MavenProject) entry.getKey();
-            DocumentationReporter reporter = (DocumentationReporter) entry.getValue();
-
-            if ( !reporter.getMessages().isEmpty() )
+            for ( Iterator it = errors.entrySet().iterator(); it.hasNext(); )
             {
-                buffer.append( "\no " ).append( project.getName() );
-                buffer.append( " (" ).append( reporter.getMessagesByType( DocumentationReport.TYPE_ERROR ).size() )
-                      .append( " errors," );
-                buffer.append( " " ).append( reporter.getMessagesByType( DocumentationReport.TYPE_WARN ).size() )
-                      .append( " warnings)" );
-                for ( Iterator errorIterator = reporter.getMessages().iterator(); errorIterator.hasNext(); )
+                Map.Entry entry = (Map.Entry) it.next();
+
+                MavenProject project = (MavenProject) entry.getKey();
+                DocumentationReporter reporter = (DocumentationReporter) entry.getValue();
+
+                if ( !reporter.getMessages().isEmpty() )
                 {
-                    String error = (String) errorIterator.next();
+                    buffer.append( "\no " ).append( project.getName() );
+                    buffer.append( " (" ).append( reporter.getMessagesByType( DocumentationReport.TYPE_ERROR ).size() )
+                          .append( " errors," );
+                    buffer.append( " " ).append( reporter.getMessagesByType( DocumentationReport.TYPE_WARN ).size() )
+                          .append( " warnings)" );
+                    for ( Iterator errorIterator = reporter.getMessages().iterator(); errorIterator.hasNext(); )
+                    {
+                        String error = (String) errorIterator.next();
 
-                    buffer.append( "\n\t" ).append( error );
+                        buffer.append( "\n\t" ).append( error );
+                    }
+
+                    buffer.append( "\n" );
                 }
-
-                buffer.append( "\n" );
             }
         }
 
