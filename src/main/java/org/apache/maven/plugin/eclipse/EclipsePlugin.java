@@ -30,6 +30,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.writers.EclipseClasspathWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseProjectWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseSettingsWriter;
+import org.apache.maven.plugin.eclipse.writers.EclipseWtpComponent15Writer;
 import org.apache.maven.plugin.eclipse.writers.EclipseWtpComponentWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseWtpFacetsWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseWtpmodulesWriter;
@@ -79,7 +80,7 @@ public class EclipsePlugin
     private static final String COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER = "org.eclipse.jdt.launching.JRE_CONTAINER"; //$NON-NLS-1$
 
     //  warning, order is important for binary search
-    public static final String[] WTP_SUPPORTED_VERSIONS = new String[] { "1.0", "R7", "none" }; //$NON-NLS-1$ //$NON-NLS-2$  //$NON-NLS-3$
+    public static final String[] WTP_SUPPORTED_VERSIONS = new String[] { "1.0", "1.5", "R7", "none" }; //$NON-NLS-1$ //$NON-NLS-2$  //$NON-NLS-3$
 
     /**
      * Constant for 'artifactId' element in POM.xml.
@@ -212,6 +213,11 @@ public class EclipsePlugin
      * Not a plugin parameter. Are we working with wtp 1.0?
      */
     private boolean wtp10;
+
+    /**
+     * Not a plugin parameter. Are we working with wtp 1.5?
+     */
+    private boolean wtp15;
 
     /**
      * Not a plugin parameter. Is this a java project?
@@ -411,6 +417,10 @@ public class EclipsePlugin
         {
             wtp10 = true;
         }
+        else if ( "1.5".equalsIgnoreCase( wtpversion ) ) //$NON-NLS-1$
+        {
+            wtp15 = true;
+        }
         if ( !"none".equalsIgnoreCase( wtpversion ) )
         {
             getLog().info( Messages.getString( "EclipsePlugin.wtpversion", wtpversion ) );
@@ -506,14 +516,25 @@ public class EclipsePlugin
                                                                                              localRepository,
                                                                                              buildOutputDirectory );
         }
-        else if ( wtp10 )
+
+        if ( wtp10 || wtp15 )
         {
             new EclipseWtpFacetsWriter( getLog(), eclipseProjectDir, project, deps ).write( sourceDirs,
                                                                                             localRepository,
                                                                                             buildOutputDirectory );
+        }
+        if ( wtp10 )
+        {
+
             new EclipseWtpComponentWriter( getLog(), eclipseProjectDir, project, deps ).write( sourceDirs,
                                                                                                localRepository,
                                                                                                buildOutputDirectory );
+        }
+        if ( wtp15 )
+        {
+            new EclipseWtpComponent15Writer( getLog(), eclipseProjectDir, project, deps ).write( sourceDirs,
+                                                                                                 localRepository,
+                                                                                                 buildOutputDirectory );
         }
 
         new EclipseProjectWriter( getLog(), eclipseProjectDir, project, deps ).write( projectBaseDir, executedProject,

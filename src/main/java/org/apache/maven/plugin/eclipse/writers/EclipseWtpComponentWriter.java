@@ -1,5 +1,3 @@
-package org.apache.maven.plugin.eclipse.writers;
-
 /*
  * Copyright 2001-2005 The Apache Software Foundation.
  *
@@ -15,6 +13,8 @@ package org.apache.maven.plugin.eclipse.writers;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package org.apache.maven.plugin.eclipse.writers;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -43,6 +43,9 @@ public class EclipseWtpComponentWriter
     extends AbstractWtpResourceWriter
 {
 
+    /**
+     * Context root attribute.
+     */
     private static final String ATTR_CONTEXT_ROOT = "context-root"; //$NON-NLS-1$
 
     /**
@@ -52,8 +55,21 @@ public class EclipseWtpComponentWriter
 
     /**
      * File name where the WTP component settings will be stored for our Eclipse Project.
+     * @return <code>.component</code>
      */
-    private static final String FILE_DOT_COMPONENT = ".component"; //$NON-NLS-1$
+    protected String getComponentFileName()
+    {
+        return ".component"; //$NON-NLS-1$
+    }
+
+    /**
+     * Version number added to component configuration.
+     * @return <code>1.0</code>
+     */
+    protected String getProjectVersion()
+    {
+        return null;
+    }
 
     public EclipseWtpComponentWriter( Log log, File eclipseProjectDir, MavenProject project, IdeDependency[] deps )
     {
@@ -71,7 +87,7 @@ public class EclipseWtpComponentWriter
         FileWriter w;
         try
         {
-            w = new FileWriter( new File( settingsDir, FILE_DOT_COMPONENT ) );
+            w = new FileWriter( new File( settingsDir, getComponentFileName() ) );
         }
         catch ( IOException ex )
         {
@@ -87,12 +103,12 @@ public class EclipseWtpComponentWriter
     }
 
     /**
-     * Writes out the module type settings for a Web Tools Project to a {@link #FILE_DOT_COMPONENT}.
+     * Writes out the module type settings for a Web Tools Project to a component file.
      * 
      * @param writer
      * @param packaging
      * @param buildOutputDirectory
-     * @param referencedReactorArtifacts
+     *  @param sourceDirs
      * @param localRepository
      * @throws MojoExecutionException
      */
@@ -102,6 +118,10 @@ public class EclipseWtpComponentWriter
     {
         writer.startElement( ELT_PROJECT_MODULES );
         writer.addAttribute( ATTR_MODULE_ID, "moduleCoreId" ); //$NON-NLS-1$
+        if ( getProjectVersion() != null )
+        {
+            writer.addAttribute( ATTR_PROJECT_VERSION, getProjectVersion() );
+        }
         writer.startElement( ELT_WB_MODULE );
 
         writer.addAttribute( ATTR_DEPLOY_NAME, getProject().getArtifactId() );

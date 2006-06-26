@@ -160,6 +160,14 @@ public abstract class AbstractEclipsePluginTestCase
                               new File( projectOutputDir, ".settings/.component" ) );
         }
 
+        // WTP15
+        File component15ExpectedFile = new File( basedir, "org.eclipse.wst.common.component" );
+        if ( component15ExpectedFile.exists() )
+        {
+            assertFileEquals( localRepositoryDir.getCanonicalPath(), component15ExpectedFile,
+                              new File( projectOutputDir, ".settings/org.eclipse.wst.common.component" ) );
+        }
+
     }
 
     protected void assertFileEquals( String mavenRepo, File expectedFile, File actualFile )
