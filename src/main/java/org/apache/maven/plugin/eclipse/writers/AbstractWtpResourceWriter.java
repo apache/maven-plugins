@@ -55,6 +55,8 @@ public abstract class AbstractWtpResourceWriter
 
     protected static final String ATTR_MODULE_ID = "id"; //$NON-NLS-1$
 
+    protected static final String ATTR_PROJECT_VERSION = "project-version"; //$NON-NLS-1$
+
     protected static final String ELT_PROJECT_MODULES = "project-modules"; //$NON-NLS-1$
 
     protected static final String ARTIFACT_MAVEN_WAR_PLUGIN = "maven-war-plugin"; //$NON-NLS-1$

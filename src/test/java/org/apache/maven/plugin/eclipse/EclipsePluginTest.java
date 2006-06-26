@@ -183,4 +183,14 @@ public class EclipsePluginTest
         testProject( "project-19" );
     }
 
+    /**
+     * WTP 1.5 changes in wtpmodules.
+     * @throws Exception any exception thrown during test
+     */
+    public void testProject20()
+        throws Exception
+    {
+        testProject( "project-20" );
+    }
+
 }
