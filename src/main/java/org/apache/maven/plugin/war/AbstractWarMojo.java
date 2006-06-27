@@ -925,7 +925,7 @@ public abstract class AbstractWarMojo
         // to plexus-utils 1.2.
         if ( destination.lastModified() < source.lastModified() )
         {
-            FileUtils.copyFile( source, destination );
+            FileUtils.copyFile( source.getCanonicalFile(), destination );
             // preserve timestamp
             destination.setLastModified( source.lastModified() );
         }
