@@ -132,6 +132,7 @@ public class WarExplodedMojoTest
         assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
         assertTrue( "WEB XML not found: " + expectedWEBXMLFile.toString(), expectedWEBXMLFile.exists() );
         assertTrue( "META-INF not found", expectedMETAINFDir.exists() );
+        assertEquals( "WEB XML not correct", mojo.getWebXml().toString(), FileUtils.fileRead( expectedWEBXMLFile ) );
     }
 
     /**
@@ -500,8 +501,8 @@ public class WarExplodedMojoTest
         assertTrue( "source files not found: " + expectedWebSourceFile.toString(), expectedWebSourceFile.exists() );
         assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
         assertTrue( "resource file not found:" + expectedResourceFile.toString(), expectedResourceFile.exists() );
-        assertTrue( "resource file with dir not found:" + expectedResourceWDirFile.toString(), expectedResourceWDirFile
-            .exists() );
+        assertTrue( "resource file with dir not found:" + expectedResourceWDirFile.toString(),
+                    expectedResourceWDirFile.exists() );
 
         // validate filtered file
         FileReader reader = new FileReader( expectedResourceWDirFile );

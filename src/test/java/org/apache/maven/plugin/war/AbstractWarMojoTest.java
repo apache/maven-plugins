@@ -16,13 +16,14 @@ package org.apache.maven.plugin.war;
  * limitations under the License.
  */
 
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.plugin.war.stub.MavenProjectBasicStub;
+import org.codehaus.plexus.util.FileUtils;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.plugin.war.stub.MavenProjectBasicStub;
 
 public abstract class AbstractWarMojoTest
     extends AbstractMojoTestCase
@@ -33,7 +34,7 @@ public abstract class AbstractWarMojoTest
 
     /**
      * initialize required parameters
-     * 
+     *
      * @param mojo
      * @param filters
      * @param classesDir
@@ -43,7 +44,7 @@ public abstract class AbstractWarMojoTest
      * @throws Exception
      */
     protected void configureMojo( AbstractWarMojo mojo, List filters, File classesDir, File webAppSource,
-                                 File webAppDir, MavenProjectBasicStub project )
+                                  File webAppDir, MavenProjectBasicStub project )
         throws Exception
     {
         setVariableValueToObject( mojo, "filters", filters );
@@ -55,7 +56,7 @@ public abstract class AbstractWarMojoTest
 
     /**
      * create an isolated xml dir
-     * 
+     *
      * @param id
      * @param xmlFiles
      * @return
@@ -84,7 +85,7 @@ public abstract class AbstractWarMojoTest
 
     /**
      * create an isolated web source with a sample jsp file
-     * 
+     *
      * @param id
      * @return
      * @throws Exception
@@ -103,7 +104,7 @@ public abstract class AbstractWarMojoTest
 
     /**
      * create a class directory with or without a sample class
-     * 
+     *
      * @param id
      * @param empty
      * @return
@@ -135,10 +136,9 @@ public abstract class AbstractWarMojoTest
     protected void createFile( File testFile )
         throws Exception
     {
-        if ( !testFile.exists() )
-        {
-            createDir( testFile.getParentFile() );
-            assertTrue( "can not create test file: " + testFile.toString(), testFile.createNewFile() );
-        }
+        createDir( testFile.getParentFile() );
+        FileUtils.fileWrite( testFile.toString(), testFile.toString() );
+
+        assertTrue( "could not create file: " + testFile, testFile.exists() );
     }
 }
