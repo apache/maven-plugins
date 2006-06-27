@@ -16,19 +16,19 @@ package org.apache.maven.plugin.war;
  * limitations under the License.
  */
 
+import org.apache.maven.archiver.MavenArchiveConfiguration;
+import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.archiver.MavenArchiver;
-import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
+import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
-import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
@@ -417,9 +417,7 @@ public abstract class AbstractWarMojo
      * @param filterProperties
      * @throws java.io.IOException if an error occured while copying webResources
      */
-    public void copyResources( Resource resource,
-                               File webappDirectory,
-                               Properties filterProperties )
+    public void copyResources( Resource resource, File webappDirectory, Properties filterProperties )
         throws IOException
     {
         if ( !resource.getDirectory().equals( webappDirectory.getPath() ) )
@@ -458,8 +456,7 @@ public abstract class AbstractWarMojo
      * @param webappDirectory the target directory
      * @throws java.io.IOException if an error occured while copying webResources
      */
-    public void copyResources( File sourceDirectory,
-                               File webappDirectory )
+    public void copyResources( File sourceDirectory, File webappDirectory )
         throws IOException
     {
         if ( !sourceDirectory.equals( webappDirectory ) )
@@ -518,8 +515,7 @@ public abstract class AbstractWarMojo
      * @param webappDirectory
      * @throws java.io.IOException if an error occured while building the webapp
      */
-    public void buildWebapp( MavenProject project,
-                             File webappDirectory )
+    public void buildWebapp( MavenProject project, File webappDirectory )
         throws MojoExecutionException, IOException
     {
         getLog().info( "Assembling webapp " + project.getArtifactId() + " in " + webappDirectory );
@@ -689,8 +685,7 @@ public abstract class AbstractWarMojo
      * @param file     File to be unpacked.
      * @param location Location where to put the unpacked files.
      */
-    private void unpack( File file,
-                         File location )
+    private void unpack( File file, File location )
         throws MojoExecutionException, NoSuchArchiverException
     {
         String archiveExt = FileUtils.getExtension( file.getAbsolutePath() ).toLowerCase();
@@ -700,6 +695,7 @@ public abstract class AbstractWarMojo
             UnArchiver unArchiver = archiverManager.getUnArchiver( archiveExt );
             unArchiver.setSourceFile( file );
             unArchiver.setDestDirectory( location );
+            unArchiver.setOverwrite( true );
             unArchiver.extract();
         }
         catch ( IOException e )
@@ -719,8 +715,7 @@ public abstract class AbstractWarMojo
      * @param srcDir    Directory containing unpacked dependent war contents
      * @param targetDir Directory to overlay srcDir into
      */
-    private void copyDependentWarContents( File srcDir,
-                                           File targetDir )
+    private void copyDependentWarContents( File srcDir, File targetDir )
         throws MojoExecutionException
     {
         DirectoryScanner scanner = new DirectoryScanner();
@@ -744,19 +739,14 @@ public abstract class AbstractWarMojo
         {
             File targetFile = new File( targetDir, files[j] );
 
-            // Do not overwrite existing files.
-            if ( !targetFile.exists() )
+            try
             {
-                try
-                {
-                    targetFile.getParentFile().mkdirs();
-                    copyFileIfModified( new File( srcDir, files[j] ), targetFile );
-                }
-                catch ( IOException e )
-                {
-                    throw new MojoExecutionException( "Error copying file '" + files[j] + "' to '" + targetFile + "'",
-                                                      e );
-                }
+                targetFile.getParentFile().mkdirs();
+                copyFileIfModified( new File( srcDir, files[j] ), targetFile );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Error copying file '" + files[j] + "' to '" + targetFile + "'", e );
             }
         }
     }
@@ -828,8 +818,7 @@ public abstract class AbstractWarMojo
      *                                       <p/>
      *                                       TO DO: Remove this method when Maven moves to plexus-utils version 1.4
      */
-    private static void copyFileToDirectoryIfModified( File source,
-                                                       File destinationDirectory )
+    private static void copyFileToDirectoryIfModified( File source, File destinationDirectory )
         throws IOException
     {
         // TO DO: Remove this method and use the method in WarFileUtils when Maven 2 changes
@@ -848,8 +837,7 @@ public abstract class AbstractWarMojo
             // support ${token}
             new FilterWrapper()
             {
-                public Reader getReader( Reader fileReader,
-                                         Properties filterProperties )
+                public Reader getReader( Reader fileReader, Properties filterProperties )
                 {
                     return new InterpolationFilterReader( fileReader, filterProperties, "${", "}" );
                 }
@@ -857,8 +845,7 @@ public abstract class AbstractWarMojo
             // support @token@
             new FilterWrapper()
             {
-                public Reader getReader( Reader fileReader,
-                                         Properties filterProperties )
+                public Reader getReader( Reader fileReader, Properties filterProperties )
                 {
                     return new InterpolationFilterReader( fileReader, filterProperties, "@", "@" );
                 }
@@ -873,10 +860,7 @@ public abstract class AbstractWarMojo
      * @param filterProperties
      * @throws IOException TO DO: Remove this method when Maven moves to plexus-utils version 1.4
      */
-    private static void copyFilteredFile( File from,
-                                          File to,
-                                          String encoding,
-                                          FilterWrapper[] wrappers,
+    private static void copyFilteredFile( File from, File to, String encoding, FilterWrapper[] wrappers,
                                           Properties filterProperties )
         throws IOException
     {
@@ -934,8 +918,7 @@ public abstract class AbstractWarMojo
      *                                       <p/>
      *                                       TO DO: Remove this method when Maven moves to plexus-utils version 1.4
      */
-    private static void copyFileIfModified( File source,
-                                            File destination )
+    private static void copyFileIfModified( File source, File destination )
         throws IOException
     {
         // TO DO: Remove this method and use the method in WarFileUtils when Maven 2 changes
@@ -943,6 +926,8 @@ public abstract class AbstractWarMojo
         if ( destination.lastModified() < source.lastModified() )
         {
             FileUtils.copyFile( source, destination );
+            // preserve timestamp
+            destination.setLastModified( source.lastModified() );
         }
     }
 
@@ -959,8 +944,7 @@ public abstract class AbstractWarMojo
      * @param destinationDirectory
      * @throws IOException TO DO: Remove this method when Maven moves to plexus-utils version 1.4
      */
-    private static void copyDirectoryStructureIfModified( File sourceDirectory,
-                                                          File destinationDirectory )
+    private static void copyDirectoryStructureIfModified( File sourceDirectory, File destinationDirectory )
         throws IOException
     {
         if ( !sourceDirectory.exists() )
@@ -1010,8 +994,7 @@ public abstract class AbstractWarMojo
      */
     private interface FilterWrapper
     {
-        Reader getReader( Reader fileReader,
-                          Properties filterProperties );
+        Reader getReader( Reader fileReader, Properties filterProperties );
     }
 
     /**
