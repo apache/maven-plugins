@@ -22,7 +22,6 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
-import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -442,9 +441,9 @@ public abstract class AbstractAssemblyMojo
             }
 
             Set allModuleProjects = getModulesFromReactor( getExecutedProject() );
-            
+
             Set moduleProjects = new HashSet( allModuleProjects );
-            
+
             FilterUtils.filterProjects( moduleProjects, moduleSet.getIncludes(), moduleSet.getExcludes(), false );
 
             List moduleFileSets = new ArrayList();
@@ -471,8 +470,7 @@ public abstract class AbstractAssemblyMojo
                     excludesList.add( PathUtils.toRelative( moduleProject.getBasedir(),
                                                             moduleProject.getBuild().getDirectory() ) + "/**" );
                     excludesList.add( PathUtils.toRelative( moduleProject.getBasedir(),
-                                                            moduleProject.getBuild().getOutputDirectory() ) +
-                        "/**" );
+                                                            moduleProject.getBuild().getOutputDirectory() ) + "/**" );
                     excludesList.add( PathUtils.toRelative( moduleProject.getBasedir(),
                                                             moduleProject.getBuild().getTestOutputDirectory() ) +
                         "/**" );
@@ -508,12 +506,12 @@ public abstract class AbstractAssemblyMojo
                         Integer.toString( archiver.getDefaultFileMode(), 8 ) );
 
                     Set binaryDependencies = moduleProject.getArtifacts();
-                    
+
                     List includes = binaries.getIncludes();
                     List excludes = binaries.getExcludes();
-                    
+
                     FilterUtils.filterArtifacts( binaryDependencies, includes, excludes, true, Collections.EMPTY_LIST );
-                    
+
                     if ( binaries.isUnpack() )
                     {
                         // TODO: something like zipfileset in plexus-archiver
@@ -540,7 +538,8 @@ public abstract class AbstractAssemblyMojo
 
                                 if ( binaries.isIncludeDependencies() )
                                 {
-                                    for ( Iterator dependencyIterator = binaryDependencies.iterator(); dependencyIterator.hasNext(); )
+                                    for ( Iterator dependencyIterator = binaryDependencies.iterator();
+                                          dependencyIterator.hasNext(); )
                                     {
                                         Artifact dependencyArtifact = (Artifact) dependencyIterator.next();
 
@@ -550,8 +549,7 @@ public abstract class AbstractAssemblyMojo
                             }
                             catch ( NoSuchArchiverException e )
                             {
-                                throw new MojoExecutionException( "Unable to obtain unarchiver: " + e.getMessage(),
-                                                                  e );
+                                throw new MojoExecutionException( "Unable to obtain unarchiver: " + e.getMessage(), e );
                             }
 
                             /*
@@ -591,8 +589,8 @@ public abstract class AbstractAssemblyMojo
                         {
                             String outputFileNameMapping = binaries.getOutputFileNameMapping();
 
-                            archiver.addFile( moduleArtifact.getFile(),
-                                              output + evaluateFileNameMapping( moduleArtifact, outputFileNameMapping ) );
+                            archiver.addFile( moduleArtifact.getFile(), output +
+                                evaluateFileNameMapping( moduleArtifact, outputFileNameMapping ) );
 
                             if ( binaries.isIncludeDependencies() )
                             {
@@ -607,8 +605,7 @@ public abstract class AbstractAssemblyMojo
                         }
                         catch ( ArchiverException e )
                         {
-                            throw new MojoExecutionException( "Error adding file to archive: " + e.getMessage(),
-                                                              e );
+                            throw new MojoExecutionException( "Error adding file to archive: " + e.getMessage(), e );
                         }
                     }
                 }
@@ -619,13 +616,13 @@ public abstract class AbstractAssemblyMojo
                     processFileSets( archiver, moduleFileSets, includeBaseDirectory );
                 }
             }
-            
+
             allModuleProjects.removeAll( moduleProjects );
-            
+
             for ( Iterator it = allModuleProjects.iterator(); it.hasNext(); )
             {
                 MavenProject excludedProject = (MavenProject) it.next();
-                
+
                 // would be better to have a way to find out when a specified include or exclude
                 // is never triggered and warn() it.
                 getLog().debug( "module: " + excludedProject.getId() + " not included" );
@@ -971,17 +968,17 @@ public abstract class AbstractAssemblyMojo
 
             Set allDependencyArtifacts = ProjectUtils.getDependencies( getExecutedProject() );
             Set dependencyArtifacts = new HashSet( allDependencyArtifacts );
-            
+
             AssemblyScopeArtifactFilter scopeFilter = new AssemblyScopeArtifactFilter( dependencySet.getScope() );
-            
-            FilterUtils.filterArtifacts( dependencyArtifacts, dependencySet.getIncludes(), dependencySet.getExcludes(), true, Collections.singletonList( scopeFilter ) );
+
+            FilterUtils.filterArtifacts( dependencyArtifacts, dependencySet.getIncludes(), dependencySet.getExcludes(),
+                                         true, Collections.singletonList( scopeFilter ) );
 
             for ( Iterator j = dependencyArtifacts.iterator(); j.hasNext(); )
             {
                 Artifact artifact = (Artifact) j.next();
 
-                String fileNameMapping =
-                    evaluateFileNameMapping( artifact, dependencySet.getOutputFileNameMapping() );
+                String fileNameMapping = evaluateFileNameMapping( artifact, dependencySet.getOutputFileNameMapping() );
                 if ( dependencySet.isUnpack() )
                 {
                     // TODO: something like zipfileset in plexus-archiver
@@ -1034,8 +1031,8 @@ public abstract class AbstractAssemblyMojo
                             }
                             catch ( IOException e )
                             {
-                                throw new MojoExecutionException(
-                                    "Failed to delete security files: " + e.getMessage(), e );
+                                throw new MojoExecutionException( "Failed to delete security files: " + e.getMessage(),
+                                                                  e );
                             }
                         }
                     }
@@ -1055,13 +1052,13 @@ public abstract class AbstractAssemblyMojo
                     }
                 }
             }
-            
+
             allDependencyArtifacts.removeAll( dependencyArtifacts );
-            
+
             for ( Iterator it = allDependencyArtifacts.iterator(); it.hasNext(); )
             {
                 Artifact artifact = (Artifact) it.next();
-                
+
                 // would be better to have a way to find out when a specified include or exclude
                 // is never triggered and warn() it.
                 getLog().debug( "artifact: " + artifact + " not included" );
@@ -1138,11 +1135,10 @@ public abstract class AbstractAssemblyMojo
 
             archiver.setDefaultFileMode( Integer.parseInt( fileSet.getFileMode(), 8 ) );
 
-            getLog()
-                .debug( "FileSet[" + output + "]" + " dir perms: " +
-                    Integer.toString( archiver.getDefaultDirectoryMode(), 8 ) + " file perms: " +
-                    Integer.toString( archiver.getDefaultFileMode(), 8 ) +
-                    ( fileSet.getLineEnding() == null ? "" : " lineEndings: " + fileSet.getLineEnding() ) );
+            getLog().debug( "FileSet[" + output + "]" + " dir perms: " +
+                Integer.toString( archiver.getDefaultDirectoryMode(), 8 ) + " file perms: " +
+                Integer.toString( archiver.getDefaultFileMode(), 8 ) +
+                ( fileSet.getLineEnding() == null ? "" : " lineEndings: " + fileSet.getLineEnding() ) );
 
             if ( directory == null )
             {
@@ -1227,12 +1223,12 @@ public abstract class AbstractAssemblyMojo
             FileItem fileItem = (FileItem) i.next();
 
             //ensure source file is in absolute path for reactor build to work
-            File source = new File ( fileItem.getSource() );
+            File source = new File( fileItem.getSource() );
             if ( ! source.isAbsolute() )
             {
-                source =  new File( this.basedir, fileItem.getSource() );
+                source = new File( this.basedir, fileItem.getSource() );
             }
-            
+
             if ( fileItem.isFiltered() )
             {
                 source = filterFile( source ).getAbsoluteFile();
@@ -1264,7 +1260,7 @@ public abstract class AbstractAssemblyMojo
                     }
 
                     File tempRootFile = File.createTempFile( source.getName() + ".", "", tempRoot );
-                    
+
                     tempRootFile.deleteOnExit();
 
                     copyReplacingLineEndings( source, tempRootFile, lineEnding );
