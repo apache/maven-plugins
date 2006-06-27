@@ -591,6 +591,28 @@ public class WarExplodedMojoTest
 
         assertEquals( "error in filtering using System properties", "system_property=system-property-value",
                       reader.readLine() );
+
+        // update property, and generate again
+        System.setProperty( "system.property", "new-system-property-value" );
+
+        mojo.execute();
+
+        // validate filtered file
+        content = FileUtils.fileRead( expectedResourceWDirFile );
+        reader = new BufferedReader( new StringReader( content ) );
+
+        assertEquals( "error in filtering using filter files", "resource_key=this_is_filtered", reader.readLine() );
+
+        assertEquals( "error in filtering using System properties", "system_key=" + System.getProperty( "user.dir" ),
+                      reader.readLine() );
+
+        assertEquals( "error in filtering using project properties", "project_key=i_think_so", reader.readLine() );
+
+        assertEquals( "error in filtering using project properties", "project_name=Test Project ", reader.readLine() );
+
+        assertEquals( "error in filtering using System properties", "system_property=new-system-property-value",
+                      reader.readLine() );
+
     }
 
     public void testExplodedWar_WithSourceIncludeExclude()
