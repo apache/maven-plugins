@@ -32,7 +32,6 @@ import org.codehaus.plexus.util.FileUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.StringReader;
 import java.util.LinkedList;
 import java.util.List;
@@ -545,22 +544,17 @@ public class WarExplodedMojoTest
         filterList.add( filterFile.getAbsolutePath() );
 
         // prepare web resources and filters
-        String filterData = "resource_key=${resource_value}\n";
-        String systemData = "system_key=${user.dir}\n";
-        String projectProp = "project_key=${is_this_simple}\n";
-        FileWriter writer = new FileWriter( sampleResourceWDir );
-        writer.write( filterData + systemData + projectProp );
-        writer.flush();
-        writer.close();
-        writer = new FileWriter( sampleResource );
-        writer.write( filterData + systemData + projectProp );
-        writer.flush();
-        writer.close();
+        String content = "resource_key=${resource_value}\n";
+        content += "system_key=${user.dir}\n";
+        content += "project_key=${is_this_simple}\n";
+        content += "project_name=${project.name}\n";
+        content += "system_property=${system.property}\n";
+        FileUtils.fileWrite( sampleResourceWDir.getAbsolutePath(), content );
+        FileUtils.fileWrite( sampleResource.getAbsolutePath(), content );
 
-        writer = new FileWriter( filterFile );
-        writer.write( "resource_value=this_is_filtered" );
-        writer.flush();
-        writer.close();
+        FileUtils.fileWrite( filterFile.getAbsolutePath(), "resource_value=this_is_filtered" );
+
+        System.setProperty( "system.property", "system-property-value" );
 
         // configure mojo
         project.addProperty( "is_this_simple", "i_think_so" );
@@ -583,15 +577,20 @@ public class WarExplodedMojoTest
                     expectedResourceWDirFile.exists() );
 
         // validate filtered file
-        String content = FileUtils.fileRead( expectedResourceWDirFile );
+        content = FileUtils.fileRead( expectedResourceWDirFile );
         BufferedReader reader = new BufferedReader( new StringReader( content ) );
 
         assertEquals( "error in filtering using filter files", "resource_key=this_is_filtered", reader.readLine() );
 
-        assertEquals( "error in filtering using System properties", reader.readLine(),
-                      "system_key=" + System.getProperty( "user.dir" ) );
+        assertEquals( "error in filtering using System properties", "system_key=" + System.getProperty( "user.dir" ),
+                      reader.readLine() );
 
         assertEquals( "error in filtering using project properties", "project_key=i_think_so", reader.readLine() );
+
+        assertEquals( "error in filtering using project properties", "project_name=Test Project ", reader.readLine() );
+
+        assertEquals( "error in filtering using System properties", "system_property=system-property-value",
+                      reader.readLine() );
     }
 
     public void testExplodedWar_WithSourceIncludeExclude()
