@@ -80,7 +80,13 @@
   </reporting>
   <profiles>
     <profile>
-      <id>ci</id>
+      <id>ciProfile</id>
+      <activation>
+        <property>
+          <name>enableCiProfile</name>
+          <value>true</value>
+        </property>
+      </activation>
       <build>
         <plugins>
           <plugin>
@@ -88,7 +94,7 @@
             <executions>
               <execution>
                 <goals>
-                  <goal>plugin</goal>
+                  <goal>check</goal>
                 </goals>
               </execution>
             </executions>
