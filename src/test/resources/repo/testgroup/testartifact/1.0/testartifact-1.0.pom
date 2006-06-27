@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>testgroup</groupId>
+  <artifactId>testartifact</artifactId>
+  <version>1.0</version>
+  <name>Test Artifact</name>
+  <url>http://dummy/project</url>
+  <description>just a dummy project for tests</description>
+  <licenses>
+    <license>
+      <name>dummy license name</name>
+      <url>dummy license url</url>
+    </license>
+  </licenses>
+</project>
