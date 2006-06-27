@@ -30,11 +30,12 @@ import org.apache.maven.plugin.war.stub.SimpleWarArtifactStub;
 import org.apache.maven.plugin.war.stub.TLDArtifactStub;
 import org.codehaus.plexus.util.FileUtils;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.StringReader;
 import java.util.LinkedList;
-import java.util.StringTokenizer;
+import java.util.List;
 
 public class WarExplodedMojoTest
     extends AbstractWarMojoTest
@@ -57,12 +58,6 @@ public class WarExplodedMojoTest
 
         mojo = (WarExplodedMojo) lookupMojo( "exploded", pomFilePath );
         assertNotNull( mojo );
-    }
-
-    public void testEnvironment()
-        throws Exception
-    {
-        // see setUp
     }
 
     /**
@@ -541,7 +536,7 @@ public class WarExplodedMojoTest
         File sampleResource = new File( webAppResource, "custom-setting.cfg" );
         File sampleResourceWDir = new File( webAppResource, "custom-config/custom-setting.cfg" );
         File filterFile = new File( getTestDirectory(), testId + "-test-data/filters/filter.properties" );
-        LinkedList filterList = new LinkedList();
+        List filterList = new LinkedList();
         ResourceStub[] resources = new ResourceStub[]{new ResourceStub()};
 
         createFile( sampleResource );
@@ -550,9 +545,9 @@ public class WarExplodedMojoTest
         filterList.add( filterFile.getAbsolutePath() );
 
         // prepare web resources and filters
-        String filterData = new String( "resource_key=${resource_value}\n" );
-        String systemData = new String( "system_key=${user.dir}\n" );
-        String projectProp = new String( "project_key=${is_this_simple}\n" );
+        String filterData = "resource_key=${resource_value}\n";
+        String systemData = "system_key=${user.dir}\n";
+        String projectProp = "project_key=${is_this_simple}\n";
         FileWriter writer = new FileWriter( sampleResourceWDir );
         writer.write( filterData + systemData + projectProp );
         writer.flush();
@@ -562,9 +557,8 @@ public class WarExplodedMojoTest
         writer.flush();
         writer.close();
 
-        String filterString = new String( "resource_value=this_is_filtered" );
         writer = new FileWriter( filterFile );
-        writer.write( filterString );
+        writer.write( "resource_value=this_is_filtered" );
         writer.flush();
         writer.close();
 
@@ -589,22 +583,15 @@ public class WarExplodedMojoTest
                     expectedResourceWDirFile.exists() );
 
         // validate filtered file
-        FileReader reader = new FileReader( expectedResourceWDirFile );
-        char[] data = new char[1024];
-        StringTokenizer tokenizer;
+        String content = FileUtils.fileRead( expectedResourceWDirFile );
+        BufferedReader reader = new BufferedReader( new StringReader( content ) );
 
-        reader.read( data );
-        tokenizer = new StringTokenizer( String.valueOf( data ), "\n" );
+        assertEquals( "error in filtering using filter files", "resource_key=this_is_filtered", reader.readLine() );
 
-        String token = tokenizer.nextToken();
-        assertTrue( "error in filtering using filter files", token.equals( "resource_key=this_is_filtered" ) );
+        assertEquals( "error in filtering using System properties", reader.readLine(),
+                      "system_key=" + System.getProperty( "user.dir" ) );
 
-        token = tokenizer.nextToken();
-        assertTrue( "error in filtering using System properties",
-                    token.equals( "system_key=" + System.getProperty( "user.dir" ) ) );
-
-        token = tokenizer.nextToken();
-        assertTrue( "error in filtering using project properties", token.equals( "project_key=i_think_so" ) );
+        assertEquals( "error in filtering using project properties", "project_key=i_think_so", reader.readLine() );
     }
 
     public void testExplodedWar_WithSourceIncludeExclude()
