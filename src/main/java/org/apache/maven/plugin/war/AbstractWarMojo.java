@@ -50,6 +50,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -346,7 +347,7 @@ public abstract class AbstractWarMojo
             List webResources = this.webResources != null ? Arrays.asList( this.webResources ) : null;
             if ( webResources != null && webResources.size() > 0 )
             {
-                Properties filterProperties = getBuildFilterProperties();
+                Map filterProperties = getBuildFilterProperties();
                 for ( Iterator it = webResources.iterator(); it.hasNext(); )
                 {
                     Resource resource = (Resource) it.next();
@@ -377,11 +378,11 @@ public abstract class AbstractWarMojo
         }
     }
 
-    private Properties getBuildFilterProperties()
+    private Map getBuildFilterProperties()
         throws MojoExecutionException
     {
         // System properties
-        Properties filterProperties = new Properties( System.getProperties() );
+        Map filterProperties = new Properties( System.getProperties() );
 
         // Project properties
         filterProperties.putAll( project.getProperties() );
@@ -401,7 +402,9 @@ public abstract class AbstractWarMojo
                 throw new MojoExecutionException( "Error loading property file '" + filtersfile + "'", e );
             }
         }
-        return filterProperties;
+
+        // can't putAll, as ReflectionProperties doesn't enumerate - so we make a composite map with the project variables as dominant
+        return new CompositeMap( new ReflectionProperties( project ), filterProperties );
     }
 
     /**
@@ -417,7 +420,7 @@ public abstract class AbstractWarMojo
      * @param filterProperties
      * @throws java.io.IOException if an error occured while copying webResources
      */
-    public void copyResources( Resource resource, File webappDirectory, Properties filterProperties )
+    public void copyResources( Resource resource, File webappDirectory, Map filterProperties )
         throws IOException
     {
         if ( !resource.getDirectory().equals( webappDirectory.getPath() ) )
@@ -496,7 +499,7 @@ public abstract class AbstractWarMojo
         {
             archiver.getArchiver().addDirectory( classesDirectory, getIncludes(), getExcludes() );
 
-            archiver.createArchive( getProject(), archive );
+            archiver.createArchive( project, archive );
         }
         catch ( Exception e )
         {
@@ -837,7 +840,7 @@ public abstract class AbstractWarMojo
             // support ${token}
             new FilterWrapper()
             {
-                public Reader getReader( Reader fileReader, Properties filterProperties )
+                public Reader getReader( Reader fileReader, Map filterProperties )
                 {
                     return new InterpolationFilterReader( fileReader, filterProperties, "${", "}" );
                 }
@@ -845,7 +848,7 @@ public abstract class AbstractWarMojo
             // support @token@
             new FilterWrapper()
             {
-                public Reader getReader( Reader fileReader, Properties filterProperties )
+                public Reader getReader( Reader fileReader, Map filterProperties )
                 {
                     return new InterpolationFilterReader( fileReader, filterProperties, "@", "@" );
                 }
@@ -861,7 +864,7 @@ public abstract class AbstractWarMojo
      * @throws IOException TO DO: Remove this method when Maven moves to plexus-utils version 1.4
      */
     private static void copyFilteredFile( File from, File to, String encoding, FilterWrapper[] wrappers,
-                                          Properties filterProperties )
+                                          Map filterProperties )
         throws IOException
     {
         // buffer so it isn't reading a byte at a time!
@@ -994,7 +997,7 @@ public abstract class AbstractWarMojo
      */
     private interface FilterWrapper
     {
-        Reader getReader( Reader fileReader, Properties filterProperties );
+        Reader getReader( Reader fileReader, Map filterProperties );
     }
 
     /**
