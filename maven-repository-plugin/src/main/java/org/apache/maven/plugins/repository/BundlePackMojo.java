@@ -57,7 +57,7 @@ public class BundlePackMojo
     /**
      * @parameter expression="${component.org.codehaus.plexus.archiver.Archiver#jar}"
      */
-    private JarArchiver jarArchiver;
+    protected JarArchiver jarArchiver;
 
     /**
      * Artifact resolver.
@@ -66,7 +66,7 @@ public class BundlePackMojo
      * @required
      * @readonly
      */
-    private ArtifactResolver artifactResolver;
+    protected ArtifactResolver artifactResolver;
 
     /**
      * Artifact factory.
@@ -87,29 +87,29 @@ public class BundlePackMojo
     protected ArtifactRepository localRepository;
 
     /**
-     * @parameter expression="${groupId}"
-     */
-    private String groupId;
-
-    /**
-     * @parameter expression="${artifactId}"
-     */
-    private String artifactId;
-
-    /**
-     * @parameter expression="${version}"
-     */
-    private String version;
-
-    /**
      * @component
      */
-    private InputHandler inputHandler;
+    protected InputHandler inputHandler;
 
     /**
      * @parameter expression="${basedir}"
      */
-    private String basedir;
+    protected String basedir;
+
+    /**
+     * @parameter expression="${groupId}"
+     */
+    protected String groupId;
+
+    /**
+     * @parameter expression="${artifactId}"
+     */
+    protected String artifactId;
+
+    /**
+     * @parameter expression="${version}"
+     */
+    protected String version;
 
     public void execute()
         throws MojoExecutionException
