@@ -1,7 +1,7 @@
 package org.apache.maven.plugin.jar;
 
 /*
- * Copyright 2001-2006 The Apache Software Foundation.
+ * Copyright 2001-2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,57 +86,13 @@ public abstract class AbstractJarMojo
     private MavenProjectHelper projectHelper;
 
     /**
-     * Get the directory where the classes to be jarred are (the root of the archive)
-     * 
-     * @return the directory
+     * Return the specific output directory to serve as the root for the archive.
      */
     protected abstract File getClassesDirectory();
 
-    /**
-     * Set the directory where the classes to be jarred are
-     * 
-     * @param classesDirectory the directory
-     */
-    protected abstract void setClassesDirectory( File classesDirectory );
-
-    /**
-     * Set {@link JarArchiver} used to create the archive
-     * 
-     * @param jarArchiver
-     */
-    protected void setJarArchiver( JarArchiver jarArchiver )
-    {
-        this.jarArchiver = jarArchiver;
-    }
-
-    /**
-     * Get {@link JarArchiver} used to create the archive
-     * 
-     * @return the archiver
-     */
-    protected JarArchiver getJarArchiver()
-    {
-        return jarArchiver;
-    }
-
-    /**
-     * Get the {@link MavenProject} that will be used to gather the data needed
-     * 
-     * @return the maven project
-     */
     protected final MavenProject getProject()
     {
         return project;
-    }
-
-    /**
-     * Set the {@link MavenProject} whose data will be used in the archive
-     * 
-     * @param project
-     */
-    protected void setMavenProject( MavenProject project )
-    {
-        this.project = project;
     }
 
     /**
@@ -159,10 +115,9 @@ public abstract class AbstractJarMojo
     }
 
     /**
-     * Generates the JAR. If contentDirectory does not exist the JAR won't be created.
+     * Generates the JAR.
      *
      * @todo Add license files in META-INF directory.
-     * @return the JAR file or <code>null</code> if contentDirectory does not exist
      */
     public File createArchive()
         throws MojoExecutionException
@@ -171,22 +126,21 @@ public abstract class AbstractJarMojo
 
         MavenArchiver archiver = new MavenArchiver();
 
-        archiver.setArchiver( getJarArchiver() );
+        archiver.setArchiver( jarArchiver );
 
         archiver.setOutputFile( jarFile );
 
         try
         {
             File contentDirectory = getClassesDirectory();
-
             if ( !contentDirectory.exists() )
             {
-                getLog().warn( "Directory " + contentDirectory + " does not exist, not creating JAR file." );
-
-                return null;
+                getLog().warn( "JAR will be empty - no content was marked for inclusion!" );
             }
-
-            archiver.getArchiver().addDirectory( contentDirectory, DEFAULT_INCLUDES, DEFAULT_EXCLUDES );
+            else
+            {
+                archiver.getArchiver().addDirectory( contentDirectory, DEFAULT_INCLUDES, DEFAULT_EXCLUDES );
+            }
 
             archiver.createArchive( project, archive );
 
@@ -209,17 +163,14 @@ public abstract class AbstractJarMojo
     {
         File jarFile = createArchive();
 
-        if ( jarFile != null )
+        String classifier = getClassifier();
+        if ( classifier != null )
         {
-            String classifier = getClassifier();
-            if ( classifier != null )
-            {
-                projectHelper.attachArtifact( getProject(), "jar", classifier, jarFile );
-            }
-            else
-            {
-                getProject().getArtifact().setFile( jarFile );
-            }
+            projectHelper.attachArtifact( getProject(), "jar", classifier, jarFile );
+        }
+        else
+        {
+            getProject().getArtifact().setFile( jarFile );
         }
     }
 }
