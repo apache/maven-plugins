@@ -8,7 +8,7 @@
   <artifactId>maven-war-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Maven War Plugin</name>
-  <version>2.0.1-SNAPSHOT</version>
+  <version>2.0.1</version>
   <prerequisites>
     <maven>2.0.1</maven>
   </prerequisites>
@@ -21,7 +21,7 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-archiver</artifactId>
-      <version>2.1-SNAPSHOT</version>
+      <version>2.1</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -46,4 +46,10 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <scm>
+    <connection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-war-plugin-2.0.1</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-war-plugin-2.0.1</developerConnection>
+    <url>https://svn.apache.org/repos/asf/maven/plugins/tags/maven-war-plugin-2.0.1</url>
+  </scm>
 </project>
