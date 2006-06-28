@@ -33,8 +33,10 @@ import org.codehaus.plexus.util.FileUtils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.StringReader;
+import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 public class WarExplodedMojoTest
     extends AbstractWarMojoTest
@@ -232,6 +234,19 @@ public class WarExplodedMojoTest
 
         // validate operation
         File expectedFile = new File( webAppDirectory, "/org/sample/company/test.jsp" );
+
+        assertTrue( "file not found: " + expectedFile.toString(), expectedFile.exists() );
+        assertEquals( "file incorrect", simpleJSP.toString(), FileUtils.fileRead( expectedFile ) );
+
+        // check when the merged war file is newer - so set an old time on the local file
+        long time = new SimpleDateFormat( "yyyy-MM-dd", Locale.US ).parse( "2005-1-1" ).getTime();
+        simpleJSP.setLastModified( time );
+        expectedFile.setLastModified( time );
+
+        project.addArtifact( simpleWarArtifact );
+        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+        setVariableValueToObject( mojo, "workDirectory", workDirectory );
+        mojo.execute();
 
         assertTrue( "file not found: " + expectedFile.toString(), expectedFile.exists() );
         assertEquals( "file incorrect", simpleJSP.toString(), FileUtils.fileRead( expectedFile ) );
