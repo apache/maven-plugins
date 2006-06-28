@@ -55,7 +55,7 @@
 
         <module name="LineLength">
           <property name="max" value="120" />
-          <property name="ignorePattern" value="@version|@see"/>
+          <property name="ignorePattern" value="@version|@see|@todo"/>
         </module>
 
         <module name="MemberName" />
@@ -106,7 +106,9 @@
 
         <!-- Checks for whitespace                               -->
         <!-- See http://checkstyle.sf.net/config_whitespace.html -->
-        <module name="EmptyForIteratorPad"/>
+        <module name="EmptyForIteratorPad">
+          <property name="option" value="space"/>
+        </module>
         <!-- module name="NoWhitespaceAfter"/ -->
         <!-- module name="NoWhitespaceBefore"/ -->
         <module name="OperatorWrap"/>
