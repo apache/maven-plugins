@@ -20,6 +20,7 @@ import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.ManifestException;
@@ -117,7 +118,7 @@ public class WarMojo
      * @throws MojoExecutionException if an error occured while building the webapp
      */
     public void execute()
-        throws MojoExecutionException
+        throws MojoExecutionException, MojoFailureException
     {
         File warFile = getWarFile( new File( outputDirectory ), warName, classifier );
 
@@ -155,7 +156,7 @@ public class WarMojo
      */
     private void performPackaging( File warFile )
         throws IOException, ArchiverException, ManifestException, DependencyResolutionRequiredException,
-        MojoExecutionException
+        MojoExecutionException, MojoFailureException
     {
         buildExplodedWebapp( getWebappDirectory() );
 
