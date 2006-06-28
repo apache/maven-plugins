@@ -337,45 +337,8 @@ public abstract class AbstractWarMojo
 
         webappDirectory.mkdirs();
 
-        File webinfDir = new File( webappDirectory, WEB_INF );
-        webinfDir.mkdirs();
-
-        File metainfDir = new File( webappDirectory, META_INF );
-        metainfDir.mkdirs();
-
         try
         {
-            List webResources = this.webResources != null ? Arrays.asList( this.webResources ) : null;
-            if ( webResources != null && webResources.size() > 0 )
-            {
-                Map filterProperties = getBuildFilterProperties();
-                for ( Iterator it = webResources.iterator(); it.hasNext(); )
-                {
-                    Resource resource = (Resource) it.next();
-                    copyResources( resource, webappDirectory, filterProperties );
-                }
-            }
-
-            copyResources( warSourceDirectory, webappDirectory );
-
-            if ( webXml != null && StringUtils.isNotEmpty( webXml.getName() ) )
-            {
-                if ( !webXml.exists() )
-                {
-                    throw new MojoFailureException( "The specified web.xml file '" + webXml + "' does not exist" );
-                }
-
-                //rename to web.xml
-                copyFileIfModified( webXml, new File( webinfDir, "/web.xml" ) );
-            }
-
-            if ( containerConfigXML != null && StringUtils.isNotEmpty( containerConfigXML.getName() ) )
-            {
-                metainfDir = new File( webappDirectory, META_INF );
-                String xmlFileName = containerConfigXML.getName();
-                copyFileIfModified( containerConfigXML, new File( metainfDir, xmlFileName ) );
-            }
-
             buildWebapp( project, webappDirectory );
         }
         catch ( IOException e )
@@ -525,13 +488,50 @@ public abstract class AbstractWarMojo
      * @throws java.io.IOException if an error occured while building the webapp
      */
     public void buildWebapp( MavenProject project, File webappDirectory )
-        throws MojoExecutionException, IOException
+        throws MojoExecutionException, IOException, MojoFailureException
     {
         getLog().info( "Assembling webapp " + project.getArtifactId() + " in " + webappDirectory );
 
-        File libDirectory = new File( webappDirectory, WEB_INF + "/lib" );
+        File webinfDir = new File( webappDirectory, WEB_INF );
+        webinfDir.mkdirs();
 
-        File tldDirectory = new File( webappDirectory, WEB_INF + "/tld" );
+        File metainfDir = new File( webappDirectory, META_INF );
+        metainfDir.mkdirs();
+
+        List webResources = this.webResources != null ? Arrays.asList( this.webResources ) : null;
+        if ( webResources != null && webResources.size() > 0 )
+        {
+            Map filterProperties = getBuildFilterProperties();
+            for ( Iterator it = webResources.iterator(); it.hasNext(); )
+            {
+                Resource resource = (Resource) it.next();
+                copyResources( resource, webappDirectory, filterProperties );
+            }
+        }
+
+        copyResources( warSourceDirectory, webappDirectory );
+
+        if ( webXml != null && StringUtils.isNotEmpty( webXml.getName() ) )
+        {
+            if ( !webXml.exists() )
+            {
+                throw new MojoFailureException( "The specified web.xml file '" + webXml + "' does not exist" );
+            }
+
+            //rename to web.xml
+            copyFileIfModified( webXml, new File( webinfDir, "/web.xml" ) );
+        }
+
+        if ( containerConfigXML != null && StringUtils.isNotEmpty( containerConfigXML.getName() ) )
+        {
+            metainfDir = new File( webappDirectory, META_INF );
+            String xmlFileName = containerConfigXML.getName();
+            copyFileIfModified( containerConfigXML, new File( metainfDir, xmlFileName ) );
+        }
+
+        File libDirectory = new File( webinfDir, "lib" );
+
+        File tldDirectory = new File( webinfDir, "tld" );
 
         File webappClassesDirectory = new File( webappDirectory, WEB_INF + "/classes" );
 
@@ -750,8 +750,12 @@ public abstract class AbstractWarMojo
 
             try
             {
-                targetFile.getParentFile().mkdirs();
-                copyFileIfModified( new File( srcDir, files[j] ), targetFile );
+                // Don't copy if it is in the source directory
+                if ( !new File( warSourceDirectory, files[j] ).exists() )
+                {
+                    targetFile.getParentFile().mkdirs();
+                    copyFileIfModified( new File( srcDir, files[j] ), targetFile );
+                }
             }
             catch ( IOException e )
             {
