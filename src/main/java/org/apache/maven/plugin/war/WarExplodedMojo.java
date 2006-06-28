@@ -17,6 +17,7 @@ package org.apache.maven.plugin.war;
  */
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 
 /**
  * Generate the exploded webapp
@@ -28,7 +29,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 public class WarExplodedMojo
     extends AbstractWarMojo
 {
-    public void execute() throws MojoExecutionException
+    public void execute()
+        throws MojoExecutionException, MojoFailureException
     {
         buildExplodedWebapp( getWebappDirectory() );
     }
