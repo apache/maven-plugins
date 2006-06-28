@@ -23,6 +23,7 @@ import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
@@ -330,7 +331,7 @@ public abstract class AbstractWarMojo
     }
 
     public void buildExplodedWebapp( File webappDirectory )
-        throws MojoExecutionException
+        throws MojoExecutionException, MojoFailureException
     {
         getLog().info( "Exploding webapp..." );
 
@@ -359,6 +360,11 @@ public abstract class AbstractWarMojo
 
             if ( webXml != null && StringUtils.isNotEmpty( webXml.getName() ) )
             {
+                if ( !webXml.exists() )
+                {
+                    throw new MojoFailureException( "The specified web.xml file '" + webXml + "' does not exist" );
+                }
+
                 //rename to web.xml
                 copyFileIfModified( webXml, new File( webinfDir, "/web.xml" ) );
             }
