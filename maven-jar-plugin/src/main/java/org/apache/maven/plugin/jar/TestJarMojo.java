@@ -43,13 +43,11 @@ public class TestJarMojo
         return "tests";
     }
 
+    /**
+     * Return the test-classes directory, to serve as the root of the tests jar.
+     */
     protected File getClassesDirectory()
     {
         return testClassesDirectory;
-    }
-
-    protected void setClassesDirectory( File classesDirectory )
-    {
-        this.testClassesDirectory = classesDirectory;
     }
 }
