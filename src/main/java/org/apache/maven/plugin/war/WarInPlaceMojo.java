@@ -17,6 +17,7 @@ package org.apache.maven.plugin.war;
  */
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 
 /**
  * Generates webapp in the source directory
@@ -27,7 +28,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 public class WarInPlaceMojo
     extends AbstractWarMojo
 {
-    public void execute() throws MojoExecutionException
+    public void execute()
+        throws MojoExecutionException, MojoFailureException
     {
         getLog().info( "Generating webapp in source directory... " + getWarSourceDirectory() );
 
