@@ -1,5 +1,5 @@
  ------
- Setting Stylesheet Configuration
+ Configuring Stylesheets
  ------
  Maria Odea Ching
  ------
@@ -7,14 +7,14 @@
  ------
 
 
-Setting Stylesheet Configuration
+Configuring Stylesheets
 
  If no custom stylesheet is specified in the "stylesheetfile" parameter, the stylesheet parameter will indicate
  which stylesheet will be used--the stylesheet included in the maven javadoc plugin or the default stylesheet used by
  the javadoc tool. "maven" indicates the maven javadoc plugin stylesheet, while "java" indicates the default javadoc
  tool stylesheet. It defaults to "java" if no value is indicated.
 
--------------------
++-----+
 <project>
   ...
   <build>
@@ -33,5 +33,5 @@ Setting Stylesheet Configuration
   </build>
   ...
 </project>
--------------------
++-----+
 

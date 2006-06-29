@@ -1,17 +1,18 @@
  ------
- Setting Group Configuration
+ Grouping Packages
  ------
+ Vincent Siveton
  Maria Odea Ching
  ------
  20 June 2006
  ------
 
 
-Setting Group Configuration
+Grouping Packages
 
  To set a grouping for different packages, set the configuration specified below in your pom:
 
--------------------
++-----+
 <project>
   ...
   <build>
@@ -39,4 +40,4 @@ Setting Group Configuration
   </build>
   ...
 </project>
--------------------
++-----+
