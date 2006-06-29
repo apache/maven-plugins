@@ -1,6 +1,7 @@
  ------
  Using Alternate Doclet
  ------
+ Vincent Siveton
  Maria Odea Ching
  ------
  20 June 2006
@@ -12,7 +13,7 @@ Using Alternate Doclet
  To generate output from an alternate doclet in addition to the project javadocs, add configuration
  similar to the following to your POM:
 
-------------------
++-----+
 <project>
    ...
    <reporting>
@@ -54,4 +55,7 @@ Using Alternate Doclet
    </reporting>
    ...
 </project>
-------------------
++-----+
+
+ The first \<reportSet\> element with 'uml' as id specifies that the a UML graph (.dot file) will be generated and the second
+ \<reportSet\> element with 'html' as its id specifies that the javadocs report should be generated.

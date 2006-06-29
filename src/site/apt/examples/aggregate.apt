@@ -1,5 +1,5 @@
  ------
- Using Aggregate
+ Aggregating Javadocs for Multi-Projects
  ------
  Maria Odea Ching
  ------
@@ -7,19 +7,25 @@
  ------
 
 
-Using Aggregate
+Aggregating Javadocs for Multi-Projects
 
  The aggregate parameter can be used to generate javadocs for multi-module projects. It gives the option to
  generate 1 javadoc report for the whole project (all modules) or generate 1 javadoc report for each module.
 
  For example, you have the following directory structure:
 
---------------------
-+-Project
-  +-Module1
-  +-Module2
-  +-Module3
---------------------
++-----+
+
+Project
+|-- pom.xml
+|-- Module1
+|   `-- pom.xml
+|-- Module1
+|   `-- pom.xml
+`-- Module1
+    `-- pom.xml
+
++-----+
 
  When you execute javadoc from Project directory with aggregate set to "true", a javadoc report will be created
  in the target directory of Project wherein all the javadocs of Project's modules are included. If aggregate is
@@ -27,7 +33,7 @@ Using Aggregate
  report for Module2 will be generated in the target directory of Module2, and a javadoc report for Module3 will be
  generated in the target directory of Module3.
 
--------------------
++-----+
 <project>
   ...
   <build>
@@ -46,4 +52,4 @@ Using Aggregate
   </build>
   ...
 </project>
--------------------
++-----+

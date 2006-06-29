@@ -1,17 +1,18 @@
  ------
- Setting Tag Configuration
+ Configuring Custom Javadoc Tags
  ------
+ Vincent Siveton
  Maria Odea Ching
  ------
  20 June 2006
  ------
 
 
-Setting Tag Configuration
+Configuring Custom Javadoc Tags
 
  To set a custom tag used in the javadoc, the following configuration must be set in the pom:
 
--------------------
++-----+
 <project>
   ...
   <build>
@@ -37,4 +38,4 @@ Setting Tag Configuration
   </build>
   ...
 </project>
--------------------
++-----+
