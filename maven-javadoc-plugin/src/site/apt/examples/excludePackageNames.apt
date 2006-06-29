@@ -9,10 +9,11 @@
 
 Excluding Packages
 
- To exclude specific packages from the javadoc, make use of the excludePackageNames as shown below. The excludePackageNames
- parameter accepts wildcard (*) characters in its value.
+ To exclude specific packages from the javadoc, make use of the excludePackageNames parameter as shown below. The parameter
+ accepts wildcard (*) characters in its value. But the wildcards should either be at the start of the package name or at the
+ end. If more than one package is to be excluded, each package name must be separated either with a ':', ',' or ';'.
 
--------------------
++-----+
 <project>
   ...
   <build>
@@ -31,4 +32,4 @@ Excluding Packages
   </build>
   ...
 </project>
--------------------
++-----+
