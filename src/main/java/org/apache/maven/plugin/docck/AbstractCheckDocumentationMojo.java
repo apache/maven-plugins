@@ -107,7 +107,7 @@ public abstract class AbstractCheckDocumentationMojo
             getLog().info( "Writing documentation survey results to: " + output );
         }
 
-        Map errors = new LinkedHashMap();
+        Map reporters = new LinkedHashMap();
         boolean hasErrors = false;
 
         for ( Iterator it = reactorProjects.iterator(); it.hasNext(); )
@@ -127,7 +127,7 @@ public abstract class AbstractCheckDocumentationMojo
                     hasErrors = true;
                 }
 
-                errors.put( project, reporter );
+                reporters.put( project, reporter );
             }
             else
             {
@@ -137,7 +137,7 @@ public abstract class AbstractCheckDocumentationMojo
 
         String messages;
 
-        messages = buildErrorMessages( errors );
+        messages = buildErrorMessages( reporters );
 
         if ( !hasErrors )
         {
@@ -169,40 +169,36 @@ public abstract class AbstractCheckDocumentationMojo
         }
     }
 
-    private String buildErrorMessages( Map errors )
+    private String buildErrorMessages( Map reporters )
     {
         String messages;
         StringBuffer buffer = new StringBuffer();
 
-        if ( errors.size() > 0 )
+        for ( Iterator it = reporters.entrySet().iterator(); it.hasNext(); )
         {
-            buffer.append( "\nThe following documentation problems were found:\n" );
+            Map.Entry entry = (Map.Entry) it.next();
 
-            for ( Iterator it = errors.entrySet().iterator(); it.hasNext(); )
+            MavenProject project = (MavenProject) entry.getKey();
+            DocumentationReporter reporter = (DocumentationReporter) entry.getValue();
+
+            if ( !reporter.getMessages().isEmpty() )
             {
-                Map.Entry entry = (Map.Entry) it.next();
+                buffer.append( "\nThe following documentation problems were found in " +
+                               project.getArtifactId() + ":\n" );
 
-                MavenProject project = (MavenProject) entry.getKey();
-                DocumentationReporter reporter = (DocumentationReporter) entry.getValue();
-
-                if ( !reporter.getMessages().isEmpty() )
+                buffer.append( "\no " ).append( project.getName() );
+                buffer.append( " (" ).append( reporter.getMessagesByType( DocumentationReport.TYPE_ERROR ).size() )
+                      .append( " errors," );
+                buffer.append( " " ).append( reporter.getMessagesByType( DocumentationReport.TYPE_WARN ).size() )
+                      .append( " warnings)" );
+                for ( Iterator errorIterator = reporter.getMessages().iterator(); errorIterator.hasNext(); )
                 {
-                    buffer.append( "\no " ).append( project.getName() );
-                    int numberOfErrors = reporter.getMessagesByType( DocumentationReport.TYPE_ERROR ).size();
-                    buffer.append( " (" ).append( numberOfErrors )
-                          .append( " error" ).append( numberOfErrors != 1 ? "s" : "" ).append( "," );
-                    int numberOfWarnings = reporter.getMessagesByType( DocumentationReport.TYPE_WARN ).size();
-                    buffer.append( " " ).append( numberOfWarnings )
-                          .append( " warning" ).append( numberOfWarnings != 1 ? "s" : "" ).append( ")" );
-                    for ( Iterator errorIterator = reporter.getMessages().iterator(); errorIterator.hasNext(); )
-                    {
-                        String error = (String) errorIterator.next();
+                    String error = (String) errorIterator.next();
 
-                        buffer.append( "\n\t" ).append( error );
-                    }
-
-                    buffer.append( "\n" );
+                    buffer.append( "\n\t" ).append( error );
                 }
+
+                buffer.append( "\n" );
             }
         }
 
