@@ -12,6 +12,9 @@
   <name>Maven Clean Plugin</name>
   <version>2.1.1-SNAPSHOT</version>
   <inceptionYear>2001</inceptionYear>
+  <prerequisites>
+    <maven>2.0</maven>
+  </prerequisites>
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -40,4 +43,20 @@
       <name>Jesse McConnell</name>
     </contributor>
   </contributors>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changelog-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>

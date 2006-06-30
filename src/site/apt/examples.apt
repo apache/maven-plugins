@@ -1,12 +1,12 @@
  ------
- Maven 2 Clean Plugin: Usage
+ Maven 2 Clean Plugin: Examples
  ------
  Mike Perham
  <mperham@apache.org>
  ------
  June 20th, 2006
 
-Usage
+Configuration
 
   Cleans the local filesystem of any Maven-specific artifacts within this module.  To
   configure the clean plugin, add it in your <<<pom.xml>>> under the <<<build>>> section:
@@ -27,6 +27,8 @@ Usage
   </build>
 [...]
 +---------
+
+Example
 
   The <<<maven-clean-plugin>>> will delete the <<<target>>> directory by default.  You may configure
   it to delete additional directories and files.  The following example shows how:
