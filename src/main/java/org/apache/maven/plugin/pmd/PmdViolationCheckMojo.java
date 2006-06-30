@@ -29,6 +29,9 @@ import org.apache.maven.plugin.MojoFailureException;
 public class PmdViolationCheckMojo
     extends AbstractPmdViolationCheckMojo
 {
+    /**
+     * @see org.apache.maven.plugin.AbstractMojo#execute()
+     */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {

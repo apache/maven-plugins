@@ -1,0 +1,48 @@
+ ------
+ Usage
+ ------
+ Maria Odea Ching
+ ------
+ 23 June 2006
+ ------
+
+
+Usage
+
+  The PMD plugin generates PMD and CPD reports using the PMD code analysis tool.
+
+  To include a report with default rule sets and configuration in your project site, set the following in the \<reporting\>
+  section of your pom:
+
++-----+
+<reporting>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-pmd-plugin</artifactId>
+    </plugin>
+  </plugins>
+</reporting>
++-----+
+
+  You can also explicitly execute the PMD plugin and generate the same report by setting the plugin in the \<build\>
+  section of your pom as shown below:
+
++-----+
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-pmd-plugin</artifactId>
+    </plugin>
+  </plugins>
+</build>
++-----+
+
+
+
+
+
+
+
+ 

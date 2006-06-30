@@ -15,7 +15,15 @@
     </links>
 
     <menu name="Overview">
-      <item name="How to Use" href="howto.html"/>
+      <item name="Overview" href="overview.html"/>
+      <item name="Usage" href="usage.html"/>
+      <item name="FAQ" href="faq.html"/>
+    </menu>
+
+    <menu name="Examples">
+      <item name="Generating PMD and CPD Reports" href="examples/generatingPmdAndCpd.html"/>
+      <item name="Using Rule Sets" href="examples/usingRuleSets.html"/>
+      <item name="Violation Checking" href="examples/violationChecking.html"/>
     </menu>
     ${reports}
   </body>

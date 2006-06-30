@@ -1,7 +1,7 @@
 package org.apache.maven.plugin.pmd;
 
 /*
- * Copyright 2004-2005 The Apache Software Foundation.
+ * Copyright 2004-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.net.URL;
 
 /**
- * Performs Locator services for the <code>*Location</code> parameters in the 
+ * Performs Locator services for the <code>*Location</code> parameters in the
  * Reports.
  *
  * @author <a href="mailto:joakim@erdfelt.com">Joakim Erdfelt</a>
@@ -38,7 +38,7 @@ public class Locator
 
     /**
      * Create a Locator object.
-     * 
+     *
      * @param log the logger object to log with.
      */
     public Locator( Log log )
@@ -48,7 +48,7 @@ public class Locator
 
     /**
      * Obtain a Log object.
-     * 
+     *
      * @return the Log object.
      */
     private Log getLog()
@@ -61,17 +61,17 @@ public class Locator
     }
 
     /**
-     * <p>
+     * <p/>
      * Attempts to resolve a location parameter into a real file.
      * </p>
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * Checks a location string to for a resource, URL, or File that matches.
      * If a resource or URL is found, then a local file is created with that
      * locations contents.
      * </p>
-     * 
-     * @param location the location string to match against.
+     *
+     * @param location  the location string to match against.
      * @param localfile the local file to use in case of resource or URL.
      * @return the File of the resolved location.
      * @throws IOException if file is unable to be found or copied into <code>localfile</code> destination.

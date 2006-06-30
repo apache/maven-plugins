@@ -1,0 +1,35 @@
+ ------
+ Violation Checking
+ ------
+ 23 June 2006
+ ------
+
+ 
+
+Violation Checking
+
+  The pmd:check and pmd:cpd-check goals allow you to configure your build to fail if any errors are found in the PMD or
+  CPD reports respectively and, in doing so, enforce your own custom code quality rules.
+
+  The following code fragment enables both the standard PMD check and the CPD check in a build, during the <<<verify>>>
+  phase.
+
++-----+
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-pmd-plugin</artifactId>
+      <executions>
+        <execution>
+          <goals>
+            <goal>check</goal>
+            <goal>cpd-check</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+  </plugins>
+</build>
++-----+
+
