@@ -16,6 +16,9 @@
     fragments,
     as well as being able to fail the build based on these metrics.
   </description>
+  <prerequisites>
+    <maven>2.0</maven>
+  </prerequisites>
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -48,4 +51,17 @@
       <name>John Allen</name>
     </contributor>
   </contributors>
+  <reporting>
+    <plugins>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <artifactId>maven-jxr-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <artifactId>maven-changelog-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>

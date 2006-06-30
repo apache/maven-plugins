@@ -1,7 +1,7 @@
 package org.apache.maven.plugin.pmd;
 
 /*
- * Copyright 2005 The Apache Software Foundation.
+ * Copyright 2005-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,11 +71,11 @@ public class PmdReport
      * @parameter expression="${targetJdk}"
      */
     private String targetJdk;
-    
+
     /**
      * The rule priority threshold; rules with lower priority
      * than this will not be evaluated.
-     * 
+     *
      * @parameter expression="${minimumPriority}" default-value="5"
      */
     private int minimumPriority = 5;
@@ -86,8 +86,7 @@ public class PmdReport
      *
      * @parameter
      */
-    private String[] rulesets =
-        new String[]{"rulesets/basic.xml", "rulesets/unusedcode.xml", "rulesets/imports.xml",};
+    private String[] rulesets = new String[]{"rulesets/basic.xml", "rulesets/unusedcode.xml", "rulesets/imports.xml",};
 
     /**
      * The file encoding to use when reading the java source.
@@ -157,7 +156,7 @@ public class PmdReport
 
             Locator locator = new Locator( getLog() );
             RuleSetFactory ruleSetFactory = new RuleSetFactory();
-            ruleSetFactory.setMinimumPriority(this.minimumPriority);
+            ruleSetFactory.setMinimumPriority( this.minimumPriority );
             RuleSet[] sets = new RuleSet[rulesets.length];
             try
             {
@@ -240,6 +239,12 @@ public class PmdReport
         }
     }
 
+    /**
+     * Convenience method to get the location of the specified file name.
+     *
+     * @param name the name of the file whose location is to be resolved
+     * @return a String that contains the absolute file name of the file
+     */
     private String getLocationTemp( String name )
     {
         String loc = name;
@@ -291,6 +296,14 @@ public class PmdReport
         return "pmd";
     }
 
+    /**
+     * Convenience method to get the list of files where the PMD tool will be executed
+     *
+     * @param includes contains the concatenated list of files to be included
+     * @param excludes contains the concatenated list of files to be excluded
+     * @return a List of the files where the PMD tool will be executed
+     * @throws IOException
+     */
     private List getFilesToProcess( String includes, String excludes )
         throws IOException
     {
@@ -325,6 +338,12 @@ public class PmdReport
         return ResourceBundle.getBundle( "pmd-report", locale, PmdReport.class.getClassLoader() );
     }
 
+    /**
+     * Convenience method that concatenates the files to be excluded into the appropriate format
+     *
+     * @param exclude the array of Strings that contains the files to be excluded
+     * @return a String that contains the concatenates file names
+     */
     private String getExclusionsString( String[] exclude )
     {
         StringBuffer excludes = new StringBuffer();

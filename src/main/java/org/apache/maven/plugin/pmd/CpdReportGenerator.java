@@ -9,6 +9,8 @@ import org.codehaus.doxia.sink.Sink;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
+ * Class that generated the CPD report.
+ *
  * @author mperham
  * @version $Id: $
  */
@@ -30,11 +32,19 @@ public class CpdReportGenerator
         this.xrefLocation = xrefLocation;
     }
 
+    /**
+     * Method that returns the title of the CPD Report
+     *
+     * @return a String that contains the title
+     */
     private String getTitle()
     {
         return bundle.getString( "report.cpd.title" );
     }
 
+    /**
+     * Method that generates the start of the CPD report.
+     */
     public void beginDocument()
     {
         sink.head();
@@ -68,10 +78,15 @@ public class CpdReportGenerator
         // TODO files summary
     }
 
+    /**
+     * Method that generates the contents of the CPD report
+     *
+     * @param matches
+     */
     public void generate( Iterator matches )
     {
         beginDocument();
-        
+
         while ( matches.hasNext() )
         {
             Match match = (Match) matches.next();
@@ -80,7 +95,7 @@ public class CpdReportGenerator
 
             String filename2 = match.getSecondMark().getTokenSrcID();
             filename2 = StringUtils.substring( filename2, sourceDirectory.length() + 1 );
-            
+
             String code = match.getSourceCodeSlice();
             int line1 = match.getFirstMark().getBeginLine();
             int line2 = match.getSecondMark().getBeginLine();
@@ -105,7 +120,8 @@ public class CpdReportGenerator
 
             if ( xrefLocation != null )
             {
-                sink.link( xrefLocation + "/" + filename1.replaceAll( "\\.java$", ".html" ).replace( '\\', '/' ) + "#" + line1 );
+                sink.link( xrefLocation + "/" + filename1.replaceAll( "\\.java$", ".html" ).replace( '\\', '/' ) + "#" +
+                    line1 );
             }
             sink.text( String.valueOf( line1 ) );
             if ( xrefLocation != null )
@@ -124,7 +140,8 @@ public class CpdReportGenerator
             sink.tableCell();
             if ( xrefLocation != null )
             {
-                sink.link( xrefLocation + "/" + filename2.replaceAll( "\\.java$", ".html" ).replace( '\\', '/' ) + "#" + line2 );
+                sink.link( xrefLocation + "/" + filename2.replaceAll( "\\.java$", ".html" ).replace( '\\', '/' ) + "#" +
+                    line2 );
             }
             sink.text( String.valueOf( line2 ) );
             if ( xrefLocation != null )
@@ -136,13 +153,13 @@ public class CpdReportGenerator
 
             // Source snippet
             sink.tableRow();
-            
+
             // TODO Cleaner way to do this?
-            sink.rawText("<td colspan='2'>");
-            sink.verbatim(false);
+            sink.rawText( "<td colspan='2'>" );
+            sink.verbatim( false );
             sink.text( code );
             sink.verbatim_();
-            sink.rawText("</td>");
+            sink.rawText( "</td>" );
             sink.tableRow_();
             sink.table();
             sink.paragraph_();

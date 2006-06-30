@@ -1,7 +1,7 @@
 package org.apache.maven.plugin.pmd;
 
 /*
- * Copyright 2005 The Apache Software Foundation.
+ * Copyright 2005-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,8 +99,7 @@ public class PmdReportListener
         {
             public int compare( Object o1, Object o2 )
             {
-                return ( (RuleViolation) o1 ).getBeginLine() -
-                    ( (RuleViolation) o2 ).getBeginLine();
+                return ( (RuleViolation) o1 ).getBeginLine() - ( (RuleViolation) o2 ).getBeginLine();
             }
         } );
 
@@ -119,7 +118,7 @@ public class PmdReportListener
             int endLine = ruleViolation.getEndLine();
             if ( endLine != beginLine )
             {
-                sink.text( " - ");
+                sink.text( " - " );
                 outputLineLink( endLine );
             }
 
