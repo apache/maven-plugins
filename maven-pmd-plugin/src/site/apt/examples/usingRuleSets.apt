@@ -1,0 +1,40 @@
+ ------
+ Using Rule Sets
+ ------
+ Maria Odea Ching
+ ------
+ 30 June 2006
+ ------
+
+
+Using Rule Sets
+
+ The PMD plugin uses three default rule sets: basic.xml, unusedcode.xml and imports.xml. These rule sets are bundled in
+ the PMD code analysis tool. To use other rule sets, you can configure the plugin as shown below:
+
++-----+
+<reporting>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-pmd-plugin</artifactId>
+      <configuration>
+        <rulesets>
+          <ruleset>/rules/braces.xml</ruleset>
+          <ruleset>/rules/naming.xml</ruleset>
+          <ruleset>d:\rulesets\strings.xml</ruleset>
+          <ruleset>http://localhost/design.xml</ruleset>
+        </rulesets>
+      </configuration>
+    </plugin>
+  </plugins>
+</reporting>
++-----+
+
+ The rulesets may reside in the classpath, filesystem or at a URL. For rule sets that are already bundled with the PMD tool,
+ you do not need to specificy the absolute path of the file. It will be resolved by the plugin. But if the rule set is a
+ custom rule set, you need to specify its absolute path.
+
+
+
+
