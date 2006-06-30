@@ -1,0 +1,24 @@
+ ------
+ Maven 2 Clean Plugin: FAQ
+ ------
+ Edwin Punzalan
+ ------
+ June 29th, 2006
+
+
+Frequently Asked Questions
+
+  [[1]] {{{#1.} I already ran <<<mvn clean>>> but the directory (<<<put dir
+  name here>>>) is still there. What should I do?}}
+
+* Answers
+
+  {1.} I already ran <<<mvn clean>>> but the directory (<<<put dir name
+  here>>>) is still there. What should I do?
+
+       Some files-generating plugins can generate their files outside of the
+       default directories being deleted by the clean plugin.  You should add
+       the location of such files in the clean plugin configuration or change
+       the configuration of those plugins to put their files inside the
+       <<<project.build.directory>>> which is by default, the <<<target>>>
+       directory.
