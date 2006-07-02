@@ -9,7 +9,7 @@
 Using PMD And CPD Reports
 
   The PMD and CPD reports share the same configuration.  For example, the following
-  tells Maven to run the PMD and CPD report as part of the site report generation, use the default rule sets:
+  tells Maven to run the PMD and CPD report as part of the site report generation and use the default rule sets:
   'basic', 'unused' and 'imports'. Note that HTML is always generated in addition to any other alternate format.
   Legal formats are "html", "csv", "xml" and "txt".
 
