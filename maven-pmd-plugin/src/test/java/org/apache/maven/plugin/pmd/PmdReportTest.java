@@ -109,6 +109,33 @@ public class PmdReportTest
 
     }
 
+    /**
+     * Verify skip parameter
+     *
+     * @throws Exception
+     */
+    public void testSkipConfiguration()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(),
+                                 "src/test/resources/unit/custom-configuration/skip-plugin-config.xml" );
+        PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
+        mojo.execute();
+
+        File basedir = new File( getBasedir(), "target/test/unit/skip-configuration" );
+        assertTrue( FileUtils.fileExists( basedir.getAbsolutePath() ) );
+
+        // verify the generated files do not exist because PMD was skipped
+        File generatedFile = new File( getBasedir(), "target/test/unit/skip-configuration/target/pmd.csv" );
+        assertFalse( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        generatedFile = new File( getBasedir(), "target/test/unit/custom-configuration/target/custom.xml" );
+        assertFalse( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        generatedFile = new File( getBasedir(), "target/test/unit/custom-configuration/target/site/pmd.html" );
+        assertFalse( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+    }
+
     public void testInvalidFormat()
         throws Exception
     {

@@ -11,3 +11,31 @@
 FAQs
 
  Below are frequently asked questions for the PMD plugin:
+
+ * The PMD report takes a long time to generate.  Is there any way to skip the PMD or CPD reports temporarily?
+
+ Yes, each report supports a skip parameter which you can pass on the command line, "-Dmaven.pmd.skip=true" and
+ "-Dmaven.cpd.skip=true" respectively.
+
+ * I want to generate one of the reports but not the other.  How can I permanently skip PMD or CPD?
+
+ Use the \<reportSets\> feature within your POM.  Below is the default configuration for the plugin.  To disable
+ one of the reports, just add the \<reportSets\> below to your POM and remove the report you don't want to generate.
+
++--------------------+
+<reporting>
+  <plugins>
+    <plugin>
+      <artifactId>maven-pmd-plugin</artifactId>
+      <reportSets>
+        <reportSet>
+          <reports>
+            <report>pmd</report>
+            <report>cpd</report>
+          </reports>
+        </reportSet>
+      </reportSets>
+    </plugin>
+  </plugins
+</reporting>
++--------------------+
