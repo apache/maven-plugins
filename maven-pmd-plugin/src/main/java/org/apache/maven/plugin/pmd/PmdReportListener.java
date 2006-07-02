@@ -18,6 +18,7 @@ package org.apache.maven.plugin.pmd;
 
 import net.sourceforge.pmd.ReportListener;
 import net.sourceforge.pmd.RuleViolation;
+import net.sourceforge.pmd.IRuleViolation;
 import net.sourceforge.pmd.stat.Metric;
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.plexus.util.StringUtils;
@@ -53,7 +54,7 @@ public class PmdReportListener
 
     private List violations = new ArrayList();
 
-    private List metrics = new ArrayList();
+    //private List metrics = new ArrayList();
 
     public PmdReportListener( Sink sink, String sourceDirectory, ResourceBundle bundle )
     {
@@ -67,7 +68,7 @@ public class PmdReportListener
         return bundle.getString( "report.pmd.title" );
     }
 
-    public void ruleViolationAdded( RuleViolation ruleViolation )
+    public void ruleViolationAdded( IRuleViolation ruleViolation )
     {
         if ( !fileInitialized )
         {
@@ -143,11 +144,11 @@ public class PmdReportListener
 
     public void metricAdded( Metric metric )
     {
-        if ( metric.getCount() != 0 )
-        {
-            // Skip metrics which have no data
-            metrics.add( metric );
-        }
+//        if ( metric.getCount() != 0 )
+//        {
+//            // Skip metrics which have no data
+//            metrics.add( metric );
+//        }
     }
 
     public void beginDocument()
