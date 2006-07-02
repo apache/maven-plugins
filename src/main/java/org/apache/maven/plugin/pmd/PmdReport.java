@@ -81,6 +81,14 @@ public class PmdReport
     private int minimumPriority = 5;
 
     /**
+     * Skip the PMD report generation.  Most useful on the command line
+     * via "-Dmaven.pmd.skip=true".
+     *
+     * @parameter expression="${maven.pmd.skip}" default-value="false"
+     */
+    private boolean skip;
+
+    /**
      * The PMD rulesets to use. See the <a href="http://pmd.sourceforge.net/rules/index.html">Stock Rulesets</a> for a
      * list of some included. Defaults to the basic, imports and unusedcode rulesets.
      *
@@ -124,7 +132,7 @@ public class PmdReport
     public void executeReport( Locale locale )
         throws MavenReportException
     {
-        if ( canGenerateReport() )
+        if ( !skip && canGenerateReport() )
         {
             Sink sink = getSink();
 
