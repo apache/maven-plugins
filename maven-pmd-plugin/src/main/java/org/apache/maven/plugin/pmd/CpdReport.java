@@ -50,6 +50,14 @@ public class CpdReport
     private int minimumTokens;
 
     /**
+     * Skip the PMD report generation.  Most useful on the command line
+     * via "-Dmaven.cpd.skip=true".
+     *
+     * @parameter expression="${maven.cpd.skip}" default-value="false"
+     */
+    private boolean skip;
+
+    /**
      * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
      */
     public String getName( Locale locale )
@@ -71,7 +79,7 @@ public class CpdReport
     public void executeReport( Locale locale )
         throws MavenReportException
     {
-        if ( canGenerateReport() )
+        if ( !skip && canGenerateReport() )
         {
             CPD cpd = new CPD( minimumTokens, new JavaLanguage() );
             String src = getProject().getBuild().getSourceDirectory();

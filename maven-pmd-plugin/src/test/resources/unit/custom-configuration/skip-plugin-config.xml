@@ -1,0 +1,46 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>skip.configuration</groupId>
+  <artifactId>skip-configuration</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <inceptionYear>2006</inceptionYear>
+  <name>Maven PMD Plugin Skip Configuration Test</name>
+  <url>http://maven.apache.org</url>
+  <build>
+    <finalName>skip-configuration</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <configuration>
+          <project implementation="org.apache.maven.plugin.pmd.stubs.CustomConfigurationMavenProjectStub"/>
+          <outputDirectory>${basedir}/target/test/unit/skip-configuration/target/site</outputDirectory>
+          <targetDirectory>${basedir}/target/test/unit/skip-configuration/target</targetDirectory>
+          <format>csv</format>
+          <linkXRef>true</linkXRef>
+          <xrefLocation>${basedir}/target/test/unit/skip-configuration/target/site/xref</xrefLocation>
+          <sourceEncoding>ISO-8859-1</sourceEncoding>
+          <targetJdk>1.4</targetJdk>
+          <minimumPriority>4</minimumPriority>          
+          <skip>true</skip>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>pmd</groupId>
+            <artifactId>pmd</artifactId>
+            <version>3.6</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+    </plugins>
+  </build>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
+</project>
