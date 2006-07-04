@@ -1,0 +1,189 @@
+ ------
+ Maven 2 War Plugin - manipulating war overlays
+ ------
+ Pete Marvin King
+ ------
+ 28 June 2006
+ 
+Introduction
+
+ Normally all artifact dependencies are collected in <<<WEB-INF/lib>>> except
+ for war artifacts. Instead, war artifacts are overlayed on the war source. 
+ No configurations is necessary.
+ 
+ <<Warning : Overlayed war files will overwrite the files in your war.>> 
+ 
+ To demonstrate, given a project structure
+ 
++-----------------+
+ .
+ |-- pom.xml
+ `-- src
+     `-- main
+         |-- java
+         |   `-- com
+         |       `-- ideal
+         |           `-- projects
+         |               `-- SampleAction.java
+         |-- resources
+         |   |-- images
+         |   |   `-- sampleimage.jpg
+         |   `-- sampleresource
+         `-- webapp
+             |-- WEB-INF
+             |   `-- web.xml
+             |-- index.jsp
+             `-- jsp
+                 `-- websource.jsp
++-----------------+
+
+ which depends on <<<documentedprojectdependency-1.0-SNAPSHOT.war>>>.
+ 
++-----------------+
+documentedprojectdependency-1.0-SNAPSHOT.war  
+ |-- META-INF
+ |   |-- MANIFEST.MF
+ |   `-- maven
+ |       `-- com.ideal.projects
+ |           `-- documentedprojectdependency
+ |               |-- pom.properties
+ |               `-- pom.xml
+ |-- WEB-INF
+ |   |-- classes
+ |   |   |-- com
+ |   |   |   `-- ideal
+ |   |   |       `-- projects
+ |   |   |           `-- SampleActionDependency.class
+ |   |   |-- images
+ |   |   |   `-- sampleimage-dependency.jpg
+ |   |   |-- images-dependency
+ |   |   |   `-- sampleimage.jpg
+ |   |   |-- sampleresource
+ |   |   |   `-- someresource-dependency.css
+ |   |   `-- sampleresource-dependency
+ |   |       `-- someresource-dependency.css
+ |   `-- web.xml
+ |-- index-dependency.jsp
+ |-- jsp
+ |   `-- websource-dependency.jsp
+ `-- jsp-dependency
+     `-- websource.jsp
++-----------------+
+
+ Assuming that you've declared the war artifact as a dependency in your <<<pom.xml>>>.
+ 
++-----------------+
+  [...]
+    <dependencies>
+      <dependency>
+         <groupId>com.ideal.projects</groupId>
+         <artifactId>documentedprojectdependency</artifactId>
+         <version>1.0-SNAPSHOT</version>
+         <type>war</type>
+         <scope>runtime</scope>
+      </dependency>
+      [...]
+    </dependencies>    
+  [...]  
++-----------------+ 
+
+ the resulting jar would end up like this
+ 
++-----------------+ 
+
+ |-- META-INF
+ |   |-- MANIFEST.MF
+ |   `-- maven
+ |       `-- com.ideal.projects
+ |           |-- documentedproject
+ |           |   |-- pom.properties
+ |           |   `-- pom.xml
+ |           `-- documentedprojectdependency
+ |               |-- pom.properties
+ |               `-- pom.xml
+ |-- WEB-INF
+ |   |-- classes
+ |   |   |-- com
+ |   |   |   `-- ideal
+ |   |   |       `-- projects
+ |   |   |           |-- SampleAction.class
+ |   |   |           `-- SampleActionDependency.class
+ |   |   |-- images
+ |   |   |   |-- sampleimage-dependency.jpg
+ |   |   |   `-- sampleimage.jpg
+ |   |   |-- images-dependency
+ |   |   |   `-- sampleimage.jpg
+ |   |   |-- sampleresource
+ |   |   |   `-- someresource-dependency.css
+ |   |   `-- sampleresource-dependency
+ |   |       `-- someresource-dependency.css
+ |   `-- web.xml
+ |-- index-dependency.jsp
+ |-- index.jsp
+ |-- jsp
+ |   |-- websource-dependency.jsp
+ |   `-- websource.jsp
+ `-- jsp-dependency
+     `-- websource.jsp
++-----------------+  
+ 
+Configuring the war overlay
+
+   The plugin parameters below can be used to modify the behaviour of the war overlay.
+ 
+   *dependentWarIncludes - patterns used for matching files to be included from the war dependency.
+   
++-----------------+  
+  [...]
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.0</version>
+        <configuration>
+          <!-- default value is ** -->
+          <dependentWarIncludes>**/IncludeME,**/images</dependentWarIncludes>   
+        </configuration>
+       </plugin>
+    </plugins>  
+  [...]
++-----------------+     
+   
+   *dependentWarExcludes - patterns used for matching files to be excluded from the war dependency.
+   
++-----------------+  
+  [...]
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.0</version>
+        <configuration>
+          <!-- no default value -->
+          <dependentWarExcludes>WEB-INF/web.xml,index.*</dependentWarExcludes>   
+        </configuration>
+       </plugin>
+    </plugins>  
+  [...]
++-----------------+     
+
+   
+   *workDirectory - directory where the war files will be temporarily extracted.
+   
++-----------------+  
+  [...]
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.0</version>
+        <configuration>
+          <!-- default value is target/war/work -->
+          <workDirectory>/tmp/extract_here</workDirectory>
+        </configuration>
+       </plugin>
+    </plugins>  
+  [...]
++-----------------+     
+
+   

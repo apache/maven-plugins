@@ -31,20 +31,21 @@
     <links>
       <item name="Maven 2" href="http://maven.apache.org/maven2/"/>
     </links>
-
     <menu name="Overview">
-      <item name="Introduction" href="introduction.html"/>
-    </menu>
-    <menu name="WAR Modes" href="usage.html">
-      <item name="war" href="war.html"/>
-      <item name="inplace" href="inplace.html"/>
-      <item name="exploded" href="exploded.html"/>
+      <item name="Introduction" href="plugin-info.html"/>
+      <item name="HOWTO" href="usage.html"/>
+      <!-- When we later have FAQs...
+      <item name="FAQ" href="faq.html"/>
+      -->
     </menu>
     <menu name="Advance Configuration">
-      <item name="With war dependencies" href="example/example-overlay.html"/>
-      <item name="Filtering war dependencies" href="example-webappdependency-filtering.html"/>
+      <item name="Adding web resources" href="examples/adding-filtering-webresources.html"/>   
+      <item name="Adding external web sources" href="examples/war-overlay.html"/>
+      <item name="War manifest customization" href="examples/war-manifest-guide.html"/>
     </menu>
-    <menu name="FAQ" href="faq.html"/>
+    <menu name="Tips">
+      <item name="Rapid testing using jetty6" href="tips/rapid-testing-jetty6-plugin.html"/>
+    </menu>
     ${reports}
   </body>
 </project>
