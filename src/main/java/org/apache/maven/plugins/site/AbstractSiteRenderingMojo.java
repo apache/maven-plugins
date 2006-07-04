@@ -210,7 +210,7 @@ public abstract class AbstractSiteRenderingMojo
         }
 
         MavenProject parentProject = getParentProject( project );
-        if ( parentProject != null && project.getUrl() != null && parentProject.getUrl() != null )
+        if ( parentProject != null )
         {
             DecorationModel parent = getDecorationModel( parentProject, locale, props );
 
@@ -221,7 +221,7 @@ public abstract class AbstractSiteRenderingMojo
             else
             {
                 assembler.assembleModelInheritance( project.getName(), decoration, parent, project.getUrl(),
-                                                    parentProject.getUrl() );
+                                                    parentProject.getUrl() == null ? project.getUrl() : parentProject.getUrl() );
             }
             if ( decoration != null )
             {
