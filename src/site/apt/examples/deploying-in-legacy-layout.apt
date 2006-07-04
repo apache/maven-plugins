@@ -6,7 +6,7 @@
   June 2006
   ------
 
-Deploying the artifact in a legacy layout of repository
+Deploy an artifact in legacy layout
 
   "Legacy" is the layout used in maven 1 repositories while maven 2 uses "default". They are different
   in terms of directory structure, timestamp of snapshots in default and existence of metadata files in default.
@@ -15,26 +15,19 @@ Deploying the artifact in a legacy layout of repository
 
 +---+
   groupId
-  |
-  +--artifactId
-     |
-     +--jars
-        |
-        +--artifact
+  |--artifactId
+     |--jars
+        `--artifact
 +---+
 
   * default layout directory structure:
 
 +---+
   groupId
-  |
-  +--artifactId
-     |
-     +--version
-     |  |
-     |  ---artifact
-     |
-     ---metadata
+  |--artifactId
+     |--version
+     |  `---artifact
+     |---metadata
 +---+
 
   In able to deploy an artifact in a legacy layout

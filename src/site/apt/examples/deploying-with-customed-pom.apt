@@ -6,7 +6,7 @@
   June 2006
   ------
 
-Deploying an artifact together with a customed pom
+Deploy an artifact with a customed pom
 
   If there is already an existing pom and want it to be deployed together with the 3rd party artifact,
   set the <<pomFile>> parameter to the path of the pom.xml.
