@@ -6,7 +6,7 @@
   June 2006
   ------
 
-Disabling the generation of generic pom on deployment
+Disable the generation of pom
 
   By default, If no pom is specified during deployment of your 3rd party artifact, a generic pom will be generated
   which contains the minimum required elements needed for the pom. In order to disable it, set the

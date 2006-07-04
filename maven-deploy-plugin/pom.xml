@@ -10,6 +10,25 @@
   <name>Maven Deploy Plugin</name>
   <version>2.2.2-SNAPSHOT</version>
   <inceptionYear>2004</inceptionYear>
+  <prerequisites>
+    <maven>2.0</maven>
+  </prerequisites>
+  <reporting>
+    <plugins>
+	  <plugin>
+	    <groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-javadoc-plugin</artifactId>
+	  </plugin>
+	  <plugin>
+	    <groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-jxr-plugin</artifactId>
+	  </plugin>
+	  <plugin>
+	    <groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-changelog-plugin</artifactId>
+	  </plugin>
+	</plugins>
+  </reporting>
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>

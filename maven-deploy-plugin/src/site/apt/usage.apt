@@ -7,7 +7,7 @@
   January 29 2006
   ------
 
-How-to
+Usage
 
 * Introduction
 
@@ -43,13 +43,8 @@ How-to
     <repository>
       <id>internal.repo</id>
       <name>MyCo Internal Repository</name>
-      <url>scp://host.com/path/to/remote/repository</url>
+      <url>Host to Company Repository</url>
     </repository>
-    <snapshotRepository>
-      <id>internal.repo</id>
-      <name>MyCo Internal Snapshot Repository</name>
-      <url>scp://host.com/path/to/snapshot/repository</url>
-    </snapshotRespository>
   </distributionManagement>
 [...]
 +---+
