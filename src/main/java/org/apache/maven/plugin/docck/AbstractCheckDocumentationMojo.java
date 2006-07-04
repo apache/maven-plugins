@@ -171,7 +171,7 @@ public abstract class AbstractCheckDocumentationMojo
 
     private String buildErrorMessages( Map reporters )
     {
-        String messages;
+        String messages = "";
         StringBuffer buffer = new StringBuffer();
 
         for ( Iterator it = reporters.entrySet().iterator(); it.hasNext(); )
@@ -183,9 +183,6 @@ public abstract class AbstractCheckDocumentationMojo
 
             if ( !reporter.getMessages().isEmpty() )
             {
-                buffer.append( "\nThe following documentation problems were found in " +
-                               project.getArtifactId() + ":\n" );
-
                 buffer.append( "\no " ).append( project.getName() );
                 buffer.append( " (" ).append( reporter.getMessagesByType( DocumentationReport.TYPE_ERROR ).size() )
                       .append( " errors," );
@@ -202,7 +199,11 @@ public abstract class AbstractCheckDocumentationMojo
             }
         }
 
-        messages = buffer.toString();
+        if ( buffer.length() > 0 )
+        {
+            messages = "\nThe following documentation problems were found:\n" + buffer.toString();            
+        }
+
         return messages;
     }
 
