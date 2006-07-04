@@ -36,13 +36,17 @@
     <menu name="Plugin Overview">
       <item name="Overview" href="overview.html"/>
       <item name="Usage" href="usage.html"/>
+	    <item name="FAQs" href="faq.html"/>
+      <!--item name="Examples" href="examples/examples.html"/-->
     </menu>
-    <menu name="Examples for plugin Configuration">
-      <item name="Disable generic pom" href="examples/deployfile/disabling-generic-pom.html"/>
-      <item name="Deploy with customed pom" href="examples/deployfile/deploying-with-customed-pom.html"/>
-      <item name="Deploy with classifier" href="examples/deployfile/deploying-with-classifiers.html"/>
-      <item name="Disable timestamps suffix" href="examples/deployfile/disabling-timestamps-suffix.html"/>
-      <item name="Deploy in legacy" href="examples/deployfile/deploying-in-legacy-layout.html"/>
+    <menu name="Examples">
+      <item name="Deployment with FTP" href="examples/deploy-ftp.html"/>
+      <item name="Deployment with external SSH " href="examples/deploy-ssh-external.html"/>
+      <item name="Disable the generation of pom" href="examples/disabling-generic-pom.html"/>
+      <item name="Deploy an artifact with a customed pom" href="examples/deploying-with-customed-pom.html"/>
+      <item name="Deploy an artifact with classifier" href="examples/deploying-with-classifiers.html"/>
+      <item name="Disable timestamps suffix in an artifact" href="examples/disabling-timestamps-suffix.html"/>
+      <item name="Deploy an artifact in legacy layout" href="examples/deploying-in-legacy-layout.html"/>
     </menu>
     ${reports}
   </body>

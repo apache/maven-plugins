@@ -51,20 +51,10 @@ Maven 2 Deploy Plugin - Introduction
     an optionally specified pomFile, but can be completed/overriden using the 
     command line.
 
-* How-To
+* Usage
 
-  Some basic instructions for configuring and using the mojos of the <<<maven-deploy-plugin>>> can be found in the {{{howto.html}How-To guide}}.
+  Some basic instructions for configuring and using the mojos of the <<<maven-deploy-plugin>>> can be found in the {{{usage.html}Usage}}.
 
-* Resources
+* Examples
 
-  * {{{http://maven.apache.org/guides/introduction/introduction-to-repositories.html} Introduction to repositories}}
-
-  * {{{http://maven.apache.org/guides/mini/guide-deploying-3rd-party-jars.html} Guide to deploying 3rd party jars to remote repository}}
-
-  * {{{http://maven.apache.org/guides/mini/guide-deploy-ftp.html} Guide to deployment using FTP}}
-
-  * {{{http://maven.apache.org/guides/mini/guide-deploy-ssh-external.html} Guide to deployment using an external SSH}}
-
-  * {{{http://maven.apache.org/guides/mini/guide-deployment-security-settings.html} Security and Deployment Settings}}
-
-  * {{{http://maven.apache.org/guides/index.html} Maven guides}}
+  Sample use-cases for the plugin are available under the Examples menu

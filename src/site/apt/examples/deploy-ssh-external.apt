@@ -1,0 +1,126 @@
+ ------
+ Maven 2 Deploy Plugin
+ ------
+ Jason van Zyl
+ ------
+ 12 October 2005
+ ------
+
+Deployment of artifacts in an external SSH command
+
+ In order to deploy artifacts using SSH you must first specify the use of an SSH server in the
+ <<distributionManagement>> element of your POM as well as specifying an <<<extension>>> in your
+ <<<build>>> element which will pull in the SSH artifacts required to deploy with SSH:
+
++----+
+
+<project>
+  <parent>
+    <groupId>com.stchome</groupId>
+    <artifactId>mavenFull</artifactId>
+    <version>1.0</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.mycompany</groupId>
+  <artifactId>my-app</artifactId>
+  <packaging>jar</packaging>
+  <version>1.1-SNAPSHOT</version>
+  <name>Maven Quick Start Archetype</name>
+  <url>http://maven.apache.org</url>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <!-- Enabling the use of FTP -->
+  <distributionManagement>
+    <repository>
+      <id>ssh-repository</id>
+      <url>scpexe://repository.mycompany.com/repository</url>
+    </repository>
+  </distributionManagement>
+
+  <build>
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+         <artifactId>wagon-ssh-external</artifactId>
+         <version>1.0-alpha-5</version>
+      </extension>
+    </extensions>
+  </build>
+
+</project>
+
++----+
+
+ If you are deploying from Unix or have Cygwin installed you won't need to any additional configuration in your <<<settings.xml>>>
+ file as everything will be taken from the environment. But if you are on Windows and are using something like <<<plink>>> then
+ you will need something like the following:
+
++----+
+
+<settings>
+  ...
+  <servers>
+    <server>
+      <id>ssh-repository</id>
+      <username>your username in the remote system if different from local</username>
+      <privateKey>/path/to/your/private/key</privateKey> <!-- not needed if using pageant -->
+      <configuration>
+        <sshExecutable>plink</sshExecutable>
+        <scpExecutable>pscp</scpExecutable>
+        <sshArgs>other arguments you may need</sshArgs>
+      </configuration>
+    </server>
+  </servers>
+  ...
+</settings>
+
++----+
+
+ You should, of course, make sure that you can login into the specified SSH server by hand before attempting the
+ deployment with Maven. Once you have verified that everything is setup correctly you can now deploy your artifacts
+ using Maven:
+
++----+
+
+mvn deploy
+
++----+
+
+ Sometimes you may have permissions problems deploying and if so you can set the file and directory permissions
+ like so:
+
++----+
+
+ <settings>
+   ...
+   <servers>
+     <server>
+       <id>ssh-repository</id>
+       <!--
+        |
+        | Change default file/dir permissions
+        |
+        -->
+       <filePermissions>664</filePermissions>
+       <directoryPermissions>775</directoryPermissions>
+       <configuration>
+         <sshExecutable>plink</sshExecutable>
+         <scpExecutable>pscp</scpExecutable>
+       </configuration>
+     </server>
+   </servers>
+   ...
+ </settings>
+
++----+
+
+ <<NOTE:>> If you are using Putty it will expect the private key to be in the <<<PPK>>> format and not the standard
+ format so make sure you use <<<puttygen>>> to convert your openssh format key to <<<PPK>>> format or generate another
+ one. Windows users can find the Putty tools {{{http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html}here}}.
