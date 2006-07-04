@@ -1,0 +1,46 @@
+ ------
+ Maven 2 War Plugin - War Manifest customization
+ ------
+ Pete Marvin King
+ ------
+ 19 June 2006
+ 
+War Manifest Customization
+
+ The manifest can be customized by configuring the war plugin's archiver.
+    
++--------------------+
+[...]
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-war-plugin</artifactId>
+      <version>2.0</version>
+      <configuration>
+         <archiver>    
+            <manifest_entr>value</manifest_entry>
+         <archiver>             
+      </configuration>
+    </plugin>
+    [...]
+  </plugins>
+[...]  
++--------------------+   
+ 
+  The <<<pom.xml>>> would generate this <<<META-INF/MANIFEST.MF>>> in your war.
+  
++--------------------+   
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Created-By: Apache Maven
+Built-By: <current_user>
+Build-Jdk: <jdk version>
+Extension-Name: <artifactId>
+Specification-Vendor: MyCompany Inc
+Implementation-Vendor: MyCompany Inc
+Implementation-Title: <artifactId>
+Implementation-Version: <version>
+manifest_entry: value
++--------------------+   
+ 
+  check the {{{http://maven.apache.org/guides/mini/guide-manifest.html}Guide to manifest customization}} for more examples.
