@@ -1,0 +1,92 @@
+ ------
+ Maven 2 War Plugin - Basic usage
+ ------
+ Pete Marvin King
+ ------
+ 27 June 2006
+
+Introduction
+
+ The war plugin is responsible for collecting all artifact dependencies, classes
+ and resources of the web application and packaging them into a web application archive.
+ 
+Basic Usage
+
+ Given the <<<pom.xml>>>
+  
++----------+
+  <project>
+     [...]
+     <groupId>com.ideal.projects</groupId>
+     <artifactId>documentedproject</artifactId>
+     <packaging>war</packaging>
+     <version>1.0-SNAPSHOT</version>
+     <name>Documented Project</name>
+     <url>http://ideal.com</url>
+     [...]
+  </project>
++----------+
+
+ with a project structure
+ 
++----------+
+ .
+ |-- pom.xml
+ `-- src
+     `-- main
+         |-- java
+         |   `-- com
+         |       `-- ideal
+         |           `-- projects
+         |               `-- SampleAction.java
+         |-- resources
+         |   |-- images
+         |   |   `-- sampleimage.jpg
+         |   `-- sampleresource
+         `-- webapp
+             |-- WEB-INF
+             |   `-- web.xml
+             |-- index.jsp
+             `-- jsp
+                 `-- websource.jsp
++----------+
+
+ and invoking
+ 
++----------+
+   mvn package
++----------+
+
+ generates the war file <<<target/documentedproject-1.0-SNAPSHOT.war>>>.
+  
++----------+
+documentedproject-1.0-SNAPSHOT.war
+  |-- META-INF
+  |   |-- MANIFEST.MF
+  |   `-- maven
+  |       `-- com.ideal.projects
+  |           `-- documentedproject
+  |               |-- pom.properties
+  |               `-- pom.xml
+  |-- WEB-INF
+  |   |-- classes
+  |   |   |-- com
+  |   |   |   `-- ideal
+  |   |   |       `-- projects
+  |   |   |           `-- SampleAction.class
+  |   |   `-- images
+  |   |       `-- sampleimage.jpg
+  |   `-- web.xml
+  |-- index.jsp
+  `-- jsp
+      `-- websource.jsp
++----------+    
+  
+Related links
+
+ {{{http://maven.apache.org/guides/mini/guide-manifest.html}Guide to manifest customization}}
+ 
+ {{{http://maven.apache.org/guides/mini/guide-archive-configuration.html}Exclusion of Maven Descriptors}}
+
+  
+  
