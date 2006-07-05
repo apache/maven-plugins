@@ -1,0 +1,45 @@
+  ------
+  Maven 2 Install Plugin - Usage
+  ------
+  Allan Ramirez
+  ------
+  July 2006
+  ------
+
+Usage
+
+* The <<<install:install>>> Mojo
+
+  In most cases, install:install goal doesnt need any configurations, it
+  needs the project's POM(where information are retrieved) and its artifact file
+  then invoked the <<<install>>> phase of the default build lifecycle.
+
++---+
+mvn install
++---+
+
+* The <<<install:install-file>>> Mojo
+
+  The <<<install:install-file>>> mojo is used primarily for installing artifacts to
+  which were not built by Maven. The project's development team may or may not
+  provide a POM for the artifact. The full usage statement of the install-file
+  mojo can be described as:
+
++---+
+mvn install:install-file -Dfile=your-artifact-1.0.jar \
+                         [-DpomFile=your-pom.xml] \
+                         [-DgroupId=org.some.group] \
+                         [-DartifactId=your-artifact] \
+                         [-Dversion=1.0] \
+                         [-Dpackaging=jar] \
+                         [-DgeneratePom=true]
+                         [-DcreateChecksum=true]
++---+
+
+  * the group, artifact, version and packaging of the file to install. These can
+    be taken from the specified pomFile, and overriden or specified using the
+    command line. When the pomFile contains a <parent> section, the parent's
+    groupId can be considered if the groupId is not specified further for the
+    current project or on the command line.
+
+
