@@ -9,5 +9,5 @@ Maven 2 JAR Plugin
 
   It also provides the capability to sign and verify a signed jar file with the goals "jar:sign" and "jar:sign-verify".
 
-  To learn how to use the plugin, click {{{howto.html}here}}.
+  To learn how to use the plugin, click {{{usage.html}here}}.
 
