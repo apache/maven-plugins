@@ -10,7 +10,8 @@
 Using Rule Sets
 
  The PMD plugin uses three default rule sets: basic.xml, unusedcode.xml and imports.xml. These rule sets are bundled in
- the PMD code analysis tool. To use other rule sets, you can configure the plugin as shown below:
+ the PMD code analysis tool ({{{http://pmd.sourceforge.net/rules/index.html}more info}}). To use other
+ rule sets, you can configure the plugin as shown below:
 
 +-----+
 <reporting>
