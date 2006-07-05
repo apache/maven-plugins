@@ -1,5 +1,5 @@
  ------
- Configuring Javadoc Report
+ Usage
  ------
  Vincent Siveton
  Maria Odea Ching
@@ -37,7 +37,7 @@ Usage
 </project>
 +-----+
 
- When you execute 'mvn site', the javadocs will be generated and included in the generated site. A link to the javadocs
+ When you execute <<<mvn site>>>, the javadocs will be generated and included in the generated site. A link to the javadocs
  will be added in the Project Reports.
 
 * Generate Standalone Javadocs
@@ -54,7 +54,7 @@ mvn javadoc:javadoc
 mvn javadoc:jar
 +-----+
 
- For 'mvn javadoc:jar', the javadocs are generated first then it will be archived in a jar file. The javadoc:jar
+ For <<<mvn javadoc:jar>>>, the javadocs are generated first then it will be archived in a jar file. The {{{plugin-info.html}javadoc:jar}}
  goal is run by default and is mostly used when releasing to publish to the repository.
 
  To set the configuration of the Javadoc plugin when executing these commands, you must configure it in the

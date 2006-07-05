@@ -21,10 +21,10 @@ Overview
 
    The Javadoc Plugin has two goals:
 
-   * {{{index.html}javadoc:javadoc}} is used to generate the javadoc files for the project. It uses the standard
+   * {{{plugin-info.html}javadoc:javadoc}} is used to generate the javadoc files for the project. It uses the standard
      Javadoc tool to generate the javadocs and supports the parameters used by the tool.
 
-   * {{{index.html}javadoc:jar}} is used to create an archive file of the generated javadocs. It is mostly used when
+   * {{{plugin-info.html}javadoc:jar}} is used to create an archive file of the generated javadocs. It is mostly used when
      releasing to publish to the repository.
 
 * Usage
