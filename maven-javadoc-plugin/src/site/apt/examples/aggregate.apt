@@ -29,7 +29,7 @@ Project
 
  When you execute javadoc from Project directory with aggregate set to "true", a javadoc report will be created
  in the target directory of Project wherein all the javadocs of Project's modules are included. If aggregate is
- set to false, a javadoc report for Module1 will be generated in the target directory of Module1, a javadoc
+ set to "false", a javadoc report for Module1 will be generated in the target directory of Module1, a javadoc
  report for Module2 will be generated in the target directory of Module2, and a javadoc report for Module3 will be
  generated in the target directory of Module3.
 
