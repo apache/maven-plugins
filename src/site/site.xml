@@ -12,9 +12,9 @@
       <item name="Maven 2" href="http://maven.apache.org/maven2/"/>
     </links>
 
-    <menu name="Maven JAR Quickstart">
-      <item name="Introduction" href="introduction.html"/>
-      <item name="How to use" href="howto.html"/>
+    <menu name="Overview">
+      <item name="Overview" href="index.html"/>
+      <item name="Usage" href="usage.html"/>
     </menu>
     ${reports}
   </body>
