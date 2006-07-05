@@ -34,9 +34,9 @@
     </links>
 
     <menu name="Overview">
-      <item name="Overview" href="overview.html"/>
-      <item name="Usage" href="usage.html"/>
-      <item name="FAQs" href="faq.html"/>
+      <item name="Overview" href="/index.html"/>
+      <item name="Usage" href="/usage.html"/>
+      <item name="FAQs" href="/faq.html"/>
     </menu>
     <menu name="Examples">
       <item name="Aggregating Javadocs for Multi-Projects" href="/examples/aggregate.html"/>
