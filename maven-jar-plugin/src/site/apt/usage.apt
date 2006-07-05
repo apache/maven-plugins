@@ -113,4 +113,4 @@ How to use
   mvn ... -Dmaven.jar.skip.sign=true
 -------------------
 
-  For full documentation, click {{{index.html}here}}.
+  For full documentation, click {{{plugin-info.html}here}}.
