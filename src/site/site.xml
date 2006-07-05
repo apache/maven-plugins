@@ -17,7 +17,6 @@
 
     <menu name="Overview">
       <item name="How to Use" href="usage.html"/>
-      <item name="Examples" href="examples.html"/>
       <item name="FAQ" href="faq.html"/>
     </menu>
 
