@@ -16,13 +16,6 @@ package org.apache.maven.plugin.pmd;
  * limitations under the License.
  */
 
-import net.sourceforge.pmd.ReportListener;
-import net.sourceforge.pmd.RuleViolation;
-import net.sourceforge.pmd.IRuleViolation;
-import net.sourceforge.pmd.stat.Metric;
-import org.codehaus.doxia.sink.Sink;
-import org.codehaus.plexus.util.StringUtils;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,6 +23,13 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import net.sourceforge.pmd.IRuleViolation;
+import net.sourceforge.pmd.ReportListener;
+import net.sourceforge.pmd.stat.Metric;
+
+import org.codehaus.doxia.sink.Sink;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Handle events from PMD, converting them into Doxia events.
@@ -100,13 +100,14 @@ public class PmdReportListener
         {
             public int compare( Object o1, Object o2 )
             {
-                return ( (RuleViolation) o1 ).getBeginLine() - ( (RuleViolation) o2 ).getBeginLine();
+                return ( (IRuleViolation) o1 ).getBeginLine() -
+                    ( (IRuleViolation) o2 ).getBeginLine();
             }
         } );
 
         for ( Iterator it = violations.iterator(); it.hasNext(); )
         {
-            RuleViolation ruleViolation = (RuleViolation) it.next();
+            IRuleViolation ruleViolation = (IRuleViolation) it.next();
 
             sink.tableRow();
             sink.tableCell();
