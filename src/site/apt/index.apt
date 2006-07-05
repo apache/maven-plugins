@@ -1,0 +1,37 @@
+ ------
+ Maven Clean Plugin
+ ------
+ Edwin Punzalan
+ ------
+ 03 July 2006
+ ------
+
+
+Overview
+
+  The Clean Plugin is used when you want to remove files generated at
+  build-time in a project's directory.
+
+* Goals Overview
+
+  The Clean Plugin only has one goal.
+
+  * {{{clean-mojo.html}clean:clean}} attempts to clean a project's working
+  directory of the files that we're generated at build-time.  By default, it
+  discovers and deletes the directories configured in
+  <<<project.build.directory>>>, <<<project.build.outputDirectory>>>,
+  <<<project.build.testOutputDirectory>>>, and
+  <<<project.reporting.outputDirectory>>>.
+
+* Usage
+
+  Instructions on the basic usage of the Clean Plugin can be found
+  {{{usage.html}here}}.
+
+* Examples
+
+  To provide you with better understanding on some usages of the Clean Plugin,
+  you can take a look into the following examples:
+
+  * {{{delete_additional_files.html}How to delete additional files outside of
+  the default directories}}
