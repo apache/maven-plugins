@@ -6,29 +6,7 @@
  ------
  June 20th, 2006
 
-Configuration
-
-  Cleans the local filesystem of any Maven-specific artifacts within this module.  To
-  configure the clean plugin, add it in your <<<pom.xml>>> under the <<<build>>> section:
-
-+--------
-<project>
-  [...]
-  <build>
-    <plugins>
-      [...]
-      <plugin>
-        <artifactId>maven-clean-plugin</artifactId>
-        <configuration>
-          [...]
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-[...]
-+---------
-
-Example
+Delete Additional Files Not Exposed to Maven
 
   The <<<maven-clean-plugin>>> will delete the <<<target>>> directory by default.  You may configure
   it to delete additional directories and files.  The following example shows how:
