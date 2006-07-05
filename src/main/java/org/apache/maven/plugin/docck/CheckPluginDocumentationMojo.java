@@ -129,8 +129,10 @@ public class CheckPluginDocumentationMojo
 
     private void checkProjectSite( MavenProject project, DocumentationReporter reporter )
     {
+        File projectSiteDirectory = new File( project.getBasedir(), siteDirectory );
+
         // check for site.xml
-        File siteXml = new File( siteDirectory, "site.xml" );
+        File siteXml = new File( projectSiteDirectory, "site.xml" );
 
         if ( !siteXml.exists() )
         {
@@ -168,18 +170,19 @@ public class CheckPluginDocumentationMojo
         */
 
         // check for usage.(xml|apt|html)
-        if ( !findFiles( siteDirectory, "usage" ) )
+        if ( !findFiles( projectSiteDirectory, "usage" ) )
         {
             reporter.error( "Missing base usage.(html|xml|apt)." );
         }
 
         // check for **/examples/**.(xml|apt|html)
-        if ( !findFiles( siteDirectory, "**/examples/*" ) && !findFiles( siteDirectory, "**/example*" ) )
+        if ( !findFiles( projectSiteDirectory, "**/examples/*" ) &&
+             !findFiles( projectSiteDirectory, "**/example*" ) )
         {
             reporter.error( "Missing examples." );
         }
 
-        if ( !findFiles( siteDirectory, "faq" ) )
+        if ( !findFiles( projectSiteDirectory, "faq" ) )
         {
             reporter.error( "Missing base FAQ.(fml|html|xml|apt)." );
         }

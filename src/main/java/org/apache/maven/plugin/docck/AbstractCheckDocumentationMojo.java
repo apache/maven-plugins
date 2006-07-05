@@ -27,8 +27,8 @@ import org.apache.maven.model.Scm;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.docck.reports.DocumentationReporter;
 import org.apache.maven.plugin.docck.reports.DocumentationReport;
+import org.apache.maven.plugin.docck.reports.DocumentationReporter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.model.fileset.FileSet;
 import org.apache.maven.shared.model.fileset.util.FileSetManager;
@@ -40,6 +40,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -74,7 +75,7 @@ public abstract class AbstractCheckDocumentationMojo
      * @parameter expression="${siteDirectory}" default-value="src/site"
      * @todo should be determined programmatically
      */
-    protected File siteDirectory;
+    protected String siteDirectory;
 
     /**
      * Sets whether this plugin is running in offline or online mode. Also useful when you don't want
@@ -87,6 +88,8 @@ public abstract class AbstractCheckDocumentationMojo
     private HttpClient httpClient;
 
     private FileSetManager fileSetManager = new FileSetManager();
+
+    private List validUrls = new ArrayList();
 
     protected AbstractCheckDocumentationMojo()
     {
@@ -201,7 +204,7 @@ public abstract class AbstractCheckDocumentationMojo
 
         if ( buffer.length() > 0 )
         {
-            messages = "\nThe following documentation problems were found:\n" + buffer.toString();            
+            messages = "\nThe following documentation problems were found:\n" + buffer.toString();
         }
 
         return messages;
@@ -398,7 +401,11 @@ public abstract class AbstractCheckDocumentationMojo
 
             if ( protocol.startsWith( "http" ) )
             {
-                if ( !offline )
+                if ( offline )
+                {
+                    reporter.warn( "Cannot verify " + description + " in offline mode with URL: \'" + url + "\'." );
+                }
+                else if ( !validUrls.contains( url ) )
                 {
                     HeadMethod headMethod = new HeadMethod( url );
                     headMethod.setFollowRedirects( true );
@@ -410,6 +417,10 @@ public abstract class AbstractCheckDocumentationMojo
                         if ( httpClient.executeMethod( headMethod ) != 200 )
                         {
                             reporter.error( "Cannot reach " + description + " with URL: \'" + url + "\'." );
+                        }
+                        else
+                        {
+                            validUrls.add( url );
                         }
                     }
                     catch ( HttpException e )
@@ -426,10 +437,6 @@ public abstract class AbstractCheckDocumentationMojo
                     {
                         headMethod.releaseConnection();
                     }
-                }
-                else
-                {
-                    reporter.warn( "Cannot verify " + description + " in offline mode with URL: \'" + url + "\'." );
                 }
             }
             else
