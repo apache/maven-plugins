@@ -16,15 +16,14 @@ package org.apache.maven.plugin.pmd;
  * limitations under the License.
  */
 
+import net.sourceforge.pmd.IRuleViolation;
 import net.sourceforge.pmd.PMD;
-import net.sourceforge.pmd.PMDException;
 import net.sourceforge.pmd.Report;
+import net.sourceforge.pmd.Rule;
 import net.sourceforge.pmd.RuleContext;
 import net.sourceforge.pmd.RuleSet;
 import net.sourceforge.pmd.RuleSetFactory;
-import net.sourceforge.pmd.TargetJDK1_3;
-import net.sourceforge.pmd.TargetJDK1_4;
-import net.sourceforge.pmd.TargetJDK1_5;
+import net.sourceforge.pmd.SourceType;
 import net.sourceforge.pmd.renderers.CSVRenderer;
 import net.sourceforge.pmd.renderers.HTMLRenderer;
 import net.sourceforge.pmd.renderers.Renderer;
@@ -188,44 +187,41 @@ public class PmdReport
             {
                 File file = (File) i.next();
 
-                try
-                {
-                    // TODO: lazily call beginFile in case there are no rules
+                
+                // TODO: lazily call beginFile in case there are no rules
 
-                    reportSink.beginFile( file );
-                    ruleContext.setSourceCodeFilename( file.getAbsolutePath() );
-                    for ( int idx = 0; idx < rulesets.length; idx++ )
-                    {
-                        try
-                        {
-                            // PMD closes this Reader even though it did not open it so we have
-                            // to open a new one with every call to processFile().
-                            Reader reader = hasEncoding ? new InputStreamReader( new FileInputStream( file ),
-                                                                                 sourceEncoding )
-                                : new FileReader( file );
-                            pmd.processFile( reader, sets[idx], ruleContext );
-                        }
-                        catch ( UnsupportedEncodingException e1 )
-                        {
-                            throw new MavenReportException( "Encoding '" + sourceEncoding + "' is not supported.", e1 );
-                        }
-                    }
-                    reportSink.endFile( file );
-                }
-                catch ( PMDException e )
+                reportSink.beginFile( file );
+                ruleContext.setSourceCodeFilename( file.getAbsolutePath() );
+                for ( int idx = 0; idx < rulesets.length; idx++ )
                 {
-                    Exception ex = e;
-                    if ( e.getReason() != null )
+                    try
                     {
-                        ex = e.getReason();
+                        // PMD closes this Reader even though it did not open it so we have
+                        // to open a new one with every call to processFile().
+                        Reader reader = hasEncoding ? new InputStreamReader( new FileInputStream( file ),
+                                                                             sourceEncoding )
+                            : new FileReader( file );
+                        pmd.processFile( reader, sets[idx], ruleContext );
                     }
-                    throw new MavenReportException( "Failure executing PMD for: " + file, ex );
+                    catch ( UnsupportedEncodingException e1 )
+                    {
+                        throw new MavenReportException( "Encoding '" + sourceEncoding + "' is not supported.", e1 );
+                    }
+                    catch ( FileNotFoundException e2 )
+                    {
+                    	getLog().warn("Error opening source file: " + file);
+                    	reportSink.ruleViolationAdded(new ProcessingErrorRuleViolation(file, e2.getLocalizedMessage()) );
+                    }
+                    catch ( Exception e3 )
+                    {
+                        getLog().warn( "Failure executing PMD for: " + file, e3 );
+                        reportSink.ruleViolationAdded(new ProcessingErrorRuleViolation(file, e3.getLocalizedMessage()) );
+                    }
+                	
                 }
-                catch ( FileNotFoundException e )
-                {
-                    throw new MavenReportException( "Error opening source file: " + file, e );
-                }
+                reportSink.endFile( file );
             }
+         
             reportSink.endDocument();
 
             if ( !isHtml() )
@@ -276,23 +272,21 @@ public class PmdReport
      */
     public PMD getPMD()
     {
-        PMD pmd;
+        PMD pmd = new PMD();
+        
         if ( "1.5".equals( targetJdk ) )
         {
-            pmd = new PMD( new TargetJDK1_5() );
+            pmd.setJavaVersion(SourceType.JAVA_15);
         }
         else if ( "1.4".equals( targetJdk ) )
         {
-            pmd = new PMD( new TargetJDK1_4() );
+        	pmd.setJavaVersion(SourceType.JAVA_14);
         }
         else if ( "1.3".equals( targetJdk ) )
         {
-            pmd = new PMD( new TargetJDK1_3() );
+        	pmd.setJavaVersion(SourceType.JAVA_13);
         }
-        else
-        {
-            pmd = new PMD();
-        }
+        
         return pmd;
     }
 
@@ -417,5 +411,68 @@ public class PmdReport
         }
 
         return renderer;
+    }
+    
+    /**
+     * @author <a href="mailto:douglass.doug@gmail.com">Doug Douglass</a>
+     */
+    private static class ProcessingErrorRuleViolation implements IRuleViolation {
+    	
+    	private String filename;
+    	
+    	private String description;
+    	
+    	public ProcessingErrorRuleViolation(File file, String description) {
+    		filename = file.getPath();
+    		this.description = description;
+    	}
+
+		public String getFilename() {
+			return this.filename;
+		}
+
+		public int getBeginLine() {
+			return 0;
+		}
+
+		public int getBeginColumn() {
+			return 0;
+		}
+
+		public int getEndLine() {
+			return 0;
+		}
+
+		public int getEndColumn() {
+			return 0;
+		}
+
+		public Rule getRule() {
+			return null;
+		}
+
+		public String getDescription() {			
+			return this.description;
+		}
+
+		public String getPackageName() {
+			return null;
+		}
+
+		public String getMethodName() {
+			return null;
+		}
+
+		public String getClassName() {
+			return null;
+		}
+
+		public boolean isSuppressed() {
+			return false;
+		}
+
+		public String getVariableName() {
+			return null;
+		}
     }
 }
