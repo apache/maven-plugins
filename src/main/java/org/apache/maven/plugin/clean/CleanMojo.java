@@ -40,7 +40,7 @@ public class CleanMojo
     /**
      * This is where build results go.
      *
-     * @parameter default-value="${project.build.directory}"
+     * @parameter expression="${project.build.directory}"
      * @required
      * @readonly
      */
@@ -49,7 +49,7 @@ public class CleanMojo
     /**
      * This is where compiled classes go.
      *
-     * @parameter default-value="${project.build.outputDirectory}"
+     * @parameter expression="${project.build.outputDirectory}"
      * @required
      * @readonly
      */
@@ -58,11 +58,20 @@ public class CleanMojo
     /**
      * This is where compiled test classes go.
      *
-     * @parameter default-value="${project.build.testOutputDirectory}"
+     * @parameter expression="${project.build.testOutputDirectory}"
      * @required
      * @readonly
      */
     private File testOutputDirectory;
+
+    /**
+     * This is where the site plugin generates its pages.
+     *
+     * @parameter expression="${project.reporting.outputDirectory}"
+     * @required
+     * @readonly
+     */
+    private File reportDirectory;
 
     /**
      * Be verbose in the debug log-level?
