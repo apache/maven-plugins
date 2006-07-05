@@ -50,37 +50,53 @@ public class InstallFileMojo
     extends AbstractInstallMojo
 {
     /**
+     * GroupId of the artifact to be installed. Retrieved from POM file if specified.
+     *
      * @parameter expression="${groupId}"
      */
     protected String groupId;
 
     /**
+     * ArtifactId of the artifact to be installed. Retrieved from POM file if specified.
+     *
      * @parameter expression="${artifactId}"
      */
     protected String artifactId;
 
     /**
+     * Version of the artifact to be installed. Retrieved from POM file if specified
+     *
      * @parameter expression="${version}"
      */
     protected String version;
 
     /**
+     * Packaging type of the artifact to be installed. Retrieved from POM file if specified
+     *
      * @parameter expression="${packaging}"
      */
     protected String packaging;
 
     /**
+     * The file to be deployed
+     *
      * @parameter expression="${file}"
      * @required
      */
     private File file;
 
     /**
+     * Location of an existing POM file to be deployed alongside the main
+     * artifact, given by the ${file} parameter.
+     *
      * @parameter expression="${pomFile}"
      */
     private File pomFile;
 
     /**
+     * Install a POM for this artifact.  Will generate a default POM if none is
+     * supplied with the pomFile argument.
+     *
      * @parameter expression="${generatePom}"
      */
     private boolean generatePom = false;

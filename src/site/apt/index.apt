@@ -1,0 +1,42 @@
+  ------
+  Maven 2 Install Plugin
+  ------
+  Allan Ramirez
+  ------
+  July 2006
+  ------
+
+Maven 2 Install Plugin - Introduction
+
+  Local Repository is the local cached of a remote repository where
+  all artifacts needed for the build are stored. By default, it is located at
+  the user home directory (~/.m2/repository) and can be configured in the
+  <<<settings.xml>>> at \<localRepository\> element.
+
+  The install plugin is used during the install phase, to place or add the
+  artifact(s) to the local repository correctly. The install plugin uses
+  the information in the POM(groupId, artifactId, version) to determine
+  the installation path of the artifact in order for maven to picked
+  it up correctly.
+
+* Goals Overview
+
+  The install plugin has 2 goals:
+
+  * {{{index.html}install:install}} is used to automatically install the
+    artifact in the local repository, its pom and the attached artifacts
+    produced by a particular project.
+
+  * {{{index.html}install:install-file}} is mostly used to install a single
+    or 3rd party artifact along with its pom. In that case the artifact
+    information can be taken from an optionally specified pomFile, but can
+    be completed/overriden using the command line.
+
+* Usage
+
+  Some basic instructions for configuring and using the mojos of the
+  <<<maven-install-plugin>>> can be found in the {{{usage.html}Usage}}.
+
+* Examples
+
+  Sample use-cases for the plugin are available under the Examples menu
