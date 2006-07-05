@@ -73,7 +73,7 @@ public abstract class AbstractPmdReport
      * See the net.sourceforge.pmd.renderers package javadoc for available renderers.
      * XML is required if the pmd:check goal is being used.
      *
-     * @parameter expression="${format}"
+     * @parameter expression="${format}" default-value="xml"
      */
     protected String format = "xml";
 
