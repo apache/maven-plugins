@@ -1,0 +1,32 @@
+  ------
+  Maven 2 Install Plugin - Creating checksums in installation
+  ------
+  Allan Ramirez
+  ------
+  July 2006
+  ------
+
+Creating artifact checksums
+
+  The install plugin has the feature of creating the checksums(MD5, SHA-1)
+  of the artifacts during installation. Checksums are cryptographic hash
+  functions used for checking the integrity of the files. This can be
+  activated by setting the <<createChecksum>> parameter to <<true>>.
+
+  In <<<install:install>>> mojo.
+
++---+
+mvn install -DcreateChecksum=true
++---+
+
+
+  Can also be done in <<<install:install-file>>> goal.
+
++---+
+mvn install:install-file  -Dfile=path-to-your-artifact-jar \
+                          -DgroupId=your.groupId \
+                          -DartifactId=your-artifactId \
+                          -Dversion=version \
+                          -Dpackaging=jar \
+                          -DcreateChecksum=true
++---+
