@@ -26,6 +26,7 @@ import java.util.ResourceBundle;
 
 import net.sourceforge.pmd.IRuleViolation;
 import net.sourceforge.pmd.ReportListener;
+import net.sourceforge.pmd.PMD;
 import net.sourceforge.pmd.stat.Metric;
 
 import org.codehaus.doxia.sink.Sink;
@@ -53,6 +54,9 @@ public class PmdReportListener
     private String xrefLocation;
 
     private List violations = new ArrayList();
+
+    // The number of erroneous files
+    private int fileCount = 0;
 
     //private List metrics = new ArrayList();
 
@@ -96,6 +100,7 @@ public class PmdReportListener
     // wrt their source line number.  We re-sort them before writing them to the report.
     private void processViolations()
     {
+        fileCount++;
         Collections.sort( violations, new Comparator()
         {
             public int compare( Object o1, Object o2 )
@@ -172,6 +177,7 @@ public class PmdReportListener
         sink.link( "http://pmd.sourceforge.net/" );
         sink.text( "PMD" );
         sink.link_();
+        sink.text( " " + PMD.VERSION + "." );
         sink.paragraph_();
 
         // TODO overall summary
@@ -262,6 +268,11 @@ public class PmdReportListener
 
     public void endDocument()
     {
+        if ( fileCount == 0 )
+        {
+            sink.text( "PMD found no problems in your source code." );
+        }
+
         sink.section1_();
 
         // The Metrics report useless with the current PMD metrics impl.
