@@ -61,7 +61,7 @@ public class CopyDependenciesMojo
 
         for ( Iterator i = artifacts.iterator(); i.hasNext(); )
         {
-            copyArtifact( (DefaultArtifact) i.next(), this.stripVersion );
+            copyArtifact( (Artifact) i.next(), this.stripVersion );
         }
     }
 
