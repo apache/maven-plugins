@@ -1,0 +1,25 @@
+  ----
+  Maven 2 Install Plugin - Generic Pom Generation
+  ------
+  Allan Ramirez
+  ------
+  June 2006
+  ------
+
+Generate a generic POM
+
+  By default there is no pom included in installing a 3rd party artifact.
+  Although the user may specify the pom but there are still times that the
+  artifact doesn't have poms such as the SUN jars. The install plugin has
+  the capability of creating a generic POM for this kind of artifacts which
+  contains minimum pom elements such as groupId, artifactId, version, packaging.
+  It can be activated by setting the <<generatePom>> parameter to <<true>>.
+
++---+
+mvn install:install-file  -Dfile=path-to-your-artifact-jar \
+                          -DgroupId=your.groupId \
+                          -DartifactId=your-artifactId \
+                          -Dversion=version \
+                          -Dpackaging=jar \
+                          -DgeneratePom=true
++---+
