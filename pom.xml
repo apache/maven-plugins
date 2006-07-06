@@ -113,13 +113,7 @@
     </dependency>
   </dependencies>
   <reporting>
-    <plugins>
-      <plugin>
-        <artifactId>maven-javadoc-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <artifactId>maven-jxr-plugin</artifactId>
-      </plugin>
+    <plugins>      
       <plugin>
         <artifactId>maven-changelog-plugin</artifactId>
       </plugin>
