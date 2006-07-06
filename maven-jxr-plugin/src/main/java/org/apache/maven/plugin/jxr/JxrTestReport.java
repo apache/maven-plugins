@@ -48,16 +48,25 @@ public class JxrTestReport
      */
     private String destDir;
 
+    /**
+     * @see org.apache.maven.plugin.jxr.AbstractJxrReport#getSourceRoots()
+     */
     protected List getSourceRoots()
     {
         return this.sourceDirs;
     }
 
+    /**
+     * @see org.apache.maven.plugin.jxr.AbstractJxrReport#getSourceRoots(org.apache.maven.project.MavenProject)
+     */
     protected List getSourceRoots( MavenProject project )
     {
         return project.getTestCompileSourceRoots();
     }
 
+    /**
+     * @see org.apache.maven.plugin.jxr.AbstractJxrReport#getDestinationDirectory()
+     */
     protected String getDestinationDirectory()
     {
         return destDir;
@@ -93,6 +102,9 @@ public class JxrTestReport
         return "xref-test/index";
     }
 
+    /**
+     * @see org.apache.maven.plugin.jxr.AbstractJxrReport#getJavadocLocation()
+     */
     protected String getJavadocLocation()
     {
         // Don't link Javadoc

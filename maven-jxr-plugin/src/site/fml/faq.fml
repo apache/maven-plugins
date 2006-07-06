@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<faqs id="General FAQ">
+  <part id="General">
+    <faq id="1">
+      <question>What is the use of the JXR plugin?</question>
+      <answer><p>The JXR plugin is used to generate cross-reference pages of the source codes of a project. It is generally used when you want to lookup certain lines of code using line numbers as reference.</p></answer>
+    </faq>
+  </part>
+</faqs>

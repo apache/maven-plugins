@@ -1,0 +1,79 @@
+ ------
+ How To Use
+ ------
+ Fabrice Bellingard
+ <bellingard.NO-SPAM@gmail.com>
+ Maria Odea Ching
+ ------
+ 5 July 2006
+ ------
+
+How To Use
+
+ The JXR plugin generates a cross-reference of the project's sources. Below are the different goals and configuration
+ for the plugin.
+
+* Generate JXR as Part of Project Reports
+
+ To include the JXR report in the site generation process, insert the following in the \<reporting\> section of your
+ pom.xml:
+
++-----+
+<project>
+   ...
+  <build>
+     ...
+  </build>
+
+  <reporting>
+      <plugins>
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-jxr-plugin</artifactId>
+          </plugin>
+      </plugins>
+  </reporting>
+   ...
+</project>
++-----+
+
+ The report will be generated when you execute the m2 site plugin.
+
++-----+
+mvn site:site
++-----+
+
+* Explicitly Generate JXR Files
+
+ To explicitly generate JXR files with specific configuration, set the following in the \<build\> section of your pom.xml:
+
++-----+
+<project>
+   ...
+  <build>
+      <plugins>
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-jxr-plugin</artifactId>
+              <configuration>
+                  <bottom>Copyright 2006</bottom>
+                  <docTitle>Maven 2 JXR Plugin Reference</docTitle>
+              </configuration>
+          </plugin>
+      </plugins>
+  </build>
+   ...
+</project>
++-----+
+
+ The JXR files for the project's main sources will be executed using this command:
+
++-----+
+mvn jxr:jxr
++-----+
+
+ To generate JXR files for the project's test sources, execute this command:
+
++-----+
+mvn jxr:test-jxr
++-----+

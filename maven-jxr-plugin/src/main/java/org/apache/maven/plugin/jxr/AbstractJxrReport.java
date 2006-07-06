@@ -133,6 +133,12 @@ public abstract class AbstractJxrReport
      */
     protected boolean aggregate;
 
+    /**
+     * Compiles the list of directories which contain source files that will be included in the JXR report generation.
+     *
+     * @param sourceDirs    the List of the source directories
+     * @return a List of the directories that will be included in the JXR report generation
+     */
     protected List pruneSourceDirs( List sourceDirs )
     {
         List pruned = new ArrayList( sourceDirs.size() );
@@ -229,6 +235,12 @@ public abstract class AbstractJxrReport
         copyRequiredResources( destinationDirectory );
     }
 
+    /**
+     * Get the bottom text to be displayed at the lower part of the generated JXR reports.
+     *
+     * @param inceptionYear the year when the project was started
+     * @return  a String that contains the bottom text to be displayed in the lower part of the generrated JXR reports
+     */
     private String getBottomText( String inceptionYear )
     {
         int actualYear = Calendar.getInstance().get( Calendar.YEAR );
@@ -362,6 +374,11 @@ public abstract class AbstractJxrReport
         }
     }
 
+    /**
+     * Gets the list of the source directories to be included in the JXR report generation
+     *
+     * @return a List of the source directories whose contents will be included in the JXR report generation
+     */
     protected List constructSourceDirs()
     {
         List sourceDirs = new ArrayList( getSourceRoots() );
@@ -382,21 +399,53 @@ public abstract class AbstractJxrReport
         return sourceDirs;
     }
 
+    /**
+     * Cf. overriden method documentation.
+     *
+     * @see org.apache.maven.reporting.AbstractMavenReport#canGenerateReport()
+     */
     public boolean canGenerateReport()
     {
         return canGenerateReport( constructSourceDirs() );
     }
 
+    /**
+     * Cf. overriden method documentation.
+     *
+     * @see org.apache.maven.reporting.AbstractMavenReport#isExternalReport()
+     */
     public boolean isExternalReport()
     {
         return true;
     }
 
+    /**
+     * Abstract method that returns the target directory where the generated JXR reports will be put.
+     *
+     * @return  a String that contains the target directory name
+     */
     protected abstract String getDestinationDirectory();
 
+    /**
+     * Abstract method that returns the specified source directories that will be included in the JXR report generation.
+     *
+     * @return a List of the source directories
+     */
     protected abstract List getSourceRoots();
 
+    /**
+     * Abstract method that returns the compile source directories of the specified project that will be included in the
+     * JXR report generation
+     *
+     * @param project the MavenProject where the JXR report plugin will be executed
+     * @return a List of the source directories
+     */
     protected abstract List getSourceRoots( MavenProject project );
 
+    /**
+     * Abstract method that returns the location of the javadoc files.
+     *
+     * @return a String that contains the loaction of the javadocs
+     */
     protected abstract String getJavadocLocation();
 }

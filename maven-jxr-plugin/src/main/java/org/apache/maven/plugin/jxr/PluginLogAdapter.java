@@ -29,26 +29,43 @@ public class PluginLogAdapter
 {
     private final Log log;
 
+    /**
+     * Class constructor
+     *
+     * @param log   the Log object to be used
+     */
     public PluginLogAdapter( Log log )
     {
         this.log = log;
     }
 
+    /**
+     * @see org.apache.maven.jxr.log.Log#info(String)
+     */
     public void info( String string )
     {
         log.info( string );
     }
 
+    /**
+     * @see org.apache.maven.jxr.log.Log#debug(String)
+     */
     public void debug( String string )
     {
         log.debug( string );
     }
 
+    /**
+     * @see org.apache.maven.jxr.log.Log#warn(String)
+     */
     public void warn( String string )
     {
         log.warn( string );
     }
 
+    /**
+     * @see org.apache.maven.jxr.log.Log#error(String)  
+     */
     public void error( String string )
     {
         log.error( string );

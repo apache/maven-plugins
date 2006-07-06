@@ -11,9 +11,16 @@
     <links>
       <item name="Maven 2" href="http://maven.apache.org"/>
     </links>
-    <menu name="JXR QuickStart">
-      <item name="Overview" href="howto.html"/>
-      <item name="JXR Sample Report" href="example/xref/index.html"/>
+    <menu name="Overview">
+      <item name="Overview" href="index.html"/>
+      <item name="Usage" href="usage.html"/>
+      <item name="FAQs" href="faq.html"/>
+    </menu>
+
+    <menu name="Examples">
+      <item name="Aggregating JXR Reports for Multi-Projects" href="/examples/aggregate.html"/>
+      <item name="Linking JXR Files to Javadocs" href="/examples/linkjavadoc.html"/>
+      <item name="JXR Sample Report" href="/example/xref/index.html"/>
     </menu>
     ${reports}
   </body>
