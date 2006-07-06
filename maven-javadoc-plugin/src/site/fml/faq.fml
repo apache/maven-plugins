@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<faqs id="General FAQ">
+  <part id="General">
+    <faq id="1">
+      <question>In which part of the pom.xml does the Javadoc plugin should be configured?</question>
+      <answer><p>You can configura the Javadoc plugin in the <i>reporting</i> section of your pom.xml if you want to include it in the site generation process (e.g. mvn site). Otherwise if you want to explicitly generate javadocs, you can configure it in the <i>build</i> section of your pom.xml.</p></answer>
+    </faq>    
+  </part>
+</faqs>
