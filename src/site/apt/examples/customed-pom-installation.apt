@@ -1,0 +1,23 @@
+  ----
+  Maven 2 Install Plugin - Installing artifact with a customed Pom
+  ------
+  Allan Ramirez
+  ------
+  June 2006
+  ------
+
+Install an artifact with a customed POM
+
+  The install plugin also has a feature that allows a pom to be included
+  during the installation of a 3rd party artifact. This can be done by
+  setting the value of the <<pomFile>> parameter to the path of the
+  customed POM.
+
++---+
+mvn install:install-file  -Dfile=path-to-your-artifact-jar \
+                          -DgroupId=your.groupId \
+                          -DartifactId=your-artifactId \
+                          -Dversion=version \
+                          -Dpackaging=jar \
+                          -DpomFile=path-to-pom
++---+
