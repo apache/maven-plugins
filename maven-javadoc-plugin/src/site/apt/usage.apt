@@ -7,7 +7,7 @@
  27 June 2006
  ------
 
-Usage
+How To Use
 
  The Javadoc Plugin generates javadocs using the Javadoc tool. Iterated below are the different goals and configuration for
  generating them using the plugin.
