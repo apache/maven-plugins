@@ -65,16 +65,25 @@ public class JxrReport
      */
     private boolean linkJavadoc;
 
+    /**
+     * @see org.apache.maven.plugin.jxr.AbstractJxrReport#getDestinationDirectory()
+     */
     protected String getDestinationDirectory()
     {
         return destDir;
     }
 
+    /**
+     * @see org.apache.maven.plugin.jxr.AbstractJxrReport#getSourceRoots()
+     */
     protected List getSourceRoots()
     {
         return this.sourceDirs;
     }
 
+    /**
+     * @see org.apache.maven.plugin.jxr.AbstractJxrReport#getSourceRoots(org.apache.maven.project.MavenProject)
+     */
     protected List getSourceRoots( MavenProject project )
     {
         return project.getCompileSourceRoots();
@@ -110,6 +119,9 @@ public class JxrReport
         return "xref/index";
     }
 
+    /**
+     * @see org.apache.maven.plugin.jxr.AbstractJxrReport#getJavadocLocation()
+     */
     protected String getJavadocLocation()
     {
         String location = null;
