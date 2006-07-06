@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import net.sourceforge.pmd.cpd.Match;
+import net.sourceforge.pmd.PMD;
 
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.plexus.util.StringUtils;
@@ -65,6 +66,7 @@ public class CpdReportGenerator
         sink.link( "http://pmd.sourceforge.net/cpd.html" );
         sink.text( "CPD" );
         sink.link_();
+        sink.text( " " + PMD.VERSION + "." );
         sink.paragraph_();
 
         // TODO overall summary
@@ -86,6 +88,11 @@ public class CpdReportGenerator
     public void generate( Iterator matches )
     {
         beginDocument();
+
+        if ( !matches.hasNext() )
+        {
+            sink.text( "CPD found no problems in your source code." );            
+        }
 
         while ( matches.hasNext() )
         {
