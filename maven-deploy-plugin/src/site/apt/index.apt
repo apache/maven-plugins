@@ -32,6 +32,8 @@ Maven 2 Deploy Plugin - Introduction
     implemented as a wagon transport (making it cross-platform), or use a system
     specific method.
 
+  []
+
   The information will be taken from the implied (or specified) pom and from the
   command line. The settings.xml file may also be parsed to retrieve user
   credentials.
@@ -41,28 +43,34 @@ Maven 2 Deploy Plugin - Introduction
 
   The deploy plugin has 2 goals:
 
-  * {{{index.html}deploy:deploy}} is used to automatically install the
+  * {{{deploy-mojo.html}deploy:deploy}} is used to automatically install the
     artifact, its pom and the attached artifacts produced by a particuliar
     project. Most if not all the information related to the deployment is stored
     in the project's pom. The operation
 
-  * {{{index.html}deploy:deploy-file}} is used to install a single artifact
+  * {{{deploy-file-mojo.html}deploy:deploy-file}} is used to install a single artifact
     along with its pom. In that case the artifact information can be taken from 
     an optionally specified pomFile, but can be completed/overriden using the 
     command line.
 
 * How To Use
 
-  Instructions on how to use the Plugin Name can be found {{{usage.html}here}}.
+  Instructions on how to use the deploy plugin can be found {{{usage.html}here}}.
 
 * Examples
 
   To provide you with better understanding on some usages of the Plugin Name,
   you can take a look into the following examples:
 
+  <<<Project Deployment:>>>
+
   * {{{examples/deploy-ftp.html}Deployment with FTP}}
 
   * {{{examples/deploy-ssh-external.html}Deployment with external SSH}}
+
+  []
+
+  <<<File Deployment:>>>
 
   * {{{examples/disabling-generic-pom.html}Disable the generation of pom}}
 
