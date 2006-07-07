@@ -32,19 +32,15 @@
       <item name="Maven 2" href="http://maven.apache.org/maven2/"/>
     </links>
     <menu name="Overview">
-      <item name="Introduction" href="plugin-info.html"/>
-      <item name="HOWTO" href="usage.html"/>
-      <!-- When we later have FAQs...
-      <item name="FAQ" href="faq.html"/>
-      -->
+      <item name="Introduction" href="overview.html"/>
+      <item name="Usage" href="usage.html"/>
+      <!--<item name="FAQ" href="faq.html"/> -->
     </menu>
-    <menu name="Advance Configuration">
+    <menu name="Examples">
       <item name="Adding web resources" href="examples/adding-filtering-webresources.html"/>   
       <item name="Adding external web sources" href="examples/war-overlay.html"/>
       <item name="War manifest customization" href="examples/war-manifest-guide.html"/>
-    </menu>
-    <menu name="Tips">
-      <item name="Rapid testing using jetty6" href="tips/rapid-testing-jetty6-plugin.html"/>
+      <item name="Rapid testing using jetty6" href="examples/rapid-testing-jetty6-plugin.html"/>
     </menu>
     ${reports}
   </body>
