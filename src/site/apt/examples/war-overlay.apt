@@ -22,7 +22,7 @@ Introduction
      `-- main
          |-- java
          |   `-- com
-         |       `-- ideal
+         |       `-- example
          |           `-- projects
          |               `-- SampleAction.java
          |-- resources
@@ -44,14 +44,14 @@ documentedprojectdependency-1.0-SNAPSHOT.war
  |-- META-INF
  |   |-- MANIFEST.MF
  |   `-- maven
- |       `-- com.ideal.projects
+ |       `-- com.example.projects
  |           `-- documentedprojectdependency
  |               |-- pom.properties
  |               `-- pom.xml
  |-- WEB-INF
  |   |-- classes
  |   |   |-- com
- |   |   |   `-- ideal
+ |   |   |   `-- example
  |   |   |       `-- projects
  |   |   |           `-- SampleActionDependency.class
  |   |   |-- images
@@ -76,7 +76,7 @@ documentedprojectdependency-1.0-SNAPSHOT.war
   [...]
     <dependencies>
       <dependency>
-         <groupId>com.ideal.projects</groupId>
+         <groupId>com.example.projects</groupId>
          <artifactId>documentedprojectdependency</artifactId>
          <version>1.0-SNAPSHOT</version>
          <type>war</type>
@@ -94,7 +94,7 @@ documentedprojectdependency-1.0-SNAPSHOT.war
  |-- META-INF
  |   |-- MANIFEST.MF
  |   `-- maven
- |       `-- com.ideal.projects
+ |       `-- com.example.projects
  |           |-- documentedproject
  |           |   |-- pom.properties
  |           |   `-- pom.xml
@@ -104,7 +104,7 @@ documentedprojectdependency-1.0-SNAPSHOT.war
  |-- WEB-INF
  |   |-- classes
  |   |   |-- com
- |   |   |   `-- ideal
+ |   |   |   `-- example
  |   |   |       `-- projects
  |   |   |           |-- SampleAction.class
  |   |   |           `-- SampleActionDependency.class
