@@ -45,7 +45,7 @@ Introduction
   When for some reason, adding <<<clean>>> to the command-line is not option,
   the clean plugin can be put into a project's pom.xml so that it gets executed
   everytime the project is built.  Below is a sample pom.xml for running the
-  clean plugin in the <<validate>>> phase everytime the project is built:
+  clean plugin in the <<<validate>>> phase everytime the project is built:
 
 +-----
 <project>

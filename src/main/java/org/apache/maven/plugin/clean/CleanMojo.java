@@ -74,21 +74,21 @@ public class CleanMojo
     private File reportDirectory;
 
     /**
-     * Be verbose in the debug log-level?
+     * Sets whether the plugin runs in verbose mode.
      *
      * @parameter expression="${clean.verbose}" default=value="false"
      */
     private boolean verbose;
 
     /**
-     * The list of filesets to delete, in addition to the default directories.
+     * The list of fileSets to delete, in addition to the default directories.
      *
      * @parameter
      */
     private List filesets;
 
     /**
-     * Should we follow symbolically linked files?
+     * Sets whether the plugin should follow Symbolic Links to delete files.
      *
      * @parameter expression="${clean.followSymLinks}" default=value="false"
      */
