@@ -51,10 +51,25 @@ Maven 2 Deploy Plugin - Introduction
     an optionally specified pomFile, but can be completed/overriden using the 
     command line.
 
-* Usage
+* How To Use
 
-  Some basic instructions for configuring and using the mojos of the <<<maven-deploy-plugin>>> can be found in the {{{usage.html}Usage}}.
+  Instructions on how to use the Plugin Name can be found {{{usage.html}here}}.
 
 * Examples
 
-  Sample use-cases for the plugin are available under the Examples menu
+  To provide you with better understanding on some usages of the Plugin Name,
+  you can take a look into the following examples:
+
+  * {{{examples/deploy-ftp.html}Deployment with FTP}}
+
+  * {{{examples/deploy-ssh-external.html}Deployment with external SSH}}
+
+  * {{{examples/disabling-generic-pom.html}Disable the generation of pom}}
+
+  * {{{examples/deploying-with-customed-pom.html}Deploy an artifact with a customed pom}}
+
+  * {{{examples/deploying-with-classifiers.html}Deploy an artifact with classifier}}
+
+  * {{{examples/disabling-timestamps-suffix.html}Disable timestamps suffix in an artifact}}
+
+  * {{{examples/deploying-in-legacy-layout.html}Deploy an artifact in legacy layout}}
