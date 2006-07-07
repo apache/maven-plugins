@@ -1,0 +1,23 @@
+  ----
+  Maven 2 Deploy Plugin - Project Deployment
+  ------
+  Allan Ramirez
+  ------
+  July 2006
+  ------
+
+File Deployment
+
+  Here are the following examples of install plugin regarding file deployment
+
+  * {{{examples/disabling-generic-pom.html}Disable the generation of pom}}
+
+  * {{{examples/deploying-with-customed-pom.html}Deploy an artifact with a customed pom}}
+
+  * {{{examples/deploying-with-classifiers.html}Deploy an artifact with classifier}}
+
+  * {{{examples/disabling-timestamps-suffix.html}Disable timestamps suffix in an artifact}}
+
+  * {{{examples/deploying-in-legacy-layout.html}Deploy an artifact in legacy layout}}
+
+  []
