@@ -1,5 +1,5 @@
  ------
- Usage
+ Maven 2 Javadoc Plugin: Usage
  ------
  Vincent Siveton
  Maria Odea Ching
@@ -7,7 +7,7 @@
  27 June 2006
  ------
 
-How To Use
+Usage
 
  The Javadoc Plugin generates javadocs using the Javadoc tool. Iterated below are the different goals and configuration for
  generating them using the plugin.
@@ -57,8 +57,8 @@ mvn javadoc:jar
  For <<<mvn javadoc:jar>>>, the javadocs are generated first then it will be archived in a jar file. The {{{jar-mojo.html}javadoc:jar}}
  goal is run by default and is mostly used when releasing to publish to the repository.
 
- To set the configuration of the Javadoc plugin when executing these commands, you must configure it in the
- \<build\> section of your pom file as shown below:
+ You should only configure the plugin in the \<build\> section of your pom file, as shown below, if and only if the configuration is
+ different to the configuration on the site or the report is not included on the site at all.
 
 +-----+
 <project>
