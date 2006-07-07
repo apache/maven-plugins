@@ -34,8 +34,8 @@
     </links>
 
     <menu name="Overview">
-      <item name="Overview" href="index.html"/>
-      <item name="Usage" href="usage.html"/>
+      <item name="Introduction" href="index.html"/>
+      <item name="How To Use" href="usage.html"/>
       <item name="FAQs" href="faq.html"/>
     </menu>
     <menu name="Examples">
