@@ -1,5 +1,5 @@
  ------
- Overview
+ Maven Javadoc Plugin: Overview
  ------
  Maria Odea Ching
  ------
@@ -8,7 +8,7 @@
 
 
 
-Overview
+Maven Javadoc Plugin
 
  The Javadoc Plugin uses the Javadoc tool to generate javadocs for the specified project. For more information about the
  standard Javadoc tool, see {{{http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html}here}}.
@@ -21,20 +21,34 @@ Overview
 
    The Javadoc Plugin has two goals:
 
-   * {{{plugin-info.html}javadoc:javadoc}} is used to generate the javadoc files for the project. It uses the standard
+   * {{{javadoc-mojo.html}javadoc:javadoc}} is used to generate the javadoc files for the project. It uses the standard
      Javadoc tool to generate the javadocs and supports the parameters used by the tool.
 
-   * {{{plugin-info.html}javadoc:jar}} is used to create an archive file of the generated javadocs. It is mostly used when
+   * {{{jar-mojo.html}javadoc:jar}} is used to create an archive file of the generated javadocs. It is mostly used when
      releasing to publish to the repository.
 
-* Usage
+* How To Use
 
    Some basic instructions for configuring and using the mojos of the <<<maven-javadoc-plugin>>> can be found in
    the {{{usage.html}Usage guide}}.
 
 * Examples
 
-   Sample use-cases for the plugin are available under the Examples menu.
+   To provide you with better understanding on some usages of the Javadoc plugin,  you can take a look into the
+   following examples:
+
+   * {{{examples/aggregate.html}Aggregating Javadocs for Multi-Projects}}
+
+   * {{{examples/alternatedoclet.html}Using Alternate Doclet}}
+
+   * {{{examples/excludepackagenames.html}Excluding Packages}}
+
+   * {{{examples/groupconfiguration.html}Grouping Packages}}
+
+   * {{{examples/stylesheetconfiguration.html}Configuring Stylesheets}}
+
+   * {{{examples/tagconfiguration.html}Configuring Custom Javadoc Tags}}
+
 
 
 
