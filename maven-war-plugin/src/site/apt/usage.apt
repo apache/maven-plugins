@@ -5,24 +5,35 @@
  ------
  27 June 2006
 
-Introduction
-
- The war plugin is responsible for collecting all artifact dependencies, classes
- and resources of the web application and packaging them into a web application archive.
- 
 Basic Usage
 
- Given the <<<pom.xml>>>
-  
+ There are 4 ways to use the war plugin :
+ 
+ *using the package phase with the project package type as war
+ 
+ *invocation of the <<<war:war>>> goal.
+ 
+ *invocation of the <<<war:exploded>>> goal
+ 
+ *invocation of the <<<war:inplace>>> goal
+
+ <<When using the war goals it is assumed that the compile phase is already done. The war plugin is not responsible
+   for compiling the java sources or copying of the resources.>> 
+
+*Using the package phase with the project package type as war / invocation of the <<<war:war>>> goal
+
+ This is the common way to use the war plugin. 
+ To illustrate, given the <<<pom.xml>>>
+    
 +----------+
   <project>
      [...]
-     <groupId>com.ideal.projects</groupId>
+     <groupId>com.example.projects</groupId>
      <artifactId>documentedproject</artifactId>
      <packaging>war</packaging>
      <version>1.0-SNAPSHOT</version>
      <name>Documented Project</name>
-     <url>http://ideal.com</url>
+     <url>http://example.com</url>
      [...]
   </project>
 +----------+
@@ -36,7 +47,7 @@ Basic Usage
      `-- main
          |-- java
          |   `-- com
-         |       `-- ideal
+         |       `-- example
          |           `-- projects
          |               `-- SampleAction.java
          |-- resources
@@ -57,6 +68,12 @@ Basic Usage
    mvn package
 +----------+
 
+ or
+
++----------+
+   mvn compile war:war
++----------+ 
+
  generates the war file <<<target/documentedproject-1.0-SNAPSHOT.war>>>.
   
 +----------+
@@ -64,14 +81,14 @@ documentedproject-1.0-SNAPSHOT.war
   |-- META-INF
   |   |-- MANIFEST.MF
   |   `-- maven
-  |       `-- com.ideal.projects
+  |       `-- com.example.projects
   |           `-- documentedproject
   |               |-- pom.properties
   |               `-- pom.xml
   |-- WEB-INF
   |   |-- classes
   |   |   |-- com
-  |   |   |   `-- ideal
+  |   |   |   `-- example
   |   |   |       `-- projects
   |   |   |           `-- SampleAction.class
   |   |   `-- images
@@ -81,12 +98,104 @@ documentedproject-1.0-SNAPSHOT.war
   `-- jsp
       `-- websource.jsp
 +----------+    
-  
-Related links
 
- {{{http://maven.apache.org/guides/mini/guide-manifest.html}Guide to manifest customization}}
+*Invocation of <<<war:exploded>>> goal
  
- {{{http://maven.apache.org/guides/mini/guide-archive-configuration.html}Exclusion of Maven Descriptors}}
+ To speed up testing during the developement phase, war:explode can be use to generate the war in exploded
+ form.
+ Using the same project above and invoking 
+ 
++----------+
+   mvn compile mvn:exploded
++----------+
 
+ would generate an exploded version of the war in <<<target/documentedproject-1.0-SNAPSHOT>>>
+ 
++----------+
+   documentedproject-1.0-SNAPSHOT
+   |-- META-INF
+   |-- WEB-INF
+   |   |-- classes
+   |   |   |-- com
+   |   |   |   `-- example
+   |   |   |       `-- projects
+   |   |   |           `-- SampleAction.class
+   |   |   `-- images
+   |   |       `-- sampleimage.jpg
+   |   `-- web.xml
+   |-- index.jsp
+   `-- jsp
+       `-- websource.jsp
++----------+ 
+
+ The default directory for the exploded war is <<<target/\<finalName\>>>>. The finalName is usually in the form
+ of \<artifact\>-\<version\>. 
+ This default directory can be overridden by specifying the webAppDirectory plugin parameter.
   
++-------+
+[...]
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-war-plugin</artifactId>
+      <version>2.0</version>
+      <configuration>
+         <webAppDirectory>/sample/servlet/container/deploy/directory<webAppDirectory>    
+      </configuration>
+    </plugin>
+  </plugins>
+[...]  
++-------+  
+
+*Invocation of <<<war:inplace>>> goal
+ 
+ Another variation of the <<<war:exploded>>> is the <<<war:inplace>>>. In <<<war:inplace>>> the exploded war is created
+ in the webapp source which defaults to <<<src/main/webapp>>>. 
+ Using our sample project above, invoking
+ 
++----------+
+   mvn compile mvn:exploded
++----------+
+
+ would result to
+ 
++----------+
+ .
+ |-- pom.xml
+ |-- src
+ |   `-- main
+ |       |-- java
+ |       |   `-- com
+ |       |       `-- ideal
+ |       |           `-- projects
+ |       |               `-- SampleAction.java
+ |       |-- resources
+ |       |   |-- images
+ |       |   |   `-- sampleimage.jpg
+ |       |   `-- sampleresource
+ |       `-- webapp
+ |           |-- META-INF
+ |           |-- WEB-INF
+ |           |   |-- classes
+ |           |   |   |-- com
+ |           |   |   |   `-- ideal
+ |           |   |   |       `-- projects
+ |           |   |   |           `-- SampleAction.class
+ |           |   |   `-- images
+ |           |   |       `-- sampleimage.jpg
+ |           |   `-- web.xml
+ |           |-- index.jsp
+ |           `-- jsp
+ |               `-- websource.jsp
+ `-- target
+     `-- classes
+         |-- com
+         |   `-- ideal
+         |       `-- projects
+         |           `-- SampleAction.class
+         `-- images
+             `-- sampleimage.jpg
++----------+ 
+ 
+ 
   
