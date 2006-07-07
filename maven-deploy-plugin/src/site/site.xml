@@ -34,9 +34,8 @@
     </links>
 
     <menu name="Plugin Overview">
-      <item name="Overview" href="overview.html"/>
-      <item name="Usage" href="usage.html"/>
-	    <item name="FAQs" href="faq.html"/>
+      <item name="How to use" href="usage.html"/>
+	    <item name="FAQ" href="faq.html"/>
       <!--item name="Examples" href="examples/examples.html"/-->
     </menu>
     <menu name="Examples">
