@@ -54,7 +54,7 @@ mvn javadoc:javadoc
 mvn javadoc:jar
 +-----+
 
- For <<<mvn javadoc:jar>>>, the javadocs are generated first then it will be archived in a jar file. The {{{plugin-info.html}javadoc:jar}}
+ For <<<mvn javadoc:jar>>>, the javadocs are generated first then it will be archived in a jar file. The {{{jar-mojo.html}javadoc:jar}}
  goal is run by default and is mostly used when releasing to publish to the repository.
 
  To set the configuration of the Javadoc plugin when executing these commands, you must configure it in the
