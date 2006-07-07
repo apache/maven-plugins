@@ -1,0 +1,17 @@
+  ----
+  Maven 2 Deploy Plugin - Project Deployment
+  ------
+  Allan Ramirez
+  ------
+  July 2006
+  ------
+
+Project Deployment
+
+  Here are the following examples of install plugin regarding project deployment
+
+  * {{{examples/deploy-ftp.html}Deployment with FTP}}
+
+  * {{{examples/deploy-ssh-external.html}Deployment with external SSH}}
+
+  []
