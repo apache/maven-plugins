@@ -43,6 +43,8 @@ public class InstallFileMojoTest
     
     private String packaging;
     
+    private String classifier;
+
     private File file;
     
     private final String LOCAL_REPO = "target/local-repo/";
@@ -88,6 +90,30 @@ public class InstallFileMojoTest
         assertTrue( installedArtifact.exists() );
     }
     
+    public void testInstallFileWithClassifier()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(),
+                                 "target/test-classes/unit/install-file-with-classifier/plugin-config.xml" );
+
+        InstallFileMojo mojo = ( InstallFileMojo ) lookupMojo( "install-file", testPom );
+
+        assertNotNull( mojo );
+
+        assignValuesForParameter( mojo );
+
+        assertNotNull( classifier );
+
+        mojo.execute();
+
+        File installedArtifact = new File( getBasedir(), LOCAL_REPO +
+                                           groupId + "/" + artifactId + "/" +
+                                           version + "/" + artifactId + "-" +
+                                           version + "-" + classifier + "." + packaging );
+
+        assertTrue( installedArtifact.exists() );
+    }
+
     public void testInstallFileWithGeneratePom()
         throws Exception
     {
@@ -245,6 +271,8 @@ public class InstallFileMojoTest
         
         this.packaging  = ( String ) getVariableValueFromObject( obj, "packaging" );
         
+        this.classifier  = ( String ) getVariableValueFromObject( obj, "classifier" );
+
         this.file = ( File ) getVariableValueFromObject( obj, "file" );
     }
     
