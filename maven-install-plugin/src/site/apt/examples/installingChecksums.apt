@@ -8,19 +8,19 @@
 
 Creating artifact checksums
 
-  The install plugin has the feature of creating the checksums(MD5, SHA-1)
-  of the artifacts during installation. Checksums are cryptographic hash
-  functions used for checking the integrity of the files. This can be
+  The install plugin can create integrity checksums (MD5, SHA-1)
+  for the artifacts during installation. Checksums are cryptographic hash
+  functions and are used to check the integrity of the associated file. This can be
   activated by setting the <<createChecksum>> parameter to <<true>>.
 
-  In <<<install:install>>> mojo.
+  In the <<<install:install>>> mojo.
 
 +---+
 mvn install -DcreateChecksum=true
 +---+
 
 
-  Can also be done in <<<install:install-file>>> goal.
+  In the <<<install:install-file>>> goal.
 
 +---+
 mvn install:install-file  -Dfile=path-to-your-artifact-jar \

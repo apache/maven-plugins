@@ -10,9 +10,9 @@ Usage
 
 * The <<<install:install>>> Mojo
 
-  In most cases, install:install goal doesnt need any configurations, it
-  needs the project's POM(where information are retrieved) and its artifact file
-  then invoked the <<<install>>> phase of the default build lifecycle.
+  In most cases, install:install goal doesnt need any configuration, it
+  needs the project's POM and the artifact file to be installed during the 
+  <<<install>>> phase of the default build lifecycle.
 
 +---+
 mvn install
@@ -21,9 +21,9 @@ mvn install
 * The <<<install:install-file>>> Mojo
 
   The <<<install:install-file>>> mojo is used primarily for installing artifacts to
-  which were not built by Maven. The project's development team may or may not
-  provide a POM for the artifact. The full usage statement of the install-file
-  mojo can be described as:
+  the local repository which were not built by Maven. The project's development team 
+  may or may not provide a POM for the artifact. Here's a complete example of the
+  install-file mojo:
 
 +---+
 mvn install:install-file -Dfile=your-artifact-1.0.jar \
@@ -32,6 +32,7 @@ mvn install:install-file -Dfile=your-artifact-1.0.jar \
                          [-DartifactId=your-artifact] \
                          [-Dversion=1.0] \
                          [-Dpackaging=jar] \
+                         [-Dclassifier=sources] \
                          [-DgeneratePom=true]
                          [-DcreateChecksum=true]
 +---+
@@ -42,4 +43,7 @@ mvn install:install-file -Dfile=your-artifact-1.0.jar \
     groupId can be considered if the groupId is not specified further for the
     current project or on the command line.
 
+  * the classifier parameter can be used to install secondary artifacts for a project,
+    like a javadoc or sources jar.  If not given, Maven assumes the file is the main
+	artifact for the project.
 
