@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
-<project name="Maven PMD Plugin">
+<project name="Maven Install Plugin">
   <bannerLeft>
     <name>Maven Install Plugin</name>
     <src>http://maven.apache.org/images/apache-maven-project.png</src>
