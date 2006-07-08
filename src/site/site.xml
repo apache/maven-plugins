@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<project name="Maven PMD Plugin">
+  <bannerLeft>
+    <name>Maven Install Plugin</name>
+    <src>http://maven.apache.org/images/apache-maven-project.png</src>
+    <href>http://maven.apache.org/</href>
+  </bannerLeft>
+  <bannerRight>
+    <src>http://maven.apache.org/images/maven-small.gif</src>
+  </bannerRight>
+  <body>
+    <links>
+      <item name="Maven 2" href="http://maven.apache.org/maven2/"/>
+    </links>
+
+    <menu name="Overview">
+      <item name="Overview" href="index.html"/>
+      <item name="Usage" href="usage.html"/>
+      <item name="FAQ" href="faq.html"/>
+    </menu>
+
+    <menu name="Examples">
+      <item name="Custom POM" href="examples/custom-pom-installation.html"/>
+      <item name="Generic POM" href="examples/generic-pom-generation.html"/>
+      <item name="Installing Checksums" href="examples/installingChecksums.html"/>
+      <item name="Updating Release Info" href="examples/updateReleaseInfo.html"/>
+    </menu>
+    ${reports}
+  </body>
+</project>
