@@ -78,6 +78,14 @@ public class InstallFileMojo
     protected String packaging;
 
     /**
+     * Classifier type of the artifact to be installed.  For example, "sources" or "javadoc".
+     * Defaults to none which means this is the project's main jar.
+     *
+     * @parameter expression="${classifier}"
+     */
+    protected String classifier;
+
+    /**
      * The file to be deployed
      *
      * @parameter expression="${file}"
@@ -130,7 +138,8 @@ public class InstallFileMojo
             }
         }
 
-        Artifact artifact = artifactFactory.createArtifact( groupId, artifactId, version, null, packaging );
+        Artifact artifact = artifactFactory.createArtifactWithClassifier(
+                groupId, artifactId, version, packaging, classifier );
 
         // TODO: check if it exists first, and default to true if not
         if ( generatePom )
