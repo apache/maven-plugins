@@ -9,7 +9,7 @@
   <artifactId>maven-pmd-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Maven PMD Plugin</name>
-  <version>2.1</version>
+  <version>2.2-SNAPSHOT</version>
   <inceptionYear>2005</inceptionYear>
   <description>
     A Maven plugin for the PMD toolkit, that produces a report on both code rule violations and detected copy and paste
@@ -64,10 +64,4 @@
       </plugin>
     </plugins>
   </reporting>
-
-  <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-pmd-plugin-2.1</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-pmd-plugin-2.1</developerConnection>
-    <url>https://svn.apache.org/repos/asf/maven/plugins/tags/maven-pmd-plugin-2.1</url>
-  </scm>
 </project>
