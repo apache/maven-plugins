@@ -1,0 +1,62 @@
+ ------
+ Configuring Describe Mojo
+ ------
+ John Casey
+ Maria Odea Ching
+ ------
+ 10 July 2006
+ ------
+
+Configuring Describe Mojo
+
+  Below are other configuration examples for the Describe mojo.
+
+* The <<<plugin>>> Parameter
+
+  The <<<plugin>>> parameter is meant to provide two things: convenience and prefix-based access.
+
+  The convenience comes when specifying a plugin by groupId:artifactId, or by groupId:artifactId:version. Where the more
+  traditional specification of separate fields would mean specifying this:
+
++---+
+mvn help:describe -DgroupId=org.somewhere
+    -DartifactId=some-plugin -Dversion=0.0.0
++---+
+
+  the use of the plugin parameter allows this:
+
++---+
+mvn help:describe -Dplugin=org.somewhere:some-plugin:0.0.0
++---+
+
+  On the other hand, the plugin parameter also offers the option to specify a plugin by its prefix, like this:
+
++---+
+mvn help:describe -Dplugin=help
++---+
+
+* The <<<mojo>>> Parameter
+
+ You can use the <<<mojo>>> parameter of the Describe Mojo to show or display relative information about the particular mojo
+ of the plugin you specified.
+
+ For example, when you execute the following command:
+
++-----+
+mvn help:describe -Dmojo=describe -DgroupId=org.apache.maven.plugins
+    -DartifactId=maven-help-plugin
++-----+
+
+ This would display brief information relative to the Describe Mojo only.
+
+* The <<<full>>> Parameter
+
+ If you want to show or display detailed information about the mojo, you can use the <<<full>>> parameter, as
+ shown below:
+
++-----+
+mvn help:describe -Dmojo=describe -DgroupId=org.apache.maven.plugins
+    -DartifactId=maven-help-plugin -Dfull=true
++-----+
+
+ This would display information such as the mojo implementation, its parameters and component requirements, among others.

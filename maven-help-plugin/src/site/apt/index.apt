@@ -1,0 +1,42 @@
+ ------
+ Introduction
+ ------
+ Maria Odea Ching
+ ------
+ 7 July 2006
+ ------
+
+
+Maven 2 Help Plugin
+
+ The Maven 2 Help Plugin is used to get relative information about a project. It can be used to get a description
+ of a particular plugin, including the plugin's mojos with their parameters and component requirements, the effective pom
+ and effective settings of the current build, and the profiles applied to the current project being built.
+
+* Goals Overview
+
+  The Help plugin has 4 goals:
+
+  * {{{active-profiles-mojo.html}help:active-profiles}} lists the profiles which are currently active for the build.
+
+  * {{{describe-mojo.html}help:describe}} describes the attirbutes of a plugin and/or plugin mojo. For its execution, it requires
+    the groupId and artifactId or the plugin prefix of the plugin to be specified.
+
+  * {{{effective-pom-mojo.html}help:effective-pom}} displays the effective POM for the current build, with the active
+    profiles factored in.
+
+  * {{{effective-settings-mojo.html}help:effective-settings}} prints out the calculated settings for the project, given any
+    profile enhancement and the inheritance of the global settings into the user-level settings.
+
+* Usage
+
+   Instructions on how to use the Help Plugin can be found {{{usage.html}here}}.
+
+* Examples
+
+   To provide you with better understanding on some usages of the Help plugin, you can take a look into the
+   following example(s):
+
+   * {{{examples/describe-configuration.html}Configuring Describe Mojo}}
+
+

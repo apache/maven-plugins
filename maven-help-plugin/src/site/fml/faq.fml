@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<faqs id="FAQ" title="Frequently Asked Questions">
+  <part id="General">
+    <faq id="What is the Maven 2 Help Plugin">
+      <question>What is the Maven 2 Help Plugin?</question>
+      <answer>
+        <p>
+          The Maven 2 Help Plugin can be used to get relative information about a particular project. You can use it
+          to get a description of a specific plugin, or get the effective settings or effective pom of the current project build.
+        </p>
+      </answer>
+    </faq>
+  </part>
+</faqs>
