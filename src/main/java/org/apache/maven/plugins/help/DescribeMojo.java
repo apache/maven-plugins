@@ -1,7 +1,7 @@
 package org.apache.maven.plugins.help;
 
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -190,6 +190,9 @@ public class DescribeMojo
      */
     private boolean full;
 
+    /**
+     * @see org.apache.maven.plugin.AbstractMojo#execute()
+     */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -225,6 +228,12 @@ public class DescribeMojo
         writeDescription( descriptionBuffer );
     }
 
+    /**
+     * Method to write the mojo description into the output file
+     *
+     * @param descriptionBuffer contains the description to be written to the file
+     * @throws MojoExecutionException
+     */
     private void writeDescription( StringBuffer descriptionBuffer )
         throws MojoExecutionException
     {
@@ -266,6 +275,14 @@ public class DescribeMojo
         }
     }
 
+    /**
+     * Method for retrieving the description of the plugin
+     *
+     * @param pi    holds information of the plugin whose description is to be retrieved
+     * @return  a PluginDescriptor where the plugin description is to be retrieved
+     * @throws MojoExecutionException
+     * @throws MojoFailureException
+     */
     private PluginDescriptor lookupPluginDescriptor( PluginInfo pi )
         throws MojoExecutionException, MojoFailureException
     {
@@ -356,6 +373,12 @@ public class DescribeMojo
         return descriptor;
     }
 
+    /**
+     * Method for parsing the plugin parameter
+     *
+     * @param pi    contains information about the plugin whose description is to be retrieved
+     * @throws MojoFailureException
+     */
     private void parsePluginLookupInfo( PluginInfo pi )
         throws MojoFailureException
     {
@@ -405,6 +428,12 @@ public class DescribeMojo
         }
     }
 
+    /**
+     * Method for retrieving the plugin description
+     *
+     * @param pd        contains the plugin description
+     * @param buffer    contains the information to be displayed or printed
+     */
     private void describePlugin( PluginDescriptor pd, StringBuffer buffer )
     {
         String name = pd.getName();
@@ -446,6 +475,12 @@ public class DescribeMojo
         }
     }
 
+    /**
+     * Convenience method for formatting the description.
+     *
+     * @param description   the plugin description
+     * @return a String of the formatted plugin description
+     */
     private String formatDescription( String description )
     {
         if ( description == null )
@@ -461,6 +496,12 @@ public class DescribeMojo
         return result;
     }
 
+    /**
+     * Convenience method for putting the appropriate value to the plugin description
+     *
+     * @param messagePart   the plugin description
+     * @param buffer        contains information to be printed or displayed
+     */
     private void prettyAppend( String messagePart, StringBuffer buffer )
     {
         if ( messagePart != null && messagePart.length() > 0 )
@@ -473,6 +514,12 @@ public class DescribeMojo
         }
     }
 
+    /**
+     * Displays information about the plugin mojo
+     *
+     * @param md        contains the description of the plugin mojo
+     * @param buffer    the displayed output
+     */
     private void describeMojo( MojoDescriptor md, StringBuffer buffer )
     {
         String line = "\n===============================================";
@@ -487,6 +534,13 @@ public class DescribeMojo
         buffer.append( "\n\n" );
     }
 
+    /**
+     * Displays detailed information about the plugin mojo
+     *
+     * @param md                contains the description of the plugin mojo
+     * @param buffer            contains information to be printed or displayed
+     * @param fullDescription   specifies whether all the details about the plugin mojo is to  be displayed
+     */
     private void describeMojoGuts( MojoDescriptor md, StringBuffer buffer, boolean fullDescription )
     {
         buffer.append( "\nDescription:\n\n" );
@@ -541,6 +595,12 @@ public class DescribeMojo
         }
     }
 
+    /**
+     * Method for displaying the component requirements of the plugin mojo
+     *
+     * @param md        contains the description of the plugin mojo
+     * @param buffer    contains information to be printed or displayed
+     */
     private void describeMojoRequirements( MojoDescriptor md, StringBuffer buffer )
     {
         buffer.append( "\n" );
@@ -580,6 +640,12 @@ public class DescribeMojo
         }
     }
 
+    /**
+     * Displays parameter information of the plugin mojo
+     *
+     * @param md        contains the description of the plugin mojo
+     * @param buffer    contains information to be printed or displayed
+     */
     private void describeMojoParameters( MojoDescriptor md, StringBuffer buffer )
     {
         buffer.append( "\n" );
@@ -647,81 +713,145 @@ public class DescribeMojo
         }
     }
 
+    /**
+     *
+     * @return a String of the plugin parameter value
+     */
     public final String getPlugin()
     {
         return plugin;
     }
 
+    /**
+     *
+     * @param plugin    the plugin value to be set
+     */
     public final void setPlugin( String plugin )
     {
         this.plugin = plugin;
     }
 
+    /**
+     *
+     * @return a PluginManager object
+     */
     public final PluginManager getPluginManager()
     {
         return pluginManager;
     }
 
+    /**
+     *
+     * @param pluginManager the plugin manager to be set
+     */
     public final void setPluginManager( PluginManager pluginManager )
     {
         this.pluginManager = pluginManager;
     }
 
+    /**
+     *
+     * @return a String that contains the artifactId
+     */
     public final String getArtifactId()
     {
         return artifactId;
     }
 
+    /**
+     *
+     * @param artifactId    the artifactId to be set
+     */
     public final void setArtifactId( String artifactId )
     {
         this.artifactId = artifactId;
     }
 
+    /**
+     *
+     * @return a String that contains the groupId
+     */
     public final String getGroupId()
     {
         return groupId;
     }
 
+    /**
+     *
+     * @param groupId   the groupId value to be set
+     */
     public final void setGroupId( String groupId )
     {
         this.groupId = groupId;
     }
 
+    /**
+     *
+     * @return an ArtifactRepository object of the local repository
+     */
     public final ArtifactRepository getLocalRepository()
     {
         return localRepository;
     }
 
+    /**
+     *
+     * @param localRepository   the local repository value to be set
+     */
     public final void setLocalRepository( ArtifactRepository localRepository )
     {
         this.localRepository = localRepository;
     }
 
+    /**
+     *
+     * @return a String of the mojo parameter value
+     */
     public final String getMojo()
     {
         return mojo;
     }
 
+    /**
+     *
+     * @param mojo  the mojo parameter value to be set
+     */
     public final void setMojo( String mojo )
     {
         this.mojo = mojo;
     }
 
+    /**
+     *
+     * @return a File object where the description will be written to
+     */
     public final File getOutput()
     {
         return output;
     }
 
+    /**
+     *
+     * @param output    the output file value to be set
+     */
     public final void setOutput( File output )
     {
         this.output = output;
     }
 
+    /**
+     *
+     * @return a MavenProject object of the current build
+     */
     public final MavenProject getProject()
     {
         return project;
     }
 
+    /**
+     *
+     * @param project   the project value to be set
+     */
     public final void setProject( MavenProject project )
     {
         this.project = project;
@@ -737,11 +867,19 @@ public class DescribeMojo
         this.settings = settings;
     }
 
+    /**
+     *
+     * @return a String that contains the value of the version parameter
+     */
     public final String getVersion()
     {
         return version;
     }
 
+    /**
+     *
+     * @param version   the version parameter value to be set
+     */
     public final void setVersion( String version )
     {
         this.version = version;
