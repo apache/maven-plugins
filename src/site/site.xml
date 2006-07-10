@@ -15,7 +15,7 @@
     </links>
 
     <menu name="Overview">
-      <item name="Overview" href="index.html"/>
+      <item name="Introduction" href="index.html"/>
       <item name="Usage" href="usage.html"/>
       <item name="FAQ" href="faq.html"/>
     </menu>
@@ -26,6 +26,7 @@
       <item name="Installing Checksums" href="examples/installingChecksums.html"/>
       <item name="Updating Release Info" href="examples/updateReleaseInfo.html"/>
     </menu>
+    
     ${reports}
   </body>
 </project>
