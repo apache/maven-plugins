@@ -1,5 +1,5 @@
  ------
- Overview
+ Introduction
  ------
  Maria Odea Ching
  ------
@@ -7,30 +7,32 @@
  ------
 
 
-
-Overview
+Maven 2 JXR Plugin
 
  The JXR plugin produces a cross-reference of the project's sources. The generated reports make it easier for the user
  to reference or find specific lines of code. It is also handy when used with the PMD plugin for referencing errors found
  in the code.
 
-
 * Goals Overview
 
   The JXR plugin has 2 goals:
 
-  * {{{plugin-info.html}jxr:jxr}} is used to generate a cross-reference page of the project's main sources. The generated JXR
+  * {{{jxr-mojo.html}jxr:jxr}} is used to generate a cross-reference page of the project's main sources. The generated JXR
   files can be linked to the javadocs of the project.
 
-  * {{{plugin-info.html}jxr:test-jxr}} on the other hand, is used to generate a cross-reference page of the project's test sources.
+  * {{{test-jxr-mojo.html}jxr:test-jxr}} on the other hand, is used to generate a cross-reference page of the project's test sources.
 
 * Usage
 
-   Some basic instructions for configuring and using the mojos of the <<<maven-jxr-plugin>>> can be found in
-   the {{{usage.html}Usage guide}}.
+   Instructions on how to use the JXR Plugin can be found {{{usage.html}here}}.
 
 * Examples
 
-   Sample use-cases for the plugin are available under the Examples menu.
+   To provide you with better understanding on some usages of the Javadoc plugin,  you can take a look into the
+   following examples:
+
+   * {{{examples/aggregate.html}Aggregating JXR Reports for Multi-Projects}}
+
+   * {{{examples/linkjavadoc.html}Linking JXR Files to Javadocs}}
 
 

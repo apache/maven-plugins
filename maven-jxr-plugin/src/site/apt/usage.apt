@@ -1,5 +1,5 @@
  ------
- How To Use
+ Usage
  ------
  Fabrice Bellingard
  <bellingard.NO-SPAM@gmail.com>
@@ -8,7 +8,7 @@
  5 July 2006
  ------
 
-How To Use
+Usage
 
  The JXR plugin generates a cross-reference of the project's sources. Below are the different goals and configuration
  for the plugin.
@@ -20,51 +20,29 @@ How To Use
 
 +-----+
 <project>
-   ...
+  ...
   <build>
-     ...
+    ...
   </build>
-
   <reporting>
-      <plugins>
-          <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-jxr-plugin</artifactId>
-          </plugin>
-      </plugins>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+      </plugin>
+    </plugins>
   </reporting>
-   ...
+  ...
 </project>
 +-----+
 
- The report will be generated when you execute the m2 site plugin.
+ The report will be generated when you execute site.
 
 +-----+
-mvn site:site
+mvn site
 +-----+
 
 * Explicitly Generate JXR Files
-
- To explicitly generate JXR files with specific configuration, set the following in the \<build\> section of your pom.xml:
-
-+-----+
-<project>
-   ...
-  <build>
-      <plugins>
-          <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-jxr-plugin</artifactId>
-              <configuration>
-                  <bottom>Copyright 2006</bottom>
-                  <docTitle>Maven 2 JXR Plugin Reference</docTitle>
-              </configuration>
-          </plugin>
-      </plugins>
-  </build>
-   ...
-</project>
-+-----+
 
  The JXR files for the project's main sources will be executed using this command:
 

@@ -9,7 +9,7 @@
 
 Aggregating JXR Reports for Multi-Projects
 
- The aggregate parameter of the JXR plugin can be used to generate JXR files for multi-module projects. Using this parameter,
+ The <<<aggregate>>> parameter of the JXR plugin can be used to generate JXR files for multi-module projects. Using this parameter,
  you can opt to generate 1 compiled set of JXR files for the whole project (all modules) or generate 1 set of JXR files for
  each module.
 
@@ -72,6 +72,6 @@ Project
 
  When you execute <<<mvn site:site>>> from the parent directory, which is Project, a set of JXR files will be created
  in the target directory of Project where all of the JXR files of the project's submodules are included. Otherwise if
- the aggregate parameter is set to false, a set of JXR files for Module1 will be generated in the target directory of
+ the <<<aggregate>>> parameter is set to false, a set of JXR files for Module1 will be generated in the target directory of
  Module1, another set of JXR files for Module2 will be generated in the target directory of Module2, and so on.
 
