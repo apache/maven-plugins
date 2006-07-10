@@ -59,7 +59,7 @@ Maven 2 Deploy Plugin - Introduction
 
 * Examples
 
-  To provide you with better understanding on some usages of the Plugin Name,
+  To provide you with better understanding on some usages of the deploy plugin,
   you can take a look into the following examples:
 
   <<<Project Deployment:>>>
