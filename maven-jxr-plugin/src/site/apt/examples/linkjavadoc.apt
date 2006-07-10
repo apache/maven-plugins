@@ -16,22 +16,14 @@ Linking JXR Files to Javadocs
   ...
   <reporting>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <configuration>
-          ...
-          <destDir>C:/Project/target/site/javadocs</destDir>
-          ...
-        </configuration>
-      </plugin>
+      ...
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jxr-plugin</artifactId>
         <configuration>
           ...
           <linkJavadoc>true</linkJavadoc>
-          <javadocDir>C:/Project/target/site/javadocs</javadocDir>
+          <javadocDir>/path/to/javadocs</javadocDir>
           ...
         </configuration>
       </plugin>
@@ -44,5 +36,8 @@ Linking JXR Files to Javadocs
 
  The generated JXR pages will have a link named "View Javadoc" that will display the javadoc of the class. In case there
  were no existing javadocs in the specified javadoc directory and no javadocs will be generated (meaning no javadoc plugin
- configuration in the reporting section of the pom), the link will no longer be displayed even if the linkJavadoc parameter
+ configuration in the reporting section of the pom), the link will no longer be displayed even if the <<<linkJavadoc>>> parameter
  is set to true.
+
+ Take note that if the <<<destDir>>> parameter is set in the javadoc plugin configuration, you need to also set the <<<javadocDir>>>
+ parameter of the JXR plugin to the same directory.
