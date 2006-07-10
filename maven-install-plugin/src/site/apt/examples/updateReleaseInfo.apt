@@ -8,4 +8,19 @@
 
 Update the release information of a project
 
-  TODO
+  Updating the release information changes the project's metadata, forcing
+  the current installed project as the release version. Mostly, this
+  parameter is used when installing a plugin that is built from source.
+  This can be activated by setting the <<updateReleaseInfo>> parameter to
+  <<true>>.
+
+  From the project base directory,  invoke the install phase.
+  
++---+
+  mvn install -DupdateReleaseInfo=true
++---+
+
+
+
+
+
