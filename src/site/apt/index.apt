@@ -29,7 +29,7 @@ Maven 2 Javadoc Plugin
 
 * Usage
 
-   Some basic instructions for configuring and using the mojos of the <<<maven-javadoc-plugin>>> can be found {{{usage.html}here}}.
+   Instructions on how to use the Javadoc Plugin can be found {{{usage.html}here}}.
 
 * Examples
 
