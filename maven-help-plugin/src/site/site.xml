@@ -36,7 +36,7 @@
       <item name="Introduction" href="index.html"/>
       <item name="Goals" href="plugin-info.html"/>
       <item name="How To Use" href="usage.html"/>
-      <item name="FAQs" href="faq.html"/>
+      <!--item name="FAQs" href="faq.html"/-->
     </menu>
 
     <menu name="Examples">
