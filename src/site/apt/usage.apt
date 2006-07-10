@@ -1,0 +1,78 @@
+ ------
+ Usage
+ ------
+ John Casey
+ Maria Odea Ching
+ ------
+ 10 July 2006
+ ------
+
+Usage
+
+ Below are the different goals and configuration of the Help plugin.
+
+* The <<<help:active-profiles>>> Mojo
+
+  The <<<active-profiles>>> mojo is used to discover which profiles have been applied to the projects currently being built.
+  For each project in the build session, it will output a list of profiles which have been applied to that project, along
+  with the source of the profile (POM, settings.xml, or profiles.xml).
+
+  Optionally, the output parameter can be specified to divert this output to a file.
+
+  You can execute this mojo using the following command:
+
++-----+
+mvn help:active-profiles -Doutput=/path/to/file
++-----+
+
+* The <<<help:describe>>> Mojo
+
+  The <<<describe>>> mojo is used to discover information about Maven plugins. Given a plugin prefix or groupId, artifactId,
+  and optionally version, the mojo will lookup that plugin and output details about it. If the user also specifies
+  which mojo to describe, the <<describe>> mojo will limit output to the details of that mojo, including parameters.
+
+  Optionally, the output parameter can be specified to divert this output to a file.
+
+  This mojo requires either the groupId and artifactId parameters or the plugin parameter to be specified:
+
++-----+
+mvn help:describe -DgroupId=org.somewhere
+    -DartifactId=some-plugin -Dversion=0.0.0
++-----+
+
+ or
+
++-----+
+mvn help:active-profiles -Dplugin=org.somewhere:some-plugin:0.0.0
++-----+
+
+ (NOTE: version is always optional here.)
+
+* The <<<help:effective-pom>>> Mojo
+
+  The <<<effective-pom>>> mojo is used to make visible the POM that results from the application of interpolation, inheritance,
+  and active profiles. It provides a useful way of removing the guesswork about just what ends up in the POM that Maven uses
+  to build your project. It will iterate over all projects in the current build session, printing the effective POM for each.
+
+  Optionally, the output parameter can be specified to divert this output to a file.
+
+  The mojo can be executedd using the following command:
+
++-----+
+mvn help:effective-profiles -Doutput=/path/to/file
++-----+
+
+* The <<<help:effective-settings>>> Mojo
+
+  The <<<effective-settings>>> mojo is used to view the Settings that Maven actually uses to run the build. This Settings
+  instance is a result of merging the global file with the user's file, with the user's file taking precedence.
+
+  Optionally, the output parameter can be specified to divert this output to a file.
+
+  The mojo can be executedd using the following command:
+
++-----+
+mvn help:effective-settings -Doutput=/path/to/file
++-----+
+
+

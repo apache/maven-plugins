@@ -1,21 +1,7 @@
 package org.apache.maven.plugins.help;
 
-import org.apache.maven.model.Profile;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +16,22 @@ import java.util.List;
  * limitations under the License.
  */
 
-/** Lists the profiles which are currently active for this build.
+import org.apache.maven.model.Profile;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * Lists the profiles which are currently active for this build.
  * 
  * @goal active-profiles
  * @aggregator
@@ -55,6 +56,9 @@ public class ActiveProfilesMojo extends AbstractMojo
      */
     private File output;
 
+    /**
+     * @see org.apache.maven.plugin.AbstractMojo#execute()
+     */
     public void execute()
         throws MojoExecutionException
     {
@@ -80,6 +84,12 @@ public class ActiveProfilesMojo extends AbstractMojo
         }
     }
     
+    /**
+     * Method for writing the output file of the active profiles information.
+     *
+     * @param message   the output to be written to the file
+     * @throws MojoExecutionException
+     */
     private void writeFile( StringBuffer message ) 
         throws MojoExecutionException
     {
@@ -122,6 +132,12 @@ public class ActiveProfilesMojo extends AbstractMojo
         }
     }
 
+    /**
+     * Method to get the active profiles for the project
+     *
+     * @param project   the current project
+     * @param message   the object where the information will be appended to
+     */
     private void getActiveProfileStatement( MavenProject project, StringBuffer message )
     {
         List profiles = project.getActiveProfiles();
@@ -153,6 +169,11 @@ public class ActiveProfilesMojo extends AbstractMojo
         message.append( "\n" );
     }
 
+    /**
+     * Setter method for the list of projects.
+     *
+     * @param projects
+     */
     public final void setProjects( List projects )
     {
         this.projects = projects;

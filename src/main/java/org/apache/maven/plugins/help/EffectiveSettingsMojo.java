@@ -1,7 +1,7 @@
 package org.apache.maven.plugins.help;
 
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 
-/** Print out the calculated settings for this project, given any profile enhancement and 
+/**
+ * Print out the calculated settings for this project, given any profile enhancement and 
  *  the inheritance of the global settings into the user-level settings.
  *  
  * @goal effective-settings
@@ -53,6 +54,9 @@ public class EffectiveSettingsMojo
      */
     private String output;
 
+    /**
+     * @see org.apache.maven.plugin.AbstractMojo#execute() 
+     */
     public void execute()
         throws MojoExecutionException
     {

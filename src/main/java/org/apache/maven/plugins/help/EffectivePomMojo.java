@@ -1,21 +1,7 @@
 package org.apache.maven.plugins.help;
 
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.project.MavenProject;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +16,22 @@ import java.util.List;
  * limitations under the License.
  */
 
-/** Display the effective POM for this build, with the active profiles factored in.
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProject;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * Display the effective POM for this build, with the active profiles factored in.
  * 
  * @goal effective-pom
  * @aggregator
@@ -56,6 +57,9 @@ public class EffectivePomMojo
      */
     private File output;
 
+    /**
+     * @see org.apache.maven.plugin.AbstractMojo#execute()
+     */
     public void execute()
         throws MojoExecutionException
     {
@@ -122,6 +126,13 @@ public class EffectivePomMojo
         }
     }
 
+    /**
+     * Method for displaying the effective pom information of the current build
+     *
+     * @param project   the project of the current build
+     * @param message   the information to be displayed
+     * @throws MojoExecutionException
+     */
     private void getEffectivePom( MavenProject project, StringBuffer message ) 
         throws MojoExecutionException
     {

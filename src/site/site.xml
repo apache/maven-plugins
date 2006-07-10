@@ -2,7 +2,7 @@
 
 <!--
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,11 +32,15 @@
       <item name="Maven 2" href="http://maven.apache.org/maven2/"/>
     </links>
 
-    <menu name="Goals">
-      <item name="active-profiles" href="/active-profiles-mojo.html"/>
-      <item name="describe" href="/describe-mojo.html"/>
-      <item name="effective-pom" href="/effective-pom-mojo.html"/>
-      <item name="effective-settings" href="/effective-settings-mojo.html"/>
+    <menu name="Overview">
+      <item name="Introduction" href="index.html"/>
+      <item name="Goals" href="plugin-info.html"/>
+      <item name="How To Use" href="usage.html"/>
+      <item name="FAQs" href="faq.html"/>
+    </menu>
+
+    <menu name="Examples">
+      <item name="Configuring Describe Mojo" href="/examples/describe-configuration.html"/>
     </menu>
     ${reports}
   </body>
