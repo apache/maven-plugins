@@ -1,0 +1,36 @@
+ ------
+ Maven 2 War Plugin - Basic usage
+ ------
+ Pete Marvin King
+ ------
+ 27 June 2006
+ 
+Overview
+
+ The war plugin is responsible for collecting all artifact dependencies, classes
+ and resources of the web application and packaging them into a web application archive.
+ 
+Supported goals
+
+ {{{war-mojo.html}war:war}} is the default goal invoked during the package phase for projects with a package type of war.
+ 
+ {{{exploded-mojo.html}war:exploded}} is generally used to speed up testing during the developement phase by creating
+ an exploded war on specified directory.    
+ 
+ {{{inplace-mojo.html}war:inplace}} another variation of the war:explode the war is instead generated in the web source directory
+ which is <<<src/main/webapp>>> by default.
+ 
+ See {{{usage.html}usage section}} for the basic usage.
+ 
+Example configurations :
+ 
+ *{{{examples/adding-filtering-webresources.html}Adding and/or filtering webResources}}
+ 
+ *{{{examples/war-overlay.html}War overlays}}
+ 
+ *{{{examples/war-manifest-guide.html}Managing your war manifest}}
+ 
+Related links
+ 
+ {{{http://maven.apache.org/guides/mini/guide-archive-configuration.html}Exclusion of Maven Descriptors}}
+ 
