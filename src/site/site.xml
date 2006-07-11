@@ -33,9 +33,21 @@
     </links>
 
     <menu name="Overview">
-      <item name="Introduction" href="introduction.html"/>
-      <item name="How to Use" href="howto.html"/>
+      <item name="Introduction" href="index.html"/>
+      <item name="Goals" href="plugin-info.html"/>
+      <item name="Usage" href="usage.html"/>
+      <item name="Library Definition" href="library.html"/>
+      <item name="FAQ" href="faq.html"/>
     </menu>
+
+    <menu name="Examples">
+      <item name="Attach Library Sources And/Or Javadocs" href="examples/attach_library_src_doc.html"/>
+      <item name="Customize Your Libraries" href="examples/customize_libraries.html"/>
+      <item name="Enable JVM 5 Features" href="examples/enable_jvm_5_features.html"/>
+      <item name="Disable Links Between Modules" href="examples/prevent_module_references.html"/>
+      <item name="Provide Deployment Descriptor File" href="examples/provide_deployment_descriptor_file.html"/>
+    </menu>
+
     ${reports}
   </body>
 </project>

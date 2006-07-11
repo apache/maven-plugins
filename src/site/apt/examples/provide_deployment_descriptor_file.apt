@@ -1,0 +1,53 @@
+ ------
+ Examples
+ ------
+ Edwin Punzalan
+ ------
+ 11 July 2006
+ ------
+
+
+Provide Deployment Descriptor File
+
+  The default deployment descriptor files are:
+
+  * <<<src/main/webapp/WEB-INF/web.xml>>> for war projects.
+
+  * <<<target/application.xml>>> for ear projects.
+
+  * <<<src/main/resources/META-INF/ejb-jar.xml>>> for ejb projects.
+
+  []
+
+  In cases where you want to provide your own descriptor files or if the
+  descriptor files are located somewhere else, you can use the following:
+
+  In the command-line:
+
++-----
+mvn idea:idea -DdeploymentDescriptorFile=src/webapp/WEB-INF/web.xml
++-----
+
+  Or in your pom.xml:
+
++-----
+<project>
+  [...]
+  <build>
+    [...]
+    <plugins>
+      [...]
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-idea-plugin</artifactId>
+        <configuration>
+          <deploymentDescriptorFile>src/webapp/WEB-INF/web.xml</deploymentDescriptorFile>
+        </configuration>
+      </plugin>
+      [...]
+    </plugins>
+    [...]
+  </build>
+  [...]
+</project>
++-----

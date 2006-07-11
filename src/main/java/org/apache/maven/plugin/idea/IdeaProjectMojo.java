@@ -35,6 +35,8 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 /**
+ * Creates the Project files (*.ipr) for IntelliJ Idea
+ *
  * @author Edwin Punzalan
  * @goal project
  * @execute phase="generate-sources"

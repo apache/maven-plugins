@@ -47,6 +47,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * Creates the module (*.iml) files for IntelliJ Idea
+ *
  * @author Edwin Punzalan
  * @goal module
  * @execute phase="generate-sources"
@@ -64,9 +66,7 @@ public class IdeaModuleMojo
     private List reactorProjects;
 
     /**
-     * @parameter expression="${component.org.apache.maven.artifact.manager.WagonManager}"
-     * @required
-     * @readonly
+     * @component
      */
     private WagonManager wagonManager;
 
@@ -78,6 +78,8 @@ public class IdeaModuleMojo
     private boolean linkModules;
 
     /**
+     * Specify the location of the deployment descriptor file, if one is provided
+     *
      * @parameter expression="${deploymentDescriptorFile}"
      */
     private String deploymentDescriptorFile;
@@ -164,6 +166,8 @@ public class IdeaModuleMojo
     private static Map attemptedDownloads = new HashMap();
 
     /**
+     * Tell IntelliJ IDEA that this module is an IntelliJ IDEA Plugin
+     *
      * @parameter default-value="false"
      */
     private boolean ideaPlugin;
@@ -176,7 +180,7 @@ public class IdeaModuleMojo
                            WagonManager wagonManager, boolean linkModules, boolean useFullNames,
                            boolean downloadSources, String sourceClassifier, boolean downloadJavadocs,
                            String javadocClassifier, Library[] libraries, Set macros, String exclude,
-                           boolean useShortDependencyNames )
+                           boolean useShortDependencyNames, String deploymentDescriptorFile, boolean ideaPlugin )
     {
         super.initParam( project, artifactFactory, localRepo, artifactResolver, artifactMetadataSource, log,
                          overwrite );
@@ -204,6 +208,10 @@ public class IdeaModuleMojo
         this.exclude = exclude;
 
         this.dependenciesAsLibraries = useShortDependencyNames;
+
+        this.deploymentDescriptorFile = deploymentDescriptorFile;
+
+        this.ideaPlugin = ideaPlugin;
     }
 
     /**
