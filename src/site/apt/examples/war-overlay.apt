@@ -11,8 +11,6 @@ Introduction
  for war artifacts. Instead, war artifacts are overlayed on the war source. 
  No configurations is necessary.
  
- <<Warning : Overlayed war files will overwrite the files in your war.>> 
- 
  To demonstrate, given a project structure
  
 +-----------------+
