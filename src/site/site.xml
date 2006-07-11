@@ -33,8 +33,14 @@
     </links>
 
     <menu name="Overview">
-      <item name="Introduction" href="/introduction.html" />              
-      <item name="Configuration" href="/configuration.html"/>
+      <item name="Introduction" href="index.html"/>
+      <item name="Goals" href="plugin-info.html"/>
+      <item name="Usage" href="usage.html"/>
+      <!--item name="FAQ" href="faq.html"/-->
+    </menu>
+
+    <menu name="Examples">
+      <item name="Configuring Source Plugin" href="/examples/configureplugin.html"/>
     </menu>
     ${reports}
   </body>

@@ -1,0 +1,32 @@
+ ------
+ Configuring Source Plugin
+ ------
+ Maria Odea Ching
+ ------
+ 11 July 2006
+ ------
+
+Configuring Source Plugin
+
+ To customize the configuration of the plugin, you can change its configuration parameters in your POM, as shown below:
+
++-----+
+<project>
+  ...
+  <build>
+    <groupId>org.apache.maven.plugin</groupId>
+    <artifactId>maven-source-plugin</artifactId>
+    <configuration>
+      <outputDirectory>/absolute/path/to/the/output/directory</outputDirectory>
+      <finalName>filename-of-generated-jar-file</finalName>
+      <attach>false</attach>
+    </configuration>
+  </build>
+  ...
+</project>
++-----+
+
+ The generated jar file will hold the value of the <<<finalName>>> plus "-sources" if it is the main sources. Otherwise,
+ it would be <<<finalName>>> plus "-test-sources" if it is the test sources. It would be generated in the specified
+ <<<outputDirectory>>>. The <<<attach>>> parameter specifies that the produced jar file will be attached to the project
+ artifact.
