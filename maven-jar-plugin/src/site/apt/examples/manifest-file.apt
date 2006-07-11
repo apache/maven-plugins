@@ -1,0 +1,36 @@
+ ------
+ Using your own manifest file
+ ------
+ Dennis Lundberg
+ ------
+ 12 July 2006
+ ------
+
+Using your own manifest file
+
+  It is sometimes useful to use your own hand crafted manifest file. You can
+  do this with this plugin. To use the manifest file
+  <<<src/main/resources/META-INF/MANIFEST.MF>>> put this configuration in your
+  <<<pom.xml>>>:
+
++-----------------+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        ...
+        <configuration>
+          <archive>
+            <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
+          </archive>
+        </configuration>
+        ...
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++-----------------+

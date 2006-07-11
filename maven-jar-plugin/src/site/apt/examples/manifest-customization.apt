@@ -1,0 +1,58 @@
+ ------
+ Manifest customization
+ ------
+ Dennis Lundberg
+ ------
+ 12 July 2006
+ ------
+
+Manifest customization
+
+  By default a manifest will contain something like the following:
+
++-----------------+
+  Manifest-Version: 1.0
+  Built-By: ${user.name}
+  Created-By: Apache Maven
+  Build-Jdk: ${java.version}
+  Extension-Name: ${project.artifactId}
+  Specification-Vendor: ${project.organization.name}
+  Implementation-Vendor: ${project.organization.name}
+  Implementation-Title: ${project.description}
+  Implementation-Version: ${project.version}
++-----------------+
+
+  Configuration can be done using the <<<archive>>> element. Below you will
+  find some of the configuration options that are available. For more info see
+  the
+  {{{http://maven.apache.org/ref/current/maven-archiver/apidocs/org/apache/maven/archiver/MavenArchiveConfiguration.html}MavenArchiveConfiguration Javadocs}}.
+
++-----------------+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        ...
+        <configuration>
+          <archive>
+            <index>true</index>
+            <manifest>
+              <addClasspath>true</addClasspath>
+            </manifest>
+            <manifestEntries>
+              <mode>development</mode>
+              <url>${pom.url}</url>
+              <key>value</key>
+            </manifestEntries>
+          </archive>
+        </configuration>
+        ...
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++-----------------+
