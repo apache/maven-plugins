@@ -3,16 +3,16 @@
  ------
  Maria Odea Ching
  ------
- 20 June 2006
+ June 2006
  ------
 
 
 Configuring Stylesheets
 
- If no custom stylesheet is specified in the stylesheetfile parameter, the stylesheet parameter will indicate
+ If no custom stylesheet is specified in the \<stylesheetfile\> parameter, the \<stylesheet\> parameter will indicate
  which stylesheet will be used--the stylesheet included in the maven javadoc plugin or the default stylesheet used by
- the javadoc tool. "maven" indicates the maven javadoc plugin stylesheet, while "java" indicates the default javadoc
- tool stylesheet. It defaults to "java" if no value is indicated.
+ the javadoc tool. <<maven>> indicates the maven javadoc plugin stylesheet, while <<java>> indicates the default javadoc
+ tool stylesheet. The default is <<java>> if not specified.
 
 +-----+
 <project>

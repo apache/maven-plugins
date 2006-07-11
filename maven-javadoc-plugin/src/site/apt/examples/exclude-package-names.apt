@@ -1,0 +1,35 @@
+ ------
+ Excluding Packages
+ ------
+ Maria Odea Ching
+ ------
+ June 2006
+ ------
+
+
+Excluding Packages
+
+ To exclude specific packages from the javadoc, use \<excludePackageNames\> as shown below. The parameter
+ accepts wildcard (*) characters in its value but the wildcards should either be at the start or the end of the package
+ name. If more than one package is to be excluded, each package name must be separated either with a ':', ',' or ';'.
+
++-----+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          ...
+          <excludePackageNames>*.internal:org.acme.exclude1.*:org.acme.exclude2</excludePackageNames>
+          ...
+        </configuration>
+      </plugin>
+    </plugins>
+  ...
+  </build>
+  ...
+</project>
++-----+
