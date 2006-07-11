@@ -1,13 +1,40 @@
  ------
- Maven 2 JAR Plugin
+ Introduction
+ ------
+ Dennis Lundberg
+ ------
+ 12 July 2006
  ------
 
-Maven 2 JAR Plugin
 
-  This plugin provides the capability to manipulate jars. Currently it can create jars for your project sources or tests classes. To achieve this use
-"jar:jar" or "jar:test-jar".
+Maven 2 Jar Plugin
 
-  It also provides the capability to sign and verify a signed jar file with the goals "jar:sign" and "jar:sign-verify".
+  This plugin provides the capability to build and sign jars.
 
-  To learn how to use the plugin, click {{{usage.html}here}}.
+* Goals Overview
 
+  * {{{jar-mojo.html}jar:jar}} create a jar file for your project sources.
+
+  * {{{test-jar-mojo.html}test-jar:jar}} create a jar file for your project test classes.
+
+  * {{{sign-mojo.html}jar:sign}} sign a jar file.
+
+  * {{{sign-verify-mojo.html}jar:sign-verify}} verify a signed jar file.
+
+  []
+
+* Usage
+
+  Instructions on how to use the Maven 2 Jar Plugin can be found {{{usage.html}here}}.
+
+  You might also want to consult the {{{http://maven.apache.org/guides/mini/guide-manifest.html}Guide
+  to Working with Manifests}}.
+
+* Examples
+
+  To provide you with better understanding of some usages of the Maven 2 Jar Plugin,
+  you can take a look at the following examples:
+
+  * {{{examples/manifest-customization.html}Manifest customization}}
+
+  * {{{examples/manifest-file.html}Using your own manifest file}}

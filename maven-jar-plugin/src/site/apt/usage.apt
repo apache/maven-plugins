@@ -1,74 +1,47 @@
  ------
- Maven 2 JAR Plugin
+ Usage
+ ------
+ Jerome Lacoste
+ Dennis Lundberg
+ ------
+ 12 July 2006
  ------
 
-How to use
+Usage
 
- Brief examples on how to use the jar:jar, jar:sign and jar:sign-verify goals.
+ Some brief examples on how to use this plugin. If you want to use advanced
+ configurations you should have a look at
+ {{{http://maven.apache.org/ref/current/maven-archiver/apidocs/org/apache/maven/archiver/MavenArchiveConfiguration.html}the Javadocs for MavenArchiveConfiguration}}.
  
-* How to use jar:jar
+* How to build a jar file
 
   If the packaging of your project is set to 'jar', this plugin is executed
   whenever it passes the "package" phase. Have it executed
   using the command below from your project:
 
--------------------
++-----------------+
   mvn package
--------------------
++-----------------+
 
-  From your project's target directory you'll able to see the generated jar file.
-
-
-* Manifest customization
-
-  By default a manifest will contain something like the following
-
--------------------
-  Manifest-Version: 1.0
-  Built-By: ${user.name}
-  Created-By: Apache Maven
-  Build-Jdk: ${java.version}
-  Extension-Name: ${project.artifactId}
-  Specification-Vendor: ${project.organization.name}
-  Implementation-Vendor: ${project.organization.name}
-  Implementation-Title: ${project.description}
-  Implementation-Version: ${project.version}
--------------------
-
-  Configuration can be done using the <<<archive>>> element. See the
-  {{{http://maven.apache.org/ref/current/maven-archiver/apidocs/org/apache/maven/archiver/MavenArchiveConfiguration.html}maven archive reference}}.
-
--------------------
-  <configuration>
-    <archive>
-      <index>true</index>
-      <manifest>
-        <addClasspath>true</addClasspath>
-      </manifest>
-      <manifestEntries>
-        <mode>development</mode>
-        <url>${pom.url}</url>
-        <key>value</key>
-      </manifestEntries>
-    </archive>
-  </configuration>
--------------------
+  In your project's target directory you'll able to see the generated jar file.
 
 
-* How to configure jar:sign using pom.xml
+* How to sign a jar file
 
   If you need to sign a jar, when using the 'jar' packaging, you just need to configure
-  the sign goal appropriately for the signing to occur automatically during the package phase.
+  the sign goal appropriately in your <<<pom.xml>>> for the signing to occur
+  automatically during the package phase.
 
   Note that you can automatically verify a jar after signing it.
 
--------------------
++-----------------+
 <project>
   ...
   <packaging>jar</packaging>
   ...
   <build>
     <plugins>
+      ...
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
@@ -83,34 +56,36 @@ How to use
            <keystore>/path/to/your/keystore</keystore>
            <alias>youralias</alias>
            <storepass>yourstorepassword</storepass>
-           <!--signedjar>${project.build.directory}/signed/${project.build.finalName}.jar</signedjar-->
+           <signedjar>${project.build.directory}/signed/${project.build.finalName}.jar</signedjar>
            <verify>true</verify>
         </configuration>
       </plugin>
+      ...
     </plugins>
   </build>
+  ...
 </project>
--------------------
++-----------------+
 
-  If you do not specify the signedjar file, your jar will be signed in-place.
-  If you do specify it, the program will attempt to create the resulting containing directory.
+  If you do not specify the \<signedjar\> file, your jar will be signed in-place.
+  If you do specify it, the plugin will attempt to create the resulting containing directory.
 
-* How to use jar:sign specifying parameters on the command line
+* How to sign a jar file specifying parameters on the command line
 
--------------------
++-----------------+
   mvn jar:sign -Dkeystore=/path/to/your/keystore -Dstorepass=yourstorepassword -Dalias=youralias
--------------------
++-----------------+
 
-* How to use jar:sign-verify specifying parameters on the command line
+* How to verify a signed jar file specifying parameters on the command line
 
--------------------
++-----------------+
   mvn jar:sign-verify [-Djarpath=/path/to/your/signedjar] [-Dverbose=true [-Dcheckcerts=true] ]
--------------------
++-----------------+
 
 * How to disable jar signing
 
--------------------
++-----------------+
   mvn ... -Dmaven.jar.skip.sign=true
--------------------
++-----------------+
 
   For full documentation, click {{{plugin-info.html}here}}.
