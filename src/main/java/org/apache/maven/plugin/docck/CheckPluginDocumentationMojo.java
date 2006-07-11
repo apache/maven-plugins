@@ -231,7 +231,6 @@ public class CheckPluginDocumentationMojo
 
         list.add( "maven-javadoc-plugin" );
         list.add( "maven-jxr-plugin" );
-        list.add( "maven-changelog-plugin" );
 
         return list;
     }
