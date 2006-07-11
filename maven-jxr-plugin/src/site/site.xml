@@ -15,7 +15,9 @@
       <item name="Introduction" href="index.html"/>
       <item name="Goals" href="plugin-info.html"/>
       <item name="Usage" href="usage.html"/>
+<!-- None yet
       <item name="FAQs" href="faq.html"/>
+-->
     </menu>
 
     <menu name="Examples">
