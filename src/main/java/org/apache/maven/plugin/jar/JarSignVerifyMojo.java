@@ -1,7 +1,7 @@
 package org.apache.maven.plugin.jar;
 
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License" );
  * you may not use this file except in compliance with the License.
@@ -51,6 +51,8 @@ public class JarSignVerifyMojo
     extends AbstractMojo
 {
     /**
+     * The working directory in which the jarsigner executable will be run.
+     *
      * @parameter expression="${workingdir}" default-value="${basedir}"
      * @required
      */
@@ -81,7 +83,7 @@ public class JarSignVerifyMojo
     private File jarPath;
 
     /**
-     * Check certificates. Requires {@link #setVerbose()}.
+     * Check certificates. Requires {@link #setVerbose(boolean)}.
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/jarsigner.html#Options">options</a>.
      *
      * @parameter expression="${checkcerts}" default-value="false"
