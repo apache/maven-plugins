@@ -62,7 +62,7 @@ Maven 2 Deploy Plugin - Introduction
   To provide you with better understanding on some usages of the deploy plugin,
   you can take a look into the following examples:
 
-  <<<Project Deployment:>>>
+  <Project Deployment:>
 
   * {{{examples/deploy-ftp.html}Deployment with FTP}}
 
@@ -70,7 +70,7 @@ Maven 2 Deploy Plugin - Introduction
 
   []
 
-  <<<File Deployment:>>>
+  <File Deployment:>
 
   * {{{examples/disabling-generic-pom.html}Disable the generation of pom}}
 
