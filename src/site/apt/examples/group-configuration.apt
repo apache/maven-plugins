@@ -4,13 +4,13 @@
  Vincent Siveton
  Maria Odea Ching
  ------
- 20 June 2006
+ June 2006
  ------
 
 
 Grouping Packages
 
- To set a grouping for different packages, set the configuration specified below in your pom:
+ To set a grouping for different packages, use the \<groups\> configuration in your pom:
 
 +-----+
 <project>

@@ -35,17 +35,17 @@
 
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
-      <item name="Goals" href="plugin-info.html"/>      
       <item name="Usage" href="usage.html"/>
-      <item name="FAQs" href="faq.html"/>
+      <item name="Goals" href="plugin-info.html"/>      
+      <item name="FAQ" href="faq.html"/>
     </menu>
     <menu name="Examples">
-      <item name="Aggregating Javadocs for Multi-Projects" href="/examples/aggregate.html"/>
-      <item name="Using Alternate Doclet" href="/examples/alternatedoclet.html"/>
-      <item name="Excluding Packages" href="/examples/excludepackagenames.html"/>
-      <item name="Grouping Packages" href="/examples/groupconfiguration.html"/>
-      <item name="Configuring Stylesheets" href="/examples/stylesheetconfiguration.html"/>
-      <item name="Configuring Custom Javadoc Tags" href="/examples/tagconfiguration.html"/>
+      <item name="Aggregating Javadocs" href="/examples/aggregate.html"/>
+      <item name="Using Alternate Doclets" href="/examples/alternate-doclet.html"/>
+      <item name="Excluding Packages" href="/examples/exclude-package-names.html"/>
+      <item name="Grouping Packages" href="/examples/group-configuration.html"/>
+      <item name="Configuring Stylesheets" href="/examples/stylesheet-configuration.html"/>
+      <item name="Configuring Custom Tags" href="/examples/tag-configuration.html"/>
     </menu>
     ${reports}
   </body>
