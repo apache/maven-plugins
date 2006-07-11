@@ -8,19 +8,15 @@
 
 Update the release information of a project
 
-  Updating the release information changes the project's metadata, forcing
-  the current installed project as the release version. Mostly, this
-  parameter is used when installing a plugin that is built from source.
-  This can be activated by setting the <<updateReleaseInfo>> parameter to
-  <<true>>.
+  Updating the release information changes the project's maven-metadata.xml
+  in the local repository, forcing the current installed version as the latest
+  release version. This parameter is most useful when installing a plugin
+  built from source so it can be used by other projects without explicitly
+  asking for the latest SNAPSHOT version.
 
-  From the project base directory,  invoke the install phase.
-  
+  This can be activated by setting the <<updateReleaseInfo>> parameter to <<true>>
+  when installing.
+
 +---+
   mvn install -DupdateReleaseInfo=true
 +---+
-
-
-
-
-
