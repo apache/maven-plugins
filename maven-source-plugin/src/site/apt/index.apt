@@ -1,0 +1,35 @@
+ ------
+ Introduction
+ ------
+ Maria Odea Ching
+ ------
+ 11 July 2006
+ ------
+
+
+Maven 2 Source Plugin
+
+ The Maven 2 Source Plugin creates a jar archive of the source files of the current project. The jar file is, by default,
+ generated in the project's target directory.
+
+* Goals Overview
+
+   The Source Plugin has two goals:
+
+   * {{{jar-mojo.html}source:jar}} is used to bundle the main sources of the project into a jar file.
+
+   * {{{test-jar-mojo.html}source:test-jar}} on the other hand, is used to bundle the test sources of the project into a
+     jar archive.
+
+* Usage
+
+   Instructions on how to use the Source Plugin can be found {{{usage.html}here}}.
+
+* Examples
+
+   To provide you with better understanding on some usages of the Source plugin, you can take a look into the
+   following examples:
+
+   * {{{examples/configureplugin.html}Configuring Source Plugin}} 
+
+
