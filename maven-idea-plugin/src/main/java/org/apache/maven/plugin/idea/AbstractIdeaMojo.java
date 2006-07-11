@@ -82,9 +82,7 @@ public abstract class AbstractIdeaMojo
     protected boolean overwrite;
 
     /**
-     * @parameter expression="${component.org.apache.maven.artifact.factory.ArtifactFactory}"
-     * @required
-     * @readonly
+     * @component
      */
     protected ArtifactFactory artifactFactory;
 
@@ -96,7 +94,7 @@ public abstract class AbstractIdeaMojo
     protected ArtifactRepository localRepo;
 
     /**
-     * @parameter expression="${component.org.apache.maven.artifact.resolver.ArtifactResolver}"
+     * @component
      */
     protected ArtifactResolver artifactResolver;
 

@@ -1,0 +1,71 @@
+ ------
+ Examples
+ ------
+ Edwin Punzalan
+ ------
+ 10 July 2006
+ ------
+
+
+Customize the Project's Libraries
+
+  If you do not want to use the packaged artifacts in your local repository and
+  would want to use an alternate url, you can use:
+
++-----
+<project>
+  [...]
+  <build>
+    [...]
+    <plugins>
+      [...]
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-idea-plugin</artifactId>
+        <configuration>
+          <libraries>
+            <library>
+              <name>junit</name>
+              <sources>file://C:/junit/src/main/java</sources>
+              <classes>file://C:/junit/target/classes</classes>
+            </library>
+          </libraries>
+        </configuration>
+      </plugin>
+      [...]
+    </plugins>
+    [...]
+  </build>
+  [...]
+</project>
++-----
+
+  Or to exclude a dependency from appearing on IntelliJ Idea's list of
+  Libraries, you can do:
+
++-----
+<project>
+  [...]
+  <build>
+    [...]
+    <plugins>
+      [...]
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-idea-plugin</artifactId>
+        <configuration>
+          <libraries>
+            <library>
+              <name>junit</name>
+              <exclude>true</exclude>
+            </library>
+          </libraries>
+        </configuration>
+      </plugin>
+      [...]
+    </plugins>
+    [...]
+  </build>
+  [...]
+</project>
++-----
