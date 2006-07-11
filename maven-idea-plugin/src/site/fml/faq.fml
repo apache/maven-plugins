@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<faqs id="FAQ" title="Frequently Asked Questions">
+ <part id="General">
+   <faq id="1">
+     <question>How does the idea plugin work on multi-project</question>
+     <answer>
+       <p>
+         Maven IDEA Plugin, by default, creates the project files (*.ipr) and
+         the workspace files (*.iws) from where the root pom is located. Then
+         module files (*.iml) are created for each of the projects inside the
+         reactor.
+       </p>
+       <p>
+         If some projects depend on another project in the reactor, then the
+         reference to the project is given instead of the hard-references to
+         the local repository copies of the artifacts.
+       </p>
+     </answer>
+   </faq>
+ </part>
+</faqs>
