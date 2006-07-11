@@ -1,7 +1,7 @@
 package org.apache.maven.plugin.jar;
 
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License" );
  * you may not use this file except in compliance with the License.
@@ -58,6 +58,8 @@ public class JarSignMojo
     private boolean skip;
 
     /**
+     * The working directory in which the jarsigner executable will be run.
+     *
      * @parameter expression="${workingdir}" default-value="${basedir}"
      * @required
      */

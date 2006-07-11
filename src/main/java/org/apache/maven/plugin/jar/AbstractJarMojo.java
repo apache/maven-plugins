@@ -1,7 +1,7 @@
 package org.apache.maven.plugin.jar;
 
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,7 +74,9 @@ public abstract class AbstractJarMojo
     private MavenProject project;
 
     /**
-     * The maven archiver to use.
+     * The maven archive configuration to use.
+     *
+     * See <a href="http://maven.apache.org/ref/current/maven-archiver/apidocs/org/apache/maven/archiver/MavenArchiveConfiguration.html">the Javadocs for MavenArchiveConfiguration</a>.
      *
      * @parameter
      */
