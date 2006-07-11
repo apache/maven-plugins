@@ -7,25 +7,25 @@
  ------
 
 
-
 Maven 2 Javadoc Plugin
 
  The Javadoc Plugin uses the Javadoc tool to generate javadocs for the specified project. For more information about the
  standard Javadoc tool, see {{{http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html}here}}.
 
- The Javadoc Plugin gets the parameter values  that will be used from the plugin configuration specified in the pom.
+ The Javadoc Plugin gets the parameter values that will be used from the plugin configuration specified in the pom.
  When no configuration values are set, the plugin sets default values instead and then executes the Javadoc tool.
- You can also use the plugin to generate javadocs then package them in a jar file.
+ You can also use the plugin to package the generated javadocs into a jar file for distribution.
 
 * Goals Overview
 
    The Javadoc Plugin has two goals:
 
-   * {{{javadoc-mojo.html}javadoc:javadoc}} is used to generate the javadoc files for the project. It uses the standard
-     Javadoc tool to generate the javadocs and supports the parameters used by the tool.
+   * {{{javadoc-mojo.html}javadoc:javadoc}} generates the javadoc files for the project. It executes the standard
+     Javadoc tool and supports the parameters used by the tool.
 
-   * {{{jar-mojo.html}javadoc:jar}} is used to create an archive file of the generated javadocs. It is mostly used when
-     releasing to publish to the repository.
+   * {{{jar-mojo.html}javadoc:jar}} creates an archive file of the generated javadocs. It is used during
+     the release process to create the javadoc artifact for the project's release.  This artifact is uploaded
+     to the remote repository along with the project's compiled binary and source archive.
 
 * Usage
 
@@ -33,20 +33,19 @@ Maven 2 Javadoc Plugin
 
 * Examples
 
-   To provide you with better understanding on some usages of the Javadoc plugin,  you can take a look into the
-   following examples:
+   The following examples show how to use the Javadoc Plugin in more advanced usecases:
 
    * {{{examples/aggregate.html}Aggregating Javadocs for Multi-Projects}}
 
-   * {{{examples/alternatedoclet.html}Using Alternate Doclet}}
+   * {{{examples/alternate-doclet.html}Using Alternate Doclet}}
 
-   * {{{examples/excludepackagenames.html}Excluding Packages}}
+   * {{{examples/exclude-package-names.html}Excluding Packages}}
 
-   * {{{examples/groupconfiguration.html}Grouping Packages}}
+   * {{{examples/group-configuration.html}Grouping Packages}}
 
-   * {{{examples/stylesheetconfiguration.html}Configuring Stylesheets}}
+   * {{{examples/stylesheet-configuration.html}Configuring Stylesheets}}
 
-   * {{{examples/tagconfiguration.html}Configuring Custom Javadoc Tags}}
+   * {{{examples/tag-configuration.html}Configuring Custom Javadoc Tags}}
 
 
 

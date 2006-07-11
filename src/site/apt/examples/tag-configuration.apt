@@ -4,13 +4,13 @@
  Vincent Siveton
  Maria Odea Ching
  ------
- 20 June 2006
+ June 2006
  ------
 
 
 Configuring Custom Javadoc Tags
 
- To set a custom tag used in the javadoc, the following configuration must be set in the pom:
+ You can configure any custom tags used in your javadoc via the \<tags\> element:
 
 +-----+
 <project>
@@ -25,7 +25,7 @@ Configuring Custom Javadoc Tags
           <tags>
             <tag>
               <name>todo</name>
-              <!-- Should be a combinaison of the letters Xaoptcmf -->
+              <!-- Should be a combination of the letters Xaoptcmf -->
               <placement>a</placement>
               <head>To do something:</head>
             </tag>
