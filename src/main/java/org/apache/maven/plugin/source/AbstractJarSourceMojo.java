@@ -1,7 +1,7 @@
 package org.apache.maven.plugin.source;
 
 /*
- * Copyright 2005 The Apache Software Foundation.
+ * Copyright 2005-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,6 +47,8 @@ public abstract class AbstractJarSourceMojo
     protected String packaging;
 
     /**
+     * The project where the plugin is currently being executed.
+     *
      * @parameter expression="${executedProject}"
      * @required
      */
@@ -82,6 +84,9 @@ public abstract class AbstractJarSourceMojo
      */
     protected String finalName;
 
+    /**
+     * @see org.apache.maven.plugin.AbstractMojo#execute()
+     */
     public abstract void execute()
         throws MojoExecutionException;
 
