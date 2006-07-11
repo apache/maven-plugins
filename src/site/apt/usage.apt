@@ -22,7 +22,7 @@ Basic Usage
 
 *Using the package phase with the project package type as war / invocation of the <<<war:war>>> goal
 
- This is the common way to use the war plugin. 
+ This is the common way of using the war plugin. 
  To illustrate, given the <<<pom.xml>>>
     
 +----------+
@@ -106,7 +106,7 @@ documentedproject-1.0-SNAPSHOT.war
  Using the same project above and invoking 
  
 +----------+
-   mvn compile mvn:exploded
+   mvn compile war:exploded
 +----------+
 
  would generate an exploded version of the war in <<<target/documentedproject-1.0-SNAPSHOT>>>
@@ -154,7 +154,7 @@ documentedproject-1.0-SNAPSHOT.war
  Using our sample project above, invoking
  
 +----------+
-   mvn compile mvn:exploded
+   mvn compile war:exploded
 +----------+
 
  would result to
