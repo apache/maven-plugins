@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <faqs id="FAQ" title="Frequently Asked Questions">
   <part id="General">
-    <faq id="In which part of the pom.xml does the Javadoc plugin should be configured">
-      <question>In which part of the pom.xml does the Javadoc plugin should be configured?</question>
-      <answer><p>You can configura the Javadoc plugin in the <i>reporting</i> section of your pom.xml if you want to include it in the site generation process (e.g. mvn site). You can also configure it in the <i>build</i> section of your pom if the configuration is different on the site or the report is not included on the site at all.</p></answer>
+    <faq id="Where in the pom.xml do I configure the Javadoc plugin?">
+      <question>Where in the pom.xml do I configure the Javadoc plugin?</question>
+      <answer><p>Like all other site report plugins, the Javadoc plugin goes in the <i>reporting</i> section of your pom.xml.</p></answer>
     </faq>
   </part>
 </faqs>
