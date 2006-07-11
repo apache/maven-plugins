@@ -44,9 +44,7 @@ public class IdeaMojo
     private List reactorProjects;
 
     /**
-     * @parameter expression="${component.org.apache.maven.artifact.manager.WagonManager}"
-     * @required
-     * @readonly
+     * @component
      */
     private WagonManager wagonManager;
 
@@ -56,6 +54,13 @@ public class IdeaMojo
      * @parameter expression="${linkModules}" default-value="true"
      */
     private boolean linkModules;
+
+    /**
+     * Specify the location of the deployment descriptor file, if one is provided
+     *
+     * @parameter expression="${deploymentDescriptorFile}"
+     */
+    private String deploymentDescriptorFile;
 
     /**
      * Whether to use full artifact names when referencing libraries.
@@ -168,6 +173,13 @@ public class IdeaMojo
      */
     private boolean dependenciesAsLibraries;
 
+    /**
+     * Tell IntelliJ IDEA that this module is an IntelliJ IDEA Plugin
+     *
+     * @parameter default-value="false"
+     */
+    private boolean ideaPlugin;
+
 
     public void execute()
         throws MojoExecutionException
@@ -200,7 +212,7 @@ public class IdeaMojo
         mojo.initParam( executedProject, artifactFactory, localRepo, artifactResolver, artifactMetadataSource, getLog(),
                         overwrite, executedProject, reactorProjects, wagonManager, linkModules, useFullNames,
                         downloadSources, sourceClassifier, downloadJavadocs, javadocClassifier, libraries, macros,
-                        exclude, dependenciesAsLibraries );
+                        exclude, dependenciesAsLibraries, deploymentDescriptorFile, ideaPlugin );
 
         mojo.rewriteModule();
     }

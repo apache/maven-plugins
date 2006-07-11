@@ -25,6 +25,8 @@ import java.io.File;
 import java.io.IOException;
 
 /**
+ * Creates workspace files (*.iws) for IntelliJ Idea
+ *
  * @author Edwin Punzalan
  * @goal workspace
  * @execute phase="generate-sources"
