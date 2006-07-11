@@ -18,7 +18,7 @@ War Manifest Customization
       <version>2.0</version>
       <configuration>
          <archiver>    
-            <manifest_entr>value</manifest_entry>
+            <manifest_entry>value</manifest_entry>
          <archiver>             
       </configuration>
     </plugin>
@@ -41,6 +41,62 @@ Implementation-Vendor: MyCompany Inc
 Implementation-Title: <artifactId>
 Implementation-Version: <version>
 manifest_entry: value
-+--------------------+   
++--------------------+
+
+Generating a manifest classpath
+
+  Generating a manifest classpath for a war is similar to for a jar, but there are a couple of slight differences since you normally won't want a jar in both the manifest classpath and the WEB-INF/lib.  Customize the war plugin's archiver:
+
++--------------------+
+[...]
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-war-plugin</artifactId>
+      <version>2.0</version>
+      <configuration>
+        <archive>
+          <manifest>
+            <addClasspath>true</addClasspath>
+          </manifest>
+       </archive>
+     </configuration>
+    </plugin>
+    [...]
+  </plugins>
+[...]
++--------------------+
+
+  Now, you can control which dependencies are included in WEB-INF/lib and in the manifest classpath by following these examples.  Maven will follow the transitive dependency tree until it gets to artifacts scoped as "provided".  Note that no way is shown to include a dependency in WEB-INF/lib but not the manifest classpath.
+
++--------------------+
+[...]
+  <dependencies>
+    <dependency>
+      <groupId>org.foo</groupId>
+      <artifactId>bar-jar1</artifactId>
+      <version>${pom.version}</version>
+      <optional>true</optional>
+      <!-- goes in manifest classpath, but not included in WEB-INF/lib -->
+    </dependency>
+    <dependency>
+      <groupId>org.foo</groupId>
+      <artifactId>bar-jar2</artifactId>
+      <version>${pom.version}</version>
+      <!-- goes in manifest classpath, AND included in WEB-INF/lib -->
+    </dependency>
+    <dependency>
+      <groupId>org.foo</groupId>
+      <artifactId>bar-jar1</artifactId>
+      <version>${pom.version}</version>
+      <scope>provided</scope>
+      <!-- excluded from manifest classpath, and excluded from WEB-INF/lib -->
+    </dependency>
+    [...]
+   </dependencies>
+[...]
++--------------------+
+
+
  
-  check the {{{http://maven.apache.org/guides/mini/guide-manifest.html}Guide to manifest customization}} for more examples.
+  Check the {{{http://maven.apache.org/guides/mini/guide-manifest.html}Guide to manifest customization}} for more examples.
