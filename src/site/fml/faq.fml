@@ -1,10 +1,11 @@
 <?xml version="1.0"?>
 <faqs id="FAQ" title="Frequently Asked Questions">
   <part id="General">
-    <faq id="1">
-      <question></question>
+    <faq id="How can I generate a source jar of the test classes">
+      <question>How can I generate a source jar of the test classes?</question>
       <answer>
         <p>
+        Use the source:test-jar to generate a jar file that contains the project test sources.
         </p>
       </answer>
     </faq>
