@@ -112,12 +112,5 @@
       <version>1.0-beta-1</version>
       <scope>test</scope>
     </dependency>
-  </dependencies>
-  <reporting>
-    <plugins>      
-      <plugin>
-        <artifactId>maven-changelog-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </reporting>
+  </dependencies>  
 </project>
