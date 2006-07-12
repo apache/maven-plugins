@@ -1,0 +1,31 @@
+  ------
+  Maven 2 RAR Plugin
+  ------
+  Allan Ramirez
+  ------
+  July 2006
+  ------
+
+Maven 2 RAR Plugin - Introduction
+
+  A resource adapter is a system-level software driver that a Java application
+  uses to connect to an enterprise information system (EIS). The RAR plugin
+  has the capability to store these resource adapters to an archive (Resource
+  Adapter Archive or RAR) which can be deployed to a J2EE server.
+
+* Goals Overview
+
+  The RAR plugin has only one goal:
+
+  * {{{rar-mojo.html}rar:rar}} used to package the Resource Adapter Archive
+  (RAR) files.
+
+  []
+
+* How to Use
+
+  Instructions on how to use the RAR plugin can be found {{{usage.html}here}}.
+
+* Examples
+
+  Sample use-cases for the plugin are available under the Examples menu.

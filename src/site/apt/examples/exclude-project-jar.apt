@@ -1,0 +1,36 @@
+  ------
+  Maven 2 RAR Plugin - Exclude the project jar
+  ------
+  Stephane Nicoll
+  Allan Ramirez
+  ------
+  July 2006
+  ------
+
+Exclude the project jar in the RAR
+
+  By default, the generated JAR file is included in the RAR file. This behavior
+  is controlled by the <<includeJar>> property. For instance, to exclude the generated
+  JAR file from the RAR, set the <<includeJar>> property to <<false>>.
+
++---+
+[...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-rar-plugin</artifactId>
+        <configuration>
+           <includeJar>false</includeJar>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+[...]
++----+
+
+  Then execute the plugin by invoking the <<<rar:rar>>> goal.
+
++----+
+mvn rar:rar
++----+

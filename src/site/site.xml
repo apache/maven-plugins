@@ -33,8 +33,15 @@
     </links>
 
     <menu name="Overview">
-      <item name="Introduction" href="introduction.html"/>
-      <item name="How to Use" href="howto.html"/>
+      <item name="Introduction" href="index.html"/>
+      <item name="Usage" href="usage.html"/>
+      <item name="FAQ" href="faq.html"/>
+    </menu>
+    <menu name="Examples">
+      <item name="Exclude the project jar from the rar" href="examples/exclude-project-jar.html"/>
+      <item name="Custom location of Resource Adapter Descriptor" href="examples/ra-custom-location.html" />
+      <item name="Include extra files in RAR" href="examples/include-extra-files.html" />
+      <item name="Adding Manifest File" href="examples/manifest.html" />
     </menu>
     ${reports}
   </body>

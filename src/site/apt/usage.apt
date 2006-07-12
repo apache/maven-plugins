@@ -1,0 +1,52 @@
+  ------
+  Maven 2 RAR Plugin
+  ------
+  Allan Ramirez
+  ------
+  July 2006
+  ------
+
+Usage
+
+  The RAR plugin is binded to the <<<package>>> phase of the build lifecycle.
+  To be able to generate the RAR as part of the lifecycle, the plugin should
+  be declared at the \<build\> section of the pom.
+
++---+
+<project>
+  [...]
+    <build>
+      <plugins>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-rar-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>test</id>
+            <goals>
+              <goal>rar</goal>
+            </goals>
+            <configuration>
+              <!-- your configuration here -->
+            </configuration>
+        </execution>
+      </plugins>
+    </build>
+  [...]
+</project>
++---+
+
+  then invoke the <<<package>>> phase.
+
++---+
+mvn package
++---+
+
+  Another way to execute the plugin is to call the <<<rar:rar>>> goal.
+
++---+
+mvn rar:rar
++---+
+
+  By default, the generated archive(RAR) can be located at the project's target 
+  directory.
+
