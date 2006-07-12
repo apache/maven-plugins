@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<faqs id="FAQ" title="Frequently Asked Questions">
+ <part id="General">
+   <faq id="question">
+     <question>Unsupported Protocol Error when deploying a 3rd party jar. What should I do?</question>
+     <answer>
+       <p>
+            When using deploy-deploy-file goal and encountered this error
+       </p>
+       <p>
+            "Error deploying artifact: Unsupported Protocol: 'ftp': Cannot find wagon which supports the requested protocol: ftp"
+       </p>
+       <p>
+            You only have to place the appropriate wagon provider to your %M2_HOME%/lib.
+            In this case the provider needed is ftp, so we have to place the wagon-ftp jar to the lib of your m2 installation.
+       </p>
+       <p>
+            If the error description is something like
+       </p>
+       <p>
+            "Error deploying artifact: Unsupported Protocol: 'ftp': Cannot find wagon which supports the requested protocol: ftp
+            org/apache/commons/net/ftp/FTP"
+       </p>
+       <p>
+            Place also the commons-net jar to %M2_HOME%/lib.
+       </p>
+     </answer>
+   </faq>
+ </part>
+</faqs>
