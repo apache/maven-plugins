@@ -1,0 +1,54 @@
+  ------
+  Maven RAR Plugin - Including extra files in the RAR
+  ------
+  Allan Ramirez
+  ------
+  July 2006
+  ------
+
+Include extra files in the RAR
+
+  Extra files may also be included in the generated archive(rar). By default,
+  all files placed inside the <<<src/main/rar>>> will be included.
+
++---+
+project
+|--pom.xml
+|--src
+   `--main
+      |--rar
+      |  `-- <!-- put the extra files here -->
+      |--java
+         [...]
++---+
+
+  Then execute the plugin by invoking the <<<rar:rar>>> goal.
+
++---+
+mvn rar:rar
++---+
+
+  To be able to change the location of the directory, configure the
+  <<<rarSourceDirectory>>> property and set a path for it.
+
++---+
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-rar-plugin</artifactId>
+        <configuration>
+           <rarSourceDirectory>some-path</rarSourceDirectory>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++----+
+
+
+
+

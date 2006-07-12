@@ -1,0 +1,38 @@
+  ------
+  Maven 2 RAR Plugin - Custom location of the Resource Adapter Descriptor
+  ------
+  Stephane Nicoll
+  Allan Ramirez
+  ------
+  July 2006
+  ------
+
+Custom location of the Resource Adapter Descriptor
+
+   It is also possible to specify a custom location for the ra.xml file. For
+   instance to use the file located in <<<src/resources/ra.xml>>>, configure your
+   project as follows:
+
++---+
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-rar-plugin</artifactId>
+        <configuration>
+           <raXmlFile>src/resources/ra.xml</raXmlFile>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++----+
+
+   Then execute the plugin by invoking the <<<rar:rar>>> goal.
+
++----+
+mvn rar:rar
++----+
