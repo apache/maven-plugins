@@ -7,9 +7,9 @@
 
 Maven IDEA Plugin: Usage
 
-* Generating the IntelliJ Idea project files
+* Generating the IntelliJ IDEA project files
 
-  To generate the files needed for an IntelliJ Idea Project setup, you need
+  To generate the files needed for an IntelliJ IDEA Project setup, you need
   only to execute the main plugin goal, which is <<<idea:idea>>> like so:
 
 +-----
@@ -17,7 +17,7 @@ mvn idea:idea
 +-----
 
   The above command will execute the other three goals needed to setup your
-  project for IntelliJ Idea: <<<idea:project>>>, <<<idea:module>>>, and
+  project for IntelliJ IDEA: <<<idea:project>>>, <<<idea:module>>>, and
   <<<idea:workspace>>>.
 
   Please note that this plugin has no way to determine the name of the jdk
@@ -29,18 +29,18 @@ mvn idea:idea
 mvn idea:idea -DjdkName=1.5
 +-----
 
-* Deleting Idea project files
+* Deleting IDEA project files
 
-  To delete the project files used by IntelliJ Idea, you can execute the
+  To delete the project files used by IntelliJ IDEA, you can execute the
   command below:
 
 +-----
 mvn idea:clean
 +-----
 
-* Creating the Idea project files separately
+* Creating the IDEA project files separately
 
-  If, for some reason, you want to create just the one of the <<<ipr>>>,
+  If, for some reason, you want to create just one of the <<<ipr>>>,
   <<<iml>>>, or <<<iws>>> files, you can still do it.
 
   To generate just the <<<ipr>>> file, use:
