@@ -10,42 +10,43 @@
 Maven IDEA Plugin
 
   The IDEA Plugin is used to generate files (ipr, iml, and iws) for a project
-  so you can work on it using the IDE, IntelliJ Idea.
+  so you can work on it using the IDE, IntelliJ IDEA.
 
 * Goals Overview
 
-  The IDEA Plugin has four goals.
+  The IDEA Plugin has five goals.
 
   * {{{idea-mojo.html}idea:idea}} is used to execute the other three goals of
   this plugin: <<<project>>>, <<<module>>>, and <<<workspace>>>.
 
   * {{{project-mojo.html}idea:project}} is used to generate the project files
-  (*.ipr) needed for an IntelliJ Idea Project.
+  (*.ipr) needed for an IntelliJ IDEA Project.
 
   * {{{module-mojo.html}idea:module}} is used to generate the module files
-  (*.iml) needed for an IntelliJ Idea Module.
+  (*.iml) needed for an IntelliJ IDEA Module.
 
   * {{{workspace-mojo.html}idea:workspace}} is used to generate the workspace
-  files (*.iws) needed for an IntelliJ Idea Project.
+  files (*.iws) needed for an IntelliJ IDEA Project.
 
   * {{{clean-mojo.html}idea:clean}} is used to delete the files relevant to
-  IntelliJ Idea.
+  IntelliJ IDEA.
 
 * How To Use
 
-  Instructions on how to use the IDEA Plugin can be found {{{usage.html}here}}.
+  Instructions on how to use the Maven IDEA Plugin can be found
+  {{{usage.html}here}}.
 
 * Examples
 
-  To provide you with better understanding on some usages of the IDEA Plugin,
-  you can take a look into the following examples:
+  To provide you with better understanding on some usages of the Maven IDEA
+  Plugin, you can take a look into the following examples:
 
-  * {{{examples/attach_library_src_doc.html}Attach Library Sources And/Or Javadocs}}
+  * {{{examples/attach-library-src-doc.html}Attach Library Sources And/Or Javadocs}}
 
-  * {{{examples/customize_libraries.html}Customize Your Libraries}}
+  * {{{examples/customize-libraries.html}Customize Your Libraries}}
 
-  * {{{examples/enable_jvm_5_features.html}Enable JVM 5 Features}}
+  * {{{examples/enable-jvm-5-features.html}Enable JVM 5 Features}}
 
-  * {{{examples/prevent_module_references.html}Disable Links Between Modules}}
+  * {{{examples/prevent-module-references.html}Disable Links Between Modules}}
 
-  * {{{examples/provide_deployment_descriptor_file.html}Provide Deployment Descriptor File}}
+  * {{{examples/provide-deployment-descriptor-file.html}Provide Deployment Descriptor File}}

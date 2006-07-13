@@ -41,11 +41,11 @@
     </menu>
 
     <menu name="Examples">
-      <item name="Attach Library Sources And/Or Javadocs" href="examples/attach_library_src_doc.html"/>
-      <item name="Customize Your Libraries" href="examples/customize_libraries.html"/>
-      <item name="Enable JVM 5 Features" href="examples/enable_jvm_5_features.html"/>
-      <item name="Disable Links Between Modules" href="examples/prevent_module_references.html"/>
-      <item name="Provide Deployment Descriptor File" href="examples/provide_deployment_descriptor_file.html"/>
+      <item name="Attach Library Sources And/Or Javadocs" href="examples/attach-library-src-doc.html"/>
+      <item name="Customize Your Libraries" href="examples/customize-libraries.html"/>
+      <item name="Enable JVM 5 Features" href="examples/enable-jvm-5-features.html"/>
+      <item name="Disable Links Between Modules" href="examples/prevent-module-references.html"/>
+      <item name="Provide Deployment Descriptor File" href="examples/provide-deployment-descriptor-file.html"/>
     </menu>
 
     ${reports}

@@ -40,7 +40,7 @@ Customize the Project's Libraries
 </project>
 +-----
 
-  Or to exclude a dependency from appearing on IntelliJ Idea's list of
+  Or to exclude a dependency from appearing on IntelliJ IDEA's list of
   Libraries, you can do:
 
 +-----
