@@ -68,6 +68,17 @@
       <name>SetBase</name>
       <version>1.0.0</version>
       <fields>
+      <field>
+          <name>mapper</name>
+          <version>1.0.0</version>
+          <association>
+            <type>Mapper</type>
+          </association>
+          <defaultValue>new Mapper()</defaultValue>
+          <description>
+            Specifies the mapper used.
+          </description>
+        </field>
         <field>
           <name>outputDirectory</name>
           <version>1.0.0</version>
@@ -175,6 +186,59 @@
       </fields>
     </class>
     <class>
+      <name>Mapper</name>
+      <version>1.0.0</version>
+      <fields>
+        <field>
+          <name>type</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <defaultValue>identity</defaultValue>
+          <description>
+            specifies one of the built-in mapper implementations. A custom mapper may be specified by using the classname property.
+            If classname is being used, then the type should not be used.
+            <![CDATA[ 
+            Valid values:
+            <ul>
+              <li><b>"flatten"</b> - The target file name is identical to the source file name, with all leading directory information stripped off. Both to and from will be ignored </li>
+              <li><b>"glob"</b> - Both to and from define patterns that may contain at most one *. For each source file that matches the from pattern, a target file name will be constructed from the to pattern by substituting the * in the to pattern with the text that matches the * in the from pattern. Source file names that don't match the from pattern will be ignored/li>
+              <li><b>"regexp"</b> - Both to and from define regular expressions. If the source file name matches the from pattern, the target file name will be constructed from the to pattern, using \0 to \9 as back-references for the full match (\0) or the matches of the subexpressions in parentheses. Source files not matching the from pattern will be ignored.</li>
+              <li><b>"merge"</b> - The target file name will always be the same, as defined by to. from will be ignored</li>
+              <li><b>"package"</b> - Sharing the same syntax as the glob mapper, the package mapper replaces directory separators found in the matched source pattern with dots in the target pattern placeholder. This mapper is particularly useful in combination with <uptodate> and <junit> output. </li>
+              <li><b>"unpackage"</b> - This mapper is the inverse of the package mapper. It replaces the dots in a package name with directory separators. This is useful for matching XML formatter results against their JUnit test test cases. The mapper shares the sample syntax as the glob mapper. </li>
+            </ul>
+            ]]>
+          </description>
+          <required>true</required>
+        </field>
+        <field>
+          <name>from</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <description>
+          the from attribute for the given implementation. Depends on the implementation
+          </description>
+        </field>
+        <field>
+          <name>to</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <description>
+          the to attribute for the given implementation. Depends on the implementation
+          </description>
+        </field>
+        <field>
+          <name>classname</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <description>
+          Specify your own implementation of the mapper. The class has to be in the classpath of the project. 
+          Do not specify the classname if the type is used.
+          </description>
+        </field>
+      </fields>
+    </class>
+    <class>
       <name>FileItem</name>
       <version>1.0.0</version>
       <description>
@@ -274,13 +338,13 @@
         </field>
         <field>
           <name>unpack</name>
-          <type>boolean</type>
-          <defaultValue>false</defaultValue>
+          <version>1.0.0</version>
+          <association>
+            <type>Unpack</type>
+          </association>
           <description>
-            If set to true, this property will unpack all dependencies
-            into the specified output directory. When set to false
-            dependencies will be includes as archives (jars).
-            Default value is false.
+            If this property exists, this will unpack all dependencies
+            into the specified output directory.
           </description>
         </field>
         <field>
@@ -296,7 +360,40 @@
         </field>
       </fields>
     </class>
-
+    <class>
+      <name>Unpack</name>
+      <version>1.0.0</version>
+      <fields>
+        <field>
+          <name>includes</name>
+          <version>1.0.0</version>
+          <association>
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
+          <description>
+            <![CDATA[
+            When &lt;include&gt; subelements are present, they define
+            a set of files and directory to include.
+            ]]>
+          </description>
+        </field>
+        <field>
+          <name>excludes</name>
+          <version>1.0.0</version>
+          <association>
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
+          <description>
+            <![CDATA[
+            When &lt;exclude&gt; subelements are present, they define
+            a set of files and directory to exclude.
+            ]]>
+          </description>
+        </field>
+      </fields>
+    </class>
   </classes>
 </model>
 

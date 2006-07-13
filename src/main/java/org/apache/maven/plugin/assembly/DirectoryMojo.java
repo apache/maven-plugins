@@ -40,4 +40,9 @@ public class DirectoryMojo
     {
         return executedProject;
     }
+
+    protected void setExecutedProject( MavenProject executedProject )
+    {
+        this.executedProject = executedProject;
+    }
 }

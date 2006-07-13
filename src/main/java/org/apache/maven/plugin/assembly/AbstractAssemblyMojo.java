@@ -16,58 +16,6 @@ package org.apache.maven.plugin.assembly;
  * limitations under the License.
  */
 
-import org.apache.maven.archiver.MavenArchiveConfiguration;
-import org.apache.maven.archiver.MavenArchiver;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
-import org.apache.maven.artifact.handler.ArtifactHandler;
-import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
-import org.apache.maven.model.Build;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.assembly.filter.AssemblyExcludesArtifactFilter;
-import org.apache.maven.plugin.assembly.filter.AssemblyIncludesArtifactFilter;
-import org.apache.maven.plugin.assembly.filter.AssemblyScopeArtifactFilter;
-import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolationException;
-import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolator;
-import org.apache.maven.plugin.assembly.interpolation.ReflectionProperties;
-import org.apache.maven.plugin.assembly.repository.RepositoryAssembler;
-import org.apache.maven.plugin.assembly.repository.RepositoryAssemblyException;
-import org.apache.maven.plugin.assembly.utils.FilterUtils;
-import org.apache.maven.plugin.assembly.utils.ProjectUtils;
-import org.apache.maven.plugin.assembly.utils.PropertyUtils;
-import org.apache.maven.plugins.assembly.model.Assembly;
-import org.apache.maven.plugins.assembly.model.Component;
-import org.apache.maven.plugins.assembly.model.DependencySet;
-import org.apache.maven.plugins.assembly.model.FileItem;
-import org.apache.maven.plugins.assembly.model.FileSet;
-import org.apache.maven.plugins.assembly.model.ModuleBinaries;
-import org.apache.maven.plugins.assembly.model.ModuleSet;
-import org.apache.maven.plugins.assembly.model.ModuleSources;
-import org.apache.maven.plugins.assembly.model.Repository;
-import org.apache.maven.plugins.assembly.model.io.xpp3.AssemblyXpp3Reader;
-import org.apache.maven.plugins.assembly.model.io.xpp3.ComponentXpp3Reader;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectHelper;
-import org.apache.maven.shared.model.fileset.util.FileSetManager;
-import org.apache.maven.wagon.PathUtils;
-import org.codehaus.plexus.archiver.Archiver;
-import org.codehaus.plexus.archiver.ArchiverException;
-import org.codehaus.plexus.archiver.jar.JarArchiver;
-import org.codehaus.plexus.archiver.jar.Manifest;
-import org.codehaus.plexus.archiver.jar.ManifestException;
-import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
-import org.codehaus.plexus.archiver.tar.TarArchiver;
-import org.codehaus.plexus.archiver.tar.TarLongFileMode;
-import org.codehaus.plexus.archiver.war.WarArchiver;
-import org.codehaus.plexus.util.DirectoryScanner;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.InterpolationFilterReader;
-import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.introspection.ReflectionValueExtractor;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -91,13 +39,68 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.maven.archiver.MavenArchiveConfiguration;
+import org.apache.maven.archiver.MavenArchiver;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
+import org.apache.maven.model.Build;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.assembly.filter.AssemblyExcludesArtifactFilter;
+import org.apache.maven.plugin.assembly.filter.AssemblyIncludesArtifactFilter;
+import org.apache.maven.plugin.assembly.filter.AssemblyScopeArtifactFilter;
+import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolationException;
+import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolator;
+import org.apache.maven.plugin.assembly.interpolation.ReflectionProperties;
+import org.apache.maven.plugin.assembly.mappers.FileNameMapper;
+import org.apache.maven.plugin.assembly.mappers.MapperUtil;
+import org.apache.maven.plugin.assembly.repository.RepositoryAssembler;
+import org.apache.maven.plugin.assembly.repository.RepositoryAssemblyException;
+import org.apache.maven.plugin.assembly.utils.FilterUtils;
+import org.apache.maven.plugin.assembly.utils.ProjectUtils;
+import org.apache.maven.plugin.assembly.utils.PropertyUtils;
+import org.apache.maven.plugins.assembly.model.Assembly;
+import org.apache.maven.plugins.assembly.model.Component;
+import org.apache.maven.plugins.assembly.model.DependencySet;
+import org.apache.maven.plugins.assembly.model.FileItem;
+import org.apache.maven.plugins.assembly.model.FileSet;
+import org.apache.maven.plugins.assembly.model.ModuleBinaries;
+import org.apache.maven.plugins.assembly.model.ModuleSet;
+import org.apache.maven.plugins.assembly.model.ModuleSources;
+import org.apache.maven.plugins.assembly.model.Repository;
+import org.apache.maven.plugins.assembly.model.Unpack;
+import org.apache.maven.plugins.assembly.model.io.xpp3.AssemblyXpp3Reader;
+import org.apache.maven.plugins.assembly.model.io.xpp3.ComponentXpp3Reader;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
+import org.apache.maven.shared.model.fileset.util.FileSetManager;
+import org.apache.maven.wagon.PathUtils;
+import org.codehaus.plexus.archiver.Archiver;
+import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.jar.JarArchiver;
+import org.codehaus.plexus.archiver.jar.Manifest;
+import org.codehaus.plexus.archiver.jar.ManifestException;
+import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
+import org.codehaus.plexus.archiver.tar.TarArchiver;
+import org.codehaus.plexus.archiver.tar.TarLongFileMode;
+import org.codehaus.plexus.archiver.war.WarArchiver;
+import org.codehaus.plexus.util.DirectoryScanner;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.InterpolationFilterReader;
+import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.introspection.ReflectionValueExtractor;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+
 /**
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  */
 public abstract class AbstractAssemblyMojo
-    extends AbstractUnpackingMojo
+extends AbstractUnpackingMojo
 {
     /**
      * A list of descriptor files to generate from.
@@ -222,6 +225,16 @@ public abstract class AbstractAssemblyMojo
      */
     private RepositoryAssembler repositoryAssembler;
 
+    /**
+     * Set to true to skip creating the zip/tar.
+     * The temporary directory and working directory which contain the files to be assembled will remain intact.
+     * This is an optional parameter.
+     *
+     * @parameter default-value="false"
+     */
+    private boolean intermediaryAssembly;
+
+
     private static final String LS = System.getProperty( "line.separator" );
 
     /**
@@ -231,7 +244,7 @@ public abstract class AbstractAssemblyMojo
      *
      */
     public void execute()
-        throws MojoExecutionException, MojoFailureException
+    throws MojoExecutionException, MojoFailureException
     {
         List assemblies = readAssemblies();
 
@@ -246,7 +259,7 @@ public abstract class AbstractAssemblyMojo
     }
 
     private void createAssembly( Assembly assembly )
-        throws MojoExecutionException, MojoFailureException
+    throws MojoExecutionException, MojoFailureException
     {
         String fullName = getDistributionName( assembly );
 
@@ -262,6 +275,11 @@ public abstract class AbstractAssemblyMojo
                 Archiver archiver = createArchiver( format );
 
                 destFile = createArchive( archiver, assembly, filename );
+
+                if ( intermediaryAssembly )
+                {
+                    return;
+                }
             }
             catch ( NoSuchArchiverException e )
             {
@@ -319,7 +337,7 @@ public abstract class AbstractAssemblyMojo
     }
 
     protected File createArchive( Archiver archiver, Assembly assembly, String filename )
-        throws MojoExecutionException, MojoFailureException, IOException, ArchiverException, RepositoryAssemblyException
+    throws MojoExecutionException, MojoFailureException, IOException, ArchiverException, RepositoryAssemblyException
     {
         processRepositories( archiver, assembly.getRepositories(), assembly.isIncludeBaseDirectory() );
         processDependencySets( archiver, assembly.getDependencySets(), assembly.isIncludeBaseDirectory() );
@@ -330,6 +348,10 @@ public abstract class AbstractAssemblyMojo
         componentsXmlFilter.addToArchive( archiver );
 
         File destFile = new File( outputDirectory, filename );
+        if ( intermediaryAssembly )
+        {
+            return destFile;
+        }
 
         if ( archiver instanceof JarArchiver )
         {
@@ -389,7 +411,7 @@ public abstract class AbstractAssemblyMojo
     }
 
     private void processRepositories( Archiver archiver, List modulesList, boolean includeBaseDirectory )
-        throws RepositoryAssemblyException, MojoExecutionException
+    throws RepositoryAssemblyException, MojoExecutionException
     {
         for ( Iterator i = modulesList.iterator(); i.hasNext(); )
         {
@@ -423,7 +445,7 @@ public abstract class AbstractAssemblyMojo
     }
 
     private void processModules( Archiver archiver, List moduleSets, boolean includeBaseDirectory )
-        throws MojoFailureException, MojoExecutionException
+    throws MojoFailureException, MojoExecutionException
     {
         for ( Iterator i = moduleSets.iterator(); i.hasNext(); )
         {
@@ -470,13 +492,14 @@ public abstract class AbstractAssemblyMojo
                     excludesList.add( PathUtils.toRelative( moduleProject.getBasedir(),
                                                             moduleProject.getBuild().getDirectory() ) + "/**" );
                     excludesList.add( PathUtils.toRelative( moduleProject.getBasedir(),
-                                                            moduleProject.getBuild().getOutputDirectory() ) + "/**" );
+                                                            moduleProject.getBuild().getOutputDirectory() ) +
+                                      "/**" );
                     excludesList.add( PathUtils.toRelative( moduleProject.getBasedir(),
                                                             moduleProject.getBuild().getTestOutputDirectory() ) +
-                        "/**" );
+                                      "/**" );
                     excludesList.add( PathUtils.toRelative( moduleProject.getBasedir(),
                                                             moduleProject.getReporting().getOutputDirectory() ) +
-                        "/**" );
+                                      "/**" );
                     moduleFileSet.setExcludes( excludesList );
 
                     moduleFileSets.add( moduleFileSet );
@@ -491,7 +514,7 @@ public abstract class AbstractAssemblyMojo
                     if ( moduleArtifact.getFile() == null )
                     {
                         throw new MojoExecutionException( "Included module: " + moduleProject.getId() +
-                            " does not have an artifact with a file. Please ensure the package phase is run before the assembly is generated." );
+                                                          " does not have an artifact with a file. Please ensure the package phase is run before the assembly is generated." );
                     }
 
                     String output = binaries.getOutputDirectory();
@@ -502,8 +525,8 @@ public abstract class AbstractAssemblyMojo
                     archiver.setDefaultFileMode( Integer.parseInt( binaries.getFileMode(), 8 ) );
 
                     getLog().debug( "ModuleSet[" + output + "]" + " dir perms: " +
-                        Integer.toString( archiver.getDefaultDirectoryMode(), 8 ) + " file perms: " +
-                        Integer.toString( archiver.getDefaultFileMode(), 8 ) );
+                                    Integer.toString( archiver.getDefaultDirectoryMode(), 8 ) + " file perms: " +
+                                    Integer.toString( archiver.getDefaultFileMode(), 8 ) );
 
                     Set binaryDependencies = moduleProject.getArtifacts();
 
@@ -512,7 +535,8 @@ public abstract class AbstractAssemblyMojo
 
                     FilterUtils.filterArtifacts( binaryDependencies, includes, excludes, true, Collections.EMPTY_LIST );
 
-                    if ( binaries.isUnpack() )
+                    Unpack unpack = binaries.getUnpack();
+                    if ( unpack != null )
                     {
                         // TODO: something like zipfileset in plexus-archiver
                         //                        archiver.addJar(  )
@@ -538,8 +562,7 @@ public abstract class AbstractAssemblyMojo
 
                                 if ( binaries.isIncludeDependencies() )
                                 {
-                                    for ( Iterator dependencyIterator = binaryDependencies.iterator();
-                                          dependencyIterator.hasNext(); )
+                                    for ( Iterator dependencyIterator = binaryDependencies.iterator(); dependencyIterator.hasNext(); )
                                     {
                                         Artifact dependencyArtifact = (Artifact) dependencyIterator.next();
 
@@ -549,7 +572,8 @@ public abstract class AbstractAssemblyMojo
                             }
                             catch ( NoSuchArchiverException e )
                             {
-                                throw new MojoExecutionException( "Unable to obtain unarchiver: " + e.getMessage(), e );
+                                throw new MojoExecutionException( "Unable to obtain unarchiver: " + e.getMessage(),
+                                                                  e );
                             }
 
                             /*
@@ -560,7 +584,7 @@ public abstract class AbstractAssemblyMojo
                             {
                                 String[] securityFiles = {"*.RSA", "*.DSA", "*.SF", "*.rsa", "*.dsa", "*.sf"};
                                 org.apache.maven.shared.model.fileset.FileSet securityFileSet =
-                                    new org.apache.maven.shared.model.fileset.FileSet();
+                                new org.apache.maven.shared.model.fileset.FileSet();
                                 securityFileSet.setDirectory( tempLocation.getAbsolutePath() + "/META-INF/" );
 
                                 for ( int sfsi = 0; sfsi < securityFiles.length; sfsi++ )
@@ -576,12 +600,32 @@ public abstract class AbstractAssemblyMojo
                                 catch ( IOException e )
                                 {
                                     throw new MojoExecutionException(
-                                        "Failed to delete security files: " + e.getMessage(), e );
+                                                                    "Failed to delete security files: " + e.getMessage(), e );
                                 }
                             }
                         }
 
-                        addDirectory( archiver, tempLocation, output, null, FileUtils.getDefaultExcludesAsList() );
+                        String[] includesArray = (String[]) unpack.getIncludes().toArray( EMPTY_STRING_ARRAY );
+                        if ( includesArray.length == 0 )
+                        {
+                            // include everything
+                            includesArray = null;
+                        }
+
+                        // TODO: default excludes should be in the archiver?
+                        List excludesList = unpack.getExcludes();
+                        excludesList.addAll( FileUtils.getDefaultExcludesAsList() );
+
+                        MapperUtil mapper = new MapperUtil( binaries.getMapper() );
+                        try
+                        {
+                            addDirectoryWithMapper( archiver, tempLocation, output, includesArray, excludesList, mapper );
+                        }
+                        catch ( Exception e )
+                        {
+                            throw new MojoExecutionException(
+                                                            "Error adding '" + tempLocation.getAbsolutePath() + "' to archive: " + e.getMessage(), e );
+                        }
                     }
                     else
                     {
@@ -589,8 +633,8 @@ public abstract class AbstractAssemblyMojo
                         {
                             String outputFileNameMapping = binaries.getOutputFileNameMapping();
 
-                            archiver.addFile( moduleArtifact.getFile(), output +
-                                evaluateFileNameMapping( moduleArtifact, outputFileNameMapping ) );
+                            archiver.addFile( moduleArtifact.getFile(),
+                                              output + evaluateFileNameMapping( moduleArtifact, outputFileNameMapping ) );
 
                             if ( binaries.isIncludeDependencies() )
                             {
@@ -599,13 +643,14 @@ public abstract class AbstractAssemblyMojo
                                     Artifact dependencyArtifact = (Artifact) artifacts.next();
 
                                     archiver.addFile( dependencyArtifact.getFile(), output +
-                                        evaluateFileNameMapping( dependencyArtifact, outputFileNameMapping ) );
+                                                      evaluateFileNameMapping( dependencyArtifact, outputFileNameMapping ) );
                                 }
                             }
                         }
                         catch ( ArchiverException e )
                         {
-                            throw new MojoExecutionException( "Error adding file to archive: " + e.getMessage(), e );
+                            throw new MojoExecutionException( "Error adding file to archive: " + e.getMessage(),
+                                                              e );
                         }
                     }
                 }
@@ -631,7 +676,7 @@ public abstract class AbstractAssemblyMojo
     }
 
     private static String evaluateFileNameMapping( Artifact artifact, String mapping )
-        throws MojoExecutionException
+    throws MojoExecutionException
     {
         String fileNameMapping = mapping;
         //insert the classifier if exist
@@ -699,7 +744,7 @@ public abstract class AbstractAssemblyMojo
     }
 
     protected List readAssemblies()
-        throws MojoFailureException, MojoExecutionException
+    throws MojoFailureException, MojoExecutionException
     {
         List assemblies = new ArrayList();
 
@@ -766,7 +811,7 @@ public abstract class AbstractAssemblyMojo
     }
 
     private Assembly getAssembly( String ref )
-        throws MojoFailureException, MojoExecutionException
+    throws MojoFailureException, MojoExecutionException
     {
         InputStream resourceAsStream = getClass().getResourceAsStream( "/assemblies/" + ref + ".xml" );
         if ( resourceAsStream == null )
@@ -777,7 +822,7 @@ public abstract class AbstractAssemblyMojo
     }
 
     private Assembly getAssembly( File file )
-        throws MojoFailureException, MojoExecutionException
+    throws MojoFailureException, MojoExecutionException
     {
         Reader r;
         try
@@ -793,7 +838,7 @@ public abstract class AbstractAssemblyMojo
     }
 
     private Assembly getAssembly( Reader reader )
-        throws MojoFailureException, MojoExecutionException
+    throws MojoFailureException, MojoExecutionException
     {
         Assembly assembly;
 
@@ -843,7 +888,7 @@ public abstract class AbstractAssemblyMojo
      * @throws MojoExecutionException
      */
     private void appendComponentsToMainAssembly( Assembly assembly )
-        throws MojoFailureException, MojoExecutionException
+    throws MojoFailureException, MojoExecutionException
     {
         List componentDescriptorFiles = assembly.getComponentDescriptors();
 
@@ -894,7 +939,7 @@ public abstract class AbstractAssemblyMojo
      * @throws MojoExecutionException
      */
     private Component getComponent( String filePath )
-        throws MojoExecutionException, MojoFailureException
+    throws MojoExecutionException, MojoFailureException
     {
         File componentDescriptor = new File( this.project.getBasedir() + "/" + filePath );
 
@@ -918,7 +963,7 @@ public abstract class AbstractAssemblyMojo
      * @param reader
      */
     private Component getComponent( Reader reader )
-        throws MojoExecutionException
+    throws MojoExecutionException
     {
         Component component;
         try
@@ -950,7 +995,7 @@ public abstract class AbstractAssemblyMojo
      * @param includeBaseDirectory
      */
     protected void processDependencySets( Archiver archiver, List dependencySets, boolean includeBaseDirectory )
-        throws MojoExecutionException
+    throws MojoExecutionException
     {
         for ( Iterator i = dependencySets.iterator(); i.hasNext(); )
         {
@@ -963,23 +1008,24 @@ public abstract class AbstractAssemblyMojo
             archiver.setDefaultFileMode( Integer.parseInt( dependencySet.getFileMode(), 8 ) );
 
             getLog().debug( "DependencySet[" + output + "]" + " dir perms: " +
-                Integer.toString( archiver.getDefaultDirectoryMode(), 8 ) + " file perms: " +
-                Integer.toString( archiver.getDefaultFileMode(), 8 ) );
+                            Integer.toString( archiver.getDefaultDirectoryMode(), 8 ) + " file perms: " +
+                            Integer.toString( archiver.getDefaultFileMode(), 8 ) );
 
             Set allDependencyArtifacts = ProjectUtils.getDependencies( getExecutedProject() );
             Set dependencyArtifacts = new HashSet( allDependencyArtifacts );
 
             AssemblyScopeArtifactFilter scopeFilter = new AssemblyScopeArtifactFilter( dependencySet.getScope() );
 
-            FilterUtils.filterArtifacts( dependencyArtifacts, dependencySet.getIncludes(), dependencySet.getExcludes(),
-                                         true, Collections.singletonList( scopeFilter ) );
+            FilterUtils.filterArtifacts( dependencyArtifacts, dependencySet.getIncludes(), dependencySet.getExcludes(), true, Collections.singletonList( scopeFilter ) );
 
             for ( Iterator j = dependencyArtifacts.iterator(); j.hasNext(); )
             {
                 Artifact artifact = (Artifact) j.next();
 
-                String fileNameMapping = evaluateFileNameMapping( artifact, dependencySet.getOutputFileNameMapping() );
-                if ( dependencySet.isUnpack() )
+                String fileNameMapping =
+                evaluateFileNameMapping( artifact, dependencySet.getOutputFileNameMapping() );
+                Unpack unpack = dependencySet.getUnpack();
+                if ( unpack != null )
                 {
                     // TODO: something like zipfileset in plexus-archiver
                     //                        archiver.addJar(  )
@@ -1005,7 +1051,7 @@ public abstract class AbstractAssemblyMojo
                         catch ( NoSuchArchiverException e )
                         {
                             throw new MojoExecutionException(
-                                "Unable to obtain unarchiver for file '" + artifact.getFile() + "'" );
+                                                            "Unable to obtain unarchiver for file '" + artifact.getFile() + "'" );
                         }
 
                         /*
@@ -1016,7 +1062,7 @@ public abstract class AbstractAssemblyMojo
                         {
                             String[] securityFiles = {"*.RSA", "*.DSA", "*.SF", "*.rsa", "*.dsa", "*.sf"};
                             org.apache.maven.shared.model.fileset.FileSet securityFileSet =
-                                new org.apache.maven.shared.model.fileset.FileSet();
+                            new org.apache.maven.shared.model.fileset.FileSet();
                             securityFileSet.setDirectory( tempLocation.getAbsolutePath() + "/META-INF/" );
 
                             for ( int sfsi = 0; sfsi < securityFiles.length; sfsi++ )
@@ -1031,13 +1077,33 @@ public abstract class AbstractAssemblyMojo
                             }
                             catch ( IOException e )
                             {
-                                throw new MojoExecutionException( "Failed to delete security files: " + e.getMessage(),
-                                                                  e );
+                                throw new MojoExecutionException(
+                                                                "Failed to delete security files: " + e.getMessage(), e );
                             }
                         }
                     }
 
-                    addDirectory( archiver, tempLocation, output, null, FileUtils.getDefaultExcludesAsList() );
+                    String[] includes = (String[]) unpack.getIncludes().toArray( EMPTY_STRING_ARRAY );
+                    if ( includes.length == 0 )
+                    {
+                        // include everything
+                        includes = null;
+                    }
+
+                    // TODO: default excludes should be in the archiver?
+                    List excludesList = unpack.getExcludes();
+                    excludesList.addAll( FileUtils.getDefaultExcludesAsList() );
+
+                    MapperUtil mapper = new MapperUtil( dependencySet.getMapper() );
+                    try
+                    {
+                        addDirectoryWithMapper( archiver, tempLocation, output, includes, excludesList, mapper );
+                    }
+                    catch ( Exception e )
+                    {
+                        throw new MojoExecutionException(
+                                                        "Error adding '" + tempLocation.getAbsolutePath() + "' to archive: " + e.getMessage(), e );
+                    }
                 }
                 else
                 {
@@ -1048,7 +1114,7 @@ public abstract class AbstractAssemblyMojo
                     catch ( ArchiverException e )
                     {
                         throw new MojoExecutionException(
-                            "Error adding file '" + artifact.getFile() + "' to archive: " + e.getMessage(), e );
+                                                        "Error adding file '" + artifact.getFile() + "' to archive: " + e.getMessage(), e );
                     }
                 }
             }
@@ -1066,44 +1132,6 @@ public abstract class AbstractAssemblyMojo
         }
     }
 
-    private void addDirectory( Archiver archiver, File directory, String output, String[] includes, List excludes )
-        throws MojoExecutionException
-    {
-        if ( directory.exists() )
-        {
-            List adaptedExcludes = excludes;
-
-            // TODO: more robust set of filters on added files in the archiver
-            File componentsXml = new File( directory, ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH );
-            if ( componentsXml.exists() )
-            {
-                try
-                {
-                    componentsXmlFilter.addComponentsXml( componentsXml );
-                }
-                catch ( IOException e )
-                {
-                    throw new MojoExecutionException( "Error reading components.xml to merge: " + e.getMessage(), e );
-                }
-                catch ( XmlPullParserException e )
-                {
-                    throw new MojoExecutionException( "Error reading components.xml to merge: " + e.getMessage(), e );
-                }
-                adaptedExcludes = new ArrayList( excludes );
-                adaptedExcludes.add( ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH );
-            }
-
-            try
-            {
-                archiver.addDirectory( directory, output, includes,
-                                       (String[]) adaptedExcludes.toArray( EMPTY_STRING_ARRAY ) );
-            }
-            catch ( ArchiverException e )
-            {
-                throw new MojoExecutionException( "Error adding directory to archive: " + e.getMessage(), e );
-            }
-        }
-    }
 
     /**
      * Process Files that will be included in the distribution.
@@ -1113,7 +1141,7 @@ public abstract class AbstractAssemblyMojo
      * @param includeBaseDirecetory
      */
     protected void processFileSets( Archiver archiver, List fileSets, boolean includeBaseDirecetory )
-        throws MojoExecutionException, MojoFailureException
+    throws MojoExecutionException, MojoFailureException
     {
         for ( Iterator i = fileSets.iterator(); i.hasNext(); )
         {
@@ -1136,9 +1164,9 @@ public abstract class AbstractAssemblyMojo
             archiver.setDefaultFileMode( Integer.parseInt( fileSet.getFileMode(), 8 ) );
 
             getLog().debug( "FileSet[" + output + "]" + " dir perms: " +
-                Integer.toString( archiver.getDefaultDirectoryMode(), 8 ) + " file perms: " +
-                Integer.toString( archiver.getDefaultFileMode(), 8 ) +
-                ( fileSet.getLineEnding() == null ? "" : " lineEndings: " + fileSet.getLineEnding() ) );
+                    Integer.toString( archiver.getDefaultDirectoryMode(), 8 ) + " file perms: " +
+                    Integer.toString( archiver.getDefaultFileMode(), 8 ) +
+                    ( fileSet.getLineEnding() == null ? "" : " lineEndings: " + fileSet.getLineEnding() ) );
 
             if ( directory == null )
             {
@@ -1179,12 +1207,12 @@ public abstract class AbstractAssemblyMojo
                 if ( ! archiveBaseDirectory.exists() )
                 {
                     throw new MojoFailureException(
-                        "The archive base directory '" + archiveBaseDirectory.getAbsolutePath() + "' does not exist" );
+                                                  "The archive base directory '" + archiveBaseDirectory.getAbsolutePath() + "' does not exist" );
                 }
                 if ( ! archiveBaseDirectory.isDirectory() )
                 {
                     throw new MojoFailureException( "The archive base directory '" +
-                        archiveBaseDirectory.getAbsolutePath() + "' exists, but it is not a directory" );
+                                                    archiveBaseDirectory.getAbsolutePath() + "' exists, but it is not a directory" );
                 }
                 archiveBaseDir = new File( archiveBaseDirectory, directory );
             }
@@ -1204,7 +1232,16 @@ public abstract class AbstractAssemblyMojo
                     archiveBaseDir = tmpDir;
                 }
                 getLog().debug( "Archive base directory: '" + archiveBaseDir.getAbsolutePath() + "'" );
-                addDirectory( archiver, archiveBaseDir, output, includes, excludesList );
+                MapperUtil mapper = new MapperUtil( fileSet.getMapper() );
+                try
+                {
+                    addDirectoryWithMapper( archiver, archiveBaseDir, output, includes, excludesList, mapper);
+                }
+                catch ( Exception e )
+                {
+                    throw new MojoExecutionException(
+                                                    "Error adding '" + archiveBaseDir.getAbsolutePath() + "' to archive: " + e.getMessage(), e );
+                }
             }
         }
     }
@@ -1216,17 +1253,17 @@ public abstract class AbstractAssemblyMojo
      * @param fileList
      */
     protected void processFileList( Archiver archiver, List fileList, boolean includeBaseDirecetory )
-        throws MojoExecutionException, MojoFailureException
+    throws MojoExecutionException, MojoFailureException
     {
         for ( Iterator i = fileList.iterator(); i.hasNext(); )
         {
             FileItem fileItem = (FileItem) i.next();
 
             //ensure source file is in absolute path for reactor build to work
-            File source = new File( fileItem.getSource() );
+            File source = new File ( fileItem.getSource() );
             if ( ! source.isAbsolute() )
             {
-                source = new File( this.basedir, fileItem.getSource() );
+                source =  new File( this.basedir, fileItem.getSource() );
             }
 
             if ( fileItem.isFiltered() )
@@ -1303,7 +1340,7 @@ public abstract class AbstractAssemblyMojo
      *
      */
     private static String evaluateFileNameMapping( String expression, Artifact artifact )
-        throws MojoExecutionException
+    throws MojoExecutionException
     {
         String value = expression;
 
@@ -1322,7 +1359,7 @@ public abstract class AbstractAssemblyMojo
             catch ( Exception e )
             {
                 throw new MojoExecutionException(
-                    "Cannot evaluate filenameMapping: '" + mat.group( 1 ) + "': " + e.getMessage(), e );
+                                                "Cannot evaluate filenameMapping: '" + mat.group( 1 ) + "': " + e.getMessage(), e );
             }
             String right = mat.group( 3 );
 
@@ -1404,7 +1441,7 @@ public abstract class AbstractAssemblyMojo
      *
      */
     private Archiver createArchiver( String format )
-        throws ArchiverException, NoSuchArchiverException
+    throws ArchiverException, NoSuchArchiverException
     {
         Archiver archiver;
         if ( format.startsWith( "tar" ) )
@@ -1454,7 +1491,7 @@ public abstract class AbstractAssemblyMojo
     }
 
     private void copyReplacingLineEndings( File source, File dest, String lineEndings )
-        throws IOException
+    throws IOException
     {
         getLog().debug( "Copying while replacing line endings: " + source + " to " + dest );
 
@@ -1488,7 +1525,7 @@ public abstract class AbstractAssemblyMojo
 
     private void copySetReplacingLineEndings( File archiveBaseDir, File tmpDir, String[] includes, String[] excludes,
                                               String lineEnding )
-        throws MojoExecutionException
+    throws MojoExecutionException
     {
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir( archiveBaseDir.getAbsolutePath() );
@@ -1524,7 +1561,7 @@ public abstract class AbstractAssemblyMojo
     }
 
     private static String getLineEndingCharacters( String lineEnding )
-        throws MojoFailureException
+    throws MojoFailureException
     {
         String value = lineEnding;
         if ( lineEnding != null )
@@ -1551,12 +1588,12 @@ public abstract class AbstractAssemblyMojo
     }
 
     private void includeSiteInAssembly( Assembly assembly )
-        throws MojoFailureException
+    throws MojoFailureException
     {
         if ( !siteDirectory.exists() )
         {
             throw new MojoFailureException(
-                "site did not exist in the target directory - please run site:site before creating the assembly" );
+                                          "site did not exist in the target directory - please run site:site before creating the assembly" );
         }
 
         getLog().info( "Adding site directory to assembly : " + siteDirectory );
@@ -1572,7 +1609,7 @@ public abstract class AbstractAssemblyMojo
 
     //@todo should only run once or know when it has already initialized
     private void initializeFiltering()
-        throws MojoExecutionException
+    throws MojoExecutionException
     {
         getLog().info( "Initializing assembly filters..." );
 
@@ -1603,7 +1640,7 @@ public abstract class AbstractAssemblyMojo
     }
 
     private File filterFile( File file )
-        throws MojoExecutionException
+    throws MojoExecutionException
     {
         initializeFiltering();
 
@@ -1627,7 +1664,7 @@ public abstract class AbstractAssemblyMojo
             Reader reader = new InterpolationFilterReader( fileReader, filterProperties, "${", "}" );
 
             BufferedReader in = new BufferedReader( new InterpolationFilterReader( reader, new ReflectionProperties(
-                project, isPropertiesFile ), "${", "}" ) );
+                                                                                                                   project, isPropertiesFile ), "${", "}" ) );
 
             Writer fileWriter = null;
             try
@@ -1664,4 +1701,215 @@ public abstract class AbstractAssemblyMojo
 
         return tempFilterFile;
     }
+
+    // Copied from AbstractArchiver.addDirectory
+    // The mapper passed to this is invoked before the file is added to the archiver.
+    public void addDirectoryWithMapper( Archiver archiver, File directory, String prefix, String[] includes, List excludes, MapperUtil mapper )
+    throws Exception, ArchiverException, IOException 
+    {
+        FileNameMapper fileMapper;
+        DirectoryScanner scanner = new DirectoryScanner();
+        try
+        {
+            fileMapper = mapper.getImplementation();
+        }
+        catch ( Exception e )
+        {
+            throw e;
+        }
+
+        if ( !directory.isDirectory() )
+        {
+            throw new ArchiverException( directory.getAbsolutePath() + " isn't a directory." );
+        }
+
+        if ( includes != null )
+        {
+            scanner.setIncludes( includes );
+        }
+
+        if ( excludes != null )
+        {
+            try
+            {
+                String[] excludesArray = handleComponentsXML(directory, excludes);
+
+                if ( excludesArray != null )
+                {
+                    scanner.setExcludes( excludesArray );
+                }
+            }
+            catch ( IOException ioe )
+            {
+                throw ioe;
+            }
+        }
+
+        String basedir = directory.getAbsolutePath();
+        scanner.setBasedir( basedir );
+        scanner.scan();
+
+
+        if ( archiver.getIncludeEmptyDirs() )
+        {
+            String [] dirs = scanner.getIncludedDirectories();
+
+            for ( int i = 0; i < dirs.length; i++ )
+            {
+                String sourceDir = dirs[i].replace( '\\', '/' );
+
+                File dir = new File( basedir, sourceDir );
+                String[] contents = dir.list();
+                if ( contents == null  || contents.length > 0 )
+                {
+                    getLog().debug( dir.getAbsolutePath() + " not empty. Skipping it" );
+                    continue;
+                }
+
+                String fileName = fileMapper.mapFileName( sourceDir );
+
+                String targetDir = ( prefix == null ? "" : prefix ) + fileName;
+
+                archiver.addDirectory(new File( basedir, sourceDir ), targetDir);
+            }
+        }
+
+        String[] files = scanner.getIncludedFiles();
+
+        for ( int i = 0; i < files.length; i++ )
+        {
+            String sourceFile = files[i].replace( '\\', '/' );
+
+            String fileName = fileMapper.mapFileName( sourceFile );
+
+            String targetFile = ( prefix == null ? "" : prefix ) + fileName;
+
+            archiver.addFile( new File(basedir, sourceFile), targetFile );
+        }
+
+    }
+
+    private String[] handleComponentsXML( File directory, List excludes )
+    throws IOException
+    {
+        List adaptedExcludes = excludes;
+
+        // TODO: more robust set of filters on added files in the archiver
+        File componentsXml = new File( directory, ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH );
+        if ( componentsXml.exists() )
+        {
+            try
+            {
+                componentsXmlFilter.addComponentsXml( componentsXml );
+            }
+            catch ( IOException e )
+            {
+                throw new IOException( "Error reading components.xml to merge: " + e.getMessage() );
+            }
+            catch ( XmlPullParserException e )
+            {
+                throw new IOException( "Error reading components.xml to merge: " + e.getMessage() );
+            }
+            adaptedExcludes = new ArrayList( excludes );
+            adaptedExcludes.add( ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH );
+        }
+
+        return(String[]) adaptedExcludes.toArray( EMPTY_STRING_ARRAY );
+    }
+
+    protected void setAppendAssemblyId( boolean appendAssemblyId )
+    {
+        this.appendAssemblyId = appendAssemblyId;
+    }
+
+    protected void setArchive( MavenArchiveConfiguration archive )
+    {
+        this.archive = archive;
+    }
+
+    protected void setArchiveBaseDirectory( File archiveBaseDirectory )
+    {
+        this.archiveBaseDirectory = archiveBaseDirectory;
+    }
+
+    protected void setBasedir( File basedir )
+    {
+        this.basedir = basedir;
+    }
+
+    protected void setComponentsXmlFilter( ComponentsXmlArchiverFileFilter componentsXmlFilter )
+    {
+        this.componentsXmlFilter = componentsXmlFilter;
+    }
+
+    /**
+     * @deprecated Use setDescriptors(..) instead.
+     * @param descriptor
+     */
+    protected void setDescriptor( File descriptor )
+    {
+        this.descriptor = descriptor;
+    }
+
+    protected void setDescriptorId( String descriptorId )
+    {
+        this.descriptorId = descriptorId;
+    }
+
+    protected void setDescriptorRefs( String[] descriptorRefs )
+    {
+        this.descriptorRefs = descriptorRefs;
+    }
+
+    protected void setDescriptors( File[] descriptors )
+    {
+        this.descriptors = descriptors;
+    }
+
+    protected void setDescriptorSourceDirectory( File descriptorSourceDirectory )
+    {
+        this.descriptorSourceDirectory = descriptorSourceDirectory;
+    }
+
+    protected void setFilterProperties( Properties filterProperties )
+    {
+        this.filterProperties = filterProperties;
+    }
+
+    protected void setFilters( List filters )
+    {
+        this.filters = filters;
+    }
+
+    protected void setIncludeSite( boolean includeSite )
+    {
+        this.includeSite = includeSite;
+    }
+
+    protected void setIntermediaryAssembly( boolean intermediaryAssembly )
+    {
+        this.intermediaryAssembly = intermediaryAssembly;
+    }
+
+    protected void setProjectHelper( MavenProjectHelper projectHelper )
+    {
+        this.projectHelper = projectHelper;
+    }
+
+    protected void setRepositoryAssembler( RepositoryAssembler repositoryAssembler )
+    {
+        this.repositoryAssembler = repositoryAssembler;
+    }
+
+    protected void setSiteDirectory( File siteDirectory )
+    {
+        this.siteDirectory = siteDirectory;
+    }
+
+    protected void setTarLongFileMode( String tarLongFileMode )
+    {
+        this.tarLongFileMode = tarLongFileMode;
+    }
+
+
 }

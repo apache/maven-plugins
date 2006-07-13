@@ -21,9 +21,7 @@
   </formats>
   <moduleSets>
     <moduleSet>
-      <binaries>
-        <unpack>false</unpack>
-      </binaries>
+      <binaries/>
     </moduleSet>
   </moduleSets>
 </assembly>

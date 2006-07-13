@@ -16,15 +16,22 @@ package org.apache.maven.plugin.assembly;
  * limitations under the License.
  */
 
-import org.apache.maven.plugin.assembly.stubs.ArchiverManagerStub;
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.artifact.Artifact;
-
 import java.io.File;
+import java.io.IOException;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.Iterator;
+
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.Model;
+import org.apache.maven.plugin.assembly.stubs.ArchiverManagerStub;
+import org.apache.maven.plugin.assembly.stubs.CountingArchiver;
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.archiver.Archiver;
+import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.manager.ArchiverManager;
+import org.easymock.MockControl;
 
 /**
  * @author Allan Q. Ramirez
@@ -32,6 +39,29 @@ import java.util.Iterator;
 public class DirectoryMojoTest
     extends AbstractMojoTestCase
 {
+    private MockManager mockManager = new MockManager();
+    
+    private MockControl archiverManagerControl;
+    
+    private ArchiverManager archiverManager;
+    
+    public void setUp() throws Exception
+    {
+        super.setUp();
+        
+        archiverManagerControl = MockControl.createControl( ArchiverManager.class );
+        mockManager.add( archiverManagerControl );
+        
+        archiverManager = (ArchiverManager) archiverManagerControl.getMock();
+    }
+    
+    public void tearDown() throws Exception
+    {
+        super.tearDown();
+        
+        TestUtils.cleanUp();
+    }
+
     public void testEnvironment()
         throws Exception
     {
@@ -46,22 +76,55 @@ public class DirectoryMojoTest
     public void testAssemblyDirectory()
         throws Exception
     {
-        File testPom = new File( getBasedir(),
-                                 "src/test/plugin-configs/directory/min-plugin-config.xml" );
+        // I'm assuming this test is meant to simply verify the bare-bones
+        // behavior of the directory mojo...
+        
+//        File testPom = new File( getBasedir(),
+//                                 "src/test/plugin-configs/directory/min-plugin-config.xml" );
 
-        DirectoryMojo mojo = ( DirectoryMojo ) lookupMojo( "directory", testPom );
+        DirectoryMojo mojo = new DirectoryMojo();
+        
+        File descriptor = TestUtils.findFileForClasspathResource( "assemblies/fileSet.xml" );
+        
+        mojo.setDescriptor( descriptor );
+        
+        File basedir = TestUtils.createTempBasedir();
+        
+        mojo.setBasedir( basedir );
+        mojo.setFinalName( "directory-min" );
+        mojo.setAppendAssemblyId( true );
+        
+        Model model = new Model();
+        
+        model.setGroupId( "directory-tests" );
+        model.setArtifactId( "min" );
+        model.setVersion( "1.0" );
+        
+        File outputDir = new File( basedir, "target/test-harness/directory/min/target" );
+        
+        mojo.setOutputDirectory( outputDir );
+        
+        MavenProject project = new MavenProject( model );
+        
+        mojo.setProject( project );
+        mojo.setExecutedProject( project );
+        
+        CountingArchiver archiver = new CountingArchiver();
+        
+        archiverManager.getArchiver( "dir" );
+        archiverManagerControl.setReturnValue( archiver );
+        
+        mojo.setArchiverManager( archiverManager );
 
-        assertNotNull( mojo );
-
-        AssemblyMojoTest.generateTestFileSets(getBasedir(), "\n");
+        AssemblyMojoTest.generateTestFileSets(basedir.getAbsolutePath(), "\n");
+        
+        mockManager.replayAll();
         
         mojo.execute();
 
-        Map filesArchived = ArchiverManagerStub.archiverStub.getFiles();
-
-        Set files = filesArchived.keySet();
-
-        assertEquals( 1, files.size() );
+        assertEquals( 4, archiver.getFileCount() );
+        
+        mockManager.verifyAll();
     }
 
     public void testAssemblyDirectoryWithAppendAssemblyIdAsFalse()
@@ -157,4 +220,5 @@ public class DirectoryMojoTest
             //expected
         }
     }
+    
 }

@@ -147,4 +147,49 @@ public abstract class AbstractUnpackingMojo
     {
         return classifier;
     }
+
+    protected void setArchiverManager( ArchiverManager archiverManager )
+    {
+        this.archiverManager = archiverManager;
+    }
+
+    protected void setArtifactResolver( ArtifactResolver artifactResolver )
+    {
+        this.artifactResolver = artifactResolver;
+    }
+
+    protected void setClassifier( String classifier )
+    {
+        this.classifier = classifier;
+    }
+
+    protected void setFinalName( String finalName )
+    {
+        this.finalName = finalName;
+    }
+
+    protected void setLocalRepository( ArtifactRepository localRepository )
+    {
+        this.localRepository = localRepository;
+    }
+
+    protected void setOutputDirectory( File outputDirectory )
+    {
+        this.outputDirectory = outputDirectory;
+    }
+
+    protected void setProject( MavenProject project )
+    {
+        this.project = project;
+    }
+
+    protected void setReactorProjects( List reactorProjects )
+    {
+        this.reactorProjects = reactorProjects;
+    }
+
+    protected void setWorkDirectory( File workDirectory )
+    {
+        this.workDirectory = workDirectory;
+    }
 }

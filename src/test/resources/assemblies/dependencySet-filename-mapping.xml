@@ -23,7 +23,6 @@
   <dependencySets>
     <dependencySet>
       <outputFileNameMapping>${version}-${artifactId}-${groupId}</outputFileNameMapping>
-      <unpack>false</unpack>
       <outputDirectory>libs</outputDirectory>
       <scope>test</scope>
     </dependencySet>

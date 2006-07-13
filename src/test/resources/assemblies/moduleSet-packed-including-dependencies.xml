@@ -22,7 +22,6 @@
   <moduleSets>
     <moduleSet>
       <binaries>
-        <unpack>false</unpack>
         <includeDependencies>true</includeDependencies>
       </binaries>
     </moduleSet>

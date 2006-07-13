@@ -1,14 +1,19 @@
 package org.apache.maven.plugin.assembly;
 
-import org.apache.maven.plugin.assembly.stubs.ArchiverManagerStub;
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.artifact.Artifact;
-
 import java.io.File;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.Iterator;
+
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.Model;
+import org.apache.maven.plugin.assembly.stubs.ArchiverManagerStub;
+import org.apache.maven.plugin.assembly.stubs.CountingArchiver;
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.archiver.manager.ArchiverManager;
+import org.codehaus.plexus.util.FileUtils;
+import org.easymock.MockControl;
 
 /*
  * Copyright 2001-2006 The Apache Software Foundation.
@@ -27,25 +32,83 @@ import java.util.Iterator;
  */
 
 public class DirectoryInlineMojoTest
-extends AbstractMojoTestCase
+    extends AbstractMojoTestCase
 {
+    private MockManager mockManager = new MockManager();
+
+    private MockControl archiverManagerControl;
+
+    private ArchiverManager archiverManager;
+
+    public void setUp()
+        throws Exception
+    {
+        super.setUp();
+
+        archiverManagerControl = MockControl.createControl( ArchiverManager.class );
+        mockManager.add( archiverManagerControl );
+
+        archiverManager = (ArchiverManager) archiverManagerControl.getMock();
+    }
+
+    public void tearDown()
+        throws Exception
+    {
+        super.tearDown();
+
+        TestUtils.cleanUp();
+    }
+
     public void testAssemblyDirectory()
         throws Exception
     {
-        File testPom = new File( getBasedir(),
-                                 "src/test/plugin-configs/directory-inline/min-plugin-config.xml" );
+        File basedir = TestUtils.createTempBasedir();
 
-        DirectoryInlineMojo mojo = ( DirectoryInlineMojo ) lookupMojo( "directory-inline", testPom );
+        // prepare the dir structure...
+        File fileSource = new File( basedir, "target/test-harness/assembly/min/target" );
+        fileSource.mkdirs();
+        
+        File sourceJar = TestUtils.findFileForClasspathResource( "test-fodder/assembly.jar" );
+        FileUtils.copyFile( sourceJar, new File( fileSource, "assembly.jar" ) );
+        
+        DirectoryMojo mojo = new DirectoryMojo();
 
-        assertNotNull( mojo );
+        File descriptor = TestUtils.findFileForClasspathResource( "assemblies/simple.xml" );
+
+        mojo.setDescriptor( descriptor );
+
+        mojo.setBasedir( basedir );
+        mojo.setFinalName( "directory-inline-min" );
+        mojo.setAppendAssemblyId( true );
+
+        Model model = new Model();
+
+        model.setGroupId( "directory-inline-tests" );
+        model.setArtifactId( "min" );
+        model.setVersion( "1.0" );
+
+        File outputDir = new File( basedir, "target/test-harness/directory-inline/min/target" );
+
+        mojo.setOutputDirectory( outputDir );
+
+        MavenProject project = new MavenProject( model );
+
+        mojo.setProject( project );
+
+        CountingArchiver archiver = new CountingArchiver();
+
+        archiverManager.getArchiver( "dir" );
+        archiverManagerControl.setReturnValue( archiver );
+
+        mojo.setArchiverManager( archiverManager );
+
+        mockManager.replayAll();
 
         mojo.execute();
 
-        Map filesArchived = ArchiverManagerStub.archiverStub.getFiles();
+        assertEquals( 1, archiver.getFileCount() );
 
-        Set files = filesArchived.keySet();
-
-        assertEquals( 1, files.size() );
+        mockManager.verifyAll();
     }
 
     public void testDependencySet()
@@ -54,11 +117,11 @@ extends AbstractMojoTestCase
         File testPom = new File( getBasedir(),
                                  "src/test/plugin-configs/directory-inline/dependency-set-plugin-config.xml" );
 
-        DirectoryInlineMojo mojo = ( DirectoryInlineMojo ) lookupMojo( "directory-inline", testPom );
+        DirectoryInlineMojo mojo = (DirectoryInlineMojo) lookupMojo( "directory-inline", testPom );
 
         assertNotNull( mojo );
 
-        MavenProject project = ( MavenProject ) getVariableValueFromObject( mojo, "project" );
+        MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
 
         Set artifacts = project.getArtifacts();
 
@@ -68,9 +131,9 @@ extends AbstractMojoTestCase
 
         Set files = filesArchived.keySet();
 
-        for( Iterator iter = artifacts.iterator(); iter.hasNext(); )
+        for ( Iterator iter = artifacts.iterator(); iter.hasNext(); )
         {
-            Artifact artifact = ( Artifact ) iter.next();
+            Artifact artifact = (Artifact) iter.next();
 
             assertTrue( files.contains( artifact.getFile() ) );
             assertTrue( artifact.getFile().getName().endsWith( ".jar" ) );

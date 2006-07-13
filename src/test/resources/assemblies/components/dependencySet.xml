@@ -17,7 +17,6 @@
 <component>
   <dependencySets>
     <dependencySet>
-      <unpack>false</unpack>
       <outputDirectory></outputDirectory>
       <scope>test</scope>
     </dependencySet>

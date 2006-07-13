@@ -21,7 +21,6 @@
   </formats>
   <dependencySets>
     <dependencySet>
-      <unpack>false</unpack>
       <outputDirectory></outputDirectory>
     </dependencySet>
   </dependencySets>
