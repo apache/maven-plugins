@@ -28,7 +28,9 @@ Provide Deployment Descriptor File
 mvn idea:idea -DdeploymentDescriptorFile=src/webapp/WEB-INF/web.xml
 +-----
 
-  Or in your pom.xml:
+  For a multiproject setup, where you'll want to have different values for this
+  parameter for projects that use it, you should put the configuration values
+  in their respective poms like so:
 
 +-----
 <project>
