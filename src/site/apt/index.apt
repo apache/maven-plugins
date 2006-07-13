@@ -25,15 +25,17 @@ Maven 2 Jar Plugin
 
 * Usage
 
-  Instructions on how to use the Maven 2 Jar Plugin can be found {{{usage.html}here}}.
+  Instructions on how to use the Jar Plugin can be found {{{usage.html}here}}.
 
   You might also want to consult the {{{http://maven.apache.org/guides/mini/guide-manifest.html}Guide
   to Working with Manifests}}.
 
 * Examples
 
-  To provide you with better understanding of some usages of the Maven 2 Jar Plugin,
+  To provide you with better understanding of some usages of the Jar Plugin,
   you can take a look at the following examples:
+
+  * {{{examples/executable-jar.html}Creating an executable jar file}}
 
   * {{{examples/manifest-customization.html}Manifest customization}}
 

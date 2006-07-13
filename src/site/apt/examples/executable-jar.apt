@@ -1,0 +1,43 @@
+ ------
+ Creating an executable jar file
+ ------
+ Dennis Lundberg
+ ------
+ 13 July 2006
+ ------
+
+Creating an executable jar file
+
+  If you want to create an executable jar file, you need to configure the jar
+  plugin accordingly. You need to tell the plugin which main class to use. This
+  is done with the <<<\<mainClass\>>>> configuration element. The plugin can
+  also add the classpath of your project to the manifest. This is done with the
+  <<<\<addClasspath\>>>> configuration element.
+
+  Here is a sample <<<pom.xml>>> configured to add the classpath and use the
+  class <<<fully.qualified.MainClass>>> as the main class:
+
++-----------------+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        ...
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>fully.qualified.MainClass</mainClass>
+              <addClasspath>true</addClasspath>
+            </manifest>
+          </archive>
+        </configuration>
+        ...
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++-----------------+
