@@ -34,7 +34,6 @@ import java.util.Set;
 import java.util.TimeZone;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -225,6 +224,12 @@ public class DefaultRepositoryAssembler
                             setAlignment( a );
 
                             File sourceFile = new File( localRepository.getBasedir(), localRepository.pathOf( a ) );
+
+                            if( !sourceFile.exists() )
+                            {
+                                break;
+                            }
+
                             targetFile = new File( targetRepository.getBasedir(), targetRepository.pathOf( a ) );
 
                             FileUtils.copyFile( sourceFile, targetFile );
