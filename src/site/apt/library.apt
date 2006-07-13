@@ -28,3 +28,8 @@ Using the Maven IDEA Plugin's <<<Libraries>>> Parameter
 
   * <<<exclude>>> - When set to <<<true>>>, makes the plugin ignore the artifact
   from its list of libraries.
+
+  []
+
+  Examples on using the <<<Library>>> parameter can be found
+  {{{examples/customize-libraries.html}here}}.

@@ -10,7 +10,7 @@
 Prevent Using Module Library References And Use Local Repository Artifacts
 
   For some reason, if one do not want to use modular (*.iml) references of IDEA
-  projects, one can choose do so using:
+  projects, one can choose to do so using:
 
 +-----
 mvn idea:idea -DlinkModules=false
@@ -29,7 +29,7 @@ mvn idea:idea -DlinkModules=false
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-idea-plugin</artifactId>
         <configuration>
-          <linkModules>true</linkModules>
+          <linkModules>false</linkModules>
         </configuration>
       </plugin>
       [...]
