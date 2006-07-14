@@ -72,13 +72,15 @@ public class WarExplodedMojoTest
         MavenProjectBasicStub project = new MavenProjectBasicStub();
         File webAppSource = createWebAppSource( testId );
         File classesDir = createClassesDir( testId, false );
-        File webAppResource = new File( getTestDirectory(), "resources" );
+        File webAppResource = new File( getTestDirectory(), testId + "-resources" );
         File webAppDirectory = new File( getTestDirectory(), testId );
         File sampleResource = new File( webAppResource, "pix/panis_na.jpg" );
         ResourceStub[] resources = new ResourceStub[]{new ResourceStub()};
 
         createFile( sampleResource );
 
+        assertTrue("sampeResource not found",sampleResource.exists());
+      
         // configure mojo
         resources[0].setDirectory( webAppResource.getAbsolutePath() );
         this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
@@ -97,8 +99,57 @@ public class WarExplodedMojoTest
         assertTrue( "resources doesn't exist: " + expectedWebResourceFile, expectedWebResourceFile.exists() );
         assertTrue( "WEB-INF not found", expectedWEBINFDir.exists() );
         assertTrue( "META-INF not found", expectedMETAINFDir.exists() );
+        
+        // house keeping
+        expectedWebSourceFile.delete();
+        expectedWebSource2File.delete();
+        expectedWebResourceFile.delete();
     }
 
+    /**
+     * @throws Exception
+     */
+    public void testSimpleExplodedWarWTargetPath()
+        throws Exception
+    {
+        // setup test data
+        String testId = "SimpleExplodedWar";
+        MavenProjectBasicStub project = new MavenProjectBasicStub();
+        File webAppSource = createWebAppSource( testId );
+        File classesDir = createClassesDir( testId, false );
+        File webAppResource = new File( getTestDirectory(), "resources" );
+        File webAppDirectory = new File( getTestDirectory(), testId );
+        File sampleResource = new File( webAppResource, "pix/panis_na.jpg" );
+        ResourceStub[] resources = new ResourceStub[]{new ResourceStub()};
+
+        createFile( sampleResource );
+
+        // configure mojo
+        resources[0].setDirectory( webAppResource.getAbsolutePath() );
+        resources[0].setTargetPath("targetPath");
+        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+        setVariableValueToObject( mojo, "webResources", resources );
+        mojo.execute();
+
+        // validate operation
+        File expectedWebSourceFile = new File( webAppDirectory, "pansit.jsp" );
+        File expectedWebSource2File = new File( webAppDirectory, "org/web/app/last-exile.jsp" );
+        File expectedWebResourceFile = new File( webAppDirectory, "targetPath/pix/panis_na.jpg" );
+        File expectedWEBINFDir = new File( webAppDirectory, "WEB-INF" );
+        File expectedMETAINFDir = new File( webAppDirectory, "META-INF" );
+
+        assertTrue( "source files not found: " + expectedWebSourceFile.toString(), expectedWebSourceFile.exists() );
+        assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
+        assertTrue( "resources doesn't exist: " + expectedWebResourceFile, expectedWebResourceFile.exists() );
+        assertTrue( "WEB-INF not found", expectedWEBINFDir.exists() );
+        assertTrue( "META-INF not found", expectedMETAINFDir.exists() );
+        
+        // house keeping
+        expectedWebSourceFile.delete();
+        expectedWebSource2File.delete();
+        expectedWebResourceFile.delete();        
+    }    
+    
     /**
      * @throws Exception
      */
@@ -129,6 +180,12 @@ public class WarExplodedMojoTest
         assertTrue( "WEB XML not found: " + expectedWEBXMLFile.toString(), expectedWEBXMLFile.exists() );
         assertTrue( "META-INF not found", expectedMETAINFDir.exists() );
         assertEquals( "WEB XML not correct", mojo.getWebXml().toString(), FileUtils.fileRead( expectedWEBXMLFile ) );
+        
+        // house keeping
+        expectedWebSourceFile.delete();
+        expectedWebSource2File.delete();      
+        expectedWEBXMLFile.delete();
+        expectedMETAINFDir.delete();
     }
 
     /**
@@ -161,6 +218,12 @@ public class WarExplodedMojoTest
         assertTrue( "WEB-INF not found", expectedWEBINFDir.exists() );
         assertTrue( "Container Config XML not found:" + expectedContainerConfigXMLFile.toString(),
                     expectedContainerConfigXMLFile.exists() );
+        
+        // house keeping
+        expectedWebSourceFile.delete();
+        expectedWebSource2File.delete();    
+        expectedContainerConfigXMLFile.delete();        
+        expectedWEBINFDir.delete();        
     }
 
     /**
@@ -203,6 +266,13 @@ public class WarExplodedMojoTest
         assertTrue( "web xml not found: " + expectedWEBXMLFile.toString(), expectedWEBXMLFile.exists() );
         assertTrue( "manifest file not found: " + expectedManifestFile.toString(), expectedManifestFile.exists() );
         assertTrue( "war file not found: " + expectedWARFile.toString(), expectedWARFile.exists() );
+        
+        // house keeping
+        expectedWebSourceFile.delete();
+        expectedWebSource2File.delete();
+        expectedManifestFile.delete();
+        expectedWEBXMLFile.delete();
+        expectedWARFile.delete();
     }
 
     /**
@@ -250,6 +320,9 @@ public class WarExplodedMojoTest
 
         assertTrue( "file not found: " + expectedFile.toString(), expectedFile.exists() );
         assertEquals( "file incorrect", simpleJSP.toString(), FileUtils.fileRead( expectedFile ) );
+        
+        // house keeping
+        expectedFile.delete();
     }
 
     /**
@@ -300,6 +373,9 @@ public class WarExplodedMojoTest
 
         assertTrue( "file not found: " + expectedFile.toString(), expectedFile.exists() );
         assertEquals( "file incorrect", "updated\n", FileUtils.fileRead( expectedFile ) );
+        
+        // house keeping
+        expectedFile.delete();
     }
 
     /**
@@ -333,6 +409,11 @@ public class WarExplodedMojoTest
         assertTrue( "source files not found: " + expectedWebSourceFile.toString(), expectedWebSourceFile.exists() );
         assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
         assertTrue( "ejb artifact not found: " + expectedEJBArtifact.toString(), expectedEJBArtifact.exists() );
+        
+        // house keeping
+        expectedWebSourceFile.delete();
+        expectedWebSource2File.delete();
+        expectedEJBArtifact.delete();
     }
 
     public void testExplodedWarWithJar()
@@ -364,6 +445,11 @@ public class WarExplodedMojoTest
         assertTrue( "source files not found: " + expectedWebSourceFile.toString(), expectedWebSourceFile.exists() );
         assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
         assertTrue( "jar artifact not found: " + expectedJarArtifact.toString(), expectedJarArtifact.exists() );
+        
+        // house keeping
+        expectedWebSourceFile.delete();
+        expectedWebSource2File.delete();
+        expectedJarArtifact.delete();
     }
 
     /**
@@ -397,6 +483,11 @@ public class WarExplodedMojoTest
         assertTrue( "source files not found: " + expectedWebSourceFile.toString(), expectedWebSourceFile.exists() );
         assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
         assertTrue( "ejb artifact not found: " + expectedEJBArtifact.toString(), expectedEJBArtifact.exists() );
+        
+        // house keeping
+        expectedWebSourceFile.delete();        
+        expectedWebSource2File.delete();
+        expectedEJBArtifact.delete();
     }
 
     /**
@@ -430,6 +521,11 @@ public class WarExplodedMojoTest
         assertTrue( "source files not found: " + expectedWebSourceFile.toString(), expectedWebSourceFile.exists() );
         assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
         assertTrue( "tld artifact not found: " + expectedTLDArtifact.toString(), expectedTLDArtifact.exists() );
+        
+        // house keeping
+        expectedWebSourceFile.delete();        
+        expectedWebSource2File.delete();
+        expectedTLDArtifact.delete();
     }
 
     /**
@@ -463,6 +559,11 @@ public class WarExplodedMojoTest
         assertTrue( "source files not found: " + expectedWebSourceFile.toString(), expectedWebSourceFile.exists() );
         assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
         assertTrue( "par artifact not found: " + expectedPARArtifact.toString(), expectedPARArtifact.exists() );
+        
+        // house keeping
+        expectedWebSourceFile.delete();
+        expectedWebSource2File.delete();
+        expectedPARArtifact.delete();
     }
 
     /**
@@ -504,6 +605,12 @@ public class WarExplodedMojoTest
         assertTrue( "ejb artifact not found: " + expectedEJBArtifact.toString(), expectedEJBArtifact.exists() );
         assertTrue( "ejb dup artifact not found: " + expectedEJBDupArtifact.toString(),
                     expectedEJBDupArtifact.exists() );
+        
+        // house keeping
+        expectedWebSourceFile.delete();
+        expectedWebSource2File.delete();
+        expectedEJBArtifact.delete();
+        expectedEJBDupArtifact.delete();
     }
 
     /**
@@ -532,6 +639,11 @@ public class WarExplodedMojoTest
         assertTrue( "source files not found: " + expectedWebSourceFile.toString(), expectedWebSourceFile.exists() );
         assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
         assertTrue( "classes not found: " + expectedClass.toString(), expectedClass.exists() );
+        
+        // house keeping
+        expectedWebSourceFile.delete();
+        expectedWebSource2File.delete();
+        expectedClass.delete();
     }
 
     /**
@@ -627,6 +739,13 @@ public class WarExplodedMojoTest
 
         assertEquals( "error in filtering using System properties", "system_property=new-system-property-value",
                       reader.readLine() );
+        
+        // house keeping
+        expectedWebSourceFile.delete();
+        expectedWebSource2File.delete();
+        expectedResourceFile.delete();
+        expectedResourceWDirFile.delete();
+        
 
     }
 
@@ -656,6 +775,12 @@ public class WarExplodedMojoTest
         assertFalse( "source files found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
         assertTrue( "WEB XML not found: " + expectedWEBXMLDir.toString(), expectedWEBXMLDir.exists() );
         assertTrue( "META-INF not found", expectedMETAINFDir.exists() );
+        
+        // house keeping
+        expectedWebSourceFile.delete();
+        expectedWebSource2File.delete();
+        expectedWEBXMLDir.delete();
+        expectedMETAINFDir.delete();
     }
 
     public void testExplodedWar_WithWarDependencyIncludeExclude()
@@ -698,6 +823,14 @@ public class WarExplodedMojoTest
         assertFalse( "manifest file found: " + expectedManifestFile.toString(), expectedManifestFile.exists() );
         assertTrue( "war file not found: " + expectedIncludedWARFile.toString(), expectedIncludedWARFile.exists() );
         assertFalse( "war file not found: " + expectedExcludedWarfile.toString(), expectedExcludedWarfile.exists() );
+        
+        // house keeping
+        expectedWebSourceFile.delete();
+        expectedWebSource2File.delete();
+        expectedManifestFile.delete();
+        expectedWEBXMLFile.delete();
+        expectedIncludedWARFile.delete();        
+        expectedExcludedWarfile.delete();
     }
 
     public void testExplodedWarWithSourceModificationCheck()
@@ -744,5 +877,11 @@ public class WarExplodedMojoTest
 //        reader = new FileReader(expectedWebSourceFile);
 //        reader.read(data);
 //        assertTrue("source file updated with old copy: " +expectedWebSourceFile.toString(),String.valueOf(data).equals("newdata") );    }
+        
+        // house keeping
+        expectedWEBINFDir.delete();
+        expectedMETAINFDir.delete();
+        expectedWebSourceFile.delete();
+        expectedWebSource2File.delete();
     }
 }
