@@ -398,18 +398,20 @@ public abstract class AbstractWarMojo
             if ( webappDirectory.exists() )
             {
                 String[] fileNames = getWarFiles( resource );
+                String targetPath = (resource.getTargetPath() == null) ? "" : resource.getTargetPath();
+                File destination = new File(webappDirectory,targetPath); 
                 for ( int i = 0; i < fileNames.length; i++ )
                 {
                     if ( resource.isFiltering() )
                     {
                         copyFilteredFile( new File( resource.getDirectory(), fileNames[i] ),
-                                          new File( webappDirectory, fileNames[i] ), null, getFilterWrappers(),
+                                          new File( destination, fileNames[i] ), null, getFilterWrappers(),
                                           filterProperties );
                     }
                     else
                     {
                         copyFileIfModified( new File( resource.getDirectory(), fileNames[i] ),
-                                            new File( webappDirectory, fileNames[i] ) );
+                                            new File( destination, fileNames[i] ) );
                     }
                 }
             }
