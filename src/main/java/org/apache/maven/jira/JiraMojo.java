@@ -1,7 +1,7 @@
 package org.apache.maven.jira;
 
 /*
- * Copyright 2001-2005 The Codehaus.
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,9 +28,9 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
- * Report on issues from the Issue Tracking System
+ * Goal which downloads issues from the Issue Tracking System and generates a report.
+ *
  * @goal jira-report
- * @description Goal wich downloads issues from Issue Tracking System and generates a report.
  * @author <a href="mailto:jruiz@exist.com">Johnny R. Ruiz III</a>
  * @version $Id$
  */
@@ -47,7 +47,7 @@ public class JiraMojo
     private String outputDirectory;
 
     /**
-     * Path of the Jira XML to be parsed.
+     * Path of the Jira XML file to be parsed.
      * 
      * @parameter expression="${project.build.directory}/jira-results.xml "
      * @required
@@ -92,7 +92,8 @@ public class JiraMojo
 
     /**
      * Defines the filter parameters to restrict the result issues from Jira.
-     * The filter parameters property must use the same format of url parameters from the Jira search
+     * The filter parameters property must use the same format of url parameters from the Jira search.
+     *
      * @parameter default-value=""
      */
     private String filter;
@@ -100,6 +101,7 @@ public class JiraMojo
     /**
      * Sets the status(es) of the project you want to limit your report to.
      * Valid statuses are: Open, In Progress, Reopened, Resolved and Closed. Multiple values can be separated by commas.
+     *
      * @parameter default-value=""
      */
     private String statusIds;
@@ -107,7 +109,8 @@ public class JiraMojo
     /**
      * Sets the resolution(s) of the project you want to limit your report to.
      * Valid statuses are: Unresolved, Fixed, Won't Fix, Duplicate, Incomplete, Cannot Reproduce.
-     * Multiple values can be separated by comma.
+     * Multiple values can be separated by commas.
+     *
      * @parameter default-value=""
      */
     private String resolutionIds;
@@ -115,6 +118,7 @@ public class JiraMojo
     /**
      * Sets the priority(s) of the project you want to limit your report to.
      * Valid statuses are: Blocker, Critical, Major, Minor, Trivial. Multiple values can be separated by commas.
+     *
      * @parameter default-value=""
      */
     private String priorityIds;
@@ -123,30 +127,35 @@ public class JiraMojo
      * Sets the component(s) of the project you want to limit your report to.
      * Multiple components can be separated by commas (such as 10011,10012).
      * Default-value -  empty, meaning all components.
+     *
      * @parameter default-value=""
      */
     private String component;
 
     /**
-     * Defines the jira username for authentication into a private Jira instalation.
+     * Defines the Jira username for authentication into a private Jira installation.
+     *
      * @parameter default-value=""
      */
     private String jiraUser;
 
     /**
-     * Defines the jira password for authentication into a private Jira instalation.
+     * Defines the Jira password for authentication into a private Jira installation.
+     *
      * @parameter default-value=""
      */
     private String jiraPassword;
 
     /**
      * Defines the http user for basic authentication into the Jira webserver.
+     *
      * @parameter default-value=""
      */
     private String webUser;
 
     /**
      * Defines the http password for basic authentication into the Jira webserver.
+     * 
      * @parameter default-value=""
      */
     private String webPassword;

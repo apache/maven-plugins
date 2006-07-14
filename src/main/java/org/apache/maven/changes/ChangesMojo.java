@@ -1,7 +1,7 @@
 package org.apache.maven.changes;
 
 /*
- * Copyright 2001-2005 The Codehaus.
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,9 @@ import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.doxia.site.renderer.SiteRenderer;
 
 /**
+ * Goal which creates a nicely formatted Changes Report in html format from a changes.xml file.
+ *
  * @goal changes-report
- * @description Goal wich creates a nicely formatted Changes Report in html format from changes.xml.
  * @author <a href="mailto:jruiz@exist.com">Johnny R. Ruiz III</a>
  * @version $Id$
  */
@@ -36,6 +37,7 @@ public class ChangesMojo
 {
     /**
      * Directory where reports will go.
+     *
      * @parameter expression="${project.build.directory}/site "
      * @required
      * @readonly
@@ -57,17 +59,19 @@ public class ChangesMojo
     private MavenProject project;
 
     /**
-     * The changes.xml that will be converted into an html report.
+     * The path of the changes.xml file that will be converted into an html report.
+     *
      * @parameter expression="${basedir}/src/changes/changes.xml"
      * @required
      */
     private String xmlPath;
 
     /**
-     * Template string that is used to discover the URL to use to display a bug report.
+     * Template string that is used to discover the URL to use to display an issue report.
      * There are 2 template tokens you can use. %URL%: this is computed by getting the
      * &lt;issueManagement&gt;&lt;url&gt; value from the POM, and removing the context path. %ISSUE% :
      * this is the issue number.
+     * 
      * @parameter expression="%URL%/ViewIssue.jspa?key=%ISSUE%"
      *
      */

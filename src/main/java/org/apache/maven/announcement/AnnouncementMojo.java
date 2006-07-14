@@ -1,7 +1,7 @@
 package org.apache.maven.announcement;
 
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,17 +35,18 @@ import java.io.Writer;
 import java.util.List;
 
 /**
+ * Goal which generate the template for an announcement.
+ *
  * @goal announcement-generate
- * @description Goal which generate the template for announcement
+ * @requiresDependencyResolution test
  * @author aramirez@exist.com
  * @version $Id$
- * 
- * @requiresDependencyResolution test
  */
 public class AnnouncementMojo extends AbstractMojo 
 {             
     /**
-     * Directory where the template file will be generated
+     * Directory where the template file will be generated.
+     *
      * @parameter expression="${project.build.directory}/announcement"
      * @required
      */
@@ -64,74 +65,86 @@ public class AnnouncementMojo extends AbstractMojo
     private String artifactId;
     
     /**
-     * Version of the plugin
+     * Version of the artifact.
+     *
      * @parameter expression="${project.version}"
      * @readonly
      */
     private String version;
     
     /**
-     * Distribution url of the plugin
+     * Distribution url of the artifact.
+     *
      * @parameter expression="${project.url}"
      * @required
      */
     private String url;
     
     /**
-     * Packaging structure based on the pom
+     * Packaging structure for the artifact.
+     *
      * @parameter expression="${project.packaging}"
      * @readonly
      */
     private String packaging;
     
     /**
+     * The name of the artifact to be used in the announcement.
+     *
      * @parameter expression="${project.build.finalName}.${project.packaging}"
      * @required
      */
     private String finalName;
     
     /**
-     * URL where the plugin can be downloaded
+     * URL where the artifact can be downloaded.
+     *
      * @parameter expression="${project.url}/${project.build.finalName}.jar"
      */
     private String urlDownload;
     
     /**
-     * Directory which contains the changes.xml file
+     * The path of the changes.xml file.
+     *
      * @parameter expression="${basedir}/src/changes/changes.xml"
      * @required
      */
     private String xmlPath;
     
     /**
-     * Name of the team that develops the project
+     * Name of the team that develops the artifact.
+     *
      * @parameter default-value="${project.artifactId}-team"
      * @required
      */
     private String developmentTeam;
     
     /**
-     * Short description or introduction of the released project.
+     * Short description or introduction of the released artifact.
+     *
      * @parameter expression="${project.description}"
      */
     private String introduction;
     
     /**
-     * Velocity Component
+     * Velocity Component.
+     *
      * @parameter expression="${component.org.codehaus.plexus.velocity.VelocityComponent}"
      * @readonly
      */
     private VelocityComponent velocity;
     
     /**
-     * Name of the tempalte to be generated
+     * The Velocity template used to format the announcement.
+     *
      * @parameter default-value="announcement.vm"
      * @required
      */
     private String template;
     
     /**
-     * Directory that contains the template
+     * Directory that contains the template.
+     *
      * @parameter default-value="org/apache/maven/announcement"
      * @required
      */
@@ -145,6 +158,7 @@ public class AnnouncementMojo extends AbstractMojo
     
     /**
      * The Maven Project.
+     *
      * @parameter expression="${project}"
      * @required
      * @readonly
@@ -160,7 +174,8 @@ public class AnnouncementMojo extends AbstractMojo
     private Settings setting;
     
     /**
-     * Flag to determine that the plugin will generate a jira announcement
+     * Flag to determine if the plugin will generate a JIRA announcement.
+     *
      * @parameter expression="${generateJiraAnnouncement}" default-value="false"
      * @required
      */
@@ -168,18 +183,21 @@ public class AnnouncementMojo extends AbstractMojo
     
     /**
      * Only closed issues are needed.
+     *
      * @parameter default-value="Closed"
      */
     private String statusId;
     
     /**
-     * Only fixed issues are needed
+     * Only fixed issues are needed.
+     *
      * @parameter default-value="Fixed"
      */
     private String resolutionId;
     
     /**
-     * Directory containing the XML file of jira-announcement to be parse
+     * The path of the XML file of Jira-announcements to be parsed.
+     *
      * @parameter expression="${project.build.directory}/jira-announcement.xml"
      * @required
      * @readonly
@@ -187,6 +205,8 @@ public class AnnouncementMojo extends AbstractMojo
     private String jiraXML;
     
     /**
+     * The maximum number of issues to include.
+     *
      * @parameter default-value="25"
      * @required
      */

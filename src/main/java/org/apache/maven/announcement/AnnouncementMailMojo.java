@@ -1,8 +1,7 @@
-
 package org.apache.maven.announcement;
 
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,16 +31,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
-
-
 /**
- * Maven Announcement mailer goal.
+ * Goal which sends an announcement through email.
+ *
  * @goal announcement-mail
  * @execute goal="announcement-generate"
- * @description Goal which sends the template thru email
  * @author aramirez@exist.com
+ * @version $Id$
  */
-
 public class AnnouncementMailMojo extends AbstractMojo
 {
     //=========================================
@@ -55,14 +52,16 @@ public class AnnouncementMailMojo extends AbstractMojo
     private MavenProject project;
     
     /**
-     * Smtp Server
+     * Smtp Server.
+     *
      * @parameter
      * @required
      */
     private String smtpHost;
     
     /**
-     * Port
+     * Port.
+     *
      * @parameter default-value="25";
      * @required
      */
@@ -84,7 +83,8 @@ public class AnnouncementMailMojo extends AbstractMojo
     private boolean sslMode;
     
     /**
-     * Subject for the email
+     * Subject for the email.
+     *
      * @parameter default-value="[ANNOUNCEMENT] - ${project.artifactId} ${project.version} release!"
      * @required
      */
@@ -92,13 +92,15 @@ public class AnnouncementMailMojo extends AbstractMojo
     
     /**
      * Recipient email address.
+     *
      * @parameter 
      * @required
      */
     private List toAddresses;
     
     /**
-     * Sender
+     * Sender.
+     *
      * @parameter expression="${project.developers}"
      * @required
      */
@@ -106,12 +108,15 @@ public class AnnouncementMailMojo extends AbstractMojo
     
     /**
      * Directory which contains the template for announcement email.
+     *
      * @parameter expression="${project.build.directory}/announcement"
      * @required
      */
     private String templateOutputDirectory;
     
     /**
+     * The Velocity template used to format the announcement.
+     * 
      * @parameter default-value="announcement.vm"
      * @required
      */
@@ -176,7 +181,6 @@ public class AnnouncementMailMojo extends AbstractMojo
     /**
      * Send the email 
      *
-     * @param recipient receiver of the email
      * @throws MojoExecutionException
      */
     protected void sendMessage() throws MojoExecutionException
