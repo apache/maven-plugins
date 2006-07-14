@@ -22,6 +22,7 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.repository.digest.Digester;
+import org.apache.maven.repository.digest.DigesterException;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
@@ -117,10 +118,14 @@ public abstract class AbstractInstallMojo
         {
             throw new MojoExecutionException( "Error in algorithm", e );
         }
+        catch( DigesterException e )
+        {
+            throw new MojoExecutionException( e.getMessage(), e );
+        }
     }
 
     protected String getChecksum( File file, String algo )
-        throws NoSuchAlgorithmException, IOException
+        throws NoSuchAlgorithmException, IOException, DigesterException
     {
         return digester.createChecksum( file, algo );
     }
