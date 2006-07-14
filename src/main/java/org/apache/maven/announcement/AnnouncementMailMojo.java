@@ -68,16 +68,22 @@ public class AnnouncementMailMojo extends AbstractMojo
     private int smtpPort;
     
     /**
+     * The username used to send the email.
+     *
      * @parameter
      */
     private String username;
     
     /**
+     * The password used to send the email.
+     *
      * @parameter
      */
     private String password;
     
     /**
+     * If the email should be sent in SSL mode.
+     *
      * @parameter default-value="false"
      */
     private boolean sslMode;
@@ -116,7 +122,7 @@ public class AnnouncementMailMojo extends AbstractMojo
     
     /**
      * The Velocity template used to format the announcement.
-     * 
+     *
      * @parameter default-value="announcement.vm"
      * @required
      */
