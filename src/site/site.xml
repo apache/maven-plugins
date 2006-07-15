@@ -41,6 +41,7 @@
     </menu>
 
     <menu name="Examples">
+      <item name="Alternate Location For The changes.xml File" href="examples/alternate-changes-xml-location.html"/>
       <item name="SMTP Authentication" href="examples/smtp-authentication.html"/>
     </menu>
 

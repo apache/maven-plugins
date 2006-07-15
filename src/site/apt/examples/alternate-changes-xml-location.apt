@@ -1,0 +1,42 @@
+ ------
+ Alternate Location For The changes.xml File
+ ------
+ Dennis Lundberg
+ ------
+ 15 July 2006
+ ------
+
+Alternate Location For The changes.xml File
+
+ <<Note:>> This feature was introduced in version <2.0-beta-2> of the Changes
+ plugin.
+
+ If you want to have your <<<changes.xml>>> in another location than the
+ default <<<${basedir}/src/changes/changes.xml>>> you can do this by
+ configuring your <<<pom.xml>>>. In this example we want to use the file
+ <<<${basedir}/src/site/changes.xml>>>:
+
++-----------------+
+<project>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <configuration>
+          <xmlPath>${basedir}/src/site/changes.xml</xmlPath>
+        </configuration>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>changes-report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
+  ...
+</project>
++-----------------+
