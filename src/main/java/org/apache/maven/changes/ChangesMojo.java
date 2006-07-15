@@ -17,6 +17,8 @@ package org.apache.maven.changes;
  */
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -24,6 +26,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.doxia.site.renderer.SiteRenderer;
+import org.codehaus.plexus.util.FileUtils;
 
 /**
  * Goal which creates a nicely formatted Changes Report in html format from a changes.xml file.
@@ -83,25 +86,50 @@ public class ChangesMojo
      */
     private String url;
 
-	public boolean canGenerateReport() 
-	{
+    public boolean canGenerateReport()
+    {
         File xmlFile = new File( xmlPath );
         return xmlFile.exists();
-	}
+    }
+
+    private void copyStaticResources()
+        throws MavenReportException
+    {
+        final String PLUGIN_RESOURCES_BASE = "org/apache/maven/plugin/changes";
+        String resourceNames[] =
+            {"images/add.gif", "images/fix.gif", "images/remove.gif", "images/rss.png", "images/update.gif"};
+        try
+        {
+            getLog().debug( "Copying static resources." );
+            for ( int i = 0; i < resourceNames.length; i++ )
+            {
+                URL url =
+                    this.getClass().getClassLoader().getResource( PLUGIN_RESOURCES_BASE + "/" + resourceNames[i] );
+                FileUtils.copyURLToFile( url, new File( outputDirectory, resourceNames[i] ) );
+            }
+        }
+        catch ( IOException e )
+        {
+            throw new MavenReportException( "Unable to copy static resources." );
+        }
+    }
 
     public void executeReport( Locale locale )
         throws MavenReportException
     {
-		ChangesReportGenerator report = new ChangesReportGenerator( xmlPath );
+        ChangesReportGenerator report = new ChangesReportGenerator( xmlPath );
 
-		if ( ( url == null ) || ( url.trim().equals( "" ) ) )
-		{
-			getLog().warn( getBundle( locale ).getString( "report.changes.warn.url" ) );
-		}
+        if ( ( url == null ) || ( url.trim().equals( "" ) ) )
+        {
+            getLog().warn( getBundle( locale ).getString( "report.changes.warn.url" ) );
+        }
 
-		report.setIssueLink( link_template );
-		report.setUrl( url );
-		report.doGenerateReport( getBundle( locale ), getSink() );
+        report.setIssueLink( link_template );
+        report.setUrl( url );
+        report.doGenerateReport( getBundle( locale ), getSink() );
+
+        // Copy the images
+        copyStaticResources();
     }
 
     public String getName( Locale locale )
