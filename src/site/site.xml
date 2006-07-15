@@ -34,7 +34,7 @@
 
     <menu name="Overview">
       <item name="Goals" href="plugin-info.html"/>
-      <item name="Usage" href="howto.html"/>
+      <item name="Usage" href="usage.html"/>
       <item name="Sample Changes Report" href="changes-report.html"/>
       <item name="Sample Jira Report" href="jira-report.html"/>
     </menu>
