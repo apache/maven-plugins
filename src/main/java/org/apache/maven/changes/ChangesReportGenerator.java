@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.reporting.MavenReportException;
 
 public class ChangesReportGenerator
@@ -34,9 +35,9 @@ public class ChangesReportGenerator
     {
     }
 
-    public ChangesReportGenerator( String xmlPath )
+    public ChangesReportGenerator( String xmlPath, Log log )
     {
-        report = new ChangesXML( xmlPath );
+        report = new ChangesXML( xmlPath, log );
     }
 
     public void setIssueLink( String issueLink )

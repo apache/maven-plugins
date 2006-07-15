@@ -1,7 +1,7 @@
 package org.apache.maven.changes;
 
 /*
- * Copyright 2001-2005 The Codehaus.
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ package org.apache.maven.changes;
  * limitations under the License.
  */
 
+import org.apache.maven.plugin.logging.Log;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -47,7 +48,7 @@ public class ChangesXML
 
     private String title;
 
-    public ChangesXML( String xmlPath )
+    public ChangesXML( String xmlPath, Log log )
     {
         SAXParserFactory factory = SAXParserFactory.newInstance();
 
@@ -59,7 +60,7 @@ public class ChangesXML
         }
         catch ( Throwable t )
         {
-            t.printStackTrace();
+            log.error( "An error occured when parsing the changes.xml file:", t );
         }
     }
 
