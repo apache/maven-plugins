@@ -202,36 +202,8 @@ mvn site
 mvn changes:announcement-generate
 -------------------
 
-  This is how you mail the generated announcement:
+  This is how you send an email with the generated announcement:
 
 -------------------
 mvn changes:announcement-mail
--------------------
-
-
-*Authentication support
-
-  If the smtp host needs authentication, you can provide your username and password
-  in the <<<\<configuration\>>>> section
-
--------------------
-<project>
-  ...
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-changes-plugin</artifactId>
-        <configuration>
-          <smtpHost>mail.yourhost.com</smtpHost>
-          <smtpPort implementation="java.lang.Integer">25</smtpPort>
-          <username>some@email.com</username>
-          <password>somepassword</password>
-          ...
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-  ...
-</project>
 -------------------
