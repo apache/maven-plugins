@@ -21,7 +21,7 @@ import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Settings;
 
-import org.codehaus.doxia.site.renderer.SiteRenderer;
+import org.apache.maven.doxia.siterenderer.Renderer;
 
 import java.io.File;
 import java.util.Locale;
@@ -58,11 +58,11 @@ public class JiraMojo
     /**
      * Doxia Site Renderer.
      * 
-     * @parameter expression="${component.org.codehaus.doxia.site.renderer.SiteRenderer}"
+     * @parameter expression="${component.org.apache.maven.doxia.siterenderer.Renderer}"
      * @required
      * @readonly
      */
-    private SiteRenderer siteRenderer;
+    private Renderer siteRenderer;
 
     /**
      * The Maven Project.
@@ -160,40 +160,39 @@ public class JiraMojo
      */
     private String webPassword;
 
+    /**
+     * @see org.apache.maven.reporting.AbstractMavenReport#canGenerateReport()
+     */
+    public boolean canGenerateReport()
+    {
+        return validateIfIssueManagementComplete();
+    }
+
     public void executeReport( Locale locale )
         throws MavenReportException
     {
-        if ( validateIfIssueManagementComplete() )
+        JiraDownloader2 jira = new JiraDownloader2();
+
+        setJiraDownloaderParameter( jira );
+
+        JiraReportGenerator report;
+
+        try
         {
-            JiraDownloader2 jira = new JiraDownloader2();
+            jira.doExecute();
 
-            setJiraDownloaderParameter( jira );
-
-            JiraReportGenerator report;
-
-            try
+            if ( !( new File( jiraXmlPath ).exists() ) )
             {
-                jira.doExecute();
-
-                if ( !( new File( jiraXmlPath ).exists() ) )
-                {
-                    return;
-                }
-
-                report = new JiraReportGenerator( jiraXmlPath );
-
-                report.doGenerateReport( getBundle( locale ), getSink() );
+                return;
             }
-            catch ( Exception e )
-            {
-                e.printStackTrace();
-            }
+
+            report = new JiraReportGenerator( jiraXmlPath );
+
+            report.doGenerateReport( getBundle( locale ), getSink() );
         }
-        else
+        catch ( Exception e )
         {
-            JiraReportGenerator report = new JiraReportGenerator();
-
-            report.doGenerateEmptyReport( getBundle( locale ), getSink() );
+            e.printStackTrace();
         }
     }
 
@@ -207,7 +206,7 @@ public class JiraMojo
         return getBundle( locale ).getString( "report.jira.description" );
     }
 
-    protected SiteRenderer getSiteRenderer()
+    protected Renderer getSiteRenderer()
     {
         return siteRenderer;
     }
