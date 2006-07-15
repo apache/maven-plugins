@@ -23,13 +23,6 @@ Usage
     <author email="jruiz@exist.com">Johnny R. Ruiz III</author>
   </properties>
   <body>
-
-    <release version="1.0" date="2005-01-01" desc="First release">
-      <action dev="jruiz" type="update">
-        Uploaded documentation on how to use the plugin.
-      </action>
-    </release>
-
     <release version="1.1" date="2005-03-01" desc="Subsequent release">
       <action dev="jruiz" type="add">
         Added additional documentation on how to configure the plugin.
@@ -40,6 +33,12 @@ Usage
       <action dev="jruiz" type="remove" due-to="Allan Ramirez" due-to-email="aramirez@exist.com">
         The element type " link " must be terminated by the matching end-tag.
         Deleted the erroneous code.
+      </action>
+    </release>
+
+    <release version="1.0" date="2005-01-01" desc="First release">
+      <action dev="jruiz" type="update">
+        Uploaded documentation on how to use the plugin.
       </action>
     </release>
   </body>
@@ -86,13 +85,13 @@ due-to-email         | Optional     |  Email of the person to be credited for th
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changes-plugin</artifactId>
-          <reportSets>
-            <reportSet>
-              <reports>
-                <report>changes-report</report>
-              </reports>
-            </reportSet>
-         </reportSets>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>changes-report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
       </plugin>
     </plugins>
   </reporting>
