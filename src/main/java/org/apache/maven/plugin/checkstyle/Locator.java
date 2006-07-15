@@ -124,7 +124,8 @@ public class Locator
                 else
                 {
                     getLog().debug( "Location is not a Resource." );
-                    throw new IOException( "Unable to find location '" + location + "' as URL, File or Resource." );
+                    throw new IOException( "Unable to find location '" + location
+                        + "' as URL, File or Resource. Working dir is " + new File( "" ).getAbsolutePath() );
                 }
             }
         }
