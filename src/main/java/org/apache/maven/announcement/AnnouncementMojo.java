@@ -44,6 +44,8 @@ import java.util.List;
  */
 public class AnnouncementMojo extends AbstractMojo 
 {             
+    private static final String SNAPSHOT_SUFFIX = "-SNAPSHOT";
+
     /**
      * Directory where the template file will be generated.
      *
@@ -51,19 +53,19 @@ public class AnnouncementMojo extends AbstractMojo
      * @required
      */
     private String outputDirectory;
-    
+
     /**
      * @parameter expression="${project.groupId}"
      * @readonly
      */
     private String groupId;
-    
+
     /**
      * @parameter expression="${project.artifactId}"
      * @readonly
      */
     private String artifactId;
-    
+
     /**
      * Version of the artifact.
      *
@@ -71,7 +73,7 @@ public class AnnouncementMojo extends AbstractMojo
      * @readonly
      */
     private String version;
-    
+
     /**
      * Distribution url of the artifact.
      *
@@ -79,7 +81,7 @@ public class AnnouncementMojo extends AbstractMojo
      * @required
      */
     private String url;
-    
+
     /**
      * Packaging structure for the artifact.
      *
@@ -87,7 +89,7 @@ public class AnnouncementMojo extends AbstractMojo
      * @readonly
      */
     private String packaging;
-    
+
     /**
      * The name of the artifact to be used in the announcement.
      *
@@ -95,14 +97,14 @@ public class AnnouncementMojo extends AbstractMojo
      * @required
      */
     private String finalName;
-    
+
     /**
      * URL where the artifact can be downloaded.
      *
      * @parameter expression="${project.url}/${project.build.finalName}.jar"
      */
     private String urlDownload;
-    
+
     /**
      * The path of the changes.xml file.
      *
@@ -110,7 +112,7 @@ public class AnnouncementMojo extends AbstractMojo
      * @required
      */
     private String xmlPath;
-    
+
     /**
      * Name of the team that develops the artifact.
      *
@@ -118,14 +120,14 @@ public class AnnouncementMojo extends AbstractMojo
      * @required
      */
     private String developmentTeam;
-    
+
     /**
      * Short description or introduction of the released artifact.
      *
      * @parameter expression="${project.description}"
      */
     private String introduction;
-    
+
     /**
      * Velocity Component.
      *
@@ -133,7 +135,7 @@ public class AnnouncementMojo extends AbstractMojo
      * @readonly
      */
     private VelocityComponent velocity;
-    
+
     /**
      * The Velocity template used to format the announcement.
      *
@@ -141,7 +143,7 @@ public class AnnouncementMojo extends AbstractMojo
      * @required
      */
     private String template;
-    
+
     /**
      * Directory that contains the template.
      *
@@ -149,13 +151,13 @@ public class AnnouncementMojo extends AbstractMojo
      * @required
      */
     private String templateDirectory;
-       
+
     private ChangesXML xml;
-    
+
       //=======================================//
      //  Jira-Announcement Needed Parameters  //
     //=======================================//
-    
+
     /**
      * The Maven Project.
      *
@@ -166,13 +168,13 @@ public class AnnouncementMojo extends AbstractMojo
     private MavenProject project;
     /**
      * Settings XML configuration.
-     * 
+     *
      * @parameter expression="${settings}"
      * @required
      * @readonly
      */
     private Settings setting;
-    
+
     /**
      * Flag to determine if the plugin will generate a JIRA announcement.
      *
@@ -180,21 +182,21 @@ public class AnnouncementMojo extends AbstractMojo
      * @required
      */
     private boolean generateJiraAnnouncement;
-    
+
     /**
      * Only closed issues are needed.
      *
      * @parameter default-value="Closed"
      */
     private String statusId;
-    
+
     /**
      * Only fixed issues are needed.
      *
      * @parameter default-value="Fixed"
      */
     private String resolutionId;
-    
+
     /**
      * The path of the XML file of Jira-announcements to be parsed.
      *
@@ -203,7 +205,7 @@ public class AnnouncementMojo extends AbstractMojo
      * @readonly
      */
     private String jiraXML;
-    
+
     /**
      * The maximum number of issues to include.
      *
@@ -211,17 +213,17 @@ public class AnnouncementMojo extends AbstractMojo
      * @required
      */
     private int nbEntries;
-    
+
       //=======================================//
      //    announcement-generate execution    //
     //=======================================//
-    
+
     /**
      * Generate the template
      *
      * @throws MojoExecutionException
      */
-    public void execute() throws MojoExecutionException 
+    public void execute() throws MojoExecutionException
     {
         if( !generateJiraAnnouncement )
         {
@@ -234,148 +236,154 @@ public class AnnouncementMojo extends AbstractMojo
             doJiraGenerate();
         }
     }
-    
+
     /**
      * Add the parameters to velocity context
      *
      * @param xml parsed changes.xml
      * @throws MojoExecutionException
      */
-    public void doGenerate(ChangesXML xml) throws MojoExecutionException 
+    public void doGenerate(ChangesXML xml) throws MojoExecutionException
     {
-        try 
+        try
         {
             Context context = new VelocityContext();
-            
+
             List releaseList = xml.getReleaseList();
-            
-            getLog().info( "Creating file..." );
-            
-            if( getIntroduction() == null || getIntroduction().equals( "" ) ) 
+
+            getLog().info( "Creating announcement file from changes.xml..." );
+
+            if( getIntroduction() == null || getIntroduction().equals( "" ) )
             {
                 setIntroduction( getUrl() );
             }
-            
+
             context.put( "releases"         , releaseList                       );
-            
+
             context.put( "groupId"          , getGroupId()                      );
-            
+
             context.put( "artifactId"       , getArtifactId()                   );
-            
+
             context.put( "version"          , getVersion()                      );
-            
+
             context.put( "packaging"        , getPackaging()                    );
-            
+
             context.put( "url"              , getUrl()                          );
-            
+
             context.put( "release"          , getLatestRelease( releaseList )   );
-            
+
             context.put( "introduction"     , getIntroduction()                 );
-            
+
             context.put( "developmentTeam"  , getDevelopmentTeam()              );
-            
+
             context.put( "finalName"        , getFinalName()                    );
-            
+
             context.put( "urlDownload"      , getUrlDownload()                  );
-            
+
             processTemplate( context, getOutputDirectory(), template  );
-        } 
-        catch( ResourceNotFoundException rnfe ) 
+        }
+        catch( ResourceNotFoundException rnfe )
         {
             throw new MojoExecutionException( "resource not found." );
-        } 
-        catch( VelocityException ve ) 
+        }
+        catch( VelocityException ve )
         {
             throw new MojoExecutionException( ve.toString() );
         }
-        catch( IOException ioe ) 
+        catch( IOException ioe )
         {
             throw new MojoExecutionException( ioe.toString() );
         }
     }
-    
-    public void doGenerate( List releases ) throws MojoExecutionException 
+
+    public void doGenerate( List releases ) throws MojoExecutionException
     {
-        try 
-        {   
-            Context context = new VelocityContext();            
-            
-            getLog().info( "Creating file..." );
-            
-            if( getIntroduction() == null || getIntroduction().equals( "" ) ) 
+        try
+        {
+            Context context = new VelocityContext();
+
+            getLog().info( "Creating announcement file from JIRA releases..." );
+
+            if( getIntroduction() == null || getIntroduction().equals( "" ) )
             {
                 setIntroduction( getUrl() );
             }
-            
+
             context.put( "releases"         , releases                          );
-            
+
             context.put( "groupId"          , getGroupId()                      );
-            
+
             context.put( "artifactId"       , getArtifactId()                   );
-            
+
             context.put( "version"          , getVersion()                      );
-            
+
             context.put( "packaging"        , getPackaging()                    );
-            
+
             context.put( "url"              , getUrl()                          );
-            
+
             context.put( "release"          , getLatestRelease( releases )      );
-            
+
             context.put( "introduction"     , getIntroduction()                 );
-            
+
             context.put( "developmentTeam"  , getDevelopmentTeam()              );
-            
+
             context.put( "finalName"        , getFinalName()                    );
-            
+
             context.put( "urlDownload"      , getUrlDownload()                  );
-            
+
             processTemplate( context, getOutputDirectory(), template  );
-        } 
-        catch( ResourceNotFoundException rnfe ) 
+        }
+        catch( ResourceNotFoundException rnfe )
         {
             throw new MojoExecutionException( "resource not found." );
-        } 
-        catch( VelocityException ve ) 
+        }
+        catch( VelocityException ve )
         {
             throw new MojoExecutionException( ve.toString() );
         }
-        catch( IOException ioe ) 
+        catch( IOException ioe )
         {
             throw new MojoExecutionException( ioe.toString() );
         }
-    }    
-    
+    }
+
     /**
-     * Get the latest release by matching the release in
-     * changes.xml and in the version of the pom
+     * Get the latest release by matching the supplied releases
+     * with the version in the pom
      *
-     * @param releases list of releases in changes.xml
+     * @param releases list of releases
      * @throws MojoExecutionException
      */
-    public Release getLatestRelease( List releases ) throws MojoExecutionException 
+    public Release getLatestRelease( List releases ) throws MojoExecutionException
     {
         boolean isFound = false;
-        
+
         Release release = null;
-        
-        for( int i=0; i<releases.size(); i++ ) 
+
+        // Remove "-SNAPSHOT" from the end, if it's there
+        String pomVersion = getVersion();
+        if( pomVersion != null && pomVersion.endsWith( SNAPSHOT_SUFFIX )) {
+            pomVersion = pomVersion.substring( 0, pomVersion.length() - SNAPSHOT_SUFFIX.length() );
+        }
+
+        for( int i=0; i<releases.size(); i++ )
         {
             release = (Release) releases.get(i);
-            
-            if( release.getVersion().equals( getVersion() ) ) 
+
+            if( release.getVersion().equals( pomVersion ) )
             {
                 isFound = true;
                 return release;
             }
         }
-        
+
         if( isFound == false )
         {
-            throw new MojoExecutionException( "Make sure that the latest release version of changes.xml matches the version of the POM." );
+            throw new MojoExecutionException( "Couldn't find the release '" + pomVersion + "' among the supplied releases." );
         }
         return release;
     }
-    
+
     /**
      * Create the velocity template
      *
