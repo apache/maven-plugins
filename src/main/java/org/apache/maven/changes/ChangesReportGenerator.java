@@ -1,7 +1,7 @@
 package org.apache.maven.changes;
 
 /*
- * Copyright 2001-2005 The Codehaus.
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ package org.apache.maven.changes;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.doxia.sink.Sink;
 
 public class ChangesReportGenerator
 {
