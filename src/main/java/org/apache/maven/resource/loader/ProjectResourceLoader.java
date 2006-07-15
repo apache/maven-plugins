@@ -1,7 +1,7 @@
 package org.apache.maven.resource.loader;
 
 /*
- * Copyright 2001-2004 The Apache Software Foundation.
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
@@ -79,7 +79,7 @@ public class ProjectResourceLoader extends ResourceLoader
      * Get an InputStream so that the Runtime can build a
      * template with it.
      *
-     * @param name name of template to get
+     * @param templateName name of template to get
      * @return InputStream containing the template
      * @throws ResourceNotFoundException if template not found
      *         in the file template path.
@@ -154,7 +154,7 @@ public class ProjectResourceLoader extends ResourceLoader
     /**
      * Try to find a template given a normalized path.
      * 
-     * @param String a normalized path
+     * @param path a normalized path
      * @return InputStream input stream that will be parsed
      *
      */
