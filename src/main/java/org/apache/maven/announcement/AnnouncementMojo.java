@@ -225,7 +225,7 @@ public class AnnouncementMojo extends AbstractMojo
     {
         if( !generateJiraAnnouncement )
         {
-            setXml( new ChangesXML( getXmlPath() ) );
+            setXml( new ChangesXML( getXmlPath(), getLog() ) );
 
             doGenerate( getXml() );
         }

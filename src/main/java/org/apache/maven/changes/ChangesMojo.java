@@ -117,7 +117,7 @@ public class ChangesMojo
     public void executeReport( Locale locale )
         throws MavenReportException
     {
-        ChangesReportGenerator report = new ChangesReportGenerator( xmlPath );
+        ChangesReportGenerator report = new ChangesReportGenerator( xmlPath, getLog() );
 
         if ( ( url == null ) || ( url.trim().equals( "" ) ) )
         {
