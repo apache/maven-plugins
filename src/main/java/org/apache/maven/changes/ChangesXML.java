@@ -167,7 +167,7 @@ public class ChangesXML
 
             release.setVersion( attrs.getValue( "version" ) );
 
-            release.setDescription( attrs.getValue( "desc" ) );
+            release.setDescription( attrs.getValue( "description" ) );
 
             actionList = new ArrayList();
         }
