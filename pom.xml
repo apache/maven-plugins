@@ -12,6 +12,9 @@
   <prerequisites>
     <maven>2.0</maven>
   </prerequisites>
+  <issueManagement>
+    <url>http://jira.codehaus.org/browse/MCHANGES</url>
+  </issueManagement>
   <developers>
     <developer>
       <id>jruiz</id>
@@ -71,4 +74,21 @@
       <version>2.0.2</version>
     </dependency>
   </dependencies>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <version>2.0-beta-2-SNAPSHOT</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>changes-report</report>
+              <report>jira-report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>

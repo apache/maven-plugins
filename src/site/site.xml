@@ -37,7 +37,7 @@
       <item name="Usage" href="usage.html"/>
       <item name="FAQ" href="faq.html"/>
       <item name="Sample Changes Report" href="sample-changes-report.html"/>
-      <item name="Sample Jira Report" href="sample-jira-report.html"/>
+      <item name="Live Jira Report" href="jira-report.html"/>
     </menu>
 
     <menu name="Examples">
