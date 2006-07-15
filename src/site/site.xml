@@ -35,8 +35,13 @@
     <menu name="Overview">
       <item name="Goals" href="plugin-info.html"/>
       <item name="Usage" href="usage.html"/>
+      <item name="FAQ" href="faq.html"/>
       <item name="Sample Changes Report" href="changes-report.html"/>
       <item name="Sample Jira Report" href="jira-report.html"/>
+    </menu>
+
+    <menu name="Examples">
+      <item name="SMTP Authentication" href="examples/smtp-authentication.html"/>
     </menu>
 
     ${reports}

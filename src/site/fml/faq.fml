@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<faqs id="FAQ" title="Frequently Asked Questions">
+ <part id="General">
+   <faq id="question1">
+     <question>What's the difference between the changes-maven-plugin at Mojo and this one?</question>
+     <answer>
+       <p>
+         This plugin started out at <a href="http://mojo.codehaus.org/">the Mojo project</a>.
+         In March of 2006 the plugin was moved to Apache and the Maven sandbox.
+         So it's the same plugin, but this one is newer.
+       </p>
+     </answer>
+   </faq>
+ </part>
+</faqs>
