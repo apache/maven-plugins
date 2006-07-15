@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.NumberFormat;
+import java.text.ParsePosition;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -220,30 +222,35 @@ public final class JiraDownloader2
         try
         {
             HttpClient cl = new HttpClient();
-            
+
             HttpState state = new HttpState();
-            
+
             HostConfiguration hc = new HostConfiguration();
-            
+
             cl.setHostConfiguration( hc );
-            
+
             cl.setState( state );
-            
+
             determineProxy( cl );
 
             Map urlMap = getJiraUrlAndIssueId();
-            
+
             String jiraUrl = (String) urlMap.get("url");
-            
+
             String jiraId = (String) urlMap.get("id");
-            
+
             doAuthentication( cl, jiraUrl );
+
+            if ( jiraId == null || jiraId.length() == 0 )
+            {
+                jiraId = getPidFromJira( cl );
+            }
 
             // create the URL for getting the proper issues from JIRA
             String fullURL = jiraUrl + "/secure/IssueNavigator.jspa?view=rss&pid=" + jiraId;
-            
+
             fullURL += createFilter();
-            
+
             fullURL += ( "&tempMax=" + nbEntriesMax + "&reset=true&decorator=none" );
 
             // execute the GET
@@ -254,11 +261,55 @@ public final class JiraDownloader2
             getLog().error( "Error accessing " + project.getIssueManagement().getUrl(), e );
         }
     }
-    
+
+    /**
+     * Try to get a JIRA pid from the issue management URL.
+     *
+     * @param client The client used to connect to JIRA
+     * @return The JIRA id for the project, or null if it can't be found
+     */
+    private String getPidFromJira( HttpClient client )
+    {
+        String jiraId = null;
+        GetMethod gm = new GetMethod( project.getIssueManagement().getUrl() );
+        log.info( "JIRA URL " + project.getIssueManagement().getUrl() + " doesn't include a pid, trying to get it" );
+        try
+        {
+            client.executeMethod( gm );
+            log.info( "Successfully reached JIRA." );
+        }
+        catch ( Exception e )
+        {
+            if ( log.isDebugEnabled() )
+            {
+                log.error( "Unable to reach JIRA project page:", e );
+            }
+            else
+            {
+                log.error( "Unable to reach JIRA project page. Cause is: " + e.getLocalizedMessage() );
+            }
+        }
+        String projectPage = gm.getResponseBodyAsString();
+        int pidIndex = projectPage.indexOf( "pid=" );
+
+        if ( pidIndex == -1 )
+        {
+            log.error( "Unable to get JIRA pid using the url " + project.getIssueManagement().getUrl() );
+        }
+        else
+        {
+            NumberFormat nf = NumberFormat.getInstance();
+            Number pidNumber = nf.parse( projectPage, new ParsePosition( pidIndex + 4 ) );
+            jiraId = Integer.toString( pidNumber.intValue() );
+            log.debug( "Found the pid " + jiraId + " at " + project.getIssueManagement().getUrl() );
+        }
+        return jiraId;
+    }
+
     private Map getJiraUrlAndIssueId()
     {
         HashMap urlMap = new HashMap();
-        
+
         String url = project.getIssueManagement().getUrl();
 
         // chop off the parameter part
@@ -275,16 +326,16 @@ public final class JiraDownloader2
 
         String jiraUrl = url.substring( 0, url.lastIndexOf( "/" ) );
 
-        if ( jiraUrl.endsWith( "secure" ) )
+        if ( jiraUrl.endsWith( "secure" ) || jiraUrl.endsWith( "browse" ) )
         {
             jiraUrl = jiraUrl.substring( 0, jiraUrl.lastIndexOf( "/" ) );
         }
-        getLog().info( "Jira lives at: " + jiraUrl );   
-        
+        getLog().info( "Jira lives at: " + jiraUrl );
+
         urlMap.put("url", jiraUrl);
-        
+
         urlMap.put("id", id);
-        
+
         return urlMap;
     }
 
