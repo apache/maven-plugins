@@ -26,6 +26,7 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.StatusLine;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.maven.jira.JiraHelper;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Proxy;
@@ -148,7 +149,6 @@ public final class JiraAnnouncementDownloader
             }
         }
 
-        
         // get the Priority Ids
         if ( priorityIds != null )
         {
@@ -210,7 +210,7 @@ public final class JiraAnnouncementDownloader
         throws Exception
     {
         try
-        {            
+        {
             HttpClient cl = new HttpClient();
             
             HttpState state = new HttpState();
@@ -231,12 +231,16 @@ public final class JiraAnnouncementDownloader
             
             doAuthentication( cl, jiraUrl );
 
+            if ( jiraId == null || jiraId.length() == 0 )
+            {
+                jiraId = JiraHelper.getPidFromJira( log, project.getIssueManagement().getUrl(), cl );
+            }
+
             // create the URL for getting the proper issues from JIRA
             String fullURL = jiraUrl + "/secure/IssueNavigator.jspa?view=rss&pid=" + jiraId;
             
-            //TODO:only for a temporary use case, 
-            //hardcoded of for fix version
-            fullURL += "&fixfor=12000";
+            // @todo: only for a temporary use case, hardcoded fix-for version
+            fullURL += "&fixfor=12730";
             
             fullURL += createFilter();
             
@@ -271,11 +275,11 @@ public final class JiraAnnouncementDownloader
 
         String jiraUrl = url.substring( 0, url.lastIndexOf( "/" ) );
 
-        if ( jiraUrl.endsWith( "secure" ) )
+        if ( jiraUrl.endsWith( "secure" ) || jiraUrl.endsWith( "browse" ) )
         {
             jiraUrl = jiraUrl.substring( 0, jiraUrl.lastIndexOf( "/" ) );
         }
-        getLog().info( "Jira lives at: " + jiraUrl );   
+        getLog().info( "Jira lives at: " + jiraUrl );
         
         urlMap.put("url", jiraUrl);
         
@@ -374,12 +378,12 @@ public final class JiraAnnouncementDownloader
         }
 
         if ( settings != null )
-        {   
+        {
             proxy = settings.getActiveProxy();
         }
 
         if ( proxy != null )
-        {   
+        {
             proxyHost = settings.getActiveProxy().getHost();
             
             proxyPort = settings.getActiveProxy().getPort();
@@ -428,7 +432,7 @@ public final class JiraAnnouncementDownloader
 
             final String strGetResponseBody = gm.getResponseBodyAsString();
             
-            // write the reponse to file           
+            // write the reponse to file
             PrintWriter pw = new PrintWriter( new FileWriter( getOutput() ) );
             
             pw.print( strGetResponseBody );
