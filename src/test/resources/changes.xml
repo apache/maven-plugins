@@ -11,7 +11,7 @@
       </action>              
     </release>
 
-    <release version="1.0-SNAPSHOT" date="2003-06-05" desc="Sample Description">
+    <release version="1.0-SNAPSHOT" date="2003-06-05" description="Sample Description">
       <action dev="vmassol" type="add">Test
       </action>              
       <action dev="vmassol" type="fix" issue="JIRA-XXX">
