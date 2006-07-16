@@ -74,11 +74,14 @@ public class ChangesMojo
      * There are 2 template tokens you can use. %URL%: this is computed by getting the
      * &lt;issueManagement&gt;&lt;url&gt; value from the POM, and removing the context path. %ISSUE% :
      * this is the issue number.
+     * <p>
+     * <strong>Note:</strong> In versions of this plugin prior to 2.0-beta-2 this parameter was called <code>link_template</code>.
+     * </p>
      * 
      * @parameter expression="%URL%/ViewIssue.jspa?key=%ISSUE%"
      *
      */
-    private String link_template;
+    private String issueLinkTemplate;
 
     /**
      * @parameter expression="${project.issueManagement.url}"
@@ -124,7 +127,7 @@ public class ChangesMojo
             getLog().warn( getBundle( locale ).getString( "report.changes.warn.url" ) );
         }
 
-        report.setIssueLink( link_template );
+        report.setIssueLink( issueLinkTemplate );
         report.setUrl( url );
         report.doGenerateReport( getBundle( locale ), getSink() );
 
