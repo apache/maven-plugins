@@ -9,7 +9,7 @@
 
 Usage
 
- This plugin is used to create a Changes Report, a Jira Report and an Announcement text file.
+ This plugin is used to create a Changes Report, a JIRA Report and an Announcement text file.
 
 *How to Generate the Changes Report
  
@@ -106,9 +106,9 @@ mvn site
 -------------------
 
 
-*How to Generate the Jira Report
+*How to Generate the JIRA Report
 
-  <<Note:>> To use the Jira Report, the <<<\<issueManagement\>>>> section in the <<<pom.xml>>> of the project must be configured.
+  <<Note:>> To use the JIRA Report, the <<<\<issueManagement\>>>> section in the <<<pom.xml>>> of the project must be configured.
 
   Sample code inside your <<<pom.xml>>>:
   
@@ -123,7 +123,7 @@ mvn site
 -------------------
 
 
-  To generate the Jira report, insert the changes plugin in the <<<\<reporting\>>>> section of your project <<<pom.xml>>>
+  To generate the JIRA report, insert the changes plugin in the <<<\<reporting\>>>> section of your project <<<pom.xml>>>
  
 -------------------
 <project>

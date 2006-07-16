@@ -46,7 +46,7 @@ public class JiraMojo
     private String outputDirectory;
 
     /**
-     * Path of the Jira XML file to be parsed.
+     * Path of the JIRA XML file to be parsed.
      * 
      * @parameter expression="${project.build.directory}/jira-results.xml "
      * @required
@@ -82,7 +82,7 @@ public class JiraMojo
     private Settings settings;
 
     /**
-     * Maximum number of entries to be displayed by the Jira Report.
+     * Maximum number of entries to be displayed by the JIRA Report.
      * 
      * @parameter default-value=100
      *
@@ -90,8 +90,8 @@ public class JiraMojo
     private int maxEntries;
 
     /**
-     * Defines the filter parameters to restrict the result issues from Jira.
-     * The filter parameters property must use the same format of url parameters from the Jira search.
+     * Defines the filter parameters to restrict the result issues from JIRA.
+     * The filter parameters property must use the same format of url parameters from the JIRA search.
      *
      * @parameter default-value=""
      */
@@ -132,28 +132,28 @@ public class JiraMojo
     private String component;
 
     /**
-     * Defines the Jira username for authentication into a private Jira installation.
+     * Defines the JIRA username for authentication into a private JIRA installation.
      *
      * @parameter default-value=""
      */
     private String jiraUser;
 
     /**
-     * Defines the Jira password for authentication into a private Jira installation.
+     * Defines the JIRA password for authentication into a private JIRA installation.
      *
      * @parameter default-value=""
      */
     private String jiraPassword;
 
     /**
-     * Defines the http user for basic authentication into the Jira webserver.
+     * Defines the http user for basic authentication into the JIRA webserver.
      *
      * @parameter default-value=""
      */
     private String webUser;
 
     /**
-     * Defines the http password for basic authentication into the Jira webserver.
+     * Defines the http password for basic authentication into the JIRA webserver.
      * 
      * @parameter default-value=""
      */
@@ -265,21 +265,21 @@ public class JiraMojo
     {
         if ( ( (MavenProject) project ).getIssueManagement() == null )
         {
-            getLog().error( "No Issue Management set. Jira Report will not be generated." );
+            getLog().error( "No Issue Management set. JIRA Report will not be generated." );
 
             return false;
         }
         else if ( ( ( (MavenProject) project ).getIssueManagement().getUrl() == null )
             || ( ( (MavenProject) project ).getIssueManagement().getUrl().trim().equals( "" ) ) )
         {
-            getLog().error( "No URL set in Issue Management. Jira Report will not be generated." );
+            getLog().error( "No URL set in Issue Management. JIRA Report will not be generated." );
 
             return false;
         }
         else if ( ( ( (MavenProject) project ).getIssueManagement().getSystem() != null )
             && !( ( (MavenProject) project ).getIssueManagement().getSystem().equalsIgnoreCase( "jira" ) ) )
         {
-            getLog().error( "Jira Report only supports JIRA.  Jira Report will not be generated." );
+            getLog().error( "JIRA Report only supports JIRA.  JIRA Report will not be generated." );
 
             return false;
         }
