@@ -10,7 +10,7 @@ Maven 2 Deploy Plugin - Introduction
   
   The deploy plugin is primarily used during the deploy phase, to add your
   artifact(s) to a remote repository for sharing with other developers and
-  projects. This is usualy done in an integration or release environment. It can
+  projects. This is usually done in an integration or release environment. It can
   also be used to deploy a particular artifact (e.g. a third party jar like
   Sun's non redistributable reference implementations).
 
@@ -44,9 +44,9 @@ Maven 2 Deploy Plugin - Introduction
   The deploy plugin has 2 goals:
 
   * {{{deploy-mojo.html}deploy:deploy}} is used to automatically install the
-    artifact, its pom and the attached artifacts produced by a particuliar
-    project. Most if not all the information related to the deployment is stored
-    in the project's pom. The operation
+    artifact, its pom and the attached artifacts produced by a particular
+    project. Most if not all of the information related to the deployment is stored
+    in the project's pom.
 
   * {{{deploy-file-mojo.html}deploy:deploy-file}} is used to install a single artifact
     along with its pom. In that case the artifact information can be taken from 
