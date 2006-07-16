@@ -85,7 +85,7 @@ public class EclipsePluginMasterProjectTest
     protected void setUp()
         throws Exception
     {
-        basedir = getTestFile( "src/test/projects/master-test" );
+        basedir = getTestFile( "target/test-classes/projects/master-test" );
         super.setUp();
     }
 
