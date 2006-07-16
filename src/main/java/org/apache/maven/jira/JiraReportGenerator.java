@@ -16,10 +16,10 @@ package org.apache.maven.jira;
  * limitations under the License.
  */
 
+import org.apache.maven.doxia.sink.Sink;
+
 import java.util.List;
 import java.util.ResourceBundle;
-
-import org.apache.maven.doxia.sink.Sink;
 
 /**
  * Generates a JIRA report.

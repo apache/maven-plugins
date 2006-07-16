@@ -19,7 +19,6 @@ package org.apache.maven.jira;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
 
 import java.text.NumberFormat;
 import java.text.ParsePosition;

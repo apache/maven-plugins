@@ -16,12 +16,11 @@ package org.apache.maven.jira;
  * limitations under the License.
  */
 
+import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Settings;
-
-import org.apache.maven.doxia.siterenderer.Renderer;
 
 import java.io.File;
 import java.util.Locale;

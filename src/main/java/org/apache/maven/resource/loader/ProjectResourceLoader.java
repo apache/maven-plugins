@@ -16,6 +16,12 @@ package org.apache.maven.resource.loader;
  * limitations under the License.
  */
 
+import org.apache.commons.collections.ExtendedProperties;
+import org.apache.velocity.exception.ResourceNotFoundException;
+import org.apache.velocity.runtime.resource.Resource;
+import org.apache.velocity.runtime.resource.loader.ResourceLoader;
+import org.apache.velocity.util.StringUtils;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,15 +29,6 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Hashtable;
 import java.util.Vector;
-
-
-import org.apache.velocity.runtime.resource.Resource;
-import org.apache.velocity.runtime.resource.loader.ResourceLoader;
-import org.apache.velocity.exception.ResourceNotFoundException;
-
-import org.apache.velocity.util.StringUtils;
-
-import org.apache.commons.collections.ExtendedProperties;
 
 /**
  * Resource Loader for external projects.
