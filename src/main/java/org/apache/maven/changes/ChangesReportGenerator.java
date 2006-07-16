@@ -139,7 +139,15 @@ public class ChangesReportGenerator
             {
                 sink.text( " " + bundle.getString( "report.changes.text.thanx" ) + " " );
 
-                sinkLink( sink, action.getDueTo(), "mailto:" + action.getDueToEmail() );
+                if ( action.getDueToEmail() != null )
+                {
+                    sinkLink( sink, action.getDueTo(), "mailto:" + action.getDueToEmail() );
+                }
+                else {
+                    sink.text( action.getDueTo() );
+                }
+
+                sink.text( "." );
             }
 
             sink.tableCell_();
