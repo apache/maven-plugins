@@ -18,7 +18,6 @@ package org.apache.maven.plugin.eclipse;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -55,7 +54,7 @@ public abstract class AbstractEclipsePluginTestCase
     /**
      * Test repository directory.
      */
-    protected File localRepositoryDir = getTestFile( "src/test/m2repo" );
+    protected File localRepositoryDir = getTestFile( "target/test-classes/m2repo" );
 
     /**
      * @see org.codehaus.plexus.PlexusTestCase#setUp()
@@ -68,6 +67,7 @@ public abstract class AbstractEclipsePluginTestCase
         this.maven.setClassLoader( Thread.currentThread().getContextClassLoader() );
         this.maven.setLogger( new MavenEmbedderConsoleLogger() );
         this.maven.setLocalRepositoryDirectory( localRepositoryDir );
+        this.maven.setOffline( true );
         this.maven.start();
 
         super.setUp();
@@ -104,7 +104,7 @@ public abstract class AbstractEclipsePluginTestCase
         throws Exception
     {
 
-        File basedir = getTestFile( "src/test/projects/" + projectName );
+        File basedir = getTestFile( "target/test-classes/projects/" + projectName );
 
         MavenProject project = maven.readProjectWithDependencies( new File( basedir, "pom.xml" ) );
 
