@@ -155,7 +155,7 @@ public class AnnouncementMojo extends AbstractMojo
     private ChangesXML xml;
 
       //=======================================//
-     //  Jira-Announcement Needed Parameters  //
+     //  JIRA-Announcement Needed Parameters  //
     //=======================================//
 
     /**
@@ -198,7 +198,7 @@ public class AnnouncementMojo extends AbstractMojo
     private String resolutionId;
 
     /**
-     * The path of the XML file of Jira-announcements to be parsed.
+     * The path of the XML file of JIRA-announcements to be parsed.
      *
      * @parameter expression="${project.build.directory}/jira-announcement.xml"
      * @required
@@ -471,7 +471,7 @@ public class AnnouncementMojo extends AbstractMojo
             catch( Exception e )
             {
                 throw new MojoExecutionException( 
-                        "Failed to download Jira Announcement", e );
+                        "Failed to download JIRA Announcement", e );
             }        
     }
 

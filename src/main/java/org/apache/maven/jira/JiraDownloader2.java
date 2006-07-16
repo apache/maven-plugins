@@ -124,7 +124,7 @@ public final class JiraDownloader2
     }
 
     /**
-     * Creates a filter given the maven.jira parameters and some defaults.
+     * Creates a filter given the parameters and some defaults.
      *
      * @return request parameters to be added to URL used for downloading the JIRA issues
      */
@@ -285,7 +285,7 @@ public final class JiraDownloader2
         {
             jiraUrl = jiraUrl.substring( 0, jiraUrl.lastIndexOf( "/" ) );
         }
-        getLog().info( "Jira lives at: " + jiraUrl );
+        getLog().info( "JIRA lives at: " + jiraUrl );
 
         urlMap.put("url", jiraUrl);
 

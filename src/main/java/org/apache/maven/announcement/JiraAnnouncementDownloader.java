@@ -116,7 +116,7 @@ public final class JiraAnnouncementDownloader
     }
 
     /**
-     * Creates a filter given the maven.jira parameters and some defaults.
+     * Creates a filter given the parameters and some defaults.
      *
      * @return request parameters to be added to URL used for downloading the JIRA issues
      */
@@ -280,7 +280,7 @@ public final class JiraAnnouncementDownloader
         {
             jiraUrl = jiraUrl.substring( 0, jiraUrl.lastIndexOf( "/" ) );
         }
-        getLog().info( "Jira lives at: " + jiraUrl );
+        getLog().info( "JIRA lives at: " + jiraUrl );
 
         urlMap.put("url", jiraUrl);
 
@@ -416,8 +416,7 @@ public final class JiraAnnouncementDownloader
      * Downloads the given link using the configured HttpClient, possibly following redirects.
      *
      * @param cl     the HttpClient
-     * @param link   the JiraUrl
-     * @return
+     * @param link   the URL to JIRA
      */
     private void download( final HttpClient cl, final String link )
     {
