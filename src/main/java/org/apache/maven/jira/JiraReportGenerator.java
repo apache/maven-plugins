@@ -21,6 +21,11 @@ import java.util.ResourceBundle;
 
 import org.apache.maven.doxia.sink.Sink;
 
+/**
+ * Generates a JIRA report.
+ *
+ * @version $Id$
+ */
 public class JiraReportGenerator
 {
     JiraXML jira;

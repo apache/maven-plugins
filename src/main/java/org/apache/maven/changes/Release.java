@@ -1,7 +1,7 @@
 package org.apache.maven.changes;
 
 /*
- * Copyright 2001-2005 The Codehaus.
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,15 @@ package org.apache.maven.changes;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * A release in a changes.xml file.
+ *
+ * @version $Id$
+ */
 public class Release
 {
     private List action;
