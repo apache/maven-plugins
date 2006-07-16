@@ -67,7 +67,7 @@ dev                  | Required     |  Name of developer who committed the chang
 type                 | Required     |  Type of change. There are four valid values: <add>, <fix>, <remove>, <update>.
 *--------------------+--------------*------------------------------------------------------------------------------------------+
 issue                | Optional     |  Id of the issue related to this change. This is the id in your issue tracking system.
-                     |              |  The Changes plugin will generate a URL out of this id. The URL is constructed using the value of the <<<link_template>>> parameter. See the {{{changes-report-mojo.html}changes-report mojo}} for more details.
+                     |              |  The Changes plugin will generate a URL out of this id. The URL is constructed using the value of the <<<issueLinkTemplate>>> parameter. See the {{{changes-report-mojo.html}changes-report mojo}} for more details.
 *--------------------+--------------*------------------------------------------------------------------------------------------+
 due-to               | Optional     |  Name of the person to be credited for this change. This can be used when a patch is submitted by a non-committer.
 *--------------------+--------------*------------------------------------------------------------------------------------------+
