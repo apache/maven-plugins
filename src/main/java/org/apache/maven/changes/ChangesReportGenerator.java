@@ -198,9 +198,14 @@ public class ChangesReportGenerator
 
         sink.lineBreak();
 
-        sink.rawText( bundle.getString( "report.changes.text.rssfeed" ) );
-
-        sink.lineBreak();
+        // @todo Temporarily commented out until MCHANGES-46 is completely solved
+//        sink.rawText( bundle.getString( "report.changes.text.rssfeed" ) );
+//        sink.text( " " );
+//        sink.link( "changes.rss" );
+//        sinkFigure( "images/rss.png", sink );
+//        sink.link_();
+//
+//        sink.lineBreak();
 
         sink.lineBreak();
     }
