@@ -35,15 +35,15 @@ import java.util.List;
 public class ChangesXML
     extends DefaultHandler
 {
-    Action action;
+    private Action action;
 
-    List actionList;
+    private List actionList;
 
-    Release release;
+    private Release release;
 
-    String currentElement;
+    private String currentElement;
 
-    String currentName;
+    private String currentName;
 
     private List releaseList;
 

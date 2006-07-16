@@ -35,8 +35,11 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Properties;
 
+/**
+ * Helper class for sending email.
+ */
 public class ProjectJavamailMailSender
-	extends AbstractMailSender
+    extends AbstractMailSender
 {
     private static final String SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
 
@@ -79,7 +82,7 @@ public class ProjectJavamailMailSender
 
         if ( isSslMode() )
         {
-            Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
+            Security.addProvider( new com.sun.net.ssl.internal.ssl.Provider() );
 
             props.put( "mail.smtp.socketFactory.port", String.valueOf( getSmtpPort() ) );
 
@@ -107,8 +110,8 @@ public class ProjectJavamailMailSender
 
     public void send( MailMessage mail )
         throws MailSenderException
-	{
-	    verify( mail );
+    {
+        verify( mail );
 
         try
         {
@@ -125,7 +128,7 @@ public class ProjectJavamailMailSender
                     };
             }
 
-            Session session = Session.getDefaultInstance(props, auth );
+            Session session = Session.getDefaultInstance( props, auth );
 
             session.setDebug( getLogger().isDebugEnabled() );
 
@@ -139,7 +142,7 @@ public class ProjectJavamailMailSender
                 int count = 0;
                 for ( Iterator i = mail.getToAddresses().iterator(); i.hasNext(); )
                 {
-                    String address = ((MailMessage.Address) i.next()).getRfc2822Address();
+                    String address = ( (MailMessage.Address) i.next() ).getRfc2822Address();
                     addressTo[count++] = new InternetAddress( address );
                 }
                 msg.setRecipients( Message.RecipientType.TO, addressTo );
@@ -151,7 +154,7 @@ public class ProjectJavamailMailSender
                 int count = 0;
                 for ( Iterator i = mail.getCcAddresses().iterator(); i.hasNext(); )
                 {
-                    String address = ((MailMessage.Address) i.next()).getRfc2822Address();
+                    String address = ( (MailMessage.Address) i.next() ).getRfc2822Address();
                     addressCc[count++] = new InternetAddress( address );
                 }
                 msg.setRecipients( Message.RecipientType.CC, addressCc );
@@ -163,7 +166,7 @@ public class ProjectJavamailMailSender
                 int count = 0;
                 for ( Iterator i = mail.getBccAddresses().iterator(); i.hasNext(); )
                 {
-                    String address = ((MailMessage.Address) i.next()).getRfc2822Address();
+                    String address = ( (MailMessage.Address) i.next() ).getRfc2822Address();
                     addressBcc[count++] = new InternetAddress( address );
                 }
                 msg.setRecipients( Message.RecipientType.BCC, addressBcc );

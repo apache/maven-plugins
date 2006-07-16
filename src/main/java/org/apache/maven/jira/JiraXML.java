@@ -36,11 +36,11 @@ public class JiraXML
 {
     private List issueList;
 
-    String currentElement;
+    private String currentElement;
 
-    String currentParent = "";
+    private String currentParent = "";
 
-    JiraIssue issue;
+    private JiraIssue issue;
 
     public JiraXML( String xmlPath )
     {

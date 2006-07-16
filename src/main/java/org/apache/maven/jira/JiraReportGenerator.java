@@ -28,7 +28,7 @@ import java.util.ResourceBundle;
  */
 public class JiraReportGenerator
 {
-    JiraXML jira;
+    private JiraXML jira;
 
     public JiraReportGenerator()
     {

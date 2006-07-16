@@ -144,29 +144,29 @@ public class AnnouncementMailMojo extends AbstractMojo
         mailer.setSmtpPort( getSmtpPort() );
         
         mailer.setSslMode( sslMode );
-        
-        if( username != null )
+
+        if ( username != null )
         {
             mailer.setUsername( username );
         }
-        
-        if( password != null )
+
+        if ( password != null )
         {
             mailer.setPassword( password );
         }
         mailer.initialize();
-        
-        if( isTextFileExisting( template ) )
+
+        if ( isTextFileExisting( template ) )
         {  
             getLog().info( "Connecting to Host: " + getSmtpHost() + ":" + getSmtpPort() );
 
             sendMessage(  );
         }
         else
-        {               
-            if( template != null )
+        {
+            if ( template != null )
             {
-                if( isTextFileExisting( template ) )
+                if ( isTextFileExisting( template ) )
                 {
                     getLog().info( "Connecting to Host: " + getSmtpHost() + " : " + getSmtpPort() );
 
@@ -195,28 +195,29 @@ public class AnnouncementMailMojo extends AbstractMojo
         
         try
         {
-            int i=0;
-            
+            int i = 0;
+
             String[] from = getFirstDevInfo( getFrom() );
-            
-            while( i < getToAddresses().size() )
+
+            while ( i < getToAddresses().size() )
             {   
                 email = getToAddresses().get( i ).toString();
 
                 getLog().info( "Sending mail... " + email );
 
-                mailer.send( getSubject(), IOUtil.toString( readAnnouncement( template ) ), email, "", from[0], from[1] );
+                mailer.send( getSubject(), IOUtil.toString( readAnnouncement( template ) ),
+                             email, "", from[0], from[1] );
 
-                getLog().info("Sent...");                
-                
+                getLog().info( "Sent..." );
+
                 i++;
             }      
         }
-        catch( IOException ioe )
+        catch ( IOException ioe )
         {
             throw new MojoExecutionException( "Failed to send email.", ioe );
         }
-        catch( MailSenderException e )
+        catch ( MailSenderException e )
         {
             throw new MojoExecutionException( "Failed to send email < " + email + " >", e );
         }        
@@ -228,7 +229,7 @@ public class AnnouncementMailMojo extends AbstractMojo
         
         File f = new File( fileName );
 
-        if( f.exists() )
+        if ( f.exists() )
         {
             found = true;
         }
@@ -250,7 +251,7 @@ public class AnnouncementMailMojo extends AbstractMojo
             
             fileReader = new FileReader( file );
         }
-        catch( FileNotFoundException fnfe )
+        catch ( FileNotFoundException fnfe )
         {
             throw new MojoExecutionException( "File not found. " + fileName );
         }
@@ -269,8 +270,8 @@ public class AnnouncementMailMojo extends AbstractMojo
         String fromName = "";
         
         String[] info = new String[2];
-        
-        if( fromNames.size() > 0 )
+
+        if ( fromNames.size() > 0 )
         {
             Developer developer = ( Developer ) fromNames.get( 0 );
 
@@ -284,7 +285,7 @@ public class AnnouncementMailMojo extends AbstractMojo
             
             getLog().info( "email retrieved. " + fromAddress + " < " + fromName + " > " );
 
-            if( fromAddress == null  || fromAddress.equals( "" ) )
+            if ( fromAddress == null || fromAddress.equals( "" ) )
             {
                 throw new MojoExecutionException( "Email address in <developers> section is required." );
             }
@@ -305,7 +306,7 @@ public class AnnouncementMailMojo extends AbstractMojo
         return smtpHost;
     }
 
-    public void setSmtpHost(String smtpHost) 
+    public void setSmtpHost( String smtpHost )
     {
         this.smtpHost = smtpHost;
     }
@@ -315,7 +316,7 @@ public class AnnouncementMailMojo extends AbstractMojo
         return smtpPort;
     }
 
-    public void setSmtpPort(int smtpPort) 
+    public void setSmtpPort( int smtpPort )
     {
         this.smtpPort = smtpPort;
     }
@@ -325,7 +326,7 @@ public class AnnouncementMailMojo extends AbstractMojo
         return subject;
     }
 
-    public void setSubject(String subject) 
+    public void setSubject( String subject )
     {
         this.subject = subject;
     }
@@ -335,7 +336,7 @@ public class AnnouncementMailMojo extends AbstractMojo
         return from;
     }
 
-    public void setFrom(List from) 
+    public void setFrom( List from )
     {
         this.from = from;
     }
@@ -345,7 +346,7 @@ public class AnnouncementMailMojo extends AbstractMojo
         return project;
     }
 
-    public void setProject(MavenProject project) 
+    public void setProject( MavenProject project )
     {
         this.project = project;
     }
@@ -355,7 +356,7 @@ public class AnnouncementMailMojo extends AbstractMojo
         return toAddresses;
     }
 
-    public void setToAddresses(List toAddresses) 
+    public void setToAddresses( List toAddresses )
     {
         this.toAddresses = toAddresses;
     }

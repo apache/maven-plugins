@@ -226,9 +226,9 @@ public final class JiraAnnouncementDownloader
 
             Map urlMap = getJiraUrlAndIssueId();
 
-            String jiraUrl = (String) urlMap.get("url");
+            String jiraUrl = (String) urlMap.get( "url" );
 
-            String jiraId = (String) urlMap.get("id");
+            String jiraId = (String) urlMap.get( "id" );
 
             doAuthentication( cl, jiraUrl );
 
@@ -282,9 +282,9 @@ public final class JiraAnnouncementDownloader
         }
         getLog().info( "JIRA lives at: " + jiraUrl );
 
-        urlMap.put("url", jiraUrl);
+        urlMap.put( "url", jiraUrl );
 
-        urlMap.put("id", id);
+        urlMap.put( "id", id );
 
         return urlMap;
     }
@@ -304,7 +304,8 @@ public final class JiraAnnouncementDownloader
 
             Credentials defaultcreds = new UsernamePasswordCredentials( webUser, webPassword );
 
-            getLog().info( "Using username: " + webUser + " for Basic Authentication against the webserver at " + jiraUrl );
+            getLog().info( "Using username: " + webUser + " for Basic Authentication against the webserver at "
+                + jiraUrl );
 
             client.getState().setCredentials( null, null, defaultcreds );
         }
@@ -393,7 +394,7 @@ public final class JiraAnnouncementDownloader
 
             proxyPass = settings.getActiveProxy().getPassword();
 
-            getLog().info(proxyPass);
+            getLog().info( proxyPass );
         }
 
         if ( proxyHost != null )
@@ -632,7 +633,7 @@ public final class JiraAnnouncementDownloader
         return log;
     }
 
-    public void setSettings(Settings settings)
+    public void setSettings( Settings settings )
     {
         this.settings = settings;
     }
