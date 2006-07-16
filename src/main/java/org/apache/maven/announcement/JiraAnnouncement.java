@@ -39,11 +39,11 @@ public class JiraAnnouncement
     
     private String reporter;
     
-    List comments;
+    private List comments;
     
     public void addComment( String comment )
     {
-        if( comments == null )
+        if ( comments == null )
         {
             comments = new ArrayList();
         }
@@ -75,7 +75,7 @@ public class JiraAnnouncement
         return title;
     }
 
-    public void setTitle(String title) 
+    public void setTitle( String title )
     {
         this.title = title;
     }    

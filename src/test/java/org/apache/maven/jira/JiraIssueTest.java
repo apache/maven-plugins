@@ -16,15 +16,17 @@ package org.apache.maven.jira;
  * limitations under the License.
  */
 
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
-public class JiraIssueTest extends TestCase {
-    
+public class JiraIssueTest extends TestCase
+{
     JiraIssue issue;
-    
-    public JiraIssueTest(String testName) 
+
+    public JiraIssueTest( String testName )
     {
-        super(testName);
+        super( testName );
     }
 
     protected void setUp() throws Exception 
@@ -38,44 +40,44 @@ public class JiraIssueTest extends TestCase {
 
     public static Test suite() 
     {
-        TestSuite suite = new TestSuite(JiraIssueTest.class);
-        
+        TestSuite suite = new TestSuite( JiraIssueTest.class );
+
         return suite;
     }
 
     public void testGetSetKey() 
     {
-        issue.setKey("key");
-        
-        assertEquals("key",issue.getKey());
+        issue.setKey( "key" );
+
+        assertEquals( "key", issue.getKey() );
     }
 
     public void testGetSetSummary() 
     {
-        issue.setSummary("summary");
-        
-        assertEquals("summary",issue.getSummary());
+        issue.setSummary( "summary" );
+
+        assertEquals( "summary", issue.getSummary() );
     }
 
     public void testGetSetStatus() 
     {
-        issue.setStatus("status");
-        
-        assertEquals("status",issue.getStatus());
+        issue.setStatus( "status" );
+
+        assertEquals( "status", issue.getStatus() );
     }
 
     public void testGetSetResolution() 
     {
-        issue.setResolution("resolution");
-        
-        assertEquals("resolution",issue.getResolution());
+        issue.setResolution( "resolution" );
+
+        assertEquals( "resolution", issue.getResolution() );
     }
 
     public void testGetSetAssignee() 
     {
-        issue.setAssignee("assignee");
-        
-        assertEquals("assignee",issue.getAssignee());
+        issue.setAssignee( "assignee" );
+
+        assertEquals( "assignee", issue.getAssignee() );
     }
     
 }

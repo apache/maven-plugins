@@ -31,6 +31,8 @@ import java.text.ParsePosition;
  */
 public class JiraHelper
 {
+    private static final String PID = "pid=";
+
     /**
      * Try to get a JIRA pid from the issue management URL.
      *
@@ -61,7 +63,7 @@ public class JiraHelper
             }
         }
         String projectPage = gm.getResponseBodyAsString();
-        int pidIndex = projectPage.indexOf( "pid=" );
+        int pidIndex = projectPage.indexOf( PID );
 
         if ( pidIndex == -1 )
         {
@@ -70,7 +72,7 @@ public class JiraHelper
         else
         {
             NumberFormat nf = NumberFormat.getInstance();
-            Number pidNumber = nf.parse( projectPage, new ParsePosition( pidIndex + 4 ) );
+            Number pidNumber = nf.parse( projectPage, new ParsePosition( pidIndex + PID.length() ) );
             jiraId = Integer.toString( pidNumber.intValue() );
             log.debug( "Found the pid " + jiraId + " at " + issueManagementUrl );
         }

@@ -225,7 +225,7 @@ public class AnnouncementMojo extends AbstractMojo
      */
     public void execute() throws MojoExecutionException
     {
-        if( !generateJiraAnnouncement )
+        if ( !generateJiraAnnouncement )
         {
             setXml( new ChangesXML( getXmlPath(), getLog() ) );
 
@@ -243,7 +243,7 @@ public class AnnouncementMojo extends AbstractMojo
      * @param xml parsed changes.xml
      * @throws MojoExecutionException
      */
-    public void doGenerate(ChangesXML xml) throws MojoExecutionException
+    public void doGenerate( ChangesXML xml ) throws MojoExecutionException
     {
         try
         {
@@ -253,7 +253,7 @@ public class AnnouncementMojo extends AbstractMojo
 
             getLog().info( "Creating announcement file from changes.xml..." );
 
-            if( getIntroduction() == null || getIntroduction().equals( "" ) )
+            if ( getIntroduction() == null || getIntroduction().equals( "" ) )
             {
                 setIntroduction( getUrl() );
             }
@@ -282,15 +282,15 @@ public class AnnouncementMojo extends AbstractMojo
 
             processTemplate( context, getOutputDirectory(), template  );
         }
-        catch( ResourceNotFoundException rnfe )
+        catch ( ResourceNotFoundException rnfe )
         {
             throw new MojoExecutionException( "resource not found." );
         }
-        catch( VelocityException ve )
+        catch ( VelocityException ve )
         {
             throw new MojoExecutionException( ve.toString() );
         }
-        catch( IOException ioe )
+        catch ( IOException ioe )
         {
             throw new MojoExecutionException( ioe.toString() );
         }
@@ -304,7 +304,7 @@ public class AnnouncementMojo extends AbstractMojo
 
             getLog().info( "Creating announcement file from JIRA releases..." );
 
-            if( getIntroduction() == null || getIntroduction().equals( "" ) )
+            if ( getIntroduction() == null || getIntroduction().equals( "" ) )
             {
                 setIntroduction( getUrl() );
             }
@@ -333,15 +333,15 @@ public class AnnouncementMojo extends AbstractMojo
 
             processTemplate( context, getOutputDirectory(), template  );
         }
-        catch( ResourceNotFoundException rnfe )
+        catch ( ResourceNotFoundException rnfe )
         {
             throw new MojoExecutionException( "resource not found." );
         }
-        catch( VelocityException ve )
+        catch ( VelocityException ve )
         {
             throw new MojoExecutionException( ve.toString() );
         }
-        catch( IOException ioe )
+        catch ( IOException ioe )
         {
             throw new MojoExecutionException( ioe.toString() );
         }
@@ -362,24 +362,26 @@ public class AnnouncementMojo extends AbstractMojo
 
         // Remove "-SNAPSHOT" from the end, if it's there
         String pomVersion = getVersion();
-        if( pomVersion != null && pomVersion.endsWith( SNAPSHOT_SUFFIX )) {
+        if ( pomVersion != null && pomVersion.endsWith( SNAPSHOT_SUFFIX ) )
+        {
             pomVersion = pomVersion.substring( 0, pomVersion.length() - SNAPSHOT_SUFFIX.length() );
         }
 
-        for( int i=0; i<releases.size(); i++ )
+        for ( int i = 0; i < releases.size(); i++ )
         {
-            release = (Release) releases.get(i);
+            release = (Release) releases.get( i );
 
-            if( release.getVersion().equals( pomVersion ) )
+            if ( release.getVersion().equals( pomVersion ) )
             {
                 isFound = true;
                 return release;
             }
         }
 
-        if( isFound == false )
+        if ( !isFound )
         {
-            throw new MojoExecutionException( "Couldn't find the release '" + pomVersion + "' among the supplied releases." );
+            throw new MojoExecutionException( "Couldn't find the release '" + pomVersion
+                + "' among the supplied releases." );
         }
         return release;
     }
@@ -416,17 +418,17 @@ public class AnnouncementMojo extends AbstractMojo
             
             getLog().info( "File created..." );
         }
-        
-        catch( ResourceNotFoundException rnfe ) 
+
+        catch ( ResourceNotFoundException rnfe )
         {
             throw new ResourceNotFoundException( "Template not found. ( " + templateDirectory + "/" + template + " )" );
-        } 
-        catch( VelocityException ve) 
+        }
+        catch ( VelocityException ve )
         {
             throw new VelocityException( ve.toString() );
         }
-   
-        catch( Exception e ) 
+
+        catch ( Exception e )
         {
             throw new MojoExecutionException( e.toString(), e.getCause() );
         }
@@ -456,8 +458,8 @@ public class AnnouncementMojo extends AbstractMojo
             try
             {
                 jiraDownloader.doExecute();
-                
-                if( jiraXMLFile.exists() )
+
+                if ( jiraXMLFile.exists() )
                 {
                     JiraAnnouncementParser jiraParser = new JiraAnnouncementParser( jiraXMLFile );
                     
@@ -468,7 +470,7 @@ public class AnnouncementMojo extends AbstractMojo
                     doGenerate( releases );
                 }
             }
-            catch( Exception e )
+            catch ( Exception e )
             {
                 throw new MojoExecutionException( 
                         "Failed to download JIRA Announcement", e );
@@ -483,8 +485,8 @@ public class AnnouncementMojo extends AbstractMojo
     {
         return xmlPath;
     }
-    
-    public void setXmlPath(String xmlPath)
+
+    public void setXmlPath( String xmlPath )
     {
         this.xmlPath = xmlPath;
     }
@@ -493,8 +495,8 @@ public class AnnouncementMojo extends AbstractMojo
     {
         return outputDirectory;
     }
-    
-    public void setOutputDirectory(String outputDirectory) 
+
+    public void setOutputDirectory( String outputDirectory )
     {
         this.outputDirectory = outputDirectory;
     }
@@ -503,8 +505,8 @@ public class AnnouncementMojo extends AbstractMojo
     {
         return groupId;
     }
-    
-    public void setGroupId(String groupId)
+
+    public void setGroupId( String groupId )
     {
         this.groupId = groupId;
     }
@@ -513,8 +515,8 @@ public class AnnouncementMojo extends AbstractMojo
     {
         return artifactId;
     }
-    
-    public void setArtifactId(String artifactId)
+
+    public void setArtifactId( String artifactId )
     {
         this.artifactId = artifactId;
     }
@@ -523,8 +525,8 @@ public class AnnouncementMojo extends AbstractMojo
     {
         return version;
     }
-    
-    public void setVersion(String version)
+
+    public void setVersion( String version )
     {
         this.version = version;
     }
@@ -533,8 +535,8 @@ public class AnnouncementMojo extends AbstractMojo
     {
         return url;
     }
-    
-    public void setUrl(String url) 
+
+    public void setUrl( String url )
     {
         this.url = url;
     }
@@ -543,8 +545,8 @@ public class AnnouncementMojo extends AbstractMojo
     {
         return xml;
     }
-    
-    public void setXml(ChangesXML xml) 
+
+    public void setXml( ChangesXML xml )
     {
         this.xml = xml;
     }
@@ -553,8 +555,8 @@ public class AnnouncementMojo extends AbstractMojo
     {
         return packaging;
     }
-    
-    public void setPackaging(String packaging) 
+
+    public void setPackaging( String packaging )
     {
         this.packaging = packaging;
     }
@@ -563,8 +565,8 @@ public class AnnouncementMojo extends AbstractMojo
     {
         return developmentTeam;
     }
-    
-    public void setDevelopmentTeam(String developmentTeam) 
+
+    public void setDevelopmentTeam( String developmentTeam )
     {
         this.developmentTeam = developmentTeam;
     }
@@ -573,8 +575,8 @@ public class AnnouncementMojo extends AbstractMojo
     {
         return introduction;
     }
-    
-    public void setIntroduction(String introduction) 
+
+    public void setIntroduction( String introduction )
     {
         this.introduction = introduction;
     }
@@ -583,8 +585,8 @@ public class AnnouncementMojo extends AbstractMojo
     {
         return velocity;
     }
-    
-    public void setVelocity(VelocityComponent velocity) 
+
+    public void setVelocity( VelocityComponent velocity )
     {
         this.velocity = velocity;
     }
@@ -593,8 +595,8 @@ public class AnnouncementMojo extends AbstractMojo
     {
         return finalName;
     }
-    
-    public void setFinalName(String finalName) 
+
+    public void setFinalName( String finalName )
     {
         this.finalName = finalName;
     }
@@ -603,8 +605,8 @@ public class AnnouncementMojo extends AbstractMojo
     {
         return urlDownload;
     }
-            
-    public void setUrlDownload(String urlDownload) 
+
+    public void setUrlDownload( String urlDownload )
     {
         this.urlDownload = urlDownload;
     }

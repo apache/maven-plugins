@@ -43,7 +43,7 @@ public class JiraAnnouncementParser
     
     private JiraAnnouncement issue;
     
-    List issues = new ArrayList();
+    private List issues = new ArrayList();
     
     public JiraAnnouncementParser( String xmlPath )
     {
@@ -67,7 +67,7 @@ public class JiraAnnouncementParser
             
             parser.parse( xml, this );
         }
-        catch( Throwable t )
+        catch ( Throwable t )
         {
             t.printStackTrace();
         }
@@ -76,7 +76,7 @@ public class JiraAnnouncementParser
     public void startElement( String namespaceURI, String sName, String qName, Attributes attrs )
         throws SAXException
     {
-        if( qName.equals( "item" ) )
+        if ( qName.equals( "item" ) )
         {
             issue = new JiraAnnouncement();
             
@@ -87,53 +87,53 @@ public class JiraAnnouncementParser
     public void endElement( String namespaceURI, String sName, String qName )
         throws SAXException
     {
-        if( qName.equals( "item" ) )
+        if ( qName.equals( "item" ) )
         {
             issues.add( issue ); 
             
             parentElement = "";
         }
-        else if( qName.equals( "title" ) && parentElement.equals( "item" ) )
+        else if ( qName.equals( "title" ) && parentElement.equals( "item" ) )
         {
             issue.setTitle( elementValue );
         }
-        else if( qName.equals( "key" ) )
+        else if ( qName.equals( "key" ) )
         {
             issue.setKey( elementValue );
         }
-        else if( qName.equals( "link" ) && parentElement.equals( "item" ) )
+        else if ( qName.equals( "link" ) && parentElement.equals( "item" ) )
         {
             issue.setLink( elementValue );
         }
-        else if( qName.equals( "summary" ) )
+        else if ( qName.equals( "summary" ) )
         {
             issue.setSummary( elementValue );
         }
-        else if( qName.equals( "type" ) )
+        else if ( qName.equals( "type" ) )
         {
             issue.setType( elementValue );
         }
-        else if( qName.equals( "status" ) )
+        else if ( qName.equals( "status" ) )
         {
             issue.setStatus( elementValue );
         }
-        else if( qName.equals( "resolution" ) )
+        else if ( qName.equals( "resolution" ) )
         {
             issue.setResolution( elementValue );
         }
-        else if( qName.equals( "assignee" ) )
+        else if ( qName.equals( "assignee" ) )
         {
             issue.setAssignee( elementValue );
         }
-        else if( qName.equals( "reporter" ) )
+        else if ( qName.equals( "reporter" ) )
         {
             issue.setReporter( elementValue );
         }
-        else if( qName.equals( "fixVersion" ) )
+        else if ( qName.equals( "fixVersion" ) )
         {
             issue.setFixVersion( elementValue );
         }
-        else if( qName.equals( "comment" ) )
+        else if ( qName.equals( "comment" ) )
         {
             issue.addComment( elementValue );
         }
@@ -145,8 +145,8 @@ public class JiraAnnouncementParser
         String str = new String( buff, offset, len );
         
         String string = str.trim();
-        
-        if( !string.equals( "" ) )
+
+        if ( !string.equals( "" ) )
         {
             elementValue = string;
         }
@@ -164,8 +164,8 @@ public class JiraAnnouncementParser
         Release release = new Release();
         
         String type = "";
-        
-        for( int i=0; i<issues.size(); i++ )
+
+        for ( int i = 0; i < issues.size(); i++ )
         {
             JiraAnnouncement issue = ( JiraAnnouncement ) issues.get( i );
             
@@ -173,15 +173,15 @@ public class JiraAnnouncementParser
             
             action.setIssue( issue.getKey() );
 
-            if( issue.getType().equals( "Bug" ) )
+            if ( issue.getType().equals( "Bug" ) )
             {
                 type = "fix";
             }
-            else if( issue.getType().equals( "New Feature" ) )
+            else if ( issue.getType().equals( "New Feature" ) )
             {
                 type = "add";
             }
-            else if( issue.getType().equals( "Improvement" ) )
+            else if ( issue.getType().equals( "Improvement" ) )
             {
                 type = "update";
             }
@@ -190,8 +190,8 @@ public class JiraAnnouncementParser
             action.setDev( issue.getAssignee() );
             
             //action.setDueTo( issue.getReporter() );
-            
-            if( issue.getComments() != null && !issue.getComments().isEmpty() )
+
+            if ( issue.getComments() != null && !issue.getComments().isEmpty() )
             {
                 int commentSize = issue.getComments().size();
            

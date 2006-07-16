@@ -50,7 +50,7 @@ public class Release
     
     public void addAction( Action act )
     {
-        if( action == null )
+        if ( action == null )
         {
             action = new ArrayList();
         }

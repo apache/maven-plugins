@@ -75,7 +75,8 @@ public class ChangesMojo
      * &lt;issueManagement&gt;&lt;url&gt; value from the POM, and removing the context path. %ISSUE% :
      * this is the issue number.
      * <p>
-     * <strong>Note:</strong> In versions of this plugin prior to 2.0-beta-2 this parameter was called <code>link_template</code>.
+     * <strong>Note:</strong> In versions of this plugin prior to 2.0-beta-2 this parameter was called
+     * <code>link_template</code>.
      * </p>
      * 
      * @parameter expression="%URL%/ViewIssue.jspa?key=%ISSUE%"
@@ -98,7 +99,7 @@ public class ChangesMojo
     private void copyStaticResources()
         throws MavenReportException
     {
-        final String PLUGIN_RESOURCES_BASE = "org/apache/maven/plugin/changes";
+        final String pluginResourcesBase = "org/apache/maven/plugin/changes";
         String resourceNames[] =
             {"images/add.gif", "images/fix.gif", "images/remove.gif", "images/rss.png", "images/update.gif"};
         try
@@ -107,7 +108,7 @@ public class ChangesMojo
             for ( int i = 0; i < resourceNames.length; i++ )
             {
                 URL url =
-                    this.getClass().getClassLoader().getResource( PLUGIN_RESOURCES_BASE + "/" + resourceNames[i] );
+                    this.getClass().getClassLoader().getResource( pluginResourcesBase + "/" + resourceNames[i] );
                 FileUtils.copyURLToFile( url, new File( outputDirectory, resourceNames[i] ) );
             }
         }

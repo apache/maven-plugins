@@ -143,7 +143,8 @@ public class ChangesReportGenerator
                 {
                     sinkLink( sink, action.getDueTo(), "mailto:" + action.getDueToEmail() );
                 }
-                else {
+                else
+                {
                     sink.text( action.getDueTo() );
                 }
 
