@@ -12,6 +12,7 @@
   <prerequisites>
     <maven>2.0</maven>
   </prerequisites>
+  <!-- Not inherited correctly -->
   <issueManagement>
     <url>http://jira.codehaus.org/browse/MCHANGES</url>
   </issueManagement>
@@ -26,7 +27,18 @@
       <name>Allan Ramirez</name>
       <email>aramirez@exist.com</email>
     </developer>    
+    <developer>
+      <id>dennisl</id>
+      <name>Dennis Lundberg</name>
+      <email>dennisl@apache.org</email>
+    </developer>
   </developers>
+  <!-- Not inherited correctly because the plugin is in the sandbox -->
+  <scm>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/sandbox/plugins/maven-changes-plugin/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/sandbox/plugins/maven-changes-plugin/</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/sandbox/plugins/maven-changes-plugin/</url>
+  </scm>
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
