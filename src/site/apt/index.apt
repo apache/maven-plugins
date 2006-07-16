@@ -18,7 +18,7 @@ Maven 2 Changes Plugin
 
 * Goals Overview
 
-  * {{{announcement-email.html}changes:announcement-mail}} send a release announcement via email.
+  * {{{announcement-mail-mojo.html}changes:announcement-mail}} send a release announcement via email.
 
   * {{{announcement-generate-mojo.html}changes:announcement-generate}} generate a release announcement.
 
