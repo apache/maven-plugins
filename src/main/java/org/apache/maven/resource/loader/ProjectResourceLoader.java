@@ -34,8 +34,9 @@ import org.apache.velocity.util.StringUtils;
 import org.apache.commons.collections.ExtendedProperties;
 
 /**
- * Resource Loader for external projects
+ * Resource Loader for external projects.
  * 
+ * @version $Id$
  */
 public class ProjectResourceLoader extends ResourceLoader
 {

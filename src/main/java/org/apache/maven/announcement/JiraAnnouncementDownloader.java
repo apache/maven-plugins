@@ -1,21 +1,21 @@
 package org.apache.maven.announcement;
 
-/* ====================================================================
- *   Copyright 2001-2004 The Apache Software Foundation.
+/*
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HostConfiguration;
@@ -42,10 +42,11 @@ import java.util.Map;
 /**
  * Gets relevant issues in RSS from a given JIRA installation.
  *
- * Based on version 1.1.2 and patch by Dr. Spock (MPJIRA-8)
+ * Based on version 1.1.2 and patch by Dr. Spock (MPJIRA-8).
  *
  * @author mfranken@xebia.com
  * @author jruiz@exist.com
+ * @version $Id$
  */
 public final class JiraAnnouncementDownloader
 {
@@ -212,23 +213,23 @@ public final class JiraAnnouncementDownloader
         try
         {
             HttpClient cl = new HttpClient();
-            
+
             HttpState state = new HttpState();
-            
+
             HostConfiguration hc = new HostConfiguration();
-            
+
             cl.setHostConfiguration( hc );
-            
+
             cl.setState( state );
 
             determineProxy( cl );
-            
+
             Map urlMap = getJiraUrlAndIssueId();
-            
+
             String jiraUrl = (String) urlMap.get("url");
-            
+
             String jiraId = (String) urlMap.get("id");
-            
+
             doAuthentication( cl, jiraUrl );
 
             if ( jiraId == null || jiraId.length() == 0 )
@@ -238,14 +239,14 @@ public final class JiraAnnouncementDownloader
 
             // create the URL for getting the proper issues from JIRA
             String fullURL = jiraUrl + "/secure/IssueNavigator.jspa?view=rss&pid=" + jiraId;
-            
+
             // @todo: only for a temporary use case, hardcoded fix-for version
             fullURL += "&fixfor=12730";
-            
+
             fullURL += createFilter();
-            
+
             fullURL += ( "&tempMax=" + nbEntriesMax + "&reset=true&decorator=none" );
-            
+
             // execute the GET
             download( cl, fullURL );
         }
@@ -254,13 +255,13 @@ public final class JiraAnnouncementDownloader
             getLog().error( "Error accessing " + project.getIssueManagement().getUrl(), e );
         }
     }
-    
+
     private Map getJiraUrlAndIssueId()
     {
         HashMap urlMap = new HashMap();
-        
+
         String url = project.getIssueManagement().getUrl();
-        
+
         // chop off the parameter part
         int pos = url.indexOf( "?" );
 
@@ -280,11 +281,11 @@ public final class JiraAnnouncementDownloader
             jiraUrl = jiraUrl.substring( 0, jiraUrl.lastIndexOf( "/" ) );
         }
         getLog().info( "Jira lives at: " + jiraUrl );
-        
+
         urlMap.put("url", jiraUrl);
-        
+
         urlMap.put("id", id);
-        
+
         return urlMap;
     }
 
@@ -302,9 +303,9 @@ public final class JiraAnnouncementDownloader
             client.getState().setAuthenticationPreemptive( true );
 
             Credentials defaultcreds = new UsernamePasswordCredentials( webUser, webPassword );
-            
+
             getLog().info( "Using username: " + webUser + " for Basic Authentication against the webserver at " + jiraUrl );
-            
+
             client.getState().setCredentials( null, null, defaultcreds );
         }
 
@@ -314,15 +315,15 @@ public final class JiraAnnouncementDownloader
         if ( ( jiraUser != null ) && ( jiraUser.length() > 0 ) && ( jiraPassword != null ) )
         {
             StringBuffer loginLink = new StringBuffer( jiraUrl );
-            
+
             loginLink.append( "/login.jsp?os_destination=/secure/" );
-            
+
             loginLink.append( "&os_username=" ).append( jiraUser );
-            
+
             getLog().info( "Login URL: " + loginLink + "&os_password=*******" );
-            
+
             loginLink.append( "&os_password=" ).append( jiraPassword );
-            
+
             loginUrl = loginLink.toString();
         }
 
@@ -334,7 +335,7 @@ public final class JiraAnnouncementDownloader
             try
             {
                 client.executeMethod( loginGet );
-                
+
                 getLog().info( "Succesfully logged in into JIRA." );
             }
             catch ( Exception e )
@@ -361,13 +362,13 @@ public final class JiraAnnouncementDownloader
     {
         // see whether there is any proxy defined in maven
         Proxy proxy = null;
-        
+
         String proxyHost = null;
-        
+
         int proxyPort = 0;
-        
+
         String proxyUser = null;
-        
+
         String proxyPass = null;
 
         if ( project == null )
@@ -385,26 +386,26 @@ public final class JiraAnnouncementDownloader
         if ( proxy != null )
         {
             proxyHost = settings.getActiveProxy().getHost();
-            
+
             proxyPort = settings.getActiveProxy().getPort();
-            
+
             proxyUser = settings.getActiveProxy().getUsername();
-            
+
             proxyPass = settings.getActiveProxy().getPassword();
-            
+
             getLog().info(proxyPass);
         }
 
         if ( proxyHost != null )
         {
             client.getHostConfiguration().setProxy( proxyHost, proxyPort );
-            
+
             getLog().info( "Using proxy: " + proxyHost + " at port " + proxyPort );
 
             if ( proxyUser != null )
             {
                 getLog().info( "Using proxy user: " + proxyUser );
-                
+
                 client.getState().setProxyCredentials( null, null,
                                                        new UsernamePasswordCredentials( proxyUser, proxyPass ) );
             }
@@ -423,24 +424,24 @@ public final class JiraAnnouncementDownloader
         try
         {
             GetMethod gm = new GetMethod( link );
-            
+
             getLog().info( "Downloading " + link );
-            
+
             gm.setFollowRedirects( true );
-            
+
             cl.executeMethod( gm );
 
             final String strGetResponseBody = gm.getResponseBodyAsString();
-            
+
             // write the reponse to file
             PrintWriter pw = new PrintWriter( new FileWriter( getOutput() ) );
-            
+
             pw.print( strGetResponseBody );
-            
+
             pw.close();
 
             StatusLine sl = gm.getStatusLine();
-            
+
             if ( sl == null )
             {
                 getLog().info( "Unknown error validating link : " + link );
@@ -460,9 +461,9 @@ public final class JiraAnnouncementDownloader
                 else
                 {
                     String newLink = locationHeader.getValue();
-                    
+
                     getLog().debug( "Following redirect to " + newLink );
-                    
+
                     download( cl, newLink );
                 }
             }
@@ -481,7 +482,7 @@ public final class JiraAnnouncementDownloader
             else
             {
                 getLog().error( "Error downloading issues from JIRA url :  " + e.getLocalizedMessage() );
-                   
+
             }
         }
         catch ( IOException e )
@@ -506,7 +507,7 @@ public final class JiraAnnouncementDownloader
     {
         this.output = thisOutput;
     }
-    
+
     public File getOutput()
     {
         return this.output;
@@ -631,7 +632,7 @@ public final class JiraAnnouncementDownloader
     {
         return log;
     }
-    
+
     public void setSettings(Settings settings)
     {
         this.settings = settings;

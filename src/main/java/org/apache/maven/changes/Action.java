@@ -1,7 +1,7 @@
 package org.apache.maven.changes;
 
 /*
- * Copyright 2001-2005 The Codehaus.
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,12 @@ package org.apache.maven.changes;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ */
+
+/**
+ * An action in a changes.xml file.
+ *
+ * @version $Id$
  */
 public class Action
 {

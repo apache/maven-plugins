@@ -27,6 +27,11 @@ import java.util.List;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+/**
+ * XML Parser for changes.xml files.
+ *
+ * @version $Id$
+ */
 public class ChangesXML
     extends DefaultHandler
 {

@@ -1,21 +1,21 @@
 package org.apache.maven.jira;
 
-/* ====================================================================
- *   Copyright 2001-2006 The Apache Software Foundation.
+/*
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
- * ====================================================================
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -41,10 +41,11 @@ import org.apache.maven.plugin.logging.Log;
 /**
  * Gets relevant issues in RSS from a given JIRA installation.
  *
- * Based on version 1.1.2 and patch by Dr. Spock (MPJIRA-8)
+ * Based on version 1.1.2 and patch by Dr. Spock (MPJIRA-8).
  *
  * @author mfranken@xebia.com
  * @author jruiz@exist.com
+ * @version $Id$
  */
 public final class JiraDownloader2
 {
@@ -307,9 +308,9 @@ public final class JiraDownloader2
             client.getState().setAuthenticationPreemptive( true );
 
             Credentials defaultcreds = new UsernamePasswordCredentials( webUser, webPassword );
-            
+
             getLog().info( "Using username: " + webUser + " for Basic Authentication against the webserver at " + jiraUrl );
-            
+
             client.getState().setCredentials( null, null, defaultcreds );
         }
 
@@ -319,15 +320,15 @@ public final class JiraDownloader2
         if ( ( jiraUser != null ) && ( jiraUser.length() > 0 ) && ( jiraPassword != null ) )
         {
             StringBuffer loginLink = new StringBuffer( jiraUrl );
-            
+
             loginLink.append( "/login.jsp?os_destination=/secure/" );
-            
+
             loginLink.append( "&os_username=" ).append( jiraUser );
-            
+
             getLog().info( "Login URL: " + loginLink + "&os_password=*******" );
-            
+
             loginLink.append( "&os_password=" ).append( jiraPassword );
-            
+
             loginUrl = loginLink.toString();
         }
 
@@ -339,7 +340,7 @@ public final class JiraDownloader2
             try
             {
                 client.executeMethod( loginGet );
-                
+
                 getLog().info( "Succesfully logged in into JIRA." );
             }
             catch ( Exception e )
@@ -366,13 +367,13 @@ public final class JiraDownloader2
     {
         // see whether there is any proxy defined in maven
         Proxy proxy = null;
-        
+
         String proxyHost = null;
-        
+
         int proxyPort = 0;
-        
+
         String proxyUser = null;
-        
+
         String proxyPass = null;
 
         if ( project == null )
@@ -383,33 +384,33 @@ public final class JiraDownloader2
         }
 
         if ( settings != null )
-        {   
+        {
             proxy = settings.getActiveProxy();
         }
 
         if ( proxy != null )
-        {   
+        {
             proxyHost = settings.getActiveProxy().getHost();
-            
+
             proxyPort = settings.getActiveProxy().getPort();
-            
+
             proxyUser = settings.getActiveProxy().getUsername();
-            
+
             proxyPass = settings.getActiveProxy().getPassword();
-            
+
             getLog().info(proxyPass);
         }
 
         if ( proxyHost != null )
         {
             client.getHostConfiguration().setProxy( proxyHost, proxyPort );
-            
+
             getLog().info( "Using proxy: " + proxyHost + " at port " + proxyPort );
 
             if ( proxyUser != null )
             {
                 getLog().info( "Using proxy user: " + proxyUser );
-                
+
                 client.getState().setProxyCredentials( null, null,
                                                        new UsernamePasswordCredentials( proxyUser, proxyPass ) );
             }
@@ -428,24 +429,24 @@ public final class JiraDownloader2
         try
         {
             GetMethod gm = new GetMethod( link );
-            
+
             getLog().info( "Downloading " + link );
-            
+
             gm.setFollowRedirects( true );
-            
+
             cl.executeMethod( gm );
 
             final String strGetResponseBody = gm.getResponseBodyAsString();
 
             // write the reponse to file
             PrintWriter pw = new PrintWriter( new FileWriter( output ) );
-            
+
             pw.print( strGetResponseBody );
-            
+
             pw.close();
 
             StatusLine sl = gm.getStatusLine();
-            
+
             if ( sl == null )
             {
                 getLog().info( "Unknown error validating link : " + link );
@@ -465,9 +466,9 @@ public final class JiraDownloader2
                 else
                 {
                     String newLink = locationHeader.getValue();
-                    
+
                     getLog().debug( "Following redirect to " + newLink );
-                    
+
                     download( cl, newLink );
                 }
             }
@@ -486,7 +487,7 @@ public final class JiraDownloader2
             else
             {
                 getLog().error( "Error downloading issues from JIRA url :  " + e.getLocalizedMessage() );
-                   
+
             }
         }
         catch ( IOException e )

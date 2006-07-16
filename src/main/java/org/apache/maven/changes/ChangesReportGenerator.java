@@ -23,6 +23,11 @@ import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.reporting.MavenReportException;
 
+/**
+ * Generates a changes report.
+ *
+ * @version $Id$
+ */
 public class ChangesReportGenerator
 {
     private ChangesXML report;
