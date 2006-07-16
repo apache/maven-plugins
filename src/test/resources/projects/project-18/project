@@ -15,7 +15,7 @@
     <link>
       <name>pom.xml</name>
       <type>1</type>
-      <location>${basedir}/src/test/projects/project-18/pom.xml</location>
+      <location>${basedir}/target/test-classes/projects/project-18/pom.xml</location>
     </link>
   </linkedResources>
 </projectDescription>

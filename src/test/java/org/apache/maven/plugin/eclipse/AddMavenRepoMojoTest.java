@@ -66,7 +66,8 @@ public class AddMavenRepoMojoTest
     private AddMavenRepoMojo getConfiguredMojo( String pomXml )
         throws Exception
     {
-        File pomXmlFile = new File( PlexusTestCase.getBasedir(), "src/test/test-harness/add-maven-repo/" + pomXml );
+        File pomXmlFile = new File( PlexusTestCase.getBasedir(), "target/test-classes/test-harness/add-maven-repo/"
+            + pomXml );
 
         AddMavenRepoMojo mojo = (AddMavenRepoMojo) lookupMojo( "add-maven-repo", pomXmlFile );
 
