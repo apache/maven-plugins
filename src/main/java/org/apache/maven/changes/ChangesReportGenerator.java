@@ -16,12 +16,12 @@ package org.apache.maven.changes;
  * limitations under the License.
  */
 
-import java.util.List;
-import java.util.ResourceBundle;
-
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.reporting.MavenReportException;
+
+import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * Generates a changes report.
