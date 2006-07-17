@@ -4,13 +4,26 @@
   <parent>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-plugins</artifactId>
-    <version>1</version>
+    <version>2-SNAPSHOT</version>
   </parent>
   <artifactId>maven-docck-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <version>1.0-SNAPSHOT</version>
   <name>Maven Documentation Checker Plugin</name>
   <url>http://maven.apache.org</url>
+  <prerequisites>
+    <maven>2.0</maven>
+  </prerequisites>
+  <!-- Not inherited correctly -->
+  <issueManagement>
+    <url>http://jira.codehaus.org/browse/MNG</url>
+  </issueManagement>
+  <!-- Not inherited correctly because the plugin is in the sandbox -->
+  <scm>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/sandbox/plugins/maven-docck-plugin/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/sandbox/plugins/maven-docck-plugin/</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/sandbox/plugins/maven-docck-plugin/</url>
+  </scm>
   <dependencies>
     <dependency>
       <groupId>commons-httpclient</groupId>
