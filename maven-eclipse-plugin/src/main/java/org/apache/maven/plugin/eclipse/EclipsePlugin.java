@@ -16,10 +16,19 @@ package org.apache.maven.plugin.eclipse;
  * limitations under the License.
  */
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.writers.EclipseClasspathWriter;
+import org.apache.maven.plugin.eclipse.writers.EclipseOSGiManifestWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseProjectWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseSettingsWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseWtpComponent15Writer;
@@ -31,14 +40,6 @@ import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Generates the following eclipse configuration files:
@@ -71,13 +72,21 @@ public class EclipsePlugin
 
     private static final String BUILDER_WST_COMPONENT_STRUCTURAL = "org.eclipse.wst.common.modulecore.ComponentStructuralBuilder"; //$NON-NLS-1$
 
+    private static final String BUILDER_PDE_MANIFEST = "org.eclipse.pde.ManifestBuilder"; //$NON-NLS-1$
+
+    private static final String BUILDER_PDE_SCHEMA = "org.eclipse.pde.SchemaBuilder"; //$NON-NLS-1$
+
     private static final String NATURE_WST_MODULE_CORE_NATURE = "org.eclipse.wst.common.modulecore.ModuleCoreNature"; //$NON-NLS-1$
 
     private static final String NATURE_JDT_CORE_JAVA = "org.eclipse.jdt.core.javanature"; //$NON-NLS-1$
 
     private static final String NATURE_JEM_WORKBENCH_JAVA_EMF = "org.eclipse.jem.workbench.JavaEMFNature"; //$NON-NLS-1$
 
+    private static final String NATURE_PDE_PLUGIN = "org.eclipse.pde.PluginNature"; //$NON-NLS-1$
+
     private static final String COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER = "org.eclipse.jdt.launching.JRE_CONTAINER"; //$NON-NLS-1$
+
+    private static final String REQUIRED_PLUGINS_CONTAINER = "org.eclipse.pde.core.requiredPlugins"; //$NON-NLS-1$  
 
     //  warning, order is important for binary search
     public static final String[] WTP_SUPPORTED_VERSIONS = new String[] { "1.0", "1.5", "R7", "none" }; //$NON-NLS-1$ //$NON-NLS-2$  //$NON-NLS-3$
@@ -205,6 +214,30 @@ public class EclipsePlugin
      * @parameter expression="${wtpversion}" default-value="none"
      */
     private String wtpversion;
+
+    /**
+     * Is it an PDE project? If yes, the plugin adds the necessary natures and build commands to
+     * the .project file. Additionally it copies all libraries to a project local directory and
+     * references them instead of referencing the files in the local Maven repository. It also
+     * ensured that the "Bundle-Classpath" in META-INF/MANIFEST.MF is synchronized.
+     * 
+     * @parameter expression="${eclipse.pde}" default-value="false"
+     */
+    private boolean pde;
+
+    /**
+     * The relative path of the manifest file
+     * 
+     * @parameter expression="${eclipse.manifest}" default-value="${basedir}/META-INF/MANIFEST.MF"
+     */
+    private File manifest;
+
+    /**
+     * The directory of local libraries
+     * 
+     * @parameter expression="${eclipse.pdeLibDir}" default-value="${basedir}/lib"
+     */
+    private String pdeLibDir;
 
     /**
      * Not a plugin parameter. Are we working with wtp r7?
@@ -549,7 +582,15 @@ public class EclipsePlugin
             new EclipseClasspathWriter( getLog(), eclipseProjectDir, project, deps ).write( projectBaseDir, sourceDirs,
                                                                                             classpathContainers,
                                                                                             localRepository,
-                                                                                            buildOutputDirectory );
+                                                                                            buildOutputDirectory, pde,
+                                                                                            pdeLibDir );
+        }
+
+        if ( pde )
+        {
+            this.getLog().info( "The Maven Eclipse plugin runs in 'pde'-mode." );
+            new EclipseOSGiManifestWriter( getLog(), eclipseProjectDir, project, deps )
+                .write( this.manifest, pdeLibDir );
         }
 
         getLog().info( Messages.getString( "EclipsePlugin.wrote", new Object[] { //$NON-NLS-1$
@@ -589,12 +630,22 @@ public class EclipsePlugin
             }
         }
 
+        if ( pde )
+        {
+            projectnatures.add( NATURE_PDE_PLUGIN );
+        }
+
     }
 
     private void fillDefaultClasspathContainers( String packaging )
     {
         classpathContainers = new ArrayList();
         classpathContainers.add( COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER );
+
+        if ( pde )
+        {
+            classpathContainers.add( REQUIRED_PLUGINS_CONTAINER );
+        }
     }
 
     private void fillDefaultBuilders( String packaging )
@@ -619,6 +670,12 @@ public class EclipsePlugin
         if ( wtpR7 )
         {
             buildcommands.add( BUILDER_WST_COMPONENT_STRUCTURAL_DEPENDENCY_RESOLVER ); // WTP 0.7 builder
+        }
+
+        if ( pde )
+        {
+            buildcommands.add( BUILDER_PDE_MANIFEST );
+            buildcommands.add( BUILDER_PDE_SCHEMA );
         }
     }
 

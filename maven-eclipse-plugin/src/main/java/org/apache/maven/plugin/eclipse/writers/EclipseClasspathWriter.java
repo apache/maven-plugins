@@ -30,6 +30,7 @@ import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
@@ -77,6 +78,26 @@ public class EclipseClasspathWriter
     private static final String ATTR_KIND = "kind"; //$NON-NLS-1$
 
     /**
+     * Attribute value for kind: var
+     */
+    private static final String ATTR_VAR = "var"; //$NON-NLS-1$    
+
+    /**
+     * Attribute value for kind: lib
+     */
+    private static final String ATTR_LIB = "lib"; //$NON-NLS-1$      
+
+    /**
+     * Attribute value for kind: src
+     */
+    private static final String ATTR_SRC = "src"; //$NON-NLS-1$   
+
+    /**
+     * Attribute value for kind: src
+     */
+    private static final String ATTR_CON = "con"; //$NON-NLS-1$     
+
+    /**
      * Element for classpathentry.
      */
     private static final String ELT_CLASSPATHENTRY = "classpathentry"; //$NON-NLS-1$
@@ -97,7 +118,8 @@ public class EclipseClasspathWriter
     }
 
     public void write( File projectBaseDir, EclipseSourceDir[] sourceDirs, List classpathContainers,
-                       ArtifactRepository localRepository, File buildOutputDirectory )
+                       ArtifactRepository localRepository, File buildOutputDirectory, boolean inPdeMode,
+                       String pdeLibDir )
         throws MojoExecutionException
     {
 
@@ -170,7 +192,7 @@ public class EclipseClasspathWriter
 
             if ( dep.isAddedToClasspath() )
             {
-                addDependency( writer, dep, localRepository );
+                addDependency( writer, dep, localRepository, projectBaseDir, inPdeMode, pdeLibDir );
             }
         }
 
@@ -180,7 +202,8 @@ public class EclipseClasspathWriter
 
     }
 
-    private void addDependency( XMLWriter writer, IdeDependency dep, ArtifactRepository localRepository )
+    private void addDependency( XMLWriter writer, IdeDependency dep, ArtifactRepository localRepository,
+                                File projectBaseDir, boolean inPdeMode, String pdeLibDir )
         throws MojoExecutionException
     {
 
@@ -189,10 +212,10 @@ public class EclipseClasspathWriter
         String sourcepath = null;
         String javadocpath = null;
 
-        if ( dep.isReferencedProject() )
+        if ( dep.isReferencedProject() && !inPdeMode )
         {
             path = "/" + dep.getArtifactId(); //$NON-NLS-1$
-            kind = "src"; //$NON-NLS-1$
+            kind = ATTR_SRC;
         }
         else
         {
@@ -214,20 +237,53 @@ public class EclipseClasspathWriter
                                                         new Object[] { dep.getArtifactId(), path } ) );
                 }
 
-                kind = "lib"; //$NON-NLS-1$
+                kind = ATTR_LIB;
             }
             else
             {
                 File localRepositoryFile = new File( localRepository.getBasedir() );
 
-                String fullPath = artifactPath.getPath();
+                // if the dependency is not provided and the plugin runs in "pde mode", the dependency is
+                // added to the Bundle-Classpath:
+                if ( inPdeMode && !dep.isProvided() )
+                {
+                    try
+                    {
+                        // TODO problem with reactor build
+                        File libsDir = new File( projectBaseDir, pdeLibDir );
+                        if ( !libsDir.exists() )
+                        {
+                            libsDir.mkdirs();
+                        }
+                        FileUtils.copyFileToDirectory( dep.getFile(), libsDir );
 
-                path = "M2_REPO/" //$NON-NLS-1$
-                    + IdeUtils.toRelativeAndFixSeparator( localRepositoryFile, new File( fullPath ), false );
+                    }
+                    catch ( IOException e )
+                    {
+                        throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcopyartifact", dep
+                            .getArtifactId() ) );
+                    }
+                    path = pdeLibDir + "/" + dep.getFile().getName();
+                    kind = ATTR_LIB;
+                }
+                // running in PDE mode and the dependency is provided means, that it is provided by
+                // the target platform. This case is covered by adding the plugin container
+                else if ( inPdeMode && dep.isProvided() )
+                {
+                    return;
+                }
+                else
+                {
+                    String fullPath = artifactPath.getPath();
 
+                    path = M2_REPO + "/" //$NON-NLS-1$
+                        + IdeUtils.toRelativeAndFixSeparator( localRepositoryFile, new File( fullPath ), false );
+
+                    kind = ATTR_VAR; //$NON-NLS-1$
+                }
                 if ( dep.getSourceAttachment() != null )
                 {
-                    sourcepath = "M2_REPO/" //$NON-NLS-1$
+                    sourcepath = M2_REPO + "/" //$NON-NLS-1$
                         + IdeUtils.toRelativeAndFixSeparator( localRepositoryFile, dep.getSourceAttachment(), false );
                 }
 
@@ -239,18 +295,17 @@ public class EclipseClasspathWriter
                                                        "\\", "/" ); //$NON-NLS-1$ //$NON-NLS-2$
                 }
 
-                kind = "var"; //$NON-NLS-1$
             }
 
         }
 
-        writer.startElement( "classpathentry" ); //$NON-NLS-1$
-        writer.addAttribute( "kind", kind ); //$NON-NLS-1$
-        writer.addAttribute( "path", path ); //$NON-NLS-1$
+        writer.startElement( ELT_CLASSPATHENTRY );
+        writer.addAttribute( ATTR_KIND, kind );
+        writer.addAttribute( ATTR_PATH, path );
 
         if ( sourcepath != null )
         {
-            writer.addAttribute( "sourcepath", sourcepath ); //$NON-NLS-1$
+            writer.addAttribute( ATTR_SOURCEPATH, sourcepath );
         }
         else if ( javadocpath != null )
         {

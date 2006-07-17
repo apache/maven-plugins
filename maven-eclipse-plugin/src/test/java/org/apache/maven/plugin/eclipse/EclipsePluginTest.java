@@ -193,4 +193,14 @@ public class EclipsePluginTest
         testProject( "project-20" );
     }
 
+    /**
+     * PDE support.
+     * @throws Exception any exception thrown during test
+     */
+    public void testProject21()
+        throws Exception
+    {
+        testProject( "project-21" );
+    }
+
 }
