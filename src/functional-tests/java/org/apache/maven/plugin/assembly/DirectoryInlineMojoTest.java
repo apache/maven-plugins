@@ -1,5 +1,6 @@
 package org.apache.maven.plugin.assembly;
 
+import org.apache.maven.plugin.assembly.mojos.DirectoryInlineMojo;
 import org.apache.maven.plugin.assembly.stubs.ArchiverManagerStub;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.project.MavenProject;

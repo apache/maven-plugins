@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.assembly;
+package org.apache.maven.plugin.assembly.mojos;
 
 /*
  * Copyright 2001-2005 The Apache Software Foundation.
@@ -18,13 +18,13 @@ package org.apache.maven.plugin.assembly;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.assembly.repository.RepositoryAssemblyException;
+import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
+import org.apache.maven.plugin.assembly.archive.AssemblyArchiver;
+import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
+import org.apache.maven.plugin.assembly.io.AssemblyReadException;
+import org.apache.maven.plugin.assembly.io.AssemblyReader;
 import org.apache.maven.plugins.assembly.model.Assembly;
-import org.codehaus.plexus.archiver.Archiver;
-import org.codehaus.plexus.archiver.ArchiverException;
-import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -34,7 +34,18 @@ public abstract class AbstractDirectoryMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        List assemblies = readAssemblies();
+        AssemblyReader reader = getAssemblyReader();
+        
+        List assemblies;
+        try
+        {
+            assemblies = reader.readAssemblies( this );
+        }
+        catch ( AssemblyReadException e )
+        {
+            throw new MojoExecutionException( "Error reading assembly descriptors: " + e.getMessage(), e );
+        }
+        
         for ( Iterator i = assemblies.iterator(); i.hasNext(); )
         {
             Assembly assembly = (Assembly) i.next();
@@ -45,7 +56,9 @@ public abstract class AbstractDirectoryMojo
     private void createDirectory( Assembly assembly )
         throws MojoExecutionException, MojoFailureException
     {
-        String fullName = finalName;
+        AssemblyArchiver archiver = getAssemblyArchiver();
+        
+        String fullName = getFinalName();
 
         if ( appendAssemblyId )
         {
@@ -58,24 +71,13 @@ public abstract class AbstractDirectoryMojo
 
         try
         {
-            Archiver archiver = this.archiverManager.getArchiver( "dir" );
-
-            createArchive( archiver, assembly, fullName );
+            archiver.createArchive( assembly, fullName, "dir", this );
         }
-
-        catch ( NoSuchArchiverException e )
+        catch ( ArchiveCreationException e )
         {
-            throw new MojoExecutionException( "Error creating assembly", e );
+            throw new MojoExecutionException( "Error creating assembly: " + e.getMessage(), e );
         }
-        catch ( ArchiverException e )
-        {
-            throw new MojoExecutionException( "Error creating assembly", e );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Error creating assembly", e );
-        }
-        catch ( RepositoryAssemblyException e )
+        catch ( AssemblyFormattingException e )
         {
             throw new MojoExecutionException( "Error creating assembly: " + e.getMessage(), e );
         }

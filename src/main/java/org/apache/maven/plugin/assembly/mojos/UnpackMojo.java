@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.assembly;
+package org.apache.maven.plugin.assembly.mojos;
 
 /*
  * Copyright 2001-2005 The Apache Software Foundation.
@@ -17,10 +17,14 @@ package org.apache.maven.plugin.assembly;
  */
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.assembly.archive.ArchiveAssemblyUtils;
+import org.apache.maven.plugin.assembly.archive.ArchiveExpansionException;
 import org.apache.maven.plugin.assembly.utils.ProjectUtils;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 
 import java.io.File;
@@ -34,12 +38,28 @@ import java.util.Iterator;
  * @requiresDependencyResolution test
  */
 public class UnpackMojo
-    extends AbstractUnpackingMojo
+    extends AbstractMojo
 {
-    protected MavenProject getExecutedProject()
-    {
-        return project;
-    }
+    
+    /**
+     * @parameter default-value="${project}"
+     * @required
+     * @readonly
+     */
+    private MavenProject project;
+    
+    /**
+     * @component
+     */
+    private ArchiverManager archiverManager;
+
+    /**
+     * Directory to unpack JARs into if needed
+     *
+     * @parameter expression="${project.build.directory}/assembly/work"
+     * @required
+     */
+    protected File workDirectory;
 
     /**
      * Unpacks the archive file.
@@ -72,11 +92,15 @@ public class UnpackMojo
                 File file = artifact.getFile();
                 try
                 {
-                    unpack( file, tempLocation );
+                    ArchiveAssemblyUtils.unpack( file, tempLocation, archiverManager );
                 }
                 catch ( NoSuchArchiverException e )
                 {
                     this.getLog().info( "Skip unpacking dependency file with unknown extension: " + file.getPath() );
+                }
+                catch ( ArchiveExpansionException e )
+                {
+                    throw new MojoExecutionException( "Error unpacking dependency file: " + file, e );
                 }
             }
         }

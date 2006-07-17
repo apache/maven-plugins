@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.assembly;
+package org.apache.maven.plugin.assembly.mojos;
 
 /*
  * Copyright 2001-2005 The Apache Software Foundation.
@@ -30,7 +30,14 @@ import org.apache.maven.project.MavenProject;
 public class DirectoryInlineMojo
     extends AbstractDirectoryMojo
 {
-    protected MavenProject getExecutedProject()
+    /**
+     * @parameter default-value="${project}"
+     * @required
+     * @readonly
+     */
+    private MavenProject project;
+    
+    public MavenProject getProject()
     {
         return project;
     }

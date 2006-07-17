@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.assembly;
+package org.apache.maven.plugin.assembly.filter;
 
 /*
  * Copyright 2001-2005 The Apache Software Foundation.

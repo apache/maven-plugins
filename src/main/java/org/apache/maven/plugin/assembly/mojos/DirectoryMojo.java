@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.assembly;
+package org.apache.maven.plugin.assembly.mojos;
 
 /*
  * Copyright 2001-2005 The Apache Software Foundation.
@@ -36,7 +36,7 @@ public class DirectoryMojo
      */
     private MavenProject executedProject;
 
-    protected MavenProject getExecutedProject()
+    public MavenProject getProject()
     {
         return executedProject;
     }

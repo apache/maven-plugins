@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.assembly;
+package org.apache.maven.plugin.assembly.mojos;
 
 /*
  * Copyright 2001-2005 The Apache Software Foundation.
@@ -21,17 +21,25 @@ import org.apache.maven.project.MavenProject;
 /**
  * Assemble an application bundle or distribution from an assembly descriptor.
  * Do not specify a phase, so make it usable in a reactor environment where forking would create issues.
+ * Do not specify it as an aggregator, so it is only for a single project.
+ * Both cases aid it in working around issues with the Maven lifecycle that should be addressed in Maven 2.1.
  *
- * @author <a href="mailto:jerome@coffeebreaks.org">Jerome Lacoste</a>
+ * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
- * @goal attached
+ * @goal single
  * @requiresDependencyResolution test
- * @aggregator
  */
-public class AttachedAssemblyMojo
+public class SingleAssemblyMojo
     extends AbstractAssemblyMojo
 {
-    protected MavenProject getExecutedProject()
+    /**
+     * @parameter default-value="${project}"
+     * @required
+     * @readonly
+     */
+    private MavenProject project;
+    
+    public MavenProject getProject()
     {
         return project;
     }

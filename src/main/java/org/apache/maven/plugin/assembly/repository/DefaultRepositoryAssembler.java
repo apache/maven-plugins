@@ -51,6 +51,7 @@ import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
+import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.filter.AssemblyExcludesArtifactFilter;
 import org.apache.maven.plugin.assembly.filter.AssemblyIncludesArtifactFilter;
 import org.apache.maven.plugin.assembly.utils.DigestUtils;
@@ -93,10 +94,12 @@ public class DefaultRepositoryAssembler
 
     private DigestUtils digester = new DigestUtils();
 
-    public void assemble( File repositoryDirectory, Repository repository, MavenProject project,
-                          ArtifactRepository localRepository )
+    public void assemble( File repositoryDirectory, Repository repository, AssemblerConfigurationSource configSource )
         throws RepositoryAssemblyException
     {
+        MavenProject project = configSource.getProject();
+        ArtifactRepository localRepository = configSource.getLocalRepository();
+        
         createGroupVersionAlignments( repository.getGroupVersionAlignments() );
 
         ArtifactRepository targetRepository = createLocalRepository( repositoryDirectory );

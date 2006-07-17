@@ -20,6 +20,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.Mojo;
+import org.apache.maven.plugin.assembly.mojos.AssemblyMojo;
 import org.apache.maven.plugin.assembly.stubs.ArchiverManagerStub;
 import org.apache.maven.plugin.assembly.stubs.JarArchiverStub;
 import org.apache.maven.plugin.assembly.stubs.ReactorMavenProjectStub;

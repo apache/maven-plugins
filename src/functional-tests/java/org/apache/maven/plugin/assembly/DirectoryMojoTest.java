@@ -16,6 +16,7 @@ package org.apache.maven.plugin.assembly;
  * limitations under the License.
  */
 
+import org.apache.maven.plugin.assembly.mojos.DirectoryMojo;
 import org.apache.maven.plugin.assembly.stubs.ArchiverManagerStub;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.project.MavenProject;
