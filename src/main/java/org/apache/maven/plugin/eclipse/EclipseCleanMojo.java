@@ -16,12 +16,12 @@ package org.apache.maven.plugin.eclipse;
  * limitations under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.util.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Deletes the .project, .classpath, .wtpmodules files and .settings folder used by Eclipse.
@@ -76,6 +76,8 @@ public class EclipseCleanMojo
     private String packaging;
 
     /**
+     * The root directory of the project
+     *
      * @parameter expression="${basedir}"
      */
     private File basedir;
