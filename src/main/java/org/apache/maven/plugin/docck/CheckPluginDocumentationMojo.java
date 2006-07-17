@@ -144,14 +144,24 @@ public class CheckPluginDocumentationMojo
             {
                 String siteHtml = FileUtils.fileRead( siteXml.getAbsolutePath() );
 
+                if ( siteHtml.indexOf( "href=\"index.html\"" ) < 0 )
+                {
+                    reporter.error( "site.xml is missing link to: index.html \"Introduction\"" );
+                }
+
                 if ( siteHtml.indexOf( "href=\"usage.html\"" ) < 0 )
                 {
-                    reporter.error( "site.xml is missing link to: usage.html" );
+                    reporter.error( "site.xml is missing link to: usage.html \"Usage\"" );
+                }
+
+                if ( siteHtml.indexOf( "href=\"plugin-info.html\"" ) < 0 )
+                {
+                    reporter.error( "site.xml is missing link to: plugin-info.html \"Goals\"" );
                 }
 
                 if ( siteHtml.indexOf( "href=\"faq.html\"" ) < 0 )
                 {
-                    reporter.error( "site.xml is missing link to: faq.html" );
+                    reporter.error( "site.xml is missing link to: faq.html \"FAQ\"" );
                 }
             }
             catch ( IOException e )
