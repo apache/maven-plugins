@@ -16,12 +16,12 @@ package org.apache.maven.plugin.eclipse;
  * limitations under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.util.FileUtils;
-
-import java.io.File;
-import java.io.IOException;
 
 /**
  * Deletes the .project, .classpath, .wtpmodules files and .settings folder used by Eclipse.
@@ -83,6 +83,20 @@ public class EclipseCleanMojo
     private File basedir;
 
     /**
+     * Is it an PDE project?
+     * 
+     * @parameter expression="${eclipse.pde}" default-value="false"
+     */
+    private boolean pde;
+
+    /**
+     * The directory of local libraries
+     * 
+     * @parameter expression="${eclipse.pdeLibDir}" default-value="${basedir}/lib"
+     */
+    private File pdeLibDir;
+
+    /**
      * @see org.apache.maven.plugin.AbstractMojo#execute()
      */
     public void execute()
@@ -109,6 +123,11 @@ public class EclipseCleanMojo
         {
             delete( settingsDir );
         }
+
+        if ( pde )
+        {
+            delete( pdeLibDir );
+        }
     }
 
     /**
@@ -120,7 +139,14 @@ public class EclipseCleanMojo
     private void delete( File f )
         throws MojoExecutionException
     {
-        getLog().info( Messages.getString( "EclipseCleanMojo.deleting", f.getName() ) ); //$NON-NLS-1$
+        if ( f.isDirectory() )
+        {
+            getLog().info( Messages.getString( "EclipseCleanMojo.deletingDirectory", f.getName() ) ); //$NON-NLS-1$
+        }
+        else
+        {
+            getLog().info( Messages.getString( "EclipseCleanMojo.deletingFile", f.getName() ) ); //$NON-NLS-1$
+        }
 
         if ( f.exists() )
         {
