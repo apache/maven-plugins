@@ -1,0 +1,43 @@
+ ------
+ Prevent Project References
+ ------
+ Edwin Punzalan
+ ------
+ 14 July 2006
+ ------
+
+
+Prevent Project References
+
+  By default, the Eclipse Plugin will create sub-projects for dependencies that
+  exists in the reactor.  If you don't want to work with the development code
+  and prefer to use the deployed packages, you can still do so by disabling the
+  project references like so:
+
++-----
+mvn eclipse:eclipse -Declipse.useProjectReferences=false
++-----
+
+  or in your pom.xml:
+
++-----
+<project>
+  [...]
+  <build>
+    [...]
+    <plugins>
+      [...]
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <configuration>
+          <eclipse.useProjectReferences>false</eclipse.useProjectReferences>
+        </configuration>
+      </plugin>
+      [...]
+    </plugins>
+    [...]
+  </build>
+  [...]
+</project>
++-----
