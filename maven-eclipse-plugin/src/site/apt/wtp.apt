@@ -8,31 +8,37 @@
  
 WTP support
 
- The eclipse plugin supports creating configurations for eclipse WTP (Web Tools Project).
- Projects with a WAR packaging are setup as WTP dynamic web projects and runtime dependencies are configured to be used
- when running them using eclipse internal servers.
+ The eclipse plugin supports creating configurations for eclipse WTP (Web Tools
+ Project). Projects with a WAR packaging can be setup as WTP dynamic web
+ projects and runtime dependencies are configured to be used when running them
+ using eclipse internal servers.
 
 
 * WTP 1.0 warning
 
- Unfortunately WTP 1.0 has been shipped bug which prevents external dependencies from work.
+ Unfortunately WTP 1.0 has been shipped with a bug which prevents external
+ dependencies from working.
  
- <<This means that only project-dependencies (in a multi-module build) will work, but any other dependency in the POM
- will be ignored when running the web application inside eclipse>>
+ <<This means that only project-dependencies (in a multi-module build) will
+ work, but any other dependency in the POM will be ignored when running the web
+ application inside eclipse.>>
  
- This bug has been fixed in release 1.0.1, so if you are still using WTP 1.0 be sure to update it to the 1.0.1 (or newer)
- release.
+ This bug has been fixed in release 1.0.1, so if you are still using WTP 1.0 be
+ sure to update it to the 1.0.1 (or newer) release.
  
- You can download a working copy of WTP from {{{http://download.eclipse.org/webtools/downloads/}http://download.eclipse.org/webtools/downloads/}}
+ You can download a working copy of WTP
+ {{{http://download.eclipse.org/webtools/downloads/}here}}
 
 * WTP versions
  
- In order to create a configuration for WTP you <always> need to specify the version of WTP you are using.
+ In order to create a configuration for WTP you have to specify the version of
+ WTP you are using.
  
- The plugin actually supports creating WTP R7 and 1.0 configuration files (and WTP 1.5 builds, since configuration files
- are not changed after 1.0)
+ The plugin actually supports creating WTP R7 and 1.0 configuration files (and
+ WTP 1.5 builds, since configuration files are not changed after 1.0).
  
- Note that R7/1.0 configuration files are totally different, so be sure to check the version you are using.
+ Note that R7/1.0 configuration files are totally different, so be sure to
+ check the version you are using.
 
  In order to generate WTP configuration files simply run:
  
@@ -40,15 +46,9 @@ WTP support
 mvn -Dwtpversion=R7 eclipse:eclipse
 +-----------------------------------------------------+
  
- Where wtpversion can be <<<R7>>>, <<<1.0>>> or <<<none>>> (default)
+ Where wtpversion can be <<<R7>>>, <<<1.0>>> or <<<none>>> (default).
  
- <Note that in the 2.0 version of the plugin the default was R7 and WTP configuration was always generated. Now that
- different incompatible versions are out the default is to not to generate WTP configuration if the user doesn't specify
- the desired version>
- 
- 
- 
- 
- 
- 
- 
+ <Note that in the 2.0 version of the plugin the default was R7 and WTP
+ configuration was always generated. Now that different incompatible versions
+ are out the default is to not to generate WTP configuration if the user
+ doesn't specify the desired version.>
