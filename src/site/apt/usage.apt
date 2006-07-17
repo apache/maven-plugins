@@ -1,5 +1,5 @@
   ------
-  Maven 2 Install Plugin - Usage
+  Usage
   ------
   Allan Ramirez
   ------
@@ -10,7 +10,7 @@ Usage
 
 * The <<<install:install>>> Mojo
 
-  In most cases, install:install goal doesnt need any configuration, it
+  In most cases, install:install goal doesn't need any configuration, it
   needs the project's POM and the artifact file to be installed during the 
   <<<install>>> phase of the default build lifecycle.
 
@@ -38,12 +38,12 @@ mvn install:install-file -Dfile=your-artifact-1.0.jar \
 +---+
 
   * the group, artifact, version and packaging of the file to install. These can
-    be taken from the specified pomFile, and overriden or specified using the
+    be taken from the specified pomFile, and overridden or specified using the
     command line. When the pomFile contains a <parent> section, the parent's
     groupId can be considered if the groupId is not specified further for the
     current project or on the command line.
 
   * the classifier parameter can be used to install secondary artifacts for a project,
-    like a javadoc or sources jar.  If not given, Maven assumes the file is the main
-	artifact for the project.
+    like a javadoc or sources jar.  If not given, Maven assumes the file is the main 
+    artifact for the project.
 
