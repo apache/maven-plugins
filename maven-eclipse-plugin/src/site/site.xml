@@ -1,22 +1,23 @@
-<project name="Maven Eclipse plugin">
-  <bannerLeft>
-    <name>Maven Eclipse plugin</name>
-    <src>http://maven.apache.org/images/apache-maven-project.png</src>
-    <href>http://maven.apache.org/</href>
-  </bannerLeft>
-  <bannerRight>
-    <src>http://maven.apache.org/images/maven-small.gif</src>
-  </bannerRight>
-  <body>
+<body>
     <links>
-      <item name="Maven 2" href="http://maven.apache.org/"/>
+      <item name="Maven" href="http://maven.apache.org/maven2/"/>
     </links>
 
     <menu name="Overview">
-      <item name="Maven 2 and Eclipse" href="overview.html"/>
+      <item name="Introduction" href="index.html"/>
+      <item name="Goals" href="plugin-info.html"/>
+      <item name="Usage" href="usage.html"/>
+      <item name="FAQ" href="faq.html"/>
       <item name="Multiple Module Projects" href="reactor.html"/>
-      <item name="WTP" href="wtp.html"/>
+      <item name="WTP Support" href="wtp.html"/>
     </menu>
+
+    <menu name="Examples">
+      <item name="Prevent Module References" href="examples/prevent-module-references.html"/>
+      <item name="Attach Library Sources" href="examples/attach-library-sources.html"/>
+      <item name="Provide Project Natures And Build Commands" href="examples/provide-project-natures-and-build-commands.html"/>
+    </menu>
+
     ${reports}
+
   </body>
-</project>
