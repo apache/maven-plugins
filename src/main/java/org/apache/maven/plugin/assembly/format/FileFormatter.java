@@ -123,7 +123,7 @@ public class FileFormatter
 
                     try
                     {
-                        Properties properties = PropertyUtils.loadPropertyFile( new File( filtersfile ), true, true );
+                        Properties properties = PropertyUtils.getInterpolatedPropertiesFromFile( new File( filtersfile ), true, true );
 
                         filterProperties.putAll( properties );
                     }
