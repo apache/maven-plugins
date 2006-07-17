@@ -105,9 +105,9 @@ public class InstallFileMojo
      * Install a POM for this artifact.  Will generate a default POM if none is
      * supplied with the pomFile argument.
      *
-     * @parameter expression="${generatePom}"
+     * @parameter expression="${generatePom}" default-value="false"
      */
-    private boolean generatePom = false;
+    private boolean generatePom;
 
     /**
      * @component
