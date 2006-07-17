@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<faqs id="FAQ" title="Frequently Asked Questions">
+ <part id="General">
+   <faq id="question">
+     <question>Can I use the <i>install:install-file</i> goal to install artifacts to my remote repository?</question>
+     <answer>
+       <p>
+            No. You may want to use <i>deploy:deploy-file</i> instead.
+       </p>
+     </answer>
+   </faq>
+ </part>
+</faqs>
