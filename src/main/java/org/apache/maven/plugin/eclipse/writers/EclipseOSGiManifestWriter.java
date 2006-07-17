@@ -25,6 +25,7 @@ import java.io.IOException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.ide.IdeDependency;
+import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
@@ -45,7 +46,7 @@ public class EclipseOSGiManifestWriter
         super( log, eclipseProjectDir, project, deps );
     }
 
-    public void write( File manifestFile, String libdir )
+    public void write( File manifestFile, File libdir )
         throws MojoExecutionException
     {
         // check for existence
@@ -79,7 +80,7 @@ public class EclipseOSGiManifestWriter
         }
     }
 
-    protected StringBuffer rewriteManifest( File manifestFile, String libdir )
+    protected StringBuffer rewriteManifest( File manifestFile, File libdir )
         throws MojoExecutionException
     {
         boolean inBundleClasspathEntry = false;
@@ -125,8 +126,10 @@ public class EclipseOSGiManifestWriter
 
     /**
      * Add all libraries that don't have the scope "provided" to the "Bundle-Classpath".
+     * @throws MojoExecutionException 
      */
-    protected String addBundleClasspathEntries( String libdir )
+    protected String addBundleClasspathEntries( File libdir )
+        throws MojoExecutionException
     {
         StringBuffer bundleClasspathSb = new StringBuffer( ENTRY_BUNDLE_CLASSPATH );
         int countAddedLibs = 0;
@@ -139,8 +142,13 @@ public class EclipseOSGiManifestWriter
                     // TODO problems with line endings might appear
                     bundleClasspathSb.append( ",\n" );
                 }
-                System.out.println( "artifact: " + this.deps[i].getArtifactId() );
-                bundleClasspathSb.append( " " + libdir + "/" + this.deps[i].getFile().getName() + "" );
+
+                getLog().debug( "Adding artifact to manifest: " + this.deps[i].getArtifactId() );
+
+                File artifactFile = new File( libdir, this.deps[i].getFile().getName() );
+
+                bundleClasspathSb.append( " "
+                    + IdeUtils.toRelativeAndFixSeparator( getEclipseProjectDirectory(), artifactFile, false ) );
                 countAddedLibs++;
             }
         }
