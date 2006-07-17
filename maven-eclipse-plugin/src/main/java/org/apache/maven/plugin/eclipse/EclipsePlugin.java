@@ -237,7 +237,7 @@ public class EclipsePlugin
      * 
      * @parameter expression="${eclipse.pdeLibDir}" default-value="${basedir}/lib"
      */
-    private String pdeLibDir;
+    private File pdeLibDir;
 
     /**
      * Not a plugin parameter. Are we working with wtp r7?

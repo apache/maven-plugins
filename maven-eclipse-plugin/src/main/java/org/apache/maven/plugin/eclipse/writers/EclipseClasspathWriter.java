@@ -118,8 +118,7 @@ public class EclipseClasspathWriter
     }
 
     public void write( File projectBaseDir, EclipseSourceDir[] sourceDirs, List classpathContainers,
-                       ArtifactRepository localRepository, File buildOutputDirectory, boolean inPdeMode,
-                       String pdeLibDir )
+                       ArtifactRepository localRepository, File buildOutputDirectory, boolean inPdeMode, File pdeLibDir )
         throws MojoExecutionException
     {
 
@@ -203,7 +202,7 @@ public class EclipseClasspathWriter
     }
 
     private void addDependency( XMLWriter writer, IdeDependency dep, ArtifactRepository localRepository,
-                                File projectBaseDir, boolean inPdeMode, String pdeLibDir )
+                                File projectBaseDir, boolean inPdeMode, File pdeLibDir )
         throws MojoExecutionException
     {
 
@@ -249,19 +248,18 @@ public class EclipseClasspathWriter
                 {
                     try
                     {
-                        // TODO problem with reactor build
-                        File libsDir = new File( projectBaseDir, pdeLibDir );
-                        if ( !libsDir.exists() )
+
+                        if ( !pdeLibDir.exists() )
                         {
-                            libsDir.mkdirs();
+                            pdeLibDir.mkdirs();
                         }
-                        FileUtils.copyFileToDirectory( dep.getFile(), libsDir );
+                        FileUtils.copyFileToDirectory( dep.getFile(), pdeLibDir );
 
                     }
                     catch ( IOException e )
                     {
                         throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcopyartifact", dep
-                            .getArtifactId() ) );
+                            .getArtifactId() ), e );
                     }
                     path = pdeLibDir + "/" + dep.getFile().getName();
                     kind = ATTR_LIB;
