@@ -11,7 +11,7 @@
   <name>Maven Eclipse Plugin</name>
   <version>2.3-SNAPSHOT</version>
   <prerequisites>
-    <maven>2.0</maven>
+    <maven>2.0.1</maven>
   </prerequisites>
   <issueManagement>
     <system>JIRA</system>
