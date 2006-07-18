@@ -17,6 +17,7 @@ package org.apache.maven.plugin.eclipse;
  */
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 
 import org.apache.maven.plugin.AbstractMojo;
@@ -124,9 +125,31 @@ public class EclipseCleanMojo
             delete( settingsDir );
         }
 
-        if ( pde )
+        if ( pde && pdeLibDir.isDirectory() )
         {
-            delete( pdeLibDir );
+
+            // delete all the jars in this directory, they have been copied here by the eclipse plugin
+            File[] localArtifacts = pdeLibDir.listFiles( new FilenameFilter()
+            {
+
+                public boolean accept( File dir, String name )
+                {
+                    return name.endsWith( ".jar" );
+                }
+            } );
+
+            for ( int j = 0; j < localArtifacts.length; j++ )
+            {
+                File file = localArtifacts[j];
+                delete( file );
+            }
+
+            // only if the dir is empty, delete it. Don't delete it is there is still something there (for example the
+            // directory could have been stored in svn and deleting the .svn control dir could cause problems
+            if ( pdeLibDir.list().length == 0 )
+            {
+                delete( pdeLibDir );
+            }
         }
     }
 
