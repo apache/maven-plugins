@@ -1,0 +1,32 @@
+ ------
+ Usage
+ ------
+ Franz Allan See
+ ------
+ 12 July 2006
+ ------
+
+Usage
+
+ The Resources Plugin handles the copying or transfering of project resources to
+ the output directory. The following examples 
+ describe the basic usage of the Plugin.
+
+* Transfer or Copy resources of the main code
+
++-----+
+mvn resources:resources
++-----+
+
+ Upon executing this command, the resources of your main code would be copied to 
+ the resources of your main output build. This does not affect the resources of your
+ test code.
+
+* Transfer or Copy resources of the unit tests
+
++-----+
+mvn resources:testResources
++-----+
+
+ Like the first goal, this goal copies the resources of your test code to your
+ test output build. Also, this does not affect the resources of the main code.
