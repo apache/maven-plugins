@@ -14,6 +14,32 @@ WTP support
  using eclipse internal servers.
 
 
+
+* WTP versions
+ 
+ In order to create a configuration for WTP you have to specify the version of
+ WTP you are using.
+ 
+ The plugin actually can create WTP R7, 1.0 and 1.5 configuration files.
+ 
+ Note that R7/1.0 configuration files are totally different, so be sure to
+ check the version you are using. WTP 1.5 configuration is slightly changed
+ from 1.0 and WTP 1.5 can also use WTP 1.0 config files without problems.
+
+ In order to generate WTP configuration files simply run:
+ 
++-----------------------------------------------------+
+mvn -Dwtpversion=R7 eclipse:eclipse
++-----------------------------------------------------+
+ 
+ Where wtpversion can be <<<R7>>>, <<<1.0>>>, <<<1.5>>> or <<<none>>> (default).
+ 
+ <Note that in the 2.0 version of the plugin the default was R7 and WTP
+ configuration was always generated. Now that different incompatible versions
+ are out the default is to not to generate WTP configuration if the user
+ doesn't specify the desired version.>
+
+ 
 * WTP 1.0 warning
 
  Unfortunately WTP 1.0 has been shipped with a bug which prevents external
@@ -28,27 +54,3 @@ WTP support
  
  You can download a working copy of WTP
  {{{http://download.eclipse.org/webtools/downloads/}here}}
-
-* WTP versions
- 
- In order to create a configuration for WTP you have to specify the version of
- WTP you are using.
- 
- The plugin actually supports creating WTP R7 and 1.0 configuration files (and
- WTP 1.5 builds, since configuration files are not changed after 1.0).
- 
- Note that R7/1.0 configuration files are totally different, so be sure to
- check the version you are using.
-
- In order to generate WTP configuration files simply run:
- 
-+-----------------------------------------------------+
-mvn -Dwtpversion=R7 eclipse:eclipse
-+-----------------------------------------------------+
- 
- Where wtpversion can be <<<R7>>>, <<<1.0>>> or <<<none>>> (default).
- 
- <Note that in the 2.0 version of the plugin the default was R7 and WTP
- configuration was always generated. Now that different incompatible versions
- are out the default is to not to generate WTP configuration if the user
- doesn't specify the desired version.>
