@@ -456,7 +456,7 @@
     <class>
       <name>ModuleSources</name>
       <version>1.0.0</version>
-      <superClass>SetBase</superClass>
+      <superClass>FileSet</superClass>
       <description>Configuration for including the source files for a Module in an assembly.</description>
     </class>
 
