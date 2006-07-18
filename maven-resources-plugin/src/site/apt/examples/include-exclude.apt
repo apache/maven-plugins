@@ -1,0 +1,160 @@
+ ------
+ Including and excluding files and directories
+ ------
+ Franz Allan See
+ ------
+ July 2006
+ ------
+
+
+Including and excluding files and directories
+
+ When specifying a resource directory, every file within that directory may not 
+ be used. Thus, we may have to specify only the files that we want to inlcude or
+ specify the files that we want to exclude.
+ 
+ To include a file, we only need to add an includes tag.
+ 
++-----+
+<project>
+  [...]
+  <name>My Resources Plugin Practice Project</name>
+  [...]
+  <build>
+    [...]
+    <resources>
+      [...]
+      <resource>
+        <directory> [your directory] </directory>
+        <includes>
+          <include> [resource file #1] </include>
+          <include> [resource file #2] </include>
+          <include> [resource file #3] </include>
+          [...]
+          <include> [resource file #n] </include>
+        </includes>
+      </resource>
+      [...]
+    </resources>
+  [...]
+  </build>
+  [...]
+</project>
++-----+
+
+ And to excludes a resource, we only need to add an exclude tag.
+ 
++-----+
+<project>
+  [...]
+  <name>My Resources Plugin Practice Project</name>
+  [...]
+  <build>
+    [...]
+    <resources>
+      [...]
+      <resource>
+        <directory> [your directory] </directory>
+        <excludes>
+          <exclude> [non-resource file #1] </exclude>
+          <exclude> [non-resource file #1] </exclude>
+          <exclude> [non-resource file #1] </exclude>
+          [...]
+          <exclude> [non-resource file #1] </exclude>
+        </excludes>
+      </resource>
+      [...]
+    </resources>
+  [...]
+  </build>
+  [...]
+</project>
++-----+
+
+ For example, if we want to include all text and rtf files under our 
+ src/my-resources directory and in all its
+ subdirectory, we can do the 
+ following
+ 
++-----+
+<project>
+  [...]
+  <name>My Resources Plugin Practice Project</name>
+  [...]
+  <build>
+    [...]
+    <resources>
+      [...]
+      <resource>
+        <directory> src/my-resources </directory>
+        <includes>
+          <include> **/*.txt </include>
+          <include> **/*.rtf </include>
+        </includes>
+      </resource>
+      [...]
+    </resources>
+  [...]
+  </build>
+  [...]
+</project>
++-----+
+
+ Also, if we want to include everything except the bitmaps, jpegs, and gifs, we 
+ can simply exclude them by
+ 
++-----+
+<project>
+  [...]
+  <name>My Resources Plugin Practice Project</name>
+  [...]
+  <build>
+    [...]
+    <resources>
+      [...]
+      <resource>
+        <directory> src/my-resources </directory>
+        <excludes>
+          <exclude> **/*.bmp </exclude>
+          <exclude> **/*.jpg </exclude>
+          <exclude> **/*.jpeg </exclude>
+          <exclude> **/*.gif </exclude>
+        </excludes>
+      </resource>
+      [...]
+    </resources>
+  [...]
+  </build>
+  [...]
+</project>
++-----+
+
+ Of course, we can also have both includes and exclude tags. For example, if we 
+ want to include all text files that
+ does not contain the word "test" in their filename
+ 
++-----+
+<project>
+  [...]
+  <name>My Resources Plugin Practice Project</name>
+  [...]
+  <build>
+    [...]
+    <resources>
+      [...]
+      <resource>
+        <directory> src/my-resources </directory>
+        <includes>
+          <include> **/*.txt </include>
+        </inclues>
+        <excludes>
+          <exclude> **/*test*.* </exclude>
+        </excludes>
+      </resource>
+      [...]
+    </resources>
+  [...]
+  </build>
+  [...]
+</project>
++-----+
