@@ -206,7 +206,7 @@ public class DoapMojo
 
         w.startElement( "repository" );
         w.startElement( "SVNRepository" );
-        rdfResourceElement( "location", project.getScm().getConnection() );
+        rdfResourceElement( "location", project.getScm().getConnection().substring( 8 ) );
         rdfResourceElement( "browse", project.getScm().getUrl() );
         w.endElement();
         w.endElement();
