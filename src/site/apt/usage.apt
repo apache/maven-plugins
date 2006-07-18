@@ -1,5 +1,5 @@
   ------
-  Maven 2 RAR Plugin
+  Usage
   ------
   Allan Ramirez
   ------
@@ -8,7 +8,7 @@
 
 Usage
 
-  The RAR plugin is binded to the <<<package>>> phase of the build lifecycle.
+  The RAR plugin is bound to the <<<package>>> phase of the build lifecycle.
   To be able to generate the RAR as part of the lifecycle, the plugin should
   be declared at the \<build\> section of the pom.
 
