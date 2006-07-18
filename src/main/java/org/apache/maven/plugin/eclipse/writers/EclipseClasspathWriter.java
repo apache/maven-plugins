@@ -261,7 +261,10 @@ public class EclipseClasspathWriter
                         throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcopyartifact", dep
                             .getArtifactId() ), e );
                     }
-                    path = pdeLibDir + "/" + dep.getFile().getName();
+
+                    File artifactFile = new File( pdeLibDir, dep.getFile().getName() );
+                    path = IdeUtils.toRelativeAndFixSeparator( getEclipseProjectDirectory(), artifactFile, false );
+
                     kind = ATTR_LIB;
                 }
                 // running in PDE mode and the dependency is provided means, that it is provided by
@@ -320,5 +323,4 @@ public class EclipseClasspathWriter
         writer.endElement();
 
     }
-
 }
