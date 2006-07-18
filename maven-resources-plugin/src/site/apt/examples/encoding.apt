@@ -1,0 +1,37 @@
+ ------
+ Specifying a character encoding scheme
+ ------
+ Franz Allan See
+ ------
+ July 2006
+ ------
+
+
+Specifying a character encoding scheme
+
+ A character encoding scheme such as ASCII, UTF-8, or UTF-16 can be chosen to be
+ used for the reading and writing of files.
+
+ For example, if we want to specify that the character encoding scheme be UTF-8,
+ we would simply have to modify the pom.
+
++-----+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <configuration>
+          ...
+          <encoding>UTF-8</aggregate>
+          ...
+        </configuration>
+      </plugin>
+    </plugins>
+  ...
+  </build>
+  ...
+</project>
++-----+

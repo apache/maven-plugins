@@ -1,0 +1,51 @@
+ ------
+ Introduction
+ ------
+ Franz Allan See
+ ------
+ 12 July 2006
+ ------
+
+
+Maven 2 Resources Plugin
+
+ The Resources Plugin handles the copying or transfering of project resources to
+ the output directory. Resources are categorized into two: main resources and 
+ test resources. The difference is that the main resources are the  resources 
+ associated to the main code while the test resources are that of the test code. 
+ 
+ This, thus, allows the separation of resources of the main code (what your 
+ plugin actually does) and its unit
+ tests.
+
+* Goals Overview
+
+   The Resources Plugin has two goals:
+
+   * {{{resources-mojo.html}resources:resources}} transfers / copies the resources of
+     the main source code to the main output directory.
+
+   * {{{testResources-mojo.html}resources:testResources}} transfers / copies the 
+     resources of the test source code to the test output directory.
+
+* Usage
+
+   Instructions on how to use the Resources Plugin can be found 
+   {{{usage.html}here}}.
+
+* Examples
+
+   The following examples show how to use the Javadoc Plugin in more advanced 
+   usecases:
+
+   * {{{examples/encoding.html}Specifying a character encoding scheme}}
+
+   * {{{examples/resource-directory.html}Specifying resource directories}}
+
+   * {{{examples/filter.html}Filtering}}
+   
+   * {{{examples/include-exclude.html}Including and excluding files and 
+      directories}}
+   
+   
+
