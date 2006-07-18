@@ -8,7 +8,7 @@
   <artifactId>maven-doap-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Maven DOAP Plugin</name>
-  <version>1.0</version>
+  <version>1.0-SNAPSHOT</version>
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -26,9 +26,4 @@
       <version>1.1</version>
     </dependency>    
   </dependencies>
-  <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-doap-plugin-1.0</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-doap-plugin-1.0</developerConnection>
-    <url>https://svn.apache.org/repos/asf/maven/plugins/tags/maven-doap-plugin-1.0</url>
-  </scm>
 </project>
