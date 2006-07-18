@@ -54,9 +54,9 @@ public class InstallMojo
     /**
      * Whether to update the metadata to make the artifact as release.
      *
-     * @parameter expression="${updateReleaseInfo}"
+     * @parameter expression="${updateReleaseInfo}" default-value="false"
      */
-    private boolean updateReleaseInfo = false;
+    private boolean updateReleaseInfo;
 
     /**
      * @parameter expression="${project.artifact}"

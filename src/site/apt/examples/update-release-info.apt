@@ -8,11 +8,11 @@
 
 Update the release information of a project
 
-  Updating the release information changes the project's maven-metadata.xml
-  in the local repository, forcing the current installed version as the latest
-  release version. This parameter is most useful when installing a plugin
-  built from source so it can be used by other projects without explicitly
-  asking for the latest SNAPSHOT version.
+  Updating the release information means that a forced update of the project's 
+  metadata took place which sets the artifact as the release version. 
+  It is most useful when installing a plugin built from source so it can be 
+  used by other projects without explicitly asking for the latest SNAPSHOT 
+  version.
 
   This can be activated by setting the <<updateReleaseInfo>> parameter to <<true>>
   when installing.

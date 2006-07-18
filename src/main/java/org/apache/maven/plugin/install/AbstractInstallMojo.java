@@ -58,7 +58,7 @@ public abstract class AbstractInstallMojo
     private Digester digester;
 
     /**
-     * Flag whether to create checksums(MD5, SHA1) or not.
+     * Flag Whether to create checksums(MD5, SHA1) or not.
      *
      * @parameter expression="${createChecksum}" default-value="false"
      */
