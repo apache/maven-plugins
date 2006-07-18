@@ -17,6 +17,7 @@ package org.apache.maven.plugin.doap;
  */
 
 import org.apache.maven.model.Developer;
+import org.apache.maven.model.License;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
@@ -132,7 +133,7 @@ public class DoapMojo
         {
             //TODO: how to map to usefulinc site, or if this is necessary, the OSI page might
             //      be more appropriate.
-            rdfResourceElement( "license", (String) project.getLicenses().get( 0 ) );
+            rdfResourceElement( "license", ((License) project.getLicenses().get( 0 )).getUrl() );
         }
 
         element( "name", project.getName() );
