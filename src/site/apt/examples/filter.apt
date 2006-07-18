@@ -1,0 +1,150 @@
+ ------
+ Filtering
+ ------
+ Franz Allan See
+ ------
+ July 2006
+ ------
+
+
+Filtering
+
+ Variables can be included in your resources. These variables, denoted by the 
+ ${...} delimeters, can come from the System properties, your project 
+ properties, from your filter resources and from the command lines. 
+ 
+ For example, if we have a resource src/main/resources/hello.txt containing
+ 
++-----+
+Hello ${name}
++-----+
+
+ And a pom like this
+ 
++-----+
+<project>
+  [...]
+  <name>My Resources Plugin Practice Project</name>
+  [...]
+  <build>
+    [...]
+    <resources>
+      [...]
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      [...]
+    </resources>
+  [...]
+  </build>
+  [...]
+</project>
++-----+
+ 
+ Upon calling
+ 
++-----+
+mvn resources:resources
++-----+
+
+ This will create a resource output in target/class/hello.txt which contains 
+ exactly the same.
+
++-----+
+Hello ${name}
++-----+
+
+ However, if we add a filtering tag to our pom and set it to true such as this
+ 
++-----+
+      [...]
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+      [...]
++-----+
+
+ Our target/class/hello.txt after calling 
+ 
++-----+
+mvn resources:resources 
++-----+
+ 
+ would be
+ 
++-----+
+Hello My Resources Plugin Practice Project
++-----+
+
+ That's because the name variable was replaced by the value of the project's 
+ name (which was specified
+ in the pom).
+ 
+ Moreover, we can also assign values through the command line using the "-D" 
+ tag. For example, to change the value for the variable name to "world", we can 
+ simply invoke this command
+ 
++-----+
+mvn resources:resources -Dname="world"
++-----+
+
+ And the output in target/class/hello.txt would be 
+ 
++-----+
+Hello world
++-----+
+ 
+ Furthermore, we are not limited to use pre-defined project variables. We can 
+ specify our own variables and their values under the properties tag. For 
+ example, if we want to change the variable from "name" to "your.name", we can 
+ sdo so by adding a "your.name" tag under the "properties" tag.
+ 
++-----+
+<project>
+  [...]
+  <properties>
+    <your.name>world</your.name>
+  </properties>
+  [...]
+</project>
++-----+
+
+ But to organize your project, you may want to put all your variables and their 
+ values on a separate file so that you will not have to rewrite your pom, or set
+ their values all the time with every build. This can be done by adding a 
+ filter.
+ 
++-----+
+<project>
+  [...]
+  <name>My Resources Plugin Practice Project</name>
+  [...]
+  <build>
+    [...]
+    <filters>
+      <filter> [a filter property] </filter>
+    </filters>
+    [...]
+  [...]
+  </build>
+  [...]
+</project>
++-----+
+ 
+ For example, we can separate "your.name" from pom by specifying a filter, "my 
+ filter values.properties" containing
+ 
++-----+
+your.name = world
++-----+
+
+ and adding that to our pom
+ 
++-----+
+    [...]
+    <filters>
+      <filter>my filter values.properties</filter>
+    </filters>
+    [...]
++-----+

@@ -56,6 +56,8 @@ public class ResourcesMojo
 {
     
     /**
+     * The character encoding scheme to be applied.
+     * 
      * @parameter
      */
     private String encoding;
@@ -90,6 +92,9 @@ public class ResourcesMojo
     private static final String[] DEFAULT_INCLUDES = {"**/**"};
 
     /**
+     * The list of additional key-value pairs aside from that of the System, 
+     * and that of the project, which would be used for the filtering. 
+     * 
      * @parameter expression="${project.build.filters}"
      */
     private List filters;
