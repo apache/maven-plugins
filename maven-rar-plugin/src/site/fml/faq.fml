@@ -10,6 +10,7 @@
        <p>
             A Resource Adapter Archive (RAR) file is a Java archive (JAR) file used to package a resource adapter for the Java 2 Connector (J2C) Architecture
             <br/>
+            <br/>
             A RAR file can contain the following:
             <br/>
               <ul>
