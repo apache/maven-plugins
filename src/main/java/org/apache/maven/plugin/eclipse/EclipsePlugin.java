@@ -478,6 +478,11 @@ public class EclipsePlugin
             return false;
         }
 
+        if ( "eclipse-plugin".equals( packaging ) )
+        {
+            pde = true;
+        }
+
         if ( eclipseProjectDir == null )
         {
             eclipseProjectDir = executedProject.getFile().getParentFile();
