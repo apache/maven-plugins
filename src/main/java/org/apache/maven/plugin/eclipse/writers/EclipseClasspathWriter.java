@@ -244,17 +244,15 @@ public class EclipseClasspathWriter
 
                 // if the dependency is not provided and the plugin runs in "pde mode", the dependency is
                 // added to the Bundle-Classpath:
-                if ( inPdeMode && !dep.isProvided() )
+                if ( inPdeMode && !dep.isProvided() && !dep.isTestDependency() )
                 {
                     try
                     {
-
                         if ( !pdeLibDir.exists() )
                         {
                             pdeLibDir.mkdirs();
                         }
                         FileUtils.copyFileToDirectory( dep.getFile(), pdeLibDir );
-
                     }
                     catch ( IOException e )
                     {
@@ -284,8 +282,18 @@ public class EclipseClasspathWriter
                 }
                 if ( dep.getSourceAttachment() != null )
                 {
-                    sourcepath = M2_REPO + "/" //$NON-NLS-1$
-                        + IdeUtils.toRelativeAndFixSeparator( localRepositoryFile, dep.getSourceAttachment(), false );
+                    if ( ATTR_VAR.equals( kind ) )
+                    {
+                        sourcepath = M2_REPO
+                            + "/" //$NON-NLS-1$
+                            + IdeUtils
+                                .toRelativeAndFixSeparator( localRepositoryFile, dep.getSourceAttachment(), false );
+                    }
+                    else
+                    {
+                        // source archive must be referenced with the full path, we can't mix a lib with a variable
+                        sourcepath = IdeUtils.getCanonicalPath( dep.getSourceAttachment() );
+                    }
                 }
 
                 if ( dep.getJavadocAttachment() != null )
