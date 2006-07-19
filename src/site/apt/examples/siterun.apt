@@ -1,0 +1,37 @@
+ ------
+ Configuring Site Run
+ ------
+ Maria Odea Ching
+ ------
+ July 2006
+ ------
+
+Configuring Site Run
+
+  For the <<<site:run>>> goal, you can configure which port to use to start up the site as well as the directory where
+  the pages for the site will be rendered.
+
+  Example, you have the following configuration in your pom:
+
++-----+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+       <groupId>org.apache.maven.plugins</groupId>
+       <artifactId>maven-site-plugin</artifactId>
+       <configuration>
+         <port>9000</port>
+         <tempWebappDirectory>${basedir}/target/site/tempdir</tempWebappDirectory>
+       </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++-----+
+
+  When you execute <<<mvn site:run>>>, you will see in the command line that the Jetty server is started at port 9000.
+  To access the site, type http://localhost:9000 in your browser. You will also see that the dummy web application is
+  generated in the '${basedir}/target/site/tempdir' directory as specified in the <<<tempWebappDirectory>>> parameter.
