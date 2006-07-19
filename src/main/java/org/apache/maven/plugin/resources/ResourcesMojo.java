@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * Copy application resources.
+ * Copy resources for the main source code to the main output directory.
  *
  * @author <a href="michal.maczka@dimatics.com">Michal Maczka</a>
  * @author <a href="mailto:jason@maven.org">Jason van Zyl</a>
