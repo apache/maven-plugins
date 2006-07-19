@@ -71,7 +71,7 @@ public class ModuleSetAssemblyPhase
             Set allModuleProjects;
             try
             {
-                allModuleProjects = ProjectUtils.getProjectModules( project, configSource.getReactorProjects() );
+                allModuleProjects = ProjectUtils.getProjectModules( project, configSource.getReactorProjects(), getLogger() );
             }
             catch ( IOException e )
             {

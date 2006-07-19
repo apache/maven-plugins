@@ -9,6 +9,7 @@ import org.codehaus.plexus.archiver.Archiver;
 
 public interface AssemblyArchiverPhase
 {
+    String ROLE = AssemblyArchiverPhase.class.getName();
 
     void execute( Assembly assembly, Archiver archiver, AssemblerConfigurationSource configSource,
                   ComponentsXmlArchiverFileFilter componentsXmlFilter )

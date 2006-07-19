@@ -70,6 +70,14 @@ public class AssemblyScopeArtifactFilter
             runtimeScope = false;
             testScope = false;
         }
+        else if ( DefaultArtifact.SCOPE_SYSTEM.equals( scope ) )
+        {
+            systemScope = true;
+            providedScope = false;
+            compileScope = false;
+            runtimeScope = false;
+            testScope = false;
+        }
         else
         {
             systemScope = false;

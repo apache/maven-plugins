@@ -17,6 +17,7 @@ package org.apache.maven.plugin.assembly.filter;
  */
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -49,7 +50,7 @@ public class AssemblyIncludesArtifactFilter
 
     public boolean include( Artifact artifact )
     {
-        String shortId = artifact.getGroupId() + ":" + artifact.getArtifactId();
+        String shortId = ArtifactUtils.versionlessKey( artifact );
         String id = artifact.getDependencyConflictId();
         
         boolean matched = false;
