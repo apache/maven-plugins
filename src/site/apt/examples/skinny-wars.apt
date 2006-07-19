@@ -1,0 +1,91 @@
+ ------
+ Maven 2 War Plugin - Creating Skinny WARs
+ ------
+ Mike Perham
+ ------
+ July 2006
+ 
+Creating Skinny WARs
+ 
+ In a typical J2EE environment, a WAR is packaged within an EAR for deployment.  The
+ WAR can contain all its dependent JARs in <<<WEB-INF/lib>>> but then the EAR can quickly grow
+ very large if there are multiple WARs, due to the presence of duplicate JARs.  Instead
+ the J2EE specification allows WARs to reference external JARs packaged within the EAR
+ via the <<<Class-Path>>> setting in their <<<MANIFEST.MF>>>.
+
+ The Maven WAR and EAR plugins do not directly support this mode of operation but
+ we can fake it through some POM and configuration magic.  First you need to tell
+ Maven to exclude the dependent JARs and add references to them in the <<<MANIFEST.MF>>>
+ instead.  This goes into your WAR's <<<pom.xml>>>:
+ 
++-----------------+ 
+    <plugins>
+      <plugin>
+         <artifactId>maven-war-plugin</artifactId>
+         <configuration>
+           <!-- This is broken in maven-war-plugin 2.0, works in 2.0.1 -->
+           <warSourceExcludes>WEB-INF/lib/*.jar</warSourceExcludes>
+           <archive>
+             <manifest>
+               <addClasspath>true</addClasspath>
+               <classpathPrefix>lib/</classpathPrefix>
+             </manifest>
+           </archive>
+         </configuration>       
+      </plugin>
+    </plugins>    
++-----------------+ 
+
+ Next we need to change the EAR's <<<pom.xml>>> to package those dependent JARs in the EAR.
+ Notice that we package everything into a lib/ directory within the EAR.  This is
+ just my own personal preference to distinguish between J2EE modules (which will
+ be packaged in the root of the EAR) and Java libraries (which are packaged in lib/).
+
++-----------------+ 
+    <plugins>
+      <plugin>
+        <artifactId>maven-ear-plugin</artifactId>
+        <configuration>
+          <defaultJavaBundleDir>lib/</defaultJavaBundleDir>
+        </configuration>       
+      </plugin>
+    </plugins>    
++-----------------+  
+
+ Now the painful part.  Your EAR's <<<pom.xml>>> needs to list every dependency that the WAR has.
+ This is because Maven assumes fat WARs and does not include transitive dependencies
+ of WARs within the EAR.
+
++-----------------+ 
+    <dependencies>
+        <dependency>
+            <groupId>com.acme</groupId>
+            <artifactId>shared-jar</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.acme</groupId>
+            <artifactId>war1</artifactId>
+            <version>1.0.0</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>com.acme</groupId>
+            <artifactId>war2</artifactId>
+            <version>1.0.0</version>
+            <type>war</type>
+        </dependency>
+    </dependencies>
++-----------------+ 
+
+ Your EAR will contain something like this:
+
++-----------------+ 
+ .
+ |-- META-INF
+ |   |-- application.xml
+ |-- lib
+ |   |-- shared-jar-1.0.0.jar
+ |-- war1-1.0.0.war
+ |-- war2-1.0.0.war
++-----------------+ 
