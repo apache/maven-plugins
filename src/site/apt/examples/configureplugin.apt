@@ -8,7 +8,7 @@
 
 Configuring Source Plugin
 
- To customize the configuration of the plugin, you can change its configuration parameters in your POM, as shown below:
+ To customize the plugin, you can change its configuration parameters in your POM, as shown below:
 
 +-----+
 <project>
@@ -26,7 +26,7 @@ Configuring Source Plugin
 </project>
 +-----+
 
- The generated jar file will hold the value of the <<<finalName>>> plus "-sources" if it is the main sources. Otherwise,
- it would be <<<finalName>>> plus "-test-sources" if it is the test sources. It would be generated in the specified
- <<<outputDirectory>>>. The <<<attach>>> parameter specifies that the produced jar file will be attached to the project
- artifact.
+ The generated jar file will be named by the value of the <<<finalName>>> plus "-sources" if it is the main sources. Otherwise,
+ it would be <<<finalName>>> plus "-test-sources" if it is the test sources. It will be generated in the specified
+ <<<outputDirectory>>>. The <<<attach>>> parameter specifies whether the java sources will be attached to the artifact list of
+ the project.
