@@ -15,10 +15,10 @@
         When should I use the resouces plugin's goal outside a lifecycle?
       </question>
       <answer>
-        <p>The maven resource plugin simply transfers or copies resources from 
-        your source to your build output (with the optional filtering). So if 
-        that's the only operation you are interested in, you can skip the
-        other phases such as compilation and testing and simply do mvn 
+        <p>The maven resource plugin simply copies resources from your source to
+        your build output (with the optional filtering). So if that's the only 
+        operation you are interested in, you can skip the other phases such as 
+        compilation and testing and simply do mvn 
         resources:resources.</p>
         <p>For example, if you just debugged your configuration file and you 
         want to manually test it in your container if it works, you can simply 
@@ -43,7 +43,7 @@
         What encoding values are allowed?
       </question>
       <answer>
-        <p>The Maven Resource Plugin only allwos encoding values representing 
+        <p>The Maven Resource Plugin only allows encoding values representing 
         the charsets supported by the Java platform, namely US-ASCII, 
         ISO-8859-1, UTF-8, UTF-16BE, UTF-16LE, and UTF-16</p>
       </answer>

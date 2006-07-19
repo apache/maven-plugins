@@ -13,7 +13,7 @@ Including and excluding files and directories
  be used. Thus, we may have to specify only the files that we want to inlcude or
  specify the files that we want to exclude.
  
- To include a file, we only need to add an includes tag.
+ To include a resource, we only need to add an includes tag.
  
 +-----+
 <project>
@@ -42,7 +42,7 @@ Including and excluding files and directories
 </project>
 +-----+
 
- And to excludes a resource, we only need to add an exclude tag.
+ And to exclude a resource, we only need to add an excludes tag.
  
 +-----+
 <project>
@@ -57,10 +57,10 @@ Including and excluding files and directories
         <directory> [your directory] </directory>
         <excludes>
           <exclude> [non-resource file #1] </exclude>
-          <exclude> [non-resource file #1] </exclude>
-          <exclude> [non-resource file #1] </exclude>
+          <exclude> [non-resource file #2] </exclude>
+          <exclude> [non-resource file #3] </exclude>
           [...]
-          <exclude> [non-resource file #1] </exclude>
+          <exclude> [non-resource file #n] </exclude>
         </excludes>
       </resource>
       [...]
@@ -72,8 +72,7 @@ Including and excluding files and directories
 +-----+
 
  For example, if we want to include all text and rtf files under our 
- src/my-resources directory and in all its
- subdirectory, we can do the 
+ src/my-resources directory and in all its  subdirectory, we can do the 
  following
  
 +-----+
@@ -130,8 +129,8 @@ Including and excluding files and directories
 +-----+
 
  Of course, we can also have both includes and exclude tags. For example, if we 
- want to include all text files that
- does not contain the word "test" in their filename
+ want to include all text files that does not contain the word "test" in their 
+ filename
  
 +-----+
 <project>
