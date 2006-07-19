@@ -23,7 +23,7 @@ Maven Eclipse Plugin
   * {{{clean-mojo.html}eclipse:clean}} is used to delete the files used by the
   Eclipse IDE.
 
-  * {{{eclipse-mojo.html}eclipse:eclipse}} generates the eclipse configuration
+  * {{{eclipse-mojo.html}eclipse:eclipse}} generates the Eclipse configuration
   files.
 
 * Usage

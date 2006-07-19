@@ -9,13 +9,13 @@
 
 Provide Project Natures And Build Commands for Eclipse
 
-  The default project nature by projects created by the Eclipse Plugin is
+  The default project nature for projects created by the Eclipse Plugin is
   <<<org.eclipse.jdt.core.javanature>>> and the default build command is
   <<<org.eclipse.jdt.core.javabuilder>>>. Additional project natures and build
   commands are also added as needed when WTP is enabled.
 
   If you want to provide additional project natures and build commands for your
-  project, i.e. Spring project, you can add them in your pom.xml like:
+  project, i.e. Spring project, you can add them in your pom.xml like this:
 
 +-----
 <project>
