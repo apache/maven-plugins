@@ -1,5 +1,10 @@
+ ------
+ Sending the output to a file
+ ------
+ ------
+ ------
 
-Using the DOCCK Plugin to send its output to a file
+Sending the output to a file
 
 * Configuring your pom.xml
 

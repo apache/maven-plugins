@@ -46,7 +46,7 @@ public class CheckPluginDocumentationMojo
 {
 
     /**
-     * Plexus component that searches for Mojos
+     * Plexus component that searches for Mojos.
      *
      * @component
      */

@@ -63,14 +63,15 @@ public abstract class AbstractCheckDocumentationMojo
     private List reactorProjects;
 
     /**
-     * An optional location where the results should be written.
+     * An optional location where the results will be written to. If this is
+     * not specified the results will be written to the console.
      *
      * @parameter expression="${output}"
      */
     private File output;
 
     /**
-     * Directory to search for files used by maven-site-plugin
+     * Directory where the site source for the project is located.
      *
      * @parameter expression="${siteDirectory}" default-value="src/site"
      * @todo should be determined programmatically

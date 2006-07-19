@@ -1,11 +1,11 @@
  ------
- Maven 2 DOCCK Plugin
+ Usage
  ------
  ------
  19-June-2006
  ------
 
-DOCCK Plugin - Configuration and Usage
+Usage
 
 * Introduction
 
@@ -64,12 +64,10 @@ mvn docck:plugin
 +---+
 [INFO] Scanning for projects...
 [INFO] Searching repository for plugin with prefix: 'docck'.
-[INFO] -------------------------------------------------------------------------
----
+[INFO] ----------------------------------------------------------------------------
 [INFO] Building Mojo Project
 [INFO]    task-segment: [docck:plugin] (aggregator-style)
-[INFO] -------------------------------------------------------------------------
----
+[INFO] ----------------------------------------------------------------------------
 [INFO] [docck:plugin]
 [INFO] Checking project: Mojo Project
 [INFO] Using 2 extractors.
@@ -92,12 +90,10 @@ mvn docck:plugin
 +---+
 [INFO] Scanning for projects...
 [INFO] Searching repository for plugin with prefix: 'docck'.
-[INFO] -------------------------------------------------------------------------
----
+[INFO] ----------------------------------------------------------------------------
 [INFO] Building Mojo Project
 [INFO]    task-segment: [docck:plugin] (aggregator-style)
-[INFO] -------------------------------------------------------------------------
----
+[INFO] ----------------------------------------------------------------------------
 [INFO] [docck:plugin]
 [INFO] Checking project: Mojo Project
 [INFO] Using 2 extractors.

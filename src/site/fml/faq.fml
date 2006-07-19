@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<faqs id="FAQ" title="Frequently Asked Questions">
+ <part id="General">
+   <faq id="question1">
+     <question>Where did the standard came from?</question>
+     <answer>
+       <p>
+         The plugin documentation standard was created to address the frequent
+	       complain of lack of documentation, specifically on the maven plugins.
+	       The standard was based on the suggestion made on the maven dev mailing
+	       list with some refinements. It is a community consensus of what basic
+	       documentation a maven plugin should have.
+       </p>
+     </answer>
+   </faq>
+   <faq id="question2">
+     <question>Why do we need a documentation standard?</question>
+     <answer>
+       <p>
+         The standard is not a set of rules but a guide to help plugin
+         developers document their plugins better, for the benefit of the users
+         of the plugin. The standard also reminds the plugin developers of the
+         important details that needs to be documented, to help speed up the
+         adoption of the plugin.
+       </p>
+     </answer>
+   </faq>
+ </part>
+</faqs>
