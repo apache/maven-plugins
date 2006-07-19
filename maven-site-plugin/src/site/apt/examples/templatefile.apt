@@ -1,0 +1,35 @@
+ ------
+ Changing the Template File
+ ------
+ Vincent Siveton
+ <vincent.siveton@gmail.com>
+ Maria Odea Ching
+ ------
+ July 2006
+ ------
+
+
+Changing the Template File
+
+  It is possible to change the Velocity template used for creating the site. In your pom, just add something like this:
+
++-----+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+       <groupId>org.apache.maven.plugins</groupId>
+       <artifactId>maven-site-plugin</artifactId>
+       <configuration>
+         <templateDirectory>${basedir}</templateDirectory>
+         <template>maven-site.vm</template>
+       </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++-----+
+
+  And execute the site goal from your project.

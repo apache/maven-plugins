@@ -42,10 +42,20 @@
     </links>
 
     <menu name="Overview">
-      <item name="i18n" href="/i18n.html"/>
-      <item name="How to use" href="howto.html"/>
-      <item name="Creating a Skin" href="creating-a-skin.html"/>
+      <item name="Introduction" href="index.html"/>
+      <item name="Goals" href="plugin-info.html"/>
+      <item name="Usage" href="usage.html"/>
+      <item name="FAQ" href="faq.html"/>
     </menu>
+
+    <menu name="Examples">
+      <item name="Configuring the Site Descriptor" href="/examples/sitedescriptor.html"/>
+      <item name="Changing the Template File" href="/examples/templatefile.html"/>
+      <item name="Excluding Modules" href="/examples/moduleexcludes.html"/>
+      <item name="Configuring Site Run" href="/examples/siterun.html"/>
+      <item name="Creating a Skin for the Maven 2 Site Plugin" href="/examples/creatingskins.html"/>
+    </menu>
+
     ${reports}
   </body>
 </project>
