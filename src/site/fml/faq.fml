@@ -5,7 +5,8 @@
      <question>Can I use the <i>install:install-file</i> goal to install artifacts to my remote repository?</question>
      <answer>
        <p>
-            No. You may want to use <i>deploy:deploy-file</i> instead.
+            No. You may want to use
+            <a href="http://maven.apache.org/plugins/maven-deploy-plugin/"><i>deploy:deploy-file</i></a> instead.
        </p>
      </answer>
    </faq>

@@ -10,7 +10,7 @@ Introduction
 
   The Local Repository is the local cache where
   all artifacts needed for the build are stored. By default, it is located within
-  the user's home directory (~/.m2/repository) but the location can be configured in 
+  the user's home directory <<<(~/.m2/repository)>>> but the location can be configured in
   <<<~/.m2/settings.xml>>> using the \<localRepository\> element.
 
   The install plugin is used during the install phase to add 
