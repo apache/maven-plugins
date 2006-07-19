@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<faqs id="FAQ" title="Frequently Asked Questions">
+  <part id="General">
+    <faq id="How do I integrate static (x)html into my Maven site">
+      <question>How do I integrate static (x)html into my Maven site?</question>
+      <answer>
+        <p>
+        You can integrate your static pages in this several steps:
+        <br/> - Put your static pages in the resources directory, ${basedir}/src/site/resources.
+        <br/> - Create your site.xml and put it in ${basedir}/src/site.
+        <br/> - Link the static pages by modifying the menu section, create items and map it with the filename of the static pages.
+        </p>
+      </answer>
+    </faq>
+  </part>
+</faqs>
