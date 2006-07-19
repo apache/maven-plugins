@@ -1,17 +1,15 @@
 package org.apache.maven.plugin.assembly.utils;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.handler.ArtifactHandler;
-import org.apache.maven.model.Build;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugins.assembly.model.Assembly;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.introspection.ReflectionValueExtractor;
+import org.codehaus.plexus.util.interpolation.ObjectBasedValueSource;
+import org.codehaus.plexus.util.interpolation.RegexBasedInterpolator;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Properties;
 
 public final class AssemblyFormatUtils
 {
@@ -57,12 +55,6 @@ public final class AssemblyFormatUtils
             value = "";
         }
         
-        if ( !value.endsWith( "/" ) && !value.endsWith( "\\" ) )
-        {
-            // TODO: shouldn't archiver do this?
-            value += '/';
-        }
-
         if ( includeBaseDirectory )
         {
             if ( value.startsWith( "/" ) )
@@ -74,23 +66,30 @@ public final class AssemblyFormatUtils
                 value = finalName + "/" + value;
             }
         }
-        else
-        {
-            if ( value.startsWith( "/" ) )
-            {
-                value = value.substring( 1 );
-            }
-        }
 
+        RegexBasedInterpolator interpolator = new RegexBasedInterpolator();
+        
+        Properties specialExpressionOverrides = new Properties();
+        
+        if ( finalName != null )
+        {
+            specialExpressionOverrides.setProperty( "finalName", finalName );
+            specialExpressionOverrides.setProperty( "build.finalName", finalName );
+        }
+        
+        interpolator.addValueSource( new PropertiesInterpolationValueSource( specialExpressionOverrides ) );
+        
         if ( project != null )
         {
-            value = StringUtils.replace( value, "${groupId}", project.getGroupId() );
-            value = StringUtils.replace( value, "${artifactId}", project.getArtifactId() );
-            value = StringUtils.replace( value, "${version}", project.getVersion() );
-
-            Build build = project.getBuild();
-            value = StringUtils.replace( value, "${build.finalName}", build.getFinalName() );
-            value = StringUtils.replace( value, "${finalName}", build.getFinalName() );
+            interpolator.addValueSource( new ObjectBasedValueSource( project ) );
+        }
+        
+        value = interpolator.interpolate( value, "__project" );
+        
+        if ( value.length() > 0 && !value.endsWith( "/" ) && !value.endsWith( "\\" ) )
+        {
+            // TODO: shouldn't archiver do this?
+            value += "/";
         }
 
         return value;
@@ -110,6 +109,7 @@ public final class AssemblyFormatUtils
     {
         String value = expression;
 
+        // TODO: [jdcasey] What if they *want* to suppress the classifier?! This should be part of the expression, IMO
         // insert the classifier if exist
         if ( !StringUtils.isEmpty( artifact.getClassifier() ) )
         {
@@ -127,44 +127,13 @@ public final class AssemblyFormatUtils
                 value = value + "-" + artifact.getClassifier();
             }
         }
-
-        // this matches the last ${...} string
-        Pattern pat = Pattern.compile( "^(.*)\\$\\{([^\\}]+)\\}(.*)$" );
-        Matcher mat = pat.matcher( expression );
-
-        if ( mat.matches() )
-        {
-            Object middle;
-            String left = evaluateFileNameMapping( mat.group( 1 ), artifact );
-            try
-            {
-                middle = ReflectionValueExtractor.evaluate( mat.group( 2 ), artifact, false );
-            }
-            catch ( Exception e )
-            {
-                throw new AssemblyFormattingException( "Cannot evaluate filenameMapping: '" + mat.group( 2 ) + "': "
-                    + e.getMessage(), e );
-            }
-            String right = mat.group( 3 );
-
-            if ( middle == null )
-            {
-                // TODO: There should be a more generic way dealing with that.
-                // Having magic words is not good at all.
-                // probe for magic word
-                if ( "extension".equals( mat.group( 2 ).trim() ) )
-                {
-                    ArtifactHandler artifactHandler = artifact.getArtifactHandler();
-                    middle = artifactHandler.getExtension();
-                }
-                else
-                {
-                    middle = "${" + mat.group( 2 ) + "}";
-                }
-            }
-
-            value = left + middle + right;
-        }
+        
+        RegexBasedInterpolator interpolator = new RegexBasedInterpolator();
+        
+        interpolator.addValueSource( new ObjectBasedValueSource( artifact ) );
+        interpolator.addValueSource( new ObjectBasedValueSource( artifact.getArtifactHandler() ) );
+        
+        value = interpolator.interpolate( value, "__artifact" );
 
         return value;
     }

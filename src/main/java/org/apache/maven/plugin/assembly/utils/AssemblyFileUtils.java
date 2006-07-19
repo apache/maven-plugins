@@ -19,6 +19,8 @@ public final class AssemblyFileUtils
 
     /**
      * NOTE: It is the responsibility of the caller to close the source Reader instance.
+     * @param lineEndings This is the result of the getLineEndingChars(..) method in this utility class; the actual
+     *   line-ending characters.
      */
     public static void convertLineEndings( Reader source, File dest, String lineEndings )
         throws IOException
@@ -27,13 +29,13 @@ public final class AssemblyFileUtils
         BufferedReader bufferedSource = null;
         try
         {
-            if ( !( source instanceof BufferedReader ) )
+            if ( source instanceof BufferedReader )
             {
-                bufferedSource = new BufferedReader( source );
+                bufferedSource = (BufferedReader) source;
             }
             else
             {
-                bufferedSource = (BufferedReader) source;
+                bufferedSource = new BufferedReader( source );
             }
             
             out = new BufferedWriter( new FileWriter( dest ) );
