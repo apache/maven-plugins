@@ -1,0 +1,49 @@
+ ------
+ Excluding Modules
+ ------
+ Maria Odea Ching
+ ------
+ July 2006
+ ------
+
+Excluding Modules
+
+  To exclude specific modules from the site to be generated, you can use the <<<excludeModules>>> parameter.
+
+  For example, you have the following site content in your pom
+
++-----+
+Module1
+|-- src
+|   |-- main
+|   `-- site
+|       |-- apt
+|       |   `-- sample-apt.apt
+|       `-- fml
+|           `-- sample-fml.fml
+`-- pom.xml
++-----+
+
+  and you want to exclude the whole fml module from the site to be generated, you need to set the following in your pom
+  then execute <<<mvn site>>>.
+
++-----+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <configuration>
+          <excludeModules>
+          </excludeModules>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++-----+
+
+  You will see that no sample-fml.html will be generated with the site.
