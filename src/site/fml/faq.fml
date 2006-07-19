@@ -5,7 +5,7 @@
       <question>How can I generate a source jar of the test classes?</question>
       <answer>
         <p>
-        Use the source:test-jar to generate a jar file that contains the project test sources.
+        Use the source:test-jar goal to generate a jar file that contains the project test sources.
         </p>
       </answer>
     </faq>
