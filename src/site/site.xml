@@ -1,4 +1,14 @@
-<body>
+<project name="Maven Compiler Plugin">
+  <bannerLeft>
+    <name>Maven Compiler Plugin</name>
+    <src>http://maven.apache.org/images/apache-maven-project.png</src>
+    <href>http://maven.apache.org/</href>
+  </bannerLeft>
+  <bannerRight>
+    <src>http://maven.apache.org/images/maven-small.gif</src>
+  </bannerRight>
+  
+  <body>
     <links>
       <item name="Maven" href="http://maven.apache.org/maven2/"/>
     </links>
@@ -21,3 +31,4 @@
     ${reports}
 
   </body>
+</project>
