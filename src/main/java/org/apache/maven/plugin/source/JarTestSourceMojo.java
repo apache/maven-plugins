@@ -24,7 +24,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * This plugin bundles all the generated test sources into a jar archive.
+ * This plugin bundles all the test sources into a jar archive.
  *
  * @goal test-jar
  * @phase package

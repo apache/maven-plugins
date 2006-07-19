@@ -48,6 +48,7 @@ public abstract class AbstractJarSourceMojo
 
     /**
      * The project where the plugin is currently being executed.
+     * The default value is populated from maven.
      *
      * @parameter expression="${executedProject}"
      * @required
@@ -67,7 +68,9 @@ public abstract class AbstractJarSourceMojo
     private MavenProjectHelper projectHelper;
 
     /**
-     * The directory where the generated archive file will be put
+     * The directory where the generated archive file will be put.
+     * Defaults to ${project.build.directory} specified in the pom or
+     * inherited from the super pom.
      *
      * @parameter expression="${project.build.directory}"
      * @required
@@ -78,6 +81,8 @@ public abstract class AbstractJarSourceMojo
      * The filename to be used for the generated archive file.
      * For the source:jar goal, "-sources" is appended to this filename.
      * For the source:test-jar goal, "-test-sources" is appended.
+     * Defaults to ${project.build.finalName} specified in the pom
+     * or inherited from the super pom.
      *
      * @parameter expression="${project.build.finalName}"
      * @required
