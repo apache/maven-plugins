@@ -39,7 +39,36 @@ public class EclipseOSGiManifestWriter
     extends AbstractEclipseResourceWriter
 {
 
+    /**
+     * Constant used for newline.
+     * @todo check if we should use system-dependent newlines or if eclipse prefers a common format
+     */
+    private static final String NEWLINE = "\n";
+
+    /**
+     * Bundle classpath: updated with the list of dependencies.
+     */
     public final static String ENTRY_BUNDLE_CLASSPATH = "Bundle-ClassPath:";
+
+    /**
+     * Bundle name: updated with the project name.
+     */
+    public final static String ENTRY_BUNDLE_NAME = "Bundle-Name:";
+
+    /**
+     * Bundle symbolic name: updated with the artifact id.
+     */
+    public final static String ENTRY_BUNDLE_SYMBOLICNAME = "Bundle-SymbolicName:";
+
+    /**
+     * Bundle version: updated with the project version.
+     */
+    public final static String ENTRY_BUNDLE_VERSION = "Bundle-Version:";
+
+    /**
+     * Bundle vendor: updated with the organization name (if set in the POM).
+     */
+    public final static String ENTRY_BUNDLE_VENDOR = "Bundle-Vendor:";
 
     public EclipseOSGiManifestWriter( Log log, File eclipseProjectDir, MavenProject project, IdeDependency[] deps )
     {
@@ -83,44 +112,75 @@ public class EclipseOSGiManifestWriter
     protected StringBuffer rewriteManifest( File manifestFile, File libdir )
         throws MojoExecutionException
     {
+
+        // warning: we read and rewrite the file line by line in order to preserve formatting
         boolean inBundleClasspathEntry = false;
         StringBuffer manifestSb = new StringBuffer();
         try
         {
             BufferedReader in = new BufferedReader( new FileReader( manifestFile ) );
-            String str;
-            while ( ( str = in.readLine() ) != null )
+            String line;
+            while ( ( line = in.readLine() ) != null )
             {
-                if ( inBundleClasspathEntry && str.indexOf( ":" ) > -1 )
+                if ( inBundleClasspathEntry && line.indexOf( ":" ) > -1 )
                 {
                     inBundleClasspathEntry = false;
-                    if ( str.length() > 0 )
-                    {
-                        manifestSb.append( str + "\n" );
-                    }
-                }
-                else if ( str.indexOf( ENTRY_BUNDLE_CLASSPATH ) > -1 )
-                {
-                    inBundleClasspathEntry = true;
                 }
                 else if ( inBundleClasspathEntry )
                 {
                     // skip it
+                    continue;
+                }
+
+                if ( line.startsWith( ENTRY_BUNDLE_CLASSPATH ) )
+                {
+                    inBundleClasspathEntry = true;
+                }
+                else if ( line.startsWith( ENTRY_BUNDLE_NAME ) )
+                {
+                    manifestSb.append( ENTRY_BUNDLE_NAME );
+                    manifestSb.append( " " );
+                    manifestSb.append( getProject().getName() );
+                    manifestSb.append( NEWLINE );
+                }
+                else if ( line.startsWith( ENTRY_BUNDLE_SYMBOLICNAME ) )
+                {
+                    manifestSb.append( ENTRY_BUNDLE_SYMBOLICNAME );
+                    manifestSb.append( " " );
+                    manifestSb.append( getProject().getArtifactId() );
+                    manifestSb.append( ";singleton:=true" );
+                    manifestSb.append( NEWLINE );
+                }
+                else if ( line.startsWith( ENTRY_BUNDLE_VERSION ) )
+                {
+                    manifestSb.append( ENTRY_BUNDLE_VERSION );
+                    manifestSb.append( " " );
+                    manifestSb.append( getProject().getVersion() );
+                    manifestSb.append( NEWLINE );
+                }
+                else if ( line.startsWith( ENTRY_BUNDLE_VENDOR ) && getProject().getOrganization() != null )
+                {
+                    manifestSb.append( ENTRY_BUNDLE_VENDOR );
+                    manifestSb.append( " " );
+                    manifestSb.append( getProject().getOrganization().getName() );
+                    manifestSb.append( NEWLINE );
                 }
                 else
                 {
-                    manifestSb.append( str + "\n" );
+                    manifestSb.append( line + NEWLINE );
                 }
             }
-            in.close();
+
+            IOUtil.close( in );
         }
         catch ( IOException e )
         {
             throw new MojoExecutionException( Messages.getString( "cantreadfile", manifestFile.getAbsolutePath() ) );
         }
         manifestSb.append( addBundleClasspathEntries( libdir ) );
+
         // OSGi manifest headers need to end with a line break
-        manifestSb.append( "\n" );
+        manifestSb.append( NEWLINE );
         return manifestSb;
     }
 
@@ -132,32 +192,28 @@ public class EclipseOSGiManifestWriter
         throws MojoExecutionException
     {
         StringBuffer bundleClasspathSb = new StringBuffer( ENTRY_BUNDLE_CLASSPATH );
-        int countAddedLibs = 0;
-        for ( int i = 0; i < this.deps.length; i++ )
+
+        // local classes, if the plugin is jarred
+        // @todo handle expanded plugins
+        bundleClasspathSb.append( " ." );
+
+        for ( int j = 0; j < this.deps.length; j++ )
         {
-            if ( !this.deps[i].isProvided() && !this.deps[i].isReferencedProject() )
+            IdeDependency dep = this.deps[j];
+            if ( !dep.isProvided() && !dep.isReferencedProject() && !dep.isTestDependency() )
             {
-                if ( countAddedLibs != 0 )
-                {
-                    // TODO problems with line endings might appear
-                    bundleClasspathSb.append( ",\n" );
-                }
+                bundleClasspathSb.append( "," + NEWLINE );
 
-                getLog().debug( "Adding artifact to manifest: " + this.deps[i].getArtifactId() );
+                getLog().debug( "Adding artifact to manifest: " + dep.getArtifactId() );
 
-                File artifactFile = new File( libdir, this.deps[i].getFile().getName() );
+                File artifactFile = new File( libdir, dep.getFile().getName() );
 
                 bundleClasspathSb.append( " "
                     + IdeUtils.toRelativeAndFixSeparator( getEclipseProjectDirectory(), artifactFile, false ) );
-                countAddedLibs++;
             }
         }
         // only insert the name of the property if there are local libraries
-        if ( countAddedLibs > 0 )
-        {
-            return bundleClasspathSb.toString();
-        }
-        return "";
+        return bundleClasspathSb.toString();
     }
 
 }
