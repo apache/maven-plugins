@@ -1,5 +1,5 @@
  ------
- Multiple Module Project with eclipse
+ Multiple Module Project with Eclipse
  ------
  Bernd Mau, mau@hhla.de
  Fabrizio Giustina
@@ -11,44 +11,44 @@ Multiple Module Projects
 
 * Project layout
 
- Due to the workspace idea many eclipse users are used to a flat layout and
+ Due to the workspace idea many Eclipse users are used to a flat layout and
  therefore want to keep this structure. The following sample shows how to
- handle maven multiple module projects with eclipse for both the standard
- maven hierachical project layout and the flat eclipse-like layout.
+ handle maven multiple module projects with Eclipse for both the standard
+ maven hierachical project layout and the flat Eclipse-like layout.
 
 
 ** Hierachical project layout
 
- Suppose eclipse is your favorite SCM client, this step by step example shows
+ Suppose Eclipse is your favorite SCM client, this step by step example shows
  how to set up a new mutiple module project.
 
- [[1]] Set up a new eclipse workspace called <step-by-step> and add the
+ [[1]] Set up a new Eclipse workspace called <step-by-step> and add the
  <M2_REPO> classpath variable.
 
- [[1]] Open the command line shell and change to the newly created workspace
+ [[2]] Open the command line shell and change to the newly created workspace
  directory.
 
- [[1]] From the command line change to newly created <step-by-step> workspace
- and create a new maven project using the archetype plugin.
+ [[3]] From the command line, create a new maven project using the archetype
+ plugin.
 
 +----+
 mvn archetype:create -DgroupId=guide.ide.eclipse -DartifactId=guide-ide-eclipse
 +----+
 
- [[1]] Create a new simple project <guide-ide-eclipse> inside the
- <step-by-step> workspace with eclipse (From the menu bar, select File >New >
+ [[4]] Create a new simple project <guide-ide-eclipse> inside the
+ <step-by-step> workspace with Eclipse (From the menu bar, select File >New >
  Project. Select Simple > Project). Eclipse will create a simple
  <.project>-file for your <guide-ide-eclipse>-project and you should be able to
  see the <pom.xml>-file.
 
- [[1]] Delete the <src>-folder and open the <pom.xml>-file to change the
+ [[5]] Delete the <src>-folder and open the <pom.xml>-file to change the
  packaging of your parent project to <pom>.
 
 +----+
   <packaging>pom</packaging>
 +----+
 
- [[1]] From the command line change to the <guide-ide-eclipse> project
+ [[6]] From the command line change to the <guide-ide-eclipse> project
  directory and create some modules.
 
 +----+
@@ -58,7 +58,7 @@ mvn archetype:create -DgroupId=guide.ide.eclipse.core -DartifactId=guide-ide-ecl
 mvn archetype:create -DgroupId=guide.ide.eclipse.module1 -DartifactId=guide-ide-eclipse-module1
 +----+
 
- [[1]] Add the newly created modules to your parent pom.
+ [[7]] Add the newly created modules to your parent pom.
 
 +----+
   <modules>
@@ -68,7 +68,7 @@ mvn archetype:create -DgroupId=guide.ide.eclipse.module1 -DartifactId=guide-ide-
   </modules>
 +----+
 
- [[1]] Add the parent to the POMs of the new modules:
+ [[8]] Add the parent to the POMs of the new modules:
 
 +----+
   <parent>
@@ -78,7 +78,7 @@ mvn archetype:create -DgroupId=guide.ide.eclipse.module1 -DartifactId=guide-ide-
   </parent>
 +----+
 
- [[1]] Add dependency from <module1> to the <core>-module:
+ [[9]] Add dependency from <module1> to the <core>-module:
 
 +----+
     <dependency>
@@ -88,7 +88,7 @@ mvn archetype:create -DgroupId=guide.ide.eclipse.module1 -DartifactId=guide-ide-
     </dependency>
 +----+
 
- [[1]] Install the project in your local repository and generate the eclipse
+ [[10]] Install the project in your local repository and generate the Eclipse
  files:
 
 +----+
@@ -96,9 +96,9 @@ mvn install
 mvn eclipse:eclipse
 +----+
 
- [[1]] Check in your project using the eclipse team support (select from the
+ [[11]] Check in your project using the Eclipse team support (select from the
  context menu Team > Share Project). <Note:> Do not check in the generated
- eclipse files. If you use CVS you should have a <.cvsignore>-file with the
+ Eclipse files. If you use CVS you should have a <.cvsignore>-file with the
  following entries for each module:
 
 +----+
@@ -115,22 +115,22 @@ target
  []
 
  From now on you have different options to proceed. If you are working on all
- modules simultanously and you'd rather have eclipse project dependencies than
+ modules simultanously and you'd rather have Eclipse project dependencies than
  binary dependencies, you should set up a new workspace and import all projects
  from <step-by-step/guide-ide-eclipse>. Note, you have to delete the
  <.project>-file of your parent project before. The result is the same as
  checking out the whole project from the command line, running
- <mvn eclipse:eclipse> and finally importing the projects into your eclipse
+ <mvn eclipse:eclipse> and finally importing the projects into your Eclipse
  workspace. In both cases you will be able to synchronize your changes using
- eclipse.
+ Eclipse.
 
  In case of large projects with many developers involved, it can be tedious to
  check out all modules and keep them up to date. Especially if you are only
  interested in one or two modules. In this case using binary dependencies is
  much more comfortable. Just check out the modules you want to work on with
- eclipse and run <mvn eclipse:eclipse> for each module (see also {{{#Maven as
- an external tool}Maven as an external tool}}). Of course, all referenced
- artifacts must be available from your maven repository.
+ Eclipse and run <mvn eclipse:eclipse> for each module (see also {{{usage.html}
+ Maven as an external tool}). Of course, all referenced artifacts must be
+ available from your maven repository.
 
 
 ** {Flat Project Layout}
@@ -144,7 +144,7 @@ target
  [[1]] Create a new directory under <guide-ide-eclipse> called
  <guide-ide-eclipse-project> and move the parent POM to it.
 
- [[1]] Change the module references in the parent POM to:
+ [[2]] Change the module references in the parent POM to:
 
 +----+
   <modules>

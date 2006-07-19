@@ -8,10 +8,10 @@
  
 WTP support
 
- The eclipse plugin supports creating configurations for eclipse WTP (Web Tools
+ The Eclipse plugin supports creating configurations for Eclipse WTP (Web Tools
  Project). Projects with a WAR packaging can be setup as WTP dynamic web
  projects and runtime dependencies are configured to be used when running them
- using eclipse internal servers.
+ using Eclipse internal servers.
 
 
 
@@ -47,7 +47,7 @@ mvn -Dwtpversion=R7 eclipse:eclipse
  
  <<This means that only project-dependencies (in a multi-module build) will
  work, but any other dependency in the POM will be ignored when running the web
- application inside eclipse.>>
+ application inside Eclipse.>>
  
  This bug has been fixed in release 1.0.1, so if you are still using WTP 1.0 be
  sure to update it to the 1.0.1 (or newer) release.
