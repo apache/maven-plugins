@@ -10,7 +10,7 @@
 Filtering
 
  Variables can be included in your resources. These variables, denoted by the 
- ${...} delimeters, can come from the System properties, your project 
+ $\{...\} delimiters, can come from the System properties, your project 
  properties, from your filter resources and from the command lines. 
  
  For example, if we have a resource src/main/resources/hello.txt containing
@@ -98,7 +98,7 @@ Hello world
  Furthermore, we are not limited to use pre-defined project variables. We can 
  specify our own variables and their values under the properties tag. For 
  example, if we want to change the variable from "name" to "your.name", we can 
- sdo so by adding a "your.name" tag under the "properties" tag.
+ do so by adding a "your.name" tag under the "properties" tag.
  
 +-----+
 <project>
