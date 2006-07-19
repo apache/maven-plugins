@@ -10,7 +10,7 @@ Usage
 
 * The <<<install:install>>> Mojo
 
-  In most cases, install:install goal doesn't need any configuration, it
+  In most cases, <<<install:install>>> goal doesn't need any configuration, it
   needs the project's POM and the artifact file to be installed during the 
   <<<install>>> phase of the default build lifecycle.
 
