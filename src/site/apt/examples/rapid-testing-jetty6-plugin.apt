@@ -5,7 +5,7 @@
  ------
  19 June 2006
  
-Rapid testing during development with the jetty6 plugin 
+Rapid testing with the jetty6 plugin 
  
  Normally, testing a web application involves compiling java sources, creating a war and 
  deploying it to a web container. 
@@ -15,7 +15,7 @@ Rapid testing during development with the jetty6 plugin
  any changes in your java sources and <<<src/main/webapp>>> for your web sources.
  The jetty6 plugin will automatically reload the modified classes and web sources.
  
- To use the jetty6 plugin just add the following in you <<<pom.xml>>>
+ To use the jetty6 plugin just add the following in your <<<pom.xml>>>:
  
 +-----------------+ 
   [...]
@@ -39,12 +39,12 @@ Rapid testing during development with the jetty6 plugin
   [...]  
 +-----------------+ 
 
- then running 
+ then start Jetty:
  
 +-----------------+ 
   mvn jetty6:run
 +-----------------+  
 
- The command will block with the jetty6 listening on port <<<8080>>>.
+ The command will block with Jetty listening on port 8080.
  
  Check the {{{http://jetty.mortbay.org/jetty6/maven-plugin/index.html}jetty6 plugin documentation}} for more details.
