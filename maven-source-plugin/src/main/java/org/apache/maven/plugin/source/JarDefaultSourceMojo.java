@@ -24,7 +24,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * This plugin bundles all the generated sources into a jar archive.
+ * This plugin bundles all the sources into a jar archive.
  *
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
  * @version $Id: AbstractJarSourceMojo.java 389062 2006-03-27 08:19:25Z aramirez $
