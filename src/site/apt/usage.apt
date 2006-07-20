@@ -7,17 +7,12 @@
 
 Usage
 
-* Introduction
-
   This document is intended to provide instructions for using the
   maven-docck-plugin. In order for this discussion to be useful, it's
-  critical to cover two topics: Using the DOCCK Plugin from the command-line
-  and configuring your project's pom.xml to run the DOCCK Plugin during its
-  build.
+  critical to cover two topics: Configuring your project's pom.xml to run
+  the plugin during every build and using the plugin from the command-line.
 
-* Configuring DOCCK Plugin inside pom.xml
-
-** Using the DOCCK Plugin defaults
+* Configuring the plugin in pom.xml
 
    You can use the following configuration in your pom.xml to run the DOCCK
    Plugin everytime the project is built.
@@ -46,7 +41,7 @@ Usage
 </project>
 +---+
 
-* Using the command-line
+* Using the plugin from the command-line
 
   The DOCCK Plugin is easily executed from the command line since it can run
   without any parameter configuration.
@@ -57,7 +52,7 @@ Usage
 mvn docck:plugin
 +---+
 
-* Sample Output of the DOCCK Plugin
+* Sample Output
 
 ** Successful run with no documentation errors
 
