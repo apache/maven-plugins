@@ -20,14 +20,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.EclipseSourceDir;
 import org.apache.maven.plugin.eclipse.Messages;
-import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.plugin.ide.IdeUtils;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
@@ -44,19 +40,17 @@ public class EclipseWtpmodulesWriter
 
     protected static final String FILE_DOT_WTPMODULES = ".wtpmodules"; //$NON-NLS-1$
 
-    public EclipseWtpmodulesWriter( Log log, File eclipseProjectDir, MavenProject project, IdeDependency[] deps )
-    {
-        super( log, eclipseProjectDir, project, deps );
-    }
-
-    public void write( EclipseSourceDir[] sourceDirs, ArtifactRepository localRepository, File buildOutputDirectory )
+    /**
+     * @see org.apache.maven.plugin.eclipse.writers.EclipseWriter#write()
+     */
+    public void write()
         throws MojoExecutionException
     {
         FileWriter w;
 
         try
         {
-            w = new FileWriter( new File( getEclipseProjectDirectory(), FILE_DOT_WTPMODULES ) );
+            w = new FileWriter( new File( config.getEclipseProjectDirectory(), FILE_DOT_WTPMODULES ) );
         }
         catch ( IOException ex )
         {
@@ -68,49 +62,48 @@ public class EclipseWtpmodulesWriter
         writer.addAttribute( ATTR_MODULE_ID, "moduleCoreId" ); //$NON-NLS-1$ 
 
         writer.startElement( ELT_WB_MODULE );
-        writer.addAttribute( ATTR_DEPLOY_NAME, getProject().getArtifactId() );
+        writer.addAttribute( ATTR_DEPLOY_NAME, config.getProject().getArtifactId() );
 
-        String packaging = getProject().getPackaging();
+        String packaging = config.getProject().getPackaging();
 
         writer.startElement( ELT_MODULE_TYPE );
-        writeModuleTypeAccordingToPackaging( getProject(), writer, packaging, buildOutputDirectory );
+        writeModuleTypeAccordingToPackaging( config.getProject(), writer, packaging, config.getBuildOutputDirectory() );
         writer.endElement(); // module-type
 
         // source and resource paths.
         // deploy-path is "/" for utility and ejb projects, "/WEB-INF/classes" for webapps
 
         String target = "/"; //$NON-NLS-1$
-        if ( "war".equals( getProject().getPackaging() ) ) //$NON-NLS-1$
+        if ( "war".equals( config.getProject().getPackaging() ) ) //$NON-NLS-1$
         {
-            String warSourceDirectory = IdeUtils.getPluginSetting( getProject(), ARTIFACT_MAVEN_WAR_PLUGIN,
+            String warSourceDirectory = IdeUtils.getPluginSetting( config.getProject(), ARTIFACT_MAVEN_WAR_PLUGIN,
                                                                    "warSourceDirectory", //$NON-NLS-1$
                                                                    "/src/main/webapp" ); //$NON-NLS-1$
 
             writer.startElement( ELT_WB_RESOURCE );
             writer.addAttribute( ATTR_DEPLOY_PATH, "/" ); //$NON-NLS-1$ 
             writer.addAttribute( ATTR_SOURCE_PATH, "/" //$NON-NLS-1$
-                + IdeUtils.toRelativeAndFixSeparator( getEclipseProjectDirectory(),
-                                                      new File( getEclipseProjectDirectory(), warSourceDirectory ),
-                                                      false ) );
+                + IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), new File( config
+                    .getEclipseProjectDirectory(), warSourceDirectory ), false ) );
             writer.endElement();
 
-            writeWarOrEarResources( writer, getProject(), localRepository );
+            writeWarOrEarResources( writer, config.getProject(), config.getLocalRepository() );
 
             target = "/WEB-INF/classes"; //$NON-NLS-1$
         }
-        else if ( "ear".equals( getProject().getPackaging() ) ) //$NON-NLS-1$
+        else if ( "ear".equals( config.getProject().getPackaging() ) ) //$NON-NLS-1$
         {
             writer.startElement( ELT_WB_RESOURCE );
             writer.addAttribute( ATTR_DEPLOY_PATH, "/" ); //$NON-NLS-1$ 
             writer.addAttribute( ATTR_SOURCE_PATH, "/" ); //$NON-NLS-1$ 
             writer.endElement();
 
-            writeWarOrEarResources( writer, getProject(), localRepository );
+            writeWarOrEarResources( writer, config.getProject(), config.getLocalRepository() );
         }
 
-        for ( int j = 0; j < sourceDirs.length; j++ )
+        for ( int j = 0; j < config.getSourceDirs().length; j++ )
         {
-            EclipseSourceDir dir = sourceDirs[j];
+            EclipseSourceDir dir = config.getSourceDirs()[j];
             // test src/resources are not added to wtpmodules
             if ( !dir.isTest() )
             {

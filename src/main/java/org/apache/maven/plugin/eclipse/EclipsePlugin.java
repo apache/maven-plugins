@@ -31,6 +31,7 @@ import org.apache.maven.plugin.eclipse.writers.EclipseClasspathWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseOSGiManifestWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseProjectWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseSettingsWriter;
+import org.apache.maven.plugin.eclipse.writers.EclipseWriterConfig;
 import org.apache.maven.plugin.eclipse.writers.EclipseWtpComponent15Writer;
 import org.apache.maven.plugin.eclipse.writers.EclipseWtpComponentWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseWtpFacetsWriter;
@@ -550,52 +551,53 @@ public class EclipsePlugin
         // used in classpath and wtpmodules
         EclipseSourceDir[] sourceDirs = buildDirectoryList( executedProject, eclipseProjectDir, buildOutputDirectory );
 
+        EclipseWriterConfig config = new EclipseWriterConfig();
+        config.setBuildCommands( buildcommands );
+        config.setBuildOutputDirectory( buildOutputDirectory );
+        config.setClasspathContainers( classpathContainers );
+        config.setDeps( deps );
+        config.setEclipseProjectDirectory( eclipseProjectDir );
+        config.setLocalRepository( localRepository );
+        config.setManifestFile( manifest );
+        config.setPde( pde );
+        config.setPdeLibDir( pdeLibDir );
+        config.setProject( project );
+        config.setProjectBaseDir( projectBaseDir );
+        config.setProjectnatures( projectnatures );
+        config.setSourceDirs( sourceDirs );
+
         if ( wtpR7 )
         {
-            new EclipseWtpmodulesWriter( getLog(), eclipseProjectDir, project, deps ).write( sourceDirs,
-                                                                                             localRepository,
-                                                                                             buildOutputDirectory );
+            new EclipseWtpmodulesWriter().init( getLog(), config ).write();
         }
 
         if ( wtp10 || wtp15 )
         {
-            new EclipseWtpFacetsWriter( getLog(), eclipseProjectDir, project, deps ).write( sourceDirs,
-                                                                                            localRepository,
-                                                                                            buildOutputDirectory );
+            new EclipseWtpFacetsWriter().init( getLog(), config ).write();
         }
         if ( wtp10 )
         {
 
-            new EclipseWtpComponentWriter( getLog(), eclipseProjectDir, project, deps ).write( sourceDirs,
-                                                                                               localRepository,
-                                                                                               buildOutputDirectory );
+            new EclipseWtpComponentWriter().init( getLog(), config ).write();
         }
         if ( wtp15 )
         {
-            new EclipseWtpComponent15Writer( getLog(), eclipseProjectDir, project, deps ).write( sourceDirs,
-                                                                                                 localRepository,
-                                                                                                 buildOutputDirectory );
+            new EclipseWtpComponent15Writer().init( getLog(), config ).write();
         }
 
-        new EclipseProjectWriter( getLog(), eclipseProjectDir, project, deps ).write( projectBaseDir, executedProject,
-                                                                                      projectnatures, buildcommands );
+        new EclipseProjectWriter().init( getLog(), config ).write();
 
-        new EclipseSettingsWriter( getLog(), eclipseProjectDir, project, deps ).write();
+        new EclipseSettingsWriter().init( getLog(), config ).write();
 
         if ( isJavaProject )
         {
-            new EclipseClasspathWriter( getLog(), eclipseProjectDir, project, deps ).write( projectBaseDir, sourceDirs,
-                                                                                            classpathContainers,
-                                                                                            localRepository,
-                                                                                            buildOutputDirectory, pde,
-                                                                                            pdeLibDir );
+            new EclipseClasspathWriter().init( getLog(), config ).write();
         }
 
         if ( pde )
         {
             this.getLog().info( "The Maven Eclipse plugin runs in 'pde'-mode." );
-            new EclipseOSGiManifestWriter( getLog(), eclipseProjectDir, project, deps )
-                .write( this.manifest, pdeLibDir );
+            new EclipseOSGiManifestWriter().init( getLog(), config ).write();
         }
 
         getLog().info( Messages.getString( "EclipsePlugin.wrote", new Object[] { //$NON-NLS-1$

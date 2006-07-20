@@ -32,8 +32,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.plugin.ide.IdeUtils;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
@@ -50,7 +48,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * @version $Id$
  */
 public class EclipseProjectWriter
-    extends AbstractEclipseResourceWriter
+    extends AbstractEclipseWriter
 {
 
     private static final String ELT_NAME = "name"; //$NON-NLS-1$
@@ -65,25 +63,22 @@ public class EclipseProjectWriter
 
     private static final String FILE_DOT_PROJECT = ".project"; //$NON-NLS-1$
 
-    public EclipseProjectWriter( Log log, File eclipseProjectDir, MavenProject project, IdeDependency[] deps )
-    {
-        super( log, eclipseProjectDir, project, deps );
-    }
-
-    public void write( File projectBaseDir, MavenProject executedProject, List addedProjectnatures,
-                       List addedBuildCommands )
+    /**
+     * @see org.apache.maven.plugin.eclipse.writers.EclipseWriter#write()
+     */
+    public void write()
         throws MojoExecutionException
     {
 
         Set projectnatures = new LinkedHashSet();
         Set buildCommands = new LinkedHashSet();
 
-        File dotProject = new File( getEclipseProjectDirectory(), FILE_DOT_PROJECT );
+        File dotProject = new File( config.getEclipseProjectDirectory(), FILE_DOT_PROJECT );
 
         if ( dotProject.exists() )
         {
 
-            getLog().info( Messages.getString( "EclipsePlugin.keepexisting", dotProject.getAbsolutePath() ) ); //$NON-NLS-1$
+            log.info( Messages.getString( "EclipsePlugin.keepexisting", dotProject.getAbsolutePath() ) ); //$NON-NLS-1$
 
             // parse existing file in order to keep manually-added entries
             FileReader reader = null;
@@ -119,11 +114,11 @@ public class EclipseProjectWriter
             }
             catch ( XmlPullParserException e )
             {
-                getLog().warn( Messages.getString( "EclipsePlugin.cantparseexisting", dotProject.getAbsolutePath() ) ); //$NON-NLS-1$
+                log.warn( Messages.getString( "EclipsePlugin.cantparseexisting", dotProject.getAbsolutePath() ) ); //$NON-NLS-1$
             }
             catch ( IOException e )
             {
-                getLog().warn( Messages.getString( "EclipsePlugin.cantparseexisting", dotProject.getAbsolutePath() ) ); //$NON-NLS-1$
+                log.warn( Messages.getString( "EclipsePlugin.cantparseexisting", dotProject.getAbsolutePath() ) ); //$NON-NLS-1$
             }
             finally
             {
@@ -132,11 +127,11 @@ public class EclipseProjectWriter
         }
 
         // adds new entries after the existing ones
-        for ( Iterator iter = addedProjectnatures.iterator(); iter.hasNext(); )
+        for ( Iterator iter = config.getProjectnatures().iterator(); iter.hasNext(); )
         {
             projectnatures.add( iter.next() );
         }
-        for ( Iterator iter = addedBuildCommands.iterator(); iter.hasNext(); )
+        for ( Iterator iter = config.getBuildCommands().iterator(); iter.hasNext(); )
         {
             buildCommands.add( iter.next() );
         }
@@ -157,7 +152,7 @@ public class EclipseProjectWriter
         writer.startElement( "projectDescription" ); //$NON-NLS-1$
 
         writer.startElement( ELT_NAME );
-        writer.writeText( getProject().getArtifactId() );
+        writer.writeText( config.getProject().getArtifactId() );
         writer.endElement();
 
         // TODO: this entire element might be dropped if the comment is null.
@@ -165,18 +160,18 @@ public class EclipseProjectWriter
         // A eclipse developer might want to look at this.
         writer.startElement( "comment" ); //$NON-NLS-1$
 
-        if ( getProject().getDescription() != null )
+        if ( config.getProject().getDescription() != null )
         {
-            writer.writeText( getProject().getDescription() );
+            writer.writeText( config.getProject().getDescription() );
         }
 
         writer.endElement();
 
         writer.startElement( "projects" ); //$NON-NLS-1$
 
-        for ( int j = 0; j < deps.length; j++ )
+        for ( int j = 0; j < config.getDeps().length; j++ )
         {
-            IdeDependency dep = deps[j];
+            IdeDependency dep = config.getDeps()[j];
             if ( dep.isReferencedProject() )
             {
                 writer.startElement( "project" ); //$NON-NLS-1$
@@ -213,21 +208,22 @@ public class EclipseProjectWriter
 
         writer.endElement(); // natures
 
-        if ( !projectBaseDir.equals( getEclipseProjectDirectory() ) )
+        if ( !config.getProjectBaseDir().equals( config.getEclipseProjectDirectory() ) )
         {
             writer.startElement( "linkedResources" ); //$NON-NLS-1$
 
-            addFileLink( writer, projectBaseDir, getEclipseProjectDirectory(), getProject().getFile() );
+            addFileLink( writer, config.getProjectBaseDir(), config.getEclipseProjectDirectory(), config.getProject()
+                .getFile() );
 
-            addSourceLinks( writer, projectBaseDir, getEclipseProjectDirectory(), executedProject
-                .getCompileSourceRoots() );
-            addResourceLinks( writer, projectBaseDir, getEclipseProjectDirectory(), executedProject.getBuild()
-                .getResources() );
+            addSourceLinks( writer, config.getProjectBaseDir(), config.getEclipseProjectDirectory(), config
+                .getProject().getCompileSourceRoots() );
+            addResourceLinks( writer, config.getProjectBaseDir(), config.getEclipseProjectDirectory(), config
+                .getProject().getBuild().getResources() );
 
-            addSourceLinks( writer, projectBaseDir, getEclipseProjectDirectory(), executedProject
-                .getTestCompileSourceRoots() );
-            addResourceLinks( writer, projectBaseDir, getEclipseProjectDirectory(), executedProject.getBuild()
-                .getTestResources() );
+            addSourceLinks( writer, config.getProjectBaseDir(), config.getEclipseProjectDirectory(), config
+                .getProject().getTestCompileSourceRoots() );
+            addResourceLinks( writer, config.getProjectBaseDir(), config.getEclipseProjectDirectory(), config
+                .getProject().getBuild().getTestResources() );
 
             writer.endElement(); // linedResources
         }
@@ -262,7 +258,7 @@ public class EclipseProjectWriter
         }
         else
         {
-            getLog().warn( Messages.getString( "EclipseProjectWriter.notafile", file ) ); //$NON-NLS-1$
+            log.warn( Messages.getString( "EclipseProjectWriter.notafile", file ) ); //$NON-NLS-1$
         }
     }
 

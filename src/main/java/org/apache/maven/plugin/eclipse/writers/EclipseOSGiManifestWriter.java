@@ -26,8 +26,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.plugin.ide.IdeUtils;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
 
 /**
@@ -36,7 +34,7 @@ import org.codehaus.plexus.util.IOUtil;
  * scope provided.
  */
 public class EclipseOSGiManifestWriter
-    extends AbstractEclipseResourceWriter
+    extends AbstractEclipseWriter
 {
 
     /**
@@ -70,38 +68,36 @@ public class EclipseOSGiManifestWriter
      */
     public final static String ENTRY_BUNDLE_VENDOR = "Bundle-Vendor:";
 
-    public EclipseOSGiManifestWriter( Log log, File eclipseProjectDir, MavenProject project, IdeDependency[] deps )
-    {
-        super( log, eclipseProjectDir, project, deps );
-    }
-
-    public void write( File manifestFile, File libdir )
+    /**
+     * @see org.apache.maven.plugin.eclipse.writers.EclipseWriter#write()
+     */
+    public void write()
         throws MojoExecutionException
     {
         // check for existence
-        if ( !manifestFile.exists() )
+        if ( !config.getManifestFile().exists() )
         {
-            getLog().warn(
-                           Messages.getString( "EclipseOSGiManifestWriter.nomanifestfile", manifestFile
-                               .getAbsolutePath() ) );
+            log.warn( Messages.getString( "EclipseOSGiManifestWriter.nomanifestfile", config.getManifestFile()
+                .getAbsolutePath() ) );
             return;
         }
 
-        StringBuffer manifestSb = rewriteManifest( manifestFile, libdir );
+        StringBuffer manifestSb = rewriteManifest( config.getManifestFile(), config.getPdeLibDir() );
         FileWriter fos = null;
         try
         {
-            fos = new FileWriter( manifestFile );
+            fos = new FileWriter( config.getManifestFile() );
             fos.write( manifestSb.toString() );
         }
         catch ( FileNotFoundException e )
         {
-            throw new MojoExecutionException( Messages.getString( "cantwritetofile", manifestFile.getAbsolutePath() ) );
+            throw new MojoExecutionException( Messages.getString( "cantwritetofile", config.getManifestFile()
+                .getAbsolutePath() ) );
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( Messages.getString( "cantwritetofile", manifestFile.getAbsolutePath() ),
-                                              e );
+            throw new MojoExecutionException( Messages.getString( "cantwritetofile", config.getManifestFile()
+                .getAbsolutePath() ), e );
         }
         finally
         {
@@ -140,14 +136,14 @@ public class EclipseOSGiManifestWriter
                 {
                     manifestSb.append( ENTRY_BUNDLE_NAME );
                     manifestSb.append( " " );
-                    manifestSb.append( getProject().getName() );
+                    manifestSb.append( config.getProject().getName() );
                     manifestSb.append( NEWLINE );
                 }
                 else if ( line.startsWith( ENTRY_BUNDLE_SYMBOLICNAME ) )
                 {
                     manifestSb.append( ENTRY_BUNDLE_SYMBOLICNAME );
                     manifestSb.append( " " );
-                    manifestSb.append( getProject().getArtifactId() );
+                    manifestSb.append( config.getProject().getArtifactId() );
                     manifestSb.append( ";singleton:=true" );
                     manifestSb.append( NEWLINE );
                 }
@@ -155,14 +151,14 @@ public class EclipseOSGiManifestWriter
                 {
                     manifestSb.append( ENTRY_BUNDLE_VERSION );
                     manifestSb.append( " " );
-                    manifestSb.append( getProject().getVersion() );
+                    manifestSb.append( config.getProject().getVersion() );
                     manifestSb.append( NEWLINE );
                 }
-                else if ( line.startsWith( ENTRY_BUNDLE_VENDOR ) && getProject().getOrganization() != null )
+                else if ( line.startsWith( ENTRY_BUNDLE_VENDOR ) && config.getProject().getOrganization() != null )
                 {
                     manifestSb.append( ENTRY_BUNDLE_VENDOR );
                     manifestSb.append( " " );
-                    manifestSb.append( getProject().getOrganization().getName() );
+                    manifestSb.append( config.getProject().getOrganization().getName() );
                     manifestSb.append( NEWLINE );
                 }
                 else
@@ -197,19 +193,19 @@ public class EclipseOSGiManifestWriter
         // @todo handle expanded plugins
         bundleClasspathSb.append( " ." );
 
-        for ( int j = 0; j < this.deps.length; j++ )
+        for ( int j = 0; j < config.getDeps().length; j++ )
         {
-            IdeDependency dep = this.deps[j];
+            IdeDependency dep = config.getDeps()[j];
             if ( !dep.isProvided() && !dep.isReferencedProject() && !dep.isTestDependency() )
             {
                 bundleClasspathSb.append( "," + NEWLINE );
 
-                getLog().debug( "Adding artifact to manifest: " + dep.getArtifactId() );
+                log.debug( "Adding artifact to manifest: " + dep.getArtifactId() );
 
                 File artifactFile = new File( libdir, dep.getFile().getName() );
 
                 bundleClasspathSb.append( " "
-                    + IdeUtils.toRelativeAndFixSeparator( getEclipseProjectDirectory(), artifactFile, false ) );
+                    + IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), artifactFile, false ) );
             }
         }
         // only insert the name of the property if there are local libraries
