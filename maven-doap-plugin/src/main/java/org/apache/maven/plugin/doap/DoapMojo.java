@@ -47,7 +47,7 @@ public class DoapMojo
     public static final String RDF_RESOURCE = "rdf:resource";
 
     /**
-     * The project to create a build for.
+     * The POM from which information will be extracted to create a DOAP file.
      *
      * @parameter expression="${project}"
      * @required
@@ -55,16 +55,23 @@ public class DoapMojo
     private MavenProject project;
 
     /**
+     * The name of the DOAP file that will be generated.
+     *
      * @parameter expression="${basedir}/doap_${project.artifactId}.rdf"
      */
     private File doapFile;
 
     /**
+     * The category which should be displayed in the DOAP file. The POM doesn't have any
+     * notions of category yet.
+     *
      * @parameter expression="${category}"
      */
     private String category;
 
     /**
+     * The language which should be displayed in the DOAP file. The POM doesn't have any
+     * notions of language yet.
      * @parameter expression="${language}" default-value="Java"
      */
     private String language;
