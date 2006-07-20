@@ -73,6 +73,11 @@ public class EclipseClasspathWriter
     private static final String ATTR_PATH = "path"; //$NON-NLS-1$
 
     /**
+     * Used for exported classpath entries.
+     */
+    private static final String ATTR_EXPORTED = "exported"; //$NON-NLS-1$
+
+    /**
      * Attribute for kind - Container (con), Variable (var)..etc.
      */
     private static final String ATTR_KIND = "kind"; //$NON-NLS-1$
@@ -310,6 +315,12 @@ public class EclipseClasspathWriter
 
         writer.startElement( ELT_CLASSPATHENTRY );
         writer.addAttribute( ATTR_KIND, kind );
+
+        if ( !dep.isSystemScoped() && !dep.isTestDependency() )
+        {
+            writer.addAttribute( ATTR_EXPORTED, Boolean.TRUE.toString() );
+        }
+
         writer.addAttribute( ATTR_PATH, path );
 
         if ( sourcepath != null )
