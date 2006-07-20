@@ -6,7 +6,7 @@
   July 2006
   ------
 
-Introduction
+Maven RAR Plugin
 
   A resource adapter is a system-level software driver that a Java application
   uses to connect to an enterprise information system (EIS). The RAR plugin
