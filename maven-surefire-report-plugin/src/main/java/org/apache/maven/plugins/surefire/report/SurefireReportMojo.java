@@ -66,7 +66,7 @@ public class SurefireReportMojo
     private MavenProject project;
 
     /**
-     * If set to <code>false</code>, only failures are shown.
+     * If set to &lt;code&gt;false&lt;/code&gt;, only failures are shown.
      *
      * @parameter expression="${showSuccess}" default-value="true"
      * @required

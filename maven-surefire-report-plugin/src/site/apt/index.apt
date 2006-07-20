@@ -1,0 +1,31 @@
+  ------
+  Introduction
+  ------
+  Allan Ramirez
+  ------
+  July 2006
+  ------
+
+Introduction
+
+  The surefire-report plugin parses the generated TEST-*.xml files under
+  <<<${basedir}/target/surefire-reports>>> and renders them to DOXIA
+  which creates the web interface version of the test results.
+
+* Goals Overview
+
+  Surefire-report plugin only has one goal:
+
+  * {{{surefire-report-mojo.html}surefire-report:report}} Generates the test
+  results report into html format.
+
+  []
+
+* Usage
+
+  Instructions on how to use the surefire-report plugin can be found {{{usage.html}here}}.
+
+* Examples
+
+  The following examples show how to use the surefire-report plugin in more advanced usecases:
+

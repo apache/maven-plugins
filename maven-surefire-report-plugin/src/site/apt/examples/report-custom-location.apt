@@ -1,0 +1,11 @@
+  ------
+  Custom Location of the Surefire Report
+  ------
+  Allan Ramirez
+  ------
+  July 2006
+  ------
+
+ Custom Location of the Surefire Report
+
+   The default location of the generated report is at <<<${basedir}/target/sure
