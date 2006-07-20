@@ -16,6 +16,8 @@
 
 package org.apache.maven.plugin.eclipse.writers;
 
+import org.codehaus.plexus.util.xml.XMLWriter;
+
 /**
  * Component writer for WTP 1.5. File name has changed in WTP 1.5rc2 and the <code>project-version</code> attribute has
  * been added. These ones are the only differences 
@@ -42,6 +44,17 @@ public class EclipseWtpComponent15Writer
     protected String getProjectVersion()
     {
         return "1.5.0"; //$NON-NLS-1$
+    }
+
+    /**
+     * @param writer
+     */
+    protected void writeContextRoot( XMLWriter writer )
+    {
+        writer.startElement( ELT_PROPERTY );
+        writer.addAttribute( ATTR_NAME, ATTR_CONTEXT_ROOT );
+        writer.addAttribute( ATTR_VALUE, config.getProject().getArtifactId() );
+        writer.endElement(); // property
     }
 
 }
