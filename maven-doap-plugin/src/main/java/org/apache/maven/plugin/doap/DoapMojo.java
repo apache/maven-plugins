@@ -34,7 +34,8 @@ import java.util.Date;
 import java.util.Iterator;
 
 /**
- * A Maven2 plugin to generate an Ant build file.
+ * A Maven2 plugin to generate a Description of a Project (DOAP) file from the information found
+ * in a POM.
  *
  * @author Jason van Zyl
  * @version $Id$
