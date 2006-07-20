@@ -1,0 +1,39 @@
+ ------
+ Maven 2 DOAP Plugin
+ ------
+ Jason van Zyl
+ ------
+ 20 July 2006
+
+How to Use
+
+  You can directly use this plugin without configuring anything using the command "mvn doap:generate". If you
+  are running it from the top-level of a project, which will typically be the case, then you run it using the
+  non-recurse option: "mvn -N doap:generate".
+  
+  The only two options you can configure are the _category_ and the _language_. If you wish to set these options
+  you can use something like the following:
+ 
+-------------------
+<project>
+  ...
+  <build>
+    ...
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-idea-plugin</artifactId>
+        <configuration>
+          <category>build-management</category>
+          <language>Java</language>
+        </configuration>
+      </plugin>
+    </plugins>
+    ...
+  </build>
+   ...
+</project>
+-------------------
+
+  For full documentation, click {{{index.html}here}}.
+ 
