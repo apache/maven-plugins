@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.List;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -28,8 +27,6 @@ import org.apache.maven.plugin.eclipse.EclipseSourceDir;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.plugin.ide.IdeUtils;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
@@ -45,7 +42,7 @@ import org.codehaus.plexus.util.xml.XMLWriter;
  * @version $Id$
  */
 public class EclipseClasspathWriter
-    extends AbstractEclipseResourceWriter
+    extends AbstractEclipseWriter
 {
 
     /**
@@ -53,14 +50,10 @@ public class EclipseClasspathWriter
      */
     private static final String M2_REPO = "M2_REPO"; //$NON-NLS-1$
 
-    private File eclipseProjectDir;
-
     /**
      * Attribute for sourcepath.
      */
     private static final String ATTR_SOURCEPATH = "sourcepath"; //$NON-NLS-1$
-
-    private MavenProject project;
 
     /**
      * Attribute for output.
@@ -117,13 +110,10 @@ public class EclipseClasspathWriter
      */
     private static final String FILE_DOT_CLASSPATH = ".classpath"; //$NON-NLS-1$
 
-    public EclipseClasspathWriter( Log log, File eclipseProjectDir, MavenProject project, IdeDependency[] deps )
-    {
-        super( log, eclipseProjectDir, project, deps );
-    }
-
-    public void write( File projectBaseDir, EclipseSourceDir[] sourceDirs, List classpathContainers,
-                       ArtifactRepository localRepository, File buildOutputDirectory, boolean inPdeMode, File pdeLibDir )
+    /**
+     * @see org.apache.maven.plugin.eclipse.writers.EclipseWriter#write()
+     */
+    public void write()
         throws MojoExecutionException
     {
 
@@ -131,7 +121,7 @@ public class EclipseClasspathWriter
 
         try
         {
-            w = new FileWriter( new File( getEclipseProjectDirectory(), FILE_DOT_CLASSPATH ) );
+            w = new FileWriter( new File( config.getEclipseProjectDirectory(), FILE_DOT_CLASSPATH ) );
         }
         catch ( IOException ex )
         {
@@ -142,15 +132,16 @@ public class EclipseClasspathWriter
 
         writer.startElement( ELT_CLASSPATH );
 
-        String defaultOutput = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, buildOutputDirectory, false );
+        String defaultOutput = IdeUtils.toRelativeAndFixSeparator( config.getProjectBaseDir(), config
+            .getBuildOutputDirectory(), false );
 
         // ----------------------------------------------------------------------
         // Source roots and resources
         // ----------------------------------------------------------------------
 
-        for ( int j = 0; j < sourceDirs.length; j++ )
+        for ( int j = 0; j < config.getSourceDirs().length; j++ )
         {
-            EclipseSourceDir dir = sourceDirs[j];
+            EclipseSourceDir dir = config.getSourceDirs()[j];
 
             writer.startElement( ELT_CLASSPATHENTRY );
 
@@ -178,7 +169,7 @@ public class EclipseClasspathWriter
         // Container classpath entries
         // ----------------------------------------------------------------------
 
-        for ( Iterator it = classpathContainers.iterator(); it.hasNext(); )
+        for ( Iterator it = config.getClasspathContainers().iterator(); it.hasNext(); )
         {
             writer.startElement( ELT_CLASSPATHENTRY );
             writer.addAttribute( ATTR_KIND, "con" ); //$NON-NLS-1$ 
@@ -190,13 +181,14 @@ public class EclipseClasspathWriter
         // The dependencies
         // ----------------------------------------------------------------------
 
-        for ( int j = 0; j < deps.length; j++ )
+        for ( int j = 0; j < config.getDeps().length; j++ )
         {
-            IdeDependency dep = deps[j];
+            IdeDependency dep = config.getDeps()[j];
 
             if ( dep.isAddedToClasspath() )
             {
-                addDependency( writer, dep, localRepository, projectBaseDir, inPdeMode, pdeLibDir );
+                addDependency( writer, dep, config.getLocalRepository(), config.getEclipseProjectDirectory(), config
+                    .isPde(), config.getPdeLibDir() );
             }
         }
 
@@ -227,18 +219,18 @@ public class EclipseClasspathWriter
 
             if ( artifactPath == null )
             {
-                getLog().error( Messages.getString( "EclipsePlugin.artifactpathisnull", dep.getId() ) ); //$NON-NLS-1$
+                log.error( Messages.getString( "EclipsePlugin.artifactpathisnull", dep.getId() ) ); //$NON-NLS-1$
                 return;
             }
 
             if ( dep.isSystemScoped() )
             {
-                path = IdeUtils.toRelativeAndFixSeparator( getEclipseProjectDirectory(), artifactPath, false );
+                path = IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), artifactPath, false );
 
-                if ( getLog().isDebugEnabled() )
+                if ( log.isDebugEnabled() )
                 {
-                    getLog().debug( Messages.getString( "EclipsePlugin.artifactissystemscoped", //$NON-NLS-1$
-                                                        new Object[] { dep.getArtifactId(), path } ) );
+                    log.debug( Messages.getString( "EclipsePlugin.artifactissystemscoped", //$NON-NLS-1$
+                                                   new Object[] { dep.getArtifactId(), path } ) );
                 }
 
                 kind = ATTR_LIB;
@@ -266,7 +258,7 @@ public class EclipseClasspathWriter
                     }
 
                     File artifactFile = new File( pdeLibDir, dep.getFile().getName() );
-                    path = IdeUtils.toRelativeAndFixSeparator( getEclipseProjectDirectory(), artifactFile, false );
+                    path = IdeUtils.toRelativeAndFixSeparator( config.getProjectBaseDir(), artifactFile, false );
 
                     kind = ATTR_LIB;
                 }

@@ -24,10 +24,7 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.EclipseSourceDir;
 import org.apache.maven.plugin.eclipse.Messages;
-import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.plugin.ide.IdeUtils;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
@@ -71,17 +68,15 @@ public class EclipseWtpComponentWriter
         return null;
     }
 
-    public EclipseWtpComponentWriter( Log log, File eclipseProjectDir, MavenProject project, IdeDependency[] deps )
-    {
-        super( log, eclipseProjectDir, project, deps );
-    }
-
-    public void write( EclipseSourceDir[] sourceDirs, ArtifactRepository localRepository, File buildOutputDirectory )
+    /**
+     * @see org.apache.maven.plugin.eclipse.writers.EclipseWriter#write()
+     */
+    public void write()
         throws MojoExecutionException
     {
 
         // create a .settings directory (if not existing)
-        File settingsDir = new File( getEclipseProjectDirectory(), DIR_WTP_SETTINGS );
+        File settingsDir = new File( config.getEclipseProjectDirectory(), DIR_WTP_SETTINGS );
         settingsDir.mkdirs();
 
         FileWriter w;
@@ -96,8 +91,9 @@ public class EclipseWtpComponentWriter
 
         // create a .component file and write out to it
         XMLWriter writer = new PrettyPrintXMLWriter( w );
-        String packaging = getProject().getPackaging();
-        writeModuleTypeComponent( writer, packaging, buildOutputDirectory, sourceDirs, localRepository );
+        String packaging = config.getProject().getPackaging();
+        writeModuleTypeComponent( writer, packaging, config.getBuildOutputDirectory(), config.getSourceDirs(), config
+            .getLocalRepository() );
         IOUtil.close( w );
 
     }
@@ -124,7 +120,7 @@ public class EclipseWtpComponentWriter
         }
         writer.startElement( ELT_WB_MODULE );
 
-        writer.addAttribute( ATTR_DEPLOY_NAME, getProject().getArtifactId() );
+        writer.addAttribute( ATTR_DEPLOY_NAME, config.getProject().getArtifactId() );
 
         // deploy-path is "/" for utility and ejb projects, "/WEB-INF/classes" for webapps
         String target = "/"; //$NON-NLS-1$
@@ -133,26 +129,26 @@ public class EclipseWtpComponentWriter
         {
             target = "/WEB-INF/classes"; //$NON-NLS-1$
 
-            String warSourceDirectory = IdeUtils.getPluginSetting( getProject(), ARTIFACT_MAVEN_WAR_PLUGIN,
+            String warSourceDirectory = IdeUtils.getPluginSetting( config.getProject(), ARTIFACT_MAVEN_WAR_PLUGIN,
                                                                    "warSourceDirectory", //$NON-NLS-1$
                                                                    "/src/main/webapp" ); //$NON-NLS-1$
 
             writer.startElement( ELT_PROPERTY );
-            writer.addAttribute( ATTR_CONTEXT_ROOT, getProject().getArtifactId() );
+            writer.addAttribute( ATTR_CONTEXT_ROOT, config.getProject().getArtifactId() );
             writer.endElement(); // property
 
             writer.startElement( ELT_WB_RESOURCE );
             writer.addAttribute( ATTR_DEPLOY_PATH, "/" ); //$NON-NLS-1$
             writer.addAttribute( ATTR_SOURCE_PATH, IdeUtils
-                .toRelativeAndFixSeparator( getProject().getBasedir(), new File( getEclipseProjectDirectory(),
-                                                                                 warSourceDirectory ), false ) );
+                .toRelativeAndFixSeparator( config.getProject().getBasedir(), new File( config
+                    .getEclipseProjectDirectory(), warSourceDirectory ), false ) );
             writer.endElement();
 
             // @todo is this really needed?
             writer.startElement( ELT_PROPERTY );
             writer.addAttribute( ATTR_NAME, "java-output-path" ); //$NON-NLS-1$
             writer.addAttribute( ATTR_VALUE, "/" //$NON-NLS-1$
-                + IdeUtils.toRelativeAndFixSeparator( getProject().getBasedir(), buildOutputDirectory, false ) );
+                + IdeUtils.toRelativeAndFixSeparator( config.getProject().getBasedir(), buildOutputDirectory, false ) );
             writer.endElement(); // property
 
         }
@@ -167,7 +163,7 @@ public class EclipseWtpComponentWriter
         if ( "war".equalsIgnoreCase( packaging ) || "ear".equalsIgnoreCase( packaging ) ) //$NON-NLS-1$ //$NON-NLS-2$
         {
             // write out the dependencies.
-            writeWarOrEarResources( writer, getProject(), localRepository );
+            writeWarOrEarResources( writer, config.getProject(), localRepository );
 
         }
 

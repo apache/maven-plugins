@@ -7,11 +7,9 @@ import java.io.File;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.eclipse.EclipseSourceDir;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.plugin.ide.IdeUtils;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.XMLWriter;
@@ -22,7 +20,7 @@ import org.codehaus.plexus.util.xml.XMLWriter;
  * @author <a href="mailto:fgiust@users.sourceforge.net">Fabrizio Giustina</a>
  */
 public abstract class AbstractWtpResourceWriter
-    extends AbstractEclipseResourceWriter
+    extends AbstractEclipseWriter
 {
 
     private static final String ELT_DEPENDENCY_TYPE = "dependency-type"; //$NON-NLS-1$
@@ -60,33 +58,6 @@ public abstract class AbstractWtpResourceWriter
     protected static final String ELT_PROJECT_MODULES = "project-modules"; //$NON-NLS-1$
 
     protected static final String ARTIFACT_MAVEN_WAR_PLUGIN = "maven-war-plugin"; //$NON-NLS-1$
-
-    public AbstractWtpResourceWriter( Log log, File eclipseProjectDir, MavenProject project, IdeDependency[] deps )
-    {
-        super( log, eclipseProjectDir, project, deps );
-    }
-
-    /**
-     * Returns Dependent artifacts for our project.
-     * 
-     * @return
-     */
-    protected IdeDependency[] getDependencies()
-    {
-        return this.deps;
-    }
-
-    /**
-     * Common elements of configuration are handled here.
-     * 
-     * @param sourceDirs
-     * @param localRepository
-     * @param buildOutputDirectory
-     * @throws MojoExecutionException
-     */
-    public abstract void write( EclipseSourceDir[] sourceDirs, ArtifactRepository localRepository,
-                                File buildOutputDirectory )
-        throws MojoExecutionException;
 
     /**
      * @param project
@@ -132,7 +103,7 @@ public abstract class AbstractWtpResourceWriter
             writer.startElement( ELT_PROPERTY );
             writer.addAttribute( ATTR_NAME, "java-output-path" ); //$NON-NLS-1$ 
             writer.addAttribute( ATTR_VALUE, "/" + //$NON-NLS-1$ 
-                IdeUtils.toRelativeAndFixSeparator( getProject().getBasedir(), buildOutputDirectory, false ) );
+                IdeUtils.toRelativeAndFixSeparator( config.getProject().getBasedir(), buildOutputDirectory, false ) );
             writer.endElement();
 
         }
@@ -152,7 +123,7 @@ public abstract class AbstractWtpResourceWriter
             writer.startElement( ELT_PROPERTY );
             writer.addAttribute( ATTR_NAME, "java-output-path" ); //$NON-NLS-1$ 
             writer.addAttribute( ATTR_VALUE, "/" + //$NON-NLS-1$ 
-                IdeUtils.toRelativeAndFixSeparator( getProject().getBasedir(), buildOutputDirectory, false ) );
+                IdeUtils.toRelativeAndFixSeparator( config.getProject().getBasedir(), buildOutputDirectory, false ) );
             writer.endElement();
         }
     }
@@ -191,7 +162,7 @@ public abstract class AbstractWtpResourceWriter
 
             if ( artifactPath == null )
             {
-                getLog().error( Messages.getString( "EclipsePlugin.artifactpathisnull", dep.getId() ) ); //$NON-NLS-1$
+                log.error( Messages.getString( "EclipsePlugin.artifactpathisnull", dep.getId() ) ); //$NON-NLS-1$
                 return;
             }
 
@@ -201,7 +172,7 @@ public abstract class AbstractWtpResourceWriter
             if ( dep.isSystemScoped() )
             {
                 handle = "module:/classpath/lib/" //$NON-NLS-1$
-                    + IdeUtils.toRelativeAndFixSeparator( getEclipseProjectDirectory(), repoFile, false );
+                    + IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), repoFile, false );
             }
             else
             {
@@ -229,9 +200,9 @@ public abstract class AbstractWtpResourceWriter
     {
 
         // dependencies
-        for ( int j = 0; j < deps.length; j++ )
+        for ( int j = 0; j < config.getDeps().length; j++ )
         {
-            IdeDependency dep = deps[j];
+            IdeDependency dep = config.getDeps()[j];
             String type = dep.getType();
 
             // NB war is needed for ear projects, we suppose nobody adds a war dependency to a war/jar project
@@ -239,7 +210,7 @@ public abstract class AbstractWtpResourceWriter
             if ( ( !dep.isTestDependency() && !dep.isProvided() )
                 && ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type ) || "war".equals( type ) ) ) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             {
-                addDependency( writer, dep, localRepository, getProject().getBasedir() );
+                addDependency( writer, dep, localRepository, config.getProject().getBasedir() );
             }
         }
     }
@@ -248,12 +219,12 @@ public abstract class AbstractWtpResourceWriter
     {
         String[] artifactNames = new String[] { "servlet-api", "servletapi", "geronimo-spec-servlet" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-        String version = IdeUtils.getDependencyVersion( artifactNames, getProject().getArtifacts(), 3 );
+        String version = IdeUtils.getDependencyVersion( artifactNames, config.getProject().getArtifacts(), 3 );
         if ( version == null )
         {
             // none of the above specified matched, try geronimo-spec-j2ee
             artifactNames = new String[] { "geronimo-spec-j2ee" }; //$NON-NLS-1$
-            version = IdeUtils.getDependencyVersion( artifactNames, getProject().getArtifacts(), 3 );
+            version = IdeUtils.getDependencyVersion( artifactNames, config.getProject().getArtifacts(), 3 );
             if ( version != null )
             {
                 String j2eeMinorVersion = StringUtils.substring( version, 2, 3 );
@@ -280,10 +251,10 @@ public abstract class AbstractWtpResourceWriter
 
     protected String resolveJavaVersion()
     {
-        String version = IdeUtils.getPluginSetting( getProject(), "maven-compiler-plugin", "target", null ); //$NON-NLS-1$ //$NON-NLS-2$
+        String version = IdeUtils.getPluginSetting( config.getProject(), "maven-compiler-plugin", "target", null ); //$NON-NLS-1$ //$NON-NLS-2$
         if ( version == null )
         {
-            IdeUtils.getPluginSetting( getProject(), "maven-compiler-plugin", "source", null ); //$NON-NLS-1$ //$NON-NLS-2$
+            IdeUtils.getPluginSetting( config.getProject(), "maven-compiler-plugin", "source", null ); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         if ( "1.5".equals( version ) || "5".equals( version ) ) //$NON-NLS-1$ //$NON-NLS-2$
