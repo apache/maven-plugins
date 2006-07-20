@@ -25,10 +25,7 @@ import java.util.Properties;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.Messages;
-import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.plugin.ide.IdeUtils;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
 
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
@@ -37,7 +34,7 @@ import org.apache.maven.project.MavenProject;
  * @version $Id$
  */
 public class EclipseSettingsWriter
-    extends AbstractEclipseResourceWriter
+    extends AbstractEclipseWriter
 {
 
     /**
@@ -64,11 +61,9 @@ public class EclipseSettingsWriter
 
     private static final String ARTIFACT_MAVEN_COMPILER_PLUGIN = "maven-compiler-plugin"; //$NON-NLS-1$
 
-    public EclipseSettingsWriter( Log log, File eclipseProjectDir, MavenProject project, IdeDependency[] deps )
-    {
-        super( log, eclipseProjectDir, project, deps );
-    }
-
+    /**
+     * @see org.apache.maven.plugin.eclipse.writers.EclipseWriter#write()
+     */
     public void write()
         throws MojoExecutionException
     {
@@ -76,8 +71,10 @@ public class EclipseSettingsWriter
         // check if it's necessary to create project specific settings
         Properties coreSettings = new Properties();
 
-        String source = IdeUtils.getPluginSetting( getProject(), ARTIFACT_MAVEN_COMPILER_PLUGIN, PROPERTY_SOURCE, null );
-        String target = IdeUtils.getPluginSetting( getProject(), ARTIFACT_MAVEN_COMPILER_PLUGIN, PROPERTY_TARGET, null );
+        String source = IdeUtils.getPluginSetting( config.getProject(), ARTIFACT_MAVEN_COMPILER_PLUGIN,
+                                                   PROPERTY_SOURCE, null );
+        String target = IdeUtils.getPluginSetting( config.getProject(), ARTIFACT_MAVEN_COMPILER_PLUGIN,
+                                                   PROPERTY_TARGET, null );
 
         if ( source != null )
         {
@@ -93,7 +90,7 @@ public class EclipseSettingsWriter
         // write the settings, if needed
         if ( !coreSettings.isEmpty() )
         {
-            File settingsDir = new File( getEclipseProjectDirectory(), DIR_DOT_SETTINGS ); //$NON-NLS-1$
+            File settingsDir = new File( config.getEclipseProjectDirectory(), DIR_DOT_SETTINGS ); //$NON-NLS-1$
 
             settingsDir.mkdirs();
 
@@ -124,8 +121,8 @@ public class EclipseSettingsWriter
                 {
                     coreSettings.store( new FileOutputStream( coreSettingsFile ), null );
 
-                    getLog().info( Messages.getString( "EclipseSettingsWriter.wrotesettings", //$NON-NLS-1$
-                                                       coreSettingsFile.getCanonicalPath() ) );
+                    log.info( Messages.getString( "EclipseSettingsWriter.wrotesettings", //$NON-NLS-1$
+                                                  coreSettingsFile.getCanonicalPath() ) );
                 }
             }
             catch ( FileNotFoundException e )
@@ -139,7 +136,7 @@ public class EclipseSettingsWriter
         }
         else
         {
-            getLog().info( Messages.getString( "EclipseSettingsWriter.usingdefaults" ) ); //$NON-NLS-1$
+            log.info( Messages.getString( "EclipseSettingsWriter.usingdefaults" ) ); //$NON-NLS-1$
         }
     }
 }
