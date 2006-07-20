@@ -6,7 +6,7 @@
   January 29 2006
   ------
 
-Maven 2 Deploy Plugin - Introduction
+Maven Deploy Plugin
   
   The deploy plugin is primarily used during the deploy phase, to add your
   artifact(s) to a remote repository for sharing with other developers and
