@@ -37,7 +37,7 @@ import java.io.IOException;
  * Checks a plugin's documentation for the standard minimums.
  *
  * @author jdcasey
- * @goal plugin
+ * @goal check
  * @aggregator
  * @phase validate
  */
