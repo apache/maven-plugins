@@ -169,14 +169,18 @@ public class EclipseProjectWriter
 
         writer.startElement( "projects" ); //$NON-NLS-1$
 
-        for ( int j = 0; j < config.getDeps().length; j++ )
+        // referenced projects should not be added for plugins
+        if ( !config.isPde() )
         {
-            IdeDependency dep = config.getDeps()[j];
-            if ( dep.isReferencedProject() )
+            for ( int j = 0; j < config.getDeps().length; j++ )
             {
-                writer.startElement( "project" ); //$NON-NLS-1$
-                writer.writeText( dep.getArtifactId() );
-                writer.endElement();
+                IdeDependency dep = config.getDeps()[j];
+                if ( dep.isReferencedProject() )
+                {
+                    writer.startElement( "project" ); //$NON-NLS-1$
+                    writer.writeText( dep.getArtifactId() );
+                    writer.endElement();
+                }
             }
         }
 
