@@ -6,7 +6,7 @@
   July 2006
   ------
 
-Introduction
+Maven Install Plugin
 
   The Local Repository is the local cache where
   all artifacts needed for the build are stored. By default, it is located within
