@@ -73,6 +73,8 @@ public class EclipsePlugin
 
     private static final String BUILDER_WST_COMPONENT_STRUCTURAL = "org.eclipse.wst.common.modulecore.ComponentStructuralBuilder"; //$NON-NLS-1$
 
+    private static final String BUILDER_WST_FACET = "org.eclipse.wst.common.project.facet.core.builder"; //$NON-NLS-1$
+
     private static final String BUILDER_PDE_MANIFEST = "org.eclipse.pde.ManifestBuilder"; //$NON-NLS-1$
 
     private static final String BUILDER_PDE_SCHEMA = "org.eclipse.pde.SchemaBuilder"; //$NON-NLS-1$
@@ -241,19 +243,9 @@ public class EclipsePlugin
     private File pdeLibDir;
 
     /**
-     * Not a plugin parameter. Are we working with wtp r7?
+     * Parsed wtp version.
      */
-    private boolean wtpR7;
-
-    /**
-     * Not a plugin parameter. Are we working with wtp 1.0?
-     */
-    private boolean wtp10;
-
-    /**
-     * Not a plugin parameter. Are we working with wtp 1.5?
-     */
-    private boolean wtp15;
+    private float wtpVersionFloat;
 
     /**
      * Not a plugin parameter. Is this a java project?
@@ -447,15 +439,15 @@ public class EclipsePlugin
 
         if ( "R7".equalsIgnoreCase( wtpversion ) ) //$NON-NLS-1$
         {
-            wtpR7 = true;
+            wtpVersionFloat = 0.7f;
         }
         else if ( "1.0".equalsIgnoreCase( wtpversion ) ) //$NON-NLS-1$
         {
-            wtp10 = true;
+            wtpVersionFloat = 1.0f;
         }
         else if ( "1.5".equalsIgnoreCase( wtpversion ) ) //$NON-NLS-1$
         {
-            wtp15 = true;
+            wtpVersionFloat = 1.5f;
         }
         if ( !"none".equalsIgnoreCase( wtpversion ) )
         {
@@ -566,21 +558,21 @@ public class EclipsePlugin
         config.setProjectnatures( projectnatures );
         config.setSourceDirs( sourceDirs );
 
-        if ( wtpR7 )
+        if ( wtpVersionFloat == 0.7f )
         {
             new EclipseWtpmodulesWriter().init( getLog(), config ).write();
         }
 
-        if ( wtp10 || wtp15 )
+        if ( wtpVersionFloat >= 1.0f )
         {
             new EclipseWtpFacetsWriter().init( getLog(), config ).write();
         }
-        if ( wtp10 )
+        if ( wtpVersionFloat == 1.0f )
         {
 
             new EclipseWtpComponentWriter().init( getLog(), config ).write();
         }
-        if ( wtp15 )
+        if ( wtpVersionFloat >= 1.5 )
         {
             new EclipseWtpComponent15Writer().init( getLog(), config ).write();
         }
@@ -617,7 +609,7 @@ public class EclipsePlugin
     {
         projectnatures = new ArrayList();
 
-        if ( wtp10 )
+        if ( wtpVersionFloat >= 1.0f )
         {
             projectnatures.add( NATURE_WST_FACET_CORE_NATURE ); // WTP 1.0 nature
         }
@@ -627,7 +619,7 @@ public class EclipsePlugin
             projectnatures.add( NATURE_JDT_CORE_JAVA );
         }
 
-        if ( wtpR7 || wtp10 )
+        if ( wtpVersionFloat >= 0.7f )
         {
             projectnatures.add( NATURE_WST_MODULE_CORE_NATURE ); // WTP 0.7/1.0 nature
 
@@ -659,7 +651,7 @@ public class EclipsePlugin
     {
         buildcommands = new ArrayList();
 
-        if ( wtpR7 )
+        if ( wtpVersionFloat == 0.7f )
         {
             buildcommands.add( BUILDER_WST_COMPONENT_STRUCTURAL ); // WTP 0.7 builder
         }
@@ -669,12 +661,17 @@ public class EclipsePlugin
             buildcommands.add( BUILDER_JDT_CORE_JAVA );
         }
 
-        if ( wtpR7 || wtp10 )
+        if ( wtpVersionFloat >= 1.5f )
+        {
+            buildcommands.add( BUILDER_WST_FACET ); // WTP 1.5 builder
+        }
+
+        if ( wtpVersionFloat >= 0.7f )
         {
             buildcommands.add( BUILDER_WST_VALIDATION ); // WTP 0.7/1.0 builder
         }
 
-        if ( wtpR7 )
+        if ( wtpVersionFloat == 0.7f )
         {
             buildcommands.add( BUILDER_WST_COMPONENT_STRUCTURAL_DEPENDENCY_RESOLVER ); // WTP 0.7 builder
         }
