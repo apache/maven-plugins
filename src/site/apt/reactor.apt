@@ -128,9 +128,9 @@ target
  check out all modules and keep them up to date. Especially if you are only
  interested in one or two modules. In this case using binary dependencies is
  much more comfortable. Just check out the modules you want to work on with
- Eclipse and run <mvn eclipse:eclipse> for each module (see also {{{usage.html}
- Maven as an external tool}). Of course, all referenced artifacts must be
- available from your maven repository.
+ Eclipse and run <mvn eclipse:eclipse> for each module (see also
+ {{{usage.html}Maven as an external tool}}. Of course, all referenced artifacts
+ must be available from your maven repository.
 
 
 ** {Flat Project Layout}
