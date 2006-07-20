@@ -29,7 +29,7 @@ Usage
         <executions>
           <execution>
             <goals>
-              <goal>plugin</goal>
+              <goal>check</goal>
             </goals>
           </execution>
         </executions>
@@ -49,7 +49,7 @@ Usage
   To run DOCCK Plugin on a project, use:
 
 +---+
-mvn docck:plugin
+mvn docck:check
 +---+
 
 * Sample Output
