@@ -38,7 +38,7 @@ public class ReportTestCaseTest
     {
         tCase.setName( "Test Case Name" );
 
-        assertEquals( "Test Case Name", tCase.getName() );
+        assertEquals( "Test Case Nam", tCase.getName() );
     }
 
     public void testSetTime()

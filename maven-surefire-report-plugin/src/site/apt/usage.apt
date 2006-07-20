@@ -1,0 +1,47 @@
+  ------
+  Usage
+  ------
+  Allan Ramirez
+  ------
+  July 2006
+  ------
+
+Usage
+
+* Generate the report as part of Project Reports
+
+  To generate the surefire-report as part of the site-generation, add the following in
+  the \<reporting\> section of your pom:
+
++---+
+<project>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
+  ...
+</project>
++---+
+
+  When the <<<mvn site>>> is invoked, the report will be automatically
+  included in the Project Reports menu as shown in the figure below.
+
+[images/surefire-sample1.PNG] Sample surefire-report
+
+* Generate the report as standalone
+
+  The surefire-report can also generate the report using its standalone goal:
+
++---+
+mvn surefire-report:report  
++---+
+
+  A html report should be generated in <<<${basedir}/target/site/surefire-report.html>>>.
+
+[images/surefire-sample2.PNG] Sample standalone surefire-report
+
