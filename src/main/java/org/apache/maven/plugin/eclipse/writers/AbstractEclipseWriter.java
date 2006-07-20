@@ -16,32 +16,33 @@
 
 package org.apache.maven.plugin.eclipse.writers;
 
+import org.apache.maven.plugin.logging.Log;
+
 /**
- * Component writer for WTP 1.5. File name has changed in WTP 1.5rc2 and the <code>project-version</code> attribute has
- * been added. These ones are the only differences 
  * @author Fabrizio Giustina
  * @version $Id$
  */
-public class EclipseWtpComponent15Writer
-    extends EclipseWtpComponentWriter
+public abstract class AbstractEclipseWriter
+    implements EclipseWriter
 {
+    /**
+     * Logger.
+     */
+    protected Log log;
 
     /**
-     * File name where the WTP component settings will be stored for our Eclipse Project.
-     * @return <code>org.eclipse.wst.common.component</code>
+     * Configuration that will be used by the writer.
      */
-    protected String getComponentFileName()
-    {
-        return "org.eclipse.wst.common.component"; //$NON-NLS-1$
-    }
+    protected EclipseWriterConfig config;
 
     /**
-     * Version number added to component configuration.
-     * @return <code>1.0</code>
+     * @see org.apache.maven.plugin.eclipse.writers.EclipseWriter#init(org.apache.maven.plugin.logging.Log, org.apache.maven.plugin.eclipse.writers.EclipseWriterConfig)
      */
-    protected String getProjectVersion()
+    public EclipseWriter init( Log log, EclipseWriterConfig config )
     {
-        return "1.5.0"; //$NON-NLS-1$
+        this.log = log;
+        this.config = config;
+        return this;
     }
 
 }

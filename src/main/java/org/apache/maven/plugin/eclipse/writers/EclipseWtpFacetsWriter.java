@@ -20,13 +20,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.eclipse.EclipseSourceDir;
 import org.apache.maven.plugin.eclipse.Messages;
-import org.apache.maven.plugin.ide.IdeDependency;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
@@ -72,22 +67,20 @@ public class EclipseWtpFacetsWriter
      */
     private static final String FILE_FACET_CORE_XML = "org.eclipse.wst.common.project.facet.core.xml"; //$NON-NLS-1$
 
-    public EclipseWtpFacetsWriter( Log log, File eclipseProjectDir, MavenProject project, IdeDependency[] deps )
-    {
-        super( log, eclipseProjectDir, project, deps );
-    }
-
-    public void write( EclipseSourceDir[] sourceDirs, ArtifactRepository localRepository, File buildOutputDirectory )
+    /**
+     * @see org.apache.maven.plugin.eclipse.writers.EclipseWriter#write()
+     */
+    public void write()
         throws MojoExecutionException
     {
 
         // create a .settings directory (if not existing)
-        File settingsDir = new File( getEclipseProjectDirectory(), DIR_WTP_SETTINGS );
+        File settingsDir = new File( config.getEclipseProjectDirectory(), DIR_WTP_SETTINGS );
         settingsDir.mkdirs();
 
         FileWriter w;
 
-        String packaging = getProject().getPackaging();
+        String packaging = config.getProject().getPackaging();
 
         // Write out facet core xml
         try
