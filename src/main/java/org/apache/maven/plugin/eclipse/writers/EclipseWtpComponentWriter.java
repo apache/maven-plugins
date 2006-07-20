@@ -43,12 +43,12 @@ public class EclipseWtpComponentWriter
     /**
      * Context root attribute.
      */
-    private static final String ATTR_CONTEXT_ROOT = "context-root"; //$NON-NLS-1$
+    public static final String ATTR_CONTEXT_ROOT = "context-root"; //$NON-NLS-1$
 
     /**
      * The .settings folder for Web Tools Project 1.x release.
      */
-    private static final String DIR_WTP_SETTINGS = ".settings"; //$NON-NLS-1$
+    public static final String DIR_WTP_SETTINGS = ".settings"; //$NON-NLS-1$
 
     /**
      * File name where the WTP component settings will be stored for our Eclipse Project.
@@ -133,9 +133,7 @@ public class EclipseWtpComponentWriter
                                                                    "warSourceDirectory", //$NON-NLS-1$
                                                                    "/src/main/webapp" ); //$NON-NLS-1$
 
-            writer.startElement( ELT_PROPERTY );
-            writer.addAttribute( ATTR_CONTEXT_ROOT, config.getProject().getArtifactId() );
-            writer.endElement(); // property
+            writeContextRoot( writer );
 
             writer.startElement( ELT_WB_RESOURCE );
             writer.addAttribute( ATTR_DEPLOY_PATH, "/" ); //$NON-NLS-1$
@@ -183,6 +181,16 @@ public class EclipseWtpComponentWriter
 
         writer.endElement(); // wb-module
         writer.endElement(); // project-modules
+    }
+
+    /**
+     * @param writer
+     */
+    protected void writeContextRoot( XMLWriter writer )
+    {
+        writer.startElement( ELT_PROPERTY );
+        writer.addAttribute( ATTR_CONTEXT_ROOT, config.getProject().getArtifactId() );
+        writer.endElement(); // property
     }
 
 }
