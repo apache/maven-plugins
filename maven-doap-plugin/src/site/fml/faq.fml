@@ -1,12 +1,26 @@
 <?xml version="1.0"?>
 <faqs id="FAQ" title="Frequently Asked Questions">
  <part id="General">
-   <faq id="question1">
+   <faq id="what-is-doap">
      <question>What is DOAP?</question>
      <answer>
        <p>
          DOAP stands for "Description of a Project" and you can find out everything there is to
-         know about DOAP {{{http://usefulinc.com/doap}here}}.
+         know about DOAP <a href="http://usefulinc.com/doap">here</a>.
+       </p>
+     </answer>
+   </faq>
+   <faq id="why-use-doap">
+     <question>Why would I use DOAP when I have a POM?</question>
+     <answer>
+       <p>
+         That's a very good question! The answer is that generating a DOAP file should take no effort if you
+         are using Maven DOAP Plugin and it helps disseminate project information which can only be a good thing.
+         Cataloging tools like <a href="http://www.codezoo.com/">CodeZoo</a> and <a href="http://swik.net/">SWiK</a>
+         can benefit from you generating DOAP files and that can also only be a good thing. Ultimately the Maven
+         team plans to provide an index of all POMs that have been submitted to the central repository so we are most
+         likely going to have the most up-to-date information about projects. Even so, it is still important to spread
+         as much information about projects around as possible so there is no downside to creating DOAP files.
        </p>
      </answer>
    </faq>
