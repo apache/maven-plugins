@@ -5,7 +5,7 @@
  ------
  20 July 2006
 
-Introduction
+Maven 2 DOAP Plugin
 
   This plugin generates a Description of a Project (DOAP) file from a POM. We would like to be able to provide
   DOAP files for systems that use them as primary input but what to also alleviate the burden of maintaining
