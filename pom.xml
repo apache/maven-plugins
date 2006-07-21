@@ -16,6 +16,7 @@
   </prerequisites>
   <!-- Not inherited correctly -->
   <issueManagement>
+    <system>jira</system>
     <url>http://jira.codehaus.org/browse/MNG</url>
   </issueManagement>
   <!-- Not inherited correctly because the plugin is in the sandbox -->
