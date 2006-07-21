@@ -6,6 +6,66 @@
   July 2006
   ------
 
- Custom Location of the Surefire Report
+Configuring the Output Location as part of the Project Reports
 
-   The default location of the generated report is at <<<${basedir}/target/sure
+  To change the location of the generated output report along with other
+  project reports. The <<outputDirectory>> property of both
+  <<<maven-site-plugin>>> and <<<maven-surefire-plugin>>> should be set to the
+  new path. For more information about <<<maven-site-plugin>>>, please click
+  {{{http://maven.apache.org/plugins/maven-site-plugin/}here}}.
+
++----+
+<project>
+  [...]
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <configuration>
+           <outputDirectory>${basedir}/target/newsite</outputDirectory>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <configuration>
+           <outputDirectory>${basedir}/target/newsite</outputDirectory>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+  [...]
+</project>
++----+
+
+  Please take note that if the <<outputDirectory>> of the <<<site plugin>>>
+  is not configured, the output location of the surefire-report will still
+  be the default.
+
+* Configuring the Output Location using standalone goal
+
+  To change the location of the generated output report using the standalone
+  goal. The <<outputDirectory>> property should be set to the new path.
+
++----+
+<project>
+  [...]
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <configuration>
+           <outputDirectory>${basedir}/target/newsite</outputDirectory>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
++----+
+
+  Then execute the goal
+
++---+
+mvn surefire-report:report
++---+

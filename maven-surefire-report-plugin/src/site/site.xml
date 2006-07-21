@@ -40,6 +40,9 @@
     </menu>
     <menu name="Examples">
       <item name="Showing Failure Tests" href="examples/show-failures.html" />
+      <item name="Changing Report Name" href="examples/changing-report-name.html" />
+      <item name="Configuring the Output Location of the Report" href="examples/report-custom-location.html" />
+      <item name="Source Code Cross Reference" href="examples/cross-referencing.html" />
     </menu>
     ${reports}
   </body>
