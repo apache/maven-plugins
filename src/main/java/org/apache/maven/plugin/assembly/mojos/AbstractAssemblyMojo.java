@@ -22,6 +22,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
+import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.AssemblyArchiver;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
@@ -237,6 +238,10 @@ public abstract class AbstractAssemblyMojo
         catch ( AssemblyReadException e )
         {
             throw new MojoExecutionException( "Error reading assemblies: " + e.getMessage(), e );
+        }
+        catch ( InvalidAssemblerConfigurationException e )
+        {
+            throw new MojoFailureException( assemblyReader, e.getMessage(), "Mojo configuration is invalid: " + e.getMessage() );
         }
 
         // TODO: include dependencies marked for distribution under certain formats

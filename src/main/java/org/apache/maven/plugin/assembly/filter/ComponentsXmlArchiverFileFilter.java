@@ -39,7 +39,9 @@ import java.util.Map;
  */
 public class ComponentsXmlArchiverFileFilter
 {
-    private Map components;
+    // [jdcasey] Switched visibility to protected to allow testing. Also, because this class isn't final, it should allow
+    // some minimal access to the components accumulated for extending classes.
+    protected Map components;
 
     public static final String COMPONENTS_XML_PATH = "META-INF/plexus/components.xml";
 
@@ -62,6 +64,7 @@ public class ComponentsXmlArchiverFileFilter
         {
             newDom = newDom.getChild( "components" );
         }
+        
         if ( newDom != null )
         {
             Xpp3Dom[] children = newDom.getChildren();

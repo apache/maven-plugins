@@ -3,6 +3,7 @@ package org.apache.maven.plugin.assembly.io;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
+import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolationException;
 import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolator;
 import org.apache.maven.plugins.assembly.model.Assembly;
@@ -14,6 +15,8 @@ import org.apache.maven.plugins.assembly.model.io.xpp3.AssemblyXpp3Reader;
 import org.apache.maven.plugins.assembly.model.io.xpp3.ComponentXpp3Reader;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
+import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -39,7 +42,7 @@ public class DefaultAssemblyReader
 {
 
     public List readAssemblies( AssemblerConfigurationSource configSource )
-        throws AssemblyReadException
+        throws AssemblyReadException, InvalidAssemblerConfigurationException
     {
         List assemblies = new ArrayList();
 
@@ -111,7 +114,8 @@ public class DefaultAssemblyReader
         return assemblies;
     }
 
-    public Assembly getAssemblyForDescriptorReference( String ref, AssemblerConfigurationSource configSource ) throws AssemblyReadException
+    public Assembly getAssemblyForDescriptorReference( String ref, AssemblerConfigurationSource configSource )
+        throws AssemblyReadException, InvalidAssemblerConfigurationException
     {
         InputStream resourceAsStream = getClass().getResourceAsStream( "/assemblies/" + ref + ".xml" );
         
@@ -124,7 +128,7 @@ public class DefaultAssemblyReader
     }
 
     public Assembly getAssemblyFromDescriptorFile( File file, AssemblerConfigurationSource configSource )
-        throws AssemblyReadException
+        throws AssemblyReadException, InvalidAssemblerConfigurationException
     {
         Reader r = null;
         try
@@ -144,7 +148,7 @@ public class DefaultAssemblyReader
     }
 
     public Assembly readAssembly( Reader reader, String locationDescription, AssemblerConfigurationSource configSource )
-        throws AssemblyReadException
+        throws AssemblyReadException, InvalidAssemblerConfigurationException
     {
         Assembly assembly;
 
@@ -181,10 +185,11 @@ public class DefaultAssemblyReader
 
         if ( configSource.isSiteIncluded() || assembly.isIncludeSiteDirectory() )
         {
+            includeSiteInAssembly( assembly, configSource );
         }
 
         mergeComponentsWithMainAssembly( assembly, configSource );
-
+        
         return assembly;
     }
 
@@ -251,7 +256,7 @@ public class DefaultAssemblyReader
     {
         File basedir = configSource.getBasedir();
 
-        File componentDescriptor = new File( basedir + "/" + filePath );
+        File componentDescriptor = new File( basedir, filePath );
 
         Reader r;
         try
@@ -298,14 +303,14 @@ public class DefaultAssemblyReader
         return component;
     }
 
-    protected void includeSiteInAssembly( Assembly assembly, AssemblerConfigurationSource configSource )
-        throws MojoFailureException
+    public void includeSiteInAssembly( Assembly assembly, AssemblerConfigurationSource configSource )
+        throws InvalidAssemblerConfigurationException
     {
         File siteDirectory = configSource.getSiteDirectory();
 
         if ( !siteDirectory.exists() )
         {
-            throw new MojoFailureException(
+            throw new InvalidAssemblerConfigurationException(
                 "site did not exist in the target directory - please run site:site before creating the assembly" );
         }
 
@@ -318,6 +323,19 @@ public class DefaultAssemblyReader
         siteFileSet.setOutputDirectory( "/site" );
 
         assembly.addFileSet( siteFileSet );
+    }
+
+    protected Logger getLogger()
+    {
+        Logger logger = super.getLogger();
+        
+        if ( logger == null )
+        {
+            logger = new ConsoleLogger( Logger.LEVEL_INFO, "assemblyReader-internal" );
+            enableLogging( logger );
+        }
+        
+        return logger;
     }
 
 }

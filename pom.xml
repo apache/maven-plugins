@@ -38,6 +38,7 @@
             <phase>generate-sources</phase>
             <goals>
               <goal>xpp3-reader</goal>
+              <goal>xpp3-writer</goal>
               <goal>java</goal>
               <goal>xsd</goal>
             </goals>
@@ -80,6 +81,7 @@
           <configuration>
             <excludes>
               <exclude>**/BasicAbstractAssemblyMojoFeaturesTest*</exclude>
+              <exclude>**/testutils/*</exclude>
             </excludes>
           </configuration>
         </plugin>
@@ -137,6 +139,24 @@
       <groupId>easymock</groupId>
       <artifactId>easymock</artifactId>
       <version>1.2_Java1.3</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>jdom</groupId>
+      <artifactId>jdom</artifactId>
+      <version>1.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>jaxen</groupId>
+      <artifactId>jaxen</artifactId>
+      <version>1.0-FCS</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>saxpath</groupId>
+      <artifactId>saxpath</artifactId>
+      <version>1.0-FCS</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

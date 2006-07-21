@@ -16,6 +16,14 @@ public class PropertiesInterpolationValueSourceTest
         
         assertEquals( "value", new PropertiesInterpolationValueSource( props ).getValue( "key" ) );
     }
+    
+    public void testShouldRetrievePropertyValueForKeyWithDot()
+    {
+        Properties props = new Properties();
+        props.setProperty( "key.with.dot", "value" );
+        
+        assertEquals( "value", new PropertiesInterpolationValueSource( props ).getValue( "key.with.dot" ) );
+    }
 
     public void testShouldRetrieveNullValueForMissingKey()
     {

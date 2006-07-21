@@ -18,6 +18,7 @@ package org.apache.maven.plugin.assembly.mojos;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.AssemblyArchiver;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
@@ -44,6 +45,10 @@ public abstract class AbstractDirectoryMojo
         catch ( AssemblyReadException e )
         {
             throw new MojoExecutionException( "Error reading assembly descriptors: " + e.getMessage(), e );
+        }
+        catch ( InvalidAssemblerConfigurationException e )
+        {
+            throw new MojoFailureException( reader, e.getMessage(), "Mojo configuration is invalid: " + e.getMessage() );
         }
         
         for ( Iterator i = assemblies.iterator(); i.hasNext(); )
