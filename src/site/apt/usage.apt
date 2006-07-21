@@ -5,16 +5,14 @@
  ------
  20 July 2006
 
-How to Use
+Usage
 
-  You can directly use this plugin without configuring anything using the command "mvn doap:generate". If you
-  are running it from the top-level of a project, which will typically be the case, then you run it using the
-  non-recurse option: "mvn -N doap:generate".
+ The only two options you can configure are the <category> and the
+ <language>. You will probably want to set the <category> option but the
+ language will default to "Java". You would setup your POM as follows before
+ attempting to generate a DOAP file for your project: 
   
-  The only two options you can configure are the _category_ and the _language_. If you wish to set these options
-  you can use something like the following:
- 
--------------------
++-----
 <project>
   ...
   <build>
@@ -22,10 +20,10 @@ How to Use
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-idea-plugin</artifactId>
+        <artifactId>maven-doap-plugin</artifactId>
         <configuration>
           <category>build-management</category>
-          <language>Java</language>
+          <language>Intercal</language>
         </configuration>
       </plugin>
     </plugins>
@@ -33,7 +31,10 @@ How to Use
   </build>
    ...
 </project>
--------------------
++-----
 
-  For full documentation, click {{{index.html}here}}.
- 
+ To generate the DOAP file you would use the following command:
+
++-----
+mvn -N doap:generate
++-----
