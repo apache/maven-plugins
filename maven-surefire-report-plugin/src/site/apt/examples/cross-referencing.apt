@@ -1,0 +1,65 @@
+  ------
+  Source Code Cross Reference
+  ------
+  Allan Ramirez
+  ------
+  July 2006
+  ------
+
+Source Code Cross Reference
+
+  There are times that we need to know right away the line number of the
+  source code that caused the failure of the test. The surefire-report plugin
+  has the capability to cross reference the source code that made the test
+  failed. In able to activate it, the <<<maven-jxr-plugin>>> should
+  also be declared to the \<reporting\> section of the pom along with the
+  <<<maven-surefire-report-plugin>>>. For more reference about
+  <<<maven-jxr-plugin>>> please click
+  {{{http://maven.apache.org/plugins/maven-jxr-plugin/}here}}.
+
++----+
+<project>
+  [...]
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <configuration>
+           <!-- place your configuration here -->
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
+  [...]
+</project>
++----+
+
+  After executing <<<mvn site>>> for site generation, You'll notice that from
+  the <<Failure Details>> section of the report, the link is available to
+  redirect you to the source code that caused the failure.
+
+  From the figure below the code that caused the failure is
+  <com.test.proj.AppTest:36>
+
+[../images/failure-details.PNG] Failure Details
+
+  The link will redirect you to the source by clicking it.
+
+[../images/xref.PNG] The source
+
+* Disable the Cross Reference Link
+
+  To disable the link to the source code, the <<linkXRef>> property should
+  be set to <<false>>. Or another way is by not declaring the
+  <<<maven-jxr-plugin>>> to the \<reporting\> section.
+
+  
+
+
+
+  

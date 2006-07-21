@@ -29,3 +29,12 @@ Introduction
 
   The following examples show how to use the surefire-report plugin in more advanced usecases:
 
+  * {{{examples/show-failures.html}Showing Failure Tests}}
+
+  * {{{examples/changing-report-name.html}Changing Report Name}}
+
+  * {{{examples/report-custom-location.html}Configuring the Output Location of the Report}}
+
+  * {{{examples/cross-referencing.html}Source Code Cross Reference}}
+
+  []
