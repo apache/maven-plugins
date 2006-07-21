@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<faqs id="FAQ" title="Frequently Asked Questions">
+ <part id="General">
+   <faq id="question1">
+     <question>What is DOAP?</question>
+     <answer>
+       <p>
+         DOAP stands for "Description of a Project" and you can find out everything there is to
+         know about DOAP {{{http://usefulinc.com/doap}here}}.
+       </p>
+     </answer>
+   </faq>
+ </part>
+</faqs>
