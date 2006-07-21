@@ -14,7 +14,7 @@ Maven 2 DOCCK Plugin
 
 * Goals Overview
 
-  * {{{plugin-mojo.html}docck:check}} Checks a plugin's documentation for the standard minimums.
+  * {{{check-mojo.html}docck:check}} Checks a plugin's documentation for the standard minimums.
 
   []
 
