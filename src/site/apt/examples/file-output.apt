@@ -26,7 +26,7 @@ Sending the output to a file
               <output>target/docck-results.txt</output>
             </configuration>
             <goals>
-              <goal>plugin</goal>
+              <goal>check</goal>
             </goals>
           </execution>
         </executions>
@@ -43,6 +43,6 @@ Sending the output to a file
   You can also direct the command-line execution output to a file using:
 
 +---+
-mvn docck:plugin -Doutput=target/docck-results.txt
+mvn docck:check -Doutput=target/docck-results.txt
 +---+
 

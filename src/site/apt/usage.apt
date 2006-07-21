@@ -61,9 +61,9 @@ mvn docck:check
 [INFO] Searching repository for plugin with prefix: 'docck'.
 [INFO] ----------------------------------------------------------------------------
 [INFO] Building Mojo Project
-[INFO]    task-segment: [docck:plugin] (aggregator-style)
+[INFO]    task-segment: [docck:check] (aggregator-style)
 [INFO] ----------------------------------------------------------------------------
-[INFO] [docck:plugin]
+[INFO] [docck:check]
 [INFO] Checking project: Mojo Project
 [INFO] Using 2 extractors.
 [INFO] Applying extractor for language: java
@@ -87,9 +87,9 @@ mvn docck:check
 [INFO] Searching repository for plugin with prefix: 'docck'.
 [INFO] ----------------------------------------------------------------------------
 [INFO] Building Mojo Project
-[INFO]    task-segment: [docck:plugin] (aggregator-style)
+[INFO]    task-segment: [docck:check] (aggregator-style)
 [INFO] ----------------------------------------------------------------------------
-[INFO] [docck:plugin]
+[INFO] [docck:check]
 [INFO] Checking project: Mojo Project
 [INFO] Using 2 extractors.
 [INFO] Applying extractor for language: java
@@ -102,7 +102,7 @@ The following documentation problems were found:
 o Maven Documentation Checker Plugin (3 errors)
         - Missing site index.(html|xml|apt).
         - Missing examples.
-        - Parameter: 'mojoParameter' in mojo: 'plugin' is missing a description.
+        - Parameter: 'mojoParameter' in mojo: 'check' is missing a description.
 
 [INFO] ------------------------------------------------------------------------
 [ERROR] BUILD FAILURE
