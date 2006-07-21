@@ -12,6 +12,10 @@
   <prerequisites>
     <maven>2.0.2</maven>
   </prerequisites>
+  <issueManagement>
+    <system>JIRA</system>
+    <url>http://jira.codehaus.org/browse/MSITE</url>
+  </issueManagement>
   <contributors>
     <contributor>
       <name>Naoki Nose</name>
