@@ -15,4 +15,21 @@ Maven 2 DOAP Plugin
   subsequent versions as more people become interested in DOAP.
   
   
+* Goals Overview
 
+  * {{{plugin-mojo.html}doap:generate}Generates a DOAP file from the POM}}.
+
+  []
+
+* Usage
+
+  Instructions on how to use the DOAP Plugin can be found {{{usage.html}here}}.
+
+* Examples
+
+  To provide you with better understanding of some usages of the DOAP Plugin,
+  you can take a look at the following examples:
+  
+  * {{{examples/options.html}Setting the category and language options.}}
+
+  []
