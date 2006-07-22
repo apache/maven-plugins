@@ -30,7 +30,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 
 /**
- * Install the artifact in a maven one local repository
+ * Deploy the artifact in a Maven 1 remote repository.
  *
  * @goal deploy-maven-one-repository
  * @phase deploy
@@ -61,27 +61,35 @@ public class MavenOneRepositoryDeployMojo
 
     /**
      * @component
+     * @todo Write Javadoc for this
      */
     protected ArtifactDeployer deployer;
 
     /**
      * @component
+     * @todo Write Javadoc for this
      */
     protected ArtifactRepositoryFactory factory;
 
     /**
+     * The id to use in <code>settings.xml</code> if you want to configure server settings there.
+     *
      * @parameter expression="${remoteRepositoryId}" default-value="mavenOneRemoteRepository"
      * @required
      */
     protected String remoteRepositoryId;
 
     /**
+     * The URL to the remote repository.
+     *
      * @parameter expression="${remoteRepositoryUrl}"
      * @required
      */
     protected String remoteRepositoryUrl;
 
     /**
+     * Whether the remote repository uses a legacy layout or not.
+     *
      * @component roleHint="legacy"
      */
     private ArtifactRepositoryLayout legacyLayout;

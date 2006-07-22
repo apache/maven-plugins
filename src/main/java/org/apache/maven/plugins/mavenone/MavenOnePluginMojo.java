@@ -29,7 +29,7 @@ import org.codehaus.plexus.util.FileUtils;
 import java.io.File;
 
 /**
- * Create a Maven 1.x plugin.
+ * Package a Maven 1 plugin.
  *
  * @goal maven-one-plugin
  * @phase package
@@ -87,10 +87,13 @@ public class MavenOnePluginMojo
 
     /**
      * @component
+     * @todo Write Javadoc for this
      */
     private MavenProjectHelper projectHelper;
 
     /**
+     * Directory that contains the compiled classes to include in the jar.
+     *
      * @parameter expression="${project.build.outputDirectory}"
      * @required
      */
