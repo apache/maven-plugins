@@ -1,0 +1,31 @@
+ ------
+ Introduction
+ ------
+ Dennis Lundberg
+ ------
+ 20 July 2006
+ ------
+
+
+Maven 2 One Plugin
+
+  This plugin provides some integration tasks with Maven 1.x:
+
+   * Provides a packaging mechanism for Maven 1.x plugins, building using Maven 2.0
+
+   * Provides a hook for installation that will copy built artifacts into a local or remote Maven 1.x repository, for
+     concurrent development with Maven 1.x projects
+
+* Goals Overview
+
+  * {{{deploy-maven-one-repository-mojo.html}one:deploy-maven-one-repository}} deploy an artifact into a Maven 1 remote repository.
+
+  * {{{install-maven-one-repository-mojo.html}one:install-maven-one-repository}} install an artifact into the Maven 1 local repository.
+
+  * {{{maven-one-plugin-mojo.html}one:maven-one-plugin}} package a Maven 1 plugin.
+
+  []
+
+* Usage
+
+  Instructions on how to use the One Plugin can be found {{{usage.html}here}}.

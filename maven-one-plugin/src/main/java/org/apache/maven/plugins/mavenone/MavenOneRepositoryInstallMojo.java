@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * Install the artifact in a maven one local repository
+ * Install the artifact in the Maven 1 local repository.
  *
  * @goal install-maven-one-repository
  * @phase install
@@ -66,20 +66,26 @@ public class MavenOneRepositoryInstallMojo
 
     /**
      * @component
+     * @todo Write Javadoc for this
      */
     protected ArtifactInstaller installer;
 
     /**
      * @component
+     * @todo Write Javadoc for this
      */
     protected ArtifactRepositoryFactory factory;
 
     /**
+     * The location of the local repository.
+     *
      * @parameter expression="${mavenOneRepository}"
      */
     protected String mavenOneRepository;
 
     /**
+     * Whether the local repository uses a legacy layout or not.
+     *
      * @component roleHint="legacy"
      */
     private ArtifactRepositoryLayout legacyLayout;
