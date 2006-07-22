@@ -17,9 +17,12 @@ public class TestFileManager
 
     private final String baseFilename;
 
-    public TestFileManager( String baseFilename )
+    private final String fileSuffix;
+
+    public TestFileManager( String baseFilename, String fileSuffix )
     {
         this.baseFilename = baseFilename;
+        this.fileSuffix = fileSuffix;
     }
 
     public void markForDeletion( File toDelete )
@@ -48,8 +51,9 @@ public class TestFileManager
     public synchronized File createTempFile()
         throws IOException
     {
-        File tempFile = File.createTempFile( baseFilename, "" );
+        File tempFile = File.createTempFile( baseFilename, fileSuffix );
         tempFile.deleteOnExit();
+        filesToDelete.add( tempFile );
 
         return tempFile;
     }

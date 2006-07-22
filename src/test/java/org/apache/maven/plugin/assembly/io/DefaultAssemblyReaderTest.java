@@ -22,6 +22,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -40,7 +43,7 @@ public class DefaultAssemblyReaderTest
 
     public void setUp()
     {
-        fileManager = new TestFileManager( "assembly-reader.test." );
+        fileManager = new TestFileManager( "assembly-reader.test.", ".xml" );
         mockManager = new MockManager();
 
         configSourceControl = MockControl.createControl( AssemblerConfigurationSource.class );
@@ -712,8 +715,197 @@ public class DefaultAssemblyReaderTest
         Assembly result = new DefaultAssemblyReader().getAssemblyForDescriptorReference( "bin", configSource );
 
         assertEquals( "bin", result.getId() );
-        
+
         mockManager.verifyAll();
+    }
+
+    public void testReadAssemblies_ShouldGetAssemblyDescriptorFromSingleFile()
+        throws IOException, AssemblyReadException, InvalidAssemblerConfigurationException
+    {
+        Assembly assembly = new Assembly();
+        assembly.setId( "test" );
+
+        FileSet fs = new FileSet();
+        fs.setDirectory( "/dir" );
+
+        assembly.addFileSet( fs );
+
+        List files = writeAssembliesToFile( Collections.singletonList( assembly ) );
+
+        File assemblyFile = (File) files.get( 0 );
+        File basedir = assemblyFile.getParentFile();
+
+        List assemblies = performReadAssemblies( basedir, assemblyFile, null, null, null, null );
+
+        assertNotNull( assemblies );
+        assertEquals( 1, assemblies.size() );
+
+        Assembly result = (Assembly) assemblies.get( 0 );
+
+        assertEquals( assembly.getId(), result.getId() );
+    }
+
+    public void testReadAssemblies_ShouldGetAssemblyDescriptorFromSingleRef()
+        throws IOException, AssemblyReadException, InvalidAssemblerConfigurationException
+    {
+        File basedir = fileManager.createTempDir();
+
+        List assemblies = performReadAssemblies( basedir, null, "bin", null, null, null );
+
+        assertNotNull( assemblies );
+        assertEquals( 1, assemblies.size() );
+
+        Assembly result = (Assembly) assemblies.get( 0 );
+
+        assertEquals( "bin", result.getId() );
+    }
+
+    public void testReadAssemblies_ShouldGetAssemblyDescriptorFromFileArray()
+        throws IOException, AssemblyReadException, InvalidAssemblerConfigurationException
+    {
+        Assembly assembly1 = new Assembly();
+        assembly1.setId( "test" );
+
+        Assembly assembly2 = new Assembly();
+        assembly2.setId( "test2" );
+
+        List assemblies = new ArrayList();
+        assemblies.add( assembly1 );
+        assemblies.add( assembly2 );
+
+        List files = writeAssembliesToFile( assemblies );
+
+        File assemblyFile = (File) files.get( 0 );
+        File basedir = assemblyFile.getParentFile();
+
+        List results = performReadAssemblies( basedir, null, null, (File[]) files.toArray( new File[0] ), null, null );
+
+        assertNotNull( results );
+        assertEquals( 2, results.size() );
+
+        Assembly result1 = (Assembly) assemblies.get( 0 );
+
+        assertEquals( assembly1.getId(), result1.getId() );
+
+        Assembly result2 = (Assembly) assemblies.get( 1 );
+
+        assertEquals( assembly2.getId(), result2.getId() );
+    }
+
+    public void testReadAssemblies_ShouldGetAssemblyDescriptorFromMultipleRefs()
+        throws IOException, AssemblyReadException, InvalidAssemblerConfigurationException
+    {
+        File basedir = fileManager.createTempDir();
+
+        List assemblies = performReadAssemblies( basedir, null, null, null, new String[] { "bin", "src" }, null );
+
+        assertNotNull( assemblies );
+        assertEquals( 2, assemblies.size() );
+
+        Assembly result = (Assembly) assemblies.get( 0 );
+
+        assertEquals( "bin", result.getId() );
+
+        Assembly result2 = (Assembly) assemblies.get( 1 );
+
+        assertEquals( "src", result2.getId() );
+    }
+
+    public void testReadAssemblies_ShouldGetAssemblyDescriptorFromDirectory()
+        throws IOException, AssemblyReadException, InvalidAssemblerConfigurationException
+    {
+        Assembly assembly1 = new Assembly();
+        assembly1.setId( "test" );
+
+        Assembly assembly2 = new Assembly();
+        assembly2.setId( "test2" );
+
+        List assemblies = new ArrayList();
+        assemblies.add( assembly1 );
+        assemblies.add( assembly2 );
+
+        List files = writeAssembliesToFile( assemblies );
+
+        File assemblyFile = (File) files.get( 0 );
+        File basedir = assemblyFile.getParentFile();
+
+        List results = performReadAssemblies( basedir, null, null, null, null, basedir );
+
+        assertNotNull( results );
+        assertEquals( 2, results.size() );
+
+        Assembly result1 = (Assembly) assemblies.get( 0 );
+
+        assertEquals( assembly1.getId(), result1.getId() );
+
+        Assembly result2 = (Assembly) assemblies.get( 1 );
+
+        assertEquals( assembly2.getId(), result2.getId() );
+    }
+
+    private List writeAssembliesToFile( List assemblies )
+        throws IOException
+    {
+        List files = new ArrayList();
+
+        for ( Iterator it = assemblies.iterator(); it.hasNext(); )
+        {
+            Assembly assembly = (Assembly) it.next();
+
+            File assemblyFile = fileManager.createTempFile();
+
+            FileWriter writer = null;
+            try
+            {
+                writer = new FileWriter( assemblyFile );
+                new AssemblyXpp3Writer().write( writer, assembly );
+            }
+            finally
+            {
+                IOUtil.close( writer );
+            }
+
+            files.add( assemblyFile );
+        }
+
+        return files;
+    }
+
+    private List performReadAssemblies( File basedir, File descriptor, String descriptorRef, File[] descriptors,
+                                        String[] descriptorRefs, File descriptorDir )
+        throws AssemblyReadException, InvalidAssemblerConfigurationException
+    {
+        configSource.getDescriptor();
+        configSourceControl.setReturnValue( descriptor );
+
+        configSource.getDescriptorId();
+        configSourceControl.setReturnValue( descriptorRef );
+
+        configSource.getDescriptorReferences();
+        configSourceControl.setReturnValue( descriptorRefs );
+
+        configSource.getDescriptors();
+        configSourceControl.setReturnValue( descriptors );
+
+        configSource.getDescriptorSourceDirectory();
+        configSourceControl.setReturnValue( descriptorDir );
+
+        configSource.getBasedir();
+        configSourceControl.setReturnValue( basedir, MockControl.ONE_OR_MORE );
+
+        configSource.getProject();
+        configSourceControl.setReturnValue( new MavenProject( new Model() ), MockControl.ONE_OR_MORE );
+
+        configSource.isSiteIncluded();
+        configSourceControl.setReturnValue( false, MockControl.ONE_OR_MORE );
+
+        mockManager.replayAll();
+
+        List assemblies = new DefaultAssemblyReader().readAssemblies( configSource );
+
+        mockManager.verifyAll();
+
+        return assemblies;
     }
 
 }
