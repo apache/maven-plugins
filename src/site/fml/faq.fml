@@ -6,8 +6,8 @@
      <answer>
        <p>
          The plugin documentation standard was created to address the frequent
-	       complain of lack of documentation, specifically on the maven plugins.
-	       The standard was based on the suggestion made on the maven dev mailing
+	       complaint of lack of documentation, specifically on the maven plugins.
+	       The standard was based on suggestions made on the maven dev mailing
 	       list with some refinements. It is a community consensus of what basic
 	       documentation a maven plugin should have.
        </p>
