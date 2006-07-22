@@ -17,7 +17,7 @@ Maven 2 DOAP Plugin
   
 * Goals Overview
 
-  * {{{plugin-mojo.html}doap:generate}} Generates a DOAP file from the POM.
+  * {{{plugin-info.html}doap:generate}} Generates a DOAP file from the POM.
 
   []
 
