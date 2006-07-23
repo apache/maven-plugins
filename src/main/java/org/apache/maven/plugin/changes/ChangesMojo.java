@@ -1,4 +1,4 @@
-package org.apache.maven.changes;
+package org.apache.maven.plugin.changes;
 
 /*
  * Copyright 2001-2006 The Apache Software Foundation.
@@ -16,17 +16,17 @@ package org.apache.maven.changes;
  * limitations under the License.
  */
 
-import org.apache.maven.doxia.siterenderer.Renderer;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.AbstractMavenReport;
-import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.plexus.util.FileUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Locale;
 import java.util.ResourceBundle;
+
+import org.apache.maven.doxia.siterenderer.Renderer;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.reporting.AbstractMavenReport;
+import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.plexus.util.FileUtils;
 
 /**
  * Goal which creates a nicely formatted Changes Report in html format from a changes.xml file.
@@ -100,15 +100,18 @@ public class ChangesMojo
         throws MavenReportException
     {
         final String pluginResourcesBase = "org/apache/maven/plugin/changes";
-        String resourceNames[] =
-            {"images/add.gif", "images/fix.gif", "images/remove.gif", "images/rss.png", "images/update.gif"};
+        String resourceNames[] = {
+            "images/add.gif",
+            "images/fix.gif",
+            "images/remove.gif",
+            "images/rss.png",
+            "images/update.gif" };
         try
         {
             getLog().debug( "Copying static resources." );
             for ( int i = 0; i < resourceNames.length; i++ )
             {
-                URL url =
-                    this.getClass().getClassLoader().getResource( pluginResourcesBase + "/" + resourceNames[i] );
+                URL url = this.getClass().getClassLoader().getResource( pluginResourcesBase + "/" + resourceNames[i] );
                 FileUtils.copyURLToFile( url, new File( outputDirectory, resourceNames[i] ) );
             }
         }

@@ -1,4 +1,4 @@
-package org.apache.maven.jira;
+package org.apache.maven.plugin.jira;
 
 /*
  * Copyright 2006 The Apache Software Foundation.
@@ -16,12 +16,12 @@ package org.apache.maven.jira;
  * limitations under the License.
  */
 
+import java.text.NumberFormat;
+import java.text.ParsePosition;
+
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.maven.plugin.logging.Log;
-
-import java.text.NumberFormat;
-import java.text.ParsePosition;
 
 /**
  * A helper class with common JIRA related functionality.
@@ -46,7 +46,7 @@ public class JiraHelper
         String jiraId = null;
         GetMethod gm = new GetMethod( issueManagementUrl );
         log.info( "JIRA URL " + issueManagementUrl + " doesn't include a pid, trying to get it" );
-        
+
         String projectPage;
         try
         {

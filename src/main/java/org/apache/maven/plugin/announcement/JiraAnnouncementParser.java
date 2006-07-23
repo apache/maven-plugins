@@ -1,4 +1,4 @@
-package org.apache.maven.announcement;
+package org.apache.maven.plugin.announcement;
 
 /*
  * Copyright 2001-2006 The Apache Software Foundation.
@@ -16,17 +16,18 @@ package org.apache.maven.announcement;
  * limitations under the License.
  */
 
-import org.apache.maven.changes.Action;
-import org.apache.maven.changes.Release;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.apache.maven.plugin.changes.Action;
+import org.apache.maven.plugin.changes.Release;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * XML Parser for <code>JiraAnnouncement</code>s.
@@ -35,36 +36,36 @@ import java.util.List;
  * @version $Id$
  */
 public class JiraAnnouncementParser
-        extends DefaultHandler
+    extends DefaultHandler
 {
     private String elementValue;
-    
+
     private String parentElement = "";
-    
+
     private JiraAnnouncement issue;
-    
+
     private List issues = new ArrayList();
-    
+
     public JiraAnnouncementParser( String xmlPath )
     {
         File xml = new File( xmlPath );
-        
+
         parseJira( xml );
     }
-    
+
     public JiraAnnouncementParser( File xmlPath )
     {
         parseJira( xmlPath );
     }
-    
+
     public void parseJira( File xml )
     {
         SAXParserFactory factory = SAXParserFactory.newInstance();
-        
+
         try
         {
             SAXParser parser = factory.newSAXParser();
-            
+
             parser.parse( xml, this );
         }
         catch ( Throwable t )
@@ -72,25 +73,25 @@ public class JiraAnnouncementParser
             t.printStackTrace();
         }
     }
-    
+
     public void startElement( String namespaceURI, String sName, String qName, Attributes attrs )
         throws SAXException
     {
         if ( qName.equals( "item" ) )
         {
             issue = new JiraAnnouncement();
-            
+
             parentElement = "item";
         }
     }
-    
+
     public void endElement( String namespaceURI, String sName, String qName )
         throws SAXException
     {
         if ( qName.equals( "item" ) )
         {
-            issues.add( issue ); 
-            
+            issues.add( issue );
+
             parentElement = "";
         }
         else if ( qName.equals( "title" ) && parentElement.equals( "item" ) )
@@ -138,12 +139,12 @@ public class JiraAnnouncementParser
             issue.addComment( elementValue );
         }
     }
-    
+
     public void characters( char[] buff, int offset, int len )
         throws SAXException
     {
         String str = new String( buff, offset, len );
-        
+
         String string = str.trim();
 
         if ( !string.equals( "" ) )
@@ -151,26 +152,26 @@ public class JiraAnnouncementParser
             elementValue = string;
         }
     }
-    
+
     public List getIssues()
     {
         return this.issues;
     }
-    
+
     public List getReleases( List issues )
     {
         List releases = new ArrayList();
-        
+
         Release release = new Release();
-        
+
         String type = "";
 
         for ( int i = 0; i < issues.size(); i++ )
         {
-            JiraAnnouncement issue = ( JiraAnnouncement ) issues.get( i );
-            
+            JiraAnnouncement issue = (JiraAnnouncement) issues.get( i );
+
             Action action = new Action();
-            
+
             action.setIssue( issue.getKey() );
 
             if ( issue.getType().equals( "Bug" ) )
@@ -186,28 +187,28 @@ public class JiraAnnouncementParser
                 type = "update";
             }
             action.setType( type );
-            
+
             action.setDev( issue.getAssignee() );
-            
+
             //action.setDueTo( issue.getReporter() );
 
             if ( issue.getComments() != null && !issue.getComments().isEmpty() )
             {
                 int commentSize = issue.getComments().size();
-           
+
                 action.setAction( issue.getComments().get( commentSize - 1 ).toString() );
-            }    
+            }
             else
             {
                 action.setAction( "" );
             }
             release.addAction( action );
-            
+
             release.setDescription( issue.getSummary() );
-            
+
             release.setVersion( issue.getFixVersion() );
-            
-            releases.add( release ); 
+
+            releases.add( release );
         }
         return releases;
     }

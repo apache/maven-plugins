@@ -1,4 +1,4 @@
-package org.apache.maven.announcement;
+package org.apache.maven.plugin.announcement;
 
 /*
  * Copyright 2001-2006 The Apache Software Foundation.
@@ -16,20 +16,20 @@ package org.apache.maven.announcement;
  * limitations under the License.
  */
 
-import org.apache.maven.announcement.mailsender.ProjectJavamailMailSender;
-import org.apache.maven.model.Developer;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.logging.console.ConsoleLogger;
-import org.codehaus.plexus.mailsender.MailSenderException;
-import org.codehaus.plexus.util.IOUtil;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
+
+import org.apache.maven.model.Developer;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.announcement.mailsender.ProjectJavamailMailSender;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.logging.console.ConsoleLogger;
+import org.codehaus.plexus.mailsender.MailSenderException;
+import org.codehaus.plexus.util.IOUtil;
 
 /**
  * Goal which sends an announcement through email.
@@ -39,7 +39,8 @@ import java.util.List;
  * @author aramirez@exist.com
  * @version $Id$
  */
-public class AnnouncementMailMojo extends AbstractMojo
+public class AnnouncementMailMojo
+    extends AbstractMojo
 {
     //=========================================
     // announcement-mail goal fields
@@ -50,7 +51,7 @@ public class AnnouncementMailMojo extends AbstractMojo
      * @readonly
      */
     private MavenProject project;
-    
+
     /**
      * Smtp Server.
      *
@@ -58,7 +59,7 @@ public class AnnouncementMailMojo extends AbstractMojo
      * @required
      */
     private String smtpHost;
-    
+
     /**
      * Port.
      *
@@ -66,28 +67,28 @@ public class AnnouncementMailMojo extends AbstractMojo
      * @required
      */
     private int smtpPort;
-    
+
     /**
      * The username used to send the email.
      *
      * @parameter
      */
     private String username;
-    
+
     /**
      * The password used to send the email.
      *
      * @parameter
      */
     private String password;
-    
+
     /**
      * If the email should be sent in SSL mode.
      *
      * @parameter default-value="false"
      */
     private boolean sslMode;
-    
+
     /**
      * Subject for the email.
      *
@@ -95,7 +96,7 @@ public class AnnouncementMailMojo extends AbstractMojo
      * @required
      */
     private String subject;
-    
+
     /**
      * Recipient email address.
      *
@@ -103,7 +104,7 @@ public class AnnouncementMailMojo extends AbstractMojo
      * @required
      */
     private List toAddresses;
-    
+
     /**
      * Sender.
      *
@@ -111,7 +112,7 @@ public class AnnouncementMailMojo extends AbstractMojo
      * @required
      */
     private List from;
-    
+
     /**
      * Directory which contains the template for announcement email.
      *
@@ -119,30 +120,30 @@ public class AnnouncementMailMojo extends AbstractMojo
      * @required
      */
     private String templateOutputDirectory;
-    
+
     /**
      * The Velocity template used to format the announcement.
      *
      * @parameter default-value="announcement.vm"
      * @required
      */
-    private String template;      
-    
+    private String template;
+
     private ProjectJavamailMailSender mailer = new ProjectJavamailMailSender();
-    
-    
-    public void execute() throws MojoExecutionException
-    {              
+
+    public void execute()
+        throws MojoExecutionException
+    {
         template = templateOutputDirectory + "/" + template;
-        
-        ConsoleLogger logger = new ConsoleLogger( 0, "base" );      
-        
-        mailer.enableLogging( logger );        
-        
+
+        ConsoleLogger logger = new ConsoleLogger( 0, "base" );
+
+        mailer.enableLogging( logger );
+
         mailer.setSmtpHost( getSmtpHost() );
-        
+
         mailer.setSmtpPort( getSmtpPort() );
-        
+
         mailer.setSslMode( sslMode );
 
         if ( username != null )
@@ -157,10 +158,10 @@ public class AnnouncementMailMojo extends AbstractMojo
         mailer.initialize();
 
         if ( isTextFileExisting( template ) )
-        {  
+        {
             getLog().info( "Connecting to Host: " + getSmtpHost() + ":" + getSmtpPort() );
 
-            sendMessage(  );
+            sendMessage();
         }
         else
         {
@@ -170,7 +171,7 @@ public class AnnouncementMailMojo extends AbstractMojo
                 {
                     getLog().info( "Connecting to Host: " + getSmtpHost() + " : " + getSmtpPort() );
 
-                    sendMessage(  );
+                    sendMessage();
                 }
                 else
                 {
@@ -178,21 +179,22 @@ public class AnnouncementMailMojo extends AbstractMojo
                 }
             }
             else
-            {                
+            {
                 throw new MojoExecutionException( "Announcement template " + template + " not found..." );
             }
         }
     }
-    
+
     /**
      * Send the email 
      *
      * @throws MojoExecutionException
      */
-    protected void sendMessage() throws MojoExecutionException
+    protected void sendMessage()
+        throws MojoExecutionException
     {
         String email = "";
-        
+
         try
         {
             int i = 0;
@@ -200,18 +202,18 @@ public class AnnouncementMailMojo extends AbstractMojo
             String[] from = getFirstDevInfo( getFrom() );
 
             while ( i < getToAddresses().size() )
-            {   
+            {
                 email = getToAddresses().get( i ).toString();
 
                 getLog().info( "Sending mail... " + email );
 
-                mailer.send( getSubject(), IOUtil.toString( readAnnouncement( template ) ),
-                             email, "", from[0], from[1] );
+                mailer
+                    .send( getSubject(), IOUtil.toString( readAnnouncement( template ) ), email, "", from[0], from[1] );
 
                 getLog().info( "Sent..." );
 
                 i++;
-            }      
+            }
         }
         catch ( IOException ioe )
         {
@@ -220,13 +222,13 @@ public class AnnouncementMailMojo extends AbstractMojo
         catch ( MailSenderException e )
         {
             throw new MojoExecutionException( "Failed to send email < " + email + " >", e );
-        }        
+        }
     }
-    
+
     protected boolean isTextFileExisting( String fileName )
     {
         boolean found = false;
-        
+
         File f = new File( fileName );
 
         if ( f.exists() )
@@ -235,20 +237,21 @@ public class AnnouncementMailMojo extends AbstractMojo
         }
         return found;
     }
-    
+
     /**
      * Read the announcement generated file
      * @param  fileName         Accepts filename to be read.
      * @return  fileReader      Return the FileReader.
      */
-    public FileReader readAnnouncement( String fileName ) throws MojoExecutionException
-    {   
+    public FileReader readAnnouncement( String fileName )
+        throws MojoExecutionException
+    {
         FileReader fileReader = null;
-        
+
         try
         {
             File file = new File( fileName );
-            
+
             fileReader = new FileReader( file );
         }
         catch ( FileNotFoundException fnfe )
@@ -257,32 +260,33 @@ public class AnnouncementMailMojo extends AbstractMojo
         }
         return fileReader;
     }
-    
+
     /**
      * Retrieve the 1st name and email address found in the developers list
      * @param fromNames         Accepts List of developers.
      * @return fromAddress      Returns the 1st email address found in the list.
      */
-    public String[] getFirstDevInfo( List fromNames ) throws MojoExecutionException
+    public String[] getFirstDevInfo( List fromNames )
+        throws MojoExecutionException
     {
         String fromAddress = "";
-        
+
         String fromName = "";
-        
+
         String[] info = new String[2];
 
         if ( fromNames.size() > 0 )
         {
-            Developer developer = ( Developer ) fromNames.get( 0 );
+            Developer developer = (Developer) fromNames.get( 0 );
 
             fromAddress = developer.getEmail();
-            
+
             fromName = developer.getName();
 
             info[0] = fromAddress;
-            
+
             info[1] = fromName;
-            
+
             getLog().info( "email retrieved. " + fromAddress + " < " + fromName + " > " );
 
             if ( fromAddress == null || fromAddress.equals( "" ) )
@@ -296,12 +300,12 @@ public class AnnouncementMailMojo extends AbstractMojo
         }
         return info;
     }
-        
+
     //================================
     // announcement-mail accessors
     //================================
-    
-    public String getSmtpHost() 
+
+    public String getSmtpHost()
     {
         return smtpHost;
     }
@@ -311,7 +315,7 @@ public class AnnouncementMailMojo extends AbstractMojo
         this.smtpHost = smtpHost;
     }
 
-    public int getSmtpPort() 
+    public int getSmtpPort()
     {
         return smtpPort;
     }
@@ -321,7 +325,7 @@ public class AnnouncementMailMojo extends AbstractMojo
         this.smtpPort = smtpPort;
     }
 
-    public String getSubject() 
+    public String getSubject()
     {
         return subject;
     }
@@ -331,7 +335,7 @@ public class AnnouncementMailMojo extends AbstractMojo
         this.subject = subject;
     }
 
-    public List getFrom() 
+    public List getFrom()
     {
         return from;
     }
@@ -341,7 +345,7 @@ public class AnnouncementMailMojo extends AbstractMojo
         this.from = from;
     }
 
-    public MavenProject getProject() 
+    public MavenProject getProject()
     {
         return project;
     }
@@ -351,7 +355,7 @@ public class AnnouncementMailMojo extends AbstractMojo
         this.project = project;
     }
 
-    public List getToAddresses() 
+    public List getToAddresses()
     {
         return toAddresses;
     }

@@ -1,4 +1,4 @@
-package org.apache.maven.jira;
+package org.apache.maven.plugin.jira;
 
 /*
  * Copyright 2005-2006 The Apache Software Foundation.
@@ -20,7 +20,8 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-public class JiraIssueTest extends TestCase
+public class JiraIssueTest
+    extends TestCase
 {
     JiraIssue issue;
 
@@ -29,55 +30,57 @@ public class JiraIssueTest extends TestCase
         super( testName );
     }
 
-    protected void setUp() throws Exception 
+    protected void setUp()
+        throws Exception
     {
         issue = new JiraIssue();
     }
 
-    protected void tearDown() throws Exception 
+    protected void tearDown()
+        throws Exception
     {
     }
 
-    public static Test suite() 
+    public static Test suite()
     {
         TestSuite suite = new TestSuite( JiraIssueTest.class );
 
         return suite;
     }
 
-    public void testGetSetKey() 
+    public void testGetSetKey()
     {
         issue.setKey( "key" );
 
         assertEquals( "key", issue.getKey() );
     }
 
-    public void testGetSetSummary() 
+    public void testGetSetSummary()
     {
         issue.setSummary( "summary" );
 
         assertEquals( "summary", issue.getSummary() );
     }
 
-    public void testGetSetStatus() 
+    public void testGetSetStatus()
     {
         issue.setStatus( "status" );
 
         assertEquals( "status", issue.getStatus() );
     }
 
-    public void testGetSetResolution() 
+    public void testGetSetResolution()
     {
         issue.setResolution( "resolution" );
 
         assertEquals( "resolution", issue.getResolution() );
     }
 
-    public void testGetSetAssignee() 
+    public void testGetSetAssignee()
     {
         issue.setAssignee( "assignee" );
 
         assertEquals( "assignee", issue.getAssignee() );
     }
-    
+
 }

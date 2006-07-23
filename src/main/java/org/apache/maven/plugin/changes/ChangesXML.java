@@ -1,4 +1,4 @@
-package org.apache.maven.changes;
+package org.apache.maven.plugin.changes;
 
 /*
  * Copyright 2001-2006 The Apache Software Foundation.
@@ -16,16 +16,17 @@ package org.apache.maven.changes;
  * limitations under the License.
  */
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.apache.maven.plugin.logging.Log;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * XML Parser for changes.xml files.

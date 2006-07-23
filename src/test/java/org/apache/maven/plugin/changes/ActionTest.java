@@ -1,4 +1,4 @@
-package org.apache.maven.changes;
+package org.apache.maven.plugin.changes;
 
 /*
  * Copyright 2005-2006 The Apache Software Foundation.
@@ -20,7 +20,8 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-public class ActionTest extends TestCase
+public class ActionTest
+    extends TestCase
 {
     Action action = new Action();
 
@@ -29,57 +30,59 @@ public class ActionTest extends TestCase
         super( testName );
     }
 
-    protected void setUp() throws Exception 
+    protected void setUp()
+        throws Exception
     {
     }
 
-    protected void tearDown() throws Exception 
+    protected void tearDown()
+        throws Exception
     {
     }
 
-    public static Test suite() 
+    public static Test suite()
     {
         TestSuite suite = new TestSuite( ActionTest.class );
 
         return suite;
     }
-    
-    public void testGetSetAction() 
+
+    public void testGetSetAction()
     {
         action.setAction( "action" );
 
         assertEquals( "action", action.getAction() );
     }
 
-    public void testGetSetDev() 
+    public void testGetSetDev()
     {
         action.setDev( "developer" );
 
         assertEquals( "developer", action.getDev() );
     }
 
-    public void testGetSetType() 
+    public void testGetSetType()
     {
         action.setType( "type" );
 
         assertEquals( "type", action.getType() );
     }
 
-    public void testGetSetIssue() 
+    public void testGetSetIssue()
     {
         action.setIssue( "issue" );
 
         assertEquals( "issue", action.getIssue() );
     }
 
-    public void testGetSetDueTo() 
+    public void testGetSetDueTo()
     {
         action.setDueTo( "due-to" );
 
         assertEquals( "due-to", action.getDueTo() );
     }
 
-    public void testGetSetDueToEmail() 
+    public void testGetSetDueToEmail()
     {
         action.setDueToEmail( "due-to-mail" );
 

@@ -1,4 +1,4 @@
-package org.apache.maven.announcement;
+package org.apache.maven.plugin.announcement;
 
 /*
  * Copyright 2001-2006 The Apache Software Foundation.
@@ -16,31 +16,31 @@ package org.apache.maven.announcement;
  * limitations under the License.
  */
 
-import org.apache.maven.jira.JiraIssue;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.maven.plugin.jira.JiraIssue;
 
 /**
  * A JIRA announcement.
  *  
  * @version $Id$
  */
-public class JiraAnnouncement 
-        extends JiraIssue
+public class JiraAnnouncement
+    extends JiraIssue
 {
     private String type;
-    
+
     private String comment;
-    
+
     private String title;
-    
+
     private String fixVersion;
-    
+
     private String reporter;
-    
+
     private List comments;
-    
+
     public void addComment( String comment )
     {
         if ( comments == null )
@@ -55,22 +55,22 @@ public class JiraAnnouncement
         return fixVersion;
     }
 
-    public void setFixVersion( String fixVersion ) 
+    public void setFixVersion( String fixVersion )
     {
         this.fixVersion = fixVersion;
     }
-    
-    public String getComment() 
+
+    public String getComment()
     {
         return comment;
     }
 
-    public void setComment( String comment ) 
+    public void setComment( String comment )
     {
         this.comment = comment;
     }
-    
-    public String getTitle() 
+
+    public String getTitle()
     {
         return title;
     }
@@ -78,30 +78,30 @@ public class JiraAnnouncement
     public void setTitle( String title )
     {
         this.title = title;
-    }    
-    
+    }
+
     public void setType( String type )
     {
         this.type = type;
     }
-    
+
     public String getType()
     {
         return this.type;
     }
-    
+
     public void setReporter( String reporter )
     {
         this.reporter = reporter;
     }
-    
+
     public String getReporter()
     {
         return this.reporter;
     }
-    
+
     public List getComments()
     {
         return comments;
-    }    
+    }
 }

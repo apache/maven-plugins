@@ -1,4 +1,4 @@
-package org.apache.maven.jira;
+package org.apache.maven.plugin.announcement;
 
 /*
  * Copyright 2001-2006 The Apache Software Foundation.
@@ -16,6 +16,13 @@ package org.apache.maven.jira;
  * limitations under the License.
  */
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HostConfiguration;
@@ -26,17 +33,11 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.StatusLine;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.maven.plugin.jira.JiraHelper;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Gets relevant issues in RSS from a given JIRA installation.
@@ -47,7 +48,7 @@ import java.util.Map;
  * @author jruiz@exist.com
  * @version $Id$
  */
-public final class JiraDownloader2
+public final class JiraAnnouncementDownloader
 {
 
     /** Log for debug output. */
@@ -103,18 +104,9 @@ public final class JiraDownloader2
 
     static
     {
-        statusMap.put( "Open", "1" );
-        statusMap.put( "In Progress", "3" );
-        statusMap.put( "Reopened", "4" );
-        statusMap.put( "Resolved", "5" );
         statusMap.put( "Closed", "6" );
 
-        resolutionMap.put( "Unresolved", "-1" );
         resolutionMap.put( "Fixed", "1" );
-        resolutionMap.put( "Won't Fix", "2" );
-        resolutionMap.put( "Duplicate", "3" );
-        resolutionMap.put( "Incomplete", "4" );
-        resolutionMap.put( "Cannot Reproduce", "5" );
 
         priorityMap.put( "Blocker", "1" );
         priorityMap.put( "Critical", "2" );
@@ -248,6 +240,9 @@ public final class JiraDownloader2
             // create the URL for getting the proper issues from JIRA
             String fullURL = jiraUrl + "/secure/IssueNavigator.jspa?view=rss&pid=" + jiraId;
 
+            // @todo: only for a temporary use case, hardcoded fix-for version
+            fullURL += "&fixfor=12730";
+
             fullURL += createFilter();
 
             fullURL += ( "&tempMax=" + nbEntriesMax + "&reset=true&decorator=none" );
@@ -309,8 +304,9 @@ public final class JiraDownloader2
 
             Credentials defaultcreds = new UsernamePasswordCredentials( webUser, webPassword );
 
-            getLog().info( "Using username: " + webUser + " for Basic Authentication against the webserver at "
-                + jiraUrl );
+            getLog().info(
+                           "Using username: " + webUser + " for Basic Authentication against the webserver at "
+                               + jiraUrl );
 
             client.getState().setCredentials( null, null, defaultcreds );
         }
@@ -422,8 +418,7 @@ public final class JiraDownloader2
      * Downloads the given link using the configured HttpClient, possibly following redirects.
      *
      * @param cl     the HttpClient
-     * @param link   the JiraUrl
-     * @return
+     * @param link   the URL to JIRA
      */
     private void download( final HttpClient cl, final String link )
     {
@@ -440,7 +435,7 @@ public final class JiraDownloader2
             final String strGetResponseBody = gm.getResponseBodyAsString();
 
             // write the reponse to file
-            PrintWriter pw = new PrintWriter( new FileWriter( output ) );
+            PrintWriter pw = new PrintWriter( new FileWriter( getOutput() ) );
 
             pw.print( strGetResponseBody );
 
@@ -512,6 +507,11 @@ public final class JiraDownloader2
     public void setOutput( File thisOutput )
     {
         this.output = thisOutput;
+    }
+
+    public File getOutput()
+    {
+        return this.output;
     }
 
     /**

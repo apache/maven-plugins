@@ -1,4 +1,4 @@
-package org.apache.maven.jira;
+package org.apache.maven.plugin.jira;
 
 /*
  * Copyright 2001-2006 The Apache Software Foundation.
@@ -16,10 +16,10 @@ package org.apache.maven.jira;
  * limitations under the License.
  */
 
-import org.apache.maven.doxia.sink.Sink;
-
 import java.util.List;
 import java.util.ResourceBundle;
+
+import org.apache.maven.doxia.sink.Sink;
 
 /**
  * Generates a JIRA report.
@@ -167,7 +167,7 @@ public class JiraReportGenerator
         {
             sink.rawText( "&nbsp;" );
         }
-        
+
         sink.tableCell_();
     }
 

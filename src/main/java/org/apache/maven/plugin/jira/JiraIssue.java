@@ -1,4 +1,4 @@
-package org.apache.maven.jira;
+package org.apache.maven.plugin.jira;
 
 /*
  * Copyright 2001-2006 The Apache Software Foundation.
@@ -24,17 +24,22 @@ package org.apache.maven.jira;
 public class JiraIssue
 {
     private String key;
+
     private String link;
+
     private String summary;
+
     private String status;
+
     private String resolution;
+
     private String assignee;
 
-    public JiraIssue(  )
+    public JiraIssue()
     {
     }
 
-    public String getKey(  )
+    public String getKey()
     {
         return key;
     }
@@ -44,7 +49,7 @@ public class JiraIssue
         this.key = key;
     }
 
-    public String getLink(  )
+    public String getLink()
     {
         return link;
     }
@@ -54,7 +59,7 @@ public class JiraIssue
         this.link = link;
     }
 
-    public String getSummary(  )
+    public String getSummary()
     {
         return summary;
     }
@@ -64,7 +69,7 @@ public class JiraIssue
         this.summary = summary;
     }
 
-    public String getStatus(  )
+    public String getStatus()
     {
         return status;
     }
@@ -74,7 +79,7 @@ public class JiraIssue
         this.status = status;
     }
 
-    public String getResolution(  )
+    public String getResolution()
     {
         return resolution;
     }
@@ -84,7 +89,7 @@ public class JiraIssue
         this.resolution = resolution;
     }
 
-    public String getAssignee(  )
+    public String getAssignee()
     {
         return assignee;
     }

@@ -1,4 +1,4 @@
-package org.apache.maven.changes;
+package org.apache.maven.plugin.changes;
 
 /*
  * Copyright 2001-2006 The Apache Software Foundation.
@@ -16,12 +16,12 @@ package org.apache.maven.changes;
  * limitations under the License.
  */
 
+import java.util.List;
+import java.util.ResourceBundle;
+
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.reporting.MavenReportException;
-
-import java.util.List;
-import java.util.ResourceBundle;
 
 /**
  * Generates a changes report.
@@ -200,13 +200,13 @@ public class ChangesReportGenerator
         sink.lineBreak();
 
         // @todo Temporarily commented out until MCHANGES-46 is completely solved
-//        sink.rawText( bundle.getString( "report.changes.text.rssfeed" ) );
-//        sink.text( " " );
-//        sink.link( "changes.rss" );
-//        sinkFigure( "images/rss.png", sink );
-//        sink.link_();
-//
-//        sink.lineBreak();
+        //        sink.rawText( bundle.getString( "report.changes.text.rssfeed" ) );
+        //        sink.text( " " );
+        //        sink.link( "changes.rss" );
+        //        sinkFigure( "images/rss.png", sink );
+        //        sink.link_();
+        //
+        //        sink.lineBreak();
 
         sink.lineBreak();
     }
