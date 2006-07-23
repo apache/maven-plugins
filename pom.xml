@@ -19,12 +19,6 @@
     <system>jira</system>
     <url>http://jira.codehaus.org/browse/MNG</url>
   </issueManagement>
-  <!-- Not inherited correctly because the plugin is in the sandbox -->
-  <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/sandbox/plugins/maven-docck-plugin/</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/sandbox/plugins/maven-docck-plugin/</developerConnection>
-    <url>http://svn.apache.org/viewvc/maven/sandbox/plugins/maven-docck-plugin/</url>
-  </scm>
   <dependencies>
     <dependency>
       <groupId>commons-httpclient</groupId>
