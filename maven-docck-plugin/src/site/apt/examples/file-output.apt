@@ -1,0 +1,48 @@
+ ------
+ Sending the output to a file
+ ------
+ ------
+ ------
+
+Sending the output to a file
+
+* Configuring your pom.xml
+
+  You can use the following configuration in your pom.xml to run the DOCCK
+  Plugin everytime the project is built and send its output to a file.
+
++---+
+<project>
+  [...]
+  <build>
+    <plugins>
+      [...]
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-docck-plugin</artifactId>
+        <executions>
+          <execution>
+            <configuration>
+              <output>target/docck-results.txt</output>
+            </configuration>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      [...]
+    </plugins>
+  </build>
+  [...]
+</project>
++---+
+
+* From the command-line
+
+  You can also direct the command-line execution output to a file using:
+
++---+
+mvn docck:check -Doutput=target/docck-results.txt
++---+
+

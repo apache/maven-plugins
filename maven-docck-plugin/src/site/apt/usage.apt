@@ -1,0 +1,121 @@
+ ------
+ Usage
+ ------
+ ------
+ 19-June-2006
+ ------
+
+Usage
+
+  This document is intended to provide instructions for using the
+  maven-docck-plugin. In order for this discussion to be useful, it's
+  critical to cover two topics: Configuring your project's pom.xml to run
+  the plugin during every build and using the plugin from the command-line.
+
+* Configuring the plugin in pom.xml
+
+   You can use the following configuration in your pom.xml to run the DOCCK
+   Plugin everytime the project is built.
+
++---+
+<project>
+  [...]
+  <build>
+    <plugins>
+      [...]
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-docck-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      [...]
+    </plugins>
+  </build>
+  [...]
+</project>
++---+
+
+* Using the plugin from the command-line
+
+  The DOCCK Plugin is easily executed from the command line since it can run
+  without any parameter configuration.
+
+  To run DOCCK Plugin on a project, use:
+
++---+
+mvn docck:check
++---+
+
+* Sample Output
+
+** Successful run with no documentation errors
+
++---+
+[INFO] Scanning for projects...
+[INFO] Searching repository for plugin with prefix: 'docck'.
+[INFO] ----------------------------------------------------------------------------
+[INFO] Building Mojo Project
+[INFO]    task-segment: [docck:check] (aggregator-style)
+[INFO] ----------------------------------------------------------------------------
+[INFO] [docck:check]
+[INFO] Checking project: Mojo Project
+[INFO] Using 2 extractors.
+[INFO] Applying extractor for language: java
+[INFO] Extractor for language: java found 1 mojo descriptors.
+[INFO] Applying extractor for language: bsh
+[INFO] Extractor for language: bsh found 0 mojo descriptors.
+[INFO] No documentation errors were found.
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 3 seconds
+[INFO] Finished at: Mon Jun 19 16:06:25 CST 2006
+[INFO] Final Memory: 3M/7M
+[INFO] ------------------------------------------------------------------------
++---+
+
+** Successful run with documentation errors
+
++---+
+[INFO] Scanning for projects...
+[INFO] Searching repository for plugin with prefix: 'docck'.
+[INFO] ----------------------------------------------------------------------------
+[INFO] Building Mojo Project
+[INFO]    task-segment: [docck:check] (aggregator-style)
+[INFO] ----------------------------------------------------------------------------
+[INFO] [docck:check]
+[INFO] Checking project: Mojo Project
+[INFO] Using 2 extractors.
+[INFO] Applying extractor for language: java
+[INFO] Extractor for language: java found 1 mojo descriptors.
+[INFO] Applying extractor for language: bsh
+[INFO] Extractor for language: bsh found 0 mojo descriptors.
+[INFO]
+The following documentation problems were found:
+
+o Maven Documentation Checker Plugin (3 errors)
+        - Missing site index.(html|xml|apt).
+        - Missing examples.
+        - Parameter: 'mojoParameter' in mojo: 'check' is missing a description.
+
+[INFO] ------------------------------------------------------------------------
+[ERROR] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] : documentation check
+Documentation errors were found.
+
+Please see the console output above for more information.
+[INFO] ------------------------------------------------------------------------
+[INFO] For more information, run Maven with the -e switch
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 3 seconds
+[INFO] Finished at: Mon Jun 19 15:54:58 CST 2006
+[INFO] Final Memory: 3M/7M
+[INFO] ------------------------------------------------------------------------
++---+
