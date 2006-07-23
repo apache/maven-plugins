@@ -21,7 +21,6 @@ import java.util.ResourceBundle;
 
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.reporting.MavenReportException;
 
 /**
  * Generates a changes report.
@@ -75,7 +74,6 @@ public class ChangesReportGenerator
     }
 
     public void doGenerateReport( ResourceBundle bundle, Sink sink )
-        throws MavenReportException
     {
         sinkBeginReport( sink, bundle );
 

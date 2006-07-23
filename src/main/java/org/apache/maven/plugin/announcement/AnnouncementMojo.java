@@ -18,7 +18,6 @@ package org.apache.maven.plugin.announcement;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 
@@ -294,10 +293,6 @@ public class AnnouncementMojo
         {
             throw new MojoExecutionException( ve.toString() );
         }
-        catch ( IOException ioe )
-        {
-            throw new MojoExecutionException( ioe.toString() );
-        }
     }
 
     public void doGenerate( List releases )
@@ -345,10 +340,6 @@ public class AnnouncementMojo
         catch ( VelocityException ve )
         {
             throw new MojoExecutionException( ve.toString() );
-        }
-        catch ( IOException ioe )
-        {
-            throw new MojoExecutionException( ioe.toString() );
         }
     }
 
@@ -401,7 +392,7 @@ public class AnnouncementMojo
      * @throws ResourceNotFoundException, VelocityException, IOException
      */
     public void processTemplate( Context context, String outputDirectory, String template )
-        throws ResourceNotFoundException, VelocityException, IOException, MojoExecutionException
+        throws ResourceNotFoundException, VelocityException, MojoExecutionException
     {
         File f;
 
