@@ -1,4 +1,4 @@
-package org.apache.maven.resource.loader;
+package org.apache.maven.plugin.resource.loader;
 
 /*
  * Copyright 2001-2006 The Apache Software Foundation.
@@ -16,12 +16,6 @@ package org.apache.maven.resource.loader;
  * limitations under the License.
  */
 
-import org.apache.commons.collections.ExtendedProperties;
-import org.apache.velocity.exception.ResourceNotFoundException;
-import org.apache.velocity.runtime.resource.Resource;
-import org.apache.velocity.runtime.resource.loader.ResourceLoader;
-import org.apache.velocity.util.StringUtils;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,12 +24,19 @@ import java.io.InputStream;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import org.apache.commons.collections.ExtendedProperties;
+import org.apache.velocity.exception.ResourceNotFoundException;
+import org.apache.velocity.runtime.resource.Resource;
+import org.apache.velocity.runtime.resource.loader.ResourceLoader;
+import org.apache.velocity.util.StringUtils;
+
 /**
  * Resource Loader for external projects.
  * 
  * @version $Id$
  */
-public class ProjectResourceLoader extends ResourceLoader
+public class ProjectResourceLoader
+    extends ResourceLoader
 {
     /**
      * The paths to search for templates.
@@ -55,13 +56,13 @@ public class ProjectResourceLoader extends ResourceLoader
 
         String separator = System.getProperty( "file.separator" );
 
-        String path = System.getProperty( "user.dir" ) + separator + "src"
-            + separator + "main" + separator + "resources" + separator;
+        String path = System.getProperty( "user.dir" ) + separator + "src" + separator + "main" + separator
+            + "resources" + separator;
 
         rsvc.info( "path :" + path );
 
         paths = new Vector();
-            
+
         paths.add( path );
 
         int sz = paths.size();
@@ -95,20 +96,18 @@ public class ProjectResourceLoader extends ResourceLoader
              * there's not much we can do. So we'll forget about
              * trying to search any more paths for the template.
              */
-            throw new ResourceNotFoundException(
-                "Need to specify a file name or file path!" );
+            throw new ResourceNotFoundException( "Need to specify a file name or file path!" );
         }
 
         String template = StringUtils.normalizePath( templateName );
         if ( template == null || template.length() == 0 )
         {
             String msg = "Project Resource loader error : argument " + template
-                + " contains .. and may be trying to access "
-                + "content outside of template root.  Rejected.";
+                + " contains .. and may be trying to access " + "content outside of template root.  Rejected.";
 
             rsvc.error( "ProjectResourceLoader : " + msg );
 
-            throw new ResourceNotFoundException ( msg );
+            throw new ResourceNotFoundException( msg );
         }
 
         /*
@@ -143,8 +142,7 @@ public class ProjectResourceLoader extends ResourceLoader
          * templates and we didn't find anything so
          * throw an exception.
          */
-        String msg = "ProjectResourceLoader Error: cannot find resource "
-            + template;
+        String msg = "ProjectResourceLoader Error: cannot find resource " + template;
 
         throw new ResourceNotFoundException( msg );
     }
@@ -158,19 +156,18 @@ public class ProjectResourceLoader extends ResourceLoader
      */
     private InputStream findTemplate( String path, String template )
     {
-        try 
+        try
         {
-            File file = new File( path, template );   
-        
+            File file = new File( path, template );
+
             if ( file.canRead() )
             {
-                return new BufferedInputStream(
-                    new FileInputStream( file.getAbsolutePath() ) );
+                return new BufferedInputStream( new FileInputStream( file.getAbsolutePath() ) );
             }
             else
-            {                
+            {
                 return null;
-            }                
+            }
         }
         catch ( FileNotFoundException fnfe )
         {
@@ -248,10 +245,10 @@ public class ProjectResourceLoader extends ResourceLoader
         if ( file.canRead() )
         {
             return file.lastModified();
-        }            
+        }
         else
         {
             return 0;
-        }            
+        }
     }
 }

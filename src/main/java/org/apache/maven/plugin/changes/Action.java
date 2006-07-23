@@ -1,4 +1,4 @@
-package org.apache.maven.changes;
+package org.apache.maven.plugin.changes;
 
 /*
  * Copyright 2001-2006 The Apache Software Foundation.

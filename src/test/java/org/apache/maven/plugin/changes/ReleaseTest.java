@@ -1,4 +1,4 @@
-package org.apache.maven.changes;
+package org.apache.maven.plugin.changes;
 
 /*
  * Copyright 2005-2006 The Apache Software Foundation.
@@ -16,14 +16,15 @@ package org.apache.maven.changes;
  * limitations under the License.
  */
 
+import java.util.ArrayList;
+import java.util.List;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class ReleaseTest extends TestCase
+public class ReleaseTest
+    extends TestCase
 {
     Release release = new Release();
 
@@ -32,36 +33,38 @@ public class ReleaseTest extends TestCase
         super( testName );
     }
 
-    protected void setUp() throws Exception 
+    protected void setUp()
+        throws Exception
     {
     }
 
-    protected void tearDown() throws Exception 
+    protected void tearDown()
+        throws Exception
     {
     }
 
-    public static Test suite() 
+    public static Test suite()
     {
         TestSuite suite = new TestSuite( ReleaseTest.class );
 
         return suite;
     }
 
-    public void testGetSetVersion() 
+    public void testGetSetVersion()
     {
         release.setVersion( "version" );
 
         assertEquals( "version", release.getVersion() );
     }
 
-    public void testGetSetDateRelease() 
+    public void testGetSetDateRelease()
     {
         release.setDateRelease( "12-09-1979" );
 
         assertEquals( "12-09-1979", release.getDateRelease() );
     }
 
-    public void testGetSetAction() 
+    public void testGetSetAction()
     {
         List actionList = new ArrayList();
 
@@ -69,5 +72,5 @@ public class ReleaseTest extends TestCase
 
         assertEquals( actionList, release.getAction() );
     }
-    
+
 }

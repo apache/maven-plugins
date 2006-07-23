@@ -1,4 +1,4 @@
-package org.apache.maven.announcement.mailsender;
+package org.apache.maven.plugin.announcement.mailsender;
 
 /*
  * Copyright 2004-2006 The Apache Software Foundation.
@@ -16,11 +16,10 @@ package org.apache.maven.announcement.mailsender;
  * limitations under the License.
  */
 
-import org.codehaus.plexus.mailsender.AbstractMailSender;
-import org.codehaus.plexus.mailsender.MailMessage;
-import org.codehaus.plexus.mailsender.MailSenderException;
-import org.codehaus.plexus.mailsender.util.DateFormatUtils;
-import org.codehaus.plexus.util.StringUtils;
+import java.security.Security;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Properties;
 
 import javax.mail.Authenticator;
 import javax.mail.Message;
@@ -30,10 +29,12 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.security.Security;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Properties;
+
+import org.codehaus.plexus.mailsender.AbstractMailSender;
+import org.codehaus.plexus.mailsender.MailMessage;
+import org.codehaus.plexus.mailsender.MailSenderException;
+import org.codehaus.plexus.mailsender.util.DateFormatUtils;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Helper class for sending email.
@@ -56,7 +57,7 @@ public class ProjectJavamailMailSender
     // ----------------------------------------------------------------------
 
     public void initialize()
-    {      
+    {
         if ( StringUtils.isEmpty( getSmtpHost() ) )
         {
             System.out.println( "Error in configuration: Missing smtpHost." );
@@ -120,12 +121,12 @@ public class ProjectJavamailMailSender
             if ( getUsername() != null )
             {
                 auth = new Authenticator()
+                {
+                    protected PasswordAuthentication getPasswordAuthentication()
                     {
-                        protected PasswordAuthentication getPasswordAuthentication()
-                        {
-                            return new PasswordAuthentication( getUsername(), getPassword() );
-                        }
-                    };
+                        return new PasswordAuthentication( getUsername(), getPassword() );
+                    }
+                };
             }
 
             Session session = Session.getDefaultInstance( props, auth );

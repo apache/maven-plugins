@@ -1,4 +1,4 @@
-package org.apache.maven.jira;
+package org.apache.maven.plugin.jira;
 
 /*
  * Copyright 2001-2006 The Apache Software Foundation.
@@ -16,15 +16,15 @@ package org.apache.maven.jira;
  * limitations under the License.
  */
 
+import java.io.File;
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Settings;
-
-import java.io.File;
-import java.util.Locale;
-import java.util.ResourceBundle;
 
 /**
  * Goal which downloads issues from the Issue Tracking System and generates a report.

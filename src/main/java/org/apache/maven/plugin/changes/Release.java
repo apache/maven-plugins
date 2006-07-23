@@ -1,4 +1,4 @@
-package org.apache.maven.changes;
+package org.apache.maven.plugin.changes;
 
 /*
  * Copyright 2001-2006 The Apache Software Foundation.
@@ -47,14 +47,14 @@ public class Release
     {
         return action;
     }
-    
+
     public void addAction( Action act )
     {
         if ( action == null )
         {
             action = new ArrayList();
         }
-        action.add( act ); 
+        action.add( act );
     }
 
     public void setDateRelease( String dateRelease )

@@ -1,4 +1,4 @@
-package org.apache.maven.announcement;
+package org.apache.maven.plugin.announcement;
 
 /*
  * Copyright 2001-2006 The Apache Software Foundation.
@@ -16,10 +16,16 @@ package org.apache.maven.announcement;
  * limitations under the License.
  */
 
-import org.apache.maven.changes.ChangesXML;
-import org.apache.maven.changes.Release;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.List;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.changes.ChangesXML;
+import org.apache.maven.plugin.changes.Release;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 import org.apache.velocity.VelocityContext;
@@ -27,12 +33,6 @@ import org.apache.velocity.context.Context;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.exception.VelocityException;
 import org.codehaus.plexus.velocity.VelocityComponent;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.List;
 
 /**
  * Goal which generate the template for an announcement.
@@ -42,8 +42,9 @@ import java.util.List;
  * @author aramirez@exist.com
  * @version $Id$
  */
-public class AnnouncementMojo extends AbstractMojo 
-{             
+public class AnnouncementMojo
+    extends AbstractMojo
+{
     private static final String SNAPSHOT_SUFFIX = "-SNAPSHOT";
 
     /**
@@ -147,15 +148,15 @@ public class AnnouncementMojo extends AbstractMojo
     /**
      * Directory that contains the template.
      *
-     * @parameter default-value="org/apache/maven/announcement"
+     * @parameter default-value="org/apache/maven/plugin/announcement"
      * @required
      */
     private String templateDirectory;
 
     private ChangesXML xml;
 
-      //=======================================//
-     //  JIRA-Announcement Needed Parameters  //
+    //=======================================//
+    //  JIRA-Announcement Needed Parameters  //
     //=======================================//
 
     /**
@@ -166,6 +167,7 @@ public class AnnouncementMojo extends AbstractMojo
      * @readonly
      */
     private MavenProject project;
+
     /**
      * Settings XML configuration.
      *
@@ -214,8 +216,8 @@ public class AnnouncementMojo extends AbstractMojo
      */
     private int nbEntries;
 
-      //=======================================//
-     //    announcement-generate execution    //
+    //=======================================//
+    //    announcement-generate execution    //
     //=======================================//
 
     /**
@@ -223,7 +225,8 @@ public class AnnouncementMojo extends AbstractMojo
      *
      * @throws MojoExecutionException
      */
-    public void execute() throws MojoExecutionException
+    public void execute()
+        throws MojoExecutionException
     {
         if ( !generateJiraAnnouncement )
         {
@@ -243,7 +246,8 @@ public class AnnouncementMojo extends AbstractMojo
      * @param xml parsed changes.xml
      * @throws MojoExecutionException
      */
-    public void doGenerate( ChangesXML xml ) throws MojoExecutionException
+    public void doGenerate( ChangesXML xml )
+        throws MojoExecutionException
     {
         try
         {
@@ -258,29 +262,29 @@ public class AnnouncementMojo extends AbstractMojo
                 setIntroduction( getUrl() );
             }
 
-            context.put( "releases"         , releaseList                       );
+            context.put( "releases", releaseList );
 
-            context.put( "groupId"          , getGroupId()                      );
+            context.put( "groupId", getGroupId() );
 
-            context.put( "artifactId"       , getArtifactId()                   );
+            context.put( "artifactId", getArtifactId() );
 
-            context.put( "version"          , getVersion()                      );
+            context.put( "version", getVersion() );
 
-            context.put( "packaging"        , getPackaging()                    );
+            context.put( "packaging", getPackaging() );
 
-            context.put( "url"              , getUrl()                          );
+            context.put( "url", getUrl() );
 
-            context.put( "release"          , getLatestRelease( releaseList )   );
+            context.put( "release", getLatestRelease( releaseList ) );
 
-            context.put( "introduction"     , getIntroduction()                 );
+            context.put( "introduction", getIntroduction() );
 
-            context.put( "developmentTeam"  , getDevelopmentTeam()              );
+            context.put( "developmentTeam", getDevelopmentTeam() );
 
-            context.put( "finalName"        , getFinalName()                    );
+            context.put( "finalName", getFinalName() );
 
-            context.put( "urlDownload"      , getUrlDownload()                  );
+            context.put( "urlDownload", getUrlDownload() );
 
-            processTemplate( context, getOutputDirectory(), template  );
+            processTemplate( context, getOutputDirectory(), template );
         }
         catch ( ResourceNotFoundException rnfe )
         {
@@ -296,7 +300,8 @@ public class AnnouncementMojo extends AbstractMojo
         }
     }
 
-    public void doGenerate( List releases ) throws MojoExecutionException
+    public void doGenerate( List releases )
+        throws MojoExecutionException
     {
         try
         {
@@ -309,29 +314,29 @@ public class AnnouncementMojo extends AbstractMojo
                 setIntroduction( getUrl() );
             }
 
-            context.put( "releases"         , releases                          );
+            context.put( "releases", releases );
 
-            context.put( "groupId"          , getGroupId()                      );
+            context.put( "groupId", getGroupId() );
 
-            context.put( "artifactId"       , getArtifactId()                   );
+            context.put( "artifactId", getArtifactId() );
 
-            context.put( "version"          , getVersion()                      );
+            context.put( "version", getVersion() );
 
-            context.put( "packaging"        , getPackaging()                    );
+            context.put( "packaging", getPackaging() );
 
-            context.put( "url"              , getUrl()                          );
+            context.put( "url", getUrl() );
 
-            context.put( "release"          , getLatestRelease( releases )      );
+            context.put( "release", getLatestRelease( releases ) );
 
-            context.put( "introduction"     , getIntroduction()                 );
+            context.put( "introduction", getIntroduction() );
 
-            context.put( "developmentTeam"  , getDevelopmentTeam()              );
+            context.put( "developmentTeam", getDevelopmentTeam() );
 
-            context.put( "finalName"        , getFinalName()                    );
+            context.put( "finalName", getFinalName() );
 
-            context.put( "urlDownload"      , getUrlDownload()                  );
+            context.put( "urlDownload", getUrlDownload() );
 
-            processTemplate( context, getOutputDirectory(), template  );
+            processTemplate( context, getOutputDirectory(), template );
         }
         catch ( ResourceNotFoundException rnfe )
         {
@@ -354,7 +359,8 @@ public class AnnouncementMojo extends AbstractMojo
      * @param releases list of releases
      * @throws MojoExecutionException
      */
-    public Release getLatestRelease( List releases ) throws MojoExecutionException
+    public Release getLatestRelease( List releases )
+        throws MojoExecutionException
     {
         boolean isFound = false;
 
@@ -398,24 +404,24 @@ public class AnnouncementMojo extends AbstractMojo
         throws ResourceNotFoundException, VelocityException, IOException, MojoExecutionException
     {
         File f;
-        
+
         try
         {
             f = new File( outputDirectory, template );
-            
-            if ( !f.getParentFile().exists() ) 
+
+            if ( !f.getParentFile().exists() )
             {
                 f.getParentFile().mkdirs();
-            } 
-                       
+            }
+
             Writer writer = new FileWriter( f );
 
             getVelocity().getEngine().mergeTemplate( templateDirectory + "/" + template, context, writer );
-            
+
             writer.flush();
-            
+
             writer.close();
-            
+
             getLog().info( "File created..." );
         }
 
@@ -433,55 +439,54 @@ public class AnnouncementMojo extends AbstractMojo
             throw new MojoExecutionException( e.toString(), e.getCause() );
         }
     }
-    
+
     public void doJiraGenerate()
         throws MojoExecutionException
     {
-            JiraAnnouncementDownloader jiraDownloader = new JiraAnnouncementDownloader();
-            
-            File jiraXMLFile = new File( jiraXML );
-            
-            jiraDownloader.setLog( getLog() );
-            
-            jiraDownloader.setOutput( jiraXMLFile );
-            
-            jiraDownloader.setStatusIds( statusId );
-            
-            jiraDownloader.setResolutionIds( resolutionId );
-            
-            jiraDownloader.setMavenProject( project );
-            
-            jiraDownloader.setSettings( setting );
-            
-            jiraDownloader.setNbEntries( nbEntries );
-            
-            try
-            {
-                jiraDownloader.doExecute();
+        JiraAnnouncementDownloader jiraDownloader = new JiraAnnouncementDownloader();
 
-                if ( jiraXMLFile.exists() )
-                {
-                    JiraAnnouncementParser jiraParser = new JiraAnnouncementParser( jiraXMLFile );
-                    
-                    List issues = jiraParser.getIssues();
-                    
-                    List releases = jiraParser.getReleases( issues );
-                    
-                    doGenerate( releases );
-                }
-            }
-            catch ( Exception e )
+        File jiraXMLFile = new File( jiraXML );
+
+        jiraDownloader.setLog( getLog() );
+
+        jiraDownloader.setOutput( jiraXMLFile );
+
+        jiraDownloader.setStatusIds( statusId );
+
+        jiraDownloader.setResolutionIds( resolutionId );
+
+        jiraDownloader.setMavenProject( project );
+
+        jiraDownloader.setSettings( setting );
+
+        jiraDownloader.setNbEntries( nbEntries );
+
+        try
+        {
+            jiraDownloader.doExecute();
+
+            if ( jiraXMLFile.exists() )
             {
-                throw new MojoExecutionException( 
-                        "Failed to download JIRA Announcement", e );
-            }        
+                JiraAnnouncementParser jiraParser = new JiraAnnouncementParser( jiraXMLFile );
+
+                List issues = jiraParser.getIssues();
+
+                List releases = jiraParser.getReleases( issues );
+
+                doGenerate( releases );
+            }
+        }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( "Failed to download JIRA Announcement", e );
+        }
     }
 
     /*
      * accessors
      */
-    
-    public String getXmlPath() 
+
+    public String getXmlPath()
     {
         return xmlPath;
     }
@@ -490,7 +495,7 @@ public class AnnouncementMojo extends AbstractMojo
     {
         this.xmlPath = xmlPath;
     }
-    
+
     public String getOutputDirectory()
     {
         return outputDirectory;
@@ -500,8 +505,8 @@ public class AnnouncementMojo extends AbstractMojo
     {
         this.outputDirectory = outputDirectory;
     }
-    
-    public String getGroupId() 
+
+    public String getGroupId()
     {
         return groupId;
     }
@@ -510,8 +515,8 @@ public class AnnouncementMojo extends AbstractMojo
     {
         this.groupId = groupId;
     }
-    
-    public String getArtifactId() 
+
+    public String getArtifactId()
     {
         return artifactId;
     }
@@ -520,7 +525,7 @@ public class AnnouncementMojo extends AbstractMojo
     {
         this.artifactId = artifactId;
     }
-    
+
     public String getVersion()
     {
         return version;
@@ -530,8 +535,8 @@ public class AnnouncementMojo extends AbstractMojo
     {
         this.version = version;
     }
-    
-    public String getUrl() 
+
+    public String getUrl()
     {
         return url;
     }
@@ -540,8 +545,8 @@ public class AnnouncementMojo extends AbstractMojo
     {
         this.url = url;
     }
-    
-    public ChangesXML getXml() 
+
+    public ChangesXML getXml()
     {
         return xml;
     }
@@ -550,8 +555,8 @@ public class AnnouncementMojo extends AbstractMojo
     {
         this.xml = xml;
     }
-    
-    public String getPackaging() 
+
+    public String getPackaging()
     {
         return packaging;
     }
@@ -560,8 +565,8 @@ public class AnnouncementMojo extends AbstractMojo
     {
         this.packaging = packaging;
     }
-    
-    public String getDevelopmentTeam() 
+
+    public String getDevelopmentTeam()
     {
         return developmentTeam;
     }
@@ -570,8 +575,8 @@ public class AnnouncementMojo extends AbstractMojo
     {
         this.developmentTeam = developmentTeam;
     }
-    
-    public String getIntroduction() 
+
+    public String getIntroduction()
     {
         return introduction;
     }
@@ -580,7 +585,7 @@ public class AnnouncementMojo extends AbstractMojo
     {
         this.introduction = introduction;
     }
-    
+
     public VelocityComponent getVelocity()
     {
         return velocity;
@@ -590,8 +595,8 @@ public class AnnouncementMojo extends AbstractMojo
     {
         this.velocity = velocity;
     }
-    
-    public String getFinalName() 
+
+    public String getFinalName()
     {
         return finalName;
     }
@@ -600,8 +605,8 @@ public class AnnouncementMojo extends AbstractMojo
     {
         this.finalName = finalName;
     }
-    
-    public String getUrlDownload() 
+
+    public String getUrlDownload()
     {
         return urlDownload;
     }
