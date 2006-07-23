@@ -27,7 +27,7 @@ import java.text.ParsePosition;
  * A helper class with common JIRA related functionality.
  *
  * @author Dennis Lundberg
- * @version $Id: JiraHelper.java 422265 2006-07-15 16:49:50 +0000 (lö, 15 jul 2006) dennisl $
+ * @version $Id: JiraHelper.java 422265 2006-07-15 16:49:50 +0000 (lï¿½, 15 jul 2006) dennisl $
  */
 public class JiraHelper
 {
@@ -46,10 +46,13 @@ public class JiraHelper
         String jiraId = null;
         GetMethod gm = new GetMethod( issueManagementUrl );
         log.info( "JIRA URL " + issueManagementUrl + " doesn't include a pid, trying to get it" );
+        
+        String projectPage;
         try
         {
             client.executeMethod( gm );
             log.info( "Successfully reached JIRA." );
+            projectPage = gm.getResponseBodyAsString();
         }
         catch ( Exception e )
         {
@@ -61,8 +64,9 @@ public class JiraHelper
             {
                 log.error( "Unable to reach JIRA project page. Cause is: " + e.getLocalizedMessage() );
             }
+            return null;
         }
-        String projectPage = gm.getResponseBodyAsString();
+
         int pidIndex = projectPage.indexOf( PID );
 
         if ( pidIndex == -1 )

@@ -263,21 +263,21 @@ public class JiraMojo
 
     private boolean validateIfIssueManagementComplete()
     {
-        if ( ( (MavenProject) project ).getIssueManagement() == null )
+        if ( project.getIssueManagement() == null )
         {
             getLog().error( "No Issue Management set. JIRA Report will not be generated." );
 
             return false;
         }
-        else if ( ( ( (MavenProject) project ).getIssueManagement().getUrl() == null )
-            || ( ( (MavenProject) project ).getIssueManagement().getUrl().trim().equals( "" ) ) )
+        else if ( ( project.getIssueManagement().getUrl() == null )
+            || ( project.getIssueManagement().getUrl().trim().equals( "" ) ) )
         {
             getLog().error( "No URL set in Issue Management. JIRA Report will not be generated." );
 
             return false;
         }
-        else if ( ( ( (MavenProject) project ).getIssueManagement().getSystem() != null )
-            && !( ( (MavenProject) project ).getIssueManagement().getSystem().equalsIgnoreCase( "jira" ) ) )
+        else if ( ( project.getIssueManagement().getSystem() != null )
+            && !( project.getIssueManagement().getSystem().equalsIgnoreCase( "jira" ) ) )
         {
             getLog().error( "JIRA Report only supports JIRA.  JIRA Report will not be generated." );
 
