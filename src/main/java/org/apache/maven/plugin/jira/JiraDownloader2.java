@@ -32,6 +32,7 @@ import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.StatusLine;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
@@ -305,7 +306,7 @@ public final class JiraDownloader2
         // check and prepare for basic authentication
         if ( ( webUser != null ) && ( webUser.length() > 0 ) )
         {
-            client.getState().setAuthenticationPreemptive( true );
+            client.getParams().setAuthenticationPreemptive( true );
 
             Credentials defaultcreds = new UsernamePasswordCredentials( webUser, webPassword );
 
@@ -313,7 +314,8 @@ public final class JiraDownloader2
                            "Using username: " + webUser + " for Basic Authentication against the webserver at "
                                + jiraUrl );
 
-            client.getState().setCredentials( null, null, defaultcreds );
+            client.getState().setCredentials( new AuthScope( null, AuthScope.ANY_PORT, null, AuthScope.ANY_SCHEME ),
+                                              defaultcreds );
         }
 
         // log into JIRA if we have to
@@ -413,7 +415,9 @@ public final class JiraDownloader2
             {
                 getLog().info( "Using proxy user: " + proxyUser );
 
-                client.getState().setProxyCredentials( null, null,
+                client.getState().setProxyCredentials(
+                                                       new AuthScope( null, AuthScope.ANY_PORT, null,
+                                                                      AuthScope.ANY_SCHEME ),
                                                        new UsernamePasswordCredentials( proxyUser, proxyPass ) );
             }
         }
