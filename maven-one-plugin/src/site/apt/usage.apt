@@ -10,17 +10,15 @@ Usage
 
 * Maven 1.x Plugin Packaging
 
-  To build a Maven 1.x plugin using Maven 2.x, you need to include this plugin in the build section, and use a
-  <<<packaging>>> of <<<maven-one-plugin>>>. The following is an example of how such a POM would look for the
-  Maven 1.x site plugin:
+  To package a Maven 1.x plugin using Maven 2.x, you need to include the Maven
+  One plugin in the build section and use a <<<packaging>>> of
+  <<<maven-one-plugin>>>. Like this:
 
 -------
 <project>
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>maven</groupId>
-  <artifactId>maven-site-plugin</artifactId>
+  ...
   <packaging>maven-one-plugin</packaging>
-  <version>1.6-SNAPSHOT</version>
+  ...
   <build>
     <plugins>
       <plugin>
@@ -28,14 +26,17 @@ Usage
         <artifactId>maven-one-plugin</artifactId>
         <extensions>true</extensions>
       </plugin>
+      ...
     </plugins>
   </build>
+  ...
 </project>
 -------
 
 * Maven 1.x Local Repository Installation
 
-  To have your artifact installed into a local Maven 1.x repository, add the following lifecycle binding to your POM:
+  To have your artifact installed into a local Maven 1.x repository, add the
+  following lifecycle binding to your POM:
 
 -------
 <project>
@@ -60,14 +61,17 @@ Usage
 </project>
 -------
 
-  <<Note:>> The plugin section can be shared with the one above in the case of building a Maven 1.x plugin.
+  <<Note:>> The plugin section can be shared with the one above in the case of
+  building a Maven 1.x plugin.
 
-  This will read the local repository location from <<<~/build.properties>>>, defaulting to <<<~/.maven/repository>>>.
+  This will read the local repository location from <<<~/build.properties>>>,
+  defaulting to <<<~/.maven/repository>>>.
 
 * Maven 1.x Remote Repository Deployment
 
-  To have your artifact deployed into an additional remote Maven 1.x repository, you need to add a lifecycle binding to
-  your POM. This example will deploy your artifact to the Maven 1.x repository at Apache:
+  To have your artifact deployed into an additional remote Maven 1.x repository,
+  you need to add a lifecycle binding to your POM. This configuration will
+  deploy your artifact to the Maven 1.x repository at Apache:
 
 -------
 <project>
@@ -95,10 +99,12 @@ Usage
 </project>
 -------
 
-  This will not read any settings from the Maven 1.x properties, so the URL is required.
+  This will not read any settings from the Maven 1.x properties, so the URL is
+  required.
 
-  If you configure server settings in your <<<settings.xml>>> file, use the ID of <<<mavenOneRemoteRepository>>>.
-  This can be overridden using the <<<remoteRepositoryId>>> configuration element.
+  If you configure server settings in your <<<settings.xml>>> file, use the ID
+  of <<<mavenOneRemoteRepository>>>. This can be overridden using the
+  <<<remoteRepositoryId>>> configuration element.
 
   For more information, see the {{{plugin-info.html} Goal Reference}}.
 

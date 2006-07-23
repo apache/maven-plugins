@@ -1,0 +1,31 @@
+ ------
+ A POM for a Maven 1.x plugin
+ ------
+ Dennis Lundberg
+ ------
+ 20 July 2006
+ ------
+
+A POM for a Maven 1.x plugin
+
+  Here is an example of how a POM for a Maven 1.x plugin would look. This is
+  for the Maven 1.x site plugin:
+
+-------
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>maven</groupId>
+  <artifactId>maven-site-plugin</artifactId>
+  <packaging>maven-one-plugin</packaging>
+  <version>1.6-SNAPSHOT</version>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-one-plugin</artifactId>
+        <extensions>true</extensions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
+-------
