@@ -66,7 +66,7 @@ public class SurefireReportMojo
     private MavenProject project;
 
     /**
-     * If set to &lt;code&gt;false&lt;/code&gt;, only failures are shown.
+     * If set to false, only failures are shown.
      *
      * @parameter expression="${showSuccess}" default-value="true"
      * @required
@@ -74,7 +74,7 @@ public class SurefireReportMojo
     private boolean showSuccess;
 
     /**
-     * This directory contains the XML Report files that must be parsed and rendered to HTML format.
+     * This directory contains the XML Report files that will be parsed and rendered to HTML format.
      *
      * @parameter expression="${project.build.directory}/surefire-reports"
      * @required
@@ -82,7 +82,7 @@ public class SurefireReportMojo
     private File reportsDirectory;
 
     /**
-     * The default filename to use for the report.
+     * The filename to use for the report.
      *
      * @parameter expression="${outputName}" default-value="surefire-report"
      * @required

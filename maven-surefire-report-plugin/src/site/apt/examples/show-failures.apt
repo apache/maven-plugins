@@ -8,8 +8,8 @@
 
 Showing Failure Tests
 
-  By default, the surefire-report plugin shows all test result satus(success
-  and failures) in the generated html. In able to show the failures only, the
+  By default, the surefire-report plugin shows all test result status(success
+  and failures) in the generated html. To be able to show the failures only, the
   property <<showSuccess>> should be set to <<false>>.
 
 +----+

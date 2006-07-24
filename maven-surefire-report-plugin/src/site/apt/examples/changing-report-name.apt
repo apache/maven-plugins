@@ -30,5 +30,5 @@ Changing Report Name
 </project>
 +----+
 
-  And after executing the <<<mvn site>>>, the generated report file name is
-  changed to <<newname.html>>.
+  And after executing the <<<mvn site>>>, the generated report file is named
+  to <<newname.html>>.

@@ -8,11 +8,11 @@
 
 Source Code Cross Reference
 
-  There are times that we need to know right away the line number of the
+  There are times when we need to know right away the line number of the
   source code that caused the failure of the test. The surefire-report plugin
   has the capability to cross reference the source code that made the test
-  failed. In able to activate it, the <<<maven-jxr-plugin>>> should
-  also be declared to the \<reporting\> section of the pom along with the
+  failed. To be able to activate it, the <<<maven-jxr-plugin>>> should
+  also be declared in the \<reporting\> section of the pom along with the
   <<<maven-surefire-report-plugin>>>. For more reference about
   <<<maven-jxr-plugin>>> please click
   {{{http://maven.apache.org/plugins/maven-jxr-plugin/}here}}.

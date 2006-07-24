@@ -48,24 +48,6 @@ Configuring the Output Location as part of the Project Reports
   To change the location of the generated output report using the standalone
   goal. The <<outputDirectory>> property should be set to the new path.
 
-+----+
-<project>
-  [...]
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-report-plugin</artifactId>
-        <configuration>
-           <outputDirectory>${basedir}/target/newsite</outputDirectory>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
-+----+
-
-  Then execute the goal
-
 +---+
-mvn surefire-report:report
+mvn surefire-report:report -DoutputDirectory=newpath
 +---+
