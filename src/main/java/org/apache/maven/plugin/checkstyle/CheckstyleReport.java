@@ -1,7 +1,7 @@
 package org.apache.maven.plugin.checkstyle;
 
 /*
- * Copyright 2004-2005 The Apache Software Foundation.
+ * Copyright 2004-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -130,7 +130,7 @@ public class CheckstyleReport
     private boolean enableFilesSummary;
 
     /**
-     * Specifies if the Files summary should be enabled or not.
+     * Specifies if the RSS should be enabled or not.
      *
      * @parameter expression="${checkstyle.enable.rss}"
      * default-value="true"
@@ -288,6 +288,8 @@ public class CheckstyleReport
     private String suppressionsLocation;
 
     /**
+     * The key to be used in the properties for the suppressions file.
+     *
      * @parameter expression="${checkstyle.suppression.expression}"
      * @since 2.1
      */
