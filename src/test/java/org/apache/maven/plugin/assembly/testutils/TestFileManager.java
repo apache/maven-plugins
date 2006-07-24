@@ -1,12 +1,19 @@
 package org.apache.maven.plugin.assembly.testutils;
 
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import junit.framework.Assert;
 
 public class TestFileManager
 {
@@ -79,6 +86,91 @@ public class TestFileManager
 
             it.remove();
         }
+    }
+
+    public void assertFileExistence( File dir, String filename, boolean shouldExist )
+    {
+        File file = new File( dir, filename );
+
+        if ( shouldExist )
+        {
+            Assert.assertTrue( file.exists() );
+        }
+        else
+        {
+            Assert.assertFalse( file.exists() );
+        }
+    }
+
+    public void assertFileContents( File dir, String filename, String contentsTest )
+        throws IOException
+    {
+        assertFileExistence( dir, filename, true );
+
+        File file = new File( dir, filename );
+
+        FileReader reader = null;
+        StringWriter writer = new StringWriter();
+
+        try
+        {
+            reader = new FileReader( file );
+
+            IOUtil.copy( reader, writer );
+        }
+        finally
+        {
+            IOUtil.close( reader );
+        }
+
+        Assert.assertEquals( contentsTest, writer.toString() );
+    }
+
+    public File createFile( File dir, String filename, String contents )
+        throws IOException
+    {
+        File file = new File( dir, filename );
+
+        file.getParentFile().mkdirs();
+
+        FileWriter writer = null;
+
+        try
+        {
+            writer = new FileWriter( file );
+
+            IOUtil.copy( new StringReader( contents ), writer );
+        }
+        finally
+        {
+            IOUtil.close( writer );
+        }
+
+        return file;
+    }
+
+    public String getFileContents( File file )
+        throws IOException
+    {
+        String result = null;
+        
+        FileReader reader = null;
+        try
+        {
+            reader = new FileReader( file );
+            
+            StringWriter writer = new StringWriter();
+            
+            IOUtil.copy( reader, writer );
+            
+            result = writer.toString();
+        }
+        finally
+        {
+            IOUtil.close( reader );
+        }
+        
+        return result;
     }
 
 }

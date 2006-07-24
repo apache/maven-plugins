@@ -13,6 +13,12 @@ import java.io.Reader;
 public final class AssemblyFileUtils
 {
 
+    public static final String LINE_ENDING_KEEP = "keep";
+    public static final String LINE_ENDING_DOS = "dos";
+    public static final String LINE_ENDING_UNIX = "unix";
+    public static final String LINE_ENDING_CRLF = "crlf";
+    public static final String LINE_ENDING_LF = "lf";
+
     private AssemblyFileUtils()
     {
     }
@@ -66,15 +72,15 @@ public final class AssemblyFileUtils
         String value = lineEnding;
         if ( lineEnding != null )
         {
-            if ( "keep".equals( lineEnding ) )
+            if ( LINE_ENDING_KEEP.equals( lineEnding ) )
             {
                 value = null;
             }
-            else if ( "dos".equals( lineEnding ) || "crlf".equals( lineEnding ) )
+            else if ( LINE_ENDING_DOS.equals( lineEnding ) || LINE_ENDING_CRLF.equals( lineEnding ) )
             {
                 value = "\r\n";
             }
-            else if ( "unix".equals( lineEnding ) || "lf".equals( lineEnding ) )
+            else if ( LINE_ENDING_UNIX.equals( lineEnding ) || LINE_ENDING_LF.equals( lineEnding ) )
             {
                 value = "\n";
             }

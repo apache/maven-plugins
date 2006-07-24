@@ -1,5 +1,11 @@
 package org.apache.maven.plugin.assembly.format;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
 import org.apache.maven.shared.model.fileset.FileSet;
@@ -8,19 +14,10 @@ import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
-import java.util.List;
-
 
 public class FileSetFormatter
 {
     
-    private static final String[] EMPTY_STRING_ARRAY = new String[0];
-
     private final AssemblerConfigurationSource configSource;
 
     private final Logger logger;
@@ -36,35 +33,37 @@ public class FileSetFormatter
     {
         File formattedDir = archiveBaseDir;
         
-        if ( set.getLineEnding() != null )
+        String lineEndingHint = set.getLineEnding();
+        
+        String lineEnding = AssemblyFileUtils.getLineEndingCharacters( lineEndingHint );
+
+        if ( lineEnding != null )
         {
             FileSet fileSet = new FileSet();
-            fileSet.setLineEnding( set.getLineEnding() );
+            fileSet.setLineEnding( lineEnding );
             fileSet.setDirectory( set.getDirectory() );
-            fileSet.setExcludes( set.getExcludes() );
             fileSet.setIncludes( set.getIncludes() );
             
-            String lineEnding = AssemblyFileUtils.getLineEndingCharacters( fileSet.getLineEnding() );
-
-            formattedDir = FileUtils.createTempFile( "", "", configSource.getTemporaryRootDirectory() );
+            formattedDir = FileUtils.createTempFile( "fileSetFormatter.", ".tmp", configSource.getTemporaryRootDirectory() );
             
             formattedDir.delete();
             formattedDir.mkdirs();
             
-            String[] includes = (String[]) fileSet.getIncludes().toArray( EMPTY_STRING_ARRAY );
-            if ( includes.length == 0 )
-            {
-                includes = null;
-            }
-
-            // TODO: default excludes should be in the archiver?
-            List excludesList = fileSet.getExcludes();
-            excludesList.addAll( FileUtils.getDefaultExcludesAsList() );
-            
-            fileSet.setExcludes( excludesList );
+            fileSet.setExcludes( set.getExcludes() );
+            fileSet.setUseDefaultExcludes( true );
             
             FileSetManager fsm = new FileSetManager( logger );
             String[] files = fsm.getIncludedFiles( fileSet );
+            
+            // if we don't have anything to process, let's just skip all of this mess.
+            if ( files == null || files.length == 0 )
+            {
+                logger.info( "No files selected for line-ending conversion. Skipping: " + fileSet.getDirectory() );
+                
+                formattedDir.delete();
+                
+                return archiveBaseDir;
+            }
             
             for ( int i = 0; i < files.length; i++ )
             {
