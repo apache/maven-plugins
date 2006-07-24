@@ -6,7 +6,7 @@
   July 2006
   ------
 
-Introduction
+Maven Surefire-Report Plugin
 
   The surefire-report plugin parses the generated TEST-*.xml files under
   <<<${basedir}/target/surefire-reports>>> and renders them to DOXIA
@@ -16,7 +16,7 @@ Introduction
 
   Surefire-report plugin only has one goal:
 
-  * {{{surefire-report-mojo.html}surefire-report:report}} Generates the test
+  * {{{report-mojo.html}surefire-report:report}} Generates the test
   results report into html format.
 
   []
