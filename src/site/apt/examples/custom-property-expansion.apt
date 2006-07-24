@@ -1,0 +1,61 @@
+ ------
+ Using Custom Checkstyle Property Expansion Definitions
+ ------
+ July 2006
+ ------
+
+
+Using Custom Checkstyle Property Expansion Definitions
+
+  A custom {{{http://checkstyle.sourceforge.net/config.html#Properties}property expansion definitions}}
+  for the Checker can be defined.
+
+  Checkstyle uses the property expansion mechanism to allow injection of specific values into a pre-defined
+  Checker configuration.  Using property expansion alone is an insufficient means to customize the checks
+  performed by Checkstyle.
+
+  Example: <<checkstyle.xml>> - only checks the package name in use to ensure that it conforms to the
+  desired scheme, but allows for users of this Checker to specify their own projectname.
+
++-----+
+<?xml version="1.0" ?>
+
+<!DOCTYPE module PUBLIC
+  "-//Puppy Crawl//DTD Check Configuration 1.2//EN"
+  "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+
+<module name="Checker">
+  <module name="TreeWalker">
+    <module name="PackageName">
+      <property name="format"
+         value="com\.example\.${projectname}(\.[a-z][a-zA-Z0-9]+)*$"/>
+    </module>
+  </module>
+</module>
++-----+
+
+  Example: <<pom.xml>> - Specifies the <<projectname>> property expansion that Checkstyle will use when
+  encountering such a variable in the above Checker configuration.
+
++-----+
+<project>
+   ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <configLocation>checkstyle.xml</configLocation>
+          <propertyExpansion>projectname=whizbang</propertyExpansion>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+   ...
+</project>
++-----+
+
+  The property expansion information can also come from a location using the <<propertiesLocation>>
+  parameter, which can point to a URL, File, or build classpath resource reference.
+

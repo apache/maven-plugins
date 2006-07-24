@@ -1,0 +1,33 @@
+ ------
+ Usage
+ ------
+ Maria Odea Ching
+ ------
+ 21 July 2006
+ ------
+
+
+Usage
+
+  To generate the checkstyle report, add the checkstyle plugin in the \<reporting\> section of your project pom.
+
++-----+
+<project>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
+  ...
+</project>
++-----+
+
+  Then, execute the site plugin to generate the report distribution.
+
++-----+
+  mvn site
++-----+

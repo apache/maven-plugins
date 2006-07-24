@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<faqs id="FAQ" title="Frequently Asked Questions">
+  <part id="General">
+    <faq id="How are the checkstyle.properties set">
+      <question>How are the checkstyle.properties set?</question>
+      <answer>
+        <p>
+        You can set the checkstyle.properties in the plugin configuration in your pom through the configLocation
+        parameter. If the parameter is not specified, the plugin uses a default .xml file, which is the sun_checks.xml,
+        that is bundled with the plugin.
+        </p>
+        </answer>
+    </faq>
+  </part>
+</faqs>
