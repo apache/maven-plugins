@@ -1,0 +1,50 @@
+ ------
+ Introduction
+ ------
+ Maria Odea Ching
+ ------
+ 20 July 2006
+ ------
+
+
+Maven 2 Checkstyle Plugin
+
+  The Checkstyle plugin generates report regarding the code style of the developer. For more information about checkstyle,
+  see {{{http://checkstyle.sourceforge.net/}http://checkstyle.sourceforge.net/}}
+
+  The plugin can be configured in the project's pom. Predefined rulesets are included with the plugin, these are:
+  sun_checks.xml, turbine_checks.xml, avalon_checks.xml and maven_checks.xml. You can also use a custom ruleset by
+  specifying it in the plugin configuration.
+
+* Goals Overview
+
+   The Checkstyle Plugin has two goals:
+
+   * {{{checkstyle-mojo.html}checkstyle:checkstyle}} performs checkstyle analysis and generates a report on violations
+     found.
+
+   * {{{check-mojo.html}checkstyle:check}} performs a violation check against the output checkstyle report to see if there
+     are any violations. Checkstyle analysis is automatically executed first before this mojo.
+
+* Usage
+
+   Instructions on how to use the Checkstyle Plugin can be found {{{usage.html}here}}.
+
+* Examples
+
+   The following examples show how to use the Checkstyle Plugin in more advanced usecases:
+
+   * {{{examples/custom-checker-config.html}Using a Custom Checkstyle Checker Configuration}}
+
+   * {{{examples/custom-property-expansion.html}Using Custom Checkstyle Property Expansion Definitions}}
+
+   * {{{examples/suppressions-filter.html}Using a Suppressions Filter}}
+
+   * {{{examples/custom-developed-checkstyle.html}Using Custom Developed Chechstyle Check Modules}}
+
+   * {{{examples/multi-module-config.html}Multimodule Configuration}}
+
+
+
+
+

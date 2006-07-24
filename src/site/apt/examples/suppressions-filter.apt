@@ -1,0 +1,52 @@
+ ------
+ Using a Suppressions Filter
+ ------
+ July 2006
+ ------
+
+
+Using a Suppressions Filter
+
+   Checkstyle allows the definition of a list of files and their line ranges that should be suppressed
+   from reporting any violations (known as a
+   {{{http://checkstyle.sourceforge.net/config.html#Filters}supressions filter}} ).
+
+   Example: <<checkstyle-suppressions.xml>>
+
++-----+
+<?xml version="1.0"?>
+
+<!DOCTYPE suppressions PUBLIC
+     "-//Puppy Crawl//DTD Suppressions 1.0//EN"
+     "http://www.puppycrawl.com/dtds/suppressions_1_0.dtd">
+
+<suppressions>
+  <suppress checks="JavadocStyleCheck"
+               files="GeneratedObject.java"
+               lines="50-9999"/>
+  <suppress checks="MagicNumberCheck"
+               files="LegacyDatasetConvertor.java"
+               lines="221,250-295"/>
+</suppressions>
++-----+
+
+   Example: <<pom.xml>> - Specifies the suppressions filter that Checkstyle should use.
+
++-----+
+<project>
+   ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <configLocation>checkstyle.xml</configLocation>
+          <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+   ...
+</project>
++-----+

@@ -1,0 +1,83 @@
+ ------
+ Using Custom Developed Chechstyle Check Modules
+ ------
+ July 2006
+ ------
+
+
+Using Custom Developed Chechstyle Check Modules
+
+ For the really adventurous, custom Checkstyle checks can be used with the Maven 2 Checkstyle Plugin.
+
+   The plugin provides the ability to define the
+   {{{http://checkstyle.sourceforge.net/config.html#Packages}package names definition}} required to
+   reference your custom check modules.
+
+   TIP: Create a maven project that produces a jar file of your custom checks, and then include it in your
+   projects using the maven build extension in the pom.xml to avoid them being included in the compile or
+   package phases of your project.
+
+   Example: <<mycompany-checkstyle-checks-1.0.jar>>.
+
++-----+
+ $ jar -tvf mycompany-checkstyle-checks-1.0.jar
+      0 Tue Nov 29 13:13:14 EST 2005 META-INF/
+    401 Tue Nov 29 13:13:12 EST 2005 META-INF/MANIFEST.MF
+      0 Tue Nov 29 13:13:12 EST 2005 META-INF/maven/
+      0 Tue Nov 29 13:13:14 EST 2005 META-INF/maven/com.mycompany/
+      0 Tue Nov 29 13:13:14 EST 2005 META-INF/maven/com.mycompany/mycompany-checkstyle-checks/
+   8489 Tue Nov 29 13:13:14 EST 2005 META-INF/maven/com.mycompany/mycompany-checkstyle-checks/pom.xml
+    151 Tue Nov 29 13:13:14 EST 2005 META-INF/maven/com.mycompany/mycompany-checkstyle-checks/pom.properties
+      0 Tue Nov 29 13:13:14 EST 2005 com/
+      0 Tue Nov 29 13:13:14 EST 2005 com/mycompany/
+      0 Tue Nov 29 13:13:14 EST 2005 com/mycompany/checkstyle/
+   1252 Tue Nov 29 13:13:14 EST 2005 com/mycompany/checkstyle/packagenames.xml
+  12939 Tue Nov 29 13:13:14 EST 2005 com/mycompany/checkstyle/PurityCheck.class
++-----+
+
+   Example: <<checkstyle.xml>>
+
++-----+
+<?xml version="1.0" ?>
+
+<!DOCTYPE module PUBLIC
+   "-//Puppy Crawl//DTD Check Configuration 1.2//EN"
+   "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+
+<module name="Checker">
+  <module name="TreeWalker">
+    <module name="PurityTest"/>
+  </module>
+</module>
++-----+
+
+
+   Example: <<pom.xml>>
+
++-----+
+<project>
+   ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <configLocation>checkstyle.xml</configLocation>
+          <packageNamesLocation>com/mycompany/checkstyle/packagenames.xml</packageNamesLocation>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+   ...
+  <build>
+    <extensions>
+      <extension>
+        <groupId>com.mycompany</groupId>
+        <artifactId>mycompany-checkstyle-checks</artifactId>
+        <version>1.0</version>
+      </extension>
+    </extensions>
+  </build>
+</project>
++-----+
