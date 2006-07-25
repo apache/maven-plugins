@@ -235,7 +235,6 @@ public class SurefirePlugin
      * the forking options. For the default we will assume that java is in the path.
      *
      * @parameter expression="${jvm}"
-     * default-value="java"
      */
     private String jvm;
 
@@ -595,6 +594,13 @@ public class SurefirePlugin
         {
             fork.setSystemProperties( systemProperties );
 
+            if ( jvm == null || "".equals( jvm ) )
+            {
+                // use the same JVM as the one used to run Maven (the "java.home" one)
+                jvm = System.getProperty( "java.home" ) + File.separator + "bin" + File.separator + "java";
+                getLog().debug( "Using JVM: " + jvm );
+            }
+            
             fork.setJvmExecutable( jvm );
 
             if ( workingDirectory != null )
