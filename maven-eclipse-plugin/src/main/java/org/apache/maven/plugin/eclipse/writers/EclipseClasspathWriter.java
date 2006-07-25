@@ -21,13 +21,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
 
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.EclipseSourceDir;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.plugin.ide.IdeUtils;
-import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
@@ -187,8 +185,7 @@ public class EclipseClasspathWriter
 
             if ( dep.isAddedToClasspath() )
             {
-                addDependency( writer, dep, config.getLocalRepository(), config.getEclipseProjectDirectory(), config
-                    .isPde(), config.getPdeLibDir() );
+                addDependency( writer, dep );
             }
         }
 
@@ -198,8 +195,7 @@ public class EclipseClasspathWriter
 
     }
 
-    private void addDependency( XMLWriter writer, IdeDependency dep, ArtifactRepository localRepository,
-                                File projectBaseDir, boolean inPdeMode, File pdeLibDir )
+    private void addDependency( XMLWriter writer, IdeDependency dep )
         throws MojoExecutionException
     {
 
@@ -208,7 +204,7 @@ public class EclipseClasspathWriter
         String sourcepath = null;
         String javadocpath = null;
 
-        if ( dep.isReferencedProject() && !inPdeMode )
+        if ( dep.isReferencedProject() && !config.isPde() )
         {
             path = "/" + dep.getArtifactId(); //$NON-NLS-1$
             kind = ATTR_SRC;
@@ -237,34 +233,21 @@ public class EclipseClasspathWriter
             }
             else
             {
-                File localRepositoryFile = new File( localRepository.getBasedir() );
+                File localRepositoryFile = new File( config.getLocalRepository().getBasedir() );
 
                 // if the dependency is not provided and the plugin runs in "pde mode", the dependency is
                 // added to the Bundle-Classpath:
-                if ( inPdeMode && !dep.isProvided() && !dep.isTestDependency() )
+                if ( config.isPde() && !dep.isProvided() && !dep.isTestDependency() )
                 {
-                    try
-                    {
-                        if ( !pdeLibDir.exists() )
-                        {
-                            pdeLibDir.mkdirs();
-                        }
-                        FileUtils.copyFileToDirectory( dep.getFile(), pdeLibDir );
-                    }
-                    catch ( IOException e )
-                    {
-                        throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcopyartifact", dep
-                            .getArtifactId() ), e );
-                    }
 
-                    File artifactFile = new File( pdeLibDir, dep.getFile().getName() );
-                    path = IdeUtils.toRelativeAndFixSeparator( config.getProjectBaseDir(), artifactFile, false );
+                    // path for link created in .project, not to the actual file
+                    path = dep.getFile().getName();
 
                     kind = ATTR_LIB;
                 }
                 // running in PDE mode and the dependency is provided means, that it is provided by
                 // the target platform. This case is covered by adding the plugin container
-                else if ( inPdeMode && dep.isProvided() )
+                else if ( config.isPde() && dep.isProvided() )
                 {
                     return;
                 }
