@@ -1,11 +1,11 @@
  ------
- Using Custom Developed Chechstyle Check Modules
+ Using Custom Developed Checkstyle Check Modules
  ------
  July 2006
  ------
 
 
-Using Custom Developed Chechstyle Check Modules
+Using Custom Developed Checkstyle Check Modules
 
  For the really adventurous, custom Checkstyle checks can be used with the Maven 2 Checkstyle Plugin.
 
@@ -20,19 +20,20 @@ Using Custom Developed Chechstyle Check Modules
    Example: <<mycompany-checkstyle-checks-1.0.jar>>.
 
 +-----+
- $ jar -tvf mycompany-checkstyle-checks-1.0.jar
-      0 Tue Nov 29 13:13:14 EST 2005 META-INF/
-    401 Tue Nov 29 13:13:12 EST 2005 META-INF/MANIFEST.MF
-      0 Tue Nov 29 13:13:12 EST 2005 META-INF/maven/
-      0 Tue Nov 29 13:13:14 EST 2005 META-INF/maven/com.mycompany/
-      0 Tue Nov 29 13:13:14 EST 2005 META-INF/maven/com.mycompany/mycompany-checkstyle-checks/
-   8489 Tue Nov 29 13:13:14 EST 2005 META-INF/maven/com.mycompany/mycompany-checkstyle-checks/pom.xml
-    151 Tue Nov 29 13:13:14 EST 2005 META-INF/maven/com.mycompany/mycompany-checkstyle-checks/pom.properties
-      0 Tue Nov 29 13:13:14 EST 2005 com/
-      0 Tue Nov 29 13:13:14 EST 2005 com/mycompany/
-      0 Tue Nov 29 13:13:14 EST 2005 com/mycompany/checkstyle/
-   1252 Tue Nov 29 13:13:14 EST 2005 com/mycompany/checkstyle/packagenames.xml
-  12939 Tue Nov 29 13:13:14 EST 2005 com/mycompany/checkstyle/PurityCheck.class
+mycompany-checkstyle-checks-1.0.jar
+|-- pom.xml
+|-- META-INF
+|   |-- MANIFEST.MF
+|   `-- maven
+|       `-- com.mycompany
+|           `-- mycompany-checkstyle-checks
+|               |-- pom.xml
+|               `-- pom.properties
+`-- com
+    `-- mycompany
+        `-- checkstyle
+            |-- packagenames.xml
+            `-- PurityCheck.class
 +-----+
 
    Example: <<checkstyle.xml>>

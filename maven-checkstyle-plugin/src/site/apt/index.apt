@@ -9,7 +9,7 @@
 
 Maven 2 Checkstyle Plugin
 
-  The Checkstyle plugin generates report regarding the code style of the developer. For more information about checkstyle,
+  The Checkstyle plugin generates report regarding the code style used by the developers. For more information about Checkstyle,
   see {{{http://checkstyle.sourceforge.net/}http://checkstyle.sourceforge.net/}}
 
   The plugin can be configured in the project's pom. Predefined rulesets are included with the plugin, these are:
@@ -20,11 +20,11 @@ Maven 2 Checkstyle Plugin
 
    The Checkstyle Plugin has two goals:
 
-   * {{{checkstyle-mojo.html}checkstyle:checkstyle}} performs checkstyle analysis and generates a report on violations
-     found.
+   * {{{checkstyle-mojo.html}checkstyle:checkstyle}} performs checkstyle analysis, and generates a report on violations.
 
-   * {{{check-mojo.html}checkstyle:check}} performs a violation check against the output checkstyle report to see if there
-     are any violations. Checkstyle analysis is automatically executed first before this mojo.
+   * {{{check-mojo.html}checkstyle:check}} performs a violation check against the last Checkstyle run to see if there are
+     any violations. It reads the Checkstyle output file, counts the number of violations found and displays it on the
+     console. 
 
 * Usage
 
@@ -40,7 +40,7 @@ Maven 2 Checkstyle Plugin
 
    * {{{examples/suppressions-filter.html}Using a Suppressions Filter}}
 
-   * {{{examples/custom-developed-checkstyle.html}Using Custom Developed Chechstyle Check Modules}}
+   * {{{examples/custom-developed-checkstyle.html}Using Custom Developed Checkstyle Check Modules}}
 
    * {{{examples/multi-module-config.html}Multimodule Configuration}}
 
