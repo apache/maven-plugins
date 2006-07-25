@@ -1,0 +1,34 @@
+  ------
+  Using System Properties
+  ------
+  Allan Ramirez
+  ------
+  July 2006
+  ------
+
+Using System Properties
+
+ To add a System property, use the following configuration:
+
++---+
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemProperties>
+            <property>
+              <name>propertyName</name>
+              <value>propertyValue</value>
+            </property>
+          </systemProperties>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++---+

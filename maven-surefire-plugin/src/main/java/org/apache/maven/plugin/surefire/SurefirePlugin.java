@@ -334,6 +334,7 @@ public class SurefirePlugin
     private ArtifactFactory artifactFactory;
 
     /**
+     * The plugin remote repositories declared in the pom.
      * @parameter expression="${project.pluginArtifactRepositories}"
      */
     private List remoteRepositories;
@@ -350,6 +351,7 @@ public class SurefirePlugin
     private Properties originalSystemProperties;
 
     /**
+     * Flag to disable the generation of report files in xml format.
      * @parameter expression="${disableXmlReport}" default-value="false"
      */
     private boolean disableXmlReport;

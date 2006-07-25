@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<faqs id="FAQ" title="Frequently Asked Questions">
+ <part id="General">
+   <faq id="compile-error-reports">
+     <question>Does surefire plugin supports JUnit 4.0?</question>
+     <answer>
+       <p>
+            No. But an issue is already filed. Please see
+            <a href="http://jira.codehaus.org/browse/SUREFIRE-31">SUREFIRE-31</a>
+            for more references.
+       </p>
+     </answer>
+   </faq>
+ </part>
+</faqs>
