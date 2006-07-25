@@ -1,4 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
@@ -72,6 +74,11 @@
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
       <version>1.0.5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-interactivity-jline</artifactId>
+      <version>1.0-alpha-5</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
