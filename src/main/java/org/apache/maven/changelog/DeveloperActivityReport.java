@@ -30,10 +30,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-
 /**
+ * A Maven 2.0 developer activity report plugin.
+ *
  * @goal dev-activity
- * @description A Maven 2.0 developer activity report plugin
  */
 public class DeveloperActivityReport
     extends ChangeLogReport
@@ -57,7 +57,7 @@ public class DeveloperActivityReport
      */
     public String getDescription( Locale locale )
     {
-        return "Generated developer activity report from SCM";
+        return "Generated developer activity report from SCM.";
     }
 
     /**
@@ -65,7 +65,7 @@ public class DeveloperActivityReport
      */
     public String getName( Locale locale )
     {
-        return "dev-activity";
+        return "Developer Activity";
     }
 
     /**
