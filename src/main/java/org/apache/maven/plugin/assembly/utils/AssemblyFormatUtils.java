@@ -88,7 +88,6 @@ public final class AssemblyFormatUtils
         
         if ( value.length() > 0 && !value.endsWith( "/" ) && !value.endsWith( "\\" ) )
         {
-            // TODO: shouldn't archiver do this?
             value += "/";
         }
 

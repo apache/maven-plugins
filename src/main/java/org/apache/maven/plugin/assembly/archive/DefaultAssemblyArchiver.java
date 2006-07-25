@@ -1,31 +1,30 @@
 package org.apache.maven.plugin.assembly.archive;
 
-import org.apache.maven.archiver.MavenArchiveConfiguration;
-import org.apache.maven.archiver.MavenArchiver;
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase;
 import org.apache.maven.plugin.assembly.filter.ComponentsXmlArchiverFileFilter;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugins.assembly.model.Assembly;
+import org.codehaus.plexus.archiver.ArchiveFileFilter;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.FilterEnabled;
+import org.codehaus.plexus.archiver.FinalizerEnabled;
+import org.codehaus.plexus.archiver.filters.JarSecurityFileFilter;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
-import org.codehaus.plexus.archiver.jar.Manifest;
-import org.codehaus.plexus.archiver.jar.ManifestException;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.archiver.tar.TarArchiver;
 import org.codehaus.plexus.archiver.tar.TarLongFileMode;
 import org.codehaus.plexus.archiver.war.WarArchiver;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * @plexus.component role="org.apache.maven.plugin.assembly.archive.ArchiveCreator"
@@ -36,6 +35,8 @@ public class DefaultAssemblyArchiver
     implements AssemblyArchiver
 {
 
+    private static final ArchiveFileFilter JAR_SECURITY_FILE_FILTER = new JarSecurityFileFilter();
+    
     /**
      * @plexus.requirement
      */
@@ -50,23 +51,40 @@ public class DefaultAssemblyArchiver
                                AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException
     {
-        File destFile = null;
-
         String filename = fullName + "." + format;
+
+        ComponentsXmlArchiverFileFilter componentsXmlFilter = new ComponentsXmlArchiverFileFilter();
+
+        File outputDirectory = configSource.getOutputDirectory();
+        
+        File destFile = new File( outputDirectory, filename );
 
         try
         {
-            Archiver archiver = createArchiver( format, configSource.getTarLongFileMode() );
+            Archiver archiver = createArchiver( format, configSource.getTarLongFileMode(), componentsXmlFilter );
 
-            destFile = createArchive( archiver, assembly, filename, configSource );
+            for ( Iterator phaseIterator = archiverPhases.iterator(); phaseIterator.hasNext(); )
+            {
+                AssemblyArchiverPhase phase = (AssemblyArchiverPhase) phaseIterator.next();
+
+                phase.execute( assembly, archiver, configSource );
+            }
+
+            archiver.setDestFile( destFile );
+            
+            archiver.createArchive();
+        }
+        catch ( ArchiverException e )
+        {
+            throw new ArchiveCreationException( "Error creating assembly archive: " + e.getMessage(), e );
+        }
+        catch ( IOException e )
+        {
+            throw new ArchiveCreationException( "Error creating assembly archive: " + e.getMessage(), e );
         }
         catch ( NoSuchArchiverException e )
         {
             throw new ArchiveCreationException( "Unable to obtain archiver for extension '" + format + "'" );
-        }
-        catch ( ArchiverException e )
-        {
-            throw new ArchiveCreationException( "Error creating assembly: " + e.getMessage(), e );
         }
 
         return destFile;
@@ -82,7 +100,7 @@ public class DefaultAssemblyArchiver
      * @throws org.codehaus.plexus.archiver.ArchiverException
      * @throws org.codehaus.plexus.archiver.manager.NoSuchArchiverException
      */
-    protected Archiver createArchiver( String format, String tarLongFileMode )
+    protected Archiver createArchiver( String format, String tarLongFileMode, ComponentsXmlArchiverFileFilter componentsXmlFilter )
         throws ArchiverException, NoSuchArchiverException
     {
         Archiver archiver;
@@ -132,110 +150,32 @@ public class DefaultAssemblyArchiver
             archiver = this.archiverManager.getArchiver( format );
         }
 
-        return archiver;
-    }
-
-    protected File createArchive( Archiver archiver, Assembly assembly, String filename,
-                                  AssemblerConfigurationSource configSource )
-        throws ArchiveCreationException, AssemblyFormattingException
-    {
-        ComponentsXmlArchiverFileFilter componentsXmlFilter = new ComponentsXmlArchiverFileFilter();
-
-        for ( Iterator phaseIterator = archiverPhases.iterator(); phaseIterator.hasNext(); )
+        /*
+         * If the assembly is 'jar-with-dependencies', remove the
+         * security files in all dependencies that will prevent the
+         * uberjar to execute. Please see MASSEMBLY-64 for details.
+         */
+        if ( archiver instanceof FilterEnabled )
         {
-            AssemblyArchiverPhase phase = (AssemblyArchiverPhase) phaseIterator.next();
-
-            phase.execute( assembly, archiver, configSource, componentsXmlFilter );
-        }
-
-        MavenArchiveConfiguration archive = configSource.getJarArchiveConfiguration();
-
-        try
-        {
-            componentsXmlFilter.addToArchive( archiver );
-        }
-        catch ( IOException e )
-        {
-            throw new ArchiveCreationException( "Error adding component descriptors to assembly archive: "
-                + e.getMessage(), e );
-        }
-        catch ( ArchiverException e )
-        {
-            throw new ArchiveCreationException( "Error adding component descriptors to assembly archive: "
-                + e.getMessage(), e );
-        }
-
-        File outputDirectory = configSource.getOutputDirectory();
-        File destFile = new File( outputDirectory, filename );
-
-        if ( archiver instanceof JarArchiver )
-        {
-            // TODO: I'd really prefer to rewrite MavenArchiver as either a
-            // separate manifest creation utility (and to
-            // create an include pom.properties etc into another archiver), or
-            // an implementation of an archiver
-            // (the first is preferable).
-            MavenArchiver mavenArchiver = new MavenArchiver();
-
-            if ( archive != null )
+            List filters = new ArrayList();
+            
+            filters.add( componentsXmlFilter );
+            
+            if ( archiver instanceof JarArchiver )
             {
-                try
-                {
-                    Manifest manifest;
-                    File manifestFile = archive.getManifestFile();
-
-                    if ( manifestFile != null )
-                    {
-                        try
-                        {
-                            manifest = new Manifest( new FileReader( manifestFile ) );
-                        }
-                        catch ( FileNotFoundException e )
-                        {
-                            throw new ArchiveCreationException( "Manifest not found: " + e.getMessage() );
-                        }
-                        catch ( IOException e )
-                        {
-                            throw new ArchiveCreationException( "Error processing manifest: " + e.getMessage(), e );
-                        }
-                    }
-                    else
-                    {
-                        manifest = mavenArchiver.getManifest( configSource.getProject(), archive.getManifest() );
-                    }
-
-                    if ( manifest != null )
-                    {
-                        JarArchiver jarArchiver = (JarArchiver) archiver;
-                        jarArchiver.addConfiguredManifest( manifest );
-                    }
-                }
-                catch ( ManifestException e )
-                {
-                    throw new ArchiveCreationException( "Error creating manifest: " + e.getMessage(), e );
-                }
-                catch ( DependencyResolutionRequiredException e )
-                {
-                    throw new ArchiveCreationException( "Dependencies were not resolved: " + e.getMessage(), e );
-                }
+                filters.add( JAR_SECURITY_FILE_FILTER );
             }
+            
+            ((FilterEnabled) archiver).setArchiveFilters( filters );
         }
-
-        archiver.setDestFile( destFile );
-        try
+        
+        if ( archiver instanceof FinalizerEnabled )
         {
-            archiver.createArchive();
+            
+            ((FinalizerEnabled) archiver).setArchiveFinalizers( Collections.singletonList( componentsXmlFilter ) );
         }
-        catch ( ArchiverException e )
-        {
-            throw new ArchiveCreationException( "Error creating assembly archive: " + e.getMessage(), e );
-        }
-        catch ( IOException e )
-        {
-            throw new ArchiveCreationException( "Error creating assembly archive: " + e.getMessage(), e );
-        }
-
-        return destFile;
+        
+        return archiver;
     }
 
 }

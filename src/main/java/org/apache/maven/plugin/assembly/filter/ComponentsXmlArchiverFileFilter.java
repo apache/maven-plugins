@@ -16,6 +16,19 @@ package org.apache.maven.plugin.assembly.filter;
  * limitations under the License.
  */
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import org.codehaus.plexus.archiver.AbstractArchiveFinalizer;
+import org.codehaus.plexus.archiver.ArchiveFileFilter;
+import org.codehaus.plexus.archiver.ArchiveFilterException;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.util.IOUtil;
@@ -24,41 +37,56 @@ import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.codehaus.plexus.util.xml.Xpp3DomWriter;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 /**
  * Components XML file filter.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class ComponentsXmlArchiverFileFilter
+    extends AbstractArchiveFinalizer
+    implements ArchiveFileFilter
 {
     // [jdcasey] Switched visibility to protected to allow testing. Also, because this class isn't final, it should allow
     // some minimal access to the components accumulated for extending classes.
     protected Map components;
 
     public static final String COMPONENTS_XML_PATH = "META-INF/plexus/components.xml";
-
-    public void addComponentsXml( File componentsXml )
-        throws IOException, XmlPullParserException
+    
+    public boolean include( InputStream dataStream, String entryName )
+        throws ArchiveFilterException
     {
-        FileReader fileReader = null;
-        Xpp3Dom newDom;
-        try
+        String entry = entryName;
+        
+        if ( entry.startsWith( "/" ) )
         {
-            fileReader = new FileReader( componentsXml );
-            newDom = Xpp3DomBuilder.build( fileReader );
+            entry = entry.substring( 1 );
         }
-        finally
+        
+        if ( ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH.equals( entry ) )
         {
-            IOUtil.close( fileReader );
+            try
+            {
+                addComponentsXml( new InputStreamReader( dataStream ) );
+            }
+            catch ( XmlPullParserException e )
+            {
+                throw new ArchiveFilterException( "Error reading components from stream: " + e.getMessage(), e );
+            }
+            catch ( IOException e )
+            {
+                throw new ArchiveFilterException( "Error reading components from stream: " + e.getMessage(), e );
+            }
+            
+            return false;
         }
+        
+        return true;
+    }
+    
+    protected void addComponentsXml( Reader componentsReader )
+        throws XmlPullParserException, IOException
+    {
+        Xpp3Dom newDom = Xpp3DomBuilder.build( componentsReader );
 
         if ( newDom != null )
         {
@@ -84,8 +112,24 @@ public class ComponentsXmlArchiverFileFilter
             }
         }
     }
+    
+//    public void addComponentsXml( File componentsXml )
+//        throws IOException, XmlPullParserException
+//    {
+//        FileReader fileReader = null;
+//        try
+//        {
+//            fileReader = new FileReader( componentsXml );
+//            
+//            addComponentsXml( fileReader );
+//        }
+//        finally
+//        {
+//            IOUtil.close( fileReader );
+//        }
+//    }
 
-    public void addToArchive( Archiver archiver )
+    private void addToArchive( Archiver archiver )
         throws IOException, ArchiverException
     {
         if ( components != null )
@@ -115,4 +159,18 @@ public class ComponentsXmlArchiverFileFilter
             archiver.addFile( f, COMPONENTS_XML_PATH );
         }
     }
+
+    public void finalizeArchiveCreation( Archiver archiver )
+        throws ArchiverException
+    {
+        try
+        {
+            addToArchive( archiver );
+        }
+        catch ( IOException e )
+        {
+            throw new ArchiverException( "Error finalizing component-set for archive. Reason: " + e.getMessage(), e );
+        }
+    }
+
 }

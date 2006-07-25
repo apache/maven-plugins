@@ -1,20 +1,10 @@
 package org.apache.maven.plugin.assembly.filter;
 
-import org.codehaus.plexus.archiver.Archiver;
-import org.codehaus.plexus.archiver.ArchiverException;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.jdom.Document;
-import org.jdom.JDOMException;
-import org.jdom.Text;
-import org.jdom.input.SAXBuilder;
-import org.jdom.xpath.XPath;
-
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -23,6 +13,17 @@ import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
+
+import org.codehaus.plexus.archiver.Archiver;
+import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.jdom.Document;
+import org.jdom.JDOMException;
+import org.jdom.Text;
+import org.jdom.input.SAXBuilder;
+import org.jdom.xpath.XPath;
 
 public class ComponentsXmlArchiverFileFilterTest
     extends TestCase
@@ -37,10 +38,10 @@ public class ComponentsXmlArchiverFileFilterTest
     public void testAddComponentsXml_ShouldAddComponentWithoutRoleHint()
         throws IOException, XmlPullParserException
     {
-        File componentsXml = writeComponentsXml( Collections.singletonList( new ComponentDef( "role", null,
+        Reader reader = writeComponentsXml( Collections.singletonList( new ComponentDef( "role", null,
             "org.apache.maven.Impl" ) ) );
 
-        filter.addComponentsXml( componentsXml );
+        filter.addComponentsXml( reader );
 
         assertFalse( filter.components.isEmpty() );
 
@@ -54,10 +55,10 @@ public class ComponentsXmlArchiverFileFilterTest
     public void testAddComponentsXml_ShouldAddComponentWithRoleHint()
         throws IOException, XmlPullParserException
     {
-        File componentsXml = writeComponentsXml( Collections.singletonList( new ComponentDef( "role", "hint",
+        Reader reader = writeComponentsXml( Collections.singletonList( new ComponentDef( "role", "hint",
             "org.apache.maven.Impl" ) ) );
 
-        filter.addComponentsXml( componentsXml );
+        filter.addComponentsXml( reader );
 
         assertFalse( filter.components.isEmpty() );
 
@@ -76,9 +77,9 @@ public class ComponentsXmlArchiverFileFilterTest
         defs.add( new ComponentDef( "role", "hint", "org.apache.maven.Impl" ) );
         defs.add( new ComponentDef( "role", "hint2", "org.apache.maven.Impl2" ) );
 
-        File componentsXml = writeComponentsXml( defs );
+        Reader reader = writeComponentsXml( defs );
 
-        filter.addComponentsXml( componentsXml );
+        filter.addComponentsXml( reader );
 
         assertFalse( filter.components.isEmpty() );
 
@@ -105,7 +106,7 @@ public class ComponentsXmlArchiverFileFilterTest
 
         FileCatchingArchiver fca = new FileCatchingArchiver();
 
-        filter.addToArchive( fca );
+        filter.finalizeArchiveCreation( fca );
 
         assertEquals( ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH, fca.getDestFileName() );
 
@@ -132,7 +133,7 @@ public class ComponentsXmlArchiverFileFilterTest
 
         FileCatchingArchiver fca = new FileCatchingArchiver();
 
-        filter.addToArchive( fca );
+        filter.finalizeArchiveCreation( fca );
 
         assertEquals( ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH, fca.getDestFileName() );
 
@@ -164,7 +165,7 @@ public class ComponentsXmlArchiverFileFilterTest
 
         FileCatchingArchiver fca = new FileCatchingArchiver();
 
-        filter.addToArchive( fca );
+        filter.finalizeArchiveCreation( fca );
 
         assertEquals( ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH, fca.getDestFileName() );
 
@@ -213,57 +214,45 @@ public class ComponentsXmlArchiverFileFilterTest
         return dom;
     }
 
-    private File writeComponentsXml( List componentDefs )
+    private Reader writeComponentsXml( List componentDefs )
         throws IOException
     {
-        File file = File.createTempFile( "ComponentsXmlArchiverFileFilter.", ".unit-test" );
-        file.deleteOnExit();
+        StringWriter writer = new StringWriter();
 
-        FileWriter writer = null;
+        PrettyPrintXMLWriter xmlWriter = new PrettyPrintXMLWriter( writer );
 
-        try
+        xmlWriter.startElement( "component-set" );
+        xmlWriter.startElement( "components" );
+
+        for ( Iterator it = componentDefs.iterator(); it.hasNext(); )
         {
-            writer = new FileWriter( file );
+            ComponentDef def = (ComponentDef) it.next();
 
-            PrettyPrintXMLWriter xmlWriter = new PrettyPrintXMLWriter( writer );
+            xmlWriter.startElement( "component" );
 
-            xmlWriter.startElement( "component-set" );
-            xmlWriter.startElement( "components" );
+            xmlWriter.startElement( "role" );
+            xmlWriter.writeText( def.role );
+            xmlWriter.endElement();
 
-            for ( Iterator it = componentDefs.iterator(); it.hasNext(); )
+            String roleHint = def.roleHint;
+            if ( roleHint != null )
             {
-                ComponentDef def = (ComponentDef) it.next();
-
-                xmlWriter.startElement( "component" );
-
-                xmlWriter.startElement( "role" );
-                xmlWriter.writeText( def.role );
-                xmlWriter.endElement();
-
-                String roleHint = def.roleHint;
-                if ( roleHint != null )
-                {
-                    xmlWriter.startElement( "role-hint" );
-                    xmlWriter.writeText( roleHint );
-                    xmlWriter.endElement();
-                }
-
-                xmlWriter.startElement( "implementation" );
-                xmlWriter.writeText( def.implementation );
-                xmlWriter.endElement();
-
+                xmlWriter.startElement( "role-hint" );
+                xmlWriter.writeText( roleHint );
                 xmlWriter.endElement();
             }
 
+            xmlWriter.startElement( "implementation" );
+            xmlWriter.writeText( def.implementation );
             xmlWriter.endElement();
+
             xmlWriter.endElement();
-        }
-        finally
-        {
-            IOUtil.close( writer );
         }
 
-        return file;
+        xmlWriter.endElement();
+        xmlWriter.endElement();
+
+        return new StringReader( writer.toString() );
     }
 
     private static final class ComponentDef
@@ -385,6 +374,30 @@ public class ComponentsXmlArchiverFileFilterTest
         }
 
         public void setIncludeEmptyDirs( boolean includeEmptyDirs )
+        {
+            throw new UnsupportedOperationException( "not supported" );
+        }
+
+        public void addArchivedFileSet( File archiveFile )
+            throws ArchiverException
+        {
+            throw new UnsupportedOperationException( "not supported" );
+        }
+
+        public void addArchivedFileSet( File archiveFile, String prefix )
+            throws ArchiverException
+        {
+            throw new UnsupportedOperationException( "not supported" );
+        }
+
+        public void addArchivedFileSet( File archiveFile, String[] includes, String[] excludes )
+            throws ArchiverException
+        {
+            throw new UnsupportedOperationException( "not supported" );
+        }
+
+        public void addArchivedFileSet( File archiveFile, String prefix, String[] includes, String[] excludes )
+            throws ArchiverException
         {
             throw new UnsupportedOperationException( "not supported" );
         }

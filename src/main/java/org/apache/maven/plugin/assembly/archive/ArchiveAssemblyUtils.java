@@ -1,29 +1,23 @@
 package org.apache.maven.plugin.assembly.archive;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
-import org.apache.maven.plugin.assembly.filter.ComponentsXmlArchiverFileFilter;
-import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
-import org.apache.maven.plugin.assembly.format.FileSetFormatter;
-import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
-import org.apache.maven.plugins.assembly.model.FileSet;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.model.fileset.util.FileSetManager;
-import org.codehaus.plexus.archiver.Archiver;
-import org.codehaus.plexus.archiver.ArchiverException;
-import org.codehaus.plexus.archiver.UnArchiver;
-import org.codehaus.plexus.archiver.jar.JarArchiver;
-import org.codehaus.plexus.archiver.manager.ArchiverManager;
-import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
-import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
+import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
+import org.apache.maven.plugin.assembly.format.FileSetFormatter;
+import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
+import org.apache.maven.plugins.assembly.model.FileSet;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.archiver.Archiver;
+import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.UnArchiver;
+import org.codehaus.plexus.archiver.manager.ArchiverManager;
+import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
+import org.codehaus.plexus.logging.Logger;
 
 public final class ArchiveAssemblyUtils
 {
@@ -35,8 +29,8 @@ public final class ArchiveAssemblyUtils
     }
 
     public static void addFileSets( Archiver archiver, List fileSets, boolean includeBaseDirectory,
-                              AssemblerConfigurationSource configSource,
-                              ComponentsXmlArchiverFileFilter componentsXmlFilter, Logger logger )
+                                    AssemblerConfigurationSource configSource,
+                                    Logger logger )
         throws ArchiveCreationException, AssemblyFormattingException
     {
         File archiveBaseDir = configSource.getArchiveBaseDirectory();
@@ -73,15 +67,14 @@ public final class ArchiveAssemblyUtils
 
             if ( logger.isDebugEnabled() )
             {
-                logger.debug(
-                    "FileSet[" + output + "]" + " dir perms: "
-                        + Integer.toString( archiver.getDefaultDirectoryMode(), 8 ) + " file perms: "
-                        + Integer.toString( archiver.getDefaultFileMode(), 8 )
-                        + (fileSet.getLineEnding() == null ? "" : " lineEndings: " + fileSet.getLineEnding()) );
+                logger.debug( "FileSet[" + output + "]" + " dir perms: "
+                    + Integer.toString( archiver.getDefaultDirectoryMode(), 8 ) + " file perms: "
+                    + Integer.toString( archiver.getDefaultFileMode(), 8 )
+                    + ( fileSet.getLineEnding() == null ? "" : " lineEndings: " + fileSet.getLineEnding() ) );
             }
 
             output = AssemblyFormatUtils.getOutputDirectory( output, project, configSource.getFinalName(),
-                includeBaseDirectory );
+                                                             includeBaseDirectory );
 
             if ( directory == null )
             {
@@ -129,7 +122,7 @@ public final class ArchiveAssemblyUtils
                 try
                 {
                     ArchiveAssemblyUtils.addDirectory( archiver, archiveBaseDir, output, fileSet.getIncludes(), fileSet
-                        .getExcludes(), componentsXmlFilter );
+                        .getExcludes() );
                 }
                 finally
                 {
@@ -140,139 +133,34 @@ public final class ArchiveAssemblyUtils
         }
     }
 
-    public static void addArtifactToArchive( Artifact artifact, Archiver archiver, ArchiverManager archiverManager, String outputDirectory,
-                                       String fileNameMapping, boolean unpack, int dirMode, int fileMode,
-                                       AssemblerConfigurationSource configSource,
-                                       ComponentsXmlArchiverFileFilter componentsXmlFilter, Logger logger )
+    public static void addDirectory( Archiver archiver, File directory, String outputDirectory, List includes,
+                                     List fileSetExcludes )
         throws ArchiveCreationException
     {
-        int oldDirMode = archiver.getDefaultDirectoryMode();
-        int oldFileMode = archiver.getDefaultFileMode();
-
-        try
+        if ( directory.exists() )
         {
-            if ( unpack )
+            List excludes;
+            if ( fileSetExcludes != null && !fileSetExcludes.isEmpty() )
             {
-                // TODO: something like zipfileset in plexus-archiver
-                // archiver.addJar( )
-
-                File tempLocation = new File( configSource.getWorkingDirectory(), fileNameMapping );
-                boolean process = false;
-                if ( !tempLocation.exists() )
-                {
-                    tempLocation.mkdirs();
-                    process = true;
-                }
-                else if ( artifact.getFile().lastModified() > tempLocation.lastModified() )
-                {
-                    process = true;
-                }
-
-                if ( process )
-                {
-                    try
-                    {
-                        unpack( artifact.getFile(), tempLocation, archiverManager );
-                    }
-                    catch ( NoSuchArchiverException e )
-                    {
-                        throw new ArchiveCreationException( "Unable to obtain unarchiver for file '"
-                            + artifact.getFile() + "'" );
-                    }
-                    catch ( ArchiveExpansionException e )
-                    {
-                        throw new ArchiveCreationException( "Unable to expand archive: '" + artifact.getFile() + "'" );
-                    }
-
-                    /*
-                     * If the assembly is 'jar-with-dependencies', remove the
-                     * security files in all dependencies that will prevent the
-                     * uberjar to execute. Please see MASSEMBLY-64 for details.
-                     */
-                    if ( archiver instanceof JarArchiver )
-                    {
-                        String[] securityFiles = { "*.RSA", "*.DSA", "*.SF", "*.rsa", "*.dsa", "*.sf" };
-                        org.apache.maven.shared.model.fileset.FileSet securityFileSet = new org.apache.maven.shared.model.fileset.FileSet();
-                        securityFileSet.setDirectory( tempLocation.getAbsolutePath() + "/META-INF/" );
-
-                        for ( int sfsi = 0; sfsi < securityFiles.length; sfsi++ )
-                        {
-                            securityFileSet.addInclude( securityFiles[sfsi] );
-                        }
-
-                        FileSetManager fsm = new FileSetManager( logger );
-                        try
-                        {
-                            fsm.delete( securityFileSet );
-                        }
-                        catch ( IOException e )
-                        {
-                            throw new ArchiveCreationException( "Failed to delete security files: " + e.getMessage(), e );
-                        }
-                    }
-                }
-
-                ArchiveAssemblyUtils.addDirectory( archiver, tempLocation, outputDirectory, null, FileUtils
-                    .getDefaultExcludesAsList(), componentsXmlFilter );
+                excludes = new ArrayList( fileSetExcludes );
             }
             else
             {
-                try
-                {
-                    archiver.addFile( artifact.getFile(), outputDirectory + fileNameMapping );
-                }
-                catch ( ArchiverException e )
-                {
-                    throw new ArchiveCreationException( "Error adding file '" + artifact.getFile() + "' to archive: "
-                        + e.getMessage(), e );
-                }
-            }
-        }
-        finally
-        {
-            archiver.setDefaultDirectoryMode( oldDirMode );
-            archiver.setDefaultFileMode( oldFileMode );
-        }
-    }
-
-    public static void addDirectory( Archiver archiver, File directory, String output, List includes,
-                                     List fileSetExcludes, ComponentsXmlArchiverFileFilter componentsXmlFilter )
-        throws ArchiveCreationException
-    {
-        // TODO Handle this in the archiver!
-        List excludes = new ArrayList( fileSetExcludes );
-        excludes.addAll( FileUtils.getDefaultExcludesAsList() );
-        
-        if ( directory.exists() )
-        {
-            List adaptedExcludes = excludes;
-
-            // TODO: more robust set of filters on added files in the archiver
-            File componentsXml = new File( directory, ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH );
-            if ( componentsXml.exists() )
-            {
-                try
-                {
-                    componentsXmlFilter.addComponentsXml( componentsXml );
-                }
-                catch ( IOException e )
-                {
-                    throw new ArchiveCreationException( "Error reading components.xml to merge: " + e.getMessage(), e );
-                }
-                catch ( XmlPullParserException e )
-                {
-                    throw new ArchiveCreationException( "Error reading components.xml to merge: " + e.getMessage(), e );
-                }
-                adaptedExcludes = new ArrayList( excludes );
-                adaptedExcludes.add( ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH );
+                excludes = new ArrayList();
             }
 
             try
             {
-                String[] includesArray = (String[]) includes.toArray( EMPTY_STRING_ARRAY );
-                String[] excludesArray = (String[]) adaptedExcludes.toArray( EMPTY_STRING_ARRAY );
-                
-                archiver.addDirectory( directory, output, includesArray, excludesArray );
+                String[] includesArray = null;
+                if ( includes != null && !includes.isEmpty() )
+                {
+                    includesArray = (String[]) includes.toArray( EMPTY_STRING_ARRAY );
+                }
+
+                // this one is guaranteed to be non-null by code above.
+                String[] excludesArray = (String[]) excludes.toArray( EMPTY_STRING_ARRAY );
+
+                archiver.addDirectory( directory, outputDirectory, includesArray, excludesArray );
             }
             catch ( ArchiverException e )
             {
@@ -284,31 +172,31 @@ public final class ArchiveAssemblyUtils
     /**
      * Unpacks the archive file.
      * 
-     * @param file
+     * @param source
      *            File to be unpacked.
-     * @param location
+     * @param destDir
      *            Location where to put the unpacked files.
      */
-    public static void unpack( File file, File location, ArchiverManager archiverManager )
+    public static void unpack( File source, File destDir, ArchiverManager archiverManager )
         throws ArchiveExpansionException, NoSuchArchiverException
     {
         try
         {
-            UnArchiver unArchiver = archiverManager.getUnArchiver( file );
+            UnArchiver unArchiver = archiverManager.getUnArchiver( source );
 
-            unArchiver.setSourceFile( file );
+            unArchiver.setSourceFile( source );
 
-            unArchiver.setDestDirectory( location );
+            unArchiver.setDestDirectory( destDir );
 
             unArchiver.extract();
         }
         catch ( IOException e )
         {
-            throw new ArchiveExpansionException( "Error unpacking file: " + file + "to: " + location, e );
+            throw new ArchiveExpansionException( "Error unpacking file: " + source + "to: " + destDir, e );
         }
         catch ( ArchiverException e )
         {
-            throw new ArchiveExpansionException( "Error unpacking file: " + file + "to: " + location, e );
+            throw new ArchiveExpansionException( "Error unpacking file: " + source + "to: " + destDir, e );
         }
     }
 

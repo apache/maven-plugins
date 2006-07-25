@@ -1,13 +1,21 @@
 package org.apache.maven.plugin.assembly.archive.phase;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.archive.ArchiveAssemblyUtils;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
+import org.apache.maven.plugin.assembly.archive.task.AddArtifactTask;
 import org.apache.maven.plugin.assembly.filter.AssemblyExcludesArtifactFilter;
 import org.apache.maven.plugin.assembly.filter.AssemblyIncludesArtifactFilter;
-import org.apache.maven.plugin.assembly.filter.ComponentsXmlArchiverFileFilter;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.apache.maven.plugin.assembly.utils.FilterUtils;
@@ -19,17 +27,7 @@ import org.apache.maven.plugins.assembly.model.ModuleSources;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.wagon.PathUtils;
 import org.codehaus.plexus.archiver.Archiver;
-import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 
 /**
  * @plexus.component role="org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase"
@@ -39,14 +37,8 @@ public class ModuleSetAssemblyPhase
     extends AbstractLogEnabled
     implements AssemblyArchiverPhase
 {
-    
-    /**
-     * @plexus.requirement
-     */
-    private ArchiverManager archiverManager;
 
-    public void execute( Assembly assembly, Archiver archiver, AssemblerConfigurationSource configSource,
-                         ComponentsXmlArchiverFileFilter componentsXmlFilter )
+    public void execute( Assembly assembly, Archiver archiver, AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException
     {
         List moduleSets = assembly.getModuleSets();
@@ -71,7 +63,8 @@ public class ModuleSetAssemblyPhase
             Set allModuleProjects;
             try
             {
-                allModuleProjects = ProjectUtils.getProjectModules( project, configSource.getReactorProjects(), getLogger() );
+                allModuleProjects = ProjectUtils.getProjectModules( project, configSource.getReactorProjects(),
+                                                                    getLogger() );
             }
             catch ( IOException e )
             {
@@ -106,9 +99,9 @@ public class ModuleSetAssemblyPhase
                     if ( moduleArtifact.getFile() == null )
                     {
                         throw new ArchiveCreationException(
-                            "Included module: "
-                                + moduleProject.getId()
-                                + " does not have an artifact with a file. Please ensure the package phase is run before the assembly is generated." );
+                                                            "Included module: "
+                                                                + moduleProject.getId()
+                                                                + " does not have an artifact with a file. Please ensure the package phase is run before the assembly is generated." );
                     }
 
                     String fileNameMapping = AssemblyFormatUtils.evaluateFileNameMapping( binaries
@@ -116,20 +109,27 @@ public class ModuleSetAssemblyPhase
 
                     String output = binaries.getOutputDirectory();
                     output = AssemblyFormatUtils.getOutputDirectory( output, moduleProject,
-                        configSource.getFinalName(), includeBaseDirectory );
+                                                                     configSource.getFinalName(), includeBaseDirectory );
+
+                    String outputLocation = output + fileNameMapping;
 
                     int fileMode = Integer.parseInt( binaries.getFileMode(), 8 );
                     int dirMode = Integer.parseInt( binaries.getDirectoryMode(), 8 );
 
                     getLogger().debug(
-                        "ModuleSet[" + output + "]" + " dir perms: "
-                            + Integer.toString( archiver.getDefaultDirectoryMode(), 8 ) + " file perms: "
-                            + Integer.toString( archiver.getDefaultFileMode(), 8 ) );
+                                       "ModuleSet[" + output + "]" + " dir perms: "
+                                           + Integer.toString( archiver.getDefaultDirectoryMode(), 8 )
+                                           + " file perms: " + Integer.toString( archiver.getDefaultFileMode(), 8 ) );
 
-                    ArchiveAssemblyUtils.addArtifactToArchive( moduleArtifact, archiver, archiverManager, output,
-                        fileNameMapping, binaries.isUnpack(), dirMode, fileMode, configSource, componentsXmlFilter,
-                        getLogger() );
+                    AddArtifactTask task = new AddArtifactTask( moduleArtifact );
 
+                    task.setDirectoryMode( dirMode );
+                    task.setFileMode( fileMode );
+                    task.setOutputLocation( outputLocation );
+                    task.setUnpack( binaries.isUnpack() );
+                    
+                    task.execute( archiver, configSource );
+                    
                     if ( binaries.isIncludeDependencies() )
                     {
                         Set binaryDependencies = moduleProject.getArtifacts();
@@ -138,7 +138,7 @@ public class ModuleSetAssemblyPhase
                         List excludes = binaries.getExcludes();
 
                         FilterUtils.filterArtifacts( binaryDependencies, includes, excludes, true,
-                            Collections.EMPTY_LIST );
+                                                     Collections.EMPTY_LIST );
 
                         for ( Iterator binDepIterator = binaryDependencies.iterator(); binDepIterator.hasNext(); )
                         {
@@ -146,17 +146,25 @@ public class ModuleSetAssemblyPhase
 
                             String depFileNameMapping = AssemblyFormatUtils.evaluateFileNameMapping( binaries
                                 .getOutputFileNameMapping(), binaryDependency );
+                            
+                            String depOutputLocation = output + depFileNameMapping;
 
-                            ArchiveAssemblyUtils.addArtifactToArchive( binaryDependency, archiver, archiverManager,
-                                output, depFileNameMapping, includeBaseDirectory, dirMode, fileMode, configSource,
-                                componentsXmlFilter, getLogger() );
+                            AddArtifactTask depTask = new AddArtifactTask( moduleArtifact );
+
+                            depTask.setDirectoryMode( dirMode );
+                            depTask.setFileMode( fileMode );
+                            depTask.setOutputLocation( depOutputLocation );
+                            depTask.setUnpack( binaries.isUnpack() );
+                            
+                            depTask.execute( archiver, configSource );
                         }
                     }
                 }
 
                 if ( !moduleFileSets.isEmpty() )
                 {
-                    ArchiveAssemblyUtils.addFileSets( archiver, moduleFileSets, includeBaseDirectory, configSource, componentsXmlFilter, getLogger() );
+                    ArchiveAssemblyUtils.addFileSets( archiver, moduleFileSets, includeBaseDirectory, configSource,
+                                                      getLogger() );
                 }
             }
 

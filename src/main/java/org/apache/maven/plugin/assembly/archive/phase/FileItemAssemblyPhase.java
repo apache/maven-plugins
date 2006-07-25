@@ -1,8 +1,11 @@
 package org.apache.maven.plugin.assembly.archive.phase;
 
+import java.io.File;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
-import org.apache.maven.plugin.assembly.filter.ComponentsXmlArchiverFileFilter;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.format.FileFormatter;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
@@ -11,10 +14,6 @@ import org.apache.maven.plugins.assembly.model.FileItem;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
-
-import java.io.File;
-import java.util.Iterator;
-import java.util.List;
 
 
 /**
@@ -26,8 +25,7 @@ public class FileItemAssemblyPhase
     implements AssemblyArchiverPhase
 {
 
-    public void execute( Assembly assembly, Archiver archiver, AssemblerConfigurationSource configSource,
-                         ComponentsXmlArchiverFileFilter componentsXmlFilter )
+    public void execute( Assembly assembly, Archiver archiver, AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException
     {
         List fileList = assembly.getFiles();

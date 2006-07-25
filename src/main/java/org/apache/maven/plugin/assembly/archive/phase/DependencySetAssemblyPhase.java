@@ -1,11 +1,16 @@
 package org.apache.maven.plugin.assembly.archive.phase;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
-import org.apache.maven.plugin.assembly.archive.ArchiveAssemblyUtils;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
+import org.apache.maven.plugin.assembly.archive.task.AddArtifactTask;
 import org.apache.maven.plugin.assembly.filter.AssemblyScopeArtifactFilter;
-import org.apache.maven.plugin.assembly.filter.ComponentsXmlArchiverFileFilter;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.apache.maven.plugin.assembly.utils.FilterUtils;
@@ -14,14 +19,7 @@ import org.apache.maven.plugins.assembly.model.Assembly;
 import org.apache.maven.plugins.assembly.model.DependencySet;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.Archiver;
-import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 
 /**
@@ -33,13 +31,7 @@ public class DependencySetAssemblyPhase
     implements AssemblyArchiverPhase
 {
 
-    /**
-     * @plexus.requirement
-     */
-    private ArchiverManager archiverManager;
-
-    public void execute( Assembly assembly, Archiver archiver, AssemblerConfigurationSource configSource,
-                         ComponentsXmlArchiverFileFilter componentsXmlFilter )
+    public void execute( Assembly assembly, Archiver archiver, AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException
     {
         List dependencySets = assembly.getDependencySets();
@@ -75,10 +67,17 @@ public class DependencySetAssemblyPhase
 
                 String fileNameMapping = AssemblyFormatUtils.evaluateFileNameMapping( dependencySet
                     .getOutputFileNameMapping(), artifact );
+                
+                String outputLocation = output + fileNameMapping;
 
-                ArchiveAssemblyUtils.addArtifactToArchive( artifact, archiver, archiverManager, output,
-                    fileNameMapping, dependencySet.isUnpack(), dirMode, fileMode, configSource, componentsXmlFilter,
-                    getLogger() );
+                AddArtifactTask task = new AddArtifactTask( artifact );
+                
+                task.setDirectoryMode( dirMode );
+                task.setFileMode( fileMode );
+                task.setOutputLocation( outputLocation );
+                task.setUnpack( dependencySet.isUnpack() );
+                
+                task.execute( archiver, configSource );
             }
 
             allDependencyArtifacts.removeAll( dependencyArtifacts );
