@@ -76,11 +76,6 @@ public class EclipseWriterConfig
     private boolean pde;
 
     /**
-     * PDE lib dir.
-     */
-    private File pdeLibDir;
-
-    /**
      * Project natures.
      */
     private List projectnatures;
@@ -219,24 +214,6 @@ public class EclipseWriterConfig
     public void setManifestFile( File manifestFile )
     {
         this.manifestFile = manifestFile;
-    }
-
-    /**
-     * Getter for <code>pdeLibDir</code>.
-     * @return Returns the pdeLibDir.
-     */
-    public File getPdeLibDir()
-    {
-        return this.pdeLibDir;
-    }
-
-    /**
-     * Setter for <code>pdeLibDir</code>.
-     * @param pdeLibDir The pdeLibDir to set.
-     */
-    public void setPdeLibDir( File pdeLibDir )
-    {
-        this.pdeLibDir = pdeLibDir;
     }
 
     /**

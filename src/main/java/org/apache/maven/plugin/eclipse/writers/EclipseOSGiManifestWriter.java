@@ -25,7 +25,6 @@ import java.io.IOException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.ide.IdeDependency;
-import org.apache.maven.plugin.ide.IdeUtils;
 import org.codehaus.plexus.util.IOUtil;
 
 /**
@@ -82,7 +81,7 @@ public class EclipseOSGiManifestWriter
             return;
         }
 
-        StringBuffer manifestSb = rewriteManifest( config.getManifestFile(), config.getPdeLibDir() );
+        StringBuffer manifestSb = rewriteManifest( config.getManifestFile() );
         FileWriter fos = null;
         try
         {
@@ -105,7 +104,7 @@ public class EclipseOSGiManifestWriter
         }
     }
 
-    protected StringBuffer rewriteManifest( File manifestFile, File libdir )
+    protected StringBuffer rewriteManifest( File manifestFile )
         throws MojoExecutionException
     {
 
@@ -173,7 +172,7 @@ public class EclipseOSGiManifestWriter
         {
             throw new MojoExecutionException( Messages.getString( "cantreadfile", manifestFile.getAbsolutePath() ) );
         }
-        manifestSb.append( addBundleClasspathEntries( libdir ) );
+        manifestSb.append( addBundleClasspathEntries() );
 
         // OSGi manifest headers need to end with a line break
         manifestSb.append( NEWLINE );
@@ -184,7 +183,7 @@ public class EclipseOSGiManifestWriter
      * Add all libraries that don't have the scope "provided" to the "Bundle-Classpath".
      * @throws MojoExecutionException 
      */
-    protected String addBundleClasspathEntries( File libdir )
+    protected String addBundleClasspathEntries()
         throws MojoExecutionException
     {
         StringBuffer bundleClasspathSb = new StringBuffer( ENTRY_BUNDLE_CLASSPATH );
@@ -202,10 +201,7 @@ public class EclipseOSGiManifestWriter
 
                 log.debug( "Adding artifact to manifest: " + dep.getArtifactId() );
 
-                File artifactFile = new File( libdir, dep.getFile().getName() );
-
-                bundleClasspathSb.append( " "
-                    + IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), artifactFile, false ) );
+                bundleClasspathSb.append( " " + dep.getFile().getName() );
             }
         }
         // only insert the name of the property if there are local libraries
