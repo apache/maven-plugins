@@ -22,11 +22,11 @@ Using a Suppressions Filter
 
 <suppressions>
   <suppress checks="JavadocStyleCheck"
-               files="GeneratedObject.java"
-               lines="50-9999"/>
+             files="GeneratedObject.java"
+             lines="50-9999"/>
   <suppress checks="MagicNumberCheck"
-               files="LegacyDatasetConvertor.java"
-               lines="221,250-295"/>
+             files="LegacyDatasetConvertor.java"
+             lines="221,250-295"/>
 </suppressions>
 +-----+
 
