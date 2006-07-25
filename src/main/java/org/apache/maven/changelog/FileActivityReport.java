@@ -32,8 +32,9 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
+ * A Maven 2.0 file activity report plugin.
+ *
  * @goal file-activity
- * @description A Maven 2.0 file activity report plugin
  */
 public class FileActivityReport
     extends ChangeLogReport
@@ -43,7 +44,7 @@ public class FileActivityReport
      */
     public String getDescription( Locale locale )
     {
-        return "Generate file activity report from SCM";
+        return "Generate file activity report from SCM.";
     }
 
     /**
@@ -51,7 +52,7 @@ public class FileActivityReport
      */
     public String getName( Locale locale )
     {
-        return "file-activity";
+        return "File Activity";
     }
 
     /**

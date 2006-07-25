@@ -60,10 +60,10 @@ import java.util.StringTokenizer;
 import java.util.Collections;
 import java.util.Comparator;
 
-
 /**
+ * A Maven 2.0 change log report plugin.
+ *
  * @goal changelog
- * @description A Maven 2.0 Changelog report plugin
  */
 public class ChangeLogReport
     extends AbstractMavenReport
@@ -1240,7 +1240,7 @@ public class ChangeLogReport
      */
     public String getDescription( Locale locale )
     {
-        return "Generated Changelog report from SCM";
+        return "Generated change log report from SCM.";
     }
 
     /**
@@ -1248,7 +1248,7 @@ public class ChangeLogReport
      */
     public String getName( Locale locale )
     {
-        return "changelog";
+        return "Change Log";
     }
 
     /**
