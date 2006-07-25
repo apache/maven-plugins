@@ -1,10 +1,8 @@
 package org.apache.maven.plugin.assembly.archive.phase;
 
-import java.util.List;
-
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
-import org.apache.maven.plugin.assembly.archive.ArchiveAssemblyUtils;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
+import org.apache.maven.plugin.assembly.archive.task.AddFileSetsTask;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugins.assembly.model.Assembly;
 import org.codehaus.plexus.archiver.Archiver;
@@ -22,10 +20,11 @@ public class FileSetAssemblyPhase
     public void execute( Assembly assembly, Archiver archiver, AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException
     {
-        List fileSets = assembly.getFileSets();
-        boolean includeBaseDirectory = assembly.isIncludeBaseDirectory();
-
-        ArchiveAssemblyUtils.addFileSets( archiver, fileSets, includeBaseDirectory, configSource, getLogger() );
+        AddFileSetsTask task = new AddFileSetsTask( assembly.getFileSets() );
+        
+        task.setLogger( getLogger() );
+        
+        task.execute( archiver, configSource );
     }
 
 }

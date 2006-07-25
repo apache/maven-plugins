@@ -16,19 +16,19 @@ package org.apache.maven.plugin.assembly.mojos;
  * limitations under the License.
  */
 
+import java.io.File;
+import java.util.Iterator;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.assembly.archive.ArchiveAssemblyUtils;
 import org.apache.maven.plugin.assembly.archive.ArchiveExpansionException;
+import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
 import org.apache.maven.plugin.assembly.utils.ProjectUtils;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
-
-import java.io.File;
-import java.util.Iterator;
 
 /**
  * Unpack project dependencies.  Currently supports dependencies of type jar and zip.
@@ -92,7 +92,7 @@ public class UnpackMojo
                 File file = artifact.getFile();
                 try
                 {
-                    ArchiveAssemblyUtils.unpack( file, tempLocation, archiverManager );
+                    AssemblyFileUtils.unpack( file, tempLocation, archiverManager );
                 }
                 catch ( NoSuchArchiverException e )
                 {

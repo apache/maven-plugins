@@ -11,9 +11,9 @@ import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
-import org.apache.maven.plugin.assembly.archive.ArchiveAssemblyUtils;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.task.AddArtifactTask;
+import org.apache.maven.plugin.assembly.archive.task.AddFileSetsTask;
 import org.apache.maven.plugin.assembly.filter.AssemblyExcludesArtifactFilter;
 import org.apache.maven.plugin.assembly.filter.AssemblyIncludesArtifactFilter;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
@@ -121,11 +121,10 @@ public class ModuleSetAssemblyPhase
                                            + Integer.toString( archiver.getDefaultDirectoryMode(), 8 )
                                            + " file perms: " + Integer.toString( archiver.getDefaultFileMode(), 8 ) );
 
-                    AddArtifactTask task = new AddArtifactTask( moduleArtifact );
+                    AddArtifactTask task = new AddArtifactTask( moduleArtifact, outputLocation );
 
                     task.setDirectoryMode( dirMode );
                     task.setFileMode( fileMode );
-                    task.setOutputLocation( outputLocation );
                     task.setUnpack( binaries.isUnpack() );
                     
                     task.execute( archiver, configSource );
@@ -149,11 +148,10 @@ public class ModuleSetAssemblyPhase
                             
                             String depOutputLocation = output + depFileNameMapping;
 
-                            AddArtifactTask depTask = new AddArtifactTask( moduleArtifact );
+                            AddArtifactTask depTask = new AddArtifactTask( binaryDependency, depOutputLocation );
 
                             depTask.setDirectoryMode( dirMode );
                             depTask.setFileMode( fileMode );
-                            depTask.setOutputLocation( depOutputLocation );
                             depTask.setUnpack( binaries.isUnpack() );
                             
                             depTask.execute( archiver, configSource );
@@ -163,8 +161,11 @@ public class ModuleSetAssemblyPhase
 
                 if ( !moduleFileSets.isEmpty() )
                 {
-                    ArchiveAssemblyUtils.addFileSets( archiver, moduleFileSets, includeBaseDirectory, configSource,
-                                                      getLogger() );
+                    AddFileSetsTask task = new AddFileSetsTask( moduleFileSets );
+                    
+                    task.setLogger( getLogger() );
+                    
+                    task.execute( archiver, configSource );
                 }
             }
 

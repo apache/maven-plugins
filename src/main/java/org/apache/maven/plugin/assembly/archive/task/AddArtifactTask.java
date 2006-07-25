@@ -12,76 +12,81 @@ import org.codehaus.plexus.archiver.ArchiverException;
 public class AddArtifactTask
     implements ArchiverTask
 {
-    
+
     private int directoryMode = -1;
-    
+
     private int fileMode = -1;
-    
+
     private boolean unpack = false;
-    
+
     private List includes;
-    
+
     private List excludes;
-    
-    private String outputLocation;
-    
+
+    private final String outputLocation;
+
     private final Artifact artifact;
-    
-    public AddArtifactTask( Artifact artifact )
+
+    public AddArtifactTask( Artifact artifact, String outputLocation )
     {
         this.artifact = artifact;
+        this.outputLocation = outputLocation;
     }
 
     public void execute( Archiver archiver, AssemblerConfigurationSource configSource )
         throws ArchiveCreationException
     {
-        int oldDirMode = archiver.getDefaultDirectoryMode();
-        int oldFileMode = archiver.getDefaultFileMode();
-        
-        if ( fileMode > -1 )
+        if ( unpack )
         {
-            archiver.setDefaultFileMode( fileMode );
-        }
-        
-        if ( directoryMode > -1 )
-        {
-            archiver.setDefaultDirectoryMode( directoryMode );
-        }
-        
-        try
-        {
-            if ( unpack )
-            {
-                String[] includesArray = TypeConversionUtils.toStringArray( includes );
-                String[] excludesArray = TypeConversionUtils.toStringArray( excludes );
+            String[] includesArray = TypeConversionUtils.toStringArray( includes );
+            String[] excludesArray = TypeConversionUtils.toStringArray( excludes );
 
-                try
-                {
-                    archiver.addArchivedFileSet( artifact.getFile(), outputLocation, includesArray, excludesArray );
-                }
-                catch ( ArchiverException e )
-                {
-                    throw new ArchiveCreationException( "Error adding file-set for '" + artifact.getId()
-                        + "' to archive: " + e.getMessage(), e );
-                }
-            }
-            else
+            int oldDirMode = archiver.getDefaultDirectoryMode();
+            int oldFileMode = archiver.getDefaultFileMode();
+
+            try
             {
-                try
+                if ( fileMode > -1 )
+                {
+                    archiver.setDefaultFileMode( fileMode );
+                }
+
+                if ( directoryMode > -1 )
+                {
+                    archiver.setDefaultDirectoryMode( directoryMode );
+                }
+
+                archiver.addArchivedFileSet( artifact.getFile(), outputLocation, includesArray, excludesArray );
+            }
+            catch ( ArchiverException e )
+            {
+                throw new ArchiveCreationException( "Error adding file-set for '" + artifact.getId() + "' to archive: "
+                    + e.getMessage(), e );
+            }
+            finally
+            {
+                archiver.setDefaultDirectoryMode( oldDirMode );
+                archiver.setDefaultFileMode( oldFileMode );
+            }
+        }
+        else
+        {
+            try
+            {
+                if ( fileMode > -1 )
+                {
+                    archiver.addFile( artifact.getFile(), outputLocation, fileMode );
+                }
+                else
                 {
                     archiver.addFile( artifact.getFile(), outputLocation );
                 }
-                catch ( ArchiverException e )
-                {
-                    throw new ArchiveCreationException( "Error adding file '" + artifact.getId() + "' to archive: "
-                        + e.getMessage(), e );
-                }
             }
-        }
-        finally
-        {
-            archiver.setDefaultDirectoryMode( oldDirMode );
-            archiver.setDefaultFileMode( oldFileMode );
+            catch ( ArchiverException e )
+            {
+                throw new ArchiveCreationException( "Error adding file '" + artifact.getId() + "' to archive: "
+                    + e.getMessage(), e );
+            }
         }
     }
 
@@ -103,11 +108,6 @@ public class AddArtifactTask
     public void setIncludes( List includes )
     {
         this.includes = includes;
-    }
-
-    public void setOutputLocation( String outputLocation )
-    {
-        this.outputLocation = outputLocation;
     }
 
     public void setUnpack( boolean unpack )

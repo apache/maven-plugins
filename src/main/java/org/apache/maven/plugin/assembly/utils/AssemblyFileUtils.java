@@ -1,6 +1,11 @@
 package org.apache.maven.plugin.assembly.utils;
 
+import org.apache.maven.plugin.assembly.archive.ArchiveExpansionException;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
+import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.UnArchiver;
+import org.codehaus.plexus.archiver.manager.ArchiverManager;
+import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.util.IOUtil;
 
 import java.io.BufferedReader;
@@ -23,6 +28,37 @@ public final class AssemblyFileUtils
     {
     }
 
+    /**
+     * Unpacks the archive file.
+     * 
+     * @param source
+     *            File to be unpacked.
+     * @param destDir
+     *            Location where to put the unpacked files.
+     */
+    public static void unpack( File source, File destDir, ArchiverManager archiverManager )
+        throws ArchiveExpansionException, NoSuchArchiverException
+    {
+        try
+        {
+            UnArchiver unArchiver = archiverManager.getUnArchiver( source );
+
+            unArchiver.setSourceFile( source );
+
+            unArchiver.setDestDirectory( destDir );
+
+            unArchiver.extract();
+        }
+        catch ( IOException e )
+        {
+            throw new ArchiveExpansionException( "Error unpacking file: " + source + "to: " + destDir, e );
+        }
+        catch ( ArchiverException e )
+        {
+            throw new ArchiveExpansionException( "Error unpacking file: " + source + "to: " + destDir, e );
+        }
+    }
+    
     /**
      * NOTE: It is the responsibility of the caller to close the source Reader instance.
      * @param lineEndings This is the result of the getLineEndingChars(..) method in this utility class; the actual

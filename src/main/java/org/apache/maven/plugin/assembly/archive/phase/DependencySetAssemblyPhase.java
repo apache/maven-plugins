@@ -70,11 +70,10 @@ public class DependencySetAssemblyPhase
                 
                 String outputLocation = output + fileNameMapping;
 
-                AddArtifactTask task = new AddArtifactTask( artifact );
+                AddArtifactTask task = new AddArtifactTask( artifact, outputLocation );
                 
                 task.setDirectoryMode( dirMode );
                 task.setFileMode( fileMode );
-                task.setOutputLocation( outputLocation );
                 task.setUnpack( dependencySet.isUnpack() );
                 
                 task.execute( archiver, configSource );

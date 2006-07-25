@@ -18,7 +18,7 @@ import junit.framework.Assert;
 public class TestFileManager
 {
 
-    public static final String TEMP_DIR_PATH = System.getProperty( "java.io.tempdir" );
+    public static final String TEMP_DIR_PATH = System.getProperty( "java.io.tmpdir" );
 
     private List filesToDelete = new ArrayList();
 
