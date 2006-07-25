@@ -170,7 +170,7 @@ public class JiraMojo
     public void executeReport( Locale locale )
         throws MavenReportException
     {
-        JiraDownloader2 jira = new JiraDownloader2();
+        JiraDownloader jira = new JiraDownloader();
 
         setJiraDownloaderParameter( jira );
 
@@ -230,7 +230,7 @@ public class JiraMojo
         return ResourceBundle.getBundle( "jira-report", locale, this.getClass().getClassLoader() );
     }
 
-    private void setJiraDownloaderParameter( JiraDownloader2 jira )
+    private void setJiraDownloaderParameter( JiraDownloader jira )
     {
         jira.setLog( getLog() );
 

@@ -16,13 +16,6 @@ package org.apache.maven.plugin.jira;
  * limitations under the License.
  */
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HostConfiguration;
@@ -39,90 +32,58 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Gets relevant issues in RSS from a given JIRA installation.
- *
+ * <p/>
  * Based on version 1.1.2 and patch by Dr. Spock (MPJIRA-8).
  *
  * @author mfranken@xebia.com
  * @author jruiz@exist.com
- * @version $Id$
+ * @version $Id: AbstractJiraDownloader.java 424727 2006-07-23 12:38:31 +0000 (sö, 23 jul 2006) fgiust $
  */
-public final class JiraDownloader2
+public abstract class AbstractJiraDownloader
 {
-
     /** Log for debug output. */
-    private org.apache.maven.plugin.logging.Log log;
-
+    private Log log;
     /** Output file for xml document. */
     private File output;
-
     /** The maximum number of entries to show. */
     private int nbEntriesMax;
-
     /** The filter to apply to query to JIRA. */
     private String filter;
-
     /** Ids of status to show, as comma separated string. */
     private String statusIds;
-
     /** Ids of resolution to show, as comma separated string. */
     private String resolutionIds;
-
     /** Ids of priority to show, as comma separated string. */
     private String priorityIds;
-
     /** The component to show. */
     private String component;
-
     /** The username to log into JIRA. */
     private String jiraUser;
-
     /** The password to log into JIRA. */
     private String jiraPassword;
-
     /** The username to log into webserver. */
     private String webUser;
-
     /** The password to log into webserver. */
     private String webPassword;
-
     /** The maven project. */
     private MavenProject project;
-
     /** The maven settings. */
     private Settings settings;
-
-    /** Mapping containing all JIRA status values. */
-    private static Map statusMap = new HashMap();
-
-    /** Mapping containing all JIRA resolution values. */
-    private static Map resolutionMap = new HashMap();
-
-    /** Mapping containing all JIRA priority values. */
-    private static Map priorityMap = new HashMap();
-
-    static
-    {
-        statusMap.put( "Open", "1" );
-        statusMap.put( "In Progress", "3" );
-        statusMap.put( "Reopened", "4" );
-        statusMap.put( "Resolved", "5" );
-        statusMap.put( "Closed", "6" );
-
-        resolutionMap.put( "Unresolved", "-1" );
-        resolutionMap.put( "Fixed", "1" );
-        resolutionMap.put( "Won't Fix", "2" );
-        resolutionMap.put( "Duplicate", "3" );
-        resolutionMap.put( "Incomplete", "4" );
-        resolutionMap.put( "Cannot Reproduce", "5" );
-
-        priorityMap.put( "Blocker", "1" );
-        priorityMap.put( "Critical", "2" );
-        priorityMap.put( "Major", "3" );
-        priorityMap.put( "Minor", "4" );
-        priorityMap.put( "Trivial", "5" );
-    }
+    /** Mapping containing all allowed JIRA status values. */
+    protected Map statusMap = new HashMap();
+    /** Mapping containing all allowed JIRA resolution values. */
+    protected Map resolutionMap = new HashMap();
+    /** Mapping containing all allowed JIRA priority values. */
+    protected Map priorityMap = new HashMap();
 
     /**
      * Creates a filter given the parameters and some defaults.
@@ -249,6 +210,11 @@ public final class JiraDownloader2
             // create the URL for getting the proper issues from JIRA
             String fullURL = jiraUrl + "/secure/IssueNavigator.jspa?view=rss&pid=" + jiraId;
 
+            if ( getFixFor() != null )
+            {
+                fullURL += "&fixfor=" + getFixFor();
+            }
+
             fullURL += createFilter();
 
             fullURL += ( "&tempMax=" + nbEntriesMax + "&reset=true&decorator=none" );
@@ -260,6 +226,16 @@ public final class JiraDownloader2
         {
             getLog().error( "Error accessing " + project.getIssueManagement().getUrl(), e );
         }
+    }
+
+    /**
+     * Override this method if you need to get issue for a specific Fix For.
+     *
+     * @return A Fix For id or <code>null</code> if you don't have that need
+     */
+    protected String getFixFor()
+    {
+        return null;
     }
 
     private Map getJiraUrlAndIssueId()
@@ -427,8 +403,7 @@ public final class JiraDownloader2
      * Downloads the given link using the configured HttpClient, possibly following redirects.
      *
      * @param cl     the HttpClient
-     * @param link   the JiraUrl
-     * @return
+     * @param link   the URL to JIRA
      */
     private void download( final HttpClient cl, final String link )
     {
@@ -445,7 +420,7 @@ public final class JiraDownloader2
             final String strGetResponseBody = gm.getResponseBodyAsString();
 
             // write the reponse to file
-            PrintWriter pw = new PrintWriter( new FileWriter( output ) );
+            PrintWriter pw = new PrintWriter( new FileWriter( getOutput() ) );
 
             pw.print( strGetResponseBody );
 
@@ -517,6 +492,11 @@ public final class JiraDownloader2
     public void setOutput( File thisOutput )
     {
         this.output = thisOutput;
+    }
+
+    public File getOutput()
+    {
+        return this.output;
     }
 
     /**
@@ -634,7 +614,7 @@ public final class JiraDownloader2
         this.log = log;
     }
 
-    private org.apache.maven.plugin.logging.Log getLog()
+    private Log getLog()
     {
         return log;
     }

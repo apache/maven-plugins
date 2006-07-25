@@ -434,7 +434,7 @@ public class AnnouncementMojo
     public void doJiraGenerate()
         throws MojoExecutionException
     {
-        JiraAnnouncementDownloader jiraDownloader = new JiraAnnouncementDownloader();
+        JiraDownloader jiraDownloader = new JiraDownloader();
 
         File jiraXMLFile = new File( jiraXML );
 
