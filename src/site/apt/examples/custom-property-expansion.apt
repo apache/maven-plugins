@@ -7,7 +7,7 @@
 
 Using Custom Checkstyle Property Expansion Definitions
 
-  A custom {{{http://checkstyle.sourceforge.net/config.html#Properties}property expansion definitions}}
+  Custom {{{http://checkstyle.sourceforge.net/config.html#Properties}property expansion definitions}}
   for the Checker can be defined.
 
   Checkstyle uses the property expansion mechanism to allow injection of specific values into a pre-defined
@@ -57,5 +57,25 @@ Using Custom Checkstyle Property Expansion Definitions
 +-----+
 
   The property expansion information can also come from a location using the <<propertiesLocation>>
-  parameter, which can point to a URL, File, or build classpath resource reference.
+  parameter as shown below. The <<propertiesLocation>> can point to a URL, File, or build classpath resource reference.
+
++-----+
+<project>
+   ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <configLocation>checkstyle.xml</configLocation>
+          <propertesLocation>${basedir}/checkstyle.properties</propertiesLocation>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+   ...
+</project>
++-----+
+
 
