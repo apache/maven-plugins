@@ -12,56 +12,68 @@ Multimodule Configuration
   Example will use a mysterious project called 'whizbang'.
 
 +-----+
-[whizbang]$ ls
-drwxr-xr-x+ 5      0 Nov  3 15:36 core/
-drwxr-xr-x+ 6      0 Nov 16 16:11 gui/
-drwxr-xr-x+ 6      0 Nov 29 13:13 jmx/
--rw-r--r--  1   6153 Nov 29 13:08 pom.xml
-drwxr-xr-x+ 4      0 Nov  1 15:48 src/
+whizbang
+|-- pom.xml
+|-- core
+|   `-- pom.xml
+|-- gui
+|   `-- pom.xml
+|-- jmx
+|   `-- pom.xml
+`-- src
 +-----+
 
   First: setup a sub project to house your build tools.
 
 +-----+
-[whizbang]$ ls
-drwxr-xr-x+ 4      0 Nov 29 13:44 build-tools/
-drwxr-xr-x+ 5      0 Nov  3 15:36 core/
-drwxr-xr-x+ 6      0 Nov 16 16:11 gui/
-drwxr-xr-x+ 6      0 Nov 29 13:13 jmx/
--rw-r--r--  1   6153 Nov 29 13:08 pom.xml
-drwxr-xr-x+ 4      0 Nov  1 15:48 src/
+whizbang
+|-- pom.xml
+|-- build-tools
+|   `-- pom.xml
+|-- core
+|   `-- pom.xml
+|-- gui
+|   `-- pom.xml
+|-- jmx
+|   `-- pom.xml
+`-- src
 +-----+
 
   Next, include the resources you want in the build-tools jar file.
 
 +-----+
-[whizbang/build-tools]$ find . -type f
-./pom.xml
-./src/main/resources/whizbang/checkstyle.xml
-./src/main/resources/whizbang/pmd.xml
-./src/main/resources/whizbang/LICENSE.txt
+whizbang
+|-- pom.xml
+|-- build-tools
+|   |-- src
+|   |   `-- main
+|   |       `-- resources
+|   |           `-- whizbang
+|   |               |-- checkstyle.xml
+|   |               |-- pmd.xml
+|   |               `-- LICENSE.TXT
+|   `-- pom.xml
+|-- core
+|-- gui
+|-- jmx
+`-- src
 +-----+
 
   TIP: put the resources into a subdirectory that you can ensure will be unique, and not conflict with anyone else.
 
-  Now, include the checkstyle configuration in the top level pom.xml
+  Now, include the Checkstyle configuration in the top level pom.xml
 
 +-----+
-[whizbang]$ cat pom.xml
-<?xml version="1.0" encoding="UTF-8"?>
-
 <project
   xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>com.example.whizbang</groupId>
   <artifactId>whizbang-parent</artifactId>
   <version>1.0</version>
   <packaging>pom</packaging>
   <name>WhizBang Parent</name>
-
   <reporting>
     <plugins>
       <plugin>
@@ -98,12 +110,13 @@ drwxr-xr-x+ 4      0 Nov  1 15:48 src/
 </project>
 +-----+
 
-  Once you are done with that, ensure that you do not include the maven-checkstyle-plugin in your sub modules, as their definition and configuration, will override the top level parent pom's definition.
+  Once you are done with that, ensure that you do not include the maven-checkstyle-plugin in your sub modules, as their definition
+  and configuration, will override the top level parent pom's definition.
 
   Lastly, kick off a build of the site.
 
 +-----+
-[whizbang]$ mvn site
+mvn site
 +-----+
 
-  Every sub project will use the same checkstyle setup and configuration.
+  Every sub project will use the same Checkstyle setup and configuration.

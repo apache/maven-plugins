@@ -9,7 +9,12 @@
 
 Usage
 
-  To generate the checkstyle report, add the checkstyle plugin in the \<reporting\> section of your project pom.
+ The following examples describe the basic usage of the Checkstyle plugin.
+
+* Generate Checkstyle Report As Part of the Project Reports
+
+  To generate the Checkstyle report as part of the Project Reports, add the Checkstyle plugin in the \<reporting\> section
+  of your project pom.
 
 +-----+
 <project>
@@ -26,8 +31,39 @@ Usage
 </project>
 +-----+
 
-  Then, execute the site plugin to generate the report distribution.
+  Then, execute the site plugin to generate the report.
 
 +-----+
   mvn site
++-----+
+
+* Generate Checkstyle Report As Standalone
+
+  You can also generate the Checkstyle report by implicitly executing the <<<checkstyle:checkstyle>>> goal from the
+  command line. It is not required to set the Checkstyle plugin in your pom unless you want to set specific configuration.
+
++-----+
+  mvn checkstyle:checkstyle
++-----+
+
+ To specifically configure the Checkstyle plugin, you need to the add it in the \<build\> section of your project pom as
+ shown in the sample below.
+
++-----+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <enableRulesSummary>false</enableRulesSummary>
+           ...
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
 +-----+
