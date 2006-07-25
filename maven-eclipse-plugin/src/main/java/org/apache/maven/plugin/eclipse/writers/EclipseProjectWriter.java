@@ -64,6 +64,16 @@ public class EclipseProjectWriter
     private static final String FILE_DOT_PROJECT = ".project"; //$NON-NLS-1$
 
     /**
+     * Constant for links to files.
+     */
+    private static final int LINK_TYPE_FILE = 1;
+
+    /**
+     * Constant for links to directories.
+     */
+    private static final int LINK_TYPE_DIRECTORY = 2;
+
+    /**
      * @see org.apache.maven.plugin.eclipse.writers.EclipseWriter#write()
      */
     public void write()
@@ -232,6 +242,21 @@ public class EclipseProjectWriter
             writer.endElement(); // linedResources
         }
 
+        if ( config.isPde() )
+        {
+            for ( int j = 0; j < config.getDeps().length; j++ )
+            {
+                IdeDependency dep = config.getDeps()[j];
+
+                if ( dep.isAddedToClasspath() && !dep.isProvided() && !dep.isReferencedProject()
+                    && !dep.isTestDependency() )
+                {
+                    String name = dep.getFile().getName();
+                    addLink( writer, name, name, LINK_TYPE_FILE );
+                }
+            }
+        }
+
         writer.endElement(); // projectDescription
 
         IOUtil.close( w );
@@ -242,23 +267,10 @@ public class EclipseProjectWriter
     {
         if ( file.isFile() )
         {
-            writer.startElement( "link" ); //$NON-NLS-1$
+            String name = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, file, true );
+            String location = IdeUtils.getCanonicalPath( file ).replaceAll( "\\\\", "/" ); //$NON-NLS-1$ //$NON-NLS-2$
 
-            writer.startElement( ELT_NAME );
-            writer.writeText( IdeUtils.toRelativeAndFixSeparator( projectBaseDir, file, true ) );
-            writer.endElement(); // name
-
-            writer.startElement( "type" ); //$NON-NLS-1$
-            writer.writeText( "1" ); //$NON-NLS-1$
-            writer.endElement(); // type
-
-            writer.startElement( "location" ); //$NON-NLS-1$
-
-            writer.writeText( IdeUtils.getCanonicalPath( file ).replaceAll( "\\\\", "/" ) ); //$NON-NLS-1$ //$NON-NLS-2$
-
-            writer.endElement(); // location
-
-            writer.endElement(); // link
+            addLink( writer, name, location, LINK_TYPE_FILE );
         }
         else
         {
@@ -276,23 +288,10 @@ public class EclipseProjectWriter
 
             if ( sourceRoot.isDirectory() )
             {
-                writer.startElement( "link" ); //$NON-NLS-1$
+                String name = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, sourceRoot, true );
+                String location = IdeUtils.getCanonicalPath( sourceRoot ).replaceAll( "\\\\", "/" ); //$NON-NLS-1$ //$NON-NLS-2$
 
-                writer.startElement( ELT_NAME );
-                writer.writeText( IdeUtils.toRelativeAndFixSeparator( projectBaseDir, sourceRoot, true ) );
-                writer.endElement(); // name
-
-                writer.startElement( "type" ); //$NON-NLS-1$
-                writer.writeText( "2" ); //$NON-NLS-1$
-                writer.endElement(); // type
-
-                writer.startElement( "location" ); //$NON-NLS-1$
-
-                writer.writeText( IdeUtils.getCanonicalPath( sourceRoot ).replaceAll( "\\\\", "/" ) ); //$NON-NLS-1$ //$NON-NLS-2$
-
-                writer.endElement(); // location
-
-                writer.endElement(); // link
+                addLink( writer, name, location, LINK_TYPE_DIRECTORY );
             }
         }
     }
@@ -307,25 +306,37 @@ public class EclipseProjectWriter
 
             if ( resourceDir.isDirectory() )
             {
-                writer.startElement( "link" ); //$NON-NLS-1$
+                String name = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, resourceDir, true );
+                String location = IdeUtils.getCanonicalPath( resourceDir ).replaceAll( "\\\\", "/" ); //$NON-NLS-1$ //$NON-NLS-2$
 
-                writer.startElement( ELT_NAME );
-                writer.writeText( IdeUtils.toRelativeAndFixSeparator( projectBaseDir, resourceDir, true ) );
-                writer.endElement(); // name
-
-                writer.startElement( "type" ); //$NON-NLS-1$
-                writer.writeText( "2" ); //$NON-NLS-1$
-                writer.endElement(); // type
-
-                writer.startElement( "location" ); //$NON-NLS-1$
-
-                writer.writeText( IdeUtils.getCanonicalPath( resourceDir ).replaceAll( "\\\\", "/" ) ); //$NON-NLS-1$ //$NON-NLS-2$
-
-                writer.endElement(); // location
-
-                writer.endElement(); // link
+                addLink( writer, name, location, LINK_TYPE_DIRECTORY );
             }
         }
     }
 
+    /**
+     * @param writer
+     * @param name
+     * @param location
+     */
+    private void addLink( XMLWriter writer, String name, String location, int type )
+    {
+        writer.startElement( "link" ); //$NON-NLS-1$
+
+        writer.startElement( ELT_NAME );
+        writer.writeText( name );
+        writer.endElement(); // name
+
+        writer.startElement( "type" ); //$NON-NLS-1$
+        writer.writeText( Integer.toString( type ) );
+        writer.endElement(); // type
+
+        writer.startElement( "location" ); //$NON-NLS-1$
+
+        writer.writeText( location );
+
+        writer.endElement(); // location
+
+        writer.endElement(); // link
+    }
 }
