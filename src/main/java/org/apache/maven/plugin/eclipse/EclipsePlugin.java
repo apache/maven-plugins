@@ -236,13 +236,6 @@ public class EclipsePlugin
     private File manifest;
 
     /**
-     * The directory of local libraries
-     * 
-     * @parameter expression="${eclipse.pdeLibDir}" default-value="${basedir}/lib"
-     */
-    private File pdeLibDir;
-
-    /**
      * Parsed wtp version.
      */
     private float wtpVersionFloat;
@@ -552,7 +545,6 @@ public class EclipsePlugin
         config.setLocalRepository( localRepository );
         config.setManifestFile( manifest );
         config.setPde( pde );
-        config.setPdeLibDir( pdeLibDir );
         config.setProject( project );
         config.setProjectBaseDir( projectBaseDir );
         config.setProjectnatures( projectnatures );

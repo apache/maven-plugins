@@ -20,4 +20,9 @@
     <nature>org.eclipse.jdt.core.javanature</nature>
     <nature>org.eclipse.pde.PluginNature</nature>
   </natures>
+  <link>
+    <name>junit-3.8.1.jar</name>
+    <type>1</type>
+    <location>junit-3.8.1.jar</location>
+  </link>
 </projectDescription>
