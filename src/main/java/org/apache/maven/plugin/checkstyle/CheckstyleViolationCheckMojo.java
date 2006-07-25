@@ -29,7 +29,9 @@ import java.io.FileReader;
 import java.io.IOException;
 
 /**
- * Perform a violation check against the last checkstyle run to see if there are any violations.
+ * Perform a violation check against the last Checkstyle run to see if there are any violations.
+ * It reads the Checkstyle output file, counts the number of violations found and displays it on the
+ * console.  
  *
  * @author <a href="mailto:joakim@erdfelt.net">Joakim Erdfelt</a>
  * @goal check
@@ -40,7 +42,7 @@ public class CheckstyleViolationCheckMojo
     extends AbstractMojo
 {
     /**
-     * Specifies the path and filename to save the checkstyle output.  The format of the output file is
+     * Specifies the path and filename to save the Checkstyle output.  The format of the output file is
      * determined by the <code>outputFileFormat</code>
      *
      * @parameter expression="${checkstyle.output.file}"
@@ -93,7 +95,7 @@ public class CheckstyleViolationCheckMojo
                 if ( failOnViolation )
                 {
                     throw new MojoFailureException(
-                        "You have " + violations + " checkstyle violation" + ( ( violations > 1 ) ? "s" : "" ) + "." );
+                        "You have " + violations + " Checkstyle violation" + ( ( violations > 1 ) ? "s" : "" ) + "." );
                 }
                 else
                 {
@@ -103,12 +105,12 @@ public class CheckstyleViolationCheckMojo
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "Unable to read checkstyle results xml: " + outputFile.getAbsolutePath(),
+            throw new MojoExecutionException( "Unable to read Checkstyle results xml: " + outputFile.getAbsolutePath(),
                                               e );
         }
         catch ( XmlPullParserException e )
         {
-            throw new MojoExecutionException( "Unable to read checkstyle results xml: " + outputFile.getAbsolutePath(),
+            throw new MojoExecutionException( "Unable to read Checkstyle results xml: " + outputFile.getAbsolutePath(),
                                               e );
         }
     }
