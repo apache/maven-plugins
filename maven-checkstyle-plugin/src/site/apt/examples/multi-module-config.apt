@@ -39,7 +39,8 @@ whizbang
 `-- src
 +-----+
 
-  Next, include the resources you want in the build-tools jar file.
+  Next, include the resources you want in the build-tools jar file. In this example, the build-tools jar will contain the
+  resources, such as the config files, for the Checkstyle and PMD plugin configuration.
 
 +-----+
 whizbang
@@ -87,19 +88,13 @@ whizbang
     </plugins>
   </reporting>
   <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-		<dependencies>
-		  <dependency>
-		    <groupId>com.example.whizbang</groupId>
-		    <artifactId>build-tools</artifactId>
-		    <version>1.0</version>
-		  </dependency>
-		</dependencies>
-      </plugin>
-    </plugins>
+    <extensions>
+      <extension>
+        <groupId>com.example.whizbang</groupId>
+        <artifactId>build-tools</artifactId>
+        <version>1.0</version>
+      </extension>
+    </extensions>
   </build>
   <modules>
     <module>build-tools</module>
@@ -112,6 +107,13 @@ whizbang
 
   Once you are done with that, ensure that you do not include the maven-checkstyle-plugin in your sub modules, as their definition
   and configuration, will override the top level parent pom's definition.
+
+  Based on the Checkstyle plugin configuration above, the values of <<<configLocation>>> and <<<headerLocation>>> will be resolved
+  from the classpath. The build-tools jar was included in the classpath when it was declared as an extension of the project.
+
+  <<Note:>> For the classpath reference, the build-tools was referred to as an extension and not as a plugin
+  dependency. This is due to the fact that if it is declared as a plugin dependency, Maven will not download it from the
+  internal repository and would just look for it in ibiblio.
 
   Lastly, kick off a build of the site.
 
