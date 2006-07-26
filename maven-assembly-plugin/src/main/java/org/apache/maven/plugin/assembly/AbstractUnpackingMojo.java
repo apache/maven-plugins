@@ -28,9 +28,7 @@ import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Base routines for assembly and unpack goals.
@@ -43,7 +41,7 @@ public abstract class AbstractUnpackingMojo
     protected static final String[] EMPTY_STRING_ARRAY = {};
 
     /**
-     * The output directory of the assembled distribution file.
+     * Sets the output directory of the assembled distribution file.
      *
      * @parameter expression="${project.build.directory}"
      * @required
@@ -51,7 +49,7 @@ public abstract class AbstractUnpackingMojo
     protected File outputDirectory;
 
     /**
-     * The filename of the assembled distribution file.
+     * Sets the filename of the assembled distribution file.
      *
      * @parameter expression="${project.build.finalName}"
      * @required
@@ -59,7 +57,7 @@ public abstract class AbstractUnpackingMojo
     protected String finalName;
 
     /**
-     * Directory to unpack JARs into if needed
+     * Sets the directory to unpack JARs into if needed.
      *
      * @parameter expression="${project.build.directory}/assembly/work"
      * @required
@@ -67,10 +65,7 @@ public abstract class AbstractUnpackingMojo
     protected File workDirectory;
 
     /**
-     * To look up Archiver/UnArchiver implementations
-     *
-     * @parameter expression="${component.org.codehaus.plexus.archiver.manager.ArchiverManager}"
-     * @required
+     * @component
      */
     protected ArchiverManager archiverManager;
 
@@ -81,6 +76,7 @@ public abstract class AbstractUnpackingMojo
 
     /**
      * @parameter expression="${localRepository}"
+     * @readonly
      */
     protected ArtifactRepository localRepository;
 
@@ -94,8 +90,10 @@ public abstract class AbstractUnpackingMojo
     protected List reactorProjects;
 
     /**
+     * Sets the artifact <code>classifier</code> to be used for the generated archive.
+     *
      * @parameter expression="${classifier}"
-     * @deprecated Please use the Assembly's id for classifier instead
+     * @deprecated Please use your assembly descriptor's id for classifier instead
      */
     protected String classifier;
 

@@ -1,5 +1,5 @@
   ---
-  Assembly Plugin Example - Including Module Sources
+  Including Module Sources
   ---
   John Casey
   ---
@@ -111,7 +111,7 @@ Assembly Plugin Example - Including Module Sources
 </project>
 +---+
 
-  This POM simply directs the assembly plugin to use the <<<src.xml>>>
+  This POM simply directs the Assembly Plugin to use the <<<src.xml>>>
   assembly descriptor when executing.
   
 * Execute!
