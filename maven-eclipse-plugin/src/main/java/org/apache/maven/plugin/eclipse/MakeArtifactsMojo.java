@@ -16,6 +16,7 @@
 package org.apache.maven.plugin.eclipse;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,13 +26,21 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.installer.ArtifactInstallationException;
+import org.apache.maven.artifact.installer.ArtifactInstaller;
+import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.ide.IdeDependency;
+import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 import org.codehaus.plexus.components.interactivity.InputHandler;
-import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -55,6 +64,18 @@ public class MakeArtifactsMojo
      * @readonly
      */
     private ArtifactRepository localRepository;
+
+    /**
+     * ArtifactFactory component.
+     * @component
+     */
+    private ArtifactFactory artifactFactory;
+
+    /**
+     * ArtifactInstaller component.
+     * @component
+     */
+    protected ArtifactInstaller installer;
 
     /**
      * Eclipse installation dir. If not set, a value for this parameter will be asked on the command line.
@@ -170,76 +191,61 @@ public class MakeArtifactsMojo
             String name = manifestEntries.getValue( "Bundle-Name" );
 
             String requireBundle = manifestEntries.getValue( "Require-Bundle" );
-            IdeDependency[] deps = parseDependencies( requireBundle );
+            Dependency[] deps = parseDependencies( requireBundle );
 
             String groupId = null;
             groupId = createGroupId( artifactId );
 
-            StringBuffer pom = new StringBuffer();
-            pom
-                .append( "<project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n"
-                    + "  xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\">\r\n"
-                    + "  <modelVersion>4.0.0</modelVersion>\r\n" + "  <groupId>" );
-            pom.append( groupId );
-            pom.append( "</groupId>\r\n" + "  <artifactId>" );
-            pom.append( artifactId );
-            pom.append( "</artifactId>\r\n" + "  <packaging>eclipse-plugin</packaging>\r\n" + "  <version>" );
-
-            pom.append( version );
-            pom.append( "</version>\r\n" );
-            pom.append( "  <name>" );
-            pom.append( name );
-            pom.append( "</name>\r\n" );
+            Model model = new Model();
+            model.setModelVersion( "4.0.0" );
+            model.setGroupId( groupId );
+            model.setArtifactId( artifactId );
+            model.setName( name );
+            model.setVersion( version );
+            model.setPackaging( "eclipse-plugin" );
 
             if ( deps.length > 0 )
             {
-                pom.append( "  <dependencies>\r\n" );
                 for ( int k = 0; k < deps.length; k++ )
                 {
-                    IdeDependency dep = deps[k];
-                    pom.append( "    <dependency>\r\n" );
-
-                    pom.append( "      <groupId>" );
-                    pom.append( dep.getGroupId() );
-                    pom.append( "</groupId>\r\n" );
-
-                    pom.append( "      <artifactId>" );
-                    pom.append( dep.getArtifactId() );
-                    pom.append( "</artifactId>\r\n" );
-
-                    pom.append( "      <version>" );
-                    pom.append( dep.getVersion() );
-                    pom.append( "</version>\r\n" );
-
-                    pom.append( "    </dependency>\r\n" );
+                    model.getDependencies().add( deps[k] );
                 }
-                pom.append( "  </dependencies>\r\n" );
+
             }
 
-            pom.append( "</project>" );
-
-            File repo = new File( localRepository.getBasedir(), StringUtils.replace( groupId, ".", "/" ) + "/"
-                + artifactId + "/" + version );
-            repo.mkdirs();
-
-            File destination = new File( repo, artifactId + "-" + version + ".jar" );
+            FileWriter fw = null;
+            ArtifactMetadata metadata = null;
+            File pomFile = null;
+            Artifact pomArtifact = artifactFactory.createArtifact( groupId, artifactId, version, null, "pom" );
+            Artifact artifact = artifactFactory.createArtifact( groupId, artifactId, version, null, "jar" );
             try
             {
-                FileUtils.copyFile( file, destination );
+                pomFile = File.createTempFile( "pom", ".xml" );
+                pomFile.deleteOnExit();
+
+                fw = new FileWriter( pomFile );
+                pomFile.deleteOnExit();
+                new MavenXpp3Writer().write( fw, model );
+                metadata = new ProjectArtifactMetadata( pomArtifact, pomFile );
+                pomArtifact.addMetadata( metadata );
             }
             catch ( IOException e )
             {
-                throw new MojoFailureException( "Unable to copy file " + file.getAbsolutePath() + " to "
-                    + destination.getAbsolutePath() );
+                throw new MojoExecutionException( "Error writing temporary pom file: " + e.getMessage(), e );
             }
+            finally
+            {
+                IOUtil.close( fw );
+            }
+
             try
             {
-                FileUtils.fileWrite( new File( repo, artifactId + "-" + version + ".pom" ).getAbsolutePath(), pom
-                    .toString() );
+                installer.install( pomFile, pomArtifact, localRepository );
+                installer.install( file, artifact, localRepository );
             }
-            catch ( IOException e )
+            catch ( ArtifactInstallationException e )
             {
-                throw new MojoFailureException( "Unable to write pom" );
+                throw new MojoFailureException( "Unable to install artifact to local repository." );
             }
 
         }
@@ -253,7 +259,7 @@ public class MakeArtifactsMojo
      */
     private String createGroupId( String artifactId )
     {
-        if ( StringUtils.countMatches( artifactId, "." ) > 2 )
+        if ( StringUtils.countMatches( artifactId, "." ) > 1 )
         {
             return StringUtils.substring( artifactId, 0, artifactId.indexOf( ".", artifactId.indexOf( "." ) + 1 ) );
         }
@@ -263,13 +269,13 @@ public class MakeArtifactsMojo
     /**
      * Parses the "Require-Bundle" and convert it to a list of dependencies.
      * @param requireBundle "Require-Bundle" entry
-     * @return an array of <code>IdeDependency</code>
+     * @return an array of <code>Dependency</code>
      */
-    protected IdeDependency[] parseDependencies( String requireBundle )
+    protected Dependency[] parseDependencies( String requireBundle )
     {
         if ( requireBundle == null )
         {
-            return new IdeDependency[0];
+            return new Dependency[0];
         }
 
         List dependencies = new ArrayList();
@@ -313,13 +319,16 @@ public class MakeArtifactsMojo
                 continue;
             }
 
-            IdeDependency dep = new IdeDependency( createGroupId( artifactId ), artifactId, version, false, false,
-                                                   false, false, false, null, "eclipse-plugin" );
+            Dependency dep = new Dependency();
+            dep.setArtifactId( artifactId );
+            dep.setGroupId( createGroupId( artifactId ) );
+            dep.setVersion( version );
+
             dependencies.add( dep );
 
         }
 
-        return (IdeDependency[]) dependencies.toArray( new IdeDependency[dependencies.size()] );
+        return (Dependency[]) dependencies.toArray( new Dependency[dependencies.size()] );
 
     }
 }
