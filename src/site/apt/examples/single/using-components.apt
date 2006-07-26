@@ -1,0 +1,187 @@
+  ---
+  Using Component Descriptors
+  ---
+  Edwin Punzalan
+  ---
+  24-July-2006
+  ---
+
+~~ Copyright 2006 The Apache Software Foundation.
+~~
+~~ Licensed under the Apache License, Version 2.0 (the "License");
+~~ you may not use this file except in compliance with the License.
+~~ You may obtain a copy of the License at
+~~
+~~      http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing, software
+~~ distributed under the License is distributed on an "AS IS" BASIS,
+~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~ See the License for the specific language governing permissions and
+~~ limitations under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/guides/mini/guide-apt-format.html
+
+Assembly Plugin Example - Using Component Descriptors
+
+* Introduction
+
+  Suppose you have a project which will be distributed in two forms: one for
+  use with appserver A and another for appserver B. And as customization for
+  these two servers, you need to exclude some dependencies which are not used
+  by the appserver you will be distributing.
+
+  <<NOTE:>> <Although putting \<excludes\> inside \<dependencySets\> may provide
+  the result we want, it is not recommended because if a new appserver becomes
+  available, you will have to maintain the excludes of the other distributions
+  to exclude dependencies meant for the new appserver.>
+
+  This example demonstrate the use of \<componentDescriptors\>, more information
+  can be found {{{../../assembly}here}}.
+
+* The Assembly Descriptors
+
+  First, let's write the assembly descriptor for appserver A distribution. It
+  should like this:
+
++-----
+<assembly>
+  <id>appserverA</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>/lib</outputDirectory>
+      <includes>
+        <include>application:logging</include>
+        <include>application:core</include>
+        <include>application:utils</include>
+        <include>application:appserverA</include>
+      </includes>
+    </dependencySet>
+  </dependencySets>
+</assembly>
++-----
+
+  The assembly descriptor for appserver B distribution would then be similar:
+
++-----
+<assembly>
+  <id>appserverB</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>/lib</outputDirectory>
+      <includes>
+        <include>application:logging</include>
+        <include>application:core</include>
+        <include>application:utils</include>
+        <include>application:appserverB</include>
+      </includes>
+    </dependencySet>
+  </dependencySets>
+</assembly>
++-----
+
+  From the two descriptors shown, we can say that there are three artifacts
+  common for both, thus we separate them into a common component descriptor
+  and save it as <<<src/assemble/component.xml>>>.  Its contents would
+  be:
+
++-----
+<component>
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>/lib</outputDirectory>
+      <includes>
+        <include>application:logging</include>
+        <include>application:core</include>
+        <include>application:utils</include>
+      </includes>
+    </dependencySet>
+  </dependencySets>
+</component>
++-----
+
+  Then the final assembly descriptor for the appserver A would be:
+
++-----
+<assembly>
+  <id>appserverA</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <componentDescriptors>
+    <componentDescriptor>src/assemble/component.xml</componentDescriptor>
+  </componentDescriptors>
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>/lib</outputDirectory>
+      <includes>
+        <include>application:appserverA</include>
+      </includes>
+    </dependencySet>
+  </dependencySets>
+</assembly>
++-----
+
+  And the corresponding assembly descriptor for the appserver B then would be:
+
++-----
+<assembly>
+  <id>appserverB</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <componentDescriptors>
+    <componentDescriptor>src/assemble/component.xml</componentDescriptor>
+  </componentDescriptors>
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>/lib</outputDirectory>
+      <includes>
+        <include>application:appserverB</include>
+      </includes>
+    </dependencySet>
+  </dependencySets>
+</assembly>
++-----
+
+* The POM
+
+  Now we should update the POM configuration of the project for the Assembly
+  Plugin, which should look like:
+
++-----
+<project>
+  [...]
+  <build>
+    [...]
+    <plugins>
+      [...]
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptors>
+            <descriptor>src/assemble/appserverA-assembly.xml</descriptor>
+            <descriptor>src/assemble/appserverB-assembly.xml</descriptor>
+          </descriptors>
+        </configuration>
+      </plugin>
+   [...]
+</project>
++-----
+
+* Creating The Distributions
+
+  Since we didn't configure the assembly plugin to always generate the
+  configured assemblies during the project's normal build lifecycles, we create
+  the distributions by:
+
++-----
+  mvn assembly:assembly
++-----
