@@ -1,5 +1,5 @@
   ---
-  Assembly Plugin - Examples
+  Examples
   ---
   John Casey
   ---
@@ -27,20 +27,25 @@ Assembly Plugin - Examples
 
 * Table of Contents
 
-  Below, you will see a series of examples showing how to use the assembly
-  plugin in various contexts.
+  Below, you will see a series of examples showing how to use the Assembly
+  Plugin in various contexts.
+
+  * {{{single/index.html}Working with Single Projects}}
+
+    * {{{single/filtering-some-distribution-files.html}Filtering Some Distribution Files}}
+
+    * {{{single/using-components.html}Using Component Descriptors}}
+
+    * {{{single/using-repositories.html}Using Repositories}}
+
+    []
+
+  * {{{multimodule/index.html}Working with Multi-Module Projects}}
   
-  * Working with Multi-Module Projects
-  
-    * {{{multimodule/module-source-inclusion-simple.html}Adding Module Sources to the Assembly}} <(Simple)>
+    * {{{multimodule/module-source-inclusion-simple.html}Adding Module Sources to the Assembly}}
     
-    * {{{multimodule/module-binary-inclusion-simple.html}Adding Module Binaries to the Assembly}} <(Simple)>
+    * {{{multimodule/module-binary-inclusion-simple.html}Adding Module Binaries to the Assembly}}
     
     []
     
   []
-
-
-    
-    
-
