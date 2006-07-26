@@ -17,7 +17,7 @@ package org.apache.maven.plugin.eclipse;
 
 import junit.framework.TestCase;
 
-import org.apache.maven.plugin.ide.IdeDependency;
+import org.apache.maven.model.Dependency;
 
 /**
  * @author Fabrizio Giustina
@@ -47,7 +47,7 @@ public class MakeArtifactsTest
      */
     public void testParseDependencies()
     {
-        IdeDependency[] deps = mojo.parseDependencies( "org.eclipse.ui;bundle-version=\"[3.2.0,4.0.0)\","
+        Dependency[] deps = mojo.parseDependencies( "org.eclipse.ui;bundle-version=\"[3.2.0,4.0.0)\","
             + "org.eclipse.ui.console;bundle-version=\"[3.1.100,4.0.0)\",org.eclipse.help;"
             + "bundle-version=\"[3.2.0,4.0.0)\",org.eclipse.core.expressions;bundle-version=\"[3.2.0,4.0.0)\"" );
 
