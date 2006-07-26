@@ -232,7 +232,8 @@ public class SurefirePlugin
 
     /**
      * Option to specify the jvm (or path to the java executable) to use with
-     * the forking options. For the default we will assume that java is in the path.
+     * the forking options. For the default, the jvm will be the same as the one 
+     * used to run Maven. 
      *
      * @parameter expression="${jvm}"
      */
