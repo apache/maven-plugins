@@ -1,32 +1,47 @@
 <?xml version="1.0"?>
 
 <!--
+  ~ Copyright 2006 The Apache Software Foundation.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!--
   Since modello does not have the capability to share descriptor,
   If you make changes to FileSet, FileItem, DependendencySet, or
   adding new collection, make sure to propagate your changes
-  to "component.xml".
+  to "component.mdo".
 -->
-
 
 <model>
   <id>assembly</id>
   <name>Assembly</name>
   <description>
     <![CDATA[
-	<p>
-	A definition of an assembly.  This descriptor specifies the 
-	type of assembly archive to create, the contents of the 
-	assembly, and the ways in which dependencies are bundled with
-	an assembly.
-	</p>
-	<p>
-	An assembly defines a collection of files usually distributed in an
-	archive format such as zip, tar, or tar.gz that is generated from a
-	project.  For example, a project could produce a ZIP assembly which
-	contains a project's JAR artifact in the root directory, the 
-	runtime dependencies in a lib/ directory, and a shell script to launch
-	a stand-alone application.
-	</p>
+    <p>
+    Maven Assembly Plugin relies on the provided assembly descriptors to dictate
+    its execution. Although there are already prefabricated descriptors available
+    for use, they can only suffice some of the common assembly requirements.
+    </p>
+    <p>
+    So in order for you to customize the way the Assembly Plugin creates your
+    assemblies, you need to know how to use the Assembly Descriptor.
+    </p>
+    <p>
+    This descriptor specifies the type of assembly archive to create, the contents
+    of the assembly, and the ways in which dependencies or its modules are bundled
+    with an assembly.
+    </p>
     ]]>
   </description>
   <defaults>
@@ -38,7 +53,16 @@
   <classes>
     <class rootElement="true" xml.tagName="assembly">
       <name>Assembly</name>
-      <description>Describes the assembly layout and packaging.</description>
+      <description>
+        <![CDATA[
+        An assembly defines a collection of files usually distributed in an
+        archive format such as zip, tar, or tar.gz that is generated from a
+        project.  For example, a project could produce a ZIP assembly which
+        contains a project's JAR artifact in the root directory, the
+        runtime dependencies in a lib/ directory, and a shell script to launch
+        a stand-alone application.
+        ]]>
+      </description>
       <version>1.0.0</version>
       <fields>
         <field>
@@ -47,8 +71,11 @@
           <required>true</required>
           <type>String</type>
           <description>
-            The id of this assembly. This is a symbolic name for a
-            particular assembly of files from this project.
+            Sets the id of this assembly. This is a symbolic name for a
+            particular assembly of files from this project. Also, aside from
+            being used to distinctly name the assembled package by attaching
+            its value to the generated archive, the id is used as your
+            artifact's classifier when deploying.
           </description>
         </field>
         <field>
@@ -61,8 +88,11 @@
           </association>
           <description>
             <![CDATA[
-            Specify the formats of the assembly.  A format is specified by 
-            supplying one of the following values in a &lt;format&gt; subelement:
+            Specifies the formats of the assembly. Multiple formats can be
+            supplied and the Assembly Plugin will generate an archive for each
+            desired formats. When deploying your project, all file formats
+            specified will also be deployed. A format is specified by supplying
+            one of the following values in a &lt;format&gt; subelement:
             <ul>
               <li><b>"zip"</b> - Creates a ZIP file format</li>
               <li><b>"gz"</b> - Creates a GZIP format</li>
@@ -83,13 +113,18 @@
             includeBaseDirectory to true will create an archive that
             includes this base directory. If this option is set to false
             the archive created will unzip its content to the current
-            directory.
+            directory. Default value is true.
           </description>
         </field>
         <field>
           <name>includeSiteDirectory</name>
           <type>boolean</type>
           <defaultValue>false</defaultValue>
+          <description>
+            Includes a site directory in the final archive. The site directory
+            location of a project is determined by the siteDirectory parameter
+            of the Assembly Plugin. Default value is false.
+          </description>
         </field>
         <field>
           <name>moduleSets</name>
@@ -99,7 +134,11 @@
             <multiplicity>*</multiplicity>
           </association>
           <description>
-            Specify which modules source files to include in the assembly
+            <![CDATA[
+            Specifies which module files to include in the assembly. A moduleSet
+            is specified by providing one or more of &lt;moduleSet&gt;
+            subelements.
+            ]]>
           </description>
         </field>
         <field>
@@ -110,7 +149,11 @@
             <multiplicity>*</multiplicity>
           </association>
           <description>
-            Specify assembly parameters for groups of files.
+            <![CDATA[
+            Specifies which groups of files to include in the assembly. A
+            fileSet is specified by providing one or more of &lt;fileSet&gt;
+            subelements.
+            ]]>
           </description>
         </field>
         <field>
@@ -121,7 +164,11 @@
             <multiplicity>*</multiplicity>
           </association>
           <description>
-            Specify assembly parameters for single files.
+            <![CDATA[
+            Specifies which single files to include in the assembly. A file
+            is specified by providing one or more of &lt;file&gt;
+            subelements.
+            ]]>
           </description>
         </field>
         <field>
@@ -132,7 +179,11 @@
             <multiplicity>*</multiplicity>
           </association>
           <description>
-            Specify assembly behavior for sets of dependencies.
+            <![CDATA[
+            Specifies which dependencies to include in the assembly. A
+            dependencySet is specified by providing one or more of
+            &lt;dependencySet&gt; subelements.
+            ]]>
           </description>
         </field>
         <field>
@@ -143,7 +194,11 @@
             <multiplicity>*</multiplicity>
           </association>
           <description>
-            Specify assembly behavior for sets of repositories.
+            <![CDATA[
+            Specifies which repository files to include in the assembly. A
+            repository is specified by providing one or more of
+            &lt;repository&gt; subelements.
+            ]]>
           </description>
         </field>
         <field>
@@ -154,11 +209,17 @@
             <multiplicity>*</multiplicity>
           </association>
           <description>
-            File relative to basedir containing Component.
+            <![CDATA[
+            Specifies the shared components xml file locations to include in the
+            assembly. The locations specified must be relative to the basedir of
+            the project. When multiple componentDescriptors are found, their
+            contents are merged. Check out the <a href="component.html">
+            descriptor components</a> for more information. A
+            componentDescriptor is specified by providing one or more of
+            &lt;componentDescriptor&gt; subelements.
+            ]]>
           </description>
         </field>
-
-
       </fields>
     </class>
 
@@ -172,7 +233,7 @@
           <version>1.0.0</version>
           <type>String</type>
           <description>
-            Specifies the output directory relative to the root
+            Sets the output directory relative to the root
             of the root directory of the assembly. For example,
             "log" will put the specified files in the log directory.
           </description>
@@ -186,8 +247,9 @@
           </association>
           <description>
             <![CDATA[
-            When &lt;include&gt; subelements are present, they define
-            a set of files and directory to include.
+            When &lt;include&gt; subelements are present, they define a set of
+            files and directory to include. If none is present, then
+            &lt;includes&gt; represents all valid values.
             ]]>
           </description>
         </field>
@@ -200,8 +262,9 @@
           </association>
           <description>
             <![CDATA[
-            When &lt;exclude&gt; subelements are present, they define
-            a set of files and directory to exclude.
+            When &lt;exclude&gt; subelements are present, they define a set of
+            files and directory to exclude. If none is present, then
+            &lt;excludes&gt; represents no exclusions.
             ]]>
           </description>
         </field>
@@ -212,10 +275,10 @@
           <defaultValue>0644</defaultValue>
           <description>
             <![CDATA[
-            Similar to a UNIX permission.  Format: (User)(Group)(Other) where each
-            component is a sum of Read = 4, Write = 2, and Execute = 1.  For example,
-            the default value of 0644 translates to User read-write, Group and Other
-            read-only.
+            Similar to a UNIX permission, sets the file mode of the files included.
+            Format: (User)(Group)(Other) where each component is a sum of Read = 4,
+            Write = 2, and Execute = 1.  For example, the default value of 0644
+            translates to User read-write, Group and Other read-only.
             <a href="http://www.onlamp.com/pub/a/bsd/2000/09/06/FreeBSD_Basics.html">(more on unix-style permissions)</a>
           	]]>
           </description>
@@ -227,10 +290,10 @@
           <defaultValue>0755</defaultValue>
           <description>
             <![CDATA[
-            Similar to a UNIX permission.  Format: (User)(Group)(Other) where each
-            component is a sum of Read = 4, Write = 2, and Execute = 1.  For example,
-            the default value of 0644 translates to User read-write, Group and Other
-            read-only.
+            Similar to a UNIX permission, sets the directory mode of the directories
+            included. Format: (User)(Group)(Other) where each component is a sum of
+            Read = 4, Write = 2, and Execute = 1.  For example, the default value of
+            0755 translates to User read-write, Group and Other read-only.
             <a href="http://www.onlamp.com/pub/a/bsd/2000/09/06/FreeBSD_Basics.html">(more on unix-style permissions)</a>
           	]]>
           </description>
@@ -241,15 +304,18 @@
       <name>FileSet</name>
       <version>1.0.0</version>
       <superClass>SetBase</superClass>
+      <description>
+        A fileSet allows the inclusion of groups of files into the assembly.
+      </description>
       <fields>
         <field>
           <name>directory</name>
           <version>1.0.0</version>
           <type>String</type>
           <description>
-            Absolute or relative from the module's directory. For
-            example, "src/main/bin" would select this subdirectory
-            of the project in which this dependency is defined.
+            Sets the absolute or relative location from the module's
+            directory. For example, "src/main/bin" would select this
+            subdirectory of the project in which this dependency is defined.
           </description>
           <required>true</required>
         </field>
@@ -259,7 +325,7 @@
           <type>String</type>
           <description>
             <![CDATA[
-            Controls the line-endings of files in this fileSet.
+            Sets the line-endings of the files in this fileSet.
             Valid values:
             <ul>
               <li><b>"keep"</b> - Preserve all line endings</li>
@@ -277,8 +343,8 @@
       <name>FileItem</name>
       <version>1.0.0</version>
       <description>
-        Allows individual file copy with option to change destination
-        file name not supported by fileSet
+        A file allows individual file inclusion with the option to change
+        the destination filename not supported by fileSets.
       </description>
       <fields>
         <field>
@@ -287,7 +353,8 @@
           <type>String</type>
           <required>true</required>
           <description>
-            Absolute or relative from the module's directory.
+            Sets the absolute or relative path from the module's directory
+            of the file to be included in the assembly.
           </description>
         </field>
         <field>
@@ -296,7 +363,7 @@
           <type>String</type>
           <required>false</required>
           <description>
-            Specifies the output directory relative to the root
+            Sets the output directory relative to the root
             of the root directory of the assembly. For example,
             "log" will put the specified files in the log directory.
           </description>
@@ -306,7 +373,7 @@
           <version>1.0.0</version>
           <type>String</type>
           <description>
-            Destination file name in outputDirectory.
+            Sets the destination filename in the outputDirectory.
             Default is the same name as the source's file.
           </description>
         </field>
@@ -317,10 +384,10 @@
           <defaultValue>0644</defaultValue>
           <description>
             <![CDATA[
-            Similar to a UNIX permission.  Format: (User)(Group)(Other) where each
-            component is a sum of Read = 4, Write = 2, and Execute = 1.  For example,
-            the default value of 0644 translates to User read-write, Group and Other 
-            read-only. 
+            Similar to a UNIX permission, sets the file mode of the files included.
+            Format: (User)(Group)(Other) where each component is a sum of Read = 4,
+            Write = 2, and Execute = 1.  For example, the default value of 0644
+            translates to User read-write, Group and Other read-only.
             <a href="http://www.onlamp.com/pub/a/bsd/2000/09/06/FreeBSD_Basics.html">(more on unix-style permissions)</a>
           	]]>
           </description>
@@ -331,8 +398,8 @@
           <type>String</type>
           <description>
             <![CDATA[
-            Controls the line-endings of files in this fileSet.
-            Valid values are: 
+            Sets the line-endings of the files in this file.
+            Valid values are:
             <ul>
               <li><b>"keep"</b> - Preserve all line endings</li>
               <li><b>"unix"</b> - Use Unix-style line endings</li>
@@ -348,7 +415,7 @@
           <version>1.0.0</version>
           <type>boolean</type>
           <description>
-            Flag used to determine if the file is filtered.
+            Sets whether to determine if the file is filtered.
           </description>
         </field>
       </fields>
@@ -358,7 +425,10 @@
       <name>DependencySet</name>
       <version>1.0.0</version>
       <superClass>SetBase</superClass>
-      <description>Defines a dependency set</description>
+      <description>
+        A dependencySet allows inclusion and exclusion of project dependencies
+        in the assembly.
+      </description>
       <fields>
         <field>
           <name>outputFileNameMapping</name>
@@ -366,9 +436,8 @@
           <type>String</type>
           <defaultValue>${artifactId}-${version}.${extension}</defaultValue>
           <description>
-            Specify the mapping pattern for all dependencies included
-            in this assembly.
-            Default is ${artifactId}-${version}.${extension}.
+            Sets the mapping pattern for all dependencies included in this
+            assembly. Default is ${artifactId}-${version}.${extension}.
           </description>
         </field>
         <field>
@@ -378,8 +447,8 @@
           <description>
             If set to true, this property will unpack all dependencies
             into the specified output directory. When set to false
-            dependencies will be includes as archives (jars).
-            Default value is false.
+            dependencies will be includes as archives (jars). Can only unpack
+            jar, zip, tar.gz, and tar.bz archives. Default value is false.
           </description>
         </field>
         <field>
@@ -389,7 +458,7 @@
           <defaultValue>runtime</defaultValue>
           <required>true</required>
           <description>
-            Specifies the dependency scope for this dependencySet.
+            Sets the dependency scope for this dependencySet.
             Default scope value is "runtime".
           </description>
         </field>
@@ -398,6 +467,17 @@
 
     <class>
       <name>ModuleSet</name>
+      <description>
+        <![CDATA[
+        A moduleSet represent one or more project &lt;module&gt; present inside
+        a project's pom.xml. This allows you to include sources or binaries
+        belonging to a project's &lt;modules&gt;.
+
+        <br/><b>NOTE:</b> When using &lt;moduleSets&gt; from the command-line, it
+        is required to pass first the package phase by doing: "mvn package
+        assembly:assembly". This bug/issue is scheduled to be addressed by Maven 2.1.
+        ]]>
+      </description>
       <version>1.0.0</version>
       <fields>
         <field>
@@ -405,8 +485,10 @@
           <version>1.0.0</version>
           <description>
             <![CDATA[
-            This is a list of <include/> elements, each containing a module reference of the type groupId:artifactId.
-            Modules matching these elements will be included in this set.
+            This is a list of &lt;include/&gt; subelements, each containing a
+            module reference of the type groupId:artifactId. Modules matching
+            these elements will be included in this set. If none is present,
+            then &lt;includes&gt; represents all valid values.
             ]]>
           </description>
           <association>
@@ -419,8 +501,9 @@
           <version>1.0.0</version>
           <description>
             <![CDATA[
-            This is a list of <exclude/> elements, each containing a module reference of the type groupId:artifactId.
-            Modules matching these elements will be excluded from this set.
+            This is a list of &lt;exclude/&gt; subelements, each containing a
+            module reference of the type groupId:artifactId. Modules matching
+            these elements will be excluded from this set.
             ]]>
           </description>
           <association>
@@ -432,8 +515,8 @@
           <name>sources</name>
           <version>1.0.0</version>
           <description>
-            When this is configured, the plugin will include the source files of the included modules from this set in 
-            the resulting assembly, according to the configuration.
+            When this is present, the plugin will include the source files of
+            the included modules from this set in the resulting assembly.
           </description>
           <association>
             <type>ModuleSources</type>
@@ -443,8 +526,8 @@
           <name>binaries</name>
           <version>1.0.0</version>
           <description>
-            When this is configured, the plugin will include the binaries of the included modules from this set in 
-            the resulting assembly, according to the configuration.
+            When this is present, the plugin will include the binaries of the
+            included modules from this set in the resulting assembly.
           </description>
           <association>
             <type>ModuleBinaries</type>
@@ -457,14 +540,20 @@
       <name>ModuleSources</name>
       <version>1.0.0</version>
       <superClass>SetBase</superClass>
-      <description>Configuration for including the source files for a Module in an assembly.</description>
+      <description>
+        Contains configuration options for including the source files of a
+        project module in an assembly.
+      </description>
     </class>
 
     <class>
       <name>ModuleBinaries</name>
       <version>1.0.0</version>
       <superClass>SetBase</superClass>
-      <description>Configuration for including the binary files for a Module in an assembly.</description>
+      <description>
+        Contains configuration options for including the binary files of a
+        project module in an assembly.
+      </description>
       <fields>
         <field>
           <name>includeDependencies</name>
@@ -494,7 +583,7 @@
           <type>String</type>
           <defaultValue>${artifactId}-${version}.${extension}</defaultValue>
           <description>
-            Specify the mapping pattern for all dependencies included
+            Sets the mapping pattern for all dependencies included
             in this assembly.
             Default is ${artifactId}-${version}.${extension}.
           </description>
@@ -506,7 +595,18 @@
       <name>Repository</name>
       <version>1.0.0</version>
       <superClass>SetBase</superClass>
-      <description>Defines a Maven repository to be included in the assembly.</description>
+      <description>
+        <![CDATA[
+        Defines a Maven repository to be included in the assembly. The artifacts
+        available to be included in a repository are your project's dependency
+        artifacts. The repository created contains the needed metadata entries
+        and also contains both sha1 and md5 checksums. This is useful for creating
+        archives which will be deployed to internal repositories.
+
+        <br/><b>NOTE:</b> Currently, only artifacts from the central repository
+        are allowed.
+        ]]>
+      </description>
       <fields>
         <field>
           <name>includeMetadata</name>
@@ -516,13 +616,19 @@
           <description>
             If set to true, this property will trigger the creation of repository
             metadata which will allow the repository to be used as a functional remote
-            repository.
+            repository. Default value is false.
           </description>
         </field>
         <field>
           <name>groupVersionAlignments</name>
           <version>1.0.0</version>
-          <description>Align a group to a version or an individual artifact.</description>
+          <description>
+            <![CDATA[
+            Specifies that you want to align a group of artifacts to a specified
+            version. A groupVersionAlignment is specified by providing one or
+            more of &lt;groupVersionAlignment&gt; subelements.
+            ]]>
+          </description>
           <association>
             <type>GroupVersionAlignment</type>
             <multiplicity>*</multiplicity>
@@ -533,24 +639,38 @@
     <class>
       <name>GroupVersionAlignment</name>
       <version>1.0.0</version>
-      <description>Defines a Maven repository to be included in the assembly.</description>
+      <description>
+        Allows a group of artifacts to be aligned to a specified version.
+      </description>
       <fields>
         <field>
           <name>id</name>
           <version>1.0.0</version>
           <type>String</type>
-          <description>The groupId for which you want to align the versions.</description>
+          <description>
+            The groupId of the artifacts for which you want to align the
+            versions.
+          </description>
         </field>
         <field>
           <name>version</name>
           <version>1.0.0</version>
           <type>String</type>
-          <description>The version you want to align this group to.</description>
+          <description>
+            The version you want to align this group to.
+          </description>
         </field>
         <field>
           <name>excludes</name>
           <version>1.0.0</version>
-          <description>Artifact Ids of the artifacts you want excluded from version alignment.</description>
+          <description>
+            <![CDATA[
+            When &lt;exclude&gt; subelements are present, they define the
+            artifactIds of the artifacts to exclude. If none is present, then
+            &lt;excludes&gt; represents no exclusions. An exclude is specified
+            by providing one or more of &lt;exclude&gt; subelements.
+            ]]>
+          </description>
           <association>
             <type>String</type>
             <multiplicity>*</multiplicity>
@@ -560,4 +680,3 @@
     </class>
   </classes>
 </model>
-

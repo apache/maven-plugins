@@ -1,0 +1,156 @@
+  ---
+  Filtering Some Distribution Files
+  ---
+  Edwin Punzalan
+  ---
+  26-July-2006
+  ---
+
+~~ Copyright 2006 The Apache Software Foundation.
+~~
+~~ Licensed under the Apache License, Version 2.0 (the "License");
+~~ you may not use this file except in compliance with the License.
+~~ You may obtain a copy of the License at
+~~
+~~      http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing, software
+~~ distributed under the License is distributed on an "AS IS" BASIS,
+~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~ See the License for the specific language governing permissions and
+~~ limitations under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/guides/mini/guide-apt-format.html
+
+Assembly Plugin Example - Filtering Some Distribution Files
+
+* Introduction
+
+  Although filtering can be done during the process-resources phase, not all
+  files going into your distribution will be coming from a project resource.
+  Thus, the Assembly Plugin allows filtering of files before copying them into
+  the created assembly.
+
+  This example demonstrates how to filter files before adding them into the
+  assembly. In this example, we need to filter distribution files into the
+  archive. The files included in the distribution are:
+
+    * README.txt
+
+    * LICENSE.txt
+
+    * NOTICE.txt
+
+    []
+
+  All the above files are in the root directory of the project but only the
+  README and the NOTICE files should be filtered. The property file to use to
+  filter these are files is found in <<<src/assemble/filter.properties>>>.
+
+
+* The Assembly Descriptor
+
+  Filtering is only enabled inside \<files\> so that's what we will use. Thus,
+  our assembly descriptor will be:
+
++-----
+<assembly>
+  <id>distribution</id>
+  <formats>
+    <format>jar</format>
+  </formats>
+  <files>
+    <file>
+      <source>README.txt</source>
+      <outputDirectory>/</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+    <file>
+      <source>LICENSE.txt</source>
+      <outputDirectory>/</outputDirectory>
+    </file>
+    <file>
+      <source>NOTICE.txt</source>
+      <outputDirectory>/</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+  </files>
+</assembly>
++-----
+
+  The above descriptor tells the Assembly Plugin to filter both the README.txt
+  and the NOTICE.txt files and to just copy the LICENSE.txt file.
+
+  Alternatively, if there are many .txt files to include inside \<files\>, we can
+  setup both \<fileSets\> and \<files\> like so:
+
++-----
+<assembly>
+  <id>distribution</id>
+  <formats>
+    <format>jar</format>
+  </formats>
+  <fileSets>
+    <fileSet>
+      <directory>${basedir}</directory>
+      <includes>*.txt</includes>
+      <excludes>
+        <exclude>README.txt</exclude>
+        <exclude>NOTICE.txt</exclude>
+      </excludes>
+    </fileSet>
+  </fileSets>
+  <files>
+    <file>
+      <source>README.txt</source>
+      <outputDirectory>/</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+    <file>
+      <source>NOTICE.txt</source>
+      <outputDirectory>/</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+  </files>
+</assembly>
++-----
+
+  The above descriptor adds all .txt files to the assembly but filters README.txt
+  and NOTICE.txt files.
+
+
+* The POM
+
+  The configuration of the Assembly Plugin inside pom.xml should not be
+  different from the others, except for the configuration of the filter file, so:
+
++-----
+<project>
+  [...]
+  <build>
+    [...]
+    <plugins>
+      [...]
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <filters>
+            <filter>src/assemble/filter.properties</filter>
+          </filters>
+          <descriptors>
+            <descriptor>src/assemble/distribution.xml</descriptor>
+          </descriptors>
+        </configuration>
+      </plugin>
+   [...]
+</project>
++-----
+
+* Generating The Assembly
+
+  To generate the distribution assembly, we then use:
+
++-----
+mvn assembly:assembly
++-----

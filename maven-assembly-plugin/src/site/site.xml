@@ -1,22 +1,20 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!--
-/*
- * Copyright 2001-2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
--->
+  ~ Copyright 2006 The Apache Software Foundation.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
 
 <project name="Maven Assembly Plugin">
   <bannerLeft>
@@ -33,12 +31,29 @@
     </links>
 
     <menu name="Overview">
-      <item name="Introduction" href="introduction.html"/>
-      <item name="How to Use" href="howto.html"/>
-      <item name="Examples" href="examples/index.html"/>
+      <item name="Introduction" href="index.html"/>
+      <item name="Usage" href="usage.html"/>
+      <item name="Features" href="features.html"/>
       <item name="Descriptor Format" href="assembly.html"/>
+      <item name="Component Format" href="component.html"/>
       <item name="Predefined Descriptors" href="descriptor-refs.html"/>
+      <item name="FAQ" href="faq.html"/>
     </menu>
+
+    <menu name="Examples">
+      <item name="Examples Index" href="examples/index.html"/>
+      <item name="Single Projects" collapse="false" href="examples/simple/index.html">
+        <item name="Filtering Some Distribution Files" href="examples/simple/filtering-some-distribution-files.html"/>
+        <item name="Using Component Descriptors" href="examples/simple/using-components.html"/>
+        <item name="Using Repositories" href="examples/simple/using-repositories.html"/>
+      </item>
+      <item name="Multimodule Projects" collapse="false" href="examples/multimodule/index.html">
+        <item name="Include Module Artifacts" href="examples/multimodule/module-binary-inclusion-simple.html"/>
+        <item name="Include Module Sources" href="examples/multimodule/module-source-inclusion-simple.html"/>
+      </item>
+    </menu>
+
     ${reports}
+
   </body>
 </project>

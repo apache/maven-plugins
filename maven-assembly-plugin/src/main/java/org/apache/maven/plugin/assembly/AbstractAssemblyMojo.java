@@ -100,14 +100,14 @@ public abstract class AbstractAssemblyMojo
     extends AbstractUnpackingMojo
 {
     /**
-     * A list of descriptor files to generate from.
+     * Sets a list of assembly descriptor files to generate from.
      *
      * @parameter
      */
     private File[] descriptors;
 
     /**
-     * A list of built-in descriptor references to generate from. You can select from <code>bin</code>,
+     * Sets the list of built-in descriptor references to generate from. Valid values are <code>bin</code>,
      * <code>jar-with-dependencies</code>, or <code>src</code>.
      *
      * @parameter
@@ -115,24 +115,23 @@ public abstract class AbstractAssemblyMojo
     private String[] descriptorRefs;
 
     /**
-     * directory to scan for descriptor files in
+     * Sets the directory to scan for descriptor files.
      *
      * @parameter
      */
     private File descriptorSourceDirectory;
 
     /**
-     * This is the base directory from which archive files are created.
+     * Sets the base directory from which archive files are created.
      * This base directory pre-pended to any <code>&lt;directory&gt;</code>
-     * specifications in the assembly descriptor.  This is an optional
-     * parameter
+     * specifications in the assembly descriptor.
      *
      * @parameter
      */
     private File archiveBaseDirectory;
 
     /**
-     * Predefined Assembly Descriptor Id's.  You can select bin, jar-with-dependencies, or src.
+     * Predefined Assembly Descriptor Id. You can select bin, jar-with-dependencies, or src.
      *
      * @parameter expression="${descriptorId}"
      * @deprecated Please use descriptorRefs instead
@@ -140,7 +139,7 @@ public abstract class AbstractAssemblyMojo
     protected String descriptorId;
 
     /**
-     * Assembly XML Descriptor file.  This must be the path to your customized descriptor file.
+     * Sets the assembly descriptor file. This must be the path to your customized descriptor file.
      *
      * @parameter expression="${descriptor}"
      * @deprecated Please use descriptors instead
@@ -149,7 +148,7 @@ public abstract class AbstractAssemblyMojo
 
     /**
      * Sets the TarArchiver behavior on file paths with more than 100 characters length.
-     * Valid values are: "warn" (default), "fail", "truncate", "gnu", or "omit".
+     * Valid values are: "warn", "fail", "truncate", "gnu", or "omit".
      *
      * @parameter expression="${tarLongFileMode}" default-value="warn"
      */
@@ -206,11 +205,17 @@ public abstract class AbstractAssemblyMojo
     private ComponentsXmlArchiverFileFilter componentsXmlFilter = new ComponentsXmlArchiverFileFilter();
 
     /**
+     * Used to customize the generated archive of the plugin.  The Maven website has an in-depth guide on using
+     * this parameter to customize which can be found
+     * <a href="http://maven.apache.org/guides/mini/guide-archive-configuration.html">here</a>.
+     *
      * @parameter
      */
     private MavenArchiveConfiguration archive;
 
     /**
+     * A List of String each pointing to a property file which is used to filter files in the generated package.
+     *
      * @parameter expression="${project.build.filters}"
      */
     protected List filters;
@@ -388,10 +393,10 @@ public abstract class AbstractAssemblyMojo
         return destFile;
     }
 
-    private void processRepositories( Archiver archiver, List modulesList, boolean includeBaseDirectory )
+    private void processRepositories( Archiver archiver, List repositoryList, boolean includeBaseDirectory )
         throws RepositoryAssemblyException, MojoExecutionException
     {
-        for ( Iterator i = modulesList.iterator(); i.hasNext(); )
+        for ( Iterator i = repositoryList.iterator(); i.hasNext(); )
         {
             Repository repository = (Repository) i.next();
 

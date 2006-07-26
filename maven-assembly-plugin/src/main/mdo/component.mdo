@@ -1,19 +1,43 @@
 <?xml version="1.0"?>
 
-<!-- Note Definitions of FileSet, FileItem, and DependencySet are 
+<!--
+  ~ Copyright 2006 The Apache Software Foundation.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!-- Note Definitions of FileSet, FileItem, and DependencySet are
      already defined in descriptor.mod, but repeated  here since
      Modello currently does not have capability to share files
 -->
+
 <model>
   <id>component</id>
   <name>Component</name>
   <description>
     <![CDATA[
-	<p>
-	Component contains FileSets, FileItems, and DependencySets already
-	define in Assembly. It allows multiple assemblies to share a set of user
-	defined collections.
-	</p>
+    <p>
+    When creating several assemblies for a project with a custom assembly
+    descriptor, it can't be helped that you will be duplicating some parts of
+    a defined assembly. These duplicates can be extracted and placed in a
+    separate file called a descriptor component.
+    </p>
+    <p>
+    Descriptor components contain FileSets, Files, and DependencySets meant
+    to be shared by assembly descriptors by referencing them using
+    &lt;componentDescriptors&gt;. It allows multiple assemblies to share a set
+    of user defined collections.
+    </p>
     ]]>
   </description>
   <defaults>
@@ -36,7 +60,11 @@
             <multiplicity>*</multiplicity>
           </association>
           <description>
-            Specify assembly parameters for groups of files.
+            <![CDATA[
+            Specifies which groups of files to include in the assembly. A
+            fileSet is specified by providing one or more of &lt;fileSet&gt;
+            subelements.
+            ]]>
           </description>
         </field>
         <field>
@@ -47,7 +75,11 @@
             <multiplicity>*</multiplicity>
           </association>
           <description>
-            Specify assembly parameters for single files.
+            <![CDATA[
+            Specifies which single files to include in the assembly. A file
+            is specified by providing one or more of &lt;file&gt;
+            subelements.
+            ]]>
           </description>
         </field>
         <field>
@@ -58,7 +90,11 @@
             <multiplicity>*</multiplicity>
           </association>
           <description>
-            Specify assembly behavior for sets of dependencies.
+            <![CDATA[
+            Specifies which dependencies to include in the assembly. A
+            dependencySet is specified by providing one or more of
+            &lt;dependencySet&gt; subelements.
+            ]]>
           </description>
         </field>
       </fields>
@@ -73,7 +109,7 @@
           <version>1.0.0</version>
           <type>String</type>
           <description>
-            Specifies the output directory relative to the root
+            Sets the output directory relative to the root
             of the root directory of the assembly. For example,
             "log" will put the specified files in the log directory.
           </description>
@@ -87,8 +123,9 @@
           </association>
           <description>
             <![CDATA[
-            When &lt;include&gt; subelements are present, they define
-            a set of files and directory to include.
+            When &lt;include&gt; subelements are present, they define a set of
+            files and directory to include. If none is present, then
+            &lt;includes&gt; represents all valid values.
             ]]>
           </description>
         </field>
@@ -101,8 +138,9 @@
           </association>
           <description>
             <![CDATA[
-            When &lt;exclude&gt; subelements are present, they define
-            a set of files and directory to exclude.
+            When &lt;exclude&gt; subelements are present, they define a set of
+            files and directory to exclude. If none is present, then
+            &lt;excludes&gt; represents no exclusions.
             ]]>
           </description>
         </field>
@@ -113,10 +151,10 @@
           <defaultValue>0644</defaultValue>
           <description>
             <![CDATA[
-            Similar to a UNIX permission.  Format: (User)(Group)(Other) where each
-            component is a sum of Read = 4, Write = 2, and Execute = 1.  For example,
-            the default value of 0644 translates to User read-write, Group and Other 
-            read-only. 
+            Similar to a UNIX permission, sets the file mode of the files included.
+            Format: (User)(Group)(Other) where each component is a sum of Read = 4,
+            Write = 2, and Execute = 1.  For example, the default value of 0644
+            translates to User read-write, Group and Other read-only.
             <a href="http://www.onlamp.com/pub/a/bsd/2000/09/06/FreeBSD_Basics.html">(more on unix-style permissions)</a>
           	]]>
           </description>
@@ -128,10 +166,10 @@
           <defaultValue>0755</defaultValue>
           <description>
             <![CDATA[
-            Similar to a UNIX permission.  Format: (User)(Group)(Other) where each
-            component is a sum of Read = 4, Write = 2, and Execute = 1.  For example,
-            the default value of 0644 translates to User read-write, Group and Other 
-            read-only. 
+            Similar to a UNIX permission, sets the directory mode of the directories
+            included. Format: (User)(Group)(Other) where each component is a sum of
+            Read = 4, Write = 2, and Execute = 1.  For example, the default value of
+            0644 translates to User read-write, Group and Other read-only.
             <a href="http://www.onlamp.com/pub/a/bsd/2000/09/06/FreeBSD_Basics.html">(more on unix-style permissions)</a>
           	]]>
           </description>
@@ -142,15 +180,18 @@
       <name>FileSet</name>
       <version>1.0.0</version>
       <superClass>SetBase</superClass>
+      <description>
+        A fileSet allows the inclusion of groups of files into the assembly.
+      </description>
       <fields>
         <field>
           <name>directory</name>
           <version>1.0.0</version>
           <type>String</type>
           <description>
-            Absolute or relative from the module's directory. For
-            example, "src/main/bin" would select this subdirectory
-            of the project in which this dependency is defined.
+            Sets the absolute or relative location from the module's
+            directory. For example, "src/main/bin" would select this
+            subdirectory of the project in which this dependency is defined.
           </description>
           <required>true</required>
         </field>
@@ -160,8 +201,8 @@
           <type>String</type>
           <description>
             <![CDATA[
-            Controls the line-endings of files in this fileSet.
-            Valid values: 
+            Sets the line-endings of the files in this fileSet.
+            Valid values:
             <ul>
               <li><b>"keep"</b> - Preserve all line endings</li>
               <li><b>"unix"</b> - Use Unix-style line endings</li>
@@ -178,8 +219,8 @@
       <name>FileItem</name>
       <version>1.0.0</version>
       <description>
-        Allows individual file copy with option to change destination
-        file name not supported by fileSet
+        A file allows individual file inclusion with the option to change
+        the destination filename not supported by fileSets.
       </description>
       <fields>
         <field>
@@ -188,7 +229,8 @@
           <type>String</type>
           <required>true</required>
           <description>
-            Absolute or relative from the module's directory.
+            Sets the absolute or relative path from the module's directory
+            of the file to be included in the assembly.
           </description>
         </field>
         <field>
@@ -197,7 +239,7 @@
           <type>String</type>
           <required>false</required>
           <description>
-            Specifies the output directory relative to the root
+            Sets the output directory relative to the root
             of the root directory of the assembly. For example,
             "log" will put the specified files in the log directory.
           </description>
@@ -207,7 +249,7 @@
           <version>1.0.0</version>
           <type>String</type>
           <description>
-            Destination file name in outputDirectory.
+            Sets the destination filename in the outputDirectory.
             Default is the same name as the source's file.
           </description>
         </field>
@@ -218,10 +260,10 @@
           <defaultValue>0644</defaultValue>
           <description>
             <![CDATA[
-            Similar to a UNIX permission.  Format: (User)(Group)(Other) where each
-            component is a sum of Read = 4, Write = 2, and Execute = 1.  For example,
-            the default value of 0644 translates to User read-write, Group and Other 
-            read-only. 
+            Similar to a UNIX permission, sets the file mode of the files included.
+            Format: (User)(Group)(Other) where each component is a sum of Read = 4,
+            Write = 2, and Execute = 1.  For example, the default value of 0644
+            translates to User read-write, Group and Other read-only.
             <a href="http://www.onlamp.com/pub/a/bsd/2000/09/06/FreeBSD_Basics.html">(more on unix-style permissions)</a>
           	]]>
           </description>
@@ -232,8 +274,8 @@
           <type>String</type>
           <description>
             <![CDATA[
-            Controls the line-endings of files in this fileSet.
-            Valid values are: 
+            Sets the line-endings of the files in this file.
+            Valid values are:
             <ul>
               <li><b>"keep"</b> - Preserve all line endings</li>
               <li><b>"unix"</b> - Use Unix-style line endings</li>
@@ -249,7 +291,7 @@
           <version>1.0.0</version>
           <type>boolean</type>
           <description>
-            Flag used to determine if the file is filtered.
+            Sets whether to determine if the file is filtered.
           </description>
         </field>
       </fields>
@@ -259,7 +301,10 @@
       <name>DependencySet</name>
       <version>1.0.0</version>
       <superClass>SetBase</superClass>
-      <description>Defines a dependency set</description>
+      <description>
+        A dependencySet allows inclusion and exclusion of project dependencies
+        in the assembly.
+      </description>
       <fields>
         <field>
           <name>outputFileNameMapping</name>
@@ -267,9 +312,8 @@
           <type>String</type>
           <defaultValue>${artifactId}-${version}.${extension}</defaultValue>
           <description>
-            Specify the mapping pattern for all dependencies included
-            in this assembly.
-            Default is ${artifactId}-${version}.${extension}.
+            Sets the mapping pattern for all dependencies included in this
+            assembly. Default is ${artifactId}-${version}.${extension}.
           </description>
         </field>
         <field>
@@ -290,7 +334,7 @@
           <defaultValue>runtime</defaultValue>
           <required>true</required>
           <description>
-            Specifies the dependency scope for this dependencySet.
+            Sets the dependency scope for this dependencySet.
             Default scope value is "runtime".
           </description>
         </field>
