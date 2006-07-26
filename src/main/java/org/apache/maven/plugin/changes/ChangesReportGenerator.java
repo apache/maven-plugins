@@ -156,7 +156,7 @@ public class ChangesReportGenerator
             sink.tableRow_();
         }
 
-        sink.table();
+        sink.table_();
     }
 
     private void constructReleaseHistory( Sink sink, ResourceBundle bundle )
