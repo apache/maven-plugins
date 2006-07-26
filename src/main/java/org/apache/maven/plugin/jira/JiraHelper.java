@@ -45,8 +45,7 @@ public class JiraHelper
     {
         String jiraId = null;
         GetMethod gm = new GetMethod( issueManagementUrl );
-        log.info( "JIRA URL " + issueManagementUrl + " doesn't include a pid, trying to get it" );
-
+    
         String projectPage;
         try
         {
@@ -58,11 +57,11 @@ public class JiraHelper
         {
             if ( log.isDebugEnabled() )
             {
-                log.error( "Unable to reach JIRA project page:", e );
+                log.error( "Unable to reach the JIRA project page:", e );
             }
             else
             {
-                log.error( "Unable to reach JIRA project page. Cause is: " + e.getLocalizedMessage() );
+                log.error( "Unable to reach the JIRA project page. Cause is: " + e.getLocalizedMessage() );
             }
             return null;
         }
@@ -71,7 +70,7 @@ public class JiraHelper
 
         if ( pidIndex == -1 )
         {
-            log.error( "Unable to get JIRA pid using the url " + issueManagementUrl );
+            log.error( "Unable to extract a JIRA pid from the page at the url " + issueManagementUrl );
         }
         else
         {
