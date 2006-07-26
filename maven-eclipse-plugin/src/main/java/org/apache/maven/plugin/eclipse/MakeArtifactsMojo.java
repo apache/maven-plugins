@@ -288,7 +288,7 @@ public class MakeArtifactsMojo
         for ( int j = 0; j < splitAtComma.length; j++ )
         {
             String string = splitAtComma[j];
-            if ( StringUtils.countMatches( string, "\"" ) == 1 )
+            if ( StringUtils.countMatches( string, "\"" ) % 2 != 0 )
             {
                 j++;
                 bundles.add( string + "," + splitAtComma[j] );
