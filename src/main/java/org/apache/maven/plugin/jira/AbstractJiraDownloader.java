@@ -31,6 +31,7 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -182,17 +183,17 @@ public abstract class AbstractJiraDownloader
     {
         try
         {
-            HttpClient cl = new HttpClient();
+            HttpClient client = new HttpClient();
 
             HttpState state = new HttpState();
 
             HostConfiguration hc = new HostConfiguration();
 
-            cl.setHostConfiguration( hc );
+            client.setHostConfiguration( hc );
 
-            cl.setState( state );
+            client.setState( state );
 
-            determineProxy( cl );
+            determineProxy( client );
 
             Map urlMap = getJiraUrlAndIssueId();
 
@@ -200,27 +201,46 @@ public abstract class AbstractJiraDownloader
 
             String jiraId = (String) urlMap.get( "id" );
 
-            doAuthentication( cl, jiraUrl );
+            prepareBasicAuthentication( client );
 
-            if ( jiraId == null || jiraId.length() == 0 )
-            {
-                jiraId = JiraHelper.getPidFromJira( log, project.getIssueManagement().getUrl(), cl );
+            boolean jiraAuthenticationSuccessful = false;
+            if( isJiraAuthenticationConfigured() ) {
+                jiraAuthenticationSuccessful = doJiraAuthentication( client, jiraUrl );
             }
 
-            // create the URL for getting the proper issues from JIRA
-            String fullURL = jiraUrl + "/secure/IssueNavigator.jspa?view=rss&pid=" + jiraId;
-
-            if ( getFixFor() != null )
+            if ( ( isJiraAuthenticationConfigured() && jiraAuthenticationSuccessful ) ||
+                !isJiraAuthenticationConfigured() )
             {
-                fullURL += "&fixfor=" + getFixFor();
+                if ( jiraId == null || jiraId.length() == 0 )
+                {
+                    log.info( "The JIRA URL " + project.getIssueManagement().getUrl() +
+                        " doesn't include a pid, trying to extract it from JIRA." );
+                    jiraId = JiraHelper.getPidFromJira( log, project.getIssueManagement().getUrl(), client );
+                }
+
+                if ( jiraId == null )
+                {
+                    getLog().error( "The issue management URL in the POM does not include a pid," +
+                        " and it was not possible to extract it from the page at that URL." );
+                }
+                else
+                {
+                    // create the URL for getting the proper issues from JIRA
+                    String fullURL = jiraUrl + "/secure/IssueNavigator.jspa?view=rss&pid=" + jiraId;
+
+                    if ( getFixFor() != null )
+                    {
+                        fullURL += "&fixfor=" + getFixFor();
+                    }
+
+                    fullURL += createFilter();
+
+                    fullURL += ( "&tempMax=" + nbEntriesMax + "&reset=true&decorator=none" );
+
+                    // execute the GET
+                    download( client, fullURL );
+                }
             }
-
-            fullURL += createFilter();
-
-            fullURL += ( "&tempMax=" + nbEntriesMax + "&reset=true&decorator=none" );
-
-            // execute the GET
-            download( cl, fullURL );
         }
         catch ( Exception e )
         {
@@ -229,7 +249,7 @@ public abstract class AbstractJiraDownloader
     }
 
     /**
-     * Override this method if you need to get issue for a specific Fix For.
+     * Override this method if you need to get issues for a specific Fix For.
      *
      * @return A Fix For id or <code>null</code> if you don't have that need
      */
@@ -238,6 +258,12 @@ public abstract class AbstractJiraDownloader
         return null;
     }
 
+    /**
+     * Parse out the base URL for JIRA and the JIRA project id from the issue
+     * management section of the POM.
+     *
+     * @return A <code>Map</code> containing the URL and project id
+     */
     private Map getJiraUrlAndIssueId()
     {
         HashMap urlMap = new HashMap();
@@ -272,70 +298,111 @@ public abstract class AbstractJiraDownloader
     }
 
     /**
-     * Authenticate against webserver and into JIRA if we have to.
+     * Check and prepare for basic authentication.
      *
-     * @param client    the HttpClient
-     * @param jiraUrl   the JIRA installation
+     * @param client The client to prepare
      */
-    private void doAuthentication( HttpClient client, final String jiraUrl )
+    private void prepareBasicAuthentication( HttpClient client )
     {
-        // check and prepare for basic authentication
         if ( ( webUser != null ) && ( webUser.length() > 0 ) )
         {
             client.getParams().setAuthenticationPreemptive( true );
 
             Credentials defaultcreds = new UsernamePasswordCredentials( webUser, webPassword );
 
-            getLog().info(
-                           "Using username: " + webUser + " for Basic Authentication against the webserver at "
-                               + jiraUrl );
+            getLog().info( "Using username: " + webUser + " for Basic Authentication." );
 
             client.getState().setCredentials( new AuthScope( null, AuthScope.ANY_PORT, null, AuthScope.ANY_SCHEME ),
                                               defaultcreds );
         }
+    }
 
+    /**
+     * Authenticate against JIRA. This method relies on jiraUser and
+     * jiraPassword being set. You can check this by calling
+     * isJiraAuthenticationConfigured().
+     *
+     * @param client    the HttpClient
+     * @param jiraUrl   the JIRA installation
+     * @return <code>true</code> if the authentication was successful, otherwise <code>false</code>
+     */
+    private boolean doJiraAuthentication( HttpClient client, final String jiraUrl )
+    {
         // log into JIRA if we have to
         String loginUrl = null;
 
-        if ( ( jiraUser != null ) && ( jiraUser.length() > 0 ) && ( jiraPassword != null ) )
+        StringBuffer loginLink = new StringBuffer( jiraUrl );
+
+        loginLink.append( "/login.jsp?os_destination=/secure/" );
+
+        loginLink.append( "&os_username=" ).append( jiraUser );
+
+        String password = null;
+        if ( jiraPassword != null )
         {
-            StringBuffer loginLink = new StringBuffer( jiraUrl );
-
-            loginLink.append( "/login.jsp?os_destination=/secure/" );
-
-            loginLink.append( "&os_username=" ).append( jiraUser );
-
-            getLog().info( "Login URL: " + loginLink + "&os_password=*******" );
-
-            loginLink.append( "&os_password=" ).append( jiraPassword );
-
-            loginUrl = loginLink.toString();
+            password = StringUtils.repeat( "*", jiraPassword.length() );
         }
+        getLog().info( "Login URL: " + loginLink + "&os_password=" + password );
+
+        loginLink.append( "&os_password=" ).append( jiraPassword );
+
+        loginUrl = loginLink.toString();
 
         // execute the login
-        if ( loginUrl != null )
+        GetMethod loginGet = new GetMethod( loginUrl );
+
+        try
         {
-            GetMethod loginGet = new GetMethod( loginUrl );
+            client.executeMethod( loginGet );
 
-            try
+            if ( loginSucceeded( loginGet ) )
             {
-                client.executeMethod( loginGet );
-
-                getLog().info( "Succesfully logged in into JIRA." );
+                getLog().info( "Successfully logged in into JIRA." );
+                return true;
             }
-            catch ( Exception e )
+            else
             {
-                if ( getLog().isDebugEnabled() )
-                {
-                    getLog().error( "Error trying to login into JIRA:", e );
-                }
-                else
-                {
-                    getLog().error( "Error trying to login into JIRA. Cause is: " + e.getLocalizedMessage() );
-                }
-                // continue any way, probably will fail later if authentication was necesaaray afterall
+                getLog().warn( "Was unable to login into JIRA: wrong username and/or password." );
             }
         }
+        catch ( Exception e )
+        {
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().error( "Error trying to login into JIRA.", e );
+            }
+            else
+            {
+                getLog().error( "Error trying to login into JIRA. Cause is: " + e.getLocalizedMessage() );
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check to see if we think that JIRA authentication is needed.
+     *
+     * @return <code>true</code> if jiraUser and jiraPassword are set, otherwise <code>false</code>
+     */
+    private boolean isJiraAuthenticationConfigured()
+    {
+        return ( jiraUser != null ) && ( jiraUser.length() > 0 ) && ( jiraPassword != null );
+    }
+
+    /**
+     * Evaluate if the login attempt to JIRA was successful or not. We can't
+     * use the status code because JIRA returns 200 even if the login fails.
+     *
+     * @param loginGet The method that was executed
+     * @return <code>false</code> if we find an error message in the response body, otherwise <code>true</code>
+     * @todo There must be a nicer way to know whether we were able to login or not
+     */
+    private boolean loginSucceeded( GetMethod loginGet )
+        throws IOException
+    {
+        final String loginFailureResponse = "your username and password are incorrect";
+
+        return loginGet.getResponseBodyAsString().indexOf( loginFailureResponse ) == -1;
     }
 
     /**
@@ -417,20 +484,11 @@ public abstract class AbstractJiraDownloader
 
             cl.executeMethod( gm );
 
-            final String strGetResponseBody = gm.getResponseBodyAsString();
-
-            // write the reponse to file
-            PrintWriter pw = new PrintWriter( new FileWriter( getOutput() ) );
-
-            pw.print( strGetResponseBody );
-
-            pw.close();
-
             StatusLine sl = gm.getStatusLine();
 
             if ( sl == null )
             {
-                getLog().info( "Unknown error validating link : " + link );
+                getLog().info( "Unknown error validating link: " + link );
 
                 return;
             }
@@ -454,9 +512,21 @@ public abstract class AbstractJiraDownloader
                 }
             }
 
-            if ( gm.getStatusCode() != HttpStatus.SC_OK )
+            if ( gm.getStatusCode() == HttpStatus.SC_OK )
             {
-                getLog().warn( "Received: [" + gm.getStatusCode() + "]" );
+                final String strGetResponseBody = gm.getResponseBodyAsString();
+
+                // write the reponse to file
+                PrintWriter pw = new PrintWriter( new FileWriter( output ) );
+
+                pw.print( strGetResponseBody );
+
+                pw.close();
+
+                getLog().info( "Downloading successful" );
+            }
+            else {
+                getLog().warn( "Downloading failed. Received: [" + gm.getStatusCode() + "]" );
             }
         }
         catch ( HttpException e )
