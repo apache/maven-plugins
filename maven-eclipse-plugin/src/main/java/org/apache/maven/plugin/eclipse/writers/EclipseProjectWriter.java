@@ -33,6 +33,7 @@ import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.plugin.ide.IdeUtils;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
@@ -222,39 +223,47 @@ public class EclipseProjectWriter
 
         writer.endElement(); // natures
 
-        if ( !config.getProjectBaseDir().equals( config.getEclipseProjectDirectory() ) )
+        boolean addLinks = !config.getProjectBaseDir().equals( config.getEclipseProjectDirectory() );
+
+        if ( addLinks || ( config.isPde() && config.getDeps().length > 0 ) )
         {
             writer.startElement( "linkedResources" ); //$NON-NLS-1$
 
-            addFileLink( writer, config.getProjectBaseDir(), config.getEclipseProjectDirectory(), config.getProject()
-                .getFile() );
-
-            addSourceLinks( writer, config.getProjectBaseDir(), config.getEclipseProjectDirectory(), config
-                .getProject().getCompileSourceRoots() );
-            addResourceLinks( writer, config.getProjectBaseDir(), config.getEclipseProjectDirectory(), config
-                .getProject().getBuild().getResources() );
-
-            addSourceLinks( writer, config.getProjectBaseDir(), config.getEclipseProjectDirectory(), config
-                .getProject().getTestCompileSourceRoots() );
-            addResourceLinks( writer, config.getProjectBaseDir(), config.getEclipseProjectDirectory(), config
-                .getProject().getBuild().getTestResources() );
-
-            writer.endElement(); // linedResources
-        }
-
-        if ( config.isPde() )
-        {
-            for ( int j = 0; j < config.getDeps().length; j++ )
+            if ( addLinks )
             {
-                IdeDependency dep = config.getDeps()[j];
 
-                if ( dep.isAddedToClasspath() && !dep.isProvided() && !dep.isReferencedProject()
-                    && !dep.isTestDependency() )
+                addFileLink( writer, config.getProjectBaseDir(), config.getEclipseProjectDirectory(), config
+                    .getProject().getFile() );
+
+                addSourceLinks( writer, config.getProjectBaseDir(), config.getEclipseProjectDirectory(), config
+                    .getProject().getCompileSourceRoots() );
+                addResourceLinks( writer, config.getProjectBaseDir(), config.getEclipseProjectDirectory(), config
+                    .getProject().getBuild().getResources() );
+
+                addSourceLinks( writer, config.getProjectBaseDir(), config.getEclipseProjectDirectory(), config
+                    .getProject().getTestCompileSourceRoots() );
+                addResourceLinks( writer, config.getProjectBaseDir(), config.getEclipseProjectDirectory(), config
+                    .getProject().getBuild().getTestResources() );
+
+            }
+
+            if ( config.isPde() )
+            {
+                for ( int j = 0; j < config.getDeps().length; j++ )
                 {
-                    String name = dep.getFile().getName();
-                    addLink( writer, name, name, LINK_TYPE_FILE );
+                    IdeDependency dep = config.getDeps()[j];
+
+                    if ( dep.isAddedToClasspath() && !dep.isProvided() && !dep.isReferencedProject()
+                        && !dep.isTestDependency() )
+                    {
+                        String name = dep.getFile().getName();
+                        addLink( writer, name, StringUtils.replace( IdeUtils.getCanonicalPath( dep.getFile() ), "\\",
+                                                                    "/" ), LINK_TYPE_FILE );
+                    }
                 }
             }
+
+            writer.endElement(); // linkedResources
         }
 
         writer.endElement(); // projectDescription
