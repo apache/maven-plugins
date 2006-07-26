@@ -1,5 +1,5 @@
   ---
-  Assembly Plugin Example - Including Module Artifacts
+  Including Module Artifacts
   ---
   John Casey
   ---
@@ -113,7 +113,7 @@ Assembly Plugin Example - Including Module Artifacts
 </project>
 +---+
 
-  This POM simply directs the assembly plugin to use the <<<bin.xml>>>
+  This POM simply directs the Assembly Plugin to use the <<<bin.xml>>>
   assembly descriptor when executing.
   
 * Execute!

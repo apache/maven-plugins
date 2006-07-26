@@ -1,9 +1,26 @@
   ---
-  Assembly Plugin - Configuration and Usage
+  Configuration and Usage
   ---
   John Casey
   ---
   12-May-2006
+
+~~ Copyright 2006 The Apache Software Foundation.
+~~
+~~ Licensed under the Apache License, Version 2.0 (the "License");
+~~ you may not use this file except in compliance with the License.
+~~ You may obtain a copy of the License at
+~~
+~~      http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing, software
+~~ distributed under the License is distributed on an "AS IS" BASIS,
+~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~ See the License for the specific language governing permissions and
+~~ limitations under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/guides/mini/guide-apt-format.html
 
 Assembly Plugin - Configuration and Usage
 
@@ -14,19 +31,19 @@ Assembly Plugin - Configuration and Usage
   critical to cover two topics: configuration of the plugin - both inside the
   POM and, where possible, from the command line - and the different execution
   styles. For the sake of clarity, we'll cover configuration before execution.
-  
+
 * Configuring the Assembly Plugin
 
-  Getting started with the assembly plugin is pretty simple. If you're using one
+  Getting started with the Assembly Plugin is pretty simple. If you're using one
   of the prefabricated assembly descriptors, you just tell it which one; if
   you're using a custom assembly descriptor, you give it the path to the
-  descriptor. Note that a single invocation of the assembly plugin can actually
+  descriptor. Note that a single invocation of the Assembly Plugin can actually
   produce assemblies from multiple descriptors, allowing you maximum flexibility
   to customize the suite of binaries your project produces.
   
   For example, imagine that our project produces a jar. If we want to create an
   assembly binary that includes our project's dependencies, we can take
-  advantage of one of the assembly plugin's prefabricated descriptors, as
+  advantage of one of the Assembly Plugin's prefabricated descriptors, as
   follows:
   
 +---+
@@ -49,12 +66,14 @@ Assembly Plugin - Configuration and Usage
 </project>
 +---+
 
-  Note that the assembly plugin allows you to specify multiple
+  Note that the Assembly Plugin allows you to specify multiple
   <<<descriptorRefs>>> at once, to produce multiple types of assemblies in a
   single invocation.
   
-  Alternatively, if we've created a custom assembly descriptor called
-  <<<src.xml>>> in the <<<src/assembly>>> directory (see the {{{#resources}Resources}} section for more information), we can tell the assembly plugin to use it instead:
+  Alternatively, we've created a custom assembly descriptor called
+  <<<src.xml>>> in the <<<src/assembly>>> directory (see the
+  {{{#resources}Resources}} section for more information), we can tell the
+  Assembly Plugin to use it instead:
   
 +---+
 <project>
@@ -63,9 +82,6 @@ Assembly Plugin - Configuration and Usage
     [...]
     <plugins>
       <plugin>
-        <!-- NOTE: We don't need a groupId specification because the group is
-             org.apache.maven.plugins ...which is assumed by default.
-         -->
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
           <descriptors>
@@ -81,7 +97,7 @@ Assembly Plugin - Configuration and Usage
   <<<descriptorRefs>>> within the same configuration.
   
   <<NOTE:>> Many other configuration options are available for the various mojos
-  in the assembly plugin. For more information, see the
+  in the Assembly Plugin. For more information, see the
   {{{examples/index.html}examples section}} or the {{{plugin-info.html}plugin
   parameter documentation}}.
   
@@ -93,7 +109,7 @@ Assembly Plugin - Configuration and Usage
   
   Currently, there are two basic approaches to building assemblies: as a
   dedicated build action, or bound to a phase of the normal build lifecycle.
-  Beyond this, it's also possible to have the assembly plugin simply create an
+  Beyond this, it's also possible to have the Assembly Plugin simply create an
   assembly directory for any given <<<descriptor>>> or <<<descriptorRef>>>,
   instead of creating archives.
   
@@ -105,7 +121,7 @@ Assembly Plugin - Configuration and Usage
 
   <<NOTE:>> Invoking the <<<assembly>>> and <<<directory>>> mojos will cause
   Maven to build the project using the normal lifecycle, up to the <<<package>>>
-  phase. Because many assemblies will contains compiled classes and other
+  phase. Because many assemblies will contain compiled classes and other
   binaries, it's reasonable to assume that the package phase will be required to
   ensure those binaries exist and have been tested. The main advantage of
   producing an assembly in this way is to avoid producing it as part of your
@@ -172,7 +188,7 @@ target
   discussed above, except that they are meant to bind into the default build
   lifecycle.
   
-  The <<<assembly>>> mojo forces a <<<package>>>-phase build to execute, in
+  The <<<assembly>>> mojo forces a <<<package>>> phase build to execute, in
   order to guarantee the availability of project binaries. Unfortunately, this
   currently means that binding the <<<assembly>>> mojo to the default lifecycle
   will cause Maven to execute the build twice - once for the main process, and
@@ -302,12 +318,12 @@ target
 
 * Advanced Configuration
 
-  As you've no doubt noticed, the assembly plugin can be a very useful way to
+  As you've no doubt noticed, the Assembly Plugin can be a very useful way to
   create a self-contained binary artifact for your project, among many other
   things. However, once you've created this self-contained jar, you will
   probably want the ability to execute it using the <<<-jar>>> JVM switch.
   
-  To accommodate this, the assembly plugin supports configuration of an
+  To accommodate this, the Assembly Plugin supports configuration of an
   <<<\<archive\>>>> element which is identical to that supported by the
   <<<maven-jar-plugin>>> (see {{{#resources}Resources}}). Using this
   configuration, it's easy to configure the <<<Main-Class>>> attribute of the
@@ -344,7 +360,7 @@ target
 Main-Class: org.sample.App
 +---+
 
-  For more information on advanced configuration for the assembly plugin, see
+  For more information on advanced configuration for the Assembly Plugin, see
   the {{{#resources}Resources}} section.
   
 ** GOTCHA!
@@ -353,16 +369,16 @@ Main-Class: org.sample.App
   <<<directory-inline>>> - <<do not>> support the <<<\<archive\>>>>
   configuration element.
 
-* {resources}Resources
+* {Resources}
 
   [[1]] For more information on writing your own assembly descriptor, read the 
-        {{{assembly-descriptor-howto.apt}Assembly Descriptor How-To}}
+        {{{assembly.html}Assembly Descriptor}}
         
-  [[2]] For more information about the <<<maven-jar-plugin>>>,
-        {{{/plugins/maven-jar-plugin}look here}}.
+  [[2]] For more information about the <<<maven-jar-plugin>>>, look
+        {{{/plugins/maven-jar-plugin}here}}.
         
   [[3]] For more information on advanced <<<maven-assembly-plugin>>>
-        configuration, {{{advanced-configuration.html}look here}}.
+        configuration, see the {{{examples/index.html}examples}}.
   
   []
 
