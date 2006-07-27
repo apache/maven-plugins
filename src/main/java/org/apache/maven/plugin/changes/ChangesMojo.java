@@ -103,6 +103,7 @@ public class ChangesMojo
         String resourceNames[] = {
             "images/add.gif",
             "images/fix.gif",
+            "images/icon_help_sml.gif",
             "images/remove.gif",
             "images/rss.png",
             "images/update.gif" };
