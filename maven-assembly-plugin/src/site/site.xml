@@ -32,6 +32,7 @@
 
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
+      <item name="Goals" href="plugin-info.html"/>
       <item name="Usage" href="usage.html"/>
       <item name="Features" href="features.html"/>
       <item name="Descriptor Format" href="assembly.html"/>
@@ -42,10 +43,10 @@
 
     <menu name="Examples">
       <item name="Examples Index" href="examples/index.html"/>
-      <item name="Single Projects" collapse="false" href="examples/simple/index.html">
-        <item name="Filtering Some Distribution Files" href="examples/simple/filtering-some-distribution-files.html"/>
-        <item name="Using Component Descriptors" href="examples/simple/using-components.html"/>
-        <item name="Using Repositories" href="examples/simple/using-repositories.html"/>
+      <item name="Single Project" collapse="false" href="examples/single/index.html">
+        <item name="Filtering Some Distribution Files" href="examples/single/filtering-some-distribution-files.html"/>
+        <item name="Using Component Descriptors" href="examples/single/using-components.html"/>
+        <item name="Using Repositories" href="examples/single/using-repositories.html"/>
       </item>
       <item name="Multimodule Projects" collapse="false" href="examples/multimodule/index.html">
         <item name="Include Module Artifacts" href="examples/multimodule/module-binary-inclusion-simple.html"/>
