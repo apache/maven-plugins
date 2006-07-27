@@ -37,7 +37,7 @@ Maven Surefire Plugin
 
 * Examples
 
-  The following examples show how to use the surefire plugin in more advanced usecases:
+  The following examples show how to use the surefire plugin in more advanced use-cases:
 
   * {{{examples/skipping-test.html}Skipping Tests}}
 
