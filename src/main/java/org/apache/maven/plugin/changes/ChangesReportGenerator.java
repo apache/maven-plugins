@@ -287,6 +287,21 @@ public class ChangesReportGenerator
         sink.figure_();
     }
 
+    private void sinkFigure( String image, Sink sink, String altText )
+    {
+        sink.figure();
+
+        sink.figureGraphics( image );
+
+        sink.figureCaption();
+
+        sink.text( altText );
+
+        sink.figureCaption_();
+
+        sink.figure_();
+    }
+
     private void sinkHeader( Sink sink, String header )
     {
         sink.tableHeaderCell();
@@ -308,6 +323,8 @@ public class ChangesReportGenerator
     private void sinkSectionTitle1Anchor( Sink sink, String text, String anchor )
     {
         sink.sectionTitle1();
+        sink.anchor( anchor );
+        sink.anchor_();
         sink.text( text );
         sink.sectionTitle1_();
     }
@@ -324,31 +341,37 @@ public class ChangesReportGenerator
     private void sinkShowTypeIcon( Sink sink, String type )
     {
         String image = "";
+        String altText = "";
 
         if ( type == null )
         {
             image = "images/icon_help_sml.gif";
+            altText = "?";
         }
         else if ( type.equals( "fix" ) )
         {
             image = "images/fix.gif";
+            altText = "fix";
         }
         else if ( type.equals( "update" ) )
         {
             image = "images/update.gif";
+            altText = "update";
         }
         else if ( type.equals( "add" ) )
         {
             image = "images/add.gif";
+            altText = "add";
         }
         else if ( type.equals( "remove" ) )
         {
             image = "images/remove.gif";
+            altText = "remove";
         }
 
         sink.tableCell();
 
-        sinkFigure( image, sink );
+        sinkFigure( image, sink, altText );
 
         sink.tableCell_();
     }
