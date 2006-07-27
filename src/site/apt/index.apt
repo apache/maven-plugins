@@ -41,9 +41,9 @@ Introduction
 
     * zip
 
-    * tar.bz
+    * tar.gz
 
-    * tar.gz2
+    * tar.bz2
 
     * jar
 
@@ -120,6 +120,12 @@ The Maven Assembly Plugin
 
   * {{{single-mojo.html}assembly:single}} An assembly mojo created as a
   work-around for lifecycle issues until addressed in the Maven 2.1 release.
+
+
+* Usage
+
+  Instructions on how to use the Assembly Plugin can be found
+  {{{usage.html}here}}.
 
 
 * Examples
