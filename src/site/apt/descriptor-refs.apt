@@ -107,7 +107,7 @@ Pre-defined Descriptor Files
 
   Use <<<src>>> as the <<<descriptorId>>> of your assembly to create source
   archives for your project.  The archive should contain enough information
-  for anyone to be able to build your project. The <<<bin>>> descriptorId
+  for anyone to be able to build your project. The <<<src>>> descriptorId
   produces the archive in three formats: tar.gz, tar.bz2, and zip.
 
   Below is the <<<src>>> descriptor format:

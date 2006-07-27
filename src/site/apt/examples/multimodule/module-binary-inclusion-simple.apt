@@ -1,5 +1,5 @@
   ---
-  Including Module Artifacts
+  Including Module Binaries
   ---
   John Casey
   ---
@@ -23,13 +23,13 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/guides/mini/guide-apt-format.html
                                                                                                                         
-Assembly Plugin Example - Including Module Artifacts
+Including Module Binaries
 
 * Introduction
 
   It is common practice to create an assembly using the parent POM of a
   multimodule build. At times, you may want to ensure that this assembly also
-  includes one or more of the module artifacts.
+  includes one or more of the module binaries.
   
   This example demonstrates how to include the artifact and dependencies of a 
   module, under the directory <<<modules/\<module-name\>>>>.

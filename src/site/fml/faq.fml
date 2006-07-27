@@ -19,7 +19,7 @@
 <faqs id="FAQ" title="Frequently Asked Questions">
   <part id="General">
     <faq id="deploy">
-      <question>If the Assembly Plugin is ran during the package phase, do my assemblies get deployed during the deploy phase?</question>
+      <question>If the Assembly Plugin is run during the package phase, do my assemblies get deployed during the deploy phase?</question>
       <answer>
         <p>Yes. The assemblies created by the Assembly Plugin is attached to your project so it gets deployed too.</p>
       </answer>
@@ -28,6 +28,13 @@
       <question>Can I use an artifact created by the assembly plugin as a dependency?</question>
       <answer>
         <p>Yes. You can refer to it using the id of the assembly as the dependency classifier.</p>
+      </answer>
+    </faq>
+    <faq id="javadoc">
+      <question>How do I use the Assembly Plugin to package my project's javadoc files?</question>
+      <answer>
+        <p>The Javadoc Plugin can generate the javadoc files of your projects. Also, the Javadoc Plugin can package them!</p>
+        <p>Please see the <a href="/plugins/maven-javadoc-plugin/">Javadoc Plugin Documentation</a>.</p>
       </answer>
     </faq>
   </part>

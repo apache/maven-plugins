@@ -22,7 +22,9 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/guides/mini/guide-apt-format.html
 
-Assembly Plugin - Features
+Features
+
+  The current version of this plugin can be found {{{project-summary.html}here}}.
 
   <NOTE: Features with no version information have been present since the first final release of the plugin.>
 

@@ -23,10 +23,11 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/guides/mini/guide-apt-format.html
 
-Assembly Plugin - Multi-Module Examples
+Multi-Module Examples
 
-  Multimodule Projects use \<moduleSets\> in their assemblies. The
-  examples below may be able to help you when creating assemblies for your
+  Multimodule Projects use \<moduleSets\> in their assemblies.
+
+  The examples below may be able to help you when creating assemblies for your
   multimodule project.
 
     * {{{module-source-inclusion-simple.html}Adding Module Sources to the Assembly}}
