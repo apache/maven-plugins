@@ -170,24 +170,28 @@ public class JiraMojo
     public void executeReport( Locale locale )
         throws MavenReportException
     {
-        JiraDownloader jira = new JiraDownloader();
+        JiraDownloader jiraDownloader = new JiraDownloader();
 
-        setJiraDownloaderParameter( jira );
+        setJiraDownloaderParameter( jiraDownloader );
 
         JiraReportGenerator report;
 
         try
         {
-            jira.doExecute();
+            jiraDownloader.doExecute();
 
-            if ( !( new File( jiraXmlPath ).exists() ) )
+            if ( new File( jiraXmlPath ).exists() )
             {
-                return;
+                report = new JiraReportGenerator( jiraXmlPath );
+
+                report.doGenerateReport( getBundle( locale ), getSink() );
             }
+            else
+            {
+                report = new JiraReportGenerator();
 
-            report = new JiraReportGenerator( jiraXmlPath );
-
-            report.doGenerateReport( getBundle( locale ), getSink() );
+                report.doGenerateEmptyReport( getBundle( locale ), getSink() );
+            }
         }
         catch ( Exception e )
         {
