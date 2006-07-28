@@ -34,7 +34,7 @@
       <question>How do I use the Assembly Plugin to package my project's javadoc files?</question>
       <answer>
         <p>The Javadoc Plugin can generate the javadoc files of your projects. Also, the Javadoc Plugin can package them!</p>
-        <p>Please see the <a href="/plugins/maven-javadoc-plugin/">Javadoc Plugin Documentation</a>.</p>
+        <p>Please see the <a href="http://maven.apache.org/plugins/maven-javadoc-plugin/">Javadoc Plugin Documentation</a>.</p>
       </answer>
     </faq>
   </part>
