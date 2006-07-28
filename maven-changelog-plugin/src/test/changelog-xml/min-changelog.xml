@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+  ~ Copyright 2001-2006 The Apache Software Foundation.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<changelog>
+  <changeset start="1977-08-06" end="2005-02-25">
+    <changelog-entry>
+      <date>1977-08-06</date>
+      <time>05:30:00</time>
+      <author>Edwin Punzalan</author>
+      <file>
+        <name>/path/to/file.extension</name>
+        <revision>1</revision>
+      </file>
+      <msg>First commit msg</msg>
+    </changelog-entry>
+    <changelog-entry>
+      <time>21:30:00</time>
+      <date>2005-02-24</date>
+      <author>Edwin Punzalan</author>
+      <file>
+        <name>/path/to/file.extension</name>
+        <revision>2</revision>
+      </file>
+      <file>
+        <name>/path/to/file2.extension</name>
+        <revision>2</revision>
+      </file>
+      <msg>Second commit msg</msg>
+    </changelog-entry>
+  </changeset>
+  <changeset start="2005-02-25" end="2100-02-25">
+    <changelog-entry>
+      <time>22:45:00</time>
+      <date>2005-02-25</date>
+      <author>Keogh Edrich Punzalan</author>
+      <file>
+        <name>/path/to/file.extension (from /path/to/other/file.extension:45)</name>
+        <revision>3</revision>
+      </file>
+      <msg>Third commit msg</msg>
+    </changelog-entry>
+    <changelog-entry>
+      <date>2100-02-25</date>
+      <time>05:30:00</time>
+      <author>Keogh Edrich Punzalan</author>
+      <file>
+        <name>/path/to/file.extension</name>
+        <revision>4</revision>
+      </file>
+      <file>
+        <name>/path/to/file2.extension</name>
+        <revision>4</revision>
+      </file>
+      <msg>Last commit msg</msg>
+    </changelog-entry>
+  </changeset>
+</changelog>
