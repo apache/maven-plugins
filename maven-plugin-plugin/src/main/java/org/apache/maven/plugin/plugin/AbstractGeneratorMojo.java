@@ -1,7 +1,7 @@
 package org.apache.maven.plugin.plugin;
 
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,12 +37,16 @@ public abstract class AbstractGeneratorMojo
     extends AbstractMojo
 {
     /**
+     * The project currently being built.
+     *
      * @parameter expression="${project}"
      * @required
      */
     protected MavenProject project;
 
     /**
+     * The component used for scanning the source tree for mojos.
+     *
      * @parameter expression="${component.org.apache.maven.tools.plugin.scanner.MojoScanner}"
      * @required
      */
