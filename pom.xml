@@ -10,7 +10,6 @@
   <packaging>maven-plugin</packaging>
   <version>1.0-SNAPSHOT</version>
   <name>Maven Documentation Checker Plugin</name>
-  <url>http://maven.apache.org</url>
   <prerequisites>
     <maven>2.0</maven>
   </prerequisites>
