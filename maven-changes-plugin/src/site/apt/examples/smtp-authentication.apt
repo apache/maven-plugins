@@ -1,0 +1,34 @@
+ ------
+ SMTP Authentication
+ ------
+ Allan Ramirez
+ ------
+ 21 October 2005
+ ------
+
+SMTP Authentication
+
+  If the SMTP host needs authentication, you can provide your username and password
+  in the <<<\<configuration\>>>> section:
+
+-------------------
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <configuration>
+          <smtpHost>mail.yourhost.com</smtpHost>
+          <smtpPort implementation="java.lang.Integer">25</smtpPort>
+          <username>some@email.com</username>
+          <password>somepassword</password>
+          ...
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
+-------------------

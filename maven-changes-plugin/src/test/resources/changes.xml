@@ -1,0 +1,25 @@
+<document>
+  <properties>
+    <title>Page title</title>
+    <author email="vmassol@apache.org">Vincent Massol</author>
+  </properties>
+  <body>
+
+    <release version="2.0" date="in CVS">
+      <action dev="vmassol" type="update">
+        Blah blah blaha.
+      </action>              
+    </release>
+
+    <release version="1.0-SNAPSHOT" date="2003-06-05" description="Sample Description">
+      <action dev="vmassol" type="add">Test
+      </action>              
+      <action dev="vmassol" type="fix" issue="JIRA-XXX">
+        Corrected bug blah blah.
+      </action>              
+      <action dev="vmassol" type="remove" due-to="John Doe" due-to-email="john@doe.com">
+        Removed blah blah.
+      </action>              
+    </release>
+  </body>
+</document>

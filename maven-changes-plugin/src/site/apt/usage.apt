@@ -1,0 +1,208 @@
+ ------
+ Usage
+ ------
+ Johnny R. Ruiz III
+ Allan Ramirez
+ ------
+ 2 September 2005
+ ------
+
+Usage
+
+ This plugin is used to create a Changes Report, a JIRA Report and an Announcement text file.
+
+*How to Generate the Changes Report
+ 
+ In order to use this plugin, simply create a <<<changes.xml>>> file under the <<<src/changes/>>> directory.
+ Here's an example of a typical <<<changes.xml>>>, showing the syntax:
+
+-------------------
+<document>
+  <properties>
+    <title>Changes Tester Project</title>
+    <author email="jruiz@exist.com">Johnny R. Ruiz III</author>
+  </properties>
+  <body>
+    <release version="1.1" date="2005-03-01" description="Subsequent release">
+      <action dev="jruiz" type="add">
+        Added additional documentation on how to configure the plugin.
+      </action>
+      <action dev="aramirez" type="fix" issue="MPJIRA-11">
+        Enable retrieving component-specific issues.
+      </action>
+      <action dev="jruiz" type="remove" due-to="Allan Ramirez" due-to-email="aramirez@exist.com">
+        The element type " link " must be terminated by the matching end-tag.
+        Deleted the erroneous code.
+      </action>
+    </release>
+
+    <release version="1.0" date="2005-01-01" description="First release">
+      <action dev="jruiz" type="update">
+        Uploaded documentation on how to use the plugin.
+      </action>
+    </release>
+  </body>
+</document>
+-------------------
+
+  The following attributes are supported for the <<<\<release\>>>> element:
+
+*--------------------+--------------*------------------------------------------------------------------------------------------+
+<<Attribute>>        | <<Optional>> | <<Description>>
+*--------------------+--------------*------------------------------------------------------------------------------------------+
+version              | Required     |  Name of the version in which the changes occur. For each change, add a nested <<<\<action\>>>> element as described below.
+*--------------------+--------------*------------------------------------------------------------------------------------------+
+date                 | Required     |  Date at which the version was released. You can use a free form comment such as "in SVN" for unreleased versions.
+*--------------------+--------------*------------------------------------------------------------------------------------------+
+description          | Optional     |  An optional description of the release. This is used in the overview table of releases. <<Note:>> In releases prior to 2.0-beta-2 this was called <<<desc>>>. It was changed to improve compatibility with the Maven 1 changes plugin.
+*--------------------+--------------*------------------------------------------------------------------------------------------+
+
+  The following attributes are supported for the <<<\<action\>>>> element:
+  
+*--------------------+--------------*------------------------------------------------------------------------------------------+
+<<Attribute>>        | <<Optional>> | <<Description>>
+*--------------------+--------------*------------------------------------------------------------------------------------------+
+dev                  | Required     |  Name of developer who committed the change. This must be the name of the developer as described in the developers section of the <<<pom.xml>>> file.
+*--------------------+--------------*------------------------------------------------------------------------------------------+
+type                 | Required     |  Type of change. There are four valid values: <add>, <fix>, <remove>, <update>.
+*--------------------+--------------*------------------------------------------------------------------------------------------+
+issue                | Optional     |  Id of the issue related to this change. This is the id in your issue tracking system.
+                     |              |  The Changes plugin will generate a URL out of this id. The URL is constructed using the value of the <<<issueLinkTemplate>>> parameter. See the {{{changes-report-mojo.html}changes-report mojo}} for more details.
+*--------------------+--------------*------------------------------------------------------------------------------------------+
+due-to               | Optional     |  Name of the person to be credited for this change. This can be used when a patch is submitted by a non-committer.
+*--------------------+--------------*------------------------------------------------------------------------------------------+
+due-to-email         | Optional     |  Email of the person to be credited for this change.
+*--------------------+--------------*------------------------------------------------------------------------------------------+
+
+
+  To generate the changes report, insert the changes plugin in the <<<\<reporting\>>>> section of your project <<<pom.xml>>>
+ 
+-------------------
+<project>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>changes-report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
+  ...
+</project>
+-------------------  
+  
+  and execute the site goal to generate the report.
+
+-------------------
+mvn site
+-------------------
+
+
+*How to Generate the JIRA Report
+
+  <<Note:>> To use the JIRA Report, the <<<\<issueManagement\>>>> section in the <<<pom.xml>>> of the project must be configured.
+
+  Sample code inside your <<<pom.xml>>>:
+  
+-------------------
+<project>
+  ...
+  <issueManagement>
+    <url>http://jira.codehaus.org/BrowseProject.jspa?id=10450</url>
+  </issueManagement>
+  ...
+</project>
+-------------------
+
+
+  To generate the JIRA report, insert the changes plugin in the <<<\<reporting\>>>> section of your project <<<pom.xml>>>
+ 
+-------------------
+<project>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>jira-report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
+  ...
+</project>
+-------------------  
+  
+  and execute the site goal to generate the report.
+
+-------------------
+mvn site
+-------------------
+
+
+*How to generate and send the Announcement in Email
+
+  In your project <<<pom.xml>>>, insert this segment:
+
+-------------------
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>announcement-generate</goal>
+            </goals>
+            <id>announcement-generate</id>
+          </execution>
+          <execution>
+            <goals>
+              <goal>announcement-mail</goal>
+            </goals>
+            <id>announcement-mail</id>
+          </execution>
+        </executions>
+        <configuration>
+          <smtpHost>mail.yourhost.com</smtpHost>
+          <smtpPort implementation="java.lang.Integer">25</smtpPort>
+          <toAddresses>
+            <toAddress implementation="java.lang.String">someones@email.com</toAddress>
+            <toAddress implementation="java.lang.String">anothersomeone@email.com</toAddress>
+          </toAddresses>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
+-------------------
+
+  You can generate the announcement by executing the command below:
+
+-------------------
+mvn changes:announcement-generate
+-------------------
+
+  This is how you send an email with the generated announcement:
+
+-------------------
+mvn changes:announcement-mail
+-------------------
