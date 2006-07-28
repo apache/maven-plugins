@@ -52,8 +52,8 @@ mvn plugin:xdoc
 mvn install
 +-----+
 
-  you will see that the version of the plugin in the plugin-registry.xml is changed to the same version of that plugin
-  you have just installed.
+  you will see that the version of the plugin in the plugin-registry.xml is changed to the same version of the plugin
+  that you have just installed.
 
   You can also explicitly execute the <<<plugin:updateRegistry>>> goal by executing
 
