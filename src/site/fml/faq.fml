@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<faqs id="FAQ" title="Frequently Asked Questions">
+  <part id="General">
+    <faq id="Where is the plugin-registry.xml">
+      <question>Where is the plugin-registry.xml?</question>
+      <answer>
+        <p>
+          The plugin-registry.xml file can be found in the M2 repository, inside the .m2 directory. It contains the
+          list of the plugins installed in your repository including the last version installed.
+        </p>
+        </answer>
+    </faq>
+  </part>
+</faqs>

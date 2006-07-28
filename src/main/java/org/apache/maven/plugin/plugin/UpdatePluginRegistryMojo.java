@@ -1,7 +1,7 @@
 package org.apache.maven.plugin.plugin;
 
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,6 +45,9 @@ public class UpdatePluginRegistryMojo
 {
 
     /**
+     * Indicates whether the plugin-registry.xml is used by Maven or not
+     * to manage plugin versions.
+     *
      * @parameter default-value="${settings.usePluginRegistry}"
      * @required
      * @readonly
@@ -52,6 +55,8 @@ public class UpdatePluginRegistryMojo
     private boolean usePluginRegistry;
 
     /**
+     * The group id of the project currently being built.
+     *
      * @parameter default-value="${project.groupId}"
      * @required
      * @readonly
@@ -59,6 +64,8 @@ public class UpdatePluginRegistryMojo
     private String groupId;
 
     /**
+     * The artifact id of the project currently being built.
+     *
      * @parameter default-value="${project.artifactId}"
      * @required
      * @readonly
@@ -66,6 +73,8 @@ public class UpdatePluginRegistryMojo
     private String artifactId;
 
     /**
+     * The version of the project currently being built.
+     *
      * @parameter default-value="${project.artifact.version}"
      * @required
      * @readonly

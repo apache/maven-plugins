@@ -1,0 +1,74 @@
+ ------
+ Usage
+ ------
+ Maria Odea Ching
+ ------
+ 27 July 2006
+ ------
+
+
+Usage
+
+  The Plugin Plugin is generally used for Maven 2 plugins. Its mojos are bound to different phases in the build life cycle.
+  So when you execute a specific phase, the Plugin Plugin mojos bound to it are also executed. Aside from this, each goal can
+  also be explicitly executed from the command line.
+
+* The <<<plugin:descriptor>>> Goal
+
+  The <<<plugin:descriptor>>> goal is bound to the <<<generate-resources>>> phase. This goal generates the plugin descriptor, which
+  is an xml file that contains information about the plugin.
+
+  For example, you want to create an archive of your plugin and you execute
+
++-----+
+mvn package
++-----+
+
+  You will see that the plugin.xml file is generated in the target/classes/META-INF/maven directory of your project. The file is
+  also bundled in the generated jar file.
+
+  To explicitly execute the <<<plugin:descriptor>>> goal, type the following in the command line:
+
++-----+
+mvn plugin:descriptor
++-----+
+
+* The <<<plugin:xdoc>>> Goal
+
+  To generate Xdoc files for the mojos of your plugin, execute the following on the command line:
+
++-----+
+mvn plugin:xdoc
++-----+
+
+* The <<<plugin:updateRegistry>>> Goal
+
+  The <<<plugin:updateRegistry>>> goal is bound to the <<<install>>> phase of the build life cycle. This goal updates the
+  plugin registry to reflect the changes in the version of the plugin you're installing in your local repository.
+
+  So when you execute
+
++-----+
+mvn install
++-----+
+
+  you will see that the version of the plugin in the plugin-registry.xml is changed to the same version of that plugin
+  you have just installed.
+
+  You can also explicitly execute the <<<plugin:updateRegistry>>> goal by executing
+
++-----+
+mvn plugin:updateRegistry
++-----+
+
+  from the command line.
+
+* The <<<plugin:addPluginArtifactMetadata>>> Goal
+
+  The <<<plugin:addPluginArtifactMetadata>>> goal, on the other hand, is bound to the <<<package>>> phase of the build life cycle.
+  This goal will add the metadata to the project artifact. To do this, execute
+
++-----+
+mvn package
++-----+
+
