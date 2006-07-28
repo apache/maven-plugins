@@ -35,7 +35,7 @@ Using TestNG
 
 * Using Suite XML Files
 
-  Another alternative is to use test NG suite XML files. This allows flexbile configuration of the tests to be run.
+  Another alternative is to use test NG suite XML files. This allows flexible configuration of the tests to be run.
   These files are created as normal, and then added to the Surefire plugin configuration:
 
 +---+

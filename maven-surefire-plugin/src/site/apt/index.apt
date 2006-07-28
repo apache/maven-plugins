@@ -9,19 +9,19 @@
 Maven Surefire Plugin
 
   The surefire plugin is used during the <<<test>>> phase of the build
-  lifecycle to execute the unit tests of an application. It generate reports
+  lifecycle to execute the unit tests of an application. It generates reports
   in 2 different file formats:
 
-  * Plain text file (*.txt)
+  * Plain text files (*.txt)
 
-  * Xml file (*.xml)
+  * Xml files (*.xml)
 
   []
 
   By default, these files are generated at <<<${basedir}/target/surefire-reports>>>.
 
   For an html format of the report, please see the
-  {{{http://maven.apache.org/plugins/maven-surefire-report-plugin}maven-surefire-report-plugin}}.
+  {{{http://maven.apache.org/plugins/maven-surefire-report-plugin/}maven-surefire-report-plugin}}.
 
 * Goals Overview
 
