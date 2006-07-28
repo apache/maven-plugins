@@ -2,7 +2,7 @@
 <faqs id="FAQ" title="Frequently Asked Questions">
  <part id="General">
    <faq id="compile-error-reports">
-     <question>Does surefire plugin supports JUnit 4.0?</question>
+     <question>Does surefire plugin support JUnit 4.0?</question>
      <answer>
        <p>
             No. But an issue is already filed. Please see
