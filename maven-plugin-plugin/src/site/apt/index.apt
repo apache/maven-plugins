@@ -1,0 +1,43 @@
+ ------
+ Introduction
+ ------
+ Maria Odea Ching
+ ------
+ 27 July 2006
+ ------
+
+
+Maven 2 Plugin Plugin
+
+ The Plugin Plugin is used to create a Maven plugin descriptor for any Mojo's found in the source tree, to include in the JAR.
+ It is also used to generate Xdoc files for the Mojos as well as for updating the plugin registry and the artifact metadata.
+
+* Goals Overview
+
+   The Plugin Plugin has four goals:
+
+   * {{{descriptor-mojo.html}plugin:descriptor}} generates a plugin descriptor.
+
+   * {{{updateRegistry-mojo.html}plugin:updateRegistry}} updates the user plugin registry (if it's in use) to reflect the
+      version being installed.
+
+   * {{{xdoc-mojo.html}plugin:xdoc}} generates Xdoc files for the project mojos or goals.
+
+   * {{{addPluginArtifactMetadata-mojo.html}plugin:addPluginArtifactMetadata}} injects any plugin-specific artifact metadata to the project's
+      artifact, for subsequent installation and deployment. The first use-case for this is to add the LATEST metadata
+      (which is plugin-specific) for shipping alongside the plugin's artifact.
+
+* Usage
+
+   Instructions on how to use the Plugin Plugin can be found {{{usage.html}here}}.
+
+* Examples
+
+   The following example shows how to use the Plugin Plugin in more advanced usecases:
+
+   * {{{examples/generate-descriptor.html}Configuring Generation of Plugin Descriptor}}
+
+
+
+
+

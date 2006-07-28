@@ -1,7 +1,7 @@
 package org.apache.maven.plugin.plugin;
 
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ import org.apache.maven.tools.plugin.generator.PluginXdocGenerator;
 import java.io.File;
 
 /**
+ * Generate Xdoc files for the project mojos or goals
+ *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
  * @goal xdoc
@@ -30,6 +32,8 @@ public class XdocGeneratorMojo
     extends AbstractGeneratorMojo
 {
     /**
+     * The directory where the generated Xdoc files will be put. 
+     *
      * @parameter expression="${project.build.directory}/generated-site/xdoc"
      * @required
      */
