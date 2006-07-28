@@ -123,7 +123,7 @@ public abstract class AbstractAssemblyMojo
 
     /**
      * Sets the base directory from which archive files are created.
-     * This base directory pre-pended to any <code>&lt;directory&gt;</code>
+     * This base directory is pre-pended to any <code>&lt;directory&gt;</code>
      * specifications in the assembly descriptor.
      *
      * @parameter
@@ -206,7 +206,7 @@ public abstract class AbstractAssemblyMojo
 
     /**
      * Used to customize the generated archive of the plugin.  The Maven website has an in-depth guide on using
-     * this parameter to customize which can be found
+     * this parameter which can be found
      * <a href="http://maven.apache.org/guides/mini/guide-archive-configuration.html">here</a>.
      *
      * @parameter
