@@ -1,0 +1,120 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <artifactId>maven-plugins</artifactId>
+    <groupId>org.apache.maven.plugins</groupId>
+    <version>2-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>maven-changes-plugin</artifactId>
+  <packaging>maven-plugin</packaging>
+  <name>Maven Changes Report Plugin</name>
+  <version>2.0-beta-2-SNAPSHOT</version>
+  <prerequisites>
+    <maven>2.0</maven>
+  </prerequisites>
+  <!-- Not inherited correctly -->
+  <issueManagement>
+    <system>jira</system>
+    <url>http://jira.codehaus.org/browse/MCHANGES</url>
+  </issueManagement>
+  <developers>
+    <developer>
+      <id>jruiz</id>
+      <name>Johnny Ruiz III</name>
+      <email>jruiz@apache.org</email>
+    </developer>
+    <developer>
+      <id>aramirez</id>
+      <name>Allan Ramirez</name>
+      <email>aramirez@exist.com</email>
+    </developer>
+    <developer>
+      <id>dennisl</id>
+      <name>Dennis Lundberg</name>
+      <email>dennisl@apache.org</email>
+    </developer>
+  </developers>
+  <!-- Not inherited correctly because the plugin is in the sandbox -->
+  <scm>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/sandbox/plugins/maven-changes-plugin/</connection>
+    <developerConnection>
+      scm:svn:https://svn.apache.org/repos/asf/maven/sandbox/plugins/maven-changes-plugin/
+    </developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/sandbox/plugins/maven-changes-plugin/</url>
+  </scm>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-settings</artifactId>
+      <version>2.0.4</version>
+    </dependency>
+    <dependency>
+      <groupId>plexus</groupId>
+      <artifactId>plexus-velocity</artifactId>
+      <version>1.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>plexus</groupId>
+      <artifactId>plexus-mail-sender-simple</artifactId>
+      <version>1.0-alpha-2</version>
+    </dependency>
+    <dependency>
+      <groupId>plexus</groupId>
+      <artifactId>plexus-mail-sender-javamail</artifactId>
+      <version>1.0-alpha-2</version>
+    </dependency>
+    <dependency>
+      <!--  forces use of javamail 1.4 since it's the only version available in the repo. We should remove this as soon
+        as the dependency in plexus-mail-sender-javamail will be update  -->
+      <groupId>javax.mail</groupId>
+      <artifactId>mail</artifactId>
+      <version>1.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.reporting</groupId>
+      <artifactId>maven-reporting-api</artifactId>
+      <version>2.0.4</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.reporting</groupId>
+      <artifactId>maven-reporting-impl</artifactId>
+      <version>2.0.4</version>
+    </dependency>
+    <dependency>
+      <groupId>velocity</groupId>
+      <artifactId>velocity</artifactId>
+      <version>1.4</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-httpclient</groupId>
+      <artifactId>commons-httpclient</artifactId>
+      <version>3.0.1</version>
+    </dependency>
+  </dependencies>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <version>2.0-beta-2-SNAPSHOT</version>
+        <configuration>
+          <xmlPath>${basedir}/src/site/changes/sample-changes.xml</xmlPath>
+        </configuration>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>changes-report</report>
+              <report>jira-report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
+</project>

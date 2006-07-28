@@ -1,0 +1,26 @@
+<document>
+  <properties>
+    <title>Changes Tester Project</title>
+    <author email="jruiz@exist.com">Johnny R. Ruiz III</author>
+  </properties>
+  <body>
+    <release version="1.1" date="2005-03-01" description="Subsequent release">
+      <action dev="jruiz" type="add" due-to="Dennis Lundberg">
+        Added additional documentation on how to configure the plugin.
+      </action>
+      <action dev="aramirez" type="fix" issue="MPJIRA-11">
+        Enable retrieving component-specific issues.
+      </action>
+      <action dev="jruiz" type="remove" due-to="Allan Ramirez" due-to-email="aramirez@exist.com">
+        The element type " link " must be terminated by the matching end-tag.
+        Deleted the erroneous code.
+      </action>
+    </release>
+
+    <release version="1.0" date="2005-01-01" description="First release">
+      <action dev="jruiz" type="update">
+        Uploaded documentation on how to use the plugin.
+      </action>
+    </release>
+  </body>
+</document>
