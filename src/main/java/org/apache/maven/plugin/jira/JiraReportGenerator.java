@@ -40,6 +40,15 @@ public class JiraReportGenerator
         jira = new JiraXML( xmlPath );
     }
 
+    public void doGenerateEmptyReport( ResourceBundle bundle, Sink sink )
+    {
+        sinkBeginReport( sink, bundle );
+
+        sink.text( "An error occured that made it impossible to generate this report." );
+
+        sinkEndReport( sink );
+    }
+
     public void doGenerateReport( ResourceBundle bundle, Sink sink )
     {
         List issueList = jira.getIssueList();
