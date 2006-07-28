@@ -38,7 +38,7 @@ Using Component Descriptors
   to exclude dependencies meant for the new appserver.>
 
   This example demonstrate the use of \<componentDescriptors\>, more information
-  can be found {{{../../assembly}here}}.
+  can be found {{{../../assembly.html}here}}.
 
 * The Assembly Descriptors
 

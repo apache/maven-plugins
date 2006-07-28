@@ -72,7 +72,7 @@ Configuration and Usage
   
   Alternatively, we've created a custom assembly descriptor called
   <<<src.xml>>> in the <<<src/assembly>>> directory (see the
-  {{{#resources}Resources}} section for more information), we can tell the
+  {{{#Resources}Resources}} section for more information), we can tell the
   Assembly Plugin to use it instead:
   
 +---+
@@ -325,7 +325,7 @@ target
   
   To accommodate this, the Assembly Plugin supports configuration of an
   <<<\<archive\>>>> element which is identical to that supported by the
-  <<<maven-jar-plugin>>> (see {{{#resources}Resources}}). Using this
+  <<<maven-jar-plugin>>> (see {{{#Resources}Resources}}). Using this
   configuration, it's easy to configure the <<<Main-Class>>> attribute of the
   jar manifest:
   
@@ -361,7 +361,7 @@ Main-Class: org.sample.App
 +---+
 
   For more information on advanced configuration for the Assembly Plugin, see
-  the {{{#resources}Resources}} section.
+  the {{{#Resources}Resources}} section.
   
 ** GOTCHA!
 
@@ -375,7 +375,7 @@ Main-Class: org.sample.App
         {{{assembly.html}Assembly Descriptor}}
         
   [[2]] For more information about the <<<maven-jar-plugin>>>, look
-        {{{/plugins/maven-jar-plugin}here}}.
+        {{{http://maven.apache.org/plugins/maven-jar-plugin/}here}}.
         
   [[3]] For more information on advanced <<<maven-assembly-plugin>>>
         configuration, see the {{{examples/index.html}examples}}.
