@@ -54,6 +54,7 @@
       <item name="Excluding Modules" href="/examples/moduleexcludes.html"/>
       <item name="Configuring Site Run" href="/examples/siterun.html"/>
       <item name="Creating a Skin for the Maven 2 Site Plugin" href="/examples/creatingskins.html"/>
+      <item name="Internationalization" href="/i18n.html"/>      
     </menu>
 
     ${reports}
