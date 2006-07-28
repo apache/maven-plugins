@@ -45,7 +45,7 @@ Filtering Some Distribution Files
     []
 
   All the above files are in the root directory of the project but only the
-  README and the NOTICE files should be filtered. The property file to use to
+  README and the NOTICE files should be filtered. The property file used to
   filter these are files is found in <<<src/assemble/filter.properties>>>.
 
 

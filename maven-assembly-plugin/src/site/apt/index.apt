@@ -49,7 +49,7 @@ Introduction
 
   To use the Assembly Plugin in Maven 2, you simply need to:
 
-    * choose or write an assembly descriptor to use,
+    * choose or write the assembly descriptor to use,
 
     * configure the Assembly Plugin in your project's pom.xml, and
 
@@ -61,7 +61,7 @@ Introduction
 
 What is an Assembly?
 
-  An "assembly" is a group of files, directories, and dependencies that is
+  An "assembly" is a group of files, directories, and dependencies that are
   assembled into an archive format and distributed.  For example, assume that
   a Maven project defines a single JAR artifact that contains both a console
   application and a Swing application.  Such a project could define two
