@@ -1,0 +1,36 @@
+ ------
+ Configuring Generation of Plugin Descriptor
+ ------
+ Maria Odea Ching
+ ------
+ July 2006
+ ------
+
+
+Configuring Generation of Plugin Descriptor
+
+ To configure the generation of the plugin descriptor, add the following to the project's pom:
+
++-----+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <configuration>
+          <goalPrefix>plugin</goalPrefix>
+          <outputDirectory>${basedir}/target/dir</outputDirectory>
+        </configuration>
+      </plugin>
+    </plugins>
+  ...
+  </build>
+  ...
+</project>
++-----+
+
+ The <<<goalPrefix>>> parameter will set the goal prefix for the plugin that is specified in the descriptor. The <<<outputDirectory>>>
+ parameter, on the other hand, specifies the target location of the generated plugin descriptor.
+
