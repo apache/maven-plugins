@@ -1,0 +1,10 @@
+<project>
+  <body>
+    <menu name="Changelog Plugin Quickstart">
+      <item name="Overview" href="howto.html"/>
+      <item name="Sample Changelog Report" href="sample-changelog.html"/>
+      <item name="Sample Developer Activity Report" href="sample-dev-activity.html"/>
+      <item name="Sample File Activity Report" href="sample-file-activity.html"/>
+    </menu>
+  </body>
+</project>
