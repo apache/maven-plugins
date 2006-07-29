@@ -65,9 +65,12 @@ public class SurefireReportParser
             for ( int index = 0; index < xmlReportFiles.length; index++ )
             {
                 ReportTestSuite testSuite = new ReportTestSuite();
+                
+                String currentReport = xmlReportFiles[index];
+
                 try
                 {
-                    testSuite.parse( reportsDirectory + "/" + xmlReportFiles[index] );
+                    testSuite.parse( reportsDirectory + "/" + currentReport );
                 }
                 catch ( ParserConfigurationException e )
                 {
@@ -75,11 +78,11 @@ public class SurefireReportParser
                 }
                 catch ( SAXException e )
                 {
-                    throw new MavenReportException( "Error parsing JUnit XML report", e );
+                    throw new MavenReportException( "Error parsing JUnit XML report " + currentReport, e );
                 }
                 catch ( IOException e )
                 {
-                    throw new MavenReportException( "Error reading JUnit XML report", e );
+                    throw new MavenReportException( "Error reading JUnit XML report " + currentReport, e );
                 }
 
                 testSuites.add( testSuite );
