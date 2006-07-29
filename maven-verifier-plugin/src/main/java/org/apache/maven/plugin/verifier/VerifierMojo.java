@@ -44,18 +44,24 @@ public class VerifierMojo
     extends AbstractMojo
 {
     /**
+     * Project base directory (appended for relative file paths).
+     *
      * @parameter expression="${basedir}"
      * @required
      */
     private File basedir;
 
     /**
+     * The file containing the verifications to perform.
+     *
      * @parameter expression="${basedir}/src/test/verifier/verifications.xml"
      * @required
      */
     private File verificationFile;
 
     /**
+     * Wether the build will fail if a file isn't available or not.
+     *
      * @required
      */
     private boolean failOnError = true;
@@ -158,7 +164,7 @@ public class VerifierMojo
 
         Pattern pattern = Pattern.compile( fileCheck.getContains() );
 
-        // Note: Very inefficient way as we load the whole file in memory. If you have a better 
+        // Note: Very inefficient way as we load the whole file in memory. If you have a better
         // idea, please submit it!
         Matcher matcher = pattern.matcher( FileUtils.fileRead( new File( fileCheck.getLocation() ) ) );
 

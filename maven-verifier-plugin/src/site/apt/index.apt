@@ -1,0 +1,29 @@
+ ------
+ Introduction
+ ------
+ Denis Cabasson
+ ------
+ 20 july 2006
+ ------
+
+
+Maven Verifier Plugin
+
+  Useful for integration tests - verifies the existence of certain conditions.
+
+* Goals Overview
+
+  General Information about the goals.
+
+  * {{{goal.html}verifier:verify}} Verifies existence or non-existence of files/directories and optionally checks file content against a regexp.
+
+* Usage
+
+  Instructions on how to use the Plugin Name can be found {{{usage.html}here}}.
+
+* Examples
+
+  To provide you with better understanding on some usages of the Plugin Name,
+  you can take a look into the following examples:
+
+  * {{{examples/simple.html}Simple Project}}

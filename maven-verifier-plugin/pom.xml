@@ -9,6 +9,9 @@
   <packaging>maven-plugin</packaging>
   <name>Maven Verifier Plugin</name>
   <version>1.0-beta-2-SNAPSHOT</version>
+  <prerequisites>
+    <maven>2.0</maven>
+  </prerequisites>
   <issueManagement>
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MVERIFIER</url>
