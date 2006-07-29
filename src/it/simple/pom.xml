@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-verifier-plugin-sample-simple</artifactId>
+  <packaging>jar</packaging>
+  <name>Maven Verifier Plugin Simple Sample</name>
+  <description>Maven Verifier Plugin Simple Sample</description>
+  <version>1.0-SNAPSHOT</version>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-verifier-plugin</artifactId>
+        <configuration>
+
+          <failOnError>true</failOnError>
+          <verificationFile>${basedir}/src/test/verifier/verifications-test.xml</verificationFile>
+
+        </configuration>
+        <executions>
+          <execution>
+            <id>main</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

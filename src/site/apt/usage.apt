@@ -1,0 +1,43 @@
+ ------
+ Maven 2 Verifier Plugin: using
+ ------
+ Denis Cabasson
+ ------
+ 20 july 2006
+ ------
+
+Verifying some file system resources during you build
+
+  Add the Verifier plugin in your <<<pom.xml>>> under the <<<build>>> section:
+
++--------
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-verifier-plugin</artifactId>
+        <configuration>
+          <failOnError>true</failOnError>
+          <verificationFile>${basedir}/src/test/verifier/verifications-test.xml</verificationFile>
+        </configuration>
+        <executions>
+          <execution>
+            <id>main</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+[...]
++---------
+
+  The <<<maven-verifier-plugin>>> will break your build if the files designated in
+  the verificationFile cannot be found.
+
+  For a sample verification file, see {{{examples/simple.html}Simple Exemple}}.
