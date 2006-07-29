@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<verifications>
+	<files>
+		<file>
+			<location>src/main/resources/file1.txt</location>
+		</file>
+		<file>
+			<location>src/main/resources/file2.txt</location>
+			<contains>aaaabbbb</contains>
+		</file>
+		<file>
+			<location>src/main/resources/file3.txt</location>
+			<exists>false</exists>
+		</file>
+	</files>
+</verifications>
