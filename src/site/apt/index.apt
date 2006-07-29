@@ -1,0 +1,61 @@
+ ------
+ Maven 2 Project Info Reports Plugin
+ ------
+ Johnny R. Ruiz III
+ <jruiz@exist.com>
+ ------
+ September 22, 2005
+
+Maven Project Info Reports Plugin
+
+ This is a plugin that generates reports information about the project.  The reports being generated are as follows:
+
+*------------------------------------------------------------------+-------------------------------------------------------------------------+
+|<<Report Name>>                                                   | <<Description>>                                                         |
+|                                                                  |                                                                         |
+*------------------------------------------------------------------+-------------------------------------------------------------------------+
+|{{{dependencies-mojo.html}Dependencies Report}}                   | Project Dependencies and Transitive Dependencies Report                 |
+*------------------------------------------------------------------+-------------------------------------------------------------------------+
+|{{{mailing-list-mojo.html}Mailing Lists}}                        | Project Mailing List                                                    |
+*------------------------------------------------------------------+-------------------------------------------------------------------------+
+|{{{cim-mojo.html}Continous Integration}}                          | Continous Integration used by the Project (System Name, URL, Notifiers) |
+*------------------------------------------------------------------+-------------------------------------------------------------------------+
+|{{{scm-mojo.html}Source Repository}}                              | Source Code Manager used by the Project. This report shows how to access|
+|                                                                  | the source code (Anonymous access, Dev access, Web access, etc.)        |
+*------------------------------------------------------------------+-------------------------------------------------------------------------+
+|{{{issue-tracking-mojo.html}Issue Tracking}}                      | Issue Tracking System used by the Project. (URL)                        |
+*------------------------------------------------------------------+-------------------------------------------------------------------------+
+|{{{project-team-mojo.html}Project Team}}                             | Project Team Members, Developers, and Contributors                      |
+*------------------------------------------------------------------+-------------------------------------------------------------------------+
+|{{{license-mojo.html}License}}                                    | License of the project                                                  |
+*------------------------------------------------------------------+-------------------------------------------------------------------------+
+|{{{dependency-convergence-mojo.html}Dependency Convergence}}      | Dependency Convergence for reactor builds                               |
+*------------------------------------------------------------------+-------------------------------------------------------------------------+
+|{{{index-mojo.html}Index}}                                        | Project index                                                           |
+*------------------------------------------------------------------+-------------------------------------------------------------------------+
+|{{{summary-mojo.html}Summary}}                                    | Project information reports summary                                     |
+*------------------------------------------------------------------+-------------------------------------------------------------------------+
+
+* Goals Overview
+
+  General Information about the goals. check the links on the table above.
+
+* Usage
+
+  Instructions on how to use the Plugin Name can be found {{{usage.html}here}}.
+
+* Examples
+
+  To provide you with better understanding on some usages of the Maven Project Info Reports Plugin,
+  you can take a look into the following examples:   
+
+ {{{examples/selective-project-info-reports.html}Running selective project info reports}}
+ 
+ {{{examples/individual-reports.html}Running Individual Reports}}
+
+Related Links
+
+ {{{http://maven.apache.org/plugins/maven-site-plugin/i18n.html}Internationalization}}
+ 
+ {{{http://maven.apache.org/plugins/maven-site-plugin/examples/creatingskins.html}Skinning}}
+ 

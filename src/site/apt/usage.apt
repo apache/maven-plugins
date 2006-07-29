@@ -1,0 +1,27 @@
+ ------
+ Maven 2 Project Info Report Plugin
+ ------
+ Johnny R. Ruiz III
+ <jruiz@exist.com>
+ Pete Marvin King
+ ------
+ September 20, 2005
+
+Introduction
+
+ Maven has been configured to run the project info reports by default. There's no need to configure anything in 
+ your <<<pom.xml>>> to generate all the project information reports.
+ 
+ Simply running 
+ 
++------------+
+   mvn site:site
++------------+ 
+
+ would generate the project information documentation. For more information on how to customize the project information
+ plugin, check the examples on the {{{index.html}Introduction}} page.
+ 
+ 
+
+
+
