@@ -23,8 +23,7 @@ Usage
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-verifier-plugin</artifactId>
         <configuration>
-          <failOnError>true</failOnError>
-          <verificationFile>${basedir}/src/test/verifier/verifications-test.xml</verificationFile>
+          <verificationFile>src/test/verifier/verifications-test.xml</verificationFile>
         </configuration>
         <executions>
           <execution>
@@ -41,7 +40,9 @@ Usage
 [...]
 +---------
 
-  The <<<maven-verifier-plugin>>> will break your build if the files designated in
-  the verificationFile cannot be found.
+  The Verifier plugin will fail your build if the verification rules found in
+  the <<<verificationFile>>> fails. If you do not want the Verifier plugin to
+  fail your build you can set the configuration element <<<\<failOnError\>>>>
+  to <<<false>>>.
 
   For a sample verifications file, see {{{examples/sample-verifications.html}Sample Verifications}}.
