@@ -3,7 +3,7 @@
   <name>Verifications</name>
   <description><![CDATA[
     Project-specific configuration file for the Verifier plugin. It contains
-    definition of expected files and directories to be checked for after an
+    definitions of the files and directories to be checked after an
     integration test has run. It can also check for file content against 
     regexps.]]></description>
   <defaults>
@@ -16,13 +16,13 @@
     <class rootElement="true" xml.tagName="verifications">
       <name>Verifications</name>
       <version>1.0.0</version>
-      <description>Root element of the project verification file.</description>
+      <description>Root element of the verifications file.</description>
       <fields>
         <field>
           <name>files</name>
           <version>1.0.0</version>
           <description><![CDATA[
-            List of files and directories to check for.
+            List of files and directories to check.
           ]]></description>
           <association>
             <type>File</type>
@@ -53,8 +53,10 @@
           <name>exists</name>
           <version>1.0.0</version>
           <description><![CDATA[
-            If true checks for file or directory existence, otherwise checks that the
-            file or directory doesn't exist.
+            When this is set to <code>true</code> the plugin checks that the
+            file or directory exists. When set to <code>false</code> it checks
+            that the file or directory does <strong>not</strong> exist. The
+            default value is <code>true</code>.
           ]]></description>
           <defaultValue>true</defaultValue>
           <type>boolean</type>

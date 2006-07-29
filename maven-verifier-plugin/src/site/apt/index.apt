@@ -13,17 +13,15 @@ Maven Verifier Plugin
 
 * Goals Overview
 
-  General Information about the goals.
-
-  * {{{goal.html}verifier:verify}} Verifies existence or non-existence of files/directories and optionally checks file content against a regexp.
+  * {{{verify-mojo.html}verifier:verify}} Verifies the existence or non-existence of files/directories and optionally checks file content against a regexp.
 
 * Usage
 
-  Instructions on how to use the Plugin Name can be found {{{usage.html}here}}.
+  Instructions on how to use the Verifier Plugin can be found {{{usage.html}here}}.
 
 * Examples
 
-  To provide you with better understanding on some usages of the Plugin Name,
+  To provide you with better understanding on some usages of the Verifier Plugin,
   you can take a look into the following examples:
 
-  * {{{examples/simple.html}Simple Project}}
+  * {{{examples/sample-verifications.html}Sample Verifications}}
