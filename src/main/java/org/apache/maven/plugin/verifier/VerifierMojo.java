@@ -32,7 +32,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Verifies existence or non-existence of files/directories an optionally checks file content against a regexp.
+ * Verifies the existence or non-existence of files/directories and optionally checks file content against a regexp.
  *
  * @goal verify
  * @phase integration-test
@@ -44,7 +44,7 @@ public class VerifierMojo
     extends AbstractMojo
 {
     /**
-     * Project base directory (appended for relative file paths).
+     * Project base directory (prepended for relative file paths).
      *
      * @parameter expression="${basedir}"
      * @required
@@ -60,7 +60,7 @@ public class VerifierMojo
     private File verificationFile;
 
     /**
-     * Wether the build will fail if a file isn't available or not.
+     * Whether the build will fail on verification errors.
      *
      * @required
      */
