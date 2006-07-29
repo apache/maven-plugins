@@ -62,9 +62,10 @@ public class VerifierMojo
     /**
      * Whether the build will fail on verification errors.
      *
+     * @parameter default-value="true"
      * @required
      */
-    private boolean failOnError = true;
+    private boolean failOnError;
 
     private VerificationResultPrinter resultPrinter = new ConsoleVerificationResultPrinter( getLog() );
 
