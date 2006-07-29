@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<body>
+    <links>
+      <item name="Maven" href="http://maven.apache.org/maven2/"/>
+    </links>
+
+    <menu name="Overview">
+      <item name="Introduction" href="index.html"/>
+      <item name="Goals" href="plugin-info.html"/>
+      <item name="Usage" href="usage.html"/>
+    </menu>
+
+    <menu name="Examples">
+      <item name="Simple" href="examples/simple.html"/>
+   </menu>
+
+    ${reports}
+
+</body>
