@@ -1,12 +1,14 @@
  ------
- Maven 2 Verifier Plugin: Simple example
+ Sample Verifications
  ------
  Denis Cabasson
  ------
  20 july 2006
  ------
 
-Sample verifications.xml file
+Sample Verifications
+
+  Here is an example of what a <<<verifications.xml>>> file can look like:
 
 +--------
 <verifications>
