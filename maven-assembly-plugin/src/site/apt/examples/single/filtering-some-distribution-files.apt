@@ -30,10 +30,10 @@ Filtering Some Distribution Files
 
   File filtering is used to substitute variable fields from inside a file to
   their represented values. For the Assembly Plugin, and most Maven filtering
-  procedures, these variables are enclosed between ${ and }. For
-  example, before a file is filtered, it contains <<<${project.artifactId}>>>.
+  procedures, these variables are enclosed between $\{ and \}. For
+  example, before a file is filtered, it contains <<<$\{project.artifactId\}>>>.
   But after filtering is complete, a new file is created with the project's
-  <<<artifactId>>> substituting <<<${project.artifactId}>>> and that this new
+  <<<artifactId>>> substituting <<<$\{project.artifactId\}>>> and that this new
   file is used instead of the original one.
 
   Although filtering can be done during the process-resources phase, not all
