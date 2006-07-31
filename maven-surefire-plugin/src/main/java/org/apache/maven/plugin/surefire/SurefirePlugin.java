@@ -66,12 +66,19 @@ import java.util.Properties;
 public class SurefirePlugin
     extends AbstractMojo
 {
-	/**
+    /**
      * Set this to 'true' to bypass unit tests entirely. Its use is NOT RECOMMENDED, but quite convenient on occasion.
      *
      * @parameter expression="${maven.test.skip}"
      */
     private boolean skip;
+
+    /**
+     * Set this to 'true' to bypass unit tests execution, but still compile them. Its use is NOT RECOMMENDED, but quite convenient on occasion.
+     *
+     * @parameter expression="${maven.test.skip.exec}"
+     */
+    private boolean skipExec;
 
     /**
      * Set this to true to ignore a failure during testing. Its use is NOT RECOMMENDED, but quite convenient on occasion.
@@ -214,9 +221,9 @@ public class SurefirePlugin
     private boolean useFile;
 
     /**
-     * When forking, set this to true to redirect the unit test standard output to a file 
+     * When forking, set this to true to redirect the unit test standard output to a file
      * (found in reportsDirectory/testName-output.txt).
-     * 
+     *
      * @parameter expression="${maven.test.redirectTestOutputToFile}"
      * @default-value="false"
      */
@@ -232,8 +239,8 @@ public class SurefirePlugin
 
     /**
      * Option to specify the jvm (or path to the java executable) to use with
-     * the forking options. For the default, the jvm will be the same as the one 
-     * used to run Maven. 
+     * the forking options. For the default, the jvm will be the same as the one
+     * used to run Maven.
      *
      * @parameter expression="${jvm}"
      */
@@ -335,6 +342,7 @@ public class SurefirePlugin
 
     /**
      * The plugin remote repositories declared in the pom.
+     *
      * @parameter expression="${project.pluginArtifactRepositories}"
      */
     private List remoteRepositories;
@@ -352,6 +360,7 @@ public class SurefirePlugin
 
     /**
      * Flag to disable the generation of report files in xml format.
+     *
      * @parameter expression="${disableXmlReport}" default-value="false"
      */
     private boolean disableXmlReport;
@@ -359,7 +368,7 @@ public class SurefirePlugin
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        if ( skip )
+        if ( skip || skipExec )
         {
             getLog().info( "Tests are skipped." );
         }
@@ -601,7 +610,7 @@ public class SurefirePlugin
                 jvm = System.getProperty( "java.home" ) + File.separator + "bin" + File.separator + "java";
                 getLog().debug( "Using JVM: " + jvm );
             }
-            
+
             fork.setJvmExecutable( jvm );
 
             if ( workingDirectory != null )
@@ -779,5 +788,21 @@ public class SurefirePlugin
         {
             surefireBooter.addReport( XMLReporter.class.getName(), new Object[]{reportsDirectory, trimStackTrace} );
         }
+    }
+
+    /**
+     * @return SurefirePlugin Returns the skipExec.
+     */
+    public boolean isSkipExec()
+    {
+        return this.skipExec;
+    }
+
+    /**
+     * @param skipExec the skipExec to set
+     */
+    public void setSkipExec( boolean skipExec )
+    {
+        this.skipExec = skipExec;
     }
 }
