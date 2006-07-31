@@ -763,7 +763,14 @@ public class IdeaModuleMojo
                 containerElement.addAttribute( "level", "module" );
                 Element methodAttribute = createElement( containerElement, "attribute" );
                 methodAttribute.addAttribute( "name", "method" );
-                methodAttribute.addAttribute( "value", "1" ); // IntelliJ 5.0.2 is bugged and doesn't read it
+                if ( Artifact.SCOPE_PROVIDED.equalsIgnoreCase( artifact.getScope() ) )
+                {
+                    methodAttribute.addAttribute( "value", "0" ); // If scope is provided, do not package.
+                }
+                else
+                {
+                    methodAttribute.addAttribute( "value", "1" ); // IntelliJ 5.0.2 is bugged and doesn't read it
+                }
                 Element uriAttribute = createElement( containerElement, "attribute" );
                 uriAttribute.addAttribute( "name", "URI" );
                 uriAttribute.addAttribute( "value", "/WEB-INF/lib/" + artifact.getFile().getName() );
