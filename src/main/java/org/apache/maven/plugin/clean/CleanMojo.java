@@ -104,6 +104,7 @@ public class CleanMojo
         removeDirectory( directory );
         removeDirectory( outputDirectory );
         removeDirectory( testOutputDirectory );
+        removeDirectory( reportDirectory );
 
         removeAdditionalFilesets();
     }
@@ -183,6 +184,14 @@ public class CleanMojo
     protected void setTestOutputDirectory( File testOutputDirectory )
     {
         this.testOutputDirectory = testOutputDirectory;
+    }
+
+    /**
+     * @param reportDirectory The reportDirectory to set.
+     */
+    protected void setReportDirectory( File reportDirectory )
+    {
+        this.reportDirectory = reportDirectory;
     }
 
     /**
