@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+
+<!--
+  ~ Copyright 2006 The Apache Software Foundation.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<faqs id="FAQ" title="Frequently Asked Questions">
+ <part id="General">
+   <faq id="what-is-ear">
+     <question>What is an EAR archive?</question>
+     <answer>
+       <p>
+         An EAR archive is used to deploy standalone EJBs, usually separated from the web application. Thus, there is no
+         need for a web application to access these EJBs. The EJBs are still accessible though using EJB clients.
+       </p>
+     </answer>
+   </faq>
+   <faq id="har-files">
+     <question>
+       The EAR Plugin throws an exception when encountering artifact files it is unfamiliar with, i.e. JBoss' har files.
+       How does one handle this?
+     </question>
+     <answer>
+       <p>
+         Apparently, the EAR Plugin must be able to recognize an artifact in order to configure it. If you know archives
+         which are not supported by the EAR Plugin, please file an issue in
+         <a href="http://jira.codehaus.org/browse/MEAR">jira</a>.
+       </p>
+     </answer>
+   </faq>
+ </part>
+</faqs>
