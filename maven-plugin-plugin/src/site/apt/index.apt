@@ -14,9 +14,11 @@ Maven 2 Plugin Plugin
 
 * Goals Overview
 
-   The Plugin Plugin has four goals:
+   The Plugin Plugin has five goals:
 
    * {{{descriptor-mojo.html}plugin:descriptor}} generates a plugin descriptor.
+
+   * {{{report-mojo.html}plugin:report}} generates the plugin documentation report.
 
    * {{{updateRegistry-mojo.html}plugin:updateRegistry}} updates the user plugin registry (if it's in use) to reflect the
       version being installed.
