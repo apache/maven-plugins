@@ -38,6 +38,12 @@ public class IdeaModuleTest
         executeMojo( "src/test/module-plugin-configs/min-plugin-config.xml" );
     }
 
+    public void testProvidedDependencies()
+        throws Exception
+    {
+        executeMojo( "src/test/module-plugin-configs/provided-dep-plugin-config.xml" );
+    }
+
     public void testExcludeDirectoryConfig()
         throws Exception
     {
@@ -120,6 +126,70 @@ public class IdeaModuleTest
 
             attribute = findElementByNameAttribute( containerElement, "attribute", "URI" );
             String attributeValue = attribute.attributeValue( "value" );
+            assertTrue( "Test library URI", expectedLibs.contains( attributeValue ) );
+            expectedLibs.remove( attributeValue );
+        }
+
+        assertTrue( "All libraries are present", expectedLibs.size() == 0 );
+    }
+
+    public void testWarConfigWithProvidedDependency()
+        throws Exception
+    {
+        List expectedLibs = new ArrayList();
+        expectedLibs.add( "/WEB-INF/lib/maven-model-2.0.1.jar" );
+        expectedLibs.add( "/WEB-INF/lib/junit-3.8.1.jar" );
+
+        Document imlDocument = executeMojo( "src/test/module-plugin-configs/provided-dep-plugin-config.xml" );
+
+        Element root = imlDocument.getRootElement();
+
+        assertEquals( "Test Project type", "J2EE_WEB_MODULE", root.attributeValue( "type" ) );
+
+        Element component = findComponent( root, "WebModuleBuildComponent" );
+
+        Element setting = findElement( component, "setting" );
+        assertTrue( "Test exploded url setting", "EXPLODED_URL".equals( setting.attributeValue( "name" ) ) );
+        assertTrue( "Test exploded url value",
+                    setting.attributeValue( "value" ).startsWith( "file://$MODULE_DIR$/target/" ) );
+
+        component = findComponent( root, "WebModuleProperties" );
+
+        Element deployDescriptor = component.element( "deploymentDescriptor" );
+        assertEquals( "Test deployment descriptor version", "2.3", deployDescriptor.attributeValue( "version" ) );
+        assertEquals( "Test deployment descriptor name", "web.xml", deployDescriptor.attributeValue( "name" ) );
+        assertEquals( "Test deployment descriptor optional", "false", deployDescriptor.attributeValue( "optional" ) );
+        assertEquals( "Test deployment descriptor file", "file://$MODULE_DIR$/src/main/webapp/WEB-INF/web.xml",
+                      deployDescriptor.attributeValue( "url" ) );
+
+        Element webroots = component.element( "webroots" );
+        Element webroot = webroots.element( "root" );
+        assertEquals( "Test webroot relative location", "/", webroot.attributeValue( "relative" ) );
+        assertEquals( "Test webroot url", "file://$MODULE_DIR$/src/main/webapp", webroot.attributeValue( "url" ) );
+
+        List containerElementList = findElementsByName( component, "containerElement" );
+        for ( Iterator containerElements = containerElementList.iterator(); containerElements.hasNext(); )
+        {
+            Element containerElement = (Element) containerElements.next();
+
+            assertEquals( "Test container element type", "library", containerElement.attributeValue( "type" ) );
+            assertEquals( "Test container element level", "module", containerElement.attributeValue( "level" ) );
+            assertTrue( "Test library url", containerElement.element( "url" ).getText().startsWith( "jar://" ) );
+
+            Element attribute = findElementByNameAttribute( containerElement, "attribute", "URI" );
+            String attributeValue = attribute.attributeValue( "value" );
+
+            attribute = findElementByNameAttribute( containerElement, "attribute", "method" );
+
+            if ( "/WEB-INF/lib/maven-model-2.0.1.jar".equals( attributeValue ) )
+            {
+                assertEquals( "Test library method", "0", attribute.attributeValue( "value" ) );
+            }
+            else
+            {
+                assertEquals( "Test library method", "1", attribute.attributeValue( "value" ) );
+            }
+
             assertTrue( "Test library URI", expectedLibs.contains( attributeValue ) );
             expectedLibs.remove( attributeValue );
         }

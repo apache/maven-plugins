@@ -22,7 +22,7 @@
       <plugin>
         <artifactId>maven-idea-plugin</artifactId>
         <configuration>
-          <executedProject implementation="org.apache.maven.plugin.idea.stubs.MavenProjectWithReactorDepStub"/>
+          <executedProject implementation="org.apache.maven.plugin.idea.stubs.WarMavenProjectWithProvidedDependencyStub"/>
           <localRepo>${localRepository}</localRepo>
           <overwrite>false</overwrite>
           <reactorProjects>
