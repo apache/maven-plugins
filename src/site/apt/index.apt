@@ -24,7 +24,7 @@
 ~~ http://maven.apache.org/guides/mini/guide-apt-format.html
 
 
-Introduction
+Maven Assembly Plugin
 
   Do you want to create a binary distribution from a Maven project that includes
   supporting scripts, configuration files, and all runtime dependencies?  You
