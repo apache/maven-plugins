@@ -82,6 +82,8 @@ public class UpdatePluginRegistryMojo
     private String version;
 
     /**
+     * Plexus component for retrieving the plugin registry info. 
+     *
      * @component role="org.apache.maven.plugin.registry.MavenPluginRegistryBuilder"
      */
     private MavenPluginRegistryBuilder pluginRegistryBuilder;
