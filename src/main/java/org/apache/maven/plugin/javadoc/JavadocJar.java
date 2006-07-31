@@ -53,7 +53,7 @@ public class JavadocJar
     private String jarOutputDirectory;
 
     /**
-     * Specified the filename that will be used for the generated jar file. Please note that "-javadoc"
+     * Specifies the filename that will be used for the generated jar file. Please note that "-javadoc"
      * will be appended to the file name.
      *
      * @parameter expression="${project.build.finalName}"
