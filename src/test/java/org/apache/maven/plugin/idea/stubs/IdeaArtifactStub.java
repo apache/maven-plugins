@@ -37,6 +37,8 @@ public class IdeaArtifactStub
 
     private File file;
 
+    private String scope;
+
 
     public void setGroupId( String groupId )
     {
@@ -92,5 +94,20 @@ public class IdeaArtifactStub
     public String getId()
     {
         return getGroupId() + ":" + getArtifactId() + ":" + getVersion();
+    }
+
+    public void setScope( String scope )
+    {
+        this.scope = scope;
+    }
+
+    public String getScope()
+    {
+        if ( scope == null )
+        {
+            scope = super.getScope();
+        }
+
+        return scope;
     }
 }
