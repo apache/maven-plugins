@@ -62,18 +62,21 @@ public class CleanMojoTest
         String directory = base + "/buildDirectory";
         String outputDirectory = base + "/buildOutputDirectory";
         String testOutputDirectory = base + "/buildTestDirectory";
+        String reportDirectory = base + "/reportDirectory";
 
         CleanMojo mojo = new CleanMojo();
 
         mojo.setDirectory( new File( basedir, directory ) );
         mojo.setOutputDirectory( new File( basedir, outputDirectory ) );
         mojo.setTestOutputDirectory( new File( basedir, testOutputDirectory ) );
+        mojo.setReportDirectory( new File( basedir, reportDirectory ) );
 
         mojo.execute();
 
         assertFalse( checkExists( directory ) );
         assertFalse( checkExists( outputDirectory ) );
         assertFalse( checkExists( testOutputDirectory ) );
+        assertFalse( checkExists( reportDirectory ) );
     }
 
     public void testNestedStructure()
