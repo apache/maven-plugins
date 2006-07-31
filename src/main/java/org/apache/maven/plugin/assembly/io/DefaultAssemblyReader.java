@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -82,7 +83,34 @@ public class DefaultAssemblyReader
         {
             try
             {
-                List descriptorList = FileUtils.getFiles( descriptorSourceDirectory, "**/*.xml", null );
+                List descriptorList;
+
+                try
+                {
+                    descriptorList = FileUtils.getFiles( descriptorSourceDirectory, "**/*.xml", null );
+                }
+                // FIXME: plexus-utils >= 1.3-SNAPSHOT should fix this.
+                catch ( NullPointerException e )
+                {
+                    StackTraceElement frameZero = e.getStackTrace()[0];
+
+                    if ( "org.codehaus.plexus.util.DirectoryScanner".equals( frameZero.getClassName() )
+                                    && "scandir".equals( frameZero.getMethodName() ) )
+                    {
+                        if ( getLogger().isDebugEnabled() )
+                        {
+                            getLogger().debug(
+                                               "Caught filesystem error while scanning directories..."
+                                                               + "using zero-length list as the result.", e );
+                        }
+
+                        descriptorList = Collections.EMPTY_LIST;
+                    }
+                    else
+                    {
+                        throw e;
+                    }
+                }
 
                 for ( Iterator iter = descriptorList.iterator(); iter.hasNext(); )
                 {

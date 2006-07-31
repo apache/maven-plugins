@@ -730,10 +730,11 @@ public class DefaultAssemblyReaderTest
 
         assembly.addFileSet( fs );
 
-        List files = writeAssembliesToFile( Collections.singletonList( assembly ) );
+        File basedir = fileManager.createTempDir();
 
-        File assemblyFile = (File) files.get( 0 );
-        File basedir = assemblyFile.getParentFile();
+        List files = writeAssembliesToFile( Collections.singletonList( assembly ), basedir );
+        
+        File assemblyFile = ( File ) files.get( 0 );
 
         List assemblies = performReadAssemblies( basedir, assemblyFile, null, null, null, null );
 
@@ -773,10 +774,9 @@ public class DefaultAssemblyReaderTest
         assemblies.add( assembly1 );
         assemblies.add( assembly2 );
 
-        List files = writeAssembliesToFile( assemblies );
+        File basedir = fileManager.createTempDir();
 
-        File assemblyFile = (File) files.get( 0 );
-        File basedir = assemblyFile.getParentFile();
+        List files = writeAssembliesToFile( assemblies, basedir );
 
         List results = performReadAssemblies( basedir, null, null, (File[]) files.toArray( new File[0] ), null, null );
 
@@ -823,11 +823,10 @@ public class DefaultAssemblyReaderTest
         List assemblies = new ArrayList();
         assemblies.add( assembly1 );
         assemblies.add( assembly2 );
+        
+        File basedir = fileManager.createTempDir();
 
-        List files = writeAssembliesToFile( assemblies );
-
-        File assemblyFile = (File) files.get( 0 );
-        File basedir = assemblyFile.getParentFile();
+        writeAssembliesToFile( assemblies, basedir );
 
         List results = performReadAssemblies( basedir, null, null, null, null, basedir );
 
@@ -843,7 +842,7 @@ public class DefaultAssemblyReaderTest
         assertEquals( assembly2.getId(), result2.getId() );
     }
 
-    private List writeAssembliesToFile( List assemblies )
+    private List writeAssembliesToFile( List assemblies, File dir )
         throws IOException
     {
         List files = new ArrayList();
@@ -851,8 +850,8 @@ public class DefaultAssemblyReaderTest
         for ( Iterator it = assemblies.iterator(); it.hasNext(); )
         {
             Assembly assembly = (Assembly) it.next();
-
-            File assemblyFile = fileManager.createTempFile();
+            
+            File assemblyFile = new File( dir, assembly.getId() + ".xml" );
 
             FileWriter writer = null;
             try

@@ -1,14 +1,5 @@
 package org.apache.maven.plugin.assembly.utils;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.model.Build;
-import org.apache.maven.model.Model;
-import org.apache.maven.plugin.assembly.testutils.MockManager;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.logging.console.ConsoleLogger;
-import org.easymock.MockControl;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,36 +10,14 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
+import org.apache.maven.model.Model;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.logging.console.ConsoleLogger;
+
 public class ProjectUtilsTest
     extends TestCase
 {
-
-    public void testGetDependencies_ShouldIncludeProjectArtifactIfItsFileIsNonNull()
-    {
-        MavenProject project = createTestProject( "test", "testGroup", "1.0" );
-
-        MockManager mgr = new MockManager();
-
-        MockControl artifactCtl = MockControl.createControl( Artifact.class );
-        mgr.add( artifactCtl );
-
-        Artifact artifact = (Artifact) artifactCtl.getMock();
-
-        artifact.getFile();
-        artifactCtl.setReturnValue( new File( "." ) );
-
-        project.setArtifact( artifact );
-
-        mgr.replayAll();
-
-        Set dependencies = ProjectUtils.getDependencies( project );
-
-        assertNotNull( dependencies );
-        assertEquals( 1, dependencies.size() );
-        assertSame( artifact, dependencies.iterator().next() );
-
-        mgr.verifyAll();
-    }
 
     private MavenProject createTestProject( String artifactId, String groupId, String version )
     {
@@ -60,80 +29,6 @@ public class ProjectUtilsTest
         MavenProject project = new MavenProject( model );
 
         return project;
-    }
-
-    public void testGetDependencies_ShouldNotIncludeProjectArtifactIfItsFileIsNull()
-    {
-        MavenProject project = createTestProject( "test", "testGroup", "1.0" );
-
-        MockManager mgr = new MockManager();
-
-        MockControl artifactCtl = MockControl.createControl( Artifact.class );
-        mgr.add( artifactCtl );
-
-        Artifact artifact = (Artifact) artifactCtl.getMock();
-
-        artifact.getFile();
-        artifactCtl.setReturnValue( null );
-
-        project.setArtifact( artifact );
-
-        mgr.replayAll();
-
-        Set dependencies = ProjectUtils.getDependencies( project );
-
-        assertNotNull( dependencies );
-        assertTrue( dependencies.isEmpty() );
-
-        mgr.verifyAll();
-    }
-
-    public void testGetDependencies_ShouldIncludeProjectDependencyArtifactWhenItsFileIsNonNull()
-    {
-        MavenProject project = createTestProject( "test", "testGroup", "1.0" );
-
-        MockManager mgr = new MockManager();
-
-        MockControl artifactCtl = MockControl.createControl( Artifact.class );
-        mgr.add( artifactCtl );
-
-        Artifact artifact = (Artifact) artifactCtl.getMock();
-
-        project.setArtifacts( Collections.singleton( artifact ) );
-
-        mgr.replayAll();
-
-        Set dependencies = ProjectUtils.getDependencies( project );
-
-        assertNotNull( dependencies );
-        assertEquals( 1, dependencies.size() );
-        assertSame( artifact, dependencies.iterator().next() );
-
-        mgr.verifyAll();
-    }
-
-    public void testGetDependencies_ShouldIncludeProjectDependencyArtifactWhenItsFileIsNull()
-    {
-        MavenProject project = createTestProject( "test", "testGroup", "1.0" );
-
-        MockManager mgr = new MockManager();
-
-        MockControl artifactCtl = MockControl.createControl( Artifact.class );
-        mgr.add( artifactCtl );
-
-        Artifact artifact = (Artifact) artifactCtl.getMock();
-
-        project.setArtifacts( Collections.singleton( artifact ) );
-
-        mgr.replayAll();
-
-        Set dependencies = ProjectUtils.getDependencies( project );
-
-        assertNotNull( dependencies );
-        assertEquals( 1, dependencies.size() );
-        assertSame( artifact, dependencies.iterator().next() );
-
-        mgr.verifyAll();
     }
 
     public void testGetProjectModules_ShouldIncludeDirectModuleOfMasterProject()

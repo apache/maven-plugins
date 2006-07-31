@@ -21,6 +21,8 @@ public class AddFileSetsTask
 {
 
     private final List fileSets;
+    
+    private boolean includeBaseDirectory = false;
 
     private Logger logger;
 
@@ -89,7 +91,7 @@ public class AddFileSetsTask
         }
 
         destDirectory = AssemblyFormatUtils.getOutputDirectory( destDirectory, project, configSource.getFinalName(),
-                                                                false );
+                                                                includeBaseDirectory );
 
         logger.debug( "The archive base directory is '" + archiveBaseDir.getAbsolutePath() + "'" );
 
@@ -161,6 +163,11 @@ public class AddFileSetsTask
     public void setLogger( Logger logger )
     {
         this.logger = logger;
+    }
+
+    public void setIncludeBaseDirectory( boolean includeBaseDirectory )
+    {
+        this.includeBaseDirectory = includeBaseDirectory;
     }
 
 }

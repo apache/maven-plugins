@@ -17,29 +17,6 @@ public final class ProjectUtils
     {
     }
 
-    /**
-     * Retrieves all artifact dependencies.
-     * 
-     * @return A HashSet of artifacts
-     */
-    public static Set getDependencies( MavenProject project )
-    {
-        Set dependenciesSet = new HashSet();
-
-        if ( project.getArtifact() != null && project.getArtifact().getFile() != null )
-        {
-            dependenciesSet.add( project.getArtifact() );
-        }
-
-        Set projectArtifacts = project.getArtifacts();
-        if ( projectArtifacts != null )
-        {
-            dependenciesSet.addAll( projectArtifacts );
-        }
-
-        return dependenciesSet;
-    }
-
     public static Set getProjectModules( MavenProject project, List reactorProjects, Logger logger )
         throws IOException
     {

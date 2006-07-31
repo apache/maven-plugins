@@ -137,7 +137,7 @@ public class ModuleSetAssemblyPhase
                         List excludes = binaries.getExcludes();
 
                         FilterUtils.filterArtifacts( binaryDependencies, includes, excludes, true,
-                                                     Collections.EMPTY_LIST );
+                                                     Collections.EMPTY_LIST, getLogger() );
 
                         for ( Iterator binDepIterator = binaryDependencies.iterator(); binDepIterator.hasNext(); )
                         {
@@ -164,6 +164,7 @@ public class ModuleSetAssemblyPhase
                     AddFileSetsTask task = new AddFileSetsTask( moduleFileSets );
                     
                     task.setLogger( getLogger() );
+                    task.setIncludeBaseDirectory( includeBaseDirectory );
                     
                     task.execute( archiver, configSource );
                 }

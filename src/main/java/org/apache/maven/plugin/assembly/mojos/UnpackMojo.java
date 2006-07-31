@@ -17,7 +17,9 @@ package org.apache.maven.plugin.assembly.mojos;
  */
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
@@ -25,7 +27,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.assembly.archive.ArchiveExpansionException;
 import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
-import org.apache.maven.plugin.assembly.utils.ProjectUtils;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
@@ -69,7 +70,20 @@ public class UnpackMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        for ( Iterator j = ProjectUtils.getDependencies( project ).iterator(); j.hasNext(); )
+        Set dependencies = new HashSet();
+
+        if ( project.getArtifact() != null && project.getArtifact().getFile() != null )
+        {
+            dependencies.add( project.getArtifact() );
+        }
+
+        Set projectArtifacts = project.getArtifacts();
+        if ( projectArtifacts != null )
+        {
+            dependencies.addAll( projectArtifacts );
+        }
+        
+        for ( Iterator j = dependencies.iterator(); j.hasNext(); )
         {
             Artifact artifact = (Artifact) j.next();
 

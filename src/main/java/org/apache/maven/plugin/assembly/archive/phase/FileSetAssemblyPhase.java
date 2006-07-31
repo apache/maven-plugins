@@ -23,6 +23,7 @@ public class FileSetAssemblyPhase
         AddFileSetsTask task = new AddFileSetsTask( assembly.getFileSets() );
         
         task.setLogger( getLogger() );
+        task.setIncludeBaseDirectory( assembly.isIncludeBaseDirectory() );
         
         task.execute( archiver, configSource );
     }

@@ -5,6 +5,7 @@ import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.logging.Logger;
 import org.easymock.MockControl;
 
 import java.util.Collections;
@@ -20,6 +21,25 @@ public class FilterUtilsTest
 
     private MockManager mockManager = new MockManager();
     
+    private MockControl loggerCtl;
+    
+    private Logger logger;
+    
+    public void setUp()
+    {
+        clearAll();
+    }
+
+    private void clearAll()
+    {
+        mockManager.clear();
+        
+        loggerCtl = MockControl.createControl( Logger.class );
+        mockManager.add( loggerCtl );
+        
+        logger = (Logger) loggerCtl.getMock();
+    }
+
     public void testFilterArtifacts_ShouldNotRemoveArtifactDirectlyIncluded()
     {
         verifyArtifactInclusion( "group", "artifact", "group:artifact", null, null, null );
@@ -33,19 +53,25 @@ public class FilterUtilsTest
 
     public void testFilterArtifacts_ShouldRemoveArtifactTransitivelyExcluded()
     {
+        enableLoggerDebugging();
         verifyArtifactExclusion( "group", "artifact", null, "group:dependentArtifact", Collections.singletonList( "group:dependentArtifact" ), null );
     }
 
     public void testFilterArtifacts_ShouldRemoveArtifactDirectlyExcluded()
     {
+        enableLoggerDebugging();
         verifyArtifactExclusion( "group", "artifact", null, "group:artifact", null, null );
+        
+        clearAll();
+        
+        enableLoggerDebugging();
         verifyArtifactExclusion( "group", "artifact", null, "group:artifact:jar", null, null );
     }
 
     public void testFilterArtifacts_ShouldNotRemoveArtifactNotIncludedAndNotExcluded()
     {
-        verifyArtifactInclusion( "group", "artifact", null, null, null, null, false );
-        verifyArtifactInclusion( "group", "artifact", null, null, null, null, false );
+        verifyArtifactInclusion( "group", "artifact", null, null, null, null );
+        verifyArtifactInclusion( "group", "artifact", null, null, null, null );
     }
 
     public void testFilterArtifacts_ShouldRemoveArtifactExcludedByAdditionalFilter()
@@ -60,13 +86,28 @@ public class FilterUtilsTest
             
         };
         
-        verifyArtifactExclusion( "group", "artifact", "fail:fail", null, null, filter, false );
+        enableLoggerDebugging();
+        
+        logger.isWarnEnabled();
+        loggerCtl.setReturnValue( true );
+        
+        logger.warn( null );
+        loggerCtl.setMatcher( MockControl.ALWAYS_MATCHER );
+        
+        verifyArtifactExclusion( "group", "artifact", "fail:fail", null, null, filter );
+    }
+    
+    private void enableLoggerDebugging()
+    {
+        logger.isDebugEnabled();
+        loggerCtl.setReturnValue( true, MockControl.ONE_OR_MORE );
+        
+        logger.debug( null );
+        loggerCtl.setMatcher( MockControl.ALWAYS_MATCHER );
+        loggerCtl.setVoidCallable( MockControl.ONE_OR_MORE );
     }
 
-    
-    
-    
-    
+
     public void testFilterProjects_ShouldNotRemoveProjectDirectlyIncluded()
     {
         verifyProjectInclusion( "group", "artifact", "group:artifact", null, null );
@@ -91,33 +132,23 @@ public class FilterUtilsTest
 
     public void testFilterProjects_ShouldNotRemoveProjectNotIncludedAndNotExcluded()
     {
-        verifyProjectInclusion( "group", "artifact", null, null, null, false );
-        verifyProjectInclusion( "group", "artifact", null, null, null, false );
+        verifyProjectInclusion( "group", "artifact", null, null, null );
+        verifyProjectInclusion( "group", "artifact", null, null, null );
     }
 
     private void verifyArtifactInclusion( String groupId, String artifactId, String inclusionPattern, String exclusionPattern, List depTrail, ArtifactFilter additionalFilter )
     {
-        verifyArtifactFiltering( groupId, artifactId, inclusionPattern, exclusionPattern, depTrail, true, true, additionalFilter );
-    }
-
-    private void verifyArtifactInclusion( String groupId, String artifactId, String inclusionPattern, String exclusionPattern, List depTrail, ArtifactFilter additionalFilter, boolean enableExpectations )
-    {
-        verifyArtifactFiltering( groupId, artifactId, inclusionPattern, exclusionPattern, depTrail, true, enableExpectations, additionalFilter );
+        verifyArtifactFiltering( groupId, artifactId, inclusionPattern, exclusionPattern, depTrail, true, additionalFilter );
     }
 
     private void verifyArtifactExclusion( String groupId, String artifactId, String inclusionPattern, String exclusionPattern, List depTrail, ArtifactFilter additionalFilter )
     {
-        verifyArtifactFiltering( groupId, artifactId, inclusionPattern, exclusionPattern, depTrail, false, true, additionalFilter );
+        verifyArtifactFiltering( groupId, artifactId, inclusionPattern, exclusionPattern, depTrail, false, additionalFilter );
     }
 
-    private void verifyArtifactExclusion( String groupId, String artifactId, String inclusionPattern, String exclusionPattern, List depTrail, ArtifactFilter additionalFilter, boolean enableExpectations )
+    private void verifyArtifactFiltering( String groupId, String artifactId, String inclusionPattern, String exclusionPattern, List depTrail, boolean verifyInclusion, ArtifactFilter additionalFilter )
     {
-        verifyArtifactFiltering( groupId, artifactId, inclusionPattern, exclusionPattern, depTrail, false, enableExpectations, additionalFilter );
-    }
-
-    private void verifyArtifactFiltering( String groupId, String artifactId, String inclusionPattern, String exclusionPattern, List depTrail, boolean verifyInclusion, boolean enableExpectations, ArtifactFilter additionalFilter )
-    {
-        ArtifactMockAndControl mac = new ArtifactMockAndControl( groupId, artifactId, depTrail, enableExpectations );
+        ArtifactMockAndControl mac = new ArtifactMockAndControl( groupId, artifactId, depTrail );
         
         mockManager.replayAll();
 
@@ -153,8 +184,8 @@ public class FilterUtilsTest
         
         Set artifacts = new HashSet();
         artifacts.add( mac.artifact );
-
-        FilterUtils.filterArtifacts( artifacts, inclusions, exclusions, depTrail != null, filters );
+        
+        FilterUtils.filterArtifacts( artifacts, inclusions, exclusions, depTrail != null, filters, logger );
 
         if ( verifyInclusion )
         {
@@ -177,22 +208,17 @@ public class FilterUtilsTest
 
     private void verifyProjectInclusion( String groupId, String artifactId, String inclusionPattern, String exclusionPattern, List depTrail )
     {
-        verifyProjectFiltering( groupId, artifactId, inclusionPattern, exclusionPattern, depTrail, true, true );
-    }
-
-    private void verifyProjectInclusion( String groupId, String artifactId, String inclusionPattern, String exclusionPattern, List depTrail, boolean enableExpectations )
-    {
-        verifyProjectFiltering( groupId, artifactId, inclusionPattern, exclusionPattern, depTrail, true, enableExpectations );
+        verifyProjectFiltering( groupId, artifactId, inclusionPattern, exclusionPattern, depTrail, true );
     }
 
     private void verifyProjectExclusion( String groupId, String artifactId, String inclusionPattern, String exclusionPattern, List depTrail )
     {
-        verifyProjectFiltering( groupId, artifactId, inclusionPattern, exclusionPattern, depTrail, false, true );
+        verifyProjectFiltering( groupId, artifactId, inclusionPattern, exclusionPattern, depTrail, false );
     }
 
-    private void verifyProjectFiltering( String groupId, String artifactId, String inclusionPattern, String exclusionPattern, List depTrail, boolean verifyInclusion, boolean enableExpectations )
+    private void verifyProjectFiltering( String groupId, String artifactId, String inclusionPattern, String exclusionPattern, List depTrail, boolean verifyInclusion )
     {
-        ProjectWithArtifactMockControl pmac = new ProjectWithArtifactMockControl( groupId, artifactId, depTrail, enableExpectations );
+        ProjectWithArtifactMockControl pmac = new ProjectWithArtifactMockControl( groupId, artifactId, depTrail );
 
         mockManager.replayAll();
         
@@ -254,11 +280,11 @@ public class FilterUtilsTest
     {
         ArtifactMockAndControl mac;
 
-        ProjectWithArtifactMockControl( String groupId, String artifactId, List depTrail, boolean enableExpectations )
+        ProjectWithArtifactMockControl( String groupId, String artifactId, List depTrail )
         {
             super( buildModel( groupId, artifactId ) );
 
-            mac = new ArtifactMockAndControl( groupId, artifactId, depTrail, enableExpectations );
+            mac = new ArtifactMockAndControl( groupId, artifactId, depTrail );
 
             setArtifact( mac.artifact );
         }
@@ -277,7 +303,7 @@ public class FilterUtilsTest
 
         List dependencyTrail;
 
-        ArtifactMockAndControl( String groupId, String artifactId, List dependencyTrail, boolean enableExpectations )
+        ArtifactMockAndControl( String groupId, String artifactId, List dependencyTrail )
         {
             this.groupId = groupId;
             this.artifactId = artifactId;
@@ -290,37 +316,36 @@ public class FilterUtilsTest
 
             // this is always enabled, for verification purposes.
             enableGetDependencyConflictId();
-            
-            if ( enableExpectations )
-            {
-                enableGetGroupIdAndArtifactId();
+            enableGetGroupIdArtifactIdAndId();
 
-                if ( dependencyTrail != null )
-                {
-                    enableGetDependencyTrail();
-                }
+            if ( dependencyTrail != null )
+            {
+                enableGetDependencyTrail();
             }
         }
 
         void enableGetDependencyTrail()
         {
             artifact.getDependencyTrail();
-            control.setReturnValue( dependencyTrail, MockControl.ONE_OR_MORE );
+            control.setReturnValue( dependencyTrail, MockControl.ZERO_OR_MORE );
         }
 
         void enableGetDependencyConflictId()
         {
             artifact.getDependencyConflictId();
-            control.setReturnValue( groupId + ":" + artifactId + ":jar", MockControl.ONE_OR_MORE );
+            control.setReturnValue( groupId + ":" + artifactId + ":jar", MockControl.ZERO_OR_MORE );
         }
 
-        void enableGetGroupIdAndArtifactId()
+        void enableGetGroupIdArtifactIdAndId()
         {
             artifact.getGroupId();
-            control.setReturnValue( groupId, MockControl.ONE_OR_MORE );
+            control.setReturnValue( groupId, MockControl.ZERO_OR_MORE );
 
             artifact.getArtifactId();
-            control.setReturnValue( artifactId, MockControl.ONE_OR_MORE );
+            control.setReturnValue( artifactId, MockControl.ZERO_OR_MORE );
+
+            artifact.getId();
+            control.setReturnValue( groupId + ":" + artifactId + ":version:null:jar", MockControl.ZERO_OR_MORE );
         }
     }
 

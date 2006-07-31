@@ -42,4 +42,9 @@ public class AssemblyExcludesArtifactFilter
     {
         return !super.include( artifact );
     }
+    
+    protected String getFilterDescription()
+    {
+        return "artifact exclusion filter";
+    }
 }
