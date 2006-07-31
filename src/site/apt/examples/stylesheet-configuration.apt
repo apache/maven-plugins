@@ -17,7 +17,7 @@ Configuring Stylesheets
 +-----+
 <project>
   ...
-  <build>
+  <reporting>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -30,7 +30,7 @@ Configuring Stylesheets
       </plugin>
     </plugins>
   ...
-  </build>
+  </reporting>
   ...
 </project>
 +-----+

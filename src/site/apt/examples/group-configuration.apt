@@ -15,7 +15,7 @@ Grouping Packages
 +-----+
 <project>
   ...
-  <build>
+  <reporting>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -37,7 +37,7 @@ Grouping Packages
       </plugin>
     </plugins>
   ...
-  </build>
+  </reporting>
   ...
 </project>
 +-----+

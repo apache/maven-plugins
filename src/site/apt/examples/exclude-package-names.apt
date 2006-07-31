@@ -16,7 +16,7 @@ Excluding Packages
 +-----+
 <project>
   ...
-  <build>
+  <reporting>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -29,7 +29,7 @@ Excluding Packages
       </plugin>
     </plugins>
   ...
-  </build>
+  </reporting>
   ...
 </project>
 +-----+

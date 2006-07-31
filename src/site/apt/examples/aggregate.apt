@@ -36,7 +36,7 @@ Project
 +-----+
 <project>
   ...
-  <build>
+  <reporting>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -49,7 +49,7 @@ Project
       </plugin>
     </plugins>
   ...
-  </build>
+  </reporting>
   ...
 </project>
 +-----+
