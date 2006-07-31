@@ -15,7 +15,7 @@ Configuring Custom Javadoc Tags
 +-----+
 <project>
   ...
-  <build>
+  <reporting>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -35,7 +35,7 @@ Configuring Custom Javadoc Tags
       </plugin>
     </plugins>
   ...
-  </build>
+  </reporting>
   ...
 </project>
 +-----+
