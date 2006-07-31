@@ -23,9 +23,18 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/guides/mini/guide-apt-format.html
 
+
 Filtering Some Distribution Files
 
 * Introduction
+
+  File filtering is used to substitute variable fields from inside a file to
+  their represented values. For the Assembly Plugin, and most Maven filtering
+  procedures, these variables are enclosed between ${ and }. For
+  example, before a file is filtered, it contains <<<${project.artifactId}>>>.
+  But after filtering is complete, a new file is created with the project's
+  <<<artifactId>>> substituting <<<${project.artifactId}>>> and that this new
+  file is used instead of the original one.
 
   Although filtering can be done during the process-resources phase, not all
   files going into your distribution will be coming from a project resource.
@@ -47,6 +56,17 @@ Filtering Some Distribution Files
   All the above files are in the root directory of the project but only the
   README and the NOTICE files should be filtered. The property file used to
   filter these are files is found in <<<src/assemble/filter.properties>>>.
+
+  A property file is a file which contains the names of the variables and their
+  corresponding string value. The format of its contents is identical to how Java
+  Property files are saved. Below is an example of a property file:
+
++---
+# lines beginning with the # sign are comments
+
+variable1=value1
+variable2=value2
++---
 
 
 * The Assembly Descriptor
