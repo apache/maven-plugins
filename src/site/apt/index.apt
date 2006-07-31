@@ -33,5 +33,5 @@ Overview
   To provide you with better understanding on some usages of the Clean Plugin,
   you can take a look into the following examples:
 
-  * {{{delete_additional_files.html}How to delete additional files outside of
+  * {{{examples/delete_additional_files.html}How to delete additional files outside of
   the default directories}}
