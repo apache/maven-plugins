@@ -39,7 +39,11 @@ Configuration and Usage
   you're using a custom assembly descriptor, you give it the path to the
   descriptor. Note that a single invocation of the Assembly Plugin can actually
   produce assemblies from multiple descriptors, allowing you maximum flexibility
-  to customize the suite of binaries your project produces.
+  to customize the suite of binaries your project produces. When the assembly is
+  created it will use the assemblyId as the artifact's classifier and will attach
+  the created assembly to the project and will be uploaded into the repository
+  on an install and deploy goal.
+  
   
   For example, imagine that our project produces a jar. If we want to create an
   assembly binary that includes our project's dependencies, we can take

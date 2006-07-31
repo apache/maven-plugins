@@ -42,7 +42,9 @@ Features
   
   * Reusable assembly-descriptor components <[2.1]>
   
-  * Supported archive formats include: tar.gz, tar.bz2, zip, jar
+  * Supported archive formats include: zip, tar, tar.gz, tar.bz2, jar, dir, war
+   (and any other format that the ArchiveManager has been configured for).
+
   
   * Directory-only assemblies
   

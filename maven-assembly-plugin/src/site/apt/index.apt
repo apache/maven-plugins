@@ -47,6 +47,12 @@ Maven Assembly Plugin
 
     * jar
 
+    * dir
+
+    * war
+
+    * and any other format that the ArchiveManager has been configured for
+
   To use the Assembly Plugin in Maven 2, you simply need to:
 
     * choose or write the assembly descriptor to use,
