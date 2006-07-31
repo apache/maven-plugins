@@ -45,6 +45,7 @@
       <item name="Examples Index" href="examples/index.html"/>
       <item name="Single Project" collapse="false" href="examples/single/index.html">
         <item name="Filtering Some Distribution Files" href="examples/single/filtering-some-distribution-files.html"/>
+        <item name="Include/Exclude Artifacts" href="examples/single/include-and-exclude.html"/>
         <item name="Using Component Descriptors" href="examples/single/using-components.html"/>
         <item name="Using Repositories" href="examples/single/using-repositories.html"/>
       </item>
