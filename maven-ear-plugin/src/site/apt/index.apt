@@ -1,0 +1,94 @@
+ ------
+ Introduction
+ ------
+ Edwin Punzalan
+ Stephane Nicoll
+ ------
+ 27 July 2006
+ ------
+
+~~ Copyright 2006 The Apache Software Foundation.
+~~
+~~ Licensed under the Apache License, Version 2.0 (the "License");
+~~ you may not use this file except in compliance with the License.
+~~ You may obtain a copy of the License at
+~~
+~~      http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing, software
+~~ distributed under the License is distributed on an "AS IS" BASIS,
+~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~ See the License for the specific language governing permissions and
+~~ limitations under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/guides/mini/guide-apt-format.html
+
+
+Maven EAR Plugin
+
+  This plugin generates J2EE Enterprise Archive (EAR) file. It can also generate
+  the deployment descriptor file (e.g. application.xml).
+
+  The EAR plugin supports the following artifacts:
+
+  * ejb
+
+  * war
+
+  * jar
+
+  * ejb-client
+
+  * rar
+
+  * ejb3
+
+  * par
+
+  * sar
+
+  * wsr
+
+  []
+
+  For available configuration options for these artifacts, please see the
+  {{{modules.html}modules configuration}}.
+
+  For more information about the J2EE technology, please visit
+  {{http://java.sun.com/developer/technicalArticles/J2EE/Intro}}.
+
+* Goals Overview
+
+  EAR Plugin has two goals:
+
+  * {{{ear-mojo.html}ear:ear}} generates J2EE Enterprise Archive (EAR) files.
+
+  * {{{generate-application-xml-mojo.html}ear:generate-application-xml}}
+  generates the application.xml deployment descriptor file.
+
+* Usage
+
+  Instructions on how to use the EAR Plugin can be found {{{usage.html}here}}.
+
+* Examples
+
+  To provide you with better understanding on some usages of the EAR Plugin,
+  you can take a look into the following examples:
+
+  * {{{examples/customizing-a-module-filename.html}Customizing A Module
+  Filename}}
+
+  * {{{examples/customizing-context-root.html}Customizing The Context Root}}
+
+  * {{{examples/customizing-module-location.html}Customizing A Module Location}}
+
+  * {{{examples/customizing-module-uri.html}Customizing A Module URI}}
+
+  * {{{examples/excluding-a-module.html}Excluding A Module}}
+
+  * {{{examples/including-a-third-party-library-in-application-xml.html}
+  Including A Third Party Library In application.xml}}
+
+  * {{{examples/specifying-security-roles-for-the-generated-application-xml.html}
+  Specifying Security Roles For The Generated application.xml}}
