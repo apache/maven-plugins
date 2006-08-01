@@ -1,0 +1,62 @@
+  ------
+  Unpacking the Copied Specific Artifacts
+  ------
+  Allan Ramirez
+  Brian Fox
+  ------
+  July 2006
+  ------
+
+Unpacking the Copied Specific Artifacts
+
+  This is pretty much alike with {{{copying-artifacts.html}Copying Specific Artifacts}}
+  example. The difference is that the copied artifacts has been unpacked.
+  To unpack the copied artifacts, use the <<<dependency:unpack>>> mojo and
+  configure the plugin into something like the sample below:
+
++---+
+ <project>
+   [...]
+   <build>
+    <plugins>
+      <plugin>
+         <groupId>org.apache.maven.plugin</groupId>
+         <artifactId>dependency-maven-plugin</artifactId>
+         <executions>
+           <execution>
+             <id>unpack</id>
+             <phase>package</phase>
+             <goals>
+               <goal>unpack</goal>
+             </goals>
+             <configuration>
+               <artifactItems>
+                 <artifactItem>
+                   <groupId>junit</groupId>
+                   <artifactId>junit</artifactId>
+                   <version>3.8.1</version>
+                   <type>jar</type>
+                   <overWrite>false</overWrite>
+                   <outputDirectory>${project.build.directory}/alternateLocation</outputDirectory>
+                   <destFileName>optional-new-name.jar</destFileName>
+                 </artifactItem>
+               </artifactItems>
+               <outputDirectory>${project.build.directory}/wars</outputDirectory>
+               <overWriteReleases>false</overWriteReleases>
+               <overWriteSnapshots>true</overWriteSnapshots>
+             </configuration>
+           </execution>
+         </executions>
+       </plugin>
+     </plugins>
+   </build>
+   [...]
+ </project>
++---+
+
+  And after invoking <<<mvn package>>>, the copied artifacts are unpacked.
+
+
+
+
+
