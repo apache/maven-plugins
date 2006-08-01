@@ -1,22 +1,20 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!--
-/*
- * Copyright 2005-2006 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
--->
+  ~ Copyright 2006 The Apache Software Foundation.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
 
 <project name="Maven Changelog Plugin">
   <bannerLeft>
@@ -33,12 +31,17 @@
     </links>
 
     <menu name="Overview">
-      <item name="Overview" href="howto.html"/>
-      <item name="Sample Changelog Report" href="sample-changelog.html"/>
-      <item name="Sample Developer Activity Report" href="sample-dev-activity.html"/>
-      <item name="Sample File Activity Report" href="sample-file-activity.html"/>
+      <item name="Introduction" href="index.html"/>
+      <item name="Goals" href="plugin-info.html"/>
+      <item name="Usage" href="usage.html"/>
+      <item name="FAQ" href="faq.html"/>
     </menu>
 
+    <menu name="Examples">
+      <item name="Using Date Type" href="/examples/configuration-date-type.html"/>
+      <item name="Using Range Type" href="/examples/configuration-range-type.html"/>
+      <item name="Using Tag Type" href="/examples/configuration-tag-type.html"/>
+    </menu>
     ${reports}
   </body>
 </project>

@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
- * A Maven 2.0 file activity report plugin.
+ * Generate a file activity report.
  *
  * @goal file-activity
  */
