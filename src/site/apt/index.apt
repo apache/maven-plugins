@@ -1,0 +1,66 @@
+  ------
+  Introduction
+  ------
+  Allan Ramirez
+  Brian Fox
+  ------
+  July 2006
+  ------
+
+Maven Dependency Plugin
+
+  The dependency plugin provides the capability to manipulate artifacts. It
+  can copy and/or unpack artifacts from local or remote repositories to a
+  specified location.
+
+* Goals Overview
+
+  Dependency plugin has 8 goals:
+
+	*{{{copy-mojo.html}dependency:copy}} takes a list of artifacts defined in
+	the plugin configuration section and copies them to a specified location,
+	renaming them or stripping the version if desired. This goal can resolve
+	the artifacts from remote repositories if they don't exist in local.
+
+	*{{{copy-dependencies-mojo.html}dependency:copy-dependencies}} takes the
+	list of direct dependencies and optionally transitive dependencies and
+	copies them to a specified location, stripping the version if desired.
+	This goal can also be run from the command line.
+
+	*{{{unpack-mojo.html}dependency:unpack}} like copy but unpacks.
+
+	*{{{unpack-dependencies-mojo.html}dependency:unpack-dependencies}} like
+	copy-dependencies but unpacks.
+
+	*{{{resolve-mojo.html}dependency:resolve}} tells Maven to resolve test
+	scope dependencies and displays the version.
+
+	*{{{resolve-mojo.html}dependency:sources}} tells Maven to resolve test
+	scope dependencies and their source attachments, and displays the version.
+
+	*{{{resolve-plugins-mojo.html}dependency:resolve-plugins}} Tells Maven to
+	resolve plugins and their dependencies.
+
+    *{{{go-offline-mojo.html}dependency:go-offline}} tells Maven to resolve
+    everything this project is dependent on (dependencies, plugins, reports)
+    in preparation for going offline.
+
+  []
+
+* Usage
+
+  Instructions on how to use the dependency plugin can be found {{{usage.html}here}}.
+
+* Examples
+
+  The following examples show how to use the dependency plugin in more advanced usecases:
+
+  * {{{examples/copying-artifacts.html}Copying Specific Artifacts}}
+
+  * {{{examples/copy-direct-dependencies.html}Copying Direct Dependencies}}
+
+  * {{{examples/copying-unpacking.html}Unpacking the Copied Specific Artifacts}}
+
+  * {{{examples/copying-unpacking-direct-dependencies.html}Unpacking the Copied Direct Dependencies}}
+
+  []
