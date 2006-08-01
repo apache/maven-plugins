@@ -110,6 +110,8 @@ public class InstallFileMojo
     private boolean generatePom;
 
     /**
+     * Used to create artifacts
+     *
      * @component
      */
     private ArtifactFactory artifactFactory;

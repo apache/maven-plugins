@@ -53,6 +53,8 @@ public abstract class AbstractInstallMojo
     protected ArtifactRepository localRepository;
 
     /**
+     * Used to get the checksum of a file.
+     *
      * @component role="org.apache.maven.repository.digest.Digester"
      */
     private Digester digester;
