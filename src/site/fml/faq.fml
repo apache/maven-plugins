@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<faqs id="FAQ" title="Frequently Asked Questions">
+ <part id="General">
+   <faq id="question">
+     <question>What is the difference between dependency-maven-plugin and maven-dependency-plugin?</question>
+     <answer>
+        <p>
+            Actually, they are the same, It's just it was moved and renamed. The dependency-maven-plugin
+            is hosted at Mojo while maven-dependency-plugin is hosted at Apache. But the most recommended
+            plugin to use is the maven-dependency-plugin.
+        </p>
+     </answer>
+   </faq>
+ </part>
+</faqs>
