@@ -39,5 +39,4 @@ Using Alternate Doclet
 </project>
 +-----+
 
- After executing <<<mvn site>>>, you will see that a UML graph (.dot file) will be generated in the specified <<<destDir>>>
- value.
+ After executing <<<mvn site>>>, you will see that a UML graph (.dot file) will be generated in the specified <<<destDir>>>.
