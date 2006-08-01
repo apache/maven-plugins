@@ -21,34 +21,16 @@ Using Alternate Doclet
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
-            <reportSets>
-               <reportSet>
-                  <id>uml</id>
-                  <configuration>
-                     <doclet>gr.spinellis.umlgraph.doclet.UmlGraph</doclet>
-                     <docletArtifact>
-                        <groupId>umlgraph</groupId>
-                        <artifactId>UMLGraph</artifactId>
-                        <version>4.2-SNAPSHOT</version>
-                     </docletArtifact>
-                     <additionalparam>-views</additionalparam>
-                     <destDir>target/uml</destDir>
-                     <show>private</show>
-                  </configuration>
-                  <reports>
-                     <report>javadoc</report>
-                  </reports>
-               </reportSet>
-               <reportSet>
-                  <id>html</id>
-                  <configuration>
-                     <show>private</show>
-                  </configuration>
-                  <reports>
-                     <report>javadoc</report>
-                  </reports>
-               </reportSet>
-            </reportSets>
+            <configuration>
+              <doclet>gr.spinellis.umlgraph.doclet.UmlGraph</doclet>
+              <docletArtifact>
+                <groupId>umlgraph</groupId>
+                <artifactId>UMLGraph</artifactId>
+                <version>4.4</version>
+              </docletArtifact>
+              <additionalparam>-views</additionalparam>
+              <destDir>target/uml</destDir>
+            </configuration>
          </plugin>
          ...
       </plugins>
@@ -57,5 +39,5 @@ Using Alternate Doclet
 </project>
 +-----+
 
- The first \<reportSet\> element with uml as id specifies that the a UML graph (.dot file) will be generated and the second
- \<reportSet\> element with html as its id specifies that the javadocs report should be generated.
+ After executing <<<mvn site>>>, you will see that a UML graph (.dot file) will be generated in the specified <<<destDir>>>
+ value.
