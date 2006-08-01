@@ -31,7 +31,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
- * A Maven 2.0 developer activity report plugin.
+ * Generate a developer activity report.
  *
  * @goal dev-activity
  */

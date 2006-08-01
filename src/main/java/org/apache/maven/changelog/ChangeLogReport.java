@@ -61,7 +61,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 /**
- * A Maven 2.0 change log report plugin.
+ * Generate a changelog report.
  *
  * @goal changelog
  */
