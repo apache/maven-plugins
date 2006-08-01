@@ -42,6 +42,7 @@ public final class EarModuleFactory
         standardArtifactTypes.add( "war" );
         standardArtifactTypes.add( "sar" );
         standardArtifactTypes.add( "wsr" );
+        standardArtifactTypes.add( "har" );
     }
 
     /**
@@ -95,6 +96,10 @@ public final class EarModuleFactory
         else if ( "wsr".equals( artifactType ) )
         {
             return new WsrModule( artifact );
+        }
+        else if ( "har".equals( artifactType ) )
+        {
+            return new HarModule( artifact );
         }
         else
         {
