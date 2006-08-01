@@ -46,6 +46,8 @@ EAR Modules
 
   * {{{#WsrModule}WsrModule}}
 
+  * {{{#HarModule}HarModule}}
+
   []
 
   These module names go into the <<<modules>>> parameter of the EAR Plugin. For
@@ -270,6 +272,29 @@ EAR Modules
 
   * <<artifactId>> - sets the artifactId of the ejb artifact you want to
   configure.
+
+  * <<bundleDir>> - sets the location of this artifact inside the ear archive.
+  If not set, this artifact will be packaged in the root of the archive.
+
+  * <<bundleFileName>> - sets the new name of this artifact inside the ear
+  archive. If not set, the artifact's filename in the repository is used.
+
+  * <<excluded>> - set to true to exclude this artifact from being packaged into
+  the ear archive. Default is false.
+
+  * <<uri>> - sets the uri path of this artifact within the ear archive.
+  Automatically determined when not set.
+
+
+* {HarModule} Properties
+
+  The following configuration options are available for HarModule:
+
+  * <<groupId>> - sets the groupId of the hibernate archive artifact you
+  want to configure.
+
+  * <<artifactId>> - sets the artifactId of the hibernate archive artifact
+  you want to configure.
 
   * <<bundleDir>> - sets the location of this artifact inside the ear archive.
   If not set, this artifact will be packaged in the root of the archive.
