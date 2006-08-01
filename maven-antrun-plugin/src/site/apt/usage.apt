@@ -1,30 +1,50 @@
- ----
-Usage
- ----
-Kenney Westerhof
- ----
-10 August 2005
- ----
+ ------
+ Usage
+ ------
+ Kenney Westerhof, Franz Allan Valencia See
+ ------
+ 27 July 2006
+ ------
+
+~~ Copyright 2006 The Apache Software Foundation.
+~~
+~~ Licensed under the Apache License, Version 2.0 (the "License");
+~~ you may not use this file except in compliance with the License.
+~~ You may obtain a copy of the License at
+~~
+~~      http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing, software
+~~ distributed under the License is distributed on an "AS IS" BASIS,
+~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~ See the License for the specific language governing permissions and
+~~ limitations under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/guides/mini/guide-apt-format.html
 
 Usage
 
-  For those of you unfamiliar with configuring a plugin see the example below:
+* Run
+
+  The maven-antrun-plugin has only one goal, <<<run>>>. 
+  
+  This allows maven 2 to run ant tasks. To do so, there must be an existing 
+  project and the maven-antrun-plugin must have its <<<\<tasks\>>>> tag 
+  configured (although it would still execute without the <<<\<tasks\>>>> tag, 
+  it would not do anything). Below is the template for the 
+  <<<maven-antrun-plugin>>>'s <<<pom.xml>>>.
 
 ------
 <project>
-  <modelVersion>4.0.0</modelVersion>
-  <artifactId>my-test-app</artifactId>
-  <groupId>my-test-group</groupId>
-  <version>1.0-SNAPSHOT</version>
-
+  [...]
   <build>
     <plugins>
-
       <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
         <executions>
           <execution>
-            <phase>generate-sources</phase>
+            <phase> <!-- a lifecycle phase --> </phase>
             <configuration>
               <tasks>
 
@@ -42,21 +62,18 @@ Usage
           </execution>
         </executions>
       </plugin>
-
     </plugins>
   </build>
+  [...]
 </project>
 ------
 
-  The example above illustrates how to bind an ant script to a
-  lifecycle phase. You can add a script to each lifecycle phase,
-  by duplicating the <<<\<execution/\>>>> section and specifying
-  a new phase.
-
+  Moreover, you can add a script to each lifecycle phase, by duplicating the 
+  <<<\<execution/\>>>> section and specifying a new phase.
   
   Below you can see how to indicate that ant has generated some more java
   source that needs to be included in the compilation phase. Note that the
-  compile phase follows the generate-sources phase in the lifecycle.
+  compile phase follows the <<<generate-sources>>> phase in the lifecycle.
 
 ------
 <project>
@@ -98,12 +115,113 @@ Usage
 </project>
 ------
 
-  Of course, you can put whatever folder you prefer. The folders in the example above are
-  handy because they are deleted when you "clean" since they are in the build directory
-  (which is, by default, "target"). 
+  Of course, you can put whatever folder you prefer. The folders in the example 
+  above arehandy because they are deleted when you <<<clean>>> since they are in
+  the build directory (which is, by default, "target"). 
 
-  <<<\<sourceRoot/\>>>> adds a single folder to the
-  list of folders that get compiled with the program source code (compile).
+  <<<\<sourceRoot/\>>>> adds a single folder to the list of folders that get 
+  compiled with the program source code (<<<compile>>>).
 
-  <<<\<testSourceRoot/\>>>> adds a single folder to the
-  list of folders that get compiled with the test source code (test-compile).
+  <<<\<testSourceRoot/\>>>> adds a single folder to the list of folders that get
+  compiled with the test source code (<<<test-compile>>>).
+
+* Ant Expressions to Maven Expressions Mapping
+ 
+  Some Ant expressions have their respective counterparts in Maven. Thus, one
+  can simply invoke the corresponding maven expression instead of using 
+  maven-antrun-plugin to avoid the unneccessary overhead.
+
+*-----------------------------------+-----------------------------------+
+| <<Ant Expression>>                | <<Maven Expression>>              |
+*-----------------------------------------------------------------------+
+| Built-in Tasks                                                        |
+*-----------------------------------+-----------------------------------+
+| <<<Ant>>>                         | {{{../maven-antrun-plugin/}<<<maven-antrun-plugin>>>}}               |
+*-----------------------------------+-----------------------------------+
+| <<<AntCall>>>                     | {{{../maven-antrun-plugin/}<<<maven-antrun-plugin>>>}}               |
+*-----------------------------------+-----------------------------------+
+| <<<Available>>>                   | {{{http://maven.apache.org/guides/introduction/introduction-to-profiles.html}<<<profiles>>>}}                         |
+*-----------------------------------+-----------------------------------+
+| <<<BUnzip2>>>                     | {{{../maven-assembly-plugin/}<<<maven-assembly-plugin>>>}}             |
+*-----------------------------------+-----------------------------------+
+| <<<BZip2>>>                       | {{{../maven-assembly-plugin/}<<<maven-assembly-plugin>>>}}             |
+*-----------------------------------+-----------------------------------+
+| <<<Chmod>>>                       | {{{../maven-assembly-plugin/}<<<maven-assembly-plugin>>>}}             |
+*-----------------------------------+-----------------------------------+
+| <<<Condition>>>                   | {{{http://maven.apache.org/guides/introduction/introduction-to-profiles.html}<<<profiles>>>}}                         |
+*-----------------------------------+-----------------------------------+
+| <<<Copy>>>                        | {{{../maven-resources-plugin/}<<<maven-resources-plugin>>>}}            |
+*-----------------------------------+-----------------------------------+
+| <<<Dependset>>>                   | {{{../maven-dependencies-plugin/}<<<maven-dependencies-plugin>>>}}         |
+*-----------------------------------+-----------------------------------+
+| <<<Ear>>>                         | {{{../maven-ear-plugin/}<<<maven-ear-plugin>>>}}                  |
+*-----------------------------------+-----------------------------------+
+| <<<Filter>>>                      | {{{../maven-resources-plugin/}<<<maven-resources-plugin>>>}}            |
+|                                   | <Note: Filter uses the @...@ token while maven-resources-plugin uses the $\{...\} token> |
+*-----------------------------------+-----------------------------------+
+| <<<FixCRLF>>>                     | {{{../maven-resources-plugin/}<<<maven-resources-plugin>>>}}            |
+*-----------------------------------+-----------------------------------+
+| <<<GenKey>>>                      | {{{../maven-jar-plugin/}<<<maven-jar-plugin>>>}}                  |
+*-----------------------------------+-----------------------------------+
+| <<<GUnzip>>>                      | {{{../maven-assembly-plugin/}<<<maven-assembly-plugin>>>}}             |
+*-----------------------------------+-----------------------------------+
+| <<<GZip>>>                        | {{{../maven-assembly-plugin/}<<<maven-assembly-plugin>>>}}             |
+*-----------------------------------+-----------------------------------+
+| <<<Jar>>>                         | {{{../maven-jar-plugin/}<<<maven-jar-plugin>>>}}                  |
+*-----------------------------------+-----------------------------------+
+| <<<Javac>>>                       | {{{../maven-compiler-plugin/}<<<maven-compiler-plugin>>>}}             |
+*-----------------------------------+-----------------------------------+
+| <<<Javadoc/Javadoc2>>>            | {{{../maven-javadoc-plugin/}<<<maven-javadoc-plugin>>>}}               |
+*-----------------------------------+-----------------------------------+
+| <<<LoadProperties>>>              | {{{../maven-resources-plugin/}<<<maven-resources-plugin>>>}}            |
+*-----------------------------------+-----------------------------------+
+| <<<Manifest>>>                    | {{{../maven-jar-plugin/}<<<maven-jar-plugin>>>}}                  |
+*-----------------------------------+-----------------------------------+
+| <<<Property>>>                    | {{{../maven-resources-plugin/}<<<maven-resources-plugin>>>}}            |
+*-----------------------------------+-----------------------------------+
+| <<<Replace>>>                     | {{{../maven-resources-plugin/}<<<maven-resources-plugin>>>}}            |
+|                                   | <Note: Replace can specify its token while maven-resources-plugin uses the $\{...\} token> |
+*-----------------------------------+-----------------------------------+
+| <<<Tar>>>                         | {{{../maven-assembly-plugin/}<<<maven-assembly-plugin>>>}}             |
+*-----------------------------------+-----------------------------------+
+| <<<Unjar>>>                       | {{{../maven-assembly-plugin/}<<<maven-assembly-plugin>>>}}             |
+*-----------------------------------+-----------------------------------+
+| <<<Untar>>>                       | {{{../maven-assembly-plugin/}<<<maven-assembly-plugin>>>}}             |
+*-----------------------------------+-----------------------------------+
+| <<<Unwar>>>                       | {{{../maven-assembly-plugin/}<<<maven-assembly-plugin>>>}}             |
+*-----------------------------------+-----------------------------------+
+| <<<Unzip>>>                       | {{{../maven-assembly-plugin/}<<<maven-assembly-plugin>>>}}             |
+*-----------------------------------+-----------------------------------+
+| <<<War>>>                         | {{{../maven-war-plugin/}<<<maven-war-plugin>>>}}                  |
+*-----------------------------------+-----------------------------------+
+| <<<Zip>>>                         | {{{../maven-assembly-plugin/}<<<maven-assembly-plugin>>>}}             |
+*-----------------------------------+-----------------------------------+
+Optional Tasks                                                          |
+*-----------------------------------+-----------------------------------+
+| <<<Antlr>>>                       | {{{../maven-antlr-plugin/}<<<maven-antlr-plugin>>>}}                |
+*-----------------------------------+-----------------------------------+
+| <<<Depend>>>                      | {{{../maven-dependencies-plugin/}<<<maven-dependencies-plugin>>>}}         |
+*-----------------------------------+-----------------------------------+
+| <<<EJB Tasks>>>                   | {{{../maven-ejb-plugin/}<<<maven-ejb-plugin>>>}}                  |
+*-----------------------------------+-----------------------------------+
+| <<<FTP>>>                         | {{{../maven-deploy-plugin/}<<<maven-deploy-plugin>>>}}               |
+|                                   | <Note: maven-deploy-plugin can only deploy unto the FTP> |
+*-----------------------------------+-----------------------------------+
+| <<<JavaCC>>>                      | {{{../maven-compiler-plugin/}<<<maven-compiler-plugin>>>}}             |
+*-----------------------------------+-----------------------------------+
+| <<<JJDoc>>>                       | {{{../maven-compiler-plugin/}<<<maven-compiler-plugin>>>}}             |
+*-----------------------------------+-----------------------------------+
+| <<<JJTree>>>                      | {{{../maven-compiler-plugin/}<<<maven-compiler-plugin>>>}}             |
+*-----------------------------------+-----------------------------------+
+| <<<JUnit>>>                       | {{{../maven-surefire-plugin/}<<<maven-surefire-plugin>>>}}             |
+*-----------------------------------+-----------------------------------+
+| <<<JUnitReport>>>                 | {{{../maven-surefire-report-plugin/}<<<maven-surefire-report-plugin>>>}}      |
+*-----------------------------------+-----------------------------------+
+| <<<ServerDeploy>>>                | {{{../maven-deploy-plugin/}<<<maven-deploy-plugin>>>}}               |
+*-----------------------------------+-----------------------------------+
+| <<<Setproxy>>>                    | {{{../maven-deploy-plugin/}<<<maven-deploy-plugin>>>}}               |
+*-----------------------------------+-----------------------------------+
+| <<<Translate>>>                   | {{{../maven-resources-plugin/}<<<maven-resources-plugin>>>}}            |
+|                                   | <Note: Translate can specify its own tokens and can have a different encoding scheme for reading and writing files. maven-resources-plugin however uses the $\{...\} annotation only and has only one encoding scheme for reading and writing> |
+*-----------------------------------+-----------------------------------+
+
