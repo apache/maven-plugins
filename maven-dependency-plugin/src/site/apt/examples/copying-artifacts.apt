@@ -1,0 +1,98 @@
+  ------
+  Copying Specific Artifacts
+  ------
+  Allan Ramirez
+  Brian Fox
+  ------
+  July 2006
+  ------
+
+Copying Specific Artifacts
+
+  In copying specific artifacts, you need to bind the <<<dependency:copy>>>
+  mojo to a lifecycle, configure the plugin and specify the artifacts you
+  want to copy. Just like the following:
+
++---+
+<project>
+  [...]
+  <build>
+   <plugins>
+     <plugin>
+        <groupId>org.apache.maven.plugin</groupId>
+        <artifactId>dependency-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>junit</groupId>
+                  <artifactId>junit</artifactId>
+                  <version>3.8.1</version>
+                  <type>jar</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${project.build.directory}/alternateLocation</outputDirectory>
+                  <destFileName>optional-new-name.jar</destFileName>
+                </artifactItem>
+              </artifactItems>
+              <outputDirectory>${project.build.directory}/wars</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>true</overWriteSnapshots>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++---+
+
+    Then after executing <<<mvn package>>> the artifact (junit) is copied to the
+    givin alternateLocation.
+
+    The <<<dependency:copy>>> goal can also be used to copy the just built
+    artifact to a custom location if desired. It must be bound after the
+    install phase so that the artifact exists in the repository. The following
+    configuration shows how:
+
++---+
+ <project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugin</groupId>
+        <artifactId>dependency-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-installed</id>
+            <phase>install</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>${project.groupId}</groupId>
+                  <artifactId>${project.artifactId}</artifactId>
+                  <version>${project.version}</version>
+                  <type>${project.packaging}</type>
+                </artifactItem>
+              </artifactItems>
+              <outputDirectory>some-other-place</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++---+
+
