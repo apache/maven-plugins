@@ -9,7 +9,7 @@ import org.codehaus.plexus.archiver.Archiver;
 public interface ArchiverTask
 {
     
-    public void execute( Archiver archiver, AssemblerConfigurationSource configSource )
+    void execute( Archiver archiver, AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException;
 
 }

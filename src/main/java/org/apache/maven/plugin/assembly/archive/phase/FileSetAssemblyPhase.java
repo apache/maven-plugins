@@ -8,6 +8,8 @@ import org.apache.maven.plugins.assembly.model.Assembly;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 
+import java.util.List;
+
 /**
  * @plexus.component role="org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase"
  *                   role-hint="file-sets"
@@ -20,12 +22,17 @@ public class FileSetAssemblyPhase
     public void execute( Assembly assembly, Archiver archiver, AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException
     {
-        AddFileSetsTask task = new AddFileSetsTask( assembly.getFileSets() );
+        List fileSets = assembly.getFileSets();
         
-        task.setLogger( getLogger() );
-        task.setIncludeBaseDirectory( assembly.isIncludeBaseDirectory() );
-        
-        task.execute( archiver, configSource );
+        if ( fileSets != null && !fileSets.isEmpty() )
+        {
+            AddFileSetsTask task = new AddFileSetsTask( fileSets );
+            
+            task.setLogger( getLogger() );
+            task.setIncludeBaseDirectory( assembly.isIncludeBaseDirectory() );
+            
+            task.execute( archiver, configSource );
+        }
     }
 
 }

@@ -1,5 +1,6 @@
 package org.apache.maven.plugin.assembly.archive.task;
 
+import java.io.File;
 import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
@@ -75,7 +76,9 @@ public class AddArtifactTask
             {
                 if ( fileMode > -1 )
                 {
-                    archiver.addFile( artifact.getFile(), outputLocation, fileMode );
+                    File artifactFile = artifact.getFile();
+                    
+                    archiver.addFile( artifactFile, outputLocation, fileMode );
                 }
                 else
                 {

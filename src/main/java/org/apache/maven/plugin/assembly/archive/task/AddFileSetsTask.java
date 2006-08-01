@@ -30,7 +30,7 @@ public class AddFileSetsTask
     {
         this.fileSets = fileSets;
     }
-
+    
     public void execute( Archiver archiver, AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException
     {
