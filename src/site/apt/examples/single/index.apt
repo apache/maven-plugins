@@ -32,7 +32,7 @@ Single Project Examples
 
   * {{{filtering-some-distribution-files.html}Filtering Some Distribution Files}}
 
-  * {{{include-and-exclude.html}Include/Exclude Artifacts}}
+  * {{{including-and-excluding-artifacts.html}Including/Excluding Artifacts}}
 
   * {{{using-components.html}Using Component Descriptors}}
 
