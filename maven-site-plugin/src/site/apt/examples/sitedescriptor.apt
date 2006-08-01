@@ -8,6 +8,23 @@
  July 2006
  ------
 
+ ~~ Copyright 2006 The Apache Software Foundation.
+ ~~
+ ~~ Licensed under the Apache License, Version 2.0 (the "License");
+ ~~ you may not use this file except in compliance with the License.
+ ~~ You may obtain a copy of the License at
+ ~~
+ ~~      http://www.apache.org/licenses/LICENSE-2.0
+ ~~
+ ~~ Unless required by applicable law or agreed to in writing, software
+ ~~ distributed under the License is distributed on an "AS IS" BASIS,
+ ~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ~~ See the License for the specific language governing permissions and
+ ~~ limitations under the License.
+
+ ~~ NOTE: For help with the syntax of this file, see:
+ ~~ http://maven.apache.org/guides/mini/guide-apt-format.html
+
 
 Configuring the Site Descriptor
 
@@ -15,9 +32,7 @@ Configuring the Site Descriptor
   For example, aside from the report distributions you want to put additional content to your site. In order for them
   to be accessible in the generated site, you must configure your site descriptor.
 
-* Site Descriptor
-
-  For more references of the site descriptor, here's a link {{{http://maven.apache.org/site.html}http://maven.apache.org/site.html}}.
+* Publish Date
 
   With the out-of box Velocity template, the "Last Published" position could be configurable.
   By default, the position is on the left but you could change it.
