@@ -53,7 +53,7 @@ Maven Dependency Plugin
 
 * Examples
 
-  The following examples show how to use the dependency plugin in more advanced usecases:
+  The following examples show how to use the dependency plugin in more advanced use-cases:
 
   * {{{examples/copying-artifacts.html}Copying Specific Artifacts}}
 
@@ -64,3 +64,14 @@ Maven Dependency Plugin
   * {{{examples/copying-unpacking-direct-dependencies.html}Unpacking the Copied Direct Dependencies}}
 
   []
+
+* Resources
+
+  Here is a link that provides more reference regarding dependencies
+  (i.e. dependency management, transitive dependencies).
+
+  * {{{http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html}Dependency Mechanism}}
+
+  []
+
+
