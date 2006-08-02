@@ -6,6 +6,23 @@
   July 2006
   ------
 
+~~ Copyright 2006 The Apache Software Foundation.
+~~
+~~ Licensed under the Apache License, Version 2.0 (the "License");
+~~ you may not use this file except in compliance with the License.
+~~ You may obtain a copy of the License at
+~~
+~~      http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing, software
+~~ distributed under the License is distributed on an "AS IS" BASIS,
+~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~ See the License for the specific language governing permissions and
+~~ limitations under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/guides/mini/guide-apt-format.html
+
 Maven RAR Plugin
 
   A resource adapter is a system-level software driver that a Java application
@@ -28,7 +45,16 @@ Maven RAR Plugin
 
 * Examples
 
-  Sample use-cases for the plugin are available under the Examples menu.
+  To provide you with better understanding on some usages of the Plugin Name,
+  you can take a look into the following examples:
+
+  * {{{examples/exclude-project-jar.html}Exclude the project jar from the rar}}
+
+  * {{{examples/ra-custom-location.html}Custom location of Resource Adapter Descriptor}}
+
+  * {{{examples/include-extra-files.html}Include extra files in RAR}}
+
+  * {{{examples/manifest.html}Adding Manifest File}}
 
 
 * Resources
