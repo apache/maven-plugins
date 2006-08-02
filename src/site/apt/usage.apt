@@ -22,11 +22,11 @@ Usage
 
    Artifacts are copied using the following rules:
 
-     * If the artifactItem.overWrite is set, use that value.
+     * If the <<<artifactItem.overWrite>>> is set, use that value.
 
-     * Releases use the overWriteReleases value (default = true)
+     * Releases use the <<<overWriteReleases>>> value (default = true)
 
-     * Snapshots use the overWriteSnapshots value (default = false)
+     * Snapshots use the <<<overWriteSnapshots>>> value (default = false)
 
      []
 
@@ -39,7 +39,7 @@ Usage
    <plugins>
      <plugin>
         <groupId>org.apache.maven.plugin</groupId>
-        <artifactId>dependency-maven-plugin</artifactId>
+        <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
             <id>copy</id>
@@ -110,7 +110,7 @@ Usage
    <plugins>
      <plugin>
         <groupId>org.apache.maven.plugin</groupId>
-        <artifactId>dependency-maven-plugin</artifactId>
+        <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
             <id>copy-dependencies</id>
@@ -140,11 +140,11 @@ Usage
    ArtifactItem by setting the optional outputDirectory field. Artifacts are
    unpacked using the following rules:
 
-     *If the artifactItem.overWrite is set, use that value.
+     *If the <<<artifactItem.overWrite>>> is set, use that value.
 
-     *Releases use the overWriteReleases value (default = true)
+     *Releases use the <<<overWriteReleases>>> value (default = true)
 
-     *Snapshots use the overWriteSnapshots value (default = false)
+     *Snapshots use the <<<overWriteSnapshots>>> value (default = false)
 
    The artifact version is optional. If not set, the plugin will attempt to
    resolve from the dependencyManagement section.
@@ -156,7 +156,7 @@ Usage
    <plugins>
      <plugin>
         <groupId>org.apache.maven.plugin</groupId>
-        <artifactId>dependency-maven-plugin</artifactId>
+        <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
             <id>unpack</id>
@@ -211,7 +211,7 @@ Usage
 
    By default, SNAPSHOTs are always overwritten, Releases are not. This can be
    changed via the optional parameters.
-
+                                      s
    The goal can also be launched from the command line like:
    <<<mvn dependency:unpack-dependencies [optional params]>>>
 
@@ -222,7 +222,7 @@ Usage
    <plugins>
      <plugin>
         <groupId>org.apache.maven.plugin</groupId>
-        <artifactId>dependency-maven-plugin</artifactId>
+        <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
             <id>unpack-dependencies</id>

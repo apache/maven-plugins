@@ -21,7 +21,7 @@ Copying Direct Dependencies
    <plugins>
      <plugin>
         <groupId>org.apache.maven.plugin</groupId>
-        <artifactId>dependency-maven-plugin</artifactId>
+        <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
             <id>copy-dependencies</id>
@@ -45,7 +45,7 @@ Copying Direct Dependencies
 
 * Excluding Transitive Dependencies
 
-   As mentioned, transitive dependencies are copied by default. However, it
+   As mentioned, {{{http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html}transitive dependencies}} are copied by default. However, it
    can also be excluded by setting the <<<excludeTransitive>>> property to
    <<true>>.
 
