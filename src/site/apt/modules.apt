@@ -28,27 +28,31 @@ EAR Modules
 
   The EAR Plugin supports additional configurations of the following modules:
 
-  * {{{#Ejb3Module}Ejb3Module}}
+  * {{{#ejb3Module}ejb3Module}}
 
-  * {{{#EjbClientModule}EjbClientModule}}
+  * {{{#ejbClientModule}ejbClientModule}}
 
-  * {{{#EjbModule}EjbModule}}
+  * {{{#ejbModule}ejbModule}}
 
-  * {{{#JavaModule}JavaModule}}
+  * {{{#javaModule}javaModule}}
 
-  * {{{#ParModule}ParModule}}
+  * {{{#parModule}parModule}}
 
-  * {{{#RarModule}RarModule}}
+  * {{{#rarModule}rarModule}}
 
-  * {{{#SarModule}SarModule}}
+  * {{{#sarModule}sarModule}}
 
-  * {{{#WebModule}WebModule}}
+  * {{{#webModule}webModule}}
 
-  * {{{#WsrModule}WsrModule}}
+  * {{{#wsrModule}wsrModule}}
 
-  * {{{#HarModule}HarModule}}
+  * {{{#harModule}harModule}}
 
   []
+
+  If the artifact you want to configure is not listed above, you can create your
+  own custom artifact configuration by following the
+  {{{#Custom Artifact Types}adding custom artifact types}} guide below this page.
 
   These module names go into the <<<modules>>> parameter of the EAR Plugin. For
   example, to configure the properties of an EjbModule, the EAR Plugin
@@ -65,9 +69,9 @@ EAR Modules
         <artifactId>maven-ear-plugin</artifactId>
         <configuration>
           <modules>
-            <EjbModule>
+            <ejbModule>
               <!-- property configurations goes here -->
-            </EjbModule>
+            </ejbModule>
           </modules>
         </configuration>
       </plugin>
@@ -75,7 +79,7 @@ EAR Modules
 </project>
 +-----
 
-* {Ejb3Module} Properties
+* {ejb3Module} Properties
 
   The following configuration options are available for Ejb3Module:
 
@@ -97,7 +101,7 @@ EAR Modules
   Automatically determined when not set.
 
 
-* {EjbClientModule} Properties
+* {ejbClientModule} Properties
 
   The following configuration options are available for EjbClientModule:
 
@@ -120,7 +124,7 @@ EAR Modules
   Automatically determined when not set.
 
 
-* {EjbModule} Properties
+* {ejbModule} Properties
 
   The following configuration options are available for EjbModule:
 
@@ -143,14 +147,14 @@ EAR Modules
   Automatically determined when not set.
 
 
-* {JavaModule} Properties
+* {javaModule} Properties
 
   The following configuration options are available for JavaModule:
 
-  * <<groupId>> - sets the groupId of the ejb artifact you want to
+  * <<groupId>> - sets the groupId of the java artifact you want to
   configure.
 
-  * <<artifactId>> - sets the artifactId of the ejb artifact you want to
+  * <<artifactId>> - sets the artifactId of the java artifact you want to
   configure.
 
   * <<bundleDir>> - sets the location of this artifact inside the ear archive.
@@ -169,14 +173,14 @@ EAR Modules
   of this module in <<<application.xml>>>. Default is false.
 
 
-* {ParModule} Properties
+* {parModule} Properties
 
   The following configuration options are available for ParModule:
 
-  * <<groupId>> - sets the groupId of the ejb artifact you want to
+  * <<groupId>> - sets the groupId of the par artifact you want to
   configure.
 
-  * <<artifactId>> - sets the artifactId of the ejb artifact you want to
+  * <<artifactId>> - sets the artifactId of the par artifact you want to
   configure.
 
   * <<bundleDir>> - sets the location of this artifact inside the ear archive.
@@ -192,14 +196,14 @@ EAR Modules
   Automatically determined when not set.
 
 
-* {RarModule} Properties
+* {rarModule} Properties
 
   The following configuration options are available for RarModule:
 
-  * <<groupId>> - sets the groupId of the ejb artifact you want to
+  * <<groupId>> - sets the groupId of the rar artifact you want to
   configure.
 
-  * <<artifactId>> - sets the artifactId of the ejb artifact you want to
+  * <<artifactId>> - sets the artifactId of the rar artifact you want to
   configure.
 
   * <<bundleDir>> - sets the location of this artifact inside the ear archive.
@@ -215,14 +219,14 @@ EAR Modules
   Automatically determined when not set.
 
 
-* {SarModule} Properties
+* {sarModule} Properties
 
   The following configuration options are available for SarModule:
 
-  * <<groupId>> - sets the groupId of the ejb artifact you want to
+  * <<groupId>> - sets the groupId of the sar artifact you want to
   configure.
 
-  * <<artifactId>> - sets the artifactId of the ejb artifact you want to
+  * <<artifactId>> - sets the artifactId of the sar artifact you want to
   configure.
 
   * <<bundleDir>> - sets the location of this artifact inside the ear archive.
@@ -238,14 +242,14 @@ EAR Modules
   Automatically determined when not set.
 
 
-* {WebModule} Properties
+* {webModule} Properties
 
   The following configuration options are available for WebModule:
 
-  * <<groupId>> - sets the groupId of the ejb artifact you want to
+  * <<groupId>> - sets the groupId of the web artifact you want to
   configure.
 
-  * <<artifactId>> - sets the artifactId of the ejb artifact you want to
+  * <<artifactId>> - sets the artifactId of the web artifact you want to
   configure.
 
   * <<bundleDir>> - sets the location of this artifact inside the ear archive.
@@ -263,14 +267,14 @@ EAR Modules
   * <<contextRoot>> - sets the context root of this web artifact.
 
 
-* {WsrModule} Properties
+* {wsrModule} Properties
 
   The following configuration options are available for WsrModule:
 
-  * <<groupId>> - sets the groupId of the ejb artifact you want to
+  * <<groupId>> - sets the groupId of the wsr artifact you want to
   configure.
 
-  * <<artifactId>> - sets the artifactId of the ejb artifact you want to
+  * <<artifactId>> - sets the artifactId of the wsr artifact you want to
   configure.
 
   * <<bundleDir>> - sets the location of this artifact inside the ear archive.
@@ -286,7 +290,7 @@ EAR Modules
   Automatically determined when not set.
 
 
-* {HarModule} Properties
+* {harModule} Properties
 
   The following configuration options are available for HarModule:
 
@@ -308,3 +312,26 @@ EAR Modules
   * <<uri>> - sets the uri path of this artifact within the ear archive.
   Automatically determined when not set.
 
+* Adding {Custom Artifact Types}
+
+  If you need to map a custom artifact type to one of those types, use the
+  <<<customArtifactTypeMappings>>>.
+
+  For instance, to map a custom 'my-rar' to the 'rar' standard artifact's type,
+  add the following to the pom's configuration:
+
++--------
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-ear-plugin</artifactId>
+        <configuration>
+          <artifactTypeMappings>
+            <artifactTypeMapping type="my-rar" mapping="rar"/>
+          </artifactTypeMappings>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
++---------
