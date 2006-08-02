@@ -29,16 +29,16 @@
    </faq>
    <faq id="har-files">
      <question>
-       The EAR Plugin throws an exception when encountering artifact files it is unfamiliar with, i.e. JBoss' har files.
-       How does one handle this?
+       The EAR Plugin throws an exception when encountering artifact types it is unfamiliar with. Is this a bug?
      </question>
      <answer>
        <p>
-         Apparently, the EAR Plugin must be able to recognize an artifact in order to configure it. If you know archives
-         which are not supported by the EAR Plugin, please file an issue in
-         <a href="http://jira.codehaus.org/browse/MEAR">jira</a>.
+         The exception can be prevented by adding your custom artifact type to the artifactTypeMappings configuration.
+         There is a mini-guide on how to do that in the <a href="modules.html#Custom Artifact Types">modules
+         configuration</a> section.
        </p>
      </answer>
    </faq>
  </part>
 </faqs>
+
