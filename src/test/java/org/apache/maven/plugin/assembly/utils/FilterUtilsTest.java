@@ -6,6 +6,7 @@ import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.easymock.MockControl;
 
 import java.util.Collections;
@@ -248,7 +249,9 @@ public class FilterUtilsTest
             exclusions = Collections.EMPTY_LIST;
         }
 
-        FilterUtils.filterProjects( projects, inclusions, exclusions, depTrail != null );
+        Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
+        
+        FilterUtils.filterProjects( projects, inclusions, exclusions, depTrail != null, logger );
 
         if ( verifyInclusion )
         {

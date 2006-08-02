@@ -11,6 +11,7 @@ import org.apache.maven.plugins.assembly.model.Component;
 import org.apache.maven.plugins.assembly.model.DependencySet;
 import org.apache.maven.plugins.assembly.model.FileItem;
 import org.apache.maven.plugins.assembly.model.FileSet;
+import org.apache.maven.plugins.assembly.model.Repository;
 import org.apache.maven.plugins.assembly.model.io.xpp3.AssemblyXpp3Reader;
 import org.apache.maven.plugins.assembly.model.io.xpp3.ComponentXpp3Reader;
 import org.apache.maven.project.MavenProject;
@@ -251,23 +252,37 @@ public class DefaultAssemblyReader
     {
         List dependencySetList = component.getDependencySets();
 
-        for ( int i = 0; i < dependencySetList.size(); ++i )
+        for ( Iterator it = dependencySetList.iterator(); it.hasNext(); )
         {
-            assembly.addDependencySet( (DependencySet) dependencySetList.get( i ) );
+            DependencySet dependencySet = ( DependencySet ) it.next();
+            assembly.addDependencySet( dependencySet );
         }
 
         List fileSetList = component.getFileSets();
 
-        for ( int i = 0; i < fileSetList.size(); ++i )
+        for ( Iterator it = fileSetList.iterator(); it.hasNext(); )
         {
-            assembly.addFileSet( (FileSet) fileSetList.get( i ) );
+            FileSet fileSet = ( FileSet ) it.next();
+            
+            assembly.addFileSet( fileSet );
         }
 
         List fileList = component.getFiles();
-
-        for ( int i = 0; i < fileList.size(); ++i )
+        
+        for ( Iterator it = fileList.iterator(); it.hasNext(); )
         {
-            assembly.addFile( (FileItem) fileList.get( i ) );
+            FileItem fileItem = ( FileItem ) it.next();
+            
+            assembly.addFile( fileItem );
+        }
+        
+        List repositoriesList = component.getRepositories();
+        
+        for ( Iterator it = repositoriesList.iterator(); it.hasNext(); )
+        {
+            Repository repository = ( Repository ) it.next();
+            
+            assembly.addRepository( repository );
         }
     }
 

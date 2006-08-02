@@ -13,6 +13,7 @@ import org.codehaus.plexus.logging.Logger;
 import org.easymock.MockControl;
 
 import java.io.File;
+import java.io.IOException;
 
 import junit.framework.TestCase;
 
@@ -23,6 +24,12 @@ public class FileSetAssemblyPhaseTest
     private MockManager mockManager = new MockManager();
     
     private TestFileManager fileManager = new TestFileManager( "file-set-assembly.test.", "" );
+    
+    public void tearDown()
+        throws IOException
+    {
+        fileManager.cleanUp();
+    }
     
     public void testShouldNotFailWhenNoFileSetsSpecified()
         throws ArchiveCreationException, AssemblyFormattingException

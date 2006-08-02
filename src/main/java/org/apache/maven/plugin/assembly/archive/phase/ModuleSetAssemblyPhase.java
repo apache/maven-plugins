@@ -1,5 +1,24 @@
 package org.apache.maven.plugin.assembly.archive.phase;
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
+import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
+import org.apache.maven.plugin.assembly.archive.task.AddArtifactTask;
+import org.apache.maven.plugin.assembly.archive.task.AddFileSetsTask;
+import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
+import org.apache.maven.plugin.assembly.utils.FilterUtils;
+import org.apache.maven.plugin.assembly.utils.ProjectUtils;
+import org.apache.maven.plugins.assembly.model.Assembly;
+import org.apache.maven.plugins.assembly.model.ModuleBinaries;
+import org.apache.maven.plugins.assembly.model.ModuleSet;
+import org.apache.maven.plugins.assembly.model.ModuleSources;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.wagon.PathUtils;
+import org.codehaus.plexus.archiver.Archiver;
+import org.codehaus.plexus.logging.AbstractLogEnabled;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,180 +27,202 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
-import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
-import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
-import org.apache.maven.plugin.assembly.archive.task.AddArtifactTask;
-import org.apache.maven.plugin.assembly.archive.task.AddFileSetsTask;
-import org.apache.maven.plugin.assembly.filter.AssemblyExcludesArtifactFilter;
-import org.apache.maven.plugin.assembly.filter.AssemblyIncludesArtifactFilter;
-import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
-import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
-import org.apache.maven.plugin.assembly.utils.FilterUtils;
-import org.apache.maven.plugin.assembly.utils.ProjectUtils;
-import org.apache.maven.plugins.assembly.model.Assembly;
-import org.apache.maven.plugins.assembly.model.ModuleBinaries;
-import org.apache.maven.plugins.assembly.model.ModuleSet;
-import org.apache.maven.plugins.assembly.model.ModuleSources;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.wagon.PathUtils;
-import org.codehaus.plexus.archiver.Archiver;
-import org.codehaus.plexus.logging.AbstractLogEnabled;
-
 /**
- * @plexus.component role="org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase"
- *                   role-hint="module-sets"
+ * @plexus.component role="org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase" role-hint="module-sets"
  */
 public class ModuleSetAssemblyPhase
     extends AbstractLogEnabled
     implements AssemblyArchiverPhase
 {
 
+    /**
+     * @plexus.requirement
+     */
+    private MavenProjectBuilder projectBuilder;
+    
+    public ModuleSetAssemblyPhase()
+    {
+        // needed for plexus
+    }
+    
+    public ModuleSetAssemblyPhase( MavenProjectBuilder projectBuilder )
+    {
+        this.projectBuilder = projectBuilder;
+    }
+
     public void execute( Assembly assembly, Archiver archiver, AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException
     {
         List moduleSets = assembly.getModuleSets();
-        MavenProject project = configSource.getProject();
+
         boolean includeBaseDirectory = assembly.isIncludeBaseDirectory();
 
         for ( Iterator i = moduleSets.iterator(); i.hasNext(); )
         {
-            ModuleSet moduleSet = (ModuleSet) i.next();
+            ModuleSet moduleSet = ( ModuleSet ) i.next();
 
-            AndArtifactFilter moduleFilter = new AndArtifactFilter();
+            Set moduleProjects = getModuleProjects( moduleSet, configSource );
 
-            if ( !moduleSet.getIncludes().isEmpty() )
+            addModuleSourceFileSets( moduleSet.getSources(), moduleProjects, archiver, configSource,
+                                     includeBaseDirectory );
+
+            addModuleBinaries( moduleSet.getBinaries(), moduleProjects, archiver, configSource, includeBaseDirectory );
+        }
+    }
+
+    protected void addModuleBinaries( ModuleBinaries binaries, Set moduleProjects, Archiver archiver,
+                                      AssemblerConfigurationSource configSource, boolean includeBaseDirectory )
+        throws ArchiveCreationException, AssemblyFormattingException
+    {
+        if ( binaries == null )
+        {
+            return;
+        }
+
+        Set visitedArtifacts = new HashSet();
+        
+        for ( Iterator j = moduleProjects.iterator(); j.hasNext(); )
+        {
+            MavenProject project = ( MavenProject ) j.next();
+            Artifact artifact = project.getArtifact();
+
+            addArtifact( artifact, project, archiver, configSource, binaries, includeBaseDirectory );
+            
+            visitedArtifacts.add( artifact.getDependencyConflictId() );
+        }
+        
+        if ( binaries.isIncludeDependencies() )
+        {
+            // FIXME: This will produce unpredictable results when module dependencies have a version conflict.
+            getLogger().warn( "NOTE: Currently, inclusion of module dependencies may produce unpredictable " +
+                    "results if a version conflict occurs." );
+            
+            for ( Iterator it = moduleProjects.iterator(); it.hasNext(); )
             {
-                moduleFilter.add( new AssemblyIncludesArtifactFilter( moduleSet.getIncludes() ) );
-            }
-            if ( !moduleSet.getExcludes().isEmpty() )
-            {
-                moduleFilter.add( new AssemblyExcludesArtifactFilter( moduleSet.getExcludes() ) );
-            }
+                MavenProject moduleProject = ( MavenProject ) it.next();
 
-            Set allModuleProjects;
-            try
-            {
-                allModuleProjects = ProjectUtils.getProjectModules( project, configSource.getReactorProjects(),
-                                                                    getLogger() );
-            }
-            catch ( IOException e )
-            {
-                throw new ArchiveCreationException( "Error retrieving module-set for project: " + project.getId()
-                    + ": " + e.getMessage(), e );
-            }
+                Set binaryDependencies = moduleProject.getArtifacts();
 
-            Set moduleProjects = new HashSet( allModuleProjects );
+                List includes = binaries.getIncludes();
+                
+                // we don't need to include dependencies which have already been found.
+                List excludes = collectExcludesFromQueuedArtifacts( visitedArtifacts, binaries.getExcludes() );
 
-            FilterUtils.filterProjects( moduleProjects, moduleSet.getIncludes(), moduleSet.getExcludes(), false );
+                FilterUtils.filterArtifacts( binaryDependencies, includes, excludes, true, Collections.EMPTY_LIST,
+                                             getLogger() );
 
-            List moduleFileSets = new ArrayList();
-
-            for ( Iterator j = moduleProjects.iterator(); j.hasNext(); )
-            {
-                MavenProject moduleProject = (MavenProject) j.next();
-
-                ModuleSources sources = moduleSet.getSources();
-                if ( sources != null )
+                for ( Iterator binDepIterator = binaryDependencies.iterator(); binDepIterator.hasNext(); )
                 {
-                    sources.setDirectory( PathUtils.toRelative( moduleProject.getBasedir(), sources.getDirectory() ) );
-
-                    moduleFileSets.add( sources );
-                }
-
-                ModuleBinaries binaries = moduleSet.getBinaries();
-
-                if ( binaries != null )
-                {
-                    Artifact moduleArtifact = moduleProject.getArtifact();
-
-                    if ( moduleArtifact.getFile() == null )
+                    Artifact artifact = ( Artifact ) binDepIterator.next();
+                    MavenProject project;
+                    try
                     {
-                        throw new ArchiveCreationException(
-                                                            "Included module: "
-                                                                + moduleProject.getId()
-                                                                + " does not have an artifact with a file. Please ensure the package phase is run before the assembly is generated." );
+                        project = projectBuilder.buildFromRepository( artifact, configSource.getRemoteRepositories(),
+                                                            configSource.getLocalRepository() );
                     }
-
-                    String fileNameMapping = AssemblyFormatUtils.evaluateFileNameMapping( binaries
-                        .getOutputFileNameMapping(), moduleArtifact );
-
-                    String output = binaries.getOutputDirectory();
-                    output = AssemblyFormatUtils.getOutputDirectory( output, moduleProject,
-                                                                     configSource.getFinalName(), includeBaseDirectory );
-
-                    String outputLocation = output + fileNameMapping;
-
-                    int fileMode = Integer.parseInt( binaries.getFileMode(), 8 );
-                    int dirMode = Integer.parseInt( binaries.getDirectoryMode(), 8 );
-
-                    getLogger().debug(
-                                       "ModuleSet[" + output + "]" + " dir perms: "
-                                           + Integer.toString( archiver.getDefaultDirectoryMode(), 8 )
-                                           + " file perms: " + Integer.toString( archiver.getDefaultFileMode(), 8 ) );
-
-                    AddArtifactTask task = new AddArtifactTask( moduleArtifact, outputLocation );
-
-                    task.setDirectoryMode( dirMode );
-                    task.setFileMode( fileMode );
-                    task.setUnpack( binaries.isUnpack() );
-                    
-                    task.execute( archiver, configSource );
-                    
-                    if ( binaries.isIncludeDependencies() )
+                    catch ( ProjectBuildingException e )
                     {
-                        Set binaryDependencies = moduleProject.getArtifacts();
-
-                        List includes = binaries.getIncludes();
-                        List excludes = binaries.getExcludes();
-
-                        FilterUtils.filterArtifacts( binaryDependencies, includes, excludes, true,
-                                                     Collections.EMPTY_LIST, getLogger() );
-
-                        for ( Iterator binDepIterator = binaryDependencies.iterator(); binDepIterator.hasNext(); )
-                        {
-                            Artifact binaryDependency = (Artifact) binDepIterator.next();
-
-                            String depFileNameMapping = AssemblyFormatUtils.evaluateFileNameMapping( binaries
-                                .getOutputFileNameMapping(), binaryDependency );
-                            
-                            String depOutputLocation = output + depFileNameMapping;
-
-                            AddArtifactTask depTask = new AddArtifactTask( binaryDependency, depOutputLocation );
-
-                            depTask.setDirectoryMode( dirMode );
-                            depTask.setFileMode( fileMode );
-                            depTask.setUnpack( binaries.isUnpack() );
-                            
-                            depTask.execute( archiver, configSource );
-                        }
+                        throw new ArchiveCreationException( "Error retrieving POM of module-dependency: " + artifact.getId()
+                                        + "; Reason: " + e.getMessage(), e );
                     }
-                }
-
-                if ( !moduleFileSets.isEmpty() )
-                {
-                    AddFileSetsTask task = new AddFileSetsTask( moduleFileSets );
                     
-                    task.setLogger( getLogger() );
-                    task.setIncludeBaseDirectory( includeBaseDirectory );
+                    addArtifact( artifact, project, archiver, configSource, binaries, includeBaseDirectory );
                     
-                    task.execute( archiver, configSource );
+                    visitedArtifacts.add( artifact.getDependencyConflictId() );
                 }
-            }
-
-            allModuleProjects.removeAll( moduleProjects );
-
-            for ( Iterator it = allModuleProjects.iterator(); it.hasNext(); )
-            {
-                MavenProject excludedProject = (MavenProject) it.next();
-
-                // would be better to have a way to find out when a specified
-                // include or exclude
-                // is never triggered and warn() it.
-                getLogger().debug( "module: " + excludedProject.getId() + " not included" );
             }
         }
+    }
+
+    protected List collectExcludesFromQueuedArtifacts( Set visitedArtifacts, List binaryExcludes )
+    {
+        List excludes = binaryExcludes;
+        
+        if ( excludes == null )
+        {
+            excludes = new ArrayList();
+        }
+        else
+        {
+            excludes = new ArrayList( excludes );
+        }
+        
+        for ( Iterator it = visitedArtifacts.iterator(); it.hasNext(); )
+        {
+            excludes.add( it.next() );
+        }
+        
+        return excludes;
+    }
+
+    protected void addArtifact( Artifact artifact, MavenProject project, Archiver archiver,
+                              AssemblerConfigurationSource configSource, ModuleBinaries binaries, boolean includeBaseDirectory )
+        throws ArchiveCreationException, AssemblyFormattingException
+    {
+        if ( artifact.getFile() == null )
+        {
+            throw new ArchiveCreationException( "Artifact: " + artifact.getId()
+                            + " (included by module) does not have an artifact with a file. "
+                            + "Please ensure the package phase is run before the assembly is generated." );
+        }
+
+        AddArtifactTask task = new AddArtifactTask( artifact );
+
+        task.setFileNameMapping( binaries.getOutputFileNameMapping() );
+        task.setIncludeBaseDirectory( includeBaseDirectory );
+        task.setOutputDirectory( binaries.getOutputDirectory() );
+        task.setProject( project );
+        task.setDirectoryMode( binaries.getDirectoryMode() );
+        task.setFileMode( binaries.getFileMode() );
+        task.setUnpack( binaries.isUnpack() );
+
+        task.execute( archiver, configSource );
+    }
+
+    protected void addModuleSourceFileSets( ModuleSources sources, Set moduleProjects, Archiver archiver,
+                                            AssemblerConfigurationSource configSource, boolean includeBaseDirectory )
+        throws ArchiveCreationException, AssemblyFormattingException
+    {
+        if ( sources == null )
+        {
+            return;
+        }
+
+        for ( Iterator j = moduleProjects.iterator(); j.hasNext(); )
+        {
+            MavenProject moduleProject = ( MavenProject ) j.next();
+
+            sources.setDirectory( PathUtils.toRelative( moduleProject.getBasedir(), sources.getDirectory() ) );
+
+            AddFileSetsTask task = new AddFileSetsTask( Collections.singletonList( sources ) );
+
+            task.setProject( moduleProject );
+            task.setLogger( getLogger() );
+            task.setIncludeBaseDirectory( includeBaseDirectory );
+
+            task.execute( archiver, configSource );
+        }
+    }
+
+    protected Set getModuleProjects( ModuleSet moduleSet, AssemblerConfigurationSource configSource )
+        throws ArchiveCreationException
+    {
+        MavenProject project = configSource.getProject();
+
+        Set moduleProjects;
+        try
+        {
+            moduleProjects = ProjectUtils.getProjectModules( project, configSource.getReactorProjects(), getLogger() );
+        }
+        catch ( IOException e )
+        {
+            throw new ArchiveCreationException( "Error retrieving module-set for project: " + project.getId() + ": "
+                            + e.getMessage(), e );
+        }
+
+        FilterUtils.filterProjects( moduleProjects, moduleSet.getIncludes(), moduleSet.getExcludes(), true,
+                                    getLogger() );
+        return moduleProjects;
     }
 
 }

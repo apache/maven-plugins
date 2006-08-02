@@ -23,11 +23,18 @@ public class AssemblyFileUtilsTest
     extends TestCase
 {
 
+    private TestFileManager fileManager = new TestFileManager( "file-utils.test.", "" );
+    
+    public void tearDown()
+        throws IOException
+    {
+        fileManager.cleanUp();
+    }
+    
     public void testUnpack_ShouldSetSourceAndDestinationAndCallExtract()
         throws IOException, ArchiveExpansionException, NoSuchArchiverException
     {
         MockManager mockManager = new MockManager();
-        TestFileManager fileManager = new TestFileManager( "file-utils.unpack.test.", "" );
         
         File source = fileManager.createTempFile();
         File destDir = fileManager.createTempDir();

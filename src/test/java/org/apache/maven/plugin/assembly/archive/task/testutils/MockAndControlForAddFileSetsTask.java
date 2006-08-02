@@ -40,15 +40,16 @@ public class MockAndControlForAddFileSetsTask
         mockManager.add( archiverCtl );
 
         archiver = ( Archiver ) archiverCtl.getMock();
-        
-        archiveBaseDir = fileManager.createTempDir();    }
+
+        archiveBaseDir = fileManager.createTempDir();
+    }
 
     public void expectGetArchiveBaseDirectory()
     {
         configSource.getArchiveBaseDirectory();
         configSourceCtl.setReturnValue( archiveBaseDir, MockControl.ONE_OR_MORE );
     }
-    
+
     public void expectGetBasedir( File basedir )
     {
         configSource.getBasedir();
@@ -75,10 +76,19 @@ public class MockAndControlForAddFileSetsTask
         archiver.setDefaultDirectoryMode( modes[0] );
         archiver.setDefaultFileMode( modes[1] );
     }
-    
+
     public void expectAdditionOfSingleFileSet( MavenProject project, File basedir, String finalName,
-                                              boolean shouldAddDir, int[] modes, int modeChangeCount,
-                                              boolean isDebugEnabled )
+                                               boolean shouldAddDir, int[] modes, int modeChangeCount,
+                                               boolean isDebugEnabled )
+    {
+        expectAdditionOfSingleFileSet( project, basedir, finalName, shouldAddDir, modes, modeChangeCount,
+                                       isDebugEnabled, true );
+
+    }
+
+    public void expectAdditionOfSingleFileSet( MavenProject project, File basedir, String finalName,
+                                               boolean shouldAddDir, int[] modes, int modeChangeCount,
+                                               boolean isDebugEnabled, boolean isProjectUsed )
     {
         // the logger sends a debug message with this info inside the addFileSet(..) method..
         if ( isDebugEnabled )
@@ -90,8 +100,11 @@ public class MockAndControlForAddFileSetsTask
             archiverCtl.setReturnValue( modes[1] );
         }
 
-        configSource.getProject();
-        configSourceCtl.setReturnValue( project, MockControl.ONE_OR_MORE );
+        if ( isProjectUsed )
+        {
+            configSource.getProject();
+            configSourceCtl.setReturnValue( project, MockControl.ONE_OR_MORE );
+        }
 
         configSource.getBasedir();
         configSourceCtl.setReturnValue( basedir, MockControl.ONE_OR_MORE );

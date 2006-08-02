@@ -53,4 +53,6 @@ public interface AssemblerConfigurationSource
 
     List getReactorProjects();
 
+    List getRemoteRepositories();
+
 }

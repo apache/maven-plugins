@@ -528,6 +528,17 @@
             <multiplicity>*</multiplicity>
           </association>
         </field>
+        <field>
+          <name>scope</name>
+          <version>1.0.0</version>              
+          <type>String</type>
+          <defaultValue>runtime</defaultValue>
+          <required>true</required>
+          <description>
+            Specifies the scope for artifacts included in this repository.
+            Default scope value is "runtime".
+          </description>
+        </field>
       </fields>
     </class>
     <class>

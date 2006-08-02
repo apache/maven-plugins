@@ -48,14 +48,21 @@ public abstract class AbstractAssemblyMojo
 {
 
     /**
-     * @parameter expression="${localRepository}"
+     * @parameter default-value="${localRepository}"
      */
     private ArtifactRepository localRepository;
 
     /**
+     * @parameter default-value="${project.remoteArtifactRepositories}"
+     * @required
+     * @readonly
+     */
+    private List remoteRepositories;
+    
+    /**
      * Contains the full list of projects in the reactor.
      *
-     * @parameter expression="${reactorProjects}"
+     * @parameter default-value="${reactorProjects}"
      * @required
      * @readonly
      */
@@ -64,7 +71,7 @@ public abstract class AbstractAssemblyMojo
     /**
      * The output directory of the assembled distribution file.
      *
-     * @parameter expression="${project.build.directory}"
+     * @parameter default-value="${project.build.directory}"
      * @required
      */
     private File outputDirectory;
@@ -72,7 +79,7 @@ public abstract class AbstractAssemblyMojo
     /**
      * The filename of the assembled distribution file.
      *
-     * @parameter expression="${project.build.finalName}"
+     * @parameter default-value="${project.build.finalName}"
      * @required
      */
     private String finalName;
@@ -80,7 +87,7 @@ public abstract class AbstractAssemblyMojo
     /**
      * Directory to unpack JARs into if needed
      *
-     * @parameter expression="${project.build.directory}/assembly/work"
+     * @parameter default-value="${project.build.directory}/assembly/work"
      * @required
      */
     private File workDirectory;
@@ -153,7 +160,7 @@ public abstract class AbstractAssemblyMojo
     /**
      * Base directory of the project.
      *
-     * @parameter expression="${basedir}"
+     * @parameter default-value="${basedir}"
      * @required
      * @readonly
      */
@@ -169,7 +176,7 @@ public abstract class AbstractAssemblyMojo
     /**
      * Temporary directory that contain the files to be assembled.
      *
-     * @parameter expression="${project.build.directory}/archive-tmp"
+     * @parameter default-value="${project.build.directory}/archive-tmp"
      * @required
      * @readonly
      */
@@ -178,7 +185,7 @@ public abstract class AbstractAssemblyMojo
     /**
      * Directory for site generated.
      *
-     * @parameter expression="${project.build.directory}/site"
+     * @parameter default-value="${project.build.directory}/site"
      * @readonly
      */
     private File siteDirectory;
@@ -207,7 +214,8 @@ public abstract class AbstractAssemblyMojo
     private MavenArchiveConfiguration archive;
 
     /**
-     * @parameter expression="${project.build.filters}"
+     * @parameter default-value="${project.build.filters}"
+     * @readonly
      */
     protected List filters;
 
@@ -519,6 +527,11 @@ public abstract class AbstractAssemblyMojo
     public void setWorkDirectory( File workDirectory )
     {
         this.workDirectory = workDirectory;
+    }
+    
+    public List getRemoteRepositories()
+    {
+        return remoteRepositories;
     }
     
 }

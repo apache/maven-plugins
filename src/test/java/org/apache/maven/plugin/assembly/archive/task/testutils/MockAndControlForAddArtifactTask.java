@@ -2,6 +2,7 @@ package org.apache.maven.plugin.assembly.archive.task.testutils;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
@@ -25,23 +26,66 @@ public class MockAndControlForAddArtifactTask
 
     public MockControl archiverCtl;
     
+    public AssemblerConfigurationSource configSource;
+    
+    public MockControl configSourceCtl;
+    
+    public ArtifactHandler artifactHandler;
+    
+    public MockControl artifactHandlerCtl;
+    
     public MockAndControlForAddArtifactTask( MockManager mockManager )
-        throws IOException
     {
         artifactCtl = MockControl.createControl( Artifact.class );
         mockManager.add( artifactCtl );
 
         artifact = ( Artifact ) artifactCtl.getMock();
         
+        artifactHandlerCtl = MockControl.createControl( ArtifactHandler.class );
+        mockManager.add( artifactHandlerCtl );
+        
+        artifactHandler = (ArtifactHandler) artifactHandlerCtl.getMock();
+        
         archiverCtl = MockControl.createControl( Archiver.class );
         mockManager.add( archiverCtl );
 
         archiver = (Archiver) archiverCtl.getMock();
+        
+        configSourceCtl = MockControl.createControl( AssemblerConfigurationSource.class );
+        mockManager.add( configSourceCtl );
+        
+        configSource = (AssemblerConfigurationSource) configSourceCtl.getMock();
     }
-
+    
+    public void expectGetArtifactHandler()
+    {
+        artifact.getArtifactHandler();
+        artifactCtl.setReturnValue( artifactHandler, MockControl.ONE_OR_MORE );
+    }
+    
+    public void expectGetClassifier( String classifier )
+    {
+        artifact.getClassifier();
+        artifactCtl.setReturnValue( classifier, MockControl.ONE_OR_MORE );
+    }
+    
+    public void expectGetFinalName( String finalName )
+    {
+        configSource.getFinalName();
+        configSourceCtl.setReturnValue( finalName, MockControl.ONE_OR_MORE );
+    }
+    
     public void expectArtifactGetFile() throws IOException
     {
-        artifactFile = File.createTempFile( "add-artifact-task.test.", ".jar" );
+        expectArtifactGetFile( true );
+    }
+
+    public void expectArtifactGetFile( boolean createTempFile ) throws IOException
+    {
+        if ( createTempFile )
+        {
+            artifactFile = File.createTempFile( "add-artifact-task.test.", ".jar" );
+        }
 
         artifact.getFile();
         
@@ -117,18 +161,6 @@ public class MockAndControlForAddArtifactTask
         }
     }
     
-    public void expectArtifactGetArtifactHandler( ArtifactHandler artifactHandler )
-    {
-        artifact.getArtifactHandler();
-        artifactCtl.setReturnValue( artifactHandler, MockControl.ONE_OR_MORE );
-    }
-
-    public void expectArtifactGetClassifier( String classifier )
-    {
-        artifact.getClassifier();
-        artifactCtl.setReturnValue( classifier, MockControl.ONE_OR_MORE );
-    }
-
     public void expectArtifactGetScope( String scope )
     {
         artifact.getScope();

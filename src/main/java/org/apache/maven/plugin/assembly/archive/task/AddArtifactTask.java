@@ -6,7 +6,10 @@ import java.util.List;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
+import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
+import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 
@@ -24,19 +27,33 @@ public class AddArtifactTask
 
     private List excludes;
 
-    private final String outputLocation;
-
     private final Artifact artifact;
 
-    public AddArtifactTask( Artifact artifact, String outputLocation )
+    private MavenProject project;
+
+    private String outputDirectory;
+
+    private String outputFileNameMapping;
+
+    private boolean includeBaseDirectory;
+
+    public AddArtifactTask( Artifact artifact )
     {
         this.artifact = artifact;
-        this.outputLocation = outputLocation;
     }
 
     public void execute( Archiver archiver, AssemblerConfigurationSource configSource )
-        throws ArchiveCreationException
+        throws ArchiveCreationException, AssemblyFormattingException
     {
+        String destDirectory = outputDirectory;
+
+        destDirectory = AssemblyFormatUtils.getOutputDirectory( destDirectory, project, configSource.getFinalName(),
+                                                                includeBaseDirectory );
+
+        String fileNameMapping = AssemblyFormatUtils.evaluateFileNameMapping( outputFileNameMapping, artifact );
+
+        String outputLocation = destDirectory + fileNameMapping;
+
         if ( unpack )
         {
             String[] includesArray = TypeConversionUtils.toStringArray( includes );
@@ -93,9 +110,9 @@ public class AddArtifactTask
         }
     }
 
-    public void setDirectoryMode( int directoryMode )
+    public void setDirectoryMode( String rawDirectoryMode )
     {
-        this.directoryMode = directoryMode;
+        this.directoryMode = Integer.parseInt( rawDirectoryMode, 8 );
     }
 
     public void setExcludes( List excludes )
@@ -103,9 +120,9 @@ public class AddArtifactTask
         this.excludes = excludes;
     }
 
-    public void setFileMode( int fileMode )
+    public void setFileMode( String rawFileMode )
     {
-        this.fileMode = fileMode;
+        this.fileMode = Integer.parseInt( rawFileMode, 8 );
     }
 
     public void setIncludes( List includes )
@@ -116,6 +133,26 @@ public class AddArtifactTask
     public void setUnpack( boolean unpack )
     {
         this.unpack = unpack;
+    }
+
+    public void setProject( MavenProject project )
+    {
+        this.project = project;
+    }
+
+    public void setOutputDirectory( String outputDirectory )
+    {
+        this.outputDirectory = outputDirectory;
+    }
+
+    public void setFileNameMapping( String outputFileNameMapping )
+    {
+        this.outputFileNameMapping = outputFileNameMapping;
+    }
+
+    public void setIncludeBaseDirectory( boolean includeBaseDirectory )
+    {
+        this.includeBaseDirectory = includeBaseDirectory;
     }
 
 }

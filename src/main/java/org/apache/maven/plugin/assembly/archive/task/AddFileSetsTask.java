@@ -26,6 +26,8 @@ public class AddFileSetsTask
 
     private Logger logger;
 
+    private MavenProject project;
+
     public AddFileSetsTask( List fileSets )
     {
         this.fileSets = fileSets;
@@ -73,7 +75,11 @@ public class AddFileSetsTask
         FileSetFormatter fileSetFormatter = new FileSetFormatter( configSource, logger );
 
         File basedir = configSource.getBasedir();
-        MavenProject project = configSource.getProject();
+        
+        if ( project == null )
+        {
+            project = configSource.getProject();
+        }
 
         String destDirectory = fileSet.getOutputDirectory();
 
@@ -168,6 +174,11 @@ public class AddFileSetsTask
     public void setIncludeBaseDirectory( boolean includeBaseDirectory )
     {
         this.includeBaseDirectory = includeBaseDirectory;
+    }
+
+    public void setProject( MavenProject project )
+    {
+        this.project = project;
     }
 
 }

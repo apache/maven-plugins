@@ -76,7 +76,7 @@ public class FileItemAssemblyPhase
 
             try
             {
-                archiver.addFile( source, target, Integer.parseInt( fileItem.getFileMode() ) );
+                archiver.addFile( source, target, Integer.parseInt( fileItem.getFileMode(), 8 ) );
             }
             catch ( ArchiverException e )
             {

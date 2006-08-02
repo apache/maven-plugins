@@ -16,23 +16,6 @@ package org.apache.maven.plugin.assembly.repository;
  * limitations under the License.
  */
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
-import java.lang.reflect.Field;
-import java.security.NoSuchAlgorithmException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TimeZone;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
@@ -57,7 +40,6 @@ import org.apache.maven.plugin.assembly.filter.AssemblyIncludesArtifactFilter;
 import org.apache.maven.plugin.assembly.utils.DigestUtils;
 import org.apache.maven.plugins.assembly.model.GroupVersionAlignment;
 import org.apache.maven.plugins.assembly.model.Repository;
-import org.apache.maven.plugins.assembly.model.SetBase;
 import org.apache.maven.project.DefaultMavenProjectBuilder;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
@@ -65,6 +47,23 @@ import org.apache.maven.project.ProjectBuildingException;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.lang.reflect.Field;
+import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TimeZone;
 
 /**
  * @author Jason van Zyl
@@ -151,11 +150,11 @@ public class DefaultRepositoryAssembler
         }
     }
 
-    private ArtifactFilter buildRepositoryFilter(SetBase repository, MavenProject project)
+    private ArtifactFilter buildRepositoryFilter(Repository repository, MavenProject project)
     {
         AndArtifactFilter filter = new AndArtifactFilter();
 
-        ArtifactFilter scopeFilter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
+        ArtifactFilter scopeFilter = new ScopeArtifactFilter( repository.getScope() );
         filter.add( scopeFilter );
 
         // ----------------------------------------------------------------------------

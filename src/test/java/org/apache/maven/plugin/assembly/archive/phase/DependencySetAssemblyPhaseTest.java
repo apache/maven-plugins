@@ -1,7 +1,6 @@
 package org.apache.maven.plugin.assembly.archive.phase;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
@@ -50,12 +49,11 @@ public class DependencySetAssemblyPhaseTest
         assembly.addDependencySet( ds );
         
         MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mockManager );
-        MockAndControlForArtifactHandler macHandler = new MockAndControlForArtifactHandler();
 
         macTask.expectArtifactGetFile();
         macTask.expectArtifactGetScope( Artifact.SCOPE_COMPILE );
-        macTask.expectArtifactGetClassifier( null );
-        macTask.expectArtifactGetArtifactHandler( macHandler.handler );
+        macTask.expectGetClassifier( null );
+        macTask.expectGetArtifactHandler();
 
         macTask.expectAddFile( outputLocation + "/artifact", 8 );
 
@@ -102,7 +100,6 @@ public class DependencySetAssemblyPhaseTest
         MockAndControlForConfigSource macCS = new MockAndControlForConfigSource();
 
         macCS.enableGetProject( project );
-        macCS.enableGetFinalName( "final-name" );
 
         DependencySet ds = new DependencySet();
         ds.setOutputDirectory( "/out" );
@@ -145,12 +142,11 @@ public class DependencySetAssemblyPhaseTest
         ds.setFileMode( Integer.toString( 8, 8 ) );
 
         MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mockManager );
-        MockAndControlForArtifactHandler macHandler = new MockAndControlForArtifactHandler();
 
         macTask.expectArtifactGetFile();
         macTask.expectArtifactGetScope( Artifact.SCOPE_COMPILE );
-        macTask.expectArtifactGetClassifier( null );
-        macTask.expectArtifactGetArtifactHandler( macHandler.handler );
+        macTask.expectGetClassifier( null );
+        macTask.expectGetArtifactHandler();
 
         if ( unpack )
         {
@@ -357,21 +353,6 @@ public class DependencySetAssemblyPhaseTest
         {
             logger.info( message );
             control.setVoidCallable( MockControl.ONE_OR_MORE );
-        }
-    }
-
-    private final class MockAndControlForArtifactHandler
-    {
-        ArtifactHandler handler;
-
-        MockControl control;
-
-        MockAndControlForArtifactHandler()
-        {
-            control = MockControl.createControl( ArtifactHandler.class );
-            mockManager.add( control );
-
-            handler = ( ArtifactHandler ) control.getMock();
         }
     }
 

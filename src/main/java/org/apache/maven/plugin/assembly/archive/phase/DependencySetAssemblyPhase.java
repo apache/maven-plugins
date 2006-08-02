@@ -1,24 +1,23 @@
 package org.apache.maven.plugin.assembly.archive.phase;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.task.AddArtifactTask;
 import org.apache.maven.plugin.assembly.filter.AssemblyScopeArtifactFilter;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
-import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.apache.maven.plugin.assembly.utils.FilterUtils;
 import org.apache.maven.plugins.assembly.model.Assembly;
 import org.apache.maven.plugins.assembly.model.DependencySet;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @plexus.component role="org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase"
@@ -49,11 +48,6 @@ public class DependencySetAssemblyPhase
     {
         MavenProject project = configSource.getProject();
 
-        String destDirectory = dependencySet.getOutputDirectory();
-
-        destDirectory = AssemblyFormatUtils.getOutputDirectory( destDirectory, project, configSource.getFinalName(),
-                                                                includeBaseDirectory );
-
         getLogger().info( "Processing DependencySet" );
 
         Set dependencyArtifacts = getDependencyArtifacts( project, dependencySet );
@@ -62,18 +56,14 @@ public class DependencySetAssemblyPhase
         {
             Artifact artifact = (Artifact) j.next();
 
-            String fileNameMapping = AssemblyFormatUtils.evaluateFileNameMapping( dependencySet
-                .getOutputFileNameMapping(), artifact );
+            AddArtifactTask task = new AddArtifactTask( artifact );
 
-            String outputLocation = destDirectory + fileNameMapping;
-
-            AddArtifactTask task = new AddArtifactTask( artifact, outputLocation );
-
-            int dirMode = Integer.parseInt( dependencySet.getDirectoryMode(), 8 );
-            int fileMode = Integer.parseInt( dependencySet.getFileMode(), 8 );
-
-            task.setDirectoryMode( dirMode );
-            task.setFileMode( fileMode );
+            task.setProject( project );
+            task.setOutputDirectory( dependencySet.getOutputDirectory() );
+            task.setFileNameMapping( dependencySet.getOutputFileNameMapping() );
+            task.setIncludeBaseDirectory( includeBaseDirectory );
+            task.setDirectoryMode( dependencySet.getDirectoryMode() );
+            task.setFileMode( dependencySet.getFileMode() );
             task.setUnpack( dependencySet.isUnpack() );
 
             task.execute( archiver, configSource );

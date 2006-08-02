@@ -11,6 +11,7 @@ import org.apache.maven.plugins.assembly.model.Component;
 import org.apache.maven.plugins.assembly.model.DependencySet;
 import org.apache.maven.plugins.assembly.model.FileItem;
 import org.apache.maven.plugins.assembly.model.FileSet;
+import org.apache.maven.plugins.assembly.model.Repository;
 import org.apache.maven.plugins.assembly.model.io.xpp3.AssemblyXpp3Writer;
 import org.apache.maven.plugins.assembly.model.io.xpp3.ComponentXpp3Writer;
 import org.apache.maven.project.MavenProject;
@@ -296,6 +297,39 @@ public class DefaultAssemblyReaderTest
         assertEquals( Artifact.SCOPE_RUNTIME, ((DependencySet) depSets.get( 0 )).getScope() );
         assertEquals( Artifact.SCOPE_COMPILE, ((DependencySet) depSets.get( 1 )).getScope() );
         assertEquals( Artifact.SCOPE_SYSTEM, ((DependencySet) depSets.get( 2 )).getScope() );
+    }
+
+    public void testMergeComponentWithAssembly_ShouldAddOneRepositoryToExistingListOfTwo()
+    {
+        Assembly assembly = new Assembly();
+
+        Repository repo = new Repository();
+        repo.setScope( Artifact.SCOPE_RUNTIME );
+
+        assembly.addRepository( repo );
+
+        repo = new Repository();
+        repo.setScope( Artifact.SCOPE_COMPILE );
+
+        assembly.addRepository( repo );
+
+        Component component = new Component();
+
+        repo = new Repository();
+        repo.setScope( Artifact.SCOPE_SYSTEM );
+
+        component.addRepository( repo );
+
+        new DefaultAssemblyReader().mergeComponentWithAssembly( component, assembly );
+
+        List depSets = assembly.getRepositories();
+
+        assertNotNull( depSets );
+        assertEquals( 3, depSets.size() );
+
+        assertEquals( Artifact.SCOPE_RUNTIME, ((Repository) depSets.get( 0 )).getScope() );
+        assertEquals( Artifact.SCOPE_COMPILE, ((Repository) depSets.get( 1 )).getScope() );
+        assertEquals( Artifact.SCOPE_SYSTEM, ((Repository) depSets.get( 2 )).getScope() );
     }
 
     // FIXME: Deep merging should take place...

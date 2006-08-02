@@ -21,17 +21,28 @@ public final class FilterUtils
     {
     }
 
-    public static void filterProjects( Set projects, List includes, List excludes, boolean actTransitively )
+    public static void filterProjects( Set projects, List includes, List excludes, boolean actTransitively,
+                                       Logger logger )
     {
+        List allFilters = new ArrayList();
+        
         AndArtifactFilter filter = new AndArtifactFilter();
 
         if ( !includes.isEmpty() )
         {
-            filter.add( new AssemblyIncludesArtifactFilter( includes, actTransitively ) );
+            AssemblyIncludesArtifactFilter includeFilter =
+                new AssemblyIncludesArtifactFilter( includes, actTransitively );
+            
+            filter.add( includeFilter );
+            allFilters.add( includeFilter );
         }
         if ( !excludes.isEmpty() )
         {
-            filter.add( new AssemblyExcludesArtifactFilter( excludes, actTransitively ) );
+            AssemblyExcludesArtifactFilter excludeFilter =
+                new AssemblyExcludesArtifactFilter( excludes, actTransitively );
+                
+            filter.add( excludeFilter );
+            allFilters.add( excludeFilter );
         }
 
         for ( Iterator it = projects.iterator(); it.hasNext(); )
@@ -42,6 +53,16 @@ public final class FilterUtils
             if ( !filter.include( artifact ) )
             {
                 it.remove();
+            }
+        }
+        
+        for ( Iterator it = allFilters.iterator(); it.hasNext(); )
+        {
+            ArtifactFilter f = (ArtifactFilter) it.next();
+            
+            if ( f instanceof StatisticsReportingFilter )
+            {
+                ((StatisticsReportingFilter) f).reportMissedCriteria( logger );
             }
         }
     }
