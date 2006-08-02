@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+
+<!--
+  ~ Copyright 2006 The Apache Software Foundation.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<faqs id="FAQ" title="Frequently Asked Questions">
+  <part id="General">
+    <faq id="What is the difference between the Changelog plugin and the Changes plugin">
+      <question>What is the difference between the Changelog plugin and the Changes plugin?</question>
+      <answer>
+        <p>
+        The Changelog plugin generates reports based on the changes in the Software Configuration Management or SCM while
+        the Changes plugin generates reports either from a changes.xml file or from the JIRA issue management system.
+        For more information about the changes plugin, see
+        <a href="http://maven.apache.org/plugins/maven-changes-plugin/">http://maven.apache.org/plugins/maven-changes-plugin</a>
+        </p>
+      </answer>
+    </faq>
+    <faq id="What is Software Configuration Management or SCM">
+      <question>What is Software Configuration Management or SCM?</question>
+      <answer>
+        <p>
+        According to Roger Pressman (in his book) Software Engineering: A Practitioner's Approach, SCM is a "set of activities
+        designed to control change by identifying the work products that are likely to change, establishing relationships among
+        them, defining mechanisms for managing different versions of these work products, controlling the changes imposed, and
+        auditing and reporting on the changes made."
+        </p>
+      </answer>
+    </faq>
+  </part>
+</faqs>

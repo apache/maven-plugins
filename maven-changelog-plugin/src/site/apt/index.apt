@@ -1,0 +1,63 @@
+ ------
+ Introduction
+ ------
+ Maria Odea Ching
+ ------
+ 31 July 2006
+ ------
+
+ ~~ Copyright 2006 The Apache Software Foundation.
+ ~~
+ ~~ Licensed under the Apache License, Version 2.0 (the "License");
+ ~~ you may not use this file except in compliance with the License.
+ ~~ You may obtain a copy of the License at
+ ~~
+ ~~      http://www.apache.org/licenses/LICENSE-2.0
+ ~~
+ ~~ Unless required by applicable law or agreed to in writing, software
+ ~~ distributed under the License is distributed on an "AS IS" BASIS,
+ ~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ~~ See the License for the specific language governing permissions and
+ ~~ limitations under the License.
+
+ ~~ NOTE: For help with the syntax of this file, see:
+ ~~ http://maven.apache.org/guides/mini/guide-apt-format.html
+
+
+Maven Changelog Plugin
+
+ The Maven Changelog Plugin generates reports regarding the recent changes in your Software Configuration Management or SCM.
+ These reports include the changelog report, developer activity report and the file activity report.
+
+* Goals Overview
+
+   The Changelog Plugin has three goals:
+
+   * {{{changelog-mojo.html}changelog:changelog}} generates the changelog report. The changelog report shows all the SCM activities
+     including the dates, files, and author of the revisions that occurred during the specified change sets.
+
+   * {{{dev-activity-mojo.html}changelog:dev-activity}} generates the developer activity report. The dev-activity report shows a
+     summary of the total commits, and the number of files changed of each developer listed in the project descriptor.
+
+   * {{{file-activity-mojo.html}changelog:file-activity}} generates the file activity report. The file-activity report lists all
+     files that we're revised during the specified change set.  It is arranged in a way where the file with the most number of revisions is listed first.
+
+* Usage
+
+   Instructions on how to use the Changelog Plugin can be found {{{usage.html}here}}.
+
+* Examples
+
+   The following examples show how to use the Changelog Plugin in more advanced use-cases:
+
+   * {{{examples/configuration-date-type.html}Using Date Type}}
+
+   * {{{examples/configuration-range-type.html}Using Range Type}}
+
+   * {{{examples/configuration-tag-type.html}Using Tag Type}}
+
+
+
+
+
+
