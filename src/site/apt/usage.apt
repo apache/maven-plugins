@@ -1,0 +1,82 @@
+ ------
+ Usage
+ ------
+ 31 July 2006
+ ------
+
+ ~~ Copyright 2006 The Apache Software Foundation.
+ ~~
+ ~~ Licensed under the Apache License, Version 2.0 (the "License");
+ ~~ you may not use this file except in compliance with the License.
+ ~~ You may obtain a copy of the License at
+ ~~
+ ~~      http://www.apache.org/licenses/LICENSE-2.0
+ ~~
+ ~~ Unless required by applicable law or agreed to in writing, software
+ ~~ distributed under the License is distributed on an "AS IS" BASIS,
+ ~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ~~ See the License for the specific language governing permissions and
+ ~~ limitations under the License.
+
+ ~~ NOTE: For help with the syntax of this file, see:
+ ~~ http://maven.apache.org/guides/mini/guide-apt-format.html
+
+
+Usage
+
+ The reports may use either range, date, or tag as basis in generating the reports. Only one can be set. The change sets then
+ can be configured by setting the correct parameter depending on the type chosen.  If <<<type>>> "date" is chosen, then the parameter
+ <<<date>>> should contain the values of the set ranges.  This goes for "range" and "tag" types as well.
+
+ To generate the changelog reports, just add the following in your project's pom:
+
++-----+
+<project>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>changelog-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
+  ...
+</project>
++-----+
+
+ Aside from the required plugin configuration parameters needed to generate the reports, all reports will refer to the scm
+ elements inside the project descriptor for other details regarding the connection to the project's scm. An example of the
+ scm element inside the pom.xml is as follows:
+
+-------------------
+<project>
+  ...
+    <scm>
+      <connection>scm:svn:http://server/path/to/project/trunk</connection>
+      <developerConnection>scm:svn:https://path/to/project/trunk</developerConnection>
+      <url>scm:svn:http://server/path/to/view/trunk</url>
+    </scm>
+  ...
+</project>
+-------------------
+
+ Please refer to the Maven project descriptor for the description of the scm elements. It can be found
+ {{{http://maven.apache.org/ref/current/maven-model/maven.html}here}}.
+
+ When you execute <<<mvn site>>>, you will see that the changelog, dev-activity and file-activity reports are included in
+ the generated site.
+
+ Sample Changelog report:
+
+[images/sample-changelog-report.PNG] Sample Changelog Report
+
+
+ Sample Developer Activity report:
+
+[images/sample-dev-activity-report.PNG] Sample Developer Activity Report
+
+
+ Sample File Activity report:
+
+[images/sample-file-activity-report.PNG] Sample File Activity Report
