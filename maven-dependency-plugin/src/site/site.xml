@@ -29,7 +29,7 @@
   </bannerRight>
   <body>
     <links>
-      <item name="Maven 2" href="http://maven.apache.org/maven2/"/>
+      <item name="Maven" href="http://maven.apache.org/maven2/"/>
     </links>
 
     <menu name="Overview">
@@ -43,6 +43,9 @@
       <item name="Copying Direct Dependencies" href="examples/copy-direct-dependencies.html" />
       <item name="Unpacking the Copied Specific Artifacts" href="examples/copying-unpacking.html" />
       <item name="Unpacking the Copied Direct Dependencies" href="examples/copying-unpacking-direct-dependencies.html" />
+    </menu>
+    <menu name="Resources">
+      <item name="Dependency Mechanism" href="http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html" />
     </menu>
     ${reports}
   </body>
