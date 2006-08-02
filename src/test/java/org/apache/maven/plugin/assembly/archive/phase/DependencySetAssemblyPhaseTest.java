@@ -347,6 +347,13 @@ public class DependencySetAssemblyPhaseTest
             mockManager.add( control );
 
             logger = ( Logger ) control.getMock();
+            
+            logger.isDebugEnabled();
+            control.setReturnValue( true, MockControl.ZERO_OR_MORE );
+            
+            logger.debug( null );
+            control.setMatcher( MockControl.ALWAYS_MATCHER );
+            control.setVoidCallable( MockControl.ZERO_OR_MORE );
         }
 
         void expectInfo( String message )

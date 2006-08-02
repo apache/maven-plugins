@@ -27,8 +27,7 @@ import org.codehaus.plexus.archiver.war.WarArchiver;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 
 /**
- * @plexus.component role="org.apache.maven.plugin.assembly.archive.ArchiveCreator"
- *                   role-hint="default"
+ * @plexus.component role="org.apache.maven.plugin.assembly.archive.ArchiveCreator" role-hint="default"
  */
 public class DefaultAssemblyArchiver
     extends AbstractLogEnabled
@@ -36,7 +35,7 @@ public class DefaultAssemblyArchiver
 {
 
     private static final ArchiveFileFilter JAR_SECURITY_FILE_FILTER = new JarSecurityFileFilter();
-    
+
     /**
      * @plexus.requirement
      */
@@ -45,7 +44,19 @@ public class DefaultAssemblyArchiver
     /**
      * @plexus.requirement role="org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase"
      */
-    private List archiverPhases;
+    private List assemblyPhases;
+    
+    public DefaultAssemblyArchiver()
+    {
+        // needed for plexus
+    }
+    
+    // introduced for testing.
+    public DefaultAssemblyArchiver( ArchiverManager archiverManager, List assemblyPhases )
+    {
+        this.archiverManager = archiverManager;
+        this.assemblyPhases = assemblyPhases;
+    }
 
     public File createArchive( Assembly assembly, String fullName, String format,
                                AssemblerConfigurationSource configSource )
@@ -56,22 +67,22 @@ public class DefaultAssemblyArchiver
         ComponentsXmlArchiverFileFilter componentsXmlFilter = new ComponentsXmlArchiverFileFilter();
 
         File outputDirectory = configSource.getOutputDirectory();
-        
+
         File destFile = new File( outputDirectory, filename );
 
         try
         {
             Archiver archiver = createArchiver( format, configSource.getTarLongFileMode(), componentsXmlFilter );
 
-            for ( Iterator phaseIterator = archiverPhases.iterator(); phaseIterator.hasNext(); )
+            for ( Iterator phaseIterator = assemblyPhases.iterator(); phaseIterator.hasNext(); )
             {
-                AssemblyArchiverPhase phase = (AssemblyArchiverPhase) phaseIterator.next();
+                AssemblyArchiverPhase phase = ( AssemblyArchiverPhase ) phaseIterator.next();
 
                 phase.execute( assembly, archiver, configSource );
             }
 
             archiver.setDestFile( destFile );
-            
+
             archiver.createArchive();
         }
         catch ( ArchiverException e )
@@ -100,82 +111,105 @@ public class DefaultAssemblyArchiver
      * @throws org.codehaus.plexus.archiver.ArchiverException
      * @throws org.codehaus.plexus.archiver.manager.NoSuchArchiverException
      */
-    protected Archiver createArchiver( String format, String tarLongFileMode, ComponentsXmlArchiverFileFilter componentsXmlFilter )
+    protected Archiver createArchiver( String format, String tarLongFileMode,
+                                       ComponentsXmlArchiverFileFilter componentsXmlFilter )
         throws ArchiverException, NoSuchArchiverException
     {
         Archiver archiver;
         if ( format.startsWith( "tar" ) )
         {
-            TarArchiver tarArchiver = (TarArchiver) this.archiverManager.getArchiver( "tar" );
-            archiver = tarArchiver;
-            int index = format.indexOf( '.' );
-            if ( index >= 0 )
-            {
-                // TODO: this needs a cleanup in plexus archiver - use a real
-                // typesafe enum
-                TarArchiver.TarCompressionMethod tarCompressionMethod = new TarArchiver.TarCompressionMethod();
-                // TODO: this should accept gz and bz2 as well so we can skip
-                // over the switch
-                String compression = format.substring( index + 1 );
-                if ( "gz".equals( compression ) )
-                {
-                    tarCompressionMethod.setValue( "gzip" );
-                }
-                else if ( "bz2".equals( compression ) )
-                {
-                    tarCompressionMethod.setValue( "bzip2" );
-                }
-                else
-                {
-                    // TODO: better handling
-                    throw new IllegalArgumentException( "Unknown compression format: " + compression );
-                }
-                tarArchiver.setCompression( tarCompressionMethod );
-
-                TarLongFileMode tarFileMode = new TarLongFileMode();
-
-                tarFileMode.setValue( tarLongFileMode );
-
-                tarArchiver.setLongfile( tarFileMode );
-            }
+            archiver = createTarArchiver( format, tarLongFileMode );
         }
         else if ( "war".equals( format ) )
         {
-            WarArchiver warArchiver = (WarArchiver) this.archiverManager.getArchiver( "war" );
-            warArchiver.setIgnoreWebxml( false ); // See MNG-1274
-            archiver = warArchiver;
+            archiver = createWarArchiver( );
         }
         else
         {
             archiver = this.archiverManager.getArchiver( format );
         }
 
+        configureArchiverFilters( archiver, componentsXmlFilter );
+
+        configureArchiverFinalizers( archiver, componentsXmlFilter );
+
+        return archiver;
+    }
+
+    protected void configureArchiverFinalizers( Archiver archiver, ComponentsXmlArchiverFileFilter componentsXmlFilter )
+    {
+        if ( archiver instanceof FinalizerEnabled )
+        {
+            ( ( FinalizerEnabled ) archiver ).setArchiveFinalizers( Collections.singletonList( componentsXmlFilter ) );
+        }
+    }
+
+    protected void configureArchiverFilters( Archiver archiver, ComponentsXmlArchiverFileFilter componentsXmlFilter )
+    {
         /*
-         * If the assembly is 'jar-with-dependencies', remove the
-         * security files in all dependencies that will prevent the
-         * uberjar to execute. Please see MASSEMBLY-64 for details.
+         * If the assembly is 'jar-with-dependencies', remove the security files in all dependencies that will prevent
+         * the uberjar to execute. Please see MASSEMBLY-64 for details.
          */
         if ( archiver instanceof FilterEnabled )
         {
             List filters = new ArrayList();
-            
+
             filters.add( componentsXmlFilter );
-            
+
             if ( archiver instanceof JarArchiver )
             {
                 filters.add( JAR_SECURITY_FILE_FILTER );
             }
-            
-            ((FilterEnabled) archiver).setArchiveFilters( filters );
+
+            ( ( FilterEnabled ) archiver ).setArchiveFilters( filters );
         }
-        
-        if ( archiver instanceof FinalizerEnabled )
+    }
+
+    protected Archiver createWarArchiver()
+        throws NoSuchArchiverException
+    {
+        WarArchiver warArchiver = ( WarArchiver ) this.archiverManager.getArchiver( "war" );
+        warArchiver.setIgnoreWebxml( false ); // See MNG-1274
+
+        return warArchiver;
+    }
+
+    protected Archiver createTarArchiver( String format, String tarLongFileMode )
+        throws NoSuchArchiverException, ArchiverException
+    {
+        TarArchiver tarArchiver = ( TarArchiver ) this.archiverManager.getArchiver( "tar" );
+        int index = format.indexOf( '.' );
+        if ( index >= 0 )
         {
-            
-            ((FinalizerEnabled) archiver).setArchiveFinalizers( Collections.singletonList( componentsXmlFilter ) );
+            // TODO: this needs a cleanup in plexus archiver - use a real
+            // typesafe enum
+            TarArchiver.TarCompressionMethod tarCompressionMethod = new TarArchiver.TarCompressionMethod();
+            // TODO: this should accept gz and bz2 as well so we can skip
+            // over the switch
+            String compression = format.substring( index + 1 );
+            if ( "gz".equals( compression ) )
+            {
+                tarCompressionMethod.setValue( "gzip" );
+            }
+            else if ( "bz2".equals( compression ) )
+            {
+                tarCompressionMethod.setValue( "bzip2" );
+            }
+            else
+            {
+                // TODO: better handling
+                throw new IllegalArgumentException( "Unknown compression format: " + compression );
+            }
+            tarArchiver.setCompression( tarCompressionMethod );
         }
+
+        TarLongFileMode tarFileMode = new TarLongFileMode();
+
+        tarFileMode.setValue( tarLongFileMode );
+
+        tarArchiver.setLongfile( tarFileMode );
         
-        return archiver;
+        return tarArchiver;
     }
 
 }

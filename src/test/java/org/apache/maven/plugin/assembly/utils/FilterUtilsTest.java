@@ -39,6 +39,13 @@ public class FilterUtilsTest
         mockManager.add( loggerCtl );
         
         logger = (Logger) loggerCtl.getMock();
+        
+        logger.isDebugEnabled();
+        loggerCtl.setReturnValue( true, MockControl.ZERO_OR_MORE );
+        
+        logger.debug( null );
+        loggerCtl.setMatcher( MockControl.ALWAYS_MATCHER );
+        loggerCtl.setVoidCallable( MockControl.ZERO_OR_MORE );
     }
 
     public void testFilterArtifacts_ShouldNotRemoveArtifactDirectlyIncluded()
@@ -54,18 +61,15 @@ public class FilterUtilsTest
 
     public void testFilterArtifacts_ShouldRemoveArtifactTransitivelyExcluded()
     {
-        enableLoggerDebugging();
         verifyArtifactExclusion( "group", "artifact", null, "group:dependentArtifact", Collections.singletonList( "group:dependentArtifact" ), null );
     }
 
     public void testFilterArtifacts_ShouldRemoveArtifactDirectlyExcluded()
     {
-        enableLoggerDebugging();
         verifyArtifactExclusion( "group", "artifact", null, "group:artifact", null, null );
         
         clearAll();
         
-        enableLoggerDebugging();
         verifyArtifactExclusion( "group", "artifact", null, "group:artifact:jar", null, null );
     }
 
@@ -87,8 +91,6 @@ public class FilterUtilsTest
             
         };
         
-        enableLoggerDebugging();
-        
         logger.isWarnEnabled();
         loggerCtl.setReturnValue( true );
         
@@ -98,17 +100,6 @@ public class FilterUtilsTest
         verifyArtifactExclusion( "group", "artifact", "fail:fail", null, null, filter );
     }
     
-    private void enableLoggerDebugging()
-    {
-        logger.isDebugEnabled();
-        loggerCtl.setReturnValue( true, MockControl.ONE_OR_MORE );
-        
-        logger.debug( null );
-        loggerCtl.setMatcher( MockControl.ALWAYS_MATCHER );
-        loggerCtl.setVoidCallable( MockControl.ONE_OR_MORE );
-    }
-
-
     public void testFilterProjects_ShouldNotRemoveProjectDirectlyIncluded()
     {
         verifyProjectInclusion( "group", "artifact", "group:artifact", null, null );

@@ -4,12 +4,14 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.easymock.MockControl;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import junit.framework.Assert;
 
@@ -161,10 +163,41 @@ public class MockAndControlForAddArtifactTask
         }
     }
     
+    public void expectAddFile( File file, String outputLocation, int fileMode )
+    {
+        try
+        {
+            archiver.addFile( file, outputLocation, fileMode );
+            archiverCtl.setVoidCallable( MockControl.ONE_OR_MORE );
+        }
+        catch ( ArchiverException e )
+        {
+            Assert.fail( "Should never happen." );
+        }
+    }
+    
     public void expectArtifactGetScope( String scope )
     {
         artifact.getScope();
         artifactCtl.setReturnValue( scope, MockControl.ONE_OR_MORE );
+    }
+
+    public void expectGetProject( MavenProject project )
+    {
+        configSource.getProject();
+        configSourceCtl.setReturnValue( project, MockControl.ONE_OR_MORE );
+    }
+
+    public void expectGetReactorProjects( List projects )
+    {
+        configSource.getReactorProjects();
+        configSourceCtl.setReturnValue( projects, MockControl.ONE_OR_MORE );
+    }
+
+    public void expectArtifactGetDependencyConflictId( String dependencyConflictId )
+    {
+        artifact.getDependencyConflictId();
+        artifactCtl.setReturnValue( dependencyConflictId, MockControl.ONE_OR_MORE );
     }
 
 }

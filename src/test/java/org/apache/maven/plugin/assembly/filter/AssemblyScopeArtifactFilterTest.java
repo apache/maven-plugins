@@ -139,12 +139,19 @@ public class AssemblyScopeArtifactFilterTest
             artifact = (Artifact) control.getMock();
             
             enableGetScope();
+            enableGetId();
         }
         
         void enableGetScope()
         {
             artifact.getScope();
             control.setReturnValue( scope, MockControl.ONE_OR_MORE );
+        }
+        
+        void enableGetId()
+        {
+            artifact.getId();
+            control.setReturnValue( "group:artifact:type:version", MockControl.ZERO_OR_MORE );
         }
     }
 

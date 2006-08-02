@@ -6,5 +6,7 @@ public interface StatisticsReportingFilter
 {
     
     void reportMissedCriteria( Logger logger );
+    
+    void reportFilteredArtifacts( Logger logger );
 
 }

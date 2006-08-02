@@ -66,7 +66,7 @@ public class ManifestCreationFinalizer
                     manifest = mavenArchiver.getManifest( project, archiveConfiguration.getManifest() );
                 }
 
-                if ( manifest != null )
+                if ( manifest != null && ( archiver instanceof JarArchiver ) )
                 {
                     JarArchiver jarArchiver = (JarArchiver) archiver;
                     jarArchiver.addConfiguredManifest( manifest );

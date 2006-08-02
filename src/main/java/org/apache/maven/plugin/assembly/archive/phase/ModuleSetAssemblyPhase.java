@@ -62,6 +62,15 @@ public class ModuleSetAssemblyPhase
             ModuleSet moduleSet = ( ModuleSet ) i.next();
 
             Set moduleProjects = getModuleProjects( moduleSet, configSource );
+            
+            ModuleSources sources = moduleSet.getSources();
+            ModuleBinaries binaries = moduleSet.getBinaries();
+            
+            if ( sources == null && binaries == null )
+            {
+                getLogger().warn( "Encountered ModuleSet with no sources or binaries specified. Skipping." );
+                continue;
+            }
 
             addModuleSourceFileSets( moduleSet.getSources(), moduleProjects, archiver, configSource,
                                      includeBaseDirectory );
@@ -106,7 +115,8 @@ public class ModuleSetAssemblyPhase
                 List includes = binaries.getIncludes();
                 
                 // we don't need to include dependencies which have already been found.
-                List excludes = collectExcludesFromQueuedArtifacts( visitedArtifacts, binaries.getExcludes() );
+//                List excludes = collectExcludesFromQueuedArtifacts( visitedArtifacts, binaries.getExcludes() );
+                List excludes = binaries.getExcludes();
 
                 FilterUtils.filterArtifacts( binaryDependencies, includes, excludes, true, Collections.EMPTY_LIST,
                                              getLogger() );

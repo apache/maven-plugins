@@ -127,7 +127,15 @@ public final class FilterUtils
             
             if ( f instanceof StatisticsReportingFilter )
             {
-                ((StatisticsReportingFilter) f).reportMissedCriteria( logger );
+                StatisticsReportingFilter sFilter = (StatisticsReportingFilter) f;
+                
+                if( logger.isDebugEnabled() )
+                {
+                    logger.debug( "Statistics for " + sFilter + "\n" );
+                }
+                
+                sFilter.reportMissedCriteria( logger );
+                sFilter.reportFilteredArtifacts( logger );
             }
         }
     }

@@ -41,6 +41,7 @@ public class AssemblyIncludesArtifactFilter
     private final boolean actTransitively;
     
     private Set patternsTriggered = new HashSet();
+    private List filteredArtifactIds = new ArrayList();
 
     public AssemblyIncludesArtifactFilter( List patterns )
     {
@@ -55,6 +56,23 @@ public class AssemblyIncludesArtifactFilter
     }
 
     public boolean include( Artifact artifact )
+    {
+        boolean shouldInclude = patternMatches( artifact );
+        
+        if ( !shouldInclude )
+        {
+            addFilteredArtifactId( artifact.getId() );
+        }
+        
+        return shouldInclude;
+    }
+
+    protected void addFilteredArtifactId( String artifactId )
+    {
+        filteredArtifactIds.add( artifactId );
+    }
+    
+    protected boolean patternMatches( Artifact artifact )
     {
         String shortId = ArtifactUtils.versionlessKey( artifact );
         String id = artifact.getDependencyConflictId();
@@ -135,9 +153,45 @@ public class AssemblyIncludesArtifactFilter
             }
         }
     }
+    
+    public String toString()
+    {
+        return "Includes filter:" + getPatternsAsString();
+    }
+    
+    protected String getPatternsAsString()
+    {
+        StringBuffer buffer = new StringBuffer();
+        for ( Iterator it = patterns.iterator(); it.hasNext(); )
+        {
+            String pattern = ( String ) it.next();
+            
+            buffer.append( "\no \'" ).append( pattern ).append( "\'" );
+        }
+        
+        return buffer.toString();
+    }
 
     protected String getFilterDescription()
     {
         return "artifact inclusion filter";
     }
+
+    public void reportFilteredArtifacts( Logger logger )
+    {
+        if ( !filteredArtifactIds.isEmpty() && logger.isDebugEnabled() )
+        {
+            StringBuffer buffer = new StringBuffer( "The following artifacts were removed by this filter: " );
+            
+            for ( Iterator it = filteredArtifactIds.iterator(); it.hasNext(); )
+            {
+                String artifactId = ( String ) it.next();
+                
+                buffer.append( '\n' ).append( artifactId );
+            }
+            
+            logger.debug( buffer.toString() );
+        }
+    }
+
 }

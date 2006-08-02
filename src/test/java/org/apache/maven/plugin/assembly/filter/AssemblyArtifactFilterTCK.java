@@ -204,11 +204,18 @@ public abstract class AssemblyArtifactFilterTCK
             
             enableGetDependencyConflictId();
             enableGetGroupIdAndArtifactId();
+            enableGetId();
             
             if ( dependencyTrail != null )
             {
                 enableGetDependencyTrail();
             }
+        }
+        
+        void enableGetId()
+        {
+            artifact.getId();
+            control.setReturnValue( groupId + ":" + artifactId + ":type:version", MockControl.ZERO_OR_MORE );
         }
         
         void enableGetDependencyTrail()
