@@ -22,6 +22,7 @@ import org.apache.maven.plugins.assembly.model.io.xpp3.AssemblyXpp3Reader;
 import org.apache.maven.plugins.assembly.model.io.xpp3.AssemblyXpp3Writer;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.introspection.ReflectionValueExtractor;
@@ -57,6 +58,10 @@ public class AssemblyInterpolator
         ofnmBlacklistings.add( "groupId" );
         ofnmBlacklistings.add( "artifactId" );
         ofnmBlacklistings.add( "version" );
+        
+        // TODO: We should be blacklisting these, but currently they're not supported by filename mapping interpolation.
+//        ofnmBlacklistings.add( "build.finalName" );
+//        ofnmBlacklistings.add( "finalName" );
 
         blacklist.put( "outputFileNameMapping", ofnmBlacklistings );
 
@@ -206,7 +211,7 @@ public class AssemblyInterpolator
                 catch ( Exception e )
                 {
                     Logger logger = getLogger();
-                    if ( logger != null )
+                    if ( logger.isDebugEnabled() )
                     {
                         logger.debug( "Assembly descriptor interpolation cannot proceed with expression: " + wholeExpr +
                             ". Skipping...", e );
@@ -235,5 +240,19 @@ public class AssemblyInterpolator
             }
         }
         return result;
+    }
+
+    protected Logger getLogger()
+    {
+        Logger logger = super.getLogger();
+        
+        if ( logger == null )
+        {
+            logger = new ConsoleLogger( Logger.LEVEL_INFO, "interpolator-internal" );
+            
+            enableLogging( logger );
+        }
+        
+        return logger;
     }
 }

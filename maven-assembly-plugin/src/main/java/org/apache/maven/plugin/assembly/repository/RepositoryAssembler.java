@@ -16,10 +16,8 @@ package org.apache.maven.plugin.assembly.repository;
  * limitations under the License.
  */
 
-import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugins.assembly.model.Repository;
-import org.apache.maven.project.MavenProject;
-
 import java.io.File;
 
 /**
@@ -29,7 +27,6 @@ public interface RepositoryAssembler
 {
     String ROLE = RepositoryAssembler.class.getName();
 
-    public void assemble( File repositoryDirectory, Repository repository, MavenProject project,
-                          ArtifactRepository localRepository )
+    public void assemble( File repositoryDirectory, Repository repository, AssemblerConfigurationSource configSource )
         throws RepositoryAssemblyException;
 }

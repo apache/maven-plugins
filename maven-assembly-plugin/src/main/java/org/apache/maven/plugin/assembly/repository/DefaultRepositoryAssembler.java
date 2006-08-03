@@ -16,23 +16,6 @@ package org.apache.maven.plugin.assembly.repository;
  * limitations under the License.
  */
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
-import java.lang.reflect.Field;
-import java.security.NoSuchAlgorithmException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TimeZone;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
@@ -51,6 +34,7 @@ import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
+import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.filter.AssemblyExcludesArtifactFilter;
 import org.apache.maven.plugin.assembly.filter.AssemblyIncludesArtifactFilter;
 import org.apache.maven.plugin.assembly.utils.DigestUtils;
@@ -63,6 +47,23 @@ import org.apache.maven.project.ProjectBuildingException;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.lang.reflect.Field;
+import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TimeZone;
 
 /**
  * @author Jason van Zyl
@@ -93,10 +94,12 @@ public class DefaultRepositoryAssembler
 
     private DigestUtils digester = new DigestUtils();
 
-    public void assemble( File repositoryDirectory, Repository repository, MavenProject project,
-                          ArtifactRepository localRepository )
+    public void assemble( File repositoryDirectory, Repository repository, AssemblerConfigurationSource configSource )
         throws RepositoryAssemblyException
     {
+        MavenProject project = configSource.getProject();
+        ArtifactRepository localRepository = configSource.getLocalRepository();
+
         createGroupVersionAlignments( repository.getGroupVersionAlignments() );
 
         ArtifactRepository targetRepository = createLocalRepository( repositoryDirectory );
@@ -104,15 +107,16 @@ public class DefaultRepositoryAssembler
         ArtifactResolutionResult result;
         try
         {
-            // i have to get everything first as a filter or transformation here doesn't seem to work
-            // to align everything. If I use a filter to change the version on the fly then I get the
-            // I get JARs but no POMs, and in some directories POMs with no JARs.
+            // i have to get everything first as a filter or transformation here
+            // doesn't seem to work
+            // to align everything. If I use a filter to change the version on
+            // the fly then I get the
+            // I get JARs but no POMs, and in some directories POMs with no
+            // JARs.
 
-            // I'm not getting runtime dependencies here
-
+            // FIXME I'm not getting runtime dependencies here
             result = artifactResolver.resolveTransitively( project.getDependencyArtifacts(), project.getArtifact(),
-                                                           project.getRemoteArtifactRepositories(), localRepository,
-                                                           metadataSource );
+                project.getRemoteArtifactRepositories(), localRepository, metadataSource );
         }
         catch ( ArtifactResolutionException e )
         {
@@ -125,23 +129,39 @@ public class DefaultRepositoryAssembler
 
         try
         {
-            // Blow the cache in the project builder so that we get POMs again on this next download
+            // Blow the cache in the project builder so that we get POMs again
+            // on this next download
             invalidateProccessedProjectCache();
         }
         catch ( Exception e )
         {
             throw new RepositoryAssemblyException( "Error invalidating the processed project cache.", e );
         }
+        
+        ArtifactFilter filter = buildRepositoryFilter( repository, project);
 
+        assembleRepositoryArtifacts( result, filter, project, localRepository, targetRepository, repositoryDirectory );
+        
+        ArtifactRepository centralRepository = findCentralRepository( project );
+
+        if ( repository.isIncludeMetadata() )
+        {
+            assembleRepositoryMetadata( result, filter, centralRepository, targetRepository );
+        }
+    }
+
+    private ArtifactFilter buildRepositoryFilter(Repository repository, MavenProject project)
+    {
         AndArtifactFilter filter = new AndArtifactFilter();
 
-        ArtifactFilter scopeFilter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
+        ArtifactFilter scopeFilter = new ScopeArtifactFilter( repository.getScope() );
         filter.add( scopeFilter );
-        
+
         // ----------------------------------------------------------------------------
         // Includes
         //
-        // We'll take everything if no includes are specified to try and make this
+        // We'll take everything if no includes are specified to try and make
+        // this
         // process more maintainable. Don't want to have to update the assembly
         // descriptor everytime the POM is updated.
         // ----------------------------------------------------------------------------
@@ -149,21 +169,21 @@ public class DefaultRepositoryAssembler
         if ( repository.getIncludes().isEmpty() )
         {
             List patterns = new ArrayList();
-            
+
             Set projectArtifacts = project.getDependencyArtifacts();
-            
+
             if ( projectArtifacts != null )
             {
                 for ( Iterator it = projectArtifacts.iterator(); it.hasNext(); )
                 {
                     Artifact artifact = (Artifact) it.next();
-                    
+
                     patterns.add( artifact.getDependencyConflictId() );
                 }
             }
-            
+
             AssemblyIncludesArtifactFilter includeFilter = new AssemblyIncludesArtifactFilter( patterns, true );
-            
+
             filter.add( includeFilter );
         }
         else
@@ -174,7 +194,8 @@ public class DefaultRepositoryAssembler
         // ----------------------------------------------------------------------------
         // Excludes
         //
-        // We still want to make it easy to exclude a few things even if we slurp
+        // We still want to make it easy to exclude a few things even if we
+        // slurp
         // up everything.
         // ----------------------------------------------------------------------------
 
@@ -183,9 +204,18 @@ public class DefaultRepositoryAssembler
             filter.add( new AssemblyExcludesArtifactFilter( repository.getExcludes(), true ) );
         }
 
+        return filter;
+    }
+
+    private void assembleRepositoryArtifacts( ArtifactResolutionResult result, ArtifactFilter filter,
+                                              MavenProject project, ArtifactRepository localRepository,
+                                              ArtifactRepository targetRepository, File repositoryDirectory )
+        throws RepositoryAssemblyException
+    {
         try
         {
-            // Now that we have the graph, let's try to align it to versions that we want and remove
+            // Now that we have the graph, let's try to align it to versions
+            // that we want and remove
             // the repository we previously populated.
             FileUtils.deleteDirectory( repositoryDirectory );
 
@@ -199,7 +229,8 @@ public class DefaultRepositoryAssembler
                 {
                     setAlignment( a );
 
-                    // We need to flip it back to not being resolved so we can look for it again!
+                    // We need to flip it back to not being resolved so we can
+                    // look for it again!
                     a.setResolved( false );
 
                     artifactResolver.resolve( a, project.getRemoteArtifactRepositories(), localRepository );
@@ -213,19 +244,19 @@ public class DefaultRepositoryAssembler
                     {
                         a = artifactFactory.createProjectArtifact( a.getGroupId(), a.getArtifactId(), a.getVersion() );
 
-                        MavenProject p = projectBuilder.buildFromRepository( a, project.getRemoteArtifactRepositories(),
-                                                                             localRepository );
+                        MavenProject p = projectBuilder.buildFromRepository( a,
+                            project.getRemoteArtifactRepositories(), localRepository );
 
                         do
                         {
-                            a = artifactFactory.createProjectArtifact( p.getGroupId(), p.getArtifactId(),
-                                                                       p.getVersion() );
+                            a = artifactFactory.createProjectArtifact( p.getGroupId(), p.getArtifactId(), p
+                                .getVersion() );
 
                             setAlignment( a );
 
                             File sourceFile = new File( localRepository.getBasedir(), localRepository.pathOf( a ) );
 
-                            if( !sourceFile.exists() )
+                            if ( !sourceFile.exists() )
                             {
                                 break;
                             }
@@ -237,8 +268,7 @@ public class DefaultRepositoryAssembler
                             writeChecksums( targetFile );
 
                             p = p.getParent();
-                        }
-                        while ( p != null );
+                        } while ( p != null );
                     }
                 }
             }
@@ -259,7 +289,10 @@ public class DefaultRepositoryAssembler
         {
             throw new RepositoryAssemblyException( "Error reading POM.", e );
         }
+    }
 
+    private ArtifactRepository findCentralRepository( MavenProject project )
+    {
         ArtifactRepository centralRepository = null;
         for ( Iterator i = project.getRemoteArtifactRepositories().iterator(); i.hasNext(); )
         {
@@ -270,68 +303,69 @@ public class DefaultRepositoryAssembler
             }
         }
 
-        if ( repository.isIncludeMetadata() )
+        return centralRepository;
+    }
+
+    private void assembleRepositoryMetadata( ArtifactResolutionResult result, ArtifactFilter filter,
+                                             ArtifactRepository centralRepository, ArtifactRepository targetRepository )
+        throws RepositoryAssemblyException
+    {
+        for ( Iterator i = result.getArtifacts().iterator(); i.hasNext(); )
         {
-            for ( Iterator i = result.getArtifacts().iterator(); i.hasNext(); )
+            Artifact a = (Artifact) i.next();
+
+            if ( filter.include( a ) )
             {
-                Artifact a = (Artifact) i.next();
+                Versioning v = new Versioning();
 
-                if ( filter.include( a ) )
+                v.setRelease( a.getVersion() );
+
+                v.setLatest( a.getVersion() );
+
+                v.addVersion( a.getVersion() );
+
+                v.setLastUpdated( getUtcDateFormatter().format( new Date() ) );
+
+                ArtifactRepositoryMetadata metadata = new ArtifactRepositoryMetadata( a, v );
+                String path = targetRepository.pathOfLocalRepositoryMetadata( metadata, centralRepository );
+                File metadataFile = new File( targetRepository.getBasedir(), path );
+
+                MetadataXpp3Writer metadataWriter = new MetadataXpp3Writer();
+
+                Writer writer = null;
+                try
                 {
-                    Versioning v = new Versioning();
+                    writer = new FileWriter( metadataFile );
 
-                    v.setRelease( a.getVersion() );
+                    metadataWriter.write( writer, metadata.getMetadata() );
+                }
+                catch ( IOException e )
+                {
+                    throw new RepositoryAssemblyException( "Error writing artifact metdata.", e );
+                }
+                finally
+                {
+                    IOUtil.close( writer );
+                }
 
-                    v.setLatest( a.getVersion() );
+                try
+                {
+                    writeChecksums( metadataFile );
 
-                    v.addVersion( a.getVersion() );
+                    File metadataFileRemote = new File( targetRepository.getBasedir(), targetRepository
+                        .pathOfRemoteRepositoryMetadata( metadata ) );
 
-                    v.setLastUpdated( getUtcDateFormatter().format( new Date() ) );
+                    FileUtils.copyFile( metadataFile, metadataFileRemote );
 
-                    ArtifactRepositoryMetadata metadata = new ArtifactRepositoryMetadata( a, v );
-                    String path = targetRepository.pathOfLocalRepositoryMetadata( metadata, centralRepository );
-                    File metadataFile = new File( targetRepository.getBasedir(), path );
+                    FileUtils.copyFile( new File( metadataFile.getParentFile(), metadataFile.getName() + ".sha1" ),
+                        new File( metadataFileRemote.getParentFile(), metadataFileRemote.getName() + ".sha1" ) );
 
-                    MetadataXpp3Writer metadataWriter = new MetadataXpp3Writer();
-
-                    Writer writer = null;
-                    try
-                    {
-                        writer = new FileWriter( metadataFile );
-
-                        metadataWriter.write( writer, metadata.getMetadata() );
-                    }
-                    catch ( IOException e )
-                    {
-                        throw new RepositoryAssemblyException( "Error writing artifact metdata.", e );
-                    }
-                    finally
-                    {
-                        IOUtil.close( writer );
-                    }
-
-                    try
-                    {
-                        writeChecksums( metadataFile );
-
-                        File metadataFileRemote = new File( targetRepository.getBasedir(),
-                                                            targetRepository.pathOfRemoteRepositoryMetadata(
-                                                                metadata ) );
-
-                        FileUtils.copyFile( metadataFile, metadataFileRemote );
-
-                        FileUtils.copyFile( new File( metadataFile.getParentFile(), metadataFile.getName() + ".sha1" ),
-                                            new File( metadataFileRemote.getParentFile(),
-                                                      metadataFileRemote.getName() + ".sha1" ) );
-
-                        FileUtils.copyFile( new File( metadataFile.getParentFile(), metadataFile.getName() + ".md5" ),
-                                            new File( metadataFileRemote.getParentFile(),
-                                                      metadataFileRemote.getName() + ".md5" ) );
-                    }
-                    catch ( IOException e )
-                    {
-                        throw new RepositoryAssemblyException( "Error writing artifact metdata.", e );
-                    }
+                    FileUtils.copyFile( new File( metadataFile.getParentFile(), metadataFile.getName() + ".md5" ),
+                        new File( metadataFileRemote.getParentFile(), metadataFileRemote.getName() + ".md5" ) );
+                }
+                catch ( IOException e )
+                {
+                    throw new RepositoryAssemblyException( "Error writing artifact metdata.", e );
                 }
             }
         }
@@ -345,8 +379,10 @@ public class DefaultRepositoryAssembler
             String md5 = digester.createChecksum( file, "MD5" );
             String sha1 = digester.createChecksum( file, "SHA-1" );
 
-            FileUtils.fileWrite( new File( file.getParentFile(), file.getName() + ".md5" ).getAbsolutePath(), md5.toLowerCase() );
-            FileUtils.fileWrite( new File( file.getParentFile(), file.getName() + ".sha1" ).getAbsolutePath(), sha1.toLowerCase() );
+            FileUtils.fileWrite( new File( file.getParentFile(), file.getName() + ".md5" ).getAbsolutePath(), md5
+                .toLowerCase() );
+            FileUtils.fileWrite( new File( file.getParentFile(), file.getName() + ".sha1" ).getAbsolutePath(), sha1
+                .toLowerCase() );
         }
         catch ( NoSuchAlgorithmException e )
         {
@@ -383,14 +419,14 @@ public class DefaultRepositoryAssembler
         }
 
         return createRepository( "local", localRepositoryUrl, false, true,
-                                 ArtifactRepositoryPolicy.CHECKSUM_POLICY_WARN );
+            ArtifactRepositoryPolicy.CHECKSUM_POLICY_WARN );
     }
 
     public ArtifactRepository createRepository( String repositoryId, String repositoryUrl, boolean offline,
                                                 boolean updateSnapshots, String globalChecksumPolicy )
     {
-        ArtifactRepository localRepository =
-            new DefaultArtifactRepository( repositoryId, repositoryUrl, repositoryLayout );
+        ArtifactRepository localRepository = new DefaultArtifactRepository( repositoryId, repositoryUrl,
+            repositoryLayout );
 
         boolean snapshotPolicySet = false;
 
