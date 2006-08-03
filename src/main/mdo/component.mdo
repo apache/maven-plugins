@@ -97,6 +97,21 @@
             ]]>
           </description>
         </field>
+        <field>
+          <name>repositories</name>
+          <version>1.0.0</version>
+          <association>
+            <type>Repository</type>
+            <multiplicity>*</multiplicity>
+          </association>
+          <description>
+            <![CDATA[
+            Specifies a set of repositories to include in the assembly. A
+            repository is specified by providing one or more of
+            &lt;repository&gt; subelements.
+            ]]>
+          </description>
+        </field>
       </fields>
     </class>
 
@@ -341,6 +356,73 @@
       </fields>
     </class>
 
+    <class>
+      <name>Repository</name>
+      <version>1.0.0</version>
+      <superClass>SetBase</superClass>
+      <description>Defines a Maven repository to be included in the assembly.</description>
+      <fields>
+        <field>
+          <name>includeMetadata</name>
+          <version>1.0.0</version>
+          <type>boolean</type>
+          <defaultValue>false</defaultValue>
+          <description>
+            If set to true, this property will trigger the creation of repository
+            metadata which will allow the repository to be used as a functional remote
+            repository.
+          </description>
+        </field>
+        <field>
+          <name>groupVersionAlignments</name>
+          <version>1.0.0</version>
+          <description>Align a group to a version or an individual artifact.</description>
+          <association>
+            <type>GroupVersionAlignment</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+        <field>
+          <name>scope</name>
+          <version>1.0.0</version>              
+          <type>String</type>
+          <defaultValue>runtime</defaultValue>
+          <required>true</required>
+          <description>
+            Specifies the scope for artifacts included in this repository.
+            Default scope value is "runtime".
+          </description>
+        </field>
+      </fields>
+    </class>
+    <class>
+      <name>GroupVersionAlignment</name>
+      <version>1.0.0</version>
+      <description>Defines a Maven repository to be included in the assembly.</description>
+      <fields>
+        <field>
+          <name>id</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <description>The groupId for which you want to align the versions.</description>
+        </field>
+        <field>
+          <name>version</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <description>The version you want to align this group to.</description>
+        </field>
+        <field>
+          <name>excludes</name>
+          <version>1.0.0</version>
+          <description>Artifact Ids of the artifacts you want excluded from version alignment.</description>
+          <association>
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+      </fields>
+    </class>
   </classes>
 </model>
 

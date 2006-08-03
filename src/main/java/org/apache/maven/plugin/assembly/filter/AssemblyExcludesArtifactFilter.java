@@ -40,6 +40,24 @@ public class AssemblyExcludesArtifactFilter
 
     public boolean include( Artifact artifact )
     {
-        return !super.include( artifact );
+        boolean shouldInclude = !patternMatches( artifact );
+        
+        if ( !shouldInclude )
+        {
+            addFilteredArtifactId( artifact.getId() );
+        }
+        
+        return shouldInclude;
     }
+
+    protected String getFilterDescription()
+    {
+        return "artifact exclusion filter";
+    }
+    
+    public String toString()
+    {
+        return "Excludes filter:" + getPatternsAsString();
+    }
+    
 }
