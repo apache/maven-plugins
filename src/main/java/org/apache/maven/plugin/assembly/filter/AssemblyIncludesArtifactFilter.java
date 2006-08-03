@@ -17,12 +17,17 @@ package org.apache.maven.plugin.assembly.filter;
  */
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
+import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * TODO: include in maven-artifact in future
@@ -30,10 +35,13 @@ import java.util.List;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class AssemblyIncludesArtifactFilter
-    implements ArtifactFilter
+    implements ArtifactFilter, StatisticsReportingFilter
 {
     private final List patterns;
     private final boolean actTransitively;
+    
+    private Set patternsTriggered = new HashSet();
+    private List filteredArtifactIds = new ArrayList();
 
     public AssemblyIncludesArtifactFilter( List patterns )
     {
@@ -49,7 +57,24 @@ public class AssemblyIncludesArtifactFilter
 
     public boolean include( Artifact artifact )
     {
-        String shortId = artifact.getGroupId() + ":" + artifact.getArtifactId();
+        boolean shouldInclude = patternMatches( artifact );
+        
+        if ( !shouldInclude )
+        {
+            addFilteredArtifactId( artifact.getId() );
+        }
+        
+        return shouldInclude;
+    }
+
+    protected void addFilteredArtifactId( String artifactId )
+    {
+        filteredArtifactIds.add( artifactId );
+    }
+    
+    protected boolean patternMatches( Artifact artifact )
+    {
+        String shortId = ArtifactUtils.versionlessKey( artifact );
         String id = artifact.getDependencyConflictId();
         
         boolean matched = false;
@@ -65,6 +90,12 @@ public class AssemblyIncludesArtifactFilter
             else if ( shortId.equals( pattern ) )
             {
                 matched = true;
+            }
+            
+            if ( matched )
+            {
+                patternsTriggered.add( pattern );
+                break;
             }
         }
         
@@ -82,6 +113,8 @@ public class AssemblyIncludesArtifactFilter
                     if ( trailStr.indexOf( pattern ) > -1 )
                     {
                         matched = true;
+                        
+                        patternsTriggered.add( pattern );
                         break;
                     }
                 }
@@ -90,4 +123,75 @@ public class AssemblyIncludesArtifactFilter
         
         return matched;
     }
+
+    public void reportMissedCriteria( Logger logger )
+    {
+        // if there are no patterns, there is nothing to report.
+        if ( !patterns.isEmpty() )
+        {
+            List missed = new ArrayList( patterns );
+            missed.removeAll( patternsTriggered );
+            
+            if ( !missed.isEmpty() && logger.isWarnEnabled() )
+            {
+                StringBuffer buffer = new StringBuffer();
+                
+                buffer.append( "The following patterns were never triggered in this " );
+                buffer.append( getFilterDescription() );
+                buffer.append( ':' );
+                
+                for ( Iterator it = missed.iterator(); it.hasNext(); )
+                {
+                    String pattern = (String) it.next();
+                    
+                    buffer.append( "\no  \'" ).append( pattern ).append( "\'" );
+                }
+                
+                buffer.append( "\n" );
+                
+                logger.warn( buffer.toString() );
+            }
+        }
+    }
+    
+    public String toString()
+    {
+        return "Includes filter:" + getPatternsAsString();
+    }
+    
+    protected String getPatternsAsString()
+    {
+        StringBuffer buffer = new StringBuffer();
+        for ( Iterator it = patterns.iterator(); it.hasNext(); )
+        {
+            String pattern = ( String ) it.next();
+            
+            buffer.append( "\no \'" ).append( pattern ).append( "\'" );
+        }
+        
+        return buffer.toString();
+    }
+
+    protected String getFilterDescription()
+    {
+        return "artifact inclusion filter";
+    }
+
+    public void reportFilteredArtifacts( Logger logger )
+    {
+        if ( !filteredArtifactIds.isEmpty() && logger.isDebugEnabled() )
+        {
+            StringBuffer buffer = new StringBuffer( "The following artifacts were removed by this filter: " );
+            
+            for ( Iterator it = filteredArtifactIds.iterator(); it.hasNext(); )
+            {
+                String artifactId = ( String ) it.next();
+                
+                buffer.append( '\n' ).append( artifactId );
+            }
+            
+            logger.debug( buffer.toString() );
+        }
+    }
+
 }

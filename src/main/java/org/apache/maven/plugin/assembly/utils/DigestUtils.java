@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
  * Create a digest for a file. Stolen from repository-utils - once released, use that instead.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
+ * @todo [jdcasey] This needs unit tests.
  */
 public class DigestUtils
 {
