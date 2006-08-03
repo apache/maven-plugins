@@ -136,7 +136,7 @@ public class SurefirePlugin
     private File testSourceDirectory;
 
     /**
-     * Specify this parameter if you want to use the test pattern matching notation, Ant pattern matching, to select tests to run.
+     * Specify this parameter(can be a comma separated list) if you want to use the test pattern matching notation, Ant pattern matching, to select tests to run.
      * The Ant pattern will be used to create an include pattern formatted like <code>**&#47;${test}.java</code>
      * When used, the <code>includes</code> and <code>excludes</code> patterns parameters are ignored.
      *
@@ -224,8 +224,7 @@ public class SurefirePlugin
      * When forking, set this to true to redirect the unit test standard output to a file
      * (found in reportsDirectory/testName-output.txt).
      *
-     * @parameter expression="${maven.test.redirectTestOutputToFile}"
-     * @default-value="false"
+     * @parameter expression="${maven.test.redirectTestOutputToFile}" default-value="false"
      */
     private boolean redirectTestOutputToFile;
 
@@ -331,11 +330,15 @@ public class SurefirePlugin
     private boolean trimStackTrace;
 
     /**
+     * Resolves the artifacts needed.
+     *
      * @component
      */
     private ArtifactResolver artifactResolver;
 
     /**
+     * Creates the artifact
+     *
      * @component
      */
     private ArtifactFactory artifactFactory;
@@ -348,6 +351,8 @@ public class SurefirePlugin
     private List remoteRepositories;
 
     /**
+     * For retrieval of artifact's metadata.
+     *
      * @component
      */
     private ArtifactMetadataSource metadataSource;
