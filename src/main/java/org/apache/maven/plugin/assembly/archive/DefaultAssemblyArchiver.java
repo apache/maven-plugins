@@ -27,7 +27,7 @@ import org.codehaus.plexus.archiver.war.WarArchiver;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 
 /**
- * @plexus.component role="org.apache.maven.plugin.assembly.archive.ArchiveCreator" role-hint="default"
+ * @plexus.component role="org.apache.maven.plugin.assembly.archive.AssemblyArchiver" role-hint="default"
  */
 public class DefaultAssemblyArchiver
     extends AbstractLogEnabled

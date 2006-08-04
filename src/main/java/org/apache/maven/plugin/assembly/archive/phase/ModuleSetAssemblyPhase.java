@@ -15,10 +15,10 @@ import org.apache.maven.plugins.assembly.model.ModuleSources;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
-import org.apache.maven.wagon.PathUtils;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -71,7 +71,7 @@ public class ModuleSetAssemblyPhase
                 getLogger().warn( "Encountered ModuleSet with no sources or binaries specified. Skipping." );
                 continue;
             }
-
+            
             addModuleSourceFileSets( moduleSet.getSources(), moduleProjects, archiver, configSource,
                                      includeBaseDirectory );
 
@@ -93,6 +93,9 @@ public class ModuleSetAssemblyPhase
         for ( Iterator j = moduleProjects.iterator(); j.hasNext(); )
         {
             MavenProject project = ( MavenProject ) j.next();
+            
+            getLogger().debug( "Processing binary artifact for module project: " + project.getId() );
+            
             Artifact artifact = project.getArtifact();
 
             addArtifact( artifact, project, archiver, configSource, binaries, includeBaseDirectory );
@@ -110,6 +113,8 @@ public class ModuleSetAssemblyPhase
             {
                 MavenProject moduleProject = ( MavenProject ) it.next();
 
+                getLogger().debug( "Processing binary dependencies for module project: " + moduleProject.getId() );
+                
                 Set binaryDependencies = moduleProject.getArtifacts();
 
                 List includes = binaries.getIncludes();
@@ -202,7 +207,26 @@ public class ModuleSetAssemblyPhase
         {
             MavenProject moduleProject = ( MavenProject ) j.next();
 
-            sources.setDirectory( PathUtils.toRelative( moduleProject.getBasedir(), sources.getDirectory() ) );
+            getLogger().debug( "Processing sources for module project: " + moduleProject.getId() );
+            
+            String sourcePath = sources.getDirectory();
+            
+            File moduleBasedir = moduleProject.getBasedir();
+            
+            if ( sourcePath != null )
+            {
+                File sourceDir = new File( sourcePath );
+                
+                if ( !sourceDir.isAbsolute() )
+                {
+                    sourcePath = new File( moduleBasedir, sourcePath ).getAbsolutePath();
+                    sources.setDirectory( sourcePath );
+                }
+            }
+            else
+            {
+                sourcePath = moduleBasedir.getAbsolutePath();
+            }
 
             AddFileSetsTask task = new AddFileSetsTask( Collections.singletonList( sources ) );
 
