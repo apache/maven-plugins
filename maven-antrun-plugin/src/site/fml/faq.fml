@@ -23,9 +23,7 @@
      <answer>
        <p>Maven has certain benefits over Ant. And for your ant projects to take
        advantage of these, you can use maven as your porject management tool and
-       use its maven-antrun-plugin to build your ant projects (<I>See 
-       <a href="http://maven.apache.org/start/maven-for-ant-users.html">
-       Maven for Ant Users</a> for a comparison between Maven and Ant</I>). </p>
+       use its maven-antrun-plugin to build your ant projects. </p>
        <p>Furthermore, if you wish to migrate from ant to maven, you can use 
        this plugin first, then gradually convert your ant expressions into their
        corresponding maven expressions.</p>
