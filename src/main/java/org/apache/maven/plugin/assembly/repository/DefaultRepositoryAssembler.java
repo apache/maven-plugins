@@ -45,6 +45,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
+import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 
@@ -67,6 +68,7 @@ import java.util.TimeZone;
 
 /**
  * @author Jason van Zyl
+ * @plexus.component role="org.apache.maven.plugin.assembly.repository.RepositoryAssembler" role-hint="default"
  */
 
 // todo will need to pop the processed project cache using reflection
@@ -78,21 +80,35 @@ public class DefaultRepositoryAssembler
 
     protected static final String UTC_TIMESTAMP_PATTERN = "yyyyMMddHHmmss";
 
+    /**
+     * @plexus.requirement
+     */
     protected ArtifactFactory artifactFactory;
 
+    /**
+     * @plexus.requirement
+     */
     protected ArtifactResolver artifactResolver;
 
+    /**
+     * @plexus.requirement
+     */
     protected ArtifactRepositoryLayout repositoryLayout;
 
+    /**
+     * @plexus.requirement
+     */
     protected ArtifactRepositoryFactory artifactRepositoryFactory;
 
+    /**
+     * @plexus.requirement
+     */
     protected ArtifactMetadataSource metadataSource;
 
+    /**
+     * @plexus.requirement
+     */
     protected MavenProjectBuilder projectBuilder;
-
-    private Map groupVersionAlignments;
-
-    private DigestUtils digester = new DigestUtils();
 
     public void assemble( File repositoryDirectory, Repository repository, AssemblerConfigurationSource configSource )
         throws RepositoryAssemblyException
@@ -100,11 +116,26 @@ public class DefaultRepositoryAssembler
         MavenProject project = configSource.getProject();
         ArtifactRepository localRepository = configSource.getLocalRepository();
 
-        createGroupVersionAlignments( repository.getGroupVersionAlignments() );
+        Map groupVersionAlignments = createGroupVersionAlignments( repository.getGroupVersionAlignments() );
 
         ArtifactRepository targetRepository = createLocalRepository( repositoryDirectory );
 
-        ArtifactResolutionResult result;
+        ArtifactResolutionResult result = null;
+        
+        Set dependencyArtifacts = project.getDependencyArtifacts();
+        
+        if ( dependencyArtifacts == null )
+        {
+            Logger logger = getLogger();
+            
+            if ( logger.isDebugEnabled() )
+            {
+                logger.debug( "dependency-artifact set for project: " + project.getId() + " is null. Skipping repository processing." );
+            }
+            
+            return;
+        }
+        
         try
         {
             // i have to get everything first as a filter or transformation here
@@ -115,7 +146,7 @@ public class DefaultRepositoryAssembler
             // JARs.
 
             // FIXME I'm not getting runtime dependencies here
-            result = artifactResolver.resolveTransitively( project.getDependencyArtifacts(), project.getArtifact(),
+            result = artifactResolver.resolveTransitively( dependencyArtifacts, project.getArtifact(),
                 project.getRemoteArtifactRepositories(), localRepository, metadataSource );
         }
         catch ( ArtifactResolutionException e )
@@ -140,7 +171,7 @@ public class DefaultRepositoryAssembler
         
         ArtifactFilter filter = buildRepositoryFilter( repository, project);
 
-        assembleRepositoryArtifacts( result, filter, project, localRepository, targetRepository, repositoryDirectory );
+        assembleRepositoryArtifacts( result, filter, project, localRepository, targetRepository, repositoryDirectory, groupVersionAlignments );
         
         ArtifactRepository centralRepository = findCentralRepository( project );
 
@@ -209,7 +240,7 @@ public class DefaultRepositoryAssembler
 
     private void assembleRepositoryArtifacts( ArtifactResolutionResult result, ArtifactFilter filter,
                                               MavenProject project, ArtifactRepository localRepository,
-                                              ArtifactRepository targetRepository, File repositoryDirectory )
+                                              ArtifactRepository targetRepository, File repositoryDirectory, Map groupVersionAlignments )
         throws RepositoryAssemblyException
     {
         try
@@ -227,7 +258,7 @@ public class DefaultRepositoryAssembler
 
                 if ( filter.include( a ) )
                 {
-                    setAlignment( a );
+                    setAlignment( a, groupVersionAlignments );
 
                     // We need to flip it back to not being resolved so we can
                     // look for it again!
@@ -252,7 +283,7 @@ public class DefaultRepositoryAssembler
                             a = artifactFactory.createProjectArtifact( p.getGroupId(), p.getArtifactId(), p
                                 .getVersion() );
 
-                            setAlignment( a );
+                            setAlignment( a, groupVersionAlignments );
 
                             File sourceFile = new File( localRepository.getBasedir(), localRepository.pathOf( a ) );
 
@@ -376,8 +407,8 @@ public class DefaultRepositoryAssembler
     {
         try
         {
-            String md5 = digester.createChecksum( file, "MD5" );
-            String sha1 = digester.createChecksum( file, "SHA-1" );
+            String md5 = DigestUtils.createChecksum( file, "MD5" );
+            String sha1 = DigestUtils.createChecksum( file, "SHA-1" );
 
             FileUtils.fileWrite( new File( file.getParentFile(), file.getName() + ".md5" ).getAbsolutePath(), md5
                 .toLowerCase() );
@@ -390,9 +421,9 @@ public class DefaultRepositoryAssembler
         }
     }
 
-    protected void createGroupVersionAlignments( List versionAlignments )
+    protected Map createGroupVersionAlignments( List versionAlignments )
     {
-        groupVersionAlignments = new HashMap();
+        Map groupVersionAlignments = new HashMap();
 
         for ( Iterator i = versionAlignments.iterator(); i.hasNext(); )
         {
@@ -400,6 +431,8 @@ public class DefaultRepositoryAssembler
 
             groupVersionAlignments.put( alignment.getId(), alignment );
         }
+        
+        return groupVersionAlignments;
     }
 
     protected static DateFormat getUtcDateFormatter()
@@ -461,7 +494,7 @@ public class DefaultRepositoryAssembler
         field.setAccessible( false );
     }
 
-    private void setAlignment( Artifact artifact )
+    private void setAlignment( Artifact artifact, Map groupVersionAlignments )
     {
         GroupVersionAlignment alignment = (GroupVersionAlignment) groupVersionAlignments.get( artifact.getGroupId() );
 

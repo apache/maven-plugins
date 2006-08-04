@@ -99,7 +99,7 @@ public class AddFileSetsTask
         destDirectory = AssemblyFormatUtils.getOutputDirectory( destDirectory, project, configSource.getFinalName(),
                                                                 includeBaseDirectory );
 
-        logger.debug( "The archive base directory is '" + archiveBaseDir.getAbsolutePath() + "'" );
+        logger.debug( "The archive base directory is '" + archiveBaseDir + "'" );
 
         File fileSetDir = getFileSetDirectory( fileSet, basedir, archiveBaseDir );
 
