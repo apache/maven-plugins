@@ -27,8 +27,6 @@ Referencing the Maven Classpaths
 
  You can use these classpath references:
   
-  * <<<maven.dependency.classpath>>> (deprecated, equal to <<<maven.compile.classpath>>>)
-
   * <<<maven.compile.classpath>>>
 
   * <<<maven.runtime.classpath>>>
@@ -38,9 +36,7 @@ Referencing the Maven Classpaths
   * <<<maven.plugin.classpath>>>
   
 
- For example, in using optional ant tasks, we can set our <<<target>>>'s 
- classpath to the maven plugin's classpath, and it's output directory to 
- "target".
+ For example, to display maven's classpaths using antrun, we can do this
 
 ------
 <project>
@@ -61,9 +57,15 @@ Referencing the Maven Classpaths
             <phase>compile</phase>
             <configuration>
               <tasks>
-                <antlr target="calc.g" outputdirectory="target">
-                  <classpath refid="maven.plugin.classpath"/>
-                </antlr>
+                <property name="compile_classpath" refid="maven.compile.classpath"/>
+                <property name="runtime_classpath" refid="maven.runtime.classpath"/>
+                <property name="test_classpath" refid="maven.test.classpath"/>
+                <property name="plugin_classpath" refid="maven.plugin.classpath"/>
+
+                <echo message="compile classpath: ${compile_classpath}"/>
+                <echo message="runtime classpath: ${runtime_classpath}"/>
+                <echo message="test classpath:    ${test_classpath}"/>
+                <echo message="plugin classpath:  ${plugin_classpath}"/>
               </tasks>
             </configuration>
             <goals>
@@ -71,28 +73,14 @@ Referencing the Maven Classpaths
             </goals>
           </execution>
         </executions>
-        <dependencies>
-          <dependency>
-            <groupId>ant</groupId>
-            <artifactId>ant-antlr</artifactId>
-            <version>1.6.5</version>
-          </dependency>
-          <dependency>
-            <groupId>antlr</groupId>
-            <artifactId>antlrall</artifactId>
-            <version>2.7.4</version>
-          </dependency>
-        </dependencies>
       </plugin>
-
     </plugins>
   </build>
 </project>
+
 ------
 
- or alternatively, we can use an external <<<build.xml>>> (<note the 
- <<<inheritRefs>>> property so the classpath references are passed to the 
- <<<build.xml>>>>)
+ or alternatively, we can use an external <<<build.xml>>>.
 
 ------
 <project>
@@ -113,7 +101,12 @@ Referencing the Maven Classpaths
             <phase>compile</phase>
             <configuration>
               <tasks>
-                <ant antfile="${basedir}/build.xml" inheritRefs="true">
+                <property name="compile_classpath" refid="maven.compile.classpath"/>
+                <property name="runtime_classpath" refid="maven.runtime.classpath"/>
+                <property name="test_classpath" refid="maven.test.classpath"/>
+                <property name="plugin_classpath" refid="maven.plugin.classpath"/>
+
+                <ant antfile="${basedir}/build.xml">
                   <target name="test"/>
                 </ant>
               </tasks>
@@ -123,20 +116,7 @@ Referencing the Maven Classpaths
             </goals>
           </execution>
         </executions>
-        <dependencies>
-          <dependency>
-            <groupId>ant</groupId>
-            <artifactId>ant-antlr</artifactId>
-            <version>1.6.5</version>
-          </dependency>
-          <dependency>
-            <groupId>antlr</groupId>
-            <artifactId>antlrall</artifactId>
-            <version>2.7.4</version>
-          </dependency>
-        </dependencies>
       </plugin>
-
     </plugins>
   </build>
 </project>
@@ -150,9 +130,10 @@ Referencing the Maven Classpaths
 
     <target name="test">
 
-        <antlr target="calc.g" outputdirectory="target">
-            <classpath refid="maven.plugin.classpath"/>
-        </antlr>
+      <echo message="compile classpath: ${compile_classpath}"/>
+      <echo message="runtime classpath: ${runtime_classpath}"/>
+      <echo message="test classpath:    ${test_classpath}"/>
+      <echo message="plugin classpath:  ${plugin_classpath}"/>
 
     </target>
 
