@@ -38,6 +38,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * @plexus.component role="org.apache.maven.plugin.assembly.io.AssemblyReader" role-hint="default"
+ */
 public class DefaultAssemblyReader
     extends AbstractLogEnabled
     implements AssemblyReader

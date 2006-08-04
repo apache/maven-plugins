@@ -49,7 +49,9 @@ public final class ProjectUtils
                     continue;
                 }
 
-                for ( Iterator parentIterator = modules.iterator(); parentIterator.hasNext(); )
+                Set currentPotentialParents = new HashSet( modules );
+                
+                for ( Iterator parentIterator = currentPotentialParents.iterator(); parentIterator.hasNext(); )
                 {
                     MavenProject potentialParent = (MavenProject) parentIterator.next();
 

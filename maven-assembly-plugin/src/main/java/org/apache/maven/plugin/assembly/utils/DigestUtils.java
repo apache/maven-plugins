@@ -33,13 +33,17 @@ import java.util.regex.Pattern;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @todo [jdcasey] This needs unit tests.
  */
-public class DigestUtils
+public final class DigestUtils
 {
     private static final int CHECKSUM_BUFFER_SIZE = 16384;
 
     private static final int BYTE_MASK = 0xFF;
+    
+    private DigestUtils()
+    {
+    }
 
-    public String createChecksum( File file, String algorithm )
+    public static String createChecksum( File file, String algorithm )
         throws IOException, NoSuchAlgorithmException
     {
         MessageDigest digest = MessageDigest.getInstance( algorithm );
