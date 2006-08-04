@@ -152,7 +152,7 @@ Usage
 *-----------------------------------+-----------------------------------+
 | <<<Copy>>>                        | {{{../maven-resources-plugin/}<<<maven-resources-plugin>>>}}            |
 *-----------------------------------+-----------------------------------+
-| <<<Dependset>>>                   | {{{../maven-dependencies-plugin/}<<<maven-dependencies-plugin>>>}}         |
+| <<<Dependset>>>                   | {{{../maven-dependency-plugin/}<<<maven-dependency-plugin>>>}}         |
 *-----------------------------------+-----------------------------------+
 | <<<Ear>>>                         | {{{../maven-ear-plugin/}<<<maven-ear-plugin>>>}}                  |
 *-----------------------------------+-----------------------------------+
@@ -200,7 +200,7 @@ Optional Tasks                                                          |
 *-----------------------------------+-----------------------------------+
 | <<<Antlr>>>                       | {{{../maven-antlr-plugin/}<<<maven-antlr-plugin>>>}}                |
 *-----------------------------------+-----------------------------------+
-| <<<Depend>>>                      | {{{../maven-dependencies-plugin/}<<<maven-dependencies-plugin>>>}}         |
+| <<<Depend>>>                      | {{{../maven-dependency-plugin/}<<<maven-dependency-plugin>>>}}         |
 *-----------------------------------+-----------------------------------+
 | <<<EJB Tasks>>>                   | {{{../maven-ejb-plugin/}<<<maven-ejb-plugin>>>}}                  |
 *-----------------------------------+-----------------------------------+
