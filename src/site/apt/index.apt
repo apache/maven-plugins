@@ -1,5 +1,5 @@
  ------
- Maven 2 War Plugin - Basic usage
+ Introduction
  ------
  Pete Marvin King
  ------
@@ -33,9 +33,9 @@ Maven WAR Plugin
  * {{{war-mojo.html}war:war}} is the default goal invoked during the package phase for projects with a package type of war.
  
  * {{{exploded-mojo.html}war:exploded}} is generally used to speed up testing during the developement phase by creating
- an exploded war on specified directory.    
+ an exploded war in a specified directory.    
  
- * {{{inplace-mojo.html}war:inplace}} another variation of the war:explode the war is instead generated in the web source directory
+ * {{{inplace-mojo.html}war:inplace}} another variation of the war:explode where the war is instead generated in the web source directory
  which is <<<src/main/webapp>>> by default.
  
 * Usage
@@ -47,15 +47,15 @@ Maven WAR Plugin
  To provide you with better understanding on some usages of the Maven WAR Plugin,
  you can take a look into the following examples:
  
- * {{{examples/adding-filtering-webresources.html}Adding and/or filtering webResources}}
+ * {{{examples/adding-filtering-webresources.html}Adding and Filtering External Web Resources}}
  
- * {{{examples/war-overlay.html}War overlays}}
+ * {{{examples/war-overlay.html}Manipulating WAR Overlays}}
  
- * {{{examples/war-manifest-guide.html}Managing your war manifest}}
+ * {{{examples/war-manifest-guide.html}War Manifest Customization}}
 
- * {{{examples/rapid-testing-jetty6-plugin.html}Rapid testing using jetty6}}
+ * {{{examples/rapid-testing-jetty6-plugin.html}Rapid Testing Using Jetty6}}
 
- * {{{examples/skinny-wars.html}Creating skinny wars}}
+ * {{{examples/skinny-wars.html}Creating Skinny WARs}}
  
 * Related links
  

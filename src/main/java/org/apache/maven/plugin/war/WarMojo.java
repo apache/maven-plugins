@@ -50,7 +50,7 @@ public class WarMojo
     private String outputDirectory;
 
     /**
-     * The name of the generated war.
+     * The name of the generated WAR.
      *
      * @parameter expression="${project.build.finalName}"
      * @required
