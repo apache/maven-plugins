@@ -117,7 +117,7 @@ public abstract class AbstractWarMojo
     private Resource[] webResources;
 
     /**
-     * Filters (property files) to include during the interpolation of the pom.xml
+     * Filters (property files) to include during the interpolation of the pom.xml.
      *
      * @parameter expression="${project.build.filters}"
      */
@@ -185,7 +185,7 @@ public abstract class AbstractWarMojo
 
     /**
      * The comma separated list of tokens to exclude when doing
-     * a way overlay.
+     * a war overlay.
      *
      * @parameter
      */
