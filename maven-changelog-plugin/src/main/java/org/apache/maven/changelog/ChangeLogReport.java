@@ -69,7 +69,7 @@ public class ChangeLogReport
     extends AbstractMavenReport
 {
     /**
-     * Used to specify whether to build the log from a range, absolute date.
+     * Used to specify whether to build the log using range, tag or date.
      *
      * @parameter expression="${changelog.type}" default-value="range"
      * @required
@@ -236,7 +236,7 @@ public class ChangeLogReport
 
     /**
      * Allows the user to choose which scm connection to use when connecting to the scm.
-     * Can either be "connection" or "developerConnection"
+     * Can either be "connection" or "developerConnection".
      *
      * @parameter default-value="connection"
      * @required

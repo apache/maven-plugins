@@ -24,29 +24,33 @@
 
 Using Range Type
 
-  To generate tha changelog reports using the <<<type>>> "range" as the basis for generation, set the configuration in the
+  To generate the changelog reports using the <<<type>>> "range" as the basis for generation, set the configuration in the
   project pom as follows:
 
 +-----+
 <project>
   ...
-    <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-changelog-plugin</artifactId>
-      <reportSets>
-        <reportSet>
-          <id>dual-report</id>
-          <configuration>
-            <type>range</type>
-            <range>30</range>
-          </configuration>
-          <reports>
-            <report>changelog</report>
-            <report>file-activity</report>
-          </reports>
-        </reportSet>
-      </reportSets>
-    </plugin>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changelog-plugin</artifactId>
+        <reportSets>
+          <reportSet>
+            <id>dual-report</id>
+            <configuration>
+              <type>range</type>
+              <range>30</range>
+            </configuration>
+            <reports>
+              <report>changelog</report>
+              <report>file-activity</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
   ...
 </project>
 +-----+
