@@ -271,7 +271,10 @@ public abstract class AbstractSiteMojo
                 {
                     List projects = this.reactorProjects;
 
-                    menu.setName( i18n.getString( "site-plugin", locale, "report.menu.projectmodules" ) );
+                    if ( menu.getName() == null )
+                    {
+                        menu.setName( i18n.getString( "site-plugin", locale, "report.menu.projectmodules" ) );
+                    }
 
                     if ( projects.size() == 1 )
                     {
@@ -704,7 +707,10 @@ public abstract class AbstractSiteMojo
 
                     parentUrl = getRelativePath( parentUrl, project.getUrl() );
 
-                    menu.setName( i18n.getString( "site-plugin", locale, "report.menu.parentproject" ) );
+                    if ( menu.getName() == null )
+                    {
+                        menu.setName( i18n.getString( "site-plugin", locale, "report.menu.parentproject" ) );
+                    }
 
                     MenuItem item = new MenuItem();
                     item.setName( parentProject.getName() );
