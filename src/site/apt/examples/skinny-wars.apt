@@ -1,5 +1,5 @@
  ------
- Maven 2 War Plugin - Creating Skinny WARs
+ Creating Skinny WARs
  ------
  Mike Perham
  ------
@@ -36,6 +36,9 @@ Creating Skinny WARs
  instead.  This goes into your WAR's <<<pom.xml>>>:
  
 +-----------------+ 
+<project>
+  [...]
+  <build>
     <plugins>
       <plugin>
          <artifactId>maven-war-plugin</artifactId>
@@ -51,6 +54,9 @@ Creating Skinny WARs
          </configuration>       
       </plugin>
     </plugins>    
+  </build>
+  [...]  
+</project>
 +-----------------+ 
 
  Next we need to change the EAR's <<<pom.xml>>> to package those dependent JARs in the EAR.
@@ -59,6 +65,7 @@ Creating Skinny WARs
  be packaged in the root of the EAR) and Java libraries (which are packaged in lib/).
 
 +-----------------+ 
+  <build>
     <plugins>
       <plugin>
         <artifactId>maven-ear-plugin</artifactId>
@@ -67,6 +74,7 @@ Creating Skinny WARs
         </configuration>       
       </plugin>
     </plugins>    
+  </build>
 +-----------------+  
 
  Now the painful part.  Your EAR's <<<pom.xml>>> needs to list every dependency that the WAR has.

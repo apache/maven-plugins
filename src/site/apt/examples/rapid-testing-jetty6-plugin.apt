@@ -1,5 +1,5 @@
  ------
- Maven 2 War Plugin - Rapid testing using jetty6 plugin
+ Rapid Testing Using the Jetty6 Plugin
  ------
  Pete Marvin King
  ------
@@ -22,7 +22,7 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/guides/mini/guide-apt-format.html
 
-Rapid testing with the jetty6 plugin 
+Rapid Testing Using the Jetty6 Plugin
  
  Normally, testing a web application involves compiling java sources, creating a war and 
  deploying it to a web container. 
@@ -35,7 +35,9 @@ Rapid testing with the jetty6 plugin
  To use the jetty6 plugin just add the following in your <<<pom.xml>>>:
  
 +-----------------+ 
+<project>
   [...]
+  <build>
     <plugins>
       <plugin>
          <groupId>org.mortbay.jetty</groupId>
@@ -53,7 +55,9 @@ Rapid testing with the jetty6 plugin
       </plugin>
       [...]
     </plugins>    
+  </build>
   [...]  
+</project>
 +-----------------+ 
 
  then start Jetty:
