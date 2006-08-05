@@ -1,5 +1,5 @@
  ------
- Maven 2 War Plugin - War Manifest customization
+ War Manifest Customization
  ------
  Pete Marvin King
  ------
@@ -27,21 +27,25 @@ War Manifest Customization
  The manifest can be customized by configuring the war plugin's archiver.
     
 +--------------------+
-[...]
-  <plugins>
-    <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-war-plugin</artifactId>
-      <version>2.0</version>
-      <configuration>
-         <archiver>    
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.0</version>
+        <configuration>
+          <archiver>    
             <manifest_entry>value</manifest_entry>
-         <archiver>             
-      </configuration>
-    </plugin>
-    [...]
-  </plugins>
-[...]  
+          <archiver>             
+        </configuration>
+      </plugin>
+      [...]
+    </plugins>
+  </build>
+  [...]  
+</project>
 +--------------------+   
  
   The <<<pom.xml>>> would generate this <<<META-INF/MANIFEST.MF>>> in your war.
@@ -62,32 +66,37 @@ manifest_entry: value
 
 Generating a manifest classpath
 
-  Generating a manifest classpath for a war is similar to for a jar, but there are a couple of slight differences since you normally won't want a jar in both the manifest classpath and the WEB-INF/lib.  Customize the war plugin's archiver:
+  Generating a manifest classpath for a war is similar to for a jar, but there are a couple of slight differences since you normally don't want a jar in both the manifest classpath and the WEB-INF/lib.  Customize the war plugin's archiver:
 
 +--------------------+
-[...]
-  <plugins>
-    <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-war-plugin</artifactId>
-      <version>2.0</version>
-      <configuration>
-        <archive>
-          <manifest>
-            <addClasspath>true</addClasspath>
-          </manifest>
-       </archive>
-     </configuration>
-    </plugin>
-    [...]
-  </plugins>
-[...]
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.0</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+      [...]
+    </plugins>
+  </build>
+  [...]  
+</project>
 +--------------------+
 
   Now, you can control which dependencies are included in WEB-INF/lib and in the manifest classpath by following these examples.  Maven will follow the transitive dependency tree until it gets to artifacts scoped as "provided".  Note that no way is shown to include a dependency in WEB-INF/lib but not the manifest classpath.
 
 +--------------------+
-[...]
+<project>
+  [...]
   <dependencies>
     <dependency>
       <groupId>org.foo</groupId>
@@ -110,8 +119,9 @@ Generating a manifest classpath
       <!-- excluded from manifest classpath, and excluded from WEB-INF/lib -->
     </dependency>
     [...]
-   </dependencies>
-[...]
+  </dependencies>
+  [...]
+</project>
 +--------------------+
 
 
