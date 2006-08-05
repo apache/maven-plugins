@@ -71,16 +71,21 @@
   </distributionManagement>
   <modules>
     <module>maven-ant-plugin</module>
+    <module>maven-antlr-plugin</module>
     <module>maven-antrun-plugin</module>
     <module>maven-assembly-plugin</module>
+    <module>maven-changelog-plugin</module>
+    <module>maven-changes-plugin</module>
     <module>maven-checkstyle-plugin</module>
     <module>maven-clean-plugin</module>
     <module>maven-clover-plugin</module>
     <module>maven-compiler-plugin</module>
     <module>maven-dependency-plugin</module>
     <module>maven-deploy-plugin</module>
-    <module>maven-eclipse-plugin</module>
+    <module>maven-doap-plugin</module>
+    <module>maven-docck-plugin</module>
     <module>maven-ear-plugin</module>
+    <module>maven-eclipse-plugin</module>
     <module>maven-ejb-plugin</module>
     <module>maven-help-plugin</module>
     <module>maven-idea-plugin</module>
@@ -88,6 +93,7 @@
     <module>maven-jar-plugin</module>
     <module>maven-javadoc-plugin</module>
     <module>maven-jxr-plugin</module>
+    <module>maven-one-plugin</module>
     <module>maven-plugin-plugin</module>
     <module>maven-pmd-plugin</module>
     <module>maven-project-info-reports-plugin</module>
