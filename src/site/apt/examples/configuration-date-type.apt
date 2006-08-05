@@ -24,24 +24,28 @@
 
 Using Date Type
 
-  To generate tha changelog reports using the <<<type>>> "date" as the basis for generation, set the configuration in the
+  To generate the changelog reports using the <<<type>>> "date" as the basis for generation, set the configuration in the
   project pom as follows:
 
 +-----+
 <project>
   ...
-    <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-changelog-plugin</artifactId>
-      <configuration>
-        <type>date</type>
-        <dates>
-          <date implementation="java.lang.String">2005-08-01</date>
-          <date implementation="java.lang.String">2005-09-01</date>
-        </dates>
-        <dateFormat>yyyy-MM-dd</dateFormat>
-      </configuration>
-    </plugin>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changelog-plugin</artifactId>
+        <configuration>
+          <type>date</type>
+          <dates>
+            <date implementation="java.lang.String">2005-08-01</date>
+            <date implementation="java.lang.String">2005-09-01</date>
+          </dates>
+          <dateFormat>yyyy-MM-dd</dateFormat>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
   ...
 </project>
 +-----+
