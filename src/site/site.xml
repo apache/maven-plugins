@@ -36,11 +36,11 @@
       <!--<item name="FAQ" href="faq.html"/> -->
     </menu>
     <menu name="Examples">
-      <item name="Adding web resources" href="examples/adding-filtering-webresources.html"/>   
-      <item name="Adding external web sources" href="examples/war-overlay.html"/>
-      <item name="War manifest customization" href="examples/war-manifest-guide.html"/>
-      <item name="Rapid testing using jetty6" href="examples/rapid-testing-jetty6-plugin.html"/>
-      <item name="Creating skinny wars" href="examples/skinny-wars.html"/>
+      <item name="Adding and Filtering External Web Resources" href="examples/adding-filtering-webresources.html"/>   
+      <item name="Manipulating WAR Overlays" href="examples/war-overlay.html"/>
+      <item name="War Manifest Customization" href="examples/war-manifest-guide.html"/>
+      <item name="Rapid Testing Using Jetty6" href="examples/rapid-testing-jetty6-plugin.html"/>
+      <item name="Creating Skinny WARs" href="examples/skinny-wars.html"/>
     </menu>
     ${reports}
   </body>

@@ -1,5 +1,5 @@
  ------
- Maven 2 War Plugin - Basic usage
+ Usage
  ------
  Pete Marvin King
  ------
@@ -22,7 +22,7 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/guides/mini/guide-apt-format.html
 
-Basic Usage
+Usage
 
  There are 4 ways to use the war plugin :
  
@@ -34,6 +34,8 @@ Basic Usage
  
  *invocation of the <<<war:inplace>>> goal
 
+ []
+
  <<When using the war goals it is assumed that the compile phase is already done. The war plugin is not responsible
    for compiling the java sources or copying of the resources.>> 
 
@@ -43,16 +45,16 @@ Basic Usage
  To illustrate, given the <<<pom.xml>>>
     
 +----------+
-  <project>
-     [...]
-     <groupId>com.example.projects</groupId>
-     <artifactId>documentedproject</artifactId>
-     <packaging>war</packaging>
-     <version>1.0-SNAPSHOT</version>
-     <name>Documented Project</name>
-     <url>http://example.com</url>
-     [...]
-  </project>
+<project>
+  [...]
+  <groupId>com.example.projects</groupId>
+  <artifactId>documentedproject</artifactId>
+  <packaging>war</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>Documented Project</name>
+  <url>http://example.com</url>
+  [...]
+</project>
 +----------+
 
  with a project structure
@@ -150,18 +152,22 @@ documentedproject-1.0-SNAPSHOT.war
  This default directory can be overridden by specifying the webAppDirectory plugin parameter.
   
 +-------+
-[...]
-  <plugins>
-    <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-war-plugin</artifactId>
-      <version>2.0</version>
-      <configuration>
-         <webAppDirectory>/sample/servlet/container/deploy/directory<webAppDirectory>    
-      </configuration>
-    </plugin>
-  </plugins>
-[...]  
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.0</version>
+        <configuration>
+           <webAppDirectory>/sample/servlet/container/deploy/directory<webAppDirectory>    
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  [...]  
+</project>
 +-------+  
 
 *Invocation of <<<war:inplace>>> goal
