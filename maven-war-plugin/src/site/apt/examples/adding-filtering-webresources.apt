@@ -1,5 +1,5 @@
  ------
- Maven 2 War Plugin - adding and filtering external web resources
+ Adding and Filtering External Web Resources
  ------
  Pete Marvin King
  ------
@@ -22,7 +22,7 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/guides/mini/guide-apt-format.html
 
-Introduction
+Adding and Filtering External Web Resources
 
  The default resource directory for all maven2 projects is <<<src/main/resources>>> which
  will end up in <<<target/classes>>> and in <<<WEB-INF/classes>>> in the war. The directory
@@ -34,26 +34,30 @@ Introduction
 *POM configuration
  
 +-------+
-[...]
-  <plugins>
-    <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-war-plugin</artifactId>
-      <version>2.0</version>
-      <configuration>
-        <webResources>
-          <resource>
-            <!-- this is relative to the pom.xml directory -->
-            <directory>resource2</directory>
-          </resource>
-        </webResources>
-       </configuration>
-     </plugin>
-  </plugins>
-[...]  
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.0</version>
+        <configuration>
+          <webResources>
+            <resource>
+              <!-- this is relative to the pom.xml directory -->
+              <directory>resource2</directory>
+            </resource>
+          </webResources>
+         </configuration>
+       </plugin>
+    </plugins>
+  </build>
+  [...]  
+</project>
 +-------+
 
- Using our sample project in the basic usage section with an added external resource
+ Using our sample project in the usage section with an added external resource
  
 +----------+
  .
@@ -126,7 +130,7 @@ documentedproject-1.0-SNAPSHOT.war
   
 **Inclusion/Exclusion for webResources
 
- using our pom configuration above we can add
+ Using our pom configuration above we can add
  
 +----------+  
  [..]
@@ -210,7 +214,7 @@ documentedproject-1.0-SNAPSHOT.war
 **Filtering webResources
 
   Using our example above, we can also configure filters for our resources.
-  We will add a hypothetical configuration directory on our project
+  We will add a hypothetical configurations directory on our project
   
 +----------+
  .
