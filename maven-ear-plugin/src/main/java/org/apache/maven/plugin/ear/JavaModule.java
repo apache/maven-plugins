@@ -61,15 +61,15 @@ public class JavaModule
         }
     }
 
-    public void resolveArtifact( Set artifacts, String defaultJavaBundleDir )
-        throws EarPluginException , MojoFailureException
+    public void resolveArtifact( Set artifacts )
+        throws EarPluginException, MojoFailureException
     {
         // Let's resolve the artifact
-        super.resolveArtifact( artifacts, defaultJavaBundleDir );
+        super.resolveArtifact( artifacts );
 
         // If the defaultJavaBundleDir is set and no bundle dir is
         // set, set the default as bundle dir
-        setJavaBundleDir( defaultJavaBundleDir );
+        setJavaBundleDir( EarExecutionContext.getInstance().getDefaultJavaBundleDir() );
     }
 
     protected String getType()

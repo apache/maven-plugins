@@ -45,6 +45,22 @@ public abstract class AbstractEarMojo
 
     public static final String META_INF = "META-INF";
 
+    public static final String UTF_8 = "UTF-8";
+
+    /**
+     * Character encoding for the auto-generated deployment file(s).
+     *
+     * @parameter
+     */
+    protected String encoding = UTF_8;
+
+    /**
+     * Directory where the deployment descriptor file(s) will be auto-generated.
+     *
+     * @parameter expression="${project.build.directory}"
+     */
+    protected String generatedDescriptorLocation;
+
     /**
      * The maven project.
      *
@@ -83,17 +99,27 @@ public abstract class AbstractEarMojo
      */
     private File workDirectory;
 
+    /**
+     * The JBoss specific configuration.
+     *
+     * @parameter
+     */
+    private PlexusConfiguration jboss;
+
+
     private List earModules;
 
     private List allModules;
 
+    private JbossConfiguration jbossConfiguration;
+
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        getLog().debug( "Resolving artifact type mappings ...");
+        getLog().debug( "Resolving artifact type mappings ..." );
         try
         {
-            ArtifactTypeMappingService.getInstance().configure( artifactTypeMappings);
+            ArtifactTypeMappingService.getInstance().configure( artifactTypeMappings );
         }
         catch ( EarPluginException e )
         {
@@ -103,6 +129,19 @@ public abstract class AbstractEarMojo
         {
             throw new MojoExecutionException( "Invalid artifact type mappings configuration", e );
         }
+
+        getLog().debug( "Initializing JBoss configuration if necessary ..." );
+        try
+        {
+            initializeJbossConfiguration();
+        }
+        catch ( EarPluginException e )
+        {
+            throw new MojoExecutionException( "Failed to initialize JBoss configuration", e );
+        }
+
+        getLog().debug( "Initializing ear execution context" );
+        EarExecutionContext.getInstance().initialize( defaultJavaBundleDir, jbossConfiguration );
 
         getLog().debug( "Resolving ear modules ..." );
         allModules = new ArrayList();
@@ -117,7 +156,7 @@ public abstract class AbstractEarMojo
                 {
                     module = modules[i];
                     getLog().debug( "Resolving ear module[" + module + "]" );
-                    module.resolveArtifact( project.getArtifacts(), defaultJavaBundleDir );
+                    module.resolveArtifact( project.getArtifacts() );
                     allModules.add( module );
                 }
             }
@@ -187,6 +226,11 @@ public abstract class AbstractEarMojo
         return workDirectory;
     }
 
+    protected JbossConfiguration getJbossConfiguration()
+    {
+        return jbossConfiguration;
+    }
+
     private static boolean isArtifactRegistered( Artifact a, List currentList )
     {
         Iterator i = currentList.iterator();
@@ -199,5 +243,42 @@ public abstract class AbstractEarMojo
             }
         }
         return false;
+    }
+
+    /**
+     * Initializes the JBoss configuration.
+     *
+     * @throws EarPluginException if the configuration is invalid
+     */
+    private void initializeJbossConfiguration()
+        throws EarPluginException
+    {
+        if ( jboss == null )
+        {
+            jbossConfiguration = null;
+        }
+        else
+        {
+            try
+            {
+                String version = jboss.getChild( JbossConfiguration.VERSION ).getValue();
+                if ( version == null )
+                {
+                    getLog().info( "JBoss version not set, using JBoss 4 by default" );
+                    version = JbossConfiguration.VERSION_4;
+                }
+                final String securityDomain = jboss.getChild( JbossConfiguration.SECURITY_DOMAIN ).getValue();
+                final String unauthenticatedPrincipal =
+                    jboss.getChild( JbossConfiguration.UNAUHTHENTICTED_PRINCIPAL ).getValue();
+                final String jmxName = jboss.getChild( JbossConfiguration.JMX_NAME ).getValue();
+
+                jbossConfiguration =
+                    new JbossConfiguration( version, securityDomain, unauthenticatedPrincipal, jmxName );
+            }
+            catch ( PlexusConfigurationException e )
+            {
+                throw new EarPluginException( "Invalid JBoss configuration", e );
+            }
+        }
     }
 }
