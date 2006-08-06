@@ -71,7 +71,7 @@ public abstract class AbstractEarModule
         this.bundleDir = null;
     }
 
-    public void resolveArtifact( Set artifacts, String defaultJavaBundleDir )
+    public void resolveArtifact( Set artifacts )
         throws EarPluginException, MojoFailureException
     {
         if ( artifact == null )

@@ -1,11 +1,8 @@
 package org.apache.maven.plugin.ear;
 
-import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.List;
@@ -33,7 +30,8 @@ import java.util.List;
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
-public final class ApplicationXmlWriter
+final class ApplicationXmlWriter
+    extends AbstractXmlWriter
 {
     public static final String DOCTYPE_1_3 = "application PUBLIC\n" +
         "\t\"-//Sun Microsystems, Inc.//DTD J2EE Application 1.3//EN\"\n" +
@@ -44,28 +42,17 @@ public final class ApplicationXmlWriter
 
     private final String version;
 
-    private final String encoding;
-
-    public ApplicationXmlWriter( String version, String encoding )
+    ApplicationXmlWriter( String version, String encoding )
     {
+        super( encoding );
         this.version = version;
-        this.encoding = encoding;
     }
 
     public void write( File destinationFile, List earModules, List securityRoles, String displayName,
                        String description )
         throws EarPluginException
     {
-        FileWriter w;
-        try
-        {
-            w = new FileWriter( destinationFile );
-        }
-        catch ( IOException ex )
-        {
-            throw new EarPluginException( "Exception while opening file[" + destinationFile.getAbsolutePath() + "]",
-                                          ex );
-        }
+        Writer w = initializeWriter( destinationFile );
 
         XMLWriter writer = null;
         if ( GenerateApplicationXmlMojo.VERSION_1_3.equals( version ) )
@@ -126,33 +113,16 @@ public final class ApplicationXmlWriter
         }
     }
 
-    private void close( Writer closeable )
+    private XMLWriter initializeRootElementOneDotThree( Writer w )
     {
-        if ( closeable == null )
-        {
-            return;
-        }
-
-        try
-        {
-            closeable.close();
-        }
-        catch ( Exception e )
-        {
-            // TODO: warn
-        }
-    }
-
-    private XMLWriter initializeRootElementOneDotThree( FileWriter w )
-    {
-        XMLWriter writer = new PrettyPrintXMLWriter( w, encoding, DOCTYPE_1_3 );
+        XMLWriter writer = initializeXmlWriter( w, DOCTYPE_1_3 );
         writer.startElement( APPLICATION_ELEMENT );
         return writer;
     }
 
-    private XMLWriter initializeRootElementOneDotFour( FileWriter w )
+    private XMLWriter initializeRootElementOneDotFour( Writer w )
     {
-        XMLWriter writer = new PrettyPrintXMLWriter( w, encoding, null );
+        XMLWriter writer = initializeXmlWriter( w, null );
         writer.startElement( APPLICATION_ELEMENT );
         writer.addAttribute( "xmlns", "http://java.sun.com/xml/ns/j2ee" );
         writer.addAttribute( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" );
@@ -162,9 +132,9 @@ public final class ApplicationXmlWriter
         return writer;
     }
 
-    private XMLWriter initializeRootElementFive( FileWriter w )
+    private XMLWriter initializeRootElementFive( Writer w )
     {
-        XMLWriter writer = new PrettyPrintXMLWriter( w, encoding, null );
+        XMLWriter writer = initializeXmlWriter( w, null );
         writer.startElement( APPLICATION_ELEMENT );
         writer.addAttribute( "xmlns", "http://java.sun.com/xml/ns/javaee" );
         writer.addAttribute( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" );
