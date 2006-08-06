@@ -38,7 +38,7 @@ public interface EarModule
      * module has been resolved.
      *
      * @return the artifact
-     * @see #resolveArtifact(java.util.Set, String)
+     * @see #resolveArtifact(java.util.Set)
      */
     public Artifact getArtifact();
 
@@ -65,14 +65,14 @@ public interface EarModule
     public void appendModule( XMLWriter writer, String version );
 
     /**
-     * Resolves the {@link Artifact} represented by the module with
-     * the specified execution configuration.
+     * Resolves the {@link Artifact} represented by the module. Note
+     * that the {@link EarExecutionContext} might be used to customiz
+     * further the resolution.
      *
-     * @param artifacts            the project's artifacts
-     * @param defaultJavaBundleDir the default bundle dir for {@link JavaModule}
+     * @param artifacts the project's artifacts
      * @throws EarPluginException if the artifact could not be resolved
      */
-    public void resolveArtifact( Set artifacts, String defaultJavaBundleDir )
+    public void resolveArtifact( Set artifacts )
         throws EarPluginException, MojoFailureException;
 
 }

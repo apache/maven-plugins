@@ -61,7 +61,8 @@ public class WebModule
 
         // If noContextRoot is true, skip the generation of
         // the context-root element
-        if (!noContextRoot.booleanValue()) {
+        if ( !noContextRoot.booleanValue() )
+        {
             writer.startElement( CONTEXT_ROOT_FIELD );
             writer.writeText( getContextRoot() );
             writer.endElement(); // context-root
@@ -70,11 +71,11 @@ public class WebModule
         writer.endElement(); // module
     }
 
-    public void resolveArtifact( Set artifacts, String defaultJavaBundleDir )
+    public void resolveArtifact( Set artifacts )
         throws EarPluginException, MojoFailureException
     {
         // Let's resolve the artifact
-        super.resolveArtifact( artifacts, defaultJavaBundleDir );
+        super.resolveArtifact( artifacts );
 
         // Context root has not been customized - using default
         if ( contextRoot == null )

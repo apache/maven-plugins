@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A Mojo that generates the application.xml deployment descriptor file.
+ * A Mojo that generates the EAR deployment descriptor file(s).
  *
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
@@ -45,9 +45,6 @@ public class GenerateApplicationXmlMojo
     public static final String VERSION_1_4 = "1.4";
 
     public static final String VERSION_5 = "5";
-
-    public static final String UTF_8 = "UTF-8";
-
 
     /**
      * Whether the application.xml should be generated or not.
@@ -81,26 +78,12 @@ public class GenerateApplicationXmlMojo
     private String description = null;
 
     /**
-     * Character encoding for the auto-generated application.xml file.
-     *
-     * @parameter
-     */
-    private String encoding = UTF_8;
-
-    /**
      * The security-roles to be added to the auto-generated
      * application.xml file.
      *
      * @parameter
      */
     private PlexusConfiguration security;
-
-    /**
-     * Directory where the application.xml file will be auto-generated.
-     *
-     * @parameter expression="${project.build.directory}"
-     */
-    private String generatedDescriptorLocation;
 
 
     public void execute()
@@ -109,44 +92,76 @@ public class GenerateApplicationXmlMojo
         // Initializes ear modules
         super.execute();
 
+        // Handle application.xml
         if ( !generateApplicationXml.booleanValue() )
         {
             getLog().debug( "Generation of application.xml is disabled" );
+        }
+        else
+        {
+            // Check version
+            if ( !version.equals( VERSION_1_3 ) && !version.equals( VERSION_1_4 ) && !version.equals( VERSION_5 ) )
+            {
+                throw new MojoExecutionException( "Invalid version[" + version + "]" );
+            }
+
+            // Generate deployment descriptor and copy it to the build directory
+            getLog().info( "Generating application.xml" );
+            try
+            {
+                generateStandardDeploymentDescriptor();
+            }
+            catch ( EarPluginException e )
+            {
+                throw new MojoExecutionException( "Failed to generate application.xml", e );
+            }
+
+            try
+            {
+                FileUtils.copyFileToDirectory( new File( generatedDescriptorLocation, "application.xml" ),
+                                               new File( getWorkDirectory(), "META-INF" ) );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Unable to copy application.xml to final destination", e );
+            }
+        }
+
+        // Handle jboss-app.xml
+        if ( getJbossConfiguration() == null )
+        {
+            getLog().debug( "Generation of jboss-app.xml is disabled" );
             return;
         }
+        else
+        {
+            // Generate deployment descriptor and copy it to the build directory
+            getLog().info( "Generating jboss-app.xml" );
+            try
+            {
+                generateJbossDeploymentDescriptor();
+            }
+            catch ( EarPluginException e )
+            {
+                throw new MojoExecutionException( "Failed to generate jboss-app.xml", e );
+            }
 
-        // Check version
-        if ( !version.equals( VERSION_1_3 ) && !version.equals( VERSION_1_4 ) && !version.equals( VERSION_5 ) )
-        {
-            throw new MojoExecutionException( "Invalid version[" + version + "]" );
-        }
-
-        // Generate deployment descriptor and copy it to the build directory
-        getLog().info( "Generating application.xml" );
-        try
-        {
-            generateDeploymentDescriptor();
-        }
-        catch ( EarPluginException e )
-        {
-            throw new MojoExecutionException( "Failed to generate application.xml", e );
-        }
-
-        try
-        {
-            FileUtils.copyFileToDirectory( new File( generatedDescriptorLocation, "application.xml" ),
-                                           new File( getWorkDirectory(), "META-INF" ) );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Unable to copy application.xml to final destination", e );
+            try
+            {
+                FileUtils.copyFileToDirectory( new File( generatedDescriptorLocation, "jboss-app.xml" ),
+                                               new File( getWorkDirectory(), "META-INF" ) );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Unable to copy jboss-app.xml to final destination", e );
+            }
         }
     }
 
     /**
-     * Generates the deployment descriptor if necessary.
+     * Generates the deployment descriptor.
      */
-    protected void generateDeploymentDescriptor()
+    protected void generateStandardDeploymentDescriptor()
         throws EarPluginException
     {
         File outputDir = new File( generatedDescriptorLocation );
@@ -159,6 +174,24 @@ public class GenerateApplicationXmlMojo
 
         ApplicationXmlWriter writer = new ApplicationXmlWriter( version, encoding );
         writer.write( descriptor, getModules(), buildSecurityRoles(), displayName, description );
+    }
+
+    /**
+     * Generates the jboss deployment descriptor.
+     */
+    protected void generateJbossDeploymentDescriptor()
+        throws EarPluginException
+    {
+        File outputDir = new File( generatedDescriptorLocation );
+        if ( !outputDir.exists() )
+        {
+            outputDir.mkdirs();
+        }
+
+        File descriptor = new File( outputDir, "jboss-app.xml" );
+
+        JbossAppXmlWriter writer = new JbossAppXmlWriter( encoding );
+        writer.write( descriptor, getJbossConfiguration(), getModules() );
     }
 
     /**
