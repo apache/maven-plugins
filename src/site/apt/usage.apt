@@ -99,3 +99,22 @@ mvn package
 
   You can take a look at the examples for more information on these advanced
   configurations.
+
+* JBoss support
+
+  The EAR plugin can generate the jboss-app.xml automatically. To do so, the 'jboss'
+  element must be configured and takes the following child elements:
+
+   * <<version>>: the targeted JBoss version to use (3.2 or 4 which is the default).
+
+   * <<security-domain>>: the JNDI name of the security manager (JBoss 4 only)
+
+   * <<unauthenticated-principal>>: the unauthenticated principal (JBoss 4 only)
+
+   * <<jmx-name>>: the object name of the ear mbean.
+
+  Hibernate archives (HAR) and Service archives (SAR) will be recognized automatically
+  and added the the jboss-app.xml file.
+
+  You can take a look at the examples for more information on the JBoss support.
+
