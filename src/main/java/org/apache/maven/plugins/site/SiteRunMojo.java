@@ -23,7 +23,7 @@ import org.codehaus.plexus.util.IOUtil;
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Server;
-import org.mortbay.jetty.handler.NotFoundHandler;
+import org.mortbay.jetty.handler.DefaultHandler;
 import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.webapp.WebAppContext;
 
@@ -75,12 +75,12 @@ public class SiteRunMojo
         WebAppContext webapp = createWebApplication();
         webapp.setServer( server );
 
-        NotFoundHandler notFoundHandler = new NotFoundHandler();
-        notFoundHandler.setServer( server );
+        DefaultHandler defaultHandler = new DefaultHandler();
+        defaultHandler.setServer( server );
 
         Handler[] handlers = new Handler[2];
         handlers[0] = webapp;
-        handlers[1] = notFoundHandler;
+        handlers[1] = defaultHandler;
         server.setHandlers( handlers );
 
         getLog().info( "Starting Jetty on http://localhost:8080/" );
