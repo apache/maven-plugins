@@ -16,8 +16,11 @@ package org.apache.maven.plugin.docck;
  * limitations under the License.
  */
 
+import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.HeadMethod;
 import org.apache.maven.model.IssueManagement;
 import org.apache.maven.model.License;
@@ -30,6 +33,8 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.docck.reports.DocumentationReport;
 import org.apache.maven.plugin.docck.reports.DocumentationReporter;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.Proxy;
+import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.model.fileset.FileSet;
 import org.apache.maven.shared.model.fileset.util.FileSetManager;
 import org.codehaus.plexus.util.IOUtil;
@@ -79,12 +84,21 @@ public abstract class AbstractCheckDocumentationMojo
     protected String siteDirectory;
 
     /**
-     * Sets whether this plugin is running in offline or online mode. Also useful when you don't want
-     * to verify http URLs.
+     * Sets whether this plugin is running in offline or online mode. Also
+     * useful when you don't want to verify http URLs.
      *
      * @parameter expression="${settings.offline}"
      */
     private boolean offline;
+
+    /**
+     * The current user system settings for use in Maven.
+     *
+     * @parameter expression="${settings}"
+     * @required
+     * @readonly
+     */
+    private Settings settings;
 
     private HttpClient httpClient;
 
@@ -95,6 +109,7 @@ public abstract class AbstractCheckDocumentationMojo
     protected AbstractCheckDocumentationMojo()
     {
         httpClient = new HttpClient();
+
         httpClient.getHttpConnectionManager().getParams().setConnectionTimeout( 5000 );
     }
 
@@ -106,6 +121,8 @@ public abstract class AbstractCheckDocumentationMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        setupProxy();
+
         if ( output != null )
         {
             getLog().info( "Writing documentation survey results to: " + output );
@@ -173,6 +190,42 @@ public abstract class AbstractCheckDocumentationMojo
         }
     }
 
+    /**
+     * Setup proxy access if needed.
+     */
+    private void setupProxy()
+    {
+        Proxy settingsProxy = settings.getActiveProxy();
+
+        if ( settingsProxy != null )
+        {
+            String proxyUsername = settingsProxy.getUsername();
+
+            String proxyPassword = settingsProxy.getPassword();
+
+            String proxyHost = settingsProxy.getHost();
+
+            int proxyPort = settingsProxy.getPort();
+
+            if ( StringUtils.isNotEmpty( proxyHost ) )
+            {
+                httpClient.getHostConfiguration().setProxy( proxyHost, proxyPort );
+
+                getLog().info( "Using proxy[" + proxyHost + "] at port [" + proxyPort + "]." );
+
+                if ( StringUtils.isNotEmpty( proxyUsername ) )
+                {
+                    getLog().info( "Using proxy user[" + proxyUsername + "]." );
+
+                    Credentials creds = new UsernamePasswordCredentials( proxyUsername, proxyPassword );
+
+                    httpClient.getState().setProxyCredentials( new AuthScope( proxyHost, proxyPort ), creds );
+                    httpClient.getParams().setAuthenticationPreemptive( true );
+                }
+            }
+        }
+    }
+
     private String buildErrorMessages( Map reporters )
     {
         String messages = "";
@@ -189,9 +242,9 @@ public abstract class AbstractCheckDocumentationMojo
             {
                 buffer.append( "\no " ).append( project.getName() );
                 buffer.append( " (" ).append( reporter.getMessagesByType( DocumentationReport.TYPE_ERROR ).size() )
-                      .append( " errors," );
+                    .append( " errors," );
                 buffer.append( " " ).append( reporter.getMessagesByType( DocumentationReport.TYPE_WARN ).size() )
-                      .append( " warnings)" );
+                    .append( " warnings)" );
                 for ( Iterator errorIterator = reporter.getMessages().iterator(); errorIterator.hasNext(); )
                 {
                     String error = (String) errorIterator.next();
@@ -264,7 +317,7 @@ public abstract class AbstractCheckDocumentationMojo
         }
         else
         {
-            checkURL( project.getUrl(), "project site", reporter);
+            checkURL( project.getUrl(), "project site", reporter );
         }
 
         if ( project.getIssueManagement() == null )
@@ -293,7 +346,7 @@ public abstract class AbstractCheckDocumentationMojo
             Prerequisites prereq = project.getPrerequisites();
             if ( StringUtils.isEmpty( prereq.getMaven() ) )
             {
-                reporter.error( "Missing <maven> tag in <prerequisites>");
+                reporter.error( "Missing <maven> tag in <prerequisites>" );
             }
         }
 
@@ -314,9 +367,8 @@ public abstract class AbstractCheckDocumentationMojo
         else
         {
             Scm scm = project.getScm();
-            if ( StringUtils.isEmpty( scm.getConnection() ) &&
-                 StringUtils.isEmpty( scm.getDeveloperConnection() ) &&
-                 StringUtils.isEmpty( scm.getUrl() ) )
+            if ( StringUtils.isEmpty( scm.getConnection() ) && StringUtils.isEmpty( scm.getDeveloperConnection() )
+                && StringUtils.isEmpty( scm.getUrl() ) )
             {
                 reporter.warn( "Missing children under the <scm> tag " );
             }
@@ -426,13 +478,13 @@ public abstract class AbstractCheckDocumentationMojo
                     }
                     catch ( HttpException e )
                     {
-                        reporter.error( "Cannot reach " + description + " with URL: \'" + url +
-                            "\'.\nError: " + e.getMessage() );
+                        reporter.error( "Cannot reach " + description + " with URL: \'" + url + "\'.\nError: "
+                            + e.getMessage() );
                     }
                     catch ( IOException e )
                     {
-                        reporter.error( "Cannot reach " + description + " with URL: \'" + url +
-                            "\'.\nError: " + e.getMessage() );
+                        reporter.error( "Cannot reach " + description + " with URL: \'" + url + "\'.\nError: "
+                            + e.getMessage() );
                     }
                     finally
                     {
@@ -447,8 +499,8 @@ public abstract class AbstractCheckDocumentationMojo
         }
         catch ( MalformedURLException e )
         {
-            reporter.warn( description + " appears to have an invalid URL: \'" + url +
-                "\'.\nError: " + e.getMessage() + "\n\nTrying to access it as a file instead." );
+            reporter.warn( description + " appears to have an invalid URL: \'" + url + "\'.\nError: " + e.getMessage()
+                + "\n\nTrying to access it as a file instead." );
 
             checkFile( url, description, reporter );
         }
