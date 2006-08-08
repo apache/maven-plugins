@@ -1,0 +1,48 @@
+import java.io.*;
+import java.net.*;
+import java.util.jar.*;
+
+boolean result = true;
+
+try
+{
+    System.out.println( "Creating JarFile java.io.File." );
+    
+    File jarFile = new File( basedir, "child2/target/child2-1.0-SNAPSHOT-bin.jar" );
+    
+    System.out.println( "Checking for existence and file-ishness of: " + jarFile );
+    
+    if ( !jarFile.exists() || jarFile.isDirectory() )
+    {
+        System.err.println( "jar file is missing or a directory." );
+        return false;
+    }
+    
+    System.out.println( "Creating JarFile instance." );
+    
+    JarFile jf = new JarFile( jarFile );
+    
+    System.out.println( "Looking for 'lib/child1.jar' jar entry." );
+    
+    if ( jf.getEntry( "lib/child1.jar" ) == null )
+    {
+        System.err.println( "child1 entry is missing." );
+        result = false;
+    }
+    
+    System.out.println( "Looking for absence of 'lib/junit.jar' jar entry." );
+    
+    if ( jf.getEntry( "lib/junit.jar" ) != null )
+    {
+        System.err.println( "junit jar should not be present." );
+        result = false;
+    }
+    
+}
+catch( IOException e )
+{
+    e.printStackTrace();
+    result = false;
+}
+
+return result;
