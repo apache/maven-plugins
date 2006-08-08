@@ -61,7 +61,7 @@ public class AddArtifactTaskTest
     {
         mac.expectModeChange( -1, -1, -1, -1, 1 );
 
-        String outputLocation = "artifact";
+        String outputLocation = "artifact/";
 
         try
         {
@@ -91,7 +91,7 @@ public class AddArtifactTaskTest
         
         mac.expectModeChange( -1, -1, directoryMode, fileMode, 2 );
 
-        String outputLocation = "artifact";
+        String outputLocation = "artifact/";
 
         try
         {
@@ -120,7 +120,7 @@ public class AddArtifactTaskTest
     {
         mac.expectModeChange( -1, -1, -1, -1, 1 );
 
-        String outputLocation = "artifact";
+        String outputLocation = "artifact/";
 
         String[] includes = { "**/*.txt" };
         String[] excludes = { "**/README.txt" };
