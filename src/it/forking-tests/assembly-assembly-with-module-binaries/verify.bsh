@@ -1,0 +1,38 @@
+import java.io.*;
+import java.net.*;
+import java.util.zip.*;
+
+boolean result = true;
+
+try
+{
+    File zipFile = new File( basedir, "target/assembly-assembly-with-module-binaries-1.0-bin.zip" );
+    
+    if ( !zipFile.exists() || zipFile.isDirectory() )
+    {
+        System.err.println( "zip-file is missing or a directory." );
+        result = false;
+    }
+    
+    ZipFile zf = new ZipFile( zipFile );
+    
+    if ( zf.getEntry( "assembly-assembly-with-module-binaries-1.0/modules/child1.jar" ) == null )
+    {
+        System.err.println( "child1 entry is missing." );
+        result = false;
+    }
+    
+    if ( zf.getEntry( "assembly-assembly-with-module-binaries-1.0/modules/child2.jar" ) == null )
+    {
+        System.err.println( "child2 entry is missing." );
+        result = false;
+    }
+    
+}
+catch( IOException e )
+{
+    e.printStackTrace();
+    result = false;
+}
+
+return result;

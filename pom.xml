@@ -113,7 +113,6 @@
           </filesets>
         </configuration>
       </plugin>
-<!--
       <plugin>
         <artifactId>maven-invoker-plugin</artifactId>
         <configuration>
@@ -126,6 +125,7 @@
             <pomExclude>**/child*/pom.xml</pomExclude>
           </pomExcludes>
         </configuration>
+<!--
         <executions>
           <execution>
             <id>functional-test</id>
@@ -135,8 +135,8 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
  -->
+      </plugin>
       <plugin>
         <groupId>org.codehaus.modello</groupId>
         <artifactId>modello-maven-plugin</artifactId>
