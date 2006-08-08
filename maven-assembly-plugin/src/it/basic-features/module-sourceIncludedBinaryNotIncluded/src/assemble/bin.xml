@@ -10,6 +10,10 @@
       <includes>
         <include>org.test:child1</include>
       </includes>
+      <binaries>
+        <includeDependencies>true</includeDependencies>
+        <unpack>false</unpack>
+      </binaries>
     </moduleSet>
   </moduleSets>
 </assembly>
