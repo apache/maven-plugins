@@ -90,6 +90,11 @@ public final class AssemblyFormatUtils
         {
             value += "/";
         }
+        
+        if ( value.length() > 0 && ( value.startsWith( "/" ) || value.startsWith( "\\" ) ) )
+        {
+            value = value.substring( 1 );
+        }
 
         return value;
     }
