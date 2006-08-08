@@ -124,6 +124,9 @@ public class ModuleSetAssemblyPhaseTest
         MockManager mm = new MockManager();
 
         MockAndControlForLogger macLogger = new MockAndControlForLogger( mm );
+        
+        macLogger.expectDebug( false, true );
+        
         MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm );
 
         macTask.expectArtifactGetFile( true );
@@ -414,9 +417,6 @@ public class ModuleSetAssemblyPhaseTest
 
         MockAndControlForAddFileSetsTask macTask = new MockAndControlForAddFileSetsTask( mm, fileManager );
 
-        MockAndControlForLogger macLogger = new MockAndControlForLogger( mm );
-        macLogger.expectDebug( true, true );
-
         MavenProject project = createProject( "group", "artifact", "version", null );
 
         Set projects = Collections.singleton( project );
@@ -435,8 +435,10 @@ public class ModuleSetAssemblyPhaseTest
                                                false );
 
         mm.replayAll();
+        
+        Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
-        createPhase( macLogger.logger, null ).addModuleSourceFileSets( sources, projects, macTask.archiver,
+        createPhase( logger, null ).addModuleSourceFileSets( sources, projects, macTask.archiver,
                                                                        macTask.configSource, false );
 
         mm.verifyAll();
