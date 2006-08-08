@@ -55,7 +55,7 @@ public class DependencySetAssemblyPhaseTest
         macTask.expectGetClassifier( null );
         macTask.expectGetArtifactHandler();
 
-        macTask.expectAddFile( outputLocation + "/artifact", 8 );
+        macTask.expectAddFile( "out/artifact", 8 );
 
         project.setArtifacts( Collections.singleton( macTask.artifact ) );
 
@@ -118,13 +118,13 @@ public class DependencySetAssemblyPhaseTest
     public void testAddDependencySet_ShouldAddOneDependencyFromProjectWithoutUnpacking()
         throws AssemblyFormattingException, ArchiveCreationException, IOException
     {
-        verifyOneDependencyAdded( "/out", false );
+        verifyOneDependencyAdded( "out", false );
     }
 
     public void testAddDependencySet_ShouldAddOneDependencyFromProjectUnpacked()
         throws AssemblyFormattingException, ArchiveCreationException, IOException
     {
-        verifyOneDependencyAdded( "/out", true );
+        verifyOneDependencyAdded( "out", true );
     }
 
     private void verifyOneDependencyAdded( String outputLocation, boolean unpack )
@@ -150,7 +150,7 @@ public class DependencySetAssemblyPhaseTest
 
         if ( unpack )
         {
-            macTask.expectAddArchivedFileSet( outputLocation + "/artifact", null, null );
+            macTask.expectAddArchivedFileSet( outputLocation + "/artifact/", null, null );
             macTask.expectModeChange( -1, -1, 8, 8, 2 );
         }
         else
