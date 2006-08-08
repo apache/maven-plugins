@@ -37,6 +37,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -420,17 +421,23 @@ public class InvokerMojo
         {
             final Interpreter engine = new Interpreter();
 
-            if ( !noLog )
-            {
-                logger.consumeLine( "Running " + scriptDescription + " in: " + script );
-
-                engine.setErr( logger.getPrintStream() );
-                engine.setOut( logger.getPrintStream() );
-            }
-
+            PrintStream origOut = System.out;
+            PrintStream origErr = System.err;
+            
             FileReader reader = null;
             try
             {
+                if ( !noLog )
+                {
+                    logger.consumeLine( "Running " + scriptDescription + " in: " + script );
+
+                    System.setErr( logger.getPrintStream() );
+                    System.setOut( logger.getPrintStream() );
+                    
+                    engine.setErr( logger.getPrintStream() );
+                    engine.setOut( logger.getPrintStream() );
+                }
+
                 engine.set( "basedir", basedir );
 
                 reader = new FileReader( script );
@@ -442,6 +449,8 @@ public class InvokerMojo
             finally
             {
                 IOUtil.close( reader );
+                System.setErr( origErr );
+                System.setOut( origOut );
             }
 
             if ( !noLog )
