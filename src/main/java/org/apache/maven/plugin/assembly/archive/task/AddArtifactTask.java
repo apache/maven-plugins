@@ -56,6 +56,11 @@ public class AddArtifactTask
 
         if ( unpack )
         {
+            if ( !outputLocation.endsWith( "/" ) )
+            {
+                outputLocation += "/";
+            }
+            
             String[] includesArray = TypeConversionUtils.toStringArray( includes );
             String[] excludesArray = TypeConversionUtils.toStringArray( excludes );
 
