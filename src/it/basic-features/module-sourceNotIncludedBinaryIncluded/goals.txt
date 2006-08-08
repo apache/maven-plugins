@@ -1,1 +1,1 @@
-clean package assembly:directory
+clean package assembly:directory-inline
