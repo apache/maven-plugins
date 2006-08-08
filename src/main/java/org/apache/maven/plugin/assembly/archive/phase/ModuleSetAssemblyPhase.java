@@ -207,7 +207,7 @@ public class ModuleSetAssemblyPhase
         {
             MavenProject moduleProject = ( MavenProject ) j.next();
 
-            getLogger().debug( "Processing sources for module project: " + moduleProject.getId() );
+            getLogger().info( "Processing sources for module project: " + moduleProject.getId() );
             
             String sourcePath = sources.getDirectory();
             
@@ -226,7 +226,10 @@ public class ModuleSetAssemblyPhase
             else
             {
                 sourcePath = moduleBasedir.getAbsolutePath();
+                sources.setDirectory( sourcePath );
             }
+            
+            getLogger().info( "module-sources source directory is: " + sourcePath );
 
             AddFileSetsTask task = new AddFileSetsTask( Collections.singletonList( sources ) );
 

@@ -71,6 +71,7 @@ public class DefaultAssemblyReader
         {
             for ( int i = 0; i < descriptors.length; i++ )
             {
+                getLogger().info( "Reading assembly descriptor: " + descriptors[i] );
                 assemblies.add( getAssemblyFromDescriptorFile( descriptors[i], configSource ) );
             }
         }
