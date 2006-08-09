@@ -15,7 +15,7 @@ Introduction
  Simply running 
  
 +------------+
-   mvn site:site
+   mvn site
 +------------+ 
 
  would generate the project information documentation. For more information on how to customize the project information
