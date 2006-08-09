@@ -9,27 +9,7 @@
  
 Run Individual Report
 
- Each Individual reports can be generated without configuring anything in the <<<pom.xml>>>, check the table below
- for the command line of each project information reports.
+ Each Individual reports can be generated without configuring anything in the <<<pom.xml>>>, check the table in 
+ {{{../plugin-info.html}Goals}} for the complete goals list.
 
   <<The generated reports using this method does not contain any navigational links.>>
-
-*---------------------------------+----------------------------------------------+
-|<<Report Name>>                  | <<Command Line>>                             |
-|                                 |                                              |
-*---------------------------------+----------------------------------------------+
-|Dependencies Report              | mvn project-info-reports:dependencies        |
-*---------------------------------+----------------------------------------------+
-|Mailing Lists                    | mvn project-info-reports:mailing-list        |
-*---------------------------------+----------------------------------------------+
-|Continous Integration            | mvn project-info-reports:cim                 |
-*---------------------------------+----------------------------------------------+
-|Source Repository                | mvn project-info-reports:scm                 |
-*---------------------------------+----------------------------------------------+
-|Issue Tracking                   | mvn project-info-reports:issue-tracking      |
-*---------------------------------+----------------------------------------------+
-|Project Team                     | mvn project-info-reports:project-team        |
-*---------------------------------+----------------------------------------------+
-|License                          | mvn project-info-reports:license             |
-*---------------------------------+----------------------------------------------+
- 
