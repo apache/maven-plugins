@@ -29,6 +29,7 @@ import org.apache.maven.shared.invoker.Invoker;
 import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.apache.maven.shared.model.fileset.FileSet;
 import org.apache.maven.shared.model.fileset.util.FileSetManager;
+import org.apache.maven.wagon.PathUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.cli.CommandLineException;
 
@@ -70,6 +71,13 @@ public class InvokerMojo
      * @parameter expression="${invoker.projectsDirectory}" default-value="${basedir}/src/projects/"
      */
     private File projectsDirectory;
+    
+    /**
+     * A single POM to build, skipping any scanning parameters and behavior.
+     * 
+     * @parameter expression="${invoker.pom}"
+     */
+    private File pom;
 
     /**
      * Includes for searching the integration test directory. This parameter is meant to be set from the POM.
@@ -517,17 +525,24 @@ public class InvokerMojo
     private String[] getPoms()
         throws IOException
     {
-        final FileSet fs = new FileSet();
+        if ( pom != null && pom.exists() )
+        {
+            return new String[]{ PathUtils.toRelative( projectsDirectory, pom.getAbsolutePath() ) };
+        }
+        else
+        {
+            final FileSet fs = new FileSet();
 
-        fs.setIncludes( pomIncludes );
-        fs.setExcludes( pomExcludes );
-        fs.setDirectory( projectsDirectory.getCanonicalPath() );
-        fs.setFollowSymlinks( false );
-        fs.setUseDefaultExcludes( false );
+            fs.setIncludes( pomIncludes );
+            fs.setExcludes( pomExcludes );
+            fs.setDirectory( projectsDirectory.getCanonicalPath() );
+            fs.setFollowSymlinks( false );
+            fs.setUseDefaultExcludes( false );
 
-        final FileSetManager fsm = new FileSetManager( getLog() );
+            final FileSetManager fsm = new FileSetManager( getLog() );
 
-        return fsm.getIncludedFiles( fs );
+            return fsm.getIncludedFiles( fs );
+        }
     }
 
     private List readFromFile( final File projectGoalList )
