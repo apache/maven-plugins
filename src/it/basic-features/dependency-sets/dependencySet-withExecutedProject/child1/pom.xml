@@ -1,6 +1,6 @@
 <?xml version="1.0"?><project>
   <parent>
-    <artifactId>dependencySet-notUnpacked</artifactId>
+    <artifactId>dependencySet-withExecutedProject</artifactId>
     <groupId>test</groupId>
     <version>1.0-SNAPSHOT</version>
   </parent>
