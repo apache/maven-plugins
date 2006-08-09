@@ -11,12 +11,16 @@ Maven 2 One Plugin
 
   This plugin provides some integration tasks with Maven 1.x:
 
-   * Provides a packaging mechanism for Maven 1.x plugins, building using Maven 2.0
+   * Helps you to switch your project from Maven 1 to Maven 2 by converting your <<<project.xml>>> to a <<<pom.xml>>>
+
+   * Provides a packaging mechanism for Maven 1.x plugins, building them using Maven 2.0
 
    * Provides a hook for installation that will copy built artifacts into a local or remote Maven 1.x repository, for
      concurrent development with Maven 1.x projects
 
 * Goals Overview
+
+  * {{{convert-mojo.html}one:convert}} convert a Maven 1 project.xml (v3 pom) to a Maven 2 pom.xml (v4 pom).
 
   * {{{deploy-maven-one-repository-mojo.html}one:deploy-maven-one-repository}} deploy an artifact into a Maven 1 remote repository.
 
