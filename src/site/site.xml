@@ -34,20 +34,11 @@
       <item name="Introduction" href="index.html"/>
       <item name="Goals" href="plugin-info.html"/>
       <item name="Usage" href="usage.html"/>
-      <!-- item name="FAQ" href="faq.html" -->
+      <item name="FAQ" href="faq.html"/>
     </menu>
     <menu name="Examples">
       <item name="Selective Reports" href="examples/selective-project-info-reports.html"/>
       <item name="Individual Reports" href="examples/individual-reports.html"/>      
-    </menu>
-    <menu name="Sample Reports">
-      <item name="Dependencies" href="sample-dependencies.html"/>
-      <item name="Mailing Lists" href="sample-mail-lists.html"/>
-      <item name="Continous Integration"  href="sample-integration.html"/>
-      <item name="Source Repository"  href="sample-source-repository.html"/>
-      <item name="Issue Tracking" href="sample-issue-tracking.html"/>
-      <item name="Project Team" href="sample-team-list.html"/>
-      <item name="License" href="sample-license.html"/>
     </menu>
     ${reports}
   </body>
