@@ -1,6 +1,6 @@
 <?xml version="1.0"?><project>
   <parent>
-    <artifactId>dependencySet-notUnpacked</artifactId>
+    <artifactId>dependencySet-withExecutedProject</artifactId>
     <groupId>test</groupId>
     <version>1.0-SNAPSHOT</version>
   </parent>
@@ -14,12 +14,7 @@
       <groupId>test</groupId>
       <artifactId>child1</artifactId>
       <version>1.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
+      <scope>runtime</scope>
     </dependency>
   </dependencies>
   
@@ -37,7 +32,7 @@
               </descriptors>
             </configuration>
             <goals>
-              <goal>attached</goal>
+              <goal>directory</goal>
             </goals>
           </execution>
         </executions>
