@@ -8,6 +8,28 @@
 
 Usage
 
+* Maven 1 to Maven 2 conversion
+
+  If you are moving a project from Maven 1 to Maven 2, you can get some help
+  from the Maven One plugin. It can convert your project's <<<project.xml>>>
+  and <<<project.properties>>> into a <<<pom.xml>>>. To do this, change to the
+  directory where your <<<project.xml>>> file is located and issue this command
+  on the command line:
+
+-------
+mvn one:convert
+-------
+
+  This goal uses
+  {{{http://maven.apache.org/ref/current/maven-model-converter/}maven-model-converter}}
+  which not only converts your project model, it also has <relocators> for many
+  plugins and <converters> for their configurations. So if you had some
+  configuration properties for the Maven 1 jar-plugin, a converter will try
+  to create a suitable configuration section for the Maven 2 jar-plugin inside
+  your new <<<pom.xml>>>. You need to review the versions for the plugins in
+  <<<pom.xml>>> after it has been created, as the versions might not be the
+  same as for the Maven 1 plugins.
+
 * Maven 1.x Plugin Packaging
 
   To package a Maven 1.x plugin using Maven 2.x, you need to include the Maven
