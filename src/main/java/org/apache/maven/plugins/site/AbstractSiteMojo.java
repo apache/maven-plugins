@@ -824,7 +824,7 @@ public abstract class AbstractSiteMojo
         }
         else
         {
-            props.put( "project.url", "NO_PROJECT_URL_SET" );
+            props.put( "project.url", "NO_PROJECT_URL_SET_" + project.getId() );
         }
 
         // Legacy for the old ${parentProject} syntax
