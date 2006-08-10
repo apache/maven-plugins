@@ -61,20 +61,20 @@ public class ModuleSetAssemblyPhaseTest
         throws ArchiveCreationException, AssemblyFormattingException, IOException
     {
         MockManager mm = new MockManager();
-        
+
         MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm );
-        
+
         MavenProject project = createProject( "group", "artifact", "version", null );
         MavenProject module = createProject( "group", "module", "version", project );
-        
+
         macTask.expectArtifactGetFile();
         module.setArtifact( macTask.artifact );
-        
+
         List projects = new ArrayList();
-        
+
         projects.add( project );
         projects.add( module );
-        
+
         macTask.expectGetProject( project );
         macTask.expectGetReactorProjects( projects );
         macTask.expectGetFinalName( "final-name" );
@@ -83,32 +83,32 @@ public class ModuleSetAssemblyPhaseTest
         macTask.expectArtifactGetDependencyConflictId( "group:module:jar" );
 
         int mode = Integer.parseInt( "777", 8 );
-        
+
         macTask.expectAddFile( "out/artifact", mode );
-        
+
         Assembly assembly = new Assembly();
         assembly.setIncludeBaseDirectory( false );
-        
+
         ModuleSet ms = new ModuleSet();
-        
+
         ModuleBinaries bin = new ModuleBinaries();
-        
+
         bin.setOutputFileNameMapping( "artifact" );
         bin.setOutputDirectory( "out" );
         bin.setFileMode( "777" );
         bin.setUnpack( false );
         bin.setIncludeDependencies( false );
-        
+
         ms.setBinaries( bin );
-        
+
         assembly.addModuleSet( ms );
-        
+
         Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
-        
+
         mm.replayAll();
 
         createPhase( logger, null ).execute( assembly, macTask.archiver, macTask.configSource );
-        
+
         mm.verifyAll();
     }
 
@@ -118,15 +118,44 @@ public class ModuleSetAssemblyPhaseTest
         createPhase( null, null ).addModuleBinaries( null, null, null, null, false );
     }
 
+    public void testAddModuleBinaries_ShouldFilterPomModule()
+        throws ArchiveCreationException, AssemblyFormattingException, IOException
+    {
+        MockManager mm = new MockManager();
+
+        MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm );
+
+        ModuleBinaries binaries = new ModuleBinaries();
+
+        binaries.setIncludeDependencies( false );
+        binaries.setUnpack( false );
+        binaries.setFileMode( "777" );
+        binaries.setOutputDirectory( "out" );
+        binaries.setOutputFileNameMapping( "artifact" );
+
+        MavenProject project = createProject( "group", "artifact", "version", null );
+        project.setPackaging( "pom" );
+        project.setArtifact( macTask.artifact );
+
+        Set projects = Collections.singleton( project );
+
+        mm.replayAll();
+
+        createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).addModuleBinaries( binaries, projects, macTask.archiver,
+                                                                 macTask.configSource, false );
+
+        mm.verifyAll();
+    }
+
     public void testAddModuleBinaries_ShouldAddOneModuleArtifactAndNoDeps()
         throws ArchiveCreationException, AssemblyFormattingException, IOException
     {
         MockManager mm = new MockManager();
 
         MockAndControlForLogger macLogger = new MockAndControlForLogger( mm );
-        
+
         macLogger.expectDebug( false, true );
-        
+
         MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm );
 
         macTask.expectArtifactGetFile( true );
@@ -435,11 +464,11 @@ public class ModuleSetAssemblyPhaseTest
                                                false );
 
         mm.replayAll();
-        
+
         Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
-        createPhase( logger, null ).addModuleSourceFileSets( sources, projects, macTask.archiver,
-                                                                       macTask.configSource, false );
+        createPhase( logger, null ).addModuleSourceFileSets( sources, projects, macTask.archiver, macTask.configSource,
+                                                             false );
 
         mm.verifyAll();
     }
