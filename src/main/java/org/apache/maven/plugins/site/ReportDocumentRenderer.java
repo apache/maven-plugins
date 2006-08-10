@@ -17,6 +17,8 @@ package org.apache.maven.plugins.site;
  */
 
 import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
+import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.doxia.sink.SinkFactory;
 import org.apache.maven.doxia.siterenderer.DocumentRenderer;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.siterenderer.RendererException;
@@ -24,11 +26,19 @@ import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.reporting.MavenReport;
+import org.apache.maven.reporting.MavenMultiPageReport;
 import org.apache.maven.reporting.MavenReportException;
+import org.apache.maven.reporting.MavenReport;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.Writer;
+import java.io.File;
+import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.Locale;
+import java.util.List;
+import java.util.Iterator;
 
 /**
  * Renders a Maven report.
@@ -53,18 +63,84 @@ public class ReportDocumentRenderer
         this.log = log;
     }
 
+    private static class MySink extends SiteRendererSink
+    {
+        private File outputDir;
+
+        private String outputName;
+            
+        public MySink( File outputDir, String outputName, RenderingContext ctx )
+        {
+            super( ctx );
+            this.outputName = outputName;
+        this.outputDir = outputDir;
+        }
+        
+        public String getOutputName()
+        {
+            return outputName;
+        }
+
+        public File getOutputDir()
+        {
+            return outputDir;
+        }
+
+    }
+
+    private static class MySinkFactory implements SinkFactory
+    {
+        private RenderingContext context;
+
+        private List sinks = new ArrayList();
+            
+        public MySinkFactory( RenderingContext ctx )
+        {
+            this.context = ctx;
+        }
+
+        public Sink createSink( File outputDir, String outputName )
+        {
+            SiteRendererSink sink = new MySink( outputDir, outputName, context );
+            sinks.add( sink );
+            return sink;
+        }
+
+        public List sinks()
+        {
+            return sinks;
+        }
+    }
+
+
     public void renderDocument( Writer writer, Renderer renderer, SiteRenderingContext siteRenderingContext )
         throws RendererException, FileNotFoundException
     {
         Locale locale = siteRenderingContext.getLocale();
         String localReportName = report.getName( locale );
-        log.info( "Generate \"" + localReportName + "\" report." );
+        log.info( "Generating \"" + localReportName + "\" report." );
+
+        MySinkFactory sf = new MySinkFactory( renderingContext );
 
         SiteRendererSink sink = new SiteRendererSink( renderingContext );
 
         try
         {
-            report.generate( sink, locale );
+            if ( report instanceof MavenMultiPageReport )
+            {
+                ( (MavenMultiPageReport) report ).generate( sink, sf, locale );
+            }
+            else
+            {
+                try
+                {
+                    report.generate( sink, locale );
+                }
+                catch ( NoSuchMethodError e )
+                {
+                    throw new RendererException( "No method on " + report.getClass(), e );
+                }
+            }
         }
         catch ( MavenReportException e )
         {
@@ -73,6 +149,28 @@ public class ReportDocumentRenderer
 
         if ( !report.isExternalReport() )
         {
+            try
+            {
+                List sinks = sf.sinks();
+
+                log.debug( "Multipage report: " + sinks.size() + " subreports");
+
+                for ( Iterator it = sinks.iterator(); it.hasNext(); )
+                {
+                    MySink mySink = (MySink) it.next();
+
+                    log.debug( "  Rendering " +  mySink.getOutputName() );
+
+                    Writer out = new FileWriter( new File( mySink.getOutputDir(), mySink.getOutputName() ) );
+
+                    renderer.generateDocument( out, mySink, siteRenderingContext );
+                }
+            }
+            catch ( IOException e )
+            {
+                throw new RendererException( "Cannot create writer", e );
+            }
+
             renderer.generateDocument( writer, sink, siteRenderingContext );
         }
     }
