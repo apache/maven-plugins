@@ -583,7 +583,25 @@ public class ScmReport
          */
         private void developerAccessSVN( SvnScmProviderRepository svnRepo )
         {
-            paragraph( i18n.getString( "project-info-report", locale, "report.scm.devaccess.svn.intro1" ) );
+            if ( svnRepo.getUrl() != null )
+            {
+                if ( svnRepo.getUrl().startsWith( "https://" ) )
+                {
+                    paragraph( i18n.getString( "project-info-report", locale, "report.scm.devaccess.svn.intro1.https" ) );
+                }
+                else if ( svnRepo.getUrl().startsWith( "svn://" ) )
+                {
+                    paragraph( i18n.getString( "project-info-report", locale, "report.scm.devaccess.svn.intro1.svn" ) );
+                }
+                else if ( svnRepo.getUrl().startsWith( "svn+ssh://" ) )
+                {
+                    paragraph( i18n.getString( "project-info-report", locale, "report.scm.devaccess.svn.intro1.svnssh" ) );
+                }
+                else
+                {
+                    paragraph( i18n.getString( "project-info-report", locale, "report.scm.devaccess.svn.intro1.other" ) );
+                }
+            }
 
             StringBuffer sb = new StringBuffer();
 
