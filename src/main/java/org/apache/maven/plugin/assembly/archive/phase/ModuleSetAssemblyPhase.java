@@ -1,6 +1,7 @@
 package org.apache.maven.plugin.assembly.archive.phase;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.task.AddArtifactTask;
@@ -79,13 +80,29 @@ public class ModuleSetAssemblyPhase
         }
     }
 
-    protected void addModuleBinaries( ModuleBinaries binaries, Set moduleProjects, Archiver archiver,
+    protected void addModuleBinaries( ModuleBinaries binaries, Set projects, Archiver archiver,
                                       AssemblerConfigurationSource configSource, boolean includeBaseDirectory )
         throws ArchiveCreationException, AssemblyFormattingException
     {
         if ( binaries == null )
         {
             return;
+        }
+        
+        Set moduleProjects = new HashSet( projects );
+        
+        for ( Iterator it = moduleProjects.iterator(); it.hasNext(); )
+        {
+            MavenProject project = ( MavenProject ) it.next();
+            
+            if ( "pom".equals( project.getPackaging() ) )
+            {
+                String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
+                
+                getLogger().debug( "Excluding POM-packaging module: " + projectId );
+                
+                it.remove();
+            }
         }
 
         Set visitedArtifacts = new HashSet();
@@ -119,10 +136,8 @@ public class ModuleSetAssemblyPhase
 
                 List includes = binaries.getIncludes();
                 
-                // we don't need to include dependencies which have already been found.
-//                List excludes = collectExcludesFromQueuedArtifacts( visitedArtifacts, binaries.getExcludes() );
                 List excludes = binaries.getExcludes();
-
+                
                 FilterUtils.filterArtifacts( binaryDependencies, includes, excludes, true, Collections.EMPTY_LIST,
                                              getLogger() );
 
