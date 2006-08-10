@@ -185,7 +185,7 @@ public class SiteDeployMojo
             if ( wagon instanceof CommandExecutor )
             {
                 CommandExecutor exec = (CommandExecutor) wagon;
-                exec.executeCommand( "chmod -Rf g+w " + repository.getBasedir() );
+                exec.executeCommand( "chmod -Rf g+w,a+rX " + repository.getBasedir() );
             }
         }
         catch ( ResourceDoesNotExistException e )
