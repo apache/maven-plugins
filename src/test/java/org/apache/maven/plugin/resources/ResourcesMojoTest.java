@@ -71,13 +71,13 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "filters", new LinkedList() );
         mojo.execute();
 
-        String resorucesDir = project.getOutputDirectory();
+        String resourcesDir = project.getOutputDirectory();
 
-        assertTrue( FileUtils.fileExists( resorucesDir + "/file4.txt" ) );
-        assertTrue( FileUtils.fileExists( resorucesDir + "/package/file3.nottest" ) );
-        assertTrue( FileUtils.fileExists( resorucesDir + "/notpackage/file1.include" ) );
-        assertTrue( FileUtils.fileExists( resorucesDir + "/package/test" ) );
-        assertTrue( FileUtils.fileExists( resorucesDir + "/notpackage/test" ) );
+        assertTrue( FileUtils.fileExists( resourcesDir + "/file4.txt" ) );
+        assertTrue( FileUtils.fileExists( resourcesDir + "/package/file3.nottest" ) );
+        assertTrue( FileUtils.fileExists( resourcesDir + "/notpackage/file1.include" ) );
+        assertTrue( FileUtils.fileExists( resourcesDir + "/package/test" ) );
+        assertTrue( FileUtils.fileExists( resourcesDir + "/notpackage/test" ) );
     }
 
     /**
@@ -107,13 +107,13 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "filters", new LinkedList() );
         mojo.execute();
 
-        String resorucesDir = project.getOutputDirectory();
+        String resourcesDir = project.getOutputDirectory();
 
-        assertTrue( FileUtils.fileExists( resorucesDir + "/file4.txt" ) );
-        assertTrue( FileUtils.fileExists( resorucesDir + "/package/file3.nottest" ) );
-        assertTrue( FileUtils.fileExists( resorucesDir + "/notpackage/file1.include" ) );
-        assertTrue( FileUtils.fileExists( resorucesDir + "/package/test" ) );
-        assertTrue( FileUtils.fileExists( resorucesDir + "/notpackage/test" ) );
+        assertTrue( FileUtils.fileExists( resourcesDir + "/file4.txt" ) );
+        assertTrue( FileUtils.fileExists( resourcesDir + "/package/file3.nottest" ) );
+        assertTrue( FileUtils.fileExists( resourcesDir + "/notpackage/file1.include" ) );
+        assertTrue( FileUtils.fileExists( resourcesDir + "/package/test" ) );
+        assertTrue( FileUtils.fileExists( resourcesDir + "/notpackage/test" ) );
     }
 
     /**
@@ -140,9 +140,9 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "filters", new LinkedList() );
         mojo.execute();
 
-        String resorucesDir = project.getOutputDirectory();
+        String resourcesDir = project.getOutputDirectory();
 
-        assertTrue( FileUtils.fileExists( resorucesDir + "/file4.txt" ) );
+        assertTrue( FileUtils.fileExists( resourcesDir + "/file4.txt" ) );
     }
 
     /**
@@ -187,13 +187,13 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "filters", new LinkedList() );
         mojo.execute();
 
-        String resorucesDir = project.getOutputDirectory();
+        String resourcesDir = project.getOutputDirectory();
 
-        assertTrue( FileUtils.fileExists( resorucesDir + "/package/test" ) );
-        assertTrue( FileUtils.fileExists( resorucesDir + "/file1.include" ) );
-        assertTrue( FileUtils.fileExists( resorucesDir + "/package/file1.include" ) );
-        assertFalse( FileUtils.fileExists( resorucesDir + "/notpackage/file1.include" ) );
-        assertFalse( FileUtils.fileExists( resorucesDir + "/notpackage/nottest/file.txt" ) );
+        assertTrue( FileUtils.fileExists( resourcesDir + "/package/test" ) );
+        assertTrue( FileUtils.fileExists( resourcesDir + "/file1.include" ) );
+        assertTrue( FileUtils.fileExists( resourcesDir + "/package/file1.include" ) );
+        assertFalse( FileUtils.fileExists( resourcesDir + "/notpackage/file1.include" ) );
+        assertFalse( FileUtils.fileExists( resourcesDir + "/notpackage/nottest/file.txt" ) );
     }
 
     /**
@@ -240,13 +240,13 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "filters", new LinkedList() );
         mojo.execute();
 
-        String resorucesDir = project.getOutputDirectory();
+        String resourcesDir = project.getOutputDirectory();
 
-        assertTrue( FileUtils.fileExists( resorucesDir + "/package/test" ) );
-        assertTrue( FileUtils.fileExists( resorucesDir + "/file1.include" ) );
-        assertTrue( FileUtils.fileExists( resorucesDir + "/package/file1.include" ) );
-        assertFalse( FileUtils.fileExists( resorucesDir + "/notpackage/file1.include" ) );
-        assertFalse( FileUtils.fileExists( resorucesDir + "/notpackage/nottest/file.txt" ) );
+        assertTrue( FileUtils.fileExists( resourcesDir + "/package/test" ) );
+        assertTrue( FileUtils.fileExists( resourcesDir + "/file1.include" ) );
+        assertTrue( FileUtils.fileExists( resourcesDir + "/package/file1.include" ) );
+        assertFalse( FileUtils.fileExists( resourcesDir + "/notpackage/file1.include" ) );
+        assertFalse( FileUtils.fileExists( resourcesDir + "/notpackage/nottest/file.txt" ) );
     }
 
     /**
