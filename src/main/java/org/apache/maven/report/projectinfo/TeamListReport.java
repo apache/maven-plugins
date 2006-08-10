@@ -171,7 +171,7 @@ public class TeamListReport
                     // To handle JS
                     sink.tableRow();
 
-                    tableCell( developer.getId() );
+                    tableCell( "<a name=\"" + developer.getId() + "\"></a>" + developer.getId(), true );
 
                     tableCell( developer.getName() );
 
