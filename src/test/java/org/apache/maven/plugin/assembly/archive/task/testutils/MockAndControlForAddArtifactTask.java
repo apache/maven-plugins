@@ -200,4 +200,10 @@ public class MockAndControlForAddArtifactTask
         artifactCtl.setReturnValue( dependencyConflictId, MockControl.ONE_OR_MORE );
     }
 
+    public void expectIsSnapshot( boolean isSnapshot )
+    {
+        artifact.isSnapshot();
+        artifactCtl.setReturnValue( isSnapshot, MockControl.ONE_OR_MORE );
+    }
+
 }
