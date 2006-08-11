@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?><metadata>
+  <groupId>org.codehaus.plexus</groupId>
+  <artifactId>plexus-utils</artifactId>
+  <version>1.3-SNAPSHOT</version>
+  <versioning>
+    <snapshot>
+      <timestamp>20060811.151624</timestamp>
+      <buildNumber>1</buildNumber>
+    </snapshot>
+    <lastUpdated>20060811151624</lastUpdated>
+  </versioning>
+</metadata>
