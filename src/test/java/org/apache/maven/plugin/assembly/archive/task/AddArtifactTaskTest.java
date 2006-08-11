@@ -38,6 +38,7 @@ public class AddArtifactTaskTest
         String outputLocation = "artifact";
 
         mac.expectAddFile( outputLocation );
+        mac.expectIsSnapshot( false );
         mockManager.replayAll();
 
         AddArtifactTask task = createTask( mac.artifact );
@@ -60,6 +61,7 @@ public class AddArtifactTaskTest
         throws ArchiveCreationException, AssemblyFormattingException
     {
         mac.expectModeChange( -1, -1, -1, -1, 1 );
+        mac.expectIsSnapshot( false );
 
         String outputLocation = "artifact/";
 
@@ -90,6 +92,7 @@ public class AddArtifactTaskTest
         int fileMode = Integer.parseInt( "777", 8 );
         
         mac.expectModeChange( -1, -1, directoryMode, fileMode, 2 );
+        mac.expectIsSnapshot( false );
 
         String outputLocation = "artifact/";
 
@@ -119,6 +122,7 @@ public class AddArtifactTaskTest
         throws ArchiveCreationException, AssemblyFormattingException
     {
         mac.expectModeChange( -1, -1, -1, -1, 1 );
+        mac.expectIsSnapshot( false );
 
         String outputLocation = "artifact/";
 
