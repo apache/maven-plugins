@@ -49,6 +49,13 @@
       <name>John Allen</name>
       <email>john_h_allen@hotmail.com</email>
     </contributor>
+    <contributor>
+      <name>Laszlo Hornyak Kocka</name>
+      <email>laszlo.hornyak@gmail.com</email>
+      <roles>
+        <role>Hungarian translator</role>
+      </roles>
+    </contributor>
   </contributors>
   <dependencies>
     <dependency>
