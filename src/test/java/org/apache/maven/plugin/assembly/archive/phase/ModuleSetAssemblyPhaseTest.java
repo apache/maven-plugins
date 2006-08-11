@@ -78,6 +78,7 @@ public class ModuleSetAssemblyPhaseTest
         macTask.expectGetProject( project );
         macTask.expectGetReactorProjects( projects );
         macTask.expectGetFinalName( "final-name" );
+        macTask.expectIsSnapshot( false );
         macTask.expectGetClassifier( null );
         macTask.expectGetArtifactHandler();
         macTask.expectArtifactGetDependencyConflictId( "group:module:jar" );
@@ -160,6 +161,7 @@ public class ModuleSetAssemblyPhaseTest
 
         macTask.expectArtifactGetFile( true );
         macTask.expectGetFinalName( "final-name" );
+        macTask.expectIsSnapshot( false );
         macTask.expectGetClassifier( null );
         macTask.expectGetArtifactHandler();
         macTask.expectAddFile( "out/artifact", Integer.parseInt( "777", 8 ) );
@@ -203,6 +205,7 @@ public class ModuleSetAssemblyPhaseTest
         macTask.expectArtifactGetFile( true );
         macTask.expectGetFinalName( "final-name" );
         macTask.expectGetClassifier( null );
+        macTask.expectIsSnapshot( false );
         macTask.expectGetArtifactHandler();
         macTask.expectAddFile( "out/artifact", Integer.parseInt( "777", 8 ) );
 
@@ -232,6 +235,7 @@ public class ModuleSetAssemblyPhaseTest
         MockAndControlForArtifact macDepArtifact = new MockAndControlForArtifact( mm );
 
         macDepArtifact.expectGetClassifier();
+        macDepArtifact.expectIsSnapshot( false );
         macDepArtifact.expectGetArtifactHandler();
         macDepArtifact.expectGetDependencyConflictId( "group", "dep", "jar" );
         macDepArtifact.expectGetFile();
@@ -407,6 +411,7 @@ public class ModuleSetAssemblyPhaseTest
         macTask.expectArtifactGetFile();
         macTask.expectGetFinalName( "final-name" );
         macTask.expectGetClassifier( null );
+        macTask.expectIsSnapshot( false );
         macTask.expectGetArtifactHandler();
 
         macTask.expectAddFile( "out/artifact", Integer.parseInt( "777", 8 ) );
@@ -778,6 +783,12 @@ public class ModuleSetAssemblyPhaseTest
             mm.add( control );
 
             artifact = ( Artifact ) control.getMock();
+        }
+
+        public void expectIsSnapshot( boolean isSnapshot )
+        {
+            artifact.isSnapshot();
+            control.setReturnValue( isSnapshot, MockControl.ONE_OR_MORE );
         }
 
         void expectGetClassifier()

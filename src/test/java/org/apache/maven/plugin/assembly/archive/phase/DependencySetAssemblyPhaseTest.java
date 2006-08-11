@@ -53,6 +53,7 @@ public class DependencySetAssemblyPhaseTest
         macTask.expectArtifactGetFile();
         macTask.expectArtifactGetScope( Artifact.SCOPE_COMPILE );
         macTask.expectGetClassifier( null );
+        macTask.expectIsSnapshot( false );
         macTask.expectGetArtifactHandler();
 
         macTask.expectAddFile( "out/artifact", 8 );
@@ -146,6 +147,7 @@ public class DependencySetAssemblyPhaseTest
         macTask.expectArtifactGetFile();
         macTask.expectArtifactGetScope( Artifact.SCOPE_COMPILE );
         macTask.expectGetClassifier( null );
+        macTask.expectIsSnapshot( false );
         macTask.expectGetArtifactHandler();
 
         if ( unpack )
