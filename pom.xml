@@ -30,6 +30,15 @@
   <prerequisites>
     <maven>2.0.4</maven>
   </prerequisites>
+  <repositories>
+    <repository>
+      <id>codehaus.org</id>
+      <url>http://snapshots.repository.codehaus.org</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </repository>
+  </repositories>
   <issueManagement>
     <system>jira</system>
     <url>http://jira.codehaus.org/browse/MASSEMBLY</url>
