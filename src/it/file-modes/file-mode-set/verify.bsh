@@ -1,0 +1,22 @@
+import java.io.*;
+
+boolean result = true;
+
+FileWriter writer = null;
+
+try
+{
+    File file = new File( basedir, "target/file-mode-set-1.0-SNAPSHOT-src.dir/src/main/java/test/App.java" );
+    writer = new FileWriter( file );
+    writer.write( "This is a test." );
+
+    System.out.println( "File: " + file + " should not be writable." );
+
+    result = false;
+}
+catch( IOException e )
+{
+    result = true;
+}
+
+return result;

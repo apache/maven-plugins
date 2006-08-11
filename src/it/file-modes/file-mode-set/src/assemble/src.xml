@@ -1,0 +1,13 @@
+<assembly>
+  <id>src</id>
+  <formats>
+    <format>tar.gz</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <fileSets>
+    <fileSet>
+      <directory>src/main/java</directory>
+      <fileMode>0400</fileMode>
+    </fileSet>
+  </fileSets>
+</assembly>
