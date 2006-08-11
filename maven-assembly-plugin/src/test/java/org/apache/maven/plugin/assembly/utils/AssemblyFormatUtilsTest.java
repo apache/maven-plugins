@@ -278,6 +278,9 @@ public class AssemblyFormatUtilsTest
                 handlerControl.setReturnValue( extension, MockControl.ONE_OR_MORE );
             }
             
+            artifact.isSnapshot();
+            artifactControl.setReturnValue( true, MockControl.ONE_OR_MORE );
+            
             // this one is always called.
             artifact.getClassifier();
             artifactControl.setReturnValue( classifier, MockControl.ONE_OR_MORE );
