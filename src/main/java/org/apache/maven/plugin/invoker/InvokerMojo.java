@@ -29,7 +29,6 @@ import org.apache.maven.shared.invoker.Invoker;
 import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.apache.maven.shared.model.fileset.FileSet;
 import org.apache.maven.shared.model.fileset.util.FileSetManager;
-import org.apache.maven.wagon.PathUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.cli.CommandLineException;
 
@@ -215,10 +214,16 @@ public class InvokerMojo
     private void runBuild( final String pom, final List failures )
         throws MojoExecutionException
     {
-        final File pomFile = new File( projectsDirectory, pom );
+        File pomFile = new File( pom );
+        
+        if ( !pomFile.isAbsolute() )
+        {
+            pomFile = new File( projectsDirectory, pom );
+        }
+        
         final File basedir = pomFile.getParentFile();
 
-        getLog().info( "Building: " + basedir );
+        getLog().info( "Building: " + pom );
 
         final File outputLog = new File( basedir, "target/build.log" );
 
@@ -513,7 +518,7 @@ public class InvokerMojo
 
                 if ( goals != null && !goals.isEmpty() )
                 {
-                    getLog().info( "Using goals specified in file: " + projectGoalList );
+                    getLog().debug( "Using goals specified in file: " + projectGoalList );
                     invocationGoals = goals;
                 }
             }
@@ -527,7 +532,7 @@ public class InvokerMojo
     {
         if ( pom != null && pom.exists() )
         {
-            return new String[]{ PathUtils.toRelative( projectsDirectory, pom.getAbsolutePath() ) };
+            return new String[]{ pom.getAbsolutePath() };
         }
         else
         {
