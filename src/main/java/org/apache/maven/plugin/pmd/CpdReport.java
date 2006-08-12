@@ -16,19 +16,23 @@ package org.apache.maven.plugin.pmd;
  * limitations under the License.
  */
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 import net.sourceforge.pmd.cpd.CPD;
 import net.sourceforge.pmd.cpd.CSVRenderer;
 import net.sourceforge.pmd.cpd.JavaLanguage;
 import net.sourceforge.pmd.cpd.Renderer;
 import net.sourceforge.pmd.cpd.XMLRenderer;
-import org.apache.maven.reporting.MavenReportException;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.Locale;
-import java.util.ResourceBundle;
+import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.plexus.util.DirectoryScanner;
 
 /**
  * Report for PMD's CPD tool.  See <a href="http://pmd.sourceforge.net/cpd.html">http://pmd.sourceforge.net/cpd.html</a>
@@ -80,21 +84,23 @@ public class CpdReport
         throws MavenReportException
     {
         if ( !skip && canGenerateReport() )
-        {
-            CPD cpd = new CPD( minimumTokens, new JavaLanguage() );
-            String src = getProject().getBuild().getSourceDirectory();
-
+        {         
+            CPD cpd = new CPD(minimumTokens, new JavaLanguage());
             try
             {
-                // TODO: use source roots instead
-                cpd.addRecursively( src );
+                List files = getFilesToProcess( "**/*.java" );
+                for ( int i = 0; i < files.size(); i++ )
+                {
+                    cpd.add( (File) files.get( i ) );
+                }
             }
-            catch ( IOException e )
+            catch (IOException e)
             {
-                throw new MavenReportException( e.getMessage(), e );
+                throw new MavenReportException(e.getMessage(), e);
             }
             cpd.go();
 
+            String src = getProject().getBuild().getSourceDirectory();
             CpdReportGenerator gen =
                 new CpdReportGenerator( getSink(), src, getBundle( locale ), constructXRefLocation() );
             gen.generate( cpd.getMatches() );
