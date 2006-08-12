@@ -49,7 +49,8 @@ Configuration
   See the {{{http://maven.apache.org/plugins/maven-jxr-plugin/}JXR}} plugin for more details.
 
   If your source uses a non-default encoding, you can use the sourceEncoding parameter to tell Maven which
-  encoding to use when reading the java source.
+  encoding to use when reading the java source.  Note also the ability to exclude source which you want
+  to ignore.
 
   You can configure the minimum code size which trips the CPD.  The default of 100 tokens corresponds
   to approxiamately 5-10 lines of code.
@@ -68,6 +69,10 @@ Configuration
         <sourceEncoding>utf-8</sourceEncoding>
         <minimumTokens>100</minimumTokens>
         <targetJdk>1.5</targetJdk>
+        <excludes>
+          <exclude>**/*Bean.java</exclude>
+          <exclude>**/generated/*.java</exclude>
+        </excludes>
       </configuration>
     </plugin>
   </plugins>

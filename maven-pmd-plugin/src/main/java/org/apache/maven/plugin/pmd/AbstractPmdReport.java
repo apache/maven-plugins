@@ -23,9 +23,13 @@ import org.apache.maven.reporting.AbstractMavenReport;
 import org.codehaus.doxia.site.renderer.SiteRenderer;
 import org.codehaus.plexus.util.PathTool;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Collections;
 
 /**
  * Base class for the PMD reports.
@@ -93,6 +97,13 @@ public abstract class AbstractPmdReport
     private File xrefLocation;
 
     /**
+     * A list of files to exclude from checking. Can contain ant-style wildcards and double wildcards.
+     *
+     * @parameter
+     */
+    private String[] excludes;
+
+    /**
      * @see org.apache.maven.reporting.AbstractMavenReport#getProject()
      */
     protected MavenProject getProject()
@@ -146,6 +157,69 @@ public abstract class AbstractPmdReport
         }
         return location;
     }
+
+    /**
+     * Convenience method to get the list of files where the PMD tool will be executed
+     *
+     * @param includes contains the concatenated list of files to be included
+     * @return a List of the files where the PMD tool will be executed
+     * @throws java.io.IOException
+     */
+    protected List getFilesToProcess( String includes )
+        throws IOException
+    {
+        String excluding = getExclusionsString( excludes );
+        List files = Collections.EMPTY_LIST;
+
+        File dir = new File( project.getBuild().getSourceDirectory() );
+        if ( dir.exists() )
+        {
+
+            StringBuffer excludesStr = new StringBuffer();
+            if ( StringUtils.isNotEmpty( excluding ) )
+            {
+                excludesStr.append( excluding );
+            }
+            String[] defaultExcludes = FileUtils.getDefaultExcludes();
+            for ( int i = 0; i < defaultExcludes.length; i++ )
+            {
+                if ( excludesStr.length() > 0 )
+                {
+                    excludesStr.append( "," );
+                }
+                excludesStr.append( defaultExcludes[i] );
+            }
+            getLog().debug( "Excluded files: '" + excludesStr + "'" );
+            files = FileUtils.getFiles( dir, includes, excludesStr.toString() );
+        }
+        return files;
+    }
+
+    /**
+     * Convenience method that concatenates the files to be excluded into the appropriate format
+     *
+     * @param exclude the array of Strings that contains the files to be excluded
+     * @return a String that contains the concatenates file names
+     */
+    private String getExclusionsString( String[] exclude )
+    {
+        StringBuffer excludes = new StringBuffer();
+
+        if ( exclude != null )
+        {
+            for ( int index = 0; index < exclude.length; index++ )
+            {
+                if ( excludes.length() > 0 )
+                {
+                    excludes.append( ',' );
+                }
+                excludes.append( exclude[index] );
+            }
+        }
+
+        return excludes.toString();
+    }
+
 
     protected boolean isHtml()
     {
