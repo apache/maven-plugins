@@ -103,13 +103,6 @@ public class PmdReport
     private String sourceEncoding;
 
     /**
-     * A list of files to exclude from checking. Can contain wildcards and double wildcards.
-     *
-     * @parameter
-     */
-    private String[] excludes;
-
-    /**
      * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
      */
     public String getName( Locale locale )
@@ -151,16 +144,6 @@ public class PmdReport
             ruleContext.setReport( report );
             reportSink.beginDocument();
 
-            List files;
-            try
-            {
-                files = getFilesToProcess( "**/*.java", getExclusionsString( excludes ) );
-            }
-            catch ( IOException e )
-            {
-                throw new MavenReportException( "Can't parse " + sourceDirectory, e );
-            }
-
             Locator locator = new Locator( getLog() );
             RuleSetFactory ruleSetFactory = new RuleSetFactory();
             ruleSetFactory.setMinimumPriority( this.minimumPriority );
@@ -182,6 +165,16 @@ public class PmdReport
             }
 
             boolean hasEncoding = sourceEncoding != null;
+
+            List files;
+            try
+            {
+                files = getFilesToProcess( "**/*.java" );
+            }
+            catch ( IOException e )
+            {
+                throw new MavenReportException( "Can't parse " + sourceDirectory, e );
+            }
 
             for ( Iterator i = files.iterator(); i.hasNext(); )
             {
@@ -217,7 +210,6 @@ public class PmdReport
                         getLog().warn( "Failure executing PMD for: " + file, e3 );
                         reportSink.ruleViolationAdded(new ProcessingErrorRuleViolation(file, e3.getLocalizedMessage()) );
                     }
-                	
                 }
                 reportSink.endFile( file );
             }
@@ -298,71 +290,9 @@ public class PmdReport
         return "pmd";
     }
 
-    /**
-     * Convenience method to get the list of files where the PMD tool will be executed
-     *
-     * @param includes contains the concatenated list of files to be included
-     * @param excludes contains the concatenated list of files to be excluded
-     * @return a List of the files where the PMD tool will be executed
-     * @throws IOException
-     */
-    private List getFilesToProcess( String includes, String excludes )
-        throws IOException
-    {
-        List files = Collections.EMPTY_LIST;
-
-        File dir = new File( project.getBuild().getSourceDirectory() );
-        if ( dir.exists() )
-        {
-
-            StringBuffer excludesStr = new StringBuffer();
-            if ( StringUtils.isNotEmpty( excludes ) )
-            {
-                excludesStr.append( excludes );
-            }
-            String[] defaultExcludes = FileUtils.getDefaultExcludes();
-            for ( int i = 0; i < defaultExcludes.length; i++ )
-            {
-                if ( excludesStr.length() > 0 )
-                {
-                    excludesStr.append( "," );
-                }
-                excludesStr.append( defaultExcludes[i] );
-            }
-            getLog().debug( "Excluded files: '" + excludesStr + "'" );
-            files = FileUtils.getFiles( dir, includes, excludesStr.toString() );
-        }
-        return files;
-    }
-
     private static ResourceBundle getBundle( Locale locale )
     {
         return ResourceBundle.getBundle( "pmd-report", locale, PmdReport.class.getClassLoader() );
-    }
-
-    /**
-     * Convenience method that concatenates the files to be excluded into the appropriate format
-     *
-     * @param exclude the array of Strings that contains the files to be excluded
-     * @return a String that contains the concatenates file names
-     */
-    private String getExclusionsString( String[] exclude )
-    {
-        StringBuffer excludes = new StringBuffer();
-
-        if ( exclude != null )
-        {
-            for ( int index = 0; index < exclude.length; index++ )
-            {
-                if ( excludes.length() > 0 )
-                {
-                    excludes.append( ',' );
-                }
-                excludes.append( exclude[index] );
-            }
-        }
-
-        return excludes.toString();
     }
 
     /**
