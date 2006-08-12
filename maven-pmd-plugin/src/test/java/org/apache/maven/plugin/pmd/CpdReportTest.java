@@ -94,15 +94,16 @@ public class CpdReportTest
         generatedFile = new File( getBasedir(), "target/test/unit/custom-configuration/target/site/cpd.html" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        //check the contents of cpd.html
+        // Contents that should NOT be in the report
         String str = readFile( new File( getBasedir(), "target/test/unit/custom-configuration/target/site/cpd.html" ) );
-        assertTrue( str.toLowerCase().indexOf( "Sample.java".toLowerCase() ) != -1 );
+        assertTrue( str.toLowerCase().indexOf( "/Sample.java".toLowerCase() ) == -1 );
 
+        str = readFile( new File( getBasedir(), "target/test/unit/custom-configuration/target/site/cpd.html" ) );
+        assertTrue( str.toLowerCase().indexOf( "public void duplicateMethod( int i )".toLowerCase() ) == -1 );
+
+        // Contents that should be in the report
         str = readFile( new File( getBasedir(), "target/test/unit/custom-configuration/target/site/cpd.html" ) );
         assertTrue( str.toLowerCase().indexOf( "AnotherSample.java".toLowerCase() ) != -1 );
-
-        str = readFile( new File( getBasedir(), "target/test/unit/custom-configuration/target/site/cpd.html" ) );
-        assertTrue( str.toLowerCase().indexOf( "public void duplicateMethod( int i )".toLowerCase() ) != -1 );
 
         str = readFile( new File( getBasedir(), "target/test/unit/custom-configuration/target/site/cpd.html" ) );
         assertTrue( str.toLowerCase().indexOf( "public static void main( String[] args )".toLowerCase() ) != -1 );

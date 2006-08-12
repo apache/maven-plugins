@@ -21,6 +21,9 @@
           <linkXRef>false</linkXRef>
           <xrefLocation>${basedir}/target/test/unit/custom-configuration/target/site/xref</xrefLocation>
           <minimumTokens>25</minimumTokens>
+          <excludes>
+            <exclude>**/Sample.java</exclude>
+          </excludes>
         </configuration>
       </plugin>
     </plugins>
