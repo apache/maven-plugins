@@ -38,19 +38,7 @@
          configuration</a> section.
        </p>
      </answer>
-   </faq>
-   <faq id="portlet">
-     <question>
-       The EAR Plugin always generate a 'context-root' element for web applications and it does not work with
-       portlet deployment. How do we solve this issue?
-     </question>
-     <answer>
-       <p>
-         Simply configure the web module by specifying the 'noContextRoot' boolean parameter. If this parameter
-         is true, the 'context-root' element is not generated for the related web module.
-       </p>
-     </answer>
-   </faq>
+   </faq>   
  </part>
 </faqs>
 
