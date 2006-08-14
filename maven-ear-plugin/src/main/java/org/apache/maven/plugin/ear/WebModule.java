@@ -91,7 +91,7 @@ public class WebModule
         return contextRoot;
     }
 
-    protected String getType()
+    public String getType()
     {
         return "war";
     }
