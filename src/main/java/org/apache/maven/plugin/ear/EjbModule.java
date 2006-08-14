@@ -48,7 +48,7 @@ public class EjbModule
         writer.endElement();
     }
 
-    protected String getType()
+    public String getType()
     {
         return "ejb";
     }

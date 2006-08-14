@@ -20,7 +20,11 @@ import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
+import org.codehaus.plexus.archiver.manager.ArchiverManager;
+import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
@@ -101,6 +105,14 @@ public class EarMojo
     private String finalName;
 
     /**
+     * The comma separated list of artifact's type(s) to unpack
+     * by default.
+     *
+     * @parameter
+     */
+    private String unpackTypes;
+
+    /**
      * The directory to get the resources from.
      *
      * @parameter expression="${project.build.outputDirectory}"
@@ -124,6 +136,12 @@ public class EarMojo
      */
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
+    /**
+     * The archive manager.
+     *
+     * @component
+     */
+    private ArchiverManager archiverManager;
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -131,29 +149,63 @@ public class EarMojo
         // Initializes ear modules
         super.execute();
 
+        // Initializes unpack types
+        List unpackTypesList = new ArrayList();
+        if ( unpackTypes != null )
+        {
+            unpackTypesList = Arrays.asList( unpackTypes.split( "," ) );
+            final Iterator it = unpackTypesList.iterator();
+            while ( it.hasNext() )
+            {
+                String type = (String) it.next();
+                if ( !EarModuleFactory.standardArtifactTypes.contains( type ) )
+                {
+                    throw new MojoExecutionException( "Invalid type["+type+"] supported types are "+ EarModuleFactory.standardArtifactTypes);
+                }
+            }
+            getLog().debug( "Initialized unpack types "+ unpackTypesList);
+        }
+
+
         // Copy modules
         try
         {
             for ( Iterator iter = getModules().iterator(); iter.hasNext(); )
             {
                 EarModule module = (EarModule) iter.next();
-                getLog().info( "Copying artifact[" + module + "] to[" + module.getUri() + "]" );
-                File destinationFile = buildDestinationFile( getWorkDirectory(), module.getUri() );
-
-                File sourceFile = module.getArtifact().getFile();
-
+                final File sourceFile = module.getArtifact().getFile();
+                final File destinationFile = buildDestinationFile( getWorkDirectory(), module.getUri() );
                 if ( !sourceFile.isFile() )
                 {
                     throw new MojoExecutionException( "Cannot copy a directory: " + sourceFile.getAbsolutePath() +
                         "; Did you package/install " + module.getArtifact() + "?" );
                 }
 
-                FileUtils.copyFile( module.getArtifact().getFile(), destinationFile );
+                if ( unpackTypesList.contains( module.getType()) || module.shouldUnpack() )
+                {
+                    getLog().info( "Copying artifact[" + module + "] to[" + module.getUri() + "] (unpacked)" );
+                    // Make sure that the destination is a directory to avoid plexus nasty stuff :)
+                    destinationFile.mkdirs();
+                    unpack( sourceFile, destinationFile );
+                }
+                else
+                {
+                    getLog().info( "Copying artifact[" + module + "] to[" + module.getUri() + "]" );
+                    FileUtils.copyFile( module.getArtifact().getFile(), destinationFile );
+                }
             }
         }
         catch ( IOException e )
         {
             throw new MojoExecutionException( "Error copying EAR modules", e );
+        }
+        catch ( ArchiverException e )
+        {
+            throw new MojoExecutionException( "Error unpacking EAR modules", e );
+        }
+        catch ( NoSuchArchiverException e )
+        {
+            throw new MojoExecutionException( "No Archiver found for EAR modules", e );
         }
 
         // Copy source files
@@ -317,4 +369,23 @@ public class EarMojo
 
         return scanner.getIncludedFiles();
     }
+
+    /**
+     * Unpacks the module into the EAR structure.
+     *
+     * @param source  File to be unpacked.
+     * @param destDir Location where to put the unpacked files.
+     */
+    public void unpack( File source, File destDir )
+        throws NoSuchArchiverException, IOException, ArchiverException
+    {
+        UnArchiver unArchiver = archiverManager.getUnArchiver( source );
+        unArchiver.setSourceFile( source );
+        unArchiver.setDestDirectory( destDir );
+
+        // Extract the module
+        unArchiver.extract();
+    }
+
+
 }

@@ -72,7 +72,7 @@ public class JavaModule
         setJavaBundleDir( EarExecutionContext.getInstance().getDefaultJavaBundleDir() );
     }
 
-    protected String getType()
+    public String getType()
     {
         return "jar";
     }

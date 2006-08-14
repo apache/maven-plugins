@@ -50,11 +50,26 @@ public interface EarModule
     public String getUri();
 
     /**
+     * Returns the type associated to the module.
+     *
+     * @return the artifact's type of the module
+     */
+    public String getType();
+
+    /**
      * Specify whether this module should be excluded or not.
      *
      * @return true if this module should be skipped, false otherwise
      */
     public boolean isExcluded();
+
+    /**
+     * Specify whether this module should be unpacked in the
+     * EAR archive or not.
+     *
+     * @return true if this module should be bundled unpacked, false otherwise
+     */
+    public boolean shouldUnpack();
 
     /**
      * Appends the <tt>XML</tt> representation of this module.

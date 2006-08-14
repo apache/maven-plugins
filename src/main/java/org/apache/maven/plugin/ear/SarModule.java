@@ -63,7 +63,7 @@ public class SarModule
         writer.endElement();
     }
 
-    protected String getType()
+    public String getType()
     {
         return "sar";
     }
