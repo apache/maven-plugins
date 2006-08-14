@@ -286,3 +286,63 @@ Usage
   This goal is exactly the same as calling
   <<<mvn dependency:resolve dependency:resolve-plugins>>>.
 
+* The <<<dependency:purge-local-repository>>> mojo
+
+  This goal is meant to delete all of the dependencies for the current project
+  (or projects, in the case of a multimodule build) from the local repository.
+  Purges can be run with a variety of limiting parameters, including artifact
+  exclusions, limiting to direct dependencies only, and different levels of
+  depth for deletion. By default, deleted artifacts can be re-resolved 
+  afterwards; you can disable this by specifying <<<-DreResolve=false>>>.
+
+  In its simplest form, the mojo can be called like this:
+
++---+
+mvn dependency:purge-local-repository
++---+
+
+  To add the restriction that the <<<org.apache.maven:maven-plugin-api>>>
+  artifact not be deleted, we can modify the command to this:
+
++---+
+mvn dependency:purge-local-repository -Dexclude=org.apache.maven:maven-plugin-api
++---+
+
+  <<NOTE:>> The <<<exclude>>> parameter is a comma-delimited list of 
+  groupId:artifactId pairs. It has a corresponding List-based parameter -
+  <<<excludes>>> - for convenient use inside the POM.
+
+  Another handy aspect of this mojo is the ability to wipe out artifacts at
+  varying depths. These depths are:
+
+  * <<file>> - Delete just the artifact's file.
+
+  * <<version>> - Delete the version directory containing this artifact. Amounts to
+    <<<file.getParentFile()>>>.
+
+  * <<artifactId>> - Delete the artifactId directory containing this artifact.
+    Amounts to <<<file.getParentFile().getParentFile()>>>.
+
+  * <<groupId>> - Delete the groupId directory structure containing this artifact.
+
+    At a minimum, this amounts to <<<file.getParentFile().getParentFile().getParentFile()>>>.
+    However, if the groupId contains multiple parts, the mojo will prune all groupId-part
+    directories that contain only the files associated with this artifact. Again, note that
+    the exception to this pruning algorithm is the lowest groupId part, which will always
+    be pruned.
+
+  []
+
+  To prune dependency artifacts back to their associated artifactId directories
+  (in order to verify proper artifact resolution, for example), simply use this
+  command:
+
++---+
+mvn dependency:prune-local-repository -DresolutionFuzziness=artifactId
++---+
+
+  Finally, it's possible to bind this mojo to the build lifecycle. One reason for this
+  might be to clean out all dependencies when the build is initialized, to verify
+  correct resolution.
+
+
