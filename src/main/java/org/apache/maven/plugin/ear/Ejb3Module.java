@@ -38,7 +38,7 @@ public class Ejb3Module
         super( a );
     }
 
-    protected String getType()
+    public String getType()
     {
         return "ejb3";
     }

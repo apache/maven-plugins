@@ -48,7 +48,7 @@ public class RarModule
         writer.endElement();
     }
 
-    protected String getType()
+    public String getType()
     {
         return "rar";
     }
