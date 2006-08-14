@@ -39,8 +39,6 @@ public class WebModule
 
     private String contextRoot;
 
-    private Boolean noContextRoot = Boolean.FALSE;
-
     public WebModule()
     {
     }
@@ -59,14 +57,10 @@ public class WebModule
         writer.writeText( getUri() );
         writer.endElement(); // web-uri
 
-        // If noContextRoot is true, skip the generation of
-        // the context-root element
-        if ( !noContextRoot.booleanValue() )
-        {
-            writer.startElement( CONTEXT_ROOT_FIELD );
-            writer.writeText( getContextRoot() );
-            writer.endElement(); // context-root
-        }
+        writer.startElement( CONTEXT_ROOT_FIELD );
+        writer.writeText( getContextRoot() );
+        writer.endElement(); // context-root
+
         writer.endElement(); // web
         writer.endElement(); // module
     }
