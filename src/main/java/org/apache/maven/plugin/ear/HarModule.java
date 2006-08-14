@@ -55,7 +55,7 @@ public class HarModule
         writer.endElement();
     }
 
-    protected String getType()
+    public String getType()
     {
         return "har";
     }

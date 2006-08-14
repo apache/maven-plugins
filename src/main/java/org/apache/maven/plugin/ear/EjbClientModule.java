@@ -37,7 +37,7 @@ public class EjbClientModule
         super( a, null );
     }
 
-    protected String getType()
+    public String getType()
     {
         return "ejb-client";
     }

@@ -100,6 +100,9 @@ EAR Modules
   * <<uri>> - sets the uri path of this artifact within the ear archive.
   Automatically determined when not set.
 
+  * <<unpack>> - set to true to unpack this artifact into the ear archive according
+  to its uri. Default is false.
+
 
 * {ejbClientModule} Properties
 
@@ -122,6 +125,9 @@ EAR Modules
 
   * <<uri>> - sets the URI path of this artifact within the ear archive.
   Automatically determined when not set.
+
+  * <<unpack>> - set to true to unpack this artifact into the ear archive according
+  to its uri. Default is false.
 
 
 * {ejbModule} Properties
@@ -146,6 +152,9 @@ EAR Modules
   * <<uri>> - sets the uri path of this artifact within the ear archive.
   Automatically determined when not set.
 
+  * <<unpack>> - set to true to unpack this artifact into the ear archive according
+  to its uri. Default is false.
+
 
 * {javaModule} Properties
 
@@ -168,6 +177,9 @@ EAR Modules
 
   * <<uri>> - sets the uri path of this artifact within the ear archive.
   Automatically determined when not set.
+
+  * <<unpack>> - set to true to unpack this artifact into the ear archive according
+  to its uri. Default is false.
 
   * <<includeInApplicationXml>> - set to true to if you want to generate an entry
   of this module in <<<application.xml>>>. Default is false.
@@ -195,6 +207,9 @@ EAR Modules
   * <<uri>> - sets the uri path of this artifact within the ear archive.
   Automatically determined when not set.
 
+  * <<unpack>> - set to true to unpack this artifact into the ear archive according
+  to its uri. Default is false.
+
 
 * {rarModule} Properties
 
@@ -217,6 +232,9 @@ EAR Modules
 
   * <<uri>> - sets the uri path of this artifact within the ear archive.
   Automatically determined when not set.
+
+  * <<unpack>> - set to true to unpack this artifact into the ear archive according
+  to its uri. Default is false.
 
 
 * {sarModule} Properties
@@ -241,6 +259,9 @@ EAR Modules
   * <<uri>> - sets the uri path of this artifact within the ear archive.
   Automatically determined when not set.
 
+  * <<unpack>> - set to true to unpack this artifact into the ear archive according
+  to its uri. Default is false.
+
 
 * {webModule} Properties
 
@@ -263,6 +284,9 @@ EAR Modules
 
   * <<uri>> - sets the uri path of this artifact within the ear archive.
   Automatically determined when not set.
+
+  * <<unpack>> - set to true to unpack this artifact into the ear archive according
+  to its uri. Default is false.
 
   * <<contextRoot>> - sets the context root of this web artifact.
 
@@ -289,6 +313,9 @@ EAR Modules
   * <<uri>> - sets the uri path of this artifact within the ear archive.
   Automatically determined when not set.
 
+  * <<unpack>> - set to true to unpack this artifact into the ear archive according
+  to its uri. Default is false.
+
 
 * {harModule} Properties
 
@@ -311,6 +338,9 @@ EAR Modules
 
   * <<uri>> - sets the uri path of this artifact within the ear archive.
   Automatically determined when not set.
+
+  * <<unpack>> - set to true to unpack this artifact into the ear archive according
+  to its uri. Default is false.
 
 * Adding {Custom Artifact Types}
 

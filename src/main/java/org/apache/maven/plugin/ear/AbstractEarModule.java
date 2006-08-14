@@ -50,6 +50,8 @@ public abstract class AbstractEarModule
 
     protected Boolean excluded = Boolean.FALSE;
 
+    protected Boolean unpack = Boolean.FALSE;
+
     /**
      * Empty constructor to be used when the module
      * is built based on the configuration.
@@ -103,13 +105,6 @@ public abstract class AbstractEarModule
             return;
         }
     }
-
-    /**
-     * Returns the type associated to the module.
-     *
-     * @return the artifact's type of the module
-     */
-    protected abstract String getType();
 
     public Artifact getArtifact()
     {
@@ -190,6 +185,11 @@ public abstract class AbstractEarModule
     public boolean isExcluded()
     {
         return excluded.booleanValue();
+    }
+
+    public boolean shouldUnpack()
+    {
+        return unpack.booleanValue();
     }
 
     public String toString()
