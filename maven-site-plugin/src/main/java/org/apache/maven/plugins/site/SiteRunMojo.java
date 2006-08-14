@@ -83,7 +83,7 @@ public class SiteRunMojo
         handlers[1] = defaultHandler;
         server.setHandlers( handlers );
 
-        getLog().info( "Starting Jetty on http://localhost:8080/" );
+        getLog().info( "Starting Jetty on http://localhost:" + port + "/" );
         try
         {
             server.start();
