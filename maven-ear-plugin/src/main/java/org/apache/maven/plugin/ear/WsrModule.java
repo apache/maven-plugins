@@ -37,7 +37,7 @@ public class WsrModule
         super( a );
     }
 
-    protected String getType()
+    public String getType()
     {
         return "wsr";
     }

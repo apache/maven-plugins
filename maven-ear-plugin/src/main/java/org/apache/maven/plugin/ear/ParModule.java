@@ -39,7 +39,7 @@ public class ParModule
         super( a );
     }
 
-    protected String getType()
+    public String getType()
     {
         return "par";
     }
