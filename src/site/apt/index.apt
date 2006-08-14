@@ -15,7 +15,7 @@ Maven Dependency Plugin
 
 * Goals Overview
 
-  Dependency plugin has 8 goals:
+  Dependency plugin has 9 goals:
 
 	*{{{copy-mojo.html}dependency:copy}} takes a list of artifacts defined in
 	the plugin configuration section and copies them to a specified location,
@@ -44,6 +44,10 @@ Maven Dependency Plugin
     *{{{go-offline-mojo.html}dependency:go-offline}} tells Maven to resolve
     everything this project is dependent on (dependencies, plugins, reports)
     in preparation for going offline.
+
+        *{{{purge-local-repository.html}dependency:purge-local-repository}} tells
+        Maven to clear all dependency-artifact files out of the local repository,
+        and optionally re-resolve them.
 
   []
 
