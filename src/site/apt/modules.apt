@@ -266,8 +266,6 @@ EAR Modules
 
   * <<contextRoot>> - sets the context root of this web artifact.
 
-  * <<noContextRoot>> - specify if the context root element should be generated.
-
 
 * {wsrModule} Properties
 
