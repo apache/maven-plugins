@@ -22,10 +22,12 @@ Maven 2 Dependency Plugin
 	
 	*{{{resolve-plugins-mojo.html}resolve-plugins}}: Tells Maven to resolve plugins and their dependencies.
 
-    *{{{go-offline-mojo.html}go-offline}}: Tells Maven to resolve everything this project is dependent on (dependencies, plugins, reports) in preparation for going offline.
-		
+        *{{{go-offline-mojo.html}go-offline}}: Tells Maven to resolve everything this project is dependent on (dependencies, plugins, reports) in preparation for going offline.
 
-  All goals are able to detect if the artifacts already exist and don't copy/unpack again. 
+        *{{{purge-local-repository.html}purge-local-repository}}: Clears out all dependency-artifact files for the current
+           project or projects from the local repository, and optionally re-resolves them.		
+
+  Where appropriate, goals are able to detect if the artifacts already exist and don't copy/unpack again. 
   
   All goals are also able to handle artifacts with classifiers. This enables the capability to manipulate sources and test-jars for example.
 
