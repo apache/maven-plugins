@@ -58,6 +58,13 @@ public class InvokerMojo
     extends AbstractMojo
 {
     /**
+     * Flag used to determine whether the build logs should be output to the normal mojo log.
+     * 
+     * @parameter expression="${invoker.streamLogs}" default-value="false"
+     */
+    private boolean streamLogs;
+    
+    /**
      * The local repository for caching artifacts.
      * 
      * @parameter expression="${invoker.localRepositoryPath}"
@@ -237,7 +244,14 @@ public class InvokerMojo
 
                 try
                 {
-                    logger = new FileLogger( outputLog );
+                    if ( streamLogs )
+                    {
+                        logger = new FileLogger( outputLog, getLog() );
+                    }
+                    else
+                    {
+                        logger = new FileLogger( outputLog );
+                    }
                     
                     getLog().debug( "build log initialized in: " + outputLog );
                 }
