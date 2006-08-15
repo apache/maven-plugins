@@ -123,6 +123,11 @@ public class DependenciesReport
     private boolean dependencyLocationsEnabled;
     
     private PlexusContainer container;
+    
+    /**
+     * Will be filled with license name / list of projects.
+     */
+    private Map licenseMap = new HashMap();
 
     /**
      * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
@@ -369,6 +374,9 @@ public class DependenciesReport
             // === Section: Project Dependency Graph.
             renderSectionProjectDependencyGraph();
 
+            // === Section: Licenses
+            renderSectionDependencyLicenseListing();
+
             if ( dependencyDetailsEnabled )
             {
                 // === Section: Dependency File Details.
@@ -454,7 +462,7 @@ public class DependenciesReport
             
             // === Section: Dependency Listings
             renderSectionDependencyListing();
-            
+
             endSection();
         }
 
@@ -869,6 +877,13 @@ public class DependenciesReport
             printDescriptionsAndURLs( listener.getRootNode() );
             endSection();
         }
+        
+        private void renderSectionDependencyLicenseListing()
+        {
+            startSection( getReportString( "report.dependencies.graph.tables.licenses" ) );
+            printGroupedLicenses();
+            endSection();
+        }
 
         private void renderDependenciesForScope( String scope, List artifacts, String[] tableHeader )
         {
@@ -957,6 +972,8 @@ public class DependenciesReport
         {
             Artifact artifact = node.getArtifact();
             String id = artifact.getDependencyConflictId();
+            
+            String unknownLicenseMessage = getReportString( "report.dependencies.graph.tables.unknown" );
 
             if ( !Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
             {
@@ -1013,11 +1030,28 @@ public class DependenciesReport
                             {
                                 sink.link_();
                             }
+
+                            List projectsWithSameLicense = (List) licenseMap.get( licenseName );
+                            if ( projectsWithSameLicense == null )
+                            {
+                                projectsWithSameLicense = new ArrayList();
+                                licenseMap.put( licenseName, projectsWithSameLicense );
+                            }
+                            projectsWithSameLicense.add( artifactName );
+
                         }
                     }
                     else
                     {
                         sink.text( getReportString( "report.license.nolicense" ) );
+
+                        List projectsWithSameLicense = (List) licenseMap.get( unknownLicenseMessage );
+                        if ( projectsWithSameLicense == null )
+                        {
+                            projectsWithSameLicense = new ArrayList();
+                            licenseMap.put( unknownLicenseMessage, projectsWithSameLicense );
+                        }
+                        projectsWithSameLicense.add( artifactName );
                     }
                     sink.paragraph_();
 
@@ -1047,6 +1081,35 @@ public class DependenciesReport
 
                 sink.paragraph();
                 sink.text( artifact.getFile().toString() );
+                sink.paragraph_();
+            }
+        }
+        
+        private void printGroupedLicenses()
+        {
+            for ( Iterator iter = licenseMap.keySet().iterator(); iter.hasNext(); )
+            {
+                String licenseName = (String) iter.next();
+                sink.paragraph();
+                sink.bold();
+                sink.text( licenseName );
+                sink.text( ": " );
+                sink.bold_();
+
+                List projects = (List) licenseMap.get( licenseName );
+                Collections.sort( projects );
+
+                for ( Iterator iterator = projects.iterator(); iterator.hasNext(); )
+                {
+                    String projectName = (String) iterator.next();
+                    sink.text( projectName );
+                    if ( iterator.hasNext() )
+                    {
+                        sink.text( "," );
+                    }
+                    sink.text( " " );
+                }
+
                 sink.paragraph_();
             }
         }
