@@ -14,8 +14,8 @@
   <packaging>maven-plugin</packaging>
   <name>Maven Invoker Plugin</name>
   <scm>
-    <connection>http://svn.apache.org/repos/asf/maven/sandbox/plugins/maven-invoker-plugin</connection>
-    <developerConnection>https://svn.apache.org/repos/asf/maven/sandbox/plugins/maven-invoker-plugin</developerConnection>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/sandbox/plugins/maven-invoker-plugin</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/sandbox/plugins/maven-invoker-plugin</developerConnection>
     <url>http://svn.apache.org/repos/asf/maven/sandbox/plugins/maven-invoker-plugin</url>
   </scm>
   <dependencies>
