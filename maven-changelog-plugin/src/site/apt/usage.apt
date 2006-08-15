@@ -62,7 +62,7 @@ Usage
 -------------------
 
  Please refer to the Maven project descriptor for the description of the scm elements. It can be found
- {{{http://maven.apache.org/ref/current/maven-model/maven.html}here}}.
+ {{{http://maven.apache.org/ref/current/maven-model/maven.html#class_scm}here}}.
 
  When you execute <<<mvn site>>>, you will see that the changelog, dev-activity and file-activity reports are included in
  the generated site.
