@@ -40,6 +40,7 @@ import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
+import org.apache.maven.model.License;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
@@ -965,6 +966,7 @@ public class DependenciesReport
                     String artifactDescription = artifactProject.getDescription();
                     String artifactUrl = artifactProject.getUrl();
                     String artifactName = artifactProject.getName();
+                    List licenses = artifactProject.getLicenses();
 
                     sink.paragraph();
                     sink.anchor( id );
@@ -990,6 +992,34 @@ public class DependenciesReport
                         sink.link_();
                         sink.paragraph_();
                     }
+
+                    sink.paragraph();
+                    sink.text( getReportString( "report.license.title" ) + ": " );
+                    if ( !licenses.isEmpty() )
+                    {
+                        for ( Iterator iter = licenses.iterator(); iter.hasNext(); )
+                        {
+                            License element = (License) iter.next();
+                            String licenseName = element.getName();
+                            String licenseUrl = element.getUrl();
+
+                            if ( licenseUrl != null )
+                            {
+                                sink.link( licenseUrl );
+                            }
+                            sink.text( licenseName );
+
+                            if ( licenseUrl != null )
+                            {
+                                sink.link_();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        sink.text( getReportString( "report.license.nolicense" ) );
+                    }
+                    sink.paragraph_();
 
                     //                    endSection();
                     sink.horizontalRule();
