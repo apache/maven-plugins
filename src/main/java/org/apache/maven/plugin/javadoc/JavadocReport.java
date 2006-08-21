@@ -32,8 +32,8 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Generates documentation for the Java code in the project using the standard
- * <a href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a> tool.
+ * Generates documentation for the Java code in the project using the standard <a
+ * href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a> tool.
  *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
@@ -58,6 +58,12 @@ public class JavadocReport
      */
     private Renderer siteRenderer;
 
+    /**
+     * Specifies the destination directory where javadoc saves the generated HTML files.
+     *
+     * @parameter expression="${project.reporting.outputDirectory}/apidocs"
+     * @required
+     */
     private File reportOutputDirectory;
 
     // ----------------------------------------------------------------------
@@ -103,6 +109,7 @@ public class JavadocReport
     public void generate( Sink sink, Locale locale )
         throws MavenReportException
     {
+        outputDirectory = getReportOutputDirectory();
         executeReport( locale );
     }
 
@@ -142,7 +149,7 @@ public class JavadocReport
         }
         return canGenerate;
     }
-    
+
     /**
      * @see org.apache.maven.reporting.MavenReport#getCategoryName()
      */
@@ -158,8 +165,9 @@ public class JavadocReport
     {
         if ( reportOutputDirectory == null )
         {
-            reportOutputDirectory = new File( getOutputDirectory() );
+            return outputDirectory;
         }
+
         return reportOutputDirectory;
     }
 
@@ -170,7 +178,14 @@ public class JavadocReport
      */
     public void setReportOutputDirectory( File reportOutputDirectory )
     {
-        this.reportOutputDirectory = reportOutputDirectory;
+        if ( ( reportOutputDirectory != null ) && ( !reportOutputDirectory.getAbsolutePath().endsWith( "apidocs" ) ) )
+        {
+            this.reportOutputDirectory = new File( reportOutputDirectory, "apidocs" );
+        }
+        else
+        {
+            this.reportOutputDirectory = reportOutputDirectory;
+        }
     }
 
     /**
@@ -181,26 +196,24 @@ public class JavadocReport
     {
         try
         {
-            String outputDirectory = getOutputDirectory();
-
-            SiteRendererSink sink = siteRenderer.createSink( new File( outputDirectory ), getOutputName() + ".html" );
+            SiteRendererSink sink = siteRenderer.createSink( getReportOutputDirectory(), getOutputName() + ".html" );
 
             generate( sink, Locale.getDefault() );
         }
         catch ( RendererException e )
         {
-            throw new MojoExecutionException(
-                "An error has occurred in " + getName( Locale.ENGLISH ) + " report generation.", e );
+            throw new MojoExecutionException( "An error has occurred in " + getName( Locale.ENGLISH )
+                + " report generation.", e );
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException(
-                "An error has occurred in " + getName( Locale.ENGLISH ) + " report generation.", e );
+            throw new MojoExecutionException( "An error has occurred in " + getName( Locale.ENGLISH )
+                + " report generation.", e );
         }
         catch ( MavenReportException e )
         {
-            throw new MojoExecutionException(
-                "An error has occurred in " + getName( Locale.ENGLISH ) + " report generation.", e );
+            throw new MojoExecutionException( "An error has occurred in " + getName( Locale.ENGLISH )
+                + " report generation.", e );
         }
     }
 }
