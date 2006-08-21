@@ -88,6 +88,12 @@ public abstract class AbstractJarMojo
     private MavenProjectHelper projectHelper;
 
     /**
+     * Whether creating the archive should be forced.
+     * @parameter expression="${jar.forceCreation}" default-value="false"
+     */
+    private boolean forceCreation;
+
+    /**
      * Return the specific output directory to serve as the root for the archive.
      */
     protected abstract File getClassesDirectory();
@@ -131,6 +137,8 @@ public abstract class AbstractJarMojo
         archiver.setArchiver( jarArchiver );
 
         archiver.setOutputFile( jarFile );
+
+        archive.setForced( forceCreation );
 
         try
         {
