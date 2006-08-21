@@ -16,9 +16,22 @@ package org.apache.maven.plugins.site;
  * limitations under the License.
  */
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.site.webapp.DoxiaBean;
+import org.apache.maven.plugins.site.webapp.DoxiaFilter;
 import org.apache.maven.reporting.MavenReport;
 import org.codehaus.plexus.util.IOUtil;
 import org.mortbay.jetty.Connector;
@@ -27,16 +40,6 @@ import org.mortbay.jetty.Server;
 import org.mortbay.jetty.handler.DefaultHandler;
 import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.webapp.WebAppContext;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * Start the site up, rendering documents as requested for fast editing.
@@ -65,6 +68,9 @@ public class SiteRunMojo
 
     private static final int MAX_IDLE_TIME = 30000;
 
+    /**
+     * @see org.apache.maven.plugin.AbstractMojo#execute()
+     */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -72,7 +78,7 @@ public class SiteRunMojo
         server.setStopAtShutdown( true );
 
         Connector defaultConnector = getDefaultConnector();
-        server.setConnectors( new Connector[]{defaultConnector} );
+        server.setConnectors( new Connector[] { defaultConnector } );
 
         WebAppContext webapp = createWebApplication();
         webapp.setServer( server );
@@ -92,7 +98,7 @@ public class SiteRunMojo
         }
         catch ( Exception e )
         {
-            throw new MojoExecutionException( "Error executing Jetty", e );
+            throw new MojoExecutionException( "Error executing Jetty: " + e.getMessage(), e );
         }
 
         // Watch it
@@ -137,19 +143,20 @@ public class SiteRunMojo
         WebAppContext webapp = new WebAppContext();
         webapp.setContextPath( "/" );
         webapp.setResourceBase( tempWebappDirectory.getAbsolutePath() );
-        webapp.setAttribute( "siteRenderer", siteRenderer );
+        webapp.setAttribute( DoxiaFilter.SITE_RENDERER_KEY, siteRenderer );
 
         // For external reports
         project.getReporting().setOutputDirectory( tempWebappDirectory.getAbsolutePath() );
         for ( Iterator i = reports.iterator(); i.hasNext(); )
         {
-            MavenReport report = ( MavenReport ) i.next();
+            MavenReport report = (MavenReport) i.next();
             report.setReportOutputDirectory( tempWebappDirectory );
         }
 
         List filteredReports = filterReports( reports );
 
         List localesList = getAvailableLocales();
+        webapp.setAttribute( DoxiaFilter.LOCALES_LIST_KEY, localesList );
 
         // Default is first in the list
         Locale defaultLocale = (Locale) localesList.get( 0 );
@@ -157,17 +164,44 @@ public class SiteRunMojo
 
         try
         {
-            // TODO: better i18n handling
-            Locale locale = Locale.getDefault();
-            SiteRenderingContext context = createSiteRenderingContext( locale );
-            webapp.setAttribute( "context", context );
+            Map i18nDoxiaContexts = new HashMap();
 
-            Map documents = locateDocuments( context, filteredReports, locale );
-            webapp.setAttribute( "documents", documents );
+            for ( Iterator it = localesList.iterator(); it.hasNext(); )
+            {
+                Locale locale = (Locale) it.next();
 
-            webapp.setAttribute( "generatedSiteDirectory", generatedSiteDirectory );
+                SiteRenderingContext i18nContext = createSiteRenderingContext( locale );
+                Map i18nDocuments = locateDocuments( i18nContext, filteredReports, locale );
+                DoxiaBean doxiaBean;
+                if ( defaultLocale.equals( locale ) )
+                {
+                    doxiaBean = new DoxiaBean( i18nContext, i18nDocuments, generatedSiteDirectory );
+                }
+                else
+                {
+                    doxiaBean = new DoxiaBean( i18nContext, i18nDocuments, new File( generatedSiteDirectory, locale
+                        .getLanguage() ) );
+                }
 
-            siteRenderer.copyResources( context, new File( siteDirectory, "resources" ), tempWebappDirectory );
+                i18nDoxiaContexts.put( locale.getLanguage(), doxiaBean );
+                if ( defaultLocale.equals( locale ) )
+                {
+                    i18nDoxiaContexts.put( "default", doxiaBean );
+                }
+
+                if ( defaultLocale.equals( locale ) )
+                {
+                    siteRenderer.copyResources( i18nContext, new File( siteDirectory, "resources" ),
+                                                tempWebappDirectory );
+                }
+                else
+                {
+                    siteRenderer.copyResources( i18nContext, new File( siteDirectory, "resources" ),
+                                                new File( tempWebappDirectory, locale.getLanguage() ) );
+                }
+            }
+
+            webapp.setAttribute( DoxiaFilter.I18N_DOXIA_CONTEXTS_KEY, i18nDoxiaContexts );
         }
         catch ( Exception e )
         {
