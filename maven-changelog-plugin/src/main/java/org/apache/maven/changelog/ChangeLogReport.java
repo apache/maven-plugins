@@ -200,7 +200,7 @@ public class ChangeLogReport
     /**
      * The directory where the report will be generated
      *
-     * @parameter expression="${project.build.directory}/site"
+     * @parameter expression="${project.reporting.outputDirectory}"
      * @required
      * @readonly
      */

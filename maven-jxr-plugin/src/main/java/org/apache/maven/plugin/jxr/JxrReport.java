@@ -46,14 +46,14 @@ public class JxrReport
     /**
      * Folder where the Xref files will be copied to.
      *
-     * @parameter expression="${project.build.directory}/site/xref"
+     * @parameter expression="${project.reporting.outputDirectory}/xref"
      */
     private String destDir;
 
     /**
      * Folder where Javadoc is generated for this project.
      *
-     * @parameter expression="${project.build.directory}/site/apidocs"
+     * @parameter expression="${project.reporting.outputDirectory}/apidocs"
      */
     private File javadocDir;
 
@@ -155,5 +155,20 @@ public class JxrReport
             }
         }
         return location;
+    }
+
+    /**
+     * @see org.apache.maven.reporting.AbstractMavenReport#setReportOutputDirectory(java.io.File)
+     */
+    public void setReportOutputDirectory( File reportOutputDirectory )
+    {
+        if ( ( reportOutputDirectory != null ) && ( !reportOutputDirectory.getAbsolutePath().endsWith( "xref" ) ) )
+        {
+            this.destDir = new File( reportOutputDirectory, "xref" ).getAbsolutePath();
+        }
+        else
+        {
+            this.destDir = reportOutputDirectory.getAbsolutePath();
+        }
     }
 }

@@ -45,7 +45,7 @@ public class SurefireReportMojo
     /**
      * Location where generated html will be created.
      *
-     * @parameter expression="${project.build.directory}/site "
+     * @parameter expression="${project.reporting.outputDirectory}"
      */
     private String outputDirectory;
 
@@ -92,7 +92,7 @@ public class SurefireReportMojo
     /**
      * Location of the Xrefs to link.
      *
-     * @parameter default-value="${project.build.directory}/site/xref-test"
+     * @parameter default-value="${project.reporting.outputDirectory}/xref-test"
      */
     private File xrefLocation;
 
