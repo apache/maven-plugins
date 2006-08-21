@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -45,15 +46,17 @@ import java.util.Map;
 public class DoxiaFilter
     implements Filter
 {
+    public static final String SITE_RENDERER_KEY = "siteRenderer";
+
+    public static final String I18N_DOXIA_CONTEXTS_KEY = "i18nDoxiaContexts";
+
+    public static final String LOCALES_LIST_KEY = "localesList";
+
     private Renderer siteRenderer;
 
-    private SiteRenderingContext context;
+    private Map i18nDoxiaContexts;
 
-    private Map documents;
-
-    private File generatedSiteDirectory;
-
-    private List originalSiteDirectories;
+    private List localesList;
 
     /**
      * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
@@ -62,11 +65,12 @@ public class DoxiaFilter
         throws ServletException
     {
         ServletContext servletContext = filterConfig.getServletContext();
-        siteRenderer = (Renderer) servletContext.getAttribute( "siteRenderer" );
-        context = (SiteRenderingContext) servletContext.getAttribute( "context" );
-        documents = (Map) servletContext.getAttribute( "documents" );
-        generatedSiteDirectory = (File) servletContext.getAttribute( "generatedSiteDirectory" );
-        originalSiteDirectories = new ArrayList( context.getSiteDirectories() );
+
+        siteRenderer = (Renderer) servletContext.getAttribute( SITE_RENDERER_KEY );
+
+        i18nDoxiaContexts = (Map) servletContext.getAttribute( I18N_DOXIA_CONTEXTS_KEY );
+
+        localesList = (List) servletContext.getAttribute( LOCALES_LIST_KEY );
     }
 
     /**
@@ -77,28 +81,73 @@ public class DoxiaFilter
     {
         HttpServletRequest req = (HttpServletRequest) servletRequest;
 
+        // ----------------------------------------------------------------------
+        // Handle the servlet path
+        // ----------------------------------------------------------------------
         String path = req.getServletPath();
+        // welcome file
         if ( path.endsWith( "/" ) )
         {
             path += "index.html";
         }
 
+        // Remove the /
         path = path.substring( 1 );
 
+        // Handle locale request
+        SiteRenderingContext context;
+        Map documents;
+        File generatedSiteDirectory;
+
+        String localeWanted = null;
+        for ( Iterator it = localesList.iterator(); it.hasNext(); )
+        {
+            Locale locale = (Locale) it.next();
+
+            if ( path.startsWith( locale.getLanguage() + "/" ) )
+            {
+                localeWanted = locale.toString();
+                path = path.substring( locale.getLanguage().length() + 1 );
+            }
+        }
+
+        if ( localeWanted == null )
+        {
+            DoxiaBean defaultDoxiaBean = (DoxiaBean) i18nDoxiaContexts.get( "default" );
+            if ( defaultDoxiaBean == null )
+            {
+                throw new ServletException( "No doxia bean found for the default locale" );
+            }
+            context = defaultDoxiaBean.getContext();
+            documents = defaultDoxiaBean.getDocuments();
+            generatedSiteDirectory = defaultDoxiaBean.getGeneratedSiteDirectory();
+        }
+        else
+        {
+            DoxiaBean i18nDoxiaBean = (DoxiaBean) i18nDoxiaContexts.get( localeWanted );
+            if ( i18nDoxiaBean == null )
+            {
+                throw new ServletException( "No doxia bean found for the locale " + localeWanted );
+            }
+            context = i18nDoxiaBean.getContext();
+            documents = i18nDoxiaBean.getDocuments();
+            generatedSiteDirectory = i18nDoxiaBean.getGeneratedSiteDirectory();
+        }
+
+        // ----------------------------------------------------------------------
+        // Handle report and documents
+        // ----------------------------------------------------------------------
         if ( documents.containsKey( path ) )
         {
-            // TODO: documents are not right for the locale
-            context.setLocale( req.getLocale() );
-
             try
             {
                 DocumentRenderer renderer = (DocumentRenderer) documents.get( path );
                 renderer.renderDocument( servletResponse.getWriter(), siteRenderer, context );
 
-                if (renderer instanceof ReportDocumentRenderer)
+                if ( renderer instanceof ReportDocumentRenderer )
                 {
                     ReportDocumentRenderer reportDocumentRenderer = (ReportDocumentRenderer) renderer;
-                    if (reportDocumentRenderer.isExternalReport())
+                    if ( reportDocumentRenderer.isExternalReport() )
                     {
                         try
                         {
@@ -126,9 +175,6 @@ public class DoxiaFilter
 
                 if ( locateDocuments.containsKey( path ) )
                 {
-                    // TODO: documents are not right for the locale
-                    context.setLocale( req.getLocale() );
-
                     DocumentRenderer renderer = (DocumentRenderer) locateDocuments.get( path );
                     renderer.renderDocument( servletResponse.getWriter(), siteRenderer, context );
                 }
@@ -137,6 +183,8 @@ public class DoxiaFilter
             {
                 throw new ServletException( e );
             }
+
+            List originalSiteDirectories = new ArrayList( context.getSiteDirectories() );
             for ( Iterator i = originalSiteDirectories.iterator(); i.hasNext(); )
             {
                 File dir = (File) i.next();
