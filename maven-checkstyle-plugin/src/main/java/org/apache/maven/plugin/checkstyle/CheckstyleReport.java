@@ -518,7 +518,7 @@ public class CheckstyleReport
         }
         catch ( IOException e )
         {
-            throw new MavenReportException( "Unable to copy static resources." );
+            throw new MavenReportException( "Unable to copy static resources.", e );
         }
     }
 
@@ -1028,6 +1028,9 @@ public class CheckstyleReport
         return ResourceBundle.getBundle( "checkstyle-report", locale, CheckstyleReport.class.getClassLoader() );
     }
 
+    /**
+     * @see org.apache.maven.reporting.AbstractMavenReport#canGenerateReport()
+     */
     public boolean canGenerateReport()
     {
         // TODO: would be good to scan the files here
