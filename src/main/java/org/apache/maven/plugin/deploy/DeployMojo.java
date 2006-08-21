@@ -20,7 +20,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.deployer.ArtifactDeploymentException;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
+import org.apache.maven.artifact.repository.DefaultArtifactRepository;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -91,11 +91,6 @@ public class DeployMojo
      */
     private String altDeploymentRepository;
     
-    /**
-     * @component
-     */
-    private ArtifactRepositoryFactory repoFactory;
-
     /**
      * @parameter expression="${project.attachedArtifacts}
      * @required
@@ -214,7 +209,7 @@ public class DeployMojo
                     throw new MojoExecutionException( "Cannot find repository layout: " + layout, e );
                 }
                 
-                repo = repoFactory.createArtifactRepository( id, url, repoLayout, null, null );
+                repo = new DefaultArtifactRepository( id, url, repoLayout );
             }
         }
         
