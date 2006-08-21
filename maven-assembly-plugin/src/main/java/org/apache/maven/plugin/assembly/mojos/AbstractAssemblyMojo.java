@@ -186,7 +186,7 @@ public abstract class AbstractAssemblyMojo
     /**
      * Directory for site generated.
      *
-     * @parameter default-value="${project.build.directory}/site"
+     * @parameter default-value="${project.reporting.outputDirectory}"
      * @readonly
      */
     private File siteDirectory;

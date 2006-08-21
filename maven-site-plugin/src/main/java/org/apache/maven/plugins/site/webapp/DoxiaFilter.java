@@ -20,6 +20,7 @@ import org.apache.maven.doxia.siterenderer.DocumentRenderer;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.siterenderer.RendererException;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
+import org.apache.maven.plugins.site.ReportDocumentRenderer;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -54,6 +55,9 @@ public class DoxiaFilter
 
     private List originalSiteDirectories;
 
+    /**
+     * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
+     */
     public void init( FilterConfig filterConfig )
         throws ServletException
     {
@@ -65,6 +69,9 @@ public class DoxiaFilter
         originalSiteDirectories = new ArrayList( context.getSiteDirectories() );
     }
 
+    /**
+     * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)
+     */
     public void doFilter( ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain )
         throws IOException, ServletException
     {
@@ -87,6 +94,22 @@ public class DoxiaFilter
             {
                 DocumentRenderer renderer = (DocumentRenderer) documents.get( path );
                 renderer.renderDocument( servletResponse.getWriter(), siteRenderer, context );
+
+                if (renderer instanceof ReportDocumentRenderer)
+                {
+                    ReportDocumentRenderer reportDocumentRenderer = (ReportDocumentRenderer) renderer;
+                    if (reportDocumentRenderer.isExternalReport())
+                    {
+                        try
+                        {
+                            filterChain.doFilter( servletRequest, servletResponse );
+                        }
+                        catch ( Exception e )
+                        {
+                            throw new ServletException( e );
+                        }
+                    }
+                }
             }
             catch ( RendererException e )
             {
@@ -99,14 +122,14 @@ public class DoxiaFilter
             context.addSiteDirectory( generatedSiteDirectory );
             try
             {
-                Map documents = siteRenderer.locateDocumentFiles( context );
+                Map locateDocuments = siteRenderer.locateDocumentFiles( context );
 
-                if ( documents.containsKey( path ) )
+                if ( locateDocuments.containsKey( path ) )
                 {
                     // TODO: documents are not right for the locale
                     context.setLocale( req.getLocale() );
 
-                    DocumentRenderer renderer = (DocumentRenderer) documents.get( path );
+                    DocumentRenderer renderer = (DocumentRenderer) locateDocuments.get( path );
                     renderer.renderDocument( servletResponse.getWriter(), siteRenderer, context );
                 }
             }
@@ -126,6 +149,9 @@ public class DoxiaFilter
         }
     }
 
+    /**
+     * @see javax.servlet.Filter#destroy()
+     */
     public void destroy()
     {
     }

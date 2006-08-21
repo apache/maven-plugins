@@ -28,7 +28,6 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenMultiPageReport;
 import org.apache.maven.reporting.MavenReportException;
-import org.apache.maven.reporting.MavenReport;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -68,14 +67,14 @@ public class ReportDocumentRenderer
         private File outputDir;
 
         private String outputName;
-            
+
         public MySink( File outputDir, String outputName, RenderingContext ctx )
         {
             super( ctx );
             this.outputName = outputName;
-        this.outputDir = outputDir;
+            this.outputDir = outputDir;
         }
-        
+
         public String getOutputName()
         {
             return outputName;
@@ -93,7 +92,7 @@ public class ReportDocumentRenderer
         private RenderingContext context;
 
         private List sinks = new ArrayList();
-            
+
         public MySinkFactory( RenderingContext ctx )
         {
             this.context = ctx;
@@ -189,5 +188,13 @@ public class ReportDocumentRenderer
     {
         // TODO: would be nice to query the report to see if it is modified
         return true;
+    }
+
+    /**
+     * @return true if the current report is external, false otherwise
+     */
+    public boolean isExternalReport()
+    {
+        return report.isExternalReport();
     }
 }

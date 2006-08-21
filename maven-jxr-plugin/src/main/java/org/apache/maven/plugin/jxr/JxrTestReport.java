@@ -18,6 +18,7 @@ package org.apache.maven.plugin.jxr;
 
 import org.apache.maven.project.MavenProject;
 
+import java.io.File;
 import java.util.List;
 import java.util.Locale;
 
@@ -44,7 +45,7 @@ public class JxrTestReport
     /**
      * Folder where the Xref files will be copied to.
      *
-     * @parameter expression="${project.build.directory}/site/xref-test"
+     * @parameter expression="${project.reporting.outputDirectory}/xref-test"
      */
     private String destDir;
 
@@ -109,5 +110,20 @@ public class JxrTestReport
     {
         // Don't link Javadoc
         return null;
+    }
+
+    /**
+     * @see org.apache.maven.reporting.AbstractMavenReport#setReportOutputDirectory(java.io.File)
+     */
+    public void setReportOutputDirectory( File reportOutputDirectory )
+    {
+        if ( ( reportOutputDirectory != null ) && ( !reportOutputDirectory.getAbsolutePath().endsWith( "xref-test" ) ) )
+        {
+            this.destDir = new File( reportOutputDirectory, "xref-test" ).getAbsolutePath();
+        }
+        else
+        {
+            this.destDir = reportOutputDirectory.getAbsolutePath();
+        }
     }
 }

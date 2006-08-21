@@ -389,4 +389,19 @@ public class CloverReportMojo extends AbstractMavenReport
 
         return canGenerate;
     }
+
+    /**
+     * @see org.apache.maven.reporting.AbstractMavenReport#setReportOutputDirectory(java.io.File)
+     */
+    public void setReportOutputDirectory( File reportOutputDirectory )
+    {
+        if ( ( reportOutputDirectory != null ) && ( !reportOutputDirectory.getAbsolutePath().endsWith( "clover" ) ) )
+        {
+            this.outputDirectory = new File( reportOutputDirectory, "clover" );
+        }
+        else
+        {
+            this.outputDirectory = reportOutputDirectory;
+        }
+    }
 }

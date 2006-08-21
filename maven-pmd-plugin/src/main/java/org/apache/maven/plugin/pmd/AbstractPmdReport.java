@@ -92,7 +92,7 @@ public abstract class AbstractPmdReport
     /**
      * Location of the Xrefs to link to.
      *
-     * @parameter default-value="${project.build.directory}/site/xref"
+     * @parameter default-value="${project.reporting.outputDirectory}/xref"
      */
     private File xrefLocation;
 

@@ -61,7 +61,7 @@ public abstract class AbstractJxrReport
     /**
      * Output folder where the main page of the report will be generated.
      *
-     * @parameter expression="${project.build.directory}/site"
+     * @parameter expression="${project.reporting.outputDirectory}"
      * @required
      */
     private String outputDirectory;
