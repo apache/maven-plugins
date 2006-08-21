@@ -28,6 +28,7 @@ import org.codehaus.plexus.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -518,7 +519,11 @@ public class CheckstyleReportGenerator
         sink.tableHeaderCell_();
         sink.tableRow_();
 
-        for ( Iterator files = results.getFiles().keySet().iterator(); files.hasNext(); )
+        // Sort the files before writing them to the report
+        ArrayList fileList = new ArrayList( results.getFiles().keySet() );
+        Collections.sort( fileList );
+
+        for ( Iterator files = fileList.iterator(); files.hasNext(); )
         {
             String filename = (String) files.next();
             List violations = results.getFileViolations( filename );
@@ -563,7 +568,10 @@ public class CheckstyleReportGenerator
         sink.text( bundle.getString( "report.checkstyle.details" ) );
         sink.sectionTitle1_();
 
-        Iterator files = results.getFiles().keySet().iterator();
+        // Sort the files before writing their details to the report
+        ArrayList fileList = new ArrayList( results.getFiles().keySet() );
+        Collections.sort( fileList );
+        Iterator files = fileList.iterator();
 
         while ( files.hasNext() )
         {
