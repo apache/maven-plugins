@@ -39,11 +39,15 @@ public class ReportResource
         this.outputDirectory = outputDirectory;
     }
 
-    public void copy( String resourceName )
-        throws IOException
+    public void copy( String resourceName ) throws IOException
     {
-        URL url = Thread.currentThread().getContextClassLoader().getResource( resourcePathBase + "/" + resourceName );
-        FileUtils.copyURLToFile( url, new File( outputDirectory, resourceName ) );
+        File resource = new File( outputDirectory, resourceName );
+        if ( ( resource != null ) && ( !resource.exists() ) )
+        {
+            URL url =
+                Thread.currentThread().getContextClassLoader().getResource( resourcePathBase + "/" + resourceName );
+            FileUtils.copyURLToFile( url, resource );
+        }
     }
 
     public File getOutputDirectory()
