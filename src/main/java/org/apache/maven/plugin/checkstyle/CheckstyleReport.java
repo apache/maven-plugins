@@ -387,7 +387,7 @@ public class CheckstyleReport
     /**
      * Location of the Xrefs to link to.
      *
-     * @parameter default-value="${project.build.directory}/site/xref"
+     * @parameter default-value="${project.reporting.outputDirectory}/xref"
      */
     private File xrefLocation;
 
@@ -1035,5 +1035,14 @@ public class CheckstyleReport
     {
         // TODO: would be good to scan the files here
         return sourceDirectory.exists();
+    }
+
+    /**
+     * @see org.apache.maven.reporting.AbstractMavenReport#setReportOutputDirectory(java.io.File)
+     */
+    public void setReportOutputDirectory( File reportOutputDirectory )
+    {
+        super.setReportOutputDirectory( reportOutputDirectory );
+        this.outputDirectory = reportOutputDirectory;
     }
 }
