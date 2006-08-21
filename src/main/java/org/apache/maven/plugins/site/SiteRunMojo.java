@@ -19,6 +19,7 @@ package org.apache.maven.plugins.site;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.reporting.MavenReport;
 import org.codehaus.plexus.util.IOUtil;
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Handler;
@@ -32,6 +33,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -136,6 +138,14 @@ public class SiteRunMojo
         webapp.setContextPath( "/" );
         webapp.setResourceBase( tempWebappDirectory.getAbsolutePath() );
         webapp.setAttribute( "siteRenderer", siteRenderer );
+
+        // For external reports
+        project.getReporting().setOutputDirectory( tempWebappDirectory.getAbsolutePath() );
+        for ( Iterator i = reports.iterator(); i.hasNext(); )
+        {
+            MavenReport report = ( MavenReport ) i.next();
+            report.setReportOutputDirectory( tempWebappDirectory );
+        }
 
         List filteredReports = filterReports( reports );
 
