@@ -401,7 +401,21 @@ public class ComponentsXmlArchiverFileFilterTest
         {
             throw new UnsupportedOperationException( "not supported" );
         }
+        
+        public void setForced( boolean forced )
+        {
+            throw new UnsupportedOperationException( "not supported" );            
+        }
 
+        public boolean isForced()
+        {
+            throw new UnsupportedOperationException( "not supported" );            
+        }
+
+        public boolean isSupportingForced()
+        {
+            throw new UnsupportedOperationException( "not supported" );            
+        }
     }
 
 }
