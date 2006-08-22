@@ -16,6 +16,27 @@
           </execution>
         </executions>
       </phase>
+
+      <!-- This below is a HACK. It tries to prevent the build from stopping in
+           case of build failures as we could still like to generate Clover
+           reports even if it happens. The Clover plugin cannot know about all
+           plugins that can execute and fail the build and moreover which can be
+           bound to any phase by the user. A better solution would be for Maven
+           to have a flag that says "continue the build even in case of
+           failures". -->
+      <phase>
+        <id>test</id>
+        <configuration>
+          <testFailureIgnore>true</testFailureIgnore>
+        </configuration>
+      </phase>
+      <phase>
+        <id>integration-test</id>
+        <configuration>
+          <testFailureIgnore>true</testFailureIgnore>
+        </configuration>
+      </phase>
+
     </phases>
   </lifecycle>
 </lifecycles>
