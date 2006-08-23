@@ -33,16 +33,16 @@ Maven AntRun Plugin
   and just call it from the POM using Ant's 
   {{{http://ant.apache.org/manual/CoreTasks/ant.html}\<ant/\> task}}.
 
-  One of the main purpose of this plugin is to facilitate the migration from Ant
-  based projects to Maven 2. Some projects may not currently unable to migrate 
-  because they depend on custom build functionality that Maven2 doesn't provide 
+  One of the main purposes of this plugin is to facilitate the migration from Ant
+  based projects to Maven 2. Some projects may not currently be able to migrate 
+  because they depend on custom build functionality that Maven 2 doesn't provide 
   by default.
       
 * Goals Overview
 
   General Information about the goals.
 
-  * {{{run-mojo.html}antrun:run}} runs ant tasks for maven2.
+  * {{{run-mojo.html}antrun:run}} runs ant tasks for Maven 2.
 
 * Usage
 

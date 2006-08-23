@@ -22,11 +22,11 @@
      <question>Why use antrun and not the ant program itself?</question>
      <answer>
        <p>Maven has certain benefits over Ant. And for your ant projects to take
-       advantage of these, you can use maven as your porject management tool and
+       advantage of these, you can use Maven as your project management tool and
        use its maven-antrun-plugin to build your ant projects. </p>
-       <p>Furthermore, if you wish to migrate from ant to maven, you can use 
+       <p>Furthermore, if you wish to migrate from ant to Maven, you can use 
        this plugin first, then gradually convert your ant expressions into their
-       corresponding maven expressions.</p>
+       corresponding Maven expressions.</p>
      </answer>
    </faq>
  </part>

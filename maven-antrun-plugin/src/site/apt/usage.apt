@@ -29,7 +29,7 @@ Usage
 
   The maven-antrun-plugin has only one goal, <<<run>>>. 
   
-  This allows maven 2 to run ant tasks. To do so, there must be an existing 
+  This allows Maven 2 to run ant tasks. To do so, there must be an existing 
   project and the maven-antrun-plugin must have its <<<\<tasks\>>>> tag 
   configured (although it would still execute without the <<<\<tasks\>>>> tag, 
   it would not do anything). Below is the template for the 
@@ -116,7 +116,7 @@ Usage
 ------
 
   Of course, you can put whatever folder you prefer. The folders in the example 
-  above arehandy because they are deleted when you <<<clean>>> since they are in
+  above are handy because they are deleted when you <<<clean>>> since they are in
   the build directory (which is, by default, "target"). 
 
   <<<\<sourceRoot/\>>>> adds a single folder to the list of folders that get 
