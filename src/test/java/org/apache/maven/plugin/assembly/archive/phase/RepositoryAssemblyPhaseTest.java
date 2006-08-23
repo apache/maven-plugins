@@ -82,13 +82,13 @@ public class RepositoryAssemblyPhaseTest
         
         Repository repo = new Repository();
         
-        repo.setOutputDirectory( "/out" );
+        repo.setOutputDirectory( "out" );
         repo.setDirectoryMode( "777" );
         repo.setFileMode( "777" );
         
         int mode = Integer.parseInt( "777", 8 );
         
-        File outDir = new File( tempRoot, "repositories/out" );
+        File outDir = new File( tempRoot, "out" );
         
         macArchiver.expectModeChange( -1, -1, mode, mode, true );
         macArchiver.expectAddDirectory( outDir, "final-name/out/", null, new String[0] );
