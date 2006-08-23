@@ -1,0 +1,8 @@
+import java.io.File;
+
+boolean result = true;
+
+result = result && new File( basedir, "target/first-bin.dir/lib/junit.jar" ).exists();
+result = result && new File( basedir, "target/second-bin.dir/lib/junit.jar" ).exists();
+
+return result;
