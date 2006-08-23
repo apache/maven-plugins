@@ -52,7 +52,7 @@ public class RepositoryAssemblyPhase
         {
             Repository repository = (Repository) i.next();
 
-            File repositoryDirectory = new File( tempRoot, "repositories/" + repository.getOutputDirectory() );
+            File repositoryDirectory = new File( tempRoot, repository.getOutputDirectory() );
 
             if ( !repositoryDirectory.exists() )
             {
