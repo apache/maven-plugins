@@ -28,11 +28,23 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Goal which cleans the build.
+ * Goal which cleans the build. 
+ * 
+ * <P>This attempts to clean a project's working directory of the files that 
+ * were generated at build-time. By default, it discovers and deletes the 
+ * directories configured in <code>project.build.directory</code>, 
+ * <code>project.build.outputDirectory</code>, 
+ * <code>project.build.testOutputDirectory</code>, and 
+ * <code>project.reporting.outputDirectory</code>. </P>
+ * 
+ * <P>Files outside the default may also be included in the deletion by 
+ * configuring the <code>filesets</code> tag.</P>
  *
  * @author <a href="mailto:evenisse@maven.org">Emmanuel Venisse</a>
  * @version $Id$
  * @goal clean
+ * 
+ * @see org.apache.maven.plugin.clean.Fileset.
  */
 public class CleanMojo
     extends AbstractMojo
@@ -76,7 +88,7 @@ public class CleanMojo
     /**
      * Sets whether the plugin runs in verbose mode.
      *
-     * @parameter expression="${clean.verbose}" default=value="false"
+     * @parameter expression="${clean.verbose}" default-value="false"
      */
     private boolean verbose;
 
@@ -90,12 +102,25 @@ public class CleanMojo
     /**
      * Sets whether the plugin should follow Symbolic Links to delete files.
      *
-     * @parameter expression="${clean.followSymLinks}" default=value="false"
+     * @parameter expression="${clean.followSymLinks}" default-value="false"
      */
     private boolean followSymLinks;
 
+    /** 
+     * Finds and retrieves included and excluded files, and handles their 
+     * deletion
+     */
     private FileSetManager fileSetManager;
 
+    
+    /**
+     * Deletes file-sets in the following project build directory order: 
+     * (source) directory, output directory, test directory, report directory, 
+     * and then the additional file-sets.
+     *  
+     * @see org.apache.maven.plugin.Mojo#execute()
+     * @throws MojoExecutionException When 
+     */
     public void execute()
         throws MojoExecutionException
     {
@@ -109,6 +134,11 @@ public class CleanMojo
         removeAdditionalFilesets();
     }
 
+    /**
+     * Deletes additional file-sets specified by the <code>filesets</code> tag.
+     * 
+     * @throws MojoExecutionException When a directory failed to get deleted.
+     */
     private void removeAdditionalFilesets()
         throws MojoExecutionException
     {
@@ -126,13 +156,19 @@ public class CleanMojo
                 }
                 catch ( IOException e )
                 {
-                    throw new MojoExecutionException(
-                        "Failed to delete directory: " + fileset.getDirectory() + ". Reason: " + e.getMessage(), e );
+                    throw new MojoExecutionException( "Failed to delete directory: " + fileset.getDirectory()
+                        + ". Reason: " + e.getMessage(), e );
                 }
             }
         }
     }
 
+    /**
+     * Deletes a directory and its contents.
+     * 
+     * @param dir The base directory of the included and excluded files.
+     * @throws MojoExecutionException When a directory failed to get deleted.
+     */
     private void removeDirectory( File dir )
         throws MojoExecutionException
     {
@@ -163,39 +199,47 @@ public class CleanMojo
     }
 
     /**
-     * @param directory The directory to set.
+     * Sets the project build directory.
+     * 
+     * @param newDirectory The project build directory to set.
      */
-    protected void setDirectory( File directory )
+    protected void setDirectory( File newDirectory )
     {
-        this.directory = directory;
+        this.directory = newDirectory;
     }
 
     /**
-     * @param outputDirectory The outputDirectory to set.
+     * Sets the project build output directory.
+     * 
+     * @param newOutputDirectory The project build output directory to set.
      */
-    protected void setOutputDirectory( File outputDirectory )
+    protected void setOutputDirectory( File newOutputDirectory )
     {
-        this.outputDirectory = outputDirectory;
+        this.outputDirectory = newOutputDirectory;
     }
 
     /**
-     * @param testOutputDirectory The testOutputDirectory to set.
+     * Sets the project build test output directory.
+     * 
+     * @param newTestOutputDirectory The project build test output directory to set.
      */
-    protected void setTestOutputDirectory( File testOutputDirectory )
+    protected void setTestOutputDirectory( File newTestOutputDirectory )
     {
-        this.testOutputDirectory = testOutputDirectory;
+        this.testOutputDirectory = newTestOutputDirectory;
     }
 
     /**
-     * @param reportDirectory The reportDirectory to set.
+     * Sets the project build report directory.
+     * 
+     * @param newReportDirectory The project build report directory to set.
      */
-    protected void setReportDirectory( File reportDirectory )
+    protected void setReportDirectory( File newReportDirectory )
     {
-        this.reportDirectory = reportDirectory;
+        this.reportDirectory = newReportDirectory;
     }
 
     /**
-     * Add a fileset to the list of filesets to clean.
+     * Adds a file-set to the list of file-sets to clean.
      *
      * @param fileset the fileset
      */
