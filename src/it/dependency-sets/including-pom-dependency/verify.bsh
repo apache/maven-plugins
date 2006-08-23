@@ -1,0 +1,16 @@
+import java.io.*;
+
+boolean result = true;
+
+// verify that transitive deps of the POM dep were included.
+result = result && new File( basedir, "target/including-pom-dependency-1.0-SNAPSHOT-bin.dir/lib/plexus-utils.jar" ).exists();
+result = result && new File( basedir, "target/including-pom-dependency-1.0-SNAPSHOT-bin.dir/lib/classworlds.jar" ).exists();
+result = result && new File( basedir, "target/including-pom-dependency-1.0-SNAPSHOT-bin.dir/lib/junit.jar" ).exists();
+
+// verify that the POM dep wasn't included.
+result = result && !new File( basedir, "target/including-pom-dependency-1.0-SNAPSHOT-bin.dir/lib/plexus-container-default.pom" ).exists();
+
+// verify that the jar associated with the POM dep wasn't included either.
+result = result && !new File( basedir, "target/including-pom-dependency-1.0-SNAPSHOT-bin.dir/lib/plexus-container-default.jar" ).exists();
+
+return result;

@@ -34,7 +34,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -293,6 +292,11 @@ public abstract class AbstractAssemblyMojo
             catch ( AssemblyFormattingException e )
             {
                 throw new MojoExecutionException( "Failed to create assembly: " + e.getMessage(), e );
+            }
+            catch ( InvalidAssemblerConfigurationException e )
+            {
+                throw new MojoFailureException( assembly, "Assembly is incorrectly configured: " + assembly.getId(), "Assembly: "
+                                + assembly.getId() + " is not configured correctly: " + e.getMessage() );
             }
         }
     }

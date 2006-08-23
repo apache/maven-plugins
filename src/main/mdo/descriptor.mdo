@@ -561,9 +561,24 @@
           <type>boolean</type>
           <defaultValue>false</defaultValue>
           <description>
-            If set to true, the plugin will include the direct and transitive dependencies of
-            of the project modules included here.  Otherwise, it will only include the module
-            packages only. Default value is false.
+          If set to true, the plugin will include the direct and transitive dependencies of
+          of the project modules included here.  Otherwise, it will only include the module
+          packages only. Default value is false.
+          </description>
+        </field>
+        <field>
+          <name>dependencySets</name>
+          <version>1.0.0</version>
+          <association>
+            <type>DependencySet</type>
+            <multiplicity>*</multiplicity>
+          </association>
+          <description>
+            <![CDATA[
+            Specifies which dependencies of the module to include in the assembly. A
+            dependencySet is specified by providing one or more of
+            &lt;dependencySet&gt; subelements.
+            ]]>
           </description>
         </field>
         <field>
