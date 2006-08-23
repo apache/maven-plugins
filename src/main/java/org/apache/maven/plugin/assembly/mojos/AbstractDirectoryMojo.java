@@ -36,7 +36,7 @@ public abstract class AbstractDirectoryMojo
         throws MojoExecutionException, MojoFailureException
     {
         AssemblyReader reader = getAssemblyReader();
-        
+
         List assemblies;
         try
         {
@@ -50,10 +50,10 @@ public abstract class AbstractDirectoryMojo
         {
             throw new MojoFailureException( reader, e.getMessage(), "Mojo configuration is invalid: " + e.getMessage() );
         }
-        
+
         for ( Iterator i = assemblies.iterator(); i.hasNext(); )
         {
-            Assembly assembly = (Assembly) i.next();
+            Assembly assembly = ( Assembly ) i.next();
             createDirectory( assembly );
         }
     }
@@ -62,7 +62,7 @@ public abstract class AbstractDirectoryMojo
         throws MojoExecutionException, MojoFailureException
     {
         AssemblyArchiver archiver = getAssemblyArchiver();
-        
+
         String fullName = getFinalName();
 
         if ( appendAssemblyId )
@@ -85,6 +85,11 @@ public abstract class AbstractDirectoryMojo
         catch ( AssemblyFormattingException e )
         {
             throw new MojoExecutionException( "Error creating assembly: " + e.getMessage(), e );
+        }
+        catch ( InvalidAssemblerConfigurationException e )
+        {
+            throw new MojoFailureException( assembly, "Assembly is incorrectly configured: " + assembly.getId(), "Assembly: "
+                            + assembly.getId() + " is not configured correctly: " + e.getMessage() );
         }
     }
 

@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
+import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase;
 import org.apache.maven.plugin.assembly.filter.ComponentsXmlArchiverFileFilter;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
@@ -60,7 +61,7 @@ public class DefaultAssemblyArchiver
 
     public File createArchive( Assembly assembly, String fullName, String format,
                                AssemblerConfigurationSource configSource )
-        throws ArchiveCreationException, AssemblyFormattingException
+        throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
     {
         String filename = fullName + "." + format;
 
