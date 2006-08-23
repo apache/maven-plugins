@@ -1,6 +1,7 @@
 package org.apache.maven.plugin.assembly.archive.phase;
 
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
+import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugins.assembly.model.Assembly;
@@ -11,6 +12,6 @@ public interface AssemblyArchiverPhase
     String ROLE = AssemblyArchiverPhase.class.getName();
 
     void execute( Assembly assembly, Archiver archiver, AssemblerConfigurationSource configSource )
-        throws ArchiveCreationException, AssemblyFormattingException;
+        throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException;
 
 }
