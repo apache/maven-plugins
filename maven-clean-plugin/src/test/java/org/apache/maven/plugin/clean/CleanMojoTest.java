@@ -133,9 +133,9 @@ public class CleanMojoTest
         assertTrue( checkExists( base ) );
         assertTrue( checkExists( base + "/classes" ) );
         assertFalse( checkExists( base + "/classes/file.txt" ) );
-/* TODO: looks like a bug in the file-management library
-        assertTrue( FileUtils.fileExists( base + "/subdir/file.txt" ) );
-*/
+        /* TODO: looks like a bug in the file-management library
+         assertTrue( FileUtils.fileExists( base + "/subdir/file.txt" ) );
+         */
 
         // fileset 2
         assertTrue( checkExists( outputDirectory ) );
@@ -162,59 +162,59 @@ public class CleanMojoTest
         }
     }
 
-/* Unix will let you get away with it, not sure how to lock the file from Java.
-    public void testOpenFile()
-        throws MojoExecutionException, FileNotFoundException
-    {
-        String path = TARGET_TEST_DIR + "/target/subdir";
+    /* Unix will let you get away with it, not sure how to lock the file from Java.
+     public void testOpenFile()
+     throws MojoExecutionException, FileNotFoundException
+     {
+     String path = TARGET_TEST_DIR + "/target/subdir";
 
-        CleanMojo mojo = new CleanMojo();
-        mojo.setDirectory( new File( basedir, path ) );
+     CleanMojo mojo = new CleanMojo();
+     mojo.setDirectory( new File( basedir, path ) );
 
-        FileInputStream fis = new FileInputStream( new File( basedir, path + "/file.txt" ) );
+     FileInputStream fis = new FileInputStream( new File( basedir, path + "/file.txt" ) );
 
-        try
-        {
-            mojo.execute();
+     try
+     {
+     mojo.execute();
 
-            fail( "Should fail to delete a file that is open" );
-        }
-        catch ( MojoExecutionException expected )
-        {
-            assertTrue( true );
-        }
-        finally
-        {
-            IOUtil.close( fis );
-        }
-    }
+     fail( "Should fail to delete a file that is open" );
+     }
+     catch ( MojoExecutionException expected )
+     {
+     assertTrue( true );
+     }
+     finally
+     {
+     IOUtil.close( fis );
+     }
+     }
 
-    public void testOpenFileInFileSet()
-        throws MojoExecutionException, FileNotFoundException
-    {
-        String path = TARGET_TEST_DIR + "/target/subdir";
+     public void testOpenFileInFileSet()
+     throws MojoExecutionException, FileNotFoundException
+     {
+     String path = TARGET_TEST_DIR + "/target/subdir";
 
-        CleanMojo mojo = new CleanMojo();
-        mojo.addFileset( createFileset( path, "**", "" ) );
+     CleanMojo mojo = new CleanMojo();
+     mojo.addFileset( createFileset( path, "**", "" ) );
 
-        FileInputStream fis = new FileInputStream( new File( basedir, path + "/file.txt" ) );
+     FileInputStream fis = new FileInputStream( new File( basedir, path + "/file.txt" ) );
 
-        try
-        {
-            mojo.execute();
+     try
+     {
+     mojo.execute();
 
-            fail( "Should fail to delete a file that is open" );
-        }
-        catch ( MojoExecutionException expected )
-        {
-            assertTrue( true );
-        }
-        finally
-        {
-            IOUtil.close( fis );
-        }
-    }
-*/
+     fail( "Should fail to delete a file that is open" );
+     }
+     catch ( MojoExecutionException expected )
+     {
+     assertTrue( true );
+     }
+     finally
+     {
+     IOUtil.close( fis );
+     }
+     }
+     */
 
     public void testMissingDirectory()
         throws MojoExecutionException
@@ -234,8 +234,8 @@ public class CleanMojoTest
     {
         Fileset fileset = new Fileset();
         fileset.setDirectory( new File( basedir, dir ).getAbsolutePath() );
-        fileset.setIncludes( Arrays.asList( new String[]{includes} ) );
-        fileset.setExcludes( Arrays.asList( new String[]{excludes} ) );
+        fileset.setIncludes( Arrays.asList( new String[] { includes } ) );
+        fileset.setExcludes( Arrays.asList( new String[] { excludes } ) );
         return fileset;
     }
 
