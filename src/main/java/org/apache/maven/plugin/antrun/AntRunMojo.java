@@ -26,7 +26,7 @@ import org.apache.tools.ant.Target;
  * Maven AntRun Mojo.
  *
  * This plugin provides the capability of calling ant tasks
- * from a POM by runing the nested ant tasks inside the &lt;task/&gt;
+ * from a POM by running the nested ant tasks inside the &lt;task/&gt;
  * parameter. It is encouraged to move the actual tasks to
  * a separate build.xml file and call that file with an
  * &lt;ant/&gt; task.
