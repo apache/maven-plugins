@@ -1,6 +1,7 @@
 package org.apache.maven.plugin.assembly.archive;
 
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
+import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase;
 import org.apache.maven.plugin.assembly.filter.ComponentsXmlArchiverFileFilter;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
@@ -40,7 +41,7 @@ public class DefaultAssemblyArchiverTest
     }
 
     public void testCreateArchive()
-        throws ArchiveCreationException, AssemblyFormattingException
+        throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
     {
         MockManager mm = new MockManager();
 

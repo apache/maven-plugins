@@ -229,7 +229,9 @@
               </pomIncludes>
               <pomExcludes>
                 <pomExclude>**/child*/pom.xml</pomExclude>
+                <pomExclude>**/module*/pom.xml</pomExclude>
               </pomExcludes>
+              <postBuildHookScript>verify.bsh</postBuildHookScript>
             </configuration>
             <executions>
               <execution>

@@ -1,0 +1,12 @@
+import java.io.*;
+
+boolean result = true;
+
+result = result && new File( basedir, "target/massembly-99-1.0-SNAPSHOT-bin.dir/lib/jdom.jar" ).exists();
+result = result && new File( basedir, "target/massembly-99-1.0-SNAPSHOT-bin.dir/lib/velocity.jar" ).exists();
+
+result = result && new File( basedir, "target/massembly-99-1.0-SNAPSHOT-bin.dir/modules/module-a.jar" ).exists();
+result = result && new File( basedir, "target/massembly-99-1.0-SNAPSHOT-bin.dir/modules/module-b.jar" ).exists();
+
+
+return result;
