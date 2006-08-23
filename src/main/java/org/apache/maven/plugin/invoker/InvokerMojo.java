@@ -126,11 +126,11 @@ public class InvokerMojo
     private String preBuildHookScript;
 
     /**
-     * relative path of a verification beanshell script to run after executing the build.
+     * relative path of a cleanup/verification beanshell script to run after executing the build.
      * 
-     * @parameter expression="${invoker.verificationScript}" default-value="verify.bsh"
+     * @parameter expression="${invoker.postBuildHookScript}" default-value="postbuild.bsh"
      */
-    private String verificationScript;
+    private String postBuildHookScript;
 
     /**
      * Location of a properties file that defines CLI properties for the test.
@@ -415,11 +415,11 @@ public class InvokerMojo
     {
         boolean result = true;
 
-        if ( verificationScript != null )
+        if ( postBuildHookScript != null )
         {
             try
             {
-                result = runScript( "verification script", basedir, verificationScript, logger );
+                result = runScript( "verification script", basedir, postBuildHookScript, logger );
             }
             catch ( final IOException e )
             {
