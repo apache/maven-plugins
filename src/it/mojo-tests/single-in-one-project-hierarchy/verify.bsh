@@ -1,0 +1,3 @@
+import java.io.File;
+
+return new File( basedir, "target/single-in-one-project-hierarchy-1.0-SNAPSHOT-bin.dir/lib/junit.jar" ).exists();
