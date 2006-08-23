@@ -206,4 +206,16 @@ public class MockAndControlForAddArtifactTask
         artifactCtl.setReturnValue( isSnapshot, MockControl.ONE_OR_MORE );
     }
 
+    public void expectArtifactGetType( String type )
+    {
+        artifact.getType();
+        artifactCtl.setReturnValue( type, MockControl.ONE_OR_MORE );
+    }
+
+    public void expectArtifactGetArtifactId( String artifactId )
+    {
+        artifact.getArtifactId();
+        artifactCtl.setReturnValue( artifactId, MockControl.ONE_OR_MORE );
+    }
+
 }

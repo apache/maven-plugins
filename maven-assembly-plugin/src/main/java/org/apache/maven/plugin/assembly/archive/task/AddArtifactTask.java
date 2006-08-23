@@ -120,14 +120,14 @@ public class AddArtifactTask
         this.directoryMode = Integer.parseInt( rawDirectoryMode, 8 );
     }
 
-    public void setExcludes( List excludes )
-    {
-        this.excludes = excludes;
-    }
-
     public void setFileMode( String rawFileMode )
     {
         this.fileMode = Integer.parseInt( rawFileMode, 8 );
+    }
+
+    public void setExcludes( List excludes )
+    {
+        this.excludes = excludes;
     }
 
     public void setIncludes( List includes )
@@ -158,6 +158,16 @@ public class AddArtifactTask
     public void setIncludeBaseDirectory( boolean includeBaseDirectory )
     {
         this.includeBaseDirectory = includeBaseDirectory;
+    }
+
+    public void setOutputDirectory( String outputDirectory, String defaultOutputDirectory )
+    {
+        setOutputDirectory( outputDirectory == null ? defaultOutputDirectory : outputDirectory );
+    }
+
+    public void setFileNameMapping( String outputFileNameMapping, String defaultOutputFileNameMapping )
+    {
+        setFileNameMapping( outputFileNameMapping == null ? defaultOutputFileNameMapping : outputFileNameMapping );
     }
 
 }
