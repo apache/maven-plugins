@@ -8,7 +8,7 @@
     <dependencySet>
       <outputFileNameMapping>${artifactId}.${extension}</outputFileNameMapping>
       <outputDirectory>lib</outputDirectory>
-      <unpack>false</unpack>
+      <unpack>true</unpack>
     </dependencySet>
   </dependencySets>
 </assembly>
