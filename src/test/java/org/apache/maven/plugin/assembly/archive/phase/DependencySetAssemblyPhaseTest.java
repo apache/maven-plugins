@@ -54,6 +54,7 @@ public class DependencySetAssemblyPhaseTest
         MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mockManager );
 
         macTask.expectArtifactGetFile();
+        macTask.expectArtifactGetType( "jar" );
         macTask.expectArtifactGetScope( Artifact.SCOPE_COMPILE );
         macTask.expectGetClassifier( null );
         macTask.expectIsSnapshot( false );

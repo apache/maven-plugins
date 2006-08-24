@@ -223,6 +223,7 @@ public class ModuleSetAssemblyPhaseTest
         MockAndControlForArtifact macDepArtifact = new MockAndControlForArtifact( mm );
 
         macDepArtifact.expectGetClassifier();
+        macDepArtifact.expectGetType( "jar" );
         macDepArtifact.expectIsSnapshot( false );
         macDepArtifact.expectGetArtifactHandler();
         macDepArtifact.expectGetArtifactId( "dep" );
@@ -290,6 +291,7 @@ public class ModuleSetAssemblyPhaseTest
         MockAndControlForArtifact macDepArtifact = new MockAndControlForArtifact( mm );
 
         macDepArtifact.expectGetClassifier();
+        macDepArtifact.expectGetType( "jar" );
         macDepArtifact.expectIsSnapshot( false );
         macDepArtifact.expectGetArtifactHandler();
         macDepArtifact.expectGetArtifactId( "dep" );
