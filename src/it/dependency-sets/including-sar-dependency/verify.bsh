@@ -6,7 +6,6 @@ boolean result = true;
 result = result && new File( basedir, "target/including-sar-dependency-1.0-SNAPSHOT-bin.dir/lib/xmlrpc.jar" ).exists();
 result = result && new File( basedir, "target/including-sar-dependency-1.0-SNAPSHOT-bin.dir/lib/plexus-xmlrpc.jar" ).exists();
 
-// verify that the POM dep was included without extracting.
-result = result && new File( basedir, "target/including-sar-dependency-1.0-SNAPSHOT-bin.dir/lib/plexus-appserver-service-xmlrpc.sar" ).exists();
+result = result && new File( basedir, "target/including-sar-dependency-1.0-SNAPSHOT-bin.dir/lib/plexus-appserver-service-xmlrpc.sar/lib/commons-codec-1.3.jar" ).exists();
 
 return result;
