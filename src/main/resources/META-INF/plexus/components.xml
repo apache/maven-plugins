@@ -18,36 +18,18 @@
 
 <component-set>
   <components>
+    <!-- UnArchiver -->
     <component>
-      <role>org.apache.maven.plugin.assembly.repository.RepositoryAssembler</role>
-      <implementation>org.apache.maven.plugin.assembly.repository.DefaultRepositoryAssembler</implementation>
-      <requirements>
-        <requirement>
-          <role>org.apache.maven.artifact.factory.ArtifactFactory</role>
-          <field-name>artifactFactory</field-name>
-        </requirement>
-        <requirement>
-          <role>org.apache.maven.artifact.resolver.ArtifactResolver</role>
-          <field-name>artifactResolver</field-name>
-        </requirement>
-        <requirement>
-          <role>org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout</role>
-          <field-name>repositoryLayout</field-name>
-        </requirement>
-        <requirement>
-          <role>org.apache.maven.artifact.repository.ArtifactRepositoryFactory</role>
-          <field-name>artifactRepositoryFactory</field-name>
-        </requirement>
-        <requirement>
-          <role>org.apache.maven.artifact.metadata.ArtifactMetadataSource</role>
-          <role-hint>maven</role-hint>
-          <field-name>metadataSource</field-name>
-        </requirement>
-        <requirement>
-          <role>org.apache.maven.project.MavenProjectBuilder</role>
-          <field-name>projectBuilder</field-name>
-        </requirement>
-      </requirements>
+      <role>org.codehaus.plexus.archiver.UnArchiver</role>
+      <role-hint>pom</role-hint>
+      <implementation>org.apache.maven.plugin.assembly.archive.archiver.NoOpUnArchiver</implementation>
+      <instantiation-strategy>per-lookup</instantiation-strategy>
+    </component>
+    <component>
+      <role>org.codehaus.plexus.archiver.UnArchiver</role>
+      <role-hint>sar</role-hint>
+      <implementation>org.codehaus.plexus.archiver.zip.ZipUnArchiver</implementation>
+      <instantiation-strategy>per-lookup</instantiation-strategy>
     </component>
   </components>
 </component-set>
