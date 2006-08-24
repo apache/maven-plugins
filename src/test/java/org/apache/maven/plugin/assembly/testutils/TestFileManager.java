@@ -25,26 +25,27 @@ public class TestFileManager
     private final String baseFilename;
 
     private final String fileSuffix;
-    
+
     private StackTraceElement callerInfo;
-    
+
     private Thread cleanupWarning;
-    
+
     private boolean warnAboutCleanup = false;
 
     public TestFileManager( String baseFilename, String fileSuffix )
     {
         this.baseFilename = baseFilename;
         this.fileSuffix = fileSuffix;
-        
+
         initializeCleanupMonitoring();
     }
 
     private void initializeCleanupMonitoring()
     {
         callerInfo = new NullPointerException().getStackTrace()[2];
-        
-        Runnable warning = new Runnable(){
+
+        Runnable warning = new Runnable()
+        {
 
             public void run()
             {
@@ -52,12 +53,12 @@ public class TestFileManager
             }
 
         };
-        
+
         cleanupWarning = new Thread( warning );
-        
+
         Runtime.getRuntime().addShutdownHook( cleanupWarning );
     }
-    
+
     private void maybeWarnAboutCleanUp()
     {
         if ( warnAboutCleanup )
@@ -105,7 +106,7 @@ public class TestFileManager
     {
         for ( Iterator it = filesToDelete.iterator(); it.hasNext(); )
         {
-            File file = (File) it.next();
+            File file = ( File ) it.next();
 
             if ( file.exists() )
             {
@@ -121,7 +122,7 @@ public class TestFileManager
 
             it.remove();
         }
-        
+
         warnAboutCleanup = false;
     }
 
@@ -182,7 +183,7 @@ public class TestFileManager
         {
             IOUtil.close( writer );
         }
-        
+
         markForDeletion( file );
 
         return file;
@@ -192,23 +193,23 @@ public class TestFileManager
         throws IOException
     {
         String result = null;
-        
+
         FileReader reader = null;
         try
         {
             reader = new FileReader( file );
-            
+
             StringWriter writer = new StringWriter();
-            
+
             IOUtil.copy( reader, writer );
-            
+
             result = writer.toString();
         }
         finally
         {
             IOUtil.close( reader );
         }
-        
+
         return result;
     }
 
@@ -216,8 +217,15 @@ public class TestFileManager
         throws Throwable
     {
         maybeWarnAboutCleanUp();
-        
+
         super.finalize();
+    }
+
+    public File createFile( String filename, String content )
+        throws IOException
+    {
+        File dir = createTempDir();
+        return createFile( dir, filename, content );
     }
 
 }
