@@ -16,20 +16,39 @@ package org.apache.maven.plugin.javadoc;
  * limitations under the License.
  */
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.AbstractArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.javadoc.options.Group;
 import org.apache.maven.plugin.javadoc.options.Tag;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
@@ -38,20 +57,6 @@ import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.DefaultConsumer;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.StringTokenizer;
-import java.util.Map;
-import java.util.HashMap;
 
 /**
  * Base class with majority of Javadoc functionality.
@@ -136,7 +141,7 @@ public abstract class AbstractJavadocMojo
      *
      * @parameter
      */
-//TODO: May need to allow multiple artifacts
+    //TODO: May need to allow multiple artifacts
     private DocletArtifact docletArtifact;
 
     /**
@@ -603,6 +608,13 @@ public abstract class AbstractJavadocMojo
      */
     protected boolean aggregate;
 
+    /**
+     * Used to resolve artifacts of aggregated modules
+     *
+     * @component
+     */
+    private ArtifactMetadataSource artifactMetadataSource;
+
     private static final float MIN_JAVA_VERSION = 1.4f;
 
     /**
@@ -731,8 +743,8 @@ public abstract class AbstractJavadocMojo
         if ( StringUtils.isEmpty( doclet ) )
         {
             addArgIf( arguments, author, "-author" );
-            addArgIfNotEmpty( arguments, "-bottom",
-                              quotedArgument( getBottomText( project.getModel().getInceptionYear() ) ) );
+            addArgIfNotEmpty( arguments, "-bottom", quotedArgument( getBottomText( project.getModel()
+                .getInceptionYear() ) ) );
             addArgIf( arguments, breakiterator, "-breakiterator", MIN_JAVA_VERSION );
             addArgIfNotEmpty( arguments, "-charset", quotedArgument( charset ) );
             addArgIfNotEmpty( arguments, "-d", quotedPathArgument( javadocDirectory.toString() ) );
@@ -744,15 +756,15 @@ public abstract class AbstractJavadocMojo
             addArgIfNotEmpty( arguments, "-footer", quotedArgument( footer ) );
             for ( int i = 0; i < groups.length; i++ )
             {
-                if ( groups[i] == null || StringUtils.isEmpty( groups[i].getTitle() ) ||
-                    StringUtils.isEmpty( groups[i].getPackages() ) )
+                if ( groups[i] == null || StringUtils.isEmpty( groups[i].getTitle() )
+                    || StringUtils.isEmpty( groups[i].getPackages() ) )
                 {
                     getLog().info( "A group option is empty. Ignore this option." );
                 }
                 else
                 {
-                    addArgIfNotEmpty( arguments, "-group", quotedArgument( groups[i].getTitle() ) + " " +
-                        quotedArgument( groups[i].getPackages() ), true );
+                    addArgIfNotEmpty( arguments, "-group", quotedArgument( groups[i].getTitle() ) + " "
+                        + quotedArgument( groups[i].getPackages() ), true );
                 }
             }
             addArgIfNotEmpty( arguments, "-header", quotedArgument( header ) );
@@ -780,16 +792,15 @@ public abstract class AbstractJavadocMojo
             addArgIf( arguments, notree, "-notree" );
             addArgIf( arguments, serialwarn, "-serialwarn" );
             addArgIf( arguments, splitindex, "-splitindex" );
-            addArgIfNotEmpty( arguments, "-stylesheetfile",
-                              quotedPathArgument( getStylesheetFile( javadocDirectory ) ) );
+            addArgIfNotEmpty( arguments, "-stylesheetfile", quotedPathArgument( getStylesheetFile( javadocDirectory ) ) );
 
             addArgIfNotEmpty( arguments, "-taglet", quotedArgument( taglet ), MIN_JAVA_VERSION );
             addArgIfNotEmpty( arguments, "-tagletpath", quotedPathArgument( tagletpath ), MIN_JAVA_VERSION );
 
             for ( int i = 0; i < tags.length; i++ )
             {
-                if ( tags[i] == null || StringUtils.isEmpty( tags[i].getName() ) ||
-                    StringUtils.isEmpty( tags[i].getPlacement() ) )
+                if ( tags[i] == null || StringUtils.isEmpty( tags[i].getName() )
+                    || StringUtils.isEmpty( tags[i].getPlacement() ) )
                 {
                     getLog().info( "A tag option is empty. Ignore this option." );
                 }
@@ -1057,17 +1068,64 @@ public abstract class AbstractJavadocMojo
 
         if ( aggregate && project.isExecutionRoot() )
         {
-            for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+            try
             {
-                MavenProject subProject = (MavenProject) i.next();
-
-                classpathElements.add( subProject.getBuild().getOutputDirectory() );
-                populateCompileArtifactMap( compileArtifactMap, subProject.getCompileArtifacts() );
+                for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+                {
+                    MavenProject subProject = (MavenProject) i.next();
+                    if ( subProject != project )
+                    {
+                        classpathElements.add( subProject.getBuild().getOutputDirectory() );
+                        Set dependencyArtifacts = subProject.createArtifacts( factory, null, null );
+                        if ( !dependencyArtifacts.isEmpty() )
+                        {
+                            ArtifactResolutionResult result = resolver
+                                .resolveTransitively( dependencyArtifacts, subProject.getArtifact(), subProject
+                                    .getRemoteArtifactRepositories(), localRepository, artifactMetadataSource );
+                            populateCompileArtifactMap( compileArtifactMap, getCompileArtifacts( result.getArtifacts() ) );
+                        }
+                    }
+                }
+            }
+            catch ( AbstractArtifactResolutionException e )
+            {
+                throw new MavenReportException( e.getMessage(), e );
+            }
+            catch ( InvalidDependencyVersionException e )
+            {
+                throw new MavenReportException( e.getMessage(), e );
             }
         }
 
         classpathElements.addAll( compileArtifactMap.values() );
         return StringUtils.join( classpathElements.iterator(), File.pathSeparator );
+    }
+
+    /**
+     * Copy from {@link MavenProject#getCompileArtifacts()}
+     * @param artifacts
+     * @return
+     */
+    private List getCompileArtifacts( Set artifacts )
+    {
+        List list = new ArrayList( artifacts.size() );
+
+        for ( Iterator i = artifacts.iterator(); i.hasNext(); )
+        {
+            Artifact a = (Artifact) i.next();
+
+            // TODO: classpath check doesn't belong here - that's the other method
+            if ( a.getArtifactHandler().isAddedToClasspath() )
+            {
+                // TODO: let the scope handler deal with this
+                if ( Artifact.SCOPE_COMPILE.equals( a.getScope() ) || Artifact.SCOPE_PROVIDED.equals( a.getScope() )
+                    || Artifact.SCOPE_SYSTEM.equals( a.getScope() ) )
+                {
+                    list.add( a );
+                }
+            }
+        }
+        return list;
     }
 
     /**
@@ -1080,20 +1138,21 @@ public abstract class AbstractJavadocMojo
     private void populateCompileArtifactMap( Map compileArtifactMap, List artifactList )
         throws MavenReportException
     {
-        if ( artifactList != null)
+        if ( artifactList != null )
         {
-        for ( Iterator i = artifactList.iterator(); i.hasNext(); )
-        {
-            Artifact a = (Artifact) i.next();
-
-            File file = a.getFile();
-
-            if ( file == null )
+            for ( Iterator i = artifactList.iterator(); i.hasNext(); )
             {
-                throw new MavenReportException( "Error in plugin descriptor - compile dependencies were not resolved" );
+                Artifact a = (Artifact) i.next();
+
+                File file = a.getFile();
+
+                if ( file == null )
+                {
+                    throw new MavenReportException(
+                                                    "Error in plugin descriptor - compile dependencies were not resolved" );
+                }
+                compileArtifactMap.put( a.getDependencyConflictId(), file.getAbsolutePath() );
             }
-            compileArtifactMap.put( a.getDependencyConflictId(), file.getAbsolutePath() );
-        }
         }
     }
 
@@ -1160,8 +1219,8 @@ public abstract class AbstractJavadocMojo
     private String getAccessLevel()
     {
         String accessLevel;
-        if ( "public".equalsIgnoreCase( show ) || "protected".equalsIgnoreCase( show ) ||
-            "package".equalsIgnoreCase( show ) || "private".equalsIgnoreCase( show ) )
+        if ( "public".equalsIgnoreCase( show ) || "protected".equalsIgnoreCase( show )
+            || "package".equalsIgnoreCase( show ) || "private".equalsIgnoreCase( show ) )
         {
             accessLevel = "-" + show;
         }
@@ -1226,8 +1285,8 @@ public abstract class AbstractJavadocMojo
             }
             else
             {
-                if ( NumberUtils.isDigits( memory.substring( 0, memory.length() - 1 ) ) &&
-                    memory.toLowerCase().endsWith( "m" ) )
+                if ( NumberUtils.isDigits( memory.substring( 0, memory.length() - 1 ) )
+                    && memory.toLowerCase().endsWith( "m" ) )
                 {
                     cmd.createArgument().setValue( "-J" + arg + memory );
                 }
@@ -1433,14 +1492,14 @@ public abstract class AbstractJavadocMojo
         if ( !StringUtils.isEmpty( path ) )
         {
             path = path.replace( '\\', '/' );
-            if( path.indexOf( "\'" ) != -1 )
+            if ( path.indexOf( "\'" ) != -1 )
             {
                 String split[] = path.split( "\'" );
                 path = "";
 
-                for( int i = 0; i < split.length; i++ )
+                for ( int i = 0; i < split.length; i++ )
                 {
-                    if( i != split.length - 1)
+                    if ( i != split.length - 1 )
                     {
                         path = path + split[i] + "\\'";
                     }
@@ -1468,8 +1527,8 @@ public abstract class AbstractJavadocMojo
             for ( int i = 0; i < offlineLinks.size(); i++ )
             {
                 OfflineLink offlineLink = (OfflineLink) offlineLinks.get( i );
-                addArgIfNotEmpty( arguments, "-linkoffline", quotedPathArgument( offlineLink.getUrl() ) + " " +
-                    quotedPathArgument( offlineLink.getLocation().getAbsolutePath() ), true );
+                addArgIfNotEmpty( arguments, "-linkoffline", quotedPathArgument( offlineLink.getUrl() ) + " "
+                    + quotedPathArgument( offlineLink.getLocation().getAbsolutePath() ), true );
             }
         }
     }
@@ -1603,8 +1662,8 @@ public abstract class AbstractJavadocMojo
                         {
                             int i = fileList[j].lastIndexOf( File.separatorChar );
                             String packageName = fileList[j].substring( 0, i + 1 );
-                            if ( packageName.equals( sourceDirectory + File.separatorChar + excludeName[0] ) &&
-                                fileList[j].substring( i ).indexOf( ".java" ) != -1 )
+                            if ( packageName.equals( sourceDirectory + File.separatorChar + excludeName[0] )
+                                && fileList[j].substring( i ).indexOf( ".java" ) != -1 )
                             {
                                 include = true;
                             }
@@ -1643,15 +1702,15 @@ public abstract class AbstractJavadocMojo
         List files = new ArrayList();
         for ( int i = 0; i < excludePackagenames.length; i++ )
         {
-            String[] fileList = FileUtils.getFilesFromExtension( sourceDirectory, new String[]{"java"} );
+            String[] fileList = FileUtils.getFilesFromExtension( sourceDirectory, new String[] { "java" } );
             for ( int j = 0; j < fileList.length; j++ )
             {
                 String[] excludeName = excludePackagenames[i].split( "[*]" );
                 int u = 0;
                 while ( u < excludeName.length )
                 {
-                    if ( !"".equals( excludeName[u].trim() ) && fileList[j].indexOf( excludeName[u] ) != -1 &&
-                        sourceDirectory.indexOf( excludeName[u] ) == -1 )
+                    if ( !"".equals( excludeName[u].trim() ) && fileList[j].indexOf( excludeName[u] ) != -1
+                        && sourceDirectory.indexOf( excludeName[u] ) == -1 )
                     {
                         files.add( fileList[j] );
                     }
@@ -1688,7 +1747,7 @@ public abstract class AbstractJavadocMojo
      */
     private void addFilesFromSource( List files, String sourceDirectory, String[] excludePackages )
     {
-        String[] fileList = FileUtils.getFilesFromExtension( sourceDirectory, new String[]{"java"} );
+        String[] fileList = FileUtils.getFilesFromExtension( sourceDirectory, new String[] { "java" } );
         if ( fileList != null && fileList.length != 0 )
         {
             List tmpFiles = getIncludedFiles( sourceDirectory, fileList, excludePackages );
