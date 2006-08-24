@@ -227,7 +227,6 @@ public class ModuleSetAssemblyPhaseTest
         macDepArtifact.expectGetArtifactHandler();
         macDepArtifact.expectGetArtifactId( "dep" );
         macDepArtifact.expectGetScope( Artifact.SCOPE_COMPILE );
-        macDepArtifact.expectGetType( "jar" );
         macDepArtifact.expectGetFile();
 
         macTask.expectAddFile( macDepArtifact.artifactFile, "out/dep", Integer.parseInt( "777", 8 ) );
@@ -295,7 +294,6 @@ public class ModuleSetAssemblyPhaseTest
         macDepArtifact.expectGetArtifactHandler();
         macDepArtifact.expectGetArtifactId( "dep" );
         macDepArtifact.expectGetScope( Artifact.SCOPE_COMPILE );
-        macDepArtifact.expectGetType( "jar" );
         macDepArtifact.expectGetFile();
 
         macTask.expectAddFile( macDepArtifact.artifactFile, "out/dep", Integer.parseInt( "777", 8 ) );

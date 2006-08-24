@@ -75,12 +75,6 @@ public class AddDependencySetsTask
         {
             Artifact depArtifact = ( Artifact ) j.next();
             
-            if ( "pom".equals( depArtifact.getType() ) )
-            {
-                logger.info( "Skipping POM artifact (found among dependencies for " + project.getId() + "): " + depArtifact.getId() );
-                continue;
-            }
-
             MavenProject depProject;
             try
             {

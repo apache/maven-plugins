@@ -208,7 +208,7 @@
             </configuration>
           </plugin>
           <plugin>
-            <artifactId>maven-plugin-test-plugin</artifactId>
+            <artifactId>maven-plugin-management-plugin</artifactId>
             <executions>
               <execution>
                 <id>handle-plugin-staging</id>
