@@ -91,7 +91,16 @@ public class AssemblyInterpolator
     public AssemblyInterpolator()
         throws IOException
     {
-        envars = CommandLineUtils.getSystemEnvVars();
+        // FIXME: Once Maven (all supported versions in the wild) are using plexus-utils >= 1.3, 
+        // we should remove this.
+        try
+        {
+            envars = CommandLineUtils.getSystemEnvVars( false );
+        }
+        catch( NoSuchMethodError e )
+        {
+            envars = CommandLineUtils.getSystemEnvVars();
+        }
     }
 
     public Assembly interpolate( Assembly assembly, Model model, Map context )
