@@ -21,12 +21,6 @@
     <!-- UnArchiver -->
     <component>
       <role>org.codehaus.plexus.archiver.UnArchiver</role>
-      <role-hint>pom</role-hint>
-      <implementation>org.apache.maven.plugin.assembly.archive.archiver.NoOpUnArchiver</implementation>
-      <instantiation-strategy>per-lookup</instantiation-strategy>
-    </component>
-    <component>
-      <role>org.codehaus.plexus.archiver.UnArchiver</role>
       <role-hint>sar</role-hint>
       <implementation>org.codehaus.plexus.archiver.zip.ZipUnArchiver</implementation>
       <instantiation-strategy>per-lookup</instantiation-strategy>
