@@ -1113,21 +1113,6 @@ public class ChangeLogReport
                         rpt_Repository + "?cmd=viewBrowseVersion" + module + "&file=" + name + "&version=" + revision;
                 }
             }
-            else if ( connection.startsWith( "scm:svn" ))
-            {
-                // idea will be to look for placeholders in URL, then replace them with appropriate values
-                String url = displayFileDetailUrl + rpt_OneRepoParam;
-
-                url = url.replaceFirst( "([&?]path=)([^&]+|$)", "$1" + name );
-                linkFile = url;
-
-                if ( revision != null )
-                {
-                    url = url.replaceFirst( "([&?]rev=)([^&]+|$)", "$1" + revision );
-                    linkRev = url;
-                }
-
-            }
             else
             {
                 String path = getAbsolutePath( displayFileDetailUrl, name );
