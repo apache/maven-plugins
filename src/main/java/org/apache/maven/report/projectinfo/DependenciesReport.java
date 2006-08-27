@@ -130,7 +130,20 @@ public class DependenciesReport
     /**
      * Will be filled with license name / list of projects.
      */
-    private Map licenseMap = new HashMap();
+    private Map licenseMap = new HashMap()
+    {
+        public Object put( Object key, Object value )
+        {
+            // handle multiple values as a list
+            List valueList = (List) get( key );
+            if ( valueList == null )
+            {
+                valueList = new ArrayList();
+            }
+            valueList.add( value );
+            return super.put( key, valueList );
+        }
+    };
 
     /**
      * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
@@ -782,7 +795,16 @@ public class DependenciesReport
 
                         String depUrl = repo.getUrl() + "/" + repo.pathOf( dependency );
 
-                        if ( dependencyExistsInRepo( repo, dependency ) )
+                        boolean dependencyExists = false;
+
+                        // check snapshots in snapshots repository only and releases in release repositories...
+                        if ( ( dependency.isSnapshot() && repo.getSnapshots().isEnabled() )
+                            || ( !dependency.isSnapshot() && repo.getReleases().isEnabled() ) )
+                        {
+                            dependencyExists = dependencyExistsInRepo( repo, dependency );
+                        }
+
+                        if ( dependencyExists )
                         {
                             sink.tableCell();
                             sink.link( depUrl );
@@ -1074,17 +1096,7 @@ public class DependenciesReport
                                 sink.link_();
                             }
 
-                            List projectsWithSameLicense = (List) licenseMap.get( licenseName );
-                            if ( projectsWithSameLicense == null )
-                            {
-                                projectsWithSameLicense = new ArrayList();
-                                licenseMap.put( licenseName, projectsWithSameLicense );
-
-                            }
-                            if ( !projectsWithSameLicense.contains( artifactName ) )
-                            {
-                                projectsWithSameLicense.add( artifactName );
-                            }
+                            licenseMap.put( licenseName, artifactName );
 
                         }
                     }
@@ -1092,16 +1104,8 @@ public class DependenciesReport
                     {
                         sink.text( getReportString( "report.license.nolicense" ) );
 
-                        List projectsWithSameLicense = (List) licenseMap.get( unknownLicenseMessage );
-                        if ( projectsWithSameLicense == null )
-                        {
-                            projectsWithSameLicense = new ArrayList();
-                            licenseMap.put( unknownLicenseMessage, projectsWithSameLicense );
-                        }
-                        if ( !projectsWithSameLicense.contains( artifactName ) )
-                        {
-                            projectsWithSameLicense.add( artifactName );
-                        }
+                        licenseMap.put( unknownLicenseMessage, artifactName );
+
                     }
                     sink.paragraph_();
 
