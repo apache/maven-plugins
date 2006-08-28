@@ -11,18 +11,18 @@ Usage
 
 * The <<<dependency:copy>>> mojo
 
-   This goal is meant to be bound to a lifecycle and configured in your
-   pom.xml. It will resolve the artifact from the repository and place a copy
+   This goal is meant to be bound to a lifecycle phase and configured in your
+   <<<pom.xml>>>. It will resolve the artifact from the repository and place a copy
    in the specified location. Multiple artifacts can be defined in a single
    execution. A default output directory is specified but can be overriden for
    each ArtifactItem by setting the optional outputDirectory field. An
    optional new name can be set to rename while copying. The artifact version
-   is optional. If not set, the plugin will attempt to resolve from the
+   is optional. If not set, the plugin will attempt to resolve it from the
    dependencyManagement section.
 
    Artifacts are copied using the following rules:
 
-     * If the <<<artifactItem.overWrite>>> is set, use that value.
+     * If the <<<artifactItem / overWrite>>> is set, use that value.
 
      * Releases use the <<<overWriteReleases>>> value (default = true)
 
@@ -72,7 +72,7 @@ Usage
 
 * The <<<dependency:copy-dependencies>>> mojo
 
-   This goal can be bound to a lifecycle and configured in your pom.xml.
+   This goal can be bound to a lifecycle phase and configured in your <<<pom.xml>>>.
    It will resolve the dependencies (including transitive dependencies) from
    the repository and place a copy in the specified location. All scopes are
    included by default, but it can be limited to a single scope.
