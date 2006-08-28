@@ -40,5 +40,19 @@
         </p>
       </answer>
     </faq>
+    <faq id="Why do the dates look weird in the report when I use the dateFormat parameter">
+      <question>Why do the dates look weird in the report when I use the dateFormat parameter?</question>
+      <answer>
+        <p>
+          The <code>dateFormat</code> parameter is used when parsing the dates
+          from the log entries retrieved from your SCM system. It can
+          <strong>not</strong> be used to format the dates in the report. If
+          you try to do this the parsed dates will be wrong and the dates in
+          the report even more so. They can look like this
+          <code>0020-05-27</code> for a file that was changed on 14 december
+          2005.
+        </p>
+      </answer>
+    </faq>
   </part>
 </faqs>
