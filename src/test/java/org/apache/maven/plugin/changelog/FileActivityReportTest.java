@@ -1,4 +1,4 @@
-package org.apache.maven.changelog;
+package org.apache.maven.plugin.changelog;
 
 /*
  * Copyright 2001-2006 The Apache Software Foundation.
@@ -18,8 +18,8 @@ package org.apache.maven.changelog;
 
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.Mojo;
-import org.apache.maven.changelog.stubs.ScmManagerStub;
 import org.apache.maven.scm.manager.ScmManager;
+import org.apache.maven.plugin.changelog.stubs.ScmManagerStub;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
@@ -27,7 +27,7 @@ import java.io.File;
 /**
  * @author Edwin Punzalan
  */
-public class DeveloperActivityReportTest
+public class FileActivityReportTest
     extends AbstractMojoTestCase
 {
     private ScmManager scmManager;
@@ -36,9 +36,9 @@ public class DeveloperActivityReportTest
         throws Exception
     {
         File pluginXmlFile = new File( getBasedir(),
-                                       "src/test/plugin-configs/dev-activity/no-source-plugin-config.xml" );
+                                               "src/test/plugin-configs/file-activity/no-source-plugin-config.xml" );
 
-        Mojo mojo = lookupMojo( "dev-activity", pluginXmlFile );
+        Mojo mojo = lookupMojo( "file-activity", pluginXmlFile );
 
         assertNotNull( "Mojo found.", mojo );
 
@@ -48,7 +48,7 @@ public class DeveloperActivityReportTest
 
         File outputDir = (File) getVariableValueFromObject( mojo, "outputDirectory" );
 
-        File outputHtml = new File( outputDir, "dev-activity.html" );
+        File outputHtml = new File( outputDir, "file-activity.html" );
 
         assertTrue( "Test html generated", outputHtml.exists() );
     }
@@ -67,9 +67,9 @@ public class DeveloperActivityReportTest
     private void executeMojo( String pluginXml )
         throws Exception
     {
-        File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/dev-activity/" + pluginXml );
+        File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/file-activity/" + pluginXml );
 
-        Mojo mojo = lookupMojo( "dev-activity", pluginXmlFile );
+        Mojo mojo = lookupMojo( "file-activity", pluginXmlFile );
 
         assertNotNull( "Mojo found.", mojo );
 
@@ -92,7 +92,7 @@ public class DeveloperActivityReportTest
 
         File outputDir = (File) getVariableValueFromObject( mojo, "outputDirectory" );
 
-        File outputHtml = new File( outputDir, "dev-activity.html" );
+        File outputHtml = new File( outputDir, "file-activity.html" );
 
         assertTrue( "Test html generated", outputHtml.exists() );
     }

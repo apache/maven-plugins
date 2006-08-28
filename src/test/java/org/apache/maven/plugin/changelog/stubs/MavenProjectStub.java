@@ -1,4 +1,4 @@
-package org.apache.maven.changelog.stubs;
+package org.apache.maven.plugin.changelog.stubs;
 
 /*
  * Copyright 2001-2006 The Apache Software Foundation.
@@ -16,29 +16,37 @@ package org.apache.maven.changelog.stubs;
  * limitations under the License.
  */
 
-import org.apache.maven.scm.command.changelog.ChangeLogSet;
+import org.codehaus.plexus.PlexusTestCase;
+import org.apache.maven.model.Scm;
 
-import java.util.Collections;
-import java.util.Date;
+import java.io.File;
 
 /**
  * @author Edwin Punzalan
  */
-public class ChangeLogScmResultStub
-    extends org.apache.maven.scm.command.changelog.ChangeLogScmResult
+public class MavenProjectStub
+    extends org.apache.maven.plugin.testing.stubs.MavenProjectStub
 {
-    public ChangeLogScmResultStub()
+    public static int testCounter = 0;
+
+    public MavenProjectStub()
     {
-        this( "", "", "", true );
+        super();
+
+        testCounter++;
     }
 
-    public ChangeLogScmResultStub( String string, String string1, String string2, boolean b )
+    public Scm getScm()
     {
-        super( "", "", "", true );
+        Scm scm = new Scm();
+
+        scm.setConnection( "scm://" );
+
+        return scm;
     }
 
-    public ChangeLogSet getChangeLog()
+    public File getBasedir()
     {
-        return new ChangeLogSet( Collections.EMPTY_LIST, new Date( 360 ), new Date( 720 ) );
+        return new File( PlexusTestCase.getBasedir(), "target/test-harness/" + testCounter );
     }
 }

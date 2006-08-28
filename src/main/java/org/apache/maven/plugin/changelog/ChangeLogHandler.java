@@ -1,4 +1,4 @@
-package org.apache.maven.changelog;
+package org.apache.maven.plugin.changelog;
 
 /*
  * Copyright 2001-2006 The Apache Software Foundation.

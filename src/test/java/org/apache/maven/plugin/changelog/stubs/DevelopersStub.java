@@ -1,4 +1,4 @@
-package org.apache.maven.changelog.stubs;
+package org.apache.maven.plugin.changelog.stubs;
 
 /*
  * Copyright 2001-2006 The Apache Software Foundation.
@@ -16,37 +16,33 @@ package org.apache.maven.changelog.stubs;
  * limitations under the License.
  */
 
-import org.codehaus.plexus.PlexusTestCase;
-import org.apache.maven.model.Scm;
+import org.apache.maven.model.Developer;
 
-import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Edwin Punzalan
  */
-public class MavenProjectStub
-    extends org.apache.maven.plugin.testing.stubs.MavenProjectStub
+public class DevelopersStub
+    extends ArrayList
 {
-    public static int testCounter = 0;
-
-    public MavenProjectStub()
+    public DevelopersStub()
     {
         super();
 
-        testCounter++;
-    }
+        List developers = new ArrayList();
 
-    public Scm getScm()
-    {
-        Scm scm = new Scm();
+        Developer developer = new Developer();
+        developer.setName( "Edwin Punzalan" );
+        developer.setId( "edwin" );
+        developers.add( developer );
 
-        scm.setConnection( "scm://" );
+        developer = new Developer();
+        developer.setName( "Keogh Edrich Punzalan" );
+        developer.setId( "keogh" );
+        developers.add( developer );
 
-        return scm;
-    }
-
-    public File getBasedir()
-    {
-        return new File( PlexusTestCase.getBasedir(), "target/test-harness/" + testCounter );
+        super.addAll( developers );
     }
 }
