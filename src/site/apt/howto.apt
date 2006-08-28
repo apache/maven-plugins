@@ -41,8 +41,8 @@ How to use
   <build>
    <plugins>
      <plugin>
-        <groupId>org.apache.maven.plugin</groupId>
-        <artifactId>dependency-maven-plugin</artifactId>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
             <id>copy</id>
@@ -82,8 +82,8 @@ How to use
   <build>
    <plugins>
      <plugin>
-        <groupId>org.apache.maven.plugin</groupId>
-        <artifactId>dependency-maven-plugin</artifactId>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
             <id>copy-installed</id>
@@ -151,8 +151,8 @@ How to use
   <build>
    <plugins>
      <plugin>
-        <groupId>org.apache.maven.plugin</groupId>
-        <artifactId>dependency-maven-plugin</artifactId>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
             <id>copy-dependencies</id>
@@ -198,8 +198,8 @@ How to use
   <build>
    <plugins>
      <plugin>
-        <groupId>org.apache.maven.plugin</groupId>
-        <artifactId>dependency-maven-plugin</artifactId>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
             <id>unpack</id>
@@ -270,8 +270,8 @@ How to use
   <build>
    <plugins>
      <plugin>
-        <groupId>org.apache.maven.plugin</groupId>
-        <artifactId>dependency-maven-plugin</artifactId>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
             <id>unpack-dependencies</id>
