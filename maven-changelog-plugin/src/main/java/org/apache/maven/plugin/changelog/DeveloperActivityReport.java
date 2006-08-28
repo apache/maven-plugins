@@ -1,4 +1,4 @@
-package org.apache.maven.changelog;
+package org.apache.maven.plugin.changelog;
 
 /*
  * Copyright 2001-2006 The Apache Software Foundation.
@@ -16,35 +16,48 @@ package org.apache.maven.changelog;
  * limitations under the License.
  */
 
+import org.apache.maven.model.Developer;
 import org.apache.maven.scm.ChangeFile;
 import org.apache.maven.scm.ChangeSet;
 import org.apache.maven.scm.command.changelog.ChangeLogSet;
 import org.codehaus.doxia.sink.Sink;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
- * Generate a file activity report.
+ * Generate a developer activity report.
  *
- * @goal file-activity
+ * @goal dev-activity
  */
-public class FileActivityReport
+public class DeveloperActivityReport
     extends ChangeLogReport
 {
+    /**
+     * List of developers to be shown on the report.
+     *
+     * @parameter expression="${project.developers}"
+     */
+    private List developers;
+
+    /**
+     * Used to hold data while creating the report
+     */
+    private HashMap commits;
+
+    private HashMap files;
+
     /**
      * @see org.apache.maven.reporting.MavenReport#getDescription(java.util.Locale)
      */
     public String getDescription( Locale locale )
     {
-        return "Generate file activity report from SCM.";
+        return "Generated developer activity report from SCM.";
     }
 
     /**
@@ -52,7 +65,7 @@ public class FileActivityReport
      */
     public String getName( Locale locale )
     {
-        return "File Activity";
+        return "Developer Activity";
     }
 
     /**
@@ -60,7 +73,7 @@ public class FileActivityReport
      */
     public String getOutputName()
     {
-        return "file-activity";
+        return "dev-activity";
     }
 
     /**
@@ -73,7 +86,7 @@ public class FileActivityReport
     {
         sink.head();
         sink.title();
-        sink.text( bundle.getString( "report.file-activity.header" ) );
+        sink.text( bundle.getString( "report.dev-activity.header" ) );
         sink.title_();
         sink.head_();
 
@@ -81,7 +94,7 @@ public class FileActivityReport
         sink.section1();
 
         sink.sectionTitle1();
-        sink.text( bundle.getString( "report.file-activity.mainTitle" ) );
+        sink.text( bundle.getString( "report.dev-activity.mainTitle" ) );
         sink.sectionTitle1_();
 
         sink.paragraph();
@@ -106,14 +119,14 @@ public class FileActivityReport
     {
         sink.head();
         sink.title();
-        sink.text( bundle.getString( "report.file-activity.header" ) );
+        sink.text( bundle.getString( "report.dev-activity.header" ) );
         sink.title_();
         sink.head_();
 
         sink.body();
         sink.section1();
         sink.sectionTitle1();
-        sink.text( bundle.getString( "report.file-activity.mainTitle" ) );
+        sink.text( bundle.getString( "report.dev-activity.mainTitle" ) );
         sink.sectionTitle1_();
 
         for ( Iterator sets = changeLogSets.iterator(); sets.hasNext(); )
@@ -124,7 +137,7 @@ public class FileActivityReport
 
         sink.section1_();
         sink.body_();
-
+        sink.flush();
         sink.table_();
     }
 
@@ -149,25 +162,26 @@ public class FileActivityReport
         }
         else
         {
-            sink.text( bundle.getString( "report.SetRangeBetween" ) );
             sink.text( " " + set.getStartDate() + " " + bundle.getString( "report.To" ) + " " + set.getEndDate() );
+            sink.sectionTitle2_();
         }
-        sink.sectionTitle2_();
-
         doSummary( set, bundle, sink );
 
         sink.table();
 
         sink.tableRow();
         sink.tableHeaderCell();
-        sink.text( bundle.getString( "report.file-activity.filename" ) );
+        sink.text( bundle.getString( "report.dev-activity.developer" ) );
         sink.tableHeaderCell_();
         sink.tableHeaderCell();
-        sink.text( bundle.getString( "report.file-activity.timesChanged" ) );
+        sink.text( bundle.getString( "report.TotalCommits" ) );
+        sink.tableHeaderCell_();
+        sink.tableHeaderCell();
+        sink.text( bundle.getString( "report.dev-activity.filesChanged" ) );
         sink.tableHeaderCell_();
         sink.tableRow_();
 
-        doRows( set, sink );
+        doDeveloperRows( set, sink );
 
         sink.table_();
 
@@ -185,100 +199,158 @@ public class FileActivityReport
     {
         sink.paragraph();
 
-        sink.text( bundle.getString( "report.file-activity.range" ) );
+        sink.text( bundle.getString( "report.dev-activity.range" ) );
         sink.text( ": " + set.getStartDate() + " " + bundle.getString( "report.To" ) + " " + set.getEndDate() );
 
         sink.text( ", " + bundle.getString( "report.TotalCommits" ) );
         sink.text( ":" + set.getChangeSets().size() );
 
-        sink.text( ", " + bundle.getString( "report.file-activity.filesChanged" ) );
+        sink.text( ", " + bundle.getString( "report.dev-activity.filesChanged" ) );
         sink.text( ":" + countFilesChanged( set.getChangeSets() ) );
 
         sink.paragraph_();
     }
 
     /**
-     * generates the row details for the file activity report
+     * generates the report section table of the developers
      *
-     * @param set  the changelog set to generate a report with
+     * @param set  change log set generate the developer activity
      * @param sink the report formatting tool
      */
-    private void doRows( ChangeLogSet set, Sink sink )
+    private void doDeveloperRows( ChangeLogSet set, Sink sink )
     {
-        List list = getOrderedFileList( set.getChangeSets() );
+        initDeveloperDetails( set );
 
-        initReportUrls();
-
-        for ( Iterator i = list.iterator(); i.hasNext(); )
+        //for( Iterator i=commits.keySet().iterator(); i.hasNext(); )
+        for ( Iterator i = developers.iterator(); i.hasNext(); )
         {
-            List revision = (List) i.next();
-            ChangeFile file = (ChangeFile) revision.get( 0 );
+            Developer developer = (Developer) i.next();
+
+            String name = developer.getName();
+
+            String id = developer.getId();
+
+            LinkedList devCommits;
+            HashMap devFiles;
+
+            if ( !commits.containsKey( name ) )
+            {
+                if ( !commits.containsKey( id ) )
+                {
+                    continue;
+                }
+                else
+                {
+                    devCommits = (LinkedList) commits.get( id );
+
+                    devFiles = (HashMap) files.get( id );
+                }
+            }
+            else
+            {
+                devCommits = (LinkedList) commits.get( name );
+
+                devFiles = (HashMap) files.get( name );
+            }
 
             sink.tableRow();
+
             sink.tableCell();
-
-            try
-            {
-                generateLinks( getConnection(), file.getName(), sink );
-            }
-            catch ( Exception e )
-            {
-                e.printStackTrace();
-
-                sink.text( file.getName() );
-            }
+            sink.link( "team-list.html#" + developer.getId() );
+            sink.text( name );
+            sink.link_();
             sink.tableCell_();
 
             sink.tableCell();
-            sink.text( "" + revision.size() );
-
+            sink.text( "" + devCommits.size() );
             sink.tableCell_();
+
+            sink.tableCell();
+            sink.text( "" + devFiles.size() );
+            sink.tableCell_();
+
             sink.tableRow_();
         }
     }
 
     /**
-     * reads the change log entries and generates a list of files changed order by the number of times edited. This
-     * used the FileActivityComparator Object to sort the list
+     * counts the number of commits and files changed for each developer
      *
-     * @param entries the changelog entries to generate the report
-     * @return list of changed files within the SCM with the number of times changed in descending order
+     * @param set the change log set to generate the developer details from
      */
-    private List getOrderedFileList( Collection entries )
+    private void initDeveloperDetails( ChangeLogSet set )
     {
-        List list = new LinkedList();
+        commits = new HashMap();
 
-        Map map = new HashMap();
+        files = new HashMap();
 
+        countDevCommits( set.getChangeSets() );
+
+        countDevFiles( set.getChangeSets() );
+    }
+
+    /**
+     * counts the number of commits of each developer
+     *
+     * @param entries the change log entries used to search and count developer commits
+     */
+    private void countDevCommits( Collection entries )
+    {
         for ( Iterator i = entries.iterator(); i.hasNext(); )
         {
             ChangeSet entry = (ChangeSet) i.next();
 
-            for ( Iterator j = entry.getFiles().iterator(); j.hasNext(); )
+            String developer = entry.getAuthor();
+
+            LinkedList list;
+
+            if ( commits.containsKey( developer ) )
             {
-                ChangeFile file = (ChangeFile) j.next();
-
-                List revisions;
-
-                if ( map.containsKey( file.getName() ) )
-                {
-                    revisions = (List) map.get( file.getName() );
-                }
-                else
-                {
-                    revisions = new LinkedList();
-                }
-
-                revisions.add( file );
-
-                map.put( file.getName(), revisions );
+                list = (LinkedList) commits.get( developer );
             }
+            else
+            {
+                list = new LinkedList();
+            }
+
+            list.add( entry );
+
+            commits.put( developer, list );
         }
+    }
 
-        list.addAll( map.values() );
+    /**
+     * counts the number of files changed by each developer
+     *
+     * @param entries the change log entries used to search and count file changes
+     */
+    private void countDevFiles( Collection entries )
+    {
+        for ( Iterator i2 = entries.iterator(); i2.hasNext(); )
+        {
+            ChangeSet entry = (ChangeSet) i2.next();
 
-        Collections.sort( list, new FileActivityComparator() );
+            String developer = entry.getAuthor();
 
-        return list;
+            HashMap filesMap;
+
+            if ( files.containsKey( developer ) )
+            {
+                filesMap = (HashMap) files.get( developer );
+            }
+            else
+            {
+                filesMap = new HashMap();
+            }
+
+            for ( Iterator i3 = entry.getFiles().iterator(); i3.hasNext(); )
+            {
+                ChangeFile file = (ChangeFile) i3.next();
+
+                filesMap.put( file.getName(), file );
+            }
+
+            files.put( developer, filesMap );
+        }
     }
 }

@@ -1,4 +1,4 @@
-package org.apache.maven.changelog.stubs;
+package org.apache.maven.plugin.changelog.stubs;
 
 /*
  * Copyright 2001-2006 The Apache Software Foundation.
@@ -16,33 +16,29 @@ package org.apache.maven.changelog.stubs;
  * limitations under the License.
  */
 
-import org.apache.maven.model.Developer;
+import org.apache.maven.scm.command.changelog.ChangeLogSet;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
+import java.util.Date;
 
 /**
  * @author Edwin Punzalan
  */
-public class DevelopersStub
-    extends ArrayList
+public class ChangeLogScmResultStub
+    extends org.apache.maven.scm.command.changelog.ChangeLogScmResult
 {
-    public DevelopersStub()
+    public ChangeLogScmResultStub()
     {
-        super();
+        this( "", "", "", true );
+    }
 
-        List developers = new ArrayList();
+    public ChangeLogScmResultStub( String string, String string1, String string2, boolean b )
+    {
+        super( "", "", "", true );
+    }
 
-        Developer developer = new Developer();
-        developer.setName( "Edwin Punzalan" );
-        developer.setId( "edwin" );
-        developers.add( developer );
-
-        developer = new Developer();
-        developer.setName( "Keogh Edrich Punzalan" );
-        developer.setId( "keogh" );
-        developers.add( developer );
-
-        super.addAll( developers );
+    public ChangeLogSet getChangeLog()
+    {
+        return new ChangeLogSet( Collections.EMPTY_LIST, new Date( 360 ), new Date( 720 ) );
     }
 }
