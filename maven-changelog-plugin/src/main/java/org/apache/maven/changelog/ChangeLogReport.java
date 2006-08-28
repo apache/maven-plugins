@@ -98,7 +98,7 @@ public class ChangeLogReport
     private List tags;
 
     /**
-     * Used to specify the date format of log entries to retrieve. This format will also be reflected in the reports.
+     * Used to specify the date format of the log entries that are retrieved from your SCM system.
      *
      * @parameter expression="${changelog.dateFormat}" default-value="yyyy-MM-dd"
      * @required
