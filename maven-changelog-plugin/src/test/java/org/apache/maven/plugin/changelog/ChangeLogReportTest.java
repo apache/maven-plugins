@@ -1,4 +1,4 @@
-package org.apache.maven.changelog;
+package org.apache.maven.plugin.changelog;
 
 /*
  * Copyright 2001-2006 The Apache Software Foundation.
@@ -16,9 +16,9 @@ package org.apache.maven.changelog;
  * limitations under the License.
  */
 
-import org.apache.maven.changelog.stubs.ScmManagerStub;
-import org.apache.maven.changelog.stubs.FailedScmManagerStub;
-import org.apache.maven.changelog.stubs.ScmManagerWithHostStub;
+import org.apache.maven.plugin.changelog.stubs.ScmManagerStub;
+import org.apache.maven.plugin.changelog.stubs.FailedScmManagerStub;
+import org.apache.maven.plugin.changelog.stubs.ScmManagerWithHostStub;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
