@@ -30,8 +30,8 @@
           <outputDirectory>site</outputDirectory>
           <offline>false</offline>
           <connectionType>connection</connectionType>
-          <project implementation="org.apache.maven.changelog.stubs.MavenProjectStub"/>
-          <settings implementation="org.apache.maven.changelog.stubs.SettingsStub"/>
+          <project implementation="org.apache.maven.plugin.changelog.stubs.MavenProjectStub"/>
+          <settings implementation="org.apache.maven.plugin.changelog.stubs.SettingsStub"/>
         </configuration>
       </plugin>
     </plugins>
