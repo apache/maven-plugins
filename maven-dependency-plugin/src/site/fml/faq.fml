@@ -5,8 +5,8 @@
      <question>What is the difference between dependency-maven-plugin and maven-dependency-plugin?</question>
      <answer>
         <p>
-            Actually, they are the same, It's just it was moved and renamed. The dependency-maven-plugin
-            is hosted at Mojo while maven-dependency-plugin is hosted at Apache. But the recommended
+            Actually, they are the same, it's just that it was moved and renamed. The dependency-maven-plugin
+            is hosted at Mojo while maven-dependency-plugin is hosted at Apache. The recommended
             plugin to use is the maven-dependency-plugin.
         </p>
      </answer>

@@ -35,7 +35,7 @@ Maven Dependency Plugin
 	*{{{resolve-mojo.html}dependency:resolve}} tells Maven to resolve test
 	scope dependencies and displays the version.
 
-	*{{{resolve-mojo.html}dependency:sources}} tells Maven to resolve test
+	*{{{sources-mojo.html}dependency:sources}} tells Maven to resolve test
 	scope dependencies and their source attachments, and displays the version.
 
 	*{{{resolve-plugins-mojo.html}dependency:resolve-plugins}} Tells Maven to
