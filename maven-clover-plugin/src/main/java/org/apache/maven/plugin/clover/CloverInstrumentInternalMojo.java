@@ -19,6 +19,8 @@ import com.cenqua.clover.CloverInstr;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -256,7 +258,7 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
             swizzleCloverDependencies( getProject().getArtifacts() ) );
     }
 
-    private Set swizzleCloverDependencies(Set artifacts)
+    protected Set swizzleCloverDependencies(Set artifacts)
     {
         Set resolvedArtifacts = new HashSet();
         for ( Iterator i = artifacts.iterator(); i.hasNext(); )
@@ -281,9 +283,30 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
                     // Set the same scope as the main artifact as this is not set by createArtifactWithClassifier.
                     cloveredArtifact.setScope( artifact.getScope() );
 
-                    resolvedArtifacts.add( cloveredArtifact );
+                    // Check the timestamp of the artifact. If the found clovered version is older than the
+                    // non-clovered one we need to use the non-clovered version. This is to handle use case such as:
+                    // - Say you have a module B that depends on a module A
+                    // - You run Clover on A
+                    // - You make modifications on A such that B would fail if not built with the latest version of A
+                    // - You try to run the Clover plugin on B. The build would fail if we didn't pick the latest
+                    //   version between the original A version and the clovered version.
+                    if (cloveredArtifact.getFile().lastModified() < artifact.getFile().lastModified())
+                    {
+                        getLog().warn("Using [" + artifact.getId() + "] even though a Clovered version exists "
+                            + "but it's older and could fail the build. Please consider running Clover again on that "
+                            + "dependency's project.");
+                        resolvedArtifacts.add( artifact );
+                    }
+                    else
+                    {
+                        resolvedArtifacts.add( cloveredArtifact );
+                    }
                 }
-                catch ( Exception e )
+                catch ( ArtifactResolutionException e )
+                {
+                    resolvedArtifacts.add( artifact );
+                }
+                catch ( ArtifactNotFoundException e )
                 {
                     resolvedArtifacts.add( artifact );
                 }
@@ -457,5 +480,15 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
         }
 
         return (String[]) parameters.toArray(new String[0]);
+    }
+
+    protected void setArtifactFactory(ArtifactFactory artifactFactory)
+    {
+        this.artifactFactory = artifactFactory;
+    }
+
+    protected void setArtifactResolver(ArtifactResolver artifactResolver)
+    {
+        this.artifactResolver = artifactResolver;
     }
 }
