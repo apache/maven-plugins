@@ -82,8 +82,8 @@ public abstract class AbstractPmdReport
     protected String format = "xml";
 
     /**
-     * Link the violation line numbers to the source xref. Defaults to true and will link
-     * automatically if jxr plugin is being used.
+     * Link the violation line numbers to the source xref. Links will be created
+     * automatically if the jxr plugin is being used.
      *
      * @parameter expression="${linkXRef}" default-value="true"
      */

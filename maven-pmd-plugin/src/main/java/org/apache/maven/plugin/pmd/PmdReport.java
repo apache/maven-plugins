@@ -64,7 +64,7 @@ public class PmdReport
 {
 
     /**
-     * The target JDK to analyse based on. Should match the target directory for the compiler plugin. Valid values are
+     * The target JDK to analyse based on. Should match the target used in the compiler plugin. Valid values are
      * currently <code>1.3</code>, <code>1.4</code>, <code>1.5</code>.
      *
      * @parameter expression="${targetJdk}"
