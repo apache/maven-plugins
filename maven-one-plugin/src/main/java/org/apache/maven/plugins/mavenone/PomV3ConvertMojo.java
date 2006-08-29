@@ -32,6 +32,7 @@ import java.io.File;
  * @version $Id$
  * @goal convert
  * @requiresProject false
+ * @since 1.1
  */
 public class PomV3ConvertMojo extends AbstractMojo
 {
