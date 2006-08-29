@@ -6,37 +6,61 @@
  23 June 2006
  ------
 
+~~ Copyright 2006 The Apache Software Foundation.
+~~
+~~ Licensed under the Apache License, Version 2.0 (the "License");
+~~ you may not use this file except in compliance with the License.
+~~ You may obtain a copy of the License at
+~~
+~~      http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing, software
+~~ distributed under the License is distributed on an "AS IS" BASIS,
+~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~ See the License for the specific language governing permissions and
+~~ limitations under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/guides/mini/guide-apt-format.html
 
 Usage
 
   The PMD plugin generates PMD and CPD reports using the PMD code analysis tool.
 
-  To include a report with default rule sets and configuration in your project site, set the following in the \<reporting\>
-  section of your pom:
+  To include a report with default rule sets and configuration in your project site, set the following in the
+  <<<\<reporting\>>>> section of your pom:
 
 +-----+
-<reporting>
-  <plugins>
-    <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-pmd-plugin</artifactId>
-    </plugin>
-  </plugins>
-</reporting>
+<project>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
+  ...
+</project>
 +-----+
 
-  You can also explicitly execute the PMD plugin and generate the same report by setting the plugin in the \<build\>
-  section of your pom as shown below:
+  You can also explicitly execute the PMD plugin and generate the same report by setting the plugin in the
+  <<<\<build\>>>> section of your pom as shown below:
 
 +-----+
-<build>
-  <plugins>
-    <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-pmd-plugin</artifactId>
-    </plugin>
-  </plugins>
-</build>
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
 +-----+
 
 
@@ -45,10 +69,10 @@ Configuration
   The PMD and CPD reports share the same configuration.  For example, the following tells Maven to run the PMD
   and CPD report as part of the site report generation.
 
-  The reports will link directly to the cross-referenced source if you enable this with the linkXRef parameter.
-  See the {{{http://maven.apache.org/plugins/maven-jxr-plugin/}JXR}} plugin for more details.
+  The reports will link directly to the cross-referenced source if you enable this with the <<<linkXRef>>> parameter.
+  See the {{{http://maven.apache.org/plugins/maven-jxr-plugin/}JXR plugin}} for more details.
 
-  If your source uses a non-default encoding, you can use the sourceEncoding parameter to tell Maven which
+  If your source uses a non-default encoding, you can use the <<<sourceEncoding>>> parameter to tell Maven which
   encoding to use when reading the java source.  Note also the ability to exclude source which you want
   to ignore.
 
@@ -59,22 +83,26 @@ Configuration
   The following is a possible configuration:
 
 +-----+
-<reporting>
-  <plugins>
-    <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-pmd-plugin</artifactId>
-      <configuration>
-        <linkXref>true</linkXref>
-        <sourceEncoding>utf-8</sourceEncoding>
-        <minimumTokens>100</minimumTokens>
-        <targetJdk>1.5</targetJdk>
-        <excludes>
-          <exclude>**/*Bean.java</exclude>
-          <exclude>**/generated/*.java</exclude>
-        </excludes>
-      </configuration>
-    </plugin>
-  </plugins>
-</reporting>
+<project>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <configuration>
+          <linkXref>true</linkXref>
+          <sourceEncoding>utf-8</sourceEncoding>
+          <minimumTokens>100</minimumTokens>
+          <targetJdk>1.5</targetJdk>
+          <excludes>
+            <exclude>**/*Bean.java</exclude>
+            <exclude>**/generated/*.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+  ...
+</project>
 +-----+
