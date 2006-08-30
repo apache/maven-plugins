@@ -123,6 +123,46 @@ public class ModuleSetAssemblyPhaseTest
         mm.verifyAll();
     }
 
+    public void testCreateFileSet_ShouldAddExcludesForSubModulesWhenExcludeSubModDirsIsTrue()
+        throws AssemblyFormattingException
+    {
+        MockManager mm = new MockManager();
+
+        FileSet fs = new FileSet();
+
+        ModuleSources sources = new ModuleSources();
+        sources.setExcludeSubModuleDirectories( true );
+
+        Model model = new Model();
+        model.setArtifactId( "artifact" );
+        
+        model.addModule( "submodule" );
+
+        MavenProject project = new MavenProject( model );
+
+        File basedir = fileManager.createTempDir();
+
+        project.setFile( new File( basedir, "pom.xml" ) );
+
+        MockAndControlForArtifact macArtifact = new MockAndControlForArtifact( mm );
+
+        macArtifact.expectIsSnapshot( false );
+        macArtifact.expectGetClassifier( null );
+        macArtifact.expectGetArtifactHandler();
+
+        project.setArtifact( macArtifact.artifact );
+
+        mm.replayAll();
+
+        FileSet result =
+            createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).createFileSet( fs, sources, project );
+        
+        assertEquals( 1, result.getExcludes().size() );
+        assertEquals( "submodule/**", result.getExcludes().get( 0 ) );
+
+        mm.verifyAll();
+    }
+
     public void testExecute_ShouldSkipIfNoModuleSetsFound()
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
     {

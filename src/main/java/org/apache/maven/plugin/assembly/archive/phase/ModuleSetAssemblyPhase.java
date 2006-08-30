@@ -286,7 +286,28 @@ public class ModuleSetAssemblyPhase
 
         fs.setDirectory( sourcePath );
         fs.setDirectoryMode( fileSet.getDirectoryMode() );
-        fs.setExcludes( fileSet.getExcludes() );
+        
+        List excludes = new ArrayList();
+        
+        List originalExcludes = fileSet.getExcludes();
+        if ( originalExcludes != null && !originalExcludes.isEmpty() )
+        {
+            excludes.addAll( originalExcludes );
+        }
+        
+        if ( sources.isExcludeSubModuleDirectories() )
+        {
+            List modules = moduleProject.getModules();
+            for ( Iterator moduleIterator = modules.iterator(); moduleIterator.hasNext(); )
+            {
+                String moduleSubPath = ( String ) moduleIterator.next();
+                
+                excludes.add( moduleSubPath + "/**" );
+            }
+        }
+        
+        fs.setExcludes( excludes );
+        
         fs.setFileMode( fileSet.getFileMode() );
         fs.setIncludes( fileSet.getIncludes() );
         fs.setLineEnding( fileSet.getLineEnding() );
