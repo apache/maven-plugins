@@ -1,20 +1,20 @@
 package org.apache.maven.plugin.assembly.archive.phase;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
-import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForAddArtifactTask;
 import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForAddDependencySetsTask;
 import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForAddFileSetsTask;
+import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForArtifact;
 import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.plugins.assembly.model.Assembly;
 import org.apache.maven.plugins.assembly.model.DependencySet;
+import org.apache.maven.plugins.assembly.model.FileSet;
 import org.apache.maven.plugins.assembly.model.ModuleBinaries;
 import org.apache.maven.plugins.assembly.model.ModuleSet;
 import org.apache.maven.plugins.assembly.model.ModuleSources;
@@ -22,7 +22,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
-import org.easymock.MockControl;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,6 +46,81 @@ public class ModuleSetAssemblyPhaseTest
         throws IOException
     {
         fileManager.cleanUp();
+    }
+
+    public void testCreateFileSet_ShouldUseModuleDirOnlyWhenOutDirIsNull()
+        throws AssemblyFormattingException
+    {
+        MockManager mm = new MockManager();
+
+        FileSet fs = new FileSet();
+
+        ModuleSources sources = new ModuleSources();
+        sources.setIncludeModuleDirectory( true );
+
+        Model model = new Model();
+        model.setArtifactId( "artifact" );
+
+        MavenProject project = new MavenProject( model );
+
+        File basedir = fileManager.createTempDir();
+
+        project.setFile( new File( basedir, "pom.xml" ) );
+
+        MockAndControlForArtifact macArtifact = new MockAndControlForArtifact( mm );
+
+        macArtifact.expectIsSnapshot( false );
+        macArtifact.expectGetClassifier( null );
+        macArtifact.expectGetArtifactHandler();
+
+        project.setArtifact( macArtifact.artifact );
+
+        mm.replayAll();
+
+        FileSet result =
+            createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).createFileSet( fs, sources, project );
+
+        assertEquals( "artifact/", result.getOutputDirectory() );
+
+        mm.verifyAll();
+    }
+
+    public void testCreateFileSet_ShouldPrependModuleDirWhenOutDirIsProvided()
+        throws AssemblyFormattingException
+    {
+        MockManager mm = new MockManager();
+
+        FileSet fs = new FileSet();
+        fs.setOutputDirectory( "out" );
+
+        ModuleSources sources = new ModuleSources();
+        sources.setIncludeModuleDirectory( true );
+
+        Model model = new Model();
+        model.setArtifactId( "artifact" );
+
+        MavenProject project = new MavenProject( model );
+
+        File basedir = fileManager.createTempDir();
+
+        project.setFile( new File( basedir, "pom.xml" ) );
+
+        MockAndControlForArtifact macArtifact = new MockAndControlForArtifact( mm );
+
+        macArtifact.expectIsSnapshot( false );
+        macArtifact.expectGetClassifier( null );
+        macArtifact.expectGetArtifactHandler();
+
+        project.setArtifact( macArtifact.artifact );
+
+        mm.replayAll();
+
+        FileSet result =
+            createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).createFileSet( fs, sources, project );
+
+        assertEquals( "artifact/out/", result.getOutputDirectory() );
+
+        mm.verifyAll();
     }
 
     public void testExecute_ShouldSkipIfNoModuleSetsFound()
@@ -221,21 +295,24 @@ public class ModuleSetAssemblyPhaseTest
 
         MockAndControlForArtifact macDepArtifact = new MockAndControlForArtifact( mm );
 
-        macDepArtifact.expectGetClassifier();
+        macDepArtifact.expectGetClassifier( null );
         macDepArtifact.expectGetType( "jar" );
         macDepArtifact.expectIsSnapshot( false );
         macDepArtifact.expectGetArtifactHandler();
         macDepArtifact.expectGetArtifactId( "dep" );
-        macDepArtifact.expectGetFile();
 
-        macTask.expectAddFile( macDepArtifact.artifactFile, "out/dep", Integer.parseInt( "777", 8 ) );
+        File artifactFile = fileManager.createTempFile();
+
+        macDepArtifact.expectGetFile( artifactFile );
+
+        macTask.expectAddFile( artifactFile, "out/dep", Integer.parseInt( "777", 8 ) );
 
         MavenProject depProject = createProject( "group", "dep", "version", null );
 
         depProject.setArtifact( macDepArtifact.artifact );
 
         macTask.expectBuildFromRepository( depProject );
-        
+
         macTask.expectCSGetRepositories( null, null );
         macTask.expectResolveDependencies( Collections.singleton( macDepArtifact.artifact ) );
 
@@ -281,14 +358,17 @@ public class ModuleSetAssemblyPhaseTest
 
         MockAndControlForArtifact macDepArtifact = new MockAndControlForArtifact( mm );
 
-        macDepArtifact.expectGetClassifier();
+        macDepArtifact.expectGetClassifier( null );
         macDepArtifact.expectGetType( "jar" );
         macDepArtifact.expectIsSnapshot( false );
         macDepArtifact.expectGetArtifactHandler();
         macDepArtifact.expectGetArtifactId( "dep" );
-        macDepArtifact.expectGetFile();
 
-        macTask.expectAddFile( macDepArtifact.artifactFile, "out/dep", Integer.parseInt( "777", 8 ) );
+        File artifactFile = fileManager.createTempFile();
+
+        macDepArtifact.expectGetFile( artifactFile );
+
+        macTask.expectAddFile( artifactFile, "out/dep", Integer.parseInt( "777", 8 ) );
 
         MavenProject depProject = createProject( "group", "dep", "version", null );
 
@@ -441,21 +521,25 @@ public class ModuleSetAssemblyPhaseTest
         MockAndControlForAddFileSetsTask macTask = new MockAndControlForAddFileSetsTask( mm, fileManager );
 
         MavenProject project = createProject( "group", "artifact", "version", null );
-        
-//        MockAndControlForArtifact macArtifact = new MockAndControlForArtifact( mm );
-//        
-//        macArtifact.expectIsSnapshot( false );
-//        macArtifact.expectGetClassifier();
-//        macArtifact.expectGetArtifactHandler();
-//        
-//        project.setArtifact( macArtifact.artifact );
-//
+
+        MockAndControlForArtifact macArtifact = new MockAndControlForArtifact( mm );
+
+        macArtifact.expectIsSnapshot( false );
+        macArtifact.expectGetClassifier( null );
+        macArtifact.expectGetArtifactHandler();
+
+        project.setArtifact( macArtifact.artifact );
+
         Set projects = Collections.singleton( project );
 
         ModuleSources sources = new ModuleSources();
-        sources.setDirectory( "/src" );
-        sources.setDirectoryMode( "777" );
-        sources.setFileMode( "777" );
+
+        FileSet fs = new FileSet();
+        fs.setDirectory( "/src" );
+        fs.setDirectoryMode( "777" );
+        fs.setFileMode( "777" );
+
+        sources.addFileSet( fs );
 
         macTask.expectGetArchiveBaseDirectory();
 
@@ -598,7 +682,7 @@ public class ModuleSetAssemblyPhaseTest
         Set moduleProjects =
             createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), macTask ).getModuleProjects(
                                                                                                        moduleSet,
-                                                                                                       macTask.configSource, 
+                                                                                                       macTask.configSource,
                                                                                                        true );
 
         assertEquals( 2, moduleProjects.size() );
@@ -779,105 +863,6 @@ public class ModuleSetAssemblyPhaseTest
         ModuleSetAssemblyPhase phase = new ModuleSetAssemblyPhase( projectBuilder, dependencyResolver, logger );
 
         return phase;
-    }
-
-    private final class MockAndControlForArtifact
-    {
-        Artifact artifact;
-
-        MockControl control;
-
-        File artifactFile;
-
-        ArtifactHandler handler;
-
-        MockControl handlerControl;
-
-        private final MockManager mm;
-
-        MockAndControlForArtifact( MockManager mm )
-        {
-            this.mm = mm;
-            control = MockControl.createControl( Artifact.class );
-            mm.add( control );
-
-            artifact = ( Artifact ) control.getMock();
-        }
-
-        public void expectGetType( String type )
-        {
-            artifact.getType();
-            control.setReturnValue( type, MockControl.ONE_OR_MORE );
-        }
-
-        public void expectGetScope( String scope )
-        {
-            artifact.getScope();
-            control.setReturnValue( scope, MockControl.ONE_OR_MORE );
-        }
-
-        public void expectIsSnapshot( boolean isSnapshot )
-        {
-            artifact.isSnapshot();
-            control.setReturnValue( isSnapshot, MockControl.ONE_OR_MORE );
-        }
-
-        void expectGetClassifier()
-        {
-            artifact.getClassifier();
-            control.setReturnValue( null, MockControl.ONE_OR_MORE );
-        }
-
-        void expectGetArtifactHandler()
-        {
-            handlerControl = MockControl.createControl( ArtifactHandler.class );
-            mm.add( handlerControl );
-
-            handler = ( ArtifactHandler ) handlerControl.getMock();
-
-            artifact.getArtifactHandler();
-            control.setReturnValue( handler, MockControl.ONE_OR_MORE );
-        }
-
-        void expectGetFile()
-            throws IOException
-        {
-            this.artifactFile = fileManager.createTempFile();
-
-            artifact.getFile();
-
-            control.setReturnValue( artifactFile, MockControl.ONE_OR_MORE );
-        }
-
-        void expectGetId( String id )
-        {
-            artifact.getId();
-            control.setReturnValue( id, MockControl.ONE_OR_MORE );
-        }
-
-        void expectGetDependencyTrail( List depTrail )
-        {
-            artifact.getDependencyTrail();
-            control.setReturnValue( new LinkedList( depTrail ), MockControl.ONE_OR_MORE );
-        }
-
-        void expectGetDependencyConflictId( String groupId, String artifactId, String packaging )
-        {
-            artifact.getDependencyConflictId();
-            control.setReturnValue( groupId + ":" + artifactId + ":" + packaging, MockControl.ONE_OR_MORE );
-        }
-
-        void expectGetGroupId( String groupId )
-        {
-            artifact.getGroupId();
-            control.setReturnValue( groupId, MockControl.ONE_OR_MORE );
-        }
-
-        void expectGetArtifactId( String artifactId )
-        {
-            artifact.getArtifactId();
-            control.setReturnValue( artifactId, MockControl.ONE_OR_MORE );
-        }
     }
 
 }

@@ -74,7 +74,7 @@ public class AddFileSetsTask
 
         FileSetFormatter fileSetFormatter = new FileSetFormatter( configSource, logger );
 
-        File basedir = configSource.getBasedir();
+        File basedir = project.getBasedir();
         
         if ( project == null )
         {
@@ -116,6 +116,7 @@ public class AddFileSetsTask
             }
 
             logger.debug( "file-set directory: '" + fileSetDir.getAbsolutePath() + "'" );
+            logger.debug( "output directory: '" + destDirectory + "'" );
 
             AddDirectoryTask task = new AddDirectoryTask( fileSetDir );
 
