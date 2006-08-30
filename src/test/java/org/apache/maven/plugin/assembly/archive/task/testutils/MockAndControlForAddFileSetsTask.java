@@ -106,9 +106,6 @@ public class MockAndControlForAddFileSetsTask
             configSourceCtl.setReturnValue( project, MockControl.ONE_OR_MORE );
         }
 
-        configSource.getBasedir();
-        configSourceCtl.setReturnValue( basedir, MockControl.ONE_OR_MORE );
-
         configSource.getFinalName();
         configSourceCtl.setReturnValue( finalName, MockControl.ONE_OR_MORE );
 

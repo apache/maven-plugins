@@ -1,0 +1,22 @@
+<assembly>
+  <id>src</id>
+  <formats>
+    <format>dir</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <moduleSets>
+    <moduleSet>
+      <includeSubModules>false</includeSubModules>
+      <sources>
+        <fileSets>
+          <fileSet>
+            <excludes>
+              <exclude>**/.svn</exclude>
+              <exclude>**/target</exclude>
+            </excludes>
+          </fileSet>
+        </fileSets>
+      </sources>
+    </moduleSet>
+  </moduleSets>
+</assembly>
