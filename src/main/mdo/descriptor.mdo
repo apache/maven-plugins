@@ -550,11 +550,49 @@
     <class>
       <name>ModuleSources</name>
       <version>1.0.0</version>
-      <superClass>FileSet</superClass>
       <description>
         Contains configuration options for including the source files of a
         project module in an assembly.
       </description>
+      <fields>
+        <field>
+          <name>fileSets</name>
+          <version>1.0.0</version>
+          <association>
+            <type>FileSet</type>
+            <multiplicity>*</multiplicity>
+          </association>
+          <description>
+            <![CDATA[
+            Specifies which groups of files from each included module to include in the assembly. A
+            fileSet is specified by providing one or more of &lt;fileSet&gt; subelements.
+            ]]>
+          </description>
+        </field>
+        <field>
+          <name>includeModuleDirectory</name>
+          <version>1.0.0</version>
+          <type>boolean</type>
+          <defaultValue>true</defaultValue>
+          <description>
+            <![CDATA[
+            Specifies whether the module's finalName should be prepended to the outputDirectory 
+            values of any fileSets applied to it. Default value is true.
+            ]]>
+          </description>
+        </field>
+        <field>
+          <name>outputFileNameMapping</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <defaultValue>${artifactId}</defaultValue>
+          <description>
+            Sets the mapping pattern for all module base-directories included in this assembly.
+            NOTE: This field is only used if includeModuleDirectory == true.
+            Default is the module's ${artifactId}.
+          </description>
+        </field>
+      </fields>
     </class>
 
     <class>
