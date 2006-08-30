@@ -1,6 +1,7 @@
 package org.apache.maven.plugin.assembly.utils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -121,7 +122,13 @@ public final class FilterUtils
             }
         }
         
-        for ( Iterator it = allFilters.iterator(); it.hasNext(); )
+        
+        reportFilteringStatistics( allFilters, logger );
+    }
+
+    public static void reportFilteringStatistics( Collection filters, Logger logger )
+    {
+        for ( Iterator it = filters.iterator(); it.hasNext(); )
         {
             ArtifactFilter f = (ArtifactFilter) it.next();
             

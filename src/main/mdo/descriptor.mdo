@@ -481,6 +481,17 @@
       <version>1.0.0</version>
       <fields>
         <field>
+          <name>includeSubModules</name>
+          <version>1.0.0</version>
+          <type>boolean</type>
+          <defaultValue>true</defaultValue>
+          <description>
+          If set to false, the plugin will exclude sub-modules from processing in this ModuleSet.
+          Otherwise, it will process all sub-modules, each subject to include/exclude rules.
+          Default value is true.
+          </description>
+        </field>
+        <field>
           <name>includes</name>
           <version>1.0.0</version>
           <description>

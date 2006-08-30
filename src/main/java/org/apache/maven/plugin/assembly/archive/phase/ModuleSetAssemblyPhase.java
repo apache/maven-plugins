@@ -8,6 +8,7 @@ import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.task.AddArtifactTask;
 import org.apache.maven.plugin.assembly.archive.task.AddDependencySetsTask;
 import org.apache.maven.plugin.assembly.archive.task.AddFileSetsTask;
+import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.utils.FilterUtils;
 import org.apache.maven.plugin.assembly.utils.ProjectUtils;
@@ -20,6 +21,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
+import org.codehaus.plexus.logging.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,14 +45,23 @@ public class ModuleSetAssemblyPhase
      */
     private MavenProjectBuilder projectBuilder;
 
+    /**
+     * @plexus.requirement
+     */
+    private DependencyResolver dependencyResolver;
+
     public ModuleSetAssemblyPhase()
     {
         // needed for plexus
     }
 
-    public ModuleSetAssemblyPhase( MavenProjectBuilder projectBuilder )
+    public ModuleSetAssemblyPhase( MavenProjectBuilder projectBuilder, DependencyResolver dependencyResolver,
+                                   Logger logger )
     {
         this.projectBuilder = projectBuilder;
+        this.dependencyResolver = dependencyResolver;
+
+        enableLogging( logger );
     }
 
     public void execute( Assembly assembly, Archiver archiver, AssemblerConfigurationSource configSource )
@@ -64,7 +75,7 @@ public class ModuleSetAssemblyPhase
         {
             ModuleSet moduleSet = ( ModuleSet ) i.next();
 
-            Set moduleProjects = getModuleProjects( moduleSet, configSource );
+            Set moduleProjects = getModuleProjects( moduleSet, configSource, moduleSet.isIncludeSubModules() );
 
             ModuleSources sources = moduleSet.getSources();
             ModuleBinaries binaries = moduleSet.getBinaries();
@@ -119,11 +130,11 @@ public class ModuleSetAssemblyPhase
         }
 
         List depSets = binaries.getDependencySets();
-        
+
         if ( ( depSets == null || depSets.isEmpty() ) && binaries.isIncludeDependencies() )
         {
             DependencySet impliedDependencySet = new DependencySet();
-            
+
             impliedDependencySet.setOutputDirectory( binaries.getOutputDirectory() );
             impliedDependencySet.setOutputFileNameMapping( binaries.getOutputFileNameMapping() );
             impliedDependencySet.setFileMode( binaries.getFileMode() );
@@ -131,10 +142,10 @@ public class ModuleSetAssemblyPhase
             impliedDependencySet.setExcludes( binaries.getExcludes() );
             impliedDependencySet.setIncludes( binaries.getIncludes() );
             impliedDependencySet.setUnpack( binaries.isUnpack() );
-            
+
             depSets = Collections.singletonList( impliedDependencySet );
         }
-        
+
         if ( depSets != null )
         {
             // FIXME: This will produce unpredictable results when module dependencies have a version conflict.
@@ -149,8 +160,8 @@ public class ModuleSetAssemblyPhase
                 getLogger().debug( "Processing binary dependencies for module project: " + moduleProject.getId() );
 
                 AddDependencySetsTask task =
-                    new AddDependencySetsTask( depSets, moduleProject, projectBuilder, getLogger() );
-                
+                    new AddDependencySetsTask( depSets, moduleProject, projectBuilder, dependencyResolver, getLogger() );
+
                 task.setIncludeBaseDirectory( includeBaseDirectory );
                 task.setDefaultOutputDirectory( binaries.getOutputDirectory() );
                 task.setDefaultOutputFileNameMapping( binaries.getOutputFileNameMapping() );
@@ -253,7 +264,8 @@ public class ModuleSetAssemblyPhase
         }
     }
 
-    protected Set getModuleProjects( ModuleSet moduleSet, AssemblerConfigurationSource configSource )
+    protected Set getModuleProjects( ModuleSet moduleSet, AssemblerConfigurationSource configSource,
+                                     boolean includeSubModules )
         throws ArchiveCreationException
     {
         MavenProject project = configSource.getProject();
@@ -261,7 +273,9 @@ public class ModuleSetAssemblyPhase
         Set moduleProjects;
         try
         {
-            moduleProjects = ProjectUtils.getProjectModules( project, configSource.getReactorProjects(), getLogger() );
+            moduleProjects =
+                ProjectUtils.getProjectModules( project, configSource.getReactorProjects(), includeSubModules,
+                                                getLogger() );
         }
         catch ( IOException e )
         {

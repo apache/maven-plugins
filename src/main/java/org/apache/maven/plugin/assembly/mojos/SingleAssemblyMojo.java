@@ -27,7 +27,6 @@ import org.apache.maven.project.MavenProject;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
  * @goal single
- * @requiresDependencyResolution test
  */
 public class SingleAssemblyMojo
     extends AbstractAssemblyMojo
