@@ -22,7 +22,6 @@ import org.apache.maven.project.MavenProject;
  * Assemble an application bundle or distribution.
  *
  * @goal directory
- * @requiresDependencyResolution test
  * @execute phase="package"
  * @aggregator
  */
