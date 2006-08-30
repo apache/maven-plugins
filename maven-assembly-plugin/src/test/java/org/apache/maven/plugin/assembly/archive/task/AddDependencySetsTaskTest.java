@@ -4,18 +4,17 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForAddDependencySetsTask;
+import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForArtifact;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.plugins.assembly.model.DependencySet;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
-import org.easymock.MockControl;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import junit.framework.TestCase;
@@ -156,21 +155,21 @@ public class AddDependencySetsTaskTest
 
         Set artifacts = new HashSet();
 
-        MockAndControlForArtifact mac = new MockAndControlForArtifact();
+        MockAndControlForArtifact mac = new MockAndControlForArtifact( mockManager );
 
-        mac.enableGetGroupId( "group" );
-        mac.enableGetArtifactId( "artifact" );
-        mac.enableGetDependencyConflictId( "group:artifact:jar" );
+        mac.expectGetGroupId( "group" );
+        mac.expectGetArtifactId( "artifact" );
+        mac.expectGetDependencyConflictId( "group:artifact:jar" );
 
         artifacts.add( mac.artifact );
 
-        MockAndControlForArtifact mac2 = new MockAndControlForArtifact();
+        MockAndControlForArtifact mac2 = new MockAndControlForArtifact( mockManager );
 
-        mac2.enableGetGroupId( "group2" );
-        mac2.enableGetArtifactId( "artifact2" );
-        mac2.enableGetDependencyConflictId( "group2:artifact2:jar" );
-        mac2.enableGetDependencyTrail( Collections.EMPTY_LIST );
-        mac2.enableGetId( "group2:artifact2:1.0" );
+        mac2.expectGetGroupId( "group2" );
+        mac2.expectGetArtifactId( "artifact2" );
+        mac2.expectGetDependencyConflictId( "group2:artifact2:jar" );
+        mac2.expectGetDependencyTrail( Collections.EMPTY_LIST );
+        mac2.expectGetId( "group2:artifact2:1.0" );
 
         artifacts.add( mac2.artifact );
 
@@ -195,57 +194,6 @@ public class AddDependencySetsTaskTest
         assertSame( mac.artifact, result.iterator().next() );
 
         mockManager.verifyAll();
-    }
-
-    private final class MockAndControlForArtifact
-    {
-        Artifact artifact;
-
-        MockControl control;
-
-        public MockAndControlForArtifact()
-        {
-            control = MockControl.createControl( Artifact.class );
-            mockManager.add( control );
-
-            artifact = ( Artifact ) control.getMock();
-        }
-
-        public void enableGetId( String id )
-        {
-            artifact.getId();
-            control.setReturnValue( id, MockControl.ONE_OR_MORE );
-        }
-
-        public void enableGetDependencyTrail( List dependencyTrail )
-        {
-            artifact.getDependencyTrail();
-            control.setReturnValue( dependencyTrail, MockControl.ONE_OR_MORE );
-        }
-
-        public void enableGetDependencyConflictId( String conflictId )
-        {
-            artifact.getDependencyConflictId();
-            control.setReturnValue( conflictId, MockControl.ONE_OR_MORE );
-        }
-
-        public void enableGetArtifactId( String artifactId )
-        {
-            artifact.getArtifactId();
-            control.setReturnValue( artifactId, MockControl.ONE_OR_MORE );
-        }
-
-        public void enableGetGroupId( String groupId )
-        {
-            artifact.getGroupId();
-            control.setReturnValue( groupId, MockControl.ONE_OR_MORE );
-        }
-
-        public void expectGetScope( String scope )
-        {
-            artifact.getScope();
-            control.setReturnValue( scope, MockControl.ONE_OR_MORE );
-        }
     }
 
 }
