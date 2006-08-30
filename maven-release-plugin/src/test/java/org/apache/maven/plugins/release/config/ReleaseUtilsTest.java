@@ -26,7 +26,7 @@ import java.io.File;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class ReleaseDescriptorTest
+public class ReleaseUtilsTest
     extends TestCase
 {
     public void testMergeConfigurationSourceEmpty()
@@ -50,20 +50,6 @@ public class ReleaseDescriptorTest
 
     public void testMergeConfiguration()
     {
-/*
-        File workingDirectory = new File( "." );
-
-        ReleaseDescriptor mergeDescriptor =
-            createMergeDescriptor( workingDirectory.getAbsolutePath(), "completed-phase-merge" );
-        ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
-        ReleaseDescriptor mergedReleaseDescriptor = ReleaseUtils.merge( releaseDescriptor, mergeDescriptor );
-        ReleaseDescriptor expectedDescriptor =
-            createMergeDescriptor( releaseDescriptor.getWorkingDirectory(), releaseDescriptor.getCompletedPhase() );
-        ReleaseDescriptor mergedExpectedDescriptor = ReleaseUtils.merge( expectedDescriptor, releaseDescriptor );
-
-        assertEquals( "Check merge", mergedExpectedDescriptor, mergedReleaseDescriptor );
-*/
-
         File workingDirectory = new File( "." );
 
         ReleaseDescriptor mergeDescriptor =
