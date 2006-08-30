@@ -23,6 +23,7 @@ import org.codehaus.plexus.util.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Test the SCM modification check phase.
@@ -44,25 +45,10 @@ public class RewritePomsForReleasePhaseTest
         phase = (ReleasePhase) lookup( ReleasePhase.ROLE, "rewrite-poms-for-release" );
     }
 
-    protected ReleaseDescriptor createConfigurationFromProjects( String path, boolean copyFiles )
+    protected List createReactorProjects( String path, boolean copyFiles )
         throws Exception
     {
-        ReleaseDescriptor releaseDescriptor = createDescriptorFromProjects( "rewrite-for-release/", path, copyFiles );
-
-        MavenProject rootProject = (MavenProject) getReactorProjects().get( 0 );
-        if ( rootProject.getScm() == null )
-        {
-            releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo/trunk" );
-        }
-        else
-        {
-            releaseDescriptor.setScmSourceUrl( rootProject.getScm().getConnection() );
-        }
-
-        releaseDescriptor.setScmReleaseLabel( "release-label" );
-        releaseDescriptor.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
-
-        return releaseDescriptor;
+        return createReactorProjects( "rewrite-for-release/", path, copyFiles );
     }
 
     protected String readTestProjectFile( String fileName )
@@ -71,21 +57,16 @@ public class RewritePomsForReleasePhaseTest
         return FileUtils.fileRead( getTestFile( "target/test-classes/projects/rewrite-for-release/" + fileName ) );
     }
 
-    protected ReleaseDescriptor createConfigurationFromBasicPom( boolean copyFiles )
-        throws Exception
-    {
-        return createConfigurationFromProjects( "basic-pom", copyFiles );
-    }
-
     public void testSimulateRewrite()
         throws Exception
     {
-        ReleaseDescriptor config = createConfigurationFromBasicPom();
+        List reactorProjects = createReactorProjectsFromBasicPom();
+        ReleaseDescriptor config = createDescriptorFromBasicPom( reactorProjects );
         config.mapReleaseVersion( "groupId:artifactId", NEXT_VERSION );
 
         String expected = readTestProjectFile( "basic-pom/pom.xml" );
 
-        phase.simulate( config, null, getReactorProjects() );
+        phase.simulate( config, null, reactorProjects );
 
         String actual = readTestProjectFile( "basic-pom/pom.xml" );
         assertEquals( "Check the original POM untouched", expected, actual );
@@ -98,14 +79,15 @@ public class RewritePomsForReleasePhaseTest
     public void testClean()
         throws Exception
     {
-        ReleaseDescriptor config = createConfigurationFromBasicPom();
+        List reactorProjects = createReactorProjectsFromBasicPom();
+        ReleaseDescriptor config = createDescriptorFromBasicPom( reactorProjects );
         config.mapReleaseVersion( "groupId:artifactId", NEXT_VERSION );
 
         File testFile = getTestFile( "target/test-classes/projects/rewrite-for-release/basic-pom/pom.xml.tag" );
         testFile.delete();
         assertFalse( testFile.exists() );
 
-        phase.simulate( config, null, getReactorProjects() );
+        phase.simulate( config, null, reactorProjects );
 
         assertTrue( testFile.exists() );
 
@@ -117,7 +99,8 @@ public class RewritePomsForReleasePhaseTest
     public void testCleanNotExists()
         throws Exception
     {
-        ReleaseDescriptor config = createConfigurationFromBasicPom();
+        List reactorProjects = createReactorProjectsFromBasicPom();
+        ReleaseDescriptor config = createDescriptorFromBasicPom( reactorProjects );
         config.mapReleaseVersion( "groupId:artifactId", NEXT_VERSION );
 
         File testFile = getTestFile( "target/test-classes/projects/rewrite-for-release/basic-pom/pom.xml.tag" );
@@ -151,20 +134,20 @@ public class RewritePomsForReleasePhaseTest
         config.mapReleaseVersion( projectId, NEXT_VERSION );
     }
 
-    protected ReleaseDescriptor createConfigurationForPomWithParentAlternateNextVersion( String path )
+    protected ReleaseDescriptor createConfigurationForPomWithParentAlternateNextVersion( List reactorProjects )
         throws Exception
     {
-        ReleaseDescriptor config = createConfigurationFromProjects( path );
+        ReleaseDescriptor config = createDescriptorFromProjects( reactorProjects );
 
         config.mapReleaseVersion( "groupId:artifactId", NEXT_VERSION );
         config.mapReleaseVersion( "groupId:subproject1", ALTERNATIVE_NEXT_VERSION );
         return config;
     }
 
-    protected ReleaseDescriptor createConfigurationForWithParentNextVersion( String path )
+    protected ReleaseDescriptor createConfigurationForWithParentNextVersion( List reactorProjects )
         throws Exception
     {
-        ReleaseDescriptor config = createConfigurationFromProjects( path );
+        ReleaseDescriptor config = createDescriptorFromProjects( reactorProjects );
 
         config.mapReleaseVersion( "groupId:artifactId", NEXT_VERSION );
         config.mapReleaseVersion( "groupId:subproject1", NEXT_VERSION );
@@ -179,71 +162,80 @@ public class RewritePomsForReleasePhaseTest
     public void testRewriteBasicPomWithCvs()
         throws Exception
     {
-        ReleaseDescriptor config = createConfigurationFromProjects( "basic-pom-with-cvs" );
+
+        List reactorProjects = createReactorProjects( "basic-pom-with-cvs" );
+        ReleaseDescriptor config = this.createDescriptorFromProjects( reactorProjects );
         mapNextVersion( config, "groupId:artifactId" );
 
-        phase.execute( config, null, getReactorProjects() );
+        phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( getReactorProjects() ) );
+        assertTrue( compareFiles( reactorProjects ) );
     }
 
     public void testRewriteBasicPomWithTagBase()
         throws Exception
     {
-        ReleaseDescriptor config = createConfigurationFromProjects( "basic-pom-with-tag-base" );
+
+        List reactorProjects = createReactorProjects( "basic-pom-with-tag-base" );
+        ReleaseDescriptor config = this.createDescriptorFromProjects( reactorProjects );
         config.setScmTagBase( "file://localhost/tmp/scm-repo/releases" );
         mapNextVersion( config, "groupId:artifactId" );
 
-        phase.execute( config, null, getReactorProjects() );
+        phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( getReactorProjects() ) );
+        assertTrue( compareFiles( reactorProjects ) );
     }
 
     public void testRewriteBasicPomWithCvsFromTag()
         throws Exception
     {
-        ReleaseDescriptor config = createConfigurationFromProjects( "basic-pom-with-cvs-from-tag" );
+        List reactorProjects = createReactorProjects( "basic-pom-with-cvs-from-tag" );
+        ReleaseDescriptor config = this.createDescriptorFromProjects( reactorProjects );
         mapNextVersion( config, "groupId:artifactId" );
 
-        phase.execute( config, null, getReactorProjects() );
+        phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( getReactorProjects() ) );
+        assertTrue( compareFiles( reactorProjects ) );
     }
 
     public void testRewriteBasicPomWithEmptyScm()
         throws Exception
     {
-        ReleaseDescriptor config = createConfigurationFromProjects( "basic-pom-with-empty-scm" );
+        List reactorProjects = createReactorProjects( "basic-pom-with-empty-scm" );
+        ReleaseDescriptor config = this.createDescriptorFromProjects( reactorProjects );
         mapNextVersion( config, "groupId:artifactId" );
 
-        phase.execute( config, null, getReactorProjects() );
+        phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( getReactorProjects() ) );
+        assertTrue( compareFiles( reactorProjects ) );
     }
 
     public void testRewriteInterpolatedVersions()
         throws Exception
     {
-        ReleaseDescriptor config = createMappedConfiguration( "interpolated-versions" );
+        List reactorProjects = createReactorProjects( "interpolated-versions" );
+        ReleaseDescriptor config = createMappedConfiguration( reactorProjects );
 
-        phase.execute( config, null, getReactorProjects() );
+        phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( getReactorProjects() ) );
+        assertTrue( compareFiles( reactorProjects ) );
     }
 
     public void testRewriteInterpolatedVersionsDifferentVersion()
         throws Exception
     {
-        ReleaseDescriptor config = createConfigurationFromProjects( "interpolated-versions" );
+
+        List reactorProjects = createReactorProjects( "interpolated-versions" );
+        ReleaseDescriptor config = this.createDescriptorFromProjects( reactorProjects );
 
         config.mapReleaseVersion( "groupId:artifactId", NEXT_VERSION );
         config.mapReleaseVersion( "groupId:subproject1", ALTERNATIVE_NEXT_VERSION );
         config.mapReleaseVersion( "groupId:subproject2", NEXT_VERSION );
         config.mapReleaseVersion( "groupId:subproject3", NEXT_VERSION );
 
-        phase.execute( config, null, getReactorProjects() );
+        phase.execute( config, null, reactorProjects );
 
-        for ( Iterator i = getReactorProjects().iterator(); i.hasNext(); )
+        for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
         {
             MavenProject project = (MavenProject) i.next();
 
@@ -262,11 +254,20 @@ public class RewritePomsForReleasePhaseTest
     public void testRewriteBasicPomWithInheritedScm()
         throws Exception
     {
-        ReleaseDescriptor config = createConfigurationForWithParentNextVersion( "basic-pom-inherited-scm" );
+        List reactorProjects = createReactorProjects( "basic-pom-inherited-scm" );
+        ReleaseDescriptor config = createConfigurationForWithParentNextVersion( reactorProjects );
         config.mapReleaseVersion( "groupId:subsubproject", NEXT_VERSION );
 
-        phase.execute( config, null, getReactorProjects() );
+        phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( getReactorProjects() ) );
+        assertTrue( compareFiles( reactorProjects ) );
+    }
+
+
+    protected ReleaseDescriptor createDescriptorFromProjects( List reactorProjects )
+    {
+        ReleaseDescriptor descriptor = super.createDescriptorFromProjects( reactorProjects );
+        descriptor.setScmReleaseLabel( "release-label" );
+        return descriptor;
     }
 }

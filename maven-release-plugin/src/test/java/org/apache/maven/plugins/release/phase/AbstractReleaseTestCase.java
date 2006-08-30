@@ -32,7 +32,6 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.Profile;
 import org.apache.maven.model.Repository;
-import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.apache.maven.plugins.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.plugins.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.profiles.DefaultProfileManager;
@@ -69,18 +68,6 @@ public abstract class AbstractReleaseTestCase
     protected ArtifactRepository localRepository;
 
     protected ReleasePhase phase;
-
-    protected List reactorProjects;
-
-    public List getReactorProjects()
-    {
-        return reactorProjects;
-    }
-
-    public void setReactorProjects( List reactorProjects )
-    {
-        this.reactorProjects = reactorProjects;
-    }
 
     protected void setUp()
         throws Exception
@@ -128,7 +115,7 @@ public abstract class AbstractReleaseTestCase
         return map;
     }
 
-    protected ReleaseDescriptor createDescriptorFromProjects( String path, String subpath, boolean copyFiles )
+    protected List createReactorProjects( String path, String subpath, boolean copyFiles )
         throws Exception
     {
         File testFile = getTestFile( "target/test-classes/projects/" + path + subpath + "/pom.xml" );
@@ -150,7 +137,7 @@ public abstract class AbstractReleaseTestCase
         profileManager.addProfile( profile );
         profileManager.activateAsDefault( profile.getId() );
 
-        reactorProjects = new ArrayList();
+        List reactorProjects = new ArrayList();
         while ( !projectFiles.isEmpty() )
         {
             File file = (File) projectFiles.pop();
@@ -207,9 +194,7 @@ public abstract class AbstractReleaseTestCase
             project.setArtifacts( result.getArtifacts() );
         }
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-
-        return releaseDescriptor;
+        return reactorProjects;
     }
 
     protected void setMockScmManager( Mock scmManagerMock )
