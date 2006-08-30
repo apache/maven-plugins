@@ -18,7 +18,7 @@ package org.apache.maven.plugins.release;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 
 import java.io.File;
 
@@ -71,10 +71,10 @@ public class PerformReleaseMojo
         try
         {
             // Note that the working directory here is not the same as in the release configuration, so don't reuse that
-            ReleaseConfiguration releaseConfiguration = createReleaseConfiguration();
+            ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
             if ( connectionUrl != null )
             {
-                releaseConfiguration.setUrl( connectionUrl );
+                releaseDescriptor.setScmSourceUrl( connectionUrl );
             }
 
             if ( goals == null )
@@ -88,7 +88,8 @@ public class PerformReleaseMojo
                 }
             }
 
-            releaseManager.perform( releaseConfiguration, workingDirectory, goals, useReleaseProfile );
+            releaseManager.perform( releaseDescriptor, settings, reactorProjects, workingDirectory, goals,
+                                    useReleaseProfile );
         }
         catch ( ReleaseExecutionException e )
         {

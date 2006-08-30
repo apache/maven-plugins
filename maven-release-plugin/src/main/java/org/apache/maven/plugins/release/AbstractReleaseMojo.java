@@ -18,7 +18,7 @@ package org.apache.maven.plugins.release;
 
 import org.apache.maven.model.Profile;
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.util.StringUtils;
@@ -70,14 +70,14 @@ public abstract class AbstractReleaseMojo
      * @required
      * @readonly
      */
-    private File basedir;
+    protected File basedir;
 
     /**
      * @parameter expression="${settings}"
      * @required
      * @readonly
      */
-    private Settings settings;
+    protected Settings settings;
 
     /**
      * @parameter expression="${project}"
@@ -105,17 +105,27 @@ public abstract class AbstractReleaseMojo
      */
     private String pomFileName;
 
-    protected ReleaseConfiguration createReleaseConfiguration()
+    /**
+     * @parameter expression="${reactorProjects}"
+     * @required
+     * @readonly
+     */
+    protected List reactorProjects;
+
+    protected ReleaseDescriptor createReleaseDescriptor()
     {
-        ReleaseConfiguration config = new ReleaseConfiguration();
-        config.setInteractive( settings.isInteractiveMode() );
-        config.setPassword( password );
-        config.setReleaseLabel( tag );
-        config.setSettings( settings );
-        config.setTagBase( tagBase );
-        config.setUsername( username );
-        config.setWorkingDirectory( basedir );
-        config.setPomFileName( pomFileName );
+        ReleaseDescriptor descriptor = new ReleaseDescriptor();
+
+        descriptor.setInteractive( settings.isInteractiveMode() );
+
+        descriptor.setScmPassword( password );
+        descriptor.setScmReleaseLabel( tag );
+        descriptor.setScmTagBase( tagBase );
+        descriptor.setScmUsername( username );
+
+        descriptor.setWorkingDirectory( basedir.getAbsolutePath() );
+
+        descriptor.setPomFileName( pomFileName );
 
         List profiles = project.getActiveProfiles();
 
@@ -142,9 +152,9 @@ public abstract class AbstractReleaseMojo
                 }
             }
         }
-        config.setAdditionalArguments( arguments );
+        descriptor.setAdditionalArguments( arguments );
 
-        return config;
+        return descriptor;
     }
 
     void setReleaseManager( ReleaseManager releaseManager )
@@ -155,5 +165,15 @@ public abstract class AbstractReleaseMojo
     Settings getSettings()
     {
         return settings;
+    }
+
+    public void setBasedir( File basedir )
+    {
+        this.basedir = basedir;
+    }
+
+    public List getReactorProjects()
+    {
+        return reactorProjects;
     }
 }

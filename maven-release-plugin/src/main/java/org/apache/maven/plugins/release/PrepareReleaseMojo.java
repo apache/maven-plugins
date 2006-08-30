@@ -18,9 +18,7 @@ package org.apache.maven.plugins.release;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.release.config.ReleaseConfiguration;
-
-import java.util.List;
+import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 
 /**
  * Prepare for a release in SCM.
@@ -38,12 +36,6 @@ import java.util.List;
 public class PrepareReleaseMojo
     extends AbstractReleaseMojo
 {
-    /**
-     * @parameter expression="${reactorProjects}"
-     * @required
-     * @readonly
-     */
-    private List reactorProjects;
 
     /**
      * Resume a previous release attempt from the point that it was stopped.
@@ -91,29 +83,18 @@ public class PrepareReleaseMojo
      */
     private String preparationGoals;
 
-    /**
-     * Whether to generate the release descriptor as part of the preparation process.
-     *
-     * @parameter expression="${generateReleaseDescriptor}" default-value="true"
-     */
-    //TODO:JW add to the release configuration and follow through to the release manager where you can
-    // add a new phase to generate the release descriptor which can optionally send the release descriptor
-    // to continuum via a web service.
-    private boolean generateReleaseDescriptor;
-
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        ReleaseConfiguration config = createReleaseConfiguration();
+        ReleaseDescriptor config = createReleaseDescriptor();
         config.setAddSchema( addSchema );
         config.setGenerateReleasePoms( generateReleasePoms );
-        config.setReactorProjects( reactorProjects );
-        config.setUseEditMode( useEditMode );
+        config.setScmUseEditMode( useEditMode );
         config.setPreparationGoals( preparationGoals );
 
         try
         {
-            releaseManager.prepare( config, resume, dryRun );
+            releaseManager.prepare( config, settings, reactorProjects, resume, dryRun );
         }
         catch ( ReleaseExecutionException e )
         {

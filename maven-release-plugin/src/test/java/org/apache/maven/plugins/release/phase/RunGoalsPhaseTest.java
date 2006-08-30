@@ -17,14 +17,13 @@ package org.apache.maven.plugins.release.phase;
  */
 
 import org.apache.maven.plugins.release.ReleaseExecutionException;
-import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.apache.maven.plugins.release.exec.MavenExecutor;
 import org.apache.maven.plugins.release.exec.MavenExecutorException;
 import org.codehaus.plexus.PlexusTestCase;
 import org.jmock.Mock;
 import org.jmock.core.constraint.IsEqual;
 import org.jmock.core.constraint.IsNull;
-import org.jmock.core.constraint.IsSame;
 import org.jmock.core.matcher.InvokeOnceMatcher;
 import org.jmock.core.matcher.TestFailureMatcher;
 import org.jmock.core.stub.ThrowStub;
@@ -54,19 +53,19 @@ public class RunGoalsPhaseTest
     {
         File testFile = getTestFile( "target/working-directory" );
 
-        ReleaseConfiguration config = new ReleaseConfiguration();
+        ReleaseDescriptor config = new ReleaseDescriptor();
         config.setPreparationGoals( "clean integration-test" );
-        config.setWorkingDirectory( testFile );
+        config.setWorkingDirectory( testFile.getAbsolutePath() );
 
         Mock mock = new Mock( MavenExecutor.class );
-        mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( new IsSame( testFile ),
+        mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( new IsEqual( testFile ),
                                                                                new IsEqual( "clean integration-test" ),
                                                                                new IsEqual( Boolean.TRUE ),
                                                                                new IsNull() );
 
         phase.setMavenExecutor( (MavenExecutor) mock.proxy() );
 
-        phase.execute( config );
+        phase.execute( config, null, null );
 
         // just needs to survive the mock
         assertTrue( true );
@@ -77,19 +76,19 @@ public class RunGoalsPhaseTest
     {
         File testFile = getTestFile( "target/working-directory" );
 
-        ReleaseConfiguration config = new ReleaseConfiguration();
+        ReleaseDescriptor config = new ReleaseDescriptor();
         config.setPreparationGoals( "clean integration-test" );
-        config.setWorkingDirectory( testFile );
+        config.setWorkingDirectory( testFile.getAbsolutePath() );
 
         Mock mock = new Mock( MavenExecutor.class );
-        mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( new IsSame( testFile ),
+        mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( new IsEqual( testFile ),
                                                                                new IsEqual( "clean integration-test" ),
                                                                                new IsEqual( Boolean.TRUE ),
                                                                                new IsNull() );
 
         phase.setMavenExecutor( (MavenExecutor) mock.proxy() );
 
-        phase.simulate( config );
+        phase.simulate( config, null, null );
 
         // just needs to survive the mock
         assertTrue( true );
@@ -99,12 +98,12 @@ public class RunGoalsPhaseTest
     {
         File testFile = getTestFile( "target/working-directory" );
 
-        ReleaseConfiguration config = new ReleaseConfiguration();
+        ReleaseDescriptor config = new ReleaseDescriptor();
         config.setPreparationGoals( "clean integration-test" );
-        config.setWorkingDirectory( testFile );
+        config.setWorkingDirectory( testFile.getAbsolutePath() );
 
         Mock mock = new Mock( MavenExecutor.class );
-        mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( new IsSame( testFile ),
+        mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( new IsEqual( testFile ),
                                                                                new IsEqual( "clean integration-test" ),
                                                                                new IsEqual( Boolean.TRUE ),
                                                                                new IsNull() ).will(
@@ -114,7 +113,7 @@ public class RunGoalsPhaseTest
 
         try
         {
-            phase.execute( config );
+            phase.execute( config, null, null );
 
             fail( "Should have thrown an exception" );
         }
@@ -128,12 +127,12 @@ public class RunGoalsPhaseTest
     {
         File testFile = getTestFile( "target/working-directory" );
 
-        ReleaseConfiguration config = new ReleaseConfiguration();
+        ReleaseDescriptor config = new ReleaseDescriptor();
         config.setPreparationGoals( "clean integration-test" );
-        config.setWorkingDirectory( testFile );
+        config.setWorkingDirectory( testFile.getAbsolutePath() );
 
         Mock mock = new Mock( MavenExecutor.class );
-        mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( new IsSame( testFile ),
+        mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( new IsEqual( testFile ),
                                                                                new IsEqual( "clean integration-test" ),
                                                                                new IsEqual( Boolean.TRUE ),
                                                                                new IsNull() ).will(
@@ -143,7 +142,7 @@ public class RunGoalsPhaseTest
 
         try
         {
-            phase.simulate( config );
+            phase.simulate( config, null, null );
 
             fail( "Should have thrown an exception" );
         }
@@ -158,16 +157,16 @@ public class RunGoalsPhaseTest
     {
         File testFile = getTestFile( "target/working-directory" );
 
-        ReleaseConfiguration config = new ReleaseConfiguration();
+        ReleaseDescriptor config = new ReleaseDescriptor();
         config.setPreparationGoals( "" );
-        config.setWorkingDirectory( testFile );
+        config.setWorkingDirectory( testFile.getAbsolutePath() );
 
         Mock mock = new Mock( MavenExecutor.class );
-        mock.expects( new TestFailureMatcher( "Shouldn't invoke executeGoals" ) ) .method( "executeGoals" );
+        mock.expects( new TestFailureMatcher( "Shouldn't invoke executeGoals" ) ).method( "executeGoals" );
 
         phase.setMavenExecutor( (MavenExecutor) mock.proxy() );
 
-        phase.execute( config );
+        phase.execute( config, null, null );
 
         // just needs to survive the mock
         assertTrue( true );

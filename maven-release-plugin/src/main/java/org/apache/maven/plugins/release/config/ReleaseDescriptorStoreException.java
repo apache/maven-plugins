@@ -21,10 +21,10 @@ package org.apache.maven.plugins.release.config;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class ReleaseConfigurationStoreException
+public class ReleaseDescriptorStoreException
     extends Exception
 {
-    public ReleaseConfigurationStoreException( String message, Throwable t )
+    public ReleaseDescriptorStoreException( String message, Throwable t )
     {
         super( message, t );
     }

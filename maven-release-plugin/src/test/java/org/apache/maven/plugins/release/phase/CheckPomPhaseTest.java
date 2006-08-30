@@ -19,7 +19,7 @@ package org.apache.maven.plugins.release.phase;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Scm;
 import org.apache.maven.plugins.release.ReleaseFailureException;
-import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.apache.maven.plugins.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusTestCase;
@@ -47,13 +47,12 @@ public class CheckPomPhaseTest
     public void testCorrectlyConfigured()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
-        releaseConfiguration.setUrl( "scm-url" );
-        releaseConfiguration.setReactorProjects( Collections.singletonList( createProject( "1.0-SNAPSHOT" ) ) );
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setScmSourceUrl( "scm-url" );
 
-        phase.execute( releaseConfiguration );
+        phase.execute( releaseDescriptor, null, Collections.singletonList( createProject( "1.0-SNAPSHOT" ) ) );
 
-        phase.simulate( releaseConfiguration );
+        phase.simulate( releaseDescriptor, null, Collections.singletonList( createProject( "1.0-SNAPSHOT" ) ) );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -62,78 +61,73 @@ public class CheckPomPhaseTest
     public void testGetUrlFromProjectConnection()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         MavenProject project = createProject( "1.0-SNAPSHOT" );
         Scm scm = new Scm();
         scm.setConnection( "scm:svn:file://localhost/tmp/repo" );
         project.setScm( scm );
-        releaseConfiguration.setReactorProjects( Collections.singletonList( project ) );
 
-        phase.execute( releaseConfiguration );
+        phase.execute( releaseDescriptor, null, Collections.singletonList( project ) );
 
-        assertEquals( "Check URL", "scm:svn:file://localhost/tmp/repo", releaseConfiguration.getUrl() );
+        assertEquals( "Check URL", "scm:svn:file://localhost/tmp/repo", releaseDescriptor.getScmSourceUrl() );
     }
 
     public void testGetUrlFromProjectConnectionSimulate()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         MavenProject project = createProject( "1.0-SNAPSHOT" );
         Scm scm = new Scm();
         scm.setConnection( "scm:svn:file://localhost/tmp/repo" );
         project.setScm( scm );
-        releaseConfiguration.setReactorProjects( Collections.singletonList( project ) );
 
-        phase.simulate( releaseConfiguration );
+        phase.simulate( releaseDescriptor, null, Collections.singletonList( project ) );
 
-        assertEquals( "Check URL", "scm:svn:file://localhost/tmp/repo", releaseConfiguration.getUrl() );
+        assertEquals( "Check URL", "scm:svn:file://localhost/tmp/repo", releaseDescriptor.getScmSourceUrl() );
     }
 
     public void testGetUrlFromProjectDevConnection()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         MavenProject project = createProject( "1.0-SNAPSHOT" );
         Scm scm = new Scm();
         scm.setConnection( "scm:svn:file://localhost/tmp/repo" );
         scm.setDeveloperConnection( "scm:svn:https://localhost/tmp/repo" );
         project.setScm( scm );
-        releaseConfiguration.setReactorProjects( Collections.singletonList( project ) );
 
-        phase.execute( releaseConfiguration );
+        phase.execute( releaseDescriptor, null, Collections.singletonList( project ) );
 
-        assertEquals( "Check URL", "scm:svn:https://localhost/tmp/repo", releaseConfiguration.getUrl() );
+        assertEquals( "Check URL", "scm:svn:https://localhost/tmp/repo", releaseDescriptor.getScmSourceUrl() );
     }
 
     public void testGetUrlFromProjectDevConnectionSimulate()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         MavenProject project = createProject( "1.0-SNAPSHOT" );
         Scm scm = new Scm();
         scm.setConnection( "scm:svn:file://localhost/tmp/repo" );
         scm.setDeveloperConnection( "scm:svn:https://localhost/tmp/repo" );
         project.setScm( scm );
-        releaseConfiguration.setReactorProjects( Collections.singletonList( project ) );
 
-        phase.simulate( releaseConfiguration );
+        phase.simulate( releaseDescriptor, null, Collections.singletonList( project ) );
 
-        assertEquals( "Check URL", "scm:svn:https://localhost/tmp/repo", releaseConfiguration.getUrl() );
+        assertEquals( "Check URL", "scm:svn:https://localhost/tmp/repo", releaseDescriptor.getScmSourceUrl() );
     }
 
     public void testGetInvalidUrl()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         MavenProject project = createProject( "1.0-SNAPSHOT" );
         Scm scm = new Scm();
         scm.setConnection( "scm:cvs:" );
         project.setScm( scm );
-        releaseConfiguration.setReactorProjects( Collections.singletonList( project ) );
 
         try
         {
-            phase.execute( releaseConfiguration );
+            phase.execute( releaseDescriptor, null, Collections.singletonList( project ) );
 
             fail( "Should have thrown an exception" );
         }
@@ -146,16 +140,15 @@ public class CheckPomPhaseTest
     public void testGetInvalidProvider()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         MavenProject project = createProject( "1.0-SNAPSHOT" );
         Scm scm = new Scm();
         scm.setConnection( "scm:foo:" );
         project.setScm( scm );
-        releaseConfiguration.setReactorProjects( Collections.singletonList( project ) );
 
         try
         {
-            phase.execute( releaseConfiguration );
+            phase.execute( releaseDescriptor, null, Collections.singletonList( project ) );
 
             fail( "Should have thrown an exception" );
         }
@@ -168,12 +161,11 @@ public class CheckPomPhaseTest
     public void testMissingUrl()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
-        releaseConfiguration.setReactorProjects( Collections.singletonList( createProject( "1.0-SNAPSHOT" ) ) );
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
 
         try
         {
-            phase.execute( releaseConfiguration );
+            phase.execute( releaseDescriptor, null, Collections.singletonList( createProject( "1.0-SNAPSHOT" ) ) );
 
             fail( "Should have failed to execute" );
         }
@@ -184,7 +176,7 @@ public class CheckPomPhaseTest
 
         try
         {
-            phase.simulate( releaseConfiguration );
+            phase.simulate( releaseDescriptor, null, Collections.singletonList( createProject( "1.0-SNAPSHOT" ) ) );
 
             fail( "Should have failed to simulate" );
         }
@@ -197,13 +189,12 @@ public class CheckPomPhaseTest
     public void testReleasingNonSnapshot()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
-        releaseConfiguration.setUrl( "scm-url" );
-        releaseConfiguration.setReactorProjects( Collections.singletonList( createProject( "1.0" ) ) );
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setScmSourceUrl( "scm-url" );
 
         try
         {
-            phase.execute( releaseConfiguration );
+            phase.execute( releaseDescriptor, null, Collections.singletonList( createProject( "1.0" ) ) );
 
             fail( "Should have failed to execute" );
         }
@@ -214,7 +205,7 @@ public class CheckPomPhaseTest
 
         try
         {
-            phase.simulate( releaseConfiguration );
+            phase.simulate( releaseDescriptor, null, Collections.singletonList( createProject( "1.0" ) ) );
 
             fail( "Should have failed to simulate" );
         }

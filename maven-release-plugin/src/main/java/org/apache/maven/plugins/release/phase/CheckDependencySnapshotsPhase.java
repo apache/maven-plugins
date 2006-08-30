@@ -20,8 +20,9 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.ReleaseFailureException;
-import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
 
@@ -49,23 +50,22 @@ public class CheckDependencySnapshotsPhase
      */
     private Prompter prompter;
 
-    public void execute( ReleaseConfiguration releaseConfiguration )
+    public void execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         getLogger().info( "Checking dependencies and plugins for snapshots ..." );
 
-        List reactorProjects = releaseConfiguration.getReactorProjects();
-        Map originalVersions = releaseConfiguration.getOriginalVersions();
+        Map originalVersions = releaseDescriptor.getOriginalVersions( reactorProjects );
 
         for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
         {
             MavenProject project = (MavenProject) i.next();
 
-            checkProject( project, originalVersions, releaseConfiguration );
+            checkProject( project, originalVersions, releaseDescriptor );
         }
     }
 
-    private void checkProject( MavenProject project, Map originalVersions, ReleaseConfiguration releaseConfiguration )
+    private void checkProject( MavenProject project, Map originalVersions, ReleaseDescriptor releaseDescriptor )
         throws ReleaseFailureException, ReleaseExecutionException
     {
         Set snapshotDependencies = new HashSet();
@@ -101,7 +101,7 @@ public class CheckDependencySnapshotsPhase
                 {
                     // It's a snapshot of the release plugin. Maybe just testing - ask
                     // By default, we fail as for any ohter plugin
-                    if ( releaseConfiguration.isInteractive() )
+                    if ( releaseDescriptor.isInteractive() )
                     {
                         try
                         {
@@ -183,11 +183,11 @@ public class CheckDependencySnapshotsPhase
             !artifact.getBaseVersion().equals( originalVersions.get( versionlessArtifactKey ) );
     }
 
-    public void simulate( ReleaseConfiguration releaseConfiguration )
+    public void simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         // It makes no modifications, so simulate is the same as execute
-        execute( releaseConfiguration );
+        execute( releaseDescriptor, settings, reactorProjects );
     }
 
     public void setPrompter( Prompter prompter )

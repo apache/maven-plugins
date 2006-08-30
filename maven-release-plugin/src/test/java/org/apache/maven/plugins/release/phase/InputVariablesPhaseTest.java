@@ -18,7 +18,7 @@ package org.apache.maven.plugins.release.phase;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.plugins.release.ReleaseExecutionException;
-import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.components.interactivity.Prompter;
@@ -62,26 +62,24 @@ public class InputVariablesPhaseTest
 
         List reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
-        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
-        releaseConfiguration.setReactorProjects( reactorProjects );
-        releaseConfiguration.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
 
-        phase.execute( releaseConfiguration );
+        phase.execute( releaseDescriptor, null, reactorProjects );
 
-        assertEquals( "Check tag", "tag-value", releaseConfiguration.getReleaseLabel() );
+        assertEquals( "Check tag", "tag-value", releaseDescriptor.getScmReleaseLabel() );
 
-        releaseConfiguration = new ReleaseConfiguration();
-        releaseConfiguration.setReactorProjects( reactorProjects );
-        releaseConfiguration.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
 
         mockPrompter.reset();
         mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).with( new IsAnything(),
                                                                                  new IsEqual( "artifactId-1.0" ) ).will(
             new ReturnStub( "simulated-tag-value" ) );
 
-        phase.simulate( releaseConfiguration );
+        phase.simulate( releaseDescriptor, null, reactorProjects );
 
-        assertEquals( "Check tag", "simulated-tag-value", releaseConfiguration.getReleaseLabel() );
+        assertEquals( "Check tag", "simulated-tag-value", releaseDescriptor.getScmReleaseLabel() );
     }
 
     public void testUnmappedVersion()
@@ -89,12 +87,11 @@ public class InputVariablesPhaseTest
     {
         List reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
-        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
-        releaseConfiguration.setReactorProjects( reactorProjects );
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
 
         try
         {
-            phase.execute( releaseConfiguration );
+            phase.execute( releaseDescriptor, null, reactorProjects );
 
             fail( "Expected an exception" );
         }
@@ -103,12 +100,11 @@ public class InputVariablesPhaseTest
             assertNull( "check no cause", e.getCause() );
         }
 
-        releaseConfiguration = new ReleaseConfiguration();
-        releaseConfiguration.setReactorProjects( reactorProjects );
+        releaseDescriptor = new ReleaseDescriptor();
 
         try
         {
-            phase.simulate( releaseConfiguration );
+            phase.simulate( releaseDescriptor, null, reactorProjects );
 
             fail( "Expected an exception" );
         }
@@ -127,26 +123,24 @@ public class InputVariablesPhaseTest
 
         List reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
-        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
-        releaseConfiguration.setReactorProjects( reactorProjects );
-        releaseConfiguration.setInteractive( false );
-        releaseConfiguration.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setInteractive( false );
+        releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
 
-        phase.execute( releaseConfiguration );
+        phase.execute( releaseDescriptor, null, reactorProjects );
 
-        assertEquals( "Check tag", "artifactId-1.0", releaseConfiguration.getReleaseLabel() );
+        assertEquals( "Check tag", "artifactId-1.0", releaseDescriptor.getScmReleaseLabel() );
 
         mockPrompter.reset();
         mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
 
-        releaseConfiguration = new ReleaseConfiguration();
-        releaseConfiguration.setReactorProjects( reactorProjects );
-        releaseConfiguration.setInteractive( false );
-        releaseConfiguration.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setInteractive( false );
+        releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
 
-        phase.simulate( releaseConfiguration );
+        phase.simulate( releaseDescriptor, null, reactorProjects );
 
-        assertEquals( "Check tag", "artifactId-1.0", releaseConfiguration.getReleaseLabel() );
+        assertEquals( "Check tag", "artifactId-1.0", releaseDescriptor.getScmReleaseLabel() );
     }
 
     public void testInputVariablesNonInteractiveConfigured()
@@ -158,26 +152,24 @@ public class InputVariablesPhaseTest
 
         List reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
-        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
-        releaseConfiguration.setReactorProjects( reactorProjects );
-        releaseConfiguration.setInteractive( false );
-        releaseConfiguration.setReleaseLabel( "tag-value" );
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setInteractive( false );
+        releaseDescriptor.setScmReleaseLabel( "tag-value" );
 
-        phase.execute( releaseConfiguration );
+        phase.execute( releaseDescriptor, null, reactorProjects );
 
-        assertEquals( "Check tag", "tag-value", releaseConfiguration.getReleaseLabel() );
+        assertEquals( "Check tag", "tag-value", releaseDescriptor.getScmReleaseLabel() );
 
         mockPrompter.reset();
         mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
 
-        releaseConfiguration = new ReleaseConfiguration();
-        releaseConfiguration.setReactorProjects( reactorProjects );
-        releaseConfiguration.setInteractive( false );
-        releaseConfiguration.setReleaseLabel( "simulated-tag-value" );
+        releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setInteractive( false );
+        releaseDescriptor.setScmReleaseLabel( "simulated-tag-value" );
 
-        phase.simulate( releaseConfiguration );
+        phase.simulate( releaseDescriptor, null, reactorProjects );
 
-        assertEquals( "Check tag", "simulated-tag-value", releaseConfiguration.getReleaseLabel() );
+        assertEquals( "Check tag", "simulated-tag-value", releaseDescriptor.getScmReleaseLabel() );
     }
 
     public void testInputVariablesInteractiveConfigured()
@@ -189,24 +181,22 @@ public class InputVariablesPhaseTest
 
         List reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
-        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
-        releaseConfiguration.setReactorProjects( reactorProjects );
-        releaseConfiguration.setReleaseLabel( "tag-value" );
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setScmReleaseLabel( "tag-value" );
 
-        phase.execute( releaseConfiguration );
+        phase.execute( releaseDescriptor, null, reactorProjects );
 
-        assertEquals( "Check tag", "tag-value", releaseConfiguration.getReleaseLabel() );
+        assertEquals( "Check tag", "tag-value", releaseDescriptor.getScmReleaseLabel() );
 
         mockPrompter.reset();
         mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
 
-        releaseConfiguration = new ReleaseConfiguration();
-        releaseConfiguration.setReactorProjects( reactorProjects );
-        releaseConfiguration.setReleaseLabel( "simulated-tag-value" );
+        releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setScmReleaseLabel( "simulated-tag-value" );
 
-        phase.simulate( releaseConfiguration );
+        phase.simulate( releaseDescriptor, null, reactorProjects );
 
-        assertEquals( "Check tag", "simulated-tag-value", releaseConfiguration.getReleaseLabel() );
+        assertEquals( "Check tag", "simulated-tag-value", releaseDescriptor.getScmReleaseLabel() );
     }
 
     public void testPrompterException()
@@ -219,13 +209,12 @@ public class InputVariablesPhaseTest
 
         List reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
-        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
-        releaseConfiguration.setReactorProjects( reactorProjects );
-        releaseConfiguration.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
 
         try
         {
-            phase.execute( releaseConfiguration );
+            phase.execute( releaseDescriptor, null, reactorProjects );
 
             fail( "Expected an exception" );
         }
@@ -234,9 +223,8 @@ public class InputVariablesPhaseTest
             assertEquals( "check cause", PrompterException.class, e.getCause().getClass() );
         }
 
-        releaseConfiguration = new ReleaseConfiguration();
-        releaseConfiguration.setReactorProjects( reactorProjects );
-        releaseConfiguration.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
 
         mockPrompter.reset();
         mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).will(
@@ -244,7 +232,7 @@ public class InputVariablesPhaseTest
 
         try
         {
-            phase.simulate( releaseConfiguration );
+            phase.simulate( releaseDescriptor, null, reactorProjects );
 
             fail( "Expected an exception" );
         }

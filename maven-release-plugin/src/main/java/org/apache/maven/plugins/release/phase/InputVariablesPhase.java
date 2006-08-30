@@ -18,10 +18,13 @@ package org.apache.maven.plugins.release.phase;
 
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.plugins.release.ReleaseExecutionException;
-import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
+
+import java.util.List;
 
 /**
  * Input any variables that were not yet configured.
@@ -41,26 +44,26 @@ public class InputVariablesPhase
         this.prompter = prompter;
     }
 
-    public void execute( ReleaseConfiguration releaseConfiguration )
+    public void execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException
     {
         // get the root project
-        MavenProject project = (MavenProject) releaseConfiguration.getReactorProjects().get( 0 );
+        MavenProject project = (MavenProject) reactorProjects.get( 0 );
 
-        String tag = releaseConfiguration.getReleaseLabel();
+        String tag = releaseDescriptor.getScmReleaseLabel();
 
         if ( tag == null )
         {
             // Must get default version from mapped versions, as the project will be the incorrect snapshot
             String key = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
-            String releaseVersion = (String) releaseConfiguration.getReleaseVersions().get( key );
+            String releaseVersion = (String) releaseDescriptor.getReleaseVersions().get( key );
             if ( releaseVersion == null )
             {
                 throw new ReleaseExecutionException( "Project tag cannot be selected if version is not yet mapped" );
             }
 
             String defaultTag = project.getArtifactId() + "-" + releaseVersion;
-            if ( releaseConfiguration.isInteractive() )
+            if ( releaseDescriptor.isInteractive() )
             {
                 try
                 {
@@ -77,15 +80,15 @@ public class InputVariablesPhase
             {
                 tag = defaultTag;
             }
-            releaseConfiguration.setReleaseLabel( tag );
+            releaseDescriptor.setScmReleaseLabel( tag );
         }
     }
 
-    public void simulate( ReleaseConfiguration releaseConfiguration )
+    public void simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException
     {
         // It makes no modifications, so simulate is the same as execute
-        execute( releaseConfiguration );
+        execute( releaseDescriptor, settings, reactorProjects );
     }
 
 }

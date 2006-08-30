@@ -18,7 +18,7 @@ package org.apache.maven.plugins.release.phase;
 
 import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.ReleaseFailureException;
-import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.apache.maven.plugins.release.scm.ReleaseScmCommandException;
 import org.apache.maven.plugins.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.plugins.release.scm.ScmRepositoryConfigurator;
@@ -29,6 +29,10 @@ import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
+import org.apache.maven.settings.Settings;
+
+import java.io.File;
+import java.util.List;
 
 /**
  * Tag the SCM repository after committing the release.
@@ -43,18 +47,18 @@ public class ScmTagPhase
      */
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
-    public void execute( ReleaseConfiguration releaseConfiguration )
+    public void execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        validateConfiguration( releaseConfiguration );
+        validateConfiguration( releaseDescriptor );
 
-        getLogger().info( "Tagging release with the label " + releaseConfiguration.getReleaseLabel() + "..." );
+        getLogger().info( "Tagging release with the label " + releaseDescriptor.getScmReleaseLabel() + "..." );
 
         ScmRepository repository;
         ScmProvider provider;
         try
         {
-            repository = scmRepositoryConfigurator.getConfiguredRepository( releaseConfiguration );
+            repository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, settings );
 
             provider = scmRepositoryConfigurator.getRepositoryProvider( repository );
         }
@@ -71,8 +75,8 @@ public class ScmTagPhase
         try
         {
             // TODO: want includes/excludes?
-            ScmFileSet fileSet = new ScmFileSet( releaseConfiguration.getWorkingDirectory() );
-            result = provider.tag( repository, fileSet, releaseConfiguration.getReleaseLabel() );
+            ScmFileSet fileSet = new ScmFileSet( new File( releaseDescriptor.getWorkingDirectory() ) );
+            result = provider.tag( repository, fileSet, releaseDescriptor.getScmReleaseLabel() );
         }
         catch ( ScmException e )
         {
@@ -85,19 +89,19 @@ public class ScmTagPhase
         }
     }
 
-    public void simulate( ReleaseConfiguration releaseConfiguration )
+    public void simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        validateConfiguration( releaseConfiguration );
+        validateConfiguration( releaseDescriptor );
 
-        getLogger().info( "Full run would be tagging " + releaseConfiguration.getWorkingDirectory() + " with label: '" +
-            releaseConfiguration.getReleaseLabel() + "'" );
+        getLogger().info( "Full run would be tagging " + releaseDescriptor.getWorkingDirectory() + " with label: '" +
+            releaseDescriptor.getScmReleaseLabel() + "'" );
     }
 
-    private static void validateConfiguration( ReleaseConfiguration releaseConfiguration )
+    private static void validateConfiguration( ReleaseDescriptor releaseDescriptor )
         throws ReleaseFailureException
     {
-        if ( releaseConfiguration.getReleaseLabel() == null )
+        if ( releaseDescriptor.getScmReleaseLabel() == null )
         {
             throw new ReleaseFailureException( "A release label is required for committing" );
         }

@@ -23,7 +23,7 @@ import org.apache.maven.model.Plugin;
 import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.ReleaseFailureException;
-import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.apache.maven.plugins.release.scm.ReleaseScmCommandException;
 import org.apache.maven.plugins.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.plugins.release.scm.ScmRepositoryConfigurator;
@@ -35,6 +35,7 @@ import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
+import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
@@ -84,26 +85,28 @@ public abstract class AbstractRewritePomsPhase
      */
     private String pomSuffix;
 
-    public void execute( ReleaseConfiguration releaseConfiguration )
+    public void execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        transform( releaseConfiguration, false );
+        transform( releaseDescriptor, settings, reactorProjects, false );
     }
 
-    private void transform( ReleaseConfiguration releaseConfiguration, boolean simulate )
+    private void transform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
+                            boolean simulate )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        for ( Iterator it = releaseConfiguration.getReactorProjects().iterator(); it.hasNext(); )
+        for ( Iterator it = reactorProjects.iterator(); it.hasNext(); )
         {
             MavenProject project = (MavenProject) it.next();
 
             getLogger().info( "Transforming '" + project.getName() + "'..." );
 
-            transformProject( project, releaseConfiguration, simulate );
+            transformProject( project, releaseDescriptor, settings, reactorProjects, simulate );
         }
     }
 
-    private void transformProject( MavenProject project, ReleaseConfiguration releaseConfiguration, boolean simulate )
+    private void transformProject( MavenProject project, ReleaseDescriptor releaseDescriptor, Settings settings,
+                                   List reactorProjects, boolean simulate )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         Document document;
@@ -149,7 +152,7 @@ public abstract class AbstractRewritePomsPhase
         ScmProvider provider;
         try
         {
-            scmRepository = scmRepositoryConfigurator.getConfiguredRepository( releaseConfiguration );
+            scmRepository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, settings );
 
             provider = scmRepositoryConfigurator.getRepositoryProvider( scmRepository );
         }
@@ -162,17 +165,17 @@ public abstract class AbstractRewritePomsPhase
             throw new ReleaseExecutionException( "Unable to configure SCM repository: " + e.getMessage(), e );
         }
 
-        transformDocument( project, document.getRootElement(), releaseConfiguration, scmRepository );
+        transformDocument( project, document.getRootElement(), releaseDescriptor, reactorProjects, scmRepository );
 
         if ( simulate )
         {
             File outputFile =
                 new File( project.getFile().getParentFile(), project.getFile().getName() + "." + pomSuffix );
-            writePom( outputFile, document, releaseConfiguration, project.getModelVersion(), intro, outtro );
+            writePom( outputFile, document, releaseDescriptor, project.getModelVersion(), intro, outtro );
         }
         else
         {
-            writePom( project.getFile(), document, releaseConfiguration, project.getModelVersion(), intro, outtro,
+            writePom( project.getFile(), document, releaseDescriptor, project.getModelVersion(), intro, outtro,
                       scmRepository, provider );
         }
     }
@@ -186,13 +189,13 @@ public abstract class AbstractRewritePomsPhase
         }
     }
 
-    private void transformDocument( MavenProject project, Element rootElement,
-                                    ReleaseConfiguration releaseConfiguration, ScmRepository scmRepository )
+    private void transformDocument( MavenProject project, Element rootElement, ReleaseDescriptor releaseDescriptor,
+                                    List reactorProjects, ScmRepository scmRepository )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         Namespace namespace = rootElement.getNamespace();
-        Map mappedVersions = getNextVersionMap( releaseConfiguration );
-        Map originalVersions = getOriginalVersionMap( releaseConfiguration );
+        Map mappedVersions = getNextVersionMap( releaseDescriptor );
+        Map originalVersions = getOriginalVersionMap( releaseDescriptor, reactorProjects );
 
         String parentVersion = rewriteParent( project, rootElement, namespace, mappedVersions, originalVersions );
 
@@ -242,7 +245,7 @@ public abstract class AbstractRewritePomsPhase
             }
         }
 
-        transformScm( project, rootElement, namespace, releaseConfiguration, projectId, scmRepository );
+        transformScm( project, rootElement, namespace, releaseDescriptor, projectId, scmRepository );
     }
 
     private void rewriteVersion( Element rootElement, Namespace namespace, Map mappedVersions, String projectId,
@@ -437,17 +440,16 @@ public abstract class AbstractRewritePomsPhase
         }
     }
 
-    private void writePom( File pomFile, Document document, ReleaseConfiguration releaseConfiguration,
-                           String modelVersion, String intro, String outtro, ScmRepository repository,
-                           ScmProvider provider )
+    private void writePom( File pomFile, Document document, ReleaseDescriptor releaseDescriptor, String modelVersion,
+                           String intro, String outtro, ScmRepository repository, ScmProvider provider )
         throws ReleaseExecutionException, ReleaseScmCommandException
     {
         try
         {
-            if ( releaseConfiguration.isUseEditMode() || provider.requiresEditMode() )
+            if ( releaseDescriptor.isScmUseEditMode() || provider.requiresEditMode() )
             {
-                EditScmResult result =
-                    provider.edit( repository, new ScmFileSet( releaseConfiguration.getWorkingDirectory(), pomFile ) );
+                EditScmResult result = provider.edit( repository, new ScmFileSet(
+                    new File( releaseDescriptor.getWorkingDirectory() ), pomFile ) );
 
                 if ( !result.isSuccess() )
                 {
@@ -460,16 +462,16 @@ public abstract class AbstractRewritePomsPhase
             throw new ReleaseExecutionException( "An error occurred enabling edit mode: " + e.getMessage(), e );
         }
 
-        writePom( pomFile, document, releaseConfiguration, modelVersion, intro, outtro );
+        writePom( pomFile, document, releaseDescriptor, modelVersion, intro, outtro );
     }
 
-    private void writePom( File pomFile, Document document, ReleaseConfiguration releaseConfiguration,
-                           String modelVersion, String intro, String outtro )
+    private void writePom( File pomFile, Document document, ReleaseDescriptor releaseDescriptor, String modelVersion,
+                           String intro, String outtro )
         throws ReleaseExecutionException
     {
         Element rootElement = document.getRootElement();
 
-        if ( releaseConfiguration.isAddSchema() )
+        if ( releaseDescriptor.isAddSchema() )
         {
             Namespace pomNamespace = Namespace.getNamespace( "", "http://maven.apache.org/POM/" + modelVersion );
             rootElement.setNamespace( pomNamespace );
@@ -523,19 +525,19 @@ public abstract class AbstractRewritePomsPhase
         }
     }
 
-    public void simulate( ReleaseConfiguration releaseConfiguration )
+    public void simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        transform( releaseConfiguration, true );
+        transform( releaseDescriptor, settings, reactorProjects, true );
     }
 
-    public void clean( ReleaseConfiguration config )
+    public void clean( List reactorProjects )
     {
-        super.clean( config );
+        super.clean( reactorProjects );
 
-        if ( config.getReactorProjects() != null )
+        if ( reactorProjects != null )
         {
-            for ( Iterator i = config.getReactorProjects().iterator(); i.hasNext(); )
+            for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
             {
                 MavenProject project = (MavenProject) i.next();
 
@@ -549,12 +551,12 @@ public abstract class AbstractRewritePomsPhase
         }
     }
 
-    protected abstract Map getOriginalVersionMap( ReleaseConfiguration releaseConfiguration );
+    protected abstract Map getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List reactorProjects );
 
-    protected abstract Map getNextVersionMap( ReleaseConfiguration releaseConfiguration );
+    protected abstract Map getNextVersionMap( ReleaseDescriptor releaseDescriptor );
 
     protected abstract void transformScm( MavenProject project, Element rootElement, Namespace namespace,
-                                          ReleaseConfiguration releaseConfiguration, String projectId,
+                                          ReleaseDescriptor releaseDescriptor, String projectId,
                                           ScmRepository scmRepository )
         throws ReleaseExecutionException;
 

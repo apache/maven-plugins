@@ -18,13 +18,14 @@ package org.apache.maven.plugins.release.phase;
 
 import org.apache.maven.model.Scm;
 import org.apache.maven.plugins.release.ReleaseExecutionException;
-import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.apache.maven.plugins.release.scm.ScmTranslator;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,8 +42,7 @@ public class RewritePomsForDevelopmentPhase
     private Map scmTranslators;
 
     protected void transformScm( MavenProject project, Element rootElement, Namespace namespace,
-                                 ReleaseConfiguration releaseConfiguration, String projectId,
-                                 ScmRepository scmRepository )
+                                 ReleaseDescriptor releaseDescriptor, String projectId, ScmRepository scmRepository )
         throws ReleaseExecutionException
     {
         // If SCM is null in original model, it is inherited, no mods needed
@@ -51,7 +51,7 @@ public class RewritePomsForDevelopmentPhase
             Element scmRoot = rootElement.getChild( "scm", namespace );
             if ( scmRoot != null )
             {
-                Map originalScmInfo = releaseConfiguration.getOriginalScmInfo();
+                Map originalScmInfo = releaseDescriptor.getOriginalScmInfo();
                 // check containsKey, not == null, as we store null as a value
                 if ( !originalScmInfo.containsKey( projectId ) )
                 {
@@ -85,13 +85,13 @@ public class RewritePomsForDevelopmentPhase
         }
     }
 
-    protected Map getOriginalVersionMap( ReleaseConfiguration releaseConfiguration )
+    protected Map getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List reactorProjects )
     {
-        return releaseConfiguration.getReleaseVersions();
+        return releaseDescriptor.getReleaseVersions();
     }
 
-    protected Map getNextVersionMap( ReleaseConfiguration releaseConfiguration )
+    protected Map getNextVersionMap( ReleaseDescriptor releaseDescriptor )
     {
-        return releaseConfiguration.getDevelopmentVersions();
+        return releaseDescriptor.getDevelopmentVersions();
     }
 }

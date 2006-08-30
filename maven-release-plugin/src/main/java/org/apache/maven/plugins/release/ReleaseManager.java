@@ -16,9 +16,11 @@ package org.apache.maven.plugins.release;
  * limitations under the License.
  */
 
-import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.plugins.release.config.ReleaseDescriptor;
+import org.apache.maven.settings.Settings;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * Release management classes.
@@ -35,43 +37,50 @@ public interface ReleaseManager
     /**
      * Prepare a release.
      *
-     * @param releaseConfiguration the configuration to pass to the preparation steps
+     * @param releaseDescriptor the configuration to pass to the preparation steps
+     * @param settings          the settings.xml configuration
+     * @param reactorProjects   the reactor projects
      * @throws ReleaseExecutionException if there is a problem performing the release
      * @throws ReleaseFailureException   if there is a problem performing the release
      */
-    void prepare( ReleaseConfiguration releaseConfiguration )
+    void prepare( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
      * Prepare a release.
      *
-     * @param releaseConfiguration the configuration to pass to the preparation steps
-     * @param resume               resume a previous release, if the properties file exists
-     * @param dryRun               do not commit any changes to the file system or SCM
+     * @param releaseDescriptor the configuration to pass to the preparation steps
+     * @param settings          the settings.xml configuration
+     * @param reactorProjects   the reactor projects
+     * @param resume            resume a previous release, if the properties file exists
+     * @param dryRun            do not commit any changes to the file system or SCM
      * @throws ReleaseExecutionException if there is a problem performing the release
      * @throws ReleaseFailureException   if there is a problem performing the release
      */
-    void prepare( ReleaseConfiguration releaseConfiguration, boolean resume, boolean dryRun )
+    void prepare( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects, boolean resume,
+                  boolean dryRun )
         throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
      * Perform a release.
      *
-     * @param releaseConfiguration the configuration to use for release
-     * @param checkoutDirectory    the location to checkout to and build from
-     * @param goals                the goals to execute
-     * @param useReleaseProfile    whether to use the release profile from the super POM or not
+     * @param releaseDescriptor the configuration to use for release
+     * @param settings          the settings.xml configuration
+     * @param checkoutDirectory the location to checkout to and build from
+     * @param goals             the goals to execute
+     * @param useReleaseProfile whether to use the release profile from the super POM or not
      * @throws ReleaseExecutionException if there is a problem performing the release
      * @throws ReleaseFailureException   if there is a problem performing the release
      */
-    void perform( ReleaseConfiguration releaseConfiguration, File checkoutDirectory, String goals,
-                  boolean useReleaseProfile )
+    void perform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects, File checkoutDirectory,
+                  String goals, boolean useReleaseProfile )
         throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
      * Clean a release.
      *
-     * @param releaseConfiguration the configuration to use for release
+     * @param releaseDescriptor the configuration to use for release
+     * @param reactorProjects   the reactor projects
      */
-    void clean( ReleaseConfiguration releaseConfiguration );
+    void clean( ReleaseDescriptor releaseDescriptor, List reactorProjects );
 }

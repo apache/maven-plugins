@@ -18,15 +18,17 @@ package org.apache.maven.plugins.release.phase;
 
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.plugins.release.ReleaseExecutionException;
-import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.apache.maven.plugins.release.versions.DefaultVersionInfo;
 import org.apache.maven.plugins.release.versions.VersionInfo;
 import org.apache.maven.plugins.release.versions.VersionParseException;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
 
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Map projects to their new versions after release / into the next development cycle.
@@ -51,10 +53,10 @@ public class MapVersionsPhase
         this.prompter = prompter;
     }
 
-    public void execute( ReleaseConfiguration releaseConfiguration )
+    public void execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException
     {
-        for ( Iterator i = releaseConfiguration.getReactorProjects().iterator(); i.hasNext(); )
+        for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
         {
             MavenProject project = (MavenProject) i.next();
 
@@ -68,7 +70,7 @@ public class MapVersionsPhase
             catch ( VersionParseException e )
             {
                 String msg = "Error parsing version, cannot determine next version: " + e.getMessage();
-                if ( releaseConfiguration.isInteractive() )
+                if ( releaseDescriptor.isInteractive() )
                 {
                     getLogger().warn( msg );
                     getLogger().debug( e.getMessage(), e );
@@ -90,13 +92,13 @@ public class MapVersionsPhase
                         nextVersion = version.getNextVersion().getSnapshotVersionString();
                     }
 
-                    if ( releaseConfiguration.isInteractive() )
+                    if ( releaseDescriptor.isInteractive() )
                     {
                         nextVersion = prompter.prompt( "What is the new development version for \"" +
                             project.getName() + "\"? (" + projectId + ")", nextVersion );
                     }
 
-                    releaseConfiguration.mapDevelopmentVersion( projectId, nextVersion );
+                    releaseDescriptor.mapDevelopmentVersion( projectId, nextVersion );
                 }
                 else
                 {
@@ -106,14 +108,14 @@ public class MapVersionsPhase
                         nextVersion = version.getReleaseVersionString();
                     }
 
-                    if ( releaseConfiguration.isInteractive() )
+                    if ( releaseDescriptor.isInteractive() )
                     {
                         nextVersion = prompter.prompt(
                             "What is the release version for \"" + project.getName() + "\"? (" + projectId + ")",
                             nextVersion );
                     }
 
-                    releaseConfiguration.mapReleaseVersion( projectId, nextVersion );
+                    releaseDescriptor.mapReleaseVersion( projectId, nextVersion );
                 }
             }
             catch ( PrompterException e )
@@ -123,11 +125,11 @@ public class MapVersionsPhase
         }
     }
 
-    public void simulate( ReleaseConfiguration releaseConfiguration )
+    public void simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException
     {
         // It makes no modifications, so simulate is the same as execute
-        execute( releaseConfiguration );
+        execute( releaseDescriptor, settings, reactorProjects );
     }
 
 }

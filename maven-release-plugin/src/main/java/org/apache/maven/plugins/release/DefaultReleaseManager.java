@@ -16,9 +16,9 @@ package org.apache.maven.plugins.release;
  * limitations under the License.
  */
 
-import org.apache.maven.plugins.release.config.ReleaseConfiguration;
-import org.apache.maven.plugins.release.config.ReleaseConfigurationStore;
-import org.apache.maven.plugins.release.config.ReleaseConfigurationStoreException;
+import org.apache.maven.plugins.release.config.ReleaseDescriptor;
+import org.apache.maven.plugins.release.config.ReleaseDescriptorStore;
+import org.apache.maven.plugins.release.config.ReleaseDescriptorStoreException;
 import org.apache.maven.plugins.release.exec.MavenExecutor;
 import org.apache.maven.plugins.release.exec.MavenExecutorException;
 import org.apache.maven.plugins.release.phase.ReleasePhase;
@@ -32,6 +32,7 @@ import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
+import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
@@ -64,7 +65,7 @@ public class DefaultReleaseManager
     /**
      * The configuration storage.
      */
-    private ReleaseConfigurationStore configStore;
+    private ReleaseDescriptorStore configStore;
 
     /**
      * Tool for configuring SCM repositories from release configuration.
@@ -76,30 +77,31 @@ public class DefaultReleaseManager
      */
     private MavenExecutor mavenExecutor;
 
-    public void prepare( ReleaseConfiguration releaseConfiguration )
+    public void prepare( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        prepare( releaseConfiguration, true, false );
+        prepare( releaseDescriptor, settings, reactorProjects, true, false );
     }
 
-    public void prepare( ReleaseConfiguration releaseConfiguration, boolean resume, boolean dryRun )
+    public void prepare( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects, boolean resume,
+                         boolean dryRun )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        ReleaseConfiguration config;
+        ReleaseDescriptor config;
         if ( resume )
         {
             try
             {
-                config = configStore.read( releaseConfiguration );
+                config = configStore.read( releaseDescriptor );
             }
-            catch ( ReleaseConfigurationStoreException e )
+            catch ( ReleaseDescriptorStoreException e )
             {
                 throw new ReleaseExecutionException( "Error reading stored configuration: " + e.getMessage(), e );
             }
         }
         else
         {
-            config = releaseConfiguration;
+            config = releaseDescriptor;
         }
 
         // Later, it would be a good idea to introduce a proper workflow tool so that the release can be made up of a
@@ -132,11 +134,11 @@ public class DefaultReleaseManager
 
             if ( dryRun )
             {
-                phase.simulate( config );
+                phase.simulate( config, settings, reactorProjects );
             }
             else
             {
-                phase.execute( config );
+                phase.execute( config, settings, reactorProjects );
             }
 
             config.setCompletedPhase( name );
@@ -144,7 +146,7 @@ public class DefaultReleaseManager
             {
                 configStore.write( config );
             }
-            catch ( ReleaseConfigurationStoreException e )
+            catch ( ReleaseDescriptorStoreException e )
             {
                 // TODO: rollback?
                 throw new ReleaseExecutionException( "Error writing release properties after completing phase", e );
@@ -152,18 +154,18 @@ public class DefaultReleaseManager
         }
     }
 
-    public void perform( ReleaseConfiguration releaseConfiguration, File checkoutDirectory, String goals,
-                         boolean useReleaseProfile )
+    public void perform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
+                         File checkoutDirectory, String goals, boolean useReleaseProfile )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         getLogger().info( "Checking out the project to perform the release ..." );
 
-        ReleaseConfiguration config;
+        ReleaseDescriptor config;
         try
         {
-            config = configStore.read( releaseConfiguration );
+            config = configStore.read( releaseDescriptor );
         }
-        catch ( ReleaseConfigurationStoreException e )
+        catch ( ReleaseDescriptorStoreException e )
         {
             throw new ReleaseExecutionException( "Error reading stored configuration: " + e.getMessage(), e );
         }
@@ -175,7 +177,7 @@ public class DefaultReleaseManager
                 "Cannot perform release - the preparation step was stopped mid-way. Please re-run release:prepare to continue, or perform the release from an SCM tag." );
         }
 
-        if ( config.getUrl() == null )
+        if ( config.getScmSourceUrl() == null )
         {
             throw new ReleaseFailureException( "No SCM URL was provided to perform the release from" );
         }
@@ -184,7 +186,7 @@ public class DefaultReleaseManager
         ScmProvider provider;
         try
         {
-            repository = scmRepositoryConfigurator.getConfiguredRepository( config );
+            repository = scmRepositoryConfigurator.getConfiguredRepository( config, settings );
 
             provider = scmRepositoryConfigurator.getRepositoryProvider( repository );
         }
@@ -215,7 +217,7 @@ public class DefaultReleaseManager
         CheckOutScmResult result;
         try
         {
-            result = provider.checkOut( repository, new ScmFileSet( checkoutDirectory ), config.getReleaseLabel() );
+            result = provider.checkOut( repository, new ScmFileSet( checkoutDirectory ), config.getScmReleaseLabel() );
         }
         catch ( ScmException e )
         {
@@ -250,14 +252,14 @@ public class DefaultReleaseManager
             throw new ReleaseExecutionException( "Error executing Maven: " + e.getMessage(), e );
         }
 
-        clean( config );
+        clean( config, reactorProjects );
     }
 
-    public void clean( ReleaseConfiguration releaseConfiguration )
+    public void clean( ReleaseDescriptor releaseDescriptor, List reactorProjects )
     {
         getLogger().info( "Cleaning up after release..." );
 
-        configStore.delete( releaseConfiguration );
+        configStore.delete( releaseDescriptor );
 
         for ( Iterator i = phases.iterator(); i.hasNext(); )
         {
@@ -265,11 +267,11 @@ public class DefaultReleaseManager
 
             ReleasePhase phase = (ReleasePhase) releasePhases.get( name );
 
-            phase.clean( releaseConfiguration );
+            phase.clean( reactorProjects );
         }
     }
 
-    void setConfigStore( ReleaseConfigurationStore configStore )
+    void setConfigStore( ReleaseDescriptorStore configStore )
     {
         this.configStore = configStore;
     }

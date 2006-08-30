@@ -21,31 +21,31 @@ package org.apache.maven.plugins.release.config;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class ReleaseConfigurationStoreStub
-    implements ReleaseConfigurationStore
+public class ReleaseDescriptorStoreStub
+    implements ReleaseDescriptorStore
 {
     /**
      * The release configuration to use.
      */
-    private ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
+    private ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
 
-    public ReleaseConfiguration read( ReleaseConfiguration mergeConfiguration )
+    public ReleaseDescriptor read( ReleaseDescriptor mergeDescriptor )
     {
-        releaseConfiguration.merge( mergeConfiguration );
-        return releaseConfiguration;
+        ReleaseUtils.merge( releaseDescriptor, mergeDescriptor );
+        return releaseDescriptor;
     }
 
-    public void write( ReleaseConfiguration config )
+    public void write( ReleaseDescriptor config )
     {
-        this.releaseConfiguration = config;
+        this.releaseDescriptor = config;
     }
 
-    public void delete( ReleaseConfiguration config )
+    public void delete( ReleaseDescriptor config )
     {
     }
 
-    public ReleaseConfiguration getReleaseConfiguration()
+    public ReleaseDescriptor getReleaseConfiguration()
     {
-        return releaseConfiguration;
+        return releaseDescriptor;
     }
 }
