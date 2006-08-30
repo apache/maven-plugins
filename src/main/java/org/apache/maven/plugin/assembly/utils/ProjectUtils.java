@@ -5,6 +5,7 @@ import org.codehaus.plexus.logging.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -17,9 +18,12 @@ public final class ProjectUtils
     {
     }
 
-    public static Set getProjectModules( MavenProject project, List reactorProjects, Logger logger )
+    public static Set getProjectModules( MavenProject project, List reactorProjects, boolean includeSubModules,
+                                         Logger logger )
         throws IOException
     {
+        Set singleParentSet = Collections.singleton( project );
+        
         Set moduleCandidates = new HashSet( reactorProjects );
 
         Set modules = new HashSet();
@@ -40,26 +44,36 @@ public final class ProjectUtils
 
             for ( Iterator candidateIterator = moduleCandidates.iterator(); candidateIterator.hasNext(); )
             {
-                MavenProject moduleCandidate = (MavenProject) candidateIterator.next();
+                MavenProject moduleCandidate = ( MavenProject ) candidateIterator.next();
 
                 if ( moduleCandidate.getFile() == null )
                 {
                     logger.warn( "Cannot compute whether " + moduleCandidate.getId() + " is a module of: "
-                        + project.getId() + "; it does not have an associated POM file on the local filesystem." );
+                                    + project.getId()
+                                    + "; it does not have an associated POM file on the local filesystem." );
                     continue;
                 }
 
-                Set currentPotentialParents = new HashSet( modules );
-                
+                Set currentPotentialParents;
+                if ( includeSubModules )
+                {
+                    currentPotentialParents = new HashSet( modules );
+                }
+                else
+                {
+                    currentPotentialParents = singleParentSet;
+                }
+
                 for ( Iterator parentIterator = currentPotentialParents.iterator(); parentIterator.hasNext(); )
                 {
-                    MavenProject potentialParent = (MavenProject) parentIterator.next();
+                    MavenProject potentialParent = ( MavenProject ) parentIterator.next();
 
                     if ( potentialParent.getFile() == null )
                     {
                         logger.warn( "Cannot use: " + moduleCandidate.getId()
-                            + " as a potential module-parent while computing the module set for: " + project.getId()
-                            + "; it does not have an associated POM file on the local filesystem." );
+                                        + " as a potential module-parent while computing the module set for: "
+                                        + project.getId()
+                                        + "; it does not have an associated POM file on the local filesystem." );
                         continue;
                     }
 
@@ -82,7 +96,8 @@ public final class ProjectUtils
                     }
                 }
             }
-        } while ( changed != 0 );
+        }
+        while ( changed != 0 );
 
         // remove the master project from the modules set, now that we're done
         // using it as a set of potential module
@@ -99,19 +114,19 @@ public final class ProjectUtils
         File basedir = mainProject.getBasedir();
 
         File moduleFile = moduleProject.getFile().getCanonicalFile();
-        
+
         File moduleBasedir = moduleProject.getBasedir();
-        
+
         if ( moduleBasedir == null )
         {
             moduleBasedir = new File( "." );
         }
-        
+
         moduleBasedir = moduleBasedir.getCanonicalFile();
 
         for ( Iterator it = modules.iterator(); it.hasNext(); )
         {
-            String moduleSubpath = (String) it.next();
+            String moduleSubpath = ( String ) it.next();
 
             File moduleDir = new File( basedir, moduleSubpath ).getCanonicalFile();
 

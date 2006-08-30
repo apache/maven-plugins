@@ -1,10 +1,13 @@
 package org.apache.maven.plugin.assembly.archive.task;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
-import org.apache.maven.plugin.assembly.filter.AssemblyScopeArtifactFilter;
+import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.apache.maven.plugin.assembly.utils.FilterUtils;
@@ -12,6 +15,7 @@ import org.apache.maven.plugins.assembly.model.DependencySet;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.logging.Logger;
@@ -19,7 +23,6 @@ import org.codehaus.plexus.logging.Logger;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -53,12 +56,15 @@ public class AddDependencySetsTask
 
     private String defaultOutputFileNameMapping;
 
+    private final DependencyResolver dependencyResolver;
+
     public AddDependencySetsTask( List dependencySets, MavenProject project, MavenProjectBuilder projectBuilder,
-                                  Logger logger )
+                                  DependencyResolver dependencyResolver, Logger logger )
     {
         this.dependencySets = dependencySets;
         this.project = project;
         this.projectBuilder = projectBuilder;
+        this.dependencyResolver = dependencyResolver;
         this.logger = logger;
     }
 
@@ -69,6 +75,12 @@ public class AddDependencySetsTask
         {
             logger.debug( "No dependency sets specified." );
             return;
+        }
+        
+        List deps = project.getDependencies();
+        if ( deps == null || deps.isEmpty() )
+        {
+            logger.debug( "Project " + project.getId() + " has no dependencies. Skipping dependency set addition." );
         }
 
         for ( Iterator i = dependencySets.iterator(); i.hasNext(); )
@@ -85,7 +97,7 @@ public class AddDependencySetsTask
     {
         logger.info( "Processing DependencySet" );
 
-        Set dependencyArtifacts = getDependencyArtifacts( project, dependencySet );
+        Set dependencyArtifacts = resolveDependencyArtifacts( dependencySet, configSource );
 
         for ( Iterator j = dependencyArtifacts.iterator(); j.hasNext(); )
         {
@@ -125,7 +137,40 @@ public class AddDependencySetsTask
         }
     }
 
-    private void addNonArchiveDependency( Artifact depArtifact, MavenProject depProject, DependencySet dependencySet,
+    protected Set resolveDependencyArtifacts( DependencySet dependencySet, AssemblerConfigurationSource configSource )
+        throws ArchiveCreationException
+    {
+        ArtifactRepository localRepository = configSource.getLocalRepository();
+
+        List additionalRemoteRepositories = configSource.getRemoteRepositories();
+
+        Set dependencyArtifacts;
+        try
+        {
+            dependencyArtifacts =
+                dependencyResolver.resolveDependencies( project, dependencySet.getScope(), localRepository,
+                                                        additionalRemoteRepositories );
+        }
+        catch ( ArtifactResolutionException e )
+        {
+            throw new ArchiveCreationException( "Failed to resolve dependencies for project: " + project.getId(), e );
+        }
+        catch ( ArtifactNotFoundException e )
+        {
+            throw new ArchiveCreationException( "Failed to resolve dependencies for project: " + project.getId(), e );
+        }
+        catch ( InvalidDependencyVersionException e )
+        {
+            throw new ArchiveCreationException( "Failed to resolve dependencies for project: " + project.getId(), e );
+        }
+
+        FilterUtils.filterArtifacts( dependencyArtifacts, dependencySet.getIncludes(), dependencySet.getExcludes(),
+                                     true, Collections.EMPTY_LIST, logger );
+
+        return dependencyArtifacts;
+    }
+
+    protected void addNonArchiveDependency( Artifact depArtifact, MavenProject depProject, DependencySet dependencySet,
                                           Archiver archiver )
         throws AssemblyFormattingException, ArchiveCreationException
     {
@@ -159,24 +204,6 @@ public class AddDependencySetsTask
         {
             throw new ArchiveCreationException( "Error adding file to archive: " + e.getMessage(), e );
         }
-    }
-
-    protected Set getDependencyArtifacts( MavenProject project, DependencySet dependencySet )
-    {
-        Set dependencyArtifacts = new HashSet();
-
-        Set projectArtifacts = project.getArtifacts();
-        if ( projectArtifacts != null )
-        {
-            dependencyArtifacts.addAll( projectArtifacts );
-        }
-
-        AssemblyScopeArtifactFilter scopeFilter = new AssemblyScopeArtifactFilter( dependencySet.getScope() );
-
-        FilterUtils.filterArtifacts( dependencyArtifacts, dependencySet.getIncludes(), dependencySet.getExcludes(),
-                                     true, Collections.singletonList( scopeFilter ), logger );
-
-        return dependencyArtifacts;
     }
 
     public boolean isIncludeBaseDirectory()

@@ -1,28 +1,23 @@
 package org.apache.maven.plugin.assembly.archive.phase;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.model.Model;
-import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
-import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForAddArtifactTask;
+import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForAddDependencySetsTask;
+import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.plugins.assembly.model.Assembly;
 import org.apache.maven.plugins.assembly.model.DependencySet;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
-import org.apache.maven.project.ProjectBuildingException;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
-import org.easymock.MockControl;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.List;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 public class DependencySetAssemblyPhaseTest
@@ -51,35 +46,33 @@ public class DependencySetAssemblyPhaseTest
         assembly.setIncludeBaseDirectory( false );
         assembly.addDependencySet( ds );
         
-        MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mockManager );
+        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mockManager );
 
         macTask.expectArtifactGetFile();
         macTask.expectArtifactGetType( "jar" );
-        macTask.expectArtifactGetScope( Artifact.SCOPE_COMPILE );
         macTask.expectGetClassifier( null );
         macTask.expectIsSnapshot( false );
         macTask.expectGetArtifactHandler();
+        
+        macTask.expectCSGetRepositories( null, null );
+        macTask.expectResolveDependencies( Collections.singleton( macTask.artifact ) );
 
         macTask.expectAddFile( "out/artifact", 8 );
 
         project.setArtifacts( Collections.singleton( macTask.artifact ) );
 
-        MockAndControlForConfigSource macCS = new MockAndControlForConfigSource();
-
-        macCS.enableGetProject( project );
-        macCS.enableGetFinalName( "final-name" );
-        macCS.enableGetRepositories( null, Collections.EMPTY_LIST );
+        macTask.expectGetProject( project );
+        macTask.expectCSGetFinalName( "final-name" );
         
         Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
         
-        MockAndControlForProjectBuilder macPB = new MockAndControlForProjectBuilder();
-        
         MavenProject depProject = new MavenProject( new Model() );
-        macPB.expectBuildFromRepository( depProject );
+        
+        macTask.expectBuildFromRepository( depProject );
 
         mockManager.replayAll();
 
-        createPhase( macPB.projectBuilder, logger ).execute( assembly, macTask.archiver, macCS.configSource );
+        createPhase( macTask, logger ).execute( assembly, macTask.archiver, macTask.configSource );
 
         mockManager.verifyAll();
     }
@@ -94,90 +87,33 @@ public class DependencySetAssemblyPhaseTest
         
         Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
         
-        MockAndControlForProjectBuilder macPB = new MockAndControlForProjectBuilder();
-        
-        MockAndControlForConfigSource macCS = new MockAndControlForConfigSource();
-        macCS.enableGetProject( null );
+        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mockManager );
+
+        macTask.expectGetProject( null );
 
         mockManager.replayAll();
 
-        createPhase( macPB.projectBuilder, logger ).execute( assembly, null, macCS.configSource );
+        createPhase( macTask, logger ).execute( assembly, null, macTask.configSource );
 
         mockManager.verifyAll();
     }
 
-    private DependencySetAssemblyPhase createPhase( MavenProjectBuilder projectBuilder, Logger logger )
+    private DependencySetAssemblyPhase createPhase( MockAndControlForAddDependencySetsTask macTask, Logger logger )
     {
-        DependencySetAssemblyPhase phase = new DependencySetAssemblyPhase( projectBuilder );
+        MavenProjectBuilder projectBuilder = null;
+        DependencyResolver dependencyResolver = null;
+        
+        if ( macTask != null )
+        {
+            projectBuilder = macTask.projectBuilder;
+            dependencyResolver = macTask.dependencyResolver;
+        }
+        
+        DependencySetAssemblyPhase phase = new DependencySetAssemblyPhase( projectBuilder, dependencyResolver, logger );
 
         phase.enableLogging( logger );
 
         return phase;
-    }
-
-    private final class MockAndControlForConfigSource
-    {
-        AssemblerConfigurationSource configSource;
-
-        MockControl control;
-
-        MockAndControlForConfigSource()
-        {
-            control = MockControl.createControl( AssemblerConfigurationSource.class );
-            mockManager.add( control );
-
-            configSource = ( AssemblerConfigurationSource ) control.getMock();
-        }
-
-        public void enableGetRepositories( ArtifactRepository localRepo, List remoteRepos )
-        {
-            configSource.getLocalRepository();
-            control.setReturnValue( localRepo, MockControl.ONE_OR_MORE );
-            
-            configSource.getRemoteRepositories();
-            control.setReturnValue( remoteRepos, MockControl.ONE_OR_MORE );
-        }
-        
-        public void enableGetFinalName( String finalName )
-        {
-            configSource.getFinalName();
-            control.setReturnValue( finalName, MockControl.ONE_OR_MORE );
-        }
-
-        void enableGetProject( MavenProject project )
-        {
-            configSource.getProject();
-            control.setReturnValue( project, MockControl.ONE_OR_MORE );
-        }
-    }
-
-    private final class MockAndControlForProjectBuilder
-    {
-        MavenProjectBuilder projectBuilder;
-        
-        MockControl control;
-        
-        public MockAndControlForProjectBuilder()
-        {
-            control = MockControl.createControl( MavenProjectBuilder.class );
-            mockManager.add( control );
-            
-            projectBuilder = ( MavenProjectBuilder ) control.getMock();
-        }
-
-        public void expectBuildFromRepository( MavenProject project )
-        {
-            try
-            {
-                projectBuilder.buildFromRepository( null, null, null );
-                control.setMatcher( MockControl.ALWAYS_MATCHER );
-                control.setReturnValue( project, MockControl.ONE_OR_MORE );
-            }
-            catch ( ProjectBuildingException e )
-            {
-                Assert.fail( "should never happen" );
-            }
-        }
     }
 
 }

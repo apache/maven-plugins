@@ -1,0 +1,9 @@
+import java.io.*;
+
+boolean result = true;
+
+result = result && new File( basedir, "target/parent-1.0-src.dir/sources/child1/pom.xml" ).exists();
+
+result = result && !new File( basedir, "target/parent-1.0-src.dir/sources/child2/pom.xml" ).exists();
+
+return result;

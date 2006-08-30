@@ -24,8 +24,8 @@ import org.apache.maven.project.MavenProject;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
+ * 
  * @goal assembly
- * @requiresDependencyResolution test
  * @execute phase="package"
  * @aggregator
  */

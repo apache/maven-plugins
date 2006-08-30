@@ -1,0 +1,10 @@
+import java.io.*;
+
+boolean result = true;
+
+result = result && new File( basedir, "target/parent-1.0-bin.dir/lib/child1.jar" ).exists();
+result = result && new File( basedir, "target/parent-1.0-bin.dir/lib/child3.jar" ).exists();
+
+result = result && !new File( basedir, "target/parent-1.0-bin.dir/lib/child2.jar" ).exists();
+
+return result;
