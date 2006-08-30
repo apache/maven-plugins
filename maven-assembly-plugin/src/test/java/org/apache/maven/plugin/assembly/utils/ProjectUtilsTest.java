@@ -49,11 +49,12 @@ public class ProjectUtilsTest
         projects.add( master );
         projects.add( module );
 
-        Set result = ProjectUtils.getProjectModules( master, projects, new ConsoleLogger( Logger.LEVEL_INFO, "test" ) );
+        Set result =
+            ProjectUtils.getProjectModules( master, projects, true, new ConsoleLogger( Logger.LEVEL_INFO, "test" ) );
 
         assertNotNull( result );
         assertEquals( 1, result.size() );
-        assertEquals( module.getId(), ((MavenProject) result.iterator().next()).getId() );
+        assertEquals( module.getId(), ( ( MavenProject ) result.iterator().next() ).getId() );
     }
 
     public void testGetProjectModules_ShouldNotIncludeMasterProject()
@@ -61,14 +62,15 @@ public class ProjectUtilsTest
     {
         MavenProject master = createTestProject( "test", "testGroup", "1.0" );
 
-        Set result = ProjectUtils.getProjectModules( master, Collections.singletonList( master ), new ConsoleLogger(
-            Logger.LEVEL_INFO, "test" ) );
+        Set result =
+            ProjectUtils.getProjectModules( master, Collections.singletonList( master ), true,
+                                            new ConsoleLogger( Logger.LEVEL_INFO, "test" ) );
 
         assertNotNull( result );
         assertTrue( result.isEmpty() );
     }
 
-    public void testGetProjectModules_ShouldIncludeInDirectModuleOfMasterProject()
+    public void testGetProjectModules_ShouldIncludeInDirectModuleOfMasterWhenIncludeSubModulesIsTrue()
         throws IOException
     {
         MavenProject master = createTestProject( "test", "testGroup", "1.0" );
@@ -93,7 +95,8 @@ public class ProjectUtilsTest
         projects.add( module );
         projects.add( subModule );
 
-        Set result = ProjectUtils.getProjectModules( master, projects, new ConsoleLogger( Logger.LEVEL_INFO, "test" ) );
+        Set result =
+            ProjectUtils.getProjectModules( master, projects, true, new ConsoleLogger( Logger.LEVEL_INFO, "test" ) );
 
         assertNotNull( result );
         assertEquals( 2, result.size() );
@@ -101,6 +104,44 @@ public class ProjectUtilsTest
         List verify = new ArrayList( projects );
         verify.remove( master );
 
+        verifyProjectsPresent( verify, result );
+    }
+
+    public void testGetProjectModules_ShouldExcludeInDirectModuleOfMasterWhenIncludeSubModulesIsFalse()
+        throws IOException
+    {
+        MavenProject master = createTestProject( "test", "testGroup", "1.0" );
+
+        master.setFile( new File( "project/pom.xml" ) );
+
+        master.getModel().addModule( "module" );
+
+        MavenProject module = createTestProject( "module", "testGroup", "1.0" );
+
+        module.getModel().addModule( "submodule" );
+
+        module.setFile( new File( "project/module/pom.xml" ) );
+
+        MavenProject subModule = createTestProject( "sub-module", "testGroup", "1.0" );
+
+        subModule.setFile( new File( "project/module/submodule/pom.xml" ) );
+
+        List projects = new ArrayList( 3 );
+
+        projects.add( master );
+        projects.add( module );
+        projects.add( subModule );
+
+        Set result =
+            ProjectUtils.getProjectModules( master, projects, false, new ConsoleLogger( Logger.LEVEL_INFO, "test" ) );
+
+        assertNotNull( result );
+        assertEquals( 1, result.size() );
+
+        List verify = new ArrayList( projects );
+        verify.remove( master );
+        verify.remove( subModule );
+        
         verifyProjectsPresent( verify, result );
     }
 
@@ -120,7 +161,8 @@ public class ProjectUtilsTest
         projects.add( master );
         projects.add( other );
 
-        Set result = ProjectUtils.getProjectModules( master, projects, new ConsoleLogger( Logger.LEVEL_INFO, "test" ) );
+        Set result =
+            ProjectUtils.getProjectModules( master, projects, true, new ConsoleLogger( Logger.LEVEL_INFO, "test" ) );
 
         assertNotNull( result );
         assertTrue( result.isEmpty() );
@@ -134,13 +176,13 @@ public class ProjectUtilsTest
 
         for ( Iterator it = result.iterator(); it.hasNext(); )
         {
-            MavenProject project = (MavenProject) it.next();
+            MavenProject project = ( MavenProject ) it.next();
 
             boolean removed = false;
 
             for ( Iterator verifyIterator = verifyCopy.iterator(); verifyIterator.hasNext(); )
             {
-                MavenProject verification = (MavenProject) verifyIterator.next();
+                MavenProject verification = ( MavenProject ) verifyIterator.next();
 
                 if ( verification.getId().equals( project.getId() ) )
                 {
@@ -166,32 +208,32 @@ public class ProjectUtilsTest
         }
     }
 
-//    private void verifyProjectsNotPresent( List verify, Set result )
-//    {
-//        List verifyCopy = new ArrayList( verify );
-//
-//        for ( Iterator it = result.iterator(); it.hasNext(); )
-//        {
-//            MavenProject project = (MavenProject) it.next();
-//
-//            for ( Iterator verifyIterator = verifyCopy.iterator(); verifyIterator.hasNext(); )
-//            {
-//                MavenProject verification = (MavenProject) verifyIterator.next();
-//
-//                if ( verification.getId().equals( project.getId() ) )
-//                {
-//                    verifyIterator.remove();
-//                }
-//            }
-//        }
-//
-//        if ( verifyCopy.size() != verify.size() )
-//        {
-//            List found = new ArrayList( verify );
-//            found.removeAll( verifyCopy );
-//
-//            fail( "Failed to verify absence of: " + found );
-//        }
-//    }
+    // private void verifyProjectsNotPresent( List verify, Set result )
+    // {
+    // List verifyCopy = new ArrayList( verify );
+    //
+    // for ( Iterator it = result.iterator(); it.hasNext(); )
+    // {
+    // MavenProject project = (MavenProject) it.next();
+    //
+    // for ( Iterator verifyIterator = verifyCopy.iterator(); verifyIterator.hasNext(); )
+    // {
+    // MavenProject verification = (MavenProject) verifyIterator.next();
+    //
+    // if ( verification.getId().equals( project.getId() ) )
+    // {
+    // verifyIterator.remove();
+    // }
+    // }
+    // }
+    //
+    // if ( verifyCopy.size() != verify.size() )
+    // {
+    // List found = new ArrayList( verify );
+    // found.removeAll( verifyCopy );
+    //
+    // fail( "Failed to verify absence of: " + found );
+    // }
+    // }
 
 }

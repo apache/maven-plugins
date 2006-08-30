@@ -9,9 +9,11 @@
     <moduleSet>
       <includes>
         <include>org.test:child1</include>
+        <include>org.test:child3</include>
       </includes>
       <binaries>
-        <outputDirectory>modules/${artifactId}</outputDirectory>
+        <outputFileNameMapping>${artifactId}.${extension}</outputFileNameMapping>
+        <outputDirectory>lib</outputDirectory>
         <includeDependencies>true</includeDependencies>
         <unpack>false</unpack>
       </binaries>

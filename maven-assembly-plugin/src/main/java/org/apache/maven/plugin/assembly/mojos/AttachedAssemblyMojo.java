@@ -24,8 +24,8 @@ import org.apache.maven.project.MavenProject;
  *
  * @author <a href="mailto:jerome@coffeebreaks.org">Jerome Lacoste</a>
  * @version $Id$
+ * 
  * @goal attached
- * @requiresDependencyResolution test
  * @aggregator
  */
 public class AttachedAssemblyMojo
