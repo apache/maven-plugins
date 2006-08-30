@@ -10,10 +10,12 @@ import org.apache.maven.plugin.assembly.archive.task.AddDependencySetsTask;
 import org.apache.maven.plugin.assembly.archive.task.AddFileSetsTask;
 import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
+import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.apache.maven.plugin.assembly.utils.FilterUtils;
 import org.apache.maven.plugin.assembly.utils.ProjectUtils;
 import org.apache.maven.plugins.assembly.model.Assembly;
 import org.apache.maven.plugins.assembly.model.DependencySet;
+import org.apache.maven.plugins.assembly.model.FileSet;
 import org.apache.maven.plugins.assembly.model.ModuleBinaries;
 import org.apache.maven.plugins.assembly.model.ModuleSet;
 import org.apache.maven.plugins.assembly.model.ModuleSources;
@@ -226,42 +228,102 @@ public class ModuleSetAssemblyPhase
             return;
         }
 
+        List fileSets = sources.getFileSets();
+
+        if ( fileSets == null || fileSets.isEmpty() )
+        {
+            FileSet fs = new FileSet();
+            fs.setDirectory( "src" );
+
+            fileSets = Collections.singletonList( fs );
+        }
+
         for ( Iterator j = moduleProjects.iterator(); j.hasNext(); )
         {
             MavenProject moduleProject = ( MavenProject ) j.next();
 
             getLogger().info( "Processing sources for module project: " + moduleProject.getId() );
 
-            String sourcePath = sources.getDirectory();
-
-            File moduleBasedir = moduleProject.getBasedir();
-
-            if ( sourcePath != null )
+            for ( Iterator fsIterator = fileSets.iterator(); fsIterator.hasNext(); )
             {
-                File sourceDir = new File( sourcePath );
+                FileSet fileSet = ( FileSet ) fsIterator.next();
 
-                if ( !sourceDir.isAbsolute() )
-                {
-                    sourcePath = new File( moduleBasedir, sourcePath ).getAbsolutePath();
-                    sources.setDirectory( sourcePath );
-                }
+                FileSet moduleFileSet = createFileSet( fileSet, sources, moduleProject );
+
+                AddFileSetsTask task = new AddFileSetsTask( Collections.singletonList( moduleFileSet ) );
+
+                task.setProject( moduleProject );
+                task.setLogger( getLogger() );
+                task.setIncludeBaseDirectory( false );
+
+                task.execute( archiver, configSource );
             }
-            else
-            {
-                sourcePath = moduleBasedir.getAbsolutePath();
-                sources.setDirectory( sourcePath );
-            }
-
-            getLogger().info( "module-sources source directory is: " + sourcePath );
-
-            AddFileSetsTask task = new AddFileSetsTask( Collections.singletonList( sources ) );
-
-            task.setProject( moduleProject );
-            task.setLogger( getLogger() );
-            task.setIncludeBaseDirectory( includeBaseDirectory );
-
-            task.execute( archiver, configSource );
         }
+    }
+
+    protected FileSet createFileSet( FileSet fileSet, ModuleSources sources, MavenProject moduleProject )
+        throws AssemblyFormattingException
+    {
+        FileSet fs = new FileSet();
+
+        String sourcePath = fileSet.getDirectory();
+
+        File moduleBasedir = moduleProject.getBasedir();
+
+        if ( sourcePath != null )
+        {
+            File sourceDir = new File( sourcePath );
+
+            if ( !sourceDir.isAbsolute() )
+            {
+                sourcePath = new File( moduleBasedir, sourcePath ).getAbsolutePath();
+            }
+        }
+        else
+        {
+            sourcePath = moduleBasedir.getAbsolutePath();
+        }
+
+        fs.setDirectory( sourcePath );
+        fs.setDirectoryMode( fileSet.getDirectoryMode() );
+        fs.setExcludes( fileSet.getExcludes() );
+        fs.setFileMode( fileSet.getFileMode() );
+        fs.setIncludes( fileSet.getIncludes() );
+        fs.setLineEnding( fileSet.getLineEnding() );
+
+        String destPathPrefix = "";
+        if ( sources.isIncludeModuleDirectory() )
+        {
+            destPathPrefix =
+                AssemblyFormatUtils.evaluateFileNameMapping( sources.getOutputFileNameMapping(),
+                                                             moduleProject.getArtifact() );
+
+            if ( !destPathPrefix.endsWith( "/" ) )
+            {
+                destPathPrefix += "/";
+            }
+        }
+
+        String destPath = fileSet.getOutputDirectory();
+        
+        if ( destPath == null )
+        {
+            destPath = destPathPrefix;
+        }
+        else
+        {
+            destPath = destPathPrefix + destPath;
+        }
+
+        destPath =
+            AssemblyFormatUtils.getOutputDirectory( destPath, moduleProject, "",
+                                                    true );
+
+        fs.setOutputDirectory( destPath );
+
+        getLogger().info( "module-sources source directory is: " + sourcePath );
+
+        return fs;
     }
 
     protected Set getModuleProjects( ModuleSet moduleSet, AssemblerConfigurationSource configSource,

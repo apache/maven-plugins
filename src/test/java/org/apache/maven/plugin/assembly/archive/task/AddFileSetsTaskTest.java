@@ -1,11 +1,13 @@
 package org.apache.maven.plugin.assembly.archive.task;
 
+import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForAddFileSetsTask;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.plugins.assembly.model.FileSet;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 
@@ -118,13 +120,16 @@ public class AddFileSetsTaskTest
 
         int[] modes = { -1, -1, Integer.parseInt( fs.getDirectoryMode(), 8 ), Integer.parseInt( fs.getFileMode(), 8 ) };
 
-        macTask.expectAdditionOfSingleFileSet( null, null, null, true, modes, 2, true );
-
+        macTask.expectAdditionOfSingleFileSet( null, null, null, true, modes, 2, true, false );
+        
+        MavenProject project = new MavenProject( new Model() );
+        
         mockManager.replayAll();
 
         AddFileSetsTask task = new AddFileSetsTask( Collections.EMPTY_LIST );
 
         task.setLogger( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
+        task.setProject( project );
 
         task.addFileSet( fs, macTask.archiver, macTask.configSource, macTask.archiveBaseDir );
 
@@ -148,13 +153,16 @@ public class AddFileSetsTaskTest
 
         int[] modes = { -1, -1, Integer.parseInt( fs.getDirectoryMode(), 8 ), Integer.parseInt( fs.getFileMode(), 8 ) };
 
-        macTask.expectAdditionOfSingleFileSet( null, null, null, true, modes, 2, true );
+        macTask.expectAdditionOfSingleFileSet( null, null, null, true, modes, 2, true, false );
+        
+        MavenProject project = new MavenProject( new Model() );
 
         mockManager.replayAll();
 
         AddFileSetsTask task = new AddFileSetsTask( Collections.EMPTY_LIST );
 
         task.setLogger( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
+        task.setProject( project );
 
         task.addFileSet( fs, macTask.archiver, macTask.configSource, archiveBaseDir );
 
@@ -172,15 +180,21 @@ public class AddFileSetsTaskTest
 
         File archiveBaseDir = fileManager.createTempDir();
 
-        int[] modes = { -1, -1, Integer.parseInt( fs.getDirectoryMode(), 8 ), Integer.parseInt( fs.getFileMode(), 8 ) };
+        macTask.expectGetFinalName( "finalName" );
+        
+        macTask.archiver.getDefaultDirectoryMode();
+        macTask.archiverCtl.setReturnValue( -1 );
+        macTask.archiver.getDefaultFileMode();
+        macTask.archiverCtl.setReturnValue( -1 );
 
-        macTask.expectAdditionOfSingleFileSet( null, null, null, false, modes, 1, true );
+        MavenProject project = new MavenProject( new Model() );
 
         mockManager.replayAll();
 
         AddFileSetsTask task = new AddFileSetsTask( Collections.EMPTY_LIST );
 
         task.setLogger( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
+        task.setProject( project );
 
         task.addFileSet( fs, macTask.archiver, macTask.configSource, archiveBaseDir );
 
