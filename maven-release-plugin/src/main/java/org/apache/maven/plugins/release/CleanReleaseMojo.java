@@ -18,9 +18,7 @@ package org.apache.maven.plugins.release;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.release.config.ReleaseConfiguration;
-
-import java.util.List;
+import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 
 /**
  * Clean up after a release preparation.
@@ -33,23 +31,11 @@ import java.util.List;
 public class CleanReleaseMojo
     extends AbstractReleaseMojo
 {
-    /**
-     * @parameter expression="${reactorProjects}"
-     * @required
-     * @readonly
-     */
-    private List reactorProjects;
-
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
-        releaseConfiguration.setReactorProjects( reactorProjects );
-        releaseManager.clean( releaseConfiguration );
-    }
-
-    List getReactorProjects()
-    {
-        return reactorProjects;
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setWorkingDirectory( basedir.getAbsolutePath() );
+        releaseManager.clean( releaseDescriptor, reactorProjects );
     }
 }

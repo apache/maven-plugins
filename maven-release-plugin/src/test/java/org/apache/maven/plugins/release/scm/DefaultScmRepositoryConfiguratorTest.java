@@ -16,7 +16,7 @@ package org.apache.maven.plugins.release.scm;
  * limitations under the License.
  */
 
-import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.provider.ScmProviderRepositoryWithHost;
@@ -50,9 +50,9 @@ public class DefaultScmRepositoryConfiguratorTest
     public void testGetConfiguredRepository()
         throws ScmRepositoryException, NoSuchScmProviderException
     {
-        ReleaseConfiguration releaseConfiguration = createReleaseConfiguration();
+        ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
 
-        ScmRepository repository = scmRepositoryConfigurator.getConfiguredRepository( releaseConfiguration );
+        ScmRepository repository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, null );
 
         assertEquals( "check provider", "cvs", repository.getProvider() );
         assertEquals( "check username", "anoncvs", repository.getProviderRepository().getUser() );
@@ -62,9 +62,9 @@ public class DefaultScmRepositoryConfiguratorTest
     public void testGetConfiguredRepositoryWithUsernameAndPassword()
         throws ScmRepositoryException, NoSuchScmProviderException
     {
-        ReleaseConfiguration releaseConfiguration = createReleaseConfiguration( "username", "password" );
+        ReleaseDescriptor releaseDescriptor = createReleaseDescriptor( "username", "password" );
 
-        ScmRepository repository = scmRepositoryConfigurator.getConfiguredRepository( releaseConfiguration );
+        ScmRepository repository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, null );
 
         assertEquals( "check username", "username", repository.getProviderRepository().getUser() );
         assertEquals( "check password", "password", repository.getProviderRepository().getPassword() );
@@ -73,11 +73,11 @@ public class DefaultScmRepositoryConfiguratorTest
     public void testGetConfiguredRepositoryWithTagBase()
         throws ScmRepositoryException, NoSuchScmProviderException
     {
-        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
-        releaseConfiguration.setUrl( "scm:svn:http://localhost/home/svn/module/trunk" );
-        releaseConfiguration.setTagBase( "http://localhost/home/svn/module/tags" );
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setScmSourceUrl( "scm:svn:http://localhost/home/svn/module/trunk" );
+        releaseDescriptor.setScmTagBase( "http://localhost/home/svn/module/tags" );
 
-        ScmRepository repository = scmRepositoryConfigurator.getConfiguredRepository( releaseConfiguration );
+        ScmRepository repository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, null );
 
         SvnScmProviderRepository providerRepository = (SvnScmProviderRepository) repository.getProviderRepository();
         assertEquals( "check tag base", "http://localhost/home/svn/module/tags", providerRepository.getTagBase() );
@@ -95,11 +95,10 @@ public class DefaultScmRepositoryConfiguratorTest
         server.setPassphrase( "settings-passphrase" );
         settings.addServer( server );
 
-        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
-        releaseConfiguration.setUrl( "scm:cvs:pserver:anoncvs@localhost:/home/cvs:module" );
-        releaseConfiguration.setSettings( settings );
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setScmSourceUrl( "scm:cvs:pserver:anoncvs@localhost:/home/cvs:module" );
 
-        ScmRepository repository = scmRepositoryConfigurator.getConfiguredRepository( releaseConfiguration );
+        ScmRepository repository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, settings );
 
         ScmProviderRepositoryWithHost providerRepository =
             (ScmProviderRepositoryWithHost) repository.getProviderRepository();
@@ -114,12 +113,12 @@ public class DefaultScmRepositoryConfiguratorTest
     public void testGetConfiguredRepositoryInvalidScmUrl()
         throws NoSuchScmProviderException
     {
-        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
-        releaseConfiguration.setUrl( "scm-url" );
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setScmSourceUrl( "scm-url" );
 
         try
         {
-            scmRepositoryConfigurator.getConfiguredRepository( releaseConfiguration );
+            scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, null );
 
             fail( "Expected failure to get a repository with an invalid SCM URL" );
         }
@@ -132,12 +131,12 @@ public class DefaultScmRepositoryConfiguratorTest
     public void testGetConfiguredRepositoryInvalidScmProvider()
         throws ScmRepositoryException
     {
-        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
-        releaseConfiguration.setUrl( "scm:url:" );
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setScmSourceUrl( "scm:url:" );
 
         try
         {
-            scmRepositoryConfigurator.getConfiguredRepository( releaseConfiguration );
+            scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, null );
 
             fail( "Expected failure to get a repository with an invalid SCM URL" );
         }
@@ -150,12 +149,12 @@ public class DefaultScmRepositoryConfiguratorTest
     public void testGetConfiguredRepositoryInvalidScmUrlParameters()
         throws NoSuchScmProviderException
     {
-        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
-        releaseConfiguration.setUrl( "scm:cvs:" );
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setScmSourceUrl( "scm:cvs:" );
 
         try
         {
-            scmRepositoryConfigurator.getConfiguredRepository( releaseConfiguration );
+            scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, null );
 
             fail( "Expected failure to get a repository with an invalid SCM URL" );
         }
@@ -168,26 +167,26 @@ public class DefaultScmRepositoryConfiguratorTest
     public void testGetRepositoryProvider()
         throws ScmRepositoryException, NoSuchScmProviderException
     {
-        ReleaseConfiguration releaseConfiguration = createReleaseConfiguration();
+        ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
 
-        ScmRepository repository = scmRepositoryConfigurator.getConfiguredRepository( releaseConfiguration );
+        ScmRepository repository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, null );
 
         ScmProvider provider = scmRepositoryConfigurator.getRepositoryProvider( repository );
         assertEquals( "Check SCM provider", "cvs", provider.getScmType() );
     }
 
-    private static ReleaseConfiguration createReleaseConfiguration()
+    private static ReleaseDescriptor createReleaseDescriptor()
     {
-        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
-        releaseConfiguration.setUrl( "scm:cvs:pserver:anoncvs@localhost:/home/cvs:module" );
-        return releaseConfiguration;
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setScmSourceUrl( "scm:cvs:pserver:anoncvs@localhost:/home/cvs:module" );
+        return releaseDescriptor;
     }
 
-    private static ReleaseConfiguration createReleaseConfiguration( String username, String password )
+    private static ReleaseDescriptor createReleaseDescriptor( String username, String password )
     {
-        ReleaseConfiguration releaseConfiguration = createReleaseConfiguration();
-        releaseConfiguration.setUsername( username );
-        releaseConfiguration.setPassword( password );
-        return releaseConfiguration;
+        ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
+        releaseDescriptor.setScmUsername( username );
+        releaseDescriptor.setScmPassword( password );
+        return releaseDescriptor;
     }
 }

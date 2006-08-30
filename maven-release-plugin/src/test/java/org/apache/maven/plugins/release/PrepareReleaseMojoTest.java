@@ -19,12 +19,15 @@ package org.apache.maven.plugins.release;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.jmock.Mock;
 import org.jmock.core.Constraint;
 import org.jmock.core.constraint.IsEqual;
+import org.jmock.core.constraint.IsNull;
 import org.jmock.core.matcher.InvokeOnceMatcher;
 import org.jmock.core.stub.ThrowStub;
+
+import java.io.File;
 
 /**
  * Test release:prepare.
@@ -37,15 +40,15 @@ public class PrepareReleaseMojoTest
     public void testPrepare()
         throws Exception
     {
-        PrepareReleaseMojo mojo = (PrepareReleaseMojo) lookupMojo( "prepare", getTestFile(
-            "target/test-classes/mojos/prepare/prepare.xml" ) );
+        File testFile = getTestFile( "target/test-classes/mojos/prepare/prepare.xml" );
+        PrepareReleaseMojo mojo = (PrepareReleaseMojo) lookupMojo( "prepare", testFile );
+        mojo.setBasedir( testFile.getParentFile() );
 
-        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
-        releaseConfiguration.setSettings( mojo.getSettings() );
-
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setWorkingDirectory( testFile.getParentFile().getAbsolutePath() );
         Mock mock = new Mock( ReleaseManager.class );
-        Constraint[] constraints = new Constraint[]{new IsEqual( releaseConfiguration ), new IsEqual( Boolean.TRUE ),
-            new IsEqual( Boolean.FALSE )};
+        Constraint[] constraints = new Constraint[]{new IsEqual( releaseDescriptor ), new IsEqual( mojo.getSettings() ),
+            new IsNull(), new IsEqual( Boolean.TRUE ), new IsEqual( Boolean.FALSE )};
         mock.expects( new InvokeOnceMatcher() ).method( "prepare" ).with( constraints );
         mojo.setReleaseManager( (ReleaseManager) mock.proxy() );
 
@@ -57,15 +60,15 @@ public class PrepareReleaseMojoTest
     public void testPrepareWithExecutionException()
         throws Exception
     {
-        PrepareReleaseMojo mojo = (PrepareReleaseMojo) lookupMojo( "prepare", getTestFile(
-            "target/test-classes/mojos/prepare/prepare.xml" ) );
+        File testFile = getTestFile( "target/test-classes/mojos/prepare/prepare.xml" );
+        PrepareReleaseMojo mojo = (PrepareReleaseMojo) lookupMojo( "prepare", testFile );
+        mojo.setBasedir( testFile.getParentFile() );
 
-        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
-        releaseConfiguration.setSettings( mojo.getSettings() );
-
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setWorkingDirectory( testFile.getParentFile().getAbsolutePath() );
         Mock mock = new Mock( ReleaseManager.class );
-        Constraint[] constraints = new Constraint[]{new IsEqual( releaseConfiguration ), new IsEqual( Boolean.TRUE ),
-            new IsEqual( Boolean.FALSE )};
+        Constraint[] constraints = new Constraint[]{new IsEqual( releaseDescriptor ), new IsEqual( mojo.getSettings() ),
+            new IsNull(), new IsEqual( Boolean.TRUE ), new IsEqual( Boolean.FALSE )};
         mock.expects( new InvokeOnceMatcher() ).method( "prepare" ).with( constraints ).will(
             new ThrowStub( new ReleaseExecutionException( "..." ) ) );
         mojo.setReleaseManager( (ReleaseManager) mock.proxy() );
@@ -85,15 +88,15 @@ public class PrepareReleaseMojoTest
     public void testPrepareWithExecutionFailure()
         throws Exception
     {
-        PrepareReleaseMojo mojo = (PrepareReleaseMojo) lookupMojo( "prepare", getTestFile(
-            "target/test-classes/mojos/prepare/prepare.xml" ) );
+        File testFile = getTestFile( "target/test-classes/mojos/prepare/prepare.xml" );
+        PrepareReleaseMojo mojo = (PrepareReleaseMojo) lookupMojo( "prepare", testFile );
+        mojo.setBasedir( testFile.getParentFile() );
 
-        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
-        releaseConfiguration.setSettings( mojo.getSettings() );
-
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setWorkingDirectory( testFile.getParentFile().getAbsolutePath() );
         Mock mock = new Mock( ReleaseManager.class );
-        Constraint[] constraints = new Constraint[]{new IsEqual( releaseConfiguration ), new IsEqual( Boolean.TRUE ),
-            new IsEqual( Boolean.FALSE )};
+        Constraint[] constraints = new Constraint[]{new IsEqual( releaseDescriptor ), new IsEqual( mojo.getSettings() ),
+            new IsNull(), new IsEqual( Boolean.TRUE ), new IsEqual( Boolean.FALSE )};
         mock.expects( new InvokeOnceMatcher() ).method( "prepare" ).with( constraints ).will(
             new ThrowStub( new ReleaseFailureException( "..." ) ) );
         mojo.setReleaseManager( (ReleaseManager) mock.proxy() );
@@ -117,7 +120,7 @@ public class PrepareReleaseMojoTest
         PerformReleaseMojo mojo = (PerformReleaseMojo) lookupMojo( "perform", getTestFile(
             "target/test-classes/mojos/perform/perform-with-scm.xml" ) );
 
-        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
+        ReleaseDescriptor releaseConfiguration = new ReleaseDescriptor();
         releaseConfiguration.setSettings( mojo.getSettings() );
         releaseConfiguration.setUrl( "scm-url" );
 
@@ -139,7 +142,7 @@ public class PrepareReleaseMojoTest
         PerformReleaseMojo mojo = (PerformReleaseMojo) lookupMojo( "perform", getTestFile(
             "target/test-classes/mojos/perform/perform.xml" ) );
 
-        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
+        ReleaseDescriptor releaseConfiguration = new ReleaseDescriptor();
         releaseConfiguration.setSettings( mojo.getSettings() );
         releaseConfiguration.setAdditionalArguments( "-P prof1,2prof" );
 
@@ -168,7 +171,7 @@ public class PrepareReleaseMojoTest
         PerformReleaseMojo mojo = (PerformReleaseMojo) lookupMojo( "perform", getTestFile(
             "target/test-classes/mojos/perform/perform-with-args.xml" ) );
 
-        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
+        ReleaseDescriptor releaseConfiguration = new ReleaseDescriptor();
         releaseConfiguration.setSettings( mojo.getSettings() );
         releaseConfiguration.setAdditionalArguments( "-Dmaven.test.skip=true -P prof1,2prof" );
 

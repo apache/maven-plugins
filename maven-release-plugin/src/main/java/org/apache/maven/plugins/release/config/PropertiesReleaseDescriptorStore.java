@@ -36,24 +36,24 @@ import java.util.Properties;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class PropertiesReleaseConfigurationStore
+public class PropertiesReleaseDescriptorStore
     extends AbstractLogEnabled
-    implements ReleaseConfigurationStore
+    implements ReleaseDescriptorStore
 {
-    public ReleaseConfiguration read( ReleaseConfiguration mergeConfiguration )
-        throws ReleaseConfigurationStoreException
+    public ReleaseDescriptor read( ReleaseDescriptor mergeDescriptor )
+        throws ReleaseDescriptorStoreException
     {
-        return read( mergeConfiguration, getDefaultReleasePropertiesFile( mergeConfiguration ) );
+        return read( mergeDescriptor, getDefaultReleasePropertiesFile( mergeDescriptor ) );
     }
 
-    public ReleaseConfiguration read( File file )
-        throws ReleaseConfigurationStoreException
+    public ReleaseDescriptor read( File file )
+        throws ReleaseDescriptorStoreException
     {
         return read( null, file );
     }
 
-    public ReleaseConfiguration read( ReleaseConfiguration mergeConfiguration, File file )
-        throws ReleaseConfigurationStoreException
+    public ReleaseDescriptor read( ReleaseDescriptor mergeDescriptor, File file )
+        throws ReleaseDescriptorStoreException
     {
         Properties properties = new Properties();
 
@@ -70,7 +70,7 @@ public class PropertiesReleaseConfigurationStore
         }
         catch ( IOException e )
         {
-            throw new ReleaseConfigurationStoreException(
+            throw new ReleaseDescriptorStoreException(
                 "Error reading properties file '" + file.getName() + "': " + e.getMessage(), e );
         }
         finally
@@ -78,18 +78,18 @@ public class PropertiesReleaseConfigurationStore
             IOUtil.close( inStream );
         }
 
-        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
-        releaseConfiguration.setCompletedPhase( properties.getProperty( "completedPhase" ) );
-        releaseConfiguration.setUrl( properties.getProperty( "scm.url" ) );
-        releaseConfiguration.setUsername( properties.getProperty( "scm.username" ) );
-        releaseConfiguration.setPassword( properties.getProperty( "scm.password" ) );
-        releaseConfiguration.setPrivateKey( properties.getProperty( "scm.privateKey" ) );
-        releaseConfiguration.setPassphrase( properties.getProperty( "scm.passphrase" ) );
-        releaseConfiguration.setTagBase( properties.getProperty( "scm.tagBase" ) );
-        releaseConfiguration.setReleaseLabel( properties.getProperty( "scm.tag" ) );
-        releaseConfiguration.setAdditionalArguments( properties.getProperty( "exec.additionalArguments" ) );
-        releaseConfiguration.setPomFileName( properties.getProperty( "exec.pomFileName" ) );
-        releaseConfiguration.setPreparationGoals( properties.getProperty( "preparationGoals" ) );
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setCompletedPhase( properties.getProperty( "completedPhase" ) );
+        releaseDescriptor.setScmSourceUrl( properties.getProperty( "scm.url" ) );
+        releaseDescriptor.setScmUsername( properties.getProperty( "scm.username" ) );
+        releaseDescriptor.setScmPassword( properties.getProperty( "scm.password" ) );
+        releaseDescriptor.setScmPrivateKey( properties.getProperty( "scm.privateKey" ) );
+        releaseDescriptor.setScmPrivateKeyPassPhrase( properties.getProperty( "scm.passphrase" ) );
+        releaseDescriptor.setScmTagBase( properties.getProperty( "scm.tagBase" ) );
+        releaseDescriptor.setScmReleaseLabel( properties.getProperty( "scm.tag" ) );
+        releaseDescriptor.setAdditionalArguments( properties.getProperty( "exec.additionalArguments" ) );
+        releaseDescriptor.setPomFileName( properties.getProperty( "exec.pomFileName" ) );
+        releaseDescriptor.setPreparationGoals( properties.getProperty( "preparationGoals" ) );
 
         // boolean properties are not written to the properties file because the value from the caller is always used
 
@@ -98,13 +98,13 @@ public class PropertiesReleaseConfigurationStore
             String property = (String) i.next();
             if ( property.startsWith( "project.rel." ) )
             {
-                releaseConfiguration.mapReleaseVersion( property.substring( "project.rel.".length() ),
-                                                        properties.getProperty( property ) );
+                releaseDescriptor.mapReleaseVersion( property.substring( "project.rel.".length() ),
+                                                     properties.getProperty( property ) );
             }
             else if ( property.startsWith( "project.dev." ) )
             {
-                releaseConfiguration.mapDevelopmentVersion( property.substring( "project.dev.".length() ),
-                                                            properties.getProperty( property ) );
+                releaseDescriptor.mapDevelopmentVersion( property.substring( "project.dev.".length() ),
+                                                         properties.getProperty( property ) );
             }
             else if ( property.startsWith( "project.scm." ) )
             {
@@ -113,11 +113,11 @@ public class PropertiesReleaseConfigurationStore
                 {
                     String key = property.substring( "project.scm.".length(), index );
 
-                    if ( !releaseConfiguration.getOriginalScmInfo().containsKey( key ) )
+                    if ( !releaseDescriptor.getOriginalScmInfo().containsKey( key ) )
                     {
                         if ( properties.getProperty( "project.scm." + key + ".empty" ) != null )
                         {
-                            releaseConfiguration.mapOriginalScmInfo( key, null );
+                            releaseDescriptor.mapOriginalScmInfo( key, null );
                         }
                         else
                         {
@@ -128,28 +128,28 @@ public class PropertiesReleaseConfigurationStore
                             scm.setUrl( properties.getProperty( "project.scm." + key + ".url" ) );
                             scm.setTag( properties.getProperty( "project.scm." + key + ".tag" ) );
 
-                            releaseConfiguration.mapOriginalScmInfo( key, scm );
+                            releaseDescriptor.mapOriginalScmInfo( key, scm );
                         }
                     }
                 }
             }
         }
 
-        if ( mergeConfiguration != null )
+        if ( mergeDescriptor != null )
         {
-            releaseConfiguration.merge( mergeConfiguration );
+            releaseDescriptor = ReleaseUtils.merge( releaseDescriptor, mergeDescriptor );
         }
 
-        return releaseConfiguration;
+        return releaseDescriptor;
     }
 
-    public void write( ReleaseConfiguration config )
-        throws ReleaseConfigurationStoreException
+    public void write( ReleaseDescriptor config )
+        throws ReleaseDescriptorStoreException
     {
         write( config, getDefaultReleasePropertiesFile( config ) );
     }
 
-    public void delete( ReleaseConfiguration config )
+    public void delete( ReleaseDescriptor config )
     {
         File file = getDefaultReleasePropertiesFile( config );
         if ( file.exists() )
@@ -158,35 +158,35 @@ public class PropertiesReleaseConfigurationStore
         }
     }
 
-    public void write( ReleaseConfiguration config, File file )
-        throws ReleaseConfigurationStoreException
+    public void write( ReleaseDescriptor config, File file )
+        throws ReleaseDescriptorStoreException
     {
         Properties properties = new Properties();
         properties.setProperty( "completedPhase", config.getCompletedPhase() );
-        properties.setProperty( "scm.url", config.getUrl() );
-        if ( config.getUsername() != null )
+        properties.setProperty( "scm.url", config.getScmSourceUrl() );
+        if ( config.getScmUsername() != null )
         {
-            properties.setProperty( "scm.username", config.getUsername() );
+            properties.setProperty( "scm.username", config.getScmUsername() );
         }
-        if ( config.getPassword() != null )
+        if ( config.getScmPassword() != null )
         {
-            properties.setProperty( "scm.password", config.getPassword() );
+            properties.setProperty( "scm.password", config.getScmPassword() );
         }
-        if ( config.getPrivateKey() != null )
+        if ( config.getScmPrivateKey() != null )
         {
-            properties.setProperty( "scm.privateKey", config.getPrivateKey() );
+            properties.setProperty( "scm.privateKey", config.getScmPrivateKey() );
         }
-        if ( config.getPassphrase() != null )
+        if ( config.getScmPrivateKeyPassPhrase() != null )
         {
-            properties.setProperty( "scm.passphrase", config.getPassphrase() );
+            properties.setProperty( "scm.passphrase", config.getScmPrivateKeyPassPhrase() );
         }
-        if ( config.getTagBase() != null )
+        if ( config.getScmTagBase() != null )
         {
-            properties.setProperty( "scm.tagBase", config.getTagBase() );
+            properties.setProperty( "scm.tagBase", config.getScmTagBase() );
         }
-        if ( config.getReleaseLabel() != null )
+        if ( config.getScmReleaseLabel() != null )
         {
-            properties.setProperty( "scm.tag", config.getReleaseLabel() );
+            properties.setProperty( "scm.tag", config.getScmReleaseLabel() );
         }
         if ( config.getAdditionalArguments() != null )
         {
@@ -255,7 +255,7 @@ public class PropertiesReleaseConfigurationStore
         }
         catch ( IOException e )
         {
-            throw new ReleaseConfigurationStoreException(
+            throw new ReleaseDescriptorStoreException(
                 "Error writing properties file '" + file.getName() + "': " + e.getMessage(), e );
         }
         finally
@@ -265,8 +265,8 @@ public class PropertiesReleaseConfigurationStore
 
     }
 
-    private static File getDefaultReleasePropertiesFile( ReleaseConfiguration mergeConfiguration )
+    private static File getDefaultReleasePropertiesFile( ReleaseDescriptor mergeDescriptor )
     {
-        return new File( mergeConfiguration.getWorkingDirectory(), "release.properties" );
+        return new File( mergeDescriptor.getWorkingDirectory(), "release.properties" );
     }
 }

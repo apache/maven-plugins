@@ -19,12 +19,13 @@ package org.apache.maven.plugins.release.phase;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.ReleaseFailureException;
-import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.apache.maven.plugins.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.plugins.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.repository.ScmRepositoryException;
+import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.util.Iterator;
@@ -43,26 +44,26 @@ public class CheckPomPhase
      */
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
-    public void execute( ReleaseConfiguration releaseConfiguration )
+    public void execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         // Currently, we don't deal with multiple SCM locations in a multiproject
-        if ( StringUtils.isEmpty( releaseConfiguration.getUrl() ) )
+        if ( StringUtils.isEmpty( releaseDescriptor.getScmSourceUrl() ) )
         {
-            MavenProject rootProject = (MavenProject) releaseConfiguration.getReactorProjects().get( 0 );
+            MavenProject rootProject = (MavenProject) reactorProjects.get( 0 );
             if ( rootProject != null && rootProject.getScm() != null )
             {
                 if ( rootProject.getScm().getDeveloperConnection() != null )
                 {
-                    releaseConfiguration.setUrl( rootProject.getScm().getDeveloperConnection() );
+                    releaseDescriptor.setScmSourceUrl( rootProject.getScm().getDeveloperConnection() );
                 }
                 else if ( rootProject.getScm().getConnection() != null )
                 {
-                    releaseConfiguration.setUrl( rootProject.getScm().getConnection() );
+                    releaseDescriptor.setScmSourceUrl( rootProject.getScm().getConnection() );
                 }
             }
 
-            if ( StringUtils.isEmpty( releaseConfiguration.getUrl() ) )
+            if ( StringUtils.isEmpty( releaseDescriptor.getScmSourceUrl() ) )
             {
                 throw new ReleaseFailureException(
                     "Missing required setting: scm connection or developerConnection must be specified." );
@@ -70,7 +71,7 @@ public class CheckPomPhase
 
             try
             {
-                scmRepositoryConfigurator.getConfiguredRepository( releaseConfiguration );
+                scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, settings );
             }
             catch ( ScmRepositoryException e )
             {
@@ -83,7 +84,6 @@ public class CheckPomPhase
             }
         }
 
-        List reactorProjects = releaseConfiguration.getReactorProjects();
         for ( Iterator it = reactorProjects.iterator(); it.hasNext(); )
         {
             MavenProject project = (MavenProject) it.next();
@@ -98,10 +98,10 @@ public class CheckPomPhase
         }
     }
 
-    public void simulate( ReleaseConfiguration releaseConfiguration )
+    public void simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         // It makes no modifications, so simulate is the same as execute
-        execute( releaseConfiguration );
+        execute( releaseDescriptor, settings, reactorProjects );
     }
 }

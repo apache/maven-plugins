@@ -18,7 +18,10 @@ package org.apache.maven.plugins.release.phase;
 
 import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.ReleaseFailureException;
-import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.plugins.release.config.ReleaseDescriptor;
+import org.apache.maven.settings.Settings;
+
+import java.util.List;
 
 /**
  * A phase in the release cycle.
@@ -35,27 +38,31 @@ public interface ReleasePhase
     /**
      * Execute the phase.
      *
-     * @param releaseConfiguration the configuration to use
+     * @param releaseDescriptor the configuration to use
+     * @param settings          the settings.xml configuration
+     * @param reactorProjects   the reactor projects
      * @throws ReleaseExecutionException an exception during the execution of the phase
      * @throws ReleaseFailureException   a failure during the execution of the phase
      */
-    void execute( ReleaseConfiguration releaseConfiguration )
+    void execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
      * Simulate the phase, but don't make any changes to the project.
      *
-     * @param releaseConfiguration the configuration to use
+     * @param releaseDescriptor the configuration to use
+     * @param settings          the settings.xml configuration
+     * @param reactorProjects   the reactor projects
      * @throws ReleaseExecutionException an exception during the execution of the phase
      * @throws ReleaseFailureException   a failure during the execution of the phase
      */
-    void simulate( ReleaseConfiguration releaseConfiguration )
+    void simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
      * Clean up after a phase if it leaves any additional files in the checkout.
      *
-     * @param config the configuration to use
+     * @param reactorProjects the reactor projects
      */
-    void clean( ReleaseConfiguration config );
+    void clean( List reactorProjects );
 }

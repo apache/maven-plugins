@@ -16,8 +16,9 @@ package org.apache.maven.plugins.release.phase;
  * limitations under the License.
  */
 
-import org.apache.maven.plugins.release.config.ReleaseConfiguration;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
+
+import java.util.List;
 
 /**
  * Base class for all phases.
@@ -28,7 +29,7 @@ public abstract class AbstractReleasePhase
     extends AbstractLogEnabled
     implements ReleasePhase
 {
-    public void clean( ReleaseConfiguration config )
+    public void clean( List reactorProjects )
     {
         // nothing to do by default
     }

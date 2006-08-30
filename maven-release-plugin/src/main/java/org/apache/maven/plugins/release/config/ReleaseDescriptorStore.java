@@ -21,35 +21,35 @@ package org.apache.maven.plugins.release.config;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public interface ReleaseConfigurationStore
+public interface ReleaseDescriptorStore
 {
     /**
      * The Plexus role.
      */
-    String ROLE = ReleaseConfigurationStore.class.getName();
+    String ROLE = ReleaseDescriptorStore.class.getName();
 
     /**
      * Read a configuration.
      *
-     * @param mergeConfiguration configuration to merge with the loaded configuration. Some values are used as defaults,
-     *                           while others are used to override
+     * @param mergeDescriptor configuration to merge with the loaded configuration. Some values are used as defaults,
+     *                        while others are used to override
      * @return the configuration
      */
-    ReleaseConfiguration read( ReleaseConfiguration mergeConfiguration )
-        throws ReleaseConfigurationStoreException;
+    ReleaseDescriptor read( ReleaseDescriptor mergeDescriptor )
+        throws ReleaseDescriptorStoreException;
 
     /**
      * Save a configuration.
      *
      * @param config the configuration
      */
-    void write( ReleaseConfiguration config )
-        throws ReleaseConfigurationStoreException;
+    void write( ReleaseDescriptor config )
+        throws ReleaseDescriptorStoreException;
 
     /**
      * Remove a configuration.
      *
      * @param config the location of the configuration
      */
-    void delete( ReleaseConfiguration config );
+    void delete( ReleaseDescriptor config );
 }

@@ -18,13 +18,14 @@ package org.apache.maven.plugins.release.phase;
 
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Scm;
-import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.apache.maven.plugins.release.scm.ScmTranslator;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,8 +42,7 @@ public class RewritePomsForReleasePhase
     private Map scmTranslators;
 
     protected void transformScm( MavenProject project, Element rootElement, Namespace namespace,
-                                 ReleaseConfiguration releaseConfiguration, String projectId,
-                                 ScmRepository scmRepository )
+                                 ReleaseDescriptor releaseDescriptor, String projectId, ScmRepository scmRepository )
     {
         // If SCM is null in original model, it is inherited, no mods needed
         if ( project.getScm() != null )
@@ -50,13 +50,13 @@ public class RewritePomsForReleasePhase
             Element scmRoot = rootElement.getChild( "scm", namespace );
             if ( scmRoot != null )
             {
-                releaseConfiguration.mapOriginalScmInfo( projectId, project.getScm() );
+                releaseDescriptor.mapOriginalScmInfo( projectId, project.getScm() );
 
-                translateScm( project, releaseConfiguration, scmRoot, namespace, scmRepository );
+                translateScm( project, releaseDescriptor, scmRoot, namespace, scmRepository );
             }
             else
             {
-                releaseConfiguration.mapOriginalScmInfo( projectId, null );
+                releaseDescriptor.mapOriginalScmInfo( projectId, null );
 
                 MavenProject parent = project.getParent();
                 if ( parent != null )
@@ -64,13 +64,13 @@ public class RewritePomsForReleasePhase
                     // If the SCM element is not present, only add it if the parent was not mapped (ie, it's external to
                     // the release process and so has not been modified, so the values will not be correct on the tag),
                     String parentId = ArtifactUtils.versionlessKey( parent.getGroupId(), parent.getArtifactId() );
-                    if ( !releaseConfiguration.getOriginalScmInfo().containsKey( parentId ) )
+                    if ( !releaseDescriptor.getOriginalScmInfo().containsKey( parentId ) )
                     {
                         // we need to add it, since it has changed from the inherited value
                         scmRoot = new Element( "scm" );
                         scmRoot.addContent( "\n  " );
 
-                        if ( translateScm( project, releaseConfiguration, scmRoot, namespace, scmRepository ) )
+                        if ( translateScm( project, releaseDescriptor, scmRoot, namespace, scmRepository ) )
                         {
                             rootElement.addContent( "\n  " ).addContent( scmRoot ).addContent( "\n" );
                         }
@@ -80,7 +80,7 @@ public class RewritePomsForReleasePhase
         }
     }
 
-    private boolean translateScm( MavenProject project, ReleaseConfiguration releaseConfiguration, Element scmRoot,
+    private boolean translateScm( MavenProject project, ReleaseDescriptor releaseDescriptor, Element scmRoot,
                                   Namespace namespace, ScmRepository scmRepository )
     {
         ScmTranslator translator = (ScmTranslator) scmTranslators.get( scmRepository.getProvider() );
@@ -88,8 +88,8 @@ public class RewritePomsForReleasePhase
         if ( translator != null )
         {
             Scm scm = project.getScm();
-            String tag = releaseConfiguration.getReleaseLabel();
-            String tagBase = releaseConfiguration.getTagBase();
+            String tag = releaseDescriptor.getScmReleaseLabel();
+            String tagBase = releaseDescriptor.getScmTagBase();
 
             // TODO: svn utils should take care of prepending this
             if ( tagBase != null )
@@ -119,7 +119,7 @@ public class RewritePomsForReleasePhase
             if ( scm.getUrl() != null )
             {
                 // use original tag base without protocol
-                String value = translator.translateTagUrl( scm.getUrl(), tag, releaseConfiguration.getTagBase() );
+                String value = translator.translateTagUrl( scm.getUrl(), tag, releaseDescriptor.getScmTagBase() );
                 if ( !value.equals( scm.getUrl() ) )
                 {
                     rewriteElement( "url", value, scmRoot, namespace );
@@ -144,13 +144,13 @@ public class RewritePomsForReleasePhase
         return result;
     }
 
-    protected Map getOriginalVersionMap( ReleaseConfiguration releaseConfiguration )
+    protected Map getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List reactorProjects )
     {
-        return releaseConfiguration.getOriginalVersions();
+        return releaseDescriptor.getOriginalVersions( reactorProjects );
     }
 
-    protected Map getNextVersionMap( ReleaseConfiguration releaseConfiguration )
+    protected Map getNextVersionMap( ReleaseDescriptor releaseDescriptor )
     {
-        return releaseConfiguration.getReleaseVersions();
+        return releaseDescriptor.getReleaseVersions();
     }
 }

@@ -16,7 +16,7 @@ package org.apache.maven.plugins.release.scm;
  * limitations under the License.
  */
 
-import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.provider.ScmProvider;
@@ -44,14 +44,14 @@ public class DefaultScmRepositoryConfigurator
      */
     private ScmManager scmManager;
 
-    public ScmRepository getConfiguredRepository( ReleaseConfiguration releaseConfiguration )
+    public ScmRepository getConfiguredRepository( ReleaseDescriptor releaseDescriptor, Settings settings )
         throws ScmRepositoryException, NoSuchScmProviderException
     {
-        String username = releaseConfiguration.getUsername();
-        String password = releaseConfiguration.getPassword();
-        String url = releaseConfiguration.getUrl();
-        String privateKey = releaseConfiguration.getPrivateKey();
-        String passphrase = releaseConfiguration.getPassphrase();
+        String username = releaseDescriptor.getScmUsername();
+        String password = releaseDescriptor.getScmPassword();
+        String url = releaseDescriptor.getScmSourceUrl();
+        String privateKey = releaseDescriptor.getScmPrivateKey();
+        String passphrase = releaseDescriptor.getScmPrivateKeyPassPhrase();
 
         ScmRepository repository = scmManager.makeScmRepository( url );
 
@@ -70,7 +70,6 @@ public class DefaultScmRepositoryConfigurator
                 host += ":" + port;
             }
 
-            Settings settings = releaseConfiguration.getSettings();
             if ( settings != null )
             {
                 // TODO: this is a bit dodgy - id is not host, but since we don't have a <host> field we make an assumption
@@ -128,7 +127,7 @@ public class DefaultScmRepositoryConfigurator
         {
             SvnScmProviderRepository svnRepo = (SvnScmProviderRepository) repository.getProviderRepository();
 
-            String tagBase = releaseConfiguration.getTagBase();
+            String tagBase = releaseDescriptor.getScmTagBase();
             if ( !StringUtils.isEmpty( tagBase ) )
             {
                 svnRepo.setTagBase( tagBase );

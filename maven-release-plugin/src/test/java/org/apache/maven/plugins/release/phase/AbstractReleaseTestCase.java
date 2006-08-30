@@ -32,7 +32,7 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.Profile;
 import org.apache.maven.model.Repository;
-import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.apache.maven.plugins.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.plugins.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.profiles.DefaultProfileManager;
@@ -69,6 +69,18 @@ public abstract class AbstractReleaseTestCase
     protected ArtifactRepository localRepository;
 
     protected ReleasePhase phase;
+
+    protected List reactorProjects;
+
+    public List getReactorProjects()
+    {
+        return reactorProjects;
+    }
+
+    public void setReactorProjects( List reactorProjects )
+    {
+        this.reactorProjects = reactorProjects;
+    }
 
     protected void setUp()
         throws Exception
@@ -116,7 +128,7 @@ public abstract class AbstractReleaseTestCase
         return map;
     }
 
-    protected ReleaseConfiguration createConfigurationFromProjects( String path, String subpath, boolean copyFiles )
+    protected ReleaseDescriptor createDescriptorFromProjects( String path, String subpath, boolean copyFiles )
         throws Exception
     {
         File testFile = getTestFile( "target/test-classes/projects/" + path + subpath + "/pom.xml" );
@@ -138,7 +150,7 @@ public abstract class AbstractReleaseTestCase
         profileManager.addProfile( profile );
         profileManager.activateAsDefault( profile.getId() );
 
-        List projects = new ArrayList();
+        reactorProjects = new ArrayList();
         while ( !projectFiles.isEmpty() )
         {
             File file = (File) projectFiles.pop();
@@ -160,19 +172,19 @@ public abstract class AbstractReleaseTestCase
                 projectFiles.push( new File( file.getParentFile(), module + "/pom.xml" ) );
             }
 
-            projects.add( project );
+            reactorProjects.add( project );
         }
 
-        ProjectSorter sorter = new ProjectSorter( projects );
+        ProjectSorter sorter = new ProjectSorter( reactorProjects );
 
-        projects = sorter.getSortedProjects();
+        reactorProjects = sorter.getSortedProjects();
 
         ArtifactFactory artifactFactory = (ArtifactFactory) lookup( ArtifactFactory.ROLE );
         ArtifactCollector artifactCollector = (ArtifactCollector) lookup( ArtifactCollector.class.getName() );
         ArtifactMetadataSource artifactMetadataSource = (ArtifactMetadataSource) lookup( ArtifactMetadataSource.ROLE );
 
         // pass back over and resolve dependencies - can't be done earlier as the order may not be correct
-        for ( Iterator i = projects.iterator(); i.hasNext(); )
+        for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
         {
             MavenProject project = (MavenProject) i.next();
 
@@ -195,10 +207,9 @@ public abstract class AbstractReleaseTestCase
             project.setArtifacts( result.getArtifacts() );
         }
 
-        ReleaseConfiguration releaseConfiguration = new ReleaseConfiguration();
-        releaseConfiguration.setReactorProjects( projects );
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
 
-        return releaseConfiguration;
+        return releaseDescriptor;
     }
 
     protected void setMockScmManager( Mock scmManagerMock )

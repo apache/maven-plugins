@@ -18,7 +18,7 @@ package org.apache.maven.plugins.release.phase;
 
 import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.ReleaseFailureException;
-import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
 import org.jmock.Mock;
@@ -45,11 +45,11 @@ public class CheckDependencySnapshotsPhaseTest
     public void testNoSnapshotDependencies()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration = createConfigurationFromProjects( "no-snapshot-dependencies" );
+        ReleaseDescriptor releaseDescriptor = createDescriptorFromProjects( "no-snapshot-dependencies" );
 
-        phase.execute( releaseConfiguration );
+        phase.execute( releaseDescriptor, null, getReactorProjects() );
 
-        phase.simulate( releaseConfiguration );
+        phase.simulate( releaseDescriptor, null, getReactorProjects() );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -58,11 +58,11 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotDependenciesInProjectOnly()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration = createConfigurationFromProjects( "internal-snapshot-dependencies" );
+        ReleaseDescriptor releaseDescriptor = createDescriptorFromProjects( "internal-snapshot-dependencies" );
 
-        phase.execute( releaseConfiguration );
+        phase.execute( releaseDescriptor, null, getReactorProjects() );
 
-        phase.simulate( releaseConfiguration );
+        phase.simulate( releaseDescriptor, null, getReactorProjects() );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -71,12 +71,12 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotReleasePluginNonInteractive()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration = createConfigurationFromProjects( "snapshot-release-plugin" );
-        releaseConfiguration.setInteractive( false );
+        ReleaseDescriptor releaseDescriptor = createDescriptorFromProjects( "snapshot-release-plugin" );
+        releaseDescriptor.setInteractive( false );
 
         try
         {
-            phase.execute( releaseConfiguration );
+            phase.execute( releaseDescriptor, null, getReactorProjects() );
 
             fail( "Should have failed execution" );
         }
@@ -87,7 +87,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseConfiguration );
+            phase.simulate( releaseDescriptor, null, getReactorProjects() );
 
             fail( "Should have failed execution" );
         }
@@ -103,7 +103,7 @@ public class CheckDependencySnapshotsPhaseTest
         CheckDependencySnapshotsPhase phase =
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
 
-        ReleaseConfiguration releaseConfiguration = createConfigurationFromProjects( "snapshot-release-plugin" );
+        ReleaseDescriptor releaseDescriptor = createDescriptorFromProjects( "snapshot-release-plugin" );
 
         Mock mockPrompter = new Mock( Prompter.class );
         mockPrompter.expects( new InvokeOnceMatcher() ).method( "showMessage" );
@@ -112,7 +112,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.execute( releaseConfiguration );
+            phase.execute( releaseDescriptor, null, getReactorProjects() );
 
             fail( "Should have failed execution" );
         }
@@ -127,7 +127,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseConfiguration );
+            phase.simulate( releaseDescriptor, null, getReactorProjects() );
 
             fail( "Should have failed execution" );
         }
@@ -143,20 +143,20 @@ public class CheckDependencySnapshotsPhaseTest
         CheckDependencySnapshotsPhase phase =
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
 
-        ReleaseConfiguration releaseConfiguration = createConfigurationFromProjects( "snapshot-release-plugin" );
+        ReleaseDescriptor releaseDescriptor = createDescriptorFromProjects( "snapshot-release-plugin" );
 
         Mock mockPrompter = new Mock( Prompter.class );
         mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).will( new ReturnStub( "yes" ) );
         mockPrompter.expects( new InvokeOnceMatcher() ).method( "showMessage" );
         phase.setPrompter( (Prompter) mockPrompter.proxy() );
 
-        phase.execute( releaseConfiguration );
+        phase.execute( releaseDescriptor, null, getReactorProjects() );
 
         mockPrompter.reset();
         mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).will( new ReturnStub( "yes" ) );
         mockPrompter.expects( new InvokeOnceMatcher() ).method( "showMessage" );
 
-        phase.simulate( releaseConfiguration );
+        phase.simulate( releaseDescriptor, null, getReactorProjects() );
 
         assertTrue( true );
     }
@@ -167,7 +167,7 @@ public class CheckDependencySnapshotsPhaseTest
         CheckDependencySnapshotsPhase phase =
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
 
-        ReleaseConfiguration releaseConfiguration = createConfigurationFromProjects( "snapshot-release-plugin" );
+        ReleaseDescriptor releaseDescriptor = createDescriptorFromProjects( "snapshot-release-plugin" );
 
         Mock mockPrompter = new Mock( Prompter.class );
         mockPrompter.expects( new InvokeOnceMatcher() ).method( "showMessage" );
@@ -176,7 +176,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.execute( releaseConfiguration );
+            phase.execute( releaseDescriptor, null, getReactorProjects() );
 
             fail( "Should have failed execution" );
         }
@@ -191,7 +191,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseConfiguration );
+            phase.simulate( releaseDescriptor, null, getReactorProjects() );
 
             fail( "Should have failed execution" );
         }
@@ -207,7 +207,7 @@ public class CheckDependencySnapshotsPhaseTest
         CheckDependencySnapshotsPhase phase =
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
 
-        ReleaseConfiguration releaseConfiguration = createConfigurationFromProjects( "snapshot-release-plugin" );
+        ReleaseDescriptor releaseDescriptor = createDescriptorFromProjects( "snapshot-release-plugin" );
 
         Mock mockPrompter = new Mock( Prompter.class );
         mockPrompter.expects( new InvokeOnceMatcher() ).method( "showMessage" );
@@ -217,7 +217,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.execute( releaseConfiguration );
+            phase.execute( releaseDescriptor, null, getReactorProjects() );
 
             fail( "Should have failed execution" );
         }
@@ -233,7 +233,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseConfiguration );
+            phase.simulate( releaseDescriptor, null, getReactorProjects() );
 
             fail( "Should have failed execution" );
         }
@@ -246,12 +246,12 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotDependenciesInProjectOnlyMismatchedVersion()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration =
-            createConfigurationFromProjects( "internal-differing-snapshot-dependencies" );
+        ReleaseDescriptor releaseDescriptor =
+            createDescriptorFromProjects( "internal-differing-snapshot-dependencies" );
 
         try
         {
-            phase.execute( releaseConfiguration );
+            phase.execute( releaseDescriptor, null, getReactorProjects() );
 
             fail( "Should have failed execution" );
         }
@@ -262,7 +262,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseConfiguration );
+            phase.simulate( releaseDescriptor, null, getReactorProjects() );
 
             fail( "Should have failed execution" );
         }
@@ -275,12 +275,11 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotManagedDependenciesInProjectOnly()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration =
-            createConfigurationFromProjects( "internal-managed-snapshot-dependency" );
+        ReleaseDescriptor releaseDescriptor = createDescriptorFromProjects( "internal-managed-snapshot-dependency" );
 
-        phase.execute( releaseConfiguration );
+        phase.execute( releaseDescriptor, null, getReactorProjects() );
 
-        phase.simulate( releaseConfiguration );
+        phase.simulate( releaseDescriptor, null, getReactorProjects() );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -289,12 +288,12 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotUnusedInternalManagedDependency()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration =
-            createConfigurationFromProjects( "unused-internal-managed-snapshot-dependency" );
+        ReleaseDescriptor releaseDescriptor =
+            createDescriptorFromProjects( "unused-internal-managed-snapshot-dependency" );
 
-        phase.execute( releaseConfiguration );
+        phase.execute( releaseDescriptor, null, getReactorProjects() );
 
-        phase.simulate( releaseConfiguration );
+        phase.simulate( releaseDescriptor, null, getReactorProjects() );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -303,12 +302,12 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotUnusedExternalManagedDependency()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration =
-            createConfigurationFromProjects( "unused-external-managed-snapshot-dependency" );
+        ReleaseDescriptor releaseDescriptor =
+            createDescriptorFromProjects( "unused-external-managed-snapshot-dependency" );
 
-        phase.execute( releaseConfiguration );
+        phase.execute( releaseDescriptor, null, getReactorProjects() );
 
-        phase.simulate( releaseConfiguration );
+        phase.simulate( releaseDescriptor, null, getReactorProjects() );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -317,12 +316,11 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotExternalManagedDependency()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration =
-            createConfigurationFromProjects( "external-managed-snapshot-dependency" );
+        ReleaseDescriptor releaseDescriptor = createDescriptorFromProjects( "external-managed-snapshot-dependency" );
 
         try
         {
-            phase.execute( releaseConfiguration );
+            phase.execute( releaseDescriptor, null, getReactorProjects() );
 
             fail( "Should have failed execution" );
         }
@@ -333,7 +331,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseConfiguration );
+            phase.simulate( releaseDescriptor, null, getReactorProjects() );
 
             fail( "Should have failed execution" );
         }
@@ -346,11 +344,11 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotDependenciesOutsideProjectOnly()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration = createConfigurationFromProjects( "external-snapshot-dependencies" );
+        ReleaseDescriptor releaseDescriptor = createDescriptorFromProjects( "external-snapshot-dependencies" );
 
         try
         {
-            phase.execute( releaseConfiguration );
+            phase.execute( releaseDescriptor, null, getReactorProjects() );
 
             fail( "Should have failed execution" );
         }
@@ -361,7 +359,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseConfiguration );
+            phase.simulate( releaseDescriptor, null, getReactorProjects() );
 
             fail( "Should have failed execution" );
         }
@@ -374,12 +372,12 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotDependenciesInsideAndOutsideProject()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration =
-            createConfigurationFromProjects( "internal-and-external-snapshot-dependencies" );
+        ReleaseDescriptor releaseDescriptor =
+            createDescriptorFromProjects( "internal-and-external-snapshot-dependencies" );
 
         try
         {
-            phase.execute( releaseConfiguration );
+            phase.execute( releaseDescriptor, null, getReactorProjects() );
 
             fail( "Should have failed execution" );
         }
@@ -390,7 +388,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseConfiguration );
+            phase.simulate( releaseDescriptor, null, getReactorProjects() );
 
             fail( "Should have failed execution" );
         }
@@ -403,11 +401,11 @@ public class CheckDependencySnapshotsPhaseTest
     public void testNoSnapshotReportPlugins()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration = createConfigurationFromProjects( "no-snapshot-report-plugins" );
+        ReleaseDescriptor releaseDescriptor = createDescriptorFromProjects( "no-snapshot-report-plugins" );
 
-        phase.execute( releaseConfiguration );
+        phase.execute( releaseDescriptor, null, getReactorProjects() );
 
-        phase.simulate( releaseConfiguration );
+        phase.simulate( releaseDescriptor, null, getReactorProjects() );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -416,12 +414,11 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotReportPluginsInProjectOnly()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration =
-            createConfigurationFromProjects( "internal-snapshot-report-plugins" );
+        ReleaseDescriptor releaseDescriptor = createDescriptorFromProjects( "internal-snapshot-report-plugins" );
 
-        phase.execute( releaseConfiguration );
+        phase.execute( releaseDescriptor, null, getReactorProjects() );
 
-        phase.simulate( releaseConfiguration );
+        phase.simulate( releaseDescriptor, null, getReactorProjects() );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -430,12 +427,11 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotReportPluginsOutsideProjectOnly()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration =
-            createConfigurationFromProjects( "external-snapshot-report-plugins" );
+        ReleaseDescriptor releaseDescriptor = createDescriptorFromProjects( "external-snapshot-report-plugins" );
 
         try
         {
-            phase.execute( releaseConfiguration );
+            phase.execute( releaseDescriptor, null, getReactorProjects() );
 
             fail( "Should have failed execution" );
         }
@@ -446,7 +442,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseConfiguration );
+            phase.simulate( releaseDescriptor, null, getReactorProjects() );
 
             fail( "Should have failed execution" );
         }
@@ -459,12 +455,12 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotReportPluginsInsideAndOutsideProject()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration =
-            createConfigurationFromProjects( "internal-and-external-snapshot-report-plugins" );
+        ReleaseDescriptor releaseDescriptor =
+            createDescriptorFromProjects( "internal-and-external-snapshot-report-plugins" );
 
         try
         {
-            phase.execute( releaseConfiguration );
+            phase.execute( releaseDescriptor, null, getReactorProjects() );
 
             fail( "Should have failed execution" );
         }
@@ -475,7 +471,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseConfiguration );
+            phase.simulate( releaseDescriptor, null, getReactorProjects() );
 
             fail( "Should have failed execution" );
         }
@@ -488,11 +484,11 @@ public class CheckDependencySnapshotsPhaseTest
     public void testNoSnapshotPlugins()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration = createConfigurationFromProjects( "no-snapshot-plugins" );
+        ReleaseDescriptor releaseDescriptor = createDescriptorFromProjects( "no-snapshot-plugins" );
 
-        phase.execute( releaseConfiguration );
+        phase.execute( releaseDescriptor, null, getReactorProjects() );
 
-        phase.simulate( releaseConfiguration );
+        phase.simulate( releaseDescriptor, null, getReactorProjects() );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -501,11 +497,11 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotPluginsInProjectOnly()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration = createConfigurationFromProjects( "internal-snapshot-plugins" );
+        ReleaseDescriptor releaseDescriptor = createDescriptorFromProjects( "internal-snapshot-plugins" );
 
-        phase.execute( releaseConfiguration );
+        phase.execute( releaseDescriptor, null, getReactorProjects() );
 
-        phase.simulate( releaseConfiguration );
+        phase.simulate( releaseDescriptor, null, getReactorProjects() );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -514,12 +510,11 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotManagedPluginInProjectOnly()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration =
-            createConfigurationFromProjects( "internal-managed-snapshot-plugin" );
+        ReleaseDescriptor releaseDescriptor = createDescriptorFromProjects( "internal-managed-snapshot-plugin" );
 
-        phase.execute( releaseConfiguration );
+        phase.execute( releaseDescriptor, null, getReactorProjects() );
 
-        phase.simulate( releaseConfiguration );
+        phase.simulate( releaseDescriptor, null, getReactorProjects() );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -528,12 +523,11 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotUnusedInternalManagedPlugin()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration =
-            createConfigurationFromProjects( "unused-internal-managed-snapshot-plugin" );
+        ReleaseDescriptor releaseDescriptor = createDescriptorFromProjects( "unused-internal-managed-snapshot-plugin" );
 
-        phase.execute( releaseConfiguration );
+        phase.execute( releaseDescriptor, null, getReactorProjects() );
 
-        phase.simulate( releaseConfiguration );
+        phase.simulate( releaseDescriptor, null, getReactorProjects() );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -542,12 +536,11 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotUnusedExternalManagedPlugin()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration =
-            createConfigurationFromProjects( "unused-external-managed-snapshot-plugin" );
+        ReleaseDescriptor releaseDescriptor = createDescriptorFromProjects( "unused-external-managed-snapshot-plugin" );
 
-        phase.execute( releaseConfiguration );
+        phase.execute( releaseDescriptor, null, getReactorProjects() );
 
-        phase.simulate( releaseConfiguration );
+        phase.simulate( releaseDescriptor, null, getReactorProjects() );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -556,12 +549,11 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotExternalManagedPlugin()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration =
-            createConfigurationFromProjects( "external-managed-snapshot-plugin" );
+        ReleaseDescriptor releaseDescriptor = createDescriptorFromProjects( "external-managed-snapshot-plugin" );
 
         try
         {
-            phase.execute( releaseConfiguration );
+            phase.execute( releaseDescriptor, null, getReactorProjects() );
 
             fail( "Should have failed execution" );
         }
@@ -572,7 +564,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseConfiguration );
+            phase.simulate( releaseDescriptor, null, getReactorProjects() );
 
             fail( "Should have failed execution" );
         }
@@ -585,11 +577,11 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotPluginsOutsideProjectOnly()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration = createConfigurationFromProjects( "external-snapshot-plugins" );
+        ReleaseDescriptor releaseDescriptor = createDescriptorFromProjects( "external-snapshot-plugins" );
 
         try
         {
-            phase.execute( releaseConfiguration );
+            phase.execute( releaseDescriptor, null, getReactorProjects() );
 
             fail( "Should have failed execution" );
         }
@@ -600,7 +592,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseConfiguration );
+            phase.simulate( releaseDescriptor, null, getReactorProjects() );
 
             fail( "Should have failed execution" );
         }
@@ -613,12 +605,11 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotPluginsInsideAndOutsideProject()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration =
-            createConfigurationFromProjects( "internal-and-external-snapshot-plugins" );
+        ReleaseDescriptor releaseDescriptor = createDescriptorFromProjects( "internal-and-external-snapshot-plugins" );
 
         try
         {
-            phase.execute( releaseConfiguration );
+            phase.execute( releaseDescriptor, null, getReactorProjects() );
 
             fail( "Should have failed execution" );
         }
@@ -629,7 +620,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseConfiguration );
+            phase.simulate( releaseDescriptor, null, getReactorProjects() );
 
             fail( "Should have failed execution" );
         }
@@ -642,11 +633,11 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotExternalParent()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration = createConfigurationFromProjects( "external-snapshot-parent/child" );
+        ReleaseDescriptor releaseDescriptor = createDescriptorFromProjects( "external-snapshot-parent/child" );
 
         try
         {
-            phase.execute( releaseConfiguration );
+            phase.execute( releaseDescriptor, null, getReactorProjects() );
 
             fail( "Should have failed execution" );
         }
@@ -657,7 +648,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseConfiguration );
+            phase.simulate( releaseDescriptor, null, getReactorProjects() );
 
             fail( "Should have failed execution" );
         }
@@ -670,11 +661,11 @@ public class CheckDependencySnapshotsPhaseTest
     public void testReleaseExternalParent()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration = createConfigurationFromProjects( "external-parent/child" );
+        ReleaseDescriptor releaseDescriptor = createDescriptorFromProjects( "external-parent/child" );
 
-        phase.execute( releaseConfiguration );
+        phase.execute( releaseDescriptor, null, getReactorProjects() );
 
-        phase.simulate( releaseConfiguration );
+        phase.simulate( releaseDescriptor, null, getReactorProjects() );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -683,11 +674,11 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotExternalExtension()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration = createConfigurationFromProjects( "external-snapshot-extension" );
+        ReleaseDescriptor releaseDescriptor = createDescriptorFromProjects( "external-snapshot-extension" );
 
         try
         {
-            phase.execute( releaseConfiguration );
+            phase.execute( releaseDescriptor, null, getReactorProjects() );
 
             fail( "Should have failed execution" );
         }
@@ -698,7 +689,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseConfiguration );
+            phase.simulate( releaseDescriptor, null, getReactorProjects() );
 
             fail( "Should have failed execution" );
         }
@@ -711,11 +702,11 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotInternalExtension()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration = createConfigurationFromProjects( "internal-snapshot-extension" );
+        ReleaseDescriptor releaseDescriptor = createDescriptorFromProjects( "internal-snapshot-extension" );
 
-        phase.execute( releaseConfiguration );
+        phase.execute( releaseDescriptor, null, getReactorProjects() );
 
-        phase.simulate( releaseConfiguration );
+        phase.simulate( releaseDescriptor, null, getReactorProjects() );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -724,20 +715,20 @@ public class CheckDependencySnapshotsPhaseTest
     public void testReleaseExternalExtension()
         throws Exception
     {
-        ReleaseConfiguration releaseConfiguration = createConfigurationFromProjects( "external-extension" );
+        ReleaseDescriptor releaseDescriptor = createDescriptorFromProjects( "external-extension" );
 
-        phase.execute( releaseConfiguration );
+        phase.execute( releaseDescriptor, null, getReactorProjects() );
 
-        phase.simulate( releaseConfiguration );
+        phase.simulate( releaseDescriptor, null, getReactorProjects() );
 
         // successful execution is verification enough
         assertTrue( true );
     }
 
-    private ReleaseConfiguration createConfigurationFromProjects( String path )
+    private ReleaseDescriptor createDescriptorFromProjects( String path )
         throws Exception
     {
-        return createConfigurationFromProjects( "check-dependencies/", path, true );
+        return createDescriptorFromProjects( "check-dependencies/", path, true );
     }
 
 }

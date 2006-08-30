@@ -18,7 +18,7 @@ package org.apache.maven.plugins.release.phase;
 
 import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.ReleaseFailureException;
-import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.apache.maven.plugins.release.scm.ReleaseScmCommandException;
 import org.apache.maven.plugins.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.plugins.release.scm.ScmRepositoryConfigurator;
@@ -30,6 +30,7 @@ import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
+import org.apache.maven.settings.Settings;
 
 import java.io.File;
 import java.text.MessageFormat;
@@ -56,10 +57,10 @@ public class ScmCommitPhase
      */
     private String messageFormat;
 
-    public void execute( ReleaseConfiguration releaseConfiguration )
+    public void execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        validateConfiguration( releaseConfiguration );
+        validateConfiguration( releaseDescriptor );
 
         getLogger().info( "Checking in modified POMs..." );
 
@@ -67,7 +68,7 @@ public class ScmCommitPhase
         ScmProvider provider;
         try
         {
-            repository = scmRepositoryConfigurator.getConfiguredRepository( releaseConfiguration );
+            repository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, settings );
 
             provider = scmRepositoryConfigurator.getRepositoryProvider( repository );
         }
@@ -80,14 +81,14 @@ public class ScmCommitPhase
             throw new ReleaseExecutionException( "Unable to configure SCM repository: " + e.getMessage(), e );
         }
 
-        Collection pomFiles = createPomFiles( releaseConfiguration.getReactorProjects() );
+        Collection pomFiles = createPomFiles( reactorProjects );
         File[] files = (File[]) pomFiles.toArray( new File[pomFiles.size()] );
 
         CheckInScmResult result;
         try
         {
-            ScmFileSet fileSet = new ScmFileSet( releaseConfiguration.getWorkingDirectory(), files );
-            result = provider.checkIn( repository, fileSet, null, createMessage( releaseConfiguration ) );
+            ScmFileSet fileSet = new ScmFileSet( new File( releaseDescriptor.getWorkingDirectory() ), files );
+            result = provider.checkIn( repository, fileSet, null, createMessage( releaseDescriptor ) );
         }
         catch ( ScmException e )
         {
@@ -99,28 +100,28 @@ public class ScmCommitPhase
         }
     }
 
-    public void simulate( ReleaseConfiguration releaseConfiguration )
+    public void simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        validateConfiguration( releaseConfiguration );
+        validateConfiguration( releaseDescriptor );
 
-        Collection pomFiles = createPomFiles( releaseConfiguration.getReactorProjects() );
+        Collection pomFiles = createPomFiles( reactorProjects );
         getLogger().info( "Full run would be checking in " + pomFiles.size() + " files with message: '" +
-            createMessage( releaseConfiguration ) + "'" );
+            createMessage( releaseDescriptor ) + "'" );
     }
 
-    private static void validateConfiguration( ReleaseConfiguration releaseConfiguration )
+    private static void validateConfiguration( ReleaseDescriptor releaseDescriptor )
         throws ReleaseFailureException
     {
-        if ( releaseConfiguration.getReleaseLabel() == null )
+        if ( releaseDescriptor.getScmReleaseLabel() == null )
         {
             throw new ReleaseFailureException( "A release label is required for committing" );
         }
     }
 
-    private String createMessage( ReleaseConfiguration releaseConfiguration )
+    private String createMessage( ReleaseDescriptor releaseDescriptor )
     {
-        return MessageFormat.format( messageFormat, new Object[]{releaseConfiguration.getReleaseLabel()} );
+        return MessageFormat.format( messageFormat, new Object[]{releaseDescriptor.getScmReleaseLabel()} );
     }
 
     private static Collection createPomFiles( List reactorProjects )

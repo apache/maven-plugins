@@ -16,7 +16,10 @@ package org.apache.maven.plugins.release.phase;
  * limitations under the License.
  */
 
-import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.plugins.release.config.ReleaseDescriptor;
+import org.apache.maven.settings.Settings;
+
+import java.util.List;
 
 /**
  * Test stub for testing if a phase is executed.
@@ -41,17 +44,17 @@ public class ReleasePhaseStub
      */
     private boolean cleaned;
 
-    public void execute( ReleaseConfiguration releaseConfiguration )
+    public void execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
     {
         executed = true;
     }
 
-    public void simulate( ReleaseConfiguration releaseConfiguration )
+    public void simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
     {
         simulated = true;
     }
 
-    public void clean( ReleaseConfiguration config )
+    public void clean( List reactorProjects )
     {
         cleaned = true;
     }

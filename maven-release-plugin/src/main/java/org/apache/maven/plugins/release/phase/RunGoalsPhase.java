@@ -17,10 +17,14 @@ package org.apache.maven.plugins.release.phase;
  */
 
 import org.apache.maven.plugins.release.ReleaseExecutionException;
-import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.apache.maven.plugins.release.exec.MavenExecutor;
 import org.apache.maven.plugins.release.exec.MavenExecutorException;
+import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.util.StringUtils;
+
+import java.io.File;
+import java.util.List;
 
 /**
  * Run the integration tests for the project to verify that it builds before committing.
@@ -35,19 +39,19 @@ public class RunGoalsPhase
      */
     private MavenExecutor mavenExecutor;
 
-    public void execute( ReleaseConfiguration releaseConfiguration )
+    public void execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException
     {
         try
         {
-            String goals = releaseConfiguration.getPreparationGoals();
+            String goals = releaseDescriptor.getPreparationGoals();
             if ( !StringUtils.isEmpty( goals ) )
             {
                 getLogger().info( "Executing preparation goals '" + goals + "'..." );
 
-                mavenExecutor.executeGoals( releaseConfiguration.getWorkingDirectory(), goals,
-                                            releaseConfiguration.isInteractive(),
-                                            releaseConfiguration.getAdditionalArguments() );
+                mavenExecutor.executeGoals( new File( releaseDescriptor.getWorkingDirectory() ), goals,
+                                            releaseDescriptor.isInteractive(),
+                                            releaseDescriptor.getAdditionalArguments() );
             }
         }
         catch ( MavenExecutorException e )
@@ -56,13 +60,13 @@ public class RunGoalsPhase
         }
     }
 
-    public void simulate( ReleaseConfiguration releaseConfiguration )
+    public void simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException
     {
         getLogger().info(
             "Executing preparation goals - since this is simulation mode it is running against the original project, not the rewritten ones" );
 
-        execute( releaseConfiguration );
+        execute( releaseDescriptor, settings, reactorProjects );
     }
 
     public void setMavenExecutor( MavenExecutor mavenExecutor )

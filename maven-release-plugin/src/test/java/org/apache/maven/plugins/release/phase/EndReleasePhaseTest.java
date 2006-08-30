@@ -18,7 +18,7 @@ package org.apache.maven.plugins.release.phase;
 
 import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.ReleaseFailureException;
-import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.codehaus.plexus.PlexusTestCase;
 
 /**
@@ -42,7 +42,7 @@ public class EndReleasePhaseTest
     public void testExecute()
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        phase.execute( new ReleaseConfiguration() );
+        phase.execute( new ReleaseDescriptor(), null, null );
 
         assertTrue( true );
     }
@@ -50,7 +50,7 @@ public class EndReleasePhaseTest
     public void testSimulate()
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        phase.simulate( new ReleaseConfiguration() );
+        phase.simulate( new ReleaseDescriptor(), null, null );
 
         assertTrue( true );
     }

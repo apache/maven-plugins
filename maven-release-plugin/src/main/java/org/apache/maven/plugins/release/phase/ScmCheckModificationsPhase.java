@@ -18,7 +18,7 @@ package org.apache.maven.plugins.release.phase;
 
 import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.ReleaseFailureException;
-import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.apache.maven.plugins.release.scm.ReleaseScmCommandException;
 import org.apache.maven.plugins.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.plugins.release.scm.ScmRepositoryConfigurator;
@@ -30,7 +30,9 @@ import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
+import org.apache.maven.settings.Settings;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -58,7 +60,7 @@ public class ScmCheckModificationsPhase
     private Set excludedFiles = new HashSet( Arrays.asList(
         new String[]{"pom.xml", "pom.xml.backup", "pom.xml.tag", "pom.xml.next", "release.properties"} ) );
 
-    public void execute( ReleaseConfiguration releaseConfiguration )
+    public void execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         getLogger().info( "Verifying that there are no local modifications..." );
@@ -67,14 +69,14 @@ public class ScmCheckModificationsPhase
         ScmProvider provider;
         try
         {
-            repository = scmRepositoryConfigurator.getConfiguredRepository( releaseConfiguration );
+            repository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, settings );
 
             provider = scmRepositoryConfigurator.getRepositoryProvider( repository );
         }
         catch ( ScmRepositoryException e )
         {
-            throw new ReleaseScmRepositoryException( e.getMessage() + " for URL: " + releaseConfiguration.getUrl(),
-                                                     e.getValidationMessages() );
+            throw new ReleaseScmRepositoryException(
+                e.getMessage() + " for URL: " + releaseDescriptor.getScmSourceUrl(), e.getValidationMessages() );
         }
         catch ( NoSuchScmProviderException e )
         {
@@ -84,7 +86,8 @@ public class ScmCheckModificationsPhase
         StatusScmResult result;
         try
         {
-            result = provider.status( repository, new ScmFileSet( releaseConfiguration.getWorkingDirectory() ) );
+            result =
+                provider.status( repository, new ScmFileSet( new File( releaseDescriptor.getWorkingDirectory() ) ) );
         }
         catch ( ScmException e )
         {
@@ -131,10 +134,10 @@ public class ScmCheckModificationsPhase
         }
     }
 
-    public void simulate( ReleaseConfiguration releaseConfiguration )
+    public void simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         // It makes no modifications, so simulate is the same as execute
-        execute( releaseConfiguration );
+        execute( releaseDescriptor, settings, reactorProjects );
     }
 }

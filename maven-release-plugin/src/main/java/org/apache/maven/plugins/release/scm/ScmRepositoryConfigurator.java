@@ -16,11 +16,12 @@ package org.apache.maven.plugins.release.scm;
  * limitations under the License.
  */
 
-import org.apache.maven.plugins.release.config.ReleaseConfiguration;
+import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
+import org.apache.maven.settings.Settings;
 
 /**
  * Configure an SCM repository using release configuration.
@@ -37,12 +38,13 @@ public interface ScmRepositoryConfigurator
     /**
      * Construct a configured SCM repository from a release configuration.
      *
-     * @param releaseConfiguration the configuration to insert into the repository
+     * @param releaseDescriptor the configuration to insert into the repository
+     * @param settings          the settings.xml configuraiton
      * @return the repository created
      * @throws ScmRepositoryException     if it is not possible to create a suitable SCM repository
      * @throws NoSuchScmProviderException if the requested SCM provider is not available
      */
-    ScmRepository getConfiguredRepository( ReleaseConfiguration releaseConfiguration )
+    ScmRepository getConfiguredRepository( ReleaseDescriptor releaseDescriptor, Settings settings )
         throws ScmRepositoryException, NoSuchScmProviderException;
 
     /**
