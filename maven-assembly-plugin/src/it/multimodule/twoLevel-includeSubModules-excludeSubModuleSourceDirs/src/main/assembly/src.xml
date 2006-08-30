@@ -6,14 +6,12 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <moduleSets>
     <moduleSet>
-      <includeSubModules>false</includeSubModules>
       <sources>
-        <excludeSubModuleDirectories>false</excludeSubModuleDirectories>
         <fileSets>
           <fileSet>
             <excludes>
               <exclude>**/.svn</exclude>
-              <exclude>**/target</exclude>
+              <exclude>target/**</exclude>
             </excludes>
           </fileSet>
         </fileSets>

@@ -582,6 +582,21 @@
           </description>
         </field>
         <field>
+          <name>excludeSubModuleDirectories</name>
+          <version>1.0.0</version>
+          <type>boolean</type>
+          <defaultValue>true</defaultValue>
+          <description>
+            <![CDATA[
+            Specifies whether sub-module directories below the current module should be excluded
+            from fileSets applied to that module. This might be useful if you only mean to copy
+            the sources for the exact module list matched by this ModuleSet, ignoring (or processing
+            separately) the modules which exist in directories below the current one. 
+            Default value is true.
+            ]]>
+          </description>
+        </field>
+        <field>
           <name>outputFileNameMapping</name>
           <version>1.0.0</version>
           <type>String</type>
