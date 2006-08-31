@@ -48,7 +48,11 @@ public abstract class AbstractAssemblyMojo
 {
 
     /**
+     * Local Maven repository where artifacts are cached during the build process.
+     * 
      * @parameter default-value="${localRepository}"
+     * @required
+     * @readonly
      */
     private ArtifactRepository localRepository;
 
