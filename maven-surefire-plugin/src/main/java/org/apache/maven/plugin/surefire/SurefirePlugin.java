@@ -457,6 +457,8 @@ public class SurefirePlugin
 
             if ( testNgArtifact != null )
             {
+                addArtifact(surefireBooter, testNgArtifact);
+
                 VersionRange range = VersionRange.createFromVersionSpec( "[4.7,)" );
                 if ( !range.containsVersion( testNgArtifact.getSelectedVersion() ) )
                 {
