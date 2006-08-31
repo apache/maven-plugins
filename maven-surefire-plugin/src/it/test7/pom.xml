@@ -5,10 +5,10 @@
    <modelVersion>4.0.0</modelVersion>
 
    <groupId>org.apache.maven.plugins.surefire</groupId>
-   <artifactId>test5</artifactId>
+   <artifactId>test7</artifactId>
    <version>1.0-SNAPSHOT</version>
-   <name>Test for testng jdk14 integration</name>
-   <description>calls testng jdk14 javadoc based tests</description>
+   <name>TestNG Junit Compatible</name>
+   <description>Tests that junit tests can be executed alongside TestNG tests</description>
    
    <dependencies>
       <dependency>
@@ -21,19 +21,23 @@
          <groupId>org.testng</groupId>
          <artifactId>testng</artifactId>
          <version>5.0.1</version>
-         <classifier>jdk14</classifier>
+         <classifier>jdk15</classifier>
          <scope>test</scope>
       </dependency>
    </dependencies>
    
    <build>
-    <testSourceDirectory>src/test/java</testSourceDirectory>
       <plugins>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
+         </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
             <configuration>
-               <groups>functional</groups>
+               <source>1.5</source>
+               <target>1.5</target>
             </configuration>
          </plugin>
       </plugins>

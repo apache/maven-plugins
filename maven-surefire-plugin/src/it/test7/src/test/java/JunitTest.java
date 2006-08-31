@@ -1,8 +1,7 @@
 import junit.framework.TestCase;
 
 /**
- * Provided to ensure both junit and testng tests can run happily
- * together.
+ * Provided to ensure both junit and testng tests can run together.
  * 
  * @author jkuhnert
  */

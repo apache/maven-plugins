@@ -1,24 +1,32 @@
-import org.testng.annotations.Configuration;
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.testng.internal.Utils;
 
 
 /**
- * Tests that forcing testng to run tests via the 
- * <code>"${maven.test.forcetestng}"</code> configuration option
- * works.
+ * Tests grouping/threading/parallel functionality of TestNG.
  * 
  * @author jkuhnert
  */
 public class TestNGTest {
 
+	static int m_testCount = 0;
+	
 	/**
 	 * Sets up testObject
 	 */
-	@Configuration(beforeTestClass = true, groups = "functional")
+	@BeforeClass(groups = "functional")
 	public void configureTest()
 	{
 		testObject = new Object();
+	}
+	
+	@AfterSuite(alwaysRun = true, groups = "functional")
+	public void check_Test_Count()
+	{
+		System.out.println("check_Test_Count(): " + m_testCount);
+		
+		assert m_testCount == 3 : "Expected 3 tests to be run but local count was " + m_testCount;
 	}
 	
 	Object testObject;
@@ -29,6 +37,7 @@ public class TestNGTest {
 	@Test(groups = {"functional", "notincluded"})
 	public void isTestObjectNull()
 	{
+		m_testCount++;
 		assert testObject != null : "testObject is null";
 	}
 	
