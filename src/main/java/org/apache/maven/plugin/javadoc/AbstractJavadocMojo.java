@@ -763,7 +763,8 @@ public abstract class AbstractJavadocMojo
                 }
                 else
                 {
-                    addArgIfNotEmpty( arguments, "-group", quotedArgument( groups[i].getTitle() ) + " "
+                    String groupTitle = StringUtils.replace( groups[i].getTitle(), ",", "&#44;" );
+                    addArgIfNotEmpty( arguments, "-group", quotedArgument( groupTitle ) + " "
                         + quotedArgument( groups[i].getPackages() ), true );
                 }
             }
