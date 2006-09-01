@@ -294,7 +294,7 @@ public abstract class AbstractJavadocMojo
      * eg. <code>&lt;![CDATA[Copyright 2005, &lt;a href="http://www.mycompany.com">MyCompany, Inc.&lt;a>]]&gt;</code><br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#bottom">bottom</a>.
      *
-     * @parameter expression="${bottom}" default-value="Copyright &copy; {inceptionYear}-{currentYear} ${project.organization.name}. All Rights Reserved."
+     * @parameter expression="${bottom}" default-value="Copyright &copy; {inceptionYear}-{currentYear} {organizationName}. All Rights Reserved."
      */
     private String bottom;
 
@@ -618,7 +618,7 @@ public abstract class AbstractJavadocMojo
     private static final float MIN_JAVA_VERSION = 1.4f;
 
     /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getOutputDirectory()
+     * @return the output directory
      */
     protected String getOutputDirectory()
     {
@@ -626,7 +626,8 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#executeReport(java.util.Locale)
+     * @param locale
+     * @throws MavenReportException
      */
     protected void executeReport( Locale locale )
         throws MavenReportException
@@ -743,8 +744,7 @@ public abstract class AbstractJavadocMojo
         if ( StringUtils.isEmpty( doclet ) )
         {
             addArgIf( arguments, author, "-author" );
-            addArgIfNotEmpty( arguments, "-bottom", quotedArgument( getBottomText( project.getModel()
-                .getInceptionYear() ) ) );
+            addArgIfNotEmpty( arguments, "-bottom", quotedArgument( getBottomText( project.getInceptionYear() ) ) );
             addArgIf( arguments, breakiterator, "-breakiterator", MIN_JAVA_VERSION );
             addArgIfNotEmpty( arguments, "-charset", quotedArgument( charset ) );
             addArgIfNotEmpty( arguments, "-d", quotedPathArgument( javadocDirectory.toString() ) );
@@ -1168,24 +1168,49 @@ public abstract class AbstractJavadocMojo
         int actualYear = Calendar.getInstance().get( Calendar.YEAR );
         String year = String.valueOf( actualYear );
 
-        String bottom = StringUtils.replace( this.bottom, "{currentYear}", year );
+        String theBottom = StringUtils.replace( this.bottom, "{currentYear}", year );
 
         if ( inceptionYear != null )
         {
             if ( inceptionYear.equals( year ) )
             {
-                bottom = StringUtils.replace( bottom, "{inceptionYear}-", "" );
+                theBottom = StringUtils.replace( theBottom, "{inceptionYear}-", "" );
             }
             else
             {
-                bottom = StringUtils.replace( bottom, "{inceptionYear}", inceptionYear );
+                theBottom = StringUtils.replace( theBottom, "{inceptionYear}", inceptionYear );
             }
         }
         else
         {
-            bottom = StringUtils.replace( bottom, "{inceptionYear}-", "" );
+            theBottom = StringUtils.replace( theBottom, "{inceptionYear}-", "" );
         }
-        return bottom;
+
+        if ( project.getOrganization() == null )
+        {
+            theBottom = StringUtils.replace( theBottom, " {organizationName}", "" );
+        }
+        else
+        {
+            if ( ( project.getOrganization() != null ) && ( !StringUtils.isEmpty( project.getOrganization().getName() ) ) )
+            {
+                if ( !StringUtils.isEmpty( project.getOrganization().getUrl() ) )
+                {
+                    theBottom = StringUtils.replace( theBottom, "{organizationName}", "<a href=\""
+                        + project.getOrganization().getUrl() + "\">" + project.getOrganization().getName() + "</a>" );
+                }
+                else
+                {
+                    theBottom = StringUtils.replace( theBottom, "{organizationName}", project.getOrganization().getName() );
+                }
+            }
+            else
+            {
+                theBottom = StringUtils.replace( theBottom, " {organizationName}", "" );
+            }
+        }
+
+        return theBottom;
     }
 
     /**
@@ -1348,6 +1373,7 @@ public abstract class AbstractJavadocMojo
      * Convenience method to add an argument to the <code>command line</code>
      * regarding the requested Java version.
      *
+     * @param arguments           a list of arguments
      * @param b                   the flag which controls if the argument is added or not.
      * @param value               the argument value to be added.
      * @param requiredJavaVersion the required Java version, for example 1.31f or 1.4f
@@ -1439,6 +1465,7 @@ public abstract class AbstractJavadocMojo
      * Convenience method to add an argument to the <code>command line</code>
      * regarding the requested Java version.
      *
+     * @param arguments           a list of arguments
      * @param key                 the argument name.
      * @param value               the argument value to be added.
      * @param requiredJavaVersion the required Java version, for example 1.31f or 1.4f
