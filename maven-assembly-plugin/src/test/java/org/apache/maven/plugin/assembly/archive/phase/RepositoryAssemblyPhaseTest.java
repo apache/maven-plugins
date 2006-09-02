@@ -91,7 +91,7 @@ public class RepositoryAssemblyPhaseTest
         File outDir = new File( tempRoot, "out" );
         
         macArchiver.expectModeChange( -1, -1, mode, mode, true );
-        macArchiver.expectAddDirectory( outDir, "final-name/out/", null, new String[0] );
+        macArchiver.expectAddDirectory( outDir, "out/", null, new String[0] );
         
         macRepo.expectAssemble( outDir, repo, macCS.configSource );
         

@@ -71,8 +71,6 @@ public class ModuleSetAssemblyPhase
     {
         List moduleSets = assembly.getModuleSets();
 
-        boolean includeBaseDirectory = assembly.isIncludeBaseDirectory();
-
         for ( Iterator i = moduleSets.iterator(); i.hasNext(); )
         {
             ModuleSet moduleSet = ( ModuleSet ) i.next();
@@ -88,15 +86,14 @@ public class ModuleSetAssemblyPhase
                 continue;
             }
 
-            addModuleSourceFileSets( moduleSet.getSources(), moduleProjects, archiver, configSource,
-                                     includeBaseDirectory );
+            addModuleSourceFileSets( moduleSet.getSources(), moduleProjects, archiver, configSource );
 
-            addModuleBinaries( moduleSet.getBinaries(), moduleProjects, archiver, configSource, includeBaseDirectory );
+            addModuleBinaries( moduleSet.getBinaries(), moduleProjects, archiver, configSource );
         }
     }
 
     protected void addModuleBinaries( ModuleBinaries binaries, Set projects, Archiver archiver,
-                                      AssemblerConfigurationSource configSource, boolean includeBaseDirectory )
+                                      AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
     {
         if ( binaries == null )
@@ -128,7 +125,7 @@ public class ModuleSetAssemblyPhase
 
             Artifact artifact = project.getArtifact();
 
-            addArtifact( artifact, project, archiver, configSource, binaries, includeBaseDirectory );
+            addArtifact( artifact, project, archiver, configSource, binaries );
         }
 
         List depSets = binaries.getDependencySets();
@@ -164,7 +161,6 @@ public class ModuleSetAssemblyPhase
                 AddDependencySetsTask task =
                     new AddDependencySetsTask( depSets, moduleProject, projectBuilder, dependencyResolver, getLogger() );
 
-                task.setIncludeBaseDirectory( includeBaseDirectory );
                 task.setDefaultOutputDirectory( binaries.getOutputDirectory() );
                 task.setDefaultOutputFileNameMapping( binaries.getOutputFileNameMapping() );
 
@@ -195,8 +191,7 @@ public class ModuleSetAssemblyPhase
     }
 
     protected void addArtifact( Artifact artifact, MavenProject project, Archiver archiver,
-                                AssemblerConfigurationSource configSource, ModuleBinaries binaries,
-                                boolean includeBaseDirectory )
+                                AssemblerConfigurationSource configSource, ModuleBinaries binaries )
         throws ArchiveCreationException, AssemblyFormattingException
     {
         if ( artifact.getFile() == null )
@@ -209,7 +204,6 @@ public class ModuleSetAssemblyPhase
         AddArtifactTask task = new AddArtifactTask( artifact );
 
         task.setFileNameMapping( binaries.getOutputFileNameMapping() );
-        task.setIncludeBaseDirectory( includeBaseDirectory );
         task.setOutputDirectory( binaries.getOutputDirectory() );
         task.setProject( project );
         task.setDirectoryMode( binaries.getDirectoryMode() );
@@ -220,7 +214,7 @@ public class ModuleSetAssemblyPhase
     }
 
     protected void addModuleSourceFileSets( ModuleSources sources, Set moduleProjects, Archiver archiver,
-                                            AssemblerConfigurationSource configSource, boolean includeBaseDirectory )
+                                            AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException
     {
         if ( sources == null )
@@ -254,7 +248,6 @@ public class ModuleSetAssemblyPhase
 
                 task.setProject( moduleProject );
                 task.setLogger( getLogger() );
-                task.setIncludeBaseDirectory( false );
 
                 task.execute( archiver, configSource );
             }
@@ -316,7 +309,7 @@ public class ModuleSetAssemblyPhase
         if ( sources.isIncludeModuleDirectory() )
         {
             destPathPrefix =
-                AssemblyFormatUtils.evaluateFileNameMapping( sources.getOutputFileNameMapping(),
+                AssemblyFormatUtils.evaluateFileNameMapping( sources.getOutputDirectoryMapping(),
                                                              moduleProject.getArtifact() );
 
             if ( !destPathPrefix.endsWith( "/" ) )
@@ -337,12 +330,12 @@ public class ModuleSetAssemblyPhase
         }
 
         destPath =
-            AssemblyFormatUtils.getOutputDirectory( destPath, moduleProject, "",
-                                                    true );
+            AssemblyFormatUtils.getOutputDirectory( destPath, moduleProject, "" );
 
         fs.setOutputDirectory( destPath );
 
-        getLogger().info( "module-sources source directory is: " + sourcePath );
+        getLogger().debug( "module source directory is: " + sourcePath );
+        getLogger().debug( "module dest directory is: " + destPath + " (assembly basedir may be prepended)" );
 
         return fs;
     }

@@ -64,6 +64,7 @@ public class AssemblyInterpolator
 //        ofnmBlacklistings.add( "finalName" );
 
         blacklist.put( "outputFileNameMapping", ofnmBlacklistings );
+        blacklist.put( "outputDirectoryMapping", ofnmBlacklistings );
 
         
         List odBlacklist = new ArrayList();

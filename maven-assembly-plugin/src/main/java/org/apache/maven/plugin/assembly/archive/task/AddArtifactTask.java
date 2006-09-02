@@ -35,8 +35,6 @@ public class AddArtifactTask
 
     private String outputFileNameMapping;
 
-    private boolean includeBaseDirectory;
-
     public AddArtifactTask( Artifact artifact )
     {
         this.artifact = artifact;
@@ -47,8 +45,7 @@ public class AddArtifactTask
     {
         String destDirectory = outputDirectory;
 
-        destDirectory = AssemblyFormatUtils.getOutputDirectory( destDirectory, project, configSource.getFinalName(),
-                                                                includeBaseDirectory );
+        destDirectory = AssemblyFormatUtils.getOutputDirectory( destDirectory, project, configSource.getFinalName() );
 
         String fileNameMapping = AssemblyFormatUtils.evaluateFileNameMapping( outputFileNameMapping, artifact );
 
@@ -153,11 +150,6 @@ public class AddArtifactTask
     public void setFileNameMapping( String outputFileNameMapping )
     {
         this.outputFileNameMapping = outputFileNameMapping;
-    }
-
-    public void setIncludeBaseDirectory( boolean includeBaseDirectory )
-    {
-        this.includeBaseDirectory = includeBaseDirectory;
     }
 
     public void setOutputDirectory( String outputDirectory, String defaultOutputDirectory )
