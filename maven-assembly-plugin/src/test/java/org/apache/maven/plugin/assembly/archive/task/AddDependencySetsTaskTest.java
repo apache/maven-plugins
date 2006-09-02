@@ -45,7 +45,7 @@ public class AddDependencySetsTaskTest
         AddDependencySetsTask task =
             new AddDependencySetsTask( Collections.singletonList( ds ), project, macTask.projectBuilder, macTask.dependencyResolver, logger );
 
-        task.addDependencySet( ds, null, macTask.configSource, false );
+        task.addDependencySet( ds, null, macTask.configSource );
 
         mockManager.verifyAll();
     }
@@ -111,7 +111,7 @@ public class AddDependencySetsTaskTest
 
         mockManager.replayAll();
 
-        task.addDependencySet( ds, macTask.archiver, macTask.configSource, false );
+        task.addDependencySet( ds, macTask.archiver, macTask.configSource );
 
         mockManager.verifyAll();
     }

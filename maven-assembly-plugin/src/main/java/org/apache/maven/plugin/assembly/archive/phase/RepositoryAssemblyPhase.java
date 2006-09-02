@@ -70,8 +70,7 @@ public class RepositoryAssemblyPhase
 
             String outputDirectory =
                 AssemblyFormatUtils.getOutputDirectory( repository.getOutputDirectory(), configSource.getProject(),
-                                                        configSource.getFinalName(),
-                                                        assembly.isIncludeBaseDirectory() );
+                                                        configSource.getFinalName() );
             
             AddDirectoryTask task = new AddDirectoryTask( repositoryDirectory );
             

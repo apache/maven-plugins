@@ -1,0 +1,16 @@
+import java.io.*;
+import java.net.*;
+import java.util.jar.*;
+
+boolean result = true;
+
+String finalName = "two-levels-includeBaseDirectory-withSources-1.0-SNAPSHOT";
+String rootDir = "target/" + finalName + "-src.dir/" + finalName + "/modules/";
+
+result = result && new File( basedir, rootDir + "child-level1-project1/pom.xml" ).exists();   
+
+result = result && new File( basedir, rootDir + "child-level1-project2/pom.xml" ).exists();   
+
+result = result && new File( basedir, rootDir + "child-level2-project1/pom.xml" ).exists();   
+
+return result;
