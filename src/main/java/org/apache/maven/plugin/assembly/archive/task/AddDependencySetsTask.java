@@ -44,8 +44,6 @@ public class AddDependencySetsTask
 
     private final List dependencySets;
 
-    private boolean includeBaseDirectory = true;
-
     private final Logger logger;
 
     private final MavenProject project;
@@ -87,12 +85,12 @@ public class AddDependencySetsTask
         {
             DependencySet dependencySet = ( DependencySet ) i.next();
 
-            addDependencySet( dependencySet, archiver, configSource, includeBaseDirectory );
+            addDependencySet( dependencySet, archiver, configSource );
         }
     }
 
     protected void addDependencySet( DependencySet dependencySet, Archiver archiver,
-                                     AssemblerConfigurationSource configSource, boolean includeBaseDirectory )
+                                     AssemblerConfigurationSource configSource )
         throws AssemblyFormattingException, ArchiveCreationException
     {
         logger.info( "Processing DependencySet" );
@@ -127,7 +125,6 @@ public class AddDependencySetsTask
                 task.setProject( depProject );
                 task.setOutputDirectory( dependencySet.getOutputDirectory(), defaultOutputDirectory );
                 task.setFileNameMapping( dependencySet.getOutputFileNameMapping(), defaultOutputFileNameMapping );
-                task.setIncludeBaseDirectory( includeBaseDirectory );
                 task.setDirectoryMode( dependencySet.getDirectoryMode() );
                 task.setFileMode( dependencySet.getFileMode() );
                 task.setUnpack( dependencySet.isUnpack() );
@@ -179,8 +176,7 @@ public class AddDependencySetsTask
         String outputDirectory = dependencySet.getOutputDirectory();
 
         outputDirectory =
-            AssemblyFormatUtils.getOutputDirectory( outputDirectory, depProject, depProject.getBuild().getFinalName(),
-                                                    includeBaseDirectory );
+            AssemblyFormatUtils.getOutputDirectory( outputDirectory, depProject, depProject.getBuild().getFinalName() );
         String destName =
             AssemblyFormatUtils.evaluateFileNameMapping( dependencySet.getOutputFileNameMapping(), depArtifact );
 
@@ -204,16 +200,6 @@ public class AddDependencySetsTask
         {
             throw new ArchiveCreationException( "Error adding file to archive: " + e.getMessage(), e );
         }
-    }
-
-    public boolean isIncludeBaseDirectory()
-    {
-        return includeBaseDirectory;
-    }
-
-    public void setIncludeBaseDirectory( boolean includeBaseDirectory )
-    {
-        this.includeBaseDirectory = includeBaseDirectory;
     }
 
     public List getDependencySets()

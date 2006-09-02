@@ -1,14 +1,8 @@
 package org.apache.maven.plugin.assembly.archive;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
+import org.apache.maven.plugin.assembly.archive.archiver.PrefixingProxyArchiver;
 import org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase;
 import org.apache.maven.plugin.assembly.filter.ComponentsXmlArchiverFileFilter;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
@@ -26,6 +20,13 @@ import org.codehaus.plexus.archiver.tar.TarArchiver;
 import org.codehaus.plexus.archiver.tar.TarLongFileMode;
 import org.codehaus.plexus.archiver.war.WarArchiver;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @plexus.component role="org.apache.maven.plugin.assembly.archive.AssemblyArchiver" role-hint="default"
@@ -64,7 +65,7 @@ public class DefaultAssemblyArchiver
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
     {
         String filename = fullName + "." + format;
-
+        
         ComponentsXmlArchiverFileFilter componentsXmlFilter = new ComponentsXmlArchiverFileFilter();
 
         File outputDirectory = configSource.getOutputDirectory();
@@ -73,7 +74,7 @@ public class DefaultAssemblyArchiver
 
         try
         {
-            Archiver archiver = createArchiver( format, configSource.getTarLongFileMode(), componentsXmlFilter );
+            Archiver archiver = createArchiver( format, assembly.isIncludeBaseDirectory(), configSource.getFinalName(), configSource.getTarLongFileMode(), componentsXmlFilter );
 
             for ( Iterator phaseIterator = assemblyPhases.iterator(); phaseIterator.hasNext(); )
             {
@@ -107,13 +108,15 @@ public class DefaultAssemblyArchiver
      * 
      * @param format
      *            Archive format
+     * @param includeBaseDir 
      * @param tarLongFileMode
+     * @param finalName 
      * @return archiver Archiver generated
      * @throws org.codehaus.plexus.archiver.ArchiverException
      * @throws org.codehaus.plexus.archiver.manager.NoSuchArchiverException
      */
-    protected Archiver createArchiver( String format, String tarLongFileMode,
-                                       ComponentsXmlArchiverFileFilter componentsXmlFilter )
+    protected Archiver createArchiver( String format, boolean includeBaseDir, String finalName,
+                                       String tarLongFileMode, ComponentsXmlArchiverFileFilter componentsXmlFilter )
         throws ArchiverException, NoSuchArchiverException
     {
         Archiver archiver;
@@ -133,6 +136,11 @@ public class DefaultAssemblyArchiver
         configureArchiverFilters( archiver, componentsXmlFilter );
 
         configureArchiverFinalizers( archiver, componentsXmlFilter );
+        
+        if ( includeBaseDir )
+        {
+            archiver = new PrefixingProxyArchiver( finalName, archiver );
+        }
 
         return archiver;
     }

@@ -85,6 +85,9 @@ public class DefaultAssemblyArchiverTest
         configSource.getTarLongFileMode();
         csControl.setReturnValue( null );
         
+        configSource.getFinalName();
+        csControl.setReturnValue( "finalName" );
+        
         Assembly assembly = new Assembly();
         
         mm.replayAll();
@@ -114,7 +117,7 @@ public class DefaultAssemblyArchiverTest
         DefaultAssemblyArchiver subject =
             createSubject( macArchiverManager.archiverManager, Collections.EMPTY_LIST, null );
 
-        subject.createArchiver( "tar", TarLongFileMode.FAIL, filter );
+        subject.createArchiver( "tar", false, "finalName", TarLongFileMode.FAIL, filter );
 
         assertNull( ttArchiver.compressionMethod );
         assertEquals( TarLongFileMode.FAIL, ttArchiver.longFileMode.getValue() );
@@ -140,7 +143,7 @@ public class DefaultAssemblyArchiverTest
         DefaultAssemblyArchiver subject =
             createSubject( macArchiverManager.archiverManager, Collections.EMPTY_LIST, null );
 
-        subject.createArchiver( "war", null, filter );
+        subject.createArchiver( "war", false, null, null, filter );
 
         assertFalse( twArchiver.ignoreWebxml );
     }
@@ -163,7 +166,7 @@ public class DefaultAssemblyArchiverTest
         DefaultAssemblyArchiver subject =
             createSubject( macArchiverManager.archiverManager, Collections.EMPTY_LIST, null );
 
-        subject.createArchiver( "zip", null, filter );
+        subject.createArchiver( "zip", false, null, null, filter );
     }
 
     public void testConfigureArchiverFinalizers_ShouldDoNothingWhenNotSupportedByArchiver()
