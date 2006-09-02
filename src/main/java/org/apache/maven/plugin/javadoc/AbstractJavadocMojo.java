@@ -106,14 +106,6 @@ public abstract class AbstractJavadocMojo
     protected MavenProject project;
 
     /**
-     * The currently executed project.
-     *
-     * @parameter expression="${executedProject}"
-     * @readonly
-     */
-    protected MavenProject executedProject;
-
-    /**
      * Set an additional parameter(s) on the command line.  This value should include quotes as necessary for parameters
      * that include spaces.
      *
@@ -974,9 +966,9 @@ public abstract class AbstractJavadocMojo
         {
             sourcePaths = new ArrayList( project.getCompileSourceRoots() );
 
-            if ( executedProject != null )
+            if ( project.getExecutionProject() != null )
             {
-                sourcePaths.addAll( executedProject.getCompileSourceRoots() );
+                sourcePaths.addAll( project.getExecutionProject().getCompileSourceRoots() );
             }
 
             if ( aggregate && project.isExecutionRoot() )
