@@ -230,7 +230,7 @@ public class ModuleSetAssemblyPhaseTest
     public void testAddModuleBinaries_ShouldReturnImmediatelyWhenBinariesIsNull()
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
     {
-        createPhase( null, null ).addModuleBinaries( null, null, null, null, false );
+        createPhase( null, null ).addModuleBinaries( null, null, null, null );
     }
 
     public void testAddModuleBinaries_ShouldFilterPomModule()
@@ -258,8 +258,7 @@ public class ModuleSetAssemblyPhaseTest
 
         createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).addModuleBinaries( binaries, projects,
                                                                                                 macTask.archiver,
-                                                                                                macTask.configSource,
-                                                                                                false );
+                                                                                                macTask.configSource );
 
         mm.verifyAll();
     }
@@ -295,8 +294,7 @@ public class ModuleSetAssemblyPhaseTest
 
         Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
-        createPhase( logger, null ).addModuleBinaries( binaries, projects, macTask.archiver, macTask.configSource,
-                                                       false );
+        createPhase( logger, null ).addModuleBinaries( binaries, projects, macTask.archiver, macTask.configSource );
 
         mm.verifyAll();
     }
@@ -364,7 +362,7 @@ public class ModuleSetAssemblyPhaseTest
 
         ModuleSetAssemblyPhase phase = createPhase( overrideLogger, macTask );
 
-        phase.addModuleBinaries( binaries, projects, macTask.archiver, macTask.configSource, false );
+        phase.addModuleBinaries( binaries, projects, macTask.archiver, macTask.configSource );
 
         mm.verifyAll();
     }
@@ -427,7 +425,7 @@ public class ModuleSetAssemblyPhaseTest
 
         ModuleSetAssemblyPhase phase = createPhase( overrideLogger, macTask );
 
-        phase.addModuleBinaries( binaries, projects, macTask.archiver, macTask.configSource, false );
+        phase.addModuleBinaries( binaries, projects, macTask.archiver, macTask.configSource );
 
         mm.verifyAll();
     }
@@ -494,7 +492,7 @@ public class ModuleSetAssemblyPhaseTest
         try
         {
             createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).addArtifact( macTask.artifact, null,
-                                                                                              null, null, null, false );
+                                                                                              null, null, null );
 
             fail( "Expected ArchiveCreationException since artifact file is null." );
         }
@@ -535,7 +533,7 @@ public class ModuleSetAssemblyPhaseTest
         createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).addArtifact( macTask.artifact, project,
                                                                                           macTask.archiver,
                                                                                           macTask.configSource,
-                                                                                          binaries, false );
+                                                                                          binaries );
 
         mm.verifyAll();
     }
@@ -548,7 +546,7 @@ public class ModuleSetAssemblyPhaseTest
         mm.replayAll();
 
         createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).addModuleSourceFileSets( null, null, null,
-                                                                                                      null, false );
+                                                                                                      null );
 
         mm.verifyAll();
     }
@@ -593,8 +591,7 @@ public class ModuleSetAssemblyPhaseTest
 
         Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
-        createPhase( logger, null ).addModuleSourceFileSets( sources, projects, macTask.archiver, macTask.configSource,
-                                                             false );
+        createPhase( logger, null ).addModuleSourceFileSets( sources, projects, macTask.archiver, macTask.configSource );
 
         mm.verifyAll();
     }

@@ -46,8 +46,7 @@ public final class AssemblyFormatUtils
         return distributionName;
     }
     
-    public static String getOutputDirectory( String output, MavenProject project, String finalName,
-                                             boolean includeBaseDirectory )
+    public static String getOutputDirectory( String output, MavenProject project, String finalName )
     {
         String value = output;
         if ( value == null )
@@ -55,18 +54,6 @@ public final class AssemblyFormatUtils
             value = "";
         }
         
-        if ( includeBaseDirectory )
-        {
-            if ( value.startsWith( "/" ) )
-            {
-                value = finalName + value;
-            }
-            else
-            {
-                value = finalName + "/" + value;
-            }
-        }
-
         RegexBasedInterpolator interpolator = new RegexBasedInterpolator();
         
         Properties specialExpressionOverrides = new Properties();

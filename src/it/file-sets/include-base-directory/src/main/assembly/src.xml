@@ -1,0 +1,15 @@
+<assembly>
+  <id>src</id>
+  <formats>
+    <format>dir</format>
+  </formats>
+  <includeBaseDirectory>true</includeBaseDirectory>
+  <fileSets>
+    <fileSet>
+      <directory>src</directory>
+      <excludes>
+        <exclude>**/.svn/**</exclude>
+      </excludes>
+    </fileSet>
+  </fileSets>
+</assembly>

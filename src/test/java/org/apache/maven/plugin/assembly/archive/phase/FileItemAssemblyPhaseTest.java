@@ -89,7 +89,7 @@ public class FileItemAssemblyPhaseTest
         fi.setLineEnding( "keep" );
         fi.setFileMode( "777" );
 
-        macArchiver.expectAddFile( file, "final-name/file.txt", Integer.parseInt( "777", 8 ) );
+        macArchiver.expectAddFile( file, "file.txt", Integer.parseInt( "777", 8 ) );
 
         assembly.addFile( fi );
 
@@ -134,7 +134,7 @@ public class FileItemAssemblyPhaseTest
         fi.setLineEnding( "keep" );
         fi.setFileMode( "777" );
 
-        macArchiver.expectAddFile( file, "final-name/file.txt", Integer.parseInt( "777", 8 ) );
+        macArchiver.expectAddFile( file, "file.txt", Integer.parseInt( "777", 8 ) );
 
         assembly.addFile( fi );
 
