@@ -972,13 +972,11 @@ public abstract class AbstractJavadocMojo
         List sourcePaths;
         if ( StringUtils.isEmpty( sourcepath ) )
         {
+            sourcePaths = new ArrayList( project.getCompileSourceRoots() );
+
             if ( executedProject != null )
             {
-                sourcePaths = new ArrayList( executedProject.getCompileSourceRoots() );
-            }
-            else
-            {
-                sourcePaths = new ArrayList( project.getCompileSourceRoots() );
+                sourcePaths.addAll( executedProject.getCompileSourceRoots() );
             }
 
             if ( aggregate && project.isExecutionRoot() )
