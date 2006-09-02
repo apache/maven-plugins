@@ -97,11 +97,21 @@ public abstract class AbstractJavadocMojo
     protected File outputDirectory;
 
     /**
+     * The Maven Project Object
+     *
      * @parameter expression="${project}"
      * @required
      * @readonly
      */
     protected MavenProject project;
+
+    /**
+     * The currently executed project.
+     *
+     * @parameter expression="${executedProject}"
+     * @readonly
+     */
+    protected MavenProject executedProject;
 
     /**
      * Set an additional parameter(s) on the command line.  This value should include quotes as necessary for parameters
@@ -962,7 +972,14 @@ public abstract class AbstractJavadocMojo
         List sourcePaths;
         if ( StringUtils.isEmpty( sourcepath ) )
         {
-            sourcePaths = new ArrayList( project.getCompileSourceRoots() );
+            if ( executedProject != null )
+            {
+                sourcePaths = new ArrayList( executedProject.getCompileSourceRoots() );
+            }
+            else
+            {
+                sourcePaths = new ArrayList( project.getCompileSourceRoots() );
+            }
 
             if ( aggregate && project.isExecutionRoot() )
             {
