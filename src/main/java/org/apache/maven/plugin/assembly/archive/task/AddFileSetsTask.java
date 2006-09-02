@@ -22,8 +22,6 @@ public class AddFileSetsTask
 
     private final List fileSets;
     
-    private boolean includeBaseDirectory = false;
-
     private Logger logger;
 
     private MavenProject project;
@@ -96,8 +94,7 @@ public class AddFileSetsTask
                 + ( fileSet.getLineEnding() == null ? "" : " lineEndings: " + fileSet.getLineEnding() ) );
         }
 
-        destDirectory = AssemblyFormatUtils.getOutputDirectory( destDirectory, project, configSource.getFinalName(),
-                                                                includeBaseDirectory );
+        destDirectory = AssemblyFormatUtils.getOutputDirectory( destDirectory, project, configSource.getFinalName() );
 
         logger.debug( "The archive base directory is '" + archiveBaseDir + "'" );
 
@@ -170,11 +167,6 @@ public class AddFileSetsTask
     public void setLogger( Logger logger )
     {
         this.logger = logger;
-    }
-
-    public void setIncludeBaseDirectory( boolean includeBaseDirectory )
-    {
-        this.includeBaseDirectory = includeBaseDirectory;
     }
 
     public void setProject( MavenProject project )

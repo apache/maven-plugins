@@ -24,16 +24,6 @@ public class AssemblyFormatUtilsTest
         verifyDistroName( "assembly", null, "finalName", false, "finalName" );
     }
     
-    public void testGetDistroName_ShouldUseJustFinalNameWhenAppendAssemblyIdAndAssemblyIdIsNull()
-    {
-        verifyDistroName( null, "classifier", "finalName", true, "finalName" );
-    }
-    
-    public void testGetDistroName_ShouldUseFinalNamePlusAssemblyIdNotClassifier()
-    {
-        verifyDistroName( "assembly", "classifier", "finalName", true, "finalName-assembly" );
-    }
-    
     public void testGetDistroName_ShouldUseFinalNamePlusClassifierWhenAppendAssemblyIdIsNull()
     {
         verifyDistroName( "assembly", "classifier", "finalName", false, "finalName-classifier" );
@@ -41,52 +31,47 @@ public class AssemblyFormatUtilsTest
     
     public void testGetOutputDir_ShouldNotAlterOutDirWhenIncludeBaseFalseAndNoExpressions()
     {
-        verifyOutputDir( "dir/", "finalName", false, null, null, null, "dir/" );
+        verifyOutputDir( "dir/", "finalName", null, null, null, "dir/" );
     }
     
     public void testGetOutputDir_ShouldNotAlterOutDirWhenIncludeBaseFalseAndNoExpressions_CheckWithBackslash()
     {
-        verifyOutputDir( "dir\\", "finalName", false, null, null, null, "dir\\" );
+        verifyOutputDir( "dir\\", "finalName", null, null, null, "dir\\" );
     }
     
     public void testGetOutputDir_ShouldAppendSlashToOutDirWhenMissingAndIncludeBaseFalseAndNoExpressions()
     {
-        verifyOutputDir( "dir", "finalName", false, null, null, null, "dir/" );
-    }
-    
-    public void testGetOutputDir_ShouldPrependFinalNameWhenIncludeBaseTrue()
-    {
-        verifyOutputDir( "dir/", "finalName", true, null, null, null, "finalName/dir/" );
+        verifyOutputDir( "dir", "finalName", null, null, null, "dir/" );
     }
     
     public void testGetOutputDir_ShouldResolveGroupIdInOutDir()
     {
-        verifyOutputDir( "${groupId}", "finalName", false, "group", null, null, "group/" );
+        verifyOutputDir( "${groupId}", "finalName", "group", null, null, "group/" );
     }
     
     public void testGetOutputDir_ShouldResolveArtifactIdInOutDir()
     {
-        verifyOutputDir( "${artifactId}", "finalName", false, null, "artifact", null, "artifact/" );
+        verifyOutputDir( "${artifactId}", "finalName", null, "artifact", null, "artifact/" );
     }
     
     public void testGetOutputDir_ShouldResolveVersionInOutDir()
     {
-        verifyOutputDir( "${version}", "finalName", false, null, null, "version", "version/" );
+        verifyOutputDir( "${version}", "finalName", null, null, "version", "version/" );
     }
     
     public void testGetOutputDir_ShouldResolveFinalNameInOutDir()
     {
-        verifyOutputDir( "${finalName}", "finalName", false, null, null, null, "finalName/" );
+        verifyOutputDir( "${finalName}", "finalName", null, null, null, "finalName/" );
     }
     
     public void testGetOutputDir_ShouldResolveBuildFinalNameInOutDir()
     {
-        verifyOutputDir( "${build.finalName}", "finalName", false, null, null, null, "finalName/" );
+        verifyOutputDir( "${build.finalName}", "finalName", null, null, null, "finalName/" );
     }
     
     public void testGetOutputDir_ShouldReturnEmptyPathWhenAllInputIsEmptyAndIncludeBaseFalse()
     {
-        verifyOutputDir( null, null, false, null, null, null, "" );
+        verifyOutputDir( null, null, null, null, null, "" );
     }
     
     public void testEvalFileNameMapping_ShouldPassExpressionThroughUnchanged() throws AssemblyFormattingException
@@ -142,7 +127,7 @@ public class AssemblyFormatUtilsTest
         mockManager.clear();
     }
     
-    private void verifyOutputDir( String outDir, String finalName, boolean includeBasedir, String groupId, String artifactId, String version, String checkValue )
+    private void verifyOutputDir( String outDir, String finalName, String groupId, String artifactId, String version, String checkValue )
     {
         MavenProject project = null;
         
@@ -156,7 +141,7 @@ public class AssemblyFormatUtilsTest
             project = new MavenProject( model );
         }
         
-        String result = AssemblyFormatUtils.getOutputDirectory( outDir, project, finalName, includeBasedir );
+        String result = AssemblyFormatUtils.getOutputDirectory( outDir, project, finalName );
         
         assertEquals( checkValue, result );
     }

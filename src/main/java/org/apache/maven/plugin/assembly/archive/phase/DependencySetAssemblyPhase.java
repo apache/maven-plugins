@@ -51,8 +51,6 @@ public class DependencySetAssemblyPhase
             new AddDependencySetsTask( assembly.getDependencySets(), configSource.getProject(), projectBuilder,
                                        dependencyResolver, getLogger() );
         
-        task.setIncludeBaseDirectory( assembly.isIncludeBaseDirectory() );
-
         task.execute( archiver, configSource );
     }
 }

@@ -60,7 +60,7 @@ public class FileItemAssemblyPhase
             }
 
             String outputDirectory = AssemblyFormatUtils.getOutputDirectory( fileItem.getOutputDirectory(),
-                configSource.getProject(), configSource.getFinalName(), assembly.isIncludeBaseDirectory() );
+                configSource.getProject(), configSource.getFinalName() );
 
             String target;
 
@@ -68,6 +68,10 @@ public class FileItemAssemblyPhase
             if ( outputDirectory.endsWith( "/" ) || outputDirectory.endsWith( "\\" ) )
             {
                 target = outputDirectory + destName;
+            }
+            else if ( outputDirectory.length() < 1 )
+            {
+                target = destName;
             }
             else
             {

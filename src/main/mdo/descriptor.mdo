@@ -117,6 +117,15 @@
           </description>
         </field>
         <field>
+          <name>baseDirectory</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <description>
+            Sets the base directory of the resulting assembly archive. If this is not
+            set and includeBaseDirectory == true, ${project.build.finalName} will be used instead.
+          </description>
+        </field>
+        <field>
           <name>includeSiteDirectory</name>
           <type>boolean</type>
           <defaultValue>false</defaultValue>
@@ -597,7 +606,7 @@
           </description>
         </field>
         <field>
-          <name>outputFileNameMapping</name>
+          <name>outputDirectoryMapping</name>
           <version>1.0.0</version>
           <type>String</type>
           <defaultValue>${artifactId}</defaultValue>
