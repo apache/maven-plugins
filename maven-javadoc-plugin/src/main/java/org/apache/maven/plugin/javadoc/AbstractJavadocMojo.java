@@ -267,6 +267,7 @@ public abstract class AbstractJavadocMojo
 
     /**
      * Specifies the package directory where javadoc will be executed. The packages are separated by '<code>:</code>'.
+     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#subpackages">subpackages</a>.
      *
      * @parameter expression="${subpackages}"
      */
@@ -731,6 +732,12 @@ public abstract class AbstractJavadocMojo
         addArgIfNotEmpty( arguments, "-source", quotedArgument( source ), MIN_JAVA_VERSION );
         addArgIf( arguments, verbose, "-verbose" );
         addArgIfNotEmpty( arguments, null, additionalparam );
+
+        if ( ( StringUtils.isEmpty( sourcepath ) ) && ( !StringUtils.isEmpty( subpackages ) ) )
+        {
+            sourcepath = StringUtils.join( sourcePaths.iterator(), File.pathSeparator );
+        }
+
         addArgIfNotEmpty( arguments, "-sourcepath", quotedPathArgument( getSourcePath( sourcePaths ) ) );
 
         if ( !StringUtils.isEmpty( sourcepath ) )
