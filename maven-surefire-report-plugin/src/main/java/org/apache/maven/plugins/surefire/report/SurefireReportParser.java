@@ -119,6 +119,8 @@ public class SurefireReportParser
 
         int totalNumberOfFailures = 0;
 
+        int totalNumberOfSkipped = 0;
+
         float totalElapsedTime = 0.0f;
 
         while ( iter.hasNext() )
@@ -131,16 +133,21 @@ public class SurefireReportParser
 
             totalNumberOfFailures += suite.getNumberOfFailures();
 
+            totalNumberOfSkipped += suite.getNumberOfSkipped();
+
             totalElapsedTime += suite.getTimeElapsed();
         }
 
-        String totalPercentage = computePercentage( totalNumberOfTests, totalNumberOfErrors, totalNumberOfFailures );
+        String totalPercentage = computePercentage( totalNumberOfTests, totalNumberOfErrors, totalNumberOfFailures,
+                                                    totalNumberOfSkipped );
 
         totalSummary.put( "totalTests", Integer.toString( totalNumberOfTests ) );
 
         totalSummary.put( "totalErrors", Integer.toString( totalNumberOfErrors ) );
 
         totalSummary.put( "totalFailures", Integer.toString( totalNumberOfFailures ) );
+
+        totalSummary.put( "totalSkipped", Integer.toString( totalNumberOfSkipped ) );
 
         totalSummary.put( "totalElapsedTime", numberFormat.format( totalElapsedTime ) );
 
@@ -205,7 +212,7 @@ public class SurefireReportParser
         return suitePackage;
     }
 
-    public String computePercentage( int tests, int errors, int failures )
+    public String computePercentage( int tests, int errors, int failures, int skipped )
     {
         float percentage;
         if ( tests == 0 )
@@ -214,7 +221,7 @@ public class SurefireReportParser
         }
         else
         {
-            percentage = ( (float) ( tests - errors - failures ) / (float) tests ) * PCENT;
+            percentage = ( (float) ( tests - errors - failures - skipped ) / (float) tests ) * PCENT;
         }
 
         return numberFormat.format( percentage );

@@ -41,6 +41,8 @@ public class ReportTestSuite
     private int numberOfErrors;
 
     private int numberOfFailures;
+    
+    private int numberOfSkipped;
 
     private int numberOfTests;
 
@@ -71,6 +73,18 @@ public class ReportTestSuite
         saxParser.parse( new File( xmlPath ), this );
     }
 
+    
+    private int getAttributeAsInt( Attributes attributes, String name )
+    {
+        // may or may not exist
+        String valueAsString = attributes.getValue( name );
+        if ( valueAsString != null )
+        {
+            return Integer.parseInt( valueAsString );
+        }
+        return 0;
+    }
+    
     public void startElement( String uri, String localName, String qName, Attributes attributes )
         throws SAXException
     {
@@ -78,11 +92,10 @@ public class ReportTestSuite
         {
             if ( "testsuite".equals( qName ) )
             {
-                numberOfErrors = Integer.parseInt( attributes.getValue( "errors" ) );
-
-                numberOfFailures = Integer.parseInt( attributes.getValue( "failures" ) );
-
-                numberOfTests = Integer.parseInt( attributes.getValue( "tests" ) );
+                numberOfErrors = getAttributeAsInt( attributes, "errors" );
+                numberOfFailures = getAttributeAsInt( attributes, "failures" );
+                numberOfSkipped = getAttributeAsInt( attributes, "skipped" );
+                numberOfTests = getAttributeAsInt( attributes, "tests" );
 
                 Number time = numberFormat.parse( attributes.getValue( "time" ) );
 
@@ -212,6 +225,16 @@ public class ReportTestSuite
     public void setNumberOfFailures( int numberOfFailures )
     {
         this.numberOfFailures = numberOfFailures;
+    }
+    
+    public int getNumberOfSkipped()
+    {
+        return numberOfSkipped;
+    }
+    
+    public void setNumberOfSkipped( int numberOfSkipped )
+    {
+        this.numberOfSkipped = numberOfSkipped;
     }
 
     public int getNumberOfTests()
