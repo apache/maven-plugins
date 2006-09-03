@@ -87,6 +87,8 @@ public class SurefireReportParserTest
 
         tSuite1.setNumberOfFailures( 20 );
 
+        tSuite1.setNumberOfSkipped( 2 );
+
         tSuite1.setTimeElapsed( 1.0f );
 
         tSuite1.setNumberOfTests( 100 );
@@ -94,6 +96,8 @@ public class SurefireReportParserTest
         tSuite2.setNumberOfErrors( 10 );
 
         tSuite2.setNumberOfFailures( 20 );
+        
+        tSuite2.setNumberOfSkipped( 2 );
 
         tSuite2.setTimeElapsed( 1.0f );
 
@@ -113,12 +117,14 @@ public class SurefireReportParserTest
 
         assertEquals( 200, Integer.parseInt( testMap.get( "totalTests" ).toString() ) );
 
+        assertEquals( 4, Integer.parseInt( testMap.get( "totalSkipped" ).toString() ) );
+
         NumberFormat numberFormat = report.getNumberFormat();
 
         assertEquals( 2.0f, numberFormat.parse( testMap.get( "totalElapsedTime" ).toString() )
             .floatValue(), 0.0f );
 
-        assertEquals( 70.00f, numberFormat.parse( (String) testMap.get( "totalPercentage" ) )
+        assertEquals( 68.00f, numberFormat.parse( (String) testMap.get( "totalPercentage" ) )
             .floatValue(), 0 );
     }
 
@@ -167,7 +173,7 @@ public class SurefireReportParserTest
     {
         NumberFormat numberFormat = report.getNumberFormat();
 
-        assertEquals( 70.00f, numberFormat.parse( report.computePercentage( 100, 20, 10 ) )
+        assertEquals( 70.00f, numberFormat.parse( report.computePercentage( 100, 20, 10, 0 ) )
             .floatValue(), 0 );
     }
 

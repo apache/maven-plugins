@@ -134,6 +134,8 @@ public class SurefireReportGenerator
         sinkHeader( sink, bundle.getString( "report.surefire.label.errors" ) );
 
         sinkHeader( sink, bundle.getString( "report.surefire.label.failures" ) );
+        
+        sinkHeader( sink, bundle.getString( "report.surefire.label.skipped" ) );
 
         sinkHeader( sink, bundle.getString( "report.surefire.label.successrate" ) );
 
@@ -148,6 +150,8 @@ public class SurefireReportGenerator
         sinkCell( sink, (String) summary.get( "totalErrors" ) );
 
         sinkCell( sink, (String) summary.get( "totalFailures" ) );
+
+        sinkCell( sink, (String) summary.get( "totalSkipped" ) );
 
         sinkCell( sink, summary.get( "totalPercentage" ) + "%" );
 
@@ -192,6 +196,8 @@ public class SurefireReportGenerator
 
         sinkHeader( sink, bundle.getString( "report.surefire.label.failures" ) );
 
+        sinkHeader( sink, bundle.getString( "report.surefire.label.skipped" ) );
+
         sinkHeader( sink, bundle.getString( "report.surefire.label.successrate" ) );
 
         sinkHeader( sink, bundle.getString( "report.surefire.label.time" ) );
@@ -217,6 +223,8 @@ public class SurefireReportGenerator
             sinkCell( sink, (String) packageSummary.get( "totalErrors" ) );
 
             sinkCell( sink, (String) packageSummary.get( "totalFailures" ) );
+
+            sinkCell( sink, (String) packageSummary.get( "totalSkipped" ) );
 
             sinkCell( sink, packageSummary.get( "totalPercentage" ) + "%" );
 
@@ -263,6 +271,8 @@ public class SurefireReportGenerator
 
             sinkHeader( sink, bundle.getString( "report.surefire.label.failures" ) );
 
+            sinkHeader( sink, bundle.getString( "report.surefire.label.skipped" ) );
+
             sinkHeader( sink, bundle.getString( "report.surefire.label.successrate" ) );
 
             sinkHeader( sink, bundle.getString( "report.surefire.label.time" ) );
@@ -307,8 +317,11 @@ public class SurefireReportGenerator
 
                     sinkCell( sink, Integer.toString( suite.getNumberOfFailures() ) );
 
+                    sinkCell( sink, Integer.toString( suite.getNumberOfSkipped() ) );
+
                     String percentage = report.computePercentage( suite.getNumberOfTests(), suite.getNumberOfErrors(),
-                                                                  suite.getNumberOfFailures() );
+                                                                  suite.getNumberOfFailures(), suite
+                                                                      .getNumberOfSkipped() );
                     sinkCell( sink, percentage + "%" );
 
                     sinkCell( sink, numberFormat.format( suite.getTimeElapsed() ) );

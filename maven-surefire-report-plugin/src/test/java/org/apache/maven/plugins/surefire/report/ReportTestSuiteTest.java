@@ -61,6 +61,13 @@ public class ReportTestSuiteTest
         assertEquals( 10, tSuite.getNumberOfFailures() );
     }
 
+    public void testSetNumberOfSkipped()
+    {
+        tSuite.setNumberOfSkipped( 5 );
+
+        assertEquals( 5, tSuite.getNumberOfSkipped() );
+    }
+    
     public void testSetNumberOfTests()
     {
         tSuite.setNumberOfTests( 11 );
