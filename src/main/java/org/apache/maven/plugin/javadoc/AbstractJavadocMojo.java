@@ -886,8 +886,15 @@ public abstract class AbstractJavadocMojo
         // Javadoc warnings
         if ( StringUtils.isNotEmpty( err.getOutput() ) )
         {
-            getLog().warn( "Javadoc Warnings" );
-            getLog().warn( err.getOutput() );
+            getLog().info( "Javadoc Warnings" );
+
+            StringTokenizer token = new StringTokenizer( err.getOutput(), "\n" );
+            while ( token.hasMoreTokens() )
+            {
+                String current = token.nextToken().trim();
+
+                getLog().warn( current );
+            }
         }
     }
 
