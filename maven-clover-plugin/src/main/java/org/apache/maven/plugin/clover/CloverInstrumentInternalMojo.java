@@ -49,12 +49,20 @@ import java.util.*;
 public class CloverInstrumentInternalMojo extends AbstractCloverMojo
 {
     /**
+     * The directory where the Clover plugin will put all the files it generates during the build process. For
+     * example the Clover plugin will put instrumented sources somewhere inside this directory.
+     *  
      * @parameter
      * @required
      */
     private String cloverOutputDirectory;
 
     /**
+     * List of all artifacts for this Clover plugin provided by Maven. This is used internally to get a handle on
+     * the Clover JAR artifact.
+     *
+     * <p>Note: This is passed by Maven and must not be configured by the user.</p>
+     *
      * @parameter expression="${plugin.artifacts}"
      * @required
      */
