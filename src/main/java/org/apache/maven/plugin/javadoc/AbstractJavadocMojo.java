@@ -106,6 +106,13 @@ public abstract class AbstractJavadocMojo
     protected MavenProject project;
 
     /**
+     * Specifies the Javadoc ressources directory to be included in the Javadoc (i.e. package.html, images...).
+     *
+     * @parameter expression="${basedir}/src/main/javadoc"
+     */
+    private String javadocDirectory;
+
+    /**
      * Set an additional parameter(s) on the command line.  This value should include quotes as necessary for parameters
      * that include spaces.
      *
@@ -649,12 +656,12 @@ public abstract class AbstractJavadocMojo
             return;
         }
 
-        File javadocDirectory = new File( getOutputDirectory() );
-        javadocDirectory.mkdirs();
+        File javadocOutputDirectory = new File( getOutputDirectory() );
+        javadocOutputDirectory.mkdirs();
 
         if ( !files.isEmpty() )
         {
-            File file = new File( javadocDirectory, "files" );
+            File file = new File( javadocOutputDirectory, "files" );
             file.deleteOnExit();
             try
             {
@@ -669,7 +676,7 @@ public abstract class AbstractJavadocMojo
         try
         {
             // Copy default style sheet
-            copyDefaultStylesheet( javadocDirectory );
+            copyDefaultStylesheet( javadocOutputDirectory );
         }
         catch ( IOException e )
         {
@@ -706,7 +713,7 @@ public abstract class AbstractJavadocMojo
 
         List arguments = new ArrayList();
 
-        cmd.setWorkingDirectory( javadocDirectory.getAbsolutePath() );
+        cmd.setWorkingDirectory( javadocOutputDirectory.getAbsolutePath() );
         cmd.setExecutable( getJavadocPath() );
 
         // General javadoc arguments
@@ -756,7 +763,7 @@ public abstract class AbstractJavadocMojo
             addArgIfNotEmpty( arguments, "-bottom", quotedArgument( getBottomText( project.getInceptionYear() ) ) );
             addArgIf( arguments, breakiterator, "-breakiterator", MIN_JAVA_VERSION );
             addArgIfNotEmpty( arguments, "-charset", quotedArgument( charset ) );
-            addArgIfNotEmpty( arguments, "-d", quotedPathArgument( javadocDirectory.toString() ) );
+            addArgIfNotEmpty( arguments, "-d", quotedPathArgument( javadocOutputDirectory.toString() ) );
             addArgIf( arguments, docfilessubdirs, "-docfilessubdirs", MIN_JAVA_VERSION );
             addArgIfNotEmpty( arguments, "-docencoding", quotedArgument( docencoding ) );
             addArgIfNotEmpty( arguments, "-doctitle", quotedArgument( doctitle ) );
@@ -802,7 +809,7 @@ public abstract class AbstractJavadocMojo
             addArgIf( arguments, notree, "-notree" );
             addArgIf( arguments, serialwarn, "-serialwarn" );
             addArgIf( arguments, splitindex, "-splitindex" );
-            addArgIfNotEmpty( arguments, "-stylesheetfile", quotedPathArgument( getStylesheetFile( javadocDirectory ) ) );
+            addArgIfNotEmpty( arguments, "-stylesheetfile", quotedPathArgument( getStylesheetFile( javadocOutputDirectory ) ) );
 
             addArgIfNotEmpty( arguments, "-taglet", quotedArgument( taglet ), MIN_JAVA_VERSION );
             addArgIfNotEmpty( arguments, "-tagletpath", quotedPathArgument( tagletpath ), MIN_JAVA_VERSION );
@@ -833,7 +840,7 @@ public abstract class AbstractJavadocMojo
 
         if ( options.length() > 0 )
         {
-            File optionsFile = new File( javadocDirectory, "options" );
+            File optionsFile = new File( javadocOutputDirectory, "options" );
             for ( Iterator it = arguments.iterator(); it.hasNext(); )
             {
                 options.append( " " );
@@ -976,6 +983,19 @@ public abstract class AbstractJavadocMojo
             if ( project.getExecutionProject() != null )
             {
                 sourcePaths.addAll( project.getExecutionProject().getCompileSourceRoots() );
+            }
+
+            if ( javadocDirectory != null )
+            {
+                File javadocDir = new File( javadocDirectory );
+                if ( !javadocDir.exists() || !javadocDir.isDirectory() )
+                {
+                    getLog().warn( "The file '" + javadocDirectory + "' doesn't exists or it is not a directory." );
+                }
+                else
+                {
+                    sourcePaths.add( javadocDirectory );
+                }
             }
 
             if ( aggregate && project.isExecutionRoot() )
@@ -1214,7 +1234,8 @@ public abstract class AbstractJavadocMojo
         }
         else
         {
-            if ( ( project.getOrganization() != null ) && ( !StringUtils.isEmpty( project.getOrganization().getName() ) ) )
+            if ( ( project.getOrganization() != null )
+                && ( !StringUtils.isEmpty( project.getOrganization().getName() ) ) )
             {
                 if ( !StringUtils.isEmpty( project.getOrganization().getUrl() ) )
                 {
@@ -1223,7 +1244,8 @@ public abstract class AbstractJavadocMojo
                 }
                 else
                 {
-                    theBottom = StringUtils.replace( theBottom, "{organizationName}", project.getOrganization().getName() );
+                    theBottom = StringUtils.replace( theBottom, "{organizationName}", project.getOrganization()
+                        .getName() );
                 }
             }
             else
@@ -1240,17 +1262,17 @@ public abstract class AbstractJavadocMojo
      * either the stylesheet included in the plugin or the stylesheet file used by the javadoc tool
      * will be used.
      *
-     * @param javadocDirectory the base directory of the plugin
+     * @param javadocOutputDirectory the base directory of the plugin
      * @return a String that contains the path to the stylesheet file
      */
-    private String getStylesheetFile( File javadocDirectory )
+    private String getStylesheetFile( File javadocOutputDirectory )
     {
         String stylesheetfile = this.stylesheetfile;
         if ( StringUtils.isEmpty( stylesheetfile ) )
         {
             if ( "maven".equals( stylesheet ) )
             {
-                stylesheetfile = javadocDirectory + File.separator + DEFAULT_CSS_NAME;
+                stylesheetfile = javadocOutputDirectory + File.separator + DEFAULT_CSS_NAME;
             }
         }
         return stylesheetfile;
@@ -1496,7 +1518,7 @@ public abstract class AbstractJavadocMojo
      * @see <a href="http://jakarta.apache.org/commons/lang/api/org/apache/commons/lang/SystemUtils.html#isJavaVersionAtLeast(float)">SystemUtils.html#isJavaVersionAtLeast(float)</a>
      */
     private void addArgIfNotEmpty( List arguments, String key, String value, float requiredJavaVersion,
-                                   boolean repeatKey )
+                                  boolean repeatKey )
     {
         if ( SystemUtils.isJavaVersionAtLeast( requiredJavaVersion ) )
         {

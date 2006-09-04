@@ -15,12 +15,42 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-    
+
 <faqs id="FAQ" title="Frequently Asked Questions">
   <part id="General">
     <faq id="Where in the pom.xml do I configure the Javadoc plugin?">
       <question>Where in the pom.xml do I configure the Javadoc plugin?</question>
-      <answer><p>Like all other site report plugins, the Javadoc plugin goes in the <i>reporting</i> section of your pom.xml.</p></answer>
+      <answer>
+        <p>
+          Like all other site report plugins, the Javadoc plugin goes in the
+          <i>reporting</i> section of your pom.xml.
+        </p>
+      </answer>
+    </faq>
+    <faq id="Where do I put javadoc resources like package.html?">
+      <question>Where do I put Javadoc resources like HTML files or images?</question>
+      <answer>
+        <p>
+          All javadoc resources like HTML files, images could be put in the
+          <i>${basedir}/src/main/javadoc</i> directory.
+        </p>
+        <p>
+          Here is the directory layout expected by Maven Javadoc Plugin:
+        </p>
+        <source>
+yourproject
+  |-- src
+    |-- main
+      |-- java
+        |-- org
+          |...
+            `-- MyClass.java
+      |-- javadoc
+        |-- org
+          |...
+            `-- package.html
+        </source>
+      </answer>
     </faq>
   </part>
 </faqs>
