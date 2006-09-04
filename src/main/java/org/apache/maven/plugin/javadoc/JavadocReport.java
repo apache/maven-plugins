@@ -21,7 +21,6 @@ import org.apache.maven.doxia.siterenderer.RendererException;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.doxia.sink.Sink;
@@ -61,10 +60,31 @@ public class JavadocReport
     /**
      * Specifies the destination directory where javadoc saves the generated HTML files.
      *
-     * @parameter expression="${project.reporting.outputDirectory}/apidocs"
+     * @parameter expression="${project.reporting.outputDirectory}/${destDir}"
      * @required
      */
     private File reportOutputDirectory;
+
+    /**
+     * The name of the destination directory.
+     *
+     * @parameter expression="${destDir}" default-value="apidocs"
+     */
+    private String destDir;
+
+    /**
+     * The name of the javadoc report.
+     *
+     * @parameter expression="${name}" default-value="JavaDocs"
+     */
+    private String name;
+
+    /**
+     * The description of the javadoc report.
+     *
+     * @parameter expression="${description}" default-value="JavaDoc API documentation."
+     */
+    private String description;
 
     // ----------------------------------------------------------------------
     //
@@ -75,7 +95,7 @@ public class JavadocReport
      */
     public String getName( Locale locale )
     {
-        return "JavaDocs";
+        return name;
     }
 
     /**
@@ -83,24 +103,7 @@ public class JavadocReport
      */
     public String getDescription( Locale locale )
     {
-        // TODO i18n
-        return "JavaDoc API documentation.";
-    }
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getProject()
-     */
-    protected MavenProject getProject()
-    {
-        return project;
-    }
-
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#getSiteRenderer()
-     */
-    protected Renderer getSiteRenderer()
-    {
-        return siteRenderer;
+        return description;
     }
 
     /**
@@ -110,6 +113,7 @@ public class JavadocReport
         throws MavenReportException
     {
         outputDirectory = getReportOutputDirectory();
+
         executeReport( locale );
     }
 
@@ -118,7 +122,7 @@ public class JavadocReport
      */
     public String getOutputName()
     {
-        return "apidocs/index";
+        return destDir + "/index";
     }
 
     /**
@@ -178,9 +182,9 @@ public class JavadocReport
      */
     public void setReportOutputDirectory( File reportOutputDirectory )
     {
-        if ( ( reportOutputDirectory != null ) && ( !reportOutputDirectory.getAbsolutePath().endsWith( "apidocs" ) ) )
+        if ( ( reportOutputDirectory != null ) && ( !reportOutputDirectory.getAbsolutePath().endsWith( destDir ) ) )
         {
-            this.reportOutputDirectory = new File( reportOutputDirectory, "apidocs" );
+            this.reportOutputDirectory = new File( reportOutputDirectory, destDir );
         }
         else
         {
