@@ -875,6 +875,13 @@ public abstract class AbstractJavadocMojo
         {
             throw new MavenReportException( "Unable to execute javadoc command", e );
         }
+
+        // Javadoc warnings
+        if ( StringUtils.isNotEmpty( err.getOutput() ) )
+        {
+            getLog().warn( "Javadoc Warnings" );
+            getLog().warn( err.getOutput() );
+        }
     }
 
     /**
