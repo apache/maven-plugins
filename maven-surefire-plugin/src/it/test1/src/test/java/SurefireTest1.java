@@ -19,7 +19,7 @@ public class SurefireTest1
     public static Test suite()
     {
         TestSuite suite = new TestSuite();
-        Test test = new SurefireTest2( "testSetUp", "dummy" );
+        Test test = new SurefireTest1( "testSetUp", "dummy" );
         suite.addTest( test );
         TestSetup setup = new TestSetup( suite )
         {
