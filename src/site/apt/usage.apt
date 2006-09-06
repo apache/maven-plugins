@@ -228,7 +228,7 @@ target
         <executions>
           <execution>
             <id>make-assembly</id> <!-- this is used for inheritance merges -->
-            <phase>packaging</phase> <!-- append to the packaging phase. -->
+            <phase>package</phase> <!-- append to the packaging phase. -->
             <goals>
               <goal>attached</goal> <!-- goals == mojos -->
             </goals>
@@ -280,7 +280,7 @@ target/sample-1.0-SNAPSHOT-jar-with-dependencies.jar
         <executions>
           <execution>
             <id>make-assembly</id> <!-- this is used for inheritance merges -->
-            <phase>packaging</phase> <!-- append to the packaging phase. -->
+            <phase>package</phase> <!-- append to the packaging phase. -->
             <goals>
               <goal>directory-inline</goal> <!-- goals == mojos -->
             </goals>
