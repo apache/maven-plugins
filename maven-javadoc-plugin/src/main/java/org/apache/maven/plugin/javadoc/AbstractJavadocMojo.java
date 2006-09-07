@@ -184,6 +184,13 @@ public abstract class AbstractJavadocMojo
      */
     private ArtifactMetadataSource artifactMetadataSource;
 
+    /**
+     * Set this to 'true' to debug Javadoc plugin. With this, 'options' and 'files' files are provided.
+     *
+     * @parameter expression="${debug}" default-value="false"
+     */
+    private boolean debug;
+
     // ----------------------------------------------------------------------
     // Javadoc Options
     // ----------------------------------------------------------------------
@@ -756,7 +763,12 @@ public abstract class AbstractJavadocMojo
         if ( !files.isEmpty() )
         {
             File file = new File( javadocOutputDirectory, "files" );
-            file.deleteOnExit();
+
+            if ( !debug )
+            {
+                file.deleteOnExit();
+            }
+
             try
             {
                 FileUtils.fileWrite( file.getAbsolutePath(), StringUtils.join( files.iterator(), "\n" ) );
@@ -966,7 +978,7 @@ public abstract class AbstractJavadocMojo
                 throw new MavenReportException( "Unable to write temporary file for command execution", e );
             }
             cmd.createArgument().setValue( "@options" );
-            if ( !getLog().isDebugEnabled() )
+            if ( !debug )
             {
                 optionsFile.deleteOnExit();
             }
