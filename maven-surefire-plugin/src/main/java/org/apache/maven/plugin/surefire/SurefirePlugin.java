@@ -585,11 +585,6 @@ public class SurefirePlugin
             getLog().debug( "  " + classpathElement );
 
             surefireBooter.addClassPathUrl( classpathElement );
-
-            // TODO: fix
-            // Some test suites (TestNG) do not utilise the separate classloader, so we need to make all the tests
-            // available in the main classloader as well (this is consistent with the old behaviour in Surefire 1.5)
-            surefireBooter.addSurefireClassPathUrl( classpathElement );
         }
 
         // ----------------------------------------------------------------------
