@@ -273,7 +273,7 @@ public abstract class AbstractJavadocMojo
     private String excludePackageNames;
 
     /**
-     * Specifies the directories where extension classes reside.
+     * Specifies the directories where extension classes reside. Separate directories in dirlist with semicolons (;).
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#extdirs">extdirs</a>.
      *
      * @parameter expression="${extdirs}"
@@ -499,6 +499,14 @@ public abstract class AbstractJavadocMojo
     private String helpfile;
 
     /**
+     * Specifies the destination directory where javadoc saves the generated HTML files.
+     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#keywords">keywords</a>.
+     *
+     * @parameter expression="${keywords}" default-value="false"
+     */
+    private boolean keywords;
+
+    /**
      * Creates links to existing javadoc-generated documentation of external referenced classes.
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#link">link</a>.
      *
@@ -587,6 +595,14 @@ public abstract class AbstractJavadocMojo
     private boolean nosince = false;
 
     /**
+     * Suppresses the timestamp, which is hidden in an HTML comment in the generated HTML near the top of each page.
+     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#notimestamp">notimestamp</a>.
+     *
+     * @parameter expression="${notimestamp}" default-value="false"
+     */
+    private boolean notimestamp;
+
+    /**
      * Omits the class/interface hierarchy pages from the generated docs.
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#notree">notree</a>.
      *
@@ -601,6 +617,14 @@ public abstract class AbstractJavadocMojo
      * @parameter expression="${serialwarn}" default-value="false"
      */
     private boolean serialwarn = false;
+
+    /**
+     * Specify the number of spaces each tab takes up in the source. If no tab is used in source, the default
+     * space is used.
+     *
+     * @parameter expression="${sourcetab}"
+     */
+    private String sourcetab;
 
     /**
      * Splits the index file into multiple files, alphabetically, one file per letter, plus a file for any index entries that
@@ -892,6 +916,7 @@ public abstract class AbstractJavadocMojo
             }
             addArgIfNotEmpty( arguments, "-header", quotedArgument( header ) );
             addArgIfNotEmpty( arguments, "-helpfile", quotedPathArgument( helpfile ) );
+            addArgIf( arguments, keywords, "-keywords", MIN_JAVA_VERSION );
 
             if ( !isOffline )
             {
@@ -912,8 +937,10 @@ public abstract class AbstractJavadocMojo
             addArgIf( arguments, nonavbar, "-nonavbar" );
             addArgIfNotEmpty( arguments, "-noqualifier", quotedArgument( noqualifier ), MIN_JAVA_VERSION );
             addArgIf( arguments, nosince, "-nosince" );
+            addArgIf( arguments, notimestamp, "-notimestamp" );
             addArgIf( arguments, notree, "-notree" );
             addArgIf( arguments, serialwarn, "-serialwarn" );
+            addArgIfNotEmpty( arguments, "-sourcetab", sourcetab );
             addArgIf( arguments, splitindex, "-splitindex" );
             addArgIfNotEmpty( arguments, "-stylesheetfile", quotedPathArgument( getStylesheetFile( javadocOutputDirectory ) ) );
 
