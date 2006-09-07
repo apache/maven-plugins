@@ -46,7 +46,11 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.javadoc.options.Group;
+import org.apache.maven.plugin.javadoc.options.DocletArtifact;
+import org.apache.maven.plugin.javadoc.options.JavadocPathArtifact;
 import org.apache.maven.plugin.javadoc.options.Tag;
+import org.apache.maven.plugin.javadoc.options.Taglet;
+import org.apache.maven.plugin.javadoc.options.TagletArtifact;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.reporting.MavenReportException;
@@ -62,6 +66,7 @@ import org.codehaus.plexus.util.cli.DefaultConsumer;
  * Base class with majority of Javadoc functionality.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
+ * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @requiresDependencyResolution compile
  * @execute phase="generate-sources"
  */
@@ -79,6 +84,15 @@ public abstract class AbstractJavadocMojo
     private static final String DEFAULT_CSS_NAME = "stylesheet.css";
 
     private static final String RESOURCE_CSS_DIR = RESOURCE_DIR + "/css";
+
+    /**
+     * The minimum version of javadoc for some options, i.e. 1.4
+     */
+    private static final float MIN_JAVA_VERSION = 1.4f;
+
+    // ----------------------------------------------------------------------
+    // Mojo parameters
+    // ----------------------------------------------------------------------
 
     /**
      * @parameter default-value="${settings.offline}"
@@ -121,6 +135,60 @@ public abstract class AbstractJavadocMojo
     private String additionalparam;
 
     /**
+     * Used for resolving artifacts
+     *
+     * @component
+     */
+    private ArtifactResolver resolver;
+
+    /**
+     * Factory for creating artifact objects
+     *
+     * @component
+     */
+    private ArtifactFactory factory;
+
+    /**
+     * The local repository where the artifacts are located
+     *
+     * @parameter expression="${localRepository}"
+     */
+    private ArtifactRepository localRepository;
+
+    /**
+     * The remote repositories where artifacts are located
+     *
+     * @parameter expression="${project.remoteArtifactRepositories}"
+     */
+    private List remoteRepositories;
+
+    /**
+     * The projects in the reactor for aggregation report.
+     *
+     * @parameter expression="${reactorProjects}"
+     * @readonly
+     */
+    private List reactorProjects;
+
+    /**
+     * Whether to build an aggregated report at the root, or build individual reports.
+     *
+     * @parameter expression="${aggregate}" default-value="false"
+     */
+    protected boolean aggregate;
+
+    /**
+     * Used to resolve artifacts of aggregated modules
+     *
+     * @component
+     */
+    private ArtifactMetadataSource artifactMetadataSource;
+
+    // ----------------------------------------------------------------------
+    // Javadoc Options
+    // ----------------------------------------------------------------------
+
+    /**
      * Uses the sentence break iterator to determine the end of the first sentence.
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#breakiterator">breakiterator</a>.
      *
@@ -137,7 +205,9 @@ public abstract class AbstractJavadocMojo
     private String doclet;
 
     /**
-     * Specifies the path to the doclet starting class file (specified with the -doclet option) and any jar files it depends on.
+     * Specifies the path to the doclet starting class file (specified with the -doclet option) and any jar files
+     * it depends on. The docletPath can contain multiple paths by separating them with a colon (:) on Solaris
+     * and a semi-colon (;) on Windows.
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#docletpath">docletpath</a>.
      *
      * @parameter expression="${docletPath}"
@@ -145,13 +215,39 @@ public abstract class AbstractJavadocMojo
     private String docletPath;
 
     /**
-     * Specifies the artifact containing the doclet starting class file (specified with the -docletpath option).
+     * Specifies the artifact containing the doclet starting class file (specified with the -doclet option).
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#docletpath">docletpath</a>.
+     * Example:
+     * <pre>
+     * &lt;docletArtifact&gt;
+     *   &lt;groupId&gt;com.sun.tools.doclets&lt;/groupId&gt;
+     *   &lt;artifactId&gt;doccheck&lt;/artifactId&gt;
+     *   &lt;version&gt;1.2b2&lt;/version&gt;
+     * &lt;/docletArtifact&gt;
+     * </pre>
      *
-     * @parameter
+     * @parameter expression="${docletArtifact}"
      */
-    //TODO: May need to allow multiple artifacts
     private DocletArtifact docletArtifact;
+
+    /**
+     * Specifies multiple artifacts containing the path for the doclet starting class file (specified with the
+     *  -doclet option).
+     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#docletpath">docletpath</a>.
+     * Example:
+     * <pre>
+     * &lt;docletArtifacts&gt;
+     *   &lt;docletArtifact&gt;
+     *     &lt;groupId&gt;com.sun.tools.doclets&lt;/groupId&gt;
+     *     &lt;artifactId&gt;doccheck&lt;/artifactId&gt;
+     *     &lt;version&gt;1.2b2&lt;/version&gt;
+     *   &lt;/docletArtifact&gt;
+     * &lt;/docletArtifacts&gt;
+     * </pre>
+     *
+     * @parameter expression="${docletArtifacts}"
+     */
+    private DocletArtifact[] docletArtifacts;
 
     /**
      * Specifies the encoding name of the source files.
@@ -238,14 +334,16 @@ public abstract class AbstractJavadocMojo
     /**
      * Specifies the access level for classes and members to show in the Javadocs.
      * Possible values are:
-     * <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#public">public</a>
-     * (shows only public classes and members),
-     * <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#protected">protected</a>
-     * (shows only public and protected classes and members),
-     * <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#package">package</a>
-     * (shows all classes and members not marked private), and
-     * <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#private">private</a>
-     * (shows all classes and members).
+     * <ul>
+     * <li><a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#public">public</a>
+     * (shows only public classes and members)</li>
+     * <li><a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#protected">protected</a>
+     * (shows only public and protected classes and members)</li>
+     * <li><a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#package">package</a>
+     * (shows all classes and members not marked private)</li>
+     * <li><a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#private">private</a>
+     * (shows all classes and members)</li>
+     * </ul>
      *
      * @parameter expression="${show}" default-value="protected"
      */
@@ -289,6 +387,10 @@ public abstract class AbstractJavadocMojo
      * @parameter expression="${verbose}" default-value="false"
      */
     private boolean verbose = false;
+
+    // ----------------------------------------------------------------------
+    // Standard Doclet Options
+    // ----------------------------------------------------------------------
 
     /**
      * Specifies whether or not the author text is included in the generated Javadocs.
@@ -522,12 +624,12 @@ public abstract class AbstractJavadocMojo
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#tag">tag</a>.
      * Example:
      * <pre>
-     * &lt;tags&gt;<br/>
-     *   &lt;tag&gt;<br/>
-     *     &lt;name&gt;todo&lt;/name&gt;<br/>
-     *     &lt;placement&gt;a&lt;/placement&gt;<br/>
-     *     &lt;head&gt;To Do:&lt;/head&gt;<br/>
-     *   &lt;/tag&gt;<br/>
+     * &lt;tags&gt;
+     *   &lt;tag&gt;
+     *     &lt;name&gt;todo&lt;/name&gt;
+     *     &lt;placement&gt;a&lt;/placement&gt;
+     *     &lt;head&gt;To Do:&lt;/head&gt;
+     *   &lt;/tag&gt;
      *  &lt;/tags&gt;
      * </pre>
      *
@@ -544,12 +646,52 @@ public abstract class AbstractJavadocMojo
     private String taglet;
 
     /**
-     * Specifies the search paths for finding taglet class files (.class).
+     * Specifies the search paths for finding taglet class files (.class). The tagletPath can contain
+     * multiple paths by separating them with a colon (:) on Solaris and a semi-colon (;) on Windows.
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#tagletpath">tagletpath</a>.
      *
      * @parameter expression="${tagletpath}"
      */
     private String tagletpath;
+
+    /**
+     * Specifies the artifact containing the taglet class files (.class).
+     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#tagletpath">tagletpath</a>.
+     * Example:
+     * <pre>
+     * &lt;tagletArtifact&gt;
+     *   &lt;groupId&gt;group-Taglet&lt;/groupId&gt;
+     *   &lt;artifactId&gt;artifact-Taglet&lt;/artifactId&gt;
+     *   &lt;version&gt;version-Taglet&lt;/version&gt;
+     * &lt;/tagletArtifact&gt;
+     * </pre>
+     *
+     * @parameter expression="${tagletArtifact}"
+     */
+    private TagletArtifact tagletArtifact;
+
+    /**
+     * Enables the Javadoc tool to interpret multiple taglets.
+     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#taglet">taglet</a>.
+     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#tagletpath">tagletpath</a>.
+     * Example:
+     * <pre>
+     * &lt;taglets&gt;
+     *   &lt;taglet&gt;
+     *     &lt;tagletClass&gt;com.sun.tools.doclets.ToDoTaglet&lt;/tagletClass&gt;
+     *     &lt;!--&lt;tagletpath&gt;/home/taglets&lt;/tagletpath&gt;--&gt;
+     *     &lt;tagletArtifact&gt;
+     *       &lt;groupId&gt;group-Taglet&lt;/groupId&gt;
+     *       &lt;artifactId&gt;artifact-Taglet&lt;/artifactId&gt;
+     *       &lt;version&gt;version-Taglet&lt;/version&gt;
+     *     &lt;/tagletArtifact&gt;
+     *   &lt;/taglet&gt;
+     *  &lt;/taglets&gt;
+     * </pre>
+     *
+     * @parameter expression="${taglets}"
+     */
+    private Taglet[] taglets;
 
     /**
      * Includes one "Use" page for each documented class and package.
@@ -575,57 +717,9 @@ public abstract class AbstractJavadocMojo
      */
     private String windowtitle;
 
-    /**
-     * Used for resolving artifacts
-     *
-     * @component
-     */
-    private ArtifactResolver resolver;
-
-    /**
-     * Factory for creating artifact objects
-     *
-     * @component
-     */
-    private ArtifactFactory factory;
-
-    /**
-     * The local repository where the artifacts are located
-     *
-     * @parameter expression="${localRepository}"
-     */
-    private ArtifactRepository localRepository;
-
-    /**
-     * The remote repositories where artifacts are located
-     *
-     * @parameter expression="${project.remoteArtifactRepositories}"
-     */
-    private List remoteRepositories;
-
-    /**
-     * The projects in the reactor for aggregation report.
-     *
-     * @parameter expression="${reactorProjects}"
-     * @readonly
-     */
-    private List reactorProjects;
-
-    /**
-     * Whether to build an aggregated report at the root, or build individual reports.
-     *
-     * @parameter expression="${aggregate}" default-value="false"
-     */
-    protected boolean aggregate;
-
-    /**
-     * Used to resolve artifacts of aggregated modules
-     *
-     * @component
-     */
-    private ArtifactMetadataSource artifactMetadataSource;
-
-    private static final float MIN_JAVA_VERSION = 1.4f;
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     /**
      * @return the output directory
@@ -684,7 +778,7 @@ public abstract class AbstractJavadocMojo
         }
 
         StringBuffer options = new StringBuffer();
-        if ( !StringUtils.isEmpty( this.locale ) )
+        if ( StringUtils.isNotEmpty( this.locale ) )
         {
             options.append( "-locale " );
             options.append( quotedArgument( this.locale ) );
@@ -701,7 +795,7 @@ public abstract class AbstractJavadocMojo
         Commandline cmd = new Commandline();
 
         // Set the proxy host and port
-        if ( !StringUtils.isEmpty( proxyHost ) && proxyPort > 0 )
+        if ( StringUtils.isNotEmpty( proxyHost ) && proxyPort > 0 )
         {
             cmd.createArgument().setValue( "-J-DproxyHost=" + proxyHost );
             cmd.createArgument().setValue( "-J-DproxyPort=" + proxyPort );
@@ -718,7 +812,7 @@ public abstract class AbstractJavadocMojo
 
         // General javadoc arguments
         addArgIf( arguments, breakiterator, "-breakiterator", MIN_JAVA_VERSION );
-        if ( !StringUtils.isEmpty( doclet ) )
+        if ( StringUtils.isNotEmpty( doclet ) )
         {
             addArgIfNotEmpty( arguments, "-doclet", quotedArgument( doclet ) );
             addArgIfNotEmpty( arguments, "-docletpath", quotedPathArgument( getDocletPath() ) );
@@ -742,14 +836,14 @@ public abstract class AbstractJavadocMojo
         addArgIf( arguments, verbose, "-verbose" );
         addArgIfNotEmpty( arguments, null, additionalparam );
 
-        if ( ( StringUtils.isEmpty( sourcepath ) ) && ( !StringUtils.isEmpty( subpackages ) ) )
+        if ( ( StringUtils.isEmpty( sourcepath ) ) && ( StringUtils.isNotEmpty( subpackages ) ) )
         {
             sourcepath = StringUtils.join( sourcePaths.iterator(), File.pathSeparator );
         }
 
         addArgIfNotEmpty( arguments, "-sourcepath", quotedPathArgument( getSourcePath( sourcePaths ) ) );
 
-        if ( !StringUtils.isEmpty( sourcepath ) )
+        if ( StringUtils.isNotEmpty( sourcepath ) )
         {
             addArgIfNotEmpty( arguments, "-subpackages", subpackages );
         }
@@ -812,24 +906,41 @@ public abstract class AbstractJavadocMojo
             addArgIfNotEmpty( arguments, "-stylesheetfile", quotedPathArgument( getStylesheetFile( javadocOutputDirectory ) ) );
 
             addArgIfNotEmpty( arguments, "-taglet", quotedArgument( taglet ), MIN_JAVA_VERSION );
-            addArgIfNotEmpty( arguments, "-tagletpath", quotedPathArgument( tagletpath ), MIN_JAVA_VERSION );
-
-            for ( int i = 0; i < tags.length; i++ )
+            if ( taglets != null )
             {
-                if ( tags[i] == null || StringUtils.isEmpty( tags[i].getName() )
-                    || StringUtils.isEmpty( tags[i].getPlacement() ) )
+                for ( int i = 0; i < taglets.length; i++ )
                 {
-                    getLog().info( "A tag option is empty. Ignore this option." );
-                }
-                else
-                {
-                    String value = "\"" + tags[i].getName() + ":" + tags[i].getPlacement();
-                    if ( !StringUtils.isEmpty( tags[i].getHead() ) )
+                    if ( ( taglets[i] == null ) || ( StringUtils.isEmpty( taglets[i].getTagletClass() ) ) )
                     {
-                        value += ":" + quotedArgument( tags[i].getHead() );
+                        getLog().info( "A taglet option is empty. Ignore this option." );
                     }
-                    value += "\"";
-                    addArgIfNotEmpty( arguments, "-tag", value, MIN_JAVA_VERSION, false );
+                    else
+                    {
+                        addArgIfNotEmpty( arguments, "-taglet", quotedArgument( taglets[i].getTagletClass() ), MIN_JAVA_VERSION );
+                    }
+                }
+            }
+            addArgIfNotEmpty( arguments, "-tagletpath", quotedPathArgument( getTagletPath() ), MIN_JAVA_VERSION );
+
+            if ( tags != null )
+            {
+                for ( int i = 0; i < tags.length; i++ )
+                {
+                    if ( ( tags[i] == null ) || ( StringUtils.isEmpty( tags[i].getName() ) )
+                        || ( StringUtils.isEmpty( tags[i].getPlacement() ) ) )
+                    {
+                        getLog().info( "A tag option is empty. Ignore this option." );
+                    }
+                    else
+                    {
+                        String value = "\"" + tags[i].getName() + ":" + tags[i].getPlacement();
+                        if ( StringUtils.isNotEmpty( tags[i].getHead() ) )
+                        {
+                            value += ":" + quotedArgument( tags[i].getHead() );
+                        }
+                        value += "\"";
+                        addArgIfNotEmpty( arguments, "-tag", value, MIN_JAVA_VERSION );
+                    }
                 }
             }
 
@@ -931,7 +1042,7 @@ public abstract class AbstractJavadocMojo
     {
         List excludedNames = null;
 
-        if ( !StringUtils.isEmpty( sourcepath ) && !StringUtils.isEmpty( subpackages ) )
+        if ( StringUtils.isNotEmpty( sourcepath ) && StringUtils.isNotEmpty( subpackages ) )
         {
             String[] excludedPackages = getExcludedPackages();
             String[] subpackagesList = subpackages.split( "[:]" );
@@ -940,7 +1051,7 @@ public abstract class AbstractJavadocMojo
         }
 
         String excludeArg = "";
-        if ( !StringUtils.isEmpty( subpackages ) && excludedNames != null )
+        if ( StringUtils.isNotEmpty( subpackages ) && excludedNames != null )
         {
             //add the excludedpackage names
             for ( Iterator it = excludedNames.iterator(); it.hasNext(); )
@@ -967,7 +1078,7 @@ public abstract class AbstractJavadocMojo
     {
         String sourcePath = null;
 
-        if ( StringUtils.isEmpty( subpackages ) || !StringUtils.isEmpty( sourcepath ) )
+        if ( StringUtils.isEmpty( subpackages ) || StringUtils.isNotEmpty( sourcepath ) )
         {
             sourcePath = StringUtils.join( sourcePaths.iterator(), File.pathSeparator );
         }
@@ -1113,6 +1224,7 @@ public abstract class AbstractJavadocMojo
         Map compileArtifactMap = new HashMap();
 
         classpathElements.add( project.getBuild().getOutputDirectory() );
+
         populateCompileArtifactMap( compileArtifactMap, project.getCompileArtifacts() );
 
         if ( aggregate && project.isExecutionRoot() )
@@ -1147,6 +1259,7 @@ public abstract class AbstractJavadocMojo
         }
 
         classpathElements.addAll( compileArtifactMap.values() );
+
         return StringUtils.join( classpathElements.iterator(), File.pathSeparator );
     }
 
@@ -1242,9 +1355,9 @@ public abstract class AbstractJavadocMojo
         else
         {
             if ( ( project.getOrganization() != null )
-                && ( !StringUtils.isEmpty( project.getOrganization().getName() ) ) )
+                && ( StringUtils.isNotEmpty( project.getOrganization().getName() ) ) )
             {
-                if ( !StringUtils.isEmpty( project.getOrganization().getUrl() ) )
+                if ( StringUtils.isNotEmpty( project.getOrganization().getUrl() ) )
                 {
                     theBottom = StringUtils.replace( theBottom, "{organizationName}", "<a href=\""
                         + project.getOrganization().getUrl() + "\">" + project.getOrganization().getName() + "</a>" );
@@ -1309,38 +1422,152 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * Method to get the path to the doclet to be used in the javadoc
+     * Method to get the path of the doclet artifacts used in the -docletpath option.
      *
-     * @return the path to the doclet
+     * @return the path to jar file that contains doclet class file separated with a colon (:)
+     * on Solaris and a semi-colon (;) on Windows
      * @throws MavenReportException
      */
     private String getDocletPath()
         throws MavenReportException
     {
-        String path;
-        if ( docletArtifact != null )
+        StringBuffer path = new StringBuffer();
+
+        if ( ( docletArtifact != null ) && ( StringUtils.isNotEmpty( docletArtifact.getGroupId() ) )
+            && ( StringUtils.isNotEmpty( docletArtifact.getArtifactId() ) )
+            && ( StringUtils.isNotEmpty( docletArtifact.getVersion() ) ) )
         {
-            Artifact artifact = factory.createArtifact( docletArtifact.getGroupId(), docletArtifact.getArtifactId(),
-                                                        docletArtifact.getVersion(), "compile", "jar" );
-            try
+            path.append( getArtifactAbsolutePath( docletArtifact ) );
+        }
+        else if ( docletArtifacts != null )
+        {
+            for ( int i = 0; i < docletArtifacts.length; i++ )
             {
-                resolver.resolve( artifact, remoteRepositories, localRepository );
-                path = artifact.getFile().getAbsolutePath();
-            }
-            catch ( ArtifactResolutionException e )
-            {
-                throw new MavenReportException( "Unable to resolve artifact.", e );
-            }
-            catch ( ArtifactNotFoundException e )
-            {
-                throw new MavenReportException( "Unable to find artifact.", e );
+                if ( docletArtifacts[i] != null )
+                {
+                    path.append( getArtifactAbsolutePath( docletArtifacts[i] ) );
+
+                    if ( i < docletArtifacts.length - 1 )
+                    {
+                        path.append( File.pathSeparator );
+                    }
+                }
             }
         }
         else
         {
-            path = docletPath;
+            path.append( docletPath );
         }
-        return path;
+
+        if ( StringUtils.isEmpty( path.toString() ) )
+        {
+            getLog().warn( "No docletpath option was found. Please review <docletpath/> or <docletArtifact/>" +
+                    " or <doclets/>." );
+        }
+
+        return path.toString();
+    }
+
+    /**
+     * Method to get the path of the taglet artifacts used in the -tagletpath option.
+     *
+     * @return the path to jar file that contains taglet class file separated with a colon (:)
+     * on Solaris and a semi-colon (;) on Windows
+     * @throws MavenReportException
+     */
+    private String getTagletPath()
+        throws MavenReportException
+    {
+        StringBuffer path = new StringBuffer();
+
+        if ( ( tagletArtifact != null ) && ( StringUtils.isNotEmpty( tagletArtifact.getGroupId() ) )
+            && ( StringUtils.isNotEmpty( tagletArtifact.getArtifactId() ) )
+            && ( StringUtils.isNotEmpty( tagletArtifact.getVersion() ) ) )
+        {
+            path.append( getArtifactAbsolutePath( tagletArtifact ) );
+        }
+        else if ( taglets != null )
+        {
+            for ( int i = 0; i < taglets.length; i++ )
+            {
+                Taglet current = taglets[i];
+                if ( current != null )
+                {
+                    boolean separated = false;
+                    if ( current.getTagletArtifact() != null )
+                    {
+                        path.append( getArtifactAbsolutePath( current.getTagletArtifact() ) );
+                        separated = true;
+                    }
+                    else if ( ( current.getTagletArtifact() != null )
+                        && ( StringUtils.isNotEmpty( current.getTagletArtifact().getGroupId() ) )
+                        && ( StringUtils.isNotEmpty( current.getTagletArtifact().getArtifactId() ) )
+                        && ( StringUtils.isNotEmpty( current.getTagletArtifact().getVersion() ) ) )
+                    {
+                        path.append( getArtifactAbsolutePath( current.getTagletArtifact() ) );
+                        separated = true;
+                    }
+                    else if ( StringUtils.isNotEmpty( current.getTagletpath() ) )
+                    {
+                        path.append( current.getTagletpath() );
+                        separated = true;
+                    }
+
+                    if ( separated && ( i < taglets.length - 1 ) )
+                    {
+                        path.append( File.pathSeparator );
+                    }
+                }
+            }
+        }
+        else
+        {
+            path.append( tagletpath );
+        }
+
+        if ( StringUtils.isEmpty( path.toString() ) )
+        {
+            getLog().warn( "No tagletpath option was found. Please review <tagletpath/> or <tagletArtifact/>" +
+                    " or <taglets/>." );
+        }
+
+        return path.toString();
+    }
+
+    /**
+     * Return the Javadoc artifact path from the local repository
+     *
+     * @param javadocArtifact
+     * @return the locale artifact path
+     * @throws MavenReportException
+     */
+    private String getArtifactAbsolutePath( JavadocPathArtifact javadocArtifact )
+        throws MavenReportException
+    {
+        if ( ( StringUtils.isEmpty( javadocArtifact.getGroupId() ) )
+            && ( StringUtils.isEmpty( javadocArtifact.getArtifactId() ) )
+            && ( StringUtils.isEmpty( javadocArtifact.getVersion() ) ) )
+        {
+            return "";
+        }
+
+        Artifact artifact = factory.createArtifact( javadocArtifact.getGroupId(),
+                                                    javadocArtifact.getArtifactId(),
+                                                    javadocArtifact.getVersion(), "compile", "jar" );
+        try
+        {
+            resolver.resolve( artifact, remoteRepositories, localRepository );
+
+            return artifact.getFile().getAbsolutePath();
+        }
+        catch ( ArtifactResolutionException e )
+        {
+            throw new MavenReportException( "Unable to resolve artifact:" + javadocArtifact, e );
+        }
+        catch ( ArtifactNotFoundException e )
+        {
+            throw new MavenReportException( "Unable to find artifact:" + javadocArtifact, e );
+        }
     }
 
     /**
@@ -1352,7 +1579,7 @@ public abstract class AbstractJavadocMojo
      */
     private void addMemoryArg( Commandline cmd, String arg, String memory )
     {
-        if ( !StringUtils.isEmpty( memory ) )
+        if ( StringUtils.isNotEmpty( memory ) )
         {
             // Allow '128' or '128m'
             if ( NumberUtils.isDigits( memory ) )
@@ -1472,9 +1699,9 @@ public abstract class AbstractJavadocMojo
      */
     private void addArgIfNotEmpty( List arguments, String key, String value, boolean repeatKey )
     {
-        if ( !StringUtils.isEmpty( value ) )
+        if ( StringUtils.isNotEmpty( value ) )
         {
-            if ( !StringUtils.isEmpty( key ) )
+            if ( StringUtils.isNotEmpty( key ) )
             {
                 arguments.add( key );
             }
@@ -1484,7 +1711,7 @@ public abstract class AbstractJavadocMojo
             {
                 String current = token.nextToken().trim();
 
-                if ( !StringUtils.isEmpty( current ) )
+                if ( StringUtils.isNotEmpty( current ) )
                 {
                     arguments.add( current );
 
@@ -1541,11 +1768,12 @@ public abstract class AbstractJavadocMojo
      * Convenience method to wrap an argument value in quotes. Intended for values which may contain whitespaces.
      *
      * @param value the argument value.
+     * @return argument with quote
      */
     private String quotedArgument( String value )
     {
         String arg = value;
-        if ( !StringUtils.isEmpty( arg ) )
+        if ( StringUtils.isNotEmpty( arg ) )
         {
             if ( arg.indexOf( "'" ) != -1 )
             {
@@ -1562,12 +1790,13 @@ public abstract class AbstractJavadocMojo
      * for path values which may contain whitespaces.
      *
      * @param value the argument value.
+     * @return path argument with quote
      */
     private String quotedPathArgument( String value )
     {
         String path = value;
 
-        if ( !StringUtils.isEmpty( path ) )
+        if ( StringUtils.isNotEmpty( path ) )
         {
             path = path.replace( '\\', '/' );
             if ( path.indexOf( "\'" ) != -1 )
@@ -1651,7 +1880,6 @@ public abstract class AbstractJavadocMojo
     private void copyDefaultStylesheet( File outputDirectory )
         throws IOException
     {
-
         if ( outputDirectory == null || !outputDirectory.exists() )
         {
             throw new IOException( "The outputDirectory " + outputDirectory + " doesn't exists." );

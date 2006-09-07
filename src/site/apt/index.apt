@@ -3,7 +3,7 @@
  ------
  Maria Odea Ching
  ------
- 29 June 2006
+ September 2006
  ------
 
  ~~ Copyright 2006 The Apache Software Foundation.
@@ -64,7 +64,4 @@ Maven 2 Javadoc Plugin
 
    * {{{examples/tag-configuration.html}Configuring Custom Javadoc Tags}}
 
-
-
-
-
+   * {{{examples/taglet-configuration.html}Configuring Custom Javadoc Taglet}}

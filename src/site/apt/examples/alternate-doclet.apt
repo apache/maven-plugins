@@ -60,13 +60,17 @@ Using Alternate Doclet
 </project>
 +-----+
 
- <<Note>>: \<additionalparam/\> is used to set additional parameters on the command line, specifically
- for doclet options.
+ <<Note>>:
+
+   * \<additionalparam/\> is used to set additional parameters on the command line, specifically
+     for doclet options.
+
+   * if you need more artifacts in the docletpath, you could use \<docletArtifacts/\>.
 
  After executing <<<mvn site>>>, you will see that a UML graph (.dot file) will be generated in the
  destination directory.
 
- <<Note>>: You must have the Graphviz binary on your PATH, or the images will not be generated.
+ <<Note about UmlGraph>>: You must have the Graphviz binary on your PATH, or the images will not be generated.
  For more information about Graphviz, please refer to {{http://www.graphviz.org/}}.
 
 Using Alternate Doclet in Addition to the Javadoc Doclet
@@ -99,7 +103,7 @@ Using Alternate Doclet in Addition to the Javadoc Doclet
                 <configuration>
                   <doclet>com.sun.tools.doclets.doccheck.DocCheck</doclet>
 
-                  <!--docletPath>/path/to/doccheck.jar</docletPath-->
+                  <!-- <docletPath>/path/to/doccheck.jar</docletPath> -->
                   <docletArtifact>
                     <groupId>com.sun.tools.doclets</groupId>
                     <artifactId>doccheck</artifactId>
@@ -122,7 +126,7 @@ Using Alternate Doclet in Addition to the Javadoc Doclet
               </reportSet>
             </reportSets>
         </plugin>
-         ...
+        ...
       </plugins>
    </reporting>
    ...
