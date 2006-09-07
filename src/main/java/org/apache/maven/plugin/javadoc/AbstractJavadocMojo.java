@@ -1707,12 +1707,6 @@ public abstract class AbstractJavadocMojo
             path.append( tagletpath );
         }
 
-        if ( StringUtils.isEmpty( path.toString() ) )
-        {
-            getLog().warn( "No tagletpath option was found. Please review <tagletpath/> or <tagletArtifact/>" +
-                    " or <taglets/>." );
-        }
-
         return path.toString();
     }
 
