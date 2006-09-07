@@ -1,5 +1,23 @@
 <?xml version="1.0"?>
 
+<!--
+/*
+ * Copyright 2001-2006 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ -->
+
 <model>
   <id>javadocoptions</id>
   <name>JavadocOptions</name>
@@ -113,6 +131,77 @@
           ]]></code>
         </codeSegment>
       </codeSegments>
+    </class>
+
+    <class>
+      <name>JavadocPathArtifact</name>
+      <description>An artifact object used by Javadoc path options like -docletpath or -tagletpath.</description>
+      <version>1.0.0</version>
+      <fields>
+        <field>
+          <name>groupId</name>
+          <description>The id of the group of the artifact.</description>
+          <version>1.0.0</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field>
+          <name>artifactId</name>
+          <description>The id of the artifact.</description>
+          <version>1.0.0</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field>
+          <name>version</name>
+          <description>The version of the artifact.</description>
+          <version>1.0.0</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+      </fields>
+    </class>
+
+    <class>
+      <name>DocletArtifact</name>
+      <version>1.0.0</version>
+      <superClass>JavadocPathArtifact</superClass>
+    </class>
+
+    <class>
+      <name>TagletArtifact</name>
+      <version>1.0.0</version>
+      <superClass>JavadocPathArtifact</superClass>
+    </class>
+
+    <class>
+      <name>Taglet</name>
+      <description>A Taglet parameter.</description>
+      <version>1.0.0</version>
+      <fields>
+        <field>
+          <name>tagletClass</name>
+          <description>tagletClass is the fully-qualified name for the taglet class.</description>
+          <version>1.0.0</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field>
+          <name>tagletpath</name>
+          <description>Specifies the search paths for finding taglet class files (.class).</description>
+          <version>1.0.0</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field>
+          <name>tagletArtifact</name>
+          <description>Specifies the taglet artifact to be included in the tagletpath option for finding taglet class files (.class).</description>
+          <version>1.0.0</version>
+          <association>
+            <type>TagletArtifact</type>
+          </association>
+        </field>
+      </fields>
     </class>
   </classes>
 </model>

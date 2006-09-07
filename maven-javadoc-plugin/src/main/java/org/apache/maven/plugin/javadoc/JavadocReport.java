@@ -24,6 +24,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.doxia.sink.Sink;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -95,6 +96,11 @@ public class JavadocReport
      */
     public String getName( Locale locale )
     {
+        if ( StringUtils.isEmpty( name ) )
+        {
+            return "JavaDocs";
+        }
+
         return name;
     }
 
@@ -103,6 +109,11 @@ public class JavadocReport
      */
     public String getDescription( Locale locale )
     {
+        if ( StringUtils.isEmpty( description ) )
+        {
+            return "JavaDoc API documentation.";
+        }
+
         return description;
     }
 
