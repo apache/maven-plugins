@@ -63,7 +63,6 @@ public abstract class AbstractDependencyFilterMojo
     /**
      * Scope to include. An Empty string indicates all scopes (default).
      * @parameter expression="${scope}" default-value=""
-     * @readonly
      * @required
      */
     protected String scope;
@@ -82,7 +81,7 @@ public abstract class AbstractDependencyFilterMojo
     
     /**
      * Directory to store flag files
-     * @parameter expression="${project.build.directory}/dependency-maven-plugin-markers" 
+     * @parameter expression="${markersDirectory}" default-value="${project.build.directory}/dependency-maven-plugin-markers" 
      * @required
      */
     protected File markersDirectory;
