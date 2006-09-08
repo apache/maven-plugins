@@ -102,6 +102,14 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
      */
     private Set excludes = new HashSet();
 
+    /**
+     * Whether the Clover plugin should instrument all source roots (ie even
+     * generated sources) or whether it should only instrument the main source
+     * root.
+     * @parameter default-value="false"
+     */
+    private boolean includesAllSourceRoots;
+
     private String cloverOutputSourceDirectory;
 
     /**
@@ -125,7 +133,7 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
             Set filesToInstrument = computeFilesToInstrument();
             if ( filesToInstrument.isEmpty() )
             {
-                getLog().warn("No Clover instrumentation done as no matching sources files found");
+                getLog().warn( "No Clover instrumentation done as no matching sources files found" );
             }
             else
             {
@@ -139,7 +147,7 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
         redirectOutputDirectories();
         redirectArtifact();
 
-        logArtifacts("after changes");
+        logArtifacts( "after changes" );
     }
 
     private boolean isJavaProject()
@@ -387,12 +395,12 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
     }
 
     /**
-     * @return the list of files to instrument taking into account the includes and excludes specified by the user
+     * @return a Plexus scanner object that scans a source root and filters files according to inclusion and
+     * exclusion patterns. In our case at hand we include only Java sources as these are the only files we want
+     * to instrument.
      */
-    private Set computeFilesToInstrument()
+    private SourceInclusionScanner getScanner()
     {
-        Set filesToInstrument = new HashSet();
-
         SourceInclusionScanner scanner = null;
 
         if ( includes.isEmpty() && excludes.isEmpty() )
@@ -410,20 +418,43 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
         }
 
         // Note: we shouldn't have to do this but this is a limitation of the Plexus SimpleSourceInclusionScanner
-        scanner.addSourceMapping(new SuffixMapping("dummy", "dummy"));
+        scanner.addSourceMapping( new SuffixMapping( "dummy", "dummy" ) );
 
-        // Only instrument main sources. Do not instrument other source roots as we don't want to instrument
-        // generates files for example.
-        File sourceDir = new File( getProject().getBuild().getSourceDirectory() );
-        if ( sourceDir.exists() )
+        return scanner;
+    }
+
+    /**
+     * @return the list of files to instrument taking into account the includes and excludes specified by the user
+     */
+    private Set computeFilesToInstrument()
+    {
+        Set filesToInstrument = new HashSet();
+        SourceInclusionScanner scanner = getScanner();
+        
+        // Decide whether to instrument all source roots or only the main source root.
+        Iterator sourceRoots;
+        if ( this.includesAllSourceRoots )
         {
-            try
+            sourceRoots = getProject().getCompileSourceRoots().iterator();
+        }
+        else
+        {
+            sourceRoots = Collections.singletonList( getProject().getBuild().getSourceDirectory() ).iterator();
+        }
+
+        while ( sourceRoots.hasNext() )
+        {
+            File sourceRoot = new File( (String) sourceRoots.next() );
+            if ( sourceRoot.exists() )
             {
-                filesToInstrument.addAll( scanner.getIncludedSources( sourceDir, null ) );
-            }
-            catch (InclusionScanException e)
-            {
-                getLog().warn("Failed to add sources from [" + getProject().getBuild().getSourceDirectory() + "]", e);
+                try
+                {
+                    filesToInstrument.addAll( scanner.getIncludedSources( sourceRoot, null ) );
+                }
+                catch (InclusionScanException e)
+                {
+                    getLog().warn( "Failed to add sources from [" + sourceRoot + "]", e);
+                }
             }
         }
 
