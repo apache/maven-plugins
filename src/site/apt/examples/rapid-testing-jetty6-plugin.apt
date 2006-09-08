@@ -22,17 +22,17 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/guides/mini/guide-apt-format.html
 
-Rapid Testing Using the Jetty6 Plugin
+Rapid Testing Using the Jetty Plugin
  
  Normally, testing a web application involves compiling java sources, creating a war and 
  deploying it to a web container. 
  
- But using the jetty6 plugin enables you to quickly test your web application by skipping
- the last two steps. By default the jetty6 plugin scans your <<<target/classes>>> for
+ But using the jetty plugin enables you to quickly test your web application by skipping
+ the last two steps. By default the jetty plugin scans your <<<target/classes>>> for
  any changes in your java sources and <<<src/main/webapp>>> for your web sources.
  The jetty6 plugin will automatically reload the modified classes and web sources.
  
- To use the jetty6 plugin just add the following in your <<<pom.xml>>>:
+ To use the jetty plugin just add the following in your <<<pom.xml>>>:
  
 +-----------------+ 
 <project>
@@ -41,8 +41,7 @@ Rapid Testing Using the Jetty6 Plugin
     <plugins>
       <plugin>
          <groupId>org.mortbay.jetty</groupId>
-         <artifactId>maven-jetty6-plugin</artifactId>
-         <version>6.0.0beta17</version>
+         <artifactId>maven-jetty-plugin</artifactId>
          <configuration>
            <scanIntervalSeconds>10</scanIntervalSeconds>
            <connectors>
@@ -63,9 +62,9 @@ Rapid Testing Using the Jetty6 Plugin
  then start Jetty:
  
 +-----------------+ 
-  mvn jetty6:run
+  mvn jetty:run
 +-----------------+  
 
  The command will block with Jetty listening on port 8080.
  
- Check the {{{http://jetty.mortbay.org/jetty6/maven-plugin/index.html}jetty6 plugin documentation}} for more details.
+ Check the {{{http://jetty.mortbay.org/maven-plugin/index.html}jetty plugin documentation}} for more details.
