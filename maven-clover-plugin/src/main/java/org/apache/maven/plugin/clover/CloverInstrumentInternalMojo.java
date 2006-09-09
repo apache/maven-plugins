@@ -31,7 +31,12 @@ import org.codehaus.plexus.compiler.util.scan.InclusionScanException;
 import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
 
 import java.io.File;
-import java.util.*;
+import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Collections;
 
 /**
  * Instrument source roots.
@@ -128,7 +133,7 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
 
         super.execute();
 
-        logArtifacts("before changes");
+        logArtifacts( "before changes" );
 
         if ( isJavaProject() )
         {
@@ -171,7 +176,7 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
         return isJavaProject;
     }
 
-    private void instrumentSources(Set filesToInstrument) throws MojoExecutionException
+    private void instrumentSources( Set filesToInstrument ) throws MojoExecutionException
     {
         int result = CloverInstr.mainImpl( createCliArgs( filesToInstrument ) );
         if ( result != 0 )
@@ -240,7 +245,7 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
     private void redirectArtifact()
     {
         // Only redirect main artifact for non-pom projects
-        if ( !getProject().getPackaging().equals("pom") )
+        if ( !getProject().getPackaging().equals( "pom" ) )
         {
             Artifact oldArtifact = getProject().getArtifact();
             Artifact newArtifact = this.artifactFactory.createArtifactWithClassifier( oldArtifact.getGroupId(),
@@ -248,7 +253,7 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
             getProject().setArtifact( newArtifact );
 
             getProject().getBuild().setFinalName( getProject().getArtifactId() + "-" + getProject().getVersion()
-                + "-clover");
+                + "-clover" );
         }
     }
 
@@ -259,7 +264,7 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
             for ( Iterator i = getProject().getCompileSourceRoots().iterator(); i.hasNext(); )
             {
                 String sourceRoot = (String) i.next();
-                getLog().debug( "[Clover]  source root [" + sourceRoot + "]");
+                getLog().debug( "[Clover]  source root [" + sourceRoot + "]" );
             }
         }
     }
@@ -276,7 +281,7 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
             swizzleCloverDependencies( getProject().getArtifacts() ) );
     }
 
-    protected Set swizzleCloverDependencies(Set artifacts)
+    protected Set swizzleCloverDependencies( Set artifacts )
     {
         Set resolvedArtifacts = new HashSet();
         for ( Iterator i = artifacts.iterator(); i.hasNext(); )
@@ -308,11 +313,11 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
                     // - You make modifications on A such that B would fail if not built with the latest version of A
                     // - You try to run the Clover plugin on B. The build would fail if we didn't pick the latest
                     //   version between the original A version and the clovered version.
-                    if (cloveredArtifact.getFile().lastModified() < artifact.getFile().lastModified())
+                    if ( cloveredArtifact.getFile().lastModified() < artifact.getFile().lastModified() )
                     {
-                        getLog().warn("Using [" + artifact.getId() + "] even though a Clovered version exists "
+                        getLog().warn( "Using [" + artifact.getId() + "] even though a Clovered version exists "
                             + "but it's older and could fail the build. Please consider running Clover again on that "
-                            + "dependency's project.");
+                            + "dependency's project." );
                         resolvedArtifacts.add( artifact );
                     }
                     else
@@ -338,7 +343,7 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
         return resolvedArtifacts;
     }
 
-    protected Artifact findCloverArtifact(List pluginArtifacts)
+    protected Artifact findCloverArtifact( List pluginArtifacts )
     {
         Artifact cloverArtifact = null;
         Iterator artifacts = pluginArtifacts.iterator();
@@ -359,7 +364,7 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
     private void addCloverDependencyToCompileClasspath()
         throws MojoExecutionException
     {
-        Artifact cloverArtifact = findCloverArtifact(this.pluginArtifacts);
+        Artifact cloverArtifact = findCloverArtifact( this.pluginArtifacts );
         if ( cloverArtifact == null )
         {
             throw new MojoExecutionException(
@@ -375,24 +380,24 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
         getProject().setDependencyArtifacts( set );
     }
 
-    private void logArtifacts(String message)
+    private void logArtifacts( String message )
     {
         if ( getLog().isDebugEnabled() )
         {
-            getLog().debug("[Clover] List of dependency artifacts " + message + ":");
+            getLog().debug( "[Clover] List of dependency artifacts " + message + ":" );
             logArtifacts( getProject().getDependencyArtifacts() );
 
-            getLog().debug("[Clover] List of artifacts " + message + ":");
+            getLog().debug( "[Clover] List of artifacts " + message + ":" );
             logArtifacts( getProject().getArtifacts() );
         }
     }
 
-    private void logArtifacts(Set artifacts)
+    private void logArtifacts( Set artifacts )
     {
         for ( Iterator i = artifacts.iterator(); i.hasNext(); )
         {
             Artifact artifact = (Artifact) i.next();
-            getLog().debug("[Clover]   Artifact [" + artifact.getId() + "], scope = [" + artifact.getScope() + "]" );
+            getLog().debug( "[Clover]   Artifact [" + artifact.getId() + "], scope = [" + artifact.getScope() + "]" );
         }
     }
 
@@ -453,9 +458,9 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
                 {
                     filesToInstrument.addAll( scanner.getIncludedSources( sourceRoot, null ) );
                 }
-                catch (InclusionScanException e)
+                catch ( InclusionScanException e )
                 {
-                    getLog().warn( "Failed to add sources from [" + sourceRoot + "]", e);
+                    getLog().warn( "Failed to add sources from [" + sourceRoot + "]", e );
                 }
             }
         }
@@ -466,7 +471,7 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
     /**
      * @return the CLI args to be passed to CloverInstr
      */
-    private String[] createCliArgs(Set filesToInstrument) throws MojoExecutionException
+    private String[] createCliArgs( Set filesToInstrument ) throws MojoExecutionException
     {
         List parameters = new ArrayList();
 
@@ -498,8 +503,8 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
             }
             else
             {
-                throw new MojoExecutionException("Unsupported jdk version [" + getJdk()
-                    + "]. Valid values are [1.4] and [1.5]");
+                throw new MojoExecutionException( "Unsupported jdk version [" + getJdk()
+                    + "]. Valid values are [1.4] and [1.5]" );
             }
         }
 
@@ -512,23 +517,23 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
         // Log parameters
         if ( getLog().isDebugEnabled() )
         {
-            getLog().debug("Parameter list being passed to Clover CLI:");
+            getLog().debug( "Parameter list being passed to Clover CLI:" );
             for ( Iterator it = parameters.iterator(); it.hasNext(); )
             {
                 String param = (String) it.next();
-                getLog().debug("  parameter = [" + param + "]");
+                getLog().debug( "  parameter = [" + param + "]" );
             }
         }
 
-        return (String[]) parameters.toArray(new String[0]);
+        return (String[]) parameters.toArray( new String[0] );
     }
 
-    protected void setArtifactFactory(ArtifactFactory artifactFactory)
+    protected void setArtifactFactory( ArtifactFactory artifactFactory )
     {
         this.artifactFactory = artifactFactory;
     }
 
-    protected void setArtifactResolver(ArtifactResolver artifactResolver)
+    protected void setArtifactResolver( ArtifactResolver artifactResolver )
     {
         this.artifactResolver = artifactResolver;
     }
