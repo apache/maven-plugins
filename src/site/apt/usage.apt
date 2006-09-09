@@ -4,9 +4,33 @@
  Vincent Massol
  <vmassol@apache.org>
  ------
- April 1st, 2006
+ September 9th, 2006
 
-Generating a Clover report when generating the site
+User Guide
+
+ * {{{usage.html#Generating a Clover report when generating the site}Generating a Clover report when generating the site}}
+
+ * {{{usage.html#Generating a Clover report without modifying your POM}Generating a Clover report without modifying your POM}}
+
+ * {{{usage.html#Generating HTML, XML and PDF reports}Generating HTML, XML and PDF reports}}
+
+ * {{{usage.html#Generating historical reports}Generating historical reports}}
+
+ * {{{usage.html#Checking test coverage}Checking test coverage}}
+
+ * {{{usage.html#Using Clover with JDK 1.4 and JDK 1.5 keywords}Using Clover with JDK 1.4 and JDK 1.5 keywords}}
+
+ * {{{usage.html#Specifying a Clover flush policy}Specifying a Clover flush policy}}
+
+ * {{{usage.html#Specifying a custom license file}Specifying a custom license file}}
+
+ * {{{usage.html#Aggregating Clover reports}Aggregating Clover reports}}
+
+ * {{{usage.html#Controlling files to instrument}Controlling files to instrument}}
+
+ []
+
+* {Generating a Clover report when generating the site}
 
   Add the Clover report in your <<<pom.xml>>> under the <<<reporting>>> section:
 
@@ -60,14 +84,14 @@ Generating a Clover report when generating the site
 
   Then, to generate the report as part of the site simply type <<<mvn site:site>>>.
   
-Generating a Clover report without modifying your POM
+* {Generating a Clover report without modifying your POM}
 
   If you simply want to generate a Clover report on the fly without modifying your POM, simply
   type <<<mvn clover:instrument clover:clover>>>. Alternatively if you want to aggregate children
   module reports into a master Clover report, run <<<mvn clover:instrument clover:aggregate clover:clover>>>
   instead.
 
-Generating HTML, XML and PDF reports
+* {Generating HTML, XML and PDF reports}
 
   By default the Clover plugin will generate a HTML report. If you want to generate a PDF or XML report, or
   if you simply do not want to generate the HTML report use the <<<generateHtml>>>, <<<generatePdf>>> and
@@ -131,7 +155,7 @@ Generating HTML, XML and PDF reports
 [...]
 +---------
 
-Generating historical reports
+* {Generating historical reports}
 
   This is done in the same manner as you generate a standard Clover report but in addition you need to set the
   <<<generateHistorical>>> configuration property to true (it's false by default). For example:
@@ -184,7 +208,7 @@ Generating historical reports
 
   Where <<<myHistoryDir>>> could be a Maven property that you define in a profile.
 
-Checking test coverage
+* {Checking test coverage}
 
   In order to check for a test coverage percentage and fail the build in case of non-compliance,
   you'll need to configure the Clover plugin to tell it what test coverage threshold you wish to use:
@@ -223,7 +247,7 @@ Checking test coverage
 
   Note: The <<<clover:check>>> goal will also check the test percentage coverage for merged databases if any is found.
 
-Using Clover with JDK 1.4 and JDK 1.5 keywords
+* {Using Clover with JDK 1.4 and JDK 1.5 keywords}
 
   If your code is using JDK 1.4 or JDK 1.5 specific keywords, you'll need to configure the Clover
   plugin. For example for JDK 1.4:
@@ -239,7 +263,7 @@ Using Clover with JDK 1.4 and JDK 1.5 keywords
 [...]
 +---------
 
-Specifying a Clover flush policy
+* {Specifying a Clover flush policy}
 
   If you want to specify the Clover 
   {{{http://cenqua.com/clover/doc/adv/flushpolicies.html}flush policy}} that the plugin should use,
@@ -260,7 +284,7 @@ Specifying a Clover flush policy
 [...]
 +---------
 
-Specifying a custom license file
+* {Specifying a custom license file}
 
   The Clover plugin provides a default evaulation license. However if your project is a commercial project
   you need to purchase your own license to use Clover. To use your license specify it using a
@@ -301,7 +325,7 @@ Specifying a custom license file
   how to use this last feature, refer to the
   {{{http://maven.apache.org/plugins/maven-checkstyle-plugin/tips.html}Checkstlye plugin documentation}}.
 
-Aggregating Clover reports
+* {Aggregating Clover reports}
 
   <<Note: There's currently a {{{http://jira.codehaus.org/browse/MCLOVER-34}bug in Maven2}} which results in the clover
   aggregation not working properly. More specifically the aggregate goal requires an existing Clover database and
@@ -362,7 +386,7 @@ myproject/
   Note that you can control the location of the master Clover database by using the <<<cloverMergeDatabase>>>
   configuration property.
 
-Controlling files to instrument
+* {Controlling files to instrument}
 
   By default all Java files are included during the instrumentation. To specify inclusion and exclusion use the
   <<<includes>>> and <<<excludes>>> configuration elements as shown in this example:
