@@ -37,7 +37,7 @@ import java.util.*;
  * Instrument source roots.
  *
  * <p><b>Note: Do not call this MOJO directly. It is meant to be called in a custom forked lifecycle by the other
- * MOJOs.</b></p>
+ * Clover plugin MOJOs.</b></p>
  *
  * @goal instrumentInternal
  * @phase generate-sources
@@ -76,6 +76,8 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
     private ArtifactFactory artifactFactory;
 
     /**
+     * Artifact resolver used to find clovered artifacts (artifacts with a clover classifier).
+     *
      * @component role="org.apache.maven.artifact.resolver.ArtifactResolver"
      * @required
      * @readonly
