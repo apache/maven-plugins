@@ -16,6 +16,7 @@ package org.apache.maven.plugin.javadoc;
  * limitations under the License.
  */
 
+import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.codehaus.plexus.util.FileUtils;
 
@@ -548,7 +549,6 @@ public class JavadocReportTest
         return str;
     }
 
-
     /**
      * Method to test the taglet artifact configuration
      *
@@ -566,12 +566,46 @@ public class JavadocReportTest
         JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
         mojo.execute();
 
-        File generatedFile = new File( getBasedir(), "target/test/unit/taglet-test/target/site/apidocs/index.html" );
-        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+        File index = new File( getBasedir(), "target/test/unit/taglet-test/target/site/apidocs/index.html" );
+        assertTrue( FileUtils.fileExists( index.getAbsolutePath() ) );
 
         File appFile = new File( getBasedir(), "target/test/unit/taglet-test/target/site/apidocs/taglet/test/App.html" );
         assertTrue( appFile.exists() );
         String appString = readFile( appFile );
         assertTrue( appString.indexOf( "<b>To Do:</b>" ) != -1 );
+    }
+
+    /**
+     * Method to test the jdk5 javadoc
+     *
+     * @throws Exception
+     */
+    public void testJdk5()
+        throws Exception
+    {
+        if ( !SystemUtils.isJavaVersionAtLeast( 1.5f ) )
+        {
+            getContainer().getLogger().warn( "JdkDK 5.0 or more is required to run javadoc for " +
+                    "'org.apache.maven.plugin.javadoc.JavadocReportTest#testJdk5()'." );
+            return;
+        }
+
+        File testPom = new File( getBasedir(),
+                                 "src/test/resources/unit/jdk5-test/jdk5-test-plugin-config.xml" );
+        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        mojo.execute();
+
+        File index = new File( getBasedir(), "target/test/unit/jdk5-test/target/site/apidocs/index.html" );
+        assertTrue( FileUtils.fileExists( index.getAbsolutePath() ) );
+
+        File overviewSummary = new File( getBasedir(), "target/test/unit/jdk5-test/target/site/apidocs/overview-summary.html" );
+        assertTrue( FileUtils.fileExists( overviewSummary.getAbsolutePath() ) );
+        String readed = readFile( overviewSummary );
+        assertTrue( readed.indexOf( "<b>Test the package-info</b>" ) != -1 );
+
+        File packageSummary = new File( getBasedir(), "target/test/unit/jdk5-test/target/site/apidocs/jdk5/test/package-summary.html" );
+        assertTrue( FileUtils.fileExists( packageSummary.getAbsolutePath() ) );
+        readed = readFile( packageSummary );
+        assertTrue( readed.indexOf( "<b>Test the package-info</b>" ) != -1 );
     }
 }
