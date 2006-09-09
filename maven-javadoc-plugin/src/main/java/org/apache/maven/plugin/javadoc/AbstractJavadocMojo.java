@@ -918,6 +918,10 @@ public abstract class AbstractJavadocMojo
 
         List files = getFiles( sourcePaths );
 
+        List packageNames = getPackageNames( sourcePaths, files );
+
+        List filesWithUnnamedPackages = getFilesWithUnnamedPackages( sourcePaths, files );
+
         if ( !canGenerateReport( files ) )
         {
             return;
@@ -926,34 +930,22 @@ public abstract class AbstractJavadocMojo
         File javadocOutputDirectory = new File( getOutputDirectory() );
         javadocOutputDirectory.mkdirs();
 
-        if ( !files.isEmpty() )
-        {
-            File file = new File( javadocOutputDirectory, "files" );
-
-            if ( !debug )
-            {
-                file.deleteOnExit();
-            }
-
-            try
-            {
-                FileUtils.fileWrite( file.getAbsolutePath(), StringUtils.join( files.iterator(), "\n" ) );
-            }
-            catch ( IOException e )
-            {
-                throw new MavenReportException( "Unable to write temporary file for command execution", e );
-            }
-        }
+        // ----------------------------------------------------------------------
+        // Copy default resources
+        // ----------------------------------------------------------------------
 
         try
         {
-            // Copy default style sheet
             copyDefaultStylesheet( javadocOutputDirectory );
         }
         catch ( IOException e )
         {
             throw new MavenReportException( "Unable to copy default stylesheet", e );
         }
+
+        // ----------------------------------------------------------------------
+        // Wrap javadoc options
+        // ----------------------------------------------------------------------
 
         StringBuffer options = new StringBuffer();
         if ( StringUtils.isNotEmpty( this.locale ) )
@@ -969,6 +961,10 @@ public abstract class AbstractJavadocMojo
             options.append( "-classpath " );
             options.append( quotedPathArgument( classpath ) );
         }
+
+        // ----------------------------------------------------------------------
+        // Wrap javadoc arguments
+        // ----------------------------------------------------------------------
 
         Commandline cmd = new Commandline();
 
@@ -1028,7 +1024,10 @@ public abstract class AbstractJavadocMojo
 
         addArgIfNotEmpty( arguments, "-exclude", getExcludedPackages( sourcePaths ), SINCE_JAVADOC_1_4 );
 
-        // javadoc arguments for default doclet
+        // ----------------------------------------------------------------------
+        // Wrap arguments for default doclet
+        // ----------------------------------------------------------------------
+
         if ( StringUtils.isEmpty( doclet ) )
         {
             addArgIf( arguments, author, "-author" );
@@ -1042,18 +1041,21 @@ public abstract class AbstractJavadocMojo
             addArgIfNotEmpty( arguments, "-excludedocfilessubdir", quotedPathArgument( excludedocfilessubdir ),
                               SINCE_JAVADOC_1_4 );
             addArgIfNotEmpty( arguments, "-footer", quotedArgument( footer ) );
-            for ( int i = 0; i < groups.length; i++ )
+            if ( groups!= null )
             {
-                if ( groups[i] == null || StringUtils.isEmpty( groups[i].getTitle() )
-                    || StringUtils.isEmpty( groups[i].getPackages() ) )
+                for ( int i = 0; i < groups.length; i++ )
                 {
-                    getLog().info( "A group option is empty. Ignore this option." );
-                }
-                else
-                {
-                    String groupTitle = StringUtils.replace( groups[i].getTitle(), ",", "&#44;" );
-                    addArgIfNotEmpty( arguments, "-group", quotedArgument( groupTitle ) + " "
-                        + quotedArgument( groups[i].getPackages() ), true );
+                    if ( groups[i] == null || StringUtils.isEmpty( groups[i].getTitle() )
+                        || StringUtils.isEmpty( groups[i].getPackages() ) )
+                    {
+                        getLog().info( "A group option is empty. Ignore this option." );
+                    }
+                    else
+                    {
+                        String groupTitle = StringUtils.replace( groups[i].getTitle(), ",", "&#44;" );
+                        addArgIfNotEmpty( arguments, "-group", quotedArgument( groupTitle ) + " "
+                            + quotedArgument( groups[i].getPackages() ), true );
+                    }
                 }
             }
             addArgIfNotEmpty( arguments, "-header", quotedArgument( header ) );
@@ -1131,33 +1133,47 @@ public abstract class AbstractJavadocMojo
             addArgIfNotEmpty( arguments, "-windowtitle", quotedArgument( windowtitle ) );
         }
 
+        // ----------------------------------------------------------------------
+        // Write options file and include it in the command line
+        // ----------------------------------------------------------------------
+
         if ( options.length() > 0 )
         {
-            File optionsFile = new File( javadocOutputDirectory, "options" );
-            for ( Iterator it = arguments.iterator(); it.hasNext(); )
+            addCommandLineOptions( cmd, options, arguments, javadocOutputDirectory );
+        }
+
+        // ----------------------------------------------------------------------
+        // Write packages file and include it in the command line
+        // ----------------------------------------------------------------------
+
+        if ( !packageNames.isEmpty() )
+        {
+            addCommandLinePackages( cmd, javadocOutputDirectory, packageNames );
+
+            // ----------------------------------------------------------------------
+            // Write argfile file and include it in the command line
+            // ----------------------------------------------------------------------
+
+            if ( !filesWithUnnamedPackages.isEmpty() )
             {
-                options.append( " " );
-                options.append( (String) it.next() );
+                addCommandLineArgFile( cmd, javadocOutputDirectory, filesWithUnnamedPackages );
             }
-            try
+        }
+        else
+        {
+            // ----------------------------------------------------------------------
+            // Write argfile file and include it in the command line
+            // ----------------------------------------------------------------------
+
+            if ( !files.isEmpty() )
             {
-                FileUtils.fileWrite( optionsFile.getAbsolutePath(), options.toString() );
-            }
-            catch ( IOException e )
-            {
-                throw new MavenReportException( "Unable to write temporary file for command execution", e );
-            }
-            cmd.createArgument().setValue( "@options" );
-            if ( !debug )
-            {
-                optionsFile.deleteOnExit();
+                addCommandLineArgFile( cmd, javadocOutputDirectory, files );
             }
         }
 
-        if ( !files.isEmpty() )
-        {
-            cmd.createArgument().setValue( "@files" );
-        }
+        // ----------------------------------------------------------------------
+        // Execute command line
+        // ----------------------------------------------------------------------
 
         getLog().debug( Commandline.toString( cmd.getCommandline() ) );
 
@@ -1176,7 +1192,10 @@ public abstract class AbstractJavadocMojo
             throw new MavenReportException( "Unable to execute javadoc command", e );
         }
 
-        // Javadoc warnings
+        // ----------------------------------------------------------------------
+        // Handle Javadoc warnings
+        // ----------------------------------------------------------------------
+
         if ( StringUtils.isNotEmpty( err.getOutput() ) )
         {
             getLog().info( "Javadoc Warnings" );
@@ -1329,7 +1348,7 @@ public abstract class AbstractJavadocMojo
      * @return a List of valid source directories
      */
     // TODO: could be better aligned with JXR, including getFiles() vs hasSources that finds java files.
-    private List pruneSourceDirs( List sourceDirs )
+    private static List pruneSourceDirs( List sourceDirs )
     {
         List pruned = new ArrayList( sourceDirs.size() );
         for ( Iterator i = sourceDirs.iterator(); i.hasNext(); )
@@ -1356,7 +1375,7 @@ public abstract class AbstractJavadocMojo
      * @param excludedPackages the package names to be excluded in the javadoc
      * @return a List of the source files to be excluded in the generated javadoc
      */
-    private List getExcludedNames( List sourcePaths, String[] subpackagesList, String[] excludedPackages )
+    private static List getExcludedNames( List sourcePaths, String[] subpackagesList, String[] excludedPackages )
     {
         List excludedNames = new ArrayList();
         for ( Iterator i = sourcePaths.iterator(); i.hasNext(); )
@@ -1450,7 +1469,7 @@ public abstract class AbstractJavadocMojo
      * @param artifacts
      * @return
      */
-    private List getCompileArtifacts( Set artifacts )
+    private static List getCompileArtifacts( Set artifacts )
     {
         List list = new ArrayList( artifacts.size() );
 
@@ -1946,7 +1965,7 @@ public abstract class AbstractJavadocMojo
      * @param value the argument value.
      * @return argument with quote
      */
-    private String quotedArgument( String value )
+    private static String quotedArgument( String value )
     {
         String arg = value;
         if ( StringUtils.isNotEmpty( arg ) )
@@ -1968,7 +1987,7 @@ public abstract class AbstractJavadocMojo
      * @param value the argument value.
      * @return path argument with quote
      */
-    private String quotedPathArgument( String value )
+    private static String quotedPathArgument( String value )
     {
         String path = value;
 
@@ -2112,7 +2131,7 @@ public abstract class AbstractJavadocMojo
      * @param excludePackages package names to be excluded in the javadoc
      * @return a StringBuffer that contains the appended file names of the files to be included in the javadoc
      */
-    private List getIncludedFiles( String sourceDirectory, String[] fileList, String[] excludePackages )
+    private static List getIncludedFiles( String sourceDirectory, String[] fileList, String[] excludePackages )
     {
         List files = new ArrayList();
 
@@ -2179,7 +2198,7 @@ public abstract class AbstractJavadocMojo
      * @param excludePackagenames package names to be excluded in the javadoc
      * @return a List of the packagenames to be excluded
      */
-    private List getExcludedPackages( String sourceDirectory, String[] excludePackagenames )
+    private static List getExcludedPackages( String sourceDirectory, String[] excludePackagenames )
     {
         List files = new ArrayList();
         for ( int i = 0; i < excludePackagenames.length; i++ )
@@ -2227,13 +2246,213 @@ public abstract class AbstractJavadocMojo
      * @param files           the variable that contains the appended filenames of the files to be included in the javadoc
      * @param excludePackages the packages to be excluded in the javadocs
      */
-    private void addFilesFromSource( List files, String sourceDirectory, String[] excludePackages )
+    private static void addFilesFromSource( List files, String sourceDirectory, String[] excludePackages )
     {
         String[] fileList = FileUtils.getFilesFromExtension( sourceDirectory, new String[] { "java" } );
         if ( fileList != null && fileList.length != 0 )
         {
             List tmpFiles = getIncludedFiles( sourceDirectory, fileList, excludePackages );
             files.addAll( tmpFiles );
+        }
+    }
+
+    /**
+     * @param sourcePaths
+     * @param files
+     * @return the list of package names for files in the sourcePaths
+     */
+    private static List getPackageNames( List sourcePaths, List files )
+    {
+        return getPackageNamesOrFilesWithUnnamedPackages( sourcePaths, files, true );
+    }
+
+    /**
+     * @param sourcePaths
+     * @param files
+     * @return a list files with unnamed package names for files in the sourecPaths
+     */
+    private static List getFilesWithUnnamedPackages( List sourcePaths, List files )
+    {
+        return getPackageNamesOrFilesWithUnnamedPackages( sourcePaths, files, false );
+    }
+
+    /**
+     * @param sourcePaths
+     * @param files
+     * @param onlyPackageName
+     * @return a list of package names or files with unnamed package names, depending the value of the unnamed flag
+     */
+    private static List getPackageNamesOrFilesWithUnnamedPackages( List sourcePaths, List files, boolean onlyPackageName )
+    {
+        List returnList = new ArrayList();
+
+        for ( Iterator it = files.iterator(); it.hasNext(); )
+        {
+            String currentFile = (String) it.next();
+            currentFile = currentFile.replace( '\\', '/' );
+
+            for ( Iterator it2 = sourcePaths.iterator(); it2.hasNext(); )
+            {
+                String currentSourcePath = (String) it2.next();
+                currentSourcePath = currentSourcePath.replace( '\\', '/' );
+
+                if ( !currentSourcePath.endsWith( "/" ) )
+                {
+                    currentSourcePath += "/";
+                }
+
+                if ( currentFile.indexOf( currentSourcePath ) != -1 )
+                {
+                    String packagename = currentFile.substring( currentSourcePath.length() + 1 );
+                    if ( onlyPackageName && packagename.lastIndexOf( "/" ) != -1 )
+                    {
+                        packagename = packagename.substring( 0, packagename.lastIndexOf( "/" ) );
+                        packagename = packagename.replace( '/', '.' );
+
+                        if ( !returnList.contains( packagename ) )
+                        {
+                            returnList.add( packagename );
+                        }
+                    }
+                    if ( !onlyPackageName && packagename.lastIndexOf( "/" ) == -1 )
+                    {
+                        returnList.add( currentFile );
+                    }
+                }
+            }
+        }
+
+        return returnList;
+    }
+
+    /**
+     * Generate an "options" file for all options and arguments and add the "@options" in the command line.
+     *
+     * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#argumentfiles">
+     * Reference Guide, Command line argument files
+     * </a>
+     *
+     * @param cmd
+     * @param options
+     * @param arguments
+     * @param javadocOutputDirectory
+     * @throws MavenReportException if any
+     */
+    private void addCommandLineOptions( Commandline cmd, StringBuffer options, List arguments,
+                                       File javadocOutputDirectory )
+        throws MavenReportException
+    {
+        File optionsFile = new File( javadocOutputDirectory, "options" );
+
+        options.append( " " );
+        options.append( StringUtils.join( arguments.toArray( new String[0] ), SystemUtils.LINE_SEPARATOR ) );
+
+        try
+        {
+            FileUtils.fileWrite( optionsFile.getAbsolutePath(), options.toString() );
+        }
+        catch ( IOException e )
+        {
+            throw new MavenReportException( "Unable to write '" + optionsFile.getName()
+                + "' temporary file for command execution", e );
+        }
+
+        cmd.createArgument().setValue( "@options" );
+
+        if ( !debug )
+        {
+            optionsFile.deleteOnExit();
+        }
+    }
+
+    /**
+     * Generate a file called "argfile" (or "files", depending the JDK) to hold files and add the "@argfile"
+     * (or "@file", depending the JDK) in the command line.
+     *
+     * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#argumentfiles">
+     * Reference Guide, Command line argument files
+     * </a>
+     * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.4.html#runningjavadoc">
+     * What s New in Javadoc 1.4
+     * </a>
+     *
+     * @param cmd
+     * @param javadocOutputDirectory
+     * @param files
+     * @throws MavenReportException if any
+     */
+    private void addCommandLineArgFile( Commandline cmd, File javadocOutputDirectory, List files )
+        throws MavenReportException
+    {
+        File argfileFile;
+        if ( SystemUtils.isJavaVersionAtLeast( SINCE_JAVADOC_1_4 ) )
+        {
+            argfileFile = new File( javadocOutputDirectory, "argfile" );
+        }
+        else
+        {
+            argfileFile = new File( javadocOutputDirectory, "files" );
+        }
+
+        try
+        {
+            FileUtils.fileWrite( argfileFile.getAbsolutePath(), StringUtils.join( files.iterator(),
+                                                                                  SystemUtils.LINE_SEPARATOR ) );
+        }
+        catch ( IOException e )
+        {
+            throw new MavenReportException( "Unable to write '" + argfileFile.getName()
+                + "' temporary file for command execution", e );
+        }
+
+        if ( SystemUtils.isJavaVersionAtLeast( SINCE_JAVADOC_1_4 ) )
+        {
+            cmd.createArgument().setValue( "@argfile" );
+        }
+        else
+        {
+            cmd.createArgument().setValue( "@files" );
+        }
+
+        if ( !debug )
+        {
+            argfileFile.deleteOnExit();
+        }
+    }
+
+    /**
+     * Generate a file called "packages" to hold all package namesand add the "@packages" in the command line.
+     *
+     * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#argumentfiles">
+     * Reference Guide, Command line argument files
+     * </a>
+     *
+     * @param cmd
+     * @param javadocOutputDirectory
+     * @param packageNames
+     * @throws MavenReportException if any
+     */
+    private void addCommandLinePackages( Commandline cmd, File javadocOutputDirectory, List packageNames )
+        throws MavenReportException
+    {
+        File packagesFile = new File( javadocOutputDirectory, "packages" );
+
+        try
+        {
+            FileUtils.fileWrite( packagesFile.getAbsolutePath(), StringUtils
+                .join( packageNames.toArray( new String[0] ), SystemUtils.LINE_SEPARATOR ) );
+        }
+        catch ( IOException e )
+        {
+            throw new MavenReportException( "Unable to write '" + packagesFile.getName()
+                + "' temporary file for command execution", e );
+        }
+
+        cmd.createArgument().setValue( "@packages" );
+
+        if ( !debug )
+        {
+            packagesFile.deleteOnExit();
         }
     }
 }
