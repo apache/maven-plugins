@@ -1,7 +1,7 @@
 package org.apache.maven.plugin.antlr;
 
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,46 +27,57 @@ import java.io.FileReader;
 import java.security.Permission;
 import java.util.StringTokenizer;
 
+//----------------------------------------------------------------------
+// Don't remove this snippet
+//----------------------------------------------------------------------
 // START SNIPPET: generate-sources-0
 /**
+ * Generates files based on grammar files with Antlr tool.
+ *
  * @goal generate
  * @phase generate-sources
- * @description Antlr plugin
  */
 public class AntlrPlugin
     extends AbstractMojo
 {
     /**
+     * Comma separated grammar file names present in the <code>sourceDirectory</code> directory.
+     *
      * @parameter expression="${grammars}"
      * @required
      */
     private String grammars;
 
     /**
+     * Specifies the Antlr directory containing grammar files.
+     *
      * @parameter expression="${basedir}/src/main/antlr"
      * @required
      */
     private File sourceDirectory;
 
     /**
+     * Specifies the destination directory where Antlr should generate files.
+     *
      * @parameter expression="${project.build.directory}/generated-sources/antlr"
      * @required
      */
     private String outputDirectory;
 
     /**
+     * The Maven Project Object
+     *
      * @parameter expression="${project}"
      * @required
      */
     private MavenProject project;
 
+    /**
+     * @see org.apache.maven.plugin.Mojo#execute()
+     */
     public void execute()
         throws MojoExecutionException
     {
-        // ----------------------------------------------------------------------
-        //
-        // ----------------------------------------------------------------------
-
         StringTokenizer st = new StringTokenizer( grammars, ", " );
 
         while ( st.hasMoreTokens() )
@@ -103,6 +114,10 @@ public class AntlrPlugin
                 generated.getParentFile().mkdirs();
             }
 
+            // ----------------------------------------------------------------------
+            // @see http://www.antlr.org/doc/options.html#Command%20Line%20Options
+            // ----------------------------------------------------------------------
+
             String[] args = new String[]{"-o", generated.getParentFile().getPath(), grammar.getPath(),};
 
             SecurityManager oldSm = System.getSecurityManager();
@@ -125,15 +140,24 @@ public class AntlrPlugin
                 System.setSecurityManager( oldSm );
             }
         }
-        
+
         if ( project != null )
         {
             project.addCompileSourceRoot( outputDirectory );
         }
     }
-    
+
     // END SNIPPET: generate-sources-0
-    
+    //  ----------------------------------------------------------------------
+    //   Don't remove this snippet
+    //  ----------------------------------------------------------------------
+
+    /**
+     * @param grammar
+     * @param outputDirectory
+     * @return generated file
+     * @throws Exception
+     */
     protected File getGeneratedFile( String grammar, String outputDirectory )
         throws Exception
     {
@@ -143,7 +167,6 @@ public class AntlrPlugin
 
         try
         {
-
             BufferedReader in = new BufferedReader( new FileReader( grammar ) );
 
             String line;
@@ -194,7 +217,6 @@ public class AntlrPlugin
 
         return genFile;
     }
-
 }
 
 class NoExitSecurityManager
@@ -206,10 +228,16 @@ class NoExitSecurityManager
     {
     }
 
+    /**
+     * @see java.lang.SecurityManager#checkPermission(java.security.Permission)
+     */
     public void checkPermission( Permission permission )
     {
     }
 
+    /**
+     * @see java.lang.SecurityManager#checkExit(int)
+     */
     public void checkExit( int status )
     {
         throw new SecurityException( "exitVM-" + status );
