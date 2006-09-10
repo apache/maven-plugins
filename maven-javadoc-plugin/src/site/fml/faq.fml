@@ -18,16 +18,16 @@
 
 <faqs id="FAQ" title="Frequently Asked Questions">
   <part id="General">
-    <faq id="Where in the pom.xml do I configure the Javadoc plugin?">
-      <question>Where in the pom.xml do I configure the Javadoc plugin?</question>
+    <faq id="Where in the pom.xml do I configure the Javadoc Plugin">
+      <question>Where in the pom.xml do I configure the Javadoc Plugin?</question>
       <answer>
         <p>
-          Like all other site report plugins, the Javadoc plugin goes in the
-          <i>reporting</i> section of your pom.xml.
+          Like all other site report plugins, the Javadoc Plugin goes in the
+          <i>&lt;reporting/&gt;</i> section of your pom.xml.
         </p>
       </answer>
     </faq>
-    <faq id="Where do I put javadoc resources like package.html?">
+    <faq id="Where do I put javadoc resources like package.html">
       <question>Where do I put Javadoc resources like HTML files or images?</question>
       <answer>
         <p>
@@ -50,6 +50,25 @@ yourproject
           |...
             `-- package.html
         </source>
+      </answer>
+    </faq>
+    <faq id="How to know exactly the Javadoc command line">
+      <question>How to know exactly the Javadoc command line?</question>
+      <answer>
+        <p>
+          The Javadoc Plugin calls the Javadoc tool with
+          <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#argumentfiles">argument files</a>,
+          i.e. files called 'options', 'packages' and 'argfile' (or 'files' with Jdk &lt; 1.4):
+          <source>${project.reporting.outputDirectory}/apidocs/javadoc.exe(or .sh) \
+          @options @packages | @argfile</source>
+        </p>
+        <p>
+          These argument files are generated at runtime depending the Javadoc Plugin configuration and are deleted
+          when the Javadoc Plugin ended.
+        </p>
+        <p>
+          To preserve them, just add &lt;debug&gt;true&lt;debug&gt; in your Javadoc Plugin configuration.
+        </p>
       </answer>
     </faq>
   </part>

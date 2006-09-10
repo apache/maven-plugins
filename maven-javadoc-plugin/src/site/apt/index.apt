@@ -26,11 +26,22 @@
 
 Maven 2 Javadoc Plugin
 
- The Javadoc Plugin uses the Javadoc tool to generate javadocs for the specified project. For more information about the
- standard Javadoc tool, see {{{http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html}here}}.
+ The Javadoc Plugin uses the Javadoc tool to generate javadocs for the specified project.
+ For more information about the standard Javadoc tool, please refer to
+ {{{http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html}Reference Guide}}.
 
  The Javadoc Plugin gets the parameter values that will be used from the plugin configuration specified in the pom.
+ To hold all javadoc arguments, packages or files, the Javadoc Plugin generates
+ {{{http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#argumentfiles}argument files}}
+ and calls the Javadoc tool as follow:
+
++-----+
+#${project.reporting.outputDirectory}/apidocs/javadoc.exe(or .sh) \
+    @options @packages | @argfile
++-----+
+
  When no configuration values are set, the plugin sets default values instead and then executes the Javadoc tool.
+
  You can also use the plugin to package the generated javadocs into a jar file for distribution.
 
 * Goals Overview
