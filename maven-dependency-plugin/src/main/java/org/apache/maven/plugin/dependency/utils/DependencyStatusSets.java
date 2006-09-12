@@ -99,7 +99,7 @@ public class DependencyStatusSets
         this.unResolvedDependencies = unResolvedDependencies;
     }
 
-    public void logStatus( Log log )
+    public void logStatus( Log log, boolean outputArtifactFilename )
     {
         log.info( "" );
         log.info( "The following files have been resolved: " );
@@ -113,7 +113,20 @@ public class DependencyStatusSets
         	sortedResolvedDependencies.addAll(resolvedDependencies);
             for ( Iterator i = sortedResolvedDependencies.iterator(); i.hasNext(); )
             {
-                log.info( "   " + ( (Artifact) i.next() ).getId() );
+                Artifact artifact = (Artifact) i.next();
+                String artifactFilename = null;
+                if (outputArtifactFilename)
+                {
+                    try
+                    {   
+                        artifact.getFile().getAbsoluteFile();
+                    }
+                    catch (NullPointerException e)
+                    {
+                        //ignore the null pointer, we'll output a null string
+                    }
+                }
+                log.info( "   " + artifact.getId()  + (outputArtifactFilename ? ":" + artifactFilename : ""));
             }
         }
 

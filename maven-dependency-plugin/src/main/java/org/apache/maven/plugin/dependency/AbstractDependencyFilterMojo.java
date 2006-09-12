@@ -98,6 +98,11 @@ public abstract class AbstractDependencyFilterMojo
      */
     protected boolean overWriteSnapshots;
 
+    /**
+     * Output absolute filename for resolved artifacts
+     * @parameter expression="${outputArtifactFilename}" default-value="false"
+     */
+    protected boolean outputArtifactFilename;
     
     /**
      * Retrieves dependencies, either direct only or all including transitive.
