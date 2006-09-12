@@ -44,6 +44,7 @@ public class ClassifierTypeTranslator
     {
         this.classifier = classifier;
         this.type = type;
+        this.factory = factory;
     }
 
     /* (non-Javadoc)
