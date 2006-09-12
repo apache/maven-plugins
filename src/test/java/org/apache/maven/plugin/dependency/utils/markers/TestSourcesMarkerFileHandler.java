@@ -185,4 +185,6 @@ public class TestSourcesMarkerFileHandler
        outputFolder.delete();
        assertFalse(outputFolder.exists());
    }
+   
+   //TODO: create test for timestamps here.
 }

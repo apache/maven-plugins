@@ -18,6 +18,7 @@
  */
 package org.apache.maven.plugin.dependency.utils.markers;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 
 /**
@@ -35,4 +36,6 @@ public interface MarkerHandler
     public boolean clearMarker()
         throws MojoExecutionException;
     
+    public boolean isMarkerOlder( Artifact artifact )
+        throws MojoExecutionException;
 }
