@@ -28,6 +28,7 @@ import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.dependency.utils.SilentLog;
 
@@ -62,57 +63,116 @@ public class TestScopeFilter
     public void testScopeFilter()
     {
         ScopeFilter filter = new ScopeFilter( Artifact.SCOPE_COMPILE, null );
-        Set result = filter.filter( artifacts, log );
-        assertEquals( 2, result.size() );
+        Set result;
+        try
+        {
+            result = filter.filter( artifacts, log );
+            assertEquals( 2, result.size() );
+        }
+        catch ( MojoExecutionException e )
+        {
+            assertTrue( true );
+        }
     }
 
     public void testScopeFilter2()
     {
         ScopeFilter filter = new ScopeFilter( Artifact.SCOPE_RUNTIME, null );
-        Set result = filter.filter( artifacts, log );
-        assertEquals( 2, result.size() );
+        Set result;
+        try
+        {
+            result = filter.filter( artifacts, log );
+            assertEquals( 2, result.size() );
+        }
+        catch ( MojoExecutionException e )
+        {
+            assertTrue( false );
+        }
     }
 
     public void testScopeFilter3()
     {
-        ScopeFilter filter = new ScopeFilter( Artifact.SCOPE_TEST, null );
-        Set result = filter.filter( artifacts, log );
-        assertEquals( 4, result.size() );
+        try
+        {
+            ScopeFilter filter = new ScopeFilter( Artifact.SCOPE_TEST, null );
+            Set result = filter.filter( artifacts, log );
+            assertEquals( 4, result.size() );
+        }
+        catch ( MojoExecutionException e )
+        {
+            assertTrue( false );
+        }
     }
 
     public void testScopeFilterNull()
     {
-        ScopeFilter filter = new ScopeFilter( null , null);
-        Set result = filter.filter( artifacts, log );
-        assertEquals( 4, result.size() );
+        try
+        {
+            ScopeFilter filter = new ScopeFilter( null, null );
+            Set result = filter.filter( artifacts, log );
+            assertEquals( 4, result.size() );
+        }
+        catch ( MojoExecutionException e )
+        {
+            assertTrue( false );
+        }
 
     }
 
     public void testScopeFilterEmpty()
     {
-        ScopeFilter filter = new ScopeFilter( "", "" );
-        Set result = filter.filter( artifacts, log );
-        assertEquals( 4, result.size() );
+        try
+        {
+            ScopeFilter filter = new ScopeFilter( "", "" );
+            Set result = filter.filter( artifacts, log );
+            assertEquals( 4, result.size() );
+        }
+        catch ( MojoExecutionException e )
+        {
+            assertTrue( false );
+        }
     }
-    
+
     public void testExcludeProvided()
     {
-        ScopeFilter filter = new ScopeFilter ("", Artifact.SCOPE_PROVIDED);
-        Set result = filter.filter( artifacts, log );
-        assertEquals( 3, result.size() );
+        try
+        {
+            ScopeFilter filter = new ScopeFilter( "", Artifact.SCOPE_PROVIDED );
+            Set result = filter.filter( artifacts, log );
+            assertEquals( 3, result.size() );
+        }
+        catch ( MojoExecutionException e )
+        {
+            assertTrue( false );
+        }
     }
 
     public void testExcludeCompile()
     {
-        ScopeFilter filter = new ScopeFilter ("", Artifact.SCOPE_COMPILE);
-        Set result = filter.filter( artifacts, log );
-        assertEquals( 2, result.size() );
+        try
+        {
+            ScopeFilter filter = new ScopeFilter( "", Artifact.SCOPE_COMPILE );
+            Set result = filter.filter( artifacts, log );
+            assertEquals( 2, result.size() );
+        }
+        catch ( MojoExecutionException e )
+        {
+            assertTrue( false );
+        }
     }
-    
+
     public void testExcludeTest()
     {
-        ScopeFilter filter = new ScopeFilter ("", Artifact.SCOPE_TEST);
-        Set result = filter.filter( artifacts, log );
-        assertEquals( 0, result.size() );
+        try
+        {
+            ScopeFilter filter = new ScopeFilter( "", Artifact.SCOPE_TEST );
+            Set result = filter.filter( artifacts, log );
+            assertTrue(false);
+        }
+        catch ( MojoExecutionException e )
+        {
+            //I expect an exception here.
+            assertTrue( true );
+        }
     }
 }

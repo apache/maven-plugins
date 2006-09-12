@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -44,8 +45,9 @@ public class ScopeFilter
      *          the set of dependencies to filter.
      * 
      * @return a Set of filtered dependencies.
+     * @throws MojoExecutionException 
      */
-    public Set filter( Set artifacts, Log log )
+    public Set filter( Set artifacts, Log log ) throws MojoExecutionException
     {
         Set results = artifacts;
 
@@ -69,7 +71,11 @@ public class ScopeFilter
             results = new HashSet();
             //plexus ScopeArtifactFilter doesn't handle the provided scope so we
             //need special handling for it.
-            if ( !Artifact.SCOPE_PROVIDED.equals( excludeScope ) )
+            if ( Artifact.SCOPE_TEST.equals(excludeScope))
+            {
+                throw new MojoExecutionException(" Can't exclude Test scope, this will exclude everything.");
+            }
+            else if ( !Artifact.SCOPE_PROVIDED.equals( excludeScope ) )
             {
                 ScopeArtifactFilter saf = new ScopeArtifactFilter( excludeScope );
 
