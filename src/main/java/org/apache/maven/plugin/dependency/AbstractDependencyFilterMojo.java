@@ -62,10 +62,18 @@ public abstract class AbstractDependencyFilterMojo
 
     /**
      * Scope to include. An Empty string indicates all scopes (default).
-     * @parameter expression="${scope}" default-value=""
+     * @parameter expression="${includeScope}" default-value=""
      * @required
      */
-    protected String scope;
+    protected String includeScope;
+    
+    /**
+     * Scope to exclude. An Empty string indicates no scopes (default).
+     * @parameter expression="${excludeScope}" default-value=""
+     * @required
+     */
+    protected String excludeScope;
+    
 
     /**
      * Specify classifier to look for. Example: sources
@@ -127,7 +135,7 @@ public abstract class AbstractDependencyFilterMojo
         FilterArtifacts filter = new FilterArtifacts();
         //TODO: dependencies is empty.
         filter.addFilter( new TransitivityFilter( project.getDependencyArtifacts(), this.excludeTransitive ) );
-        filter.addFilter( new ScopeFilter( this.scope ) );
+        filter.addFilter( new ScopeFilter( this.includeScope , this.excludeScope) );
         filter.addFilter( new TypeFilter( this.includeTypes, this.excludeTypes ) );
 
         //perform filtering
