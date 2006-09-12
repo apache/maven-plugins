@@ -28,21 +28,31 @@ public class ScopeFilter
     implements ArtifactsFilter
 {
 
-    private String scope;
+    private String includeScope;
 
-    public ScopeFilter( String scope )
+    private String excludeScope;
+
+    public ScopeFilter( String includeScope, String excludeScope )
     {
-        this.scope = scope;
+        this.includeScope = includeScope;
+        this.excludeScope = excludeScope;
     }
 
+    /**
+     * This function determines if filtering needs to be performed. Excludes are ignored if Includes are used.
+     * @param dependencies
+     *          the set of dependencies to filter.
+     * 
+     * @return a Set of filtered dependencies.
+     */
     public Set filter( Set artifacts, Log log )
     {
         Set results = artifacts;
 
-        if ( StringUtils.isNotEmpty( scope ) )
+        if ( StringUtils.isNotEmpty( includeScope ) )
         {
             results = new HashSet();
-            ScopeArtifactFilter saf = new ScopeArtifactFilter( scope );
+            ScopeArtifactFilter saf = new ScopeArtifactFilter( includeScope );
 
             Iterator iter = artifacts.iterator();
             while ( iter.hasNext() )
@@ -54,23 +64,74 @@ public class ScopeFilter
                 }
             }
         }
+        else if ( StringUtils.isNotEmpty( excludeScope ) )
+        {
+            results = new HashSet();
+            //plexus ScopeArtifactFilter doesn't handle the provided scope so we
+            //need special handling for it.
+            if ( !Artifact.SCOPE_PROVIDED.equals( excludeScope ) )
+            {
+                ScopeArtifactFilter saf = new ScopeArtifactFilter( excludeScope );
+
+                Iterator iter = artifacts.iterator();
+                while ( iter.hasNext() )
+                {
+                    Artifact artifact = (Artifact) iter.next();
+                    if ( !saf.include( artifact ) )
+                    {
+                        System.out.println(artifact.getScope());
+                        results.add( artifact );
+                    }
+                }
+            }
+            else
+            {
+                Iterator iter = artifacts.iterator();
+                while ( iter.hasNext() )
+                {
+                    Artifact artifact = (Artifact) iter.next();
+                    if ( !Artifact.SCOPE_PROVIDED.equals( artifact.getScope() ) )
+                    {
+                        results.add( artifact );
+                    }
+                }
+            }
+
+        }
+
         return results;
     }
 
     /**
-     * @return Returns the scope.
+     * @return Returns the includeScope.
      */
-    public String getScope()
+    public String getIncludeScope()
     {
-        return this.scope;
+        return this.includeScope;
     }
 
     /**
-     * @param scope The scope to set.
+     * @param includeScope The includeScope to set.
      */
-    public void setScope( String scope )
+    public void setIncludeScope( String scope )
     {
-        this.scope = scope;
+        this.includeScope = scope;
+    }
+
+    /**
+     * @return Returns the excludeScope.
+     */
+    public String getExcludeScope()
+    {
+        return this.excludeScope;
+    }
+
+    /**
+     * @param excludeScope The excludeScope to set.
+     */
+    public void setExcludeScope( String excludeScope )
+    {
+        this.excludeScope = excludeScope;
     }
 
 }
