@@ -122,4 +122,30 @@ public class TestDefaultMarkerFileHandler
        outputFolder.delete();
        assertFalse(outputFolder.exists());
    }
+   
+   public void testMarkerTimeStamp () throws MojoExecutionException, IOException, InterruptedException
+   {
+       System.out.println("Using Output:"+outputFolder.getAbsolutePath());
+       File theFile = new File(outputFolder,"theFile.jar");
+       outputFolder.mkdirs();
+       theFile.createNewFile();
+       Artifact theArtifact =(Artifact) artifacts.get(0);
+       theArtifact.setFile(theFile);
+       DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler(theArtifact,this.outputFolder);
+       assertFalse(handler.isMarkerSet());
+       //if the marker is not set, assume it is infinately older than the artifact.
+       assertTrue(handler.isMarkerOlder(theArtifact));
+       handler.setMarker();
+       assertFalse(handler.isMarkerOlder(theArtifact));
+
+       theFile.setLastModified(theFile.lastModified()+222);
+       assertTrue(handler.isMarkerOlder(theArtifact));
+       
+       theFile.delete();
+       handler.clearMarker();
+       assertFalse(handler.isMarkerSet());
+       outputFolder.delete();
+       assertFalse(outputFolder.exists());
+       
+   }
 }

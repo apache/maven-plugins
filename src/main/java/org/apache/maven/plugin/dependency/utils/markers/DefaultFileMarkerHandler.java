@@ -35,7 +35,7 @@ public class DefaultFileMarkerHandler
 
     protected File markerFilesDirectory;
 
-    public DefaultFileMarkerHandler( Artifact artifact, File markerFilesDirectory)
+    public DefaultFileMarkerHandler( Artifact artifact, File markerFilesDirectory )
     {
         this.artifact = artifact;
         this.markerFilesDirectory = markerFilesDirectory;
@@ -69,6 +69,21 @@ public class DefaultFileMarkerHandler
     {
         File marker = getMarkerFile();
         return marker.exists();
+    }
+
+    public boolean isMarkerOlder( Artifact artifact )
+        throws MojoExecutionException
+    {
+        File marker = getMarkerFile();
+        if (marker.exists())
+        {
+            return artifact.getFile().lastModified() > marker.lastModified(); 
+        }
+        else
+        {
+            //if the marker doesn't exist, we want to copy so assume it is infinately older
+            return true;
+        }
     }
 
     public void setMarker()
