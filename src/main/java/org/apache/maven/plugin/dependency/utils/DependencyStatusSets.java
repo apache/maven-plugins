@@ -20,6 +20,8 @@ package org.apache.maven.plugin.dependency.utils;
 
 import java.util.Iterator;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.logging.Log;
@@ -107,7 +109,9 @@ public class DependencyStatusSets
         }
         else
         {
-            for ( Iterator i = this.resolvedDependencies.iterator(); i.hasNext(); )
+        	SortedSet sortedResolvedDependencies = new TreeSet();
+        	sortedResolvedDependencies.addAll(resolvedDependencies);
+            for ( Iterator i = sortedResolvedDependencies.iterator(); i.hasNext(); )
             {
                 log.info( "   " + ( (Artifact) i.next() ).getId() );
             }
@@ -117,7 +121,9 @@ public class DependencyStatusSets
         {
             log.info( "" );
             log.info( "The following files where skipped: " );
-            for ( Iterator i = this.skippedDependencies.iterator(); i.hasNext(); )
+            SortedSet sortedSkippedDependencies = new TreeSet();
+            sortedSkippedDependencies.addAll(this.skippedDependencies);
+            for ( Iterator i = sortedSkippedDependencies.iterator(); i.hasNext(); )
             {
                 log.info( "   " + ( (Artifact) i.next() ).getId() );
             }
@@ -127,7 +133,9 @@ public class DependencyStatusSets
         if ( this.unResolvedDependencies != null && !this.unResolvedDependencies.isEmpty() )
         {
             log.info( "The following files have NOT been resolved: " );
-            for ( Iterator i = this.unResolvedDependencies.iterator(); i.hasNext(); )
+            SortedSet sortedUnResolvedDependencies = new TreeSet();
+            sortedUnResolvedDependencies.addAll(this.unResolvedDependencies);
+            for ( Iterator i = sortedUnResolvedDependencies.iterator(); i.hasNext(); )
             {
                 log.info( "   " + ( (Artifact) i.next() ).getId() );
             }
