@@ -1,4 +1,4 @@
-package org.apache.maven.report.projectinfo;
+package org.apache.maven.report.projectinfo.dependencies;
 
 /*
  * Copyright 2004-2006 The Apache Software Foundation.
@@ -149,7 +149,7 @@ public class ReportResolutionListener
         return artifacts.values();
     }
 
-    static class Node
+    public static class Node
     {
         private Node parent;
 
