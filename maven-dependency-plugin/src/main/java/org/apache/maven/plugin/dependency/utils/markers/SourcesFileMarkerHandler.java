@@ -88,25 +88,48 @@ public class SourcesFileMarkerHandler
     {
         File marker = getMarkerFile();
 
-        File marker2 = getMarkerFile(!this.resolved);
+        File marker2 = getMarkerFile( !this.resolved );
 
         return marker.exists() || marker2.exists();
+    }
+
+    public boolean isMarkerOlder( Artifact artifact )
+        throws MojoExecutionException
+    {
+        File marker = getMarkerFile();
+        if ( marker.exists() )
+        {
+            return artifact.getFile().lastModified() > marker.lastModified();
+        }
+        else
+        {
+            marker = getMarkerFile( !this.resolved );
+            if ( marker.exists() )
+            {
+                return artifact.getFile().lastModified() > marker.lastModified();
+            }
+            else
+            {
+                //if the marker doesn't exist, we want to copy so assume it is infinately older
+                return true;
+            }
+        }
     }
 
     public void setMarker()
         throws MojoExecutionException
     {
         File marker = getMarkerFile();
-        
+
         //get the other file if it exists.
-        File clearMarker = getMarkerFile(!this.resolved);
+        File clearMarker = getMarkerFile( !this.resolved );
         //create marker file
         marker.getParentFile().mkdirs();
         try
         {
             marker.createNewFile();
             //clear the other file if it exists.
-            if (clearMarker.exists())
+            if ( clearMarker.exists() )
             {
                 clearMarker.delete();
             }
@@ -116,7 +139,7 @@ public class SourcesFileMarkerHandler
             throw new MojoExecutionException( "Unable to create Marker: " + marker.getAbsolutePath(), e );
         }
     }
-    
+
     /**
      * Deletes the file or directory denoted by this abstract pathname.  If
      * this pathname denotes a directory, then the directory must be empty in
@@ -134,7 +157,7 @@ public class SourcesFileMarkerHandler
         throws MojoExecutionException
     {
         File marker = getMarkerFile();
-        File marker2 = getMarkerFile(!this.resolved);
+        File marker2 = getMarkerFile( !this.resolved );
         boolean markResult = marker.delete();
         boolean mark2Result = marker2.delete();
         return markResult || mark2Result;
