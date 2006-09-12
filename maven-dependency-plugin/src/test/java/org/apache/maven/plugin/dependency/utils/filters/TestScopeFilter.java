@@ -61,28 +61,28 @@ public class TestScopeFilter
 
     public void testScopeFilter()
     {
-        ScopeFilter filter = new ScopeFilter( Artifact.SCOPE_COMPILE );
+        ScopeFilter filter = new ScopeFilter( Artifact.SCOPE_COMPILE, null );
         Set result = filter.filter( artifacts, log );
         assertEquals( 2, result.size() );
     }
 
     public void testScopeFilter2()
     {
-        ScopeFilter filter = new ScopeFilter( Artifact.SCOPE_RUNTIME );
+        ScopeFilter filter = new ScopeFilter( Artifact.SCOPE_RUNTIME, null );
         Set result = filter.filter( artifacts, log );
         assertEquals( 2, result.size() );
     }
 
     public void testScopeFilter3()
     {
-        ScopeFilter filter = new ScopeFilter( Artifact.SCOPE_TEST );
+        ScopeFilter filter = new ScopeFilter( Artifact.SCOPE_TEST, null );
         Set result = filter.filter( artifacts, log );
         assertEquals( 4, result.size() );
     }
 
     public void testScopeFilterNull()
     {
-        ScopeFilter filter = new ScopeFilter( null );
+        ScopeFilter filter = new ScopeFilter( null , null);
         Set result = filter.filter( artifacts, log );
         assertEquals( 4, result.size() );
 
@@ -90,8 +90,29 @@ public class TestScopeFilter
 
     public void testScopeFilterEmpty()
     {
-        ScopeFilter filter = new ScopeFilter( "" );
+        ScopeFilter filter = new ScopeFilter( "", "" );
         Set result = filter.filter( artifacts, log );
         assertEquals( 4, result.size() );
+    }
+    
+    public void testExcludeProvided()
+    {
+        ScopeFilter filter = new ScopeFilter ("", Artifact.SCOPE_PROVIDED);
+        Set result = filter.filter( artifacts, log );
+        assertEquals( 3, result.size() );
+    }
+
+    public void testExcludeCompile()
+    {
+        ScopeFilter filter = new ScopeFilter ("", Artifact.SCOPE_COMPILE);
+        Set result = filter.filter( artifacts, log );
+        assertEquals( 2, result.size() );
+    }
+    
+    public void testExcludeTest()
+    {
+        ScopeFilter filter = new ScopeFilter ("", Artifact.SCOPE_TEST);
+        Set result = filter.filter( artifacts, log );
+        assertEquals( 0, result.size() );
     }
 }
