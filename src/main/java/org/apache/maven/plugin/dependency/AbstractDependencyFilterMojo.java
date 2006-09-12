@@ -45,7 +45,6 @@ public abstract class AbstractDependencyFilterMojo
      */
     protected boolean excludeTransitive;
 
-
     /**
      * Comma Separated list of Types to include. Empty String indicates include everything (default).
      * @parameter expression="${includeTypes}" default-value=""
@@ -66,14 +65,13 @@ public abstract class AbstractDependencyFilterMojo
      * @required
      */
     protected String includeScope;
-    
+
     /**
      * Scope to exclude. An Empty string indicates no scopes (default).
      * @parameter expression="${excludeScope}" default-value=""
      * @required
      */
     protected String excludeScope;
-    
 
     /**
      * Specify classifier to look for. Example: sources
@@ -86,7 +84,7 @@ public abstract class AbstractDependencyFilterMojo
      * @parameter expression="${type}" default-value="java-source"
      */
     protected String type;
-    
+
     /**
      * Directory to store flag files
      * @parameter expression="${markersDirectory}" default-value="${project.build.directory}/dependency-maven-plugin-markers" 
@@ -102,29 +100,36 @@ public abstract class AbstractDependencyFilterMojo
 
     /**
      * Overwrite snapshot artifacts
-     * @parameter expression="${overWriteSnapshots}" default-value="true"
+     * @parameter expression="${overWriteSnapshots}" default-value="false"
      */
     protected boolean overWriteSnapshots;
+
+    /**
+     * Overwrite snapshot artifacts
+     * @parameter expression="${overWriteIfNewer}" default-value="true"
+     */
+    protected boolean overWriteIfNewer;
 
     /**
      * Output absolute filename for resolved artifacts
      * @parameter expression="${outputArtifactFilename}" default-value="false"
      */
     protected boolean outputArtifactFilename;
-    
+
     /**
      * Retrieves dependencies, either direct only or all including transitive.
      *
      * @return A HashSet of artifacts
      * @throws MojoExecutionException if an error occured.
      */
-    protected Set getDependencies() throws MojoExecutionException
+    protected Set getDependencies()
+        throws MojoExecutionException
     {
         DependencyStatusSets status = getDependencySets();
-        
+
         return status.getResolvedDependencies();
     }
-    
+
     protected DependencyStatusSets getDependencySets()
         throws MojoExecutionException
     {
@@ -135,7 +140,7 @@ public abstract class AbstractDependencyFilterMojo
         FilterArtifacts filter = new FilterArtifacts();
         //TODO: dependencies is empty.
         filter.addFilter( new TransitivityFilter( project.getDependencyArtifacts(), this.excludeTransitive ) );
-        filter.addFilter( new ScopeFilter( this.includeScope , this.excludeScope) );
+        filter.addFilter( new ScopeFilter( this.includeScope, this.excludeScope ) );
         filter.addFilter( new TypeFilter( this.includeTypes, this.excludeTypes ) );
 
         //perform filtering
@@ -143,69 +148,72 @@ public abstract class AbstractDependencyFilterMojo
 
         //transform artifacts if classifier is set
         DependencyStatusSets status = null;
-        if (StringUtils.isNotEmpty(classifier))
+        if ( StringUtils.isNotEmpty( classifier ) )
         {
-            status = getClassifierTranslatedDependencies(artifacts,false);
+            status = getClassifierTranslatedDependencies( artifacts, false );
         }
         else
         {
-            status = filterMarkedDependencies(artifacts);
+            status = filterMarkedDependencies( artifacts );
         }
-        
+
         return status;
     }
-    
-    protected DependencyStatusSets getClassifierTranslatedDependencies(Set artifacts,boolean stopOnFailure) throws MojoExecutionException
+
+    protected DependencyStatusSets getClassifierTranslatedDependencies( Set artifacts, boolean stopOnFailure )
+        throws MojoExecutionException
     {
         Set unResolvedArtifacts = new HashSet();
         Set resolvedArtifacts = artifacts;
         DependencyStatusSets status = new DependencyStatusSets();
-        
+
         //possibly translate artifacts into a new set of artifacts based on the classifier and type
         //if this did something, we need to resolve the new artifacts
-        if ( StringUtils.isNotEmpty(classifier))
+        if ( StringUtils.isNotEmpty( classifier ) )
         {
             ArtifactTranslator translator = new ClassifierTypeTranslator( this.classifier, this.type, this.factory );
             artifacts = translator.translate( artifacts, log );
 
-            status = filterMarkedDependencies(artifacts);
-            
+            status = filterMarkedDependencies( artifacts );
+
             //the unskipped artifacts are in the resolved set.
             artifacts = status.getResolvedDependencies();
-            
+
             //resolve the rest of the artifacts
             ArtifactsResolver artifactsResolver = new DefaultArtifactsResolver( this.resolver, this.local,
                                                                                 this.remoteRepos, stopOnFailure );
-            resolvedArtifacts = artifactsResolver.resolve(artifacts,log);
-            
+            resolvedArtifacts = artifactsResolver.resolve( artifacts, log );
+
             //calculate the artifacts not resolved.
-            unResolvedArtifacts.addAll(artifacts);
-            unResolvedArtifacts.removeAll(resolvedArtifacts);
+            unResolvedArtifacts.addAll( artifacts );
+            unResolvedArtifacts.removeAll( resolvedArtifacts );
         }
-        
+
         //return a bean of all 3 sets.
-        status.setResolvedDependencies(resolvedArtifacts);
-        status.setUnResolvedDependencies(unResolvedArtifacts);
-        
+        status.setResolvedDependencies( resolvedArtifacts );
+        status.setUnResolvedDependencies( unResolvedArtifacts );
+
         return status;
     }
-    
-    private DependencyStatusSets filterMarkedDependencies(Set artifacts) throws MojoExecutionException
+
+    private DependencyStatusSets filterMarkedDependencies( Set artifacts )
+        throws MojoExecutionException
     {
         //remove files that have markers already
         FilterArtifacts filter = new FilterArtifacts();
         filter.clearFilters();
-        filter.addFilter(new MarkerFileFilter(this.overWriteReleases,this.overWriteSnapshots,this.markersDirectory));
-        
-        Set unMarkedArtifacts = filter.filter(artifacts,log);
-        
+        filter.addFilter( new MarkerFileFilter( this.overWriteReleases, this.overWriteSnapshots, this.overWriteIfNewer,
+                                                this.markersDirectory ) );
+
+        Set unMarkedArtifacts = filter.filter( artifacts, log );
+
         //calculate the skipped artifacts
         Set skippedArtifacts = new HashSet();
-        skippedArtifacts.addAll(artifacts);
-        skippedArtifacts.removeAll(unMarkedArtifacts);
-        
-        return new DependencyStatusSets(unMarkedArtifacts,null,skippedArtifacts);
+        skippedArtifacts.addAll( artifacts );
+        skippedArtifacts.removeAll( unMarkedArtifacts );
+
+        return new DependencyStatusSets( unMarkedArtifacts, null, skippedArtifacts );
     }
-    
+
     //TODO: Set marker files.
 }
