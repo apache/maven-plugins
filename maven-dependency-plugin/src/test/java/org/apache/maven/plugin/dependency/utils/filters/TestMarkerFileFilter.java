@@ -19,6 +19,7 @@
 package org.apache.maven.plugin.dependency.utils.filters;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -79,7 +80,7 @@ public class TestMarkerFileFilter
     
     public void testMarkerFile() throws MojoExecutionException
     {
-        MarkerFileFilter filter = new MarkerFileFilter(true,true,outputFolder);
+        MarkerFileFilter filter = new MarkerFileFilter(true,true,false,outputFolder);
         Set result = filter.filter(artifacts,log);
         assertEquals(2,result.size());
         
@@ -94,7 +95,7 @@ public class TestMarkerFileFilter
         DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler(snap,outputFolder);
         handler.setMarker();
         
-        MarkerFileFilter filter = new MarkerFileFilter(true,false,outputFolder);
+        MarkerFileFilter filter = new MarkerFileFilter(true,false,false,outputFolder);
         Set result = filter.filter(artifacts,log);
         assertEquals(1,result.size());
         
@@ -111,7 +112,7 @@ public class TestMarkerFileFilter
         DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler(release,outputFolder);
         handler.setMarker();
         
-        MarkerFileFilter filter = new MarkerFileFilter(false,false,outputFolder);
+        MarkerFileFilter filter = new MarkerFileFilter(false,false,false,outputFolder);
         Set result = filter.filter(artifacts,log);
         assertEquals(1,result.size());
         
@@ -122,6 +123,34 @@ public class TestMarkerFileFilter
         assertTrue(handler.clearMarker());
         outputFolder.delete();
         assertFalse(outputFolder.exists()); 
+    }
+    
+    public void testMarkerTimestamp () throws MojoExecutionException, IOException
+    {
+        snap.setFile(new File(outputFolder,"snap.file"));
+        release.setFile(new File(outputFolder,"release.file"));
+        outputFolder.mkdirs();
+        snap.getFile().createNewFile();
+        release.getFile().createNewFile();
+        snap.getFile().setLastModified(snap.getFile().lastModified()+222);
+        DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler(snap,outputFolder);
+        handler.setMarker();
+        MarkerFileFilter filter = new MarkerFileFilter(false,false,true,outputFolder);
+        Set result = filter.filter(artifacts,log);
+        assertEquals(2,result.size());
+        
+        snap.getFile().setLastModified(snap.getFile().lastModified()-10000);
+        
+        result = filter.filter(artifacts,log);
+        assertEquals(1,result.size());
+        
+        assertTrue(handler.clearMarker());
+        assertFalse(handler.isMarkerSet());
+        snap.getFile().delete();
+        release.getFile().delete();
+        outputFolder.delete();
+        assertFalse(outputFolder.exists());
+        
     }
     
     

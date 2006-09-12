@@ -40,13 +40,16 @@ public class MarkerFileFilter
     boolean overWriteReleases;
 
     boolean overWriteSnapshots;
+    
+    boolean overWriteIfNewer;
 
     File markerFileDirectory;
 
-    public MarkerFileFilter( boolean overWriteReleases, boolean overWriteSnapshots, File markerFileDirectory )
+    public MarkerFileFilter( boolean overWriteReleases, boolean overWriteSnapshots, boolean overWriteIfNewer, File markerFileDirectory )
     {
         this.overWriteReleases = overWriteReleases;
         this.overWriteSnapshots = overWriteSnapshots;
+        this.overWriteIfNewer = overWriteIfNewer;
         this.markerFileDirectory = markerFileDirectory;
     }
 
@@ -71,7 +74,7 @@ public class MarkerFileFilter
             }
 
             MarkerHandler marker = new DefaultFileMarkerHandler( artifact, markerFileDirectory );
-            if ( overWrite || !marker.isMarkerSet() )
+            if ( overWrite || (!marker.isMarkerSet() || (overWriteIfNewer && marker.isMarkerOlder(artifact))) )
             {
                 result.add( artifact );
             }
@@ -109,5 +112,37 @@ public class MarkerFileFilter
     public void setOverWriteSnapshots( boolean overWriteSnapshots )
     {
         this.overWriteSnapshots = overWriteSnapshots;
+    }
+
+    /**
+     * @return Returns the markerFileDirectory.
+     */
+    public File getMarkerFileDirectory()
+    {
+        return this.markerFileDirectory;
+    }
+
+    /**
+     * @param markerFileDirectory The markerFileDirectory to set.
+     */
+    public void setMarkerFileDirectory( File markerFileDirectory )
+    {
+        this.markerFileDirectory = markerFileDirectory;
+    }
+
+    /**
+     * @return Returns the overWriteIfNewer.
+     */
+    public boolean isOverWriteIfNewer()
+    {
+        return this.overWriteIfNewer;
+    }
+
+    /**
+     * @param overWriteIfNewer The overWriteIfNewer to set.
+     */
+    public void setOverWriteIfNewer( boolean overWriteIfNewer )
+    {
+        this.overWriteIfNewer = overWriteIfNewer;
     }
 }
