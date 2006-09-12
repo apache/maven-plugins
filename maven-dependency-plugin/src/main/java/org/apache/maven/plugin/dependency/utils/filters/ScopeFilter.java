@@ -85,7 +85,6 @@ public class ScopeFilter
                     Artifact artifact = (Artifact) iter.next();
                     if ( !saf.include( artifact ) )
                     {
-                        System.out.println(artifact.getScope());
                         results.add( artifact );
                     }
                 }
