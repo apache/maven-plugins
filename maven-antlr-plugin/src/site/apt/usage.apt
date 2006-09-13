@@ -29,7 +29,7 @@ Usage
  The Antlr Plugin generates files based on grammar file(s). The following examples describe the basic
  usage of the Plugin.
 
-* Generate Sources From Grammar File(s)
+* Generate Files From Antlr Grammar File(s)
 
  You must configure the Antlr Plugin as follow:
 
@@ -63,9 +63,9 @@ Usage
 mvn antlr:generate
 +-----+
 
-* Generate Sources From Grammar File(s) As Part Of Your Build
+* Generate Files From Antlr Grammar File(s) As Part Of Your Build
 
- When you compile your project, the Antlr Plugin could be executed. You should add the generate <<<execution>>>
+ When you compile your project, the Antlr Plugin could be executed. You should add the \<execution\> section
  as follow:
 
 +-----+
@@ -100,3 +100,34 @@ mvn antlr:generate
 +-----+
 
  When you execute <<<mvn compile>>>, the files will be generated and included in your compile sources.
+
+* Generate Antlr Reports
+
+ To include Antlr reports in your documentation, you must configure the following in the \<reporting\>
+ section of your pom:
+
++-----+
+<project>
+...
+  <reporting>
+    <plugins>
+      ...
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antlr-plugin</artifactId>
+        <configuration>
+          <!--
+            Comma separated list of grammar files.
+            By default, grammar file is in ${basedir}/src/main/antlr
+          -->
+          <grammars>java15.g</grammars>
+        </configuration>
+      </plugin>
+      ...
+    </plugins>
+  </reporting>
+...
+</project>
++-----+
+
+ When you execute <<<mvn site>>>, the report will be generated.
