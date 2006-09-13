@@ -33,9 +33,11 @@ Maven 2 Antlr Plugin
 
 * Goals Overview
 
-   The Antlr Plugin has one goal:
+   The Antlr Plugin has two goals:
 
-   * {{{generate-mojo.html}antlr:generate}} generates file(s) to a target directory based on grammar file(s).
+   * {{{generate-mojo.html}antlr:generate}} Generates file(s) to a target directory based on grammar file(s).
+
+   * {{{html-mojo.html}antlr:html}} Generates Antlr report for grammar file(s).
 
 * Usage
 
