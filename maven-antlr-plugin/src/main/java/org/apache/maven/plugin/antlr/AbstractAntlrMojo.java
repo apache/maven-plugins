@@ -20,6 +20,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -27,6 +29,7 @@ import java.util.StringTokenizer;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.StringOutputStream;
 import org.codehaus.plexus.util.StringUtils;
 
 import antlr.Tool;
@@ -157,6 +160,12 @@ public abstract class AbstractAntlrMojo
 
             File grammar = new File( sourceDirectory, eachGrammar );
 
+            if ( !grammar.exists() )
+            {
+                throw new MojoExecutionException( "The grammar '" + grammar.getAbsolutePath()
+                    + "' doesnt exist." );
+            }
+
             getLog().info( "grammar: " + grammar );
 
             File generated = null;
@@ -209,13 +218,17 @@ public abstract class AbstractAntlrMojo
                 getLog().debug( "antlr args=\n" + StringUtils.join( args, "\n" ) );
             }
 
-            SecurityManager oldSm = System.getSecurityManager();
-
-            System.setSecurityManager( NoExitSecurityManager.INSTANCE );
-
             // ----------------------------------------------------------------------
             // Call Antlr
             // ----------------------------------------------------------------------
+
+            SecurityManager oldSm = System.getSecurityManager();
+            PrintStream oldErr = System.err;
+
+            System.setSecurityManager( NoExitSecurityManager.INSTANCE );
+            OutputStream errOS = new StringOutputStream();
+            PrintStream err = new PrintStream( errOS );
+            System.setErr( err );
 
             try
             {
@@ -225,12 +238,21 @@ public abstract class AbstractAntlrMojo
             {
                 if ( !e.getMessage().equals( "exitVM-0" ) )
                 {
-                    throw new MojoExecutionException( "Execution failed", e );
+                    throw new MojoExecutionException( "Antlr execution failed: " + e.getMessage(), e );
+                }
+
+                if ( ( errOS.toString().indexOf( "exitVM-" ) != -1 ) &&
+                    ( errOS.toString().indexOf( "exitVM-0" ) == -1 ) )
+                {
+                    throw new MojoExecutionException( "Antlr execution failed. Error output:\n" + errOS, e );
                 }
             }
             finally
             {
                 System.setSecurityManager( oldSm );
+                System.setErr( oldErr );
+
+                System.err.println( errOS.toString() );
             }
         }
 
