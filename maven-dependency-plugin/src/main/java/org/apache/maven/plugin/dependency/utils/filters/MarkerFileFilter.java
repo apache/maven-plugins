@@ -64,6 +64,7 @@ public class MarkerFileFilter
         boolean overWrite = false;
 
         Iterator iter = artifacts.iterator();
+        //log.debug("Artifacts:"+ artifacts.size());
         while ( iter.hasNext() )
         {
             Artifact artifact = (Artifact) iter.next();
