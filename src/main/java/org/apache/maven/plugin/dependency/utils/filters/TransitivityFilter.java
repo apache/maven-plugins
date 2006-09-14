@@ -40,6 +40,9 @@ public class TransitivityFilter
 
     public Set filter( Set artifacts, Log log )
     {
+        //why not just take the directDependencies here?
+        //because if this filter is run after some other process, the
+        //set of artifacts may not be the same as the directDependencies.
         Set result = artifacts;
 
         if ( excludeTransitive )
