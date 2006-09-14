@@ -125,7 +125,6 @@ public class TestDefaultMarkerFileHandler
    
    public void testMarkerTimeStamp () throws MojoExecutionException, IOException, InterruptedException
    {
-       System.out.println("Using Output:"+outputFolder.getAbsolutePath());
        File theFile = new File(outputFolder,"theFile.jar");
        outputFolder.mkdirs();
        theFile.createNewFile();

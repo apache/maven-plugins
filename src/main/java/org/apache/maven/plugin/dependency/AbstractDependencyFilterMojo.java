@@ -133,15 +133,15 @@ public abstract class AbstractDependencyFilterMojo
     protected DependencyStatusSets getDependencySets()
         throws MojoExecutionException
     {
-        //start with all artifacts.
-        Set artifacts = project.getArtifacts();
-
         //add filters in well known order, least specific to most specific
         FilterArtifacts filter = new FilterArtifacts();
-        //TODO: dependencies is empty.
+        
         filter.addFilter( new TransitivityFilter( project.getDependencyArtifacts(), this.excludeTransitive ) );
         filter.addFilter( new ScopeFilter( this.includeScope, this.excludeScope ) );
         filter.addFilter( new TypeFilter( this.includeTypes, this.excludeTypes ) );
+
+        //start with all artifacts.
+        Set artifacts = project.getArtifacts();
 
         //perform filtering
         artifacts = filter.filter( artifacts, log );
