@@ -31,6 +31,7 @@ import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.dependency.utils.ArtifactStubFactory;
 import org.apache.maven.plugin.dependency.utils.SilentLog;
 
 /**
@@ -47,16 +48,8 @@ public class TestTypeFilter
     {
         super.setUp();
         
-        ArtifactHandler ah = new DefaultArtifactHandler();
-        VersionRange vr = VersionRange.createFromVersion("1.1");
-        Artifact artifact = new DefaultArtifact("test", "1", vr, Artifact.SCOPE_COMPILE, "jar","", ah, false);
-        artifacts.add(artifact);
-        artifact = new DefaultArtifact("test", "2", vr, Artifact.SCOPE_COMPILE, "war","", ah, false);
-        artifacts.add(artifact);
-        artifact = new DefaultArtifact("test", "3", vr, Artifact.SCOPE_COMPILE, "sources","", ah, false);
-        artifacts.add(artifact);
-        artifact = new DefaultArtifact("test", "4", vr, Artifact.SCOPE_COMPILE, "zip","", ah, false);
-        artifacts.add(artifact);
+        ArtifactStubFactory factory = new ArtifactStubFactory(null,false);
+        artifacts = factory.getTypedArtifacts();
     }
     
     public void testTypeParsing()

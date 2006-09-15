@@ -25,6 +25,7 @@ import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Utility class with static helper methods
@@ -176,7 +177,7 @@ public class DependencyUtil
             //so it can be used offline
             else
             {
-                if ( artifact.getClassifier() != null )
+                if ( StringUtils.isNotEmpty(artifact.getClassifier()))
                 {
                     destFileName = artifact.getArtifactId() + "-" + artifact.getClassifier() + "-"
                         + artifact.getVersion() + "." + artifact.getType();

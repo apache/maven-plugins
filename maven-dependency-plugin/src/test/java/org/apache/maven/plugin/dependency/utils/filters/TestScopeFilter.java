@@ -30,6 +30,7 @@ import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.dependency.utils.ArtifactStubFactory;
 import org.apache.maven.plugin.dependency.utils.SilentLog;
 
 /**
@@ -48,16 +49,8 @@ public class TestScopeFilter
     {
         super.setUp();
 
-        ArtifactHandler ah = new DefaultArtifactHandler();
-        VersionRange vr = VersionRange.createFromVersion( "1.1" );
-        Artifact artifact = new DefaultArtifact( "test", "1", vr, Artifact.SCOPE_COMPILE, "jar", "", ah, false );
-        artifacts.add( artifact );
-        artifact = new DefaultArtifact( "test", "2", vr, Artifact.SCOPE_PROVIDED, "war", "", ah, false );
-        artifacts.add( artifact );
-        artifact = new DefaultArtifact( "test", "3", vr, Artifact.SCOPE_TEST, "sources", "", ah, false );
-        artifacts.add( artifact );
-        artifact = new DefaultArtifact( "test", "4", vr, Artifact.SCOPE_RUNTIME, "zip", "", ah, false );
-        artifacts.add( artifact );
+        ArtifactStubFactory factory = new ArtifactStubFactory (null,false);
+        artifacts = factory.getScopedArtifacts();
     }
 
     public void testScopeFilter()
@@ -67,7 +60,7 @@ public class TestScopeFilter
         try
         {
             result = filter.filter( artifacts, log );
-            assertEquals( 2, result.size() );
+            assertEquals( 3, result.size() );
         }
         catch ( MojoExecutionException e )
         {
@@ -96,7 +89,7 @@ public class TestScopeFilter
         {
             ScopeFilter filter = new ScopeFilter( Artifact.SCOPE_TEST, null );
             Set result = filter.filter( artifacts, log );
-            assertEquals( 4, result.size() );
+            assertEquals( 5, result.size() );
         }
         catch ( MojoExecutionException e )
         {
@@ -110,7 +103,7 @@ public class TestScopeFilter
         {
             ScopeFilter filter = new ScopeFilter( null, null );
             Set result = filter.filter( artifacts, log );
-            assertEquals( 4, result.size() );
+            assertEquals( 5, result.size() );
         }
         catch ( MojoExecutionException e )
         {
@@ -125,7 +118,7 @@ public class TestScopeFilter
         {
             ScopeFilter filter = new ScopeFilter( "", "" );
             Set result = filter.filter( artifacts, log );
-            assertEquals( 4, result.size() );
+            assertEquals( 5, result.size() );
         }
         catch ( MojoExecutionException e )
         {
@@ -139,7 +132,7 @@ public class TestScopeFilter
         {
             ScopeFilter filter = new ScopeFilter( "", Artifact.SCOPE_PROVIDED );
             Set result = filter.filter( artifacts, log );
-            assertEquals( 3, result.size() );
+            assertEquals( 4, result.size() );
         }
         catch ( MojoExecutionException e )
         {
