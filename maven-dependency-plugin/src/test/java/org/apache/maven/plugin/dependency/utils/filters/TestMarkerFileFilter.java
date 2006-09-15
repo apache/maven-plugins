@@ -27,14 +27,11 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DefaultArtifact;
-import org.apache.maven.artifact.handler.ArtifactHandler;
-import org.apache.maven.artifact.handler.DefaultArtifactHandler;
-import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.dependency.utils.ArtifactStubFactory;
 import org.apache.maven.plugin.dependency.utils.SilentLog;
 import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
+import org.apache.maven.plugin.logging.Log;
 
 /**
  * @author brianf
@@ -49,28 +46,21 @@ public class TestMarkerFileFilter
     
     File outputFolder;
     
-    Artifact snap;
-    Artifact release;
-
+    ArtifactStubFactory fact;
+    
     protected void setUp()
         throws Exception
     {
         super.setUp();
-
-        ArtifactHandler ah = new DefaultArtifactHandler();
-        VersionRange vr = VersionRange.createFromVersion( "1.1" );
-        this.release = new DefaultArtifact( "test", "1", vr, Artifact.SCOPE_COMPILE, "jar", "", ah, false );
-        artifacts.add( release );
-        
-        vr = VersionRange.createFromVersion( "1.1-SNAPSHOT" );
-        snap = new DefaultArtifact( "test", "2", vr, Artifact.SCOPE_PROVIDED, "war", "", ah, false );
-        artifacts.add( snap );
-        
+ 
         //pick random output location
         Random a = new Random();
         outputFolder = new File("target/markers"+a.nextLong()+"/");
         outputFolder.delete();
         assertFalse(outputFolder.exists());
+        
+        this.fact = new ArtifactStubFactory(outputFolder,false);
+        artifacts = fact.getReleaseAndSnapshotArtifacts();
     }
     
     protected void tearDown()
@@ -92,7 +82,7 @@ public class TestMarkerFileFilter
     
     public void testMarkerSnapshots () throws MojoExecutionException
     {
-        DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler(snap,outputFolder);
+        DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler(fact.getSnapshotArtifact(),outputFolder);
         handler.setMarker();
         
         MarkerFileFilter filter = new MarkerFileFilter(true,false,false,outputFolder);
@@ -109,7 +99,7 @@ public class TestMarkerFileFilter
     
     public void testMarkerRelease () throws MojoExecutionException
     {
-        DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler(release,outputFolder);
+        DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler(fact.getReleaseArtifact(),outputFolder);
         handler.setMarker();
         
         MarkerFileFilter filter = new MarkerFileFilter(false,false,false,outputFolder);
@@ -127,21 +117,22 @@ public class TestMarkerFileFilter
     
     public void testMarkerTimestamp () throws MojoExecutionException, IOException
     {
-        snap.setFile(new File(outputFolder,"snap.file"));
-        release.setFile(new File(outputFolder,"release.file"));
-        outputFolder.mkdirs();
-        snap.getFile().createNewFile();
-        release.getFile().createNewFile();
+        ArtifactStubFactory fileFact = new ArtifactStubFactory(outputFolder,true);
+        Artifact snap = fileFact.getSnapshotArtifact();
+        Artifact release = fileFact.getReleaseArtifact();
+        HashSet tempArtifacts = new HashSet();
+        tempArtifacts.add(snap);
+        tempArtifacts.add(release);
         snap.getFile().setLastModified(snap.getFile().lastModified()+222);
         DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler(snap,outputFolder);
         handler.setMarker();
         MarkerFileFilter filter = new MarkerFileFilter(false,false,true,outputFolder);
-        Set result = filter.filter(artifacts,log);
+        Set result = filter.filter(tempArtifacts,log);
         assertEquals(2,result.size());
         
         snap.getFile().setLastModified(snap.getFile().lastModified()-10000);
         
-        result = filter.filter(artifacts,log);
+        result = filter.filter(tempArtifacts,log);
         assertEquals(1,result.size());
         
         assertTrue(handler.clearMarker());
@@ -149,8 +140,7 @@ public class TestMarkerFileFilter
         snap.getFile().delete();
         release.getFile().delete();
         outputFolder.delete();
-        assertFalse(outputFolder.exists());
-        
+        assertFalse(outputFolder.exists());    
     }
     
     

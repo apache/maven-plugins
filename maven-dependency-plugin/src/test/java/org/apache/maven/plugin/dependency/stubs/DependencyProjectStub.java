@@ -144,6 +144,8 @@ public class DependencyProjectStub
 
     private String defaultGoal;
 
+    private Set artifacts;
+
     public DependencyProjectStub()
     {
         super( (Model) null );
@@ -723,12 +725,19 @@ public class DependencyProjectStub
 
     public void setArtifacts( Set set )
     {
-
+        this.artifacts = set;
     }
 
     public Set getArtifacts()
     {
-        return Collections.singleton( "" );
+        if (artifacts == null)
+        {
+            return Collections.EMPTY_SET;
+        }
+        else
+        {
+            return artifacts;
+        }
     }
 
     public Map getArtifactMap()
