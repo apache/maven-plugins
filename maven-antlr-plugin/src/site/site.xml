@@ -38,6 +38,10 @@
       <item name="FAQ" href="faq.html"/>
     </menu>
 
+    <menu name="Examples">
+      <item name="Grammar Inheritance" href="/examples/inheritance.html"/>
+    </menu>
+
     ${reports}
   </body>
 </project>

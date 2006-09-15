@@ -22,12 +22,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.antlr.options.Grammar;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringOutputStream;
 import org.codehaus.plexus.util.StringUtils;
@@ -84,9 +86,27 @@ public abstract class AbstractAntlrMojo
      * See <a href="http://www.antlr.org/doc/options.html#Command%20Line%20Options">Command Line Options</a>
      *
      * @parameter expression="${grammars}"
-     * @required
      */
     protected String grammars;
+
+    /**
+     * Grammar list presents in the <code>sourceDirectory</code> directory.
+     * <br/>
+     * See <a href="http://www.antlr.org/doc/options.html#Command%20Line%20Options">Command Line Options</a>
+     * <br/>
+     * Example:
+     * <pre>
+     * &lt;grammarDefs&gt;<br/>
+     *   &lt;grammar&gt;<br/>
+     *     &lt;name&gt;myGrammar.g&lt;/name&gt;<br/>
+     *     &lt;glib&gt;mySuperGrammar.g;myOtherSuperGrammar.g&lt;/glib&gt;<br/>
+     *   &lt;/grammar&gt;<br/>
+     * &lt;/grammarDefs&gt;
+     * </pre>
+     *
+     * @parameter expression="${grammarDefs}"
+     */
+    protected Grammar[] grammarDefs;
 
     /**
      * Launch the ParseView debugger upon parser invocation.
@@ -148,28 +168,34 @@ public abstract class AbstractAntlrMojo
     protected void executeAntlr()
         throws MojoExecutionException
     {
+        validateParameters();
+
         // ----------------------------------------------------------------------
         // Call Antlr for each grammar
         // ----------------------------------------------------------------------
 
-        StringTokenizer st = new StringTokenizer( grammars, ", " );
+        Grammar[] grammarsUsed = getGrammars();
 
-        while ( st.hasMoreTokens() )
+        for ( int i = 0; i < grammarsUsed.length; i++ )
         {
-            String eachGrammar = st.nextToken().trim();
+            String grammarName = grammarsUsed[i].getName();
 
-            File grammar = new File( sourceDirectory, eachGrammar );
+            if ( StringUtils.isEmpty( grammarName ) )
+            {
+                getLog().info( "Empty grammar in the configuration. Skipped." );
+                continue;
+            }
+
+            File grammar = new File( sourceDirectory, grammarName.trim() );
 
             if ( !grammar.exists() )
             {
-                throw new MojoExecutionException( "The grammar '" + grammar.getAbsolutePath()
-                    + "' doesnt exist." );
+                throw new MojoExecutionException( "The grammar '" + grammar.getAbsolutePath() + "' doesnt exist." );
             }
 
-            getLog().info( "grammar: " + grammar );
+            getLog().info( "Using Antlr grammar: " + grammar );
 
             File generated = null;
-
             try
             {
                 generated = getGeneratedFile( grammar.getPath(), outputDirectory );
@@ -184,7 +210,7 @@ public abstract class AbstractAntlrMojo
                 if ( generated.lastModified() > grammar.lastModified() )
                 {
                     // it's more recent, skip.
-                    getLog().info( "The grammar is already generated" );
+                    getLog().info( "The grammar is already generated." );
                     continue;
                 }
             }
@@ -209,6 +235,21 @@ public abstract class AbstractAntlrMojo
             addArgs( arguments );
             arguments.add( "-o" );
             arguments.add( generated.getParentFile().getPath() );
+            if ( StringUtils.isNotEmpty( grammarsUsed[i].getGlib() ) )
+            {
+                StringBuffer glib = new StringBuffer();
+                StringTokenizer st = new StringTokenizer( grammarsUsed[i].getGlib(), ",; " );
+                while ( st.hasMoreTokens() )
+                {
+                    glib.append( new File( sourceDirectory, st.nextToken().trim() ) );
+                    if ( st.hasMoreTokens() )
+                    {
+                        glib.append( ";" );
+                    }
+                }
+                arguments.add( "-glib" );
+                arguments.add( glib.toString() );
+            }
             arguments.add( grammar.getPath() );
 
             String[] args = (String[]) arguments.toArray( new String[0] );
@@ -242,7 +283,7 @@ public abstract class AbstractAntlrMojo
                 }
 
                 if ( ( errOS.toString().indexOf( "exitVM-" ) != -1 ) &&
-                    ( errOS.toString().indexOf( "exitVM-0" ) == -1 ) )
+                     ( errOS.toString().indexOf( "exitVM-0" ) == -1 ) )
                 {
                     throw new MojoExecutionException( "Antlr execution failed. Error output:\n" + errOS, e );
                 }
@@ -342,5 +383,58 @@ public abstract class AbstractAntlrMojo
         }
 
         return genFile;
+    }
+
+    /**
+     * grammars or grammarDefs parameters is required
+     *
+     * @throws MojoExecutionException
+     */
+    private void validateParameters()
+        throws MojoExecutionException
+    {
+        if ( ( StringUtils.isEmpty( grammars ) ) && ( ( grammarDefs == null ) || ( grammarDefs.length == 0 ) ) )
+        {
+            StringBuffer msg = new StringBuffer();
+            msg.append( "Antlr plugin parameters are invalid/missing." ).append( '\n' );
+            msg.append( "Inside the definition for plugin 'maven-antlr-plugin' specify the following:" ).append( '\n' );
+            msg.append( '\n' );
+            msg.append( "<configuration>" ).append( '\n' );
+            msg.append( "  <grammars>VALUE</grammars>" ).append( '\n' );
+            msg.append( "- OR - " ).append( '\n' );
+            msg.append( "  <grammarDefs>VALUE</grammarDefs>" ).append( '\n' );
+            msg.append( "</configuration>" ).append( '\n' );
+
+            throw new MojoExecutionException( msg.toString() );
+        }
+    }
+
+    /**
+     * @return an array of grammar from <code>grammars</code> and <code>grammarDefs</code> variables
+     */
+    private Grammar[] getGrammars()
+    {
+        List grammarList = new LinkedList();
+
+        if ( StringUtils.isNotEmpty( grammars ) )
+        {
+            StringTokenizer st = new StringTokenizer( grammars, ", " );
+            while ( st.hasMoreTokens() )
+            {
+                String currentGrammar = st.nextToken().trim();
+
+                Grammar grammar = new Grammar();
+                grammar.setName( currentGrammar );
+
+                grammarList.add( grammar );
+            }
+        }
+
+        if ( grammarDefs != null )
+        {
+            grammarList.addAll( Arrays.asList( grammarDefs ) );
+        }
+
+        return (Grammar[]) grammarList.toArray( new Grammar[0] );
     }
 }
