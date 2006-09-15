@@ -22,7 +22,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -31,6 +33,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.antlr.options.Grammar;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.util.StringOutputStream;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -64,6 +67,15 @@ public abstract class AbstractAntlrMojo
      * @required
      */
     protected MavenProject project;
+
+    /**
+     * The maven project's helper.
+     *
+     * @parameter expression="${component.org.apache.maven.project.MavenProjectHelper}"
+     * @required
+     * @readonly
+     */
+    private MavenProjectHelper projectHelper;
 
     // ----------------------------------------------------------------------
     // Antlr parameters
@@ -299,6 +311,8 @@ public abstract class AbstractAntlrMojo
 
         if ( project != null )
         {
+            projectHelper.addResource( project, outputDirectory.getAbsolutePath(), Collections
+                .singletonList( "**/**.txt" ), new ArrayList() );
             project.addCompileSourceRoot( outputDirectory.getAbsolutePath() );
         }
     }
