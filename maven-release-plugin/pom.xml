@@ -234,7 +234,9 @@
         <executions>
           <execution>
             <goals>
+              <goal>xpp3-reader</goal>
               <goal>java</goal>
+              <goal>xpp3-writer</goal>
             </goals>
           </execution>
         </executions>

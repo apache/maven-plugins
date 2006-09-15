@@ -17,6 +17,7 @@ package org.apache.maven.plugins.release.phase;
  */
 
 import org.apache.maven.plugins.release.ReleaseExecutionException;
+import org.apache.maven.plugins.release.ReleaseResult;
 import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.apache.maven.settings.Settings;
 
@@ -30,15 +31,21 @@ import java.util.List;
 public class GenerateReleasePomsPhase
     extends AbstractReleasePhase
 {
-    public void execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException
     {
+        ReleaseResult result = new ReleaseResult();
+
         if ( releaseDescriptor.isGenerateReleasePoms() )
         {
-            getLogger().info( "Generating release POMs..." );
+            logInfo( result, "Generating release POMs..." );
 
             generateReleasePoms();
         }
+
+        result.setResultCode( ReleaseResult.SUCCESS );
+
+        return result;
     }
 
     private void generateReleasePoms()
@@ -369,9 +376,13 @@ public class GenerateReleasePomsPhase
     }
 */
 
-    public void simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
     {
         // TODO [!]: implement
+        ReleaseResult result = new ReleaseResult();
 
+        result.setResultCode( ReleaseResult.SUCCESS );
+
+        return result;
     }
 }

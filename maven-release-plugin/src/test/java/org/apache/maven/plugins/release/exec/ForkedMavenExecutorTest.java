@@ -25,6 +25,7 @@ import org.jmock.core.constraint.IsEqual;
 import org.jmock.core.matcher.InvokeOnceMatcher;
 import org.jmock.core.stub.ReturnStub;
 import org.jmock.core.stub.ThrowStub;
+import org.apache.maven.plugins.release.ReleaseResult;
 
 import java.io.File;
 
@@ -63,7 +64,7 @@ public class ForkedMavenExecutorTest
 
         executor.setCommandLineFactory( (CommandLineFactory) mock.proxy() );
 
-        executor.executeGoals( workingDirectory, "clean integration-test", false, null );
+        executor.executeGoals( workingDirectory, "clean integration-test", false, null, new ReleaseResult() );
 
         assertTrue( true );
     }
@@ -89,7 +90,7 @@ public class ForkedMavenExecutorTest
 
         executor.setCommandLineFactory( (CommandLineFactory) mock.proxy() );
 
-        executor.executeGoals( workingDirectory, "clean integration-test", false, null, "my-pom.xml" );
+        executor.executeGoals( workingDirectory, "clean integration-test", false, null, "my-pom.xml", new ReleaseResult() );
 
         assertTrue( true );
     }
@@ -140,7 +141,7 @@ public class ForkedMavenExecutorTest
 
         try
         {
-            executor.executeGoals( workingDirectory, "clean integration-test", false, null );
+            executor.executeGoals( workingDirectory, "clean integration-test", false, null, new ReleaseResult() );
 
             fail( "Should have thrown an exception" );
         }
@@ -174,7 +175,7 @@ public class ForkedMavenExecutorTest
 
         try
         {
-            executor.executeGoals( workingDirectory, "clean integration-test", false, null );
+            executor.executeGoals( workingDirectory, "clean integration-test", false, null, new ReleaseResult() );
 
             fail( "Should have thrown an exception" );
         }

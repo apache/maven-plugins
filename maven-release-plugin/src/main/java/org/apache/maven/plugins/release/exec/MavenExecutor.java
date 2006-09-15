@@ -16,6 +16,8 @@ package org.apache.maven.plugins.release.exec;
  * limitations under the License.
  */
 
+import org.apache.maven.plugins.release.ReleaseResult;
+
 import java.io.File;
 
 /**
@@ -40,8 +42,8 @@ public interface MavenExecutor
      * @param pomFileName         the file name of the POM to execute on
      * @throws MavenExecutorException if an error occurred executing Maven
      */
-    void executeGoals( File workingDirectory, String goals, boolean interactive, String additionalArguments,
-                       String pomFileName )
+    void executeGoals( File workingDirectory, String goals, boolean interactive,
+                                      String additionalArguments, String pomFileName, ReleaseResult result )
         throws MavenExecutorException;
 
     /**
@@ -53,6 +55,7 @@ public interface MavenExecutor
      * @param additionalArguments additional arguments to pass to the Maven command
      * @throws MavenExecutorException if an error occurred executing Maven
      */
-    void executeGoals( File workingDirectory, String goals, boolean interactive, String additionalArguments )
+    void executeGoals( File workingDirectory, String goals, boolean interactive,
+                                      String additionalArguments, ReleaseResult result )
         throws MavenExecutorException;
 }

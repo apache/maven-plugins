@@ -18,6 +18,7 @@ package org.apache.maven.plugins.release.phase;
 
 import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.ReleaseFailureException;
+import org.apache.maven.plugins.release.ReleaseResult;
 import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.apache.maven.plugins.release.scm.ReleaseScmCommandException;
 import org.apache.maven.plugins.release.scm.ReleaseScmRepositoryException;
@@ -60,10 +61,12 @@ public class ScmCheckModificationsPhase
     private Set excludedFiles = new HashSet( Arrays.asList(
         new String[]{"pom.xml", "pom.xml.backup", "pom.xml.tag", "pom.xml.next", "release.properties"} ) );
 
-    public void execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        getLogger().info( "Verifying that there are no local modifications..." );
+        ReleaseResult relResult = new ReleaseResult();
+
+        logInfo( relResult, "Verifying that there are no local modifications..." );
 
         ScmRepository repository;
         ScmProvider provider;
@@ -132,12 +135,16 @@ public class ScmCheckModificationsPhase
             throw new ReleaseFailureException(
                 "Cannot prepare the release because you have local modifications : \n" + message );
         }
+
+        relResult.setResultCode( ReleaseResult.SUCCESS );
+
+        return relResult;
     }
 
-    public void simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         // It makes no modifications, so simulate is the same as execute
-        execute( releaseDescriptor, settings, reactorProjects );
+        return execute( releaseDescriptor, settings, reactorProjects );
     }
 }

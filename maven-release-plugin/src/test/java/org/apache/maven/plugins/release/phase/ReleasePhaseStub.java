@@ -17,6 +17,7 @@ package org.apache.maven.plugins.release.phase;
  */
 
 import org.apache.maven.plugins.release.config.ReleaseDescriptor;
+import org.apache.maven.plugins.release.ReleaseResult;
 import org.apache.maven.settings.Settings;
 
 import java.util.List;
@@ -44,19 +45,37 @@ public class ReleasePhaseStub
      */
     private boolean cleaned;
 
-    public void execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
     {
+        ReleaseResult result = new ReleaseResult();
+
         executed = true;
+
+        result.setResultCode( ReleaseResult.SUCCESS );
+
+        return result;
     }
 
-    public void simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
     {
+        ReleaseResult result = new ReleaseResult();
+
         simulated = true;
+
+        result.setResultCode( ReleaseResult.SUCCESS );
+
+        return result;
     }
 
-    public void clean( List reactorProjects )
+    public ReleaseResult clean( List reactorProjects )
     {
+        ReleaseResult result = new ReleaseResult();
+
         cleaned = true;
+
+        result.setResultCode( ReleaseResult.SUCCESS );
+
+        return result;
     }
 
     public boolean isExecuted()

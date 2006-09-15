@@ -18,6 +18,7 @@ package org.apache.maven.plugins.release.phase;
 
 import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.ReleaseFailureException;
+import org.apache.maven.plugins.release.ReleaseResult;
 import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.apache.maven.settings.Settings;
 
@@ -32,15 +33,27 @@ public class EndReleasePhase
     extends AbstractReleasePhase
 {
 
-    public void execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        getLogger().info( "Release preparation complete." );
+        ReleaseResult result = new ReleaseResult();
+
+        logInfo( result, "Release preparation complete." );
+
+        result.setResultCode( ReleaseResult.SUCCESS );
+
+        return result;
     }
 
-    public void simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        getLogger().info( "Release preparation simulation complete." );
+        ReleaseResult result = new ReleaseResult();
+
+        logInfo( result, "Release preparation simulation complete." );
+
+        result.setResultCode( ReleaseResult.SUCCESS );
+
+        return result;
     }
 }

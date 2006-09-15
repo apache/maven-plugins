@@ -17,6 +17,7 @@ package org.apache.maven.plugins.release.phase;
  */
 
 import org.codehaus.plexus.logging.AbstractLogEnabled;
+import org.apache.maven.plugins.release.ReleaseResult;
 
 import java.util.List;
 
@@ -29,8 +30,37 @@ public abstract class AbstractReleasePhase
     extends AbstractLogEnabled
     implements ReleasePhase
 {
-    public void clean( List reactorProjects )
+    public ReleaseResult clean( List reactorProjects )
     {
         // nothing to do by default
+
+        return getReleaseResultSuccess();
+    }
+
+    protected void logInfo( ReleaseResult result, String message )
+    {
+        result.appendInfo( message );
+        getLogger().info( message );
+    }
+
+    protected void logWarn( ReleaseResult result, String message )
+    {
+        result.appendWarn( message );
+        getLogger().warn( message );
+    }
+
+    protected void logDebug( ReleaseResult result, String message, Exception e )
+    {
+        result.appendDebug( message, e );
+        getLogger().debug( message, e );
+    }
+
+    protected ReleaseResult getReleaseResultSuccess()
+    {
+        ReleaseResult result = new ReleaseResult();
+
+        result.setResultCode( ReleaseResult.SUCCESS );
+
+        return result;
     }
 }

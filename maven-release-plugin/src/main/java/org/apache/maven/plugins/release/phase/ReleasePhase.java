@@ -18,6 +18,7 @@ package org.apache.maven.plugins.release.phase;
 
 import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.ReleaseFailureException;
+import org.apache.maven.plugins.release.ReleaseResult;
 import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.apache.maven.settings.Settings;
 
@@ -44,7 +45,7 @@ public interface ReleasePhase
      * @throws ReleaseExecutionException an exception during the execution of the phase
      * @throws ReleaseFailureException   a failure during the execution of the phase
      */
-    void execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
@@ -56,7 +57,7 @@ public interface ReleasePhase
      * @throws ReleaseExecutionException an exception during the execution of the phase
      * @throws ReleaseFailureException   a failure during the execution of the phase
      */
-    void simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
@@ -64,5 +65,5 @@ public interface ReleasePhase
      *
      * @param reactorProjects the reactor projects
      */
-    void clean( List reactorProjects );
+    ReleaseResult clean( List reactorProjects );
 }

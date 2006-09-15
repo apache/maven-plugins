@@ -24,9 +24,11 @@ import org.codehaus.plexus.PlexusTestCase;
 import org.jmock.Mock;
 import org.jmock.core.constraint.IsEqual;
 import org.jmock.core.constraint.IsNull;
+import org.jmock.core.constraint.IsAnything;
 import org.jmock.core.matcher.InvokeOnceMatcher;
 import org.jmock.core.matcher.TestFailureMatcher;
 import org.jmock.core.stub.ThrowStub;
+import org.jmock.core.Constraint;
 
 import java.io.File;
 
@@ -58,10 +60,13 @@ public class RunGoalsPhaseTest
         config.setWorkingDirectory( testFile.getAbsolutePath() );
 
         Mock mock = new Mock( MavenExecutor.class );
-        mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( new IsEqual( testFile ),
-                                                                               new IsEqual( "clean integration-test" ),
-                                                                               new IsEqual( Boolean.TRUE ),
-                                                                               new IsNull() );
+        Constraint[] constraints = new Constraint[]{ new IsEqual( testFile ),
+                                                     new IsEqual( "clean integration-test" ),
+                                                     new IsEqual( Boolean.TRUE ),
+                                                     new IsNull(),
+                                                     new IsAnything() };
+
+        mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( constraints );
 
         phase.setMavenExecutor( (MavenExecutor) mock.proxy() );
 
@@ -81,10 +86,12 @@ public class RunGoalsPhaseTest
         config.setWorkingDirectory( testFile.getAbsolutePath() );
 
         Mock mock = new Mock( MavenExecutor.class );
-        mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( new IsEqual( testFile ),
-                                                                               new IsEqual( "clean integration-test" ),
-                                                                               new IsEqual( Boolean.TRUE ),
-                                                                               new IsNull() );
+        Constraint[] constraints = new Constraint[]{new IsEqual( testFile ),
+                                                    new IsEqual( "clean integration-test" ),
+                                                    new IsEqual( Boolean.TRUE ),
+                                                    new IsNull(),
+                                                    new IsAnything() };
+        mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( constraints );
 
         phase.setMavenExecutor( (MavenExecutor) mock.proxy() );
 
@@ -103,10 +110,12 @@ public class RunGoalsPhaseTest
         config.setWorkingDirectory( testFile.getAbsolutePath() );
 
         Mock mock = new Mock( MavenExecutor.class );
-        mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( new IsEqual( testFile ),
-                                                                               new IsEqual( "clean integration-test" ),
-                                                                               new IsEqual( Boolean.TRUE ),
-                                                                               new IsNull() ).will(
+        Constraint[] constraints = new Constraint[]{ new IsEqual( testFile ),
+                                                       new IsEqual( "clean integration-test" ),
+                                                       new IsEqual( Boolean.TRUE ),
+                                                       new IsNull(),
+                                                       new IsAnything() };
+        mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( constraints ).will(
             new ThrowStub( new MavenExecutorException( "...", new Exception() ) ) );
 
         phase.setMavenExecutor( (MavenExecutor) mock.proxy() );
@@ -132,10 +141,12 @@ public class RunGoalsPhaseTest
         config.setWorkingDirectory( testFile.getAbsolutePath() );
 
         Mock mock = new Mock( MavenExecutor.class );
-        mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( new IsEqual( testFile ),
-                                                                               new IsEqual( "clean integration-test" ),
-                                                                               new IsEqual( Boolean.TRUE ),
-                                                                               new IsNull() ).will(
+        Constraint[] constraints = new Constraint[]{ new IsEqual( testFile ),
+                                                     new IsEqual( "clean integration-test" ),
+                                                     new IsEqual( Boolean.TRUE ),
+                                                     new IsNull(),
+                                                     new IsAnything() };
+        mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( constraints ).will(
             new ThrowStub( new MavenExecutorException( "...", new Exception() ) ) );
 
         phase.setMavenExecutor( (MavenExecutor) mock.proxy() );

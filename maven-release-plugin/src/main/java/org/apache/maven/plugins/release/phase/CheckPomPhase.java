@@ -19,6 +19,7 @@ package org.apache.maven.plugins.release.phase;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.ReleaseFailureException;
+import org.apache.maven.plugins.release.ReleaseResult;
 import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.apache.maven.plugins.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.plugins.release.scm.ScmRepositoryConfigurator;
@@ -44,9 +45,11 @@ public class CheckPomPhase
      */
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
-    public void execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
+        ReleaseResult result = new ReleaseResult();
+
         // Currently, we don't deal with multiple SCM locations in a multiproject
         if ( StringUtils.isEmpty( releaseDescriptor.getScmSourceUrl() ) )
         {
@@ -96,12 +99,16 @@ public class CheckPomPhase
                     "The project " + projectId + " isn't a snapshot (" + project.getVersion() + ")." );
             }
         }
+
+        result.setResultCode( ReleaseResult.SUCCESS );
+
+        return result;
     }
 
-    public void simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         // It makes no modifications, so simulate is the same as execute
-        execute( releaseDescriptor, settings, reactorProjects );
+        return execute( releaseDescriptor, settings, reactorProjects );
     }
 }

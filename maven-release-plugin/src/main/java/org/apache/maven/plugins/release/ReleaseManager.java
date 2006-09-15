@@ -58,7 +58,7 @@ public interface ReleaseManager
      * @throws ReleaseFailureException   if there is a problem performing the release
      */
     void prepare( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects, boolean resume,
-                  boolean dryRun )
+                           boolean dryRun )
         throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
@@ -72,8 +72,8 @@ public interface ReleaseManager
      * @throws ReleaseExecutionException if there is a problem performing the release
      * @throws ReleaseFailureException   if there is a problem performing the release
      */
-    void perform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects, File checkoutDirectory,
-                  String goals, boolean useReleaseProfile )
+    void perform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
+                           File checkoutDirectory, String goals, boolean useReleaseProfile )
         throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
@@ -83,4 +83,20 @@ public interface ReleaseManager
      * @param reactorProjects   the reactor projects
      */
     void clean( ReleaseDescriptor releaseDescriptor, List reactorProjects );
+
+    void prepare( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects, boolean resume,
+                           boolean dryRun, ReleaseManagerListener listener )
+        throws ReleaseExecutionException, ReleaseFailureException;
+
+    ReleaseResult prepareWithResult( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects, boolean resume,
+                           boolean dryRun, ReleaseManagerListener listener );
+
+    void perform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
+                           File checkoutDirectory, String goals, boolean useReleaseProfile,
+                           ReleaseManagerListener listener )
+        throws ReleaseExecutionException, ReleaseFailureException;
+
+    ReleaseResult performWithResult( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
+                           File checkoutDirectory, String goals, boolean useReleaseProfile,
+                           ReleaseManagerListener listener );
 }

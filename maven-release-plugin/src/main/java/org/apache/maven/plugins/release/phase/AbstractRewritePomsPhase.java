@@ -23,6 +23,7 @@ import org.apache.maven.model.Plugin;
 import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.ReleaseFailureException;
+import org.apache.maven.plugins.release.ReleaseResult;
 import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.apache.maven.plugins.release.scm.ReleaseScmCommandException;
 import org.apache.maven.plugins.release.scm.ReleaseScmRepositoryException;
@@ -85,28 +86,34 @@ public abstract class AbstractRewritePomsPhase
      */
     private String pomSuffix;
 
-    public void execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        transform( releaseDescriptor, settings, reactorProjects, false );
+        ReleaseResult result = new ReleaseResult();
+
+        transform( releaseDescriptor, settings, reactorProjects, false, result );
+
+        result.setResultCode( ReleaseResult.SUCCESS );
+
+        return result;
     }
 
     private void transform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
-                            boolean simulate )
+                            boolean simulate, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         for ( Iterator it = reactorProjects.iterator(); it.hasNext(); )
         {
             MavenProject project = (MavenProject) it.next();
 
-            getLogger().info( "Transforming '" + project.getName() + "'..." );
+            logInfo( result, "Transforming '" + project.getName() + "'..." );
 
-            transformProject( project, releaseDescriptor, settings, reactorProjects, simulate );
+            transformProject( project, releaseDescriptor, settings, reactorProjects, simulate, result );
         }
     }
 
     private void transformProject( MavenProject project, ReleaseDescriptor releaseDescriptor, Settings settings,
-                                   List reactorProjects, boolean simulate )
+                                   List reactorProjects, boolean simulate, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         Document document;
@@ -165,7 +172,8 @@ public abstract class AbstractRewritePomsPhase
             throw new ReleaseExecutionException( "Unable to configure SCM repository: " + e.getMessage(), e );
         }
 
-        transformDocument( project, document.getRootElement(), releaseDescriptor, reactorProjects, scmRepository );
+        transformDocument( project, document.getRootElement(), releaseDescriptor,
+                           reactorProjects, scmRepository, result );
 
         if ( simulate )
         {
@@ -190,7 +198,7 @@ public abstract class AbstractRewritePomsPhase
     }
 
     private void transformDocument( MavenProject project, Element rootElement, ReleaseDescriptor releaseDescriptor,
-                                    List reactorProjects, ScmRepository scmRepository )
+                                    List reactorProjects, ScmRepository scmRepository, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         Namespace namespace = rootElement.getNamespace();
@@ -203,7 +211,8 @@ public abstract class AbstractRewritePomsPhase
 
         rewriteVersion( rootElement, namespace, mappedVersions, projectId, project, parentVersion );
 
-        rewriteDependencies( project.getDependencies(), rootElement, mappedVersions, originalVersions, projectId );
+        rewriteDependencies( project.getDependencies(), rootElement, mappedVersions, originalVersions,
+                             projectId, result );
 
         if ( project.getDependencyManagement() != null )
         {
@@ -211,7 +220,7 @@ public abstract class AbstractRewritePomsPhase
             if ( dependencyRoot != null )
             {
                 rewriteDependencies( project.getDependencyManagement().getDependencies(), dependencyRoot,
-                                     mappedVersions, originalVersions, projectId );
+                                     mappedVersions, originalVersions, projectId, result );
             }
         }
 
@@ -220,18 +229,19 @@ public abstract class AbstractRewritePomsPhase
             Element buildRoot = rootElement.getChild( "build", namespace );
             if ( buildRoot != null )
             {
-                rewritePlugins( project.getBuildPlugins(), buildRoot, mappedVersions, originalVersions, projectId );
+                rewritePlugins( project.getBuildPlugins(), buildRoot, mappedVersions,
+                                originalVersions, projectId, result );
                 if ( project.getPluginManagement() != null )
                 {
                     Element pluginsRoot = buildRoot.getChild( "pluginManagement", namespace );
                     if ( pluginsRoot != null )
                     {
                         rewritePlugins( project.getPluginManagement().getPlugins(), pluginsRoot, mappedVersions,
-                                        originalVersions, projectId );
+                                        originalVersions, projectId, result );
                     }
                 }
                 rewriteExtensions( project.getBuildExtensions(), buildRoot, mappedVersions, originalVersions,
-                                   projectId );
+                                   projectId, result );
             }
         }
 
@@ -241,11 +251,11 @@ public abstract class AbstractRewritePomsPhase
             if ( pluginsRoot != null )
             {
                 rewriteReportPlugins( project.getReportPlugins(), pluginsRoot, mappedVersions, originalVersions,
-                                      projectId );
+                                      projectId, result );
             }
         }
 
-        transformScm( project, rootElement, namespace, releaseDescriptor, projectId, scmRepository );
+        transformScm( project, rootElement, namespace, releaseDescriptor, projectId, scmRepository, result );
     }
 
     private void rewriteVersion( Element rootElement, Namespace namespace, Map mappedVersions, String projectId,
@@ -307,7 +317,7 @@ public abstract class AbstractRewritePomsPhase
     }
 
     private void rewriteDependencies( List dependencies, Element dependencyRoot, Map mappedVersions,
-                                      Map originalVersions, String projectId )
+                                      Map originalVersions, String projectId, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         if ( dependencies != null )
@@ -317,13 +327,13 @@ public abstract class AbstractRewritePomsPhase
                 Dependency dep = (Dependency) i.next();
 
                 updateDomVersion( dep.getGroupId(), dep.getArtifactId(), mappedVersions, dep.getVersion(),
-                                  originalVersions, "dependencies", "dependency", dependencyRoot, projectId );
+                                  originalVersions, "dependencies", "dependency", dependencyRoot, projectId, result );
             }
         }
     }
 
     private void rewritePlugins( List plugins, Element pluginRoot, Map mappedVersions, Map originalVersions,
-                                 String projectId )
+                                 String projectId, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         if ( plugins != null )
@@ -336,14 +346,14 @@ public abstract class AbstractRewritePomsPhase
                 if ( plugin.getVersion() != null )
                 {
                     updateDomVersion( plugin.getGroupId(), plugin.getArtifactId(), mappedVersions, plugin.getVersion(),
-                                      originalVersions, "plugins", "plugin", pluginRoot, projectId );
+                                      originalVersions, "plugins", "plugin", pluginRoot, projectId, result );
                 }
             }
         }
     }
 
     private void rewriteExtensions( List extensions, Element extensionRoot, Map mappedVersions, Map originalVersions,
-                                    String projectId )
+                                    String projectId, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         if ( extensions != null )
@@ -354,13 +364,13 @@ public abstract class AbstractRewritePomsPhase
 
                 updateDomVersion( extension.getGroupId(), extension.getArtifactId(), mappedVersions,
                                   extension.getVersion(), originalVersions, "extensions", "extension", extensionRoot,
-                                  projectId );
+                                  projectId, result );
             }
         }
     }
 
     private void rewriteReportPlugins( List plugins, Element pluginRoot, Map mappedVersions, Map originalVersions,
-                                       String projectId )
+                                       String projectId, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         if ( plugins != null )
@@ -373,7 +383,7 @@ public abstract class AbstractRewritePomsPhase
                 if ( plugin.getVersion() != null )
                 {
                     updateDomVersion( plugin.getGroupId(), plugin.getArtifactId(), mappedVersions, plugin.getVersion(),
-                                      originalVersions, "plugins", "plugin", pluginRoot, projectId );
+                                      originalVersions, "plugins", "plugin", pluginRoot, projectId, result );
                 }
             }
         }
@@ -381,7 +391,7 @@ public abstract class AbstractRewritePomsPhase
 
     private void updateDomVersion( String groupId, String artifactId, Map mappedVersions, String version,
                                    Map originalVersions, String groupTagName, String tagName, Element dependencyRoot,
-                                   String projectId )
+                                   String projectId, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         String key = ArtifactUtils.versionlessKey( groupId, artifactId );
@@ -392,7 +402,7 @@ public abstract class AbstractRewritePomsPhase
         {
             if ( mappedVersion != null )
             {
-                getLogger().debug( "Updating " + artifactId + " to " + mappedVersion );
+                logInfo( result, "Updating " + artifactId + " to " + mappedVersion );
 
                 try
                 {
@@ -525,14 +535,22 @@ public abstract class AbstractRewritePomsPhase
         }
     }
 
-    public void simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        transform( releaseDescriptor, settings, reactorProjects, true );
+        ReleaseResult result = new ReleaseResult();
+
+        transform( releaseDescriptor, settings, reactorProjects, true, result );
+
+        result.setResultCode( ReleaseResult.SUCCESS );
+
+        return result;
     }
 
-    public void clean( List reactorProjects )
+    public ReleaseResult clean( List reactorProjects )
     {
+        ReleaseResult result = new ReleaseResult();
+
         super.clean( reactorProjects );
 
         if ( reactorProjects != null )
@@ -549,6 +567,10 @@ public abstract class AbstractRewritePomsPhase
                 }
             }
         }
+
+        result.setResultCode( ReleaseResult.SUCCESS );
+
+        return result;
     }
 
     protected abstract Map getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List reactorProjects );
@@ -557,7 +579,7 @@ public abstract class AbstractRewritePomsPhase
 
     protected abstract void transformScm( MavenProject project, Element rootElement, Namespace namespace,
                                           ReleaseDescriptor releaseDescriptor, String projectId,
-                                          ScmRepository scmRepository )
+                                          ScmRepository scmRepository, ReleaseResult result )
         throws ReleaseExecutionException;
 
     protected Element rewriteElement( String name, String value, Element root, Namespace namespace )

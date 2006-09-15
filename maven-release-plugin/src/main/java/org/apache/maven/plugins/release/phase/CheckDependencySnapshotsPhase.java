@@ -20,6 +20,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.ReleaseFailureException;
+import org.apache.maven.plugins.release.ReleaseResult;
 import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
@@ -50,10 +51,12 @@ public class CheckDependencySnapshotsPhase
      */
     private Prompter prompter;
 
-    public void execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        getLogger().info( "Checking dependencies and plugins for snapshots ..." );
+        ReleaseResult result = new ReleaseResult();
+
+        logInfo( result, "Checking dependencies and plugins for snapshots ..." );
 
         Map originalVersions = releaseDescriptor.getOriginalVersions( reactorProjects );
 
@@ -63,6 +66,10 @@ public class CheckDependencySnapshotsPhase
 
             checkProject( project, originalVersions, releaseDescriptor );
         }
+
+        result.setResultCode( ReleaseResult.SUCCESS );
+
+        return result;
     }
 
     private void checkProject( MavenProject project, Map originalVersions, ReleaseDescriptor releaseDescriptor )
@@ -183,11 +190,11 @@ public class CheckDependencySnapshotsPhase
             !artifact.getBaseVersion().equals( originalVersions.get( versionlessArtifactKey ) );
     }
 
-    public void simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         // It makes no modifications, so simulate is the same as execute
-        execute( releaseDescriptor, settings, reactorProjects );
+        return execute( releaseDescriptor, settings, reactorProjects );
     }
 
     public void setPrompter( Prompter prompter )
