@@ -25,12 +25,9 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DefaultArtifact;
-import org.apache.maven.artifact.handler.ArtifactHandler;
-import org.apache.maven.artifact.handler.DefaultArtifactHandler;
-import org.apache.maven.artifact.versioning.VersionRange;
-import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.dependency.utils.ArtifactStubFactory;
 import org.apache.maven.plugin.dependency.utils.SilentLog;
+import org.apache.maven.plugin.logging.Log;
 
 /**
  * @author brianf
@@ -50,18 +47,12 @@ public class TestTransitivityFilter
     {
         super.setUp();
 
-        ArtifactHandler ah = new DefaultArtifactHandler();
-        VersionRange vr = VersionRange.createFromVersion( "1.1" );
-        Artifact artifact = new DefaultArtifact( "test", "1", vr, Artifact.SCOPE_COMPILE, "jar", "", ah, false );
-        artifacts.add( artifact );
-        artifact = new DefaultArtifact( "test", "2", vr, Artifact.SCOPE_COMPILE, "war", "", ah, false );
-        artifacts.add( artifact );
-        directArtifacts.add( artifact );
-        artifact = new DefaultArtifact( "test", "3", vr, Artifact.SCOPE_COMPILE, "sources", "", ah, false );
-        artifacts.add( artifact );
-        directArtifacts.add( artifact );
-        artifact = new DefaultArtifact( "test", "4", vr, Artifact.SCOPE_COMPILE, "zip", "", ah, false );
-        artifacts.add( artifact );
+        ArtifactStubFactory fact = new ArtifactStubFactory(null,false);
+        artifacts = fact.getScopedArtifacts();
+        
+        directArtifacts = fact.getReleaseAndSnapshotArtifacts();
+        
+        artifacts.addAll(directArtifacts);
     }
 
     public void testAll()
@@ -70,7 +61,7 @@ public class TestTransitivityFilter
 
         Set result = filter.filter( artifacts, log );
 
-        assertEquals( result.size(), 4 );
+        assertEquals( 7, result.size() );
     }
 
     public void testExclude()
@@ -79,13 +70,13 @@ public class TestTransitivityFilter
 
         Set result = filter.filter( artifacts, log );
 
-        assertEquals( result.size(), 2 );
+        assertEquals( 2, result.size() );
 
         Iterator iter = result.iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = (Artifact) iter.next();
-            assertTrue( artifact.getArtifactId().equals( "2" ) || artifact.getArtifactId().equals( "3" ) );
+            assertTrue( artifact.getArtifactId().equals( "release" ) || artifact.getArtifactId().equals( "snapshot" ) );
         }
     }
 

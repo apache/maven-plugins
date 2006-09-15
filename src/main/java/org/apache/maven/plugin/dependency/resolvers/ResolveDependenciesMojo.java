@@ -31,6 +31,12 @@ import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
 public class ResolveDependenciesMojo
     extends AbstractResolveMojo
 {
+    
+    /**
+     * Only used to store results for integration test validation
+     */
+    DependencyStatusSets results;
+    
     /**
      * Main entry into mojo. Gets the list of dependencies and iterates through displaying the resolved version.
      * 
@@ -42,8 +48,16 @@ public class ResolveDependenciesMojo
         throws MojoExecutionException
     {
         //get sets of dependencies
-        DependencyStatusSets status = this.getDependencySets();
+        results = this.getDependencySets();
         
-        status.logStatus(log, outputArtifactFilename);
+        results.logStatus(log, outputArtifactFilename);
+    }
+
+    /**
+     * @return Returns the results.
+     */
+    public DependencyStatusSets getResults()
+    {
+        return this.results;
     }
 }
