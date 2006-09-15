@@ -18,6 +18,7 @@ package org.apache.maven.plugins.release.phase;
 
 import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.ReleaseFailureException;
+import org.apache.maven.plugins.release.ReleaseResult;
 import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.apache.maven.plugins.release.scm.ReleaseScmCommandException;
 import org.apache.maven.plugins.release.scm.ReleaseScmRepositoryException;
@@ -57,9 +58,11 @@ public class ScmCommitPhase
      */
     private String messageFormat;
 
-    public void execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
+        ReleaseResult relResult = new ReleaseResult();
+
         validateConfiguration( releaseDescriptor );
 
         getLogger().info( "Checking in modified POMs..." );
@@ -98,16 +101,26 @@ public class ScmCommitPhase
         {
             throw new ReleaseScmCommandException( "Unable to commit files", result );
         }
+
+        relResult.setResultCode( ReleaseResult.SUCCESS );
+
+        return relResult;
     }
 
-    public void simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
+        ReleaseResult result = new ReleaseResult();
+
         validateConfiguration( releaseDescriptor );
 
         Collection pomFiles = createPomFiles( reactorProjects );
-        getLogger().info( "Full run would be checking in " + pomFiles.size() + " files with message: '" +
+        logInfo( result, "Full run would be checking in " + pomFiles.size() + " files with message: '" +
             createMessage( releaseDescriptor ) + "'" );
+
+        result.setResultCode( ReleaseResult.SUCCESS );
+
+        return result;
     }
 
     private static void validateConfiguration( ReleaseDescriptor releaseDescriptor )

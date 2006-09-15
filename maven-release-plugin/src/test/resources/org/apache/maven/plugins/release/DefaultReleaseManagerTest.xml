@@ -38,11 +38,11 @@
         </requirement>
       </requirements>
       <configuration>
-        <phases>
+        <preparePhases>
           <phase>step1</phase>
           <phase>step2</phase>
           <phase>step3</phase>
-        </phases>
+        </preparePhases>
       </configuration>
     </component>
     <component>
@@ -61,9 +61,9 @@
         </requirement>
       </requirements>
       <configuration>
-        <phases>
+        <preparePhases>
           <phase>foo</phase>
-        </phases>
+        </preparePhases>
       </configuration>
     </component>
     <component>

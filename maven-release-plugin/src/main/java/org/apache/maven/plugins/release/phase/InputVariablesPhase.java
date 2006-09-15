@@ -18,6 +18,7 @@ package org.apache.maven.plugins.release.phase;
 
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.plugins.release.ReleaseExecutionException;
+import org.apache.maven.plugins.release.ReleaseResult;
 import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
@@ -44,9 +45,11 @@ public class InputVariablesPhase
         this.prompter = prompter;
     }
 
-    public void execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException
     {
+        ReleaseResult result = new ReleaseResult();
+
         // get the root project
         MavenProject project = (MavenProject) reactorProjects.get( 0 );
 
@@ -82,13 +85,23 @@ public class InputVariablesPhase
             }
             releaseDescriptor.setScmReleaseLabel( tag );
         }
+
+        result.setResultCode( ReleaseResult.SUCCESS );
+
+        return result;
     }
 
-    public void simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException
     {
+        ReleaseResult result = new ReleaseResult();
+
         // It makes no modifications, so simulate is the same as execute
         execute( releaseDescriptor, settings, reactorProjects );
+
+        result.setResultCode( ReleaseResult.SUCCESS );
+
+        return result;
     }
 
 }

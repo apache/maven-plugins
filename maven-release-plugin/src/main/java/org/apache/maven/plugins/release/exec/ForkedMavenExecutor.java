@@ -22,6 +22,7 @@ import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.StreamConsumer;
+import org.apache.maven.plugins.release.ReleaseResult;
 
 import java.io.File;
 
@@ -42,8 +43,8 @@ public class ForkedMavenExecutor
     /**
      * @noinspection UseOfSystemOutOrSystemErr
      */
-    public void executeGoals( File workingDirectory, String goals, boolean interactive, String additionalArguments,
-                              String pomFileName )
+    public void executeGoals( File workingDirectory, String goals, boolean interactive,
+                                             String additionalArguments, String pomFileName, ReleaseResult relResult )
         throws MavenExecutorException
     {
         Commandline cl = commandLineFactory.createCommandLine( "mvn" );
@@ -86,6 +87,7 @@ public class ForkedMavenExecutor
 
         try
         {
+            relResult.appendInfo( "Executing: " + cl.toString() );
             getLogger().info( "Executing: " + cl.toString() );
 
             int result = CommandLineUtils.executeCommandLine( cl, stdOut, stdErr );
@@ -100,12 +102,17 @@ public class ForkedMavenExecutor
         {
             throw new MavenExecutorException( "Can't run goal " + goals, stdOut.toString(), stdErr.toString(), e );
         }
+        finally
+        {
+            relResult.appendOutput( stdOut.toString() );
+        }
     }
 
-    public void executeGoals( File workingDirectory, String goals, boolean interactive, String arguments )
+    public void executeGoals( File workingDirectory, String goals, boolean interactive,
+                                             String arguments, ReleaseResult result )
         throws MavenExecutorException
     {
-        executeGoals( workingDirectory, goals, interactive, arguments, null );
+        executeGoals( workingDirectory, goals, interactive, arguments, null, result );
     }
 
     public void setCommandLineFactory( CommandLineFactory commandLineFactory )

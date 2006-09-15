@@ -20,6 +20,7 @@ import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Scm;
 import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.apache.maven.plugins.release.scm.ScmTranslator;
+import org.apache.maven.plugins.release.ReleaseResult;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.jdom.Element;
@@ -42,7 +43,8 @@ public class RewritePomsForReleasePhase
     private Map scmTranslators;
 
     protected void transformScm( MavenProject project, Element rootElement, Namespace namespace,
-                                 ReleaseDescriptor releaseDescriptor, String projectId, ScmRepository scmRepository )
+                                 ReleaseDescriptor releaseDescriptor, String projectId, ScmRepository scmRepository,
+                                 ReleaseResult result )
     {
         // If SCM is null in original model, it is inherited, no mods needed
         if ( project.getScm() != null )
@@ -52,7 +54,7 @@ public class RewritePomsForReleasePhase
             {
                 releaseDescriptor.mapOriginalScmInfo( projectId, project.getScm() );
 
-                translateScm( project, releaseDescriptor, scmRoot, namespace, scmRepository );
+                translateScm( project, releaseDescriptor, scmRoot, namespace, scmRepository, result );
             }
             else
             {
@@ -70,7 +72,7 @@ public class RewritePomsForReleasePhase
                         scmRoot = new Element( "scm" );
                         scmRoot.addContent( "\n  " );
 
-                        if ( translateScm( project, releaseDescriptor, scmRoot, namespace, scmRepository ) )
+                        if ( translateScm( project, releaseDescriptor, scmRoot, namespace, scmRepository, result ) )
                         {
                             rootElement.addContent( "\n  " ).addContent( scmRoot ).addContent( "\n" );
                         }
@@ -81,7 +83,7 @@ public class RewritePomsForReleasePhase
     }
 
     private boolean translateScm( MavenProject project, ReleaseDescriptor releaseDescriptor, Element scmRoot,
-                                  Namespace namespace, ScmRepository scmRepository )
+                                  Namespace namespace, ScmRepository scmRepository, ReleaseResult relResult )
     {
         ScmTranslator translator = (ScmTranslator) scmTranslators.get( scmRepository.getProvider() );
         boolean result = false;
@@ -139,7 +141,11 @@ public class RewritePomsForReleasePhase
         }
         else
         {
-            getLogger().debug( "No SCM translator found - skipping rewrite" );
+            String message = "No SCM translator found - skipping rewrite";
+
+            relResult.appendDebug( message );
+
+            getLogger().debug( message );
         }
         return result;
     }

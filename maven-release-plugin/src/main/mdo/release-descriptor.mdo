@@ -1,6 +1,6 @@
 <model>
   <id>release-descriptor</id>
-  <name>Release Descriptor</name>
+  <name>ReleaseDescriptor</name>
   <description>
     A release descriptor contains everything that is needed to perform a
     release. A release descriptor can be used by third party systems like

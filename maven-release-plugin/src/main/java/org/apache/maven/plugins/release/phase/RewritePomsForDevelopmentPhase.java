@@ -18,6 +18,7 @@ package org.apache.maven.plugins.release.phase;
 
 import org.apache.maven.model.Scm;
 import org.apache.maven.plugins.release.ReleaseExecutionException;
+import org.apache.maven.plugins.release.ReleaseResult;
 import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.apache.maven.plugins.release.scm.ScmTranslator;
 import org.apache.maven.project.MavenProject;
@@ -42,7 +43,8 @@ public class RewritePomsForDevelopmentPhase
     private Map scmTranslators;
 
     protected void transformScm( MavenProject project, Element rootElement, Namespace namespace,
-                                 ReleaseDescriptor releaseDescriptor, String projectId, ScmRepository scmRepository )
+                                 ReleaseDescriptor releaseDescriptor, String projectId, ScmRepository scmRepository,
+                                 ReleaseResult result )
         throws ReleaseExecutionException
     {
         // If SCM is null in original model, it is inherited, no mods needed
@@ -79,7 +81,9 @@ public class RewritePomsForDevelopmentPhase
                 }
                 else
                 {
-                    getLogger().debug( "No SCM translator found - skipping rewrite" );
+                    String message = "No SCM translator found - skipping rewrite";
+                    result.appendDebug( message );
+                    getLogger().debug( message );
                 }
             }
         }

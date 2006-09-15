@@ -18,6 +18,7 @@ package org.apache.maven.plugins.release.phase;
 
 import org.apache.maven.plugins.release.ReleaseExecutionException;
 import org.apache.maven.plugins.release.ReleaseFailureException;
+import org.apache.maven.plugins.release.ReleaseResult;
 import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.apache.maven.plugins.release.scm.ReleaseScmCommandException;
 import org.apache.maven.plugins.release.scm.ReleaseScmRepositoryException;
@@ -47,12 +48,14 @@ public class ScmTagPhase
      */
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
-    public void execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
+        ReleaseResult relResult = new ReleaseResult();
+
         validateConfiguration( releaseDescriptor );
 
-        getLogger().info( "Tagging release with the label " + releaseDescriptor.getScmReleaseLabel() + "..." );
+        logInfo( relResult, "Tagging release with the label " + releaseDescriptor.getScmReleaseLabel() + "..." );
 
         ScmRepository repository;
         ScmProvider provider;
@@ -87,15 +90,25 @@ public class ScmTagPhase
         {
             throw new ReleaseScmCommandException( "Unable to tag SCM", result );
         }
+
+        relResult.setResultCode( ReleaseResult.SUCCESS );
+
+        return relResult;
     }
 
-    public void simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
+        ReleaseResult result = new ReleaseResult();
+
         validateConfiguration( releaseDescriptor );
 
-        getLogger().info( "Full run would be tagging " + releaseDescriptor.getWorkingDirectory() + " with label: '" +
+        logInfo( result, "Full run would be tagging " + releaseDescriptor.getWorkingDirectory() + " with label: '" +
             releaseDescriptor.getScmReleaseLabel() + "'" );
+
+        result.setResultCode( ReleaseResult.SUCCESS );
+
+        return result;
     }
 
     private static void validateConfiguration( ReleaseDescriptor releaseDescriptor )

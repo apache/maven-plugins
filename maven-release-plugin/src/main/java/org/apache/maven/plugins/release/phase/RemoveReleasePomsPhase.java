@@ -17,6 +17,7 @@ package org.apache.maven.plugins.release.phase;
  */
 
 import org.apache.maven.plugins.release.ReleaseExecutionException;
+import org.apache.maven.plugins.release.ReleaseResult;
 import org.apache.maven.plugins.release.config.ReleaseDescriptor;
 import org.apache.maven.settings.Settings;
 
@@ -30,11 +31,13 @@ import java.util.List;
 public class RemoveReleasePomsPhase
     extends AbstractReleasePhase
 {
-    public void execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException
     {
+        ReleaseResult result = new ReleaseResult();
+
         // TODO [!]: implement
-        getLogger().info( "Removing release POMs..." );
+        logInfo( result, "Removing release POMs..." );
 
 /*
         File currentReleasePomFile = null;
@@ -80,10 +83,20 @@ public class RemoveReleasePomsPhase
         }
 
 */
+
+        result.setResultCode( ReleaseResult.SUCCESS );
+
+        return result;
     }
 
-    public void simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
     {
+        ReleaseResult result = new ReleaseResult();
+
         // TODO [!]: implement
+
+        result.setResultCode( ReleaseResult.SUCCESS );
+
+        return result;
     }
 }
