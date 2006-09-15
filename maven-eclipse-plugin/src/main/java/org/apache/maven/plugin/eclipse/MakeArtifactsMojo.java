@@ -163,6 +163,12 @@ public class MakeArtifactsMojo
                 throw new MojoFailureException( "Unable to read manifest for jar " + file.getAbsolutePath() );
             }
 
+            if ( manifest == null )
+            {
+                getLog().warn( "Jar " + file.getAbsolutePath() + " does not have a manifest; skipping.." );
+                continue;
+            }
+
             Attributes manifestEntries = manifest.getMainAttributes();
 
             String artifactId = manifestEntries.getValue( "Bundle-SymbolicName" );
