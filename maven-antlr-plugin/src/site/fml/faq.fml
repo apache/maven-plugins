@@ -26,5 +26,19 @@
         </p>
       </answer>
     </faq>
+    <faq id="What is the process order of grammar files">
+      <question>What is the process order of grammar files?</question>
+      <answer>
+        <p>
+          The order is based on the grammar definition.
+          For instance, with the following configuration &lt;grammars&gt;grammar1.g,grammar2.g&lt;/grammars&gt;,
+          antlr is called twice, first time with grammar1.g, second time with grammar2.g.
+        </p>
+        <p>
+          The order is important when grammar files use <a href="http://www.antlr.org/doc/vocab.html">import
+          vocabulary</a>
+        </p>
+      </answer>
+    </faq>
   </part>
 </faqs>

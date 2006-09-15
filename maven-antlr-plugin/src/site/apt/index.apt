@@ -45,4 +45,6 @@ Maven 2 Antlr Plugin
 
 * Examples
 
-   No example exists.
+   The following examples show how to use the Antlr Plugin in more advanced usecases:
+
+   * {{{examples/inheritance.html}Grammar Inheritance}}
