@@ -131,48 +131,6 @@ public abstract class AbstractEclipsePluginTestCase
             "org.apache.maven.plugins:maven-eclipse-plugin:eclipse" } ), eventMonitor, new ConsoleDownloadMonitor(),
                             properties, basedir );
 
-        File projectExpectedFile = new File( basedir, "project" );
-        if ( projectExpectedFile.exists() )
-        {
-            assertFileEquals( localRepositoryDir.getCanonicalPath(), projectExpectedFile, new File( projectOutputDir,
-                                                                                                    ".project" ) );
-        }
-
-        File classpathExpectedFile = new File( basedir, "classpath" );
-        if ( classpathExpectedFile.exists() )
-        {
-            assertFileEquals( localRepositoryDir.getCanonicalPath(), classpathExpectedFile, new File( projectOutputDir,
-                                                                                                      ".classpath" ) );
-        }
-
-        File wtpModulesExpectedFile = new File( basedir, "wtpmodules" );
-        if ( wtpModulesExpectedFile.exists() )
-        {
-            assertFileEquals( localRepositoryDir.getCanonicalPath(), wtpModulesExpectedFile,
-                              new File( projectOutputDir, ".wtpmodules" ) );
-        }
-
-        if ( new File( basedir, "settings" ).exists() )
-        {
-            assertFileEquals( localRepositoryDir.getCanonicalPath(), new File( basedir, "settings" ),
-                              new File( projectOutputDir, ".settings/org.eclipse.jdt.core.prefs" ) );
-        }
-
-        File componentExpectedFile = new File( basedir, "component" );
-        if ( componentExpectedFile.exists() )
-        {
-            assertFileEquals( localRepositoryDir.getCanonicalPath(), componentExpectedFile,
-                              new File( projectOutputDir, ".settings/.component" ) );
-        }
-
-        // WTP15
-        File component15ExpectedFile = new File( basedir, "org.eclipse.wst.common.component" );
-        if ( component15ExpectedFile.exists() )
-        {
-            assertFileEquals( localRepositoryDir.getCanonicalPath(), component15ExpectedFile,
-                              new File( projectOutputDir, ".settings/org.eclipse.wst.common.component" ) );
-        }
-
         compareDirectoryContent( basedir, projectOutputDir, "" );
         compareDirectoryContent( basedir, projectOutputDir, ".settings/" );
 
