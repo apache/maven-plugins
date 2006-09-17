@@ -26,65 +26,65 @@ import java.util.Properties;
 public class EclipsePluginTest
     extends AbstractEclipsePluginTestCase
 {
-    public void testProject1()
+    public void testProject01()
         throws Exception
     {
-        testProject( "project-1" );
+        testProject( "project-01" );
     }
 
-    public void testProject2()
+    public void testProject02()
         throws Exception
     {
-        testProject( "project-2" );
+        testProject( "project-02" );
     }
 
-    public void testProject3()
+    public void testProject03()
         throws Exception
     {
-        testProject( "project-3" );
+        testProject( "project-03" );
     }
 
-    public void testProject4()
+    public void testProject04()
         throws Exception
     {
-        testProject( "project-4" );
+        testProject( "project-04" );
     }
 
-    public void testProject5()
+    public void testProject05()
         throws Exception
     {
-        testProject( "project-5" );
+        testProject( "project-05" );
     }
 
-    public void testProject6()
+    public void testProject06()
         throws Exception
     {
-        testProject( "project-6" );
+        testProject( "project-06" );
     }
 
     // @todo temporary disabled, since it randomically fails due to a different order for dependencies in classpath and
     // wtpmodules. This is not a problem, since order could be ignored in this test, but we should rewrite the file-comparing
     // step which at the moment just does line by line comparison
-    //    public void testProject7()
+    //    public void testProject07()
     //        throws Exception
     //    {
-    //        testProject( "project-7" );
+    //        testProject( "project-07" );
     //    }
 
-    public void testProject8()
+    public void testProject08()
         throws Exception
     {
-        testProject( "project-8" );
+        testProject( "project-08" );
     }
 
     /**
      * Tests with <code>outputDirectory</code> and <code>outputDir</code>
      * @throws Exception
      */
-    public void testProject9()
+    public void testProject09()
         throws Exception
     {
-        testProject( "project-9" );
+        testProject( "project-09" );
     }
 
     public void testProject10()
