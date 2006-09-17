@@ -213,4 +213,14 @@ public class EclipsePluginTest
         testProject( "project-22" );
     }
 
+    /**
+     * Additional config files using "additionalConfig" property.
+     * @throws Exception any exception thrown during test
+     */
+    public void testProject23()
+        throws Exception
+    {
+        testProject( "project-23" );
+    }
+
 }
