@@ -17,6 +17,7 @@ package org.apache.maven.plugin.eclipse;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -130,8 +131,12 @@ public abstract class AbstractEclipsePluginTestCase
             "org.apache.maven.plugins:maven-eclipse-plugin:eclipse" } ), eventMonitor, new ConsoleDownloadMonitor(),
                             properties, basedir );
 
-        assertFileEquals( localRepositoryDir.getCanonicalPath(), new File( basedir, "project" ),
-                          new File( projectOutputDir, ".project" ) );
+        File projectExpectedFile = new File( basedir, "project" );
+        if ( projectExpectedFile.exists() )
+        {
+            assertFileEquals( localRepositoryDir.getCanonicalPath(), projectExpectedFile, new File( projectOutputDir,
+                                                                                                    ".project" ) );
+        }
 
         File classpathExpectedFile = new File( basedir, "classpath" );
         if ( classpathExpectedFile.exists() )
@@ -168,6 +173,40 @@ public abstract class AbstractEclipsePluginTestCase
                               new File( projectOutputDir, ".settings/org.eclipse.wst.common.component" ) );
         }
 
+        compareDirectoryContent( basedir, projectOutputDir, "" );
+        compareDirectoryContent( basedir, projectOutputDir, ".settings/" );
+
+    }
+
+    /**
+     * @param basedir
+     * @param projectOutputDir
+     * @throws IOException
+     */
+    private void compareDirectoryContent( File basedir, File projectOutputDir, String additionalDir )
+        throws IOException
+    {
+        File expectedConfigDir = new File( basedir, "expected/" + additionalDir );
+
+        if ( expectedConfigDir.isDirectory() )
+        {
+            File[] files = expectedConfigDir.listFiles( new FileFilter()
+            {
+                public boolean accept( File file )
+                {
+                    return !file.isDirectory();
+                }
+            } );
+
+            for ( int j = 0; j < files.length; j++ )
+            {
+                File file = files[j];
+
+                assertFileEquals( localRepositoryDir.getCanonicalPath(), file,
+                                  new File( projectOutputDir, additionalDir + file.getName() ) );
+
+            }
+        }
     }
 
     protected void assertFileEquals( String mavenRepo, File expectedFile, File actualFile )

@@ -1,0 +1,6 @@
+<fileset-config file-format-version="1.2.0" simple-config="true">
+  <fileset name="all" enabled="true" check-config-name="acme corporate style" local="false">
+    <file-match-pattern match-pattern="." include-pattern="true"/>
+  </fileset>
+  <filter name="NonSrcDirs" enabled="true"/>
+</fileset-config>
