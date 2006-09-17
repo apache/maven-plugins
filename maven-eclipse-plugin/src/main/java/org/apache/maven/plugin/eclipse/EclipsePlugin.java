@@ -17,6 +17,7 @@ package org.apache.maven.plugin.eclipse;
  */
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -40,6 +41,7 @@ import org.apache.maven.plugin.ide.AbstractIdeSupportMojo;
 import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -234,6 +236,30 @@ public class EclipsePlugin
      * @parameter expression="${eclipse.manifest}" default-value="${basedir}/META-INF/MANIFEST.MF"
      */
     private File manifest;
+
+    /**
+     * Allow to configure additional generic configuration files for eclipse that will be written out to disk when
+     * running eclipse:eclipse. FOr each file you can specify the name and the text content.
+     * 
+     * <pre>
+     * &lt;additionalConfig&gt;
+     *    &lt;file&gt;
+     *      &lt;name&gt;.checkstyle&lt;/name&gt;
+     *      &lt;content&gt;
+     *        &lt;![CDATA[&lt;fileset-config file-format-version="1.2.0" simple-config="true"&gt;
+     *          &lt;fileset name="all" enabled="true" check-config-name="acme corporate style" local="false"&gt;
+     *              &lt;file-match-pattern match-pattern="." include-pattern="true"/&gt;
+     *          &lt;/fileset&gt;
+     *          &lt;filter name="NonSrcDirs" enabled="true"/&gt;
+     *        &lt;/fileset-config&gt;]]&gt;
+     *      &lt;/content&gt;
+     *    &lt;/file&gt;
+     * &lt;/additionalConfig&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private EclipseConfigFile[] additionalConfig;
 
     /**
      * Parsed wtp version.
@@ -582,6 +608,31 @@ public class EclipsePlugin
         {
             this.getLog().info( "The Maven Eclipse plugin runs in 'pde'-mode." );
             new EclipseOSGiManifestWriter().init( getLog(), config ).write();
+        }
+
+        if ( additionalConfig != null )
+        {
+            for ( int j = 0; j < additionalConfig.length; j++ )
+            {
+                EclipseConfigFile file = additionalConfig[j];
+                File projectRelativeFile = new File( this.eclipseProjectDir, file.getName() );
+                if ( projectRelativeFile.isDirectory() )
+                {
+                    // just ignore?
+                    getLog().warn( Messages.getString( "EclipsePlugin.foundadir", //$NON-NLS-1$
+                                                       projectRelativeFile.getAbsolutePath() ) );
+                }
+
+                try
+                {
+                    FileUtils.fileWrite( projectRelativeFile.getAbsolutePath(), file.getContent() );
+                }
+                catch ( IOException e )
+                {
+                    throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantwritetofile", //$NON-NLS-1$
+                                                                          projectRelativeFile.getAbsolutePath() ) );
+                }
+            }
         }
 
         getLog().info( Messages.getString( "EclipsePlugin.wrote", new Object[] { //$NON-NLS-1$
