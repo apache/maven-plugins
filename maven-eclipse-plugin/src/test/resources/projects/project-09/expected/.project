@@ -15,27 +15,27 @@
     <link>
       <name>pom.xml</name>
       <type>1</type>
-      <location>${basedir}/target/test-classes/projects/project-9/pom.xml</location>
+      <location>${basedir}/target/test-classes/projects/project-09/pom.xml</location>
     </link>
     <link>
       <name>src-main-java</name>
       <type>2</type>
-      <location>${basedir}/target/test-classes/projects/project-9/src/main/java</location>
+      <location>${basedir}/target/test-classes/projects/project-09/src/main/java</location>
     </link>
     <link>
       <name>src-main-resources</name>
       <type>2</type>
-      <location>${basedir}/target/test-classes/projects/project-9/src/main/resources</location>
+      <location>${basedir}/target/test-classes/projects/project-09/src/main/resources</location>
     </link>
     <link>
       <name>src-test-java</name>
       <type>2</type>
-      <location>${basedir}/target/test-classes/projects/project-9/src/test/java</location>
+      <location>${basedir}/target/test-classes/projects/project-09/src/test/java</location>
     </link>
     <link>
       <name>src-test-resources</name>
       <type>2</type>
-      <location>${basedir}/target/test-classes/projects/project-9/src/test/resources</location>
+      <location>${basedir}/target/test-classes/projects/project-09/src/test/resources</location>
     </link>
   </linkedResources>
 </projectDescription>
