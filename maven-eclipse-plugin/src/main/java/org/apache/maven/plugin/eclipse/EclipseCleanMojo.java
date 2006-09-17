@@ -68,6 +68,11 @@ public class EclipseCleanMojo
     private static final String FILE_FACET_CORE_XML = ".settings/org.eclipse.wst.common.project.facet.core.xml"; //$NON-NLS-1$
 
     /**
+     * General project preferences.
+     */
+    private static final String FILE_ECLIPSE_JDT_CORE_PREFS = ".settings/org.eclipse.jdt.core.prefs"; //$NON-NLS-1$
+
+    /**
      * Packaging for the current project.
      * @parameter expression="${project.packaging}"
      * @required
@@ -110,6 +115,7 @@ public class EclipseCleanMojo
         delete( new File( basedir, FILE_DOT_COMPONENT ) );
         delete( new File( basedir, FILE_DOT_COMPONENT_15 ) );
         delete( new File( basedir, FILE_FACET_CORE_XML ) );
+        delete( new File( basedir, FILE_ECLIPSE_JDT_CORE_PREFS ) );
 
         File settingsDir = new File( basedir, DIR_DOT_SETTINGS );
         if ( settingsDir.exists() && settingsDir.isDirectory() && settingsDir.list().length == 0 )
