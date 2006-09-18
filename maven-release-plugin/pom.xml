@@ -19,13 +19,16 @@
   <parent>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-plugins</artifactId>
-    <version>3</version>
+    <version>4-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>maven-release-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Maven Release plugin</name>
   <version>2.0-beta-5-SNAPSHOT</version>
+  <prerequisites>
+    <maven>2.0.1</maven>
+  </prerequisites>
   <issueManagement>
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MRELEASE</url>

@@ -29,13 +29,24 @@
   </bannerRight>
   <body>
     <links>
-      <item name="Maven" href="http://maven.apache.org/"/>
+      <item name="Maven" href="http://maven.apache.org/maven2/"/>
     </links>
 
     <menu name="Overview">
-      <item name="Introduction" href="introduction.html"/>
-      <item name="How to Use" href="howto.html"/>
+      <item name="Introduction" href="index.html"/>
+      <item name="Goals" href="plugin-info.html"/>
+      <item name="Usage" href="usage.html"/>
+      <item name="FAQ" href="faq.html"/>
     </menu>
+
+    <menu name="Examples">
+      <item name="Perform Release" href="examples/perform-release.html"/>
+      <item name="Prepare Release" href="examples/prepare-release.html"/>
+      <item name="Generate Release POMs" href="examples/generate-release-poms.html"/>
+      <item name="Lock Files During Release" href="examples/lock-files.html"/>
+      <item name="Run Additional Goals Before Commit" href="examples/run-goals-before-commit.html"/>
+    </menu>
+
     ${reports}
   </body>
 </project>
