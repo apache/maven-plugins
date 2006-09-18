@@ -1,0 +1,52 @@
+  ------
+  Introduction
+  ------
+  Carlos Sanchez <carlos@apache.org>
+  Brett Porter <brett@apache.org>
+  John Tolentino <jtolentino@apache.org>
+  ------
+  September 18, 2006
+
+  ~~ Copyright 2006 The Apache Software Foundation.
+  ~~
+  ~~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~~ you may not use this file except in compliance with the License.
+  ~~ You may obtain a copy of the License at
+  ~~
+  ~~      http://www.apache.org/licenses/LICENSE-2.0
+  ~~
+  ~~ Unless required by applicable law or agreed to in writing, software
+  ~~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~~ See the License for the specific language governing permissions and
+  ~~ limitations under the License.
+
+  ~~ NOTE: For help with the syntax of this file, see:
+  ~~ http://maven.apache.org/guides/mini/guide-apt-format.html
+
+Maven Release Plugin
+
+  This plugin is used to release a project with Maven, saving a lot of repetitive, manual work.
+  Releasing a project takes two steps: prepare and perform.
+
+* Usage
+
+  Instructions on how to use the Maven Release Plugin can be found {{{usage.html}here}}.
+
+* Examples
+
+  To provide you with better understanding on some usages of the Maven Release Plugin,
+  you can take a look into the following examples:
+
+
+  * {{{examples/perform-release.html}Perform Release}}
+
+  * {{{examples/prepare-release.html}Prepare Release}}
+
+  * {{{examples/generate-release-poms.html}Generate Release POMs}}
+
+  * {{{examples/lock-files.html}Lock Files During Release}}
+
+  * {{{examples/run-goals-before-commit.html}Run Additional Goals Before Commit}}
+
+
