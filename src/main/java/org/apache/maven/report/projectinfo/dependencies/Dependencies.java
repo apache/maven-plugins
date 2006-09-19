@@ -42,18 +42,6 @@ import java.util.Map;
 
 public class Dependencies
 {
-    public final static String IS_DEBUG_PRESENT = "is-debug-present";
-
-    public final static String IS_SEALED = "sealed";
-
-    public final static String FILE_LENGTH = "filelength";
-
-    public final static String JAR_ENTRIES = "jar-entries";
-
-    public final static String NUM_OF_CLASSES = "num-of-classes";
-
-    public final static String NUM_OF_PACKAGES = "num-of-packages";
-
     private List projectDependencies;
 
     private ReportResolutionListener resolvedDependencies;
@@ -78,16 +66,20 @@ public class Dependencies
 
         mapArtifactFiles( listener.getRootNode(), projectMap );
 
+        // quick fix
         try
-        {
-            this.jar = (Jar) container.lookup( Jar.ROLE );
+        { 
+            if ( container != null )
+            {    
+                this.jar = (Jar) container.lookup( Jar.ROLE );
+            }    
         }
         catch ( ComponentLookupException ex )
         {
             //TODO: handle exception
         }
-    }
-
+    } 
+    
     public static Map getManagedVersionMap( MavenProject project, ArtifactFactory factory )
         throws ProjectBuildingException
     {
@@ -206,5 +198,10 @@ public class Dependencies
         jarClasses = jar.getClasses();
 
         return new JarDependencyDetails( jarClasses, jar.isSealed(), jar.getEntries() );
+    }
+    
+    public ReportResolutionListener.Node getResolvedRoot()
+    {
+        return resolvedDependencies.getRootNode();
     }
 }
