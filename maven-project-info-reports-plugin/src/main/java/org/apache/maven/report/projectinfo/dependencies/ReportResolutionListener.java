@@ -38,6 +38,8 @@ public class ReportResolutionListener
     private Map artifacts = new HashMap();
 
     private Node rootNode;
+    
+    private int currentDepth = 0;
 
     public void testArtifact( Artifact artifact )
     {
@@ -47,6 +49,8 @@ public class ReportResolutionListener
     public void startProcessChildren( Artifact artifact )
     {
         Node node = (Node) artifacts.get( artifact.getDependencyConflictId() );
+        
+        node.depth = currentDepth++;        
         if ( parents.isEmpty() )
         {
             rootNode = node;
@@ -59,6 +63,7 @@ public class ReportResolutionListener
     {
         Node check = (Node) parents.pop();
         assert artifact.equals( check.artifact );
+        currentDepth--;
     }
 
     public void omitForNearer( Artifact omitted, Artifact kept )
@@ -101,6 +106,7 @@ public class ReportResolutionListener
         {
             node.parent = (Node) parents.peek();
             node.parent.children.add( node );
+            node.depth = currentDepth;
         }
         artifacts.put( artifact.getDependencyConflictId(), node );
     }
@@ -156,6 +162,8 @@ public class ReportResolutionListener
         private List children = new ArrayList();
 
         private Artifact artifact;
+        
+        private int depth;
 
         public List getChildren()
         {
@@ -165,6 +173,11 @@ public class ReportResolutionListener
         public Artifact getArtifact()
         {
             return artifact;
+        }
+        
+        public int getDepth()
+        {
+            return depth;
         }
     }
 
