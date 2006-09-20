@@ -1,0 +1,10 @@
+import java.io.*;
+
+boolean result = true;
+
+String assemblyDir = "target/use-default-excludes-1.0-SNAPSHOT-src.dir/src/main/assembly/";
+
+result = result && new File( basedir, assemblyDir + "src.xml" ).exists();
+result = result && !new File( basedir, assemblyDir + ".svn" ).exists();
+
+return result;
