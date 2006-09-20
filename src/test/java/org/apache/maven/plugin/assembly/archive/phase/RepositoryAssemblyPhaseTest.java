@@ -14,6 +14,7 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.util.FileUtils;
 import org.easymock.MockControl;
 
 import java.io.File;
@@ -91,7 +92,7 @@ public class RepositoryAssemblyPhaseTest
         File outDir = new File( tempRoot, "out" );
         
         macArchiver.expectModeChange( -1, -1, mode, mode, true );
-        macArchiver.expectAddDirectory( outDir, "out/", null, new String[0] );
+        macArchiver.expectAddDirectory( outDir, "out/", null, FileUtils.getDefaultExcludes() );
         
         macRepo.expectAssemble( outDir, repo, macCS.configSource );
         
