@@ -222,6 +222,11 @@ public abstract class AbstractAssemblyMojo
      * @readonly
      */
     protected List filters;
+    
+    /**
+     * @parameter expression="${attach}" default-value="true"
+     */
+    private boolean attach;
 
     /**
      * @component
@@ -275,17 +280,20 @@ public abstract class AbstractAssemblyMojo
                     MavenProject project = getProject();
                     String classifier = getClassifier();
                     
-                    if ( isAssemblyIdAppended() )
+                    if ( attach && destFile.isFile() )
                     {
-                        projectHelper.attachArtifact( project, format, assembly.getId(), destFile );
-                    }
-                    else if ( classifier != null )
-                    {
-                        projectHelper.attachArtifact( project, format, classifier, destFile );
-                    }
-                    else
-                    {
-                        projectHelper.attachArtifact( project, format, null, destFile );
+                        if ( isAssemblyIdAppended() )
+                        {
+                            projectHelper.attachArtifact( project, format, assembly.getId(), destFile );
+                        }
+                        else if ( classifier != null )
+                        {
+                            projectHelper.attachArtifact( project, format, classifier, destFile );
+                        }
+                        else
+                        {
+                            projectHelper.attachArtifact( project, format, null, destFile );
+                        }
                     }
                 }
             }
