@@ -20,7 +20,7 @@ public class ArtifactStubFactory
 
     public ArtifactStubFactory( File workingDir, boolean createFiles )
     {
-        this.workingDir = workingDir;
+        this.workingDir = new File(workingDir,"localTestRepo");
         this.createFiles = createFiles;
     }
 
