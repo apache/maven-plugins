@@ -29,6 +29,7 @@ import junit.framework.TestCase;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.ArtifactStubFactory;
+import org.apache.maven.plugin.dependency.utils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.utils.SilentLog;
 import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
 import org.apache.maven.plugin.logging.Log;
@@ -56,7 +57,7 @@ public class TestMarkerFileFilter
         //pick random output location
         Random a = new Random();
         outputFolder = new File("target/markers"+a.nextLong()+"/");
-        outputFolder.delete();
+        DependencyTestUtils.removeDirectory(outputFolder);
         assertFalse(outputFolder.exists());
         
         this.fact = new ArtifactStubFactory(outputFolder,false);
@@ -80,7 +81,7 @@ public class TestMarkerFileFilter
         assertEquals(2,result.size());    
     }
     
-    public void testMarkerSnapshots () throws MojoExecutionException
+    public void testMarkerSnapshots () throws MojoExecutionException, IOException
     {
         DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler(fact.getSnapshotArtifact(),outputFolder);
         handler.setMarker();
@@ -93,11 +94,11 @@ public class TestMarkerFileFilter
         result = filter.filter(artifacts,log);
         assertEquals(2,result.size());
         assertTrue(handler.clearMarker());
-        outputFolder.delete();
+        DependencyTestUtils.removeDirectory(outputFolder);
         assertFalse(outputFolder.exists()); 
     }
     
-    public void testMarkerRelease () throws MojoExecutionException
+    public void testMarkerRelease () throws MojoExecutionException, IOException
     {
         DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler(fact.getReleaseArtifact(),outputFolder);
         handler.setMarker();
@@ -111,7 +112,7 @@ public class TestMarkerFileFilter
         assertEquals(2,result.size());
      
         assertTrue(handler.clearMarker());
-        outputFolder.delete();
+        DependencyTestUtils.removeDirectory(outputFolder);
         assertFalse(outputFolder.exists()); 
     }
     
@@ -139,7 +140,7 @@ public class TestMarkerFileFilter
         assertFalse(handler.isMarkerSet());
         snap.getFile().delete();
         release.getFile().delete();
-        outputFolder.delete();
+        DependencyTestUtils.removeDirectory(outputFolder);
         assertFalse(outputFolder.exists());    
     }
     
