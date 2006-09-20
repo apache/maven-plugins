@@ -222,15 +222,30 @@ public class ModuleSetAssemblyPhase
             return;
         }
 
-        List fileSets = sources.getFileSets();
+        List fileSets = new ArrayList();
 
-        if ( fileSets == null || fileSets.isEmpty() )
+        if ( isDeprecatedModuleSourcesConfigPresent( sources ) )
+        {
+            FileSet fs = new FileSet();
+            fs.setOutputDirectory( sources.getOutputDirectory() );
+            fs.setIncludes( sources.getIncludes() );
+            fs.setExcludes( sources.getExcludes() );
+            fs.setUseDefaultExcludes( sources.isUseDefaultExcludes() );
+
+            fileSets.add( fs );
+        }
+
+        List subFileSets = sources.getFileSets();
+
+        if ( subFileSets == null || subFileSets.isEmpty() )
         {
             FileSet fs = new FileSet();
             fs.setDirectory( "src" );
 
-            fileSets = Collections.singletonList( fs );
+            subFileSets = Collections.singletonList( fs );
         }
+
+        fileSets.addAll( subFileSets );
 
         for ( Iterator j = moduleProjects.iterator(); j.hasNext(); )
         {
@@ -252,6 +267,43 @@ public class ModuleSetAssemblyPhase
                 task.execute( archiver, configSource );
             }
         }
+    }
+
+    /**
+     * Determine whether the deprecated file-set configuration directly within the ModuleSources object is present.
+     */
+    protected boolean isDeprecatedModuleSourcesConfigPresent( ModuleSources sources )
+    {
+        boolean result = false;
+
+        if ( sources.getOutputDirectory() != null )
+        {
+            result = true;
+        }
+        else if ( sources.getIncludes() != null && !sources.getIncludes().isEmpty() )
+        {
+            result = true;
+        }
+        else if ( sources.getExcludes() != null && !sources.getExcludes().isEmpty() )
+        {
+            result = true;
+        }
+
+        if ( result )
+        {
+            getLogger().warn(
+                              "[DEPRECATION] Use of <moduleSources/> as a file-set is deprecated. "
+                                              + "Please use the <fileSets/> sub-element of <moduleSources/> instead." );
+        }
+        else if ( !sources.isUseDefaultExcludes() )
+        {
+            getLogger().warn(
+                              "[DEPRECATION] Use of directoryMode, fileMode, or useDefaultExcludes "
+                                              + "elements directly within <moduleSources/> are all deprecated. "
+                                              + "Please use the <fileSets/> sub-element of <moduleSources/> instead." );
+        }
+
+        return result;
     }
 
     protected FileSet createFileSet( FileSet fileSet, ModuleSources sources, MavenProject moduleProject )
@@ -279,28 +331,28 @@ public class ModuleSetAssemblyPhase
 
         fs.setDirectory( sourcePath );
         fs.setDirectoryMode( fileSet.getDirectoryMode() );
-        
+
         List excludes = new ArrayList();
-        
+
         List originalExcludes = fileSet.getExcludes();
         if ( originalExcludes != null && !originalExcludes.isEmpty() )
         {
             excludes.addAll( originalExcludes );
         }
-        
+
         if ( sources.isExcludeSubModuleDirectories() )
         {
             List modules = moduleProject.getModules();
             for ( Iterator moduleIterator = modules.iterator(); moduleIterator.hasNext(); )
             {
                 String moduleSubPath = ( String ) moduleIterator.next();
-                
+
                 excludes.add( moduleSubPath + "/**" );
             }
         }
-        
+
         fs.setExcludes( excludes );
-        
+
         fs.setFileMode( fileSet.getFileMode() );
         fs.setIncludes( fileSet.getIncludes() );
         fs.setLineEnding( fileSet.getLineEnding() );
@@ -319,7 +371,7 @@ public class ModuleSetAssemblyPhase
         }
 
         String destPath = fileSet.getOutputDirectory();
-        
+
         if ( destPath == null )
         {
             destPath = destPathPrefix;
@@ -329,8 +381,7 @@ public class ModuleSetAssemblyPhase
             destPath = destPathPrefix + destPath;
         }
 
-        destPath =
-            AssemblyFormatUtils.getOutputDirectory( destPath, moduleProject, "" );
+        destPath = AssemblyFormatUtils.getOutputDirectory( destPath, moduleProject, "" );
 
         fs.setOutputDirectory( destPath );
 

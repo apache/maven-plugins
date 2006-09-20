@@ -119,6 +119,7 @@ public class AddFileSetsTask
 
             task.setDirectoryMode( Integer.parseInt( fileSet.getDirectoryMode(), 8 ) );
             task.setFileMode( Integer.parseInt( fileSet.getFileMode(), 8 ) );
+            task.setUseDefaultExcludes( fileSet.isUseDefaultExcludes() );
             task.setExcludes( fileSet.getExcludes() );
             task.setIncludes( fileSet.getIncludes() );
             task.setOutputDirectory( destDirectory );

@@ -1,0 +1,12 @@
+<assembly>
+  <id>src</id>
+  <formats>
+    <format>dir</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <fileSets>
+    <fileSet>
+      <directory>src</directory>
+    </fileSet>
+  </fileSets>
+</assembly>
