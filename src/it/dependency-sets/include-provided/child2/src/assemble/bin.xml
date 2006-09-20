@@ -1,0 +1,15 @@
+<assembly>
+  <id>bin</id>
+  <formats>
+    <format>jar</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <dependencySets>
+    <dependencySet>
+      <unpack>false</unpack>
+      <outputDirectory>lib</outputDirectory>
+      <outputFileNameMapping>${artifactId}.${extension}</outputFileNameMapping>
+      <scope>provided</scope>
+    </dependencySet>
+  </dependencySets>
+</assembly>
