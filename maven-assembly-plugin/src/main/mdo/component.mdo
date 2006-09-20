@@ -50,11 +50,11 @@
     <class rootElement="true" xml.tagName="component">
       <name>Component</name>
       <description>Describes the component layout and packaging.</description>
-      <version>1.0.0</version>
+      <version>1.0.0+</version>
       <fields>
         <field>
           <name>fileSets</name>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <association>
             <type>FileSet</type>
             <multiplicity>*</multiplicity>
@@ -69,7 +69,7 @@
         </field>
         <field>
           <name>files</name>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <association>
             <type>FileItem</type>
             <multiplicity>*</multiplicity>
@@ -84,7 +84,7 @@
         </field>
         <field>
           <name>dependencySets</name>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <association>
             <type>DependencySet</type>
             <multiplicity>*</multiplicity>
@@ -99,7 +99,7 @@
         </field>
         <field>
           <name>repositories</name>
-          <version>1.0.0</version>
+          <version>1.1.0</version>
           <association>
             <type>Repository</type>
             <multiplicity>*</multiplicity>
@@ -117,11 +117,22 @@
 
     <class>
       <name>SetBase</name>
-      <version>1.0.0</version>
+      <version>1.0.0+</version>
       <fields>
         <field>
+          <name>useDefaultExcludes</name>
+          <version>1.1.0</version>
+          <type>boolean</type>
+          <defaultValue>true</defaultValue>
+          <description>
+            Whether standard exclusion patterns, such as those matching CVS and Subversion
+            metadata files, should be used when calculating the files affected by this set.
+            For backward compatibility, the default value is true.
+          </description>
+        </field>
+        <field>
           <name>outputDirectory</name>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <description>
             Sets the output directory relative to the root
@@ -131,7 +142,7 @@
         </field>
         <field>
           <name>includes</name>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <association>
             <type>String</type>
             <multiplicity>*</multiplicity>
@@ -146,7 +157,7 @@
         </field>
         <field>
           <name>excludes</name>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <association>
             <type>String</type>
             <multiplicity>*</multiplicity>
@@ -161,7 +172,7 @@
         </field>
         <field>
           <name>fileMode</name>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <defaultValue>0644</defaultValue>
           <description>
@@ -176,7 +187,7 @@
         </field>
         <field>
           <name>directoryMode</name>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <defaultValue>0755</defaultValue>
           <description>
@@ -193,7 +204,7 @@
     </class>
     <class>
       <name>FileSet</name>
-      <version>1.0.0</version>
+      <version>1.0.0+</version>
       <superClass>SetBase</superClass>
       <description>
         A fileSet allows the inclusion of groups of files into the assembly.
@@ -201,7 +212,7 @@
       <fields>
         <field>
           <name>directory</name>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <description>
             Sets the absolute or relative location from the module's
@@ -212,7 +223,7 @@
         </field>
         <field>
           <name>lineEnding</name>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <description>
             <![CDATA[
@@ -232,7 +243,7 @@
     </class>
     <class>
       <name>FileItem</name>
-      <version>1.0.0</version>
+      <version>1.0.0+</version>
       <description>
         A file allows individual file inclusion with the option to change
         the destination filename not supported by fileSets.
@@ -240,7 +251,7 @@
       <fields>
         <field>
           <name>source</name>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <required>true</required>
           <description>
@@ -250,7 +261,7 @@
         </field>
         <field>
           <name>outputDirectory</name>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <required>false</required>
           <description>
@@ -261,7 +272,7 @@
         </field>
         <field>
           <name>destName</name>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <description>
             Sets the destination filename in the outputDirectory.
@@ -270,7 +281,7 @@
         </field>
         <field>
           <name>fileMode</name>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <defaultValue>0644</defaultValue>
           <description>
@@ -285,7 +296,7 @@
         </field>
         <field>
           <name>lineEnding</name>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <description>
             <![CDATA[
@@ -303,7 +314,7 @@
         </field>
         <field>
           <name>filtered</name>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>boolean</type>
           <description>
             Sets whether to determine if the file is filtered.
@@ -314,7 +325,7 @@
 
     <class>
       <name>DependencySet</name>
-      <version>1.0.0</version>
+      <version>1.0.0+</version>
       <superClass>SetBase</superClass>
       <description>
         A dependencySet allows inclusion and exclusion of project dependencies
@@ -323,7 +334,7 @@
       <fields>
         <field>
           <name>outputFileNameMapping</name>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <defaultValue>${artifactId}-${version}.${extension}</defaultValue>
           <description>
@@ -344,7 +355,7 @@
         </field>
         <field>
           <name>scope</name>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <defaultValue>runtime</defaultValue>
           <required>true</required>
@@ -358,13 +369,13 @@
 
     <class>
       <name>Repository</name>
-      <version>1.0.0</version>
+      <version>1.1.0</version>
       <superClass>SetBase</superClass>
       <description>Defines a Maven repository to be included in the assembly.</description>
       <fields>
         <field>
           <name>includeMetadata</name>
-          <version>1.0.0</version>
+          <version>1.1.0</version>
           <type>boolean</type>
           <defaultValue>false</defaultValue>
           <description>
@@ -375,7 +386,7 @@
         </field>
         <field>
           <name>groupVersionAlignments</name>
-          <version>1.0.0</version>
+          <version>1.1.0</version>
           <description>Align a group to a version or an individual artifact.</description>
           <association>
             <type>GroupVersionAlignment</type>
@@ -384,7 +395,7 @@
         </field>
         <field>
           <name>scope</name>
-          <version>1.0.0</version>              
+          <version>1.1.0</version>              
           <type>String</type>
           <defaultValue>runtime</defaultValue>
           <required>true</required>
@@ -397,24 +408,24 @@
     </class>
     <class>
       <name>GroupVersionAlignment</name>
-      <version>1.0.0</version>
+      <version>1.1.0</version>
       <description>Defines a Maven repository to be included in the assembly.</description>
       <fields>
         <field>
           <name>id</name>
-          <version>1.0.0</version>
+          <version>1.1.0</version>
           <type>String</type>
           <description>The groupId for which you want to align the versions.</description>
         </field>
         <field>
           <name>version</name>
-          <version>1.0.0</version>
+          <version>1.1.0</version>
           <type>String</type>
           <description>The version you want to align this group to.</description>
         </field>
         <field>
           <name>excludes</name>
-          <version>1.0.0</version>
+          <version>1.1.0</version>
           <description>Artifact Ids of the artifacts you want excluded from version alignment.</description>
           <association>
             <type>String</type>

@@ -8,6 +8,7 @@ import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.util.FileUtils;
 
 public class AddDirectoryTask
     implements ArchiverTask
@@ -17,6 +18,7 @@ public class AddDirectoryTask
     private List includes;
     private List excludes;
     private String outputDirectory;
+    private boolean useDefaultExcludes = true;
     private int directoryMode = -1;
     private int fileMode = -1;
 
@@ -53,6 +55,11 @@ public class AddDirectoryTask
                 else
                 {
                     directoryExcludes = new ArrayList();
+                }
+                
+                if ( useDefaultExcludes )
+                {
+                    directoryExcludes.addAll( FileUtils.getDefaultExcludesAsList() );
                 }
 
                 try
@@ -104,6 +111,11 @@ public class AddDirectoryTask
     public void setFileMode( int fileMode )
     {
         this.fileMode = fileMode;
+    }
+
+    public void setUseDefaultExcludes( boolean useDefaultExcludes )
+    {
+        this.useDefaultExcludes = useDefaultExcludes;
     }
 
 }
