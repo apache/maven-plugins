@@ -76,6 +76,7 @@ public class RepositoryAssemblyPhase
             
             task.setDirectoryMode( Integer.parseInt( repository.getDirectoryMode(), 8 ) );
             task.setFileMode( Integer.parseInt( repository.getFileMode(), 8 ) );
+            task.setUseDefaultExcludes( repository.isUseDefaultExcludes() );
             task.setOutputDirectory( outputDirectory );
             
             task.execute( archiver, configSource );

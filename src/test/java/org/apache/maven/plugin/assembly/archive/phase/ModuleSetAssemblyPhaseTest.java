@@ -47,6 +47,56 @@ public class ModuleSetAssemblyPhaseTest
     {
         fileManager.cleanUp();
     }
+    
+    public void testIsDeprecatedModuleSourcesConfigPresent_ShouldCatchOutputDir()
+    {
+        ModuleSources sources = new ModuleSources();
+        sources.setOutputDirectory( "outdir" );
+       
+        ModuleSetAssemblyPhase phase = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null );
+        
+        assertTrue( phase.isDeprecatedModuleSourcesConfigPresent( sources ) );
+    }
+
+    public void testIsDeprecatedModuleSourcesConfigPresent_ShouldCatchInclude()
+    {
+        ModuleSources sources = new ModuleSources();
+        sources.addInclude( "**/included.txt" );
+       
+        ModuleSetAssemblyPhase phase = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null );
+        
+        assertTrue( phase.isDeprecatedModuleSourcesConfigPresent( sources ) );
+    }
+
+    public void testIsDeprecatedModuleSourcesConfigPresent_ShouldCatchExclude()
+    {
+        ModuleSources sources = new ModuleSources();
+        sources.addExclude( "**/excluded.txt" );
+       
+        ModuleSetAssemblyPhase phase = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null );
+        
+        assertTrue( phase.isDeprecatedModuleSourcesConfigPresent( sources ) );
+    }
+
+    public void testIsDeprecatedModuleSourcesConfigPresent_ShouldNotCatchFileMode()
+    {
+        ModuleSources sources = new ModuleSources();
+        sources.setFileMode( "777" );
+       
+        ModuleSetAssemblyPhase phase = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null );
+        
+        assertFalse( phase.isDeprecatedModuleSourcesConfigPresent( sources ) );
+    }
+
+    public void testIsDeprecatedModuleSourcesConfigPresent_ShouldNotCatchDirMode()
+    {
+        ModuleSources sources = new ModuleSources();
+        sources.setDirectoryMode( "777" );
+       
+        ModuleSetAssemblyPhase phase = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null );
+        
+        assertFalse( phase.isDeprecatedModuleSourcesConfigPresent( sources ) );
+    }
 
     public void testCreateFileSet_ShouldUseModuleDirOnlyWhenOutDirIsNull()
         throws AssemblyFormattingException
