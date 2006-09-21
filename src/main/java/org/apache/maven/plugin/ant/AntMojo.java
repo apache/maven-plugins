@@ -1,7 +1,7 @@
 package org.apache.maven.plugin.ant;
 
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * A Maven2 plugin to generate an Ant build file.
+ * Generate an Ant build file.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
@@ -52,6 +52,9 @@ public class AntMojo
      */
     private ArtifactRepository localRepository;
 
+    /**
+     * @see org.apache.maven.plugin.Mojo#execute()
+     */
     public void execute()
         throws MojoExecutionException
     {
