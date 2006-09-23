@@ -3,13 +3,13 @@
     <plugins>
       <plugin>
         <artifactId>maven-install-plugin</artifactId>
-		<configuration>
-		  <pomFile>${basedir}/src/test/resources/unit/basic-install-test-packaging-pom/plugin-config.xml</pomFile>
-		  <packaging>pom</packaging>
-		  <artifact implementation="org.apache.maven.plugin.install.stubs.InstallArtifactStub" />
-		  <attachedArtifacts />
+        <configuration>
+          <pomFile>${basedir}/src/test/resources/unit/basic-install-test-packaging-pom/plugin-config.xml</pomFile>
+          <packaging>pom</packaging>
+          <artifact implementation="org.apache.maven.plugin.install.stubs.InstallArtifactStub"/>
+          <attachedArtifacts/>
           <localRepository>${localRepository}</localRepository>
-		</configuration>
+        </configuration>
       </plugin>
     </plugins>
   </build>

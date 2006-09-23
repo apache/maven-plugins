@@ -32,7 +32,7 @@
 
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
-	  <item name="Goals" href="plugin-info.html" />
+      <item name="Goals" href="plugin-info.html"/>
       <item name="Usage" href="usage.html"/>
       <item name="FAQ" href="faq.html"/>
     </menu>
@@ -43,7 +43,7 @@
       <item name="Installing Checksums" href="examples/installing-checksums.html"/>
       <item name="Updating Release Info" href="examples/update-release-info.html"/>
     </menu>
-    
+
     ${reports}
   </body>
 </project>

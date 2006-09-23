@@ -25,11 +25,11 @@ public class AttachedArtifactStub0
     {
         return "attached-artifact-test-0";
     }
-    
+
     public File getFile()
     {
-        return new File( System.getProperty( "basedir" ), 
-            "target/test-classes/unit/basic-install-test-with-attached-artifacts/" +
-            "target/maven-install-test-1.0-SNAPSHOT.jar" ); 
+        return new File( System.getProperty( "basedir" ),
+                         "target/test-classes/unit/basic-install-test-with-attached-artifacts/" +
+                             "target/maven-install-test-1.0-SNAPSHOT.jar" );
     }
 }

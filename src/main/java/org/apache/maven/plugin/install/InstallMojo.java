@@ -104,14 +104,15 @@ public class InstallMojo
                 {
                     installer.install( file, artifact, localRepository );
 
-                    if( createChecksum )
+                    if ( createChecksum )
                     {
                         //create checksums for pom and artifact
                         File pom = new File( localRepository.getBasedir(),
-                                             localRepository.pathOfLocalRepositoryMetadata( metadata, localRepository ) );
+                                             localRepository.pathOfLocalRepositoryMetadata( metadata,
+                                                                                            localRepository ) );
 
                         installCheckSum( pom, true );
-                        installCheckSum( file, artifact , false );
+                        installCheckSum( file, artifact, false );
                     }
                 }
                 else if ( !attachedArtifacts.isEmpty() )
@@ -131,7 +132,7 @@ public class InstallMojo
 
                 installer.install( attached.getFile(), attached, localRepository );
 
-                if( createChecksum )
+                if ( createChecksum )
                 {
                     installCheckSum( attached.getFile(), attached, false );
                 }
