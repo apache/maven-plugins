@@ -16,13 +16,15 @@ package org.apache.maven.plugin.install;
  * limitations under the License.
  */
 
+import org.apache.maven.archiva.digest.Digester;
+import org.apache.maven.archiva.digest.DigesterException;
+import org.apache.maven.archiva.digest.Md5Digester;
+import org.apache.maven.archiva.digest.Sha1Digester;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.installer.ArtifactInstaller;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.repository.digest.Digester;
-import org.apache.maven.repository.digest.DigesterException;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
@@ -53,25 +55,44 @@ public abstract class AbstractInstallMojo
     protected ArtifactRepository localRepository;
 
     /**
-     * Used to get the checksum of a file.
-     *
-     * @component role="org.apache.maven.repository.digest.Digester"
-     */
-    private Digester digester;
-
-    /**
      * Flag Whether to create checksums(MD5, SHA1) or not.
      *
      * @parameter expression="${createChecksum}" default-value="false"
      */
     protected boolean createChecksum;
 
+    /**
+     * Digester for MD5.
+     */
+    protected Digester md5Digester;
+
+    /**
+     * Digester for SHA-1.
+     */
+    protected Digester sha1Digester;
+
+    /**
+     * Constructor. The digesters are instantiated here.
+     */
+    public AbstractInstallMojo()
+    {
+        try
+        {
+            md5Digester = new Md5Digester();
+            sha1Digester = new Sha1Digester();
+        }
+        catch ( NoSuchAlgorithmException e )
+        {
+            new RuntimeException( e );
+        }
+    }
+
     protected void installCheckSum( File file, boolean isPom )
         throws MojoExecutionException
     {
         installCheckSum( file, null, isPom );
     }
-    
+
     protected void installCheckSum( File file, Artifact artifact, boolean isPom )
         throws MojoExecutionException
     {
@@ -79,10 +100,10 @@ public abstract class AbstractInstallMojo
         {
             getLog().info( "Creating Checksums..." );
 
-            String md5Sum = getChecksum( file, Digester.MD5 );
-            String sha1Sum = getChecksum( file, Digester.SHA1 );
+            String md5Sum = getChecksum( file, "MD5" );
+            String sha1Sum = getChecksum( file, "SHA-1" );
 
-            File temp= File.createTempFile( "maven-md5-checksum", null );
+            File temp = File.createTempFile( "maven-md5-checksum", null );
             temp.deleteOnExit();
             FileUtils.fileWrite( temp.getAbsolutePath(), md5Sum );
 
@@ -92,7 +113,7 @@ public abstract class AbstractInstallMojo
 
             File destination = null;
 
-            if( isPom )
+            if ( isPom )
             {
                 destination = file;
             }
@@ -112,15 +133,15 @@ public abstract class AbstractInstallMojo
             FileUtils.copyFile( temp, new File( destination + ".md5" ) );
             FileUtils.copyFile( tempSha1, new File( destination + ".sha1" ) );
         }
-        catch( IOException e )
+        catch ( IOException e )
         {
             throw new MojoExecutionException( "Error creating checksum", e );
         }
-        catch( NoSuchAlgorithmException e )
+        catch ( NoSuchAlgorithmException e )
         {
             throw new MojoExecutionException( "Error in algorithm", e );
         }
-        catch( DigesterException e )
+        catch ( DigesterException e )
         {
             throw new MojoExecutionException( e.getMessage(), e );
         }
@@ -129,6 +150,17 @@ public abstract class AbstractInstallMojo
     protected String getChecksum( File file, String algo )
         throws NoSuchAlgorithmException, IOException, DigesterException
     {
-        return digester.createChecksum( file, algo );
+        if ( "MD5".equals( algo ) )
+        {
+            return md5Digester.calc( file );
+        }
+        else if ( "SHA-1".equals( algo ) )
+        {
+            return sha1Digester.calc( file );
+        }
+        else
+        {
+            throw new NoSuchAlgorithmException( "No support for algorithm " + algo + "." );
+        }
     }
 }
