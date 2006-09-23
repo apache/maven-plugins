@@ -18,9 +18,9 @@ package org.apache.maven.plugin.install.stubs;
 
 public class AttachedArtifactStub1
     extends AttachedArtifactStub0
-{   
+{
     public String getArtifactId()
     {
         return "attached-artifact-test-1";
-    }    
+    }
 }

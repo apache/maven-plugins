@@ -3,15 +3,17 @@
     <plugins>
       <plugin>
         <artifactId>maven-install-plugin</artifactId>
-		<configuration>
-		  <groupId>org.apache.maven.test</groupId>
-		  <artifactId>maven-install-file-test</artifactId>
-		  <version>1.0-SNAPSHOT</version>
-		  <packaging>jar</packaging>
-		  <file>${basedir}/src/test/resources/unit/install-file-with-pomFile-test/target/maven-install-test-1.0-SNAPSHOT.jar</file>
-		  <pomFile>${basedir}/src/test/resources/unit/install-file-with-pomFile-test/plugin-config.xml</pomFile>
-		  <localRepository>${localRepository}</localRepository>
-		</configuration>
+        <configuration>
+          <groupId>org.apache.maven.test</groupId>
+          <artifactId>maven-install-file-test</artifactId>
+          <version>1.0-SNAPSHOT</version>
+          <packaging>jar</packaging>
+          <file>
+            ${basedir}/src/test/resources/unit/install-file-with-pomFile-test/target/maven-install-test-1.0-SNAPSHOT.jar
+          </file>
+          <pomFile>${basedir}/src/test/resources/unit/install-file-with-pomFile-test/plugin-config.xml</pomFile>
+          <localRepository>${localRepository}</localRepository>
+        </configuration>
       </plugin>
     </plugins>
   </build>
