@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
@@ -29,6 +28,7 @@ import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Repository;
+import org.apache.maven.model.Resource;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.codehaus.plexus.PlexusTestCase;
@@ -47,13 +47,14 @@ public class AntTestMavenProjectStub
      */
     public AntTestMavenProjectStub()
     {
+        File antTestDir = new File( PlexusTestCase.getBasedir() + "/src/test/resources/unit/ant-test/" );
+
         MavenXpp3Reader pomReader = new MavenXpp3Reader();
         Model model = null;
 
         try
         {
-            model = pomReader.read( new FileReader( new File( PlexusTestCase.getBasedir()
-                + "/src/test/resources/unit/ant-test/ant-test-plugin-config.xml" ) ) );
+            model = pomReader.read( new FileReader( new File( antTestDir, "ant-test-plugin-config.xml" ) ) );
             setModel( model );
         }
         catch ( Exception e )
@@ -69,10 +70,22 @@ public class AntTestMavenProjectStub
         setPackaging( model.getPackaging() );
 
         build = new Build();
+        Resource resource = new Resource();
+
         build.setFinalName( model.getArtifactId() );
         build.setDirectory( getBasedir().getAbsolutePath() + "/target" );
+
+        build.setSourceDirectory( antTestDir + "/src/main/java" );
+        resource.setDirectory( antTestDir + "/src/main/resources" );
+        build.setResources( Collections.singletonList( resource ) );
         build.setOutputDirectory( getBasedir().getAbsolutePath() + "/target/classes" );
+
+        build.setTestSourceDirectory( antTestDir + "/src/test/java" );
+        resource = new Resource();
+        resource.setDirectory( antTestDir + "/src/test/resources" );
+        build.setTestResources( Collections.singletonList( resource ) );
         build.setTestOutputDirectory( getBasedir().getAbsolutePath() + "/target/test-classes" );
+
         setBuild( build );
     }
 
@@ -118,16 +131,29 @@ public class AntTestMavenProjectStub
     }
 
     /**
-     * @see org.apache.maven.project.MavenProject#getArtifacts()
+     * @see org.apache.maven.project.MavenProject#getCompileArtifacts()
      */
-    public Set getArtifacts()
+    public List getCompileArtifacts()
     {
         Artifact junit = new DefaultArtifact( "junit", "junit", VersionRange.createFromVersion( "3.8.1" ),
                                               Artifact.SCOPE_TEST, "jar", null, new DefaultArtifactHandler( "jar" ),
                                               false );
         junit.setFile( new File( "junit/junit/3.8.1/junit-3.8.1.jar" ) );
 
-        return Collections.singleton( junit );
+        return Collections.singletonList( junit );
+    }
+
+    /**
+     * @see org.apache.maven.project.MavenProject#getTestArtifacts()
+     */
+    public List getTestArtifacts()
+    {
+        Artifact junit = new DefaultArtifact( "junit", "junit", VersionRange.createFromVersion( "3.8.1" ),
+                                              Artifact.SCOPE_TEST, "jar", null, new DefaultArtifactHandler( "jar" ),
+                                              false );
+        junit.setFile( new File( "junit/junit/3.8.1/junit-3.8.1.jar" ) );
+
+        return Collections.singletonList( junit );
     }
 
     /**
