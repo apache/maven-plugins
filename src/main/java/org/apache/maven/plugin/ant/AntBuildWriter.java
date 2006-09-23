@@ -17,6 +17,7 @@ package org.apache.maven.plugin.ant;
  */
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -26,11 +27,13 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Properties;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Repository;
 import org.apache.maven.model.Resource;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.Settings;
 import org.apache.maven.wagon.PathUtils;
 import org.apache.tools.ant.Main;
 import org.codehaus.plexus.util.IOUtil;
@@ -50,20 +53,35 @@ public class AntBuildWriter
     /**
      * The default line indenter
      */
-    protected final static int DEFAULT_INDENTATION_SIZE = 2;
+    protected static final int DEFAULT_INDENTATION_SIZE = 2;
+
+    /**
+     * The default build file name (build.xml)
+     * @see Main#DEFAULT_BUILD_FILENAME
+     */
+    protected static final String DEFAULT_BUILD_FILENAME = Main.DEFAULT_BUILD_FILENAME;
+
+    /**
+     * The default build properties file name
+     */
+    protected static final String DEFAULT_PROPERTIES_FILENAME = "build.properties";
 
     private MavenProject project;
 
     private File localRepository;
 
+    private Settings settings;
+
     /**
      * @param project
      * @param localRepository
+     * @param settings
      */
-    public AntBuildWriter( MavenProject project, File localRepository )
+    public AntBuildWriter( MavenProject project, File localRepository, Settings settings )
     {
         this.project = project;
         this.localRepository = localRepository;
+        this.settings = settings;
     }
 
     // ----------------------------------------------------------------------
@@ -74,7 +92,7 @@ public class AntBuildWriter
         throws IOException
     {
         // TODO: parameter
-        FileWriter w = new FileWriter( new File( project.getBasedir(), Main.DEFAULT_BUILD_FILENAME ) );
+        FileWriter w = new FileWriter( new File( project.getBasedir(), DEFAULT_BUILD_FILENAME ) );
 
         XMLWriter writer = new PrettyPrintXMLWriter( w, StringUtils.repeat( " ", DEFAULT_INDENTATION_SIZE ), "UTF-8",
                                                      null );
@@ -122,12 +140,6 @@ public class AntBuildWriter
         writeCompileTarget( writer, compileSourceRoots );
 
         // ----------------------------------------------------------------------
-        // <target name="jar" />
-        // ----------------------------------------------------------------------
-        // TODO: what if type is not JAR?
-        writeJarTarget( writer );
-
-        // ----------------------------------------------------------------------
         // <target name="compile-tests" />
         // ----------------------------------------------------------------------
 
@@ -141,6 +153,12 @@ public class AntBuildWriter
         writeTestTargets( writer, testCompileSourceRoots );
 
         // ----------------------------------------------------------------------
+        // <target name="jar" />
+        // ----------------------------------------------------------------------
+        // TODO: what if type is not JAR?
+        writeJarTarget( writer );
+
+        // ----------------------------------------------------------------------
         // <target name="get-deps" />
         // ----------------------------------------------------------------------
         writeGetDepsTarget( writer );
@@ -148,6 +166,280 @@ public class AntBuildWriter
         writer.endElement(); // project
 
         IOUtil.close( w );
+    }
+
+    protected void writeBuildProperties()
+        throws IOException
+    {
+        FileOutputStream os = new FileOutputStream( new File( project.getBasedir(), DEFAULT_PROPERTIES_FILENAME ) );
+        Properties properties = new Properties();
+
+        // ----------------------------------------------------------------------
+        // Build properties
+        // ----------------------------------------------------------------------
+
+        addProperty( properties, "maven.build.finalName", PathUtils.toRelative( project.getBasedir(), project
+            .getBuild().getFinalName() ) );
+
+        // target
+        addProperty( properties, "maven.build.dir", PathUtils.toRelative( project.getBasedir(), project.getBuild()
+            .getDirectory() ) );
+
+        // ${maven.build.dir}/classes
+        addProperty( properties, "maven.build.outputDir", "${maven.build.dir}/"
+            + PathUtils.toRelative( new File( project.getBasedir(), properties.getProperty( "maven.build.dir" ) ),
+                                    project.getBuild().getOutputDirectory() ) );
+        // src/main/java
+        if ( !project.getCompileSourceRoots().isEmpty() )
+        {
+            String[] compileSourceRoots = (String[]) project.getCompileSourceRoots().toArray( new String[0] );
+            for ( int i = 0; i < compileSourceRoots.length; i++ )
+            {
+                addProperty( properties, "maven.build.srcDir." + i, PathUtils.toRelative( project.getBasedir(),
+                                                                                          compileSourceRoots[i] ) );
+            }
+        }
+        // src/main/resources
+        if ( project.getBuild().getResources() != null )
+        {
+            Resource[] array = (Resource[]) project.getBuild().getResources().toArray( new Resource[0] );
+            for ( int i = 0; i < array.length; i++ )
+            {
+                addProperty( properties, "maven.build.resourceDir." + i, PathUtils.toRelative( project.getBasedir(),
+                                                                                               array[i].getDirectory() ) );
+            }
+        }
+
+        // ${maven.build.dir}/test-classes
+        addProperty( properties, "maven.build.testOutputDir", "${maven.build.dir}/"
+            + PathUtils.toRelative( new File( project.getBasedir(), properties.getProperty( "maven.build.dir" ) ),
+                                    project.getBuild().getTestOutputDirectory() ) );
+        // src/test/java
+        if ( !project.getTestCompileSourceRoots().isEmpty() )
+        {
+            String[] compileSourceRoots = (String[]) project.getTestCompileSourceRoots().toArray( new String[0] );
+            for ( int i = 0; i < compileSourceRoots.length; i++ )
+            {
+                addProperty( properties, "maven.build.testDir." + i, PathUtils.toRelative( project.getBasedir(),
+                                                                                           compileSourceRoots[i] ) );
+            }
+        }
+        // src/test/resources
+        if ( project.getBuild().getTestResources() != null )
+        {
+            Resource[] array = (Resource[]) project.getBuild().getTestResources().toArray( new Resource[0] );
+            for ( int i = 0; i < array.length; i++ )
+            {
+                addProperty( properties, "maven.build.testResourceDir." + i, PathUtils
+                    .toRelative( project.getBasedir(), array[i].getDirectory() ) );
+            }
+        }
+
+        // ----------------------------------------------------------------------
+        // Settings properties
+        // ----------------------------------------------------------------------
+
+        addProperty( properties, "maven.settings.offline", String.valueOf( settings.isOffline() ) );
+        addProperty( properties, "maven.settings.interactiveMode", String.valueOf( settings.isInteractiveMode() ) );
+        addProperty( properties, "maven.repo.local", localRepository.getAbsolutePath() );
+
+        properties.store( os, "Generated by Maven Ant Plugin" );
+    }
+
+    private void writeProperties( XMLWriter writer )
+    {
+        // TODO: optional in m1
+        // TODO: USD properties
+        AntBuildWriterUtil.writeCommentText( writer, "Build environnement properties", 1 );
+
+        // ----------------------------------------------------------------------
+        // File properties to override local properties
+        // ----------------------------------------------------------------------
+
+        writer.startElement( "property" );
+        writer.addAttribute( "file", "${user.home}/.m2/maven.properties" );
+        writer.endElement(); // property
+
+        writer.startElement( "property" );
+        writer.addAttribute( "file", "build.properties" );
+        writer.endElement(); // property
+
+        // ----------------------------------------------------------------------
+        // Build properties
+        // ----------------------------------------------------------------------
+
+        AntBuildWriterUtil.writeLineBreak( writer, 2, 1 );
+
+        writer.startElement( "property" );
+        writer.addAttribute( "name", "maven.build.finalName" );
+        writer.addAttribute( "value", project.getBuild().getFinalName() );
+        writer.endElement(); // property
+
+        writer.startElement( "property" );
+        writer.addAttribute( "name", "maven.build.dir" );
+        writer.addAttribute( "value", PathUtils.toRelative( project.getBasedir(), project.getBuild().getDirectory() ) );
+        writer.endElement(); // property
+
+        writer.startElement( "property" );
+        writer.addAttribute( "name", "maven.build.outputDir" );
+        writer.addAttribute( "value", "${maven.build.dir}/"
+            + PathUtils.toRelative( new File( project.getBuild().getDirectory() ), project.getBuild()
+                .getOutputDirectory() ) );
+        writer.endElement(); // property
+
+        if ( !project.getCompileSourceRoots().isEmpty() )
+        {
+            String[] compileSourceRoots = (String[]) project.getCompileSourceRoots().toArray( new String[0] );
+            for ( int i = 0; i < compileSourceRoots.length; i++ )
+            {
+                writer.startElement( "property" );
+                writer.addAttribute( "name", "maven.build.srcDir." + i );
+                writer.addAttribute( "value", PathUtils.toRelative( project.getBasedir(), compileSourceRoots[i] ) );
+                writer.endElement(); // property
+            }
+        }
+
+        if ( project.getBuild().getResources() != null )
+        {
+            Resource[] array = (Resource[]) project.getBuild().getResources().toArray( new Resource[0] );
+            for ( int i = 0; i < array.length; i++ )
+            {
+                writer.startElement( "property" );
+                writer.addAttribute( "name", "maven.build.resourceDir." + i );
+                writer.addAttribute( "value", PathUtils.toRelative( project.getBasedir(), array[i].getDirectory() ) );
+                writer.endElement(); // property
+            }
+        }
+
+        writer.startElement( "property" );
+        writer.addAttribute( "name", "maven.build.testOutputDir" );
+        writer.addAttribute( "value", "${maven.build.dir}/"
+            + PathUtils.toRelative( new File( project.getBuild().getDirectory() ), project.getBuild()
+                .getTestOutputDirectory() ) );
+        writer.endElement(); // property
+
+        if ( !project.getTestCompileSourceRoots().isEmpty() )
+        {
+            String[] compileSourceRoots = (String[]) project.getTestCompileSourceRoots().toArray( new String[0] );
+            for ( int i = 0; i < compileSourceRoots.length; i++ )
+            {
+                writer.startElement( "property" );
+                writer.addAttribute( "name", "maven.build.testDir." + i );
+                writer.addAttribute( "value", PathUtils.toRelative( project.getBasedir(), compileSourceRoots[i] ) );
+                writer.endElement(); // property
+            }
+        }
+
+        if ( project.getBuild().getResources() != null )
+        {
+            Resource[] array = (Resource[]) project.getBuild().getResources().toArray( new Resource[0] );
+            for ( int i = 0; i < array.length; i++ )
+            {
+                writer.startElement( "property" );
+                writer.addAttribute( "name", "maven.build.testResourceDir." + i );
+                writer.addAttribute( "value", PathUtils.toRelative( project.getBasedir(), array[i].getDirectory() ) );
+                writer.endElement(); // property
+            }
+        }
+
+        writer.startElement( "property" );
+        writer.addAttribute( "name", "maven.test.reports" );
+        writer.addAttribute( "value", "${maven.build.dir}/test-reports" );
+        writer.endElement(); // property
+
+        // ----------------------------------------------------------------------
+        // Setting properties
+        // ----------------------------------------------------------------------
+
+        AntBuildWriterUtil.writeLineBreak( writer, 2, 1 );
+
+        writer.startElement( "property" );
+        writer.addAttribute( "name", "maven.repo.local" );
+        writer.addAttribute( "value", localRepository.getAbsolutePath() );
+        writer.endElement(); // property
+
+        writer.startElement( "property" );
+        writer.addAttribute( "name", "maven.settings.offline" );
+        writer.addAttribute( "value", String.valueOf( settings.isOffline() ) );
+        writer.endElement(); // property
+
+        writer.startElement( "property" );
+        writer.addAttribute( "name", "maven.settings.interactiveMode" );
+        writer.addAttribute( "value", String.valueOf( settings.isInteractiveMode() ) );
+        writer.endElement(); // property
+
+        AntBuildWriterUtil.writeLineBreak( writer );
+    }
+
+    private void writeBuildPathDefinition( XMLWriter writer )
+    {
+        AntBuildWriterUtil.writeCommentText( writer, "Defining classpaths", 1 );
+
+        writer.startElement( "path" );
+        writer.addAttribute( "id", "build.classpath" );
+        writer.startElement( "fileset" );
+        writer.addAttribute( "dir", "${maven.repo.local}" );
+
+        for ( Iterator i = project.getCompileArtifacts().iterator(); i.hasNext(); )
+        {
+            Artifact artifact = (Artifact) i.next();
+            writer.startElement( "include" );
+            writer.addAttribute( "name", PathUtils.toRelative( localRepository, artifact.getFile().getPath() ) );
+            writer.endElement(); // include
+        }
+        writer.endElement(); // fileset
+        writer.endElement(); // path
+
+        writer.startElement( "path" );
+        writer.addAttribute( "id", "build.test.classpath" );
+        writer.startElement( "fileset" );
+        writer.addAttribute( "dir", "${maven.repo.local}" );
+
+        for ( Iterator i = project.getTestArtifacts().iterator(); i.hasNext(); )
+        {
+            Artifact artifact = (Artifact) i.next();
+            writer.startElement( "include" );
+            writer.addAttribute( "name", PathUtils.toRelative( localRepository, artifact.getFile().getPath() ) );
+            writer.endElement(); // include
+        }
+        writer.endElement(); // fileset
+        writer.endElement(); // path
+
+        AntBuildWriterUtil.writeLineBreak( writer );
+    }
+
+    private void writeCleanTarget( XMLWriter writer )
+    {
+        AntBuildWriterUtil.writeCommentText( writer, "Cleaning up target", 1 );
+
+        writer.startElement( "target" );
+        writer.addAttribute( "name", "clean" );
+        writer.addAttribute( "description", "Clean the output directory" );
+
+        writer.startElement( "delete" );
+        writer.addAttribute( "dir", "${maven.build.dir}" );
+        writer.endElement(); // delete
+
+        writer.endElement(); // target
+
+        AntBuildWriterUtil.writeLineBreak( writer );
+    }
+
+    private void writeCompileTarget( XMLWriter writer, List compileSourceRoots )
+    {
+        AntBuildWriterUtil.writeCommentText( writer, "Compilation target", 1 );
+
+        writer.startElement( "target" );
+        writer.addAttribute( "name", "compile" );
+        writer.addAttribute( "depends", "get-deps" );
+        writer.addAttribute( "description", "Compile the code" );
+
+        writeCompileTasks( writer, project.getBasedir(), "${maven.build.outputDir}", compileSourceRoots, project
+            .getBuild().getResources(), null, false );
+
+        writer.endElement(); // target
+
+        AntBuildWriterUtil.writeLineBreak( writer );
     }
 
     private void writeCompileTestsTarget( XMLWriter writer, List testCompileSourceRoots )
@@ -160,8 +452,8 @@ public class AntBuildWriter
         AntBuildWriterUtil.addWrapAttribute( writer, "target", "description", "Compile the test code", 2 );
         AntBuildWriterUtil.addWrapAttribute( writer, "target", "if", "junit.present", 2 );
 
-        writeCompileTasks( writer, project.getBasedir(), "${maven.test.output}", testCompileSourceRoots, project
-            .getBuild().getTestResources(), "${maven.build.output}" );
+        writeCompileTasks( writer, project.getBasedir(), "${maven.build.testOutputDir}", testCompileSourceRoots,
+                           project.getBuild().getTestResources(), "${maven.build.outputDir}", true );
 
         writer.endElement(); // target
 
@@ -207,23 +499,24 @@ public class AntBuildWriter
 
             writer.startElement( "classpath" );
             writer.startElement( "path" );
-            writer.addAttribute( "refid", "build.classpath" );
+            writer.addAttribute( "refid", "build.test.classpath" );
             writer.endElement(); // path
             writer.startElement( "pathelement" );
-            writer.addAttribute( "location", "${maven.build.output}" );
+            writer.addAttribute( "location", "${maven.build.outputDir}" );
             writer.endElement(); // pathelement
             writer.startElement( "pathelement" );
-            writer.addAttribute( "location", "${maven.test.output}" );
+            writer.addAttribute( "location", "${maven.build.testOutputDir}" );
             writer.endElement(); // pathelement
             writer.endElement(); // classpath
 
             writer.startElement( "batchtest" );
             writer.addAttribute( "todir", "${maven.test.reports}" );
-            for ( Iterator i = testCompileSourceRoots.iterator(); i.hasNext(); )
+
+            String[] compileSourceRoots = (String[]) testCompileSourceRoots.toArray( new String[0] );
+            for ( int i = 0; i < compileSourceRoots.length; i++ )
             {
                 writer.startElement( "fileset" );
-                String testSrcDir = (String) i.next();
-                writer.addAttribute( "dir", PathUtils.toRelative( project.getBasedir(), testSrcDir ) );
+                writer.addAttribute( "dir", "${maven.build.testDir." + i + "}" );
                 /* TODO: need to get these from the test plugin somehow?
                  UnitTest unitTest = project.getBuild().getUnitTest();
                  writeIncludesExcludes( writer, unitTest.getIncludes(), unitTest.getExcludes() );
@@ -285,8 +578,8 @@ public class AntBuildWriter
         writer.addAttribute( "description", "Create the JAR" );
 
         writer.startElement( "jar" );
-        writer.addAttribute( "jarfile", "${maven.build.directory}/${maven.build.final.name}.jar" );
-        AntBuildWriterUtil.addWrapAttribute( writer, "jar", "basedir", "${maven.build.output}", 3 );
+        writer.addAttribute( "jarfile", "${maven.build.dir}/${maven.build.finalName}.jar" );
+        AntBuildWriterUtil.addWrapAttribute( writer, "jar", "basedir", "${maven.build.outputDir}", 3 );
         AntBuildWriterUtil.addWrapAttribute( writer, "jar", "excludes", "**/package.html", 3 );
         writer.endElement(); // jar
 
@@ -295,42 +588,9 @@ public class AntBuildWriter
         AntBuildWriterUtil.writeLineBreak( writer );
     }
 
-    private void writeCleanTarget( XMLWriter writer )
-    {
-        AntBuildWriterUtil.writeCommentText( writer, "Cleaning up target", 1 );
-
-        writer.startElement( "target" );
-        writer.addAttribute( "name", "clean" );
-        writer.addAttribute( "description", "Clean the output directory" );
-
-        writer.startElement( "delete" );
-        writer.addAttribute( "dir", "${maven.build.directory}" );
-        writer.endElement(); // delete
-
-        writer.endElement(); // target
-
-        AntBuildWriterUtil.writeLineBreak( writer );
-    }
-
-    private void writeCompileTarget( XMLWriter writer, List compileSourceRoots )
-    {
-        AntBuildWriterUtil.writeCommentText( writer, "Compilation target", 1 );
-
-        writer.startElement( "target" );
-        writer.addAttribute( "name", "compile" );
-        writer.addAttribute( "depends", "get-deps" );
-        writer.addAttribute( "description", "Compile the code" );
-
-        writeCompileTasks( writer, project.getBasedir(), "${maven.build.output}", compileSourceRoots, project
-            .getBuild().getResources(), null );
-
-        writer.endElement(); // target
-
-        AntBuildWriterUtil.writeLineBreak( writer );
-    }
-
     private static void writeCompileTasks( XMLWriter writer, File basedir, String outputDirectory,
-                                          List compileSourceRoots, List resources, String additionalClassesDirectory )
+                                          List compileSourceRoots, List resources, String additionalClassesDirectory,
+                                          boolean isTest )
     {
         writer.startElement( "mkdir" );
         writer.addAttribute( "dir", outputDirectory );
@@ -345,13 +605,19 @@ public class AntBuildWriter
             AntBuildWriterUtil.addWrapAttribute( writer, "javac", "deprecation", "true", 3 ); // TODO: use compiler setting
             AntBuildWriterUtil.addWrapAttribute( writer, "javac", "optimize", "false", 3 ); // TODO: use compiler setting
 
-            for ( Iterator i = compileSourceRoots.iterator(); i.hasNext(); )
+            String[] compileSourceRootsArray = (String[]) compileSourceRoots.toArray( new String[0] );
+            for ( int i = 0; i < compileSourceRootsArray.length; i++ )
             {
-                String srcDir = (String) i.next();
-
                 writer.startElement( "src" );
                 writer.startElement( "pathelement" );
-                writer.addAttribute( "location", PathUtils.toRelative( basedir, srcDir ) );
+                if ( isTest )
+                {
+                    writer.addAttribute( "location", "${maven.build.testDir." + i + "}" );
+                }
+                else
+                {
+                    writer.addAttribute( "location", "${maven.build.srcDir." + i + "}" );
+                }
                 writer.endElement(); // pathelement
                 writer.endElement(); // src
             }
@@ -359,28 +625,42 @@ public class AntBuildWriter
             if ( additionalClassesDirectory == null )
             {
                 writer.startElement( "classpath" );
-                writer.addAttribute( "refid", "build.classpath" );
+                if ( isTest )
+                {
+                    writer.addAttribute( "refid", "build.test.classpath" );
+                }
+                else
+                {
+                    writer.addAttribute( "refid", "build.classpath" );
+                }
                 writer.endElement(); // classpath
             }
             else
             {
                 writer.startElement( "classpath" );
                 writer.startElement( "path" );
-                writer.addAttribute( "refid", "build.classpath" );
+                if ( isTest )
+                {
+                    writer.addAttribute( "refid", "build.test.classpath" );
+                }
+                else
+                {
+                    writer.addAttribute( "refid", "build.classpath" );
+                }
                 writer.endElement(); // path
                 writer.startElement( "pathelement" );
                 writer.addAttribute( "location", additionalClassesDirectory );
                 writer.endElement(); // pathelement
                 writer.endElement(); // classpath
-
             }
 
             writer.endElement(); // javac
         }
 
-        for ( Iterator i = resources.iterator(); i.hasNext(); )
+        Resource[] array = (Resource[]) resources.toArray( new Resource[0] );
+        for ( int i = 0; i < array.length; i++ )
         {
-            Resource resource = (Resource) i.next();
+            Resource resource = array[i];
 
             if ( new File( resource.getDirectory() ).exists() )
             {
@@ -398,7 +678,14 @@ public class AntBuildWriter
                 writer.addAttribute( "todir", outputDir );
 
                 writer.startElement( "fileset" );
-                writer.addAttribute( "dir", PathUtils.toRelative( basedir, resource.getDirectory() ) );
+                if ( isTest )
+                {
+                    writer.addAttribute( "dir", "${maven.build.testResourceDir." + i + "}" );
+                }
+                else
+                {
+                    writer.addAttribute( "dir", "${maven.build.resourceDir." + i + "}" );
+                }
 
                 writeIncludesExcludes( writer, resource.getIncludes(), resource.getExcludes() );
 
@@ -409,42 +696,9 @@ public class AntBuildWriter
         }
     }
 
-    private static List removeEmptyCompileSourceRoots( List compileSourceRoots )
-    {
-        List newCompileSourceRootsList = new ArrayList();
-        if ( compileSourceRoots != null )
-        {
-            // copy as I may be modifying it
-            for ( Iterator i = compileSourceRoots.iterator(); i.hasNext(); )
-            {
-                String srcDir = (String) i.next();
-                if ( new File( srcDir ).exists() )
-                {
-                    newCompileSourceRootsList.add( srcDir );
-                }
-            }
-        }
-        return newCompileSourceRootsList;
-    }
-
-    private static void writeIncludesExcludes( XMLWriter writer, List includes, List excludes )
-    {
-        for ( Iterator i = includes.iterator(); i.hasNext(); )
-        {
-            String include = (String) i.next();
-            writer.startElement( "include" );
-            writer.addAttribute( "name", include );
-            writer.endElement(); // include
-        }
-        for ( Iterator i = excludes.iterator(); i.hasNext(); )
-        {
-            String exclude = (String) i.next();
-            writer.startElement( "exclude" );
-            writer.addAttribute( "name", exclude );
-            writer.endElement(); // exclude
-        }
-    }
-
+    /**
+     * @param writer
+     */
     private void writeGetDepsTarget( XMLWriter writer )
     {
         AntBuildWriterUtil.writeCommentText( writer, "Download dependencies target", 1 );
@@ -455,8 +709,8 @@ public class AntBuildWriter
         writer.startElement( "condition" );
         writer.addAttribute( "property", "maven.mode.offline" );
         writer.startElement( "equals" );
-        writer.addAttribute( "arg1", "${build.sysclasspath}" );
-        writer.addAttribute( "arg2", "only" );
+        writer.addAttribute( "arg1", "${maven.settings.offline}" );
+        writer.addAttribute( "arg2", "true" );
         writer.endElement(); // equals
         writer.endElement(); // condition
         writer.endElement(); // target
@@ -474,8 +728,7 @@ public class AntBuildWriter
         writer.endElement(); // mkdir
 
         // TODO: proxy - probably better to use wagon!
-
-        for ( Iterator i = project.getArtifacts().iterator(); i.hasNext(); )
+        for ( Iterator i = project.getTestArtifacts().iterator(); i.hasNext(); )
         {
             Artifact artifact = (Artifact) i.next();
 
@@ -508,78 +761,54 @@ public class AntBuildWriter
         AntBuildWriterUtil.writeLineBreak( writer );
     }
 
-    private void writeBuildPathDefinition( XMLWriter writer )
+    // ----------------------------------------------------------------------
+    // Convenience methods
+    // ----------------------------------------------------------------------
+
+    /**
+     * @param compileSourceRoots
+     * @return not null list
+     */
+    private static List removeEmptyCompileSourceRoots( List compileSourceRoots )
     {
-        AntBuildWriterUtil.writeCommentText( writer, "Defining classpaths", 1 );
-
-        writer.startElement( "path" );
-        writer.addAttribute( "id", "build.classpath" );
-        writer.startElement( "fileset" );
-        writer.addAttribute( "dir", "${maven.repo.local}" );
-        for ( Iterator i = project.getArtifacts().iterator(); i.hasNext(); )
+        List newCompileSourceRootsList = new ArrayList();
+        if ( compileSourceRoots != null )
         {
-            Artifact artifact = (Artifact) i.next();
-            writer.startElement( "include" );
-            writer.addAttribute( "name", PathUtils.toRelative( localRepository, artifact.getFile().getPath() ) );
-            writer.endElement(); // include
+            // copy as I may be modifying it
+            for ( Iterator i = compileSourceRoots.iterator(); i.hasNext(); )
+            {
+                String srcDir = (String) i.next();
+                if ( new File( srcDir ).exists() )
+                {
+                    newCompileSourceRootsList.add( srcDir );
+                }
+            }
         }
-        writer.endElement(); // fileset
-        writer.endElement(); // path
 
-        AntBuildWriterUtil.writeLineBreak( writer );
+        return newCompileSourceRootsList;
     }
 
-    private void writeProperties( XMLWriter writer )
+    /**
+     * @param writer
+     * @param includes
+     * @param excludes
+     */
+    private static void writeIncludesExcludes( XMLWriter writer, List includes, List excludes )
     {
-        // TODO: optional in m1
-        // TODO: USD properties
-        AntBuildWriterUtil.writeCommentText( writer, "Build environnement properties", 1 );
-
-        writer.startElement( "property" );
-        writer.addAttribute( "file", "${user.home}/.m2/maven.properties" );
-        writer.endElement(); // property
-
-        writer.startElement( "property" );
-        writer.addAttribute( "name", "maven.build.output" );
-        writer.addAttribute( "value", PathUtils.toRelative( project.getBasedir(), project.getBuild()
-            .getOutputDirectory() ) );
-        writer.endElement(); // property
-
-        writer.startElement( "property" );
-        writer.addAttribute( "name", "maven.build.directory" );
-        writer.addAttribute( "value", PathUtils.toRelative( project.getBasedir(), project.getBuild().getDirectory() ) );
-        writer.endElement(); // property
-
-        writer.startElement( "property" );
-        writer.addAttribute( "name", "maven.build.final.name" );
-        writer.addAttribute( "value", project.getBuild().getFinalName() );
-        writer.endElement(); // property
-
-        // TODO: property?
-        writer.startElement( "property" );
-        writer.addAttribute( "name", "maven.test.reports" );
-        writer.addAttribute( "value", "${maven.build.directory}/test-reports" );
-        writer.endElement(); // property
-
-        writer.startElement( "property" );
-        writer.addAttribute( "name", "maven.test.output" );
-        writer.addAttribute( "value", PathUtils.toRelative( project.getBasedir(), project.getBuild()
-            .getTestOutputDirectory() ) );
-        writer.endElement(); // property
-
-        writer.startElement( "property" );
-        writer.addAttribute( "name", "maven.repo.local" );
-        writer.addAttribute( "value", "${user.home}/.m2/repository" );
-        writer.endElement(); // property
-
-        /* TODO: offline setting
-         writer.startElement( "property" );
-         writer.addAttribute( "name", "maven.mode.offline" );
-         writer.addAttribute( "value", project.getBuild().getOutput() );
-         writer.endElement(); // property
-         */
-
-        AntBuildWriterUtil.writeLineBreak( writer );
+        for ( Iterator i = includes.iterator(); i.hasNext(); )
+        {
+            String include = (String) i.next();
+            writer.startElement( "include" );
+            writer.addAttribute( "name", include );
+            writer.endElement(); // include
+        }
+        for ( Iterator i = excludes.iterator(); i.hasNext(); )
+        {
+            String exclude = (String) i.next();
+            writer.startElement( "exclude" );
+            writer.addAttribute( "name", exclude );
+            writer.endElement(); // exclude
+        }
     }
 
     /**
@@ -612,5 +841,17 @@ public class AntBuildWriter
         AntBuildWriterUtil.writeCommentLineBreak( writer );
 
         AntBuildWriterUtil.writeLineBreak( writer );
+    }
+
+    /**
+     * Put a property in properties defined by a name and a value
+     *
+     * @param properties
+     * @param name
+     * @param value
+     */
+    private static void addProperty( Properties properties, String name, String value )
+    {
+        properties.put( name, StringUtils.isNotEmpty( value ) ? value : "" );
     }
 }

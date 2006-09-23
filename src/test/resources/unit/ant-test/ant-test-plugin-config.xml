@@ -42,6 +42,7 @@
         <artifactId>maven-ant-plugin</artifactId>
         <configuration>
           <project implementation="org.apache.maven.plugin.ant.stubs.AntTestMavenProjectStub"/>
+          <settings implementation="org.apache.maven.plugin.ant.stubs.SettingsStub"/>
           <localRepository>${localRepository}</localRepository>
         </configuration>
       </plugin>
