@@ -51,18 +51,40 @@ public class AntMojoTest
     }
 
     /**
-     * Method to test Ant generation
+     * Method to test Default Ant generation
      *
      * @throws Exception
      */
-    public void testWriter()
+    public void testDefaultProject()
         throws Exception
     {
-        File testPom = new File( getBasedir(), "src/test/resources/unit/ant-test/ant-test-plugin-config.xml" );
+        invokeAntMojo( "ant-test" );
+    }
+
+    /**
+     * Method to test Project with no dependencies
+     *
+     * @throws Exception
+     */
+    public void testProjectWithNoDep()
+        throws Exception
+    {
+        invokeAntMojo( "ant-nodep-test" );
+    }
+
+    /**
+     * @param testPom
+     * @throws Exception
+     */
+    private void invokeAntMojo( String testProject )
+        throws Exception
+    {
+        File testPom = new File( getBasedir(),
+                                 "src/test/resources/unit/" + testProject + "/" + testProject + "-plugin-config.xml" );
         AntMojo mojo = (AntMojo) lookupMojo( "ant", testPom );
         mojo.execute();
 
-        File antBasedir = new File( getBasedir(), "target/test/unit/ant-test/" );
+        File antBasedir = new File( getBasedir(), "target/test/unit/" + testProject + "/" );
         File antBuild = new File( antBasedir, AntBuildWriter.DEFAULT_BUILD_FILENAME );
         assertTrue( antBuild.exists() );
         File antProperties = new File( antBasedir, AntBuildWriter.DEFAULT_PROPERTIES_FILENAME );
@@ -75,7 +97,7 @@ public class AntMojoTest
         assertTrue( new File( antBasedir, "target/ant-plugin-test.jar" ).exists() );
 
         Properties properties = new Properties();
-        properties.load( new FileInputStream( new File( getBasedir(), "target/test/unit/ant-test/build.properties" ) ) );
+        properties.load( new FileInputStream( new File( getBasedir(), "target/test/unit/" + testProject + "/build.properties" ) ) );
         String repo = properties.getProperty( "maven.repo.local" );
         assertTrue( repo.equals( new File( getBasedir(), "target/local-repo" ).getAbsolutePath() ) );
     }
