@@ -17,9 +17,10 @@ package org.apache.maven.plugin.ant;
  */
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.util.Properties;
 
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.tools.ant.Main;
 
 /**
  * Class to test Ant plugin
@@ -62,13 +63,20 @@ public class AntMojoTest
         mojo.execute();
 
         File antBasedir = new File( getBasedir(), "target/test/unit/ant-test/" );
-        File antBuild = new File( antBasedir, Main.DEFAULT_BUILD_FILENAME );
+        File antBuild = new File( antBasedir, AntBuildWriter.DEFAULT_BUILD_FILENAME );
         assertTrue( antBuild.exists() );
+        File antProperties = new File( antBasedir, AntBuildWriter.DEFAULT_PROPERTIES_FILENAME );
+        assertTrue( antProperties.exists() );
 
         AntWrapper.invoke( antBuild );
 
         assertTrue( new File( antBasedir, "target" ).exists() );
         assertTrue( new File( antBasedir, "target/classes" ).exists() );
         assertTrue( new File( antBasedir, "target/ant-plugin-test.jar" ).exists() );
+
+        Properties properties = new Properties();
+        properties.load( new FileInputStream( new File( getBasedir(), "target/test/unit/ant-test/build.properties" ) ) );
+        String repo = properties.getProperty( "maven.repo.local" );
+        assertTrue( repo.equals( new File( getBasedir(), "target/local-repo" ).getAbsolutePath() ) );
     }
 }
