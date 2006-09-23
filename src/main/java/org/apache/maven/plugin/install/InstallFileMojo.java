@@ -22,8 +22,8 @@ import org.apache.maven.artifact.installer.ArtifactInstallationException;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
-import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
@@ -31,11 +31,11 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
-import java.io.FileReader;
-import java.io.FileNotFoundException;
 
 /**
  * Installs a file in local repository.
@@ -125,7 +125,7 @@ public class InstallFileMojo
 
         File pom = null;
 
-        if( pomFile != null && pomFile.exists() )
+        if ( pomFile != null && pomFile.exists() )
         {
             processModel( readPom( pomFile ) );
 
@@ -140,8 +140,8 @@ public class InstallFileMojo
             }
         }
 
-        Artifact artifact = artifactFactory.createArtifactWithClassifier(
-                groupId, artifactId, version, packaging, classifier );
+        Artifact artifact =
+            artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, packaging, classifier );
 
         // TODO: check if it exists first, and default to true if not
         if ( generatePom )
@@ -183,13 +183,13 @@ public class InstallFileMojo
 
             File destination = new File( localRepository.getBasedir(), localPath );
 
-            if( !file.getPath().equals( destination.getPath() ) )
+            if ( !file.getPath().equals( destination.getPath() ) )
             {
                 installer.install( file, artifact, localRepository );
 
-                if( createChecksum )
+                if ( createChecksum )
                 {
-                    if( generatePom )
+                    if ( generatePom )
                     {
                         //create checksums for pom and artifact
                         pom = new File( localRepository.getBasedir(),
@@ -197,14 +197,14 @@ public class InstallFileMojo
 
                         installCheckSum( pom, true );
                     }
-                    installCheckSum( file, artifact , false );
+                    installCheckSum( file, artifact, false );
                 }
 
-                if( pomFile != null && pomFile.exists() )
+                if ( pomFile != null && pomFile.exists() )
                 {
                     installer.install( pomFile, pomArtifact, localRepository );
 
-                    if( createChecksum )
+                    if ( createChecksum )
                     {
                         installCheckSum( pomFile, pomArtifact, false );
                     }
@@ -212,7 +212,9 @@ public class InstallFileMojo
             }
             else
             {
-                throw new MojoFailureException( "Cannot install artifact. Artifact is already in the local repository.\n\nFile in question is: " + file + "\n" );
+                throw new MojoFailureException(
+                    "Cannot install artifact. Artifact is already in the local repository.\n\nFile in question is: " +
+                        file + "\n" );
             }
         }
         catch ( ArtifactInstallationException e )
@@ -234,15 +236,15 @@ public class InstallFileMojo
 
             return mavenReader.read( reader );
         }
-        catch( FileNotFoundException e )
+        catch ( FileNotFoundException e )
         {
             throw new MojoExecutionException( "File not found " + file, e );
         }
-        catch( IOException e )
+        catch ( IOException e )
         {
             throw new MojoExecutionException( "Error reading pom", e );
         }
-        catch( XmlPullParserException e )
+        catch ( XmlPullParserException e )
         {
             throw new MojoExecutionException( "Error reading pom", e );
         }
