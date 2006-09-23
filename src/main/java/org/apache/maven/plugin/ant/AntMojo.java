@@ -20,6 +20,7 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.Settings;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +31,7 @@ import java.io.IOException;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
  * @goal ant
- * @requiresDependencyResolution
+ * @requiresDependencyResolution test
  * @todo change this to use the artifact ant tasks instead of :get
  */
 public class AntMojo
@@ -53,6 +54,15 @@ public class AntMojo
     private ArtifactRepository localRepository;
 
     /**
+     * The current user system settings for use in Maven.
+     *
+     * @parameter expression="${settings}"
+     * @required
+     * @readonly
+     */
+    private Settings settings;
+
+    /**
      * @see org.apache.maven.plugin.Mojo#execute()
      */
     public void execute()
@@ -60,11 +70,12 @@ public class AntMojo
     {
         // TODO: read back previous
 
-        AntBuildWriter antBuildWriter = new AntBuildWriter( project, new File( localRepository.getBasedir() ) );
+        AntBuildWriter antBuildWriter = new AntBuildWriter( project, new File( localRepository.getBasedir() ), settings );
 
         try
         {
             antBuildWriter.writeBuildXml();
+            antBuildWriter.writeBuildProperties();
         }
         catch ( IOException e )
         {
