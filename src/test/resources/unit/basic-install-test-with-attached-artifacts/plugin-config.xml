@@ -3,16 +3,17 @@
     <plugins>
       <plugin>
         <artifactId>maven-install-plugin</artifactId>
-		<configuration>
-		  <pomFile>${basedir}/src/test/resources/unit/basic-install-test-with-attached-artifacts/plugin-config.xml</pomFile>
-		  <packaging>jar</packaging>
-		  <artifact implementation="org.apache.maven.plugin.install.stubs.InstallArtifactStub" />
-		  <attachedArtifacts>
-		    <attachedArtifact implementation="org.apache.maven.plugin.install.stubs.AttachedArtifactStub0" />
-			<attachedArtifact implementation="org.apache.maven.plugin.install.stubs.AttachedArtifactStub1" />
-		  </attachedArtifacts>
+        <configuration>
+          <pomFile>${basedir}/src/test/resources/unit/basic-install-test-with-attached-artifacts/plugin-config.xml
+          </pomFile>
+          <packaging>jar</packaging>
+          <artifact implementation="org.apache.maven.plugin.install.stubs.InstallArtifactStub"/>
+          <attachedArtifacts>
+            <attachedArtifact implementation="org.apache.maven.plugin.install.stubs.AttachedArtifactStub0"/>
+            <attachedArtifact implementation="org.apache.maven.plugin.install.stubs.AttachedArtifactStub1"/>
+          </attachedArtifacts>
           <localRepository>${localRepository}</localRepository>
-		</configuration>
+        </configuration>
       </plugin>
     </plugins>
   </build>

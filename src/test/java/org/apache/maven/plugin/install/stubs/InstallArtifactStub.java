@@ -16,27 +16,27 @@ package org.apache.maven.plugin.install.stubs;
  * limitations under the License.
  */
 
+import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.artifact.handler.DefaultArtifactHandler;
+import org.apache.maven.artifact.metadata.ArtifactMetadata;
+import org.apache.maven.plugin.testing.stubs.ArtifactStub;
+
 import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.maven.artifact.handler.ArtifactHandler;
-import org.apache.maven.artifact.handler.DefaultArtifactHandler;
-import org.apache.maven.artifact.metadata.ArtifactMetadata;
-import org.apache.maven.plugin.testing.stubs.ArtifactStub;
-
 
 public class InstallArtifactStub
     extends ArtifactStub
 {
     private Map metadataMap;
-    
+
     private File file;
-    
+
     private boolean release;
-    
+
     public String getArtifactId()
     {
         return "maven-install-test";
@@ -51,22 +51,22 @@ public class InstallArtifactStub
     {
         return "1.0-SNAPSHOT";
     }
-    
+
     public String getBaseVersion()
     {
         return getVersion();
     }
-    
+
     public void setFile( File file )
     {
         this.file = file;
     }
-    
+
     public File getFile()
     {
         return file;
     }
-    
+
     public ArtifactHandler getArtifactHandler()
     {
         return new DefaultArtifactHandler()
@@ -77,7 +77,7 @@ public class InstallArtifactStub
             }
         };
     }
-    
+
     public void addMetadata( ArtifactMetadata metadata )
     {
         if ( metadataMap == null )
@@ -95,7 +95,7 @@ public class InstallArtifactStub
             metadataMap.put( metadata.getKey(), metadata );
         }
     }
-    
+
     public Collection getMetadataList()
     {
         return metadataMap == null ? Collections.EMPTY_LIST : metadataMap.values();
