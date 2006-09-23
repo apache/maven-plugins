@@ -661,25 +661,19 @@ public class WarExplodedMojoTest
         File webAppResource = new File( getTestDirectory(), testId + "-test-data/resources" );
         File sampleResource = new File( webAppResource, "custom-setting.cfg" );
         File sampleResourceWDir = new File( webAppResource, "custom-config/custom-setting.cfg" );
-        File filterFile = new File( getTestDirectory(), testId + "-test-data/filters/filter.properties" );
         List filterList = new LinkedList();
         ResourceStub[] resources = new ResourceStub[]{new ResourceStub()};
 
         createFile( sampleResource );
         createFile( sampleResourceWDir );
-        createFile( filterFile );
-        filterList.add( filterFile.getAbsolutePath() );
 
-        // prepare web resources and filters
-        String content = "resource_key=${resource_value}\n";
-        content += "system_key=${user.dir}\n";
+        // prepare web resources
+        String content = "system_key=${user.dir}\n";
         content += "project_key=${is_this_simple}\n";
         content += "project_name=${project.name}\n";
         content += "system_property=${system.property}\n";
         FileUtils.fileWrite( sampleResourceWDir.getAbsolutePath(), content );
         FileUtils.fileWrite( sampleResource.getAbsolutePath(), content );
-
-        FileUtils.fileWrite( filterFile.getAbsolutePath(), "resource_value=this_is_filtered" );
 
         System.setProperty( "system.property", "system-property-value" );
 
@@ -707,8 +701,6 @@ public class WarExplodedMojoTest
         content = FileUtils.fileRead( expectedResourceWDirFile );
         BufferedReader reader = new BufferedReader( new StringReader( content ) );
 
-        assertEquals( "error in filtering using filter files", "resource_key=this_is_filtered", reader.readLine() );
-
         assertEquals( "error in filtering using System properties", "system_key=" + System.getProperty( "user.dir" ),
                       reader.readLine() );
 
@@ -728,6 +720,31 @@ public class WarExplodedMojoTest
         content = FileUtils.fileRead( expectedResourceWDirFile );
         reader = new BufferedReader( new StringReader( content ) );
 
+        assertEquals( "error in filtering using System properties", "system_key=" + System.getProperty( "user.dir" ),
+                      reader.readLine() );
+
+        assertEquals( "error in filtering using project properties", "project_key=i_think_so", reader.readLine() );
+
+        assertEquals( "error in filtering using project properties", "project_name=Test Project ", reader.readLine() );
+
+        assertEquals( "error in filtering using System properties", "system_property=new-system-property-value",
+                      reader.readLine() );
+        
+        // update property, and generate again
+        File filterFile = new File( getTestDirectory(), testId + "-test-data/filters/filter.properties" );
+        createFile( filterFile );
+        filterList.add( filterFile.getAbsolutePath() );
+        content = "resource_key=${resource_value}\n" + content;
+        FileUtils.fileWrite( sampleResourceWDir.getAbsolutePath(), content );
+        FileUtils.fileWrite( sampleResource.getAbsolutePath(), content );
+        FileUtils.fileWrite( filterFile.getAbsolutePath(), "resource_value=this_is_filtered" );
+
+        mojo.execute();
+
+        // validate filtered file
+        content = FileUtils.fileRead( expectedResourceWDirFile );
+        reader = new BufferedReader( new StringReader( content ) );
+
         assertEquals( "error in filtering using filter files", "resource_key=this_is_filtered", reader.readLine() );
 
         assertEquals( "error in filtering using System properties", "system_key=" + System.getProperty( "user.dir" ),
@@ -739,16 +756,15 @@ public class WarExplodedMojoTest
 
         assertEquals( "error in filtering using System properties", "system_property=new-system-property-value",
                       reader.readLine() );
+
         
         // house keeping
         expectedWebSourceFile.delete();
         expectedWebSource2File.delete();
         expectedResourceFile.delete();
         expectedResourceWDirFile.delete();
-        
-
     }
-
+    
     public void testExplodedWar_WithSourceIncludeExclude()
         throws Exception
     {
