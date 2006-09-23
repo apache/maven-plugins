@@ -352,9 +352,12 @@ public abstract class AbstractWarMojo
     private Map getBuildFilterProperties()
         throws MojoExecutionException
     {
+        
+        Map filterProperties = new Properties();
+        
         // System properties
-        Map filterProperties = new Properties( System.getProperties() );
-
+        filterProperties.putAll( System.getProperties() );
+        
         // Project properties
         filterProperties.putAll( project.getProperties() );
 
