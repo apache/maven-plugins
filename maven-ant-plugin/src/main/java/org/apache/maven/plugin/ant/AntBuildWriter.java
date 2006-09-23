@@ -379,12 +379,20 @@ public class AntBuildWriter
         writer.addAttribute( "id", "build.classpath" );
         writer.startElement( "fileset" );
         writer.addAttribute( "dir", "${maven.repo.local}" );
-
-        for ( Iterator i = project.getCompileArtifacts().iterator(); i.hasNext(); )
+        if ( !project.getCompileArtifacts().isEmpty() )
         {
-            Artifact artifact = (Artifact) i.next();
+            for ( Iterator i = project.getCompileArtifacts().iterator(); i.hasNext(); )
+            {
+                Artifact artifact = (Artifact) i.next();
+                writer.startElement( "include" );
+                writer.addAttribute( "name", PathUtils.toRelative( localRepository, artifact.getFile().getPath() ) );
+                writer.endElement(); // include
+            }
+        }
+        else
+        {
             writer.startElement( "include" );
-            writer.addAttribute( "name", PathUtils.toRelative( localRepository, artifact.getFile().getPath() ) );
+            writer.addAttribute( "name", "*.jar" );
             writer.endElement(); // include
         }
         writer.endElement(); // fileset
@@ -394,12 +402,20 @@ public class AntBuildWriter
         writer.addAttribute( "id", "build.test.classpath" );
         writer.startElement( "fileset" );
         writer.addAttribute( "dir", "${maven.repo.local}" );
-
-        for ( Iterator i = project.getTestArtifacts().iterator(); i.hasNext(); )
+        if ( !project.getTestArtifacts().isEmpty() )
         {
-            Artifact artifact = (Artifact) i.next();
+            for ( Iterator i = project.getTestArtifacts().iterator(); i.hasNext(); )
+            {
+                Artifact artifact = (Artifact) i.next();
+                writer.startElement( "include" );
+                writer.addAttribute( "name", PathUtils.toRelative( localRepository, artifact.getFile().getPath() ) );
+                writer.endElement(); // include
+            }
+        }
+        else
+        {
             writer.startElement( "include" );
-            writer.addAttribute( "name", PathUtils.toRelative( localRepository, artifact.getFile().getPath() ) );
+            writer.addAttribute( "name", "*.jar" );
             writer.endElement(); // include
         }
         writer.endElement(); // fileset
