@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.util.Properties;
 
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.project.MavenProject;
 
 /**
  * Class to test Ant plugin
@@ -90,21 +91,30 @@ public class AntMojoTest
         AntMojo mojo = (AntMojo) lookupMojo( "ant", testPom );
         mojo.execute();
 
+        MavenProject currentProject = (MavenProject) getVariableValueFromObject( mojo, "project" );
+
         File antBasedir = new File( getBasedir(), "target/test/unit/" + testProject + "/" );
         File antBuild = new File( antBasedir, AntBuildWriter.DEFAULT_BUILD_FILENAME );
         assertTrue( antBuild.exists() );
-        File antProperties = new File( antBasedir, AntBuildWriter.DEFAULT_MAVEN_PROPERTIES_FILENAME );
-        assertTrue( antProperties.exists() );
+        if ( !currentProject.getPackaging().toLowerCase().equals( "pom" ) )
+        {
+            File antProperties = new File( antBasedir, AntBuildWriter.DEFAULT_MAVEN_PROPERTIES_FILENAME );
+            assertTrue( antProperties.exists() );
+        }
 
         AntWrapper.invoke( antBuild );
 
-        assertTrue( new File( antBasedir, "target" ).exists() );
-        assertTrue( new File( antBasedir, "target/classes" ).exists() );
-        assertTrue( new File( antBasedir, "target/ant-plugin-test.jar" ).exists() );
+        if ( !currentProject.getPackaging().toLowerCase().equals( "pom" ) )
+        {
+            assertTrue( new File( antBasedir, "target" ).exists() );
+            assertTrue( new File( antBasedir, "target/classes" ).exists() );
+            assertTrue( new File( antBasedir, "target/" + currentProject.getBuild().getFinalName() + ".jar" ).exists() );
 
-        Properties properties = new Properties();
-        properties.load( new FileInputStream( new File( antBasedir, AntBuildWriter.DEFAULT_MAVEN_PROPERTIES_FILENAME ) ) );
-        String repo = properties.getProperty( "maven.repo.local" );
-        assertTrue( repo.equals( new File( getBasedir(), "target/local-repo" ).getAbsolutePath() ) );
+            Properties properties = new Properties();
+            properties
+                .load( new FileInputStream( new File( antBasedir, AntBuildWriter.DEFAULT_MAVEN_PROPERTIES_FILENAME ) ) );
+            String repo = properties.getProperty( "maven.repo.local" );
+            assertTrue( repo.equals( new File( getBasedir(), "target/local-repo" ).getAbsolutePath() ) );
+        }
     }
 }
