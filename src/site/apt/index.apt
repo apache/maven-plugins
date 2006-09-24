@@ -30,9 +30,11 @@ Maven 2 Ant Plugin
 
 * Goals Overview
 
-   The Ant Plugin has one goal:
+   The Ant Plugin has two goals:
 
    * {{{ant-mojo.html}ant:ant}} Generate Ant build files.
+
+   * {{{clean-mojo.html}ant:clean}} Clean all Ant build files.
 
 * Usage
 

@@ -219,7 +219,7 @@ public class AntBuildWriter
         // ----------------------------------------------------------------------
 
         writer.startElement( "project" );
-        writer.addAttribute( "name", project.getArtifactId() );
+        writer.addAttribute( "name", project.getArtifactId() + "-from-maven");
         writer.addAttribute( "default", "jar" );
         writer.addAttribute( "basedir", "." );
 
