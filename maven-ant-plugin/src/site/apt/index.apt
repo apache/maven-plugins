@@ -1,0 +1,45 @@
+ ------
+ Introduction
+ ------
+ Vincent Siveton
+ ------
+ September 2006
+ ------
+
+ ~~ Copyright 2006 The Apache Software Foundation.
+ ~~
+ ~~ Licensed under the Apache License, Version 2.0 (the "License");
+ ~~ you may not use this file except in compliance with the License.
+ ~~ You may obtain a copy of the License at
+ ~~
+ ~~      http://www.apache.org/licenses/LICENSE-2.0
+ ~~
+ ~~ Unless required by applicable law or agreed to in writing, software
+ ~~ distributed under the License is distributed on an "AS IS" BASIS,
+ ~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ~~ See the License for the specific language governing permissions and
+ ~~ limitations under the License.
+
+ ~~ NOTE: For help with the syntax of this file, see:
+ ~~ http://maven.apache.org/guides/mini/guide-apt-format.html
+
+
+Maven 2 Ant Plugin
+
+ The Ant Plugin generates {{{http://ant.apache.org/}Ant}} build files for Ant 1.6.2 or above.
+
+* Goals Overview
+
+   The Ant Plugin has one goal:
+
+   * {{{ant-mojo.html}ant:ant}} Generate Ant build files.
+
+* Usage
+
+   Instructions on how to use the Ant Plugin can be found {{{usage.html}here}}.
+
+* Examples
+
+   The following examples show how to use the Ant Plugin in more advanced usecases:
+
+   * {{{examples/using.html}Using generated Ant build files}}
