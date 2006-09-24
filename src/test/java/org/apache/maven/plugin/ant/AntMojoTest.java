@@ -73,21 +73,27 @@ public class AntMojoTest
     }
 
     /**
-     * @param testPom
+     * Invoke Ant mojo.
+     * <br/>
+     * The Maven test project should be in a directory called <code>testProject</code> in  "src/test/resources/unit/" directory.
+     * The Maven test project should be called <code>"testProject"-plugin-config.xml</code> and should produced
+     * <code>ant-plugin-test.jar</code> as artefact.
+     *
+     * @param testProject
      * @throws Exception
      */
     private void invokeAntMojo( String testProject )
         throws Exception
     {
-        File testPom = new File( getBasedir(),
-                                 "src/test/resources/unit/" + testProject + "/" + testProject + "-plugin-config.xml" );
+        File testPom = new File( getBasedir(), "src/test/resources/unit/" + testProject + "/" + testProject
+            + "-plugin-config.xml" );
         AntMojo mojo = (AntMojo) lookupMojo( "ant", testPom );
         mojo.execute();
 
         File antBasedir = new File( getBasedir(), "target/test/unit/" + testProject + "/" );
         File antBuild = new File( antBasedir, AntBuildWriter.DEFAULT_BUILD_FILENAME );
         assertTrue( antBuild.exists() );
-        File antProperties = new File( antBasedir, AntBuildWriter.DEFAULT_PROPERTIES_FILENAME );
+        File antProperties = new File( antBasedir, AntBuildWriter.DEFAULT_MAVEN_PROPERTIES_FILENAME );
         assertTrue( antProperties.exists() );
 
         AntWrapper.invoke( antBuild );
@@ -97,7 +103,7 @@ public class AntMojoTest
         assertTrue( new File( antBasedir, "target/ant-plugin-test.jar" ).exists() );
 
         Properties properties = new Properties();
-        properties.load( new FileInputStream( new File( getBasedir(), "target/test/unit/" + testProject + "/build.properties" ) ) );
+        properties.load( new FileInputStream( new File( antBasedir, AntBuildWriter.DEFAULT_MAVEN_PROPERTIES_FILENAME ) ) );
         String repo = properties.getProperty( "maven.repo.local" );
         assertTrue( repo.equals( new File( getBasedir(), "target/local-repo" ).getAbsolutePath() ) );
     }
