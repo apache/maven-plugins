@@ -29,6 +29,9 @@
   <packaging>maven-plugin</packaging>
   <name>Maven Ant Plugin</name>
   <version>2.0-beta-2-SNAPSHOT</version>
+  <prerequisites>
+    <maven>2.0</maven>
+  </prerequisites>
   <issueManagement>
     <system>jira</system>
     <url>http://jira.codehaus.org/browse/MANT</url>
