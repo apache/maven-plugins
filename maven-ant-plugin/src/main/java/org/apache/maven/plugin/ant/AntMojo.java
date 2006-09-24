@@ -26,7 +26,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Generate an Ant build file.
+ * Generate Ant build files.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
@@ -63,26 +63,33 @@ public class AntMojo
     private Settings settings;
 
     /**
+     * Overwrite or not the <code>build.xml</code>
+     *
+     * @parameter expression="${overwrite}" default-value="false"
+     */
+    private boolean overwrite;
+
+    /**
      * @see org.apache.maven.plugin.Mojo#execute()
      */
     public void execute()
         throws MojoExecutionException
     {
-        // TODO: read back previous
-
-        AntBuildWriter antBuildWriter = new AntBuildWriter( project, new File( localRepository.getBasedir() ), settings );
+        AntBuildWriter antBuildWriter = new AntBuildWriter( project, new File( localRepository.getBasedir() ),
+                                                            settings, overwrite );
 
         try
         {
-            antBuildWriter.writeBuildXml();
+            antBuildWriter.writeBuildXmls();
             antBuildWriter.writeBuildProperties();
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "Error building Ant script", e );
+            throw new MojoExecutionException( "Error building Ant script:" + e.getMessage(), e );
         }
 
         getLog().info(
-            "Wrote Ant project for " + project.getArtifactId() + " to " + project.getBasedir().getAbsolutePath() );
+                       "Wrote Ant project for " + project.getArtifactId() + " to "
+                           + project.getBasedir().getAbsolutePath() );
     }
 }
