@@ -110,7 +110,7 @@ public class AntBuildWriter
     }
 
     /**
-     * Generate <code>maven-build.properties</code>
+     * Generate <code>maven-build.properties</code> only for a non-POM project
      *
      * @see #DEFAULT_MAVEN_PROPERTIES_FILENAME
      * @throws IOException
@@ -118,6 +118,11 @@ public class AntBuildWriter
     protected void writeBuildProperties()
         throws IOException
     {
+        if ( isPomPackaging( project ) )
+        {
+            return;
+        }
+
         FileOutputStream os = new FileOutputStream( new File( project.getBasedir(), DEFAULT_MAVEN_PROPERTIES_FILENAME ) );
         Properties properties = new Properties();
 
@@ -219,7 +224,7 @@ public class AntBuildWriter
         // ----------------------------------------------------------------------
 
         writer.startElement( "project" );
-        writer.addAttribute( "name", project.getArtifactId() + "-from-maven");
+        writer.addAttribute( "name", project.getArtifactId() + "-from-maven" );
         writer.addAttribute( "default", "jar" );
         writer.addAttribute( "basedir", "." );
 
@@ -342,8 +347,18 @@ public class AntBuildWriter
         IOUtil.close( w );
     }
 
+    /**
+     * Write properties in the writer only for a non-POM project.
+     *
+     * @param writer
+     */
     private void writeProperties( XMLWriter writer )
     {
+        if ( isPomPackaging( project ) )
+        {
+            return;
+        }
+
         // TODO: optional in m1
         // TODO: USD properties
         AntBuildWriterUtil.writeCommentText( writer, "Build environnement properties", 1 );
@@ -467,8 +482,18 @@ public class AntBuildWriter
         AntBuildWriterUtil.writeLineBreak( writer );
     }
 
+    /**
+     * Write path definition in the writer only for a non-POM project.
+     *
+     * @param writer
+     */
     private void writeBuildPathDefinition( XMLWriter writer )
     {
+        if ( isPomPackaging( project ) )
+        {
+            return;
+        }
+
         AntBuildWriterUtil.writeCommentText( writer, "Defining classpaths", 1 );
 
         writer.startElement( "path" );
@@ -520,6 +545,11 @@ public class AntBuildWriter
         AntBuildWriterUtil.writeLineBreak( writer );
     }
 
+    /**
+     * Write clean target in the writer depending the packaging of the project.
+     *
+     * @param writer
+     */
     private void writeCleanTarget( XMLWriter writer )
     {
         AntBuildWriterUtil.writeCommentText( writer, "Cleaning up target", 1 );
@@ -528,174 +558,303 @@ public class AntBuildWriter
         writer.addAttribute( "name", "clean" );
         writer.addAttribute( "description", "Clean the output directory" );
 
-        writer.startElement( "delete" );
-        writer.addAttribute( "dir", "${maven.build.dir}" );
-        writer.endElement(); // delete
+        if ( isPomPackaging( project ) )
+        {
+            if ( project.getModules() != null )
+            {
+                for ( Iterator it = project.getModules().iterator(); it.hasNext(); )
+                {
+                    String moduleSubPath = (String) it.next();
+                    writer.startElement( "ant" );
+                    writer.addAttribute( "antfile", "build.xml" );
+                    writer.addAttribute( "dir", PathUtils.toRelative( project.getBasedir(), moduleSubPath ) );
+                    writer.addAttribute( "target", "clean" );
+                    writer.endElement(); // ant
+                }
+            }
+        }
+        else
+        {
+            writer.startElement( "delete" );
+            writer.addAttribute( "dir", "${maven.build.dir}" );
+            writer.endElement(); // delete
+        }
 
         writer.endElement(); // target
 
         AntBuildWriterUtil.writeLineBreak( writer );
     }
 
+    /**
+     * Write compile target in the writer depending the packaging of the project.
+     *
+     * @param writer
+     * @param compileSourceRoots
+     */
     private void writeCompileTarget( XMLWriter writer, List compileSourceRoots )
     {
         AntBuildWriterUtil.writeCommentText( writer, "Compilation target", 1 );
 
-        writer.startElement( "target" );
-        writer.addAttribute( "name", "compile" );
-        writer.addAttribute( "depends", "get-deps" );
-        writer.addAttribute( "description", "Compile the code" );
+        if ( isPomPackaging( project ) )
+        {
+            writer.startElement( "target" );
+            writer.addAttribute( "name", "compile" );
+            writer.addAttribute( "description", "Compile the code" );
+            if ( project.getModules() != null )
+            {
+                for ( Iterator it = project.getModules().iterator(); it.hasNext(); )
+                {
+                    String moduleSubPath = (String) it.next();
+                    writer.startElement( "ant" );
+                    writer.addAttribute( "antfile", "build.xml" );
+                    writer.addAttribute( "dir", PathUtils.toRelative( project.getBasedir(), moduleSubPath ) );
+                    writer.addAttribute( "target", "compile" );
+                    writer.endElement(); // ant
+                }
+            }
+            writer.endElement(); // target
+        }
+        else
+        {
+            writer.startElement( "target" );
+            writer.addAttribute( "name", "compile" );
+            writer.addAttribute( "depends", "get-deps" );
+            writer.addAttribute( "description", "Compile the code" );
 
-        writeCompileTasks( writer, project.getBasedir(), "${maven.build.outputDir}", compileSourceRoots, project
-            .getBuild().getResources(), null, false );
+            writeCompileTasks( writer, project.getBasedir(), "${maven.build.outputDir}", compileSourceRoots, project
+                .getBuild().getResources(), null, false );
 
-        writer.endElement(); // target
+            writer.endElement(); // target
+        }
 
         AntBuildWriterUtil.writeLineBreak( writer );
     }
 
+    /**
+     * Write compile-test target in the writer depending the packaging of the project.
+     *
+     * @param writer
+     * @param testCompileSourceRoots
+     */
     private void writeCompileTestsTarget( XMLWriter writer, List testCompileSourceRoots )
     {
         AntBuildWriterUtil.writeCommentText( writer, "Test-compilation target", 1 );
 
-        writer.startElement( "target" );
-        writer.addAttribute( "name", "compile-tests" );
-        AntBuildWriterUtil.addWrapAttribute( writer, "target", "depends", "junit-present, compile", 2 );
-        AntBuildWriterUtil.addWrapAttribute( writer, "target", "description", "Compile the test code", 2 );
-        AntBuildWriterUtil.addWrapAttribute( writer, "target", "if", "junit.present", 2 );
+        if ( isPomPackaging( project ) )
+        {
+            writer.startElement( "target" );
+            writer.addAttribute( "name", "compile-tests" );
+            writer.addAttribute( "description", "Compile the test code" );
+            if ( project.getModules() != null )
+            {
+                for ( Iterator it = project.getModules().iterator(); it.hasNext(); )
+                {
+                    String moduleSubPath = (String) it.next();
+                    writer.startElement( "ant" );
+                    writer.addAttribute( "antfile", "build.xml" );
+                    writer.addAttribute( "dir", PathUtils.toRelative( project.getBasedir(), moduleSubPath ) );
+                    writer.addAttribute( "target", "compile-tests" );
+                    writer.endElement(); // ant
+                }
+            }
+            writer.endElement(); // target
+        }
+        else
+        {
+            writer.startElement( "target" );
+            writer.addAttribute( "name", "compile-tests" );
+            AntBuildWriterUtil.addWrapAttribute( writer, "target", "depends", "junit-present, compile", 2 );
+            AntBuildWriterUtil.addWrapAttribute( writer, "target", "description", "Compile the test code", 2 );
+            AntBuildWriterUtil.addWrapAttribute( writer, "target", "if", "junit.present", 2 );
 
-        writeCompileTasks( writer, project.getBasedir(), "${maven.build.testOutputDir}", testCompileSourceRoots,
-                           project.getBuild().getTestResources(), "${maven.build.outputDir}", true );
+            writeCompileTasks( writer, project.getBasedir(), "${maven.build.testOutputDir}", testCompileSourceRoots,
+                               project.getBuild().getTestResources(), "${maven.build.outputDir}", true );
 
-        writer.endElement(); // target
+            writer.endElement(); // target
+        }
 
         AntBuildWriterUtil.writeLineBreak( writer );
     }
 
+    /**
+     * Write test target in the writer depending the packaging of the project.
+     *
+     * @param writer
+     * @param testCompileSourceRoots
+     */
     private void writeTestTargets( XMLWriter writer, List testCompileSourceRoots )
     {
         AntBuildWriterUtil.writeCommentText( writer, "Run all tests", 1 );
 
-        writer.startElement( "target" );
-        writer.addAttribute( "name", "test" );
-        AntBuildWriterUtil.addWrapAttribute( writer, "target", "depends", "junit-present, compile-tests", 2 );
-        AntBuildWriterUtil.addWrapAttribute( writer, "target", "if", "junit.present", 2 );
-        AntBuildWriterUtil.addWrapAttribute( writer, "target", "description", "Run the test cases", 2 );
-
-        if ( !testCompileSourceRoots.isEmpty() )
+        if ( isPomPackaging( project ) )
         {
-            writer.startElement( "mkdir" );
-            writer.addAttribute( "dir", "${maven.test.reports}" );
-            writer.endElement(); //mkdir
-
-            writer.startElement( "junit" );
-            writer.addAttribute( "printSummary", "yes" );
-            writer.addAttribute( "haltonerror", "true" );
-            writer.addAttribute( "haltonfailure", "true" );
-            writer.addAttribute( "fork", "true" );
-            writer.addAttribute( "dir", "." );
-
-            writer.startElement( "sysproperty" );
-            writer.addAttribute( "key", "basedir" );
-            writer.addAttribute( "value", "." );
-            writer.endElement(); // sysproperty
-
-            writer.startElement( "formatter" );
-            writer.addAttribute( "type", "xml" );
-            writer.endElement(); // formatter
-
-            writer.startElement( "formatter" );
-            writer.addAttribute( "type", "plain" );
-            writer.addAttribute( "usefile", "false" );
-            writer.endElement(); // formatter
-
-            writer.startElement( "classpath" );
-            writer.startElement( "path" );
-            writer.addAttribute( "refid", "build.test.classpath" );
-            writer.endElement(); // path
-            writer.startElement( "pathelement" );
-            writer.addAttribute( "location", "${maven.build.outputDir}" );
-            writer.endElement(); // pathelement
-            writer.startElement( "pathelement" );
-            writer.addAttribute( "location", "${maven.build.testOutputDir}" );
-            writer.endElement(); // pathelement
-            writer.endElement(); // classpath
-
-            writer.startElement( "batchtest" );
-            writer.addAttribute( "todir", "${maven.test.reports}" );
-
-            String[] compileSourceRoots = (String[]) testCompileSourceRoots.toArray( new String[0] );
-            for ( int i = 0; i < compileSourceRoots.length; i++ )
+            writer.startElement( "target" );
+            writer.addAttribute( "name", "test" );
+            writer.addAttribute( "description", "Run the test cases" );
+            if ( project.getModules() != null )
             {
-                writer.startElement( "fileset" );
-                writer.addAttribute( "dir", "${maven.build.testDir." + i + "}" );
-                /* TODO: need to get these from the test plugin somehow?
-                 UnitTest unitTest = project.getBuild().getUnitTest();
-                 writeIncludesExcludes( writer, unitTest.getIncludes(), unitTest.getExcludes() );
-                 // TODO: m1 allows additional test exclusions via maven.ant.excludeTests
-                 */
-                writeIncludesExcludes( writer, Collections.singletonList( "**/*Test.java" ), Collections
-                    .singletonList( "**/*Abstract*Test.java" ) );
-                writer.endElement(); // fileset
+                for ( Iterator it = project.getModules().iterator(); it.hasNext(); )
+                {
+                    String moduleSubPath = (String) it.next();
+                    writer.startElement( "ant" );
+                    writer.addAttribute( "antfile", "build.xml" );
+                    writer.addAttribute( "dir", PathUtils.toRelative( project.getBasedir(), moduleSubPath ) );
+                    writer.addAttribute( "target", "test" );
+                    writer.endElement(); // ant
+                }
             }
-            writer.endElement(); // batchtest
-
-            writer.endElement(); // junit
+            writer.endElement(); // target
         }
-        writer.endElement(); // target
+        else
+        {
+            writer.startElement( "target" );
+            writer.addAttribute( "name", "test" );
+            AntBuildWriterUtil.addWrapAttribute( writer, "target", "depends", "junit-present, compile-tests", 2 );
+            AntBuildWriterUtil.addWrapAttribute( writer, "target", "if", "junit.present", 2 );
+            AntBuildWriterUtil.addWrapAttribute( writer, "target", "description", "Run the test cases", 2 );
 
-        AntBuildWriterUtil.writeLineBreak( writer, 2, 1 );
+            if ( !testCompileSourceRoots.isEmpty() )
+            {
+                writer.startElement( "mkdir" );
+                writer.addAttribute( "dir", "${maven.test.reports}" );
+                writer.endElement(); //mkdir
 
-        writer.startElement( "target" );
-        writer.addAttribute( "name", "test-junit-present" );
+                writer.startElement( "junit" );
+                writer.addAttribute( "printSummary", "yes" );
+                writer.addAttribute( "haltonerror", "true" );
+                writer.addAttribute( "haltonfailure", "true" );
+                writer.addAttribute( "fork", "true" );
+                writer.addAttribute( "dir", "." );
 
-        writer.startElement( "available" );
-        writer.addAttribute( "classname", "junit.framework.Test" );
-        writer.addAttribute( "property", "junit.present" );
-        writer.endElement(); // available
+                writer.startElement( "sysproperty" );
+                writer.addAttribute( "key", "basedir" );
+                writer.addAttribute( "value", "." );
+                writer.endElement(); // sysproperty
 
-        writer.endElement(); // target
+                writer.startElement( "formatter" );
+                writer.addAttribute( "type", "xml" );
+                writer.endElement(); // formatter
 
-        AntBuildWriterUtil.writeLineBreak( writer, 2, 1 );
+                writer.startElement( "formatter" );
+                writer.addAttribute( "type", "plain" );
+                writer.addAttribute( "usefile", "false" );
+                writer.endElement(); // formatter
 
-        writer.startElement( "target" );
-        writer.addAttribute( "name", "junit-present" );
-        AntBuildWriterUtil.addWrapAttribute( writer, "target", "depends", "test-junit-present", 2 );
-        AntBuildWriterUtil.addWrapAttribute( writer, "target", "unless", "junit.present", 2 );
+                writer.startElement( "classpath" );
+                writer.startElement( "path" );
+                writer.addAttribute( "refid", "build.test.classpath" );
+                writer.endElement(); // path
+                writer.startElement( "pathelement" );
+                writer.addAttribute( "location", "${maven.build.outputDir}" );
+                writer.endElement(); // pathelement
+                writer.startElement( "pathelement" );
+                writer.addAttribute( "location", "${maven.build.testOutputDir}" );
+                writer.endElement(); // pathelement
+                writer.endElement(); // classpath
 
-        writer.startElement( "echo" );
-        writer.writeText( StringUtils.repeat( "=", 35 ) + " WARNING " + StringUtils.repeat( "=", 35 ) );
-        writer.endElement(); // echo
+                writer.startElement( "batchtest" );
+                writer.addAttribute( "todir", "${maven.test.reports}" );
 
-        writer.startElement( "echo" );
-        writer.writeText( " Junit isn't present in your $ANT_HOME/lib directory. Tests not executed. " );
-        writer.endElement(); // echo
+                String[] compileSourceRoots = (String[]) testCompileSourceRoots.toArray( new String[0] );
+                for ( int i = 0; i < compileSourceRoots.length; i++ )
+                {
+                    writer.startElement( "fileset" );
+                    writer.addAttribute( "dir", "${maven.build.testDir." + i + "}" );
+                    /* TODO: need to get these from the test plugin somehow?
+                     UnitTest unitTest = project.getBuild().getUnitTest();
+                     writeIncludesExcludes( writer, unitTest.getIncludes(), unitTest.getExcludes() );
+                     // TODO: m1 allows additional test exclusions via maven.ant.excludeTests
+                     */
+                    writeIncludesExcludes( writer, Collections.singletonList( "**/*Test.java" ), Collections
+                        .singletonList( "**/*Abstract*Test.java" ) );
+                    writer.endElement(); // fileset
+                }
+                writer.endElement(); // batchtest
 
-        writer.startElement( "echo" );
-        writer.writeText( StringUtils.repeat( "=", 79 ) );
-        writer.endElement(); // echo
+                writer.endElement(); // junit
+            }
+            writer.endElement(); // target
 
-        writer.endElement(); // target
+            AntBuildWriterUtil.writeLineBreak( writer, 2, 1 );
+
+            writer.startElement( "target" );
+            writer.addAttribute( "name", "test-junit-present" );
+
+            writer.startElement( "available" );
+            writer.addAttribute( "classname", "junit.framework.Test" );
+            writer.addAttribute( "property", "junit.present" );
+            writer.endElement(); // available
+
+            writer.endElement(); // target
+
+            AntBuildWriterUtil.writeLineBreak( writer, 2, 1 );
+
+            writer.startElement( "target" );
+            writer.addAttribute( "name", "junit-present" );
+            AntBuildWriterUtil.addWrapAttribute( writer, "target", "depends", "test-junit-present", 2 );
+            AntBuildWriterUtil.addWrapAttribute( writer, "target", "unless", "junit.present", 2 );
+
+            writer.startElement( "echo" );
+            writer.writeText( StringUtils.repeat( "=", 35 ) + " WARNING " + StringUtils.repeat( "=", 35 ) );
+            writer.endElement(); // echo
+
+            writer.startElement( "echo" );
+            writer.writeText( " Junit isn't present in your $ANT_HOME/lib directory. Tests not executed. " );
+            writer.endElement(); // echo
+
+            writer.startElement( "echo" );
+            writer.writeText( StringUtils.repeat( "=", 79 ) );
+            writer.endElement(); // echo
+
+            writer.endElement(); // target
+        }
 
         AntBuildWriterUtil.writeLineBreak( writer );
     }
 
+    /**
+     * Write jar target in the writer depending the packaging of the project.
+     *
+     * @param writer
+     */
     private void writeJarTarget( XMLWriter writer )
     {
         AntBuildWriterUtil.writeCommentText( writer, "Creation target", 1 );
 
-        writer.startElement( "target" );
-        writer.addAttribute( "name", "jar" );
-        writer.addAttribute( "depends", "compile,test" );
-        writer.addAttribute( "description", "Create the JAR" );
+        if ( isPomPackaging( project ) )
+        {
+            writer.startElement( "target" );
+            writer.addAttribute( "name", "jar" );
+            writer.addAttribute( "description", "Create the JAR" );
+            if ( project.getModules() != null )
+            {
+                for ( Iterator it = project.getModules().iterator(); it.hasNext(); )
+                {
+                    String moduleSubPath = (String) it.next();
+                    writer.startElement( "ant" );
+                    writer.addAttribute( "antfile", "build.xml" );
+                    writer.addAttribute( "dir", PathUtils.toRelative( project.getBasedir(), moduleSubPath ) );
+                    writer.addAttribute( "target", "jar" );
+                    writer.endElement(); // ant
+                }
+            }
+            writer.endElement(); // target
+        }
+        else
+        {
+            writer.startElement( "target" );
+            writer.addAttribute( "name", "jar" );
+            writer.addAttribute( "depends", "compile,test" );
+            writer.addAttribute( "description", "Create the JAR" );
 
-        writer.startElement( "jar" );
-        writer.addAttribute( "jarfile", "${maven.build.dir}/${maven.build.finalName}.jar" );
-        AntBuildWriterUtil.addWrapAttribute( writer, "jar", "basedir", "${maven.build.outputDir}", 3 );
-        AntBuildWriterUtil.addWrapAttribute( writer, "jar", "excludes", "**/package.html", 3 );
-        writer.endElement(); // jar
+            writer.startElement( "jar" );
+            writer.addAttribute( "jarfile", "${maven.build.dir}/${maven.build.finalName}.jar" );
+            AntBuildWriterUtil.addWrapAttribute( writer, "jar", "basedir", "${maven.build.outputDir}", 3 );
+            AntBuildWriterUtil.addWrapAttribute( writer, "jar", "excludes", "**/package.html", 3 );
+            writer.endElement(); // jar
 
-        writer.endElement(); // target
+            writer.endElement(); // target
+        }
 
         AntBuildWriterUtil.writeLineBreak( writer );
     }
@@ -809,10 +968,17 @@ public class AntBuildWriter
     }
 
     /**
+     * Write get-deps target in the writer only for a non-POM project
+     *
      * @param writer
      */
     private void writeGetDepsTarget( XMLWriter writer )
     {
+        if ( isPomPackaging( project ) )
+        {
+            return;
+        }
+
         AntBuildWriterUtil.writeCommentText( writer, "Download dependencies target", 1 );
 
         writer.startElement( "target" );
@@ -970,5 +1136,14 @@ public class AntBuildWriter
     private static void addProperty( Properties properties, String name, String value )
     {
         properties.put( name, StringUtils.isNotEmpty( value ) ? value : "" );
+    }
+
+    /**
+     * @param mavenProject
+     * @return true if project packaging equals <code>pom</code>
+     */
+    private boolean isPomPackaging( MavenProject mavenProject )
+    {
+        return mavenProject.getPackaging().toLowerCase().equals( "pom" );
     }
 }
