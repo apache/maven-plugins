@@ -1,0 +1,96 @@
+ ------
+ Usage
+ ------
+ Vincent Siveton
+ ------
+ September 2006
+ ------
+
+ ~~ Copyright 2006 The Apache Software Foundation.
+ ~~
+ ~~ Licensed under the Apache License, Version 2.0 (the "License");
+ ~~ you may not use this file except in compliance with the License.
+ ~~ You may obtain a copy of the License at
+ ~~
+ ~~      http://www.apache.org/licenses/LICENSE-2.0
+ ~~
+ ~~ Unless required by applicable law or agreed to in writing, software
+ ~~ distributed under the License is distributed on an "AS IS" BASIS,
+ ~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ~~ See the License for the specific language governing permissions and
+ ~~ limitations under the License.
+
+ ~~ NOTE: For help with the syntax of this file, see:
+ ~~ http://maven.apache.org/guides/mini/guide-apt-format.html
+
+
+Usage
+
+ The Ant Plugin generates Ant build files. The following example describe the basic
+ usage of the Plugin.
+
+* Generate Ant build files
+
+ To generate files, you should execute the ant goal of the Ant Plugin, i.e.:
+
++-----+
+mvn ant:ant
++-----+
+
+ The following files should be created:
+
++-----+
+yourProjectBaseDir
+  |-- build.xml
+  `-- maven-build.xml
+  `-- maven-build.properties
++-----+
+
+** build.xml
+
+ The <<<build.xml>>> is a generic Ant build file. It could be updated by the user. Here is the out-of-box <<<build.xml>>>:
+
++-----+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ====================================================================== -->
+<!-- Ant build file (http://ant.apache.org/) for Ant 1.6.2 or above.        -->
+<!-- ====================================================================== -->
+
+<project name="%PROJECT_ARTIFACTID%" default="jar" basedir=".">
+
+  <!-- ====================================================================== -->
+  <!-- Import maven-build.xml into the current project                        -->
+  <!-- ====================================================================== -->
+
+  <import file="maven-build.xml"/>
+
+  <!-- ====================================================================== -->
+  <!-- Help target                                                            -->
+  <!-- ====================================================================== -->
+
+  <target name="help">
+    <echo message="Please run: $ant -projecthelp"/>
+  </target>
+</project>
++-----+
+
+ <<Note>>: By default, the <<<build.xml>>> is not overwrited when calling <<<mvn ant:ant>>>. If you want to overwrite it,
+ you should execute the ant goal with the <<<overwrite>>> parameter, i.e.:
+
++-----+
+mvn ant:ant -Doverwrite=true
++-----+
+
+** maven-build.xml
+
+ The <<<maven-build.xml>>> is an Ant build file for the Maven project. It contains several targets to clean, compile,
+ test and packaging the Ant project.
+
+ <<Note>>: <<DO NOT EDIT maven-build.xml!>> It could be overwrite when calling <<<mvn ant:ant>>>.
+
+** maven-build.properties
+
+ The <<<maven-build.properties>>> contains several properties used by the <<<maven-build.xml>>> build file.
+
+ <<Note>>: <<DO NOT EDIT maven-build.properties!>> It could be overwrite when calling <<<mvn ant:ant>>>.
