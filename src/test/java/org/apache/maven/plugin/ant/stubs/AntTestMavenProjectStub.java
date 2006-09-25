@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
@@ -167,5 +168,13 @@ public class AntTestMavenProjectStub
         repo.setUrl( "http://repo1.maven.org/maven2" );
 
         return Collections.singletonList( repo );
+    }
+
+    /**
+     * @see org.apache.maven.project.MavenProject#getProperties()
+     */
+    public Properties getProperties()
+    {
+        return getModel().getProperties();
     }
 }

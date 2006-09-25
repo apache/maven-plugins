@@ -48,4 +48,7 @@
       </plugin>
     </plugins>
   </build>
+  <properties>
+    <myKey>myValue</myKey>
+  </properties>
 </project>
