@@ -16,8 +16,13 @@ package org.apache.maven.plugin.ant;
  * limitations under the License.
  */
 
+import java.util.Iterator;
+
+import org.apache.maven.model.Plugin;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.XMLWriter;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
  * Utility class for the <code>AntBuildWriter</code> class.
@@ -173,6 +178,11 @@ public class AntBuildWriterUtil
      */
     public static void addWrapAttribute( XMLWriter writer, String tag, String name, String value, int indent )
     {
+        if ( StringUtils.isEmpty( value ) )
+        {
+            return;
+        }
+
         if ( indent < 0 )
         {
             writer.addAttribute( name, value );
@@ -183,5 +193,58 @@ public class AntBuildWriterUtil
                 + StringUtils.repeat( " ", ( StringUtils.isEmpty( tag ) ? 0 : tag.length() ) + indent
                     * AntBuildWriter.DEFAULT_INDENTATION_SIZE ) + name, value );
         }
+    }
+
+    /**
+     * Return the optionName value defined in a project for a given artifactId plugin.
+     *
+     * @param project
+     * @param optionName
+     * @param defaultValue
+     * @return the value for the option name (comma separated value in the case of list) or null if not found
+     */
+    public static String getMavenCompilerPluginConfiguration( MavenProject project, String optionName,
+                                                String defaultValue )
+    {
+        for ( Iterator it = project.getModel().getBuild().getPlugins().iterator(); it.hasNext(); )
+        {
+            Plugin plugin = (Plugin) it.next();
+
+            if ( ( plugin.getGroupId().equals( "org.apache.maven.plugins" ) )
+                && ( plugin.getArtifactId().equals( "maven-compiler-plugin" ) ) )
+            {
+                Xpp3Dom dom = (Xpp3Dom) plugin.getConfiguration();
+
+                if ( ( dom != null ) && ( dom.getChild( optionName ) != null ) )
+                {
+                    if ( StringUtils.isNotEmpty( dom.getChild( optionName ).getValue() ) )
+                    {
+                        return dom.getChild( optionName ).getValue();
+                    }
+
+                    if ( dom.getChild( optionName ).getChildren() != null )
+                    {
+                        StringBuffer sb = new StringBuffer();
+
+                        Xpp3Dom[] children = dom.getChild( optionName ).getChildren();
+                        for ( int i = 0; i < children.length; i++ )
+                        {
+                            String value = children[i].getValue();
+                            if ( StringUtils.isNotEmpty( value ) )
+                            {
+                                sb.append( value );
+                                if ( i < children.length - 1 )
+                                {
+                                    sb.append( "," );
+                                }
+                            }
+                        }
+                        return sb.toString();
+                    }
+                }
+            }
+        }
+
+        return defaultValue;
     }
 }
