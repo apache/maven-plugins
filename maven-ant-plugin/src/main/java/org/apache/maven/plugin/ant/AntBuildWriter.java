@@ -859,9 +859,8 @@ public class AntBuildWriter
         AntBuildWriterUtil.writeLineBreak( writer );
     }
 
-    private static void writeCompileTasks( XMLWriter writer, File basedir, String outputDirectory,
-                                          List compileSourceRoots, List resources, String additionalClassesDirectory,
-                                          boolean isTest )
+    private void writeCompileTasks( XMLWriter writer, File basedir, String outputDirectory, List compileSourceRoots,
+                                   List resources, String additionalClassesDirectory, boolean isTest )
     {
         writer.startElement( "mkdir" );
         writer.addAttribute( "dir", outputDirectory );
@@ -871,10 +870,32 @@ public class AntBuildWriter
         {
             writer.startElement( "javac" );
             writer.addAttribute( "destdir", outputDirectory );
-            AntBuildWriterUtil.addWrapAttribute( writer, "javac", "excludes", "**/package.html", 3 );
-            AntBuildWriterUtil.addWrapAttribute( writer, "javac", "debug", "true", 3 ); // TODO: use compiler setting
-            AntBuildWriterUtil.addWrapAttribute( writer, "javac", "deprecation", "true", 3 ); // TODO: use compiler setting
-            AntBuildWriterUtil.addWrapAttribute( writer, "javac", "optimize", "false", 3 ); // TODO: use compiler setting
+            AntBuildWriterUtil.addWrapAttribute( writer, "javac", "includes", AntBuildWriterUtil
+                .getMavenCompilerPluginConfiguration( project, "includes", null ), 3 );
+            AntBuildWriterUtil.addWrapAttribute( writer, "javac", "excludes", AntBuildWriterUtil
+                .getMavenCompilerPluginConfiguration( project, "excludes", null ), 3 );
+            AntBuildWriterUtil.addWrapAttribute( writer, "javac", "encoding", AntBuildWriterUtil
+                .getMavenCompilerPluginConfiguration( project, "encoding", null ), 3 );
+            AntBuildWriterUtil.addWrapAttribute( writer, "javac", "nowarn", AntBuildWriterUtil
+                .getMavenCompilerPluginConfiguration( project, "showWarnings", "false" ), 3 );
+            AntBuildWriterUtil.addWrapAttribute( writer, "javac", "debug", AntBuildWriterUtil
+                .getMavenCompilerPluginConfiguration( project, "debug", "true" ), 3 );
+            AntBuildWriterUtil.addWrapAttribute( writer, "javac", "optimize", AntBuildWriterUtil
+                .getMavenCompilerPluginConfiguration( project, "optimize", "false" ), 3 );
+            AntBuildWriterUtil.addWrapAttribute( writer, "javac", "deprecation", AntBuildWriterUtil
+                .getMavenCompilerPluginConfiguration( project, "showDeprecation", "true" ), 3 );
+            AntBuildWriterUtil.addWrapAttribute( writer, "javac", "target", AntBuildWriterUtil
+                .getMavenCompilerPluginConfiguration( project, "target", null ), 3 );
+            AntBuildWriterUtil.addWrapAttribute( writer, "javac", "verbose", AntBuildWriterUtil
+                .getMavenCompilerPluginConfiguration( project, "verbose", "false" ), 3 );
+            AntBuildWriterUtil.addWrapAttribute( writer, "javac", "fork", AntBuildWriterUtil
+                .getMavenCompilerPluginConfiguration( project, "fork", "false" ), 3 );
+            AntBuildWriterUtil.addWrapAttribute( writer, "javac", "memoryMaximumSize", AntBuildWriterUtil
+                .getMavenCompilerPluginConfiguration( project, "meminitial", null ), 3 );
+            AntBuildWriterUtil.addWrapAttribute( writer, "javac", "memoryInitialSize", AntBuildWriterUtil
+                .getMavenCompilerPluginConfiguration( project, "maxmem", null ), 3 );
+            AntBuildWriterUtil.addWrapAttribute( writer, "javac", "source", AntBuildWriterUtil
+                .getMavenCompilerPluginConfiguration( project, "source", null ), 3 );
 
             String[] compileSourceRootsArray = (String[]) compileSourceRoots.toArray( new String[0] );
             for ( int i = 0; i < compileSourceRootsArray.length; i++ )
