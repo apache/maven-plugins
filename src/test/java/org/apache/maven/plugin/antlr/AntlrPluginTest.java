@@ -37,7 +37,7 @@ import org.codehaus.plexus.util.cli.WriterStreamConsumer;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  */
-public class AntlrTest
+public class AntlrPluginTest
     extends AbstractMojoTestCase
 {
     /**
@@ -186,6 +186,20 @@ public class AntlrTest
                 getContainer().getLogger().info(
                                                  "org.apache.maven.plugins:maven-antlr-plugin could not be " +
                                                  "configured. AntlrTest#testJavaGrammarReport() skipped." );
+                return;
+            }
+
+            // ----------------------------------------------------------------------
+            // Calling mvn from command line could throw an exception if
+            // java.lang.NoClassDefFoundError: org/apache/maven/doxia/sink/SinkFactory
+            // ----------------------------------------------------------------------
+
+            if ( output.toString()
+                .indexOf( "java.lang.NoClassDefFoundError: org/apache/maven/doxia/sink/SinkFactory" ) != -1 )
+            {
+                getContainer().getLogger().info(
+                                                 "java.lang.NoClassDefFoundError: org/apache/maven/doxia/sink/SinkFactory." +
+                                                 " AntlrTest#testJavaGrammarReport() skipped." );
                 return;
             }
 
