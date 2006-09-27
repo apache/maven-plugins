@@ -1,0 +1,62 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>doclet.test</groupId>
+  <artifactId>doclet-path-test</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <inceptionYear>2006</inceptionYear>
+  <name>Maven Javadoc Plugin Doclet Path Test</name>
+  <url>http://maven.apache.org</url>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <project implementation="org.apache.maven.plugin.javadoc.stubs.DocletPathTestMavenProjectStub"/>
+          <localRepository>${localRepository}</localRepository>
+          <outputDirectory>${basedir}/target/test/unit/doclet-path-test/target/site/apidocs</outputDirectory>
+          <doclet>UmlGraph</doclet>
+          <docletArtifacts>
+            <docletArtifact>
+              <groupId>umlgraph</groupId>
+              <artifactId>UMLGraph</artifactId>
+              <version>2.1</version>
+            </docletArtifact>
+            <docletArtifact>
+              <groupId>umlgraph</groupId>
+              <artifactId>UMLGraph-bis</artifactId>
+              <version>2.1</version>
+            </docletArtifact>
+          </docletArtifacts>
+          <breakiterator>false</breakiterator>
+          <old>false</old>
+          <show>protected</show>
+          <quiet>false</quiet>
+          <verbose>false</verbose>
+          <author>true</author>
+          <charset>ISO-8859-1</charset>
+          <docfilessubdirs>false</docfilessubdirs>
+          <linksource>false</linksource>
+          <nocomment>false</nocomment>
+          <nodeprecated>false</nodeprecated>
+          <nodeprecatedlist>false</nodeprecatedlist>
+          <nohelp>false</nohelp>
+          <noindex>false</noindex>
+          <nonavbar>false</nonavbar>
+          <nosince>false</nosince>
+          <notree>false</notree>
+          <serialwarn>false</serialwarn>
+          <splitindex>false</splitindex>
+          <stylesheet>java</stylesheet>
+          <groups/>
+          <tags/>
+          <remoteRepositories/>
+          <use>true</use>
+          <version>true</version>
+          <windowtitle>Maven Javadoc Plugin Doclet Path Test 1.0-SNAPSHOT API</windowtitle>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

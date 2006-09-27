@@ -1,0 +1,134 @@
+ ------
+ Using Alternate Doclet
+ ------
+ Vincent Siveton
+ Maria Odea Ching
+ ------
+ September 2006
+ ------
+
+ ~~ Copyright 2006 The Apache Software Foundation.
+ ~~
+ ~~ Licensed under the Apache License, Version 2.0 (the "License");
+ ~~ you may not use this file except in compliance with the License.
+ ~~ You may obtain a copy of the License at
+ ~~
+ ~~      http://www.apache.org/licenses/LICENSE-2.0
+ ~~
+ ~~ Unless required by applicable law or agreed to in writing, software
+ ~~ distributed under the License is distributed on an "AS IS" BASIS,
+ ~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ~~ See the License for the specific language governing permissions and
+ ~~ limitations under the License.
+
+ ~~ NOTE: For help with the syntax of this file, see:
+ ~~ http://maven.apache.org/guides/mini/guide-apt-format.html
+
+
+Using Alternate Doclet
+
+ To generate output from an alternate doclet, add configuration similar to the following to your POM.
+
+ In this example, the doclet is UmlGraph. UmlGraph allows the declarative specification and drawing
+ of UML class and sequence diagrams.
+ For more information about UmlGraph, please refer to {{http://www.spinellis.gr/sw/umlgraph/}}.
+
++-----+
+<project>
+   ...
+   <reporting>
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <configuration>
+              <doclet>gr.spinellis.umlgraph.doclet.UmlGraph</doclet>
+
+              <!-- <docletPath>/path/to/UmlGraph.jar</docletPath> -->
+              <docletArtifact>
+                <groupId>gr.spinellis</groupId>
+                <artifactId>UmlGraph</artifactId>
+                <version>4.4</version>
+              </docletArtifact>
+              <additionalparam>-views</additionalparam>
+            </configuration>
+         </plugin>
+         ...
+      </plugins>
+   </reporting>
+   ...
+</project>
++-----+
+
+ <<Note>>:
+
+   * \<additionalparam/\> is used to set additional parameters on the command line, specifically
+     for doclet options.
+
+   * if you need more artifacts in the docletpath, you could use \<docletArtifacts/\>.
+
+ After executing <<<mvn site>>>, you will see that a UML graph (.dot file) will be generated in the
+ destination directory.
+
+ <<Note about UmlGraph>>: You must have the Graphviz binary on your PATH, or the images will not be generated.
+ For more information about Graphviz, please refer to {{http://www.graphviz.org/}}.
+
+Using Alternate Doclet in Addition to the Javadoc Doclet
+
+ To generate output from an alternate doclet in addition to the normal HTML Javadoc doclet, add configuration
+ similar to the following to your POM.
+
+ In this example, the doclet is Sun DocCheck. The Sun Doc Check Doclet is an extension to the Javadoc
+ tool. It runs on source code and reviews documentation comments, generating an HTML report that
+ identifies empty comments and other ommissions and irregularities in the documentation comments.
+ For more information about Sun DocCheck, please refer to {{http://java.sun.com/j2se/javadoc/doccheck/}}.
+
++-----+
+<project>
+   ...
+   <reporting>
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <reportSets>
+              <reportSet>
+                <id>html</id>
+                <reports>
+                  <report>javadoc</report>
+                </reports>
+              </reportSet>
+              <reportSet>
+                <id>doccheck</id>
+                <configuration>
+                  <doclet>com.sun.tools.doclets.doccheck.DocCheck</doclet>
+
+                  <!-- <docletPath>/path/to/doccheck.jar</docletPath> -->
+                  <docletArtifact>
+                    <groupId>com.sun.tools.doclets</groupId>
+                    <artifactId>doccheck</artifactId>
+                    <version>1.2b2</version>
+                  </docletArtifact>
+                  <additionalparam>
+                    -d ${project.build.directory}/site/doccheck
+                  </additionalparam>
+
+                  <!-- Other dir than apidocs -->
+                  <destDir>doccheck</destDir>
+
+                  <!-- For the project-reports page-->
+                  <name>DocCheck</name>
+                  <description>DocCheck documentation.</description>
+                </configuration>
+                <reports>
+                  <report>javadoc</report>
+                </reports>
+              </reportSet>
+            </reportSets>
+        </plugin>
+        ...
+      </plugins>
+   </reporting>
+   ...
+</project>
++-----+

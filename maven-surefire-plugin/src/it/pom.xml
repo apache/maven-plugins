@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <groupId>org.apache.maven.plugins.surefire</groupId>
+  <artifactId>it</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>Surefire plugin integration tests</name>
+
+  <modules>
+    <module>test1</module>
+    <module>test2</module>
+    <module>test3</module>
+    <module>test4</module>
+    <module>test5</module>
+    <module>test6</module>
+    <module>test7</module>
+    <module>test8</module>
+  </modules> 
+
+</project>

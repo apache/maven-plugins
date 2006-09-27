@@ -1,0 +1,52 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>exception.test</groupId>
+  <artifactId>exception-test</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <inceptionYear>2006</inceptionYear>
+  <name>Maven Javadoc Plugin Exception Test</name>
+  <url>http://maven.apache.org</url>    
+  <build>
+    <finalName>exception-test</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <project implementation="org.apache.maven.plugin.javadoc.stubs.ExceptionTestMavenProjectStub"/>
+          <localRepository>${localRepository}</localRepository>
+          <outputDirectory>exception/..  +  /target/test/unit/default-configuration/target/site/apidocs</outputDirectory>
+          <breakiterator>false</breakiterator>
+          <old>false</old>
+          <show>protected</show>
+          <quiet>false</quiet>
+          <verbose>false</verbose>
+          <author>true</author>
+          <charset>ISO-8859-1</charset>
+          <docfilessubdirs>false</docfilessubdirs>
+          <linksource>false</linksource>
+          <nocomment>false</nocomment>
+          <nodeprecated>false</nodeprecated>
+          <nodeprecatedlist>false</nodeprecatedlist>
+          <nohelp>false</nohelp>
+          <noindex>false</noindex>
+          <nonavbar>false</nonavbar>
+          <nosince>false</nosince>
+          <notree>false</notree>
+          <serialwarn>false</serialwarn>
+          <splitindex>false</splitindex>
+          <stylesheet>java</stylesheet>
+          <groups/>
+          <tags/>
+          <use>true</use>
+          <version>true</version>
+          <windowtitle>Maven Javadoc Plugin Exception Test 1.0-SNAPSHOT API</windowtitle>
+          <links>
+             <param>http://java.sun.com/j2se/1.4.2/docs/api</param>
+          </links>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<project name="Maven Surefire Plugin">
+  <bannerLeft>
+    <name>Maven Install Plugin</name>
+    <src>http://maven.apache.org/images/apache-maven-project.png</src>
+    <href>http://maven.apache.org/</href>
+  </bannerLeft>
+  <bannerRight>
+    <src>http://maven.apache.org/images/maven-small.gif</src>
+  </bannerRight>
+  <body>
+    <links>
+      <item name="Maven 2" href="http://maven.apache.org/maven2/"/>
+    </links>
+
+    <menu name="Overview">
+      <item name="Introduction" href="index.html"/>
+	  <item name="Goals" href="plugin-info.html" />
+      <item name="Usage" href="usage.html"/>
+      <item name="FAQ" href="faq.html"/>
+    </menu>
+
+    <menu name="Examples">
+      <item name="Skipping Tests" href="examples/skipping-test.html" />
+      <item name="Inclusions and Exclusions of Tests" href="examples/inclusion-exclusion.html" />
+      <item name="Running a Single Test" href="examples/single-test.html" />
+      <item name="Class Loading Issues" href="examples/class-loading.html" />
+      <item name="Forking" href="examples/forking.html" />
+      <item name="Using System Properties" href="examples/system-properties.html" />
+      <item name="Using TestNG" href="examples/testng.html"/>
+    </menu>
+    
+    ${reports}
+  </body>
+</project>
