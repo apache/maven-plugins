@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -940,7 +941,7 @@ public abstract class AbstractJavadocMojo
         }
         catch ( IOException e )
         {
-            throw new MavenReportException( "Unable to copy default stylesheet", e );
+            throw new MavenReportException( "Unable to copy default stylesheet: " + e.getMessage(), e );
         }
 
         // ----------------------------------------------------------------------
@@ -982,7 +983,14 @@ public abstract class AbstractJavadocMojo
         List arguments = new ArrayList();
 
         cmd.setWorkingDirectory( javadocOutputDirectory.getAbsolutePath() );
-        cmd.setExecutable( getJavadocPath() );
+        try
+        {
+            cmd.setExecutable( getJavadocPath() );
+        }
+        catch ( IOException e )
+        {
+            throw new MavenReportException( "Unable to find javadoc command: " + e.getMessage(), e );
+        }
 
         // General javadoc arguments
         addArgIf( arguments, breakiterator, "-breakiterator", SINCE_JAVADOC_1_4 );
@@ -1041,7 +1049,7 @@ public abstract class AbstractJavadocMojo
             addArgIfNotEmpty( arguments, "-excludedocfilessubdir", quotedPathArgument( excludedocfilessubdir ),
                               SINCE_JAVADOC_1_4 );
             addArgIfNotEmpty( arguments, "-footer", quotedArgument( footer ) );
-            if ( groups!= null )
+            if ( groups != null )
             {
                 for ( int i = 0; i < groups.length; i++ )
                 {
@@ -1087,7 +1095,8 @@ public abstract class AbstractJavadocMojo
             addArgIf( arguments, serialwarn, "-serialwarn" );
             addArgIfNotEmpty( arguments, "-sourcetab", sourcetab, SINCE_JAVADOC_1_5 );
             addArgIf( arguments, splitindex, "-splitindex" );
-            addArgIfNotEmpty( arguments, "-stylesheetfile", quotedPathArgument( getStylesheetFile( javadocOutputDirectory ) ) );
+            addArgIfNotEmpty( arguments, "-stylesheetfile",
+                              quotedPathArgument( getStylesheetFile( javadocOutputDirectory ) ) );
 
             addArgIfNotEmpty( arguments, "-taglet", quotedArgument( taglet ), SINCE_JAVADOC_1_4 );
             if ( taglets != null )
@@ -1100,7 +1109,8 @@ public abstract class AbstractJavadocMojo
                     }
                     else
                     {
-                        addArgIfNotEmpty( arguments, "-taglet", quotedArgument( taglets[i].getTagletClass() ), SINCE_JAVADOC_1_4 );
+                        addArgIfNotEmpty( arguments, "-taglet", quotedArgument( taglets[i].getTagletClass() ),
+                                          SINCE_JAVADOC_1_4 );
                     }
                 }
             }
@@ -1184,12 +1194,15 @@ public abstract class AbstractJavadocMojo
 
             if ( exitCode != 0 )
             {
-                throw new MavenReportException( "Exit code: " + exitCode + " - " + err.getOutput() );
+                StringBuffer msg = new StringBuffer( "Exit code: " + exitCode + " - " + err.getOutput() );
+                msg.append( '\n' );
+                msg.append( "Command line was:" + Commandline.toString( cmd.getCommandline() ) );
+                throw new MavenReportException( msg.toString() );
             }
         }
         catch ( CommandLineException e )
         {
-            throw new MavenReportException( "Unable to execute javadoc command", e );
+            throw new MavenReportException( "Unable to execute javadoc command: " + e.getMessage(), e );
         }
 
         // ----------------------------------------------------------------------
@@ -1307,11 +1320,7 @@ public abstract class AbstractJavadocMojo
             if ( javadocDirectory != null )
             {
                 File javadocDir = new File( javadocDirectory );
-                if ( !javadocDir.exists() || !javadocDir.isDirectory() )
-                {
-                    getLog().warn( "The file '" + javadocDirectory + "' doesn't exists or it is not a directory." );
-                }
-                else
+                if ( javadocDir.exists() && javadocDir.isDirectory() )
                 {
                     sourcePaths.add( javadocDirectory );
                 }
@@ -1662,8 +1671,9 @@ public abstract class AbstractJavadocMojo
 
         if ( StringUtils.isEmpty( path.toString() ) )
         {
-            getLog().warn( "No docletpath option was found. Please review <docletpath/> or <docletArtifact/>" +
-                    " or <doclets/>." );
+            getLog().warn(
+                           "No docletpath option was found. Please review <docletpath/> or <docletArtifact/>"
+                               + " or <doclets/>." );
         }
 
         return path.toString();
@@ -1746,8 +1756,7 @@ public abstract class AbstractJavadocMojo
             return "";
         }
 
-        Artifact artifact = factory.createArtifact( javadocArtifact.getGroupId(),
-                                                    javadocArtifact.getArtifactId(),
+        Artifact artifact = factory.createArtifact( javadocArtifact.getGroupId(), javadocArtifact.getArtifactId(),
                                                     javadocArtifact.getVersion(), "compile", "jar" );
         try
         {
@@ -1797,31 +1806,67 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * Get the path of Javadoc tool depending the OS.
+     * Get the path of Javadoc tool depending the OS, the <code>java.home</code> system property and the
+     * <code>JAVA_HOME</code> environment variable
      *
      * @return the path of the Javadoc tool
+     * @throws IOException if not found
      */
     private String getJavadocPath()
+        throws IOException
     {
         String javadocCommand = "javadoc" + ( SystemUtils.IS_OS_WINDOWS ? ".exe" : "" );
 
         File javadocExe;
 
+        // ----------------------------------------------------------------------
+        // Try to find javadocExe from System.getProperty( "java.home" )
+        // By default, System.getProperty( "java.home" ) = JRE_HOME and JRE_HOME
+        // should be in the JDK_HOME
+        // ----------------------------------------------------------------------
+
         // For IBM's JDK 1.2
         if ( SystemUtils.IS_OS_AIX )
         {
-            javadocExe = new File( SystemUtils.getJavaHome() + "/../sh", javadocCommand );
+            javadocExe = new File( SystemUtils.getJavaHome() + File.separator + ".." + File.separator + "sh",
+                                   javadocCommand );
         }
         else if ( SystemUtils.IS_OS_MAC_OSX )
         {
-            javadocExe = new File( SystemUtils.getJavaHome() + "/bin", javadocCommand );
+            javadocExe = new File( SystemUtils.getJavaHome() + File.separator + "bin", javadocCommand );
         }
         else
         {
-            javadocExe = new File( SystemUtils.getJavaHome() + "/../bin", javadocCommand );
+            javadocExe = new File( SystemUtils.getJavaHome() + File.separator + ".." + File.separator + "bin",
+                                   javadocCommand );
         }
 
-        getLog().debug( "Javadoc executable=[" + javadocExe.getAbsolutePath() + "]" );
+        // ----------------------------------------------------------------------
+        // Try to find javadocExe from JAVA_HOME environment variable
+        // ----------------------------------------------------------------------
+
+        if ( !javadocExe.exists() || !javadocExe.isFile() )
+        {
+            Properties env = CommandLineUtils.getSystemEnvVars();
+            String javaHome = env.getProperty( "JAVA_HOME" );
+            if ( StringUtils.isEmpty( javaHome ) )
+            {
+                throw new IOException( "The environment variable JAVA_HOME is not correctly set." );
+            }
+            if ( ( !new File( javaHome ).exists() ) || ( !new File( javaHome ).isDirectory() ) )
+            {
+                throw new IOException( "The environment variable JAVA_HOME=" + javaHome + " doesn't exist or is "
+                    + "not a valid directory." );
+            }
+
+            javadocExe = new File( env.getProperty( "JAVA_HOME" ) + File.separator + "bin", javadocCommand );
+        }
+
+        if ( !javadocExe.exists() || !javadocExe.isFile() )
+        {
+            throw new IOException( "The javadoc executable '" + javadocExe + "' doesn't exist or is not a file. "
+                + "Verify the JAVA_HOME environment variable." );
+        }
 
         return javadocExe.getAbsolutePath();
     }
