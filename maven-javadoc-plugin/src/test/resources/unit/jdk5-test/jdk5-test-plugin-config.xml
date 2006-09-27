@@ -1,0 +1,25 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>jdk5.test</groupId>
+  <artifactId>jdk5-test</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <inceptionYear>2006</inceptionYear>
+  <name>Maven Javadoc Plugin jdk5 Test</name>
+  <url>http://maven.apache.org</url>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <project implementation="org.apache.maven.plugin.javadoc.stubs.Jdk5TestMavenProjectStub"/>
+          <localRepository>${localRepository}</localRepository>
+          <outputDirectory>${basedir}/target/test/unit/jdk5-test/target/site/apidocs</outputDirectory>
+          <source>1.5</source>
+          <windowtitle>Maven Javadoc Plugin Taglet jdk5 1.0-SNAPSHOT API</windowtitle>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

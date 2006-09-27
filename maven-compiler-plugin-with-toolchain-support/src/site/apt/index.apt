@@ -1,0 +1,66 @@
+ ------
+ Introduction
+ ------
+ Edwin Punzalan
+ ------
+ 06 July 2006
+ ------
+
+~~ Copyright 2006 The Apache Software Foundation.
+~~
+~~ Licensed under the Apache License, Version 2.0 (the "License");
+~~ you may not use this file except in compliance with the License.
+~~ You may obtain a copy of the License at
+~~
+~~      http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing, software
+~~ distributed under the License is distributed on an "AS IS" BASIS,
+~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~ See the License for the specific language governing permissions and
+~~ limitations under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/guides/mini/guide-apt-format.html
+
+
+Maven Compiler Plugin
+
+  The Compiler Plugin is used to compile the sources of your project.  The
+  default compiler is <<<javac>>> and is used to compile Java sources.  Other
+  compilers can be used and work has already started on AspectJ, .NET, and C#.
+
+  This Compiler Plugin is the Maven 2 version of Maven 1.x's Java Plugin.
+
+  <<NOTE:>> <To know more about the Java JDK 1.4 javac, please see:
+  {{http://java.sun.com/j2se/1.4.2/docs/tooldocs/tools.html#basic}}.>
+
+* Goals Overview
+
+  The Compiler Plugin has two goals.  Both are already bound to their proper
+  phases within the Maven Lifecycle and are therefore, automatically executed
+  during their respective phases.
+
+  * {{{compile-mojo.html}compiler:compile}} is bound to the compile phase and
+  is used to compile the main source files.
+
+  * {{{testCompile-mojo.html}compiler:testCompile}} is bound to the
+  test-compile phase and is used to compile the test source files.
+
+* Usage
+
+  Instructions on how to use the Compiler Plugin can be found
+  {{{usage.html}here}}.
+
+* Examples
+
+  To provide you with better understanding on some usages of the Compiler
+  Plugin, you can take a look into the following examples:
+
+  * {{{examples/compile-using-different-jdk.html}Compile Using A Different JDK}}
+
+  * {{{examples/set-compiler-source-and-target.html}Compile Using -source and -target javac Options}}
+
+  * {{{examples/compile-with-memory-enhancements.html}Compile Using Memory Allocation Enhancement}}
+
+  * {{{examples/pass-compiler-arguments.html}Pass Compiler Arguments}}

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+
+   <groupId>org.apache.maven.plugins.surefire</groupId>
+   <artifactId>test5</artifactId>
+   <version>1.0-SNAPSHOT</version>
+   <name>Test for testng jdk14 integration</name>
+   <description>calls testng jdk14 javadoc based tests</description>
+   
+   <dependencies>
+      <dependency>
+         <groupId>junit</groupId>
+         <artifactId>junit</artifactId>
+         <version>3.8.1</version>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.testng</groupId>
+         <artifactId>testng</artifactId>
+         <version>5.0.1</version>
+         <classifier>jdk14</classifier>
+         <scope>test</scope>
+      </dependency>
+   </dependencies>
+   
+   <build>
+    <testSourceDirectory>src/test/java</testSourceDirectory>
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+               <groups>functional</groups>
+            </configuration>
+         </plugin>
+      </plugins>
+   </build>
+
+</project>

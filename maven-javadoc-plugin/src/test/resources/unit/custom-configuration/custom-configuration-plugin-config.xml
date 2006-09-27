@@ -1,0 +1,87 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>def.configuration</groupId>
+  <artifactId>default-configuration</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <inceptionYear>2005</inceptionYear>
+  <name>Maven Javadoc Plugin Default Configuration Test</name>
+  <url>http://maven.apache.org</url>    
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <project implementation="org.apache.maven.plugin.javadoc.stubs.CustomConfigurationMavenProjectStub"/>
+          <localRepository>${localRepository}</localRepository>
+          <outputDirectory>${basedir}/target/test/unit/custom-configuration/target/site/apidocs</outputDirectory>
+          <breakiterator>false</breakiterator>
+          <old>true</old>
+          <show>private</show>
+          <quiet>true</quiet>
+          <verbose>false</verbose>
+          <author>false</author>
+          <charset>ISO-8859-1</charset>
+          <docfilessubdirs>false</docfilessubdirs>
+          <linksource>false</linksource>
+          <nocomment>false</nocomment>
+          <nodeprecated>true</nodeprecated>
+          <nodeprecatedlist>false</nodeprecatedlist>
+          <nohelp>true</nohelp>
+          <noindex>true</noindex>
+          <nonavbar>false</nonavbar>
+          <nosince>false</nosince>
+          <notree>true</notree>
+          <serialwarn>false</serialwarn>
+          <splitindex>false</splitindex>
+          <stylesheet>maven</stylesheet>
+          <groups>
+            <group>
+              <title>Core Packages</title>
+              <packages>org.apache.maven.plugin.javadoc.test1</packages>
+            </group>
+            <group>
+              <title>Extension Packages</title>
+              <packages>org.apache.maven.plugin.javadoc.test2</packages>
+            </group>
+          </groups>
+          <tags>
+            <tag>
+              <name>.usage</name>
+              <placement>a</placement>
+              <head>Usage</head>
+            </tag>
+            <tag>
+              <name>.todo</name>
+              <placement>a</placement>
+              <head>To do something:</head>
+            </tag>
+            <tag>
+              <name>.fixme</name>
+              <placement>a</placement>
+              <head>Fixme</head>
+            </tag>
+          </tags>
+          <use>true</use>
+          <version>false</version>
+          <windowtitle>Maven Javadoc Plugin Default configuration Test 1.0-SNAPSHOT API</windowtitle>
+          <bottom>SAMPLE BOTTOM CONTENT</bottom>
+          <minmemory>128m</minmemory>
+          <maxmemory>512</maxmemory>
+          <offlineLinks>
+            <OfflineLink>
+              <url>http://java.sun.com/j2se/1.4.2/docs/api</url>
+              <location>${basedir}/src/test/resources/unit/custom-configuration</location>
+            </OfflineLink>
+          </offlineLinks>
+          <header>MAVEN JAVADOC PLUGIN TEST</header>
+          <footer>MAVEN JAVADOC PLUGIN TEST FOOTER</footer>
+          <locale>en_US</locale>
+          <isOffline>true</isOffline>
+          <excludePackageNames>*.exclude2:custom.configuration.exclude1.*</excludePackageNames>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
