@@ -132,7 +132,12 @@ public class IdeaWorkspaceMojo
             {
                 int startIndex = connection.indexOf( ":" );
 
-                int endIndex = connection.indexOf( ":", startIndex + 1 );
+                int endIndex = connection.indexOf( "|", startIndex + 1 );
+
+                if ( endIndex == -1 )
+                {
+                    endIndex = connection.indexOf( ":", startIndex + 1 );
+                }
 
                 if ( startIndex < endIndex )
                 {
