@@ -16,13 +16,18 @@ package org.apache.maven.plugin.javadoc.stubs;
  * limitations under the License.
  */
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Scm;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
@@ -47,14 +52,12 @@ public class AggregateProject2TestMavenProjectStub
         artifact.setArtifactHandler( new DefaultArtifactHandlerStub() );
         setArtifact( artifact );
 
-        Scm scm = new Scm();
+        scm = new Scm();
         scm.setConnection( "scm:svn:http://svn.apache.org/maven/sample/trunk" );
-        setScm( scm );
 
-        Build build = new Build();
+        build = new Build();
         build.setFinalName( "aggregate-test-project2" );
         build.setDirectory( getBasedir() + "/target/test/unit/aggregate-test/target" );
-        setBuild( build );
 
         String basedir = getBasedir().getAbsolutePath();
         List compileSourceRoots = new ArrayList();
@@ -62,23 +65,44 @@ public class AggregateProject2TestMavenProjectStub
         setCompileSourceRoots( compileSourceRoots );
     }
 
+    /**
+     * @see org.apache.maven.project.MavenProject#getScm()
+     */
     public Scm getScm()
     {
         return scm;
     }
 
+    /**
+     * @see org.apache.maven.project.MavenProject#setScm(org.apache.maven.model.Scm)
+     */
     public void setScm( Scm scm )
     {
         this.scm = scm;
     }
 
+    /**
+     * @see org.apache.maven.project.MavenProject#getBuild()
+     */
     public Build getBuild()
     {
         return build;
     }
 
+    /**
+     * @see org.apache.maven.project.MavenProject#setBuild(org.apache.maven.model.Build)
+     */
     public void setBuild( Build build )
     {
         this.build = build;
+    }
+
+    /**
+     * @see org.apache.maven.project.MavenProject#createArtifacts(org.apache.maven.artifact.factory.ArtifactFactory, java.lang.String, org.apache.maven.artifact.resolver.filter.ArtifactFilter)
+     */
+    public Set createArtifacts( ArtifactFactory artifactFactory, String string, ArtifactFilter artifactFilter )
+        throws InvalidDependencyVersionException
+    {
+        return Collections.EMPTY_SET;
     }
 }

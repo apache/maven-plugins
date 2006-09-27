@@ -218,17 +218,17 @@ public class JavadocReport
         catch ( RendererException e )
         {
             throw new MojoExecutionException( "An error has occurred in " + getName( Locale.ENGLISH )
-                + " report generation.", e );
+                + " report generation:" + e.getMessage(), e );
         }
         catch ( IOException e )
         {
             throw new MojoExecutionException( "An error has occurred in " + getName( Locale.ENGLISH )
-                + " report generation.", e );
+                + " report generation:" + e.getMessage(), e );
         }
         catch ( MavenReportException e )
         {
             throw new MojoExecutionException( "An error has occurred in " + getName( Locale.ENGLISH )
-                + " report generation.", e );
+                + " report generation:" + e.getMessage(), e );
         }
     }
 }

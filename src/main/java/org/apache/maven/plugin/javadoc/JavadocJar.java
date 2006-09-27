@@ -62,7 +62,7 @@ public class JavadocJar
 
     /**
      * Used for attaching the artifact in the project
-     * 
+     *
      * @component
      */
     private MavenProjectHelper projectHelper;
@@ -120,15 +120,15 @@ public class JavadocJar
             }
             catch ( ArchiverException e )
             {
-                throw new MojoExecutionException( "Error while creating archive.", e );
+                throw new MojoExecutionException( "Error while creating archive:" + e.getMessage(), e );
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException( "Error while creating archive.", e );
+                throw new MojoExecutionException( "Error while creating archive:" + e.getMessage(), e );
             }
             catch ( MavenReportException e )
             {
-                throw new MojoExecutionException( "Error while creating archive.", e );
+                throw new MojoExecutionException( "Error while creating archive:" + e.getMessage(), e );
             }
         }
     }
