@@ -129,6 +129,7 @@ public abstract class AbstractCompilerMojo
      */
     private String compilerId;
 
+    //TOOLCHAIN
     /**
      * Version of the compiler to use, ex. "1.3", "1.5", if fork is set to true.
      *
@@ -160,6 +161,7 @@ public abstract class AbstractCompilerMojo
      */
     private String maxmem;
 
+    //TOOLCHAIN
     /**
      * Sets the executable of the compiler to use when fork is true.
      *
