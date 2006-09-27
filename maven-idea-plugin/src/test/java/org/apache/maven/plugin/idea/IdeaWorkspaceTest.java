@@ -45,6 +45,18 @@ public class IdeaWorkspaceTest
         assertEquals( "Test scm type from scm connection", "type", element.attributeValue( "value" ) );
     }
 
+    public void testScmConnectionWithPipeConfig()
+        throws Exception
+    {
+        Document iwsDocument = executeMojo( "src/test/workspace-plugin-configs/connection-with-pipe-plugin-config.xml" );
+
+        Element component = findComponent( iwsDocument.getRootElement(), "VcsManagerConfiguration" );
+
+        Element element = findElementByNameAttribute( component, "option", "ACTIVE_VCS_NAME" );
+
+        assertEquals( "Test scm type from scm connection", "type", element.attributeValue( "value" ) );
+    }
+
     public void testScmDevConnectionConfig()
         throws Exception
     {
