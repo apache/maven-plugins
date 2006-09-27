@@ -44,6 +44,15 @@ public class JavadocReportTest
     }
 
     /**
+     * @see junit.framework.TestCase#tearDown()
+     */
+    protected void tearDown()
+        throws Exception
+    {
+        // nop
+    }
+
+    /**
      * Test when default configuration is provided for the plugin
      *
      * @throws Exception
@@ -99,36 +108,35 @@ public class JavadocReportTest
                                   "target/test/unit/default-configuration/target/site/apidocs/allclasses-noframe.html" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        generatedFile =
-            new File( getBasedir(), "target/test/unit/default-configuration/target/site/apidocs/constant-values.html" );
+        generatedFile = new File( getBasedir(),
+                                  "target/test/unit/default-configuration/target/site/apidocs/constant-values.html" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        generatedFile =
-            new File( getBasedir(), "target/test/unit/default-configuration/target/site/apidocs/deprecated-list.html" );
+        generatedFile = new File( getBasedir(),
+                                  "target/test/unit/default-configuration/target/site/apidocs/deprecated-list.html" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        generatedFile =
-            new File( getBasedir(), "target/test/unit/default-configuration/target/site/apidocs/help-doc.html" );
+        generatedFile = new File( getBasedir(),
+                                  "target/test/unit/default-configuration/target/site/apidocs/help-doc.html" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        generatedFile =
-            new File( getBasedir(), "target/test/unit/default-configuration/target/site/apidocs/index-all.html" );
+        generatedFile = new File( getBasedir(),
+                                  "target/test/unit/default-configuration/target/site/apidocs/index-all.html" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        generatedFile =
-            new File( getBasedir(), "target/test/unit/default-configuration/target/site/apidocs/index.html" );
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/site/apidocs/index.html" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        generatedFile =
-            new File( getBasedir(), "target/test/unit/default-configuration/target/site/apidocs/overview-tree.html" );
+        generatedFile = new File( getBasedir(),
+                                  "target/test/unit/default-configuration/target/site/apidocs/overview-tree.html" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        generatedFile =
-            new File( getBasedir(), "target/test/unit/default-configuration/target/site/apidocs/package-list" );
+        generatedFile = new File( getBasedir(),
+                                  "target/test/unit/default-configuration/target/site/apidocs/package-list" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        generatedFile =
-            new File( getBasedir(), "target/test/unit/default-configuration/target/site/apidocs/stylesheet.css" );
+        generatedFile = new File( getBasedir(),
+                                  "target/test/unit/default-configuration/target/site/apidocs/stylesheet.css" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
     }
 
@@ -140,14 +148,14 @@ public class JavadocReportTest
     public void testSubpackages()
         throws Exception
     {
-        File testPom =
-            new File( getBasedir(), "src/test/resources/unit/subpackages-test/subpackages-test-plugin-config.xml" );
+        File testPom = new File( getBasedir(),
+                                 "src/test/resources/unit/subpackages-test/subpackages-test-plugin-config.xml" );
         JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
         mojo.execute();
 
         //check the excluded packages
-        File generatedFile =
-            new File( getBasedir(), "target/test/unit/subpackages-test/target/site/apidocs/subpackages/test/excluded" );
+        File generatedFile = new File( getBasedir(),
+                                       "target/test/unit/subpackages-test/target/site/apidocs/subpackages/test/excluded" );
         assertTrue( !FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         generatedFile = new File( getBasedir(),
@@ -155,8 +163,8 @@ public class JavadocReportTest
         assertTrue( !FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         //check if the classes in the specified subpackages were included
-        generatedFile =
-            new File( getBasedir(), "target/test/unit/subpackages-test/target/site/apidocs/subpackages/test/App.html" );
+        generatedFile = new File( getBasedir(),
+                                  "target/test/unit/subpackages-test/target/site/apidocs/subpackages/test/App.html" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         generatedFile = new File( getBasedir(),
@@ -180,8 +188,7 @@ public class JavadocReportTest
     public void testDocfiles()
         throws Exception
     {
-        File testPom =
-            new File( getBasedir(), "src/test/resources/unit/docfiles-test/docfiles-test-plugin-config.xml" );
+        File testPom = new File( getBasedir(), "src/test/resources/unit/docfiles-test/docfiles-test-plugin-config.xml" );
         JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
         mojo.execute();
 
@@ -197,12 +204,12 @@ public class JavadocReportTest
                                   "target/test/unit/docfiles-test/target/site/apidocs/doc-files/included-dir2/sample-included2.gif" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        generatedFile =
-            new File( getBasedir(), "target/test/unit/docfiles-test/target/site/apidocs/doc-files/excluded-dir1" );
+        generatedFile = new File( getBasedir(),
+                                  "target/test/unit/docfiles-test/target/site/apidocs/doc-files/excluded-dir1" );
         assertTrue( !FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        generatedFile =
-            new File( getBasedir(), "target/test/unit/docfiles-test/target/site/apidocs/doc-files/excluded-dir2" );
+        generatedFile = new File( getBasedir(),
+                                  "target/test/unit/docfiles-test/target/site/apidocs/doc-files/excluded-dir2" );
         assertTrue( !FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
     }
 
@@ -221,8 +228,8 @@ public class JavadocReportTest
         mojo.execute();
 
         //check if there is a tree page generated (notree == true)
-        File generatedFile =
-            new File( getBasedir(), "target/test/unit/custom-configuration/target/site/apidocs/overview-tree.html" );
+        File generatedFile = new File( getBasedir(),
+                                       "target/test/unit/custom-configuration/target/site/apidocs/overview-tree.html" );
         assertTrue( !FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         generatedFile = new File( getBasedir(),
@@ -230,14 +237,14 @@ public class JavadocReportTest
         assertTrue( !FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         //check if the main index page was generated (noindex == true)
-        generatedFile =
-            new File( getBasedir(), "target/test/unit/custom-configuration/target/site/apidocs/index-all.html" );
+        generatedFile = new File( getBasedir(),
+                                  "target/test/unit/custom-configuration/target/site/apidocs/index-all.html" );
         assertTrue( !FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         //check if the deprecated list and the deprecated api were generated (nodeprecated == true)
         //@todo Fix: the class-use of the deprecated api is still created eventhough the deprecated api of that class is no longer generated
-        generatedFile =
-            new File( getBasedir(), "target/test/unit/custom-configuration/target/site/apidocs/deprecated-list.html" );
+        generatedFile = new File( getBasedir(),
+                                  "target/test/unit/custom-configuration/target/site/apidocs/deprecated-list.html" );
         assertTrue( !FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         generatedFile = new File( getBasedir(),
@@ -255,7 +262,8 @@ public class JavadocReportTest
 
         //offlineLinks
         assertTrue( str.toLowerCase().indexOf(
-            "HREF=\"http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html\"".toLowerCase() ) != -1 );
+                                               "HREF=\"http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html\""
+                                                   .toLowerCase() ) != -1 );
 
         //header
         assertTrue( str.toUpperCase().indexOf( "MAVEN JAVADOC PLUGIN TEST" ) != -1 );
@@ -268,15 +276,15 @@ public class JavadocReportTest
 
         //check the wildcard (*) package exclusions -- excludePackageNames parameter
         generatedFile = new File( getBasedir(),
-            "target/test/unit/custom-configuration/target/site/apidocs/custom/configuration/exclude1/Exclude1App.html" );
+                                  "target/test/unit/custom-configuration/target/site/apidocs/custom/configuration/exclude1/Exclude1App.html" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         generatedFile = new File( getBasedir(),
-            "target/test/unit/custom-configuration/target/site/apidocs/custom/configuration/exclude1/subexclude/SubexcludeApp.html" );
+                                  "target/test/unit/custom-configuration/target/site/apidocs/custom/configuration/exclude1/subexclude/SubexcludeApp.html" );
         assertTrue( !FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         generatedFile = new File( getBasedir(),
-            "target/test/unit/custom-configuration/target/site/apidocs/custom/configuration/exclude2/Exclude2App.html" );
+                                  "target/test/unit/custom-configuration/target/site/apidocs/custom/configuration/exclude2/Exclude2App.html" );
         assertTrue( !FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
     }
 
@@ -293,8 +301,7 @@ public class JavadocReportTest
         // doclet path contains the UmlGraph artifact
         // ----------------------------------------------------------------------
 
-        File testPom = new File( getBasedir(),
-                                 "src/test/resources/unit/doclet-test/doclet-test-plugin-config.xml" );
+        File testPom = new File( getBasedir(), "src/test/resources/unit/doclet-test/doclet-test-plugin-config.xml" );
         JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
         mojo.execute();
 
@@ -311,8 +318,7 @@ public class JavadocReportTest
         // doclet path contains the twice UmlGraph artifacts
         // ----------------------------------------------------------------------
 
-        testPom = new File( getBasedir(),
-                                 "src/test/resources/unit/doclet-path-test/doclet-path-test-plugin-config.xml" );
+        testPom = new File( getBasedir(), "src/test/resources/unit/doclet-path-test/doclet-path-test-plugin-config.xml" );
         mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
         mojo.execute();
 
@@ -334,8 +340,8 @@ public class JavadocReportTest
     public void testAggregate()
         throws Exception
     {
-        File testPom =
-            new File( getBasedir(), "src/test/resources/unit/aggregate-test/aggregate-test-plugin-config.xml" );
+        File testPom = new File( getBasedir(),
+                                 "src/test/resources/unit/aggregate-test/aggregate-test-plugin-config.xml" );
         JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
         mojo.execute();
 
@@ -383,8 +389,8 @@ public class JavadocReportTest
     public void testQuotedPath()
         throws Exception
     {
-        File testPom =
-            new File( getBasedir(), "src/test/resources/unit/quotedpath'test/quotedpath-test-plugin-config.xml" );
+        File testPom = new File( getBasedir(),
+                                 "src/test/resources/unit/quotedpath'test/quotedpath-test-plugin-config.xml" );
         JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
         mojo.execute();
 
@@ -398,24 +404,20 @@ public class JavadocReportTest
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         //project level generated javadoc files
-        generatedFile =
-            new File( getBasedir(), "target/test/unit/quotedpath'test/target/site/apidocs/index-all.html" );
+        generatedFile = new File( getBasedir(), "target/test/unit/quotedpath'test/target/site/apidocs/index-all.html" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        generatedFile =
-            new File( getBasedir(), "target/test/unit/quotedpath'test/target/site/apidocs/index.html" );
+        generatedFile = new File( getBasedir(), "target/test/unit/quotedpath'test/target/site/apidocs/index.html" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        generatedFile =
-            new File( getBasedir(), "target/test/unit/quotedpath'test/target/site/apidocs/overview-tree.html" );
+        generatedFile = new File( getBasedir(),
+                                  "target/test/unit/quotedpath'test/target/site/apidocs/overview-tree.html" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        generatedFile =
-            new File( getBasedir(), "target/test/unit/quotedpath'test/target/site/apidocs/package-list" );
+        generatedFile = new File( getBasedir(), "target/test/unit/quotedpath'test/target/site/apidocs/package-list" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        generatedFile =
-            new File( getBasedir(), "target/test/unit/quotedpath'test/target/site/apidocs/stylesheet.css" );
+        generatedFile = new File( getBasedir(), "target/test/unit/quotedpath'test/target/site/apidocs/stylesheet.css" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
     }
 
@@ -427,8 +429,8 @@ public class JavadocReportTest
     {
         try
         {
-            File testPom =
-                new File( getBasedir(), "src/test/resources/unit/default-configuration/exception-test-plugin-config.xml" );
+            File testPom = new File( getBasedir(),
+                                     "src/test/resources/unit/default-configuration/exception-test-plugin-config.xml" );
             JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
             mojo.execute();
 
@@ -440,22 +442,13 @@ public class JavadocReportTest
 
             try
             {
-                FileUtils.deleteDirectory( new File( getBasedir(), "exception") );
+                FileUtils.deleteDirectory( new File( getBasedir(), "exception" ) );
             }
-            catch( IOException ie )
+            catch ( IOException ie )
             {
                 // nop
             }
         }
-    }
-
-    /**
-     * @see junit.framework.TestCase#tearDown()
-     */
-    protected void tearDown()
-        throws Exception
-    {
-        // nop
     }
 
     /**
@@ -472,18 +465,23 @@ public class JavadocReportTest
         File f = new File( getBasedir(), "target/local-repo/umlgraph/UMLGraph/2.1" );
         f.mkdirs();
 
-        FileUtils.copyFile( new File( getBasedir(),
-                                      "src/test/resources/unit/doclet-test/artifact-doclet/umlgraph/UMLGraph/maven-metadata-local.xml" ),
-                            new File( getBasedir(),
-                                      "target/local-repo/umlgraph/UMLGraph/maven-metadata-local.xml" ) );
+        FileUtils
+            .copyFile(
+                       new File( getBasedir(),
+                                 "src/test/resources/unit/doclet-test/artifact-doclet/umlgraph/UMLGraph/maven-metadata-local.xml" ),
+                       new File( getBasedir(), "target/local-repo/umlgraph/UMLGraph/maven-metadata-local.xml" ) );
 
-        FileUtils.copyFile( new File( getBasedir(),
-                                      "src/test/resources/unit/doclet-test/artifact-doclet/umlgraph/UMLGraph/2.1/UMLGraph-2.1.jar" ),
-                            new File( getBasedir(), "target/local-repo/umlgraph/UMLGraph/2.1/UMLGraph-2.1.jar" ) );
+        FileUtils
+            .copyFile(
+                       new File( getBasedir(),
+                                 "src/test/resources/unit/doclet-test/artifact-doclet/umlgraph/UMLGraph/2.1/UMLGraph-2.1.jar" ),
+                       new File( getBasedir(), "target/local-repo/umlgraph/UMLGraph/2.1/UMLGraph-2.1.jar" ) );
 
-        FileUtils.copyFile( new File( getBasedir(),
-                                      "src/test/resources/unit/doclet-test/artifact-doclet/umlgraph/UMLGraph/2.1/UMLGraph-2.1.pom" ),
-                            new File( getBasedir(), "target/local-repo/umlgraph/UMLGraph/2.1/UMLGraph-2.1.pom" ) );
+        FileUtils
+            .copyFile(
+                       new File( getBasedir(),
+                                 "src/test/resources/unit/doclet-test/artifact-doclet/umlgraph/UMLGraph/2.1/UMLGraph-2.1.pom" ),
+                       new File( getBasedir(), "target/local-repo/umlgraph/UMLGraph/2.1/UMLGraph-2.1.pom" ) );
 
         // ----------------------------------------------------------------------
         // UMLGraph-bis
@@ -492,18 +490,23 @@ public class JavadocReportTest
         f = new File( getBasedir(), "target/local-repo/umlgraph/UMLGraph-bis/2.1" );
         f.mkdirs();
 
-        FileUtils.copyFile( new File( getBasedir(),
-                                      "src/test/resources/unit/doclet-path-test/artifact-doclet/umlgraph/UMLGraph-bis/maven-metadata-local.xml" ),
-                            new File( getBasedir(),
-                                      "target/local-repo/umlgraph/UMLGraph-bis/maven-metadata-local.xml" ) );
+        FileUtils
+            .copyFile(
+                       new File( getBasedir(),
+                                 "src/test/resources/unit/doclet-path-test/artifact-doclet/umlgraph/UMLGraph-bis/maven-metadata-local.xml" ),
+                       new File( getBasedir(), "target/local-repo/umlgraph/UMLGraph-bis/maven-metadata-local.xml" ) );
 
-        FileUtils.copyFile( new File( getBasedir(),
-                                      "src/test/resources/unit/doclet-path-test/artifact-doclet/umlgraph/UMLGraph-bis/2.1/UMLGraph-bis-2.1.jar" ),
-                            new File( getBasedir(), "target/local-repo/umlgraph/UMLGraph-bis/2.1/UMLGraph-bis-2.1.jar" ) );
+        FileUtils
+            .copyFile(
+                       new File( getBasedir(),
+                                 "src/test/resources/unit/doclet-path-test/artifact-doclet/umlgraph/UMLGraph-bis/2.1/UMLGraph-bis-2.1.jar" ),
+                       new File( getBasedir(), "target/local-repo/umlgraph/UMLGraph-bis/2.1/UMLGraph-bis-2.1.jar" ) );
 
-        FileUtils.copyFile( new File( getBasedir(),
-                                      "src/test/resources/unit/doclet-path-test/artifact-doclet/umlgraph/UMLGraph-bis/2.1/UMLGraph-bis-2.1.pom" ),
-                            new File( getBasedir(), "target/local-repo/umlgraph/UMLGraph-bis/2.1/UMLGraph-bis-2.1.pom" ) );
+        FileUtils
+            .copyFile(
+                       new File( getBasedir(),
+                                 "src/test/resources/unit/doclet-path-test/artifact-doclet/umlgraph/UMLGraph-bis/2.1/UMLGraph-bis-2.1.pom" ),
+                       new File( getBasedir(), "target/local-repo/umlgraph/UMLGraph-bis/2.1/UMLGraph-bis-2.1.pom" ) );
 
         // ----------------------------------------------------------------------
         // commons-attributes-compiler
@@ -513,18 +516,23 @@ public class JavadocReportTest
         f = new File( getBasedir(), "target/local-repo/org/tullmann/taglets/1.0" );
         f.mkdirs();
 
-        FileUtils.copyFile( new File( getBasedir(),
-                                      "src/test/resources/unit/taglet-test/artifact-taglet/org/tullmann/taglets/maven-metadata-local.xml" ),
-                            new File( getBasedir(),
-                                      "target/local-repo/org/tullmann/taglets/maven-metadata-local.xml" ) );
+        FileUtils
+            .copyFile(
+                       new File( getBasedir(),
+                                 "src/test/resources/unit/taglet-test/artifact-taglet/org/tullmann/taglets/maven-metadata-local.xml" ),
+                       new File( getBasedir(), "target/local-repo/org/tullmann/taglets/maven-metadata-local.xml" ) );
 
-        FileUtils.copyFile( new File( getBasedir(),
-                                      "src/test/resources/unit/taglet-test/artifact-taglet/org/tullmann/taglets/1.0/taglets-1.0.jar" ),
-                            new File( getBasedir(), "target/local-repo/org/tullmann/taglets/1.0/taglets-1.0.jar" ) );
+        FileUtils
+            .copyFile(
+                       new File( getBasedir(),
+                                 "src/test/resources/unit/taglet-test/artifact-taglet/org/tullmann/taglets/1.0/taglets-1.0.jar" ),
+                       new File( getBasedir(), "target/local-repo/org/tullmann/taglets/1.0/taglets-1.0.jar" ) );
 
-        FileUtils.copyFile( new File( getBasedir(),
-                                      "src/test/resources/unit/taglet-test/artifact-taglet/org/tullmann/taglets/1.0/taglets-1.0.pom" ),
-                            new File( getBasedir(), "target/local-repo/org/tullmann/taglets/1.0/taglets-1.0.pom" ) );
+        FileUtils
+            .copyFile(
+                       new File( getBasedir(),
+                                 "src/test/resources/unit/taglet-test/artifact-taglet/org/tullmann/taglets/1.0/taglets-1.0.pom" ),
+                       new File( getBasedir(), "target/local-repo/org/tullmann/taglets/1.0/taglets-1.0.pom" ) );
     }
 
     /**
@@ -561,8 +569,7 @@ public class JavadocReportTest
         // taglet-test: check if a taglet is used
         // ----------------------------------------------------------------------
 
-        File testPom = new File( getBasedir(),
-                                 "src/test/resources/unit/taglet-test/taglet-test-plugin-config.xml" );
+        File testPom = new File( getBasedir(), "src/test/resources/unit/taglet-test/taglet-test-plugin-config.xml" );
         JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
         mojo.execute();
 
@@ -585,27 +592,48 @@ public class JavadocReportTest
     {
         if ( !SystemUtils.isJavaVersionAtLeast( 1.5f ) )
         {
-            getContainer().getLogger().warn( "JdkDK 5.0 or more is required to run javadoc for " +
-                    "'org.apache.maven.plugin.javadoc.JavadocReportTest#testJdk5()'." );
+            getContainer().getLogger().warn(
+                                             "JdkDK 5.0 or more is required to run javadoc for "
+                                                 + "'org.apache.maven.plugin.javadoc.JavadocReportTest#testJdk5()'." );
             return;
         }
 
-        File testPom = new File( getBasedir(),
-                                 "src/test/resources/unit/jdk5-test/jdk5-test-plugin-config.xml" );
+        File testPom = new File( getBasedir(), "src/test/resources/unit/jdk5-test/jdk5-test-plugin-config.xml" );
         JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
         mojo.execute();
 
         File index = new File( getBasedir(), "target/test/unit/jdk5-test/target/site/apidocs/index.html" );
         assertTrue( FileUtils.fileExists( index.getAbsolutePath() ) );
 
-        File overviewSummary = new File( getBasedir(), "target/test/unit/jdk5-test/target/site/apidocs/overview-summary.html" );
+        File overviewSummary = new File( getBasedir(),
+                                         "target/test/unit/jdk5-test/target/site/apidocs/overview-summary.html" );
         assertTrue( FileUtils.fileExists( overviewSummary.getAbsolutePath() ) );
         String readed = readFile( overviewSummary );
         assertTrue( readed.indexOf( "<b>Test the package-info</b>" ) != -1 );
 
-        File packageSummary = new File( getBasedir(), "target/test/unit/jdk5-test/target/site/apidocs/jdk5/test/package-summary.html" );
+        File packageSummary = new File( getBasedir(),
+                                        "target/test/unit/jdk5-test/target/site/apidocs/jdk5/test/package-summary.html" );
         assertTrue( FileUtils.fileExists( packageSummary.getAbsolutePath() ) );
         readed = readFile( packageSummary );
         assertTrue( readed.indexOf( "<b>Test the package-info</b>" ) != -1 );
+    }
+
+    /**
+     * Test to find the javadoc executable when <code>java.home</code> is not in the JDK_HOME.
+     * In this case, try to use the <code>JAVA_HOME</code> environment variable.
+     *
+     * @throws Exception
+     */
+    public void testToFindJavadoc()
+        throws Exception
+    {
+        String oldJreHome = System.getProperty( "java.home" );
+        System.setProperty( "java.home", "foo/bar" );
+
+        File testPom = new File( getBasedir(), "src/test/resources/unit/javaHome-test/javaHome-test-plugin-config.xml" );
+        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        mojo.execute();
+
+        System.setProperty( "java.home", oldJreHome );
     }
 }

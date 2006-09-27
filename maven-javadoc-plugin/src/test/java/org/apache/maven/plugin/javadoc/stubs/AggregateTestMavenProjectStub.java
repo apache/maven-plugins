@@ -50,7 +50,7 @@ public class AggregateTestMavenProjectStub
         }
         catch ( Exception e )
         {
-
+            throw new RuntimeException( e );
         }
 
         setGroupId( model.getGroupId() );
@@ -61,37 +61,46 @@ public class AggregateTestMavenProjectStub
         setPackaging( model.getPackaging() );
         setExecutionRoot( true );
 
-        Scm scm = new Scm();
+        scm = new Scm();
         scm.setConnection( "scm:svn:http://svn.apache.org/maven/sample/trunk" );
-        setScm( scm );
 
-        Build build = new Build();
+        build = new Build();
         build.setFinalName( model.getArtifactId() );
         build.setDirectory( getBasedir() + "/target/test/unit/aggregate-test/target" );
-        setBuild( build );
 
         String basedir = getBasedir().getAbsolutePath();
         List compileSourceRoots = new ArrayList();
         compileSourceRoots.add( basedir + "/src/test/resources/unit/aggregate-test/aggregate/test" );
         setCompileSourceRoots( compileSourceRoots );
-
     }
 
+    /**
+     * @see org.apache.maven.project.MavenProject#getScm()
+     */
     public Scm getScm()
     {
         return scm;
     }
 
+    /**
+     * @see org.apache.maven.project.MavenProject#setScm(org.apache.maven.model.Scm)
+     */
     public void setScm( Scm scm )
     {
         this.scm = scm;
     }
 
+    /**
+     * @see org.apache.maven.project.MavenProject#getBuild()
+     */
     public Build getBuild()
     {
         return build;
     }
 
+    /**
+     * @see org.apache.maven.project.MavenProject#setBuild(org.apache.maven.model.Build)
+     */
     public void setBuild( Build build )
     {
         this.build = build;
