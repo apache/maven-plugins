@@ -143,10 +143,40 @@ public class IdeaWorkspaceMojo
                 {
                     scmType = connection.substring( startIndex + 1, endIndex );
 
+                    scmType = translateScmType( scmType );
+
                     return scmType;
                 }
             }
         }
         return null;
+    }
+
+    /**
+     * Translate the SCM type from the SCM connection URL to the format used by
+     * IDEA as the value for ACTIVE_VCS_NAME.
+     */
+    protected String translateScmType( String scmType )
+    {
+        if ( "cvs".equals( scmType ) )
+        {
+            return "CVS";
+        }
+        else if ( "perforce".equals( scmType ) )
+        {
+            return "Perforce";
+        }
+        else if ( "starteam".equals( scmType ) )
+        {
+            return "StarTeam";
+        }
+        else if ( "vss".equals( scmType ) )
+        {
+            return "SourceSafe";
+        }
+        else
+        {
+            return scmType;
+        }
     }
 }
