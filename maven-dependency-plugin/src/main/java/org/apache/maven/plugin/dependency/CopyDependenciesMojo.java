@@ -43,7 +43,7 @@ public class CopyDependenciesMojo
      * @parameter expression="${stripVersion}" default-value="false" 
      * @parameter
      */
-    private boolean stripVersion = false;
+    protected boolean stripVersion = false;
 
     /**
      * Main entry into mojo. Gets the list of dependencies and iterates through calling copyArtifact.
