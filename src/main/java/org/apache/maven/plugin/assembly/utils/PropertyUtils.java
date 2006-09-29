@@ -29,7 +29,7 @@ import java.util.Properties;
 
 /**
  * @author <a href="mailto:kenney@neonics.com">Kenney Westerhof</a>
- * @version $Id: PropertyUtils.java 191749 2005-06-22 01:21:07Z brett $
+ * @version $Id$
  */
 public final class PropertyUtils
 {
