@@ -3,7 +3,7 @@
  ------
  Kenney Westerhof, Franz Allan Valencia See
  ------
- 26 July 2006
+ September 2006
  ------
 
 ~~ Copyright 2006 The Apache Software Foundation.
@@ -25,19 +25,19 @@
 
 Maven AntRun Plugin
 
-  This plugin provides the ability to run Ant tasks from within Maven2. You can 
+  This plugin provides the ability to run Ant tasks from within Maven2. You can
   even embed your ant scripts in the POM!
 
-  It is <not> the intention of this plugin to provide a means of polluting the 
-  POM, so it's encouraged to move all your Ant tasks to a <<<build.xml>>> file 
-  and just call it from the POM using Ant's 
+  It is <not> the intention of this plugin to provide a means of polluting the
+  POM, so it's encouraged to move all your Ant tasks to a <<<build.xml>>> file
+  and just call it from the POM using Ant's
   {{{http://ant.apache.org/manual/CoreTasks/ant.html}\<ant/\> task}}.
 
   One of the main purposes of this plugin is to facilitate the migration from Ant
-  based projects to Maven 2. Some projects may not currently be able to migrate 
-  because they depend on custom build functionality that Maven 2 doesn't provide 
+  based projects to Maven 2. Some projects may not currently be able to migrate
+  because they depend on custom build functionality that Maven 2 doesn't provide
   by default.
-      
+
 * Goals Overview
 
   General Information about the goals.
@@ -46,12 +46,14 @@ Maven AntRun Plugin
 
 * Usage
 
-  Instructions on how to use the Maven AntRun Plugin can be found 
+  Instructions on how to use the Maven AntRun Plugin can be found
   {{{usage.html}here}}.
 
 * Examples
 
-  To provide you with better understanding on some usages of the Maven AntRun 
+  To provide you with better understanding on some usages of the Maven AntRun
   Plugin, you can take a look into the following examples:
 
   * {{{examples/classpaths.html}Referencing the Maven Classpaths}}
+
+  * {{{examples/tasksAttributes.html}Using <<<\<tasks/\>>>> Attributes}}
