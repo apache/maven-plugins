@@ -1,7 +1,7 @@
 package org.apache.maven.plugin.antrun.components;
 
 /*
- * Copyright 2004-2005 The Apache Software Foundation.
+ * Copyright 2004-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,11 +30,14 @@ import org.codehaus.plexus.component.configurator.converters.lookup.ConverterLoo
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.PlexusConfigurationException;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Plexus ConfigurationConverter to set up Ant Target component fields.
  *
  * @author <a href="mailto:kenney@apache.org">Kenney Westerhof</a>
+ * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
+ * @version $Id$
  */
 public class AntTargetConverter
     extends AbstractConfigurationConverter
@@ -43,14 +46,20 @@ public class AntTargetConverter
 
     public static final String ROLE = ConfigurationConverter.class.getName();
 
+    /**
+     * @see org.codehaus.plexus.component.configurator.converters.ConfigurationConverter#canConvert(java.lang.Class)
+     */
     public boolean canConvert( Class type )
     {
         return Target.class.isAssignableFrom( type );
     }
 
+    /**
+     * @see org.codehaus.plexus.component.configurator.converters.ConfigurationConverter#fromConfiguration(org.codehaus.plexus.component.configurator.converters.lookup.ConverterLookup, org.codehaus.plexus.configuration.PlexusConfiguration, java.lang.Class, java.lang.Class, java.lang.ClassLoader, org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator, org.codehaus.plexus.component.configurator.ConfigurationListener)
+     */
     public Object fromConfiguration( ConverterLookup converterLookup, PlexusConfiguration configuration, Class type,
-                                     Class baseType, ClassLoader classLoader, ExpressionEvaluator expressionEvaluator,
-                                     ConfigurationListener listener )
+                                    Class baseType, ClassLoader classLoader, ExpressionEvaluator expressionEvaluator,
+                                    ConfigurationListener listener )
         throws ComponentConfigurationException
     {
         Object retValue = fromExpression( configuration, expressionEvaluator, type );
@@ -63,14 +72,18 @@ public class AntTargetConverter
 
         retValue = instantiateObject( implementation );
 
-        processConfiguration( (Target) retValue, configuration, expressionEvaluator );
+        if (! ( retValue instanceof Target ) )
+        {
+            retValue = new Target();
+        }
+
+        processConfiguration( (Target)retValue, configuration, expressionEvaluator );
 
         return retValue;
     }
 
-
     private void processConfiguration( Target target, PlexusConfiguration configuration,
-                                       ExpressionEvaluator expressionEvaluator )
+                                      ExpressionEvaluator expressionEvaluator )
         throws ComponentConfigurationException
     {
         Project project = new Project();
@@ -78,10 +91,18 @@ public class AntTargetConverter
 
         target.setName( "" );
         target.setProject( project );
+        String[] attributeNames = configuration.getAttributeNames();
+        for ( int i = 0; i < attributeNames.length; i++ )
+        {
+            String attributeName = attributeNames[i];
+            String attributeValue = configuration.getAttribute( attributeNames[i], null );
+
+            addAttributes( target, attributeName, attributeValue );
+        }
         project.addTarget( target );
 
-        project.addReference(MAVEN_EXPRESSION_EVALUATOR_ID , expressionEvaluator);
-        
+        project.addReference( MAVEN_EXPRESSION_EVALUATOR_ID, expressionEvaluator );
+
         initDefinitions( project, target );
 
         processConfiguration( null, project, target, configuration );
@@ -89,9 +110,8 @@ public class AntTargetConverter
         project.init();
     }
 
-
     private void processConfiguration( RuntimeConfigurable parentWrapper, Project project, Target target,
-                                       PlexusConfiguration configuration )
+                                      PlexusConfiguration configuration )
         throws ComponentConfigurationException
     {
         int items = configuration.getChildCount();
@@ -130,11 +150,11 @@ public class AntTargetConverter
             }
             catch ( PlexusConfigurationException e )
             {
-                throw new ComponentConfigurationException(
-                    "Error reading text value from element '" + childConfiguration.getName() + "'", e );
+                throw new ComponentConfigurationException( "Error reading text value from element '"
+                    + childConfiguration.getName() + "'", e );
             }
 
-            String [] attrNames = childConfiguration.getAttributeNames();
+            String[] attrNames = childConfiguration.getAttributeNames();
 
             for ( int a = 0; a < attrNames.length; a++ )
             {
@@ -145,9 +165,8 @@ public class AntTargetConverter
                 }
                 catch ( PlexusConfigurationException e )
                 {
-                    throw new ComponentConfigurationException(
-                        "Error getting attribute '" + attrNames[a] + "' of tag '" + childConfiguration.getName() + "'",
-                        e );
+                    throw new ComponentConfigurationException( "Error getting attribute '" + attrNames[a]
+                        + "' of tag '" + childConfiguration.getName() + "'", e );
                 }
             }
 
@@ -160,11 +179,51 @@ public class AntTargetConverter
         }
     }
 
-
     protected void initDefinitions( Project project, Target unused )
     {
         ComponentHelper componentHelper = ComponentHelper.getComponentHelper( project );
 
         componentHelper.initDefaultDefinitions();
+    }
+
+    /**
+     * Add specific <code>attributeValue</code> to the tasks for given <code>attributeName</code> like
+     * <code>"if"</code>, <code>"unless"</code>, <code>"name"</code> and <code>"description"</code>.
+     * <br/>
+     * <b>Note:</b> <code>"depends"</code> from Ant tasks is not be used.
+     *
+     * @see <a href="http://ant.apache.org/manual/using.html#targets">Ant targets</a>
+     *
+     * @param tasks should be not null
+     * @param attributeName if empty, skipped
+     * @param attributeValue if empty, skipped
+     */
+    private static void addAttributes( Target tasks, String attributeName, String attributeValue )
+    {
+        if ( StringUtils.isEmpty( attributeName ) )
+        {
+            return;
+        }
+        if ( StringUtils.isEmpty( attributeValue ) )
+        {
+            return;
+        }
+
+        if ( attributeName.toLowerCase().equals( "name" ) )
+        {
+            tasks.setName( attributeValue );
+        }
+        if ( attributeName.toLowerCase().equals( "unless" ) )
+        {
+            tasks.setUnless( attributeValue );
+        }
+        if ( attributeName.toLowerCase().equals( "description" ) )
+        {
+            tasks.setDescription( attributeValue );
+        }
+        if ( attributeName.toLowerCase().equals( "if" ) )
+        {
+            tasks.setIf( attributeValue );
+        }
     }
 }
