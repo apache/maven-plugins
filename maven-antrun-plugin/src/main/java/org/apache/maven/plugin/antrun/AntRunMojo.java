@@ -1,7 +1,7 @@
 package org.apache.maven.plugin.antrun;
 
 /*
- * Copyright 2005 The Apache Software Foundation.
+ * Copyright 2005-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,24 +25,25 @@ import org.apache.tools.ant.Target;
 /**
  * Maven AntRun Mojo.
  *
- * This plugin provides the capability of calling ant tasks
- * from a POM by running the nested ant tasks inside the &lt;task/&gt;
+ * This plugin provides the capability of calling Ant tasks
+ * from a POM by running the nested ant tasks inside the &lt;tasks/&gt;
  * parameter. It is encouraged to move the actual tasks to
  * a separate build.xml file and call that file with an
  * &lt;ant/&gt; task.
  *
  * @author <a href="mailto:kenney@apache.org">Kenney Westerhof</a>
- *
+ * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
+ * @version $Id$
  * @configurator override
- *
  * @goal run
- * 
  * @requiresDependencyResolution test
  */
 public class AntRunMojo
     extends AbstractAntMojo
 {
     /**
+     * The Maven project object
+     *
      * @parameter expression="${project}"
      * @required
      * @readonly
@@ -50,8 +51,9 @@ public class AntRunMojo
     private MavenProject project;
 
     /**
-     * The XML for the Ant task. You can add anything you can add 
-     * between &lt;target> and &lt;/target> in a build.xml.
+     * The XML for the Ant task. You can add anything you can add
+     * between &lt;target&gt; and &lt;/target&gt; in a build.xml.
+     *
      * @parameter expression="${tasks}"
      */
     private Target tasks;
@@ -75,6 +77,7 @@ public class AntRunMojo
     private File testSourceRoot;
 
     /**
+     * @see org.apache.maven.plugin.Mojo#execute()
      */
     public void execute()
         throws MojoExecutionException
@@ -92,6 +95,5 @@ public class AntRunMojo
             getLog().info( "Registering compile test source root " + testSourceRoot );
             project.addTestCompileSourceRoot( testSourceRoot.toString() );
         }
-
     }
 }

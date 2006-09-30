@@ -17,7 +17,6 @@ package org.apache.maven.plugin.antrun;
  */
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
@@ -55,6 +54,11 @@ public class AntPropertyHelper
         log = l;
     }
 
+    /**
+     * @param exprEvaluator
+     * @param artifacts
+     * @param l
+     */
     public AntPropertyHelper( ExpressionEvaluator exprEvaluator, Set artifacts, Log l )
     {
         this.mavenProject = null;
@@ -65,8 +69,8 @@ public class AntPropertyHelper
         {
             Artifact artifact = (Artifact) it.next();
 
-            String key = "maven.dependency." + artifact.getGroupId() + "." + artifact.getArtifactId() + 
-                ( artifact.getClassifier() != null ? "." + artifact.getClassifier() : "" ) + 
+            String key = "maven.dependency." + artifact.getGroupId() + "." + artifact.getArtifactId() +
+                ( artifact.getClassifier() != null ? "." + artifact.getClassifier() : "" ) +
                 ( artifact.getType() != null ? "." + artifact.getType() : "" ) + ".path";
 
             log.debug( "Storing: " + key + "=" + artifact.getFile().getPath() );
@@ -75,6 +79,9 @@ public class AntPropertyHelper
         }
     }
 
+    /**
+     * @see org.apache.tools.ant.PropertyHelper#getPropertyHook(java.lang.String, java.lang.String, boolean)
+     */
     public synchronized Object getPropertyHook( String ns, String name, boolean user )
     {
         if ( log.isDebugEnabled() )
@@ -87,7 +94,7 @@ public class AntPropertyHelper
         {
             return getPropertyHook( ns, name, user, mavenProject );
         }
-        
+
 
         Object val = null;
 
@@ -98,11 +105,11 @@ public class AntPropertyHelper
 
         if ( val == null )
         {
-            try 
+            try
             {
                 val = exprEvaluator.evaluate( "${" + name + "}" );
             }
-            catch (ExpressionEvaluationException e) 
+            catch (ExpressionEvaluationException e)
             {
                 if ( log.isErrorEnabled() )
                 {
@@ -183,5 +190,4 @@ public class AntPropertyHelper
 
         return val;
     }
-
 }

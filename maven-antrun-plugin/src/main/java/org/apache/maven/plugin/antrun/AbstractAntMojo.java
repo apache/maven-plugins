@@ -1,7 +1,7 @@
 package org.apache.maven.plugin.antrun;
 
 /*
- * Copyright 2005 The Apache Software Foundation.
+ * Copyright 2005-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.antrun.components.AntTargetConverter;
 import org.apache.maven.project.MavenProject;
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.PropertyHelper;
@@ -37,12 +38,15 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator
 import org.codehaus.plexus.util.StringUtils;
 
 /**
+ * Abstract class for the Antrun plugin
+ *
  * @author <a href="mailto:kenney@apache.org">Kenney Westerhof</a>
+ * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
+ * @version $Id$
  */
 public abstract class AbstractAntMojo
     extends AbstractMojo
 {
-    
     /**
      * The plugin dependencies.
      *
@@ -51,19 +55,30 @@ public abstract class AbstractAntMojo
      * @readonly
      */
     private List artifacts;
-    
+
+    /**
+     * @param antTasks
+     * @param mavenProject
+     * @throws MojoExecutionException
+     */
     protected void executeTasks( Target antTasks, MavenProject mavenProject )
         throws MojoExecutionException
     {
+        if ( antTasks == null )
+        {
+            getLog().info( "No ant tasks defined - SKIPPED" );
+            return;
+        }
+
         try
         {
             //TODO refactor - place the manipulation of the expressionEvaluator into a separated class.
-            ExpressionEvaluator exprEvaluator = (ExpressionEvaluator) antTasks.getProject().getReference(AntTargetConverter.MAVEN_EXPRESSION_EVALUATOR_ID);
+            ExpressionEvaluator exprEvaluator = (ExpressionEvaluator) antTasks.getProject()
+                .getReference( AntTargetConverter.MAVEN_EXPRESSION_EVALUATOR_ID );
 
             Project antProject = antTasks.getProject();
 
             PropertyHelper propertyHelper = PropertyHelper.getPropertyHelper( antProject );
-
             propertyHelper.setNext( new AntPropertyHelper( exprEvaluator, mavenProject.getArtifacts(), getLog() ) );
 
             DefaultLogger antLogger = new DefaultLogger();
@@ -79,11 +94,12 @@ public abstract class AbstractAntMojo
 
             /* maven.dependency.classpath it's deprecated as it's equal to maven.compile.classpath */
             antProject.addReference( "maven.dependency.classpath", p );
-
             antProject.addReference( "maven.compile.classpath", p );
+
             p = new Path( antProject );
             p.setPath( StringUtils.join( mavenProject.getRuntimeClasspathElements().iterator(), File.pathSeparator ) );
             antProject.addReference( "maven.runtime.classpath", p );
+
             p = new Path( antProject );
             p.setPath( StringUtils.join( mavenProject.getTestClasspathElements().iterator(), File.pathSeparator ) );
             antProject.addReference( "maven.test.classpath", p );
@@ -102,19 +118,36 @@ public abstract class AbstractAntMojo
             {
                 getLog().info( "Executed tasks" );
             }
-
+        }
+        catch ( DependencyResolutionRequiredException e )
+        {
+            throw new MojoExecutionException( "DependencyResolutionRequiredException: " + e.getMessage(), e );
+        }
+        catch ( BuildException e )
+        {
+            throw new MojoExecutionException( "An Ant BuildException has occured: " + e.getMessage(), e );
         }
         catch ( Exception e )
         {
-            throw new MojoExecutionException( "Error executing ant tasks", e );
+            throw new MojoExecutionException( "Error executing ant tasks: " + e.getMessage(), e );
         }
     }
 
+    /**
+     * @param artifacts
+     * @param antProject
+     * @return a path
+     * @throws DependencyResolutionRequiredException
+     */
     public Path getPathFromArtifacts( Collection artifacts, Project antProject )
         throws DependencyResolutionRequiredException
     {
-        List list = new ArrayList( artifacts.size() );
+        if ( artifacts == null )
+        {
+            return new Path( antProject );
+        }
 
+        List list = new ArrayList( artifacts.size() );
         for ( Iterator i = artifacts.iterator(); i.hasNext(); )
         {
             Artifact a = (Artifact) i.next();
@@ -125,8 +158,10 @@ public abstract class AbstractAntMojo
             }
             list.add( file.getPath() );
         }
+
         Path p = new Path( antProject );
         p.setPath( StringUtils.join( list.iterator(), File.pathSeparator ) );
+
         return p;
     }
 

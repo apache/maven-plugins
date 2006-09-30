@@ -1,9 +1,9 @@
  ------
  Usage
  ------
- Kenney Westerhof, Franz Allan Valencia See
+ Kenney Westerhof, Franz Allan Valencia See, Vincent Siveton
  ------
- 27 July 2006
+ September 2006
  ------
 
 ~~ Copyright 2006 The Apache Software Foundation.
@@ -27,12 +27,12 @@ Usage
 
 * Run
 
-  The maven-antrun-plugin has only one goal, <<<run>>>. 
-  
-  This allows Maven 2 to run ant tasks. To do so, there must be an existing 
-  project and the maven-antrun-plugin must have its <<<\<tasks\>>>> tag 
-  configured (although it would still execute without the <<<\<tasks\>>>> tag, 
-  it would not do anything). Below is the template for the 
+  The maven-antrun-plugin has only one goal, <<<run>>>.
+
+  This allows Maven 2 to run ant tasks. To do so, there must be an existing
+  project and the maven-antrun-plugin must have its <<<\<tasks\>>>> tag
+  configured (although it would still execute without the <<<\<tasks\>>>> tag,
+  it would not do anything). Below is the template for the
   <<<maven-antrun-plugin>>>'s <<<pom.xml>>>.
 
 ------
@@ -53,7 +53,7 @@ Usage
                   you can add between <target> and </target> in a
                   build.xml.
                 -->
-                
+
               </tasks>
             </configuration>
             <goals>
@@ -68,23 +68,41 @@ Usage
 </project>
 ------
 
-  Moreover, you can add a script to each lifecycle phase, by duplicating the 
+  Moreover, you can add a script to each lifecycle phase, by duplicating the
   <<<\<execution/\>>>> section and specifying a new phase.
-  
+
+  Ultimately, you could specify some Ant {{{http://ant.apache.org/manual/using.html#targets}<<<\<target/\>>>>}}
+  attributes in the <<<\<tasks/\>>>> tag. Only <<<depends>>> attribute in Ant <<<\<target/\>>>> is not wrapped.
+
+------
+[...]
+<configuration>
+  <tasks name="The name of the tasks"
+    if="The name of the property that must be set in order for this task"
+    unless="The name of the property that must NOT be set in order for this task"
+    description="A short description of this target's function">
+
+    <!--
+      Place any ant task here. You can add anything
+      you can add between <target> and </target> in a
+      build.xml.
+    -->
+
+  </tasks>
+<configuration>
+[...]
+------
+
   Below you can see how to indicate that ant has generated some more java
   source that needs to be included in the compilation phase. Note that the
   compile phase follows the <<<generate-sources>>> phase in the lifecycle.
 
 ------
 <project>
-  <modelVersion>4.0.0</modelVersion>
-  <artifactId>my-test-app</artifactId>
-  <groupId>my-test-group</groupId>
-  <version>1.0-SNAPSHOT</version>
-
+  [...]
   <build>
     <plugins>
-
+      [...]
       <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
         <executions>
@@ -100,8 +118,12 @@ Usage
                 -->
 
               </tasks>
-              <sourceRoot>${project.build.directory}/generated-sources/main/java</sourceRoot>
-              <testSourceRoot>${project.build.directory}/generated-sources/test/java</testSourceRoot>
+              <sourceRoot>
+                ${project.build.directory}/generated-sources/main/java
+              </sourceRoot>
+              <testSourceRoot>
+                ${project.build.directory}/generated-sources/test/java
+              </testSourceRoot>
             </configuration>
             <goals>
               <goal>run</goal>
@@ -109,26 +131,26 @@ Usage
           </execution>
         </executions>
       </plugin>
-
     </plugins>
   </build>
+  [...]
 </project>
 ------
 
-  Of course, you can put whatever folder you prefer. The folders in the example 
+  Of course, you can put whatever folder you prefer. The folders in the example
   above are handy because they are deleted when you <<<clean>>> since they are in
-  the build directory (which is, by default, "target"). 
+  the build directory (which is, by default, "target").
 
-  <<<\<sourceRoot/\>>>> adds a single folder to the list of folders that get 
+  <<<\<sourceRoot/\>>>> adds a single folder to the list of folders that get
   compiled with the program source code (<<<compile>>>).
 
   <<<\<testSourceRoot/\>>>> adds a single folder to the list of folders that get
   compiled with the test source code (<<<test-compile>>>).
 
 * Ant Expressions to Maven Expressions Mapping
- 
+
   Some Ant expressions have their respective counterparts in Maven. Thus, one
-  can simply invoke the corresponding maven expression instead of using 
+  can simply invoke the corresponding maven expression instead of using
   maven-antrun-plugin to avoid the unneccessary overhead.
 
 *-----------------------------------+-----------------------------------+
