@@ -63,6 +63,12 @@
       <artifactId>plexus-utils</artifactId>
       <version>1.2</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.maven.shared</groupId>
+      <artifactId>maven-plugin-testing-harness</artifactId>
+      <version>1.0-beta-2-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
 
   </dependencies>
 </project>
