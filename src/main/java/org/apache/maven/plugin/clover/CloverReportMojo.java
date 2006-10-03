@@ -127,6 +127,13 @@ public class CloverReportMojo extends AbstractMavenReport
     private boolean generateHistorical;
 
     /**
+     * Comma or space separated list of Clover contexts (block, statement or method filers) to exclude when
+     * generating coverage reports.
+     * @parameter
+     */
+    private String contextFilters;
+
+    /**
      * <p>Note: This is passed by Maven and must not be configured by the user.</p>
      *
      * @component
@@ -295,6 +302,10 @@ public class CloverReportMojo extends AbstractMavenReport
     {
         CloverFormatType type = new CloverFormatType();
         type.setType( format );
+        if ( this.contextFilters != null )
+        {
+        	type.setFilter( contextFilters );
+        }
         return type;
     }
 
