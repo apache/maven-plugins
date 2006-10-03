@@ -28,6 +28,8 @@ User Guide
 
  * {{{usage.html#Controlling files to instrument}Controlling files to instrument}}
 
+ * {{{usage.html#Getting information on an existing Clover database}Getting information on an existing Clover database}}
+
  []
 
 * {Generating a Clover report when generating the site}
@@ -407,4 +409,23 @@ myproject/
       </excludes>
 [...]
 +---------
- 
+
+* {Getting information on an existing Clover database}
+
+  You can dump information about your project's Clover database (after it has been populated) by running
+  <<<mvn clover:log>>>.
+
+  Here's an example of an output:
+
++--------
+[INFO] [clover:log]
+[INFO] Clover Coverage Report
+Coverage Timestamp: Tue Oct 03 12:54:52 CEST 2006
+
+
+Coverage Overview -
+      Methods: 2/3 (66,7%)
+   Statements: 2/3 (66,7%)
+ Conditionals: 1/2 (50%)
+        TOTAL: 62,5%
++---------
