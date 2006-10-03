@@ -45,6 +45,13 @@ public class CloverCheckMojo extends AbstractCloverMojo
     private String targetPercentage;
 
     /**
+     * Comma or space separated list of Clover contexts (block, statement or method filers) to exclude when
+     * generating coverage reports.
+     * @parameter
+     */
+    private String contextFilters;
+    
+    /**
      * {@inheritDoc}
      * @see org.apache.maven.plugin.clover.internal.AbstractCloverMojo#execute()
      * @throws MojoExecutionException when the TPC is below the threshold
@@ -102,6 +109,11 @@ public class CloverCheckMojo extends AbstractCloverMojo
         cloverPassTask.setHaltOnFailure( true );
         cloverPassTask.setTarget( new Percentage( this.targetPercentage ) );
         cloverPassTask.setFailureProperty( "clovercheckproperty" );
+
+        if ( this.contextFilters != null )
+        {
+            cloverPassTask.setFilter( this.contextFilters );
+        }
 
         try
         {
