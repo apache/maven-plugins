@@ -50,7 +50,7 @@ public class ResolveDependenciesMojo
         //get sets of dependencies
         results = this.getDependencySets();
         
-        results.logStatus(log, outputArtifactFilename);
+        results.logStatus(getLog(), outputArtifactFilename);
     }
 
     /**

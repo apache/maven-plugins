@@ -88,14 +88,19 @@ public class FilterArtifacts
       return artifacts;
   }
   
-  private void log(Set artifacts, Log log)
-  {
-      log.debug("Artifacts:");
-      Iterator iter = artifacts.iterator();
-      while (iter.hasNext())
-      {
-          Artifact artifact = (Artifact) iter.next();
-          log.debug(""+artifact);
-      }
-  }
+/**
+ * @return Returns the filters.
+ */
+public ArrayList getFilters()
+{
+    return this.filters;
+}
+
+/**
+ * @param filters The filters to set.
+ */
+public void setFilters( ArrayList filters )
+{
+    this.filters = filters;
+}
 }
