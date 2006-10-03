@@ -14,18 +14,28 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <reporting>
+    <excludeDefaults>true</excludeDefaults>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clover-plugin</artifactId>
+        <configuration>
+          <!-- Verify that context filters work -->
+          <contextFilters>try</contextFilters>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clover-plugin</artifactId>
         <configuration>
-
-          <!-- Verify that context filters work -->
-          <contextFilters>static</contextFilters>
-
-          <targetPercentage>80%</targetPercentage>
-
+          <!-- Without the block filter the TPC is 50% and with it it's 57,1%. Thus we check for a TPC above of
+               55% to verify the filter has been applied correctly -->
+          <targetPercentage>55%</targetPercentage>
         </configuration>
         <executions>
           <execution>
@@ -34,7 +44,6 @@
             <goals>
               <goal>instrument</goal>
               <goal>check</goal>
-              <goal>log</goal>
             </goals>
           </execution>
         </executions>
