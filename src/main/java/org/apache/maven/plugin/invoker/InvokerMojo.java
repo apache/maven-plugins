@@ -232,7 +232,7 @@ public class InvokerMojo
 
         getLog().info( "Building: " + pom );
 
-        final File outputLog = new File( basedir, "target/build.log" );
+        final File outputLog = new File( basedir, "build.log" );
 
         FileLogger logger = null;
 
