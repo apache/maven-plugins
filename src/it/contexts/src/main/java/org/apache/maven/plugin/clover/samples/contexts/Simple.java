@@ -17,18 +17,20 @@ package org.apache.maven.plugin.clover.samples.contexts;
 
 public class Simple
 {
-    static
-    {
-        System.getProperties();
-    }
-    
     public void someMethod1()
     {        
     }
 
     public void someMethodToReduceStatementCoverage()
     {
-        System.getProperties();        
+        try
+        {
+            System.getProperties();
+        }
+        finally
+        {
+            // We use a try/finally so that we can use a block context of 
+        }
     }
     
     public void someMethod2(int i)
