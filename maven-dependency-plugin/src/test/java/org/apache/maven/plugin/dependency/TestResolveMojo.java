@@ -30,7 +30,7 @@ public class TestResolveMojo
     {
         File testPom = new File( getBasedir(), "target/test-classes/unit/resolve-test/plugin-config.xml" );
         ResolveDependenciesMojo mojo = (ResolveDependenciesMojo) lookupMojo( "resolve", testPom );
-
+        mojo.silent = false;
         assertNotNull( mojo );
         assertNotNull(mojo.project);
         MavenProject project = mojo.project;

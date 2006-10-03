@@ -144,5 +144,25 @@ public class TestMarkerFileFilter
         assertFalse(outputFolder.exists());    
     }
     
+    public void testGettersSetters()
+    {
+        MarkerFileFilter filter = new MarkerFileFilter(true,false,true,outputFolder);
+        assertEquals(true,filter.isOverWriteReleases());
+        assertEquals(false,filter.isOverWriteSnapshots());
+        assertEquals(true,filter.isOverWriteIfNewer());
+        assertEquals(outputFolder,filter.getMarkerFileDirectory());
+        
+        filter.setOverWriteReleases(false);
+        filter.setOverWriteSnapshots(true);
+        filter.setOverWriteIfNewer(false);
+        File file = new File(outputFolder,"child");
+        filter.setMarkerFileDirectory(file);
+        assertEquals(false,filter.isOverWriteReleases());
+        assertEquals(true,filter.isOverWriteSnapshots());
+        assertEquals(false,filter.isOverWriteIfNewer());
+        assertEquals(file,filter.getMarkerFileDirectory());
+        
+        
+    }
     
 }

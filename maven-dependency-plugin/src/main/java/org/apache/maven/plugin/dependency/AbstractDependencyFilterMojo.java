@@ -144,7 +144,7 @@ public abstract class AbstractDependencyFilterMojo
         Set artifacts = project.getArtifacts();
 
         //perform filtering
-        artifacts = filter.filter( artifacts, log );
+        artifacts = filter.filter( artifacts, getLog() );
 
         //transform artifacts if classifier is set
         DependencyStatusSets status = null;
@@ -172,7 +172,7 @@ public abstract class AbstractDependencyFilterMojo
         if ( StringUtils.isNotEmpty( classifier ) )
         {
             ArtifactTranslator translator = new ClassifierTypeTranslator( this.classifier, this.type, this.factory );
-            artifacts = translator.translate( artifacts, log );
+            artifacts = translator.translate( artifacts, getLog() );
 
             status = filterMarkedDependencies( artifacts );
 
@@ -182,7 +182,7 @@ public abstract class AbstractDependencyFilterMojo
             //resolve the rest of the artifacts
             ArtifactsResolver artifactsResolver = new DefaultArtifactsResolver( this.resolver, this.local,
                                                                                 this.remoteRepos, stopOnFailure );
-            resolvedArtifacts = artifactsResolver.resolve( artifacts, log );
+            resolvedArtifacts = artifactsResolver.resolve( artifacts, getLog() );
 
             //calculate the artifacts not resolved.
             unResolvedArtifacts.addAll( artifacts );
@@ -205,7 +205,7 @@ public abstract class AbstractDependencyFilterMojo
         filter.addFilter( new MarkerFileFilter( this.overWriteReleases, this.overWriteSnapshots, this.overWriteIfNewer,
                                                 this.markersDirectory ) );
 
-        Set unMarkedArtifacts = filter.filter( artifacts, log );
+        Set unMarkedArtifacts = filter.filter( artifacts, getLog() );
 
         //calculate the skipped artifacts
         Set skippedArtifacts = new HashSet();

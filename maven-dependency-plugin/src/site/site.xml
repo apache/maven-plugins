@@ -20,7 +20,7 @@
 
 <project name="Maven Dependency Plugin">
   <bannerLeft>
-    <name>Maven Rar Plugin</name>
+    <name>Maven Dependency Plugin</name>
     <src>http://maven.apache.org/images/apache-maven-project.png</src>
     <href>http://maven.apache.org/</href>
   </bannerLeft>

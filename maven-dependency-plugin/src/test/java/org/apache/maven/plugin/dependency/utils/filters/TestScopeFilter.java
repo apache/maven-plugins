@@ -19,23 +19,20 @@
 package org.apache.maven.plugin.dependency.utils.filters;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import junit.framework.TestCase;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DefaultArtifact;
-import org.apache.maven.artifact.handler.ArtifactHandler;
-import org.apache.maven.artifact.handler.DefaultArtifactHandler;
-import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.dependency.utils.ArtifactStubFactory;
 import org.apache.maven.plugin.dependency.utils.SilentLog;
+import org.apache.maven.plugin.logging.Log;
 
 /**
  * @author brianf
- *
+ * 
  */
 public class TestScopeFilter
     extends TestCase
@@ -49,109 +46,117 @@ public class TestScopeFilter
     {
         super.setUp();
 
-        ArtifactStubFactory factory = new ArtifactStubFactory (null,false);
+        ArtifactStubFactory factory = new ArtifactStubFactory( null, false );
         artifacts = factory.getScopedArtifacts();
     }
 
-    public void testScopeFilter()
+    public void testScopeCompile()
+        throws MojoExecutionException
     {
         ScopeFilter filter = new ScopeFilter( Artifact.SCOPE_COMPILE, null );
         Set result;
-        try
-        {
-            result = filter.filter( artifacts, log );
-            assertEquals( 3, result.size() );
-        }
-        catch ( MojoExecutionException e )
-        {
-            assertTrue( true );
-        }
+
+        result = filter.filter( artifacts, log );
+        assertEquals( 3, result.size() );
+
     }
 
-    public void testScopeFilter2()
+    public void testScopeRuntime()
+        throws MojoExecutionException
     {
         ScopeFilter filter = new ScopeFilter( Artifact.SCOPE_RUNTIME, null );
         Set result;
-        try
+        result = filter.filter( artifacts, log );
+        assertEquals( 2, result.size() );
+
+    }
+
+    public void testScopeTest()
+        throws MojoExecutionException
+    {
+        ScopeFilter filter = new ScopeFilter( Artifact.SCOPE_TEST, null );
+        Set result = filter.filter( artifacts, log );
+        assertEquals( 5, result.size() );
+    }
+
+    public void testScopeProvided()
+        throws MojoExecutionException
+    {
+
+        ScopeFilter filter = new ScopeFilter( Artifact.SCOPE_PROVIDED, null );
+        Set result = filter.filter( artifacts, log );
+        Iterator iter = result.iterator();
+        assertTrue( result.size() > 0 );
+        while ( iter.hasNext() )
         {
-            result = filter.filter( artifacts, log );
-            assertEquals( 2, result.size() );
-        }
-        catch ( MojoExecutionException e )
-        {
-            assertTrue( false );
+            Artifact artifact = (Artifact) iter.next();
+            assertEquals( Artifact.SCOPE_PROVIDED, artifact.getScope() );
         }
     }
 
-    public void testScopeFilter3()
+    public void testScopeSystem()
+        throws MojoExecutionException
     {
-        try
+
+        ScopeFilter filter = new ScopeFilter( Artifact.SCOPE_SYSTEM, null );
+        Set result = filter.filter( artifacts, log );
+        Iterator iter = result.iterator();
+        assertTrue( result.size() > 0 );
+        while ( iter.hasNext() )
         {
-            ScopeFilter filter = new ScopeFilter( Artifact.SCOPE_TEST, null );
-            Set result = filter.filter( artifacts, log );
-            assertEquals( 5, result.size() );
-        }
-        catch ( MojoExecutionException e )
-        {
-            assertTrue( false );
+            Artifact artifact = (Artifact) iter.next();
+            assertEquals( Artifact.SCOPE_SYSTEM, artifact.getScope() );
         }
     }
 
     public void testScopeFilterNull()
+        throws MojoExecutionException
     {
-        try
-        {
-            ScopeFilter filter = new ScopeFilter( null, null );
-            Set result = filter.filter( artifacts, log );
-            assertEquals( 5, result.size() );
-        }
-        catch ( MojoExecutionException e )
-        {
-            assertTrue( false );
-        }
-
+        ScopeFilter filter = new ScopeFilter( null, null );
+        Set result = filter.filter( artifacts, log );
+        assertEquals( 5, result.size() );
     }
 
     public void testScopeFilterEmpty()
+        throws MojoExecutionException
     {
-        try
-        {
-            ScopeFilter filter = new ScopeFilter( "", "" );
-            Set result = filter.filter( artifacts, log );
-            assertEquals( 5, result.size() );
-        }
-        catch ( MojoExecutionException e )
-        {
-            assertTrue( false );
-        }
+        ScopeFilter filter = new ScopeFilter( "", "" );
+        Set result = filter.filter( artifacts, log );
+        assertEquals( 5, result.size() );
     }
 
     public void testExcludeProvided()
+        throws MojoExecutionException
     {
-        try
+        ScopeFilter filter = new ScopeFilter( "", Artifact.SCOPE_PROVIDED );
+        Set result = filter.filter( artifacts, log );
+        Iterator iter = result.iterator();
+        while ( iter.hasNext() )
         {
-            ScopeFilter filter = new ScopeFilter( "", Artifact.SCOPE_PROVIDED );
-            Set result = filter.filter( artifacts, log );
-            assertEquals( 4, result.size() );
+            Artifact artifact = (Artifact) iter.next();
+            assertFalse( Artifact.SCOPE_PROVIDED.equalsIgnoreCase( artifact.getScope() ) );
         }
-        catch ( MojoExecutionException e )
+    }
+
+    public void testExcludeSystem()
+        throws MojoExecutionException
+    {
+        ScopeFilter filter = new ScopeFilter( "", Artifact.SCOPE_SYSTEM );
+        Set result = filter.filter( artifacts, log );
+        Iterator iter = result.iterator();
+        while ( iter.hasNext() )
         {
-            assertTrue( false );
+            Artifact artifact = (Artifact) iter.next();
+            assertFalse( Artifact.SCOPE_SYSTEM.equalsIgnoreCase( artifact.getScope() ) );
         }
     }
 
     public void testExcludeCompile()
+        throws MojoExecutionException
     {
-        try
-        {
-            ScopeFilter filter = new ScopeFilter( "", Artifact.SCOPE_COMPILE );
-            Set result = filter.filter( artifacts, log );
-            assertEquals( 2, result.size() );
-        }
-        catch ( MojoExecutionException e )
-        {
-            assertTrue( false );
-        }
+        ScopeFilter filter = new ScopeFilter( "", Artifact.SCOPE_COMPILE );
+        Set result = filter.filter( artifacts, log );
+        assertEquals( 2, result.size() );
     }
 
     public void testExcludeTest()
@@ -159,13 +164,48 @@ public class TestScopeFilter
         try
         {
             ScopeFilter filter = new ScopeFilter( "", Artifact.SCOPE_TEST );
-            Set result = filter.filter( artifacts, log );
-            assertTrue(false);
+            filter.filter( artifacts, log );
+            fail( "Expected an Exception" );
         }
         catch ( MojoExecutionException e )
         {
-            //I expect an exception here.
-            assertTrue( true );
+
         }
+    }
+
+    public void testBadScope()
+    {
+        ScopeFilter filter = new ScopeFilter( "cOmpile", "" );
+        try
+        { 
+            filter.filter( artifacts, log );
+            fail( "Expected an Exception" );
+        }
+        catch ( MojoExecutionException e )
+        {
+
+        }
+        try
+        {
+            filter = new ScopeFilter( "", "coMpile" );
+            filter.filter( artifacts, log );
+            fail( "Expected an Exception" );
+        }
+        catch ( MojoExecutionException e )
+        {
+
+        }
+    }
+    
+    public void testSettersGetters()
+    {
+        ScopeFilter filter = new ScopeFilter("include","exclude");
+        assertEquals("include",filter.getIncludeScope());
+        assertEquals("exclude",filter.getExcludeScope());
+        
+        filter.setExcludeScope("a");
+        filter.setIncludeScope("b");
+        assertEquals("b",filter.getIncludeScope());
+        assertEquals("a",filter.getExcludeScope());  
     }
 }
