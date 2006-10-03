@@ -30,6 +30,8 @@ User Guide
 
  * {{{usage.html#Getting information on an existing Clover database}Getting information on an existing Clover database}}
 
+ * {{{usage.html#Using block contexts}Using block contexts}}
+
  []
 
 * {Generating a Clover report when generating the site}
@@ -429,3 +431,22 @@ Coverage Overview -
  Conditionals: 1/2 (50%)
         TOTAL: 62,5%
 +---------
+
+* {Using block contexts}
+
+  Clover allows specifying {{{http://cenqua.com/clover/doc/adv/contexts.html}block contexts}}
+  (i.e. elements to be excluded from the Test Percentage Coverage). To configure a block context use
+  the <<<contextFilters>>> element. For example to exclude <<<try>>> and <<<static>>> block contexts, you would
+  write:
+
++--------
+[...]
+  <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-clover-plugin</artifactId>
+    <configuration>
+      <contextFilters>try,static</contextFilters>
+    </configuration>
+[...]
++---------
+  
