@@ -28,6 +28,8 @@ public class TestCopyDependenciesMojo
         File testPom = new File( getBasedir(), "target/test-classes/unit/copy-dependencies-test/plugin-config.xml" );
         CopyDependenciesMojo mojo = (CopyDependenciesMojo) lookupMojo( "copy-dependencies", testPom );
         mojo.outputDirectory = new File( this.testDir, "outputDirectory" );
+        // mojo.silent = true;
+
         assertNotNull( mojo );
         assertNotNull( mojo.project );
         MavenProject project = mojo.project;
@@ -53,7 +55,6 @@ public class TestCopyDependenciesMojo
     {
         CopyDependenciesMojo mojo = getNewMojo();
         mojo.execute();
-
         Iterator iter = mojo.project.getArtifacts().iterator();
         while ( iter.hasNext() )
         {
@@ -247,6 +248,7 @@ public class TestCopyDependenciesMojo
         mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
         mojo.project.setDependencyArtifacts( new HashSet() );
         mojo.includeScope = "test";
+
         mojo.execute();
         ScopeArtifactFilter saf = new ScopeArtifactFilter( mojo.includeScope );
 
@@ -289,17 +291,15 @@ public class TestCopyDependenciesMojo
         mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
         mojo.project.setDependencyArtifacts( new HashSet() );
         mojo.includeScope = "provided";
+        
         mojo.execute();
-        ScopeArtifactFilter saf = new ScopeArtifactFilter( mojo.includeScope );
-
         Iterator iter = mojo.project.getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = (Artifact) iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName );
-
-            assertEquals( saf.include( artifact ), file.exists() );
+            assertEquals( Artifact.SCOPE_PROVIDED.equals( artifact.getScope() ), file.exists() );
         }
     }
 
@@ -310,8 +310,8 @@ public class TestCopyDependenciesMojo
         mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
         mojo.project.setDependencyArtifacts( new HashSet() );
         mojo.includeScope = "system";
+        
         mojo.execute();
-        ScopeArtifactFilter saf = new ScopeArtifactFilter( mojo.includeScope );
 
         Iterator iter = mojo.project.getArtifacts().iterator();
         while ( iter.hasNext() )
@@ -320,7 +320,7 @@ public class TestCopyDependenciesMojo
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName );
 
-            assertEquals( saf.include( artifact ), file.exists() );
+            assertEquals( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ), file.exists() );
         }
     }
 }

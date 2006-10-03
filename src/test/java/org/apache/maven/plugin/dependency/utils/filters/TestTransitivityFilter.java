@@ -66,8 +66,10 @@ public class TestTransitivityFilter
 
     public void testExclude()
     {
-        TransitivityFilter filter = new TransitivityFilter( directArtifacts, true );
-
+        TransitivityFilter filter = new TransitivityFilter( directArtifacts, false );
+        assertFalse(filter.isExcludeTransitive());
+        filter.setExcludeTransitive(true);
+        assertTrue(filter.isExcludeTransitive());
         Set result = filter.filter( artifacts, log );
 
         assertEquals( 2, result.size() );
