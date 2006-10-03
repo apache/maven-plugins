@@ -93,25 +93,22 @@ public abstract class AbstractDependencyMojo
      */
     protected boolean silent;
     
-    protected Log log;
-
-    public AbstractDependencyMojo ()
-    {
-      if (silent)
-      {
-          log = new SilentLog();
-      }
-      else
-      {
-          log = super.getLog();
-      }
-    }
+    private Log log;
 
     /**
      * @return Returns the log.
      */
     public Log getLog()
     {
+        if (silent)
+        {
+            log = new SilentLog();
+        }
+        else
+        {
+            log = super.getLog();
+        }
+        
         return this.log;
     }
 
