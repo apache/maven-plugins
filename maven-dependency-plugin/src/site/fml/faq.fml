@@ -7,7 +7,7 @@
         <p>
             Actually, they are the same, it's just that it was moved and renamed. The dependency-maven-plugin
             is hosted at Mojo while maven-dependency-plugin is hosted at Apache. The recommended
-            plugin to use is the maven-dependency-plugin.
+            plugin to use is the maven-dependency-plugin. 
         </p>
      </answer>
    </faq>
