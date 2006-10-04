@@ -17,10 +17,9 @@ package org.apache.maven.plugin.dependency;
 
 import org.apache.maven.project.MavenProjectBuilder;
 
-
 /**
  * @author brianf
- *
+ * 
  */
 public abstract class AbstractResolveMojo
     extends AbstractDependencyFilterMojo

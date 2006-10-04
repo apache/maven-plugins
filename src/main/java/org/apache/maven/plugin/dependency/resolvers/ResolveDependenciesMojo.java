@@ -22,7 +22,7 @@ import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
 
 /**
  * Goal that resolves the project dependencies from the repository.
- *
+ * 
  * @goal resolve
  * @requiresDependencyResolution test
  * @phase generate-sources
@@ -31,26 +31,27 @@ import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
 public class ResolveDependenciesMojo
     extends AbstractResolveMojo
 {
-    
+
     /**
      * Only used to store results for integration test validation
      */
     DependencyStatusSets results;
-    
+
     /**
-     * Main entry into mojo. Gets the list of dependencies and iterates through displaying the resolved version.
+     * Main entry into mojo. Gets the list of dependencies and iterates through
+     * displaying the resolved version.
      * 
-     * @throws MojoExecutionException 
-     *          with a message if an error occurs. 
-     *
+     * @throws MojoExecutionException
+     *             with a message if an error occurs.
+     * 
      */
     public void execute()
         throws MojoExecutionException
     {
-        //get sets of dependencies
+        // get sets of dependencies
         results = this.getDependencySets();
-        
-        results.logStatus(getLog(), outputArtifactFilename);
+
+        results.logStatus( getLog(), outputArtifactFilename );
     }
 
     /**

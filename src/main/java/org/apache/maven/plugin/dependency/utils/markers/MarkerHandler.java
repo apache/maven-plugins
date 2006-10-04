@@ -23,7 +23,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 
 /**
  * @author brianf
- *
+ * 
  */
 public interface MarkerHandler
 {
@@ -35,7 +35,7 @@ public interface MarkerHandler
 
     public boolean clearMarker()
         throws MojoExecutionException;
-    
+
     public boolean isMarkerOlder( Artifact artifact )
         throws MojoExecutionException;
 }

@@ -32,12 +32,12 @@ import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.dependency.utils.SilentLog;
+import org.apache.maven.plugin.logging.Log;
 
 /**
  * @author brianf
- *
+ * 
  */
 public class TestSourcesMarkerFileHandler
     extends TestCase
@@ -45,7 +45,7 @@ public class TestSourcesMarkerFileHandler
     List artifacts = new ArrayList();
 
     Log log = new SilentLog();
-    
+
     File outputFolder;
 
     protected void setUp()
@@ -63,128 +63,138 @@ public class TestSourcesMarkerFileHandler
         artifacts.add( artifact );
         artifact = new DefaultArtifact( "test", "4", vr, Artifact.SCOPE_RUNTIME, "zip", "", ah, false );
         artifacts.add( artifact );
-        
-        //pick random output location
+
+        // pick random output location
         Random a = new Random();
-        outputFolder = new File("target/markers"+a.nextLong()+"/");
+        outputFolder = new File( "target/markers" + a.nextLong() + "/" );
         outputFolder.delete();
-        assertFalse(outputFolder.exists());
+        assertFalse( outputFolder.exists() );
     }
 
     protected void tearDown()
     {
         outputFolder.delete();
     }
-    
-   public void testSetMarkerResolved() throws MojoExecutionException
-   {
-       DefaultFileMarkerHandler handler = new SourcesFileMarkerHandler((Artifact) artifacts.get(0),this.outputFolder,true);
-       assertFalse(handler.isMarkerSet());
-       handler.setMarker();
-       assertTrue(handler.isMarkerSet());
-       handler.clearMarker();
-       assertFalse(handler.isMarkerSet());
-       
-       handler.setMarker();
-       handler.setMarker();
-       assertTrue(handler.isMarkerSet());
-       
-       handler.clearMarker();
-       handler.clearMarker();
-       outputFolder.delete();
-       assertFalse(outputFolder.exists());
-   }
-   
-   public void testSetMarkerUnresolved() throws MojoExecutionException
-   {
-       DefaultFileMarkerHandler handler = new SourcesFileMarkerHandler((Artifact) artifacts.get(0),this.outputFolder,false);
-       assertFalse(handler.isMarkerSet());
-       handler.setMarker();
-       assertTrue(handler.isMarkerSet());
-       handler.clearMarker();
-       assertFalse(handler.isMarkerSet());
-       
-       handler.setMarker();
-       handler.setMarker();
-       assertTrue(handler.isMarkerSet());
-       
-       handler.clearMarker();
-       handler.clearMarker();
-       outputFolder.delete();
-       assertFalse(outputFolder.exists());
-   }
-   
-   public void testBothMarkers() throws MojoExecutionException
-   {
-       DefaultFileMarkerHandler handler = new SourcesFileMarkerHandler((Artifact) artifacts.get(1),this.outputFolder,true);
-       DefaultFileMarkerHandler handler2 = new SourcesFileMarkerHandler((Artifact) artifacts.get(1),this.outputFolder,false);
-       
-       handler.setMarker();
-       assertTrue(handler.isMarkerSet());
-       assertTrue(handler2.isMarkerSet());
-       
-       handler2.clearMarker();
-       assertFalse(handler.isMarkerSet());
-       assertFalse(handler2.isMarkerSet());
-       outputFolder.delete();
-       assertFalse(outputFolder.exists());
-   }
-   
-   public void testMarkerFile() throws MojoExecutionException, IOException
-   {
-       DefaultFileMarkerHandler handler = new SourcesFileMarkerHandler((Artifact) artifacts.get(0),this.outputFolder,true);
-       DefaultFileMarkerHandler handler2 = new SourcesFileMarkerHandler((Artifact) artifacts.get(0),this.outputFolder,false);
-       
-       File handle = handler.getMarkerFile();
-       File handle2 = handler2.getMarkerFile();
-       assertFalse (handle.exists());
-       assertFalse (handler.isMarkerSet());
-       assertFalse (handle2.exists());
-       assertFalse (handler2.isMarkerSet());
-       
-       //if either file exists, the marker is set
-       handler.setMarker();
-       assertTrue(handler.isMarkerSet());
-       assertTrue(handle.exists());
-       assertTrue(handler2.isMarkerSet());
-       assertFalse(handle2.exists());
-       
-       //if either file exists, the marker is set
-       //setting 1 will clear the other marker
-       handler2.setMarker();
-       assertTrue(handler.isMarkerSet());
-       assertFalse(handle.exists());
-       assertTrue(handler2.isMarkerSet());
-       assertTrue(handle2.exists());
-       
-       //reset file for next test
-       handle.createNewFile();
-       
-       //only delete one, should be still true
-       handle2.delete();
-       assertTrue (handler.isMarkerSet());
-       assertTrue (handler2.isMarkerSet());
-       
-       //delete the 2nd, should be false.
-       handle.delete();
-       assertFalse (handler.isMarkerSet());
-       assertFalse (handler2.isMarkerSet());
-       
-       handle.createNewFile();
-       assertTrue(handler.isMarkerSet());
-       assertTrue(handler2.isMarkerSet());
-       
-       handler.clearMarker();
-       assertFalse(handle.exists());
-       handler2.clearMarker();
-       assertFalse(handle2.exists());
-       
-       handle.delete();
-       handle2.delete();
-       
-       outputFolder.delete();
-       assertFalse(outputFolder.exists());
-   }
-   
-   //TODO: create test for timestamps here.
+
+    public void testSetMarkerResolved()
+        throws MojoExecutionException
+    {
+        DefaultFileMarkerHandler handler = new SourcesFileMarkerHandler( (Artifact) artifacts.get( 0 ),
+                                                                         this.outputFolder, true );
+        assertFalse( handler.isMarkerSet() );
+        handler.setMarker();
+        assertTrue( handler.isMarkerSet() );
+        handler.clearMarker();
+        assertFalse( handler.isMarkerSet() );
+
+        handler.setMarker();
+        handler.setMarker();
+        assertTrue( handler.isMarkerSet() );
+
+        handler.clearMarker();
+        handler.clearMarker();
+        outputFolder.delete();
+        assertFalse( outputFolder.exists() );
+    }
+
+    public void testSetMarkerUnresolved()
+        throws MojoExecutionException
+    {
+        DefaultFileMarkerHandler handler = new SourcesFileMarkerHandler( (Artifact) artifacts.get( 0 ),
+                                                                         this.outputFolder, false );
+        assertFalse( handler.isMarkerSet() );
+        handler.setMarker();
+        assertTrue( handler.isMarkerSet() );
+        handler.clearMarker();
+        assertFalse( handler.isMarkerSet() );
+
+        handler.setMarker();
+        handler.setMarker();
+        assertTrue( handler.isMarkerSet() );
+
+        handler.clearMarker();
+        handler.clearMarker();
+        outputFolder.delete();
+        assertFalse( outputFolder.exists() );
+    }
+
+    public void testBothMarkers()
+        throws MojoExecutionException
+    {
+        DefaultFileMarkerHandler handler = new SourcesFileMarkerHandler( (Artifact) artifacts.get( 1 ),
+                                                                         this.outputFolder, true );
+        DefaultFileMarkerHandler handler2 = new SourcesFileMarkerHandler( (Artifact) artifacts.get( 1 ),
+                                                                          this.outputFolder, false );
+
+        handler.setMarker();
+        assertTrue( handler.isMarkerSet() );
+        assertTrue( handler2.isMarkerSet() );
+
+        handler2.clearMarker();
+        assertFalse( handler.isMarkerSet() );
+        assertFalse( handler2.isMarkerSet() );
+        outputFolder.delete();
+        assertFalse( outputFolder.exists() );
+    }
+
+    public void testMarkerFile()
+        throws MojoExecutionException, IOException
+    {
+        DefaultFileMarkerHandler handler = new SourcesFileMarkerHandler( (Artifact) artifacts.get( 0 ),
+                                                                         this.outputFolder, true );
+        DefaultFileMarkerHandler handler2 = new SourcesFileMarkerHandler( (Artifact) artifacts.get( 0 ),
+                                                                          this.outputFolder, false );
+
+        File handle = handler.getMarkerFile();
+        File handle2 = handler2.getMarkerFile();
+        assertFalse( handle.exists() );
+        assertFalse( handler.isMarkerSet() );
+        assertFalse( handle2.exists() );
+        assertFalse( handler2.isMarkerSet() );
+
+        // if either file exists, the marker is set
+        handler.setMarker();
+        assertTrue( handler.isMarkerSet() );
+        assertTrue( handle.exists() );
+        assertTrue( handler2.isMarkerSet() );
+        assertFalse( handle2.exists() );
+
+        // if either file exists, the marker is set
+        // setting 1 will clear the other marker
+        handler2.setMarker();
+        assertTrue( handler.isMarkerSet() );
+        assertFalse( handle.exists() );
+        assertTrue( handler2.isMarkerSet() );
+        assertTrue( handle2.exists() );
+
+        // reset file for next test
+        handle.createNewFile();
+
+        // only delete one, should be still true
+        handle2.delete();
+        assertTrue( handler.isMarkerSet() );
+        assertTrue( handler2.isMarkerSet() );
+
+        // delete the 2nd, should be false.
+        handle.delete();
+        assertFalse( handler.isMarkerSet() );
+        assertFalse( handler2.isMarkerSet() );
+
+        handle.createNewFile();
+        assertTrue( handler.isMarkerSet() );
+        assertTrue( handler2.isMarkerSet() );
+
+        handler.clearMarker();
+        assertFalse( handle.exists() );
+        handler2.clearMarker();
+        assertFalse( handle2.exists() );
+
+        handle.delete();
+        handle2.delete();
+
+        outputFolder.delete();
+        assertFalse( outputFolder.exists() );
+    }
+
+    // TODO: create test for timestamps here.
 }

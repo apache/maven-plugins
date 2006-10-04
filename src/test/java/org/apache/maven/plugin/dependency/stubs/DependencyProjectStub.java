@@ -53,7 +53,8 @@ import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
- *  very simple stub of maven project, going to take a lot of work to make it useful as a stub though
+ * very simple stub of maven project, going to take a lot of work to make it
+ * useful as a stub though
  */
 public class DependencyProjectStub
     extends MavenProject
@@ -154,14 +155,14 @@ public class DependencyProjectStub
     // kinda dangerous...
     public DependencyProjectStub( Model model )
     {
-        //  super(model);
+        // super(model);
         super( (Model) null );
     }
 
     // kinda dangerous...
     public DependencyProjectStub( MavenProject project )
     {
-        //super(project);
+        // super(project);
         super( (Model) null );
     }
 
@@ -730,7 +731,7 @@ public class DependencyProjectStub
 
     public Set getArtifacts()
     {
-        if (artifacts == null)
+        if ( artifacts == null )
         {
             return Collections.EMPTY_SET;
         }

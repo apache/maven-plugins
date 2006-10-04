@@ -7,7 +7,6 @@ import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
-import org.apache.maven.plugin.dependency.utils.ArtifactStubFactory;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.project.MavenProject;
 
@@ -291,7 +290,7 @@ public class TestCopyDependenciesMojo
         mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
         mojo.project.setDependencyArtifacts( new HashSet() );
         mojo.includeScope = "provided";
-        
+
         mojo.execute();
         Iterator iter = mojo.project.getArtifacts().iterator();
         while ( iter.hasNext() )
@@ -310,7 +309,7 @@ public class TestCopyDependenciesMojo
         mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
         mojo.project.setDependencyArtifacts( new HashSet() );
         mojo.includeScope = "system";
-        
+
         mojo.execute();
 
         Iterator iter = mojo.project.getArtifacts().iterator();

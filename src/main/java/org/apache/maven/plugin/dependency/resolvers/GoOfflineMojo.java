@@ -25,8 +25,9 @@ import org.apache.maven.plugin.dependency.AbstractResolveMojo;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 
 /**
- * Goal that resolves all project dependencies, including plugins and reports and their dependencies.
- *
+ * Goal that resolves all project dependencies, including plugins and reports
+ * and their dependencies.
+ * 
  * @goal go-offline
  * @execute goal=resolve-plugins
  * @requiresDependencyResolution test
@@ -36,13 +37,13 @@ public class GoOfflineMojo
     extends AbstractResolveMojo
 {
 
-        
     /**
-     * Main entry into mojo. Gets the list of dependencies and iterates through displaying the resolved version.
+     * Main entry into mojo. Gets the list of dependencies and iterates through
+     * displaying the resolved version.
      * 
-     * @throws MojoExecutionException 
-     *          with a message if an error occurs. 
-     *
+     * @throws MojoExecutionException
+     *             with a message if an error occurs.
+     * 
      */
     public void execute()
         throws MojoExecutionException

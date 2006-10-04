@@ -25,10 +25,11 @@ import org.apache.maven.plugin.logging.Log;
 
 /**
  * @author brianf
- *
+ * 
  */
 public interface ArtifactsFilter
 {
-   public Set filter (Set artifacts , Log log) throws MojoExecutionException;
-   
+    public Set filter( Set artifacts, Log log )
+        throws MojoExecutionException;
+
 }

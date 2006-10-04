@@ -10,16 +10,14 @@ import org.apache.maven.project.MavenProject;
 public class TestResolveMojo
     extends AbstractDependencyMojoTestCase
 {
-    
+
     protected void setUp()
         throws Exception
     {
         // required for mojo lookups to work
-        super.setUp("markers",false);
+        super.setUp( "markers", false );
     }
 
-
-    
     /**
      * tests the proper discovery and configuration of the mojo
      * 
@@ -32,28 +30,26 @@ public class TestResolveMojo
         ResolveDependenciesMojo mojo = (ResolveDependenciesMojo) lookupMojo( "resolve", testPom );
         mojo.silent = false;
         assertNotNull( mojo );
-        assertNotNull(mojo.project);
+        assertNotNull( mojo.project );
         MavenProject project = mojo.project;
-              
-        
+
         Set artifacts = this.stubFactory.getScopedArtifacts();
         Set directArtifacts = this.stubFactory.getReleaseAndSnapshotArtifacts();
-        artifacts.addAll(directArtifacts);
-        
-        project.setArtifacts(artifacts);
-        project.setDependencyArtifacts(directArtifacts);
-   
+        artifacts.addAll( directArtifacts );
+
+        project.setArtifacts( artifacts );
+        project.setDependencyArtifacts( directArtifacts );
+
         mojo.execute();
         DependencyStatusSets results = mojo.getResults();
-        assertNotNull(results);
-        assertEquals(artifacts.size(),results.getResolvedDependencies().size());
-        
-        
-        setVariableValueToObject(mojo,"excludeTransitive",Boolean.TRUE);
-        
+        assertNotNull( results );
+        assertEquals( artifacts.size(), results.getResolvedDependencies().size() );
+
+        setVariableValueToObject( mojo, "excludeTransitive", Boolean.TRUE );
+
         mojo.execute();
         results = mojo.getResults();
-        assertNotNull(results);
-        assertEquals(directArtifacts.size(),results.getResolvedDependencies().size());
+        assertNotNull( results );
+        assertEquals( directArtifacts.size(), results.getResolvedDependencies().size() );
     }
 }

@@ -49,7 +49,7 @@ public class AbstractDependencyMojoTestCase
             {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
-                fail("Trying to remove directory:"+testDir);
+                fail( "Trying to remove directory:" + testDir );
             }
             assertFalse( testDir.exists() );
         }

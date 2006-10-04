@@ -24,14 +24,14 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.project.ProjectBuildingException;
-import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.plugin.dependency.AbstractResolveMojo;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
+import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 
 /**
  * Goal that resolves all project plugins and reports and their dependencies.
- *
+ * 
  * @goal resolve-plugins
  * @phase generate-sources
  * @author brianf
@@ -39,7 +39,6 @@ import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 public class ResolvePluginsMojo
     extends AbstractResolveMojo
 {
-
 
     /**
      * Remote repositories which will be searched for plugins.
@@ -52,24 +51,26 @@ public class ResolvePluginsMojo
 
     /**
      * If we should exclude transitive dependencies
+     * 
      * @parameter expression="${excludeTransitive}" default-value="false"
      */
     private boolean excludeTransitive;
 
     /**
-     * Main entry into mojo. Gets the list of dependencies and iterates through displaying the resolved version.
+     * Main entry into mojo. Gets the list of dependencies and iterates through
+     * displaying the resolved version.
      * 
-     * @throws MojoExecutionException 
-     *          with a message if an error occurs. 
-     *
+     * @throws MojoExecutionException
+     *             with a message if an error occurs.
+     * 
      */
     public void execute()
         throws MojoExecutionException
     {
         try
         {
-            Set plugins = DependencyUtil.resolvePluginArtifacts( project, factory, local,
-                                                                 remotePluginRepositories, resolver );
+            Set plugins = DependencyUtil.resolvePluginArtifacts( project, factory, local, remotePluginRepositories,
+                                                                 resolver );
             for ( Iterator i = plugins.iterator(); i.hasNext(); )
             {
                 Artifact plugin = (Artifact) i.next();
@@ -79,9 +80,9 @@ public class ResolvePluginsMojo
                 }
                 if ( !excludeTransitive )
                 {
-                    Set transitiveDependencies = DependencyUtil
-                        .resolveArtifactDependencies( plugin, factory, local,
-                                                      remoteRepos, resolver, mavenProjectBuilder );
+                    Set transitiveDependencies = DependencyUtil.resolveArtifactDependencies( plugin, factory, local,
+                                                                                             remoteRepos, resolver,
+                                                                                             mavenProjectBuilder );
                     if ( !silent )
                     {
                         for ( Iterator transIter = transitiveDependencies.iterator(); transIter.hasNext(); )

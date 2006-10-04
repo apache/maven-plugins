@@ -12,7 +12,7 @@ public class SilentLog
     }
 
     public void debug( CharSequence content )
-    {   
+    {
     }
 
     public void debug( CharSequence content, Throwable error )
@@ -72,5 +72,5 @@ public class SilentLog
 
     public void error( Throwable error )
     {
-    }    
+    }
 }
