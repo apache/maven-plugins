@@ -29,51 +29,52 @@ import org.apache.maven.plugin.logging.Log;
 
 /**
  * @author brianf
- *
+ * 
  */
 public class TestFilterArtifacts
     extends TestCase
 {
     Log log = new SilentLog();
+
     protected void setUp()
         throws Exception
     {
         super.setUp();
     }
-    
+
     public void testArtifactFilter()
     {
         Set a = new HashSet();
         FilterArtifacts fa = new FilterArtifacts();
-        ArtifactsFilter scope = new ScopeFilter("compile","system");
-        ArtifactsFilter type = new TypeFilter("jar","war");
-        ArtifactsFilter trans = new TransitivityFilter(a,true);
-        
-        assertEquals(0,fa.getFilters().size());
-        fa.addFilter(scope);
-        assertEquals(1,fa.getFilters().size());
-        fa.addFilter(type);
-        assertEquals(2,fa.getFilters().size());
-        assertTrue(fa.getFilters().get(0) instanceof ScopeFilter );
-        assertTrue(fa.getFilters().get(1) instanceof TypeFilter );
-        fa.addFilter(1,trans);
-        assertEquals(3,fa.getFilters().size());
-        assertTrue(fa.getFilters().get(0) instanceof ScopeFilter );
-        assertTrue(fa.getFilters().get(1) instanceof TransitivityFilter );
-        assertTrue(fa.getFilters().get(2) instanceof TypeFilter );
-        
+        ArtifactsFilter scope = new ScopeFilter( "compile", "system" );
+        ArtifactsFilter type = new TypeFilter( "jar", "war" );
+        ArtifactsFilter trans = new TransitivityFilter( a, true );
+
+        assertEquals( 0, fa.getFilters().size() );
+        fa.addFilter( scope );
+        assertEquals( 1, fa.getFilters().size() );
+        fa.addFilter( type );
+        assertEquals( 2, fa.getFilters().size() );
+        assertTrue( fa.getFilters().get( 0 ) instanceof ScopeFilter );
+        assertTrue( fa.getFilters().get( 1 ) instanceof TypeFilter );
+        fa.addFilter( 1, trans );
+        assertEquals( 3, fa.getFilters().size() );
+        assertTrue( fa.getFilters().get( 0 ) instanceof ScopeFilter );
+        assertTrue( fa.getFilters().get( 1 ) instanceof TransitivityFilter );
+        assertTrue( fa.getFilters().get( 2 ) instanceof TypeFilter );
+
         ArrayList list = new ArrayList();
-        list.addAll(fa.getFilters());
-        
+        list.addAll( fa.getFilters() );
+
         fa.clearFilters();
-        assertEquals(0,fa.getFilters().size());
-        
-        fa.setFilters(list);
-        assertEquals(3,fa.getFilters().size());
-        assertTrue(fa.getFilters().get(0) instanceof ScopeFilter );
-        assertTrue(fa.getFilters().get(1) instanceof TransitivityFilter );
-        assertTrue(fa.getFilters().get(2) instanceof TypeFilter );
-        
+        assertEquals( 0, fa.getFilters().size() );
+
+        fa.setFilters( list );
+        assertEquals( 3, fa.getFilters().size() );
+        assertTrue( fa.getFilters().get( 0 ) instanceof ScopeFilter );
+        assertTrue( fa.getFilters().get( 1 ) instanceof TransitivityFilter );
+        assertTrue( fa.getFilters().get( 2 ) instanceof TypeFilter );
+
     }
-    
-  }
+
+}

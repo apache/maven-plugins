@@ -1,5 +1,17 @@
 package org.apache.maven.plugin.dependency;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -17,18 +29,6 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 /**
  * Remove the project dependencies from the local repository, and optionally
  * re-resolve them.
@@ -37,14 +37,14 @@ import java.util.Set;
  * 
  * @goal purge-local-repository
  * @aggregator
- *
+ * 
  */
 public class PurgeLocalRepositoryMojo
     extends AbstractMojo
 {
 
     public static final String FILE_FUZZINESS = "file";
-    
+
     public static final String VERSION_FUZZINESS = "version";
 
     public static final String ARTIFACT_ID_FUZZINESS = "artifactId";
@@ -52,7 +52,8 @@ public class PurgeLocalRepositoryMojo
     public static final String GROUP_ID_FUZZINESS = "groupId";
 
     /**
-     * The projects in the current build. Each of these is subject to refreshing.
+     * The projects in the current build. Each of these is subject to
+     * refreshing.
      * 
      * @parameter default-value="${reactorProjects}"
      * @required
@@ -67,11 +68,12 @@ public class PurgeLocalRepositoryMojo
      * @parameter
      */
     private List excludes;
-    
+
     /**
-     * Comma-separated list of groupId:artifactId entries, which should be used to exclude artifacts
-     * from deletion/refresh. This is a command-line alternative to the <code>excludes</code>
-     * parameter, since List parameters are not currently compatible with CLI specification.
+     * Comma-separated list of groupId:artifactId entries, which should be used
+     * to exclude artifacts from deletion/refresh. This is a command-line
+     * alternative to the <code>excludes</code> parameter, since List
+     * parameters are not currently compatible with CLI specification.
      * 
      * @parameter expression="${exclude}"
      */
@@ -79,8 +81,8 @@ public class PurgeLocalRepositoryMojo
 
     /**
      * Whether to re-resolve the artifacts once they have been deleted from the
-     * local repository. If you are running this mojo from the command-line, 
-     * you may want to disable this. By default, artifacts will be re-resolved.
+     * local repository. If you are running this mojo from the command-line, you
+     * may want to disable this. By default, artifacts will be re-resolved.
      * 
      * @parameter expression="${reResolve}" default-value="true"
      */
@@ -111,14 +113,16 @@ public class PurgeLocalRepositoryMojo
     private ArtifactMetadataSource source;
 
     /**
-     * Determines how liberally the plugin will delete an artifact from the local repository.
-     * Values are:
-     * <br/>
+     * Determines how liberally the plugin will delete an artifact from the
+     * local repository. Values are: <br/>
      * <ul>
-     *   <li><b>file</b> <i>(default)</i> - Eliminate only the artifact's file.</li>
-     *   <li><b>version</b> - Eliminate all files associated with the artifact's version.</li>
-     *   <li><b>artifactId</b> - Eliminate all files associated with the artifact's artifactId.</li>
-     *   <li><b>groupId</b> - Eliminate all files associated with the artifact's groupId.</li>
+     * <li><b>file</b> <i>(default)</i> - Eliminate only the artifact's file.</li>
+     * <li><b>version</b> - Eliminate all files associated with the artifact's
+     * version.</li>
+     * <li><b>artifactId</b> - Eliminate all files associated with the
+     * artifact's artifactId.</li>
+     * <li><b>groupId</b> - Eliminate all files associated with the artifact's
+     * groupId.</li>
      * </ul>
      * 
      * @parameter expression="${resolutionFuzziness}" default-value="file"
@@ -126,7 +130,8 @@ public class PurgeLocalRepositoryMojo
     private String resolutionFuzziness;
 
     /**
-     * Whether this mojo should act on all transitive dependencies. Default value is true.
+     * Whether this mojo should act on all transitive dependencies. Default
+     * value is true.
      * 
      * @parameter expression="${actTransitively}" default-value="true"
      */
@@ -134,6 +139,7 @@ public class PurgeLocalRepositoryMojo
 
     /**
      * Used to construct artifacts for deletion/resolution...
+     * 
      * @component
      */
     private ArtifactFactory factory;
@@ -149,7 +155,7 @@ public class PurgeLocalRepositoryMojo
         throws MojoExecutionException, MojoFailureException
     {
         List exclusionPatterns = buildExclusionPatternsList();
-        
+
         for ( Iterator it = projects.iterator(); it.hasNext(); )
         {
             MavenProject project = (MavenProject) it.next();
@@ -175,29 +181,29 @@ public class PurgeLocalRepositoryMojo
     private List buildExclusionPatternsList()
     {
         List patterns = new ArrayList();
-        
+
         if ( exclude != null )
         {
             String[] elements = exclude.split( " ?, ?" );
-            
+
             patterns.addAll( Arrays.asList( elements ) );
         }
         else if ( excludes != null && !excludes.isEmpty() )
         {
             patterns.addAll( excludes );
         }
-        
+
         return patterns;
     }
 
     private Map createArtifactMap( MavenProject project )
     {
         Map artifactMap = Collections.EMPTY_MAP;
-        
+
         List dependencies = project.getDependencies();
-        
+
         List remoteRepositories = Collections.EMPTY_LIST;
-        
+
         Set dependencyArtifacts = new HashSet();
 
         for ( Iterator it = dependencies.iterator(); it.hasNext(); )
@@ -205,20 +211,20 @@ public class PurgeLocalRepositoryMojo
             Dependency dependency = (Dependency) it.next();
 
             VersionRange vr = VersionRange.createFromVersion( dependency.getVersion() );
-            
+
             Artifact artifact = factory.createDependencyArtifact( dependency.getGroupId(), dependency.getArtifactId(),
                                                                   vr, dependency.getType(), dependency.getClassifier(),
                                                                   dependency.getScope() );
             dependencyArtifacts.add( artifact );
         }
-            
+
         if ( actTransitively )
         {
             try
             {
-                ArtifactResolutionResult result = resolver.resolveTransitively( dependencyArtifacts, project.getArtifact(), remoteRepositories,
-                                              localRepository, source );
-                
+                ArtifactResolutionResult result = resolver.resolveTransitively( dependencyArtifacts, project
+                    .getArtifact(), remoteRepositories, localRepository, source );
+
                 artifactMap = ArtifactUtils.artifactMapByVersionlessId( result.getArtifacts() );
             }
             catch ( ArtifactResolutionException e )
@@ -236,7 +242,7 @@ public class PurgeLocalRepositoryMojo
             for ( Iterator it = dependencyArtifacts.iterator(); it.hasNext(); )
             {
                 Artifact artifact = (Artifact) it.next();
-                
+
                 try
                 {
                     resolver.resolve( artifact, remoteRepositories, localRepository );
@@ -253,7 +259,7 @@ public class PurgeLocalRepositoryMojo
                 }
             }
         }
-        
+
         return artifactMap;
     }
 
@@ -269,7 +275,7 @@ public class PurgeLocalRepositoryMojo
         throws ArtifactResolutionException, MojoFailureException
     {
         Map deps = createArtifactMap( project );
-        
+
         if ( deps.isEmpty() )
         {
             getLog().info( "Nothing to do for project: " + project.getId() );
@@ -283,26 +289,26 @@ public class PurgeLocalRepositoryMojo
                 String excludedKey = (String) it.next();
 
                 verbose( "Excluding: " + excludedKey + " from refresh operation for project: " + project.getId() );
-                
+
                 deps.remove( excludedKey );
             }
         }
-        
+
         verbose( "Processing dependencies for project: " + project.getId() );
-        
+
         List missingArtifacts = new ArrayList();
         for ( Iterator it = deps.entrySet().iterator(); it.hasNext(); )
         {
             Map.Entry entry = (Map.Entry) it.next();
 
             Artifact artifact = (Artifact) entry.getValue();
-            
+
             verbose( "Processing artifact: " + artifact.getId() );
 
             File deleteTarget = findDeleteTarget( artifact );
 
             verbose( "Deleting: " + deleteTarget );
-            
+
             if ( deleteTarget.isDirectory() )
             {
                 try
@@ -311,20 +317,21 @@ public class PurgeLocalRepositoryMojo
                 }
                 catch ( IOException e )
                 {
-                    throw new MojoFailureException( this, "Cannot delete dependency from the local repository: " + artifact.getId(), "Failed to delete: " + deleteTarget );
+                    throw new MojoFailureException( this, "Cannot delete dependency from the local repository: "
+                        + artifact.getId(), "Failed to delete: " + deleteTarget );
                 }
             }
             else
             {
                 deleteTarget.delete();
             }
-            
+
             if ( reResolve )
             {
                 verbose( "Re-resolving." );
-                
+
                 artifact.setResolved( false );
-                
+
                 try
                 {
                     resolver.resolveAlways( artifact, project.getRemoteArtifactRepositories(), localRepository );
@@ -361,42 +368,46 @@ public class PurgeLocalRepositoryMojo
     private File findDeleteTarget( Artifact artifact )
     {
         File deleteTarget = artifact.getFile();
-        
+
         if ( GROUP_ID_FUZZINESS.equals( resolutionFuzziness ) )
         {
             // get the artifactId dir.
             deleteTarget = deleteTarget.getParentFile().getParentFile();
-            
+
             // get the first groupId dir.
             deleteTarget = deleteTarget.getParentFile();
-            
+
             String[] path = localRepository.pathOf( artifact ).split( "\\/" );
-            
-            // subtract the artifact filename, version dir, artifactId dir, and the first groupId 
+
+            // subtract the artifact filename, version dir, artifactId dir, and
+            // the first groupId
             // dir, since we've accounted for those above.
             int groupParts = path.length - 4;
-            
+
             File parent = deleteTarget.getParentFile();
             int count = 0;
-            while( count++ < groupParts )
+            while ( count++ < groupParts )
             {
-                // prune empty dirs back to the beginning of the groupId, if possible.
-                
-                // if the parent dir only has the one child file, then it's okay to prune.
+                // prune empty dirs back to the beginning of the groupId, if
+                // possible.
+
+                // if the parent dir only has the one child file, then it's okay
+                // to prune.
                 if ( parent.list().length < 2 )
                 {
                     deleteTarget = parent;
-                    
+
                     // check the parent of this newly checked dir
                     parent = deleteTarget.getParentFile();
                 }
                 else
                 {
-                    // if there are more files than the one that we're interested in killing, stop.
+                    // if there are more files than the one that we're
+                    // interested in killing, stop.
                     break;
                 }
             }
-            
+
         }
         else if ( ARTIFACT_ID_FUZZINESS.equals( resolutionFuzziness ) )
         {
@@ -409,7 +420,7 @@ public class PurgeLocalRepositoryMojo
             deleteTarget = deleteTarget.getParentFile();
         }
         // else it's file fuzziness.
-        
+
         return deleteTarget;
     }
 

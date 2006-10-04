@@ -30,9 +30,8 @@ public class TransitivityFilter
     private boolean excludeTransitive;
 
     private Set directDependencies;
-    
 
-    public TransitivityFilter( Set directDependencies, boolean excludeTransitive)
+    public TransitivityFilter( Set directDependencies, boolean excludeTransitive )
     {
         this.excludeTransitive = excludeTransitive;
         this.directDependencies = directDependencies;
@@ -40,14 +39,14 @@ public class TransitivityFilter
 
     public Set filter( Set artifacts, Log log )
     {
-        //why not just take the directDependencies here?
-        //because if this filter is run after some other process, the
-        //set of artifacts may not be the same as the directDependencies.
+        // why not just take the directDependencies here?
+        // because if this filter is run after some other process, the
+        // set of artifacts may not be the same as the directDependencies.
         Set result = artifacts;
 
         if ( excludeTransitive )
         {
-            log.debug("Excluding Transitive Dependencies.");
+            log.debug( "Excluding Transitive Dependencies." );
             result = new HashSet();
             Iterator iterator = artifacts.iterator();
             while ( iterator.hasNext() )
@@ -56,23 +55,25 @@ public class TransitivityFilter
                 if ( artifactIsADirectDependency( artifact ) )
                 {
                     result.add( artifact );
-                    log.debug("Added: "+artifact);
+                    log.debug( "Added: " + artifact );
                 }
             }
-            log.debug("Added "+ result.size());
+            log.debug( "Added " + result.size() );
         }
         else
         {
-            log.debug("Including Transitive Dependencies.");
+            log.debug( "Including Transitive Dependencies." );
         }
 
         return result;
     }
 
     /**
-     * Compares the artifact to the list of dependencies to see if it is directly included by this project
+     * Compares the artifact to the list of dependencies to see if it is
+     * directly included by this project
+     * 
      * @param artifact
-     *          representing the item to compare.
+     *            representing the item to compare.
      * @return true if artifact is a direct dependency
      */
     public boolean artifactIsADirectDependency( Artifact artifact )
@@ -101,7 +102,8 @@ public class TransitivityFilter
     }
 
     /**
-     * @param excludeTransitive The excludeTransitive to set.
+     * @param excludeTransitive
+     *            The excludeTransitive to set.
      */
     public void setExcludeTransitive( boolean excludeTransitive )
     {

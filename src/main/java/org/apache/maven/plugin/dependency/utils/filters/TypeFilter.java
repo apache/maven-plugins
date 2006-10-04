@@ -43,9 +43,11 @@ public class TypeFilter
     }
 
     /**
-     * This function determines if filtering needs to be performed. Excludes are ignored if Includes are used.
+     * This function determines if filtering needs to be performed. Excludes are
+     * ignored if Includes are used.
+     * 
      * @param dependencies
-     *          the set of dependencies to filter.
+     *            the set of dependencies to filter.
      * 
      * @return a Set of filtered dependencies.
      */
@@ -53,14 +55,14 @@ public class TypeFilter
     {
         Set results = artifacts;
 
-        if ( this.includeTypes !=null && !this.includeTypes.isEmpty() )
+        if ( this.includeTypes != null && !this.includeTypes.isEmpty() )
         {
             log.debug( "Including only Types: " + this.includeString );
             results = filterIncludes( artifacts, this.includeTypes );
         }
         else
         {
-            if ( this.excludeTypes !=null && !this.excludeTypes.isEmpty() )
+            if ( this.excludeTypes != null && !this.excludeTypes.isEmpty() )
             {
                 log.debug( "Excluding Types: " + this.excludeString );
                 results = filterExcludes( artifacts, this.excludeTypes );
@@ -70,13 +72,14 @@ public class TypeFilter
     }
 
     /**
-     * Processes the dependencies list and includes the dependencies that match a type in the list. 
+     * Processes the dependencies list and includes the dependencies that match
+     * a type in the list.
      * 
      * @param depends
-     *          List of dependencies.
+     *            List of dependencies.
      * @param types
-     *          List of types to include.
-     *          
+     *            List of types to include.
+     * 
      * @return a set of filtered types.
      */
     private Set filterIncludes( Set artifacts, List types )
@@ -92,8 +95,8 @@ public class TypeFilter
             {
                 Artifact artifact = (Artifact) iter.next();
 
-                //if the type matches the type, add to the
-                //results
+                // if the type matches the type, add to the
+                // results
                 if ( artifact.getType().equals( artifactType ) )
                 {
                     result.add( artifact );
@@ -104,13 +107,14 @@ public class TypeFilter
     }
 
     /**
-     * Processes the dependencies list and excludes the dependencies that match a type in the list. 
+     * Processes the dependencies list and excludes the dependencies that match
+     * a type in the list.
      * 
      * @param depends
-     *          List of dependencies.
+     *            List of dependencies.
      * @param types
-     *          List of types to exclude.
-     *          
+     *            List of types to exclude.
+     * 
      * @return a set of filtered types.
      */
     private Set filterExcludes( Set artifacts, List types )
@@ -123,8 +127,8 @@ public class TypeFilter
             boolean exclude = false;
             Artifact artifact = (Artifact) iter.next();
 
-            //look through all types. If no matches are found
-            //then it can be added to the results.
+            // look through all types. If no matches are found
+            // then it can be added to the results.
             Iterator typeIter = types.iterator();
             while ( typeIter.hasNext() )
             {
@@ -146,7 +150,8 @@ public class TypeFilter
     }
 
     /**
-     * @param includeTypes The includeTypes to set.
+     * @param includeTypes
+     *            The includeTypes to set.
      */
     public void setExcludeTypes( String excludeTypeString )
     {
@@ -159,7 +164,8 @@ public class TypeFilter
     }
 
     /**
-     * @param includeTypes The includeTypes to set.
+     * @param includeTypes
+     *            The includeTypes to set.
      */
     public void setIncludeTypes( String includeTypeString )
     {

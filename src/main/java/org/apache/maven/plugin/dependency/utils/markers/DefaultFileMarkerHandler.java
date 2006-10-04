@@ -26,7 +26,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 
 /**
  * @author brianf
- *
+ * 
  */
 public class DefaultFileMarkerHandler
     implements MarkerHandler
@@ -43,9 +43,8 @@ public class DefaultFileMarkerHandler
 
     /**
      * Returns properly formatted File
-     *        
-     * @return
-     *        File object for marker. The file is not guaranteed to exist.
+     * 
+     * @return File object for marker. The file is not guaranteed to exist.
      */
     protected File getMarkerFile()
     {
@@ -55,14 +54,14 @@ public class DefaultFileMarkerHandler
     /**
      * Tests whether the file or directory denoted by this abstract pathname
      * exists.
-     *
-     * @return  <code>true</code> if and only if the file or directory denoted
-     *          by this abstract pathname exists; <code>false</code> otherwise
-     *
-     * @throws  SecurityException
-     *          If a security manager exists and its <code>{@link
+     * 
+     * @return <code>true</code> if and only if the file or directory denoted
+     *         by this abstract pathname exists; <code>false</code> otherwise
+     * 
+     * @throws SecurityException
+     *             If a security manager exists and its <code>{@link
      *          java.lang.SecurityManager#checkRead(java.lang.String)}</code>
-     *          method denies read access to the file or directory
+     *             method denies read access to the file or directory
      */
     public boolean isMarkerSet()
         throws MojoExecutionException
@@ -75,13 +74,14 @@ public class DefaultFileMarkerHandler
         throws MojoExecutionException
     {
         File marker = getMarkerFile();
-        if (marker.exists())
+        if ( marker.exists() )
         {
-            return artifact.getFile().lastModified() > marker.lastModified(); 
+            return artifact.getFile().lastModified() > marker.lastModified();
         }
         else
         {
-            //if the marker doesn't exist, we want to copy so assume it is infinately older
+            // if the marker doesn't exist, we want to copy so assume it is
+            // infinately older
             return true;
         }
     }
@@ -90,7 +90,7 @@ public class DefaultFileMarkerHandler
         throws MojoExecutionException
     {
         File marker = getMarkerFile();
-        //create marker file
+        // create marker file
         marker.getParentFile().mkdirs();
         try
         {
@@ -104,17 +104,17 @@ public class DefaultFileMarkerHandler
     }
 
     /**
-     * Deletes the file or directory denoted by this abstract pathname.  If
-     * this pathname denotes a directory, then the directory must be empty in
-     * order to be deleted.
-     *
-     * @return  <code>true</code> if and only if the file or directory is
-     *          successfully deleted; <code>false</code> otherwise
-     *
-     * @throws  SecurityException
-     *          If a security manager exists and its <code>{@link
-     *          java.lang.SecurityManager#checkDelete}</code> method denies
-     *          delete access to the file
+     * Deletes the file or directory denoted by this abstract pathname. If this
+     * pathname denotes a directory, then the directory must be empty in order
+     * to be deleted.
+     * 
+     * @return <code>true</code> if and only if the file or directory is
+     *         successfully deleted; <code>false</code> otherwise
+     * 
+     * @throws SecurityException
+     *             If a security manager exists and its <code>{@link
+     *          java.lang.SecurityManager#checkDelete}</code>
+     *             method denies delete access to the file
      */
     public boolean clearMarker()
         throws MojoExecutionException

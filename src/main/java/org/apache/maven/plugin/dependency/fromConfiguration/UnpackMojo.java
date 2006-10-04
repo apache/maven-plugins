@@ -22,13 +22,14 @@ import java.util.Iterator;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
+import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 
 /**
- * Goal that retrieves a list of artifacts from the repository and unpacks them in a defined location.
- *
+ * Goal that retrieves a list of artifacts from the repository and unpacks them
+ * in a defined location.
+ * 
  * @goal unpack
  * @phase process-sources
  * @author brianf
@@ -39,17 +40,18 @@ public final class UnpackMojo
 
     /**
      * Directory to store flag files after unpack
-     * @parameter expression="${project.build.directory}/dependency-maven-plugin-markers" 
+     * 
+     * @parameter expression="${project.build.directory}/dependency-maven-plugin-markers"
      */
     private File markersDirectory;
 
     /**
-     * Main entry into mojo. This method gets the ArtifactItems and iterates through each one passing
-     * it to unpackArtifact.
+     * Main entry into mojo. This method gets the ArtifactItems and iterates
+     * through each one passing it to unpackArtifact.
      * 
-     * @throws MojoExecutionException 
-     *              with a message if an error occurs.
-     *              
+     * @throws MojoExecutionException
+     *             with a message if an error occurs.
+     * 
      * @see ArtifactItem
      * @see #getArtifactItems
      * @see #unpackArtifact(ArtifactItem)
@@ -68,14 +70,16 @@ public final class UnpackMojo
 
     /**
      * This method gets the Artifact object and calls DependencyUtil.unpackFile.
-     * @param artifactItem 
-     *          containing the information about the Artifact to unpack.
-     *          
-     * @throws MojoExecutionException 
-     *          with a message if an error occurs.
-     *          
+     * 
+     * @param artifactItem
+     *            containing the information about the Artifact to unpack.
+     * 
+     * @throws MojoExecutionException
+     *             with a message if an error occurs.
+     * 
      * @see #getArtifact
-     * @see DependencyUtil#unpackFile(Artifact, File, File, ArchiverManager, Log)
+     * @see DependencyUtil#unpackFile(Artifact, File, File, ArchiverManager,
+     *      Log)
      */
     private void unpackArtifact( ArtifactItem artifactItem )
         throws MojoExecutionException
@@ -84,7 +88,7 @@ public final class UnpackMojo
 
         File location = artifactItem.getOutputDirectory();
 
-        DependencyUtil.unpackFile( artifact, location, this.markersDirectory, this.archiverManager,
-                                   this.getLog(), artifactItem.isDoOverWrite() );
+        DependencyUtil.unpackFile( artifact, location, this.markersDirectory, this.archiverManager, this.getLog(),
+                                   artifactItem.isDoOverWrite() );
     }
 }

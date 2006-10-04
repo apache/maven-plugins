@@ -23,12 +23,14 @@ import java.util.Iterator;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
+import org.apache.maven.plugin.logging.Log;
 
 /**
- * Goal that copies a list of artifacts from the repository to defined locations.
- *
+ * Goal that copies a list of artifacts from the repository to defined
+ * locations.
+ * 
  * @goal copy
- *
+ * 
  * @phase process-sources
  * @author brianf
  */
@@ -38,17 +40,18 @@ public class CopyMojo
 
     /**
      * Strip artifact version during copy
-     * @parameter expression="${stripVersion}" default-value="false" 
+     * 
+     * @parameter expression="${stripVersion}" default-value="false"
      * @parameter
      */
     private boolean stripVersion = false;
 
     /**
-     * Main entry into mojo. This method gets the ArtifactItems and iterates through each one passing
-     * it to copyArtifact.
-     
-     * @throws MojoExecutionException 
-     *          with a message if an error occurs.
+     * Main entry into mojo. This method gets the ArtifactItems and iterates
+     * through each one passing it to copyArtifact.
+     * 
+     * @throws MojoExecutionException
+     *             with a message if an error occurs.
      * 
      * @see ArtifactItem
      * @see #getArtifactItems
@@ -67,13 +70,16 @@ public class CopyMojo
     }
 
     /**
-     * Resolves the artifact from the repository and copies it to the specified location.
-     * @param artifactItem 
-     *          containing the information about the Artifact to copy.
-     * @param removeVersion 
-     *          specifies if the version should be removed from the file name when copying.      
-     * @throws MojoExecutionException 
-     *          with a message if an error occurs.
+     * Resolves the artifact from the repository and copies it to the specified
+     * location.
+     * 
+     * @param artifactItem
+     *            containing the information about the Artifact to copy.
+     * @param removeVersion
+     *            specifies if the version should be removed from the file name
+     *            when copying.
+     * @throws MojoExecutionException
+     *             with a message if an error occurs.
      * 
      * @see DependencyUtil#copyFile(File, File, Log)
      * @see DependencyUtil#getFormattedFileName(Artifact, boolean)

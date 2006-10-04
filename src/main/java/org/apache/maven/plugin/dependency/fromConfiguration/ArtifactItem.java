@@ -20,13 +20,16 @@ import java.io.File;
 import org.apache.maven.artifact.Artifact;
 
 /**
- * ArtifactItem represents information specified in the plugin configuration section for each artifact.
+ * ArtifactItem represents information specified in the plugin configuration
+ * section for each artifact.
+ * 
  * @author brianf
  */
 public class ArtifactItem
 {
     /**
      * Group Id of Artifact
+     * 
      * @parameter
      * @required
      */
@@ -34,6 +37,7 @@ public class ArtifactItem
 
     /**
      * Name of Artifact
+     * 
      * @parameter
      * @required
      */
@@ -41,12 +45,14 @@ public class ArtifactItem
 
     /**
      * Version of Artifact
+     * 
      * @parameter
      */
     private String version = null;
 
     /**
      * Type of Artifact (War,Jar,etc)
+     * 
      * @parameter
      * @required
      */
@@ -54,18 +60,21 @@ public class ArtifactItem
 
     /**
      * Classifier for Artifact (tests,sources,etc)
+     * 
      * @parameter
      */
     private String classifier;
 
     /**
      * Location to use for this Artifact. Overrides default location.
+     * 
      * @parameter
      */
     private File outputDirectory;
 
     /**
      * Provides ability to change destination file name
+     * 
      * @parameter
      */
     private String destFileName;
@@ -94,7 +103,8 @@ public class ArtifactItem
     }
 
     /**
-     * @param artifactId The artifactId to set.
+     * @param artifactId
+     *            The artifactId to set.
      */
     public void setArtifactId( String artifact )
     {
@@ -110,7 +120,8 @@ public class ArtifactItem
     }
 
     /**
-     * @param groupId The groupId to set.
+     * @param groupId
+     *            The groupId to set.
      */
     public void setGroupId( String groupId )
     {
@@ -126,7 +137,8 @@ public class ArtifactItem
     }
 
     /**
-     * @param type The type to set.
+     * @param type
+     *            The type to set.
      */
     public void setType( String type )
     {
@@ -142,7 +154,8 @@ public class ArtifactItem
     }
 
     /**
-     * @param version The version to set.
+     * @param version
+     *            The version to set.
      */
     public void setVersion( String version )
     {
@@ -158,7 +171,8 @@ public class ArtifactItem
     }
 
     /**
-     * @param classifier Classifier.
+     * @param classifier
+     *            Classifier.
      */
     public void setClassifier( String classifier )
     {
@@ -179,7 +193,8 @@ public class ArtifactItem
     }
 
     /**
-     * @param location The location to set.
+     * @param location
+     *            The location to set.
      */
     public void setOutputDirectory( File outputDirectory )
     {
@@ -195,7 +210,8 @@ public class ArtifactItem
     }
 
     /**
-     * @param destFileName The destFileName to set.
+     * @param destFileName
+     *            The destFileName to set.
      */
     public void setDestFileName( String destFileName )
     {
@@ -211,7 +227,8 @@ public class ArtifactItem
     }
 
     /**
-     * @param doOverWrite The doOverWrite to set.
+     * @param doOverWrite
+     *            The doOverWrite to set.
      */
     public void setDoOverWrite( boolean doOverWrite )
     {
@@ -227,7 +244,8 @@ public class ArtifactItem
     }
 
     /**
-     * @param overWriteSnapshots The overWriteSnapshots to set.
+     * @param overWriteSnapshots
+     *            The overWriteSnapshots to set.
      */
     public void setOverWrite( String overWrite )
     {
@@ -243,7 +261,8 @@ public class ArtifactItem
     }
 
     /**
-     * @param artifact The artifact to set.
+     * @param artifact
+     *            The artifact to set.
      */
     public void setArtifact( Artifact artifact )
     {
