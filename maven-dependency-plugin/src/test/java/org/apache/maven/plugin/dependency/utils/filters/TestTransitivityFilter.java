@@ -31,7 +31,7 @@ import org.apache.maven.plugin.logging.Log;
 
 /**
  * @author brianf
- *
+ * 
  */
 public class TestTransitivityFilter
     extends TestCase
@@ -47,12 +47,12 @@ public class TestTransitivityFilter
     {
         super.setUp();
 
-        ArtifactStubFactory fact = new ArtifactStubFactory(null,false);
+        ArtifactStubFactory fact = new ArtifactStubFactory( null, false );
         artifacts = fact.getScopedArtifacts();
-        
+
         directArtifacts = fact.getReleaseAndSnapshotArtifacts();
-        
-        artifacts.addAll(directArtifacts);
+
+        artifacts.addAll( directArtifacts );
     }
 
     public void testAll()
@@ -67,9 +67,9 @@ public class TestTransitivityFilter
     public void testExclude()
     {
         TransitivityFilter filter = new TransitivityFilter( directArtifacts, false );
-        assertFalse(filter.isExcludeTransitive());
-        filter.setExcludeTransitive(true);
-        assertTrue(filter.isExcludeTransitive());
+        assertFalse( filter.isExcludeTransitive() );
+        filter.setExcludeTransitive( true );
+        assertTrue( filter.isExcludeTransitive() );
         Set result = filter.filter( artifacts, log );
 
         assertEquals( 2, result.size() );

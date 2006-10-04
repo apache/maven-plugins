@@ -22,13 +22,14 @@ import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
+import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 
 /**
- * Goal that unpacks the project dependencies from the repository to a defined location.
- *
+ * Goal that unpacks the project dependencies from the repository to a defined
+ * location.
+ * 
  * @goal unpack-dependencies
  * @requiresDependencyResolution compile
  * @phase process-sources
@@ -38,17 +39,16 @@ public class UnpackDependenciesMojo
     extends AbstractFromDependenciesMojo
 {
 
-
-
     /**
-     * Main entry into mojo. This method gets the dependencies and iterates through each one passing
-     * it to DependencyUtil.unpackFile().
+     * Main entry into mojo. This method gets the dependencies and iterates
+     * through each one passing it to DependencyUtil.unpackFile().
      * 
-     * @throws MojoExecutionException 
-     *          with a message if an error occurs.
-     *          
+     * @throws MojoExecutionException
+     *             with a message if an error occurs.
+     * 
      * @see #getDependencies
-     * @see DependencyUtil#unpackFile(Artifact, File, File, ArchiverManager, Log)
+     * @see DependencyUtil#unpackFile(Artifact, File, File, ArchiverManager,
+     *      Log)
      */
     public void execute()
         throws MojoExecutionException
@@ -72,8 +72,8 @@ public class UnpackDependenciesMojo
                 overWrite = this.overWriteReleases;
             }
 
-            DependencyUtil.unpackFile( artifact, destDir, this.markersDirectory, this.archiverManager, this
-                .getLog(), overWrite );
+            DependencyUtil.unpackFile( artifact, destDir, this.markersDirectory, this.archiverManager, this.getLog(),
+                                       overWrite );
         }
     }
 }

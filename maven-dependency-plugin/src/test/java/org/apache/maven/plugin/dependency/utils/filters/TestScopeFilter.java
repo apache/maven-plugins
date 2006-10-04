@@ -177,7 +177,7 @@ public class TestScopeFilter
     {
         ScopeFilter filter = new ScopeFilter( "cOmpile", "" );
         try
-        { 
+        {
             filter.filter( artifacts, log );
             fail( "Expected an Exception" );
         }
@@ -196,16 +196,16 @@ public class TestScopeFilter
 
         }
     }
-    
+
     public void testSettersGetters()
     {
-        ScopeFilter filter = new ScopeFilter("include","exclude");
-        assertEquals("include",filter.getIncludeScope());
-        assertEquals("exclude",filter.getExcludeScope());
-        
-        filter.setExcludeScope("a");
-        filter.setIncludeScope("b");
-        assertEquals("b",filter.getIncludeScope());
-        assertEquals("a",filter.getExcludeScope());  
+        ScopeFilter filter = new ScopeFilter( "include", "exclude" );
+        assertEquals( "include", filter.getIncludeScope() );
+        assertEquals( "exclude", filter.getExcludeScope() );
+
+        filter.setExcludeScope( "a" );
+        filter.setIncludeScope( "b" );
+        assertEquals( "b", filter.getIncludeScope() );
+        assertEquals( "a", filter.getExcludeScope() );
     }
 }

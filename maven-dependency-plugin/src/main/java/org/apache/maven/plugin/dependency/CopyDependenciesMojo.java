@@ -21,14 +21,14 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
+import org.apache.maven.plugin.logging.Log;
 
 /**
- * Goal that copies the project dependencies from the repository to a defined location.
- *
+ * Goal that copies the project dependencies from the repository to a defined
+ * location.
+ * 
  * @goal copy-dependencies
  * @requiresDependencyResolution compile
  * @phase process-sources
@@ -40,17 +40,19 @@ public class CopyDependenciesMojo
 
     /**
      * Strip artifact version during copy
-     * @parameter expression="${stripVersion}" default-value="false" 
+     * 
+     * @parameter expression="${stripVersion}" default-value="false"
      * @parameter
      */
     protected boolean stripVersion = false;
 
     /**
-     * Main entry into mojo. Gets the list of dependencies and iterates through calling copyArtifact.
+     * Main entry into mojo. Gets the list of dependencies and iterates through
+     * calling copyArtifact.
      * 
-     * @throws MojoExecutionException 
-     *          with a message if an error occurs. 
-     *
+     * @throws MojoExecutionException
+     *             with a message if an error occurs.
+     * 
      * @see #getDependencies
      * @see #copyArtifact(Artifact, boolean)
      */
@@ -66,17 +68,19 @@ public class CopyDependenciesMojo
     }
 
     /**
-     * Copies the Artifact after building the destination file name if overridden. This method also checks if the
-     * classifier is set and adds it to the destination file name if needed.
-     *
-     * @param artifact 
-     *          representing the object to be copied.
-     * @param removeVersion 
-     *          specifies if the version should be removed from the file name when copying.         
+     * Copies the Artifact after building the destination file name if
+     * overridden. This method also checks if the classifier is set and adds it
+     * to the destination file name if needed.
      * 
-     * @throws MojoExecutionException 
-     *          with a message if an error occurs.
-     *
+     * @param artifact
+     *            representing the object to be copied.
+     * @param removeVersion
+     *            specifies if the version should be removed from the file name
+     *            when copying.
+     * 
+     * @throws MojoExecutionException
+     *             with a message if an error occurs.
+     * 
      * @see DependencyUtil#copyFile(File, File, Log)
      * @see DependencyUtil#getFormattedFileName(Artifact, boolean)
      */

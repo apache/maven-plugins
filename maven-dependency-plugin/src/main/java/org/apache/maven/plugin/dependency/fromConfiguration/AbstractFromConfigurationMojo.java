@@ -1,4 +1,3 @@
-
 /*
  *  Copyright 2005-2006 Brian Fox (brianefox@gmail.com)
  *
@@ -29,10 +28,12 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojo;
 
 /**
- * Abstract Parent class used by mojos that get Artifact information from the plugin configuration as an ArrayList of ArtifactItems
+ * Abstract Parent class used by mojos that get Artifact information from the
+ * plugin configuration as an ArrayList of ArtifactItems
+ * 
  * @see ArtifactItem
  * @author brianf
- *
+ * 
  */
 public abstract class AbstractFromConfigurationMojo
     extends AbstractDependencyMojo
@@ -40,40 +41,46 @@ public abstract class AbstractFromConfigurationMojo
 
     /**
      * Default location used for mojo unless overridden in ArtifactItem
-     * @parameter expression="${outputDirectory}" default-value="${project.build.directory}/dependency"
+     * 
+     * @parameter expression="${outputDirectory}"
+     *            default-value="${project.build.directory}/dependency"
      * @required
      */
     protected File outputDirectory;
 
     /**
      * Overwrite release artifacts
+     * 
      * @parameter expression="${overWriteReleases}" default-value="false"
      */
     protected boolean overWriteReleases;
 
     /**
      * Overwrite snapshot artifacts
+     * 
      * @parameter expression="${overWriteSnapshots}" default-value="true"
      */
     protected boolean overWriteSnapshots;
-    
+
     /**
-     * Collection of ArtifactItems to work on. (ArtifactItem contains groupId, artifactId, version, type, location, destFile, markerFile and overwrite.)
+     * Collection of ArtifactItems to work on. (ArtifactItem contains groupId,
+     * artifactId, version, type, location, destFile, markerFile and overwrite.)
      * See "How To Use" and "Javadoc" for details.
+     * 
      * @parameter
      * @required
      */
     private ArrayList artifactItems;
 
-  
     /**
-     * Preprocesses the list of ArtifactItems. This method defaults the outputDirectory if not set
-     * and creates the output Directory if it doesn't exist.
-     
+     * Preprocesses the list of ArtifactItems. This method defaults the
+     * outputDirectory if not set and creates the output Directory if it doesn't
+     * exist.
+     * 
      * @return An ArrayList of preprocessed ArtifactItems
      * 
-     * @throws MojoExecutionException 
-     *          with a message if an error occurs.
+     * @throws MojoExecutionException
+     *             with a message if an error occurs.
      * 
      * @see ArtifactItem
      */
@@ -116,16 +123,18 @@ public abstract class AbstractFromConfigurationMojo
     }
 
     /**
-     * Resolves the Artifact from the remote repository if nessessary. If no version is specified, it will
-     * be retrieved from the dependency list or from the DependencyManagement section of the pom.
-     *
-     * @param artifactItem 
-     *          containing information about artifact from plugin configuration.
-     * @return Artifact 
-     *          object representing the specified file.
+     * Resolves the Artifact from the remote repository if nessessary. If no
+     * version is specified, it will be retrieved from the dependency list or
+     * from the DependencyManagement section of the pom.
      * 
-     * @throws MojoExecutionException 
-     *          with a message if the version can't be found in DependencyManagement.
+     * @param artifactItem
+     *            containing information about artifact from plugin
+     *            configuration.
+     * @return Artifact object representing the specified file.
+     * 
+     * @throws MojoExecutionException
+     *             with a message if the version can't be found in
+     *             DependencyManagement.
      */
     protected Artifact getArtifact( ArtifactItem artifactItem )
         throws MojoExecutionException
@@ -139,12 +148,13 @@ public abstract class AbstractFromConfigurationMojo
             if ( artifactItem.getVersion() == null )
             {
                 throw new MojoExecutionException( "Unable to find artifact version of " + artifactItem.getGroupId()
-                    + ":" + artifactItem.getArtifactId() + " in either dependency list or in project's dependency management." );
+                    + ":" + artifactItem.getArtifactId()
+                    + " in either dependency list or in project's dependency management." );
             }
 
         }
 
-        //use classifer if set.
+        // use classifer if set.
         String classifier = artifactItem.getClassifier();
 
         if ( classifier == null || classifier.equals( "" ) )
@@ -176,13 +186,17 @@ public abstract class AbstractFromConfigurationMojo
     }
 
     /**
-     * Tries to find missing version from dependancy list and dependency management. 
-     * If found, the artifact is updated with the correct version.
-     * @param artifact representing configured file.
+     * Tries to find missing version from dependancy list and dependency
+     * management. If found, the artifact is updated with the correct version.
+     * 
+     * @param artifact
+     *            representing configured file.
      */
     private void fillMissingArtifactVersion( ArtifactItem artifact )
     {
-        this.getLog().debug( "Attempting to find missing version in " + artifact.getGroupId() + ":" + artifact.getArtifactId() );
+        this.getLog().debug(
+                             "Attempting to find missing version in " + artifact.getGroupId() + ":"
+                                 + artifact.getArtifactId() );
 
         List list = this.project.getDependencies();
 
@@ -197,11 +211,11 @@ public abstract class AbstractFromConfigurationMojo
                 this.getLog().debug( "Found missing version: " + dependency.getVersion() + " in dependency list." );
 
                 artifact.setVersion( dependency.getVersion() );
-                
+
                 return;
             }
         }
-        
+
         list = this.project.getDependencyManagement().getDependencies();
 
         for ( int i = 0; i < list.size(); ++i )
@@ -212,11 +226,12 @@ public abstract class AbstractFromConfigurationMojo
                 && dependency.getArtifactId().equals( artifact.getArtifactId() )
                 && dependency.getType().equals( artifact.getType() ) )
             {
-                this.getLog().debug( "Found missing version: " + dependency.getVersion() + " in dependency management list" );
+                this.getLog().debug(
+                                     "Found missing version: " + dependency.getVersion()
+                                         + " in dependency management list" );
 
                 artifact.setVersion( dependency.getVersion() );
             }
         }
     }
 }
-

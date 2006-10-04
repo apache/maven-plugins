@@ -33,7 +33,7 @@ import org.apache.maven.plugin.logging.Log;
 
 /**
  * @author brianf
- *
+ * 
  */
 public class DefaultArtifactsResolver
     implements ArtifactsResolver
@@ -55,8 +55,11 @@ public class DefaultArtifactsResolver
         this.stopOnFailure = stopOnFailure;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.mojo.dependency.utils.resolvers.ArtifactsResolver#resolve(java.util.Set, org.apache.maven.plugin.logging.Log)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.mojo.dependency.utils.resolvers.ArtifactsResolver#resolve(java.util.Set,
+     *      org.apache.maven.plugin.logging.Log)
      */
     public Set resolve( Set artifacts, Log log )
         throws MojoExecutionException
@@ -77,18 +80,18 @@ public class DefaultArtifactsResolver
                 // an error occurred during resolution, log it an continue
                 log.debug( "error resolving: " + artifact.getId() );
                 log.debug( ex );
-                if (stopOnFailure)
+                if ( stopOnFailure )
                 {
-                    throw new MojoExecutionException("error resolving: " + artifact.getId(),ex);
+                    throw new MojoExecutionException( "error resolving: " + artifact.getId(), ex );
                 }
             }
             catch ( ArtifactNotFoundException ex )
             {
                 // not found, log it and continue
                 log.debug( "not found in any repository: " + artifact.getId() );
-                if (stopOnFailure)
+                if ( stopOnFailure )
                 {
-                    throw new MojoExecutionException("not found in any repository: " + artifact.getId(),ex);
+                    throw new MojoExecutionException( "not found in any repository: " + artifact.getId(), ex );
                 }
             }
         }

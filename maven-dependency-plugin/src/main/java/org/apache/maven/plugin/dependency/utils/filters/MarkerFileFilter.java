@@ -25,13 +25,13 @@ import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
 import org.apache.maven.plugin.dependency.utils.markers.MarkerHandler;
+import org.apache.maven.plugin.logging.Log;
 
 /**
  * @author brianf
- *
+ * 
  */
 public class MarkerFileFilter
     implements ArtifactsFilter
@@ -40,12 +40,13 @@ public class MarkerFileFilter
     boolean overWriteReleases;
 
     boolean overWriteSnapshots;
-    
+
     boolean overWriteIfNewer;
 
     File markerFileDirectory;
 
-    public MarkerFileFilter( boolean overWriteReleases, boolean overWriteSnapshots, boolean overWriteIfNewer, File markerFileDirectory )
+    public MarkerFileFilter( boolean overWriteReleases, boolean overWriteSnapshots, boolean overWriteIfNewer,
+                            File markerFileDirectory )
     {
         this.overWriteReleases = overWriteReleases;
         this.overWriteSnapshots = overWriteSnapshots;
@@ -53,8 +54,11 @@ public class MarkerFileFilter
         this.markerFileDirectory = markerFileDirectory;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.mojo.dependency.utils.filters.ArtifactsFilter#filter(java.util.Set, org.apache.maven.plugin.logging.Log)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.mojo.dependency.utils.filters.ArtifactsFilter#filter(java.util.Set,
+     *      org.apache.maven.plugin.logging.Log)
      */
     public Set filter( Set artifacts, Log log )
         throws MojoExecutionException
@@ -64,7 +68,7 @@ public class MarkerFileFilter
         boolean overWrite = false;
 
         Iterator iter = artifacts.iterator();
-        //log.debug("Artifacts:"+ artifacts.size());
+        // log.debug("Artifacts:"+ artifacts.size());
         while ( iter.hasNext() )
         {
             Artifact artifact = (Artifact) iter.next();
@@ -75,7 +79,7 @@ public class MarkerFileFilter
             }
 
             MarkerHandler marker = new DefaultFileMarkerHandler( artifact, markerFileDirectory );
-            if ( overWrite || (!marker.isMarkerSet() || (overWriteIfNewer && marker.isMarkerOlder(artifact))) )
+            if ( overWrite || ( !marker.isMarkerSet() || ( overWriteIfNewer && marker.isMarkerOlder( artifact ) ) ) )
             {
                 result.add( artifact );
             }
@@ -92,7 +96,8 @@ public class MarkerFileFilter
     }
 
     /**
-     * @param overWriteReleases The overWriteReleases to set.
+     * @param overWriteReleases
+     *            The overWriteReleases to set.
      */
     public void setOverWriteReleases( boolean overWriteReleases )
     {
@@ -108,7 +113,8 @@ public class MarkerFileFilter
     }
 
     /**
-     * @param overWriteSnapshots The overWriteSnapshots to set.
+     * @param overWriteSnapshots
+     *            The overWriteSnapshots to set.
      */
     public void setOverWriteSnapshots( boolean overWriteSnapshots )
     {
@@ -124,7 +130,8 @@ public class MarkerFileFilter
     }
 
     /**
-     * @param markerFileDirectory The markerFileDirectory to set.
+     * @param markerFileDirectory
+     *            The markerFileDirectory to set.
      */
     public void setMarkerFileDirectory( File markerFileDirectory )
     {
@@ -140,7 +147,8 @@ public class MarkerFileFilter
     }
 
     /**
-     * @param overWriteIfNewer The overWriteIfNewer to set.
+     * @param overWriteIfNewer
+     *            The overWriteIfNewer to set.
      */
     public void setOverWriteIfNewer( boolean overWriteIfNewer )
     {
