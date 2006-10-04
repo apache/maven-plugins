@@ -173,6 +173,8 @@
               <projectsDirectory>src/it</projectsDirectory>
               <pomIncludes>
                 <pomInclude>**/contexts/pom.xml</pomInclude>
+                <pomInclude>**/simple/pom.xml</pomInclude>
+                <pomInclude>**/multiproject/pom.xml</pomInclude>
               </pomIncludes>
               <postBuildHookScript>verify.bsh</postBuildHookScript>
             </configuration>
