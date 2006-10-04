@@ -15,11 +15,12 @@ public class DependencyTestUtils
      * 
      * @param dir
      *            The base directory of the included and excluded files.
-     * @throws IOException 
+     * @throws IOException
      * @throws MojoExecutionException
      *             When a directory failed to get deleted.
      */
-    static public void removeDirectory( File dir ) throws IOException
+    static public void removeDirectory( File dir )
+        throws IOException
     {
         if ( dir != null )
         {
@@ -28,7 +29,7 @@ public class DependencyTestUtils
             FileSet fs = new FileSet();
             fs.setDirectory( dir.getPath() );
             fs.addInclude( "**/**" );
-              fileSetManager.delete( fs );
+            fileSetManager.delete( fs );
 
         }
     }

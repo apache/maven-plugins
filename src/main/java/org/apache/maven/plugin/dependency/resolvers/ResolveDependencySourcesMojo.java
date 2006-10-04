@@ -26,7 +26,7 @@ import org.apache.maven.plugin.dependency.AbstractResolveMojo;
 
 /**
  * Goal that resolves the project source dependencies from the repository.
- *
+ * 
  * @goal sources
  * @phase generate-sources
  * @requiresDependencyResolution test
@@ -40,67 +40,71 @@ public class ResolveDependencySourcesMojo
 
     private static final String SOURCE_CLASSIFIER = "sources";
 
-    
     /**
      * If the plugin should exclude Transitive dependencies.
+     * 
      * @parameter expression="${excludeTransitive}" default-value="false"
      */
     private boolean excludeTransitive;
 
     /**
-     * The mojo compares artifact groupIds against this string using string.startsWith to see
-     * if they should be resolved.
+     * The mojo compares artifact groupIds against this string using
+     * string.startsWith to see if they should be resolved.
+     * 
      * @parameter expression="${groupId}" default-value=""
      */
     private String groupId;
-    
+
     /**
-     * Directory to store flag files 
-     * @parameter expression="${dependency.MarkersDirectory}" default-value="${project.build.directory}/dependency-maven-plugin-markers" 
+     * Directory to store flag files
+     * 
+     * @parameter expression="${dependency.MarkersDirectory}"
+     *            default-value="${project.build.directory}/dependency-maven-plugin-markers"
      * @required
      */
     private File markersDirectory;
-    
+
     /**
      * Use Marker Files
-     * @parameter expression="${dependency.useMarkers}" default-value="false" 
+     * 
+     * @parameter expression="${dependency.useMarkers}" default-value="false"
      */
     private boolean useMarkers;
-    
+
     /**
-     * Main entry into mojo. Gets the list of dependencies and iterates through resolving the source jars.
+     * Main entry into mojo. Gets the list of dependencies and iterates through
+     * resolving the source jars.
      * 
-     * @throws MojoExecutionException 
-     *          with a message if an error occurs. 
-     *
+     * @throws MojoExecutionException
+     *             with a message if an error occurs.
+     * 
      */
     public void execute()
         throws MojoExecutionException
     {
         // Loop through all artifacts
         Set artifacts;
-        if (!excludeTransitive)
+        if ( !excludeTransitive )
         {
-         artifacts = project.getArtifacts();
+            artifacts = project.getArtifacts();
         }
         else
         {
             artifacts = project.getDependencyArtifacts();
         }
-        
-        if (groupId != null && !"".equals(groupId))
+
+        if ( groupId != null && !"".equals( groupId ) )
         {
             Iterator iter = artifacts.iterator();
-            while(iter.hasNext())
+            while ( iter.hasNext() )
             {
                 Artifact artifact = (Artifact) iter.next();
-                if (!artifact.getGroupId().startsWith(groupId))
+                if ( !artifact.getGroupId().startsWith( groupId ) )
                 {
                     iter.remove();
                 }
             }
         }
-        
 
     }
 }
