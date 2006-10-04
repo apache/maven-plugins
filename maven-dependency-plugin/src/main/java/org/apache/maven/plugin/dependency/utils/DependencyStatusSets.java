@@ -28,7 +28,7 @@ import org.apache.maven.plugin.logging.Log;
 
 /**
  * @author brianf
- *
+ * 
  */
 public class DependencyStatusSets
 {
@@ -60,7 +60,8 @@ public class DependencyStatusSets
     }
 
     /**
-     * @param resolvedDependencies The resolvedDependencies to set.
+     * @param resolvedDependencies
+     *            The resolvedDependencies to set.
      */
     public void setResolvedDependencies( Set resolvedDependencies )
     {
@@ -76,7 +77,8 @@ public class DependencyStatusSets
     }
 
     /**
-     * @param skippedDependencies The skippedDependencies to set.
+     * @param skippedDependencies
+     *            The skippedDependencies to set.
      */
     public void setSkippedDependencies( Set skippedDependencies )
     {
@@ -92,7 +94,8 @@ public class DependencyStatusSets
     }
 
     /**
-     * @param unResolvedDependencies The unResolvedDependencies to set.
+     * @param unResolvedDependencies
+     *            The unResolvedDependencies to set.
      */
     public void setUnResolvedDependencies( Set unResolvedDependencies )
     {
@@ -109,24 +112,24 @@ public class DependencyStatusSets
         }
         else
         {
-        	SortedSet sortedResolvedDependencies = new TreeSet();
-        	sortedResolvedDependencies.addAll(resolvedDependencies);
+            SortedSet sortedResolvedDependencies = new TreeSet();
+            sortedResolvedDependencies.addAll( resolvedDependencies );
             for ( Iterator i = sortedResolvedDependencies.iterator(); i.hasNext(); )
             {
                 Artifact artifact = (Artifact) i.next();
                 String artifactFilename = null;
-                if (outputArtifactFilename)
+                if ( outputArtifactFilename )
                 {
                     try
-                    {   
+                    {
                         artifact.getFile().getAbsoluteFile();
                     }
-                    catch (NullPointerException e)
+                    catch ( NullPointerException e )
                     {
-                        //ignore the null pointer, we'll output a null string
+                        // ignore the null pointer, we'll output a null string
                     }
                 }
-                log.info( "   " + artifact.getId()  + (outputArtifactFilename ? ":" + artifactFilename : ""));
+                log.info( "   " + artifact.getId() + ( outputArtifactFilename ? ":" + artifactFilename : "" ) );
             }
         }
 
@@ -135,7 +138,7 @@ public class DependencyStatusSets
             log.info( "" );
             log.info( "The following files where skipped: " );
             SortedSet sortedSkippedDependencies = new TreeSet();
-            sortedSkippedDependencies.addAll(this.skippedDependencies);
+            sortedSkippedDependencies.addAll( this.skippedDependencies );
             for ( Iterator i = sortedSkippedDependencies.iterator(); i.hasNext(); )
             {
                 log.info( "   " + ( (Artifact) i.next() ).getId() );
@@ -147,7 +150,7 @@ public class DependencyStatusSets
         {
             log.info( "The following files have NOT been resolved: " );
             SortedSet sortedUnResolvedDependencies = new TreeSet();
-            sortedUnResolvedDependencies.addAll(this.unResolvedDependencies);
+            sortedUnResolvedDependencies.addAll( this.unResolvedDependencies );
             for ( Iterator i = sortedUnResolvedDependencies.iterator(); i.hasNext(); )
             {
                 log.info( "   " + ( (Artifact) i.next() ).getId() );

@@ -56,15 +56,13 @@ public class ScopeFilter
 
         if ( StringUtils.isNotEmpty( includeScope ) )
         {
-            if (!Artifact.SCOPE_COMPILE.equals(includeScope)&&
-                !Artifact.SCOPE_TEST.equals(includeScope)&&
-                !Artifact.SCOPE_PROVIDED.equals(includeScope)&&
-                !Artifact.SCOPE_RUNTIME.equals(includeScope)&&
-                !Artifact.SCOPE_SYSTEM.equals(includeScope))
+            if ( !Artifact.SCOPE_COMPILE.equals( includeScope ) && !Artifact.SCOPE_TEST.equals( includeScope )
+                && !Artifact.SCOPE_PROVIDED.equals( includeScope ) && !Artifact.SCOPE_RUNTIME.equals( includeScope )
+                && !Artifact.SCOPE_SYSTEM.equals( includeScope ) )
             {
-                throw new MojoExecutionException("Invalid Scope in includeScope: "+ includeScope);
+                throw new MojoExecutionException( "Invalid Scope in includeScope: " + includeScope );
             }
-            
+
             results = new HashSet();
 
             if ( Artifact.SCOPE_PROVIDED.equals( includeScope ) || Artifact.SCOPE_SYSTEM.equals( includeScope ) )
@@ -88,13 +86,11 @@ public class ScopeFilter
         }
         else if ( StringUtils.isNotEmpty( excludeScope ) )
         {
-            if (!Artifact.SCOPE_COMPILE.equals(excludeScope)&&
-                !Artifact.SCOPE_TEST.equals(excludeScope)&&
-                !Artifact.SCOPE_PROVIDED.equals(excludeScope)&&
-                !Artifact.SCOPE_RUNTIME.equals(excludeScope)&&
-                !Artifact.SCOPE_SYSTEM.equals(excludeScope))
+            if ( !Artifact.SCOPE_COMPILE.equals( excludeScope ) && !Artifact.SCOPE_TEST.equals( excludeScope )
+                && !Artifact.SCOPE_PROVIDED.equals( excludeScope ) && !Artifact.SCOPE_RUNTIME.equals( excludeScope )
+                && !Artifact.SCOPE_SYSTEM.equals( excludeScope ) )
             {
-                throw new MojoExecutionException("Invalid Scope in excludeScope: "+ excludeScope);
+                throw new MojoExecutionException( "Invalid Scope in excludeScope: " + excludeScope );
             }
             results = new HashSet();
             // plexus ScopeArtifactFilter doesn't handle the provided scope so

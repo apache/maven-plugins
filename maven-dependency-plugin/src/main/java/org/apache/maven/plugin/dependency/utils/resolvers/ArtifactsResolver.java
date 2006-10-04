@@ -25,9 +25,10 @@ import org.apache.maven.plugin.logging.Log;
 
 /**
  * @author brianf
- *
+ * 
  */
 public interface ArtifactsResolver
 {
-    Set resolve (Set artifacts, Log log) throws MojoExecutionException;
+    Set resolve( Set artifacts, Log log )
+        throws MojoExecutionException;
 }

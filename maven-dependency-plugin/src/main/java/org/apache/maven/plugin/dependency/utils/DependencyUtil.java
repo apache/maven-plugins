@@ -29,25 +29,26 @@ import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Utility class with static helper methods
+ * 
  * @author brianf
- *
+ * 
  */
 public class DependencyUtil
 {
     /**
      * Does the actual copy of the file and logging.
      * 
-     * @param artifact 
-     *          represents the file to copy.
-     * @param destFile 
-     *          file name of destination file.
-     * @param log 
-     *          to use for output.
+     * @param artifact
+     *            represents the file to copy.
+     * @param destFile
+     *            file name of destination file.
+     * @param log
+     *            to use for output.
      * @param overWriteSnapshots
-     *          force Over Writing of the file         
-     *          
-     * @throws MojoExecutionException 
-     *          with a message if an error occurs.
+     *            force Over Writing of the file
+     * 
+     * @throws MojoExecutionException
+     *             with a message if an error occurs.
      */
     public static boolean copyFile( File artifact, File destFile, Log log, boolean overWrite )
         throws MojoExecutionException
@@ -75,13 +76,13 @@ public class DependencyUtil
     }
 
     /**
-     * Unpacks the archive file, checking for a marker file to see if it should unpack again. Creates the marker 
-     * file after unpacking.
-     *
+     * Unpacks the archive file, checking for a marker file to see if it should
+     * unpack again. Creates the marker file after unpacking.
+     * 
      * @param Artifact
-     *          File to be unpacked.
+     *            File to be unpacked.
      * @param unpackDirectory
-     *          Location where to put the unpacked files.
+     *            Location where to put the unpacked files.
      */
     public static void unpackFile( Artifact artifact, File unpackDirectory, File markersDirectory,
                                   ArchiverManager archiverManager, Log log, boolean overWrite )
@@ -99,7 +100,7 @@ public class DependencyUtil
 
                 unpack( artifact.getFile(), unpackDirectory, archiverManager, log );
 
-                //create marker file
+                // create marker file
                 markerFile.getParentFile().mkdirs();
                 markerFile.createNewFile();
             }
@@ -116,11 +117,11 @@ public class DependencyUtil
 
     /**
      * Unpacks the archive file.
-     *
+     * 
      * @param file
-     *          File to be unpacked.
+     *            File to be unpacked.
      * @param location
-     *          Location where to put the unpacked files.
+     *            Location where to put the unpacked files.
      */
     private static void unpack( File file, File location, ArchiverManager archiverManager, Log log )
         throws MojoExecutionException
@@ -153,16 +154,16 @@ public class DependencyUtil
     }
 
     /**
-     * Builds the file name. If removeVersion is set, then the file name must be reconstructed 
-     * from the artifactId, Classifier (if used) and Type. Otherwise, this method returns the
-     * artifact file name.
+     * Builds the file name. If removeVersion is set, then the file name must be
+     * reconstructed from the artifactId, Classifier (if used) and Type.
+     * Otherwise, this method returns the artifact file name.
      * 
      * @param artifact
-     *          File to be formatted.
+     *            File to be formatted.
      * @param removeVersion
-     *          Specifies if the version should be removed from the file name.
-     * @return
-     *          Formatted file name in the format artifactId-[classifier-][version].[type]
+     *            Specifies if the version should be removed from the file name.
+     * @return Formatted file name in the format
+     *         artifactId-[classifier-][version].[type]
      */
     public static String getFormattedFileName( Artifact artifact, boolean removeVersion )
     {
@@ -174,10 +175,10 @@ public class DependencyUtil
             {
                 destFileName = file.getName();
             }
-            //so it can be used offline
+            // so it can be used offline
             else
             {
-                if ( StringUtils.isNotEmpty(artifact.getClassifier()))
+                if ( StringUtils.isNotEmpty( artifact.getClassifier() ) )
                 {
                     destFileName = artifact.getArtifactId() + "-" + artifact.getClassifier() + "-"
                         + artifact.getVersion() + "." + artifact.getType();
@@ -206,15 +207,15 @@ public class DependencyUtil
     /**
      * Formats the outputDirectory based on type.
      * 
-     * @param useSubdirsPerType 
-     *          if a new sub directory should be used for each type.
-     * @param useSubdirsPerArtifact 
-     *          if a new sub directory should be used for each artifact.
+     * @param useSubdirsPerType
+     *            if a new sub directory should be used for each type.
+     * @param useSubdirsPerArtifact
+     *            if a new sub directory should be used for each artifact.
      * @param outputDirectory
-     *          base outputDirectory.
+     *            base outputDirectory.
      * @param artifact
-     *          information about the artifact.         
-     *          
+     *            information about the artifact.
+     * 
      * @return a formatted File object to use for output.
      */
     public static File getFormattedOutputDirectory( boolean useSubdirsPerType, boolean useSubdirPerArtifact,
@@ -222,7 +223,7 @@ public class DependencyUtil
     {
         File result = null;
 
-        //get id but convert the chars so it's safe as a folder name.
+        // get id but convert the chars so it's safe as a folder name.
         String artifactId = artifact.getId().replace( ':', '-' );
         if ( !useSubdirsPerType )
         {
@@ -259,11 +260,11 @@ public class DependencyUtil
      * Log the results
      * 
      * @param resolvedArtifacts
-     *        set of artifacts that where resolved.
+     *            set of artifacts that where resolved.
      * @param missingArtifacts
-     *        set of artifacts that where not resolved.
-     * @param existingArtifacts 
-     *        set of artifacts that already existed.
+     *            set of artifacts that where not resolved.
+     * @param existingArtifacts
+     *            set of artifacts that already existed.
      */
     private static void logResults( Set resolvedArtifacts, Set missingArtifacts, HashSet existingArtifacts,
                                    boolean silent, Log log )
@@ -314,16 +315,16 @@ public class DependencyUtil
      * This method resolves the plugin artifacts from the project.
      * 
      * @param project
-     *        The POM.
+     *            The POM.
      * @param artifactFactory
-     *        component to build artifact objects.
+     *            component to build artifact objects.
      * @param localRepository
-     *        where to resolve artifacts.
+     *            where to resolve artifacts.
      * @param remotePluginRepositories
-     *        list of remote repositories used to resolve plugins.
+     *            list of remote repositories used to resolve plugins.
      * @param artifactResolver
-     *        component used to resolve artifacts. 
-     *        
+     *            component used to resolve artifacts.
+     * 
      * @return set of resolved plugin artifacts.
      * 
      * @throws ArtifactResolutionException
@@ -351,23 +352,23 @@ public class DependencyUtil
     }
 
     /**
-     * This method resolves the dependency artifacts from the project. 
+     * This method resolves the dependency artifacts from the project.
+     * 
      * @param project
-     *     The POM.
+     *            The POM.
      * @param artifactFactory
-     *        component to build artifact objects.
+     *            component to build artifact objects.
      * @param localRepository
-     *        where to resolve artifacts.
+     *            where to resolve artifacts.
      * @param remoteArtifactRepositories
-     *        list of remote repositories used to resolve artifacts.
+     *            list of remote repositories used to resolve artifacts.
      * @param artifactResolver
-     *        component used to resolve artifacts.
-     * @return
-     *        resolved set of dependency artifacts.
-     *         
+     *            component used to resolve artifacts.
+     * @return resolved set of dependency artifacts.
+     * 
      * @throws ArtifactResolutionException
      * @throws ArtifactNotFoundException
-     * @throws InvalidDependencyVersionException 
+     * @throws InvalidDependencyVersionException
      */
     public static Set resolveDependencyArtifacts( MavenProject project, ArtifactFactory artifactFactory,
                                                  ArtifactRepository localRepository, List remoteArtifactRepositories,
@@ -388,19 +389,20 @@ public class DependencyUtil
 
     /**
      * This method resolves all transitive dependencies of an artifact.
+     * 
      * @param artifact
-     *        the artifact used to retrieve dependencies
+     *            the artifact used to retrieve dependencies
      * @param artifactFactory
-     *        component to build artifact objects.
+     *            component to build artifact objects.
      * @param localRepository
-     *        where to resolve artifacts.
+     *            where to resolve artifacts.
      * @param remoteArtifactRepositories
-     *        list of remote repositories used to resolve artifacts.
+     *            list of remote repositories used to resolve artifacts.
      * @param artifactResolver
-     *        component used to resolve artifacts.
+     *            component used to resolve artifacts.
      * @param mavenProjectBuilder
-     *        component used to build a pom artifact.
-     *
+     *            component used to build a pom artifact.
+     * 
      * @return resolved set of dependencies
      * 
      * @throws ArtifactResolutionException

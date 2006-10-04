@@ -19,7 +19,7 @@ public class ArtifactStubFactory
 
     public ArtifactStubFactory( File workingDir, boolean createFiles )
     {
-        this.workingDir = new File(workingDir,"localTestRepo");
+        this.workingDir = new File( workingDir, "localTestRepo" );
         this.createFiles = createFiles;
     }
 
@@ -32,7 +32,7 @@ public class ArtifactStubFactory
     {
         return createArtifact( groupId, artifactId, version, scope, "jar", "" );
     }
-    
+
     public Artifact createArtifact( String groupId, String artifactId, String version, String scope, String type,
                                    String classifier )
     {
@@ -89,34 +89,34 @@ public class ArtifactStubFactory
         set.add( getSnapshotArtifact() );
         return set;
     }
-    
+
     public Set getScopedArtifacts()
     {
-     Set set = new HashSet();
-     set.add(createArtifact("g","compile","1.0",Artifact.SCOPE_COMPILE));
-     set.add(createArtifact("g","provided","1.0",Artifact.SCOPE_PROVIDED));
-     set.add(createArtifact("g","test","1.0",Artifact.SCOPE_TEST));
-     set.add(createArtifact("g","runtime","1.0",Artifact.SCOPE_RUNTIME));
-     set.add(createArtifact("g","system","1.0",Artifact.SCOPE_SYSTEM));
-     return set;
+        Set set = new HashSet();
+        set.add( createArtifact( "g", "compile", "1.0", Artifact.SCOPE_COMPILE ) );
+        set.add( createArtifact( "g", "provided", "1.0", Artifact.SCOPE_PROVIDED ) );
+        set.add( createArtifact( "g", "test", "1.0", Artifact.SCOPE_TEST ) );
+        set.add( createArtifact( "g", "runtime", "1.0", Artifact.SCOPE_RUNTIME ) );
+        set.add( createArtifact( "g", "system", "1.0", Artifact.SCOPE_SYSTEM ) );
+        return set;
     }
-    
+
     public Set getTypedArtifacts()
     {
-     Set set = new HashSet();
-     set.add(createArtifact("g","a","1.0",Artifact.SCOPE_COMPILE,"war",null));
-     set.add(createArtifact("g","b","1.0",Artifact.SCOPE_COMPILE,"jar",null));
-     set.add(createArtifact("g","c","1.0",Artifact.SCOPE_COMPILE,"sources",null));
-     set.add(createArtifact("g","d","1.0",Artifact.SCOPE_COMPILE,"zip",null));
-     return set;
+        Set set = new HashSet();
+        set.add( createArtifact( "g", "a", "1.0", Artifact.SCOPE_COMPILE, "war", null ) );
+        set.add( createArtifact( "g", "b", "1.0", Artifact.SCOPE_COMPILE, "jar", null ) );
+        set.add( createArtifact( "g", "c", "1.0", Artifact.SCOPE_COMPILE, "sources", null ) );
+        set.add( createArtifact( "g", "d", "1.0", Artifact.SCOPE_COMPILE, "zip", null ) );
+        return set;
     }
-    
+
     public Set getMixedArtifacts()
     {
         Set set = new HashSet();
-        set.addAll(getTypedArtifacts());
-        set.addAll(getScopedArtifacts());
-        set.addAll(getReleaseAndSnapshotArtifacts());
+        set.addAll( getTypedArtifacts() );
+        set.addAll( getScopedArtifacts() );
+        set.addAll( getReleaseAndSnapshotArtifacts() );
         return set;
     }
 }
