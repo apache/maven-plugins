@@ -10,7 +10,6 @@ import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.artifact.versioning.VersionRange;
-import org.codehaus.plexus.util.StringUtils;
 
 public class ArtifactStubFactory
 {
@@ -106,9 +105,18 @@ public class ArtifactStubFactory
     {
      Set set = new HashSet();
      set.add(createArtifact("g","a","1.0",Artifact.SCOPE_COMPILE,"war",null));
-     set.add(createArtifact("g","a","1.0",Artifact.SCOPE_COMPILE,"jar",null));
-     set.add(createArtifact("g","a","1.0",Artifact.SCOPE_COMPILE,"sources",null));
-     set.add(createArtifact("g","a","1.0",Artifact.SCOPE_COMPILE,"zip",null));
+     set.add(createArtifact("g","b","1.0",Artifact.SCOPE_COMPILE,"jar",null));
+     set.add(createArtifact("g","c","1.0",Artifact.SCOPE_COMPILE,"sources",null));
+     set.add(createArtifact("g","d","1.0",Artifact.SCOPE_COMPILE,"zip",null));
      return set;
+    }
+    
+    public Set getMixedArtifacts()
+    {
+        Set set = new HashSet();
+        set.addAll(getTypedArtifacts());
+        set.addAll(getScopedArtifacts());
+        set.addAll(getReleaseAndSnapshotArtifacts());
+        return set;
     }
 }

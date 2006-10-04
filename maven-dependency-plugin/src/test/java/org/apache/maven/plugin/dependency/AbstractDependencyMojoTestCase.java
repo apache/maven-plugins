@@ -39,17 +39,20 @@ public class AbstractDependencyMojoTestCase
 
     protected void tearDown()
     {
-        try
+        if ( testDir != null )
         {
-            DependencyTestUtils.removeDirectory( testDir );
+            try
+            {
+                DependencyTestUtils.removeDirectory( testDir );
+            }
+            catch ( IOException e )
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                fail("Trying to remove directory:"+testDir);
+            }
+            assertFalse( testDir.exists() );
         }
-        catch ( IOException e )
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            assertTrue( false );
-        }
-        assertFalse( testDir.exists() );
     }
 
 }
