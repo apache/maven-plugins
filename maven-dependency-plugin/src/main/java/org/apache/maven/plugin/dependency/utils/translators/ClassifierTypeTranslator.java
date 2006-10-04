@@ -25,10 +25,11 @@ import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.plugin.logging.Log;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * @author brianf
- *
+ * 
  */
 public class ClassifierTypeTranslator
     implements ArtifactTranslator
@@ -47,8 +48,11 @@ public class ClassifierTypeTranslator
         this.factory = factory;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.mojo.dependency.utils.translators.ArtifactTranslator#translate(java.util.Set, org.apache.maven.plugin.logging.Log)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.mojo.dependency.utils.translators.ArtifactTranslator#translate(java.util.Set,
+     *      org.apache.maven.plugin.logging.Log)
      */
     public Set translate( Set artifacts, Log log )
     {
@@ -59,9 +63,37 @@ public class ClassifierTypeTranslator
         for ( Iterator i = artifacts.iterator(); i.hasNext(); )
         {
             Artifact artifact = (Artifact) i.next();
+
+            //this translator must pass both type and classifier here so we will use the
+            //base artifact value if null comes in
+            String useType = null;
+            if ( StringUtils.isNotEmpty(this.type) )
+            {
+                useType = this.type;
+            }
+            else
+            {
+                useType = artifact.getType();
+            }
+
+            String useClassifier = null;
+            if ( StringUtils.isNotEmpty(this.classifier) )
+            {
+                useClassifier = this.classifier;
+            }
+            else
+            {
+                useClassifier = artifact.getClassifier();
+            }
+
             // Create a new artifact
             Artifact newArtifact = factory.createArtifactWithClassifier( artifact.getGroupId(), artifact
-                .getArtifactId(), artifact.getVersion(), this.type, this.classifier );
+                .getArtifactId(), artifact.getVersion(), useType, useClassifier );
+
+            // note the new artifacts will always have the scope set to null. We
+            // should
+            // reset it here so that it will pass other filters if needed
+            newArtifact.setScope( artifact.getScope() );
 
             results.add( newArtifact );
         }
@@ -78,7 +110,8 @@ public class ClassifierTypeTranslator
     }
 
     /**
-     * @param classifier The classifier to set.
+     * @param classifier
+     *            The classifier to set.
      */
     public void setClassifier( String classifier )
     {
@@ -94,7 +127,8 @@ public class ClassifierTypeTranslator
     }
 
     /**
-     * @param type The type to set.
+     * @param type
+     *            The type to set.
      */
     public void setType( String type )
     {
