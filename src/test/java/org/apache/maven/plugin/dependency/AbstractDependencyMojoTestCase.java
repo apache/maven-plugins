@@ -26,10 +26,8 @@ public class AbstractDependencyMojoTestCase
     {
         // required for mojo lookups to work
         super.setUp();
-        // pick random output location
-        Random a = new Random();
         testDir = new File( getBasedir(), "target" + File.separatorChar + "unit-tests" + File.separatorChar
-            + testDirStr + a.nextLong() + File.separatorChar );
+            + testDirStr + File.separatorChar );
         testDir.delete();
         assertFalse( testDir.exists() );
 

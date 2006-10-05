@@ -1,14 +1,27 @@
 package org.apache.maven.plugin.dependency;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.factory.DefaultArtifactFactory;
+import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
+import org.apache.maven.artifact.handler.manager.DefaultArtifactHandlerManager;
+import org.apache.maven.artifact.repository.DefaultArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.dependency.stubs.StubArtifactRepository;
+import org.apache.maven.plugin.dependency.stubs.StubArtifactResolver;
+import org.apache.maven.plugin.dependency.utils.ArtifactStubFactory;
+import org.apache.maven.plugin.dependency.utils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.StringUtils;
 
 public class TestCopyDependenciesMojo
     extends AbstractDependencyMojoTestCase
@@ -320,6 +333,100 @@ public class TestCopyDependenciesMojo
             File file = new File( mojo.outputDirectory, fileName );
 
             assertEquals( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ), file.exists() );
+        }
+    }
+
+    public void testCDMClassifier()
+        throws Exception
+    {
+        dotestCopyDependenciesMojoClassifierType( "jdk14", null );
+    }
+
+    public void testCDMType()
+        throws Exception
+    {
+        dotestCopyDependenciesMojoClassifierType( null, "sources" );
+    }
+
+    public void testCDMClassifierType()
+        throws Exception
+    {
+        dotestCopyDependenciesMojoClassifierType( "jdk14", "sources" );
+    }
+
+    public void dotestCopyDependenciesMojoClassifierType( String testClassifier, String testType )
+        throws Exception
+    {
+        CopyDependenciesMojo mojo = getNewMojo();
+        mojo.classifier = testClassifier;
+        mojo.type = testType;
+
+        // init classifier things
+        mojo.factory = DependencyTestUtils.getArtifactFactory();
+        mojo.resolver = new StubArtifactResolver( false, false );
+        mojo.local = new StubArtifactRepository( this.testDir.getAbsolutePath() );
+
+        mojo.execute();
+
+        Iterator iter = mojo.project.getArtifacts().iterator();
+        while ( iter.hasNext() )
+        {
+            Artifact artifact = (Artifact) iter.next();
+
+            String useClassifier = artifact.getClassifier();
+            String useType = artifact.getType();
+
+            if ( StringUtils.isNotEmpty( testClassifier ) )
+            {
+                useClassifier = "-" + testClassifier;
+                // type is only used if classifier is used.
+                if ( StringUtils.isNotEmpty( testType ) )
+                {
+                    useType = testType;
+                }
+            }
+            String fileName = artifact.getArtifactId() + useClassifier + "-" + artifact.getVersion() + "." + useType;
+            File file = new File( mojo.outputDirectory, fileName );
+
+            if ( !file.exists() )
+            {
+                fail( "Can't find:" + file.getAbsolutePath() );
+            }
+        }
+    }
+
+    public void testArtifactNotFound()
+        throws Exception
+    {
+        dotestArtifactExceptions( false, true );
+    }
+
+    public void testArtifactResolutionException()
+        throws Exception
+    {
+        dotestArtifactExceptions( true, false );
+    }
+
+    public void dotestArtifactExceptions( boolean are, boolean anfe )
+        throws Exception
+    {
+        CopyDependenciesMojo mojo = getNewMojo();
+        mojo.classifier = "jdk";
+        mojo.type = "java-sources";
+        
+        // init classifier things
+        mojo.factory = DependencyTestUtils.getArtifactFactory();
+        mojo.resolver = new StubArtifactResolver( are, anfe );
+        mojo.local = new StubArtifactRepository( this.testDir.getAbsolutePath() );
+
+        try
+        {
+            mojo.execute();
+            fail( "ExpectedException" );
+        }
+        catch ( MojoExecutionException e )
+        {
+
         }
     }
 }

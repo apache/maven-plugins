@@ -59,7 +59,7 @@ public class CopyDependenciesMojo
     public void execute()
         throws MojoExecutionException
     {
-        Set artifacts = getDependencies();
+        Set artifacts = getDependencies(true);
 
         for ( Iterator i = artifacts.iterator(); i.hasNext(); )
         {

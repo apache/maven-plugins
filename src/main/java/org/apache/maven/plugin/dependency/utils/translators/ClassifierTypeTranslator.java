@@ -64,10 +64,11 @@ public class ClassifierTypeTranslator
         {
             Artifact artifact = (Artifact) i.next();
 
-            //this translator must pass both type and classifier here so we will use the
-            //base artifact value if null comes in
+            // this translator must pass both type and classifier here so we
+            // will use the
+            // base artifact value if null comes in
             String useType = null;
-            if ( StringUtils.isNotEmpty(this.type) )
+            if ( StringUtils.isNotEmpty( this.type ) )
             {
                 useType = this.type;
             }
@@ -77,7 +78,7 @@ public class ClassifierTypeTranslator
             }
 
             String useClassifier = null;
-            if ( StringUtils.isNotEmpty(this.classifier) )
+            if ( StringUtils.isNotEmpty( this.classifier ) )
             {
                 useClassifier = this.classifier;
             }

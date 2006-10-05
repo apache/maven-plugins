@@ -31,7 +31,9 @@ import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.dependency.utils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.utils.SilentLog;
 import org.apache.maven.plugin.logging.Log;
 
@@ -64,16 +66,15 @@ public class TestDefaultMarkerFileHandler
         artifact = new DefaultArtifact( "test", "4", vr, Artifact.SCOPE_RUNTIME, "zip", "", ah, false );
         artifacts.add( artifact );
 
-        // pick random output location
-        Random a = new Random();
-        outputFolder = new File( "target/markers" + a.nextLong() + "/" );
+        outputFolder = new File( "target/markers/" );
         outputFolder.delete();
         assertFalse( outputFolder.exists() );
     }
 
     protected void tearDown()
+        throws IOException
     {
-        outputFolder.delete();
+        DependencyTestUtils.removeDirectory( this.outputFolder );
     }
 
     public void testSetMarker()
@@ -96,8 +97,6 @@ public class TestDefaultMarkerFileHandler
         assertFalse( handler.isMarkerSet() );
         handler.clearMarker();
         assertFalse( handler.isMarkerSet() );
-        outputFolder.delete();
-        assertFalse( outputFolder.exists() );
     }
 
     public void testMarkerFile()
@@ -122,11 +121,34 @@ public class TestDefaultMarkerFileHandler
 
         handler.clearMarker();
         assertFalse( handle.exists() );
-
-        outputFolder.delete();
-        assertFalse( outputFolder.exists() );
     }
 
+    /*
+    public void testMarkerFileException()
+        throws IOException, MojoExecutionException
+    {
+        DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( (Artifact) artifacts.get( 0 ),
+                                                                         this.outputFolder );
+
+        File handle = handler.getMarkerFile();
+        assertFalse( handle.exists() );
+        assertFalse( handler.isMarkerSet() );
+
+        handle.getParentFile().mkdirs();
+        handle.getParentFile().setReadOnly();
+        handle.
+        
+        try
+        {
+            handler.setMarker();
+            fail( "Expected an Exception" );
+        }
+        catch ( MojoExecutionException e )
+        {
+
+        }
+    }
+*/
     public void testMarkerTimeStamp()
         throws MojoExecutionException, IOException, InterruptedException
     {
@@ -149,8 +171,5 @@ public class TestDefaultMarkerFileHandler
         theFile.delete();
         handler.clearMarker();
         assertFalse( handler.isMarkerSet() );
-        outputFolder.delete();
-        assertFalse( outputFolder.exists() );
-
     }
 }
