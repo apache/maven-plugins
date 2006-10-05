@@ -53,7 +53,7 @@ public class ArtifactStubFactory
         return artifact;
     }
 
-    void setArtifactFile( Artifact artifact )
+    public void setArtifactFile( Artifact artifact )
     {
         String fileName = DependencyUtil.getFormattedFileName( artifact, false );
 
