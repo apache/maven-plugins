@@ -49,7 +49,7 @@ public class ResolveDependenciesMojo
         throws MojoExecutionException
     {
         // get sets of dependencies
-        results = this.getDependencySets();
+        results = this.getDependencySets(false);
 
         results.logStatus( getLog(), outputArtifactFilename );
     }

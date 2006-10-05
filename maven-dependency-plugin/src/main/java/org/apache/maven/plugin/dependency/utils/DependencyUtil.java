@@ -62,7 +62,7 @@ public class DependencyUtil
                 FileUtils.copyFile( artifact, destFile );
                 result = true;
             }
-            catch ( IOException e )
+            catch ( Exception e )
             {
                 throw new MojoExecutionException( "Error copying artifact from " + artifact + " to " + destFile, e );
             }
