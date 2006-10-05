@@ -196,5 +196,40 @@ public class TestSourcesMarkerFileHandler
         assertFalse( outputFolder.exists() );
     }
 
-    // TODO: create test for timestamps here.
+    public void testMarkerTimeStampResolved()
+        throws MojoExecutionException, IOException, InterruptedException
+    {
+        doTestMarkerTimeStamp( true );
+    }
+
+    public void testMarkerTimeStampUnResolved()
+        throws MojoExecutionException, IOException, InterruptedException
+    {
+        doTestMarkerTimeStamp( false );
+    }
+
+    public void doTestMarkerTimeStamp( boolean resolved )
+        throws MojoExecutionException, IOException, InterruptedException
+    {
+        File theFile = new File( outputFolder, "theFile.jar" );
+        outputFolder.mkdirs();
+        theFile.createNewFile();
+        Artifact theArtifact = (Artifact) artifacts.get( 0 );
+        theArtifact.setFile( theFile );
+        SourcesFileMarkerHandler handler = new SourcesFileMarkerHandler( (Artifact) artifacts.get( 0 ),
+                                                                         this.outputFolder, resolved );
+        assertFalse( handler.isMarkerSet() );
+        // if the marker is not set, assume it is infinately older than the
+        // artifact.
+        assertTrue( handler.isMarkerOlder( theArtifact ) );
+        handler.setMarker();
+        assertFalse( handler.isMarkerOlder( theArtifact ) );
+
+        theFile.setLastModified( theFile.lastModified() + 222 );
+        assertTrue( handler.isMarkerOlder( theArtifact ) );
+
+        theFile.delete();
+        handler.clearMarker();
+        assertFalse( handler.isMarkerSet() );
+    }
 }
