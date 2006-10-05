@@ -24,9 +24,9 @@ import org.apache.maven.plugin.logging.Log;
 
 /**
  * @author brianf
- *
+ * 
  */
 public interface ArtifactTranslator
 {
-    public Set translate(Set artifacts, Log log);
+    public Set translate( Set artifacts, Log log );
 }

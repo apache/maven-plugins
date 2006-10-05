@@ -18,20 +18,21 @@ package org.apache.maven.plugin.dependency;
 import java.util.List;
 
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.dependency.utils.SilentLog;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.plugin.dependency.utils.SilentLog;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 
 /**
  * @author brianf
- *
+ * 
  */
 public abstract class AbstractDependencyMojo
     extends AbstractMojo
 {
     /**
      * Used to look up Artifacts in the remote repository.
+     * 
      * @parameter expression="${component.org.apache.maven.artifact.factory.ArtifactFactory}"
      * @required
      * @readonly
@@ -40,6 +41,7 @@ public abstract class AbstractDependencyMojo
 
     /**
      * Used to look up Artifacts in the remote repository.
+     * 
      * @parameter expression="${component.org.apache.maven.artifact.resolver.ArtifactResolver}"
      * @required
      * @readonly
@@ -48,6 +50,7 @@ public abstract class AbstractDependencyMojo
 
     /**
      * Location of the local repository.
+     * 
      * @parameter expression="${localRepository}"
      * @readonly
      * @required
@@ -56,6 +59,7 @@ public abstract class AbstractDependencyMojo
 
     /**
      * List of Remote Repositories used by the resolver
+     * 
      * @parameter expression="${project.remoteArtifactRepositories}"
      * @readonly
      * @required
@@ -64,15 +68,16 @@ public abstract class AbstractDependencyMojo
 
     /**
      * To look up Archiver/UnArchiver implementations
-     *
+     * 
      * @parameter expression="${component.org.codehaus.plexus.archiver.manager.ArchiverManager}"
      * @required
      * @readonly
      */
     protected ArchiverManager archiverManager;
-    
+
     /**
      * POM
+     * 
      * @parameter expression="${project}"
      * @readonly
      * @required
@@ -81,18 +86,20 @@ public abstract class AbstractDependencyMojo
 
     /**
      * Contains the full list of projects in the reactor.
+     * 
      * @parameter expression="${reactorProjects}"
      * @required
      * @readonly
      */
     protected List reactorProjects;
-    
+
     /**
      * If the plugin should be silent.
+     * 
      * @parameter expression="${silent}" default-value="false"
      */
     protected boolean silent;
-    
+
     private Log log;
 
     /**
@@ -100,7 +107,7 @@ public abstract class AbstractDependencyMojo
      */
     public Log getLog()
     {
-        if (silent)
+        if ( silent )
         {
             log = new SilentLog();
         }
@@ -108,7 +115,7 @@ public abstract class AbstractDependencyMojo
         {
             log = super.getLog();
         }
-        
+
         return this.log;
     }
 
