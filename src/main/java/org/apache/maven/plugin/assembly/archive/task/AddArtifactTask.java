@@ -53,7 +53,7 @@ public class AddArtifactTask
 
         if ( unpack )
         {
-            if ( !outputLocation.endsWith( "/" ) )
+            if ( outputLocation.length() > 0 && !outputLocation.endsWith( "/" ) )
             {
                 outputLocation += "/";
             }

@@ -25,7 +25,8 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/</outputDirectory>
+      <outputDirectory></outputDirectory>
+      <outputFileNameMapping></outputFileNameMapping>
       <unpack>true</unpack>
       <scope>runtime</scope>
     </dependencySet>
