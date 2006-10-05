@@ -1,1 +1,1 @@
-package assembly:assembly
+install assembly:assembly
