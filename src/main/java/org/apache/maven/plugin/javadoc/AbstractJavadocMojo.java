@@ -1039,16 +1039,16 @@ public abstract class AbstractJavadocMojo
         if ( StringUtils.isEmpty( doclet ) )
         {
             addArgIf( arguments, author, "-author" );
-            addArgIfNotEmpty( arguments, "-bottom", quotedArgument( getBottomText( project.getInceptionYear() ) ) );
+            addArgIfNotEmpty( arguments, "-bottom", quotedArgument( getBottomText( project.getInceptionYear() ) ), false, false );
             addArgIf( arguments, breakiterator, "-breakiterator", SINCE_JAVADOC_1_4 );
             addArgIfNotEmpty( arguments, "-charset", quotedArgument( charset ) );
             addArgIfNotEmpty( arguments, "-d", quotedPathArgument( javadocOutputDirectory.toString() ) );
             addArgIf( arguments, docfilessubdirs, "-docfilessubdirs", SINCE_JAVADOC_1_4 );
             addArgIfNotEmpty( arguments, "-docencoding", quotedArgument( docencoding ) );
-            addArgIfNotEmpty( arguments, "-doctitle", quotedArgument( doctitle ) );
+            addArgIfNotEmpty( arguments, "-doctitle", quotedArgument( doctitle ), false, false );
             addArgIfNotEmpty( arguments, "-excludedocfilessubdir", quotedPathArgument( excludedocfilessubdir ),
                               SINCE_JAVADOC_1_4 );
-            addArgIfNotEmpty( arguments, "-footer", quotedArgument( footer ) );
+            addArgIfNotEmpty( arguments, "-footer", quotedArgument( footer ), false, false );
             if ( groups != null )
             {
                 for ( int i = 0; i < groups.length; i++ )
@@ -1066,7 +1066,7 @@ public abstract class AbstractJavadocMojo
                     }
                 }
             }
-            addArgIfNotEmpty( arguments, "-header", quotedArgument( header ) );
+            addArgIfNotEmpty( arguments, "-header", quotedArgument( header ), false, false );
             addArgIfNotEmpty( arguments, "-helpfile", quotedPathArgument( helpfile ) );
             addArgIf( arguments, keywords, "-keywords", SINCE_JAVADOC_1_4_2 );
 
@@ -1140,7 +1140,7 @@ public abstract class AbstractJavadocMojo
 
             addArgIf( arguments, use, "-use" );
             addArgIf( arguments, version, "-version" );
-            addArgIfNotEmpty( arguments, "-windowtitle", quotedArgument( windowtitle ) );
+            addArgIfNotEmpty( arguments, "-windowtitle", quotedArgument( windowtitle ), false, false );
         }
 
         // ----------------------------------------------------------------------
@@ -1933,11 +1933,13 @@ public abstract class AbstractJavadocMojo
      * Moreover, the value could be comma separated.
      *
      * @param arguments
-     * @param key       the argument name.
-     * @param value     the argument value to be added.
-     * @param repeatKey repeat or not the key in the command line
+     * @param key         the argument name.
+     * @param value       the argument value to be added.
+     * @param repeatKey   repeat or not the key in the command line
+     * @param splitValue  if <code>true</code> given value will be tokenized by comma
      */
-    private void addArgIfNotEmpty( List arguments, String key, String value, boolean repeatKey )
+    private void addArgIfNotEmpty( List arguments, String key, String value, 
+        boolean repeatKey, boolean splitValue )
     {
         if ( StringUtils.isNotEmpty( value ) )
         {
@@ -1946,23 +1948,43 @@ public abstract class AbstractJavadocMojo
                 arguments.add( key );
             }
 
-            StringTokenizer token = new StringTokenizer( value, "," );
-            while ( token.hasMoreTokens() )
-            {
-                String current = token.nextToken().trim();
-
-                if ( StringUtils.isNotEmpty( current ) )
+            if (splitValue) {
+                StringTokenizer token = new StringTokenizer( value, "," );
+                while ( token.hasMoreTokens() )
                 {
-                    arguments.add( current );
-
-                    if ( token.hasMoreTokens() && repeatKey )
+                    String current = token.nextToken().trim();
+    
+                    if ( StringUtils.isNotEmpty( current ) )
                     {
-                        arguments.add( key );
+                        arguments.add( current );
+    
+                        if ( token.hasMoreTokens() && repeatKey )
+                        {
+                            arguments.add( key );
+                        }
                     }
                 }
+            } else {
+                arguments.add( value );
             }
         }
     }
+    
+    /**
+     * Convenience method to add an argument to the <code>command line</code>
+     * if the the value is not null or empty.
+     * <p/>
+     * Moreover, the value could be comma separated.
+     *
+     * @param arguments
+     * @param key       the argument name.
+     * @param value     the argument value to be added.
+     * @param repeatKey repeat or not the key in the command line
+     */
+    private void addArgIfNotEmpty( List arguments, String key, String value, boolean repeatKey ) {
+        addArgIfNotEmpty(arguments, key, value, repeatKey, true);
+    }
+
 
     /**
      * Convenience method to add an argument to the <code>command line</code>
