@@ -37,6 +37,13 @@
       <item name="Usage" href="usage.html"/>
       <item name="FAQ" href="faq.html"/>
     </menu>
+    
+    <!-- TODO: Give examples -->
+    <!--menu name="Examples">
+      <item name="item 1" href="examples/item1.html"/>
+      <item name="item 2" href="examples/item2.html"/>
+      <item name="item 3" href="examples/item3.html"/>
+    </menu-->
 
     <!-- To be uncommented once it's up to date again -->
     <!--menu name="Architecture">
