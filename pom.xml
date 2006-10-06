@@ -2,7 +2,7 @@
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>2-SNAPSHOT</version>
+    <version>3</version>
   </parent>
   <prerequisites>
     <maven>2.0.1</maven>
@@ -11,7 +11,7 @@
   <artifactId>maven-clover-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Maven Clover Plugin</name>
-  <version>2.3-SNAPSHOT</version>
+  <version>2.3</version>
   <description>Maven plugin for Clover</description>
   <issueManagement>
     <system>jira</system>
@@ -173,6 +173,8 @@
               <projectsDirectory>src/it</projectsDirectory>
               <pomIncludes>
                 <pomInclude>**/contexts/pom.xml</pomInclude>
+                <pomInclude>**/simple/pom.xml</pomInclude>
+                <pomInclude>**/multiproject/pom.xml</pomInclude>
               </pomIncludes>
               <postBuildHookScript>verify.bsh</postBuildHookScript>
             </configuration>
@@ -190,4 +192,10 @@
       </build>
     </profile>
   </profiles>
+
+  <scm>
+    <connection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-clover-plugin-2.3</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-clover-plugin-2.3</developerConnection>
+    <url>https://svn.apache.org/repos/asf/maven/plugins/tags/maven-clover-plugin-2.3</url>
+  </scm>
 </project>

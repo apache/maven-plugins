@@ -1,44 +1,290 @@
  ------
- Maven 2 Clover Plugin: using
+ Usage
  ------
  Vincent Massol
  <vmassol@apache.org>
+ Franz Allan Valencia see
+ <franz.see@gmail.com>
  ------
- September 9th, 2006
+ October 11th, 2006
+ ------
 
-User Guide
+ ~~ Copyright 2006 The Apache Software Foundation.
+ ~~
+ ~~ Licensed under the Apache License, Version 2.0 (the "License");
+ ~~ you may not use this file except in compliance with the License.
+ ~~ You may obtain a copy of the License at
+ ~~
+ ~~      http://www.apache.org/licenses/LICENSE-2.0
+ ~~
+ ~~ Unless required by applicable law or agreed to in writing, software
+ ~~ distributed under the License is distributed on an "AS IS" BASIS,
+ ~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ~~ See the License for the specific language governing permissions and
+ ~~ limitations under the License.
 
- * {{{usage.html#Generating a Clover report when generating the site}Generating a Clover report when generating the site}}
+ ~~ NOTE: For help with the syntax of this file, see:
+ ~~ http://maven.apache.org/guides/mini/guide-apt-format.html
+ 
+{Usage}
 
- * {{{usage.html#Generating a Clover report without modifying your POM}Generating a Clover report without modifying your POM}}
+* Table Of Contents
 
- * {{{usage.html#Generating HTML, XML and PDF reports}Generating HTML, XML and PDF reports}}
+ * {{{usage.html#Getting Started}Getting Started}}
 
- * {{{usage.html#Generating historical reports}Generating historical reports}}
+   * {{{usage.html#Controlling files to instrument}Controlling files to instrument}}
 
  * {{{usage.html#Checking test coverage}Checking test coverage}}
 
- * {{{usage.html#Using Clover with JDK 1.4 and JDK 1.5 keywords}Using Clover with JDK 1.4 and JDK 1.5 keywords}}
+   * {{{usage.html#Using block contexts}Using block contexts}}
+   
+   * {{{usage.html#Using Clover with different JDK versions}Using Clover with different JDK versions}}
 
- * {{{usage.html#Specifying a Clover flush policy}Specifying a Clover flush policy}}
+   * {{{usage.html#Specifying a Clover flush policy}Specifying a Clover flush policy}}
 
- * {{{usage.html#Specifying a custom license file}Specifying a custom license file}}
+ * {{{usage.html#Generating a Clover report}Generating a Clover report}}
 
- * {{{usage.html#Aggregating Clover reports}Aggregating Clover reports}}
+   * {{{usage.html#Specifying report formats}Specifying report formats}}
 
- * {{{usage.html#Controlling files to instrument}Controlling files to instrument}}
+   * {{{usage.html#Generating historical reports}Generating historical reports}}
+
+   * {{{usage.html#Aggregating Clover Reports}Aggregating Clover Reports}}
 
  * {{{usage.html#Getting information on an existing Clover database}Getting information on an existing Clover database}}
 
+ * {{{usage.html#Specifying a custom license file}Specifying a custom license file}}
+
  []
+ 
+* {Getting Started}
 
-* {Generating a Clover report when generating the site}
+  The first thing to do is to create a {{{http://cenqua.com/clover/doc/adv/database.html}Clover database}}. To do
+  this, you must either do: 
 
-  Add the Clover report in your <<<pom.xml>>> under the <<<reporting>>> section:
++------+
+  mvn clover:instrument
++------+
+
+ or 
+ 
++------+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clover-plugin</artifactId>
+        <configuration>
+          [...]
+        </configuration>
+        <executions>
+          <execution>
+            [...]
+            <goals>
+              <goal>instrument</goal>
+            </goals>
+            [...]
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
++------+ 
+  
+  This instruments all sources using Clover so that a
+  {{{http://cenqua.com/clover/doc/adv/database.html}Clover database}} is created (or if it already exists, the plugin
+  will simply use it and add data on top of the existing one). When you execute your tests
+  the instrumented code will start generating logs into the Clover database. These logs can then be used for
+  Test Coverage Percentage checks, for report generation or for logging.
+
+  Note that the Clover plugin takes great care not to mix the instrumented code nor any artifact generated from it
+  with main production sources and artifacts. This is the reason why you may see your tests executed twice: once
+  for the production sources and once for the Clover-instrumented sources.
+
+  <Back to {{{usage.html}top}}.>
+  
+** {Controlling files to instrument}
+  
+  By default all Java files are included during the instrumentation. To specify
+  inclusion and exclusion use the <<<includes>>> and <<<excludes>>> 
+  configuration elements as shown in this example:
 
 +--------
+  <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-clover-plugin</artifactId>
+    <configuration>
+      <includes>
+        <include>**/api/**/*.java</include>
+        <include>some/path/MyFile.java</include>
+        [...]
+      </includes>
+      <excludes>
+        <exclude>**/*Test/java</exclude>
+        [...]
+      </excludes>
+[...]
++---------
+
+  <Back to {{{usage.html}top}}.>
+  
+* {Checking test coverage}
+
+  In order to check for a test coverage percentage and fail the build in case of
+  non-compliance, you'll need to configure the Clover plugin to tell it what 
+  test coverage threshold you wish to use:
+
++------+
+  mvn clover:check -DtargetPercentage=50%
++------+
+
+ or 
+ 
++------+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clover-plugin</artifactId>
+        <configuration>
+          <targetPercentage>50%</targetPercentage>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>verify</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
++------+
+
+  In this example you've told Maven to run <<<clover:check>>> whenever the 
+  <<<verify>>> phase is reached (this will be the case if you run 
+  <<<mvn install>>> for example). 
+  
+  Furthermore, you specified that the <<<targetPercentage>>> is <<<50%>>>, 
+  meaning the test must result to at least <<<50%>>> test coverage percentage to
+  pass. If the <<<targetPercentage>>> was not specified, the default value of 
+  <<<70%>>> will be used.
+  
+  However, as previously mentioned, Clover needs an existing 
+  {{{http://cenqua.com/clover/doc/adv/database.html}Clover database}}. Thus, a call
+  to <<<clover:instrument>>> may be neccessary:
+  
++------+
+  mvn clover:instrument clover:check -DtargetPercentage=50%
++------+
+
+ or 
+ 
++------+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clover-plugin</artifactId>
+        <configuration>
+          <targetPercentage>50%</targetPercentage>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>verify</phase>
+            <goals>
+              <goal>instrument</goal>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
++------+
+
+  Note: The <<<clover:check>>> goal will also check the test percentage coverage
+  for merged Clover databases if any is found (see the
+  {{{usage.html#Aggregating Clover Reports}Aggregating Clover Reports}} section for more on that).
+ 
+  <Back to {{{usage.html}top}}.>
+  
+** {Using block contexts}
+
+  Clover allows specifying {{{http://cenqua.com/clover/doc/adv/contexts.html}block contexts}}
+  (i.e. elements to be excluded from the Test Percentage Coverage). To configure a block context use
+  the <<<contextFilters>>> element. For example to exclude <<<try>>> and <<<static>>> block contexts, you would
+  write:
+
++--------
+[...]
+  <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-clover-plugin</artifactId>
+    <configuration>
+      <contextFilters>try,static</contextFilters>
+    </configuration>
+[...]
++---------
+
+  <Back to {{{usage.html}top}}.>
+
+** {Using Clover with different JDK versions}
+
+  If your code is using JDK 1.4 or JDK 1.5 specific keywords, you'll need to 
+  configure the Clover plugin. For example for JDK 1.4:
+  
++--------
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clover-plugin</artifactId>
+        <configuration>
+          <jdk>1.4</jdk>
+[...]
++---------
+
+  <Back to {{{usage.html}top}}.>
+  
+** {Specifying a Clover flush policy}
+
+  If you want to specify the Clover 
+  {{{http://cenqua.com/clover/doc/adv/flushpolicies.html}flush policy}} that the
+  plugin should use, then specify it in the plugin's configuration. Valid 
+  policies are <<<threaded>>>, <<<directed>>> and <<<interval>>>.
+  
+  For example to use a <<<threaded>>> policy with a flush interval of <<<5000>>>
+  ms you would write:
+  
++--------
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clover-plugin</artifactId>
+        <configuration>
+          <flushPolicy>threaded</flushPolicy>
+          <flushInterval>5000</flushInterval>
+[...]
++---------
+
+  <Back to {{{usage.html}top}}.>
+  
+* {Generating a Clover report}
+  
+  To generate a Clover report, simply execute the following command:
+  
++------+
+mvn clover:clover
++------+
+
+  Also, you may want to generate a Clover Report everytime you generate site for
+  your maven project (i.e. <<<mvn site>>>):
+  
++--------
 <project>
-  [...]
+  [...] 
   <reporting>
     <plugins>
       [...]
@@ -53,12 +299,19 @@ User Guide
   </reporting>
 [...]
 +---------
+  
+  But just like the <<<clover:check>>> goal, the <<<clover:clover>>> goal
+  also needs an existing 
+  {{{http://cenqua.com/clover/doc/adv/database.html}Clover database}}. Thus, if
+  if it still does not exist, a call to <<<clover:instrument>>> must first be 
+  made:
+  
++------+
+mvn clover:instrument clover:clover
++------+
 
-  The <<<maven-clover-plugin>>> report will only generate a report out of an existing Clover database
-  so if you don't have a Clover database available you'll need to configure your build to generate one.
-  This is achieved by binding the <<<clover:instrument>>> goal to the <<<pre-site>>> phase so that it
-  executes before the report executes. For example:
-
+  or 
+  
 +--------
 <project>
   [...]
@@ -81,23 +334,37 @@ User Guide
       </plugin>
     </plugins>
   </build>
+  [...]
+  <reporting>
+    <plugins>
+      [...]
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clover-plugin</artifactId>
+        <configuration>
+          [...]
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
 [...]
 +---------
+ 
+  Note that in the above example that <<<clover:instrument>>> was bound to the
+  <<<pre-site>>> phase. This is done to ensure that a 
+  {{{http://cenqua.com/clover/doc/adv/database.html}Clover database}} is 
+  generated before the report executes. 
 
-  Then, to generate the report as part of the site simply type <<<mvn site:site>>>.
+  <Back to {{{usage.html}top}}.>
   
-* {Generating a Clover report without modifying your POM}
+** {Specifying report formats}
 
-  If you simply want to generate a Clover report on the fly without modifying your POM, simply
-  type <<<mvn clover:instrument clover:clover>>>. Alternatively if you want to aggregate children
-  module reports into a master Clover report, run <<<mvn clover:instrument clover:aggregate clover:clover>>>
-  instead.
-
-* {Generating HTML, XML and PDF reports}
-
-  By default the Clover plugin will generate a HTML report. If you want to generate a PDF or XML report, or
-  if you simply do not want to generate the HTML report use the <<<generateHtml>>>, <<<generatePdf>>> and
-  <<<generateXml>>> configuration elements. By default the <<<generateHtml>>> element is set to true.
+  By default the Clover plugin will generate a HTML report. If you want to 
+  generate a PDF or XML report, or if you simply do not want to generate the 
+  HTML report use the <<<generateHtml>>>, <<<generatePdf>>> and 
+  <<<generateXml>>> configuration elements. By default the <<<generateHtml>>> 
+  element is set to true.
+  
   For example if you wish to generate the PDF and XML reports you would use:
 
 +--------
@@ -113,8 +380,9 @@ User Guide
 [...]
 +---------
 
-  Note that only the HTML report gets a link in the "Project Reports" section in generated menu on the site. If
-  you want to link the PDF or XML reports you'll need to do that by modifying your <<<site.xml>>>. For example:
+  Note that only the HTML report gets a link in the "Project Reports" section in
+  generated menu on the site. If you want to link the PDF or XML reports you'll 
+  need to do that by modifying your <<<site.xml>>>. For example:
 
 +--------
 [...]
@@ -125,9 +393,11 @@ User Guide
 [...]
 +---------
 
-  If you do not want to generate the HTML report then you should not configure the Clover plugin in the
-  <<<reporting>>> section as this section is for plugins which generate HTML reports. In that case, simply
-  bind the <<<clover:clover>>> goal to the <<<site>>> phase in the <<<build>>> section. For example:
+  If you do not want to generate the HTML report then you should not configure 
+  the Clover plugin in the <<<reporting>>> section as this section is for 
+  plugins which generate HTML reports. In that case, simply bind the 
+  <<<clover:clover>>> goal to the <<<site>>> phase in the <<<build>>> section. 
+  For example:
 
 +--------
 <project>
@@ -157,10 +427,14 @@ User Guide
 [...]
 +---------
 
-* {Generating historical reports}
+  <Back to {{{usage.html}top}}.>
+  
+** {Generating historical reports}
 
-  This is done in the same manner as you generate a standard Clover report but in addition you need to set the
-  <<<generateHistorical>>> configuration property to true (it's false by default). For example:
+  Generating historical reports is done in the same manner as you generate a 
+  standard Clover report but in addition you need to set the 
+  <<<generateHistorical>>> configuration property to true (it's false by 
+  default). For example:
 
 +--------
 <project>
@@ -174,19 +448,27 @@ User Guide
           <generateHistorical>true</generateHistorical>
           [...]
         </configuration>
-[...]
+        [...]
       </plugin>
     </plugins>
   </build>
 [...]
 +---------
 
-  Now this will generate a historical report only if you have saved Clover historical savepoints. In order to save a
-  Clover savepoint, run the <<<clover:save-history>>> goal. It's up to you to decide when you want to call this goal.
-  For example you could call it every time a build is executing on your CI server, or you could call it at every
-  project release, etc. The location of the history directory for saving the savepoints is controlled by the
-  <<<historyDir>>> configuration property, which points to <<<${project.build.directory}/clover/history>>> by default.
-  It is recommended to use another location that will not get erased by a <<<mvn clean>>>. For example:
+  Now this will generate a 
+  {{{http://cenqua.com/clover/doc/tutorial/part2.html}Clover historical report}}
+  only if you have saved Clover historical savepoints. In order to save a Clover
+  savepoint, run the <<<clover:save-history>>> goal. It's up to you to decide 
+  when you want to call this goal. 
+  
+  For example you could call it every time a build is executing on your CI 
+  server, or you could call it at every project release, etc. The location of 
+  the history directory for saving the savepoints is controlled by the 
+  <<<historyDir>>> configuration property, which points to 
+  <<<${project.build.directory}/clover/history>>> by default. 
+  
+  It is recommended to use another location that will not get erased by a 
+  <<<mvn clean>>>. For example:
 
 +--------
 <project>
@@ -201,149 +483,39 @@ User Guide
           <historyDir>${myHistoryDir}</historyDir>
           [...]
         </configuration>
-[...]
+        [...]
       </plugin>
     </plugins>
   </build>
 [...]
 +---------
 
-  Where <<<myHistoryDir>>> could be a Maven property that you define in a profile.
+  Where <<<myHistoryDir>>> could be a Maven property that you define in a 
+  profile.
 
-* {Checking test coverage}
-
-  In order to check for a test coverage percentage and fail the build in case of non-compliance,
-  you'll need to configure the Clover plugin to tell it what test coverage threshold you wish to use:
+  <Back to {{{usage.html}top}}.>
   
-+--------
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-clover-plugin</artifactId>
-        <configuration>
-          <targetPercentage>50%</targetPercentage>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>verify</phase>
-            <goals>
-              <goal>instrument</goal>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
-+---------
+** {Aggregating Clover Reports}
 
-  In this example you've told Maven to run <<<clover:instrument>>> and <<<clover:check>>> whenever the <<<verify>>>
-  phase is reached (this will be the case if you run <<<mvn install>>> for example). You need to call
-  <<<clover:instrument>>> before the check because <<<clover:check>>> requires an existing Clover datababase to
-  perform the verification.
+  <Note: There's currently a 
+  {{{http://jira.codehaus.org/browse/MCLOVER-34}bug in Maven2}} which results in
+  the clover aggregation not working properly. More specifically the >
+  <<<aggregate>>> <goal requires an existing Clover database and the first
+  time your run> <<<mvn site>>> <it won't find the generated children databases as they'll be produced after it
+  executes. It'll work the second time though. Just ensure that you run the aggregate goal after
+  you've generated the children Clover databases.>
 
-  If you don't specify a target percentage the default value used is 70%.
-
-  You can also invoke <<<mvn clover:check>>> directly on the command line.
-
-  Note: The <<<clover:check>>> goal will also check the test percentage coverage for merged databases if any is found.
-
-* {Using Clover with JDK 1.4 and JDK 1.5 keywords}
-
-  If your code is using JDK 1.4 or JDK 1.5 specific keywords, you'll need to configure the Clover
-  plugin. For example for JDK 1.4:
-  
-+--------
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-clover-plugin</artifactId>
-        <configuration>
-          <jdk>1.4</jdk>
-[...]
-+---------
-
-* {Specifying a Clover flush policy}
-
-  If you want to specify the Clover 
-  {{{http://cenqua.com/clover/doc/adv/flushpolicies.html}flush policy}} that the plugin should use,
-  then specify it in the plugin's configuration. Valid policies are <<<threaded>>>, <<<directed>>>
-  and <<<interval>>>.
-  
-  For example to use a <<<threaded>>> policy with a flush interval of <<<5000>>> ms you would write:
-  
-+--------
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-clover-plugin</artifactId>
-        <configuration>
-          <flushPolicy>threaded</flushPolicy>
-          <flushInterval>5000</flushInterval>
-[...]
-+---------
-
-* {Specifying a custom license file}
-
-  The Clover plugin provides a default evaulation license. However if your project is a commercial project
-  you need to purchase your own license to use Clover. To use your license specify it using a
-  <<<licenseLocation>>> configuration element. For example if you wanted to automatically execute the
-  <<<check>>> goal when you type <<<mvn install>>> and if you wanted to use your license located in
-  <<<${basedir}/src/test/clover/myclover.license>>> you would use:
+  You can aggregate children modules Clover databases into a single merged database
+  by running the <<<clover:aggregate>>> goal. This For example if you have the
+  following project layout:
 
 +--------
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-clover-plugin</artifactId>
-        <configuration>
-          <licenseLocation>${basedir}/src/test/clover/myclover.license</licenseLocation>
-        </configuration>
-        <executions>
-          <execution>
-            <configuration>
-              <targetPercentage>50%</targetPercentage>
-            </configuration>
-            <phase>verify</phase>
-            <goals>
-              <goal>instrument</goal>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
-+---------
-
-  Important note: The <<<licenseLocation>>> element needs to be defined in the global <<<configuration>>> element
-  and not in the <<<configuration>>> element under the <<<execution>>> tag.
-
-  Instead of specifying a file, you can also specify either a <<URL>> or a <<relative path inside a JAR>> (to learn
-  how to use this last feature, refer to the
-  {{{http://maven.apache.org/plugins/maven-checkstyle-plugin/tips.html}Checkstlye plugin documentation}}.
-
-* {Aggregating Clover reports}
-
-  <<Note: There's currently a {{{http://jira.codehaus.org/browse/MCLOVER-34}bug in Maven2}} which results in the clover
-  aggregation not working properly. More specifically the aggregate goal requires an existing Clover database and
-  thus the first time your run "mvn site" the aggregated report won't be generated. It'll work the second time
-  though. Just ensure that you run the aggregate goal after you've generated the children Clover databases.>>
-
-  You can aggregate children modules Clover reports into a single master report by running the <<<clover:aggregate>>>
-  goal. For example if you have the following project layout:
-
-+--------
-myproject/
-  |_ project1/
-    |_ pom.xml
-  |_ project2/
-    |_ pom.xml
-  |_ pom.xml
+myproject
+ |-- project1
+ |   `-- pom.xml
+ |-- project2
+ |   `-- pom.xml
+ `-- pom.xml
 +---------
 
   Then, ensure that your <<<myproject/pom.xml>>> contains the following:
@@ -381,35 +553,31 @@ myproject/
 [...]
 +---------
 
-  When you run <<<mvn site>>> in <<<myproject/>>>, the plugin will instrument your sources, run your tests,
-  aggregate the different Clover databases generated for each build module (i.e. <<<project1>>> and <<<project2>>>)
-  and generate a master Clover report in the site for the <<<myproject>>> project.
+  When you run <<<mvn site>>> in <<<myproject/>>>, the plugin will instrument 
+  your sources, run your tests, aggregate the different 
+  {{{http://cenqua.com/clover/doc/adv/database.html}Clover database}} generated 
+  for each build module (i.e. <<<project1>>> and <<<project2>>>) and generate an
+  aggregated Clover report in the site for the <<<myproject>>> project.
+  
+  Alternatively, you can execute
+  
++------+
+mvn clover:aggregate clover:clover
++------+
 
-  Note that you can control the location of the master Clover database by using the <<<cloverMergeDatabase>>>
-  configuration property.
+  or if there is no existing 
+  {{{http://cenqua.com/clover/doc/adv/database.html}Clover database}}:
+  
++------+
+mvn clover:instrument clover:aggregate clover:clover
++------+
 
-* {Controlling files to instrument}
-
-  By default all Java files are included during the instrumentation. To specify inclusion and exclusion use the
-  <<<includes>>> and <<<excludes>>> configuration elements as shown in this example:
-
-+--------
-  <plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-clover-plugin</artifactId>
-    <configuration>
-      <includes>
-        <include>**/api/**/*.java</include>
-        <include>some/path/MyFile.java</include>
-        [...]
-      </includes>
-      <excludes>
-        <exclude>**/*Test/java</exclude>
-        [...]
-      </excludes>
-[...]
-+---------
-
+  Note that you can control the location of the merged
+  {{{http://cenqua.com/clover/doc/adv/database.html}Clover database}} by using
+  the <<<cloverMergeDatabase>>> configuration property.
+  
+  <Back to {{{usage.html}top}}.>
+  
 * {Getting information on an existing Clover database}
 
   You can dump information about your project's Clover database (after it has been populated) by running
@@ -429,3 +597,48 @@ Coverage Overview -
  Conditionals: 1/2 (50%)
         TOTAL: 62,5%
 +---------
+
+  <Back to {{{usage.html}top}}.>
+  
+* {Specifying a custom license file}
+
+  The Clover plugin provides a default evaulation license. However if you continue to use Clover you'll need your
+  own license (they are free for open source/non-commercial project but you'll need to contact Cenqua to get a
+  license). To use your license specify it using a <<<licenseLocation>>> configuration element. For example if you
+  wanted to automatically execute the <<<check>>> goal when you type <<<mvn install>>> and if you wanted to use your
+  license located in <<<${basedir}/src/test/clover/myclover.license>>> you would use:
+
++--------
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clover-plugin</artifactId>
+        <configuration>
+          <licenseLocation>${basedir}/src/test/clover/myclover.license</licenseLocation>
+        </configuration>
+        <executions>
+          <execution>
+            <configuration>
+              <targetPercentage>50%</targetPercentage>
+            </configuration>
+            <phase>verify</phase>
+            <goals>
+              <goal>instrument</goal>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
++---------
+
+  Important note: The <<<licenseLocation>>> element needs to be defined in the global <<<configuration>>> element
+  and not in the <<<configuration>>> element under the <<<execution>>> tag.
+
+  Instead of specifying a file, you can also specify either a <<URL>> or a <<relative path inside a JAR>> (to learn
+  how to use this feature, refer to the
+  {{{http://maven.apache.org/plugins/maven-checkstyle-plugin/tips.html}Checkstlye plugin documentation}}.
+
+  <Back to {{{usage.html}top}}.>

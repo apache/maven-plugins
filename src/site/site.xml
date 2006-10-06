@@ -37,6 +37,12 @@
       <item name="Usage" href="usage.html"/>
       <item name="FAQ" href="faq.html"/>
     </menu>
+    
+    <menu name="Examples">
+      <item name="Simple" href="/examples/simple.html"/>
+      <item name="Filter Contexts" href="/examples/contexts.html"/>
+      <item name="Multiproject" href="/examples/multiproject.html"/>
+    </menu>
 
     <!-- To be uncommented once it's up to date again -->
     <!--menu name="Architecture">
