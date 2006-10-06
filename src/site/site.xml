@@ -38,12 +38,11 @@
       <item name="FAQ" href="faq.html"/>
     </menu>
     
-    <!-- TODO: Give examples -->
-    <!--menu name="Examples">
-      <item name="item 1" href="examples/item1.html"/>
-      <item name="item 2" href="examples/item2.html"/>
-      <item name="item 3" href="examples/item3.html"/>
-    </menu-->
+    <menu name="Examples">
+      <item name="Simple" href="/examples/simple.html"/>
+      <item name="Filter Contexts" href="/examples/contexts.html"/>
+      <item name="Multiproject" href="/examples/multiproject.html"/>
+    </menu>
 
     <!-- To be uncommented once it's up to date again -->
     <!--menu name="Architecture">

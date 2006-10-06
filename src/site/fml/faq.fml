@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+
+<!--
+  ~ Copyright 2006 The Apache Software Foundation.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<faqs id="FAQ" title="Frequently Asked Questions">
+ <part id="General">
+   <faq id="Does Clover work on the Source code or the bytecode?">
+     <question>Does Clover work on the Source code or the bytecode?</question>
+     <answer>
+       <p>Clover works on the source code. It is not possible for Clover to work
+       on bytecodes.</p>
+     </answer>
+   </faq>
+   <faq id="Why are my tests executed twice?">
+     <question>Why are my tests executed twice?</question>
+     <answer>
+       <p>The Clover plugin takes great care not to mix the instrumented code nor any artifact generated from it
+       with main production sources and artifacts. This is the reason why you may see your tests executed twice: once
+       for the production sources and once for the Clover-instrumented sources.
+       </p>
+     </answer>
+   </faq>
+ </part>
+</faqs>
