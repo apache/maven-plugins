@@ -256,61 +256,7 @@ public class DependencyUtil
 
     }
 
-    /**
-     * Log the results
-     * 
-     * @param resolvedArtifacts
-     *            set of artifacts that where resolved.
-     * @param missingArtifacts
-     *            set of artifacts that where not resolved.
-     * @param existingArtifacts
-     *            set of artifacts that already existed.
-     */
-    private static void logResults( Set resolvedArtifacts, Set missingArtifacts, HashSet existingArtifacts,
-                                   boolean silent, Log log )
-    {
-        if ( !silent )
-        {
-            log.info( "" );
-            log.info( "The following files have been resolved: " );
-            if ( resolvedArtifacts.isEmpty() )
-            {
-                log.info( "   none" );
-            }
-            else
-            {
-                for ( Iterator i = resolvedArtifacts.iterator(); i.hasNext(); )
-                {
-                    log.info( "   " + ( (Artifact) i.next() ).getId() );
-                }
-            }
-
-            if ( existingArtifacts != null && !existingArtifacts.isEmpty() )
-            {
-                log.info( "" );
-                log.info( "The following files where skipped: " );
-                for ( Iterator i = existingArtifacts.iterator(); i.hasNext(); )
-                {
-                    log.info( "   " + ( (Artifact) i.next() ).getId() );
-                }
-            }
-            log.info( "" );
-            log.info( "The following files have NOT been resolved: " );
-            if ( missingArtifacts.isEmpty() )
-            {
-                log.info( "   none" );
-            }
-            else
-            {
-                for ( Iterator i = missingArtifacts.iterator(); i.hasNext(); )
-                {
-                    log.info( "   " + ( (Artifact) i.next() ).getId() );
-                }
-            }
-            log.info( "" );
-        }
-    }
-
+   
     /**
      * This method resolves the plugin artifacts from the project.
      * 
