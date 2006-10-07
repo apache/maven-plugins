@@ -34,12 +34,24 @@ public class EclipseSourceDir
 
     private String exclude;
 
+    private boolean isResource;
+
     private boolean test;
 
+    /**
+     * @deprecated Use the other constructor
+     */
     public EclipseSourceDir( String path, String output, boolean test, String include, String exclude )
+    {
+        this(path, output, test, false, include, exclude);
+    }
+
+
+    public EclipseSourceDir( String path, String output, boolean isResource, boolean test, String include, String exclude )
     {
         this.path = path;
         this.output = output;
+        this.isResource = isResource;
         this.test = test;
         this.include = include;
         this.exclude = exclude;

@@ -772,7 +772,7 @@ public class EclipsePlugin
                 String sourceRoot = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, sourceRootFile, !projectBaseDir
                     .equals( basedir ) );
 
-                directories.add( new EclipseSourceDir( sourceRoot, output, test, null, null ) );
+                directories.add( new EclipseSourceDir( sourceRoot, output, true, test, null, null ) );
             }
         }
     }
@@ -847,7 +847,7 @@ public class EclipsePlugin
                 output = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, outputFile, false );
             }
 
-            directories.add( new EclipseSourceDir( resourceDir, output, test, includePattern, excludePattern ) );
+            directories.add( new EclipseSourceDir( resourceDir, output, true, test, includePattern, excludePattern ) );
         }
     }
 
