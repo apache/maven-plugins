@@ -32,6 +32,8 @@ import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.dependency.stubs.StubDefaultFileMarkerHandler;
+import org.apache.maven.plugin.dependency.stubs.StubSourcesFileMarkerHandler;
 import org.apache.maven.plugin.dependency.utils.SilentLog;
 import org.apache.maven.plugin.logging.Log;
 
@@ -216,20 +218,46 @@ public class TestSourcesMarkerFileHandler
         theFile.createNewFile();
         Artifact theArtifact = (Artifact) artifacts.get( 0 );
         theArtifact.setFile( theFile );
-        SourcesFileMarkerHandler handler = new SourcesFileMarkerHandler( (Artifact) artifacts.get( 0 ),
+        SourcesFileMarkerHandler resolvedHandler = new SourcesFileMarkerHandler( (Artifact) artifacts.get( 0 ),
                                                                          this.outputFolder, resolved );
-        assertFalse( handler.isMarkerSet() );
+        SourcesFileMarkerHandler unResolvedHandler = new SourcesFileMarkerHandler( (Artifact) artifacts.get( 0 ),
+                                                                                 this.outputFolder, !resolved );
+             
+        assertFalse( resolvedHandler.isMarkerSet() );
+        assertFalse( unResolvedHandler.isMarkerSet() );
         // if the marker is not set, assume it is infinately older than the
         // artifact.
-        assertTrue( handler.isMarkerOlder( theArtifact ) );
-        handler.setMarker();
-        assertFalse( handler.isMarkerOlder( theArtifact ) );
+        assertTrue( resolvedHandler.isMarkerOlder( theArtifact ) );
+        assertTrue( unResolvedHandler.isMarkerOlder( theArtifact ) );
+        resolvedHandler.setMarker();
+        assertFalse( resolvedHandler.isMarkerOlder( theArtifact ) );
+        assertFalse( unResolvedHandler.isMarkerOlder( theArtifact ) );
 
+        resolvedHandler.clearMarker();
+        unResolvedHandler.setMarker();
+        assertFalse( resolvedHandler.isMarkerOlder( theArtifact ) );
+        assertFalse( unResolvedHandler.isMarkerOlder( theArtifact ) );
+        
         theFile.setLastModified( theFile.lastModified() + 222 );
-        assertTrue( handler.isMarkerOlder( theArtifact ) );
+        assertTrue( resolvedHandler.isMarkerOlder( theArtifact ) );
+        assertTrue( unResolvedHandler.isMarkerOlder( theArtifact ) );
 
         theFile.delete();
-        handler.clearMarker();
-        assertFalse( handler.isMarkerSet() );
+        resolvedHandler.clearMarker();
+        assertFalse( resolvedHandler.isMarkerSet() );
+    }
+    public void testMarkerFileException()
+    {
+        // this stub wraps the file with an object to throw exceptions
+        StubSourcesFileMarkerHandler handler = new StubSourcesFileMarkerHandler( (Artifact) artifacts.get( 0 ),
+                                                                                 this.outputFolder, true );
+        try
+        {
+            handler.setMarker();
+            fail( "Expected an Exception here" );
+        }
+        catch ( MojoExecutionException e )
+        {
+        }
     }
 }
