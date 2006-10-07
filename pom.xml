@@ -2,7 +2,7 @@
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>3</version>
+    <version>4-SNAPSHOT</version>
   </parent>
   <prerequisites>
     <maven>2.0.1</maven>
