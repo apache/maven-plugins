@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import junit.framework.TestCase;
 
@@ -31,8 +30,8 @@ import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.artifact.versioning.VersionRange;
-import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.dependency.stubs.StubDefaultFileMarkerHandler;
 import org.apache.maven.plugin.dependency.utils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.utils.SilentLog;
 import org.apache.maven.plugin.logging.Log;
@@ -123,32 +122,6 @@ public class TestDefaultMarkerFileHandler
         assertFalse( handle.exists() );
     }
 
-    /*
-    public void testMarkerFileException()
-        throws IOException, MojoExecutionException
-    {
-        DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( (Artifact) artifacts.get( 0 ),
-                                                                         this.outputFolder );
-
-        File handle = handler.getMarkerFile();
-        assertFalse( handle.exists() );
-        assertFalse( handler.isMarkerSet() );
-
-        handle.getParentFile().mkdirs();
-        handle.getParentFile().setReadOnly();
-        handle.
-        
-        try
-        {
-            handler.setMarker();
-            fail( "Expected an Exception" );
-        }
-        catch ( MojoExecutionException e )
-        {
-
-        }
-    }
-*/
     public void testMarkerTimeStamp()
         throws MojoExecutionException, IOException, InterruptedException
     {
@@ -171,5 +144,21 @@ public class TestDefaultMarkerFileHandler
         theFile.delete();
         handler.clearMarker();
         assertFalse( handler.isMarkerSet() );
+    }
+
+    public void testMarkerFileException()
+    {
+        // this stub wraps the file with an object to throw exceptions
+        StubDefaultFileMarkerHandler handler = new StubDefaultFileMarkerHandler( (Artifact) artifacts.get( 0 ),
+                                                                                 this.outputFolder );
+        try
+        {
+            handler.setMarker();
+            fail( "Expected an Exception here" );
+        }
+        catch ( MojoExecutionException e )
+        {
+
+        }
     }
 }

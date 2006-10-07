@@ -25,6 +25,7 @@ import java.util.TreeSet;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.logging.Log;
+import org.codehaus.plexus.util.CollectionUtils;
 
 /**
  * @author brianf
@@ -106,7 +107,7 @@ public class DependencyStatusSets
     {
         log.info( "" );
         log.info( "The following files have been resolved: " );
-        if ( this.resolvedDependencies.isEmpty() )
+        if ( this.resolvedDependencies == null || this.resolvedDependencies.isEmpty() )
         {
             log.info( "   none" );
         }
@@ -122,7 +123,7 @@ public class DependencyStatusSets
                 {
                     try
                     {
-                        artifact.getFile().getAbsoluteFile();
+                        artifactFilename = artifact.getFile().getAbsoluteFile().getName();
                     }
                     catch ( NullPointerException e )
                     {
