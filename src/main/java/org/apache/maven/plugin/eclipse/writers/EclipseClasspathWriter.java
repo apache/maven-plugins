@@ -94,6 +94,11 @@ public class EclipseClasspathWriter
     private static final String ATTR_CON = "con"; //$NON-NLS-1$     
 
     /**
+     * Attribute name for source file excludes in a path.
+     */
+    private static final String ATTR_EXCLUDING = "excluding";
+
+    /**
      * Element for classpathentry.
      */
     private static final String ELT_CLASSPATHENTRY = "classpathentry"; //$NON-NLS-1$
@@ -148,6 +153,11 @@ public class EclipseClasspathWriter
             if ( dir.getOutput() != null && !defaultOutput.equals( dir.getOutput() ) )
             {
                 writer.addAttribute( ATTR_OUTPUT, dir.getOutput() );
+            }
+
+            if ( dir.isResource() )
+            {
+                writer.addAttribute( ATTR_EXCLUDING, "**/*.java" );
             }
 
             writer.endElement();
