@@ -52,4 +52,6 @@ public class TestResolveMojo
         assertNotNull( results );
         assertEquals( directArtifacts.size(), results.getResolvedDependencies().size() );
     }
+    
+    //TODO: Test skipping artifacts.
 }

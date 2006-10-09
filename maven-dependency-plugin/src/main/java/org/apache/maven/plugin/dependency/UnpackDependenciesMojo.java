@@ -23,6 +23,10 @@ import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
+import org.apache.maven.plugin.dependency.utils.filters.ArtifactsFilter;
+import org.apache.maven.plugin.dependency.utils.filters.MarkerFileFilter;
+import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
+import org.apache.maven.plugin.dependency.utils.markers.MarkerHandler;
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 
@@ -61,19 +65,15 @@ public class UnpackDependenciesMojo
             File destDir = DependencyUtil.getFormattedOutputDirectory( this.useSubDirectoryPerType,
                                                                        this.useSubDirectoryPerArtifact,
                                                                        this.outputDirectory, artifact );
-
-            boolean overWrite = true;
-            if ( artifact.isSnapshot() )
-            {
-                overWrite = this.overWriteSnapshots;
-            }
-            else
-            {
-                overWrite = this.overWriteReleases;
-            }
-
+//          force overwrite for now. The filters should have removed anything from the list that shouldn't 
+            //be overwritten.
             DependencyUtil.unpackFile( artifact, destDir, this.markersDirectory, this.archiverManager, this.getLog(),
-                                       overWrite );
+                                       true );
         }
+    }
+
+    protected ArtifactsFilter getMarkedArtifactFilter()
+    {
+        return new MarkerFileFilter(this.overWriteReleases,this.overWriteSnapshots,this.overWriteIfNewer,new DefaultFileMarkerHandler(this.markersDirectory));
     }
 }
