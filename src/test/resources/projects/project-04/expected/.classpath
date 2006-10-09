@@ -1,8 +1,8 @@
 <classpath>
   <classpathentry kind="src" path="src-main-java"/>
-  <classpathentry kind="src" path="src-main-resources" output="target/classes/main-resources"/>
+  <classpathentry kind="src" path="src-main-resources" output="target/classes/main-resources" excluding="**/*.java"/>
   <classpathentry kind="src" path="src-test-java" output="target/test-classes-dir"/>
-  <classpathentry kind="src" path="src-test-resources" output="target/test-classes-dir"/>
+  <classpathentry kind="src" path="src-test-resources" output="target/test-classes-dir" excluding="**/*.java"/>
   <classpathentry kind="output" path="target/classes"/>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
   <classpathentry kind="var" exported="true" path="M2_REPO/junit/junit/2.0/junit-2.0.jar"/>
