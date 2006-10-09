@@ -47,23 +47,34 @@ public class JarDefaultSourceMojo
         }
         else
         {
-            File outputFile = new File( outputDirectory, finalName + "-sources.jar" );
-            File[] sourceDirectories = getDefaultSources();
+            // Do not attach source JAR for artifacts with classifier. This is because Maven2 only supports a single
+            // classifier per artifact. This is a limitation. See http://jira.codehaus.org/browse/MSOURCES-10.
+            if ( getProject().getArtifact().getClassifier() != null )
+            {
+                getLog().warn( "NOT adding sources to artifacts with classifier as Maven only supports one classifier "
+                    + "per artifact. Current artifact [" + getProject().getArtifact().getId() + "] has a ["
+                    + getProject().getArtifact().getClassifier() + "] classifier.");
+            }
+            else
+            {
+                File outputFile = new File( outputDirectory, finalName + "-sources.jar" );
+                File[] sourceDirectories = getDefaultSources();
 
-            try
-            {
-                createJar( outputFile, sourceDirectories, new JarArchiver() );
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Error creating source archive: " + e.getMessage(), e );
-            }
-            catch ( ArchiverException e )
-            {
-                throw new MojoExecutionException( "Error creating source archive: " + e.getMessage(), e );
-            }
+                try
+                {
+                    createJar( outputFile, sourceDirectories, new JarArchiver() );
+                }
+                catch ( IOException e )
+                {
+                    throw new MojoExecutionException( "Error creating source archive: " + e.getMessage(), e );
+                }
+                catch ( ArchiverException e )
+                {
+                    throw new MojoExecutionException( "Error creating source archive: " + e.getMessage(), e );
+                }
 
-            attachArtifact( outputFile, "sources" );
+                attachArtifact( outputFile, "sources" );
+            }
         }
     }
 
