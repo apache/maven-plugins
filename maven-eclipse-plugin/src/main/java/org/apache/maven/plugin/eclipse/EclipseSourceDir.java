@@ -43,11 +43,11 @@ public class EclipseSourceDir
      */
     public EclipseSourceDir( String path, String output, boolean test, String include, String exclude )
     {
-        this(path, output, test, false, include, exclude);
+        this( path, output, test, false, include, exclude );
     }
 
-
-    public EclipseSourceDir( String path, String output, boolean isResource, boolean test, String include, String exclude )
+    public EclipseSourceDir( String path, String output, boolean isResource, boolean test, String include,
+                             String exclude )
     {
         this.path = path;
         this.output = output;
@@ -160,6 +160,15 @@ public class EclipseSourceDir
     public void setTest( boolean test )
     {
         this.test = test;
+    }
+
+    /**
+     * Getter for <code>isResource</code>.
+     * @return Returns the isResource.
+     */
+    public boolean isResource()
+    {
+        return this.isResource;
     }
 
     /**

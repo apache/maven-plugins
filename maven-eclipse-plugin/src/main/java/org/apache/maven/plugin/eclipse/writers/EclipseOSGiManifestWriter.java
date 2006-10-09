@@ -26,6 +26,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.ide.IdeDependency;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * The <code>EclipseOSGiManifestWriter</code> ensures that value of the "Bundle-Classpath" property 
@@ -177,6 +178,38 @@ public class EclipseOSGiManifestWriter
         // OSGi manifest headers need to end with a line break
         manifestSb.append( NEWLINE );
         return manifestSb;
+    }
+
+    /**
+     * Normalize a version number, by moving snapshot identifier to the 5th token (first 4 tokens must be numeric for
+     * OSGI bundles)
+     * @param version original version
+     * @return a normalized version number
+     */
+    protected static String getNormalizedVersion( String version )
+    {
+
+        if ( version.endsWith( "-SNAPSHOT" ) )
+        {
+            String[] versionTokens = StringUtils.split( StringUtils.stripEnd( version, "-SNAPSHOT" ), "." );
+
+            int j = 0;
+            StringBuffer newVersion = new StringBuffer( 20 );
+            for ( ; j < versionTokens.length; j++ )
+            {
+                newVersion.append( versionTokens[j] );
+                newVersion.append( "." );
+            }
+            for ( ; j < 3; j++ )
+            {
+                newVersion.append( "0." );
+            }
+
+            newVersion.append( "SNAPSHOT" );
+            version = newVersion.toString();
+
+        }
+        return version;
     }
 
     /**
