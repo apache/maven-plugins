@@ -35,6 +35,11 @@ public class DefaultFileMarkerHandler
 
     protected File markerFilesDirectory;
 
+    public DefaultFileMarkerHandler( File markerFilesDirectory )
+    {
+        this.markerFilesDirectory = markerFilesDirectory;
+    }
+
     public DefaultFileMarkerHandler( Artifact artifact, File markerFilesDirectory )
     {
         this.artifact = artifact;
@@ -70,13 +75,13 @@ public class DefaultFileMarkerHandler
         return marker.exists();
     }
 
-    public boolean isMarkerOlder( Artifact artifact )
+    public boolean isMarkerOlder( Artifact artifact1 )
         throws MojoExecutionException
     {
         File marker = getMarkerFile();
         if ( marker.exists() )
         {
-            return artifact.getFile().lastModified() > marker.lastModified();
+            return artifact1.getFile().lastModified() > marker.lastModified();
         }
         else
         {
@@ -121,5 +126,39 @@ public class DefaultFileMarkerHandler
     {
         File marker = getMarkerFile();
         return marker.delete();
+    }
+
+    /**
+     * @return Returns the artifact.
+     */
+    public Artifact getArtifact()
+    {
+        return this.artifact;
+    }
+
+    /**
+     * @param artifact
+     *            The artifact to set.
+     */
+    public void setArtifact( Artifact artifact )
+    {
+        this.artifact = artifact;
+    }
+
+    /**
+     * @return Returns the markerFilesDirectory.
+     */
+    public File getMarkerFilesDirectory()
+    {
+        return this.markerFilesDirectory;
+    }
+
+    /**
+     * @param markerFilesDirectory
+     *            The markerFilesDirectory to set.
+     */
+    public void setMarkerFilesDirectory( File markerFilesDirectory )
+    {
+        this.markerFilesDirectory = markerFilesDirectory;
     }
 }

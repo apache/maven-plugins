@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
+import org.apache.maven.plugin.dependency.utils.filters.ArtifactsFilter;
 import org.apache.maven.plugin.dependency.utils.filters.FilterArtifacts;
 import org.apache.maven.plugin.dependency.utils.filters.MarkerFileFilter;
 import org.apache.maven.plugin.dependency.utils.filters.ScopeFilter;
@@ -132,6 +133,7 @@ public abstract class AbstractDependencyFilterMojo
      */
     protected boolean outputArtifactFilename;
 
+    abstract protected ArtifactsFilter getMarkedArtifactFilter();
     /**
      * Retrieves dependencies, either direct only or all including transitive.
      * 
@@ -214,14 +216,13 @@ public abstract class AbstractDependencyFilterMojo
         return status;
     }
 
-    private DependencyStatusSets filterMarkedDependencies( Set artifacts )
+    protected DependencyStatusSets filterMarkedDependencies( Set artifacts )
         throws MojoExecutionException
     {
         // remove files that have markers already
         FilterArtifacts filter = new FilterArtifacts();
         filter.clearFilters();
-        filter.addFilter( new MarkerFileFilter( this.overWriteReleases, this.overWriteSnapshots, this.overWriteIfNewer,
-                                                this.markersDirectory ) );
+        filter.addFilter( getMarkedArtifactFilter() );
 
         Set unMarkedArtifacts = filter.filter( artifacts, getLog() );
 

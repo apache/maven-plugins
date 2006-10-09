@@ -32,6 +32,7 @@ import org.apache.maven.plugin.dependency.utils.ArtifactStubFactory;
 import org.apache.maven.plugin.dependency.utils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.utils.SilentLog;
 import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
+import org.apache.maven.plugin.dependency.utils.markers.MarkerHandler;
 import org.apache.maven.plugin.logging.Log;
 
 /**
@@ -72,7 +73,7 @@ public class TestMarkerFileFilter
     public void testMarkerFile()
         throws MojoExecutionException
     {
-        MarkerFileFilter filter = new MarkerFileFilter( true, true, false, outputFolder );
+        MarkerFileFilter filter = new MarkerFileFilter( true, true, false, new DefaultFileMarkerHandler( outputFolder ) );
         Set result = filter.filter( artifacts, log );
         assertEquals( 2, result.size() );
 
@@ -88,7 +89,7 @@ public class TestMarkerFileFilter
         DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( fact.getSnapshotArtifact(), outputFolder );
         handler.setMarker();
 
-        MarkerFileFilter filter = new MarkerFileFilter( true, false, false, outputFolder );
+        MarkerFileFilter filter = new MarkerFileFilter( true, false, false, new DefaultFileMarkerHandler( outputFolder ) );
         Set result = filter.filter( artifacts, log );
         assertEquals( 1, result.size() );
 
@@ -106,7 +107,8 @@ public class TestMarkerFileFilter
         DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( fact.getReleaseArtifact(), outputFolder );
         handler.setMarker();
 
-        MarkerFileFilter filter = new MarkerFileFilter( false, false, false, outputFolder );
+        MarkerFileFilter filter = new MarkerFileFilter( false, false, false,
+                                                        new DefaultFileMarkerHandler( outputFolder ) );
         Set result = filter.filter( artifacts, log );
         assertEquals( 1, result.size() );
 
@@ -131,7 +133,7 @@ public class TestMarkerFileFilter
         snap.getFile().setLastModified( snap.getFile().lastModified() + 222 );
         DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( snap, outputFolder );
         handler.setMarker();
-        MarkerFileFilter filter = new MarkerFileFilter( false, false, true, outputFolder );
+        MarkerFileFilter filter = new MarkerFileFilter( false, false, true, new DefaultFileMarkerHandler( outputFolder ) );
         Set result = filter.filter( tempArtifacts, log );
         assertEquals( 2, result.size() );
 
@@ -150,21 +152,19 @@ public class TestMarkerFileFilter
 
     public void testGettersSetters()
     {
-        MarkerFileFilter filter = new MarkerFileFilter( true, false, true, outputFolder );
+        MarkerFileFilter filter = new MarkerFileFilter( true, false, true, new DefaultFileMarkerHandler( outputFolder ) );
         assertEquals( true, filter.isOverWriteReleases() );
         assertEquals( false, filter.isOverWriteSnapshots() );
         assertEquals( true, filter.isOverWriteIfNewer() );
-        assertEquals( outputFolder, filter.getMarkerFileDirectory() );
 
         filter.setOverWriteReleases( false );
         filter.setOverWriteSnapshots( true );
         filter.setOverWriteIfNewer( false );
         File file = new File( outputFolder, "child" );
-        filter.setMarkerFileDirectory( file );
+
         assertEquals( false, filter.isOverWriteReleases() );
         assertEquals( true, filter.isOverWriteSnapshots() );
         assertEquals( false, filter.isOverWriteIfNewer() );
-        assertEquals( file, filter.getMarkerFileDirectory() );
 
     }
 
