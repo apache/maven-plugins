@@ -22,7 +22,12 @@ import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
+import org.apache.maven.plugin.dependency.utils.filters.ArtifactsFilter;
+import org.apache.maven.plugin.dependency.utils.filters.DestFileFilter;
+import org.apache.maven.plugin.dependency.utils.filters.MarkerFileFilter;
+import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
 import org.apache.maven.plugin.logging.Log;
 
 /**
@@ -59,11 +64,21 @@ public class CopyDependenciesMojo
     public void execute()
         throws MojoExecutionException
     {
-        Set artifacts = getDependencies(true);
+        DependencyStatusSets dss = getDependencySets( true );
+        Set artifacts = dss.getResolvedDependencies();
 
         for ( Iterator i = artifacts.iterator(); i.hasNext(); )
         {
             copyArtifact( (Artifact) i.next(), this.stripVersion );
+        }
+
+        artifacts = dss.getSkippedDependencies();
+        {
+            for ( Iterator i = artifacts.iterator(); i.hasNext(); )
+            {
+                Artifact artifact = (Artifact)i.next();
+                getLog().info(artifact.getFile().getName()+" already exists in destination."); 
+            }
         }
     }
 
@@ -95,16 +110,13 @@ public class CopyDependenciesMojo
                                                                    this.outputDirectory, artifact );
         File destFile = new File( destDir, destFileName );
 
-        boolean overWrite = true;
-        if ( artifact.isSnapshot() )
-        {
-            overWrite = this.overWriteSnapshots;
-        }
-        else
-        {
-            overWrite = this.overWriteReleases;
-        }
+        DependencyUtil.copyFile( artifact.getFile(), destFile, this.getLog(), true );
+    }
 
-        DependencyUtil.copyFile( artifact.getFile(), destFile, this.getLog(), overWrite );
+    protected ArtifactsFilter getMarkedArtifactFilter()
+    {
+        return new DestFileFilter( this.overWriteReleases, this.overWriteSnapshots, this.overWriteIfNewer,
+                                   this.useSubDirectoryPerArtifact, this.useSubDirectoryPerType, this.stripVersion,
+                                   this.outputDirectory );
     }
 }

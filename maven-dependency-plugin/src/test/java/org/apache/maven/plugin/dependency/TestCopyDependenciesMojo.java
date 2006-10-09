@@ -1,25 +1,18 @@
 package org.apache.maven.plugin.dependency;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.factory.DefaultArtifactFactory;
-import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
-import org.apache.maven.artifact.handler.manager.DefaultArtifactHandlerManager;
-import org.apache.maven.artifact.repository.DefaultArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.stubs.StubArtifactRepository;
 import org.apache.maven.plugin.dependency.stubs.StubArtifactResolver;
-import org.apache.maven.plugin.dependency.utils.ArtifactStubFactory;
 import org.apache.maven.plugin.dependency.utils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
+import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -27,18 +20,16 @@ public class TestCopyDependenciesMojo
     extends AbstractDependencyMojoTestCase
 {
 
+    CopyDependenciesMojo mojo;
+
     protected void setUp()
         throws Exception
     {
         // required for mojo lookups to work
         super.setUp( "copy-dependencies", true );
-    }
 
-    private CopyDependenciesMojo getNewMojo()
-        throws Exception
-    {
         File testPom = new File( getBasedir(), "target/test-classes/unit/copy-dependencies-test/plugin-config.xml" );
-        CopyDependenciesMojo mojo = (CopyDependenciesMojo) lookupMojo( "copy-dependencies", testPom );
+        mojo = (CopyDependenciesMojo) lookupMojo( "copy-dependencies", testPom );
         mojo.outputDirectory = new File( this.testDir, "outputDirectory" );
         // mojo.silent = true;
 
@@ -52,8 +43,21 @@ public class TestCopyDependenciesMojo
 
         project.setArtifacts( artifacts );
         project.setDependencyArtifacts( directArtifacts );
+        mojo.markersDirectory = new File( this.testDir, "markers" );
 
-        return mojo;
+    }
+
+    public void assertNoMarkerFile( Artifact artifact )
+    {
+        DefaultFileMarkerHandler handle = new DefaultFileMarkerHandler( artifact, mojo.markersDirectory );
+        try
+        {
+            assertFalse( handle.isMarkerSet() );
+        }
+        catch ( MojoExecutionException e )
+        {
+            fail( e.getLongMessage() );
+        }
 
     }
 
@@ -65,7 +69,6 @@ public class TestCopyDependenciesMojo
     public void testCopyDependenciesMojo()
         throws Exception
     {
-        CopyDependenciesMojo mojo = getNewMojo();
         mojo.execute();
         Iterator iter = mojo.project.getArtifacts().iterator();
         while ( iter.hasNext() )
@@ -74,13 +77,15 @@ public class TestCopyDependenciesMojo
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName );
             assertTrue( file.exists() );
+
+            // there should be no markers for the copy mojo
+            assertNoMarkerFile( artifact );
         }
     }
 
     public void testCopyDependenciesMojoStripVersion()
         throws Exception
     {
-        CopyDependenciesMojo mojo = getNewMojo();
         mojo.stripVersion = true;
         mojo.execute();
 
@@ -97,7 +102,6 @@ public class TestCopyDependenciesMojo
     public void testCopyDependenciesMojoNoTransitive()
         throws Exception
     {
-        CopyDependenciesMojo mojo = getNewMojo();
         mojo.excludeTransitive = true;
         mojo.execute();
         Iterator iter = mojo.project.getDependencyArtifacts().iterator();
@@ -120,7 +124,6 @@ public class TestCopyDependenciesMojo
     public void testCopyDependenciesMojoExcludeType()
         throws Exception
     {
-        CopyDependenciesMojo mojo = getNewMojo();
         mojo.project.setArtifacts( stubFactory.getTypedArtifacts() );
         mojo.project.setDependencyArtifacts( new HashSet() );
         mojo.excludeTypes = "jar";
@@ -146,7 +149,6 @@ public class TestCopyDependenciesMojo
     public void testCopyDependenciesMojoIncludeType()
         throws Exception
     {
-        CopyDependenciesMojo mojo = getNewMojo();
         mojo.project.setArtifacts( stubFactory.getTypedArtifacts() );
         mojo.project.setDependencyArtifacts( new HashSet() );
 
@@ -176,7 +178,6 @@ public class TestCopyDependenciesMojo
     public void testCopyDependenciesMojoSubPerType()
         throws Exception
     {
-        CopyDependenciesMojo mojo = getNewMojo();
         mojo.project.setArtifacts( stubFactory.getTypedArtifacts() );
         mojo.project.setDependencyArtifacts( new HashSet() );
         mojo.useSubDirectoryPerType = true;
@@ -196,7 +197,6 @@ public class TestCopyDependenciesMojo
     public void testCopyDependenciesMojoSubPerArtifact()
         throws Exception
     {
-        CopyDependenciesMojo mojo = getNewMojo();
         mojo.useSubDirectoryPerArtifact = true;
         mojo.execute();
 
@@ -214,7 +214,6 @@ public class TestCopyDependenciesMojo
     public void testCopyDependenciesMojoSubPerArtifactAndType()
         throws Exception
     {
-        CopyDependenciesMojo mojo = getNewMojo();
         mojo.project.setArtifacts( stubFactory.getTypedArtifacts() );
         mojo.project.setDependencyArtifacts( new HashSet() );
         mojo.useSubDirectoryPerArtifact = true;
@@ -235,7 +234,6 @@ public class TestCopyDependenciesMojo
     public void testCopyDependenciesMojoIncludeCompileScope()
         throws Exception
     {
-        CopyDependenciesMojo mojo = getNewMojo();
         mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
         mojo.project.setDependencyArtifacts( new HashSet() );
         mojo.includeScope = "compile";
@@ -256,7 +254,6 @@ public class TestCopyDependenciesMojo
     public void testCopyDependenciesMojoIncludeTestScope()
         throws Exception
     {
-        CopyDependenciesMojo mojo = getNewMojo();
         mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
         mojo.project.setDependencyArtifacts( new HashSet() );
         mojo.includeScope = "test";
@@ -278,7 +275,6 @@ public class TestCopyDependenciesMojo
     public void testCopyDependenciesMojoIncludeRuntimeScope()
         throws Exception
     {
-        CopyDependenciesMojo mojo = getNewMojo();
         mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
         mojo.project.setDependencyArtifacts( new HashSet() );
         mojo.includeScope = "runtime";
@@ -299,7 +295,6 @@ public class TestCopyDependenciesMojo
     public void testCopyDependenciesMojoIncludeprovidedScope()
         throws Exception
     {
-        CopyDependenciesMojo mojo = getNewMojo();
         mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
         mojo.project.setDependencyArtifacts( new HashSet() );
         mojo.includeScope = "provided";
@@ -318,7 +313,6 @@ public class TestCopyDependenciesMojo
     public void testCopyDependenciesMojoIncludesystemScope()
         throws Exception
     {
-        CopyDependenciesMojo mojo = getNewMojo();
         mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
         mojo.project.setDependencyArtifacts( new HashSet() );
         mojo.includeScope = "system";
@@ -357,7 +351,6 @@ public class TestCopyDependenciesMojo
     public void dotestCopyDependenciesMojoClassifierType( String testClassifier, String testType )
         throws Exception
     {
-        CopyDependenciesMojo mojo = getNewMojo();
         mojo.classifier = testClassifier;
         mojo.type = testType;
 
@@ -392,6 +385,9 @@ public class TestCopyDependenciesMojo
             {
                 fail( "Can't find:" + file.getAbsolutePath() );
             }
+
+            // there should be no markers for the copy mojo
+            assertNoMarkerFile( artifact );
         }
     }
 
@@ -410,10 +406,9 @@ public class TestCopyDependenciesMojo
     public void dotestArtifactExceptions( boolean are, boolean anfe )
         throws Exception
     {
-        CopyDependenciesMojo mojo = getNewMojo();
         mojo.classifier = "jdk";
         mojo.type = "java-sources";
-        
+
         // init classifier things
         mojo.factory = DependencyTestUtils.getArtifactFactory();
         mojo.resolver = new StubArtifactResolver( are, anfe );
@@ -428,5 +423,134 @@ public class TestCopyDependenciesMojo
         {
 
         }
+    }
+
+    /*
+     * public void testOverwrite() { stubFactory.setCreateFiles( false );
+     * Artifact artifact = stubFactory.createArtifact( "test", "artifact", "1.0" );
+     * 
+     * File testFile = new File( getBasedir() + File.separatorChar +
+     * "target/test-classes/unit/copy-dependencies-test/test.zip" ); }
+     */
+
+    public void testDontOverWriteRelease()
+        throws MojoExecutionException, InterruptedException
+    {
+
+        Set artifacts = new HashSet();
+        Artifact release = stubFactory.getReleaseArtifact();
+        release.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+
+        artifacts.add( release );
+
+        mojo.project.setArtifacts( artifacts );
+        mojo.project.setDependencyArtifacts( artifacts );
+
+        mojo.overWriteIfNewer = false;
+
+        mojo.execute();
+
+        File copiedFile = new File( mojo.outputDirectory, DependencyUtil.getFormattedFileName( release, false ) );
+
+        Thread.sleep( 100);
+        long time = System.currentTimeMillis();
+        copiedFile.setLastModified( time );
+        Thread.sleep( 100 );
+
+        mojo.execute();
+
+        assertEquals( time, copiedFile.lastModified() );
+    }
+
+    public void testOverWriteRelease()
+        throws MojoExecutionException, InterruptedException
+    {
+
+        Set artifacts = new HashSet();
+        Artifact release = stubFactory.getReleaseArtifact();
+        release.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+
+        artifacts.add( release );
+
+        mojo.project.setArtifacts( artifacts );
+        mojo.project.setDependencyArtifacts( artifacts );
+
+        mojo.overWriteReleases = true;
+        mojo.overWriteIfNewer = false;
+
+        mojo.execute();
+
+        File copiedFile = new File( mojo.outputDirectory, DependencyUtil.getFormattedFileName( release, false ) );
+
+        Thread.sleep( 100 );
+        long time = System.currentTimeMillis();
+        copiedFile.setLastModified( time );
+        Thread.sleep( 100 );
+
+        mojo.execute();
+
+        assertTrue( time < copiedFile.lastModified() );
+    }
+
+    public void testDontOverWriteSnap()
+        throws MojoExecutionException, InterruptedException
+    {
+
+        Set artifacts = new HashSet();
+        Artifact snap = stubFactory.getSnapshotArtifact();
+        snap.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+
+        artifacts.add( snap );
+
+        mojo.project.setArtifacts( artifacts );
+        mojo.project.setDependencyArtifacts( artifacts );
+
+        mojo.overWriteReleases = false;
+        mojo.overWriteSnapshots = false;
+        mojo.overWriteIfNewer = false;
+
+        mojo.execute();
+
+        File copiedFile = new File( mojo.outputDirectory, DependencyUtil.getFormattedFileName( snap, false ) );
+
+        Thread.sleep( 100 );
+        long time = System.currentTimeMillis();
+        copiedFile.setLastModified( time );
+        Thread.sleep( 100 );
+
+        mojo.execute();
+
+        assertEquals( time, copiedFile.lastModified() );
+    }
+
+    public void testOverWriteSnap()
+        throws MojoExecutionException, InterruptedException
+    {
+
+        Set artifacts = new HashSet();
+        Artifact snap = stubFactory.getSnapshotArtifact();
+        snap.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+
+        artifacts.add( snap );
+
+        mojo.project.setArtifacts( artifacts );
+        mojo.project.setDependencyArtifacts( artifacts );
+
+        mojo.overWriteReleases = false;
+        mojo.overWriteSnapshots = true;
+        mojo.overWriteIfNewer = false;
+
+        mojo.execute();
+
+        File copiedFile = new File( mojo.outputDirectory, DependencyUtil.getFormattedFileName( snap, false ) );
+
+        Thread.sleep( 100 );
+        long time = System.currentTimeMillis();
+        copiedFile.setLastModified( time );
+        Thread.sleep( 100 );
+
+        mojo.execute();
+
+        assertTrue( time < copiedFile.lastModified() );
     }
 }

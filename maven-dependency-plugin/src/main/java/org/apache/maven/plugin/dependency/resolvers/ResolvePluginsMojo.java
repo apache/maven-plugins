@@ -26,6 +26,7 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractResolveMojo;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
+import org.apache.maven.plugin.dependency.utils.filters.ArtifactsFilter;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 
@@ -113,5 +114,11 @@ public class ResolvePluginsMojo
             throw new MojoExecutionException( "Nested:", e );
         }
 
+    }
+
+    protected ArtifactsFilter getMarkedArtifactFilter()
+    {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
