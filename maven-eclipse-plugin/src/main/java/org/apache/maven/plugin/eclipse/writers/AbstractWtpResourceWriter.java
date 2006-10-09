@@ -4,8 +4,10 @@
 package org.apache.maven.plugin.eclipse.writers;
 
 import java.io.File;
+import java.util.Iterator;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.ide.IdeDependency;
@@ -244,9 +246,19 @@ public abstract class AbstractWtpResourceWriter
 
     protected String resolveJ2eeVersion()
     {
-        String version = null;
-        // @todo this is the default, find real j2ee version from dependencies
-        return version == null ? "1.3" : version; //$NON-NLS-1$
+        // Take a guess as to what version of J2EE they're using; assume 1.3
+        // See: http://maven.apache.org/guides/mini/guide-coping-with-sun-jars.html
+        String version = "1.3";
+        for ( Iterator it = config.getProject().getDependencies().iterator(); it.hasNext(); )
+        {
+            Dependency d = (Dependency) it.next();
+            if ( "javax.j2ee".equals( d.getGroupId() ) && "j2ee".equals( d.getArtifactId() ) )
+            {
+                version = d.getVersion();
+                break;
+            }
+        }
+        return version;
     }
 
     protected String resolveJavaVersion()
