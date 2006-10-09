@@ -34,6 +34,11 @@ public class SourcesFileMarkerHandler
 
     boolean resolved;
 
+    public SourcesFileMarkerHandler( File markerFilesDirectory )
+    {
+        super(markerFilesDirectory);
+    }
+
     public SourcesFileMarkerHandler( Artifact artifact, File markerFilesDirectory, boolean resolved )
     {
         super( artifact, markerFilesDirectory );
@@ -162,5 +167,22 @@ public class SourcesFileMarkerHandler
         boolean markResult = marker.delete();
         boolean mark2Result = marker2.delete();
         return markResult || mark2Result;
+    }
+
+    /**
+     * @return Returns the resolved.
+     */
+    public boolean isResolved()
+    {
+        return this.resolved;
+    }
+
+    /**
+     * @param resolved
+     *            The resolved to set.
+     */
+    public void setResolved( boolean resolved )
+    {
+        this.resolved = resolved;
     }
 }

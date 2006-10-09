@@ -119,4 +119,36 @@ public class ArtifactStubFactory
         set.addAll( getReleaseAndSnapshotArtifacts() );
         return set;
     }
+
+    /**
+     * @return Returns the createFiles.
+     */
+    public boolean isCreateFiles()
+    {
+        return this.createFiles;
+    }
+
+    /**
+     * @param createFiles The createFiles to set.
+     */
+    public void setCreateFiles( boolean createFiles )
+    {
+        this.createFiles = createFiles;
+    }
+
+    /**
+     * @return Returns the workingDir.
+     */
+    public File getWorkingDir()
+    {
+        return this.workingDir;
+    }
+
+    /**
+     * @param workingDir The workingDir to set.
+     */
+    public void setWorkingDir( File workingDir )
+    {
+        this.workingDir = workingDir;
+    }
 }

@@ -2,7 +2,6 @@ package org.apache.maven.plugin.dependency;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Random;
 
 import org.apache.maven.plugin.dependency.utils.ArtifactStubFactory;
 import org.apache.maven.plugin.dependency.utils.DependencyTestUtils;

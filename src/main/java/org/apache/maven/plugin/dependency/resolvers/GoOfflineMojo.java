@@ -23,6 +23,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractResolveMojo;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
+import org.apache.maven.plugin.dependency.utils.filters.ArtifactsFilter;
 
 /**
  * Goal that resolves all project dependencies, including plugins and reports
@@ -57,5 +58,11 @@ public class GoOfflineMojo
                 this.getLog().info( "Resolved: " + DependencyUtil.getFormattedFileName( (Artifact) i.next(), false ) );
             }
         }
+    }
+
+    protected ArtifactsFilter getMarkedArtifactFilter()
+    {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

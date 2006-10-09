@@ -23,6 +23,7 @@ import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractResolveMojo;
+import org.apache.maven.plugin.dependency.utils.filters.ArtifactsFilter;
 
 /**
  * Goal that resolves the project source dependencies from the repository.
@@ -106,5 +107,11 @@ public class ResolveDependencySourcesMojo
             }
         }
 
+    }
+
+    protected ArtifactsFilter getMarkedArtifactFilter()
+    {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
