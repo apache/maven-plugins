@@ -32,7 +32,6 @@ import org.apache.maven.plugin.dependency.utils.ArtifactStubFactory;
 import org.apache.maven.plugin.dependency.utils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.utils.SilentLog;
 import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
-import org.apache.maven.plugin.dependency.utils.markers.MarkerHandler;
 import org.apache.maven.plugin.logging.Log;
 
 /**
@@ -160,7 +159,6 @@ public class TestMarkerFileFilter
         filter.setOverWriteReleases( false );
         filter.setOverWriteSnapshots( true );
         filter.setOverWriteIfNewer( false );
-        File file = new File( outputFolder, "child" );
 
         assertEquals( false, filter.isOverWriteReleases() );
         assertEquals( true, filter.isOverWriteSnapshots() );

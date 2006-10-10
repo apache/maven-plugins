@@ -25,7 +25,6 @@ import java.util.TreeSet;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.logging.Log;
-import org.codehaus.plexus.util.CollectionUtils;
 
 /**
  * @author brianf

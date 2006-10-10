@@ -38,7 +38,7 @@ public interface MarkerHandler
 
     public boolean isMarkerOlder( Artifact artifact )
         throws MojoExecutionException;
-    
-    public void setArtifact(Artifact artifact);
-    
+
+    public void setArtifact( Artifact artifact );
+
 }

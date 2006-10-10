@@ -26,8 +26,6 @@ import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.filters.ArtifactsFilter;
 import org.apache.maven.plugin.dependency.utils.filters.DestFileFilter;
-import org.apache.maven.plugin.dependency.utils.filters.MarkerFileFilter;
-import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
 import org.apache.maven.plugin.logging.Log;
 
 /**
@@ -76,8 +74,8 @@ public class CopyDependenciesMojo
         {
             for ( Iterator i = artifacts.iterator(); i.hasNext(); )
             {
-                Artifact artifact = (Artifact)i.next();
-                getLog().info(artifact.getFile().getName()+" already exists in destination."); 
+                Artifact artifact = (Artifact) i.next();
+                getLog().info( artifact.getFile().getName() + " already exists in destination." );
             }
         }
     }
