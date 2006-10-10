@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.apache.maven.plugin.dependency.resolvers.ResolveDependenciesMojo;
 import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
+import org.apache.maven.plugin.dependency.utils.SilentLog;
 import org.apache.maven.project.MavenProject;
 
 public class TestResolveMojo
@@ -28,11 +29,10 @@ public class TestResolveMojo
     {
         File testPom = new File( getBasedir(), "target/test-classes/unit/resolve-test/plugin-config.xml" );
         ResolveDependenciesMojo mojo = (ResolveDependenciesMojo) lookupMojo( "resolve", testPom );
-        mojo.silent = false;
         assertNotNull( mojo );
         assertNotNull( mojo.project );
         MavenProject project = mojo.project;
-
+        mojo.silent = true;
         Set artifacts = this.stubFactory.getScopedArtifacts();
         Set directArtifacts = this.stubFactory.getReleaseAndSnapshotArtifacts();
         artifacts.addAll( directArtifacts );
@@ -52,6 +52,14 @@ public class TestResolveMojo
         assertNotNull( results );
         assertEquals( directArtifacts.size(), results.getResolvedDependencies().size() );
     }
-    
-    //TODO: Test skipping artifacts.
+
+    public void testSilent()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(), "target/test-classes/unit/resolve-test/plugin-config.xml" );
+        ResolveDependenciesMojo mojo = (ResolveDependenciesMojo) lookupMojo( "resolve", testPom );
+        mojo.silent = false;
+
+        assertFalse( mojo.getLog() instanceof SilentLog );
+    } // TODO: Test skipping artifacts.
 }
