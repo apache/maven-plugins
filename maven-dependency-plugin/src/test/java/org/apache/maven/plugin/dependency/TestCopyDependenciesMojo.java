@@ -452,7 +452,7 @@ public class TestCopyDependenciesMojo
 
         File copiedFile = new File( mojo.outputDirectory, DependencyUtil.getFormattedFileName( release, false ) );
 
-        Thread.sleep( 100);
+        Thread.sleep( 100 );
         long time = System.currentTimeMillis();
         copiedFile.setLastModified( time );
         Thread.sleep( 100 );
@@ -552,5 +552,10 @@ public class TestCopyDependenciesMojo
         mojo.execute();
 
         assertTrue( time < copiedFile.lastModified() );
+    }
+    
+    public void testGetDependencies() throws MojoExecutionException
+    {
+        assertEquals(mojo.getDependencies(true).toString(),mojo.getDependencySets(true).getResolvedDependencies().toString());
     }
 }

@@ -50,6 +50,16 @@ public class DestFileFilter
 
     File outputFileDirectory;
 
+    public DestFileFilter (File outputFileDirectory)
+    {
+        this.outputFileDirectory = outputFileDirectory;
+        overWriteReleases = false;
+        overWriteIfNewer = false;
+        overWriteSnapshots = false;
+        useSubDirectoryPerArtifact = false;
+        useSubDirectoryPerType = false;
+        removeVersion = false;
+    }
     public DestFileFilter( boolean overWriteReleases, boolean overWriteSnapshots, boolean overWriteIfNewer,
                           boolean useSubDirectoryPerArtifact, boolean useSubDirectoryPerType, boolean removeVersion,
                           File outputFileDirectory )
@@ -79,7 +89,7 @@ public class DestFileFilter
         while ( iter.hasNext() )
         {
             Artifact artifact = (Artifact) iter.next();
-            if ( okToCopy( artifact ) )
+            if ( okToProcess( artifact ) )
             {
                 result.add( artifact );
             }
@@ -87,7 +97,7 @@ public class DestFileFilter
         return result;
     }
 
-    public boolean okToCopy( Artifact artifact )
+    public boolean okToProcess( Artifact artifact )
         throws MojoExecutionException
     {
         boolean overWrite = false;
@@ -162,5 +172,61 @@ public class DestFileFilter
     public void setOverWriteIfNewer( boolean overWriteIfNewer )
     {
         this.overWriteIfNewer = overWriteIfNewer;
+    }
+    /**
+     * @return Returns the outputFileDirectory.
+     */
+    public File getOutputFileDirectory()
+    {
+        return this.outputFileDirectory;
+    }
+    /**
+     * @param outputFileDirectory The outputFileDirectory to set.
+     */
+    public void setOutputFileDirectory( File outputFileDirectory )
+    {
+        this.outputFileDirectory = outputFileDirectory;
+    }
+    /**
+     * @return Returns the removeVersion.
+     */
+    public boolean isRemoveVersion()
+    {
+        return this.removeVersion;
+    }
+    /**
+     * @param removeVersion The removeVersion to set.
+     */
+    public void setRemoveVersion( boolean removeVersion )
+    {
+        this.removeVersion = removeVersion;
+    }
+    /**
+     * @return Returns the useSubDirectoryPerArtifact.
+     */
+    public boolean isUseSubDirectoryPerArtifact()
+    {
+        return this.useSubDirectoryPerArtifact;
+    }
+    /**
+     * @param useSubDirectoryPerArtifact The useSubDirectoryPerArtifact to set.
+     */
+    public void setUseSubDirectoryPerArtifact( boolean useSubDirectoryPerArtifact )
+    {
+        this.useSubDirectoryPerArtifact = useSubDirectoryPerArtifact;
+    }
+    /**
+     * @return Returns the useSubDirectoryPerType.
+     */
+    public boolean isUseSubDirectoryPerType()
+    {
+        return this.useSubDirectoryPerType;
+    }
+    /**
+     * @param useSubDirectoryPerType The useSubDirectoryPerType to set.
+     */
+    public void setUseSubDirectoryPerType( boolean useSubDirectoryPerType )
+    {
+        this.useSubDirectoryPerType = useSubDirectoryPerType;
     }
 }

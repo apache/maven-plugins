@@ -66,7 +66,7 @@ public class TestDefaultMarkerFileHandler
         artifacts.add( artifact );
 
         outputFolder = new File( "target/markers/" );
-        outputFolder.delete();
+        DependencyTestUtils.removeDirectory( this.outputFolder );
         assertFalse( outputFolder.exists() );
     }
 
@@ -160,5 +160,17 @@ public class TestDefaultMarkerFileHandler
         {
 
         }
+    }
+
+    public void testGetterSetter()
+    {
+        DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( null, null );
+        assertTrue( handler.getArtifact() == null );
+        handler.setArtifact( (Artifact) artifacts.get( 0 ) );
+        assertSame( artifacts.get( 0 ), handler.getArtifact() );
+
+        assertTrue( handler.getMarkerFilesDirectory() == null );
+        handler.setMarkerFilesDirectory( outputFolder );
+        assertSame( outputFolder, handler.getMarkerFilesDirectory() );
     }
 }
