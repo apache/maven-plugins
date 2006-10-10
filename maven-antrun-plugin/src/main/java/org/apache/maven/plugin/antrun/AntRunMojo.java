@@ -16,11 +16,11 @@ package org.apache.maven.plugin.antrun;
  * limitations under the License.
  */
 
-import java.io.File;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.tools.ant.Target;
+
+import java.io.File;
 
 /**
  * Maven AntRun Mojo.
@@ -82,7 +82,9 @@ public class AntRunMojo
     public void execute()
         throws MojoExecutionException
     {
-        executeTasks( tasks, project );
+        populateAntProjectWithMavenInformation( project, tasks.getProject() );
+
+        tasks.execute();
 
         if ( sourceRoot != null )
         {

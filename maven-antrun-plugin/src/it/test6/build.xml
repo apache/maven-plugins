@@ -2,9 +2,9 @@
 <project name="test6">
 
     <target name="test">
-
+        <mkdir dir="${basedir}/target"/>
         <!-- <taskdef name="antlr" classname="org.apache.tools.ant.taskdefs.optional.ANTLR"/> -->
-
+        
         <antlr target="calc.g" outputdirectory="target">
             <classpath refid="maven.plugin.classpath"/>
         </antlr>
