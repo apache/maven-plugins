@@ -129,7 +129,8 @@ public class ArtifactStubFactory
     }
 
     /**
-     * @param createFiles The createFiles to set.
+     * @param createFiles
+     *            The createFiles to set.
      */
     public void setCreateFiles( boolean createFiles )
     {
@@ -145,7 +146,8 @@ public class ArtifactStubFactory
     }
 
     /**
-     * @param workingDir The workingDir to set.
+     * @param workingDir
+     *            The workingDir to set.
      */
     public void setWorkingDir( File workingDir )
     {

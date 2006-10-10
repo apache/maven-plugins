@@ -5,9 +5,8 @@ import java.io.File;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.dependency.utils.markers.SourcesFileMarkerHandler;
 
-
 public class StubSourcesFileMarkerHandler
-extends SourcesFileMarkerHandler
+    extends SourcesFileMarkerHandler
 {
 
     public StubSourcesFileMarkerHandler( Artifact artifact, File markerFilesDirectory, boolean resolved )
@@ -30,7 +29,5 @@ extends SourcesFileMarkerHandler
 
         return new StubMarkerFile( this.markerFilesDirectory, this.artifact.getId().replace( ':', '-' ) + suffix );
     }
-
-
 
 }

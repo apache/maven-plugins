@@ -32,7 +32,6 @@ import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.dependency.stubs.StubDefaultFileMarkerHandler;
 import org.apache.maven.plugin.dependency.stubs.StubSourcesFileMarkerHandler;
 import org.apache.maven.plugin.dependency.utils.SilentLog;
 import org.apache.maven.plugin.logging.Log;
@@ -219,10 +218,10 @@ public class TestSourcesMarkerFileHandler
         Artifact theArtifact = (Artifact) artifacts.get( 0 );
         theArtifact.setFile( theFile );
         SourcesFileMarkerHandler resolvedHandler = new SourcesFileMarkerHandler( (Artifact) artifacts.get( 0 ),
-                                                                         this.outputFolder, resolved );
+                                                                                 this.outputFolder, resolved );
         SourcesFileMarkerHandler unResolvedHandler = new SourcesFileMarkerHandler( (Artifact) artifacts.get( 0 ),
-                                                                                 this.outputFolder, !resolved );
-             
+                                                                                   this.outputFolder, !resolved );
+
         assertFalse( resolvedHandler.isMarkerSet() );
         assertFalse( unResolvedHandler.isMarkerSet() );
         // if the marker is not set, assume it is infinately older than the
@@ -237,7 +236,7 @@ public class TestSourcesMarkerFileHandler
         unResolvedHandler.setMarker();
         assertFalse( resolvedHandler.isMarkerOlder( theArtifact ) );
         assertFalse( unResolvedHandler.isMarkerOlder( theArtifact ) );
-        
+
         theFile.setLastModified( theFile.lastModified() + 222 );
         assertTrue( resolvedHandler.isMarkerOlder( theArtifact ) );
         assertTrue( unResolvedHandler.isMarkerOlder( theArtifact ) );
@@ -246,6 +245,7 @@ public class TestSourcesMarkerFileHandler
         resolvedHandler.clearMarker();
         assertFalse( resolvedHandler.isMarkerSet() );
     }
+
     public void testMarkerFileException()
     {
         // this stub wraps the file with an object to throw exceptions

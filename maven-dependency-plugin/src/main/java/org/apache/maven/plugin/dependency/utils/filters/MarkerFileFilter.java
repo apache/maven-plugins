@@ -87,8 +87,8 @@ public class MarkerFileFilter
             overWrite = true;
         }
 
-        handler.setArtifact(artifact);
-        
+        handler.setArtifact( artifact );
+
         if ( overWrite || ( !handler.isMarkerSet() || ( overWriteIfNewer && handler.isMarkerOlder( artifact ) ) ) )
         {
             result = true;
