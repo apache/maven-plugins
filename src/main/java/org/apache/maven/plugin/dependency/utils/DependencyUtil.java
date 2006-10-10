@@ -256,7 +256,6 @@ public class DependencyUtil
 
     }
 
-   
     /**
      * This method resolves the plugin artifacts from the project.
      * 

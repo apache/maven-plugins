@@ -23,7 +23,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
 import org.apache.maven.plugin.dependency.utils.filters.ArtifactsFilter;
 import org.apache.maven.plugin.dependency.utils.filters.FilterArtifacts;
-import org.apache.maven.plugin.dependency.utils.filters.MarkerFileFilter;
 import org.apache.maven.plugin.dependency.utils.filters.ScopeFilter;
 import org.apache.maven.plugin.dependency.utils.filters.TransitivityFilter;
 import org.apache.maven.plugin.dependency.utils.filters.TypeFilter;
@@ -134,6 +133,7 @@ public abstract class AbstractDependencyFilterMojo
     protected boolean outputArtifactFilename;
 
     abstract protected ArtifactsFilter getMarkedArtifactFilter();
+
     /**
      * Retrieves dependencies, either direct only or all including transitive.
      * 
@@ -141,15 +141,15 @@ public abstract class AbstractDependencyFilterMojo
      * @throws MojoExecutionException
      *             if an error occured.
      */
-    protected Set getDependencies(boolean stopOnFailure)
+    protected Set getDependencies( boolean stopOnFailure )
         throws MojoExecutionException
     {
-        DependencyStatusSets status = getDependencySets(stopOnFailure);
+        DependencyStatusSets status = getDependencySets( stopOnFailure );
 
         return status.getResolvedDependencies();
     }
 
-    protected DependencyStatusSets getDependencySets(boolean stopOnFailure)
+    protected DependencyStatusSets getDependencySets( boolean stopOnFailure )
         throws MojoExecutionException
     {
         // add filters in well known order, least specific to most specific

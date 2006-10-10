@@ -876,15 +876,15 @@ public class DependencyProjectStub
         return activeProfiles;
     }
 
-    public void addAttachedArtifact( Artifact artifact )
+    public void addAttachedArtifact( Artifact theArtifact )
     {
         if ( attachedArtifacts == null )
         {
-            this.attachedArtifacts = Collections.singletonList( artifact );
+            this.attachedArtifacts = Collections.singletonList( theArtifact );
         }
         else
         {
-            attachedArtifacts.add( artifact );
+            attachedArtifacts.add( theArtifact );
         }
     }
 
@@ -971,7 +971,7 @@ public class DependencyProjectStub
 
     }
 
-    public void attachArtifact( String string, String string1, File file )
+    public void attachArtifact( String string, String string1, File theFile )
     {
 
     }
