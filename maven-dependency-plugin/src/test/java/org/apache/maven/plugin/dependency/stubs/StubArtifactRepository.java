@@ -10,7 +10,8 @@ public class StubArtifactRepository
     implements ArtifactRepository
 {
     String baseDir = null;
-    public StubArtifactRepository(String dir)
+
+    public StubArtifactRepository( String dir )
     {
         baseDir = dir;
     }

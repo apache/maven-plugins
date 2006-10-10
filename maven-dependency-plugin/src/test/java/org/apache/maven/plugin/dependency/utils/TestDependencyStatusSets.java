@@ -3,7 +3,6 @@ package org.apache.maven.plugin.dependency.utils;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.maven.monitor.logging.DefaultLog;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
 import org.apache.maven.plugin.logging.Log;
 
@@ -67,7 +66,7 @@ public class TestDependencyStatusSets
         Set artifacts = this.stubFactory.getMixedArtifacts();
         doTestDependencyStatusLog( artifacts );
     }
-    
+
     public void testDependencyStatusEmptySet()
     {
         doTestDependencyStatusLog( new HashSet() );

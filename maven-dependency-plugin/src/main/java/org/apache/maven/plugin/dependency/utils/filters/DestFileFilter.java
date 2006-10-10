@@ -41,17 +41,18 @@ public class DestFileFilter
     boolean overWriteSnapshots;
 
     boolean overWriteIfNewer;
-    
+
     boolean useSubDirectoryPerArtifact;
-    
+
     boolean useSubDirectoryPerType;
-    
+
     boolean removeVersion;
 
     File outputFileDirectory;
 
     public DestFileFilter( boolean overWriteReleases, boolean overWriteSnapshots, boolean overWriteIfNewer,
-                           boolean useSubDirectoryPerArtifact, boolean useSubDirectoryPerType, boolean removeVersion, File outputFileDirectory )
+                          boolean useSubDirectoryPerArtifact, boolean useSubDirectoryPerType, boolean removeVersion,
+                          File outputFileDirectory )
     {
         this.overWriteReleases = overWriteReleases;
         this.overWriteSnapshots = overWriteSnapshots;
@@ -86,7 +87,8 @@ public class DestFileFilter
         return result;
     }
 
-    public boolean okToCopy( Artifact artifact ) throws MojoExecutionException
+    public boolean okToCopy( Artifact artifact )
+        throws MojoExecutionException
     {
         boolean overWrite = false;
         boolean result = false;
@@ -96,10 +98,14 @@ public class DestFileFilter
             overWrite = true;
         }
 
-       File destFolder = DependencyUtil.getFormattedOutputDirectory(this.useSubDirectoryPerType,this.useSubDirectoryPerArtifact,this.outputFileDirectory,artifact);
-       File destFile = new File(destFolder,DependencyUtil.getFormattedFileName(artifact,this.removeVersion));
-       
-        if ( overWrite || ( !destFile.exists() || ( overWriteIfNewer && artifact.getFile().lastModified() < destFile.lastModified() ) ) )
+        File destFolder = DependencyUtil.getFormattedOutputDirectory( this.useSubDirectoryPerType,
+                                                                      this.useSubDirectoryPerArtifact,
+                                                                      this.outputFileDirectory, artifact );
+        File destFile = new File( destFolder, DependencyUtil.getFormattedFileName( artifact, this.removeVersion ) );
+
+        if ( overWrite
+            || ( !destFile.exists() || ( overWriteIfNewer && artifact.getFile().lastModified() < destFile
+                .lastModified() ) ) )
         {
             result = true;
         }

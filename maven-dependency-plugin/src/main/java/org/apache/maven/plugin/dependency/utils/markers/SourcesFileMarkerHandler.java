@@ -36,7 +36,7 @@ public class SourcesFileMarkerHandler
 
     public SourcesFileMarkerHandler( File markerFilesDirectory )
     {
-        super(markerFilesDirectory);
+        super( markerFilesDirectory );
     }
 
     public SourcesFileMarkerHandler( Artifact artifact, File markerFilesDirectory, boolean resolved )
@@ -98,20 +98,20 @@ public class SourcesFileMarkerHandler
         return marker.exists() || marker2.exists();
     }
 
-    public boolean isMarkerOlder( Artifact artifact )
+    public boolean isMarkerOlder( Artifact theArtifact )
         throws MojoExecutionException
     {
         File marker = getMarkerFile();
         if ( marker.exists() )
         {
-            return artifact.getFile().lastModified() > marker.lastModified();
+            return theArtifact.getFile().lastModified() > marker.lastModified();
         }
         else
         {
             marker = getMarkerFile( !this.resolved );
             if ( marker.exists() )
             {
-                return artifact.getFile().lastModified() > marker.lastModified();
+                return theArtifact.getFile().lastModified() > marker.lastModified();
             }
             else
             {

@@ -26,7 +26,6 @@ import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.filters.ArtifactsFilter;
 import org.apache.maven.plugin.dependency.utils.filters.MarkerFileFilter;
 import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
-import org.apache.maven.plugin.dependency.utils.markers.MarkerHandler;
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 
