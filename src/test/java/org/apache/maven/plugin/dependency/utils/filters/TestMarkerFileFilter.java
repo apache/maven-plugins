@@ -21,7 +21,6 @@ package org.apache.maven.plugin.dependency.utils.filters;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 
 import junit.framework.TestCase;
@@ -54,9 +53,7 @@ public class TestMarkerFileFilter
     {
         super.setUp();
 
-        // pick random output location
-        Random a = new Random();
-        outputFolder = new File( "target/markers" + a.nextLong() + "/" );
+        outputFolder = new File( "target/markers/" );
         DependencyTestUtils.removeDirectory( outputFolder );
         assertFalse( outputFolder.exists() );
 
@@ -64,9 +61,9 @@ public class TestMarkerFileFilter
         artifacts = fact.getReleaseAndSnapshotArtifacts();
     }
 
-    protected void tearDown()
+    protected void tearDown() throws IOException
     {
-
+        DependencyTestUtils.removeDirectory( outputFolder );
     }
 
     public void testMarkerFile()

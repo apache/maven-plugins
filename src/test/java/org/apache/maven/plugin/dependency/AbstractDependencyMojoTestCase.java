@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import org.apache.maven.plugin.dependency.utils.ArtifactStubFactory;
 import org.apache.maven.plugin.dependency.utils.DependencyTestUtils;
+import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 public class AbstractDependencyMojoTestCase
@@ -27,7 +28,7 @@ public class AbstractDependencyMojoTestCase
         super.setUp();
         testDir = new File( getBasedir(), "target" + File.separatorChar + "unit-tests" + File.separatorChar
             + testDirStr + File.separatorChar );
-        testDir.delete();
+        DependencyTestUtils.removeDirectory(testDir);
         assertFalse( testDir.exists() );
 
         stubFactory = new ArtifactStubFactory( this.testDir, createFiles );
