@@ -56,7 +56,7 @@ public class UnpackDependenciesMojo
     public void execute()
         throws MojoExecutionException
     {
-        Set artifacts = getDependencies(true);
+        Set artifacts = getDependencies( true );
 
         for ( Iterator i = artifacts.iterator(); i.hasNext(); )
         {
@@ -64,8 +64,9 @@ public class UnpackDependenciesMojo
             File destDir = DependencyUtil.getFormattedOutputDirectory( this.useSubDirectoryPerType,
                                                                        this.useSubDirectoryPerArtifact,
                                                                        this.outputDirectory, artifact );
-//          force overwrite for now. The filters should have removed anything from the list that shouldn't 
-            //be overwritten.
+            // force overwrite for now. The filters should have removed anything
+            // from the list that shouldn't
+            // be overwritten.
             DependencyUtil.unpackFile( artifact, destDir, this.markersDirectory, this.archiverManager, this.getLog(),
                                        true );
         }
@@ -73,6 +74,7 @@ public class UnpackDependenciesMojo
 
     protected ArtifactsFilter getMarkedArtifactFilter()
     {
-        return new MarkerFileFilter(this.overWriteReleases,this.overWriteSnapshots,this.overWriteIfNewer,new DefaultFileMarkerHandler(this.markersDirectory));
+        return new MarkerFileFilter( this.overWriteReleases, this.overWriteSnapshots, this.overWriteIfNewer,
+                                     new DefaultFileMarkerHandler( this.markersDirectory ) );
     }
 }

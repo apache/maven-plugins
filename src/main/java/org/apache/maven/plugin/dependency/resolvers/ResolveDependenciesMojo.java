@@ -52,7 +52,7 @@ public class ResolveDependenciesMojo
         throws MojoExecutionException
     {
         // get sets of dependencies
-        results = this.getDependencySets(false);
+        results = this.getDependencySets( false );
 
         results.logStatus( getLog(), outputArtifactFilename );
     }
@@ -67,6 +67,6 @@ public class ResolveDependenciesMojo
 
     protected ArtifactsFilter getMarkedArtifactFilter()
     {
-       return new ResolveFileFilter(new SourcesFileMarkerHandler(this.markersDirectory));
+        return new ResolveFileFilter( new SourcesFileMarkerHandler( this.markersDirectory ) );
     }
 }
