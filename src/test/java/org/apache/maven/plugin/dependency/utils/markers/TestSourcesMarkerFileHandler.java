@@ -260,4 +260,12 @@ public class TestSourcesMarkerFileHandler
         {
         }
     }
+    
+    public void testMarkerFileResolvedSetter()
+    {
+        SourcesFileMarkerHandler handler = new SourcesFileMarkerHandler(null,null,true);
+        assertTrue(handler.isResolved());
+        handler.setResolved(false);
+        assertFalse(handler.isResolved());
+    }
 }
