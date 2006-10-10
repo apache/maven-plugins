@@ -20,8 +20,10 @@ public class StubArtifactResolver
 {
 
     boolean throwArtifactResolutionException;
+
     boolean throwArtifactNotFoundException;
-    public StubArtifactResolver(boolean throwArtifactResolutionException, boolean throwArtifactNotFoundException)
+
+    public StubArtifactResolver( boolean throwArtifactResolutionException, boolean throwArtifactNotFoundException )
     {
         this.throwArtifactNotFoundException = throwArtifactNotFoundException;
         this.throwArtifactResolutionException = throwArtifactResolutionException;
@@ -30,21 +32,21 @@ public class StubArtifactResolver
     public void resolve( Artifact artifact, List remoteRepositories, ArtifactRepository localRepository )
         throws ArtifactResolutionException, ArtifactNotFoundException
     {
-        if (!this.throwArtifactNotFoundException && !this.throwArtifactResolutionException)
+        if ( !this.throwArtifactNotFoundException && !this.throwArtifactResolutionException )
         {
-        // TODO Auto-generated method stub
-        ArtifactStubFactory factory = new ArtifactStubFactory(new File(localRepository.getBasedir()),true);
-        factory.setArtifactFile(artifact);
+            // TODO Auto-generated method stub
+            ArtifactStubFactory factory = new ArtifactStubFactory( new File( localRepository.getBasedir() ), true );
+            factory.setArtifactFile( artifact );
         }
         else
         {
-            if (throwArtifactResolutionException)
+            if ( throwArtifactResolutionException )
             {
-                throw new ArtifactResolutionException("Catch!", artifact);
+                throw new ArtifactResolutionException( "Catch!", artifact );
             }
             else
             {
-                throw new ArtifactNotFoundException("Catch!",artifact);
+                throw new ArtifactNotFoundException( "Catch!", artifact );
             }
         }
     }

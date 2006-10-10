@@ -40,21 +40,24 @@ public class DependencyTestUtils
 
         }
     }
-    
-    static public ArtifactFactory getArtifactFactory() throws IllegalAccessException
+
+    static public ArtifactFactory getArtifactFactory()
+        throws IllegalAccessException
     {
         ArtifactFactory artifactFactory;
         ArtifactHandlerManager manager = new DefaultArtifactHandlerManager();
         setVariableValueToObject( manager, "artifactHandlers", new HashMap() );
 
         artifactFactory = new DefaultArtifactFactory();
-        setVariableValueToObject( artifactFactory, "artifactHandlerManager", manager ); 
-        
+        setVariableValueToObject( artifactFactory, "artifactHandlerManager", manager );
+
         return artifactFactory;
     }
-    
+
     /**
-     * convience method to set values to variables in objects that don't have setters
+     * convience method to set values to variables in objects that don't have
+     * setters
+     * 
      * @param object
      * @param variable
      * @param value
@@ -67,8 +70,7 @@ public class DependencyTestUtils
 
         field.setAccessible( true );
 
-        field.set(object, value );
+        field.set( object, value );
     }
-
 
 }
