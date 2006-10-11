@@ -300,12 +300,6 @@ public class EclipseClasspathWriter
 
         writer.startElement( ELT_CLASSPATHENTRY );
         writer.addAttribute( ATTR_KIND, kind );
-
-        if ( !dep.isSystemScoped() && !dep.isTestDependency() )
-        {
-            writer.addAttribute( ATTR_EXPORTED, Boolean.TRUE.toString() );
-        }
-
         writer.addAttribute( ATTR_PATH, path );
 
         if ( sourcepath != null )
