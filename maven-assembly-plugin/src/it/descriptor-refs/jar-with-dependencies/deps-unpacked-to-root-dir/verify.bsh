@@ -29,6 +29,12 @@ try
         System.err.println( "child1 class is missing." );
         result = false;
     }
+
+    if ( jf.getEntry( "test/App.class" ) == null )
+    {
+        System.err.println( "child2 class is missing." );
+        result = false;
+    }
     
     System.out.println( "Looking for absence of 'junit/' jar entry." );
     
