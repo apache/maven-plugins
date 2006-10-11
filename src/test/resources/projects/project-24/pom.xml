@@ -1,0 +1,19 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>eclipse</groupId>
+  <artifactId>maven-eclipse-plugin-test-project-24</artifactId>
+  <version>24.1-SNAPSHOT</version>
+  <name>maven-eclipse-plugin-test-project-24</name>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <configuration>
+          <pde>true</pde>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

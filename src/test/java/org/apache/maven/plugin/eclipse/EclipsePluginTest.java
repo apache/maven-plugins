@@ -223,4 +223,14 @@ public class EclipsePluginTest
         testProject( "project-23" );
     }
 
+    /**
+     * Test rewriting of OSGI manifest files.
+     * @throws Exception any exception thrown during test
+     */
+    public void testProject24()
+        throws Exception
+    {
+        testProject( "project-24" );
+    }
+
 }
