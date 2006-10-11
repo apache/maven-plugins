@@ -76,8 +76,10 @@ public abstract class AbstractEarModule
     public void resolveArtifact( Set artifacts )
         throws EarPluginException, MojoFailureException
     {
+        // If the artifact is already set no need to resolve it
         if ( artifact == null )
         {
+            // Make sure that at least the groupId and the artifactId are specified
             if ( groupId == null || artifactId == null )
             {
                 throw new MojoFailureException(
@@ -88,6 +90,9 @@ public abstract class AbstractEarModule
             while ( i.hasNext() )
             {
                 Artifact a = (Artifact) i.next();
+
+                // If the groupId, the artifactId, the classifier matches and if the
+                // artifact's type is known, then we have found it.
                 if ( a.getGroupId().equals( groupId ) && a.getArtifactId().equals( artifactId ) &&
                     ArtifactTypeMappingService.getInstance().isMappedToType( getType(), a.getType() ) )
                 {
@@ -95,10 +100,8 @@ public abstract class AbstractEarModule
                     return;
                 }
             }
-
             // Artifact has not been found
-            throw new MojoFailureException( "Artifact[" + groupId + ":" + artifactId + ":" + getType() + "] " +
-                "is not a dependency of the project." );
+            throw new MojoFailureException( "Artifact[" + this + "] " + "is not a dependency of the project." );
         }
         else
         {
