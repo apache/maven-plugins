@@ -306,7 +306,8 @@ public class EclipseClasspathWriter
         {
             writer.addAttribute( ATTR_SOURCEPATH, sourcepath );
         }
-        else if ( javadocpath != null )
+
+        if ( javadocpath != null )
         {
             writer.startElement( "attributes" ); //$NON-NLS-1$
 
