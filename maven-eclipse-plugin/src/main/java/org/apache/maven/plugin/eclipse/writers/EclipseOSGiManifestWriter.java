@@ -151,7 +151,7 @@ public class EclipseOSGiManifestWriter
                 {
                     manifestSb.append( ENTRY_BUNDLE_VERSION );
                     manifestSb.append( " " );
-                    manifestSb.append( config.getProject().getVersion() );
+                    manifestSb.append( getNormalizedVersion( config.getProject().getVersion() ) );
                     manifestSb.append( NEWLINE );
                 }
                 else if ( line.startsWith( ENTRY_BUNDLE_VENDOR ) && config.getProject().getOrganization() != null )
