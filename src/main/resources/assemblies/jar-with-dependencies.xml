@@ -31,4 +31,10 @@
       <scope>runtime</scope>
     </dependencySet>
   </dependencySets>
+  <fileSets>
+    <fileSet>
+      <directory>target/classes</directory>
+      <outputDirectory></outputDirectory>
+    </fileSet>
+  </fileSets>
 </assembly>
