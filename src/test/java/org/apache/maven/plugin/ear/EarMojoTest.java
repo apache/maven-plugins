@@ -11,7 +11,8 @@ import java.util.Properties;
  * @author $Author: sni $ (last edit)
  * @version $Revision: 1.5 $
  */
-public class EarMojoTest extends AbstractEarPluginTestCase
+public class EarMojoTest
+    extends AbstractEarPluginTestCase
 {
 
     /**
@@ -20,7 +21,7 @@ public class EarMojoTest extends AbstractEarPluginTestCase
     public void testProject01()
         throws Exception
     {
-         doTestProject( "project-01", new String[]{"ejb-sample-one-1.0.jar"});
+        doTestProject( "project-01", new String[]{"ejb-sample-one-1.0.jar"} );
     }
 
     public void testProject02()
@@ -30,15 +31,23 @@ public class EarMojoTest extends AbstractEarPluginTestCase
         //doTestProject( "project-02", new String[]{"APP-INF/lib/ejb-sample-one-1.0.jar, ejb-sample-two.jar"});
     }
 
-    protected void doTestProject(final String projectName, final String[] expectedArtifacts)
+    /**
+     * Test the classifier functionnality
+     */
+    public void testProject03()
         throws Exception
     {
-        final File baseDir = executeMojo(projectName, new Properties());
-
-        assertArchiveContent(baseDir, projectName,expectedArtifacts);
-
+        doTestProject( "project-03", new String[]{"ejb-sample-one-1.0-classified.jar"} );
     }
 
+    protected void doTestProject( final String projectName, final String[] expectedArtifacts )
+        throws Exception
+    {
+        final File baseDir = executeMojo( projectName, new Properties() );
+
+        assertArchiveContent( baseDir, projectName, expectedArtifacts );
+
+    }
 
 
 }
