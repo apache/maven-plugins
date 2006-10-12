@@ -22,8 +22,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.codehaus.plexus.archiver.AbstractArchiveFinalizer;
@@ -49,12 +51,19 @@ public class ComponentsXmlArchiverFileFilter
     // [jdcasey] Switched visibility to protected to allow testing. Also, because this class isn't final, it should allow
     // some minimal access to the components accumulated for extending classes.
     protected Map components;
+    
+    private boolean excludeOverride = false;
 
     public static final String COMPONENTS_XML_PATH = "META-INF/plexus/components.xml";
     
     public boolean include( InputStream dataStream, String entryName )
         throws ArchiveFilterException
     {
+        if ( excludeOverride )
+        {
+            return true;
+        }
+        
         String entry = entryName;
         
         if ( entry.startsWith( "/" ) )
@@ -87,7 +96,7 @@ public class ComponentsXmlArchiverFileFilter
         throws XmlPullParserException, IOException
     {
         Xpp3Dom newDom = Xpp3DomBuilder.build( componentsReader );
-
+        
         if ( newDom != null )
         {
             newDom = newDom.getChild( "components" );
@@ -156,7 +165,12 @@ public class ComponentsXmlArchiverFileFilter
             {
                 IOUtil.close( fileWriter );
             }
+            
+            excludeOverride = true;
+            
             archiver.addFile( f, COMPONENTS_XML_PATH );
+            
+            excludeOverride = false;
         }
     }
 
@@ -171,6 +185,16 @@ public class ComponentsXmlArchiverFileFilter
         {
             throw new ArchiverException( "Error finalizing component-set for archive. Reason: " + e.getMessage(), e );
         }
+    }
+
+    public List getVirtualFiles()
+    {
+        if ( components != null && !components.isEmpty() )
+        {
+            return Collections.singletonList( COMPONENTS_XML_PATH );
+        }
+        
+        return null;
     }
 
 }

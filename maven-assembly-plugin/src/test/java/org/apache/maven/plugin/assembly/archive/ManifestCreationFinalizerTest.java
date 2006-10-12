@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.net.URL;
+import java.util.Collections;
 
 import junit.framework.TestCase;
 
@@ -66,13 +67,13 @@ public class ManifestCreationFinalizerTest
         
         config.setManifestFile( manifestFile );
         
-        Archiver archiver = new JarArchiver();
+        JarArchiver archiver = new JarArchiver();
+        
+        archiver.setArchiveFinalizers( Collections.singletonList( new ManifestCreationFinalizer( project, config ) ) );
 
         File file = fileManager.createTempFile();
         
         archiver.setDestFile( file );
-        
-        new ManifestCreationFinalizer( project, config ).finalizeArchiveCreation( archiver );
         
         archiver.createArchive();
         
