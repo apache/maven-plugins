@@ -1,0 +1,42 @@
+  ------
+  Install an artifact on a specific local repository path
+  ------
+  Vincent Siveton
+  ------
+  October 2006
+  ------
+
+~~ Copyright 2006 The Apache Software Foundation.
+~~
+~~ Licensed under the Apache License, Version 2.0 (the "License");
+~~ you may not use this file except in compliance with the License.
+~~ You may obtain a copy of the License at
+~~
+~~      http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing, software
+~~ distributed under the License is distributed on an "AS IS" BASIS,
+~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~ See the License for the specific language governing permissions and
+~~ limitations under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/guides/mini/guide-apt-format.html
+
+Install on a specific local repository path
+
+  By default, Maven Install Plugin uses the local repository defined in the settings.xml to install an artifact.
+
+  You could install an artifact on a specific local repository  by setting the <<localRepositoryPath>> and <<localRepositoryId>>
+  parameters when installing.
+
++---+
+mvn install:install-file  -Dfile=path-to-your-artifact-jar \
+                          -DgroupId=your.groupId \
+                          -DartifactId=your-artifactId \
+                          -Dversion=version \
+                          -Dpackaging=jar \
+                          -DpomFile=path-to-pom \
+                          -DlocalRepositoryPath=path-to-specific-local-repo \
+                          -DlocalRepositoryId=id-for-specific-local-repo
++---+
