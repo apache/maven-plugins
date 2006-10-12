@@ -1,5 +1,6 @@
 package org.apache.maven.plugin.dependency.utils;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -54,13 +55,13 @@ public class TestDependencyStatusSets
         assertSame( s, dss.getSkippedDependencies() );
     }
 
-    public void testDependencyStatusLog()
+    public void testDependencyStatusLog() throws IOException
     {
         Set artifacts = this.stubFactory.getMixedArtifacts();
         doTestDependencyStatusLog( artifacts );
     }
 
-    public void testDependencyStatusLogNullFiles()
+    public void testDependencyStatusLogNullFiles() throws IOException
     {
         this.stubFactory.createFiles = false;
         Set artifacts = this.stubFactory.getMixedArtifacts();

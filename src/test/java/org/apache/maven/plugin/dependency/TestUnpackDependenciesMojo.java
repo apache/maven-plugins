@@ -17,22 +17,26 @@ import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
 
-public class TestCopyDependenciesMojo
+public class TestUnpackDependenciesMojo
     extends AbstractDependencyMojoTestCase
 {
 
-    CopyDependenciesMojo mojo;
+    UnpackDependenciesMojo mojo;
 
     protected void setUp()
         throws Exception
     {
         // required for mojo lookups to work
-        super.setUp( "copy-dependencies", true );
+        super.setUp( "unpack-dependencies", true );
 
-        File testPom = new File( getBasedir(), "target/test-classes/unit/copy-dependencies-test/plugin-config.xml" );
-        mojo = (CopyDependenciesMojo) lookupMojo( "copy-dependencies", testPom );
+        File testPom = new File( getBasedir(), "target/test-classes/unit/unpack-dependencies-test/plugin-config.xml" );
+        mojo = (UnpackDependenciesMojo) lookupMojo( "unpack-dependencies", testPom );
         mojo.outputDirectory = new File( this.testDir, "outputDirectory" );
         // mojo.silent = true;
+
+        // i'm using one file repeatedly to unpack.
+        stubFactory.setSrcFile( new File( getBasedir() + File.separatorChar
+            + "target/test-classes/unit/unpack-dependencies-test/test.zip" ) );
 
         assertNotNull( mojo );
         assertNotNull( mojo.project );
@@ -59,15 +63,39 @@ public class TestCopyDependenciesMojo
         {
             fail( e.getLongMessage() );
         }
+    }
+
+    public void assertMarkerFile( Artifact artifact )
+    {
+        DefaultFileMarkerHandler handle = new DefaultFileMarkerHandler( artifact, mojo.markersDirectory );
+        try
+        {
+            assertTrue( handle.isMarkerSet() );
+        }
+        catch ( MojoExecutionException e )
+        {
+            fail( e.getLongMessage() );
+        }
+    }
+    
+    public void assertMarkerFile(boolean val, Artifact artifact)
+    {
+        if (val)
+        {
+            assertMarkerFile(artifact);
+        }
+        else
+        {
+            assertNoMarkerFile(artifact);
+        }
+    }
+
+    public void testNull()
+    {
 
     }
 
-    /**
-     * tests the proper discovery and configuration of the mojo
-     * 
-     * @throws Exception
-     */
-    public void testCopyDependenciesMojo()
+    public void testUnpackDependenciesMojo()
         throws Exception
     {
         mojo.execute();
@@ -75,82 +103,45 @@ public class TestCopyDependenciesMojo
         while ( iter.hasNext() )
         {
             Artifact artifact = (Artifact) iter.next();
-            String fileName = DependencyUtil.getFormattedFileName( artifact, false );
-            File file = new File( mojo.outputDirectory, fileName );
-            assertTrue( file.exists() );
-
-            // there should be no markers for the copy mojo
-            assertNoMarkerFile( artifact );
+            assertMarkerFile( artifact );
         }
     }
 
-    public void testCopyDependenciesMojoStripVersion()
-        throws Exception
-    {
-        mojo.stripVersion = true;
-        mojo.execute();
-
-        Iterator iter = mojo.project.getArtifacts().iterator();
-        while ( iter.hasNext() )
-        {
-            Artifact artifact = (Artifact) iter.next();
-            String fileName = DependencyUtil.getFormattedFileName( artifact, true );
-            File file = new File( mojo.outputDirectory, fileName );
-            assertTrue( file.exists() );
-        }
-    }
-
-    public void testCopyDependenciesMojoNoTransitive()
+    public void testUnpackDependenciesMojoNoTransitive()
         throws Exception
     {
         mojo.excludeTransitive = true;
         mojo.execute();
         Iterator iter = mojo.project.getDependencyArtifacts().iterator();
-
-        // test - get all direct dependencies and verify that they exist
-        // then delete the file and at the end, verify the folder is empty.
         while ( iter.hasNext() )
         {
             Artifact artifact = (Artifact) iter.next();
-            String fileName = DependencyUtil.getFormattedFileName( artifact, false );
-            File file = new File( mojo.outputDirectory, fileName );
-            assertTrue( file.exists() );
-            file.delete();
-            assertFalse( file.exists() );
+            assertMarkerFile( artifact );
         }
-        // assumes you can't delete a folder that has files.
-        assertTrue( mojo.outputDirectory.delete() );
     }
 
-    public void testCopyDependenciesMojoExcludeType()
+    public void testUnpackDependenciesMojoExcludeType()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getTypedArtifacts() );
+        mojo.project.setArtifacts( stubFactory.getTypedArchiveArtifacts() );
         mojo.project.setDependencyArtifacts( new HashSet() );
         mojo.excludeTypes = "jar";
         mojo.execute();
 
-        // test - get all direct dependencies and verify that they exist if they
-        // are not a jar
-        // then delete the file and at the end, verify the folder is empty.
         Iterator iter = mojo.project.getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = (Artifact) iter.next();
-            String fileName = DependencyUtil.getFormattedFileName( artifact, false );
-            File file = new File( mojo.outputDirectory, fileName );
-            assertEquals( artifact.getType().equalsIgnoreCase( "jar" ), !file.exists() );
-            file.delete();
-            assertFalse( file.exists() );
+
+            assertMarkerFile(!artifact.getType().equalsIgnoreCase( "jar" ),artifact );
+            
         }
-        // assumes you can't delete a folder that has files.
-        assertTrue( mojo.outputDirectory.delete() );
     }
 
-    public void testCopyDependenciesMojoIncludeType()
+    public void testUnpackDependenciesMojoIncludeType()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getTypedArtifacts() );
+        mojo.project.setArtifacts( stubFactory.getTypedArchiveArtifacts() );
         mojo.project.setDependencyArtifacts( new HashSet() );
 
         mojo.includeTypes = "jar";
@@ -159,27 +150,18 @@ public class TestCopyDependenciesMojo
 
         mojo.execute();
 
-        // test - get all direct dependencies and verify that they exist only if
-        // they are a jar
-        // then delete the file and at the end, verify the folder is empty.
         Iterator iter = mojo.project.getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = (Artifact) iter.next();
-            String fileName = DependencyUtil.getFormattedFileName( artifact, false );
-            File file = new File( mojo.outputDirectory, fileName );
-            assertEquals( artifact.getType().equalsIgnoreCase( "jar" ), file.exists() );
-            file.delete();
-            assertFalse( file.exists() );
-        }
-        // assumes you can't delete a folder that has files.
-        assertTrue( mojo.outputDirectory.delete() );
+
+            assertMarkerFile(artifact.getType().equalsIgnoreCase( "jar" ),artifact );        }
     }
 
-    public void testCopyDependenciesMojoSubPerType()
+    public void testUnpackDependenciesMojoSubPerType()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getTypedArtifacts() );
+        mojo.project.setArtifacts( stubFactory.getTypedArchiveArtifacts() );
         mojo.project.setDependencyArtifacts( new HashSet() );
         mojo.useSubDirectoryPerType = true;
         mojo.execute();
@@ -191,11 +173,11 @@ public class TestCopyDependenciesMojo
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File folder = DependencyUtil.getFormattedOutputDirectory( true, false, mojo.outputDirectory, artifact );
             File file = new File( folder, fileName );
-            assertTrue( file.exists() );
+            assertMarkerFile(artifact);
         }
     }
 
-    public void testCopyDependenciesMojoSubPerArtifact()
+    public void testUnpackDependenciesMojoSubPerArtifact()
         throws Exception
     {
         mojo.useSubDirectoryPerArtifact = true;
@@ -208,14 +190,14 @@ public class TestCopyDependenciesMojo
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File folder = DependencyUtil.getFormattedOutputDirectory( false, true, mojo.outputDirectory, artifact );
             File file = new File( folder, fileName );
-            assertTrue( file.exists() );
+            assertMarkerFile(artifact);
         }
     }
 
-    public void testCopyDependenciesMojoSubPerArtifactAndType()
+    public void testUnpackDependenciesMojoSubPerArtifactAndType()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getTypedArtifacts() );
+        mojo.project.setArtifacts( stubFactory.getTypedArchiveArtifacts() );
         mojo.project.setDependencyArtifacts( new HashSet() );
         mojo.useSubDirectoryPerArtifact = true;
         mojo.useSubDirectoryPerType = true;
@@ -228,11 +210,11 @@ public class TestCopyDependenciesMojo
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File folder = DependencyUtil.getFormattedOutputDirectory( true, true, mojo.outputDirectory, artifact );
             File file = new File( folder, fileName );
-            assertTrue( file.exists() );
+            assertMarkerFile(artifact);
         }
     }
 
-    public void testCopyDependenciesMojoIncludeCompileScope()
+    public void testUnpackDependenciesMojoIncludeCompileScope()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
@@ -248,11 +230,11 @@ public class TestCopyDependenciesMojo
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName );
 
-            assertEquals( saf.include( artifact ), file.exists() );
+            assertMarkerFile( saf.include( artifact ), artifact );
         }
     }
 
-    public void testCopyDependenciesMojoIncludeTestScope()
+    public void testUnpackDependenciesMojoIncludeTestScope()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
@@ -269,11 +251,11 @@ public class TestCopyDependenciesMojo
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName );
 
-            assertEquals( saf.include( artifact ), file.exists() );
+            assertMarkerFile( saf.include( artifact ), artifact );
         }
     }
 
-    public void testCopyDependenciesMojoIncludeRuntimeScope()
+    public void testUnpackDependenciesMojoIncludeRuntimeScope()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
@@ -289,11 +271,11 @@ public class TestCopyDependenciesMojo
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName );
 
-            assertEquals( saf.include( artifact ), file.exists() );
+            assertMarkerFile( saf.include( artifact ), artifact );
         }
     }
 
-    public void testCopyDependenciesMojoIncludeprovidedScope()
+    public void testUnpackDependenciesMojoIncludeprovidedScope()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
@@ -307,11 +289,11 @@ public class TestCopyDependenciesMojo
             Artifact artifact = (Artifact) iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName );
-            assertEquals( Artifact.SCOPE_PROVIDED.equals( artifact.getScope() ), file.exists() );
+            assertMarkerFile( Artifact.SCOPE_PROVIDED.equals( artifact.getScope() ), artifact );
         }
     }
 
-    public void testCopyDependenciesMojoIncludesystemScope()
+    public void testUnpackDependenciesMojoIncludesystemScope()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
@@ -327,35 +309,33 @@ public class TestCopyDependenciesMojo
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName );
 
-            assertEquals( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ), file.exists() );
+            assertMarkerFile( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ), artifact );
         }
     }
 
-    public void testCDMClassifier()
+/*    public void testCDMClassifier()
         throws Exception
     {
-        dotestCopyDependenciesMojoClassifierType( "jdk14", null );
+        dotestUnpackDependenciesMojoClassifierType( "jdk14", null );
     }
 
     public void testCDMType()
         throws Exception
     {
-        dotestCopyDependenciesMojoClassifierType( null, "sources" );
+        dotestUnpackDependenciesMojoClassifierType( null, "zip" );
     }
 
     public void testCDMClassifierType()
         throws Exception
     {
-        dotestCopyDependenciesMojoClassifierType( "jdk14", "sources" );
-    }
+        dotestUnpackDependenciesMojoClassifierType( "jdk14", "war" );
+    }*/
 
-    public void dotestCopyDependenciesMojoClassifierType( String testClassifier, String testType )
+    public void dotestUnpackDependenciesMojoClassifierType( String testClassifier, String testType )
         throws Exception
     {
         mojo.classifier = testClassifier;
-        mojo.type = testType;
-
-        // init classifier things
+        mojo.type = testType; // init classifier things
         mojo.factory = DependencyTestUtils.getArtifactFactory();
         mojo.resolver = new StubArtifactResolver( false, false );
         mojo.local = new StubArtifactRepository( this.testDir.getAbsolutePath() );
@@ -382,13 +362,7 @@ public class TestCopyDependenciesMojo
             String fileName = artifact.getArtifactId() + useClassifier + "-" + artifact.getVersion() + "." + useType;
             File file = new File( mojo.outputDirectory, fileName );
 
-            if ( !file.exists() )
-            {
-                fail( "Can't find:" + file.getAbsolutePath() );
-            }
-
-            // there should be no markers for the copy mojo
-            assertNoMarkerFile( artifact );
+            assertMarkerFile(artifact);
         }
     }
 
@@ -409,7 +383,6 @@ public class TestCopyDependenciesMojo
     {
         mojo.classifier = "jdk";
         mojo.type = "java-sources";
-
         // init classifier things
         mojo.factory = DependencyTestUtils.getArtifactFactory();
         mojo.resolver = new StubArtifactResolver( are, anfe );
@@ -422,18 +395,9 @@ public class TestCopyDependenciesMojo
         }
         catch ( MojoExecutionException e )
         {
-
         }
     }
-
-    /*
-     * public void testOverwrite() { stubFactory.setCreateFiles( false );
-     * Artifact artifact = stubFactory.createArtifact( "test", "artifact", "1.0" );
-     * 
-     * File testFile = new File( getBasedir() + File.separatorChar +
-     * "target/test-classes/unit/copy-dependencies-test/test.zip" ); }
-     */
-
+/*
     public void testDontOverWriteRelease()
         throws MojoExecutionException, InterruptedException, IOException
     {
@@ -554,9 +518,11 @@ public class TestCopyDependenciesMojo
 
         assertTrue( time < copiedFile.lastModified() );
     }
-    
-    public void testGetDependencies() throws MojoExecutionException
+
+    public void testGetDependencies()
+        throws MojoExecutionException
     {
-        assertEquals(mojo.getDependencies(true).toString(),mojo.getDependencySets(true).getResolvedDependencies().toString());
+        assertSame( mojo.getDependencies( true ), mojo.getDependencySets( true ).getResolvedDependencies() );
     }
+*/
 }

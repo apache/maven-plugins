@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.filters.ArtifactsFilter;
 import org.apache.maven.plugin.dependency.utils.filters.MarkerFileFilter;
@@ -56,7 +57,8 @@ public class UnpackDependenciesMojo
     public void execute()
         throws MojoExecutionException
     {
-        Set artifacts = getDependencies( true );
+        DependencyStatusSets dss = getDependencySets( true );
+        Set artifacts = dss.getResolvedDependencies();
 
         for ( Iterator i = artifacts.iterator(); i.hasNext(); )
         {
@@ -64,12 +66,21 @@ public class UnpackDependenciesMojo
             File destDir = DependencyUtil.getFormattedOutputDirectory( this.useSubDirectoryPerType,
                                                                        this.useSubDirectoryPerArtifact,
                                                                        this.outputDirectory, artifact );
-            // force overwrite for now. The filters should have removed anything
-            // from the list that shouldn't
-            // be overwritten.
-            DependencyUtil.unpackFile( artifact, destDir, this.markersDirectory, this.archiverManager, this.getLog(),
-                                       true );
+
+            DependencyUtil.unpack( artifact.getFile(), destDir, this.archiverManager, this.getLog() );
+            DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( artifact, this.markersDirectory );
+            handler.setMarker();
         }
+
+        artifacts = dss.getSkippedDependencies();
+        {
+            for ( Iterator i = artifacts.iterator(); i.hasNext(); )
+            {
+                Artifact artifact = (Artifact) i.next();
+                getLog().info( artifact.getFile().getName() + " already exists in destination." );
+            }
+        }
+
     }
 
     protected ArtifactsFilter getMarkedArtifactFilter()

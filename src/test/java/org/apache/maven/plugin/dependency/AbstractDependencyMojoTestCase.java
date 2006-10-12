@@ -5,7 +5,6 @@ import java.io.IOException;
 
 import org.apache.maven.plugin.dependency.utils.ArtifactStubFactory;
 import org.apache.maven.plugin.dependency.utils.DependencyTestUtils;
-import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 public class AbstractDependencyMojoTestCase
@@ -47,7 +46,7 @@ public class AbstractDependencyMojoTestCase
             {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
-                fail( "Trying to remove directory:" + testDir );
+                fail( "Trying to remove directory:" + testDir+"\r\n"+e.toString() );
             }
             assertFalse( testDir.exists() );
         }

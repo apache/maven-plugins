@@ -82,7 +82,10 @@ public class DependencyUtil
      * @param Artifact
      *            File to be unpacked.
      * @param unpackDirectory
-     *            Location where to put the unpacked files.
+     *            Location where to put the unpacked files. 
+     *            
+     *  @deprecated Please now use unpack()
+     * @see unpack()
      */
     public static void unpackFile( Artifact artifact, File unpackDirectory, File markersDirectory,
                                   ArchiverManager archiverManager, Log log, boolean overWrite )
@@ -123,12 +126,14 @@ public class DependencyUtil
      * @param location
      *            Location where to put the unpacked files.
      */
-    private static void unpack( File file, File location, ArchiverManager archiverManager, Log log )
+    public static void unpack( File file, File location, ArchiverManager archiverManager, Log log )
         throws MojoExecutionException
     {
 
         try
         {
+            location.mkdirs();
+
             UnArchiver unArchiver;
 
             unArchiver = archiverManager.getUnArchiver( file );
@@ -145,11 +150,15 @@ public class DependencyUtil
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "Error unpacking file: " + file + "to: " + location, e );
+            e.printStackTrace();
+            throw new MojoExecutionException( "Error unpacking file: " + file + " to: " + location + "\r\n"
+                + e.toString(), e );
         }
         catch ( ArchiverException e )
         {
-            throw new MojoExecutionException( "Error unpacking file: " + file + "to: " + location, e );
+            e.printStackTrace();
+            throw new MojoExecutionException( "Error unpacking file: " + file + " to: " + location + "\r\n"
+                + e.toString(), e );
         }
     }
 

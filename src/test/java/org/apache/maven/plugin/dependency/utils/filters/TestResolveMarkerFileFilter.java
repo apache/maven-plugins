@@ -67,7 +67,7 @@ public class TestResolveMarkerFileFilter
     }
 
     public void testResolveFile()
-        throws MojoExecutionException
+        throws MojoExecutionException, IOException
     {
         SourcesFileMarkerHandler handler = new SourcesFileMarkerHandler( outputFolder );
         ResolveFileFilter filter = new ResolveFileFilter( handler );
