@@ -502,6 +502,18 @@ mvn clover:instrument clover:clover
   Where <<<myHistoryDir>>> could be a Maven property that you define in a 
   profile.
 
+  The historical report is generated in the <<<${project.build.dir}/clover/history/historical.html>>> file. If you
+  wish to link this report to the generated web site you'll need to modify your <<<site.xml>>> and add the link by
+  hand. The technical reason is that Maven only supports one report per MOJO. For example:
+
++--------
+[...]
+  <menu name="Other Reports">
+    <item name="Clover History" href="clover/history/historical.html"/>
+  </menu>
+[...]
++---------
+
   <Back to {{{usage.html}top}}.>
   
 ** {Aggregating Clover Reports}
