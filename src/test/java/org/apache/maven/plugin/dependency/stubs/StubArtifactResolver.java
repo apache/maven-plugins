@@ -1,6 +1,7 @@
 package org.apache.maven.plugin.dependency.stubs;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,7 +37,15 @@ public class StubArtifactResolver
         {
             // TODO Auto-generated method stub
             ArtifactStubFactory factory = new ArtifactStubFactory( new File( localRepository.getBasedir() ), true );
-            factory.setArtifactFile( artifact );
+            try
+            {
+                factory.setArtifactFile( artifact );
+            }
+            catch ( IOException e )
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
         else
         {
