@@ -30,7 +30,7 @@ public final class AssemblyFileUtils
 
     /**
      * Unpacks the archive file.
-     * 
+     *
      * @param source
      *            File to be unpacked.
      * @param destDir
@@ -49,16 +49,12 @@ public final class AssemblyFileUtils
 
             unArchiver.extract();
         }
-        catch ( IOException e )
-        {
-            throw new ArchiveExpansionException( "Error unpacking file: " + source + "to: " + destDir, e );
-        }
         catch ( ArchiverException e )
         {
             throw new ArchiveExpansionException( "Error unpacking file: " + source + "to: " + destDir, e );
         }
     }
-    
+
     /**
      * NOTE: It is the responsibility of the caller to close the source Reader instance.
      * @param lineEndings This is the result of the getLineEndingChars(..) method in this utility class; the actual
@@ -79,7 +75,7 @@ public final class AssemblyFileUtils
             {
                 bufferedSource = new BufferedReader( source );
             }
-            
+
             out = new BufferedWriter( new FileWriter( dest ) );
 
             String line;
