@@ -206,6 +206,15 @@
   Note: The <<<clover:check>>> goal will also check the test percentage coverage
   for merged Clover databases if any is found (see the
   {{{usage.html#Aggregating Clover Reports}Aggregating Clover Reports}} section for more on that).
+
+  There are some special cases where you'd want the build not to fail even though the TPC is below the expected
+  threshold (for example to let the build continue so that you can see the results of other checks prior to
+  fixing the TPC). There's a <<<failOnViolation>>> configuration property for this which you can also run on the
+  command line as follows:
+
++------+
+  mvn clover:instrument clover:check -DtargetPercentage=50% -DfailOnViolation=false
++------+
  
   <Back to {{{usage.html}top}}.>
   
