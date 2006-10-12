@@ -1,6 +1,7 @@
 package org.apache.maven.plugin.assembly.filter;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
@@ -11,11 +12,16 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import junit.framework.TestCase;
 
+import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.zip.ZipArchiver;
+import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -29,6 +35,8 @@ public class ComponentsXmlArchiverFileFilterTest
     extends TestCase
 {
     private ComponentsXmlArchiverFileFilter filter;
+    
+    private TestFileManager fileManager = new TestFileManager( "componentsXmlArchiverFileFilter.test", ".zip" );
 
     public void setUp()
     {
@@ -39,7 +47,7 @@ public class ComponentsXmlArchiverFileFilterTest
         throws IOException, XmlPullParserException
     {
         Reader reader = writeComponentsXml( Collections.singletonList( new ComponentDef( "role", null,
-            "org.apache.maven.Impl" ) ) );
+                                                                                         "org.apache.maven.Impl" ) ) );
 
         filter.addComponentsXml( reader );
 
@@ -56,7 +64,7 @@ public class ComponentsXmlArchiverFileFilterTest
         throws IOException, XmlPullParserException
     {
         Reader reader = writeComponentsXml( Collections.singletonList( new ComponentDef( "role", "hint",
-            "org.apache.maven.Impl" ) ) );
+                                                                                         "org.apache.maven.Impl" ) ) );
 
         filter.addComponentsXml( reader );
 
@@ -118,9 +126,9 @@ public class ComponentsXmlArchiverFileFilterTest
         XPath hint = XPath.newInstance( "//component[position()=1]/role-hint/text()" );
         XPath implementation = XPath.newInstance( "//component[position()=1]/implementation/text()" );
 
-        assertEquals( "role", ((Text) role.selectSingleNode( doc )).getText() );
+        assertEquals( "role", ( (Text) role.selectSingleNode( doc ) ).getText() );
         assertNull( hint.selectSingleNode( doc ) );
-        assertEquals( "impl", ((Text) implementation.selectSingleNode( doc )).getText() );
+        assertEquals( "impl", ( (Text) implementation.selectSingleNode( doc ) ).getText() );
     }
 
     public void testAddToArchive_ShouldWriteComponentWithHintToFile()
@@ -145,9 +153,9 @@ public class ComponentsXmlArchiverFileFilterTest
         XPath hint = XPath.newInstance( "//component[position()=1]/role-hint/text()" );
         XPath implementation = XPath.newInstance( "//component[position()=1]/implementation/text()" );
 
-        assertEquals( "role", ((Text) role.selectSingleNode( doc )).getText() );
-        assertEquals( "hint", ((Text) hint.selectSingleNode( doc )).getText() );
-        assertEquals( "impl", ((Text) implementation.selectSingleNode( doc )).getText() );
+        assertEquals( "role", ( (Text) role.selectSingleNode( doc ) ).getText() );
+        assertEquals( "hint", ( (Text) hint.selectSingleNode( doc ) ).getText() );
+        assertEquals( "impl", ( (Text) implementation.selectSingleNode( doc ) ).getText() );
     }
 
     public void testAddToArchive_ShouldWriteTwoComponentToFile()
@@ -177,17 +185,75 @@ public class ComponentsXmlArchiverFileFilterTest
         XPath hint = XPath.newInstance( "//component[position()=1]/role-hint/text()" );
         XPath implementation = XPath.newInstance( "//component[position()=1]/implementation/text()" );
 
-        assertEquals( "role", ((Text) role.selectSingleNode( doc )).getText() );
-        assertEquals( "hint", ((Text) hint.selectSingleNode( doc )).getText() );
-        assertEquals( "impl", ((Text) implementation.selectSingleNode( doc )).getText() );
+        assertEquals( "role", ( (Text) role.selectSingleNode( doc ) ).getText() );
+        assertEquals( "hint", ( (Text) hint.selectSingleNode( doc ) ).getText() );
+        assertEquals( "impl", ( (Text) implementation.selectSingleNode( doc ) ).getText() );
 
         XPath role2 = XPath.newInstance( "//component[position()=2]/role/text()" );
         XPath hint2 = XPath.newInstance( "//component[position()=2]/role-hint/text()" );
         XPath implementation2 = XPath.newInstance( "//component[position()=2]/implementation/text()" );
 
-        assertEquals( "role", ((Text) role2.selectSingleNode( doc )).getText() );
-        assertEquals( "hint2", ((Text) hint2.selectSingleNode( doc )).getText() );
-        assertEquals( "impl", ((Text) implementation2.selectSingleNode( doc )).getText() );
+        assertEquals( "role", ( (Text) role2.selectSingleNode( doc ) ).getText() );
+        assertEquals( "hint2", ( (Text) hint2.selectSingleNode( doc ) ).getText() );
+        assertEquals( "impl", ( (Text) implementation2.selectSingleNode( doc ) ).getText() );
+
+    }
+
+    public void testAddToArchive_ShouldWriteTwoComponentToArchivedFile()
+        throws IOException, ArchiverException, JDOMException
+    {
+        filter.components = new LinkedHashMap();
+
+        Xpp3Dom dom = createComponentDom( new ComponentDef( "role", "hint", "impl" ) );
+
+        filter.components.put( "rolehint", dom );
+
+        Xpp3Dom dom2 = createComponentDom( new ComponentDef( "role", "hint2", "impl" ) );
+
+        filter.components.put( "rolehint2", dom2 );
+
+        ZipArchiver archiver = new ZipArchiver();
+        
+        File archiveFile = fileManager.createTempFile();
+        
+        archiver.setDestFile( archiveFile );
+        
+        File descriptorFile = fileManager.createTempFile();
+        
+        archiver.setArchiveFinalizers( Collections.singletonList( filter ) );
+        
+        archiver.createArchive();
+        
+        ZipFile zf = new ZipFile( archiveFile );
+        
+        ZipEntry ze = zf.getEntry( ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH );
+        
+        assertNotNull( ze );
+        
+        FileOutputStream fileStream = new FileOutputStream( descriptorFile );
+        
+        IOUtil.copy( zf.getInputStream( ze ), fileStream );
+        IOUtil.close( fileStream );
+
+        SAXBuilder builder = new SAXBuilder( false );
+
+        Document doc = builder.build( descriptorFile );
+
+        XPath role = XPath.newInstance( "//component[position()=1]/role/text()" );
+        XPath hint = XPath.newInstance( "//component[position()=1]/role-hint/text()" );
+        XPath implementation = XPath.newInstance( "//component[position()=1]/implementation/text()" );
+
+        assertEquals( "role", ( (Text) role.selectSingleNode( doc ) ).getText() );
+        assertEquals( "hint", ( (Text) hint.selectSingleNode( doc ) ).getText() );
+        assertEquals( "impl", ( (Text) implementation.selectSingleNode( doc ) ).getText() );
+
+        XPath role2 = XPath.newInstance( "//component[position()=2]/role/text()" );
+        XPath hint2 = XPath.newInstance( "//component[position()=2]/role-hint/text()" );
+        XPath implementation2 = XPath.newInstance( "//component[position()=2]/implementation/text()" );
+
+        assertEquals( "role", ( (Text) role2.selectSingleNode( doc ) ).getText() );
+        assertEquals( "hint2", ( (Text) hint2.selectSingleNode( doc ) ).getText() );
+        assertEquals( "impl", ( (Text) implementation2.selectSingleNode( doc ) ).getText() );
 
     }
 
@@ -401,20 +467,20 @@ public class ComponentsXmlArchiverFileFilterTest
         {
             throw new UnsupportedOperationException( "not supported" );
         }
-        
+
         public void setForced( boolean forced )
         {
-            throw new UnsupportedOperationException( "not supported" );            
+            throw new UnsupportedOperationException( "not supported" );
         }
 
         public boolean isForced()
         {
-            throw new UnsupportedOperationException( "not supported" );            
+            throw new UnsupportedOperationException( "not supported" );
         }
 
         public boolean isSupportingForced()
         {
-            throw new UnsupportedOperationException( "not supported" );            
+            throw new UnsupportedOperationException( "not supported" );
         }
     }
 
