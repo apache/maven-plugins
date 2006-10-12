@@ -1,0 +1,9 @@
+<component-set>
+  <components>
+    <component>
+      <role>child</role>
+      <role-hint>two</role-hint>
+      <implementation>test/App</implementation>
+    </component>
+  </components>
+</component-set>

@@ -1,0 +1,59 @@
+import java.io.*;
+import java.net.*;
+import java.util.jar.*;
+
+boolean result = true;
+
+try
+{
+    System.out.println( "Creating JarFile java.io.File." );
+    
+    File jarFile = new File( basedir, "child2/target/child2-1.0-SNAPSHOT-jar-with-dependencies.jar" );
+    
+    System.out.println( "Checking for existence and file-ishness of: " + jarFile );
+    
+    if ( !jarFile.exists() || jarFile.isDirectory() )
+    {
+        System.err.println( "jar file is missing or a directory." );
+        return false;
+    }
+    
+    System.out.println( "Creating JarFile instance." );
+    
+    JarFile jf = new JarFile( jarFile );
+    
+    System.out.println( "Looking for component descriptor jar entry." );
+    
+    JarEntry je = jf.getEntry( "META-INF/plexus/components.xml" ); 
+
+    if ( je == null )
+    {
+        System.err.println( "component descriptor is missing." );
+        result = false;
+    }
+    else
+    {
+        InputStream instream = jf.getInputStream( je );
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        byte[] buf = new byte[16];
+        int read = -1;
+
+        while( ( read = instream.read( buf ) ) > -1 )
+        {
+            baos.write( buf, 0, read );
+        }
+
+        String test = new String( baos.toByteArray() );
+
+        result = test.indexOf( "one" ) > -1 && test.indexOf( "two" ) > -1;
+    }
+   
+}
+catch( IOException e )
+{
+    e.printStackTrace();
+    result = false;
+}
+
+return result;
