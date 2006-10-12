@@ -469,7 +469,7 @@ public class DefaultAssemblyArchiverTest
 
         TarOptions options;
 
-        public void createArchive()
+        protected void execute()
             throws ArchiverException, IOException
         {
             archiveCreated = true;

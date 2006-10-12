@@ -1,0 +1,9 @@
+<component-set>
+  <components>
+    <component>
+      <role>child</role>
+      <role-hint>one</role-hint>
+      <implementation>test/AppChild1</implementation>
+    </component>
+  </components>
+</component-set>
