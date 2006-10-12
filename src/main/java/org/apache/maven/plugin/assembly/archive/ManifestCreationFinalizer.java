@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
@@ -23,6 +25,13 @@ public class ManifestCreationFinalizer
     private final MavenProject project;
     private final MavenArchiveConfiguration archiveConfiguration;
 
+    // TODO: I'd really prefer to rewrite MavenArchiver as either a
+    // separate manifest creation utility (and to
+    // create an include pom.properties etc into another archiver), or
+    // an implementation of an archiver
+    // (the first is preferable).
+    private MavenArchiver mavenArchiver = new MavenArchiver();
+
     public ManifestCreationFinalizer( MavenProject project, MavenArchiveConfiguration archiveConfiguration )
     {
         this.project = project;
@@ -32,13 +41,6 @@ public class ManifestCreationFinalizer
     public void finalizeArchiveCreation( Archiver archiver )
         throws ArchiverException
     {
-        // TODO: I'd really prefer to rewrite MavenArchiver as either a
-        // separate manifest creation utility (and to
-        // create an include pom.properties etc into another archiver), or
-        // an implementation of an archiver
-        // (the first is preferable).
-        MavenArchiver mavenArchiver = new MavenArchiver();
-
         if ( archiveConfiguration != null )
         {
             try
@@ -81,6 +83,25 @@ public class ManifestCreationFinalizer
                 throw new ArchiverException( "Dependencies were not resolved: " + e.getMessage(), e );
             }
         }
+    }
+
+    public List getVirtualFiles()
+    {
+        try
+        {
+            if ( mavenArchiver.getManifest( project, archiveConfiguration.getManifest() ) != null )
+            {
+                return Collections.singletonList( "META-INF/MANIFEST.MF" );
+            }
+        }
+        catch ( ManifestException e )
+        {
+        }
+        catch ( DependencyResolutionRequiredException e )
+        {
+        }
+        
+        return null;
     }
 
 }
