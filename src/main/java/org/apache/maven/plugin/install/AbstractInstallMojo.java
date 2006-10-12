@@ -148,7 +148,7 @@ public abstract class AbstractInstallMojo
     }
 
     protected String getChecksum( File file, String algo )
-        throws NoSuchAlgorithmException, IOException, DigesterException
+        throws NoSuchAlgorithmException, DigesterException
     {
         if ( "MD5".equals( algo ) )
         {

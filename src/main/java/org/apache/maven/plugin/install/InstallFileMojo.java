@@ -20,6 +20,8 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.installer.ArtifactInstallationException;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
+import org.apache.maven.artifact.repository.DefaultArtifactRepository;
+import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -28,6 +30,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
@@ -36,6 +39,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
+import java.net.MalformedURLException;
 
 /**
  * Installs a file in local repository.
@@ -116,9 +120,50 @@ public class InstallFileMojo
      */
     private ArtifactFactory artifactFactory;
 
+    /**
+     * Default repository layout
+     *
+     * @component roleHint="default"
+     */
+    private ArtifactRepositoryLayout repositoryLayout;
+
+    /**
+     * The path for a specific local repository directory. It will wrap into an <code>ArtifactRepository</code>
+     * with <code>localRepoId</code> as <code>id</code> and with default <code>repositoryLayout</code>
+     *
+     * @parameter expression="${localRepositoryPath}"
+     */
+    private File localRepositoryPath;
+
+    /**
+     * The <code>id</code> for the <code>localRepo</code>
+     *
+     * @parameter expression="${localRepositoryId}"
+     */
+    private String localRepositoryId;
+
+    /**
+     * @see org.apache.maven.plugin.Mojo#execute()
+     */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        // ----------------------------------------------------------------------
+        // Override the default localRepository variable
+        // ----------------------------------------------------------------------
+        if ( StringUtils.isNotEmpty( localRepositoryId ) && ( localRepositoryPath != null ) )
+        {
+            try
+            {
+                localRepository = new DefaultArtifactRepository( localRepositoryId, localRepositoryPath.toURL()
+                    .toString(), repositoryLayout );
+            }
+            catch ( MalformedURLException e )
+            {
+                throw new MojoExecutionException( "MalformedURLException: " + e.getMessage(), e );
+            }
+        }
+
         ArtifactMetadata metadata = null;
 
         Artifact pomArtifact = null;
@@ -224,13 +269,18 @@ public class InstallFileMojo
         }
     }
 
-    private Model readPom( File file )
+    /**
+     * @param aFile
+     * @return the model from a file
+     * @throws MojoExecutionException if any
+     */
+    private Model readPom( File aFile )
         throws MojoExecutionException
     {
         Reader reader = null;
         try
         {
-            reader = new FileReader( file );
+            reader = new FileReader( aFile );
 
             MavenXpp3Reader mavenReader = new MavenXpp3Reader();
 
@@ -238,7 +288,7 @@ public class InstallFileMojo
         }
         catch ( FileNotFoundException e )
         {
-            throw new MojoExecutionException( "File not found " + file, e );
+            throw new MojoExecutionException( "File not found " + aFile, e );
         }
         catch ( IOException e )
         {
