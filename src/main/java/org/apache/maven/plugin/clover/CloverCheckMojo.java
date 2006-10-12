@@ -50,7 +50,16 @@ public class CloverCheckMojo extends AbstractCloverMojo
      * @parameter
      */
     private String contextFilters;
-    
+
+    /**
+     * Do we fail the build on a violation? The default is true but there are some edge cases where you want to be
+     * able to check what would fail but without actually failing the build. For example you may want to let the build
+     * continue so that you can verify others checks that are executed after the Clover checks. 
+     *
+     * @parameter expression="${failOnViolation}" default-value="true"
+     */
+    private boolean failOnViolation;
+
     /**
      * {@inheritDoc}
      * @see org.apache.maven.plugin.clover.internal.AbstractCloverMojo#execute()
@@ -122,9 +131,17 @@ public class CloverCheckMojo extends AbstractCloverMojo
         catch ( BuildException e )
         {
             getLog().error( antProject.getProperty( "clovercheckproperty" ) );
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
 
+            if ( this.failOnViolation )
+            {
+                throw new MojoExecutionException( e.getMessage(), e );
+            }
+            else
+            {
+                getLog().warn( "Clover test percentage coverage is below threshold but failOnViolation is set to "
+                    + " false, preventing the build from failing." );
+            }
+        }
     }
 
     /**
