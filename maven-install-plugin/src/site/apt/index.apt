@@ -30,7 +30,7 @@ Maven Install Plugin
   the user's home directory <<<(~/.m2/repository)>>> but the location can be configured in
   <<<~/.m2/settings.xml>>> using the \<localRepository\> element.
 
-  The install plugin is used during the install phase to add 
+  The install plugin is used during the install phase to add
   artifact(s) to the local repository. The install plugin uses
   the information in the POM (groupId, artifactId, version) to determine
   the proper location for the artifact within the local repository.
@@ -44,8 +44,8 @@ Maven Install Plugin
     (sources, javadoc, etc) produced by a particular project.
 
   * {{{install-file-mojo.html}install:install-file}} is mostly used to install an externally
-    created artifact into the local repository, along with its pom. In that case 
-	the project information can be taken from an optionally specified pomFile, but can
+    created artifact into the local repository, along with its pom. In that case
+    the project information can be taken from an optionally specified pomFile, but can
     be given using command line parameters.
 
 * Usage
@@ -65,5 +65,7 @@ Maven Install Plugin
   * {{{examples/installing-checksums.html}Installing Checksums}}
 
   * {{{examples/update-release-info.html}Updating Release Info}}
+
+  * {{{examples/specific-local-repo.html}Installing an artifact on a specific local repository path}}
 
   []
