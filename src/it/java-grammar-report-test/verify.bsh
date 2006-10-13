@@ -1,0 +1,46 @@
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+
+import org.codehaus.plexus.util.IOUtil;
+
+File outputDir = new File( basedir, "target/site/antlr" );
+if ( !outputDir.isDirectory() || !outputDir.exists() )
+{
+  System.err.println( "The file '" + outputDir.getAbsolutePath() + "' is not a directory or doesn't exist." );
+  return false;
+}
+
+File index = new File( outputDir, "index.html" );
+if ( !index.isFile() || !index.exists() )
+{
+  System.err.println( "The file '" + index.getAbsolutePath() + "' is not a file or doesn't exist." );
+  return false;
+}
+
+String indexContent = "";
+try
+{
+  BufferedReader in = new BufferedReader( new FileReader( index ) );
+  indexContent = IOUtil.toString( in );
+}
+catch( IOException e )
+{
+  System.err.println( "IOException: " + e.getMessage() );
+  return false;
+}
+
+if ( indexContent.indexOf( "<a href=\"JavaRecognizer.html\">JavaRecognizer</a>" ) == -1 )
+{
+  System.err.println( "The file '" + index.getAbsolutePath() + "' should have <a href=\"JavaRecognizer.html\">JavaRecognizer</a>" );
+  return false;
+}
+
+File javaRecognizer = new File( outputDir, "JavaRecognizer.html" );
+if ( !javaRecognizer.isFile() || !javaRecognizer.exists() )
+{
+  System.err.println( "The file '" + javaRecognizer.getAbsolutePath() + "' is not a file or doesn't exist." );
+  return false;
+}
+
+return true;
