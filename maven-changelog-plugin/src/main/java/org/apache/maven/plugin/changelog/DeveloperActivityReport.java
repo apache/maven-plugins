@@ -129,10 +129,17 @@ public class DeveloperActivityReport
         sink.text( bundle.getString( "report.dev-activity.mainTitle" ) );
         sink.sectionTitle1_();
 
-        for ( Iterator sets = changeLogSets.iterator(); sets.hasNext(); )
-        {
-            ChangeLogSet set = (ChangeLogSet) sets.next();
-            doChangedSets( set, bundle, sink );
+        if( developers.isEmpty() ) {
+            sink.paragraph();
+            sink.text( bundle.getString( "report.dev-activity.noDevelopers" ) );
+            sink.paragraph_();
+        }
+        else {
+            for ( Iterator sets = changeLogSets.iterator(); sets.hasNext(); )
+            {
+                ChangeLogSet set = (ChangeLogSet) sets.next();
+                doChangedSets( set, bundle, sink );
+            }
         }
 
         sink.section1_();
