@@ -916,7 +916,8 @@ public class ChangeLogReport
 
         initReportUrls();
 
-        Collections.sort( new ArrayList( entries ), new Comparator()
+        List sortedEntries = new ArrayList(entries);
+        Collections.sort( sortedEntries, new Comparator()
         {
             public int compare( Object arg0, Object arg1 )
             {
@@ -926,7 +927,7 @@ public class ChangeLogReport
             }
         } );
 
-        for ( Iterator i = entries.iterator(); i.hasNext(); )
+        for ( Iterator i = sortedEntries.iterator(); i.hasNext(); )
         {
             ChangeSet entry = (ChangeSet) i.next();
 
