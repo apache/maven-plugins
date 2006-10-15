@@ -22,6 +22,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
+import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
@@ -379,7 +380,7 @@ public class EarMojo
     public void unpack( File source, File destDir )
         throws NoSuchArchiverException, IOException, ArchiverException
     {
-        UnArchiver unArchiver = archiverManager.getUnArchiver( source );
+        UnArchiver unArchiver = archiverManager.getUnArchiver( "zip" );
         unArchiver.setSourceFile( source );
         unArchiver.setDestDirectory( destDir );
 

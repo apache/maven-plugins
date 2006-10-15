@@ -94,6 +94,39 @@ public abstract class AbstractEarPluginTestCase
         return basedir;
     }
 
+
+    /**
+     * Executes the specified projects and asserts the given artifacts.
+     *
+     * @param projectName        the project to test
+     * @param expectedArtifacts  the list of artifacts to be found in the EAR archive
+     * @param artifactsDirectory whether the artifact is an exploded artifactsDirectory or not
+     * @throws Exception
+     */
+    protected void doTestProject( final String projectName, final String[] expectedArtifacts,
+                                  final boolean[] artifactsDirectory )
+        throws Exception
+    {
+        final File baseDir = executeMojo( projectName, new Properties() );
+
+        assertArchiveContent( baseDir, projectName, expectedArtifacts, artifactsDirectory );
+
+    }
+
+    /**
+     * Executes the specified projects and asserts the given artifacts as
+     * artifacts (non directory)
+     *
+     * @param projectName       the project to test
+     * @param expectedArtifacts the list of artifacts to be found in the EAR archive
+     * @throws Exception
+     */
+    protected void doTestProject( final String projectName, final String[] expectedArtifacts )
+        throws Exception
+    {
+        doTestProject( projectName, expectedArtifacts, new boolean[expectedArtifacts.length] );
+    }
+
     protected void assertEarArchive( final File baseDir, final String projectName )
     {
         assertTrue( "EAR archive does not exist", getEarArchive( baseDir, projectName ).exists() );
@@ -124,16 +157,27 @@ public abstract class AbstractEarPluginTestCase
         return FINAL_NAME_PREFIX + projectName + FINAL_NAME_SUFFIX;
     }
 
-    protected void assertArchiveContent( final File baseDir, final String projectName, final String[] artifactNames )
+    protected void assertArchiveContent( final File baseDir, final String projectName, final String[] artifactNames,
+                                         final boolean[] artifactsDirectory )
     {
+        // sanity check
+        assertEquals( "Wrong parameter, artifacts mist match directory flag", artifactNames.length,
+                      artifactsDirectory.length );
+
         File dir = getEarDirectory( baseDir, projectName );
         final List actualFiles = buildFiles( dir );
         assertEquals( "Artifacts mismatch " + actualFiles, artifactNames.length, actualFiles.size() );
         for ( int i = 0; i < artifactNames.length; i++ )
         {
             String artifactName = artifactNames[i];
-            File expectedFile = new File(dir, artifactName);
-            assertTrue("Artifact["+artifactName+"] not found in ear archive", actualFiles.contains( expectedFile));            
+            final boolean isDirectory = artifactsDirectory[i];
+            File expectedFile = new File( dir, artifactName );
+
+            assertEquals( "Artifact[" + artifactName + "] not in the right form (exploded/archive", isDirectory,
+                          expectedFile.isDirectory() );
+            assertTrue( "Artifact[" + artifactName + "] not found in ear archive",
+                        actualFiles.contains( expectedFile ) );
+
         }
     }
 
@@ -166,14 +210,11 @@ public abstract class AbstractEarPluginTestCase
         for ( int i = 0; i < result.length; i++ )
         {
             File file = result[i];
-            if ( file.isFile() )
-            {
-                files.add( file );
-            }
-            else
-            {
-                addFiles( file, files );
-            }
+            files.add( file );
+            /*
+             Here's we can introduce a more complex
+             file filtering if necessary
+             */
         }
     }
 }
