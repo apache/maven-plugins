@@ -181,7 +181,15 @@ public class ArtifactItem
 
     public String toString()
     {
-        return groupId + ":" + artifactId + ":" + classifier + ":" + version + ":" + type;
+        String ver = (version == null)? "?" : version;
+        if (this.classifier == null)
+        {
+            return groupId + ":" + artifactId + ":" + ver + ":" + type;   
+        }
+        else
+        {
+            return groupId + ":" + artifactId + ":" + classifier + ":" + ver + ":" + type;    
+        }
     }
 
     /**
