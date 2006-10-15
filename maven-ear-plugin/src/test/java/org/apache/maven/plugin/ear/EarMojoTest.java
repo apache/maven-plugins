@@ -40,14 +40,16 @@ public class EarMojoTest
         doTestProject( "project-03", new String[]{"ejb-sample-one-1.0-classified.jar"} );
     }
 
-    protected void doTestProject( final String projectName, final String[] expectedArtifacts )
+    /**
+     * Test the classifier functionnality
+     */
+    public void testProject04()
         throws Exception
     {
-        final File baseDir = executeMojo( projectName, new Properties() );
-
-        assertArchiveContent( baseDir, projectName, expectedArtifacts );
-
+        doTestProject( "project-04", new String[]{"ejb-sample-one-1.0.jar","sar-sample-one-1.0.sar"}, new boolean[]{false, true});
     }
+
+
 
 
 }
