@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -59,6 +60,24 @@ public class TestCopyDependenciesMojo
         {
             fail( e.getLongMessage() );
         }
+
+    }
+
+    public void testCopyFile()
+        throws MojoExecutionException, IOException
+    {
+        File src = File.createTempFile( "copy", null );
+        Random a = new Random();
+        File outputFolder2 = new File( "target/copyTo" + a.nextLong() + "/" );
+
+        File dest = new File( outputFolder2, "toMe.jar" );
+
+        assertFalse( dest.exists() );
+
+        assertTrue( mojo.copyFile( src, dest, false ) );
+        assertTrue( dest.exists() );
+        assertFalse( mojo.copyFile( src, dest, false ) );
+        assertTrue( mojo.copyFile( src, dest, true ) );
 
     }
 
