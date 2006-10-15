@@ -119,4 +119,12 @@ public abstract class AbstractDependencyMojo
         return this.log;
     }
 
+    /**
+     * @return Returns the archiverManager.
+     */
+    public ArchiverManager getArchiverManager()
+    {
+        return this.archiverManager;
+    }
+
 }
