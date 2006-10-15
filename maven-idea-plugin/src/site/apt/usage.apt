@@ -5,12 +5,12 @@
  ------
  05 July 2006
 
-Maven IDEA Plugin: Usage
+Usage
 
 * Generating the IntelliJ IDEA project files
 
-  To generate the files needed for an IntelliJ IDEA Project setup, you need
-  only to execute the main plugin goal, which is <<<idea:idea>>> like so:
+  To generate the files needed for an IntelliJ IDEA Project setup, you only
+  need to execute the main plugin goal, which is <<<idea:idea>>> like so:
 
 +-----
 mvn idea:idea
@@ -20,9 +20,9 @@ mvn idea:idea
   project for IntelliJ IDEA: <<<idea:project>>>, <<<idea:module>>>, and
   <<<idea:workspace>>>.
 
-  Please note that this plugin has no way to determine the name of the jdk
-  library you are using.  By default, this uses the jdk name equivalent to
-  <<<java -version>>> in your machine.  If you know the name of the jdk library
+  Please note that this plugin has no way to determine the name of the JDK
+  you are using.  By default, this uses the JDK name equivalent to
+  <<<java -version>>> in your machine.  If you know the name of the JDK
   to use, for example, 1.5, you can then execute:
 
 +-----
