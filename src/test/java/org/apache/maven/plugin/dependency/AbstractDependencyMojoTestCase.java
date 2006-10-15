@@ -27,7 +27,7 @@ public class AbstractDependencyMojoTestCase
         super.setUp();
         testDir = new File( getBasedir(), "target" + File.separatorChar + "unit-tests" + File.separatorChar
             + testDirStr + File.separatorChar );
-        DependencyTestUtils.removeDirectory(testDir);
+        DependencyTestUtils.removeDirectory( testDir );
         assertFalse( testDir.exists() );
 
         stubFactory = new ArtifactStubFactory( this.testDir, createFiles );
@@ -46,7 +46,7 @@ public class AbstractDependencyMojoTestCase
             {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
-                fail( "Trying to remove directory:" + testDir+"\r\n"+e.toString() );
+                fail( "Trying to remove directory:" + testDir + "\r\n" + e.toString() );
             }
             assertFalse( testDir.exists() );
         }
