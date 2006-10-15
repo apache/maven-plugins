@@ -9,8 +9,8 @@
 
 Prevent Using Module Library References And Use Local Repository Artifacts
 
-  For some reason, if one do not want to use modular (*.iml) references of IDEA
-  projects, one can choose to do so using:
+  If for some reason, you do not want to use module (*.iml) references for your IDEA
+  project, you can choose to do so using:
 
 +-----
 mvn idea:idea -DlinkModules=false

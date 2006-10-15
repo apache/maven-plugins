@@ -18,7 +18,7 @@
  */
 -->
 
-<project name="Maven Idea Plugin">
+<project name="Maven IDEA Plugin">
   <bannerLeft>
     <name>Maven Idea Plugin</name>
     <src>http://maven.apache.org/images/apache-maven-project.png</src>
