@@ -88,7 +88,6 @@ public final class UnpackMojo
 
         File location = artifactItem.getOutputDirectory();
 
-        DependencyUtil.unpackFile( artifact, location, this.markersDirectory, this.archiverManager, this.getLog(),
-                                   artifactItem.isDoOverWrite() );
+        unpackFile( artifact, location, this.markersDirectory, artifactItem.isDoOverWrite() );
     }
 }

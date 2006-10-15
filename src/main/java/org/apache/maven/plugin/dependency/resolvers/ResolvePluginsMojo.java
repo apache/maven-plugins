@@ -16,6 +16,7 @@
 
 package org.apache.maven.plugin.dependency.resolvers;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -70,8 +71,7 @@ public class ResolvePluginsMojo
     {
         try
         {
-            Set plugins = DependencyUtil.resolvePluginArtifacts( project, factory, local, remotePluginRepositories,
-                                                                 resolver );
+            Set plugins = resolvePluginArtifacts();
             for ( Iterator i = plugins.iterator(); i.hasNext(); )
             {
                 Artifact plugin = (Artifact) i.next();
@@ -81,9 +81,7 @@ public class ResolvePluginsMojo
                 }
                 if ( !excludeTransitive )
                 {
-                    Set transitiveDependencies = DependencyUtil.resolveArtifactDependencies( plugin, factory, local,
-                                                                                             remoteRepos, resolver,
-                                                                                             mavenProjectBuilder );
+                    Set transitiveDependencies = this.resolveArtifactDependencies( plugin);
                     if ( !silent )
                     {
                         for ( Iterator transIter = transitiveDependencies.iterator(); transIter.hasNext(); )
@@ -114,6 +112,44 @@ public class ResolvePluginsMojo
             throw new MojoExecutionException( "Nested:", e );
         }
 
+    }
+
+    /**
+     * This method resolves the plugin artifacts from the project.
+     * 
+     * @param project
+     *            The POM.
+     * @param artifactFactory
+     *            component to build artifact objects.
+     * @param localRepository
+     *            where to resolve artifacts.
+     * @param remotePluginRepositories
+     *            list of remote repositories used to resolve plugins.
+     * @param artifactResolver
+     *            component used to resolve artifacts.
+     * 
+     * @return set of resolved plugin artifacts.
+     * 
+     * @throws ArtifactResolutionException
+     * @throws ArtifactNotFoundException
+     */
+    protected Set resolvePluginArtifacts()
+        throws ArtifactResolutionException, ArtifactNotFoundException
+    {
+        Set plugins = project.getPluginArtifacts();
+        Set reports = project.getReportArtifacts();
+
+        Set artifacts = new HashSet();
+        artifacts.addAll( reports );
+        artifacts.addAll( plugins );
+
+        for ( Iterator i = artifacts.iterator(); i.hasNext(); )
+        {
+            Artifact artifact = (Artifact) i.next();
+            // resolve the new artifact
+            this.resolver.resolve( artifact, this.remotePluginRepositories, this.local );
+        }
+        return artifacts;
     }
 
     protected ArtifactsFilter getMarkedArtifactFilter()
