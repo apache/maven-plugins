@@ -554,9 +554,11 @@ public class TestCopyDependenciesMojo
 
         assertTrue( time < copiedFile.lastModified() );
     }
-    
-    public void testGetDependencies() throws MojoExecutionException
+
+    public void testGetDependencies()
+        throws MojoExecutionException
     {
-        assertEquals(mojo.getDependencies(true).toString(),mojo.getDependencySets(true).getResolvedDependencies().toString());
+        assertEquals( mojo.getDependencies( true ).toString(), mojo.getDependencySets( true ).getResolvedDependencies()
+            .toString() );
     }
 }

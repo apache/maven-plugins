@@ -4,12 +4,18 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
-
+import org.codehaus.plexus.logging.Logger;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.plugin.dependency.AbstractDependencyMojo;
+import org.codehaus.plexus.archiver.Archiver;
+import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.manager.ArchiverManager;
+import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
+import org.codehaus.plexus.archiver.war.WarArchiver;
 import org.codehaus.plexus.util.FileUtils;
 
 public class ArtifactStubFactory
@@ -20,10 +26,20 @@ public class ArtifactStubFactory
 
     File srcFile;
 
+    boolean createUnpackableFile;
+
+    AbstractDependencyMojo mojo;
+
     public ArtifactStubFactory( File workingDir, boolean createFiles )
     {
         this.workingDir = new File( workingDir, "localTestRepo" );
         this.createFiles = createFiles;
+    }
+
+    public void setUnpackableFile( AbstractDependencyMojo mojo )
+    {
+        this.createUnpackableFile = true;
+        this.mojo = mojo;
     }
 
     public Artifact createArtifact( String groupId, String artifactId, String version )
@@ -72,12 +88,68 @@ public class ArtifactStubFactory
         {
             theFile.createNewFile();
         }
+        else if ( createUnpackableFile )
+        {
+            try
+            {
+                createUnpackableFile( artifact, theFile );
+            }
+            catch ( NoSuchArchiverException e )
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            catch ( ArchiverException e )
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            catch ( IOException e )
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
         else
         {
             FileUtils.copyFile( srcFile, theFile );
         }
 
         artifact.setFile( theFile );
+    }
+
+    public String getUnpackableFileName( Artifact artifact )
+    {
+        return "" + artifact.getGroupId() + "-" + artifact.getArtifactId() + "-" + artifact.getVersion() + "-"
+            + artifact.getClassifier() + "-" + artifact.getType() + ".txt";
+    }
+
+    public void createUnpackableFile( Artifact artifact, File destFile )
+        throws NoSuchArchiverException, ArchiverException, IOException
+    {
+        ArchiverManager archiverManager = mojo.getArchiverManager();
+        Archiver archiver = archiverManager.getArchiver( destFile );
+
+        archiver.setDestFile( destFile );
+        archiver.addFile( srcFile, getUnpackableFileName( artifact ) );
+
+        try
+        {
+            DependencyTestUtils.setVariableValueToObject( archiver, "logger", new SilentLog() );
+        }
+        catch ( IllegalAccessException e )
+        {
+            System.out.println( "Unable to override logger with silent log." );
+            e.printStackTrace();
+        }
+        if ( archiver instanceof WarArchiver )
+        {
+            WarArchiver war = (WarArchiver) archiver;
+            // the use of this is counter-intuitive:
+            // http://jira.codehaus.org/browse/PLX-286
+            war.setIgnoreWebxml( false );
+        }
+        archiver.createArchive();
     }
 
     public Artifact getReleaseArtifact()

@@ -1,0 +1,13 @@
+<project>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+          <configuration>
+              <project implementation="org.apache.maven.plugin.dependency.stubs.DependencyProjectStub"/>
+              <silent>true</silent>
+          </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
