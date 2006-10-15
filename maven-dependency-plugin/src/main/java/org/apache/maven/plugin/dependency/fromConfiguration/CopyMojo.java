@@ -101,7 +101,7 @@ public class CopyMojo
 
         File destFile = new File( artifactItem.getOutputDirectory(), destFileName );
 
-        DependencyUtil.copyFile( artifact.getFile(), destFile, this.getLog(), artifactItem.isDoOverWrite() );
+        copyFile( artifact.getFile(), destFile, artifactItem.isDoOverWrite() );
     }
 
 }

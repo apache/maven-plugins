@@ -77,27 +77,7 @@ public class TestDependencyUtil
 
     }
 
-    public void testCopyFile()
-        throws MojoExecutionException, IOException
-    {
-        File src = File.createTempFile( "copy", null );
-        Random a = new Random();
-        File outputFolder2 = new File( "target/copyTo" + a.nextLong() + "/" );
 
-        File dest = new File( outputFolder2, "toMe.jar" );
-
-        assertFalse( dest.exists() );
-
-        assertTrue( DependencyUtil.copyFile( src, dest, log, false ) );
-        assertTrue( dest.exists() );
-        assertFalse( DependencyUtil.copyFile( src, dest, log, false ) );
-        assertTrue( DependencyUtil.copyFile( src, dest, log, true ) );
-
-        src.delete();
-        dest.delete();
-        outputFolder2.delete();
-        outputFolder.delete();
-    }
 
     public void testDirectoryName()
         throws MojoExecutionException
