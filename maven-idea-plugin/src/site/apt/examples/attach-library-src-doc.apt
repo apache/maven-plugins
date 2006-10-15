@@ -9,7 +9,7 @@
 
 Attach Sources and/or Javadocs to Library Dependencies
 
-  Artifacts with source and javadoc deployed can be attached to IDEA libraries
+  Artifacts with sources and javadocs deployed can be attached to IDEA libraries
   using <<<downloadSources>>> and <<<downloadJavadocs>>> respectively. The
   following example shows how to do this in the command-line:
 

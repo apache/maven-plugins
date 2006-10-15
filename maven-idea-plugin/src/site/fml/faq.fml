@@ -2,13 +2,13 @@
 <faqs id="FAQ" title="Frequently Asked Questions">
  <part id="General">
    <faq id="idea-plugin">
-     <question>Is this the IDEA Plugin that allows me to run maven commands from within IntelliJ IDEA?</question>
+     <question>Is this the IDEA Plugin that allows me to run Maven commands from within IntelliJ IDEA?</question>
      <answer>
-       <p>No. This is a maven plugin to generate IntelliJ IDEA files for a maven project. This is not an IDEA Plugin for Maven.</p>
+       <p>No. This is a Maven plugin to generate IntelliJ IDEA files for a Maven project. This is not an IDEA Plugin for Maven.</p>
      </answer>
    </faq>
    <faq id="multi-project-handling">
-     <question>How does the IDEA plugin work on multi-project</question>
+     <question>How does the IDEA plugin work on multi-projects</question>
      <answer>
        <p>
          Maven IDEA Plugin, by default, creates the project files (*.ipr) and
