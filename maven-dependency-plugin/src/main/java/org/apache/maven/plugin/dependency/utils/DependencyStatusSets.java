@@ -33,11 +33,11 @@ import org.apache.maven.plugin.logging.Log;
 public class DependencyStatusSets
 {
 
-    Set resolvedDependencies = null;
+    TreeSet resolvedDependencies = null;
 
-    Set unResolvedDependencies = null;
+    TreeSet unResolvedDependencies = null;
 
-    Set skippedDependencies = null;
+    TreeSet skippedDependencies = null;
 
     public DependencyStatusSets()
     {
@@ -46,9 +46,18 @@ public class DependencyStatusSets
 
     public DependencyStatusSets( Set resolved, Set unResolved, Set skipped )
     {
-        this.resolvedDependencies = resolved;
-        this.unResolvedDependencies = unResolved;
-        this.skippedDependencies = skipped;
+        if ( resolved != null )
+        {
+            this.resolvedDependencies = new TreeSet( resolved );
+        }
+        if ( unResolved != null )
+        {
+            this.unResolvedDependencies = new TreeSet( unResolved );
+        }
+        if ( skipped != null )
+        {
+            this.skippedDependencies = new TreeSet( skipped );
+        }
     }
 
     /**
@@ -65,7 +74,14 @@ public class DependencyStatusSets
      */
     public void setResolvedDependencies( Set resolvedDependencies )
     {
-        this.resolvedDependencies = resolvedDependencies;
+        if ( resolvedDependencies != null )
+        {
+            this.resolvedDependencies = new TreeSet( resolvedDependencies );
+        }
+        else
+        {
+            this.resolvedDependencies = null;
+        }
     }
 
     /**
@@ -82,7 +98,14 @@ public class DependencyStatusSets
      */
     public void setSkippedDependencies( Set skippedDependencies )
     {
-        this.skippedDependencies = skippedDependencies;
+        if ( skippedDependencies != null )
+        {
+            this.skippedDependencies = new TreeSet( skippedDependencies );
+        }
+        else
+        {
+            this.skippedDependencies = null;
+        }
     }
 
     /**
@@ -99,7 +122,14 @@ public class DependencyStatusSets
      */
     public void setUnResolvedDependencies( Set unResolvedDependencies )
     {
-        this.unResolvedDependencies = unResolvedDependencies;
+        if ( unResolvedDependencies != null )
+        {
+            this.unResolvedDependencies = new TreeSet( unResolvedDependencies );
+        }
+        else
+        {
+            this.unResolvedDependencies = null;
+        }
     }
 
     public void logStatus( Log log, boolean outputArtifactFilename )
@@ -112,9 +142,7 @@ public class DependencyStatusSets
         }
         else
         {
-            SortedSet sortedResolvedDependencies = new TreeSet();
-            sortedResolvedDependencies.addAll( resolvedDependencies );
-            for ( Iterator i = sortedResolvedDependencies.iterator(); i.hasNext(); )
+            for ( Iterator i = resolvedDependencies.iterator(); i.hasNext(); )
             {
                 Artifact artifact = (Artifact) i.next();
                 String artifactFilename = null;

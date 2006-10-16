@@ -59,7 +59,7 @@ public class ResolveDependencySourcesMojo
     /**
      * Directory to store flag files
      * 
-     * @parameter expression="${dependency.MarkersDirectory}"
+     * @parameter expression="${dependency.resolveMarkersDirectory}"
      *            default-value="${project.build.directory}/dependency-maven-plugin-markers"
      * @required
      */

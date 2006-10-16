@@ -1,7 +1,6 @@
 package org.apache.maven.plugin.dependency;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -35,7 +34,7 @@ public class TestUnpackDependenciesMojo
         // mojo.silent = true;
 
         // it needs to get the archivermanager
-        stubFactory.setUnpackableFile( mojo );
+        stubFactory.setUnpackableFile( mojo.archiverManager );
         // i'm using one file repeatedly to archive so I can test the name
         // programmatically.
         stubFactory.setSrcFile( new File( getBasedir() + File.separatorChar
@@ -67,9 +66,10 @@ public class TestUnpackDependenciesMojo
                                                                   mojo.outputDirectory, artifact );
 
         File destFile = new File( folder, stubFactory.getUnpackableFileName( artifact ) );
-        /*
+
+     /*
          * System.out.println( "Checking file: " + destFile.getPath() ); if (
-         * val != destFile.exists() ) { System.out.println("FAIL!"); }
+         * val != destFile.exists() ) { System.out.println( "FAIL!" ); }
          */
         assertEquals( val, destFile.exists() );
         assertMarkerFile( val, artifact );
@@ -283,24 +283,31 @@ public class TestUnpackDependenciesMojo
         }
     }
 
-    /*
-     * public void testCDMClassifier() throws Exception {
-     * dotestUnpackDependenciesMojoClassifierType( "jdk14", null ); }
-     * 
-     * public void testCDMType() throws Exception {
-     * dotestUnpackDependenciesMojoClassifierType( null, "zip" ); }
-     * 
-     * public void testCDMClassifierType() throws Exception {
-     * dotestUnpackDependenciesMojoClassifierType( "jdk14", "war" ); }
-     */
+    public void testCDMClassifier()
+        throws Exception
+    {
+        dotestUnpackDependenciesMojoClassifierType( "jdk14", null );
+    }
+
+    public void testCDMType()
+        throws Exception
+    {
+        dotestUnpackDependenciesMojoClassifierType( null, "zip" );
+    }
+
+    public void testCDMClassifierType()
+        throws Exception
+    {
+        dotestUnpackDependenciesMojoClassifierType( "jdk14", "war" );
+    }
 
     public void dotestUnpackDependenciesMojoClassifierType( String testClassifier, String testType )
         throws Exception
     {
         mojo.classifier = testClassifier;
-        mojo.type = testType; // init classifier things
+        mojo.type = testType;
         mojo.factory = DependencyTestUtils.getArtifactFactory();
-        mojo.resolver = new StubArtifactResolver( false, false );
+        mojo.resolver = new StubArtifactResolver( stubFactory, false, false );
         mojo.local = new StubArtifactRepository( this.testDir.getAbsolutePath() );
 
         mojo.execute();
@@ -315,17 +322,16 @@ public class TestUnpackDependenciesMojo
 
             if ( StringUtils.isNotEmpty( testClassifier ) )
             {
-                useClassifier = "-" + testClassifier;
+                useClassifier = testClassifier;
                 // type is only used if classifier is used.
                 if ( StringUtils.isNotEmpty( testType ) )
                 {
                     useType = testType;
                 }
             }
-            String fileName = artifact.getArtifactId() + useClassifier + "-" + artifact.getVersion() + "." + useType;
-            File file = new File( mojo.outputDirectory, fileName );
-
-            assertUnpacked( artifact );
+            Artifact unpacked = stubFactory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(), artifact
+                .getVersion(), Artifact.SCOPE_COMPILE, useType, useClassifier );
+            assertUnpacked( unpacked );
         }
     }
 
@@ -348,7 +354,7 @@ public class TestUnpackDependenciesMojo
         mojo.type = "java-sources";
         // init classifier things
         mojo.factory = DependencyTestUtils.getArtifactFactory();
-        mojo.resolver = new StubArtifactResolver( are, anfe );
+        mojo.resolver = new StubArtifactResolver( null, are, anfe );
         mojo.local = new StubArtifactRepository( this.testDir.getAbsolutePath() );
 
         try
