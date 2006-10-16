@@ -4,13 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
-import org.codehaus.plexus.logging.Logger;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.artifact.versioning.VersionRange;
-import org.apache.maven.plugin.dependency.AbstractDependencyMojo;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
@@ -28,7 +27,7 @@ public class ArtifactStubFactory
 
     boolean createUnpackableFile;
 
-    AbstractDependencyMojo mojo;
+    ArchiverManager archiverManager;
 
     public ArtifactStubFactory( File workingDir, boolean createFiles )
     {
@@ -36,10 +35,10 @@ public class ArtifactStubFactory
         this.createFiles = createFiles;
     }
 
-    public void setUnpackableFile( AbstractDependencyMojo mojo )
+    public void setUnpackableFile( ArchiverManager archiverManager )
     {
         this.createUnpackableFile = true;
-        this.mojo = mojo;
+        this.archiverManager = archiverManager;
     }
 
     public Artifact createArtifact( String groupId, String artifactId, String version )
@@ -127,7 +126,6 @@ public class ArtifactStubFactory
     public void createUnpackableFile( Artifact artifact, File destFile )
         throws NoSuchArchiverException, ArchiverException, IOException
     {
-        ArchiverManager archiverManager = mojo.getArchiverManager();
         Archiver archiver = archiverManager.getArchiver( destFile );
 
         archiver.setDestFile( destFile );
@@ -155,13 +153,13 @@ public class ArtifactStubFactory
     public Artifact getReleaseArtifact()
         throws IOException
     {
-        return createArtifact( "groupId", "release", "1.0" );
+        return createArtifact( "testGroupId", "release", "1.0" );
     }
 
     public Artifact getSnapshotArtifact()
         throws IOException
     {
-        return createArtifact( "groupId", "snapshot", "2.0-SNAPSHOT" );
+        return createArtifact( "testGroupId", "snapshot", "2.0-SNAPSHOT" );
     }
 
     public Set getReleaseAndSnapshotArtifacts()
