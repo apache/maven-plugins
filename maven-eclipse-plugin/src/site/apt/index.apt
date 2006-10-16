@@ -14,7 +14,7 @@ Maven Eclipse Plugin
 
 * Goals Overview
 
-  The Maven Eclipse Plugin has three goals:
+  The Maven Eclipse Plugin has five goals:
 
   * {{{add-maven-repo-mojo.html}eclipse:add-maven-repo}} is used to add the
   classpath variable MAVEN_REPO to Eclipse which points to your local
@@ -25,6 +25,13 @@ Maven Eclipse Plugin
 
   * {{{eclipse-mojo.html}eclipse:eclipse}} generates the Eclipse configuration
   files.
+  
+  * {{{make-artifacts-mojo.html}eclipse:make-artifacts}} copies all Eclipse plugins from an 
+  installation directory to the local repository, generating POMs for each.
+  
+  * {{{install-plugins-mojo.html}eclipse:install-plugins}} installs all resolved project 
+  dependencies of a particular type (usually 'eclipse-plugin') into the specified Eclipse
+  installation directory.
 
 * Usage
 
