@@ -1,6 +1,5 @@
 package org.apache.maven.plugin.dependency.stubs;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -24,10 +23,14 @@ public class StubArtifactResolver
 
     boolean throwArtifactNotFoundException;
 
-    public StubArtifactResolver( boolean throwArtifactResolutionException, boolean throwArtifactNotFoundException )
+    ArtifactStubFactory factory;
+
+    public StubArtifactResolver( ArtifactStubFactory factory, boolean throwArtifactResolutionException,
+                                boolean throwArtifactNotFoundException )
     {
         this.throwArtifactNotFoundException = throwArtifactNotFoundException;
         this.throwArtifactResolutionException = throwArtifactResolutionException;
+        this.factory = factory;
     }
 
     public void resolve( Artifact artifact, List remoteRepositories, ArtifactRepository localRepository )
@@ -35,11 +38,12 @@ public class StubArtifactResolver
     {
         if ( !this.throwArtifactNotFoundException && !this.throwArtifactResolutionException )
         {
-            // TODO Auto-generated method stub
-            ArtifactStubFactory factory = new ArtifactStubFactory( new File( localRepository.getBasedir() ), true );
             try
             {
-                factory.setArtifactFile( artifact );
+                if ( factory != null )
+                {
+                    factory.setArtifactFile( artifact );
+                }
             }
             catch ( IOException e )
             {

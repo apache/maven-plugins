@@ -11,12 +11,8 @@ import org.codehaus.plexus.util.StringUtils;
  * @author brianf
  * 
  */
-public class DependencyUtil
+public final class DependencyUtil
 {
-
-
-    
-
     /**
      * Builds the file name. If removeVersion is set, then the file name must be
      * reconstructed from the artifactId, Classifier (if used) and Type.

@@ -70,7 +70,7 @@ public class TestCopyDependenciesMojo
         Random a = new Random();
         File outputFolder2 = new File( "target/copyTo" + a.nextLong() + "/" );
 
-        File dest = new File( outputFolder2, "toMe.jar" );
+        File dest = new File( mojo.outputDirectory, "toMe.jar" );
 
         assertFalse( dest.exists() );
 
@@ -376,7 +376,7 @@ public class TestCopyDependenciesMojo
 
         // init classifier things
         mojo.factory = DependencyTestUtils.getArtifactFactory();
-        mojo.resolver = new StubArtifactResolver( false, false );
+        mojo.resolver = new StubArtifactResolver( stubFactory, false, false );
         mojo.local = new StubArtifactRepository( this.testDir.getAbsolutePath() );
 
         mojo.execute();
@@ -431,7 +431,7 @@ public class TestCopyDependenciesMojo
 
         // init classifier things
         mojo.factory = DependencyTestUtils.getArtifactFactory();
-        mojo.resolver = new StubArtifactResolver( are, anfe );
+        mojo.resolver = new StubArtifactResolver( null, are, anfe );
         mojo.local = new StubArtifactRepository( this.testDir.getAbsolutePath() );
 
         try
