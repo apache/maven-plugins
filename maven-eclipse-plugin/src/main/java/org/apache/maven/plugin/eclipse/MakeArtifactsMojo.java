@@ -51,6 +51,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @author Fabrizio Giustina
  * @version $Id$
  * @goal make-artifacts
+ * @requiresProject false
  */
 public class MakeArtifactsMojo
     extends AbstractMojo
