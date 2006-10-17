@@ -20,8 +20,8 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>ant-plugin.test</groupId>
-  <artifactId>ant-plugin-test</artifactId>
+  <groupId>org.apache.maven.plugins.maven-ant-plugin.unit</groupId>
+  <artifactId>ant-test</artifactId>
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
   <inceptionYear>2006</inceptionYear>

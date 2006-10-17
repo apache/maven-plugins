@@ -1,0 +1,161 @@
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+
+import org.codehaus.plexus.util.IOUtil;
+
+File build;
+File mavenBuild;
+File mavenBuildProperties;
+
+// Root project
+
+build = new File( basedir, "build.xml" );
+if ( build.isDirectory() || !build.exists() )
+{
+  System.err.println( "The file '" + build.getAbsolutePath() + "' is a directory or doesn't exist." );
+  return false;
+}
+mavenBuild = new File( basedir, "maven-build.xml" );
+if ( mavenBuild.isDirectory() || !mavenBuild.exists() )
+{
+  System.err.println( "The file '" + mavenBuild.getAbsolutePath() + "' is a directory or doesn't exist." );
+  return false;
+}
+
+// EAR project
+
+build = new File( basedir + "/ear", "build.xml" );
+if ( build.isDirectory() || !build.exists() )
+{
+  System.err.println( "The file '" + build.getAbsolutePath() + "' is a directory or doesn't exist." );
+  return false;
+}
+mavenBuild = new File( basedir + "/ear", "maven-build.xml" );
+if ( mavenBuild.isDirectory() || !mavenBuild.exists() )
+{
+  System.err.println( "The file '" + mavenBuild.getAbsolutePath() + "' is a directory or doesn't exist." );
+  return false;
+}
+mavenBuildProperties = new File( basedir + "/ear", "maven-build.properties" );
+if ( mavenBuildProperties.isDirectory() || !mavenBuildProperties.exists() )
+{
+  System.err.println( "The file '" + mavenBuildProperties.getAbsolutePath() + "' is a directory or doesn't exist." );
+  return false;
+}
+
+// EJBS project
+
+build = new File( basedir + "/ejbs", "build.xml" );
+if ( build.isDirectory() || !build.exists() )
+{
+  System.err.println( "The file '" + build.getAbsolutePath() + "' is a directory or doesn't exist." );
+  return false;
+}
+mavenBuild = new File( basedir + "/ejbs", "maven-build.xml" );
+if ( mavenBuild.isDirectory() || !mavenBuild.exists() )
+{
+  System.err.println( "The file '" + mavenBuild.getAbsolutePath() + "' is a directory or doesn't exist." );
+  return false;
+}
+mavenBuildProperties = new File( basedir + "/ejbs", "maven-build.properties" );
+if ( mavenBuildProperties.isDirectory() || !mavenBuildProperties.exists() )
+{
+  System.err.println( "The file '" + mavenBuildProperties.getAbsolutePath() + "' is a directory or doesn't exist." );
+  return false;
+}
+
+// PRImARY-SOURCE project
+
+build = new File( basedir + "/primary-source", "build.xml" );
+if ( build.isDirectory() || !build.exists() )
+{
+  System.err.println( "The file '" + build.getAbsolutePath() + "' is a directory or doesn't exist." );
+  return false;
+}
+mavenBuild = new File( basedir + "/primary-source", "maven-build.xml" );
+if ( mavenBuild.isDirectory() || !mavenBuild.exists() )
+{
+  System.err.println( "The file '" + mavenBuild.getAbsolutePath() + "' is a directory or doesn't exist." );
+  return false;
+}
+mavenBuildProperties = new File( basedir + "/primary-source", "maven-build.properties" );
+if ( mavenBuildProperties.isDirectory() || !mavenBuildProperties.exists() )
+{
+  System.err.println( "The file '" + mavenBuildProperties.getAbsolutePath() + "' is a directory or doesn't exist." );
+  return false;
+}
+
+// PROJECTS project
+
+build = new File( basedir + "/projects", "build.xml" );
+if ( build.isDirectory() || !build.exists() )
+{
+  System.err.println( "The file '" + build.getAbsolutePath() + "' is a directory or doesn't exist." );
+  return false;
+}
+mavenBuild = new File( basedir + "/projects", "maven-build.xml" );
+if ( mavenBuild.isDirectory() || !mavenBuild.exists() )
+{
+  System.err.println( "The file '" + mavenBuild.getAbsolutePath() + "' is a directory or doesn't exist." );
+  return false;
+}
+
+// LOGGING project
+
+build = new File( basedir + "/projects/logging", "build.xml" );
+if ( build.isDirectory() || !build.exists() )
+{
+  System.err.println( "The file '" + build.getAbsolutePath() + "' is a directory or doesn't exist." );
+  return false;
+}
+mavenBuild = new File( basedir + "/projects/logging", "maven-build.xml" );
+if ( mavenBuild.isDirectory() || !mavenBuild.exists() )
+{
+  System.err.println( "The file '" + mavenBuild.getAbsolutePath() + "' is a directory or doesn't exist." );
+  return false;
+}
+mavenBuildProperties = new File( basedir + "/projects/logging", "maven-build.properties" );
+if ( mavenBuildProperties.isDirectory() || !mavenBuildProperties.exists() )
+{
+  System.err.println( "The file '" + mavenBuildProperties.getAbsolutePath() + "' is a directory or doesn't exist." );
+  return false;
+}
+
+// SERVLETS project
+
+build = new File( basedir + "/servlets", "build.xml" );
+if ( build.isDirectory() || !build.exists() )
+{
+  System.err.println( "The file '" + build.getAbsolutePath() + "' is a directory or doesn't exist." );
+  return false;
+}
+mavenBuild = new File( basedir + "/servlets", "maven-build.xml" );
+if ( mavenBuild.isDirectory() || !mavenBuild.exists() )
+{
+  System.err.println( "The file '" + mavenBuild.getAbsolutePath() + "' is a directory or doesn't exist." );
+  return false;
+}
+
+// SERVLET project
+
+build = new File( basedir + "/servlets/servlet", "build.xml" );
+if ( build.isDirectory() || !build.exists() )
+{
+  System.err.println( "The file '" + build.getAbsolutePath() + "' is a directory or doesn't exist." );
+  return false;
+}
+mavenBuild = new File( basedir + "/servlets/servlet", "maven-build.xml" );
+if ( mavenBuild.isDirectory() || !mavenBuild.exists() )
+{
+  System.err.println( "The file '" + mavenBuild.getAbsolutePath() + "' is a directory or doesn't exist." );
+  return false;
+}
+mavenBuildProperties = new File( basedir + "/servlets/servlet", "maven-build.properties" );
+if ( mavenBuildProperties.isDirectory() || !mavenBuildProperties.exists() )
+{
+  System.err.println( "The file '" + mavenBuildProperties.getAbsolutePath() + "' is a directory or doesn't exist." );
+  return false;
+}
+
+return true;
