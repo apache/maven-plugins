@@ -1,5 +1,21 @@
 package org.apache.maven.report.projectinfo.dependencies.renderer;
 
+/*
+ * Copyright 2001-2006 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
@@ -17,9 +33,19 @@ import org.apache.maven.report.projectinfo.dependencies.ReportResolutionListener
 import org.apache.maven.report.projectinfo.dependencies.RepositoryUtils;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.apache.maven.shared.jar.JarException;
+import org.codehaus.plexus.graphing.GraphRenderer;
+import org.codehaus.plexus.graphing.decorators.EdgeDecorator;
+import org.codehaus.plexus.graphing.decorators.GraphDecorator;
+import org.codehaus.plexus.graphing.decorators.NodeDecorator;
+import org.codehaus.plexus.graphing.model.Edge;
+import org.codehaus.plexus.graphing.model.Graph;
+import org.codehaus.plexus.graphing.model.GraphConstraintException;
+import org.codehaus.plexus.graphing.model.Node;
+import org.codehaus.plexus.graphing.model.dag.Dag;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
+import java.awt.Color;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -32,6 +58,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * DependenciesRenderer 
+ *
+ * @version $Id$
+ */
 public class DependenciesRenderer
     extends AbstractMavenReportRenderer
 {
@@ -61,6 +92,10 @@ public class DependenciesRenderer
     private Log log;
 
     private RepositoryUtils repoUtils;
+    
+    private GraphRenderer graphRenderer;
+    
+    private File outputDirectory;
 
     /**
      * Will be filled with license name / list of projects.
@@ -82,7 +117,7 @@ public class DependenciesRenderer
 
     public DependenciesRenderer( Sink sink, Locale locale, I18N _i18n, Dependencies _dependencies,
                                  ReportResolutionListener listener, DependenciesReportConfiguration config,
-                                 RepositoryUtils _repoUtils )
+                                 RepositoryUtils _repoUtils, GraphRenderer graphRenderer, File outputDir )
     {
         super( sink );
 
@@ -97,6 +132,10 @@ public class DependenciesRenderer
         this.i18n = _i18n;
 
         this.configuration = config;
+        
+        this.graphRenderer = graphRenderer;
+        
+        this.outputDirectory = outputDir;
     }
 
     public void setLog( Log _log )
@@ -216,6 +255,42 @@ public class DependenciesRenderer
     {
         startSection( getReportString( "report.dependencies.graph.title" ) );
 
+        // === Section: Dependency Graph
+        if ( graphRenderer != null )
+        {
+            Graph graph = new Dag();
+            try
+            {
+                graph.setDecorator( new GraphDecorator() );
+                graph.getDecorator().setTitle( "Dependency Graph" );
+                collectDependencyGraph( graph, null, listener.getRootNode() );
+                
+                String pngFilename = "dependency-graph.png";
+
+                File visualGraphFile = new File( outputDirectory, pngFilename );
+                graphRenderer.render( graph, visualGraphFile );
+                
+                if(visualGraphFile.exists())
+                {
+                    sink.paragraph();
+                    sink.figure();
+                    sink.figureCaption();
+                    sink.text( "Visual Dependency Graph" ); // TODO: externalize string
+                    sink.figureCaption_();
+                    sink.figureGraphics( pngFilename );
+                    sink.figure_();
+
+                }
+            }
+            catch ( Exception e )
+            {
+                sink.paragraph();
+                sink.text( getReportString( "report.dependencies.graph.error" ) );
+                sink.paragraph_();
+                log.error( "Unable to generate graph.", e );
+            }
+        }
+        
         // === Section: Dependency Tree
         renderSectionDependencyTree();
 
@@ -223,6 +298,49 @@ public class DependenciesRenderer
         renderSectionDependencyListing();
 
         endSection();
+    }
+    
+    private void collectDependencyGraph( Graph graph, Node parentNode, ReportResolutionListener.Node node )
+        throws GraphConstraintException
+    {
+        String label = makeGraphNodeLabel( node );
+        Node gnode = graph.addNode( label );
+        gnode.setDecorator( new NodeDecorator() );
+        
+        if ( node.isRoot() )
+        {
+            gnode.getDecorator().setBackgroundColor( Color.CYAN );
+        }
+        
+        if( parentNode != null )
+        {
+            Edge edge = graph.addEdge( parentNode, gnode );
+            edge.setDecorator( new EdgeDecorator() );
+            edge.getDecorator().setLineHead( EdgeDecorator.ARROW );
+            edge.getDecorator().setLineTail( EdgeDecorator.NONE );
+        }
+        
+        if ( !node.getChildren().isEmpty() )
+        {
+            for ( Iterator deps = node.getChildren().iterator(); deps.hasNext(); )
+            {
+                ReportResolutionListener.Node dep = (ReportResolutionListener.Node) deps.next();
+                collectDependencyGraph( graph, gnode, dep );
+            }
+        }
+    }
+    
+    private String makeGraphNodeLabel( ReportResolutionListener.Node node )
+    {
+        StringBuffer label = new StringBuffer();
+        Artifact artifact = node.getArtifact();
+        if ( artifact != null )
+        {
+            label.append( artifact.getGroupId() ).append( "\n" );
+            label.append( artifact.getArtifactId() ).append( "\n" );
+            label.append( artifact.getVersion() );
+        }
+        return label.toString();
     }
 
     private void renderSectionDependencyTree()
@@ -236,7 +354,7 @@ public class DependenciesRenderer
         sink.paragraph_();
         endSection();
     }
-
+    
     private void renderSectionDependencyFileDetails()
     {
         startSection( getReportString( "report.dependencies.file.details.title" ) );

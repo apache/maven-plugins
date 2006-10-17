@@ -54,6 +54,7 @@ public class ReportResolutionListener
         if ( parents.isEmpty() )
         {
             rootNode = node;
+            rootNode.setRoot( true );
         }
 
         parents.push( node );
@@ -158,13 +159,15 @@ public class ReportResolutionListener
     public static class Node
     {
         private Node parent;
+        
+        private boolean root = false;
 
         private List children = new ArrayList();
 
         private Artifact artifact;
         
         private int depth;
-
+        
         public List getChildren()
         {
             return children;
@@ -178,6 +181,16 @@ public class ReportResolutionListener
         public int getDepth()
         {
             return depth;
+        }
+
+        public boolean isRoot()
+        {
+            return root;
+        }
+
+        public void setRoot( boolean root )
+        {
+            this.root = root;
         }
     }
 

@@ -31,8 +31,10 @@ import org.apache.maven.report.projectinfo.dependencies.renderer.DependenciesRen
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.context.Context;
 import org.codehaus.plexus.context.ContextException;
+import org.codehaus.plexus.graphing.GraphRenderer;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 
 import java.util.Collections;
@@ -63,6 +65,7 @@ public class DependenciesReport
      * @component
      */
     protected ArtifactMetadataSource artifactMetadataSource;
+    
 
     /**
      * @component
@@ -92,6 +95,11 @@ public class DependenciesReport
      * @parameter expression="${dependency.locations.enabled}" default-value="false"
      */
     private boolean dependencyLocationsEnabled;
+    
+    /**
+     * @parameter expression="${graphing.implementation}" default-value="graphviz"
+     */
+    private String graphingImpl;
 
     private PlexusContainer container;
 
@@ -116,6 +124,18 @@ public class DependenciesReport
      */
     public void executeReport( Locale locale )
     {
+        GraphRenderer graphRenderer;
+        
+        try
+        {
+            graphRenderer = (GraphRenderer) container.lookup( GraphRenderer.ROLE, graphingImpl );
+        }
+        catch ( ComponentLookupException e )
+        {
+            graphRenderer = null;
+            getLog().error( "GraphRenderer implementation [" + graphingImpl + "] does not exist.", e );
+        }
+        
         RepositoryUtils repoUtils = new RepositoryUtils( wagonManager, settings, mavenProjectBuilder, factory, resolver,
                                                          project.getRemoteArtifactRepositories(),
                                                          project.getPluginArtifactRepositories(), localRepository );
@@ -127,8 +147,8 @@ public class DependenciesReport
         DependenciesReportConfiguration config =
             new DependenciesReportConfiguration( dependencyDetailsEnabled, dependencyLocationsEnabled );
 
-        DependenciesRenderer r =
-            new DependenciesRenderer( getSink(), locale, i18n, dependencies, listener, config, repoUtils );
+        DependenciesRenderer r = new DependenciesRenderer( getSink(), locale, i18n, dependencies, listener, config,
+                                                           repoUtils, graphRenderer, outputDirectory );
 
         repoUtils.setLog( getLog() );
         r.setLog( getLog() );
