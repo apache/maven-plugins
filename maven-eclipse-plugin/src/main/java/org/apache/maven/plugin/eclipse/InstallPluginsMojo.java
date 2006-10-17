@@ -57,11 +57,11 @@ public class InstallPluginsMojo
      * The list of resolved dependencies from the current project. Since we're not resolving the
      * dependencies by hand here, the build will fail if some of these dependencies do not resolve.
      * 
-     * @parameter default-value="${project.dependencyArtifacts}"
+     * @parameter default-value="${project.artifacts}"
      * @required
      * @readonly
      */
-    private List dependencyArtifacts;
+    private List artifacts;
 
     /**
      * Comma-delimited list of dependency &lt;type/&gt; values which will be installed in the eclipse
@@ -119,7 +119,7 @@ public class InstallPluginsMojo
     {
         this.eclipseDir = eclipseDir;
         this.overwrite = overwrite;
-        this.dependencyArtifacts = dependencyArtifacts;
+        this.artifacts = dependencyArtifacts;
         this.pluginDependencyTypes = pluginDependencyTypes;
         this.localRepository = localRepository;
         this.projectBuilder = projectBuilder;
@@ -158,7 +158,7 @@ public class InstallPluginsMojo
             throw new MojoFailureException( "Invalid Eclipse directory: " + eclipseDir );
         }
 
-        for ( Iterator it = dependencyArtifacts.iterator(); it.hasNext(); )
+        for ( Iterator it = artifacts.iterator(); it.hasNext(); )
         {
             Artifact artifact = (Artifact) it.next();
 
