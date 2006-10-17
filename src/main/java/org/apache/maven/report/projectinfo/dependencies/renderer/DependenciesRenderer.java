@@ -263,6 +263,7 @@ public class DependenciesRenderer
             {
                 graph.setDecorator( new GraphDecorator() );
                 graph.getDecorator().setTitle( "Dependency Graph" );
+                graph.getDecorator().setOrientation( GraphDecorator.LEFT_TO_RIGHT );
                 collectDependencyGraph( graph, null, listener.getRootNode() );
                 
                 String pngFilename = "dependency-graph.png";
