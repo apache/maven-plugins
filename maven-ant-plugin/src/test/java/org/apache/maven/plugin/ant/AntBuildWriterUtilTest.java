@@ -16,12 +16,15 @@ package org.apache.maven.plugin.ant;
  * limitations under the License.
  */
 
+import java.io.File;
 import java.io.StringWriter;
 
+import org.apache.maven.embedder.MavenEmbedder;
+import org.apache.maven.embedder.MavenEmbedderConsoleLogger;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
-
-import junit.framework.TestCase;
 
 /**
  * Test cases for 'org.apache.maven.plugin.ant.AntBuildWriterUtil'
@@ -30,7 +33,7 @@ import junit.framework.TestCase;
  * @version $Id$
  */
 public class AntBuildWriterUtilTest
-    extends TestCase
+    extends PlexusTestCase
 {
     /**
      * Test method for 'org.apache.maven.plugin.ant.AntBuildWriterUtil.writeComment(XMLWriter, String)'
@@ -74,5 +77,57 @@ public class AntBuildWriterUtilTest
         sb.append( "<!-- project's build, reporting and documentation from a central piece of   -->" ).append( '\n' );
         sb.append( "<!-- information.                                                           -->" ).append( '\n' );
         assertTrue( s.toString().equals( sb.toString() ) );
+    }
+
+    /**
+     * Test method for 'org.apache.maven.plugin.ant.AntBuildWriterUtil.getMavenCompilerPluginConfiguration(MavenProject, String, String)'
+     *
+     * @throws Exception
+     */
+    public void testGetMavenCompilerPluginConfiguration()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(), "src/test/resources/unit/ant-compiler-config-test/pom.xml" );
+
+        MavenEmbedder maven = new MavenEmbedder();
+        maven.setClassLoader( Thread.currentThread().getContextClassLoader() );
+        maven.setLogger( new MavenEmbedderConsoleLogger() );
+        maven.setLocalRepositoryDirectory( getTestFile( "target/local-repo" ) );
+        maven.setOffline( true );
+        maven.start();
+
+        MavenProject project = maven.readProjectWithDependencies( testPom );
+
+        assertEquals( AntBuildWriterUtil.getMavenCompilerPluginConfiguration( project, "debug", null ), "true" );
+        assertEquals( AntBuildWriterUtil.getMavenCompilerPluginConfiguration( project, "includes", null ),
+                      "**/*.java,**/*.jad" );
+
+        maven.stop();
+    }
+
+    /**
+     * Test method for 'org.apache.maven.plugin.ant.AntBuildWriterUtil.getMavenWarPluginConfiguration(MavenProject, String, String)'
+     *
+     * @throws Exception
+     */
+    public void testGetMavenWarPluginConfiguration()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(), "src/test/resources/unit/ant-war-config-test/pom.xml" );
+
+        MavenEmbedder maven = new MavenEmbedder();
+        maven.setClassLoader( Thread.currentThread().getContextClassLoader() );
+        maven.setLogger( new MavenEmbedderConsoleLogger() );
+        maven.setLocalRepositoryDirectory( getTestFile( "target/local-repo" ) );
+        maven.setOffline( true );
+        maven.start();
+
+        MavenProject project = maven.readProjectWithDependencies( testPom );
+
+        assertEquals( AntBuildWriterUtil.getMavenWarPluginConfiguration( project, "warName", null ), "mywebapp" );
+        assertTrue( AntBuildWriterUtil.getMavenWarPluginConfiguration( project, "webXml", null )
+            .endsWith( "/src/main/webapp/WEB-INF/web.xml" ) );
+
+        maven.stop();
     }
 }

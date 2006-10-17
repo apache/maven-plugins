@@ -16,158 +16,21 @@ package org.apache.maven.plugin.ant.stubs;
  * limitations under the License.
  */
 
-import java.io.File;
-import java.io.FileReader;
-import java.util.Collections;
-import java.util.List;
 import java.util.Properties;
-
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DefaultArtifact;
-import org.apache.maven.artifact.handler.DefaultArtifactHandler;
-import org.apache.maven.artifact.versioning.VersionRange;
-import org.apache.maven.model.Build;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.Repository;
-import org.apache.maven.model.Resource;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
-import org.codehaus.plexus.PlexusTestCase;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  */
 public class AntTestMavenProjectStub
-    extends MavenProjectStub
+    extends AbstractAntTestMavenProjectStub
 {
-    private Build build;
-
     /**
-     * Default
+     * @see org.apache.maven.plugin.ant.stubs.AbstractAntTestMavenProjectStub#getProjetPath()
      */
-    public AntTestMavenProjectStub()
+    public String getProjetPath()
     {
-        File antTestDir = new File( PlexusTestCase.getBasedir() + "/src/test/resources/unit/ant-test/" );
-
-        MavenXpp3Reader pomReader = new MavenXpp3Reader();
-        Model model = null;
-
-        try
-        {
-            model = pomReader.read( new FileReader( new File( antTestDir, "ant-test-plugin-config.xml" ) ) );
-            setModel( model );
-        }
-        catch ( Exception e )
-        {
-            throw new RuntimeException( e );
-        }
-
-        setGroupId( model.getGroupId() );
-        setArtifactId( model.getArtifactId() );
-        setVersion( model.getVersion() );
-        setName( model.getName() );
-        setUrl( model.getUrl() );
-        setPackaging( model.getPackaging() );
-
-        build = new Build();
-        Resource resource = new Resource();
-
-        build.setFinalName( model.getArtifactId() );
-        build.setDirectory( getBasedir().getAbsolutePath() + "/target" );
-
-        build.setSourceDirectory( antTestDir + "/src/main/java" );
-        resource.setDirectory( antTestDir + "/src/main/resources" );
-        build.setResources( Collections.singletonList( resource ) );
-        build.setOutputDirectory( getBasedir().getAbsolutePath() + "/target/classes" );
-
-        build.setTestSourceDirectory( antTestDir + "/src/test/java" );
-        resource = new Resource();
-        resource.setDirectory( antTestDir + "/src/test/resources" );
-        build.setTestResources( Collections.singletonList( resource ) );
-        build.setTestOutputDirectory( getBasedir().getAbsolutePath() + "/target/test-classes" );
-
-        setBuild( build );
-    }
-
-    /**
-     * @see org.apache.maven.project.MavenProject#getBuild()
-     */
-    public Build getBuild()
-    {
-        return build;
-    }
-
-    /**
-     * @see org.apache.maven.project.MavenProject#getBasedir()
-     */
-    public File getBasedir()
-    {
-        File basedir = new File( PlexusTestCase.getBasedir(), "/target/test/unit/ant-test/" );
-
-        if ( !basedir.exists() )
-        {
-            basedir.mkdirs();
-        }
-
-        return basedir;
-    }
-
-    /**
-     * @see org.apache.maven.project.MavenProject#getCompileSourceRoots()
-     */
-    public List getCompileSourceRoots()
-    {
-        File src = new File( PlexusTestCase.getBasedir() + "/src/test/resources/unit/ant-test/src/main/java" );
-        return Collections.singletonList( src.getAbsolutePath() );
-    }
-
-    /**
-     * @see org.apache.maven.project.MavenProject#getTestCompileSourceRoots()
-     */
-    public List getTestCompileSourceRoots()
-    {
-        File test = new File( PlexusTestCase.getBasedir() + "/src/test/resources/unit/ant-test/src/test/java" );
-        return Collections.singletonList( test.getAbsolutePath() );
-    }
-
-    /**
-     * @see org.apache.maven.project.MavenProject#getCompileArtifacts()
-     */
-    public List getCompileArtifacts()
-    {
-        Artifact junit = new DefaultArtifact( "junit", "junit", VersionRange.createFromVersion( "3.8.1" ),
-                                              Artifact.SCOPE_TEST, "jar", null, new DefaultArtifactHandler( "jar" ),
-                                              false );
-        junit.setFile( new File( "junit/junit/3.8.1/junit-3.8.1.jar" ) );
-
-        return Collections.singletonList( junit );
-    }
-
-    /**
-     * @see org.apache.maven.project.MavenProject#getTestArtifacts()
-     */
-    public List getTestArtifacts()
-    {
-        Artifact junit = new DefaultArtifact( "junit", "junit", VersionRange.createFromVersion( "3.8.1" ),
-                                              Artifact.SCOPE_TEST, "jar", null, new DefaultArtifactHandler( "jar" ),
-                                              false );
-        junit.setFile( new File( "junit/junit/3.8.1/junit-3.8.1.jar" ) );
-
-        return Collections.singletonList( junit );
-    }
-
-    /**
-     * @see org.apache.maven.project.MavenProject#getRepositories()
-     */
-    public List getRepositories()
-    {
-        Repository repo = new Repository();
-        repo.setId( "central" );
-        repo.setName( "central" );
-        repo.setUrl( "http://repo1.maven.org/maven2" );
-
-        return Collections.singletonList( repo );
+        return "ant-test";
     }
 
     /**

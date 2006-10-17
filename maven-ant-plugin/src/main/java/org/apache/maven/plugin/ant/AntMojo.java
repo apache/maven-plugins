@@ -85,7 +85,7 @@ public class AntMojo
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "Error building Ant script:" + e.getMessage(), e );
+            throw new MojoExecutionException( "Error building Ant script: " + e.getMessage(), e );
         }
 
         getLog().info(
