@@ -170,7 +170,7 @@ public class InstallPluginsMojo
 
                 try
                 {
-                    project = projectBuilder.buildFromRepository( artifact, Collections.emptyList(), localRepository,
+                    project = projectBuilder.buildFromRepository( artifact, Collections.EMPTY_LIST, localRepository,
                                                                   true );
                 }
                 catch ( ProjectBuildingException e )
