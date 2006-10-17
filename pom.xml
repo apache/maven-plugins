@@ -30,7 +30,7 @@
   <name>Maven Ant Plugin</name>
   <version>2.0-beta-2-SNAPSHOT</version>
   <prerequisites>
-    <maven>2.0.2</maven>
+    <maven>2.0.4</maven>
   </prerequisites>
   <issueManagement>
     <system>jira</system>
@@ -40,19 +40,19 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-project</artifactId>
-      <version>2.0.2</version>
+      <version>2.0.4</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-settings</artifactId>
-      <version>2.0.2</version>
+      <version>2.0.4</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
       <version>2.0.2</version>
     </dependency>
-    <!-- For Maven 2.0.2 -->
+    <!-- For Maven 2.0.4 -->
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
@@ -64,9 +64,26 @@
       <version>1.6.5</version>
     </dependency>
     <dependency>
+      <groupId>xalan</groupId>
+      <artifactId>xalan</artifactId>
+      <version>2.7.0</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-plugin-testing-harness</artifactId>
       <version>1.0-beta-1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-embedder</artifactId>
+      <version>2.0.4</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-core</artifactId>
+      <version>2.0.4</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -82,4 +99,123 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <profiles>
+    <profile>
+      <id>integration-tests</id>
+      <activation>
+        <property>
+          <name>integration-tests</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-clean-plugin</artifactId>
+            <configuration>
+              <filesets>
+                <fileset>
+                  <directory>src/it</directory>
+                  <includes>
+                    <include>**/target</include>
+                    <include>**/build.xml</include>
+                    <include>**/maven-build.xml</include>
+                    <include>**/maven-build.properties</include>
+                  </includes>
+                </fileset>
+              </filesets>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <version>2.2-SNAPSHOT</version>
+            <executions>
+              <execution>
+                <id>it-test</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>install-file</goal>
+                </goals>
+                <configuration>
+                  <file>${project.build.directory}/${project.build.finalName}.jar</file>
+                  <groupId>${project.groupId}</groupId>
+                  <artifactId>${project.artifactId}</artifactId>
+                  <version>${project.version}</version>
+                  <packaging>${project.packaging}</packaging>
+                  <pomFile>${basedir}/pom.xml</pomFile>
+                  <createChecksum>true</createChecksum>
+                  <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+                  <localRepositoryId>it-local-repo</localRepositoryId>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-invoker-plugin</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <configuration>
+              <debug>true</debug>
+              <projectsDirectory>src/it</projectsDirectory>
+              <pomIncludes>
+                <pomInclude>ear-it/pom.xml</pomInclude>
+                <pomInclude>webapp-it/pom.xml</pomInclude>
+                <pomInclude>plugin-it/pom.xml</pomInclude>
+              </pomIncludes>
+              <postBuildHookScript>verify.bsh</postBuildHookScript>
+              <goals>
+                  <!-- Install to the target local-repo -->
+                <goal>install ant:ant</goal>
+              </goals>
+              <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+            </configuration>
+            <executions>
+              <execution>
+                <id>integration-test</id>
+                <phase>integration-test</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <!--  Verify the results by calling Ant -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.1</version>
+            <executions>
+              <execution>
+                <phase>post-integration-test</phase>
+                <configuration>
+                  <tasks>
+                    <ant antfile="${basedir}/src/it/ear-it/build.xml"
+                         dir="${basedir}/src/it/ear-it" target="clean"/>
+                    <ant antfile="${basedir}/src/it/ear-it/build.xml"
+                         dir="${basedir}/src/it/ear-it" target="package"/>
+
+                    <ant antfile="${basedir}/src/it/webapp-it/build.xml"
+                         dir="${basedir}/src/it/webapp-it" target="clean"/>
+                    <ant antfile="${basedir}/src/it/webapp-it/build.xml"
+                         dir="${basedir}/src/it/webapp-it" target="package"/>
+
+                    <ant antfile="${basedir}/src/it/plugin-it/build.xml"
+                         dir="${basedir}/src/it/plugin-it" target="clean"/>
+                    <ant antfile="${basedir}/src/it/plugin-it/build.xml"
+                         dir="${basedir}/src/it/plugin-it" target="package"/>
+                  </tasks>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

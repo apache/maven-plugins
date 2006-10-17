@@ -1,0 +1,32 @@
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+
+import org.codehaus.plexus.util.IOUtil;
+
+File build;
+File mavenBuild;
+File mavenBuildProperties;
+
+// Plugin project
+
+build = new File( basedir, "build.xml" );
+if ( build.isDirectory() || !build.exists() )
+{
+  System.err.println( "The file '" + build.getAbsolutePath() + "' is a directory or doesn't exist." );
+  return false;
+}
+mavenBuild = new File( basedir, "maven-build.xml" );
+if ( mavenBuild.isDirectory() || !mavenBuild.exists() )
+{
+  System.err.println( "The file '" + mavenBuild.getAbsolutePath() + "' is a directory or doesn't exist." );
+  return false;
+}
+mavenBuildProperties = new File( basedir, "maven-build.properties" );
+if ( mavenBuildProperties.isDirectory() || !mavenBuildProperties.exists() )
+{
+  System.err.println( "The file '" + mavenBuildProperties.getAbsolutePath() + "' is a directory or doesn't exist." );
+  return false;
+}
+
+return true;

@@ -86,8 +86,7 @@ public class AntMojoTest
     private void invokeAntMojo( String testProject )
         throws Exception
     {
-        File testPom = new File( getBasedir(), "src/test/resources/unit/" + testProject + "/" + testProject
-            + "-plugin-config.xml" );
+        File testPom = new File( getBasedir(), "src/test/resources/unit/" + testProject + "/pom.xml" );
         AntMojo mojo = (AntMojo) lookupMojo( "ant", testPom );
         mojo.execute();
 
