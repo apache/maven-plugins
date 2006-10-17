@@ -69,6 +69,7 @@ public abstract class AbstractEclipsePluginTestCase
         this.maven.setLogger( new MavenEmbedderConsoleLogger() );
         this.maven.setLocalRepositoryDirectory( localRepositoryDir );
         this.maven.setOffline( true );
+        this.maven.setInteractiveMode( false );
         this.maven.start();
 
         super.setUp();
