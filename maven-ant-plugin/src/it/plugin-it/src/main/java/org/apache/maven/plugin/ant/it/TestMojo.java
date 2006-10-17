@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.ant.stubs;
+package org.apache.maven.plugin.ant.it;
 
 /*
  * Copyright 2006 The Apache Software Foundation.
@@ -16,19 +16,22 @@ package org.apache.maven.plugin.ant.stubs;
  * limitations under the License.
  */
 
+import org.apache.maven.plugin.AbstractMojo;
 
 /**
+ * @goal test
+ *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  */
-public class AntNoDepTestMavenProjectStub
-    extends AbstractAntTestMavenProjectStub
+public class TestMojo
+    extends AbstractMojo
 {
     /**
-     * @see org.apache.maven.plugin.ant.stubs.AbstractAntTestMavenProjectStub#getProjetPath()
+     * @see org.apache.maven.plugin.Mojo#execute()
      */
-    public String getProjetPath()
+    public void execute()
     {
-        return "ant-nodep-test";
+        System.out.println( "Hello World!" );
     }
 }
