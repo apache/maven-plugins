@@ -22,19 +22,30 @@
       <question>How are the checkstyle properties set?</question>
       <answer>
         <p>
-        You can set the checkstyle properties to be used in the plugin configuration in your pom through the <strong>propertiesLocation</strong>
-        parameter. The properties file will be resolved by the plugin based on its value.
+          You can set the checkstyle properties to be used in the plugin configuration in your pom through the
+          <strong>propertiesLocation</strong> parameter. The properties file will be resolved by the plugin based
+          on its value.
         </p>
-        </answer>
+      </answer>
     </faq>
     <faq id="How do I set a custom ruleset">
       <question>How do I set a custom ruleset?</question>
       <answer>
         <p>
-        You can set a custom ruleset through the <strong>configLocation</strong> plugin parameter. If no value is specified, the
-        plugin will use a default ruleset, which is the sun_checks.xml, that is bundled with the plugin.
+          You can set a custom ruleset through the <strong>configLocation</strong> plugin parameter. If no value is
+          specified, the plugin will use a default ruleset, which is the sun_checks.xml, that is bundled with the
+          plugin.
         </p>
-        </answer>
+      </answer>
+    </faq>
+    <faq id="How do I include the test directory in Checkstyle">
+      <question>How do I include the test directory in Checkstyle?</question>
+      <answer>
+        <p>
+          You can include test directory in the checkstyle report by setting the
+          <strong>includeTestSourceDirectory</strong> plugin parameter to <strong>true</strong>.
+        </p>
+      </answer>
     </faq>
   </part>
 </faqs>
