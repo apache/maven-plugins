@@ -420,7 +420,12 @@ public class CheckstyleReportGenerator
                     // like GenericIllegalRegexp and Regexp
                     if ( message != null )
                     {
-                        if ( message.equals( event.getMessage() ) )
+                        // event.getMessage() uses java.text.MessageFormat in its implementation.
+                        // Read MessageFormat Javadoc about single quote:
+                        // http://java.sun.com/j2se/1.4.2/docs/api/java/text/MessageFormat.html
+                        String msgWithoutSingleQuote = StringUtils.replace( message, "'", "" );
+                        if ( message.equals( event.getMessage() ) ||
+                             msgWithoutSingleQuote.equals( event.getMessage() ) )
                         {
                             count++;
                         }
