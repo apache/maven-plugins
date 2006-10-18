@@ -31,7 +31,7 @@ import java.io.IOException;
 /**
  * Perform a violation check against the last Checkstyle run to see if there are any violations.
  * It reads the Checkstyle output file, counts the number of violations found and displays it on the
- * console.  
+ * console.
  *
  * @author <a href="mailto:joakim@erdfelt.net">Joakim Erdfelt</a>
  * @goal check
@@ -65,7 +65,9 @@ public class CheckstyleViolationCheckMojo
      */
     private boolean failOnViolation;
 
-
+    /**
+     * @see org.apache.maven.plugin.Mojo#execute()
+     */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -97,10 +99,8 @@ public class CheckstyleViolationCheckMojo
                     throw new MojoFailureException(
                         "You have " + violations + " Checkstyle violation" + ( ( violations > 1 ) ? "s" : "" ) + "." );
                 }
-                else
-                {
-                    getLog().warn( "checkstyle:check violations detected but failOnViolation set to false" );
-                }
+
+                getLog().warn( "checkstyle:check violations detected but failOnViolation set to false" );
             }
         }
         catch ( IOException e )
