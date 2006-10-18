@@ -23,6 +23,7 @@ import java.io.File;
  * @version $Id$
  */
 public class IdeDependency
+    implements Comparable
 {
     /**
      * Is this dependency available in the reactor?
@@ -349,6 +350,32 @@ public class IdeDependency
     public String toString()
     {
         return getId();
+    }
+
+    /**
+     * @see java.lang.Comparable#compareTo(java.lang.Object)
+     * Compare using groupId+artifactId+type Strings
+     */
+    public int compareTo( Object o )
+    {
+        IdeDependency dep = (IdeDependency) o;
+        int equals = this.getGroupId().compareTo( dep.getGroupId() );
+        if ( equals != 0 )
+        {
+            return equals;
+        }
+        equals = this.getArtifactId().compareTo( dep.getArtifactId() );
+        if ( equals != 0 )
+        {
+            return equals;
+        }
+        equals = this.getType().compareTo( dep.getType() );
+        if ( equals != 0 )
+        {
+            return equals;
+        }
+
+        return 0;
     }
 
 }
