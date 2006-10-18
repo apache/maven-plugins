@@ -21,6 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.Messages;
@@ -214,10 +215,9 @@ public class EclipseOSGiManifestWriter
 
     /**
      * Add all libraries that don't have the scope "provided" to the "Bundle-Classpath".
-     * @throws MojoExecutionException 
+     * @return complete "Bundle-ClassPath:" entry for manifest 
      */
     protected String addBundleClasspathEntries()
-        throws MojoExecutionException
     {
         StringBuffer bundleClasspathSb = new StringBuffer( ENTRY_BUNDLE_CLASSPATH );
 
@@ -225,9 +225,15 @@ public class EclipseOSGiManifestWriter
         // @todo handle expanded plugins
         bundleClasspathSb.append( " ." );
 
-        for ( int j = 0; j < config.getDeps().length; j++ )
+        IdeDependency[] deps = config.getDeps();
+
+        // since Manifest is supposed to be in SVN, having the order of classpath entries shuffled at each run is very
+        // annoying. For now just sort them by using groupId/artifactId
+        Arrays.sort( deps );
+
+        for ( int j = 0; j < deps.length; j++ )
         {
-            IdeDependency dep = config.getDeps()[j];
+            IdeDependency dep = deps[j];
             if ( !dep.isProvided() && !dep.isReferencedProject() && !dep.isTestDependency() )
             {
                 bundleClasspathSb.append( "," + NEWLINE );
