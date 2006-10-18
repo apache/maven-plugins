@@ -354,7 +354,7 @@ public class CheckstyleReport
     private boolean failsOnError;
 
     /**
-     * Specifies the location of the source files to be used for Checkstyle
+     * Specifies the location of the source directory to be used for Checkstyle
      *
      * @parameter default-value="${project.build.sourceDirectory}"
      * @required
@@ -362,6 +362,22 @@ public class CheckstyleReport
     private File sourceDirectory;
 
     /**
+     * Specifies the location of the test source directory to be used for Checkstyle
+     *
+     * @parameter default-value="${project.build.testSourceDirectory}"
+     */
+    private File testSourceDirectory;
+
+    /**
+     * Include or not the test source directory to be used for Checkstyle
+     *
+     * @parameter default-value="${false}"
+     */
+    private boolean includeTestSourceDirectory;
+
+    /**
+     * The Maven Project Object
+     *
      * @parameter default-value="${project}"
      * @required
      * @readonly
@@ -694,6 +710,12 @@ public class CheckstyleReport
         try
         {
             classPathStrings = this.project.getCompileClasspathElements();
+
+            if ( includeTestSourceDirectory && ( testSourceDirectory != null ) && ( testSourceDirectory.exists() )
+                && ( testSourceDirectory.isDirectory() ) )
+            {
+                classPathStrings = this.project.getTestClasspathElements();
+            }
         }
         catch ( DependencyResolutionRequiredException e )
         {
@@ -743,6 +765,11 @@ public class CheckstyleReport
         }
 
         CheckstyleReportListener sinkListener = new CheckstyleReportListener( sourceDirectory );
+        if ( includeTestSourceDirectory && ( testSourceDirectory != null ) && ( testSourceDirectory.exists() )
+            && ( testSourceDirectory.isDirectory() ) )
+        {
+            sinkListener.addSourceDirectory( testSourceDirectory );
+        }
 
         checker.addListener( sinkListener );
 
@@ -851,6 +878,11 @@ public class CheckstyleReport
         }
 
         List files = FileUtils.getFiles( sourceDirectory, includes, excludesStr.toString() );
+        if ( includeTestSourceDirectory && ( testSourceDirectory != null ) && ( testSourceDirectory.exists() )
+            && ( testSourceDirectory.isDirectory() ) )
+        {
+            files.addAll( FileUtils.getFiles( testSourceDirectory, includes, excludesStr.toString() ) );
+        }
 
         return (File[]) files.toArray( EMPTY_FILE_ARRAY );
     }

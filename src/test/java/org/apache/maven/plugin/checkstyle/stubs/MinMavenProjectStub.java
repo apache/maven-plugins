@@ -22,6 +22,7 @@ import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.codehaus.plexus.PlexusTestCase;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Collections;
 import java.io.File;
@@ -32,17 +33,37 @@ import java.io.File;
 public class MinMavenProjectStub
     extends org.apache.maven.plugin.testing.stubs.MavenProjectStub
 {
+    /**
+     * @see org.apache.maven.project.MavenProject#getCompileClasspathElements()
+     */
     public List getCompileClasspathElements()
         throws DependencyResolutionRequiredException
     {
         return Collections.singletonList( PlexusTestCase.getBasedir() + "/target/classes" );
     }
 
+    /**
+     * @see org.apache.maven.project.MavenProject#getTestClasspathElements()
+     */
+    public List getTestClasspathElements()
+        throws DependencyResolutionRequiredException
+    {
+        List list = new ArrayList( getCompileClasspathElements() );
+        list.add( PlexusTestCase.getBasedir() + "/target/test-classes" );
+        return list;
+    }
+
+    /**
+     * @see org.apache.maven.project.MavenProject#getBasedir()
+     */
     public File getBasedir()
     {
         return new File( PlexusTestCase.getBasedir() );
     }
 
+    /**
+     * @see org.apache.maven.project.MavenProject#getReportPlugins()
+     */
     public List getReportPlugins()
     {
         ReportPlugin jxrPlugin = new ReportPlugin();
@@ -52,6 +73,9 @@ public class MinMavenProjectStub
         return Collections.singletonList( jxrPlugin );
     }
 
+    /**
+     * @see org.apache.maven.project.MavenProject#getOrganization()
+     */
     public Organization getOrganization()
     {
         Organization organization = new Organization();
@@ -61,11 +85,17 @@ public class MinMavenProjectStub
         return organization;
     }
 
+    /**
+     * @see org.apache.maven.project.MavenProject#getInceptionYear()
+     */
     public String getInceptionYear()
     {
         return "2006";
     }
 
+    /**
+     * @see org.apache.maven.project.MavenProject#getBuild()
+     */
     public Build getBuild()
     {
         Build build = new Build();
