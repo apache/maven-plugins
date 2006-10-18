@@ -23,6 +23,7 @@ import org.apache.maven.reporting.MavenReport;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
+import java.util.Locale;
 
 /**
  * @author Edwin Punzalan
@@ -30,6 +31,33 @@ import java.io.File;
 public class CheckstyleReportTest
     extends AbstractMojoTestCase
 {
+    private Locale oldDefaultLocale;
+
+    /**
+     * @see junit.framework.TestCase#setUp()
+     */
+    protected void setUp()
+        throws Exception
+    {
+        super.setUp();
+
+        // Specify English as default Locale for messages in tests
+        oldDefaultLocale = Locale.getDefault();
+        Locale.setDefault( Locale.ENGLISH );
+    }
+
+    /**
+     * @see junit.framework.TestCase#tearDown()
+     */
+    protected void tearDown()
+        throws Exception
+    {
+        super.tearDown();
+
+        // Restore current locale
+        Locale.setDefault( oldDefaultLocale );
+    }
+
     public void testNoSource()
         throws Exception
     {
