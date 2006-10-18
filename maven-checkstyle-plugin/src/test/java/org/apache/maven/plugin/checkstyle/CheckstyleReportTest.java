@@ -141,6 +141,12 @@ public class CheckstyleReportTest
         }
     }
 
+    public void testTestSourceDirectory()
+        throws Exception
+    {
+        File htmlFile = generateReport( "test-source-directory-plugin-config.xml" );
+    }
+
     private File generateReport( String pluginXml )
         throws Exception
     {
