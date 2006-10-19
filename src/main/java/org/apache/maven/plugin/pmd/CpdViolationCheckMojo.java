@@ -16,8 +16,13 @@ package org.apache.maven.plugin.pmd;
  * limitations under the License.
  */
 
+import java.io.IOException;
+import java.util.Map;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.codehaus.plexus.util.xml.pull.XmlPullParser;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
  * Fail the build if there were any CPD violations in the source code.
@@ -36,5 +41,23 @@ public class CpdViolationCheckMojo
         throws MojoExecutionException, MojoFailureException
     {
         executeCheck( "cpd.xml", "duplication", "CPD duplication" );
+    }
+    
+    /**
+     * Formats the failure details and prints them as an INFO message
+     * 
+     * @param item
+     */
+    protected void printError( Map item )
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    protected Map getErrorDetails( XmlPullParser xpp )
+        throws XmlPullParserException, IOException
+    {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
