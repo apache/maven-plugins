@@ -16,12 +16,18 @@ package org.apache.maven.plugin.pmd;
  * limitations under the License.
  */
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.codehaus.plexus.util.xml.pull.XmlPullParser;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
  * Fail the build if there were any PMD violations in the source code.
- *
+ * 
  * @goal check
  * @phase verify
  * @execute goal="pmd"
@@ -37,4 +43,57 @@ public class PmdViolationCheckMojo
     {
         executeCheck( "pmd.xml", "violation", "PMD violation" );
     }
+
+    /**
+     * Formats the failure details and prints them as an INFO message
+     * 
+     * @param item
+     *         parsed details about error
+     */
+    protected void printError( Map item )
+    {
+        
+        StringBuffer buff = new StringBuffer( 100 );
+        buff.append( item.get( "package" ) );
+        buff.append( "." ).append( item.get( "class" ) );
+        buff.append( ":" ).append( item.get( "line" ) );
+        buff.append( " Rule:" ).append( item.get( "rule" ) );
+        buff.append( " Priority:" ).append( item.get( "priority" ) );
+        buff.append( " " ).append( item.get( "text" ) ).append( "." );
+
+        this.getLog().info( buff.toString() );
+    }
+
+    /**
+     * Gets the attributes and text for the violation tag and puts them in a
+     * HashMap
+     * 
+     * @param xpp
+     * @throws XmlPullParserException
+     * @throws IOException
+     */
+    protected Map getErrorDetails( XmlPullParser xpp )
+        throws XmlPullParserException, IOException
+    {
+        int index = 0;
+        int attributeCount = 0;
+        HashMap msgs = new HashMap();
+
+        attributeCount = xpp.getAttributeCount();
+        while ( index < attributeCount )
+        {
+
+            msgs.put( xpp.getAttributeName( index ), xpp.getAttributeValue( index ) );
+
+            index++;
+        }
+
+        // get the tag's text
+        if ( xpp.next() == XmlPullParser.TEXT )
+        {
+            msgs.put( "text", xpp.getText().trim() );
+        }
+        return msgs;
+    }
+
 }
