@@ -36,16 +36,15 @@ import org.apache.maven.shared.jar.JarException;
 import org.codehaus.plexus.graphing.GraphRenderer;
 import org.codehaus.plexus.graphing.decorators.EdgeDecorator;
 import org.codehaus.plexus.graphing.decorators.GraphDecorator;
-import org.codehaus.plexus.graphing.decorators.NodeDecorator;
 import org.codehaus.plexus.graphing.model.Edge;
 import org.codehaus.plexus.graphing.model.Graph;
 import org.codehaus.plexus.graphing.model.GraphConstraintException;
 import org.codehaus.plexus.graphing.model.Node;
 import org.codehaus.plexus.graphing.model.dag.Dag;
+import org.codehaus.plexus.graphing.util.ColorUtil;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
-import java.awt.Color;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -80,7 +79,7 @@ public class DependenciesRenderer
         JAR_SUBTYPE.add( "par" );
         JAR_SUBTYPE.add( "ejb" );
     }
-
+    
     private final ReportResolutionListener listener;
 
     private Dependencies dependencies;
@@ -96,6 +95,8 @@ public class DependenciesRenderer
     private GraphRenderer graphRenderer;
     
     private File outputDirectory;
+    
+    private GraphColors graphColors = new GraphColors();
 
     /**
      * Will be filled with license name / list of projects.
@@ -264,7 +265,7 @@ public class DependenciesRenderer
                 graph.setDecorator( new GraphDecorator() );
                 graph.getDecorator().setTitle( "Dependency Graph" );
                 graph.getDecorator().setOrientation( GraphDecorator.LEFT_TO_RIGHT );
-                collectDependencyGraph( graph, null, listener.getRootNode() );
+                collectDependencyGraph( graph, 0, null, listener.getRootNode() );
                 
                 String pngFilename = "dependency-graph.png";
 
@@ -301,36 +302,55 @@ public class DependenciesRenderer
         endSection();
     }
     
-    private void collectDependencyGraph( Graph graph, Node parentNode, ReportResolutionListener.Node node )
+    private void collectDependencyGraph( Graph graph, int depth, Node parentNode, ReportResolutionListener.Node node )
         throws GraphConstraintException
     {
         String label = makeGraphNodeLabel( node );
         Node gnode = graph.addNode( label );
-        gnode.setDecorator( new NodeDecorator() );
-        
-        if ( node.isRoot() )
+        gnode.getDecorator().setGroupName( node.getArtifact().getGroupId() );
+
+        switch ( depth )
         {
-            gnode.getDecorator().setBackgroundColor( Color.CYAN );
+            case 0: // root
+                setNodeColors( gnode, graphColors.getRootProject() );
+                break;
+            case 1: // direct dependencies
+                setNodeColors( gnode, graphColors.getDirectDependencies() );
+                break;
+            default: // other, transitive deps
+                setNodeColors( gnode, graphColors.getTransitiveDependencies() );
+                break;
         }
-        
-        if( parentNode != null )
+
+        if ( StringUtils.equals( Artifact.SCOPE_TEST, node.getArtifact().getScope() ) )
+        {
+            setNodeColors( gnode, graphColors.getTestDependencies() );
+        }
+
+        if ( parentNode != null )
         {
             Edge edge = graph.addEdge( parentNode, gnode );
-            edge.setDecorator( new EdgeDecorator() );
             edge.getDecorator().setLineHead( EdgeDecorator.ARROW );
             edge.getDecorator().setLineTail( EdgeDecorator.NONE );
         }
-        
+
         if ( !node.getChildren().isEmpty() )
         {
             for ( Iterator deps = node.getChildren().iterator(); deps.hasNext(); )
             {
                 ReportResolutionListener.Node dep = (ReportResolutionListener.Node) deps.next();
-                collectDependencyGraph( graph, gnode, dep );
+                collectDependencyGraph( graph, depth + 1, gnode, dep );
             }
         }
     }
     
+    private void setNodeColors( Node node, ArtifactColors colors )
+    {
+        node.getDecorator().setBorderColor( ColorUtil.toColor( colors.getBorderColor() ) );
+        node.getDecorator().setBackgroundColor( ColorUtil.toColor( colors.getBackgroundColor() ) );
+        node.getDecorator().setLabelColor( ColorUtil.toColor( colors.getLabelColor() ) );
+    }
+
     private String makeGraphNodeLabel( ReportResolutionListener.Node node )
     {
         StringBuffer label = new StringBuffer();
