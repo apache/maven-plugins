@@ -5,7 +5,7 @@
     <parent>
         <artifactId>maven-plugins</artifactId>
         <groupId>org.apache.maven.plugins</groupId>
-        <version>3</version>
+        <version>4-SNAPSHOT</version>
     </parent>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-dependency-plugin</artifactId>
