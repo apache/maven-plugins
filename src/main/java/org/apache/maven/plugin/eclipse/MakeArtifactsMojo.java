@@ -36,6 +36,7 @@ import org.apache.maven.artifact.installer.ArtifactInstaller;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.model.Dependency;
+import org.apache.maven.model.License;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.AbstractMojo;
@@ -241,6 +242,16 @@ public class MakeArtifactsMojo
             model.setName( name );
             model.setVersion( version );
             model.setPackaging( "eclipse-plugin" );
+
+            if ( groupId.startsWith( "org.eclipse" ) )
+            {
+                // infer license for know projects, everything at eclipse is licensed under EPL
+                // maybe too simplicistic, but better than nothing
+                License license = new License();
+                license.setName( "Eclipse Public License - v 1.0" );
+                license.setUrl( "http://www.eclipse.org/org/documents/epl-v10.html" );
+                model.addLicense( license );
+            }
 
             if ( deps.length > 0 )
             {
