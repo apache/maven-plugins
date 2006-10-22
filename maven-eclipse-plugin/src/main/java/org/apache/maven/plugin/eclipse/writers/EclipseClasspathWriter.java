@@ -247,9 +247,12 @@ public class EclipseClasspathWriter
 
                 // if the dependency is not provided and the plugin runs in "pde mode", the dependency is
                 // added to the Bundle-Classpath:
-                if ( config.isPde() && !dep.isProvided() && !dep.isTestDependency() )
+                if ( config.isPde() && ( dep.isProvided() || dep.isOsgiBundle() ) )
                 {
-
+                    return;
+                }
+                else if ( config.isPde() && !dep.isProvided() && !dep.isTestDependency() )
+                {
                     // path for link created in .project, not to the actual file
                     path = dep.getFile().getName();
 
@@ -257,10 +260,6 @@ public class EclipseClasspathWriter
                 }
                 // running in PDE mode and the dependency is provided means, that it is provided by
                 // the target platform. This case is covered by adding the plugin container
-                else if ( config.isPde() && dep.isProvided() )
-                {
-                    return;
-                }
                 else
                 {
                     String fullPath = artifactPath.getPath();
@@ -270,6 +269,7 @@ public class EclipseClasspathWriter
 
                     kind = ATTR_VAR; //$NON-NLS-1$
                 }
+
                 if ( dep.getSourceAttachment() != null )
                 {
                     if ( ATTR_VAR.equals( kind ) )
@@ -288,7 +288,7 @@ public class EclipseClasspathWriter
 
                 if ( dep.getJavadocAttachment() != null )
                 {
-                    //                  NB eclipse (3.1) doesn't support variables in javadoc paths, so we need to add the
+                    // NB eclipse (3.1) doesn't support variables in javadoc paths, so we need to add the
                     // full path for the maven repo
                     javadocpath = StringUtils.replace( IdeUtils.getCanonicalPath( dep.getJavadocAttachment() ),
                                                        "\\", "/" ); //$NON-NLS-1$ //$NON-NLS-2$
