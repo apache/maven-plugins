@@ -43,6 +43,7 @@ import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -52,6 +53,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
+import java.util.zip.ZipFile;
 
 /**
  * Abstract base plugin which takes care of the common stuff usually needed by maven IDE plugins. A
@@ -481,11 +486,50 @@ public abstract class AbstractIdeSupportMojo
                 if ( !isReactorProject || emittedReactorProjectId.add( art.getGroupId() + '-' + art.getArtifactId() ) )
                 {
 
-                    String packaging = art.getArtifactHandler().getPackaging();
+                    // the following doesn't work: art.getArtifactHandler().getPackaging() always returns "jar" also
+                    // if the packaging specified in pom.xml is different.
 
                     // osgi-bundle packaging is provided by the felix osgi plugin
                     // eclipse-plugin packaging is provided by this eclipse plugin
-                    boolean isOsgiBundle = "osgi-bundle".equals( packaging ) || "eclipse-plugin".equals( packaging );
+                    // String packaging = art.getArtifactHandler().getPackaging();
+                    // boolean isOsgiBundle = "osgi-bundle".equals( packaging ) || "eclipse-plugin".equals( packaging );
+
+                    // we need to check the manifest, if "Bundle-SymbolicName" is there the artifact can be considered
+                    // an osgi bundle
+                    boolean isOsgiBundle = false;
+                    if ( art.getFile() != null )
+                    {
+                        JarFile jarFile = null;
+                        try
+                        {
+                            jarFile = new JarFile( art.getFile(), false, ZipFile.OPEN_READ );
+
+                            Manifest manifest = jarFile.getManifest();
+                            if ( manifest != null )
+                            {
+                                isOsgiBundle = manifest.getMainAttributes()
+                                    .getValue( new Attributes.Name( "Bundle-SymbolicName" ) ) != null;
+                            }
+                        }
+                        catch ( IOException e )
+                        {
+                            getLog().info( "Unable to read jar manifest from " + art.getFile() );
+                        }
+                        finally
+                        {
+                            if ( jarFile != null )
+                            {
+                                try
+                                {
+                                    jarFile.close();
+                                }
+                                catch ( IOException e )
+                                {
+                                    // ignore
+                                }
+                            }
+                        }
+                    }
 
                     IdeDependency dep = new IdeDependency( art.getGroupId(), art.getArtifactId(), art.getVersion(),
                                                            isReactorProject, Artifact.SCOPE_TEST
