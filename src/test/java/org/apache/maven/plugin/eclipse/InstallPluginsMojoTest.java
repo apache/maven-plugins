@@ -36,7 +36,7 @@ public class InstallPluginsMojoTest
 
     private static final String VERSION = "0.0.9";
 
-    private static final String SOURCE_PATH = "m2repo/org/codehaus/m2eclipse/" + ARTIFACT_ID + "/" + VERSION + "/"
+    private static final String SOURCE_PATH = "M2REPO/org/codehaus/m2eclipse/" + ARTIFACT_ID + "/" + VERSION + "/"
         + ARTIFACT_ID + "-" + VERSION + ".jar";
 
     private File sourceFile;
