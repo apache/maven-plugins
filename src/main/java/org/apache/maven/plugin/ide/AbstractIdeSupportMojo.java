@@ -481,12 +481,19 @@ public abstract class AbstractIdeSupportMojo
                 if ( !isReactorProject || emittedReactorProjectId.add( art.getGroupId() + '-' + art.getArtifactId() ) )
                 {
 
+                    String packaging = art.getArtifactHandler().getPackaging();
+
+                    // osgi-bundle packaging is provided by the felix osgi plugin
+                    // eclipse-plugin packaging is provided by this eclipse plugin
+                    boolean isOsgiBundle = "osgi-bundle".equals( packaging ) || "eclipse-plugin".equals( packaging );
+
                     IdeDependency dep = new IdeDependency( art.getGroupId(), art.getArtifactId(), art.getVersion(),
                                                            isReactorProject, Artifact.SCOPE_TEST
                                                                .equals( art.getScope() ), Artifact.SCOPE_SYSTEM
                                                                .equals( art.getScope() ), Artifact.SCOPE_PROVIDED
                                                                .equals( art.getScope() ), art.getArtifactHandler()
-                                                               .isAddedToClasspath(), art.getFile(), art.getType() );
+                                                               .isAddedToClasspath(), art.getFile(), art.getType(),
+                                                           isOsgiBundle );
 
                     dependencyList.add( dep );
                 }

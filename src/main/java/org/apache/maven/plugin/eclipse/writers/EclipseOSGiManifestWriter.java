@@ -234,7 +234,7 @@ public class EclipseOSGiManifestWriter
         for ( int j = 0; j < deps.length; j++ )
         {
             IdeDependency dep = deps[j];
-            if ( !dep.isProvided() && !dep.isReferencedProject() && !dep.isTestDependency() )
+            if ( !dep.isProvided() && !dep.isReferencedProject() && !dep.isTestDependency() && !dep.isOsgiBundle() )
             {
                 bundleClasspathSb.append( "," + NEWLINE );
 

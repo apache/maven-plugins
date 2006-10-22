@@ -86,6 +86,11 @@ public class IdeDependency
     private String type;
 
     /**
+     * Does this artifact contains a OSGI Manifest?
+     */
+    private boolean osgiBundle;
+
+    /**
      * 
      * @param groupId Group id
      * @param artifactId Artifact id
@@ -100,7 +105,7 @@ public class IdeDependency
      */
     public IdeDependency( String groupId, String artifactId, String version, boolean referencedProject,
                           boolean testDependency, boolean systemScoped, boolean provided, boolean addedToClasspath,
-                          File file, String type )
+                          File file, String type, boolean osgiBundle )
     {
         // group:artifact:version
         this.groupId = groupId;
@@ -113,6 +118,7 @@ public class IdeDependency
         this.systemScoped = systemScoped;
         this.provided = provided;
         this.addedToClasspath = addedToClasspath;
+        this.osgiBundle = osgiBundle;
 
         // file and type
         this.file = file;
@@ -198,6 +204,15 @@ public class IdeDependency
     public boolean isReferencedProject()
     {
         return this.referencedProject;
+    }
+
+    /**
+     * Getter for <code>osgiBundle</code>.
+     * @return Returns the osgiBundle.
+     */
+    public boolean isOsgiBundle()
+    {
+        return this.osgiBundle;
     }
 
     /**

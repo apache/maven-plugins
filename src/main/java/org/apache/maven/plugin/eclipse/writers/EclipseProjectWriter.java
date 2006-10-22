@@ -254,7 +254,7 @@ public class EclipseProjectWriter
                     IdeDependency dep = config.getDeps()[j];
 
                     if ( dep.isAddedToClasspath() && !dep.isProvided() && !dep.isReferencedProject()
-                        && !dep.isTestDependency() )
+                        && !dep.isTestDependency() && !dep.isOsgiBundle() )
                     {
                         String name = dep.getFile().getName();
                         addLink( writer, name, StringUtils.replace( IdeUtils.getCanonicalPath( dep.getFile() ), "\\",
