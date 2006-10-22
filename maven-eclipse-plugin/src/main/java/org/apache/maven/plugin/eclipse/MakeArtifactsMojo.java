@@ -19,12 +19,15 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+import java.util.zip.ZipEntry;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -152,16 +155,35 @@ public class MakeArtifactsMojo
 
             getLog().info( "Processing file " + file.getAbsolutePath() );
 
+            JarFile jar = null;
             Manifest manifest;
+            Properties pluginProperties = new Properties();
             try
             {
-                JarFile jar = new JarFile( file );
+                jar = new JarFile( file );
                 manifest = jar.getManifest();
-                jar.close();
+                ZipEntry jarEntry = jar.getEntry( "plugin.properties" );
+                if ( jarEntry != null )
+                {
+                    InputStream pluginPropertiesStream = jar.getInputStream( jarEntry );
+                    pluginProperties.load( pluginPropertiesStream );
+                }
             }
             catch ( IOException e )
             {
                 throw new MojoFailureException( "Unable to read manifest for jar " + file.getAbsolutePath() );
+            }
+            finally
+            {
+                try
+                {
+                    // this also closes any opened input stream
+                    jar.close();
+                }
+                catch ( IOException e )
+                {
+                    // ignore
+                }
             }
 
             if ( manifest == null )
@@ -180,6 +202,7 @@ public class MakeArtifactsMojo
                 artifactId = StringUtils.substring( artifactId, 0, separator );
             }
             artifactId = StringUtils.trim( artifactId );
+
             String version = manifestEntries.getValue( "Bundle-Version" );
 
             if ( artifactId == null || version == null )
@@ -193,9 +216,17 @@ public class MakeArtifactsMojo
                 version = StringUtils.substring( version, 0, version.lastIndexOf( "." ) );
             }
 
-            // @todo could be i18n! Need to be read from plugin.properties
-            // Bundle-Name: %pluginName
             String name = manifestEntries.getValue( "Bundle-Name" );
+
+            // if Bundle-Name is %pluginName fetch the full name from plugin.properties
+            if ( name != null && name.startsWith( "%" ) )
+            {
+                String nameFromProperties = pluginProperties.getProperty( name.substring( 1 ) );
+                if ( nameFromProperties != null )
+                {
+                    name = nameFromProperties;
+                }
+            }
 
             String requireBundle = manifestEntries.getValue( "Require-Bundle" );
             Dependency[] deps = parseDependencies( requireBundle );
