@@ -39,7 +39,7 @@ public class AssemblyIncludesArtifactFilter
 {
     private final List patterns;
     private final boolean actTransitively;
-    
+
     private Set patternsTriggered = new HashSet();
     private List filteredArtifactIds = new ArrayList();
 
@@ -58,12 +58,12 @@ public class AssemblyIncludesArtifactFilter
     public boolean include( Artifact artifact )
     {
         boolean shouldInclude = patternMatches( artifact );
-        
+
         if ( !shouldInclude )
         {
             addFilteredArtifactId( artifact.getId() );
         }
-        
+
         return shouldInclude;
     }
 
@@ -71,18 +71,18 @@ public class AssemblyIncludesArtifactFilter
     {
         filteredArtifactIds.add( artifactId );
     }
-    
+
     protected boolean patternMatches( Artifact artifact )
     {
         String shortId = ArtifactUtils.versionlessKey( artifact );
         String id = artifact.getDependencyConflictId();
-        
+
         boolean matched = false;
         for ( Iterator i = patterns.iterator(); i.hasNext() && !matched; )
         {
             // TODO: what about wildcards? Just specifying groups? versions?
             String pattern = (String) i.next();
-            
+
             if ( id.equals( pattern ) )
             {
                 matched = true;
@@ -91,36 +91,38 @@ public class AssemblyIncludesArtifactFilter
             {
                 matched = true;
             }
-            
+
             if ( matched )
             {
                 patternsTriggered.add( pattern );
                 break;
             }
         }
-        
+
         if ( !matched && actTransitively )
         {
             List depTrail = artifact.getDependencyTrail();
+
             if ( depTrail != null && !depTrail.isEmpty() )
             {
-                String trailStr = StringUtils.join( depTrail.iterator(), "," );
-                
+                String trailStr = "," + StringUtils.join( depTrail.iterator(), "," );
+
                 for ( Iterator it = patterns.iterator(); it.hasNext(); )
                 {
                     String pattern = (String) it.next();
-                    
-                    if ( trailStr.indexOf( pattern ) > -1 )
+
+                    // TODO: Version ranges, wildcards, ...?
+                    if ( trailStr.indexOf( "," + pattern + ":" ) > -1 )
                     {
                         matched = true;
-                        
+
                         patternsTriggered.add( pattern );
                         break;
                     }
                 }
             }
         }
-        
+
         return matched;
     }
 
@@ -131,44 +133,44 @@ public class AssemblyIncludesArtifactFilter
         {
             List missed = new ArrayList( patterns );
             missed.removeAll( patternsTriggered );
-            
+
             if ( !missed.isEmpty() && logger.isWarnEnabled() )
             {
                 StringBuffer buffer = new StringBuffer();
-                
+
                 buffer.append( "The following patterns were never triggered in this " );
                 buffer.append( getFilterDescription() );
                 buffer.append( ':' );
-                
+
                 for ( Iterator it = missed.iterator(); it.hasNext(); )
                 {
                     String pattern = (String) it.next();
-                    
+
                     buffer.append( "\no  \'" ).append( pattern ).append( "\'" );
                 }
-                
+
                 buffer.append( "\n" );
-                
+
                 logger.warn( buffer.toString() );
             }
         }
     }
-    
+
     public String toString()
     {
         return "Includes filter:" + getPatternsAsString();
     }
-    
+
     protected String getPatternsAsString()
     {
         StringBuffer buffer = new StringBuffer();
         for ( Iterator it = patterns.iterator(); it.hasNext(); )
         {
             String pattern = ( String ) it.next();
-            
+
             buffer.append( "\no \'" ).append( pattern ).append( "\'" );
         }
-        
+
         return buffer.toString();
     }
 
@@ -181,15 +183,15 @@ public class AssemblyIncludesArtifactFilter
     {
         if ( !filteredArtifactIds.isEmpty() && logger.isDebugEnabled() )
         {
-            StringBuffer buffer = new StringBuffer( "The following artifacts were removed by this filter: " );
-            
+            StringBuffer buffer = new StringBuffer( "The following artifacts were removed by this " + getFilterDescription() + ": " );
+
             for ( Iterator it = filteredArtifactIds.iterator(); it.hasNext(); )
             {
                 String artifactId = ( String ) it.next();
-                
+
                 buffer.append( '\n' ).append( artifactId );
             }
-            
+
             logger.debug( buffer.toString() );
         }
     }

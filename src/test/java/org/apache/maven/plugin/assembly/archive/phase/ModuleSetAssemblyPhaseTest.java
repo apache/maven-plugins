@@ -47,14 +47,14 @@ public class ModuleSetAssemblyPhaseTest
     {
         fileManager.cleanUp();
     }
-    
+
     public void testIsDeprecatedModuleSourcesConfigPresent_ShouldCatchOutputDir()
     {
         ModuleSources sources = new ModuleSources();
         sources.setOutputDirectory( "outdir" );
-       
+
         ModuleSetAssemblyPhase phase = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null );
-        
+
         assertTrue( phase.isDeprecatedModuleSourcesConfigPresent( sources ) );
     }
 
@@ -62,9 +62,9 @@ public class ModuleSetAssemblyPhaseTest
     {
         ModuleSources sources = new ModuleSources();
         sources.addInclude( "**/included.txt" );
-       
+
         ModuleSetAssemblyPhase phase = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null );
-        
+
         assertTrue( phase.isDeprecatedModuleSourcesConfigPresent( sources ) );
     }
 
@@ -72,9 +72,9 @@ public class ModuleSetAssemblyPhaseTest
     {
         ModuleSources sources = new ModuleSources();
         sources.addExclude( "**/excluded.txt" );
-       
+
         ModuleSetAssemblyPhase phase = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null );
-        
+
         assertTrue( phase.isDeprecatedModuleSourcesConfigPresent( sources ) );
     }
 
@@ -82,9 +82,9 @@ public class ModuleSetAssemblyPhaseTest
     {
         ModuleSources sources = new ModuleSources();
         sources.setFileMode( "777" );
-       
+
         ModuleSetAssemblyPhase phase = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null );
-        
+
         assertFalse( phase.isDeprecatedModuleSourcesConfigPresent( sources ) );
     }
 
@@ -92,9 +92,9 @@ public class ModuleSetAssemblyPhaseTest
     {
         ModuleSources sources = new ModuleSources();
         sources.setDirectoryMode( "777" );
-       
+
         ModuleSetAssemblyPhase phase = createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null );
-        
+
         assertFalse( phase.isDeprecatedModuleSourcesConfigPresent( sources ) );
     }
 
@@ -185,7 +185,7 @@ public class ModuleSetAssemblyPhaseTest
 
         Model model = new Model();
         model.setArtifactId( "artifact" );
-        
+
         model.addModule( "submodule" );
 
         MavenProject project = new MavenProject( model );
@@ -206,7 +206,7 @@ public class ModuleSetAssemblyPhaseTest
 
         FileSet result =
             createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).createFileSet( fs, sources, project );
-        
+
         assertEquals( 1, result.getExcludes().size() );
         assertEquals( "submodule/**", result.getExcludes().get( 0 ) );
 
@@ -850,7 +850,7 @@ public class ModuleSetAssemblyPhaseTest
             MavenProject parent = project.getParent();
             while ( parent != null )
             {
-                depTrail.addLast( ArtifactUtils.versionlessKey( parent.getGroupId(), parent.getArtifactId() ) );
+                depTrail.addLast( parent.getId() );
 
                 parent = parent.getParent();
             }
