@@ -18,27 +18,8 @@
  */
 -->
 
-<project name="Maven Resources Plugin">
-  <bannerLeft>
-    <name>Maven Resources Plugin</name>
-    <src>http://maven.apache.org/images/apache-maven-project.png</src>
-    <href>http://maven.apache.org/</href>
-  </bannerLeft>
-  <bannerRight>
-    <src>http://maven.apache.org/images/maven-small.gif</src>
-  </bannerRight>
+<project>
   <body>
-    <links>
-      <item name="Maven 2" href="http://maven.apache.org/maven2/"/>
-    </links>
-
-
-    <menu name="Overview">
-      <item name="Introduction" href="index.html"/>
-      <item name="Usage" href="usage.html"/>
-      <item name="Goals" href="plugin-info.html"/>      
-      <item name="FAQ" href="faq.html"/>
-    </menu>
     <menu name="Examples">
       <item name="Specifying a character encoding scheme" 
 		href="/examples/encoding.html"/>
@@ -49,6 +30,5 @@
       <item name="Including and excluding files and directories" 
 		href="/examples/include-exclude.html"/>
     </menu>
-    ${reports}
   </body>
 </project>
