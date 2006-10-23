@@ -16,25 +16,8 @@
   ~ limitations under the License.
   -->
 
-<project name="Maven War Plugin">
-  <bannerLeft>
-    <name>Maven War Plugin</name>
-    <src>http://maven.apache.org/images/apache-maven-project.png</src>
-    <href>http://maven.apache.org/</href>
-  </bannerLeft>
-  <bannerRight>
-    <src>http://maven.apache.org/images/maven-small.gif</src>
-  </bannerRight>
+<project>
   <body>
-    <links>
-      <item name="Maven 2" href="http://maven.apache.org/maven2/"/>
-    </links>
-    <menu name="Overview">
-      <item name="Introduction" href="index.html"/>
-      <item name="Goals" href="plugin-info.html"/>
-      <item name="Usage" href="usage.html"/>
-      <!--<item name="FAQ" href="faq.html"/> -->
-    </menu>
     <menu name="Examples">
       <item name="Adding and Filtering External Web Resources" href="examples/adding-filtering-webresources.html"/>   
       <item name="Manipulating WAR Overlays" href="examples/war-overlay.html"/>
@@ -42,6 +25,5 @@
       <item name="Rapid Testing Using Jetty6" href="examples/rapid-testing-jetty6-plugin.html"/>
       <item name="Creating Skinny WARs" href="examples/skinny-wars.html"/>
     </menu>
-    ${reports}
   </body>
 </project>
