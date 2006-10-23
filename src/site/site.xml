@@ -16,29 +16,13 @@
   ~ limitations under the License.
   -->
 
-<project name="Maven Assembly Plugin">
-  <bannerLeft>
-    <name>Maven Assembly Plugin</name>
-    <src>http://maven.apache.org/images/apache-maven-project.png</src>
-    <href>http://maven.apache.org/</href>
-  </bannerLeft>
-  <bannerRight>
-    <src>http://maven.apache.org/images/maven-small.gif</src>
-  </bannerRight>
+<project>
   <body>
-    <links>
-      <item name="Maven 2" href="http://maven.apache.org/maven2/"/>
-    </links>
-
-    <menu name="Overview">
-      <item name="Introduction" href="index.html"/>
-      <item name="Goals" href="plugin-info.html"/>
-      <item name="Usage" href="usage.html"/>
+    <menu name="Reference">
       <item name="Features" href="features.html"/>
       <item name="Descriptor Format" href="assembly.html"/>
       <item name="Component Format" href="component.html"/>
       <item name="Predefined Descriptors" href="descriptor-refs.html"/>
-      <item name="FAQ" href="faq.html"/>
     </menu>
 
     <menu name="Examples">
@@ -54,8 +38,5 @@
         <item name="Include Module Sources" href="examples/multimodule/module-source-inclusion-simple.html"/>
       </item>
     </menu>
-
-    ${reports}
-
   </body>
 </project>
