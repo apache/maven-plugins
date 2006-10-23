@@ -1,25 +1,8 @@
-<project name="Maven Compiler Plugin">
-  <bannerLeft>
-    <name>Maven Eclipse Plugin</name>
-    <src>http://maven.apache.org/images/apache-maven-project.png</src>
-    <href>http://maven.apache.org/</href>
-  </bannerLeft>
-  <bannerRight>
-    <src>http://maven.apache.org/images/maven-small.gif</src>
-  </bannerRight>
-  
+<project>
   <body>
-    <links>
-      <item name="Maven" href="http://maven.apache.org/maven2/"/>
-    </links>
-
-    <menu name="Overview">
-      <item name="Introduction" href="index.html"/>
-      <item name="Goals" href="plugin-info.html"/>
-      <item name="Usage" href="usage.html"/>
+    <menu name="Configuration">
       <item name="Multiple Module Projects" href="reactor.html"/>
       <item name="WTP Support" href="wtp.html"/>
-      <item name="FAQ" href="faq.html"/>
     </menu>
 
     <menu name="Examples">
@@ -27,8 +10,5 @@
       <item name="Attach Library Sources" href="examples/attach-library-sources.html"/>
       <item name="Provide Project Natures And Build Commands" href="examples/provide-project-natures-and-build-commands.html"/>
     </menu>
-
-    ${reports}
-
   </body>
 </project>
