@@ -18,7 +18,9 @@ package org.apache.maven.plugins.release;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.ReleaseExecutionException;
+import org.apache.maven.shared.release.ReleaseFailureException;
 
 /**
  * Prepare for a release in SCM.

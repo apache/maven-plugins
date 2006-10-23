@@ -18,7 +18,8 @@ package org.apache.maven.plugins.release;
 
 import org.apache.maven.model.Profile;
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugins.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.ReleaseManager;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.util.StringUtils;
