@@ -5,7 +5,6 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
-import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
@@ -67,14 +66,14 @@ public class AddDependencySetsTask
     }
 
     public void execute( Archiver archiver, AssemblerConfigurationSource configSource )
-        throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
+        throws ArchiveCreationException, AssemblyFormattingException
     {
         if ( dependencySets == null || dependencySets.isEmpty() )
         {
             logger.debug( "No dependency sets specified." );
             return;
         }
-        
+
         List deps = project.getDependencies();
         if ( deps == null || deps.isEmpty() )
         {
@@ -93,7 +92,7 @@ public class AddDependencySetsTask
                                      AssemblerConfigurationSource configSource )
         throws AssemblyFormattingException, ArchiveCreationException
     {
-        logger.info( "Processing DependencySet" );
+        logger.info( "Processing DependencySet (output=" + dependencySet.getOutputDirectory() + ")" );
 
         Set dependencyArtifacts = resolveDependencyArtifacts( dependencySet, configSource );
 
