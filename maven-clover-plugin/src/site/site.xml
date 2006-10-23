@@ -16,41 +16,19 @@
  ~ limitations under the License.
  -->
 
-<project name="Maven Clover Plugin">
-  <bannerLeft>
-    <name>Maven Clover Plugin</name>
-    <src>http://maven.apache.org/images/apache-maven-project.png</src>
-    <href>http://maven.apache.org/</href>
-  </bannerLeft>
-  <bannerRight>
-    <src>http://maven.apache.org/images/maven-small.gif</src>
-  </bannerRight>
-  <publishDate format="dd MMM yyyy" />
+<project>
   <body>
-    <links>
-      <item name="Maven" href="http://maven.apache.org/maven2/"/>
-    </links>
-
-    <menu name="Overview">
-      <item name="Introduction" href="index.html"/>
-      <item name="Goals" href="plugin-info.html"/>
-      <item name="Usage" href="usage.html"/>
-      <item name="FAQ" href="faq.html"/>
-    </menu>
-    
     <menu name="Examples">
       <item name="Simple" href="/examples/simple.html"/>
       <item name="Filter Contexts" href="/examples/contexts.html"/>
       <item name="Multiproject" href="/examples/multiproject.html"/>
     </menu>
 
-    <!-- To be uncommented once it's up to date again -->
-    <!--menu name="Architecture">
+    <!-- To be uncommented once it's up to date again
+    <menu name="Architecture">
       <item name="Overview" href="/architecture/architecture.html"/>
       <item name="Check Goal" href="/architecture/clover-check.html"/>
-    </menu-->
-    
-    ${reports}
-
+    </menu>
+    -->
   </body>
 </project>

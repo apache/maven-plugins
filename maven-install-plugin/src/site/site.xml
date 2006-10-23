@@ -16,34 +16,13 @@
   ~ limitations under the License.
   -->
 
-<project name="Maven Install Plugin">
-  <bannerLeft>
-    <name>Maven Install Plugin</name>
-    <src>http://maven.apache.org/images/apache-maven-project.png</src>
-    <href>http://maven.apache.org/</href>
-  </bannerLeft>
-  <bannerRight>
-    <src>http://maven.apache.org/images/maven-small.gif</src>
-  </bannerRight>
+<project>
   <body>
-    <links>
-      <item name="Maven" href="http://maven.apache.org/maven2/"/>
-    </links>
-
-    <menu name="Overview">
-      <item name="Introduction" href="index.html"/>
-      <item name="Goals" href="plugin-info.html"/>
-      <item name="Usage" href="usage.html"/>
-      <item name="FAQ" href="faq.html"/>
-    </menu>
-
     <menu name="Examples">
       <item name="Custom POM" href="examples/custom-pom-installation.html"/>
       <item name="Generic POM" href="examples/generic-pom-generation.html"/>
       <item name="Installing Checksums" href="examples/installing-checksums.html"/>
       <item name="Updating Release Info" href="examples/update-release-info.html"/>
     </menu>
-
-    ${reports}
   </body>
 </project>

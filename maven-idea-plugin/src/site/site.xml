@@ -18,26 +18,10 @@
  */
 -->
 
-<project name="Maven IDEA Plugin">
-  <bannerLeft>
-    <name>Maven Idea Plugin</name>
-    <src>http://maven.apache.org/images/apache-maven-project.png</src>
-    <href>http://maven.apache.org/</href>
-  </bannerLeft>
-  <bannerRight>
-    <src>http://maven.apache.org/images/maven-small.gif</src>
-  </bannerRight>
+<project>
   <body>
-    <links>
-      <item name="Maven 2" href="http://maven.apache.org/maven2/"/>
-    </links>
-
-    <menu name="Overview">
-      <item name="Introduction" href="index.html"/>
-      <item name="Goals" href="plugin-info.html"/>
-      <item name="Usage" href="usage.html"/>
+    <menu name="Configuration">
       <item name="Library Definition" href="library.html"/>
-      <item name="FAQ" href="faq.html"/>
     </menu>
 
     <menu name="Examples">
@@ -47,7 +31,5 @@
       <item name="Disable Links Between Modules" href="examples/prevent-module-references.html"/>
       <item name="Provide Deployment Descriptor File" href="examples/provide-deployment-descriptor-file.html"/>
     </menu>
-
-    ${reports}
   </body>
 </project>

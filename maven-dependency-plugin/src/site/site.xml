@@ -18,26 +18,8 @@
  */
 -->
 
-<project name="Maven Dependency Plugin">
-  <bannerLeft>
-    <name>Maven Dependency Plugin</name>
-    <src>http://maven.apache.org/images/apache-maven-project.png</src>
-    <href>http://maven.apache.org/</href>
-  </bannerLeft>
-  <bannerRight>
-    <src>http://maven.apache.org/images/maven-small.gif</src>
-  </bannerRight>
+<project>
   <body>
-    <links>
-      <item name="Maven" href="http://maven.apache.org/maven2/"/>
-    </links>
-
-    <menu name="Overview">
-      <item name="Introduction" href="index.html"/>
-      <item name="Usage" href="usage.html"/>
-      <item name="Goals" href="plugin-info.html" />
-      <item name="FAQ" href="faq.html"/>
-    </menu>
     <menu name="Examples">
       <item name="Copying Specific Artifacts" href="examples/copying-artifacts.html" />
       <item name="Copying Direct Dependencies" href="examples/copy-direct-dependencies.html" />
@@ -47,6 +29,5 @@
     <menu name="Resources">
       <item name="Dependency Mechanism" href="http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html" />
     </menu>
-    ${reports}
   </body>
 </project>
