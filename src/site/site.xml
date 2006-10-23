@@ -18,25 +18,9 @@
  */
 -->
 
-<project name="Maven Changes Report Plugin">
-  <bannerLeft>
-    <name>Maven Changes Report Plugin</name>
-    <src>http://maven.apache.org/images/apache-maven-project.png</src>
-    <href>http://maven.apache.org/</href>
-  </bannerLeft>
-  <bannerRight>
-    <src>http://maven.apache.org/images/maven-small.gif</src>
-  </bannerRight>
+<project>
   <body>
-    <links>
-      <item name="Maven 2" href="http://maven.apache.org/maven2/"/>
-    </links>
-
-    <menu name="Overview">
-      <item name="Introduction" href="index.html"/>
-      <item name="Goals" href="plugin-info.html"/>
-      <item name="Usage" href="usage.html"/>
-      <item name="FAQ" href="faq.html"/>
+    <menu name="Samples">
       <item name="Sample Changes Report" href="changes-report.html"/>
       <item name="Live JIRA Report" href="jira-report.html"/>
     </menu>
@@ -45,7 +29,5 @@
       <item name="Alternate Location for the changes.xml File" href="examples/alternate-changes-xml-location.html"/>
       <item name="SMTP Authentication" href="examples/smtp-authentication.html"/>
     </menu>
-
-    ${reports}
   </body>
 </project>
