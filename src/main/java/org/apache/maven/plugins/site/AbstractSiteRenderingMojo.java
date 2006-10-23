@@ -195,6 +195,7 @@ public abstract class AbstractSiteRenderingMojo
         {
             if ( siteDescriptor != null && siteDescriptor.exists() )
             {
+                getLog().debug( "Reading site descriptor from " + siteDescriptor );
                 siteDescriptorContent = FileUtils.fileRead( siteDescriptor );
             }
         }
