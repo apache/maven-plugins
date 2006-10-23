@@ -16,26 +16,10 @@
   ~ limitations under the License.
   -->
 
-<project name="Maven EAR Plugin">
-  <bannerLeft>
-    <name>Maven EAR Plugin</name>
-    <src>http://maven.apache.org/images/apache-maven-project.png</src>
-    <href>http://maven.apache.org/</href>
-  </bannerLeft>
-  <bannerRight>
-    <src>http://maven.apache.org/images/maven-small.gif</src>
-  </bannerRight>
+<project>
   <body>
-    <links>
-      <item name="Maven" href="http://maven.apache.org/maven2/"/>
-    </links>
-
-    <menu name="Overview">
-      <item name="Introduction" href="index.html"/>
-      <item name="Goals" href="plugin-info.html"/>
-      <item name="Usage" href="usage.html"/>
+    <menu name="Configuration">
       <item name="Modules" href="modules.html"/>
-      <item name="FAQ" href="faq.html"/>
     </menu>
 
     <menu name="Examples">
@@ -49,8 +33,5 @@
       <item name="Specifying Security Roles For The Generated application.xml" href="examples/specifying-security-roles-for-the-generated-application-xml.html"/>
       <item name="Generating jboss-app.xml" href="examples/generating-jboss-app.html"/>
     </menu>
-
-    ${reports}
-
   </body>
 </project>
