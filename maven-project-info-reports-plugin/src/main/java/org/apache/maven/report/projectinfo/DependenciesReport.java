@@ -89,6 +89,7 @@ public class DependenciesReport
     private boolean dependencyDetailsEnabled;
 
     /**
+     * Display the repository locations of the dependencies. Requires Maven 2.0.5+.
      * @parameter expression="${dependency.locations.enabled}" default-value="false"
      */
     private boolean dependencyLocationsEnabled;
