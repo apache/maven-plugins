@@ -16,26 +16,8 @@
   ~ limitations under the License.
   -->
 
-<project name="Maven Rar Plugin">
-  <bannerLeft>
-    <name>Maven Rar Plugin</name>
-    <src>http://maven.apache.org/images/apache-maven-project.png</src>
-    <href>http://maven.apache.org/</href>
-  </bannerLeft>
-  <bannerRight>
-    <src>http://maven.apache.org/images/maven-small.gif</src>
-  </bannerRight>
+<project>
   <body>
-    <links>
-      <item name="Maven 2" href="http://maven.apache.org/maven2/"/>
-    </links>
-
-    <menu name="Overview">
-      <item name="Introduction" href="index.html"/>
-      <item name="Usage" href="usage.html"/>
-      <item name="Goals" href="plugin-info.html" />
-      <item name="FAQ" href="faq.html"/>
-    </menu>
     <menu name="Examples">
       <item name="Exclude the project jar from the rar" href="examples/exclude-project-jar.html"/>
       <item name="Custom location of Resource Adapter Descriptor" href="examples/ra-custom-location.html" />
@@ -46,6 +28,5 @@
       <item name="J2EE Connector API specification" href="http://java.sun.com/j2ee/connector/" />
       <item name="Resource Adapter Archive Descriptor Sample" href="http://docs.sun.com/source/817-2254-10/Ch_04_sm.html" />
     </menu>
-    ${reports}
   </body>
 </project>
