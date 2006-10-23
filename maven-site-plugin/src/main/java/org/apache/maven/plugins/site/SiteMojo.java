@@ -45,7 +45,7 @@ public class SiteMojo
     /**
      * Directory containing the generated project sites and report distributions.
      *
-     * @parameter expression="${project.reporting.outputDirectory}"
+     * @parameter expression="${siteOutputDirectory}" default-value="${project.reporting.outputDirectory}"
      * @required
      */
     protected File outputDirectory;
