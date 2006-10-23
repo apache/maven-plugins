@@ -21,11 +21,11 @@ public class FilterUtilsTest
 {
 
     private MockManager mockManager = new MockManager();
-    
+
     private MockControl loggerCtl;
-    
+
     private Logger logger;
-    
+
     public void setUp()
     {
         clearAll();
@@ -34,15 +34,15 @@ public class FilterUtilsTest
     private void clearAll()
     {
         mockManager.clear();
-        
+
         loggerCtl = MockControl.createControl( Logger.class );
         mockManager.add( loggerCtl );
-        
+
         logger = (Logger) loggerCtl.getMock();
-        
+
         logger.isDebugEnabled();
         loggerCtl.setReturnValue( true, MockControl.ZERO_OR_MORE );
-        
+
         logger.debug( null );
         loggerCtl.setMatcher( MockControl.ALWAYS_MATCHER );
         loggerCtl.setVoidCallable( MockControl.ZERO_OR_MORE );
@@ -56,20 +56,20 @@ public class FilterUtilsTest
 
     public void testFilterArtifacts_ShouldNotRemoveArtifactTransitivelyIncluded()
     {
-        verifyArtifactInclusion( "group", "artifact", "group:dependentArtifact", null, Collections.singletonList( "group:dependentArtifact" ), null );
+        verifyArtifactInclusion( "group", "artifact", "group:dependentArtifact", null, Collections.singletonList( "group:dependentArtifact:jar:version" ), null );
     }
 
     public void testFilterArtifacts_ShouldRemoveArtifactTransitivelyExcluded()
     {
-        verifyArtifactExclusion( "group", "artifact", null, "group:dependentArtifact", Collections.singletonList( "group:dependentArtifact" ), null );
+        verifyArtifactExclusion( "group", "artifact", null, "group:dependentArtifact", Collections.singletonList( "group:dependentArtifact:jar:version" ), null );
     }
 
     public void testFilterArtifacts_ShouldRemoveArtifactDirectlyExcluded()
     {
         verifyArtifactExclusion( "group", "artifact", null, "group:artifact", null, null );
-        
+
         clearAll();
-        
+
         verifyArtifactExclusion( "group", "artifact", null, "group:artifact:jar", null, null );
     }
 
@@ -88,18 +88,18 @@ public class FilterUtilsTest
             {
                 return false;
             }
-            
+
         };
-        
+
         logger.isWarnEnabled();
         loggerCtl.setReturnValue( true );
-        
+
         logger.warn( null );
         loggerCtl.setMatcher( MockControl.ALWAYS_MATCHER );
-        
+
         verifyArtifactExclusion( "group", "artifact", "fail:fail", null, null, filter );
     }
-    
+
     public void testFilterProjects_ShouldNotRemoveProjectDirectlyIncluded()
     {
         verifyProjectInclusion( "group", "artifact", "group:artifact", null, null );
@@ -108,12 +108,12 @@ public class FilterUtilsTest
 
     public void testFilterProjects_ShouldNotRemoveProjectTransitivelyIncluded()
     {
-        verifyProjectInclusion( "group", "artifact", "group:dependentArtifact", null, Collections.singletonList( "group:dependentArtifact" ) );
+        verifyProjectInclusion( "group", "artifact", "group:dependentArtifact", null, Collections.singletonList( "group:dependentArtifact:jar:version" ) );
     }
 
     public void testFilterProjects_ShouldRemoveProjectTransitivelyExcluded()
     {
-        verifyProjectExclusion( "group", "artifact", null, "group:dependentArtifact", Collections.singletonList( "group:dependentArtifact" ) );
+        verifyProjectExclusion( "group", "artifact", null, "group:dependentArtifact", Collections.singletonList( "group:dependentArtifact:jar:version" ) );
     }
 
     public void testFilterProjects_ShouldRemoveProjectDirectlyExcluded()
@@ -141,7 +141,7 @@ public class FilterUtilsTest
     private void verifyArtifactFiltering( String groupId, String artifactId, String inclusionPattern, String exclusionPattern, List depTrail, boolean verifyInclusion, ArtifactFilter additionalFilter )
     {
         ArtifactMockAndControl mac = new ArtifactMockAndControl( groupId, artifactId, depTrail );
-        
+
         mockManager.replayAll();
 
         List inclusions;
@@ -163,7 +163,7 @@ public class FilterUtilsTest
         {
             exclusions = Collections.EMPTY_LIST;
         }
-        
+
         List filters;
         if ( additionalFilter != null )
         {
@@ -173,10 +173,10 @@ public class FilterUtilsTest
         {
             filters = Collections.EMPTY_LIST;
         }
-        
+
         Set artifacts = new HashSet();
         artifacts.add( mac.artifact );
-        
+
         FilterUtils.filterArtifacts( artifacts, inclusions, exclusions, depTrail != null, filters, logger );
 
         if ( verifyInclusion )
@@ -188,12 +188,12 @@ public class FilterUtilsTest
         {
             // just make sure this trips, to meet the mock's expectations.
             mac.artifact.getDependencyConflictId();
-            
+
             assertTrue( artifacts.isEmpty() );
         }
 
         mockManager.verifyAll();
-        
+
         // get ready for multiple calls per test.
         mockManager.clear();
     }
@@ -213,7 +213,7 @@ public class FilterUtilsTest
         ProjectWithArtifactMockControl pmac = new ProjectWithArtifactMockControl( groupId, artifactId, depTrail );
 
         mockManager.replayAll();
-        
+
         // make sure the mock is satisfied...you can't disable this expectation.
         pmac.mac.artifact.getDependencyConflictId();
 
@@ -241,7 +241,7 @@ public class FilterUtilsTest
         }
 
         Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
-        
+
         FilterUtils.filterProjects( projects, inclusions, exclusions, depTrail != null, logger );
 
         if ( verifyInclusion )
@@ -255,7 +255,7 @@ public class FilterUtilsTest
         }
 
         mockManager.verifyAll();
-        
+
         // get ready for multiple calls per test.
         mockManager.clear();
     }

@@ -26,14 +26,14 @@ public final class FilterUtils
                                        Logger logger )
     {
         List allFilters = new ArrayList();
-        
+
         AndArtifactFilter filter = new AndArtifactFilter();
 
         if ( !includes.isEmpty() )
         {
             AssemblyIncludesArtifactFilter includeFilter =
                 new AssemblyIncludesArtifactFilter( includes, actTransitively );
-            
+
             filter.add( includeFilter );
             allFilters.add( includeFilter );
         }
@@ -41,7 +41,7 @@ public final class FilterUtils
         {
             AssemblyExcludesArtifactFilter excludeFilter =
                 new AssemblyExcludesArtifactFilter( excludes, actTransitively );
-                
+
             filter.add( excludeFilter );
             allFilters.add( excludeFilter );
         }
@@ -56,11 +56,11 @@ public final class FilterUtils
                 it.remove();
             }
         }
-        
+
         for ( Iterator it = allFilters.iterator(); it.hasNext(); )
         {
             ArtifactFilter f = (ArtifactFilter) it.next();
-            
+
             if ( f instanceof StatisticsReportingFilter )
             {
                 ((StatisticsReportingFilter) f).reportMissedCriteria( logger );
@@ -72,7 +72,7 @@ public final class FilterUtils
                                         List additionalFilters, Logger logger )
     {
         List allFilters = new ArrayList();
-        
+
         AndArtifactFilter filter = new AndArtifactFilter();
 
         if ( additionalFilters != null && !additionalFilters.isEmpty() )
@@ -88,25 +88,26 @@ public final class FilterUtils
         if ( !includes.isEmpty() )
         {
             ArtifactFilter includeFilter = new AssemblyIncludesArtifactFilter( includes, actTransitively );
-            
+
             filter.add( includeFilter );
-            
+
             allFilters.add( includeFilter );
         }
+
         if ( !excludes.isEmpty() )
         {
             ArtifactFilter excludeFilter = new AssemblyExcludesArtifactFilter( excludes, actTransitively );
-            
+
             filter.add( excludeFilter );
-            
+
             allFilters.add( excludeFilter );
         }
 
-        if ( !additionalFilters.isEmpty() )
+        if ( additionalFilters != null && !additionalFilters.isEmpty() )
         {
             allFilters.addAll( additionalFilters );
         }
-        
+
         for ( Iterator it = artifacts.iterator(); it.hasNext(); )
         {
             Artifact artifact = (Artifact) it.next();
@@ -114,15 +115,14 @@ public final class FilterUtils
             if ( !filter.include( artifact ) )
             {
                 it.remove();
-                
+
                 if ( logger.isDebugEnabled() )
                 {
                     logger.debug( artifact.getId() + " was removed by one or more filters." );
                 }
             }
         }
-        
-        
+
         reportFilteringStatistics( allFilters, logger );
     }
 
@@ -131,16 +131,16 @@ public final class FilterUtils
         for ( Iterator it = filters.iterator(); it.hasNext(); )
         {
             ArtifactFilter f = (ArtifactFilter) it.next();
-            
+
             if ( f instanceof StatisticsReportingFilter )
             {
                 StatisticsReportingFilter sFilter = (StatisticsReportingFilter) f;
-                
+
                 if( logger.isDebugEnabled() )
                 {
                     logger.debug( "Statistics for " + sFilter + "\n" );
                 }
-                
+
                 sFilter.reportMissedCriteria( logger );
                 sFilter.reportFilteredArtifacts( logger );
             }
