@@ -18,27 +18,8 @@
  */
 -->
 
-<project name="Maven Release Plugin">
-  <bannerLeft>
-    <name>Maven Release Plugin</name>
-    <src>http://maven.apache.org/images/apache-maven-project.png</src>
-    <href>http://maven.apache.org/</href>
-  </bannerLeft>
-  <bannerRight>
-    <src>http://maven.apache.org/images/maven-small.gif</src>
-  </bannerRight>
+<project>
   <body>
-    <links>
-      <item name="Maven" href="http://maven.apache.org/maven2/"/>
-    </links>
-
-    <menu name="Overview">
-      <item name="Introduction" href="index.html"/>
-      <item name="Goals" href="plugin-info.html"/>
-      <item name="Usage" href="usage.html"/>
-      <item name="FAQ" href="faq.html"/>
-    </menu>
-
     <menu name="Examples">
       <item name="Perform Release" href="examples/perform-release.html"/>
       <item name="Prepare Release" href="examples/prepare-release.html"/>
@@ -46,7 +27,5 @@
       <item name="Lock Files During Release" href="examples/lock-files.html"/>
       <item name="Run Additional Goals Before Commit" href="examples/run-goals-before-commit.html"/>
     </menu>
-
-    ${reports}
   </body>
 </project>

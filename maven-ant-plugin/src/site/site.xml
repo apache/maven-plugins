@@ -16,32 +16,14 @@
   ~ limitations under the License.
   -->
 
-<project name="Maven 2 Ant Plugin">
-  <bannerLeft>
-    <name>Maven 2 Ant Plugin</name>
-    <src>http://maven.apache.org/images/apache-maven-project.png</src>
-    <href>http://maven.apache.org/</href>
-  </bannerLeft>
-  <bannerRight>
-    <src>http://maven.apache.org/images/maven-small.gif</src>
-  </bannerRight>
+<project>
   <body>
     <links>
-      <item name="Maven" href="http://maven.apache.org/"/>
       <item name="Ant" href="http://ant.apache.org/"/>
     </links>
-
-    <menu name="Overview">
-      <item name="Introduction" href="index.html"/>
-      <item name="Goals" href="plugin-info.html"/>
-      <item name="Usage" href="usage.html"/>
-      <item name="FAQ" href="faq.html"/>
-    </menu>
 
     <menu name="Examples">
       <item name="Using Ant build files" href="/examples/using.html"/>
     </menu>
-
-    ${reports}
   </body>
 </project>

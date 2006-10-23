@@ -16,27 +16,12 @@
   ~ limitations under the License.
   -->
 
-<project name="Maven 2 Javadoc Plugin">
-  <bannerLeft>
-    <name>Maven 2 Javadoc Plugin</name>
-    <src>http://maven.apache.org/images/apache-maven-project.png</src>
-    <href>http://maven.apache.org/</href>
-  </bannerLeft>
-  <bannerRight>
-    <src>http://maven.apache.org/images/maven-small.gif</src>
-  </bannerRight>
+<project>
   <body>
     <links>
-      <item name="Maven 2" href="http://maven.apache.org/maven2/"/>
       <item name="Javadoc Tool" href="http://java.sun.com/j2se/javadoc/"/>
     </links>
 
-    <menu name="Overview">
-      <item name="Introduction" href="index.html"/>
-      <item name="Goals" href="plugin-info.html"/>
-      <item name="Usage" href="usage.html"/>
-      <item name="FAQ" href="faq.html"/>
-    </menu>
     <menu name="Examples">
       <item name="Aggregating Javadocs" href="/examples/aggregate.html"/>
       <item name="Using Alternate Doclets" href="/examples/alternate-doclet.html"/>
@@ -46,6 +31,5 @@
       <item name="Configuring Custom Tags" href="/examples/tag-configuration.html"/>
       <item name="Configuring Custom Taglets" href="/examples/taglet-configuration.html"/>
     </menu>
-    ${reports}
   </body>
 </project>

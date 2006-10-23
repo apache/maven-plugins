@@ -16,27 +16,8 @@
   ~ limitations under the License.
   -->
 
-<project name="Maven Checkstyle Plugin">
-  <bannerLeft>
-    <name>Maven Checkstyle Plugin</name>
-    <src>http://maven.apache.org/images/apache-maven-project.png</src>
-    <href>http://maven.apache.org/</href>
-  </bannerLeft>
-  <bannerRight>
-    <src>http://maven.apache.org/images/maven-small.gif</src>
-  </bannerRight>
+<project>
   <body>
-    <links>
-      <item name="Maven 2" href="http://maven.apache.org/maven2/"/>
-    </links>
-
-    <menu name="Overview">
-      <item name="Introduction" href="index.html"/>
-      <item name="Goals" href="plugin-info.html"/>
-      <item name="Usage" href="usage.html"/>            
-      <item name="FAQ" href="faq.html"/>
-    </menu>
-
     <menu name="Examples">
       <item name="Using a Custom Checkstyle Checker Configuration" href="/examples/custom-checker-config.html"/>
       <item name="Using Custom Checkstyle Property Expansion Definitions" href="/examples/custom-property-expansion.html"/>
@@ -44,6 +25,5 @@
       <item name="Using Custom Developed Checkstyle Check Modules" href="/examples/custom-developed-checkstyle.html"/>
       <item name="Multimodule Configuration" href="/examples/multi-module-config.html"/>
     </menu>
-    ${reports}
   </body>
 </project>

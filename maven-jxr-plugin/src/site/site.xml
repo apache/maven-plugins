@@ -1,30 +1,9 @@
 <project>
-  <bannerLeft>
-    <name>Maven Assembly Plugin</name>
-    <src>http://maven.apache.org/images/apache-maven-project.png</src>
-    <href>http://maven.apache.org</href>
-  </bannerLeft>
-  <bannerRight>
-    <src>http://maven.apache.org/images/maven-small.gif</src>
-  </bannerRight>
   <body>
-    <links>
-      <item name="Maven 2" href="http://maven.apache.org"/>
-    </links>
-    <menu name="Overview">
-      <item name="Introduction" href="index.html"/>
-      <item name="Goals" href="plugin-info.html"/>
-      <item name="Usage" href="usage.html"/>
-<!-- None yet
-      <item name="FAQs" href="faq.html"/>
--->
-    </menu>
-
     <menu name="Examples">
       <item name="Aggregating JXR Reports for Multi-Projects" href="/examples/aggregate.html"/>
       <item name="Linking JXR Files to Javadocs" href="/examples/linkjavadoc.html"/>
       <item name="JXR Sample Report" href="/xref/index.html"/>
     </menu>
-    ${reports}
   </body>
 </project>
