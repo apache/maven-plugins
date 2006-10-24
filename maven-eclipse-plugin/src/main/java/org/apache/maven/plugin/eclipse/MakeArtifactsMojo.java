@@ -273,7 +273,6 @@ public class MakeArtifactsMojo
             model.setArtifactId( artifactId );
             model.setName( name );
             model.setVersion( version );
-            model.setPackaging( "eclipse-plugin" );
 
             /* set the pom property to install unpacked if it was unpacked */
             if ( wasUnpacked )
