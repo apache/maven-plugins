@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.StringTokenizer;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -36,8 +37,8 @@ import org.apache.maven.artifact.installer.ArtifactInstaller;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.model.Dependency;
-import org.apache.maven.model.License;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Parent;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -245,12 +246,11 @@ public class MakeArtifactsMojo
 
             if ( groupId.startsWith( "org.eclipse" ) )
             {
-                // infer license for know projects, everything at eclipse is licensed under EPL
-                // maybe too simplicistic, but better than nothing
-                License license = new License();
-                license.setName( "Eclipse Public License - v 1.0" );
-                license.setUrl( "http://www.eclipse.org/org/documents/epl-v10.html" );
-                model.addLicense( license );
+                Parent parent = new Parent();
+                parent.setGroupId( "org.eclipse" );
+                parent.setArtifactId( "eclipse" );
+                parent.setVersion( "1" );
+                model.setParent( parent );
             }
 
             if ( deps.length > 0 )
@@ -302,15 +302,23 @@ public class MakeArtifactsMojo
     }
 
     /**
-     * Get the group id as the two first tokens in artifacts Id (e.g. <code>org.eclipse</code>)
+     * Get the group id as the three first tokens in artifacts Id (e.g. <code>org.eclipse.jdt</code>)
      * @param artifactId artifact id
      * @return group id
      */
-    private String createGroupId( String artifactId )
+    String createGroupId( String artifactId )
     {
         if ( StringUtils.countMatches( artifactId, "." ) > 1 )
         {
-            return StringUtils.substring( artifactId, 0, artifactId.indexOf( ".", artifactId.indexOf( "." ) + 1 ) );
+            StringTokenizer st = new StringTokenizer( artifactId, "." );
+            int i = 0;
+            String groupId = "";
+            while ( st.hasMoreTokens() && ( i < 3 ) )
+            {
+                groupId += "." + st.nextToken();
+                i++;
+            }
+            return groupId.substring( 1 );
         }
         return artifactId;
     }

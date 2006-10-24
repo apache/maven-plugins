@@ -61,4 +61,13 @@ public class MakeArtifactsTest
         assertEquals( "org.eclipse.core.expressions", deps[3].getArtifactId() );
         assertEquals( "[3.2.0,4.0.0)", deps[3].getVersion() );
     }
+    
+    public void testCreateGroupId()
+    {
+        assertEquals( "test", mojo.createGroupId( "test" ) );
+        assertEquals( "org.eclipse", mojo.createGroupId( "org.eclipse" ) );
+        assertEquals( "org.eclipse.jdt", mojo.createGroupId( "org.eclipse.jdt" ) );
+        assertEquals( "org.eclipse.jdt", mojo.createGroupId( "org.eclipse.jdt.apt" ) );
+        assertEquals( "org.eclipse.jdt", mojo.createGroupId( "org.eclipse.jdt.apt.core" ) );
+    }
 }
