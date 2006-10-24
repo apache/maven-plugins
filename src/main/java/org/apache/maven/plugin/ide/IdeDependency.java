@@ -91,6 +91,16 @@ public class IdeDependency
     private boolean osgiBundle;
 
     /**
+     * If this jar is an osgi bundle, this is its Bundle-SymbolicName?
+     */
+    private String osgiSymbolicName;
+
+    /**
+     * Depth of this dependency in the transitive dependency trail.
+     */
+    private int dependencyDepth;
+
+    /**
      * 
      * @param groupId Group id
      * @param artifactId Artifact id
@@ -102,10 +112,13 @@ public class IdeDependency
      * @param addedToClasspath Is this dependency added to classpath?
      * @param file Resolved artifact file
      * @param type Artifact type
+     * @param osgiBundle Does this artifact contains a OSGI Manifest?
+     * @param osgiSymbolicName Bundle-SymbolicName from the Manifest (if available)
+     * @param dependencyDepth Depth of this dependency in the transitive dependency trail.
      */
     public IdeDependency( String groupId, String artifactId, String version, boolean referencedProject,
                           boolean testDependency, boolean systemScoped, boolean provided, boolean addedToClasspath,
-                          File file, String type, boolean osgiBundle )
+                          File file, String type, boolean osgiBundle, String osgiSymbolicName, int dependencyDepth )
     {
         // group:artifact:version
         this.groupId = groupId;
@@ -118,7 +131,11 @@ public class IdeDependency
         this.systemScoped = systemScoped;
         this.provided = provided;
         this.addedToClasspath = addedToClasspath;
+
+        // needed for OSGI support
         this.osgiBundle = osgiBundle;
+        this.osgiSymbolicName = osgiSymbolicName;
+        this.dependencyDepth = dependencyDepth;
 
         // file and type
         this.file = file;

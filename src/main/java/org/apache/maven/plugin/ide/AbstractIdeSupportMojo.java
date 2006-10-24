@@ -16,6 +16,22 @@ package org.apache.maven.plugin.ide;
  * limitations under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
+import java.util.zip.ZipFile;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
@@ -41,22 +57,6 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.jar.Attributes;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
-import java.util.zip.ZipFile;
 
 /**
  * Abstract base plugin which takes care of the common stuff usually needed by maven IDE plugins. A
@@ -450,7 +450,9 @@ public abstract class AbstractIdeSupportMojo
 
             for ( Iterator i = artifactResolutionResult.getArtifactResolutionNodes().iterator(); i.hasNext(); )
             {
+
                 ResolutionNode node = (ResolutionNode) i.next();
+                int dependencyDepth = node.getDepth();
                 Artifact art = node.getArtifact();
                 boolean isReactorProject = getUseProjectReferences() && isAvailableAsAReactorProject( art );
 
@@ -497,6 +499,7 @@ public abstract class AbstractIdeSupportMojo
                     // we need to check the manifest, if "Bundle-SymbolicName" is there the artifact can be considered
                     // an osgi bundle
                     boolean isOsgiBundle = false;
+                    String osgiSymbolicName = null;
                     if ( art.getFile() != null )
                     {
                         JarFile jarFile = null;
@@ -507,8 +510,8 @@ public abstract class AbstractIdeSupportMojo
                             Manifest manifest = jarFile.getManifest();
                             if ( manifest != null )
                             {
-                                isOsgiBundle = manifest.getMainAttributes()
-                                    .getValue( new Attributes.Name( "Bundle-SymbolicName" ) ) != null;
+                                osgiSymbolicName = manifest.getMainAttributes()
+                                    .getValue( new Attributes.Name( "Bundle-SymbolicName" ) );
                             }
                         }
                         catch ( IOException e )
@@ -531,13 +534,15 @@ public abstract class AbstractIdeSupportMojo
                         }
                     }
 
+                    isOsgiBundle = osgiSymbolicName != null;
+
                     IdeDependency dep = new IdeDependency( art.getGroupId(), art.getArtifactId(), art.getVersion(),
                                                            isReactorProject, Artifact.SCOPE_TEST
                                                                .equals( art.getScope() ), Artifact.SCOPE_SYSTEM
                                                                .equals( art.getScope() ), Artifact.SCOPE_PROVIDED
                                                                .equals( art.getScope() ), art.getArtifactHandler()
                                                                .isAddedToClasspath(), art.getFile(), art.getType(),
-                                                           isOsgiBundle );
+                                                           isOsgiBundle, osgiSymbolicName, dependencyDepth );
 
                     dependencyList.add( dep );
                 }
