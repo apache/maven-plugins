@@ -17,7 +17,6 @@ package org.apache.maven.plugin.eclipse;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -44,6 +43,8 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
+import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.components.interactivity.InputHandler;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
@@ -108,6 +109,14 @@ public class MakeArtifactsMojo
     private boolean stripQualifier;
 
     /**
+     * The Jar archiver.
+     *
+     * @parameter expression="${component.org.codehaus.plexus.archiver.Archiver#jar}"
+     * @required
+     */
+    private JarArchiver jarArchiver;
+
+    /**
      * @see org.apache.maven.plugin.Mojo#execute()
      */
     public void execute()
@@ -141,14 +150,7 @@ public class MakeArtifactsMojo
             throw new MojoFailureException( "Plugin directory " + pluginDir.getAbsolutePath() + " doesn't exists" );
         }
 
-        File[] files = pluginDir.listFiles( new FilenameFilter()
-        {
-
-            public boolean accept( File dir, String name )
-            {
-                return name.endsWith( ".jar" );
-            }
-        } );
+        File[] files = pluginDir.listFiles( );
 
         for ( int j = 0; j < files.length; j++ )
         {
@@ -157,36 +159,65 @@ public class MakeArtifactsMojo
 
             getLog().info( "Processing file " + file.getAbsolutePath() );
 
-            JarFile jar = null;
-            Manifest manifest;
+            Manifest manifest = null;
             Properties pluginProperties = new Properties();
-            try
-            {
-                jar = new JarFile( file );
-                manifest = jar.getManifest();
-                ZipEntry jarEntry = jar.getEntry( "plugin.properties" );
-                if ( jarEntry != null )
-                {
-                    InputStream pluginPropertiesStream = jar.getInputStream( jarEntry );
-                    pluginProperties.load( pluginPropertiesStream );
-                }
-            }
-            catch ( IOException e )
-            {
-                throw new MojoFailureException( "Unable to read manifest for jar " + file.getAbsolutePath() );
-            }
-            finally
+            boolean wasUnpacked = false;
+
+            /* package directories in a temp jar */
+            if ( file.isDirectory() )
             {
                 try
                 {
-                    // this also closes any opened input stream
-                    jar.close();
+                    File manifestFile = new File( file, "META-INF/MANIFEST.MF" );
+                    if ( !manifestFile.exists() )
+                    {
+                        getLog().warn(
+                                       "Plugin in folder " + file.getAbsolutePath()
+                                           + " does not have a manifest; skipping.." );
+                        continue;
+                    }
+
+                    File tmpJar = File.createTempFile( "mvn-eclipse", null );
+                    tmpJar.deleteOnExit();
+
+                    jarArchiver.setDestFile( tmpJar );
+                    jarArchiver.addDirectory( file );
+                    jarArchiver.setManifest( manifestFile );
+                    jarArchiver.createArchive();
+
+                    file = tmpJar;
+                    wasUnpacked = true;
+                }
+                catch ( ArchiverException e )
+                {
+                    throw new MojoExecutionException( "Unable to jar plugin in folder " + file.getAbsolutePath(), e );
                 }
                 catch ( IOException e )
                 {
-                    // ignore
+                    throw new MojoExecutionException( "Unable to jar plugin in folder " + file.getAbsolutePath(), e );
                 }
             }
+
+            if ( file.getName().endsWith( ".jar" ) || wasUnpacked )
+            {
+                try
+                {
+                    JarFile jar = new JarFile( file );
+                    manifest = jar.getManifest();
+                    pluginProperties = loadPluginProperties( jar );
+                }
+                catch ( IOException e )
+                {
+                    throw new MojoFailureException( "Unable to read manifest or plugin properties for "
+                        + file.getAbsolutePath() );
+                }
+            }
+            else
+            {
+                getLog().debug( "Ignoring file " + file.getAbsolutePath() );
+                continue;
+            }
+
 
             if ( manifest == null )
             {
@@ -243,6 +274,14 @@ public class MakeArtifactsMojo
             model.setName( name );
             model.setVersion( version );
             model.setPackaging( "eclipse-plugin" );
+
+            /* set the pom property to install unpacked if it was unpacked */
+            if ( wasUnpacked )
+            {
+                Properties properties = new Properties();
+                properties.setProperty( InstallPluginsMojo.PROP_UNPACK_PLUGIN, Boolean.TRUE.toString() );
+                model.setProperties( properties );
+            }
 
             if ( groupId.startsWith( "org.eclipse" ) )
             {
@@ -388,4 +427,29 @@ public class MakeArtifactsMojo
         return (Dependency[]) dependencies.toArray( new Dependency[dependencies.size()] );
 
     }
+
+    private Properties loadPluginProperties( JarFile file )
+        throws IOException
+    {
+        InputStream pluginPropertiesStream = null;
+        try
+        {
+            Properties pluginProperties = new Properties();
+            ZipEntry jarEntry = file.getEntry( "plugin.properties" );
+            if ( jarEntry != null )
+            {
+                pluginPropertiesStream = file.getInputStream( jarEntry );
+                pluginProperties.load( pluginPropertiesStream );
+            }
+            return pluginProperties;
+        }
+        finally
+        {
+            if ( pluginPropertiesStream != null )
+            {
+                pluginPropertiesStream.close();
+            }
+        }
+    }
+
 }
