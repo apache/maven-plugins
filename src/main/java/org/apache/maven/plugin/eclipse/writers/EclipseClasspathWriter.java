@@ -94,6 +94,11 @@ public class EclipseClasspathWriter
     private static final String ATTR_CON = "con"; //$NON-NLS-1$     
 
     /**
+     * Attribute name for source file includes in a path.
+     */
+    private static final String ATTR_INCLUDING = "including";
+
+    /**
      * Attribute name for source file excludes in a path.
      */
     private static final String ATTR_EXCLUDING = "excluding";
@@ -155,9 +160,23 @@ public class EclipseClasspathWriter
                 writer.addAttribute( ATTR_OUTPUT, dir.getOutput() );
             }
 
+            if ( StringUtils.isNotEmpty( dir.getInclude() ) )
+            {
+                writer.addAttribute( ATTR_INCLUDING, dir.getInclude() );
+            }
+
+            String excludes = dir.getExclude();
+
             if ( dir.isResource() )
             {
-                writer.addAttribute( ATTR_EXCLUDING, "**/*.java" );
+                // automatically exclude java files: eclipse doesn't have the concept of resource directory so it will
+                // try to compile any java file found in maven resource dirs
+                excludes = StringUtils.isEmpty( excludes ) ? "**/*.java" : excludes + "|**/*.java";
+            }
+
+            if ( StringUtils.isNotEmpty( excludes ) )
+            {
+                writer.addAttribute( ATTR_EXCLUDING, excludes );
             }
 
             writer.endElement();
