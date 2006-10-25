@@ -233,4 +233,14 @@ public class EclipsePluginTest
         testProject( "project-24" );
     }
 
+    /**
+     * Test source exclude/include.
+     * @throws Exception any exception thrown during test
+     */
+    public void testProject25()
+        throws Exception
+    {
+        testProject( "project-25" );
+    }
+
 }

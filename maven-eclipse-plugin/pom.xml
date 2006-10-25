@@ -34,6 +34,7 @@
           <excludes>
             <exclude>**/Abstract*TestCase.java</exclude>
             <exclude>**/EclipsePluginMasterProjectTest.java</exclude>
+            <exclude>**/InstallPluginsMojoTest.java</exclude>
           </excludes>
         </configuration>
       </plugin>
