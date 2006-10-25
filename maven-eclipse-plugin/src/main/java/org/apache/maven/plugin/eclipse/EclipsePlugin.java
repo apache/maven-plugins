@@ -789,37 +789,16 @@ public class EclipsePlugin
 
             if ( resource.getIncludes().size() != 0 )
             {
-                // @todo includePattern = ?
-                getLog().warn( Messages.getString( "EclipsePlugin.includenotsupported" ) ); //$NON-NLS-1$
+                includePattern = StringUtils.join( resource.getIncludes().iterator(), "|" );
             }
 
             if ( resource.getExcludes().size() != 0 )
             {
-                // @todo excludePattern = ?
-                getLog().warn( Messages.getString( "EclipsePlugin.excludenotsupported" ) ); //$NON-NLS-1$
+                excludePattern = StringUtils.join( resource.getExcludes().iterator(), "|" );
             }
 
-            // Example of setting include/exclude patterns for future reference.
-            //
             // TODO: figure out how to merge if the same dir is specified twice
-            // with different in/exclude patterns. We can't write them now,
-            // since only the the first one would be included.
-            //
-            // if ( resource.getIncludes().size() != 0 )
-            // {
-            // writer.addAttribute(
-            // "including", StringUtils.join( resource.getIncludes().iterator(),
-            // "|" )
-            // );
-            // }
-            //
-            // if ( resource.getExcludes().size() != 0 )
-            // {
-            // writer.addAttribute(
-            // "excluding", StringUtils.join( resource.getExcludes().iterator(),
-            // "|" )
-            // );
-            // }
+            // with different in/exclude patterns.
 
             File resourceDirectory = new File( resource.getDirectory() );
 
