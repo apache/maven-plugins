@@ -109,14 +109,6 @@ public class MakeArtifactsMojo
     private boolean stripQualifier;
 
     /**
-     * The Jar archiver.
-     *
-     * @parameter expression="${component.org.codehaus.plexus.archiver.Archiver#jar}"
-     * @required
-     */
-    private JarArchiver jarArchiver;
-
-    /**
      * @see org.apache.maven.plugin.Mojo#execute()
      */
     public void execute()
@@ -179,6 +171,8 @@ public class MakeArtifactsMojo
 
                     File tmpJar = File.createTempFile( "mvn-eclipse", null );
                     tmpJar.deleteOnExit();
+
+                    JarArchiver jarArchiver = new JarArchiver();
 
                     jarArchiver.setDestFile( tmpJar );
                     jarArchiver.addDirectory( file );
