@@ -17,6 +17,7 @@ import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -61,7 +62,7 @@ public class InstallPluginsMojo
      * @required
      * @readonly
      */
-    private List artifacts;
+    private Collection artifacts;
 
     /**
      * Comma-delimited list of dependency &lt;type/&gt; values which will be installed in the eclipse
