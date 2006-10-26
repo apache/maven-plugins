@@ -147,7 +147,7 @@ public class InstallPluginsMojo
             }
             catch ( IOException e )
             {
-                throw new MojoFailureException( "Unable to read from standard input" );
+                throw new MojoExecutionException( "Unable to read from standard input", e );
             }
 
             eclipseDir = new File( eclipseDirString );
