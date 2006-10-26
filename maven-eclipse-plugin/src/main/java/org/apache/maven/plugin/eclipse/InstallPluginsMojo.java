@@ -9,6 +9,7 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
+import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
@@ -22,6 +23,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
 /**
  * Install plugins resolved from the Maven repository system into an Eclipse instance.
@@ -68,7 +72,7 @@ public class InstallPluginsMojo
      * Comma-delimited list of dependency &lt;type/&gt; values which will be installed in the eclipse
      * instance's plugins directory.
      * 
-     * @parameter expression="${pluginDependencyTypes}" default-value="eclipse-plugin"
+     * @parameter expression="${pluginDependencyTypes}" default-value="jar"
      */
     private String pluginDependencyTypes;
 
@@ -246,6 +250,26 @@ public class InstallPluginsMojo
 
         boolean skipped = true;
 
+        try
+        {
+            /* check if artifact is an OSGi bundle and ignore if not */
+            JarFile jar = new JarFile( artifact.getFile() );
+            Manifest manifest = jar.getManifest();
+            Attributes attributes = manifest.getMainAttributes();
+            Object bundleName = attributes.getValue( "Bundle-Name" );
+            if ( bundleName == null )
+            {
+                getLog().debug( "Ignoring " + artifact.getArtifactId() + " as it is not an OSGi bundle (no Bundle-Name in manifest)" );
+                return;
+            }
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Unable to read manifest of plugin "
+                + artifact.getFile().getAbsolutePath(), e );
+        }
+
+        
         if ( overwrite )
         {
             if ( pluginFile.exists() || pluginDir.exists() )
@@ -333,10 +357,19 @@ public class InstallPluginsMojo
 
                 unarchiver.setSourceFile( artifactFile );
                 unarchiver.setDestDirectory( pluginDir );
+                unarchiver.extract();
             }
             catch ( NoSuchArchiverException e )
             {
                 throw new MojoExecutionException( "Could not find unarchiver for: " + artifactFile, e );
+            }
+            catch ( ArchiverException e )
+            {
+                throw new MojoExecutionException( "Could not extract: " + artifactFile, e );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Could not extract: " + artifactFile, e );
             }
         }
     }
@@ -344,14 +377,13 @@ public class InstallPluginsMojo
     /**
      * <p>
      * Format the artifact information into an Eclipse-friendly plugin name. Currently, this is just:
-     * </p>
-     * <p>
      * <code>artifactId + "_" + version</code>
+     * changing <code>-</code> to <code>.</code> in version
      * </p>
      */
     private String formatEclipsePluginName( Artifact artifact )
     {
-        return artifact.getArtifactId() + "_" + artifact.getVersion();
+        return artifact.getArtifactId() + "_" + artifact.getVersion().replace( '-', '.' );
     }
 
 }
