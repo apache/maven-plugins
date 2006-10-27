@@ -243,25 +243,12 @@ public class InstallPluginsMojo
             installAsJar = !Boolean.valueOf( properties.getProperty( PROP_UNPACK_PLUGIN, "false" ) ).booleanValue();
         }
 
-        String pluginName = formatEclipsePluginName( artifact );
-
-        File pluginFile = new File( pluginsDir, pluginName + ".jar" );
-        File pluginDir = new File( pluginsDir, pluginName );
-
-        boolean skipped = true;
-
+        Attributes attributes = null;
         try
         {
-            /* check if artifact is an OSGi bundle and ignore if not */
             JarFile jar = new JarFile( artifact.getFile() );
             Manifest manifest = jar.getManifest();
-            Attributes attributes = manifest.getMainAttributes();
-            Object bundleName = attributes.getValue( "Bundle-Name" );
-            if ( bundleName == null )
-            {
-                getLog().debug( "Ignoring " + artifact.getArtifactId() + " as it is not an OSGi bundle (no Bundle-Name in manifest)" );
-                return;
-            }
+            attributes = manifest.getMainAttributes();
         }
         catch ( IOException e )
         {
@@ -269,7 +256,24 @@ public class InstallPluginsMojo
                 + artifact.getFile().getAbsolutePath(), e );
         }
 
-        
+        String bundleVersion = attributes.getValue( "Bundle-Version" );
+        String pluginName = formatEclipsePluginName( artifact, bundleVersion );
+
+        File pluginFile = new File( pluginsDir, pluginName + ".jar" );
+        File pluginDir = new File( pluginsDir, pluginName );
+
+        boolean skipped = true;
+
+        /* check if artifact is an OSGi bundle and ignore if not */
+        Object bundleName = attributes.getValue( "Bundle-Name" );
+        if ( bundleName == null )
+        {
+            getLog().debug(
+                            "Ignoring " + artifact.getArtifactId()
+                                + " as it is not an OSGi bundle (no Bundle-Name in manifest)" );
+            return;
+        }
+
         if ( overwrite )
         {
             if ( pluginFile.exists() || pluginDir.exists() )
@@ -377,13 +381,19 @@ public class InstallPluginsMojo
     /**
      * <p>
      * Format the artifact information into an Eclipse-friendly plugin name. Currently, this is just:
-     * <code>artifactId + "_" + version</code>
-     * changing <code>-</code> to <code>.</code> in version
+     * <code>artifactId + "_" + bundle version</code> if bundle version is not null.
      * </p>
      */
-    private String formatEclipsePluginName( Artifact artifact )
+    private String formatEclipsePluginName( Artifact artifact, String bundleVersion )
     {
-        return artifact.getArtifactId() + "_" + artifact.getVersion().replace( '-', '.' );
+        if ( bundleVersion == null )
+        {
+            return artifact.getArtifactId() + artifact.getVersion().replace( "-", "." );
+        }
+        else
+        {
+            return artifact.getArtifactId() + "_" + bundleVersion;
+        }
     }
 
 }
