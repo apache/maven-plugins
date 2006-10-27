@@ -1,6 +1,5 @@
 package org.apache.maven.plugin.assembly.archive.phase;
 
-import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
@@ -799,6 +798,7 @@ public class ModuleSetAssemblyPhaseTest
         macArtifacts.add( addArtifact( project2, mm, true, false ) );
 
         ( ( MockAndControlForArtifact ) macArtifacts.get( 1 ) ).expectGetId( "group:artifact2:jar:version" );
+        ( ( MockAndControlForArtifact ) macArtifacts.get( 1 ) ).expectGetDependencyTrail( Collections.singletonList( "group:artifact:jar:version" ) );
 
         MavenProject project3 = createProject( "group", "artifact3", "version", project2 );
         macArtifacts.add( addArtifact( project3, mm, true, true ) );
