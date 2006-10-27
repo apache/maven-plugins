@@ -5,6 +5,7 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
+import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
@@ -66,7 +67,7 @@ public class AddDependencySetsTask
     }
 
     public void execute( Archiver archiver, AssemblerConfigurationSource configSource )
-        throws ArchiveCreationException, AssemblyFormattingException
+        throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
     {
         if ( dependencySets == null || dependencySets.isEmpty() )
         {
@@ -82,7 +83,7 @@ public class AddDependencySetsTask
 
         for ( Iterator i = dependencySets.iterator(); i.hasNext(); )
         {
-            DependencySet dependencySet = ( DependencySet ) i.next();
+            DependencySet dependencySet = (DependencySet) i.next();
 
             addDependencySet( dependencySet, archiver, configSource );
         }
@@ -90,7 +91,7 @@ public class AddDependencySetsTask
 
     protected void addDependencySet( DependencySet dependencySet, Archiver archiver,
                                      AssemblerConfigurationSource configSource )
-        throws AssemblyFormattingException, ArchiveCreationException
+        throws AssemblyFormattingException, ArchiveCreationException, InvalidAssemblerConfigurationException
     {
         logger.info( "Processing DependencySet (output=" + dependencySet.getOutputDirectory() + ")" );
 
@@ -98,19 +99,18 @@ public class AddDependencySetsTask
 
         for ( Iterator j = dependencyArtifacts.iterator(); j.hasNext(); )
         {
-            Artifact depArtifact = ( Artifact ) j.next();
+            Artifact depArtifact = (Artifact) j.next();
 
             MavenProject depProject;
             try
             {
-                depProject =
-                    projectBuilder.buildFromRepository( depArtifact, configSource.getRemoteRepositories(),
-                                                        configSource.getLocalRepository() );
+                depProject = projectBuilder.buildFromRepository( depArtifact, configSource.getRemoteRepositories(),
+                                                                 configSource.getLocalRepository() );
             }
             catch ( ProjectBuildingException e )
             {
                 throw new ArchiveCreationException( "Error retrieving POM of module-dependency: " + depArtifact.getId()
-                                + "; Reason: " + e.getMessage(), e );
+                    + "; Reason: " + e.getMessage(), e );
             }
 
             if ( NON_ARCHIVE_DEPENDENCY_TYPES.contains( depArtifact.getType() ) )
@@ -134,7 +134,7 @@ public class AddDependencySetsTask
     }
 
     protected Set resolveDependencyArtifacts( DependencySet dependencySet, AssemblerConfigurationSource configSource )
-        throws ArchiveCreationException
+        throws ArchiveCreationException, InvalidAssemblerConfigurationException
     {
         ArtifactRepository localRepository = configSource.getLocalRepository();
 
@@ -143,9 +143,8 @@ public class AddDependencySetsTask
         Set dependencyArtifacts;
         try
         {
-            dependencyArtifacts =
-                dependencyResolver.resolveDependencies( project, dependencySet.getScope(), localRepository,
-                                                        additionalRemoteRepositories );
+            dependencyArtifacts = dependencyResolver
+                .resolveDependencies( project, dependencySet.getScope(), localRepository, additionalRemoteRepositories );
         }
         catch ( ArtifactResolutionException e )
         {
@@ -161,23 +160,23 @@ public class AddDependencySetsTask
         }
 
         FilterUtils.filterArtifacts( dependencyArtifacts, dependencySet.getIncludes(), dependencySet.getExcludes(),
-                                     true, Collections.EMPTY_LIST, logger );
+                                     dependencySet.isUseStrictFiltering(), true, Collections.EMPTY_LIST, logger );
 
         return dependencyArtifacts;
     }
 
     protected void addNonArchiveDependency( Artifact depArtifact, MavenProject depProject, DependencySet dependencySet,
-                                          Archiver archiver )
+                                            Archiver archiver )
         throws AssemblyFormattingException, ArchiveCreationException
     {
         File source = depArtifact.getFile();
 
         String outputDirectory = dependencySet.getOutputDirectory();
 
-        outputDirectory =
-            AssemblyFormatUtils.getOutputDirectory( outputDirectory, depProject, depProject.getBuild().getFinalName() );
-        String destName =
-            AssemblyFormatUtils.evaluateFileNameMapping( dependencySet.getOutputFileNameMapping(), depArtifact );
+        outputDirectory = AssemblyFormatUtils.getOutputDirectory( outputDirectory, depProject, depProject.getBuild()
+            .getFinalName() );
+        String destName = AssemblyFormatUtils.evaluateFileNameMapping( dependencySet.getOutputFileNameMapping(),
+                                                                       depArtifact );
 
         String target;
 
