@@ -16,10 +16,10 @@ package org.apache.maven.plugin.assembly.interpolation;
  * limitations under the License.
  */
 
-import org.apache.maven.model.Model;
 import org.apache.maven.plugins.assembly.model.Assembly;
 import org.apache.maven.plugins.assembly.model.io.xpp3.AssemblyXpp3Reader;
 import org.apache.maven.plugins.assembly.model.io.xpp3.AssemblyXpp3Writer;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
@@ -104,13 +104,13 @@ public class AssemblyInterpolator
         }
     }
 
-    public Assembly interpolate( Assembly assembly, Model model, Map context )
+    public Assembly interpolate( Assembly assembly, MavenProject project, Map context )
         throws AssemblyInterpolationException
     {
-        return interpolate( assembly, model, context, true );
+        return interpolate( assembly, project, context, true );
     }
 
-    public Assembly interpolate( Assembly assembly, Model model, Map context, boolean strict )
+    public Assembly interpolate( Assembly assembly, MavenProject project, Map context, boolean strict )
         throws AssemblyInterpolationException
     {
         StringWriter sWriter = new StringWriter();
@@ -128,7 +128,7 @@ public class AssemblyInterpolator
 
         String serializedAssembly = sWriter.toString();
 
-        serializedAssembly = interpolateInternal( serializedAssembly, assembly, model, context );
+        serializedAssembly = interpolateInternal( serializedAssembly, assembly, project, context );
 
         StringReader sReader = new StringReader( serializedAssembly );
 
@@ -151,7 +151,7 @@ public class AssemblyInterpolator
         return assembly;
     }
 
-    private String interpolateInternal( String src, Assembly assembly, Model model, Map context )
+    private String interpolateInternal( String src, Assembly assembly, MavenProject project, Map context )
         throws AssemblyInterpolationException
     {
         String result = src;
@@ -178,7 +178,7 @@ public class AssemblyInterpolator
                 }
 
                 String interpolatedValue =
-                    interpolateElementValue( value, assembly, model, context, blacklistedExpressions );
+                    interpolateElementValue( value, assembly, project, context, blacklistedExpressions );
 
                 String modifiedElement = StringUtils.replace( element, value, interpolatedValue );
                 result = StringUtils.replace( result, element, modifiedElement );
@@ -188,7 +188,7 @@ public class AssemblyInterpolator
         return result;
     }
 
-    private String interpolateElementValue( String src, Assembly assembly, Model model, Map context,
+    private String interpolateElementValue( String src, Assembly assembly, MavenProject project, Map context,
                                             List blacklistedExpressions )
         throws AssemblyInterpolationException
     {
@@ -209,14 +209,14 @@ public class AssemblyInterpolator
 
             if ( value == null )
             {
-                value = model.getProperties().getProperty( realExpr );
+                value = project.getProperties().getProperty( realExpr );
             }
 
             if ( value == null )
             {
                 try
                 {
-                    value = ReflectionValueExtractor.evaluate( realExpr, model );
+                    value = ReflectionValueExtractor.evaluate( realExpr, project );
                 }
                 catch ( Exception e )
                 {

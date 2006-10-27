@@ -197,7 +197,7 @@ public class DefaultAssemblyReader
             AssemblyXpp3Reader r = new AssemblyXpp3Reader();
             assembly = r.read( reader );
 
-            assembly = new AssemblyInterpolator().interpolate( assembly, project.getModel(), context );
+            assembly = new AssemblyInterpolator().interpolate( assembly, project, context );
         }
         catch ( IOException e )
         {
