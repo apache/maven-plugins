@@ -108,6 +108,11 @@ public final class AssemblyFormatUtils
         interpolator.addValueSource( new ObjectBasedValueSource( artifact ) );
         interpolator.addValueSource( new ObjectBasedValueSource( artifact.getArtifactHandler() ) );
         
+        Properties classifierMask = new Properties();
+        classifierMask.setProperty( "classifier", "" );
+        
+        interpolator.addValueSource( new PropertiesInterpolationValueSource( classifierMask ) );
+        
         value = interpolator.interpolate( value, "__artifact" );
 
         return value;
