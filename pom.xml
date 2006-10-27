@@ -121,6 +121,7 @@
                 <descriptor>src/main/resources/META-INF/plexus/components.xml</descriptor>
               </descriptors>
             </configuration>
+            <phase>generate-resources</phase>
             <goals>
               <goal>merge-descriptors</goal>
             </goals>

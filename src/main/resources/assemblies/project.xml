@@ -17,7 +17,7 @@
   -->
 
 <assembly>
-  <id>src</id>
+  <id>project</id>
   <formats>
     <format>tar.gz</format>
     <format>tar.bz2</format>
@@ -25,18 +25,13 @@
   </formats>
   <fileSets>
     <fileSet>
-      <includes>
-        <include>README*</include>
-        <include>LICENSE*</include>
-        <include>NOTICE*</include>
-        <include>pom.xml</include>
-      </includes>
-      <useDefaultExcludes>true</useDefaultExcludes>
-    </fileSet>
-    <fileSet>
       <!-- TODO: use expresssions instead: ${project.build.sourceDirectory}, etc -->
-      <directory>src</directory>
+      <directory>.</directory>
+      <outputDirectory></outputDirectory>
       <useDefaultExcludes>true</useDefaultExcludes>
+      <excludes>
+        <exclude>**/target/**</exclude>
+      </excludes>
     </fileSet>
   </fileSets>
 </assembly>
