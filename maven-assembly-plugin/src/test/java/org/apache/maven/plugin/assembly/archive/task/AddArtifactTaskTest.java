@@ -28,7 +28,6 @@ public class AddArtifactTaskTest
         mac = new MockAndControlForAddArtifactTask( mockManager );
         mac.expectArtifactGetFile();
         mac.expectGetFinalName( "final-name" );
-        mac.expectGetClassifier( null );
         mac.expectGetArtifactHandler();
     }
 

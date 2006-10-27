@@ -50,7 +50,6 @@ public class DependencySetAssemblyPhaseTest
 
         macTask.expectArtifactGetFile();
         macTask.expectArtifactGetType( "jar" );
-        macTask.expectGetClassifier( null );
         macTask.expectIsSnapshot( false );
         macTask.expectGetArtifactHandler();
         
