@@ -466,7 +466,7 @@
           <name>outputFileNameMapping</name>
           <version>1.0.0+</version>
           <type>String</type>
-          <defaultValue>${artifactId}-${version}.${extension}</defaultValue>
+          <defaultValue>${artifactId}-${version}-${classifier}.${extension}</defaultValue>
           <description>
             Sets the mapping pattern for all dependencies included in this
             assembly. Default is ${artifactId}-${version}.${extension}.
