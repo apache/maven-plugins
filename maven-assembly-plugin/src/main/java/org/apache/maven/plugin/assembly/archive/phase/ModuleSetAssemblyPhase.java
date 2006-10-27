@@ -116,14 +116,45 @@ public class ModuleSetAssemblyPhase
                 it.remove();
             }
         }
+        
+        String classifier = binaries.getAttachmentClassifier();
 
         for ( Iterator j = moduleProjects.iterator(); j.hasNext(); )
         {
             MavenProject project = ( MavenProject ) j.next();
 
-            getLogger().debug( "Processing binary artifact for module project: " + project.getId() );
+            Artifact artifact = null;
+            
+            if ( classifier == null )
+            {
+                getLogger().debug( "Processing binary artifact for module project: " + project.getId() );
 
-            Artifact artifact = project.getArtifact();
+                artifact = project.getArtifact();
+            }
+            else
+            {
+                getLogger().debug( "Processing binary attachment: " + classifier + " for module project: " + project.getId() );
+
+                List attachments = project.getAttachedArtifacts();
+                if ( attachments != null && !attachments.isEmpty() )
+                {
+                    for ( Iterator attachmentIterator = attachments.iterator(); attachmentIterator.hasNext(); )
+                    {
+                        Artifact attachment = (Artifact) attachmentIterator.next();
+                        
+                        if ( classifier.equals( attachment.getClassifier() ) )
+                        {
+                            artifact = attachment;
+                            break;
+                        }
+                    }
+                }
+                
+                if ( artifact == null )
+                {
+                    throw new InvalidAssemblerConfigurationException( "Cannot find attachment with classifier: " + classifier + " in module project: " + project.getId() + ". Please exclude this module from the module-set." );
+                }
+            }
 
             addArtifact( artifact, project, archiver, configSource, binaries );
         }
