@@ -26,34 +26,44 @@ public class AssemblyExcludesArtifactFilterTest
         
     };
     
-    public void testShouldIncludeDirectlyMatchedArtifactByDependencyConflictId()
+    public void testShouldNotIncludeDirectlyMatchedArtifactByDependencyConflictId()
     {
         tck.testShouldIncludeDirectlyMatchedArtifactByDependencyConflictId( true );
     }
 
-    public void testShouldIncludeDirectlyMatchedArtifactByGroupIdArtifactId()
+    public void testShouldNotIncludeDirectlyMatchedArtifactByGroupIdArtifactId()
     {
         tck.testShouldIncludeDirectlyMatchedArtifactByGroupIdArtifactId( true );
     }
 
-    public void testShouldIncludeWhenPatternMatchesDependencyTrailAndTransitivityIsEnabled()
+    public void testShouldNotIncludeWhenPatternMatchesDependencyTrailAndTransitivityIsEnabled()
     {
         tck.testShouldIncludeWhenPatternMatchesDependencyTrailAndTransitivityIsEnabled( true );
     }
 
-    public void testShouldNotIncludeWhenArtifactIdDiffers()
+    public void testShouldIncludeWhenArtifactIdDiffers()
     {
         tck.testShouldNotIncludeWhenArtifactIdDiffers( true );
     }
 
-    public void testShouldNotIncludeWhenBothIdElementsDiffer()
+    public void testShouldIncludeWhenBothIdElementsDiffer()
     {
         tck.testShouldNotIncludeWhenBothIdElementsDiffer( true );
     }
 
-    public void testShouldNotIncludeWhenGroupIdDiffers()
+    public void testShouldIncludeWhenGroupIdDiffers()
     {
         tck.testShouldNotIncludeWhenGroupIdDiffers( true );
+    }
+
+    public void testShouldIncludeWhenNegativeMatch()
+    {
+        tck.testShouldNotIncludeWhenNegativeMatch( true );
+    }
+
+    public void testShouldNotIncludeWhenWildcardMatchesInSequence()
+    {
+        tck.testShouldIncludeWhenWildcardMatchesInSequence( true );
     }
 
 }

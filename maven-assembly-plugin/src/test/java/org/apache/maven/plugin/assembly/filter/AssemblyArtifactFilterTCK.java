@@ -179,6 +179,60 @@ public abstract class AssemblyArtifactFilterTCK
         mockManager.verifyAll();
     }
 
+    public void testShouldNotIncludeWhenNegativeMatch( boolean reverse )
+    {
+        String groupId = "group";
+        String artifactId = "artifact";
+
+        ArtifactMockAndControl mac = new ArtifactMockAndControl( groupId, artifactId );
+
+        mockManager.replayAll();
+
+        List patterns = new ArrayList();
+
+        patterns.add( "!group:artifact:jar" );
+
+        ArtifactFilter filter = createFilter( patterns );
+
+        if ( reverse )
+        {
+            assertTrue( filter.include( mac.artifact ) );
+        }
+        else
+        {
+            assertFalse( filter.include( mac.artifact ) );
+        }
+
+        mockManager.verifyAll();
+    }
+
+    public void testShouldIncludeWhenWildcardMatchesInSequence( boolean reverse )
+    {
+        String groupId = "group";
+        String artifactId = "artifact";
+
+        ArtifactMockAndControl mac = new ArtifactMockAndControl( groupId, artifactId );
+
+        mockManager.replayAll();
+
+        List patterns = new ArrayList();
+
+        patterns.add( "group:*:jar" );
+
+        ArtifactFilter filter = createFilter( patterns );
+
+        if ( reverse )
+        {
+            assertFalse( filter.include( mac.artifact ) );
+        }
+        else
+        {
+            assertTrue( filter.include( mac.artifact ) );
+        }
+
+        mockManager.verifyAll();
+    }
+
     private final class ArtifactMockAndControl
     {
         MockControl control;

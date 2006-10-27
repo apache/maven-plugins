@@ -23,7 +23,6 @@ import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -37,7 +36,8 @@ import java.util.Set;
 public class AssemblyIncludesArtifactFilter
     implements ArtifactFilter, StatisticsReportingFilter
 {
-    private final List patterns;
+    private final List positivePatterns;
+    private final List negativePatterns;
     private final boolean actTransitively;
 
     private Set patternsTriggered = new HashSet();
@@ -45,14 +45,33 @@ public class AssemblyIncludesArtifactFilter
 
     public AssemblyIncludesArtifactFilter( List patterns )
     {
-        this.actTransitively = false;
-        this.patterns = Collections.unmodifiableList( patterns );
+        this( patterns, false );
     }
 
     public AssemblyIncludesArtifactFilter( List patterns, boolean actTransitively )
     {
         this.actTransitively = actTransitively;
-        this.patterns = Collections.unmodifiableList( patterns );
+        List pos = new ArrayList();
+        List neg = new ArrayList();
+        if ( patterns != null && !patterns.isEmpty() )
+        {
+            for ( Iterator it = patterns.iterator(); it.hasNext(); )
+            {
+                String pattern = (String) it.next();
+                
+                if ( pattern.startsWith( "!" ) )
+                {
+                    neg.add( pattern.substring( 1 ) );
+                }
+                else
+                {
+                    pos.add( pattern );
+                }
+            }
+        }
+        
+        this.positivePatterns = pos;
+        this.negativePatterns = neg;
     }
 
     public boolean include( Artifact artifact )
@@ -67,39 +86,42 @@ public class AssemblyIncludesArtifactFilter
         return shouldInclude;
     }
 
+    protected boolean patternMatches( Artifact artifact )
+    {
+        return positiveMatch( artifact ) && !negativeMatch( artifact );
+    }
+
     protected void addFilteredArtifactId( String artifactId )
     {
         filteredArtifactIds.add( artifactId );
     }
 
-    protected boolean patternMatches( Artifact artifact )
+    private boolean negativeMatch( Artifact artifact )
+    {
+        return match( artifact, negativePatterns );
+    }
+
+    protected boolean positiveMatch( Artifact artifact )
+    {
+        return match( artifact, positivePatterns );
+    }
+
+    private boolean match( Artifact artifact, List patterns )
     {
         String shortId = ArtifactUtils.versionlessKey( artifact );
         String id = artifact.getDependencyConflictId();
-
-        boolean matched = false;
-        for ( Iterator i = patterns.iterator(); i.hasNext() && !matched; )
+        
+        if ( matchAgainst( id, patterns, false ) )
         {
-            // TODO: what about wildcards? Just specifying groups? versions?
-            String pattern = (String) i.next();
-
-            if ( id.equals( pattern ) )
-            {
-                matched = true;
-            }
-            else if ( shortId.equals( pattern ) )
-            {
-                matched = true;
-            }
-
-            if ( matched )
-            {
-                patternsTriggered.add( pattern );
-                break;
-            }
+            return true;
+        }
+        
+        if ( matchAgainst( shortId, patterns, false ) )
+        {
+            return true;
         }
 
-        if ( !matched && actTransitively )
+        if ( actTransitively )
         {
             List depTrail = artifact.getDependencyTrail();
 
@@ -107,31 +129,70 @@ public class AssemblyIncludesArtifactFilter
             {
                 String trailStr = "," + StringUtils.join( depTrail.iterator(), "," );
 
-                for ( Iterator it = patterns.iterator(); it.hasNext(); )
-                {
-                    String pattern = (String) it.next();
-
-                    // TODO: Version ranges, wildcards, ...?
-                    if ( trailStr.indexOf( "," + pattern + ":" ) > -1 )
-                    {
-                        matched = true;
-
-                        patternsTriggered.add( pattern );
-                        break;
-                    }
-                }
+                return matchAgainst( trailStr, patterns, true );
             }
         }
 
-        return matched;
+        return false;
+    }
+
+    private boolean matchAgainst( String value, List patterns, boolean regionMatch )
+    {
+        for ( Iterator i = patterns.iterator(); i.hasNext(); )
+        {
+            // TODO: what about wildcards? Just specifying groups? versions?
+            String pattern = (String) i.next();
+
+            if ( regionMatch )
+            {
+                if ( value.indexOf( pattern ) > -1 )
+                {
+                    patternsTriggered.add( pattern );
+                    return true;
+                }
+            }
+            else
+            {
+                if ( value.equals( pattern ) )
+                {
+                    patternsTriggered.add( pattern );
+                    return true;
+                }
+            }
+            
+            if ( pattern.indexOf( '*' ) > -1 )
+            {
+                String[] subPatterns = pattern.split( "\\*" );
+                int[] idxes = new int[subPatterns.length];
+                
+                for ( int j = 0; j < subPatterns.length; j++ )
+                {
+                    String subPattern = subPatterns[j];
+                    
+                    int lastIdx = j == 0 ? 0 : idxes[j-1];
+                    
+                    idxes[j] = value.indexOf( subPattern, lastIdx );
+                    
+                    if ( idxes[j] < 0 )
+                    {
+                        return false;
+                    }
+                }
+                
+                patternsTriggered.add( pattern );
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     public void reportMissedCriteria( Logger logger )
     {
         // if there are no patterns, there is nothing to report.
-        if ( !patterns.isEmpty() )
+        if ( !positivePatterns.isEmpty() )
         {
-            List missed = new ArrayList( patterns );
+            List missed = new ArrayList( positivePatterns );
             missed.removeAll( patternsTriggered );
 
             if ( !missed.isEmpty() && logger.isWarnEnabled() )
@@ -164,7 +225,7 @@ public class AssemblyIncludesArtifactFilter
     protected String getPatternsAsString()
     {
         StringBuffer buffer = new StringBuffer();
-        for ( Iterator it = patterns.iterator(); it.hasNext(); )
+        for ( Iterator it = positivePatterns.iterator(); it.hasNext(); )
         {
             String pattern = ( String ) it.next();
 
