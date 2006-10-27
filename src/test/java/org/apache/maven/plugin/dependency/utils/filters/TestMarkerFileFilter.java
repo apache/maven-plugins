@@ -126,7 +126,7 @@ public class TestMarkerFileFilter
         HashSet tempArtifacts = new HashSet();
         tempArtifacts.add( snap );
         tempArtifacts.add( release );
-        snap.getFile().setLastModified( snap.getFile().lastModified() + 222 );
+        snap.getFile().setLastModified( snap.getFile().lastModified() + 1500 );
         DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( snap, outputFolder );
         handler.setMarker();
         MarkerFileFilter filter = new MarkerFileFilter( false, false, true, new DefaultFileMarkerHandler( outputFolder ) );
