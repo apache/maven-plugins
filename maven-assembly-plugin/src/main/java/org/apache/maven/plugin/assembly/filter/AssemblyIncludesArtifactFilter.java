@@ -190,9 +190,12 @@ public class AssemblyIncludesArtifactFilter
     public void reportMissedCriteria( Logger logger )
     {
         // if there are no patterns, there is nothing to report.
-        if ( !positivePatterns.isEmpty() )
+        if ( !positivePatterns.isEmpty() || !negativePatterns.isEmpty() )
         {
-            List missed = new ArrayList( positivePatterns );
+            List missed = new ArrayList();
+            missed.addAll( positivePatterns );
+            missed.addAll( negativePatterns );
+            
             missed.removeAll( patternsTriggered );
 
             if ( !missed.isEmpty() && logger.isWarnEnabled() )
@@ -255,6 +258,23 @@ public class AssemblyIncludesArtifactFilter
 
             logger.debug( buffer.toString() );
         }
+    }
+
+    public boolean hasMissedCriteria()
+    {
+        // if there are no patterns, there is nothing to report.
+        if ( !positivePatterns.isEmpty() || !negativePatterns.isEmpty() )
+        {
+            List missed = new ArrayList();
+            missed.addAll( positivePatterns );
+            missed.addAll( negativePatterns );
+            
+            missed.removeAll( patternsTriggered );
+
+            return !missed.isEmpty();
+        }
+        
+        return false;
     }
 
 }

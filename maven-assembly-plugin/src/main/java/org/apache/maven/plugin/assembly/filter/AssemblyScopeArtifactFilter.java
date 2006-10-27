@@ -205,4 +205,32 @@ public class AssemblyScopeArtifactFilter
             }
         }
     }
+
+    public boolean hasMissedCriteria()
+    {
+        boolean report = false;
+        
+        if ( !compileScopeHit )
+        {
+            report = true;
+        }
+        if ( !runtimeScopeHit )
+        {
+            report = true;
+        }
+        if ( !testScopeHit )
+        {
+            report = true;
+        }
+        if ( !providedScopeHit )
+        {
+            report = true;
+        }
+        if ( !systemScopeHit )
+        {
+            report = true;
+        }
+
+        return report;
+    }
 }
