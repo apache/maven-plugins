@@ -473,7 +473,9 @@ public class TestCopyDependenciesMojo
         File copiedFile = new File( mojo.outputDirectory, DependencyUtil.getFormattedFileName( release, false ) );
 
         Thread.sleep( 100 );
-        long time = System.currentTimeMillis();
+        //round up to the next second
+        long time = System.currentTimeMillis() + 1000;
+        time = time - (time % 1000);
         copiedFile.setLastModified( time );
         Thread.sleep( 100 );
 
@@ -503,12 +505,16 @@ public class TestCopyDependenciesMojo
         File copiedFile = new File( mojo.outputDirectory, DependencyUtil.getFormattedFileName( release, false ) );
 
         Thread.sleep( 100 );
+        //round down to the last second
         long time = System.currentTimeMillis();
+        time = time - (time % 1000);
         copiedFile.setLastModified( time );
-        Thread.sleep( 100 );
+        //wait at least a second for filesystems that only record to the nearest second.
+        Thread.sleep( 1000 );
 
         mojo.execute();
 
+        long f = copiedFile.lastModified();
         assertTrue( time < copiedFile.lastModified() );
     }
 
@@ -534,7 +540,9 @@ public class TestCopyDependenciesMojo
         File copiedFile = new File( mojo.outputDirectory, DependencyUtil.getFormattedFileName( snap, false ) );
 
         Thread.sleep( 100 );
-        long time = System.currentTimeMillis();
+        //round up to the next second
+        long time = System.currentTimeMillis() + 1000;
+        time = time - (time % 1000);
         copiedFile.setLastModified( time );
         Thread.sleep( 100 );
 
@@ -565,9 +573,12 @@ public class TestCopyDependenciesMojo
         File copiedFile = new File( mojo.outputDirectory, DependencyUtil.getFormattedFileName( snap, false ) );
 
         Thread.sleep( 100 );
+        //round down to the last second
         long time = System.currentTimeMillis();
+        time = time - (time % 1000);
         copiedFile.setLastModified( time );
-        Thread.sleep( 100 );
+        //wait at least a second for filesystems that only record to the nearest second.
+        Thread.sleep( 1000 );
 
         mojo.execute();
 
