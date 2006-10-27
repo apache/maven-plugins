@@ -33,6 +33,9 @@ import org.codehaus.plexus.util.StringUtils;
  * The <code>EclipseOSGiManifestWriter</code> ensures that value of the "Bundle-Classpath" property 
  * in META-INF/MANIFEST.MF is synchronized with the POM by adding all dependencies that don't have the
  * scope provided.
+ * 
+ * @todo move this to use the code from
+ * <a href="http://svn.apache.org/viewvc/incubator/felix/trunk/tools/maven2/maven-osgi-plugin/">Maven OSGi plugin</a>
  */
 public class EclipseOSGiManifestWriter
     extends AbstractEclipseWriter
