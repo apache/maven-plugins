@@ -119,7 +119,6 @@ public class ModuleSetAssemblyPhaseTest
         MockAndControlForArtifact macArtifact = new MockAndControlForArtifact( mm );
 
         macArtifact.expectIsSnapshot( false );
-        macArtifact.expectGetClassifier( null );
         macArtifact.expectGetArtifactHandler();
 
         project.setArtifact( macArtifact.artifact );
@@ -158,7 +157,6 @@ public class ModuleSetAssemblyPhaseTest
         MockAndControlForArtifact macArtifact = new MockAndControlForArtifact( mm );
 
         macArtifact.expectIsSnapshot( false );
-        macArtifact.expectGetClassifier( null );
         macArtifact.expectGetArtifactHandler();
 
         project.setArtifact( macArtifact.artifact );
@@ -198,7 +196,6 @@ public class ModuleSetAssemblyPhaseTest
         MockAndControlForArtifact macArtifact = new MockAndControlForArtifact( mm );
 
         macArtifact.expectIsSnapshot( false );
-        macArtifact.expectGetClassifier( null );
         macArtifact.expectGetArtifactHandler();
 
         project.setArtifact( macArtifact.artifact );
@@ -247,7 +244,6 @@ public class ModuleSetAssemblyPhaseTest
         macTask.expectGetReactorProjects( projects );
         macTask.expectGetFinalName( "final-name" );
         macTask.expectIsSnapshot( false );
-        macTask.expectGetClassifier( null );
         macTask.expectGetArtifactHandler();
 
         int mode = Integer.parseInt( "777", 8 );
@@ -328,7 +324,7 @@ public class ModuleSetAssemblyPhaseTest
         macTask.expectGetFinalName( "final-name" );
         macTask.expectIsSnapshot( false );
         macTask.expectGetArtifactHandler();
-        macTask.expectAddFile( "out/artifact-test", Integer.parseInt( "777", 8 ) );
+        macTask.expectAddFile( "out/artifact", Integer.parseInt( "777", 8 ) );
 
         ModuleBinaries binaries = new ModuleBinaries();
 
@@ -403,7 +399,6 @@ public class ModuleSetAssemblyPhaseTest
         macTask.expectArtifactGetFile( true );
         macTask.expectGetFinalName( "final-name" );
         macTask.expectIsSnapshot( false );
-        macTask.expectGetClassifier( null );
         macTask.expectGetArtifactHandler();
         macTask.expectAddFile( "out/artifact", Integer.parseInt( "777", 8 ) );
 
@@ -438,7 +433,6 @@ public class ModuleSetAssemblyPhaseTest
 
         macTask.expectArtifactGetFile( true );
         macTask.expectGetFinalName( "final-name" );
-        macTask.expectGetClassifier( null );
         macTask.expectIsSnapshot( false );
         macTask.expectGetArtifactHandler();
         macTask.expectAddFile( "out/artifact", Integer.parseInt( "777", 8 ) );
@@ -462,7 +456,6 @@ public class ModuleSetAssemblyPhaseTest
 
         MockAndControlForArtifact macDepArtifact = new MockAndControlForArtifact( mm );
 
-        macDepArtifact.expectGetClassifier( null );
         macDepArtifact.expectGetType( "jar" );
         macDepArtifact.expectIsSnapshot( false );
         macDepArtifact.expectGetArtifactHandler();
@@ -507,7 +500,6 @@ public class ModuleSetAssemblyPhaseTest
         macTask.expectArtifactGetFile( true );
         macTask.expectArtifactGetArtifactId( "artifact" );
         macTask.expectGetFinalName( "final-name" );
-        macTask.expectGetClassifier( null );
         macTask.expectIsSnapshot( false );
         macTask.expectGetArtifactHandler();
         macTask.expectAddFile( "out/artifact", Integer.parseInt( "777", 8 ) );
@@ -525,7 +517,6 @@ public class ModuleSetAssemblyPhaseTest
 
         MockAndControlForArtifact macDepArtifact = new MockAndControlForArtifact( mm );
 
-        macDepArtifact.expectGetClassifier( null );
         macDepArtifact.expectGetType( "jar" );
         macDepArtifact.expectIsSnapshot( false );
         macDepArtifact.expectGetArtifactHandler();
@@ -641,7 +632,6 @@ public class ModuleSetAssemblyPhaseTest
 
         macTask.expectArtifactGetFile();
         macTask.expectGetFinalName( "final-name" );
-        macTask.expectGetClassifier( null );
         macTask.expectIsSnapshot( false );
         macTask.expectGetArtifactHandler();
 
@@ -688,7 +678,6 @@ public class ModuleSetAssemblyPhaseTest
         MockAndControlForArtifact macArtifact = new MockAndControlForArtifact( mm );
 
         macArtifact.expectIsSnapshot( false );
-        macArtifact.expectGetClassifier( null );
         macArtifact.expectGetArtifactHandler();
 
         project.setArtifact( macArtifact.artifact );
