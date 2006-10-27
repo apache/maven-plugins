@@ -3,6 +3,7 @@ package org.apache.maven.plugin.assembly.interpolation;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugins.assembly.model.Assembly;
 import org.apache.maven.plugins.assembly.model.DependencySet;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
@@ -36,6 +37,8 @@ public class AssemblyInterpolatorTest
         model.setGroupId( "group.id" );
         model.setVersion( "1" );
         model.setPackaging( "jar" );
+        
+        MavenProject project = new MavenProject( model );
 
         Assembly assembly = new Assembly();
 
@@ -47,7 +50,7 @@ public class AssemblyInterpolatorTest
 
         assembly.addDependencySet( set );
 
-        Assembly outputAssembly = interpolator.interpolate( assembly, model, Collections.EMPTY_MAP );
+        Assembly outputAssembly = interpolator.interpolate( assembly, project, Collections.EMPTY_MAP );
 
         List outputDependencySets = outputAssembly.getDependencySets();
         assertEquals( 1, outputDependencySets.size() );
@@ -75,7 +78,7 @@ public class AssemblyInterpolatorTest
 
         assembly.addDependencySet( set );
 
-        Assembly outputAssembly = interpolator.interpolate( assembly, model, Collections.EMPTY_MAP );
+        Assembly outputAssembly = interpolator.interpolate( assembly, new MavenProject( model ), Collections.EMPTY_MAP );
 
         List outputDependencySets = outputAssembly.getDependencySets();
         assertEquals( 1, outputDependencySets.size() );
@@ -98,7 +101,7 @@ public class AssemblyInterpolatorTest
 
         assembly.setId( "assembly.${groupId}" );
 
-        Assembly result = interpolator.interpolate( assembly, model, Collections.EMPTY_MAP );
+        Assembly result = interpolator.interpolate( assembly, new MavenProject( model ), Collections.EMPTY_MAP );
 
         assertEquals( "assembly.group.id", result.getId() );
     }
@@ -121,7 +124,7 @@ public class AssemblyInterpolatorTest
 
         assembly.setId( "assembly.${groupId}" );
 
-        Assembly result = interpolator.interpolate( assembly, model, Collections.EMPTY_MAP );
+        Assembly result = interpolator.interpolate( assembly, new MavenProject( model ), Collections.EMPTY_MAP );
 
         assertEquals( "assembly.other.id", result.getId() );
     }
@@ -144,7 +147,7 @@ public class AssemblyInterpolatorTest
 
         assembly.setId( "assembly.${groupId}" );
 
-        Assembly result = interpolator.interpolate( assembly, model, Collections.singletonMap( "groupId",
+        Assembly result = interpolator.interpolate( assembly, new MavenProject( model ), Collections.singletonMap( "groupId",
             "still.another.id" ) );
 
         assertEquals( "assembly.still.another.id", result.getId() );
@@ -172,7 +175,7 @@ public class AssemblyInterpolatorTest
 
         assembly.addDependencySet( set );
 
-        Assembly outputAssembly = interpolator.interpolate( assembly, model, Collections.EMPTY_MAP );
+        Assembly outputAssembly = interpolator.interpolate( assembly, new MavenProject( model ), Collections.EMPTY_MAP );
 
         List outputDependencySets = outputAssembly.getDependencySets();
         assertEquals( 1, outputDependencySets.size() );
@@ -207,7 +210,7 @@ public class AssemblyInterpolatorTest
 
         assembly.setId( "assembly.${unresolved}" );
 
-        Assembly result = interpolator.interpolate( assembly, model, Collections.EMPTY_MAP );
+        Assembly result = interpolator.interpolate( assembly, new MavenProject( model ), Collections.EMPTY_MAP );
 
         assertEquals( "assembly.${unresolved}", result.getId() );
     }
