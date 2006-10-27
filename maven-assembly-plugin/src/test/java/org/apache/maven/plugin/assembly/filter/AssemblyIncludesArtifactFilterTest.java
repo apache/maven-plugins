@@ -55,4 +55,14 @@ public class AssemblyIncludesArtifactFilterTest
         tck.testShouldNotIncludeWhenGroupIdDiffers( false );
     }
 
+    public void testShouldNotIncludeWhenNegativeMatch()
+    {
+        tck.testShouldNotIncludeWhenNegativeMatch( false );
+    }
+
+    public void testShouldIncludeWhenWildcardMatchesInSequence()
+    {
+        tck.testShouldIncludeWhenWildcardMatchesInSequence( false );
+    }
+
 }

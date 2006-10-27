@@ -160,6 +160,7 @@ public class AddDependencySetsTaskTest
         mac.expectGetGroupId( "group" );
         mac.expectGetArtifactId( "artifact" );
         mac.expectGetDependencyConflictId( "group:artifact:jar" );
+        mac.expectGetDependencyTrail( Collections.EMPTY_LIST );
 
         artifacts.add( mac.artifact );
 
