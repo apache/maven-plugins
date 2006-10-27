@@ -195,6 +195,7 @@
           <configuration>
             <excludes>
               <exclude>**/BasicAbstractAssemblyMojoFeaturesTest*</exclude>
+              <exclude>**/AllTests*</exclude>
               <exclude>**/testutils/*</exclude>
             </excludes>
           </configuration>

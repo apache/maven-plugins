@@ -50,7 +50,7 @@ public class FileItemAssemblyPhase
                 source = new File( basedir, sourcePath );
             }
 
-            fileFormatter.format( source, fileItem.isFiltered(), fileItem.getLineEnding() );
+            source = fileFormatter.format( source, fileItem.isFiltered(), fileItem.getLineEnding() );
 
             String destName = fileItem.getDestName();
 

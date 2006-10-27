@@ -103,25 +103,6 @@ public final class AssemblyFormatUtils
         // FIXME: This is BAD! Accessors SHOULD NOT change the behavior of the object.
         artifact.isSnapshot();
 
-        // TODO: [jdcasey] What if they *want* to suppress the classifier?! This should be part of the expression, IMO
-        // insert the classifier if exist
-        if ( !StringUtils.isEmpty( artifact.getClassifier() ) )
-        {
-            int dotIdx = value.lastIndexOf( "." );
-
-            if ( dotIdx >= 0 )
-            {
-                String extension = value.substring( dotIdx + 1, value.length() );
-                String artifactWithoutExt = value.substring( 0, dotIdx );
-
-                value = artifactWithoutExt + "-" + artifact.getClassifier() + "." + extension;
-            }
-            else
-            {
-                value = value + "-" + artifact.getClassifier();
-            }
-        }
-        
         RegexBasedInterpolator interpolator = new RegexBasedInterpolator();
         
         interpolator.addValueSource( new ObjectBasedValueSource( artifact ) );

@@ -81,32 +81,32 @@ public class AssemblyFormatUtilsTest
     
     public void testEvalFileNameMapping_ShouldInsertClassifierAheadOfExtension() throws AssemblyFormattingException
     {
-        verifyEvalFileNameMapping( "filename.ext", "classifier", null, null, null, null, "filename-classifier.ext" );
+        verifyEvalFileNameMapping( "filename-${classifier}.ext", "classifier", null, null, null, null, "filename-classifier.ext" );
     }
     
     public void testEvalFileNameMapping_ShouldAppendClassifier() throws AssemblyFormattingException
     {
-        verifyEvalFileNameMapping( "filename", "classifier", null, null, null, null, "filename-classifier" );
+        verifyEvalFileNameMapping( "filename", null, null, null, null, null, "filename" );
     }
     
     public void testEvalFileNameMapping_ShouldResolveGroupId() throws AssemblyFormattingException
     {
-        verifyEvalFileNameMapping( "${groupId}", "classifier", "group", null, null, null, "group-classifier" );
+        verifyEvalFileNameMapping( "${groupId}", null, "group", null, null, null, "group" );
     }
     
     public void testEvalFileNameMapping_ShouldResolveArtifactId() throws AssemblyFormattingException
     {
-        verifyEvalFileNameMapping( "${artifactId}", "classifier", null, "artifact", null, null, "artifact-classifier" );
+        verifyEvalFileNameMapping( "${artifactId}", null, null, "artifact", null, null, "artifact" );
     }
     
     public void testEvalFileNameMapping_ShouldResolveVersion() throws AssemblyFormattingException
     {
-        verifyEvalFileNameMapping( "${version}", "classifier", null, null, "version", null, "version-classifier" );
+        verifyEvalFileNameMapping( "${version}", null, null, null, "version", null, "version" );
     }
     
     public void testEvalFileNameMapping_ShouldResolveExtension() throws AssemblyFormattingException
     {
-        verifyEvalFileNameMapping( "file.${extension}", "classifier", null, null, null, "ext", "file-classifier.ext" );
+        verifyEvalFileNameMapping( "file.${extension}", null, null, null, null, "ext", "file.ext" );
     }
     
     private void verifyEvalFileNameMapping( String expression, String classifier, String groupId, String artifactId,
@@ -266,9 +266,11 @@ public class AssemblyFormatUtilsTest
             artifact.isSnapshot();
             artifactControl.setReturnValue( true, MockControl.ONE_OR_MORE );
             
-            // this one is always called.
-            artifact.getClassifier();
-            artifactControl.setReturnValue( classifier, MockControl.ONE_OR_MORE );
+            if ( classifier != null )
+            {
+                artifact.getClassifier();
+                artifactControl.setReturnValue( classifier, MockControl.ONE_OR_MORE );
+            }
             
             artifact.getArtifactHandler();
             artifactControl.setReturnValue( handler, MockControl.ONE_OR_MORE );
