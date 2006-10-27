@@ -9,6 +9,7 @@ import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
+import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.filter.AssemblyExcludesArtifactFilter;
 import org.apache.maven.plugin.assembly.filter.AssemblyIncludesArtifactFilter;
 import org.apache.maven.plugin.assembly.filter.StatisticsReportingFilter;
@@ -31,16 +32,16 @@ public final class FilterUtils
 
         if ( !includes.isEmpty() )
         {
-            AssemblyIncludesArtifactFilter includeFilter =
-                new AssemblyIncludesArtifactFilter( includes, actTransitively );
+            AssemblyIncludesArtifactFilter includeFilter = new AssemblyIncludesArtifactFilter( includes,
+                                                                                               actTransitively );
 
             filter.add( includeFilter );
             allFilters.add( includeFilter );
         }
         if ( !excludes.isEmpty() )
         {
-            AssemblyExcludesArtifactFilter excludeFilter =
-                new AssemblyExcludesArtifactFilter( excludes, actTransitively );
+            AssemblyExcludesArtifactFilter excludeFilter = new AssemblyExcludesArtifactFilter( excludes,
+                                                                                               actTransitively );
 
             filter.add( excludeFilter );
             allFilters.add( excludeFilter );
@@ -63,13 +64,14 @@ public final class FilterUtils
 
             if ( f instanceof StatisticsReportingFilter )
             {
-                ((StatisticsReportingFilter) f).reportMissedCriteria( logger );
+                ( (StatisticsReportingFilter) f ).reportMissedCriteria( logger );
             }
         }
     }
 
-    public static void filterArtifacts( Set artifacts, List includes, List excludes, boolean actTransitively,
-                                        List additionalFilters, Logger logger )
+    public static void filterArtifacts( Set artifacts, List includes, List excludes, boolean strictFiltering,
+                                        boolean actTransitively, List additionalFilters, Logger logger )
+        throws InvalidAssemblerConfigurationException
     {
         List allFilters = new ArrayList();
 
@@ -124,6 +126,22 @@ public final class FilterUtils
         }
 
         reportFilteringStatistics( allFilters, logger );
+
+        for ( Iterator it = allFilters.iterator(); it.hasNext(); )
+        {
+            ArtifactFilter f = (ArtifactFilter) it.next();
+
+            if ( f instanceof StatisticsReportingFilter )
+            {
+                StatisticsReportingFilter sFilter = (StatisticsReportingFilter) f;
+
+                if ( strictFiltering && sFilter.hasMissedCriteria() )
+                {
+                    throw new InvalidAssemblerConfigurationException(
+                                                                      "One or more filters had unmatched criteria. Check debug log for more information." );
+                }
+            }
+        }
     }
 
     public static void reportFilteringStatistics( Collection filters, Logger logger )
@@ -136,7 +154,7 @@ public final class FilterUtils
             {
                 StatisticsReportingFilter sFilter = (StatisticsReportingFilter) f;
 
-                if( logger.isDebugEnabled() )
+                if ( logger.isDebugEnabled() )
                 {
                     logger.debug( "Statistics for " + sFilter + "\n" );
                 }
