@@ -641,6 +641,17 @@
       </description>
       <fields>
         <field>
+          <name>attachmentClassifier</name>
+          <version>1.1.0</version>
+          <type>String</type>
+          <description>
+          When specified, the attachmentClassifier will cause the assembler to look at artifacts
+          attached to the module instead of the main project artifact. If it can find an attached
+          artifact matching the specified classifier, it will use it; otherwise, it will throw an
+          exception.
+          </description>
+        </field>
+        <field>
           <name>includeDependencies</name>
           <version>1.0.0+</version>
           <type>boolean</type>

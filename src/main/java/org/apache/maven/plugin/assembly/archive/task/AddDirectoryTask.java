@@ -13,13 +13,19 @@ import org.codehaus.plexus.util.FileUtils;
 public class AddDirectoryTask
     implements ArchiverTask
 {
-    
+
     private final File directory;
+
     private List includes;
+
     private List excludes;
+
     private String outputDirectory;
+
     private boolean useDefaultExcludes = true;
+
     private int directoryMode = -1;
+
     private int fileMode = -1;
 
     public AddDirectoryTask( File directory )
@@ -30,6 +36,16 @@ public class AddDirectoryTask
     public void execute( Archiver archiver, AssemblerConfigurationSource configSource )
         throws ArchiveCreationException
     {
+        if ( ".".equals( outputDirectory ) )
+        {
+            outputDirectory = "";
+        }
+        else if ( "..".equals( outputDirectory ) )
+        {
+            throw new ArchiveCreationException( "Cannot add source directory: " + directory + " to archive-path: "
+                + outputDirectory + ". All paths must be within the archive root directory." );
+        }
+
         int oldDirMode = archiver.getDefaultDirectoryMode();
         int oldFileMode = archiver.getDefaultFileMode();
 
@@ -39,7 +55,7 @@ public class AddDirectoryTask
             {
                 archiver.setDefaultDirectoryMode( directoryMode );
             }
-            
+
             if ( fileMode > -1 )
             {
                 archiver.setDefaultFileMode( fileMode );
@@ -56,7 +72,7 @@ public class AddDirectoryTask
                 {
                     directoryExcludes = new ArrayList();
                 }
-                
+
                 if ( useDefaultExcludes )
                 {
                     directoryExcludes.addAll( FileUtils.getDefaultExcludesAsList() );
