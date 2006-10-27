@@ -110,14 +110,7 @@ public class TestFileManager
 
             if ( file.exists() )
             {
-                if ( file.isDirectory() )
-                {
-                    FileUtils.deleteDirectory( file );
-                }
-                else
-                {
-                    file.delete();
-                }
+                FileUtils.forceDelete( file );
             }
 
             it.remove();
