@@ -169,6 +169,13 @@ public class AssemblyIncludesArtifactFilter
                 {
                     String subPattern = subPatterns[j];
                     
+                    if ( subPattern == null || subPattern.length() < 1 )
+                    {
+                        idxes[j] = j == 0 ? 0 : idxes[j-1];
+                        
+                        continue;
+                    }
+                    
                     int lastIdx = j == 0 ? 0 : idxes[j-1];
                     
                     idxes[j] = value.indexOf( subPattern, lastIdx );
