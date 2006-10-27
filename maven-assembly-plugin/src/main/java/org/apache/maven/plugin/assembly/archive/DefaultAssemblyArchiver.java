@@ -75,7 +75,6 @@ public class DefaultAssemblyArchiver
         try
         {
             Archiver archiver = createArchiver( format, assembly.isIncludeBaseDirectory(), configSource.getFinalName(), configSource.getTarLongFileMode(), componentsXmlFilter );
-            System.out.println( "Archiver is: " + archiver );
 
             for ( Iterator phaseIterator = assemblyPhases.iterator(); phaseIterator.hasNext(); )
             {
@@ -85,8 +84,6 @@ public class DefaultAssemblyArchiver
             }
 
             archiver.setDestFile( destFile );
-
-            System.out.println( "Creating archive with: " + archiver );
             
             archiver.createArchive();
         }
@@ -152,8 +149,6 @@ public class DefaultAssemblyArchiver
     {
         if ( archiver instanceof FinalizerEnabled )
         {
-            System.out.println( "Adding components.xml merge finalizer." );
-            
             ( ( FinalizerEnabled ) archiver ).setArchiveFinalizers( Collections.singletonList( componentsXmlFilter ) );
         }
     }
