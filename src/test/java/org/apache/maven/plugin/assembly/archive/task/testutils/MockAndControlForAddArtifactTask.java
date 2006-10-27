@@ -87,6 +87,7 @@ public class MockAndControlForAddArtifactTask
         if ( createTempFile )
         {
             artifactFile = File.createTempFile( "add-artifact-task.test.", ".jar" );
+            artifactFile.deleteOnExit();
         }
 
         artifact.getFile();
