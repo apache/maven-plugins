@@ -69,6 +69,12 @@ public class ChangeLogReport
     extends AbstractMavenReport
 {
     /**
+     * A special token that represents the SCM relative path for a file.
+     * It can be used in <code>displayFileDetailUrl</code>.
+     */
+    private static final String FILE_TOKEN = "%FILE%";
+
+    /**
      * Used to specify whether to build the log using range, tag or date.
      *
      * @parameter expression="${changelog.type}" default-value="range"
@@ -244,7 +250,19 @@ public class ChangeLogReport
     private String connectionType;
 
     /**
-     * Allows the user to specify the file detail URL to use when viewing an scm file.
+     * A template string that is used to create the URL to the file details.
+     * There is a special token that you can use in your template:
+     * <ul>
+     * <li><code>%FILE%</code> - this is the path to a file</li>
+     * </ul>
+     * <p>
+     * Example:
+     * <code>http://checkstyle.cvs.sourceforge.net/checkstyle%FILE%?view=markup</code>
+     * </p>
+     * <p>
+     * <strong>Note:</strong> If you don't supply the token in your template,
+     * the path of the file will simply be appended to your template URL.
+     * </p>
      *
      * @parameter expression="${project.scm.url}"
      */
@@ -987,29 +1005,6 @@ public class ChangeLogReport
 
                     rpt_MultiRepoParam = "&" + rpt_TmpMultiRepoParam.substring( 1 );
                 }
-                else
-                {
-                    idx = displayFileDetailUrl.indexOf( "?" );
-
-                    if ( idx > 0 )
-                    {
-                        String fileDetailUrl = displayFileDetailUrl.substring( 0, idx );
-
-                        String rpt_TmpMultiRepoParam = displayFileDetailUrl.substring( idx + 1 );
-
-                        displayFileDetailUrl = fileDetailUrl;
-
-                        rpt_OneRepoParam = "?" + rpt_TmpMultiRepoParam;
-
-                        rpt_MultiRepoParam = "&" + rpt_TmpMultiRepoParam;
-                    }
-                    else
-                    {
-                        rpt_OneRepoParam = "";
-
-                        rpt_MultiRepoParam = "";
-                    }
-                }
             }
             else
             {
@@ -1090,7 +1085,21 @@ public class ChangeLogReport
 
         if ( displayFileDetailUrl != null )
         {
-            if ( connection.startsWith( "scm:perforce" ) )
+            if ( !scmUrl.equals( displayFileDetailUrl ) )
+            {
+                // Use the given URL to create links to the files
+                if( displayFileDetailUrl.indexOf( FILE_TOKEN ) > 0 )
+                {
+                    linkFile = displayFileDetailUrl.replaceAll( FILE_TOKEN, name );
+                }
+                else
+                {
+                    // This is here so that we are backwards compatible with the
+                    // format used before the special token was introduced
+                    linkFile = displayFileDetailUrl + name;
+                }
+            }
+            else if ( connection.startsWith( "scm:perforce" ) )
             {
                 String path = getAbsolutePath( displayFileDetailUrl, name );
                 linkFile = path + "?ac=22";
