@@ -1,18 +1,13 @@
 package org.apache.maven.plugin.ear;
 
-import org.apache.maven.cli.ConsoleDownloadMonitor;
+import junit.framework.TestCase;
 import org.apache.maven.embedder.MavenEmbedder;
-import org.apache.maven.embedder.MavenEmbedderConsoleLogger;
-import org.apache.maven.embedder.PlexusLoggerAdapter;
-import org.apache.maven.monitor.event.DefaultEventMonitor;
-import org.apache.maven.monitor.event.EventMonitor;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.PlexusTestCase;
+import org.apache.maven.it.Verifier;
+import org.apache.maven.it.util.ResourceExtractor;
 
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -22,7 +17,7 @@ import java.util.Properties;
  * @version $Revision: 1.5 $
  */
 public abstract class AbstractEarPluginTestCase
-    extends PlexusTestCase
+    extends TestCase
 {
 
     protected final String FINAL_NAME_PREFIX = "maven-ear-plugin-test-";
@@ -35,34 +30,41 @@ public abstract class AbstractEarPluginTestCase
     protected MavenEmbedder maven;
 
     /**
+     * The base directory.
+     */
+    private File basedir;
+
+    /**
      * Test repository directory.
      */
-    protected File localRepositoryDir = getTestFile( "target/test-classes/m2repo" );
+    protected File localRepositoryDir = new File( getBasedir().getAbsolutePath(), "target/test-classes/m2repo" );
+
 
     /**
-     * @see org.codehaus.plexus.PlexusTestCase#setUp()
+     * Execute the EAR plugin for the specified project.
+     *
+     * @param projectName the name of the project
+     * @param properties  extra properties to be used by the embedder
+     * @return the base directory of the project
+     * @throws Exception if an error occured
      */
-    protected void setUp()
+    protected File executeMojo( final String projectName, final Properties properties, boolean expectNoError )
         throws Exception
     {
-        this.maven = new MavenEmbedder();
-        this.maven.setClassLoader( Thread.currentThread().getContextClassLoader() );
-        this.maven.setLogger( new MavenEmbedderConsoleLogger() );
-        this.maven.setLocalRepositoryDirectory( localRepositoryDir );
-        this.maven.setOffline( true );
-        this.maven.start();
 
-        super.setUp();
-    }
+        File testDir = ResourceExtractor.simpleExtractResources( getClass(), "/projects/" + projectName );
+        Verifier verifier = new Verifier( testDir.getAbsolutePath(), true );
+        verifier.localRepo = localRepositoryDir.getAbsolutePath();
+        verifier.executeGoal( "package" );
+        // If no error is expected make sure that error logs are free
+        if ( expectNoError )
+        {
+            verifier.verifyErrorFreeLog();
+        }
+        assertEarArchive( testDir, projectName );
+        assertEarDirectory( testDir, projectName );
 
-    /**
-     * @see org.codehaus.plexus.PlexusTestCase#tearDown()
-     */
-    protected void tearDown()
-        throws Exception
-    {
-        maven.stop();
-        super.tearDown();
+        return testDir;
     }
 
     /**
@@ -76,22 +78,8 @@ public abstract class AbstractEarPluginTestCase
     protected File executeMojo( final String projectName, final Properties properties )
         throws Exception
     {
-        File basedir = getTestFile( "target/test-classes/projects/" + projectName );
 
-        MavenProject project = maven.readProjectWithDependencies( new File( basedir, "pom.xml" ) );
-
-        EventMonitor eventMonitor =
-            new DefaultEventMonitor( new PlexusLoggerAdapter( new MavenEmbedderConsoleLogger() ) );
-
-        this.maven.execute( project, Arrays.asList( new String[]{"org.apache.maven.plugins:maven-clean-plugin:clean",
-            "org.apache.maven.plugins:maven-ear-plugin:generate-application-xml",
-            "org.apache.maven.plugins:maven-ear-plugin:ear"} ), eventMonitor, new ConsoleDownloadMonitor(), properties,
-                                                                basedir );
-
-        assertEarArchive( basedir, projectName );
-        assertEarDirectory( basedir, projectName );
-
-        return basedir;
+        return executeMojo( projectName, properties, true );
     }
 
 
@@ -161,11 +149,22 @@ public abstract class AbstractEarPluginTestCase
                                          final boolean[] artifactsDirectory )
     {
         // sanity check
-        assertEquals( "Wrong parameter, artifacts mist match directory flag", artifactNames.length,
+        assertEquals( "Wrong parameter, artifacts mismatch directory flags", artifactNames.length,
                       artifactsDirectory.length );
 
         File dir = getEarDirectory( baseDir, projectName );
-        final List actualFiles = buildFiles( dir );
+
+        // Let's build the expected directories sort list
+        final List expectedDirectories = new ArrayList();
+        for ( int i = 0; i < artifactsDirectory.length; i++ )
+        {
+            if ( artifactsDirectory[i] )
+            {
+                expectedDirectories.add( new File( dir, artifactNames[i] ) );
+            }
+        }
+
+        final List actualFiles = buildFiles( dir, expectedDirectories );
         assertEquals( "Artifacts mismatch " + actualFiles, artifactNames.length, actualFiles.size() );
         for ( int i = 0; i < artifactNames.length; i++ )
         {
@@ -181,15 +180,15 @@ public abstract class AbstractEarPluginTestCase
         }
     }
 
-    protected List buildFiles( final File baseDir )
+    protected List buildFiles( final File baseDir, final List expectedDirectories )
     {
         final List result = new ArrayList();
-        addFiles( baseDir, result );
+        addFiles( baseDir, result, expectedDirectories );
 
         return result;
     }
 
-    private void addFiles( final File directory, final List files )
+    private void addFiles( final File directory, final List files, final List expectedDirectories )
     {
         File[] result = directory.listFiles( new FilenameFilter()
         {
@@ -207,14 +206,46 @@ public abstract class AbstractEarPluginTestCase
 
         } );
 
+        /*
+           Kinda complex. If we found a file, we always add it to the list
+           of files. If a directory is within the expectedDirectories short
+           list we add it but we don't add it's content. Otherwise, we don't
+           add the directory *BUT* we browse it's content
+         */
         for ( int i = 0; i < result.length; i++ )
         {
             File file = result[i];
-            files.add( file );
-            /*
-             Here's we can introduce a more complex
-             file filtering if necessary
-             */
+            if ( file.isFile() )
+            {
+                files.add( file );
+            }
+            else if ( expectedDirectories.contains( file ) )
+            {
+                files.add( file );
+            }
+            else
+            {
+                addFiles( file, files, expectedDirectories );
+            }
         }
+    }
+
+    protected File getBasedir()
+    {
+        if ( basedir != null )
+        {
+            return basedir;
+        }
+
+        final String basedirString = System.getProperty( "basedir" );
+        if ( basedirString == null )
+        {
+            basedir = new File( "" );
+        }
+        else
+        {
+            basedir = new File( basedirString );
+        }
+        return basedir;
     }
 }
