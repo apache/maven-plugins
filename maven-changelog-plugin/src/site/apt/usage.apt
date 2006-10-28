@@ -24,11 +24,15 @@
 
 Usage
 
- The reports may use either range, date, or tag as basis in generating the reports. Only one can be set. The change sets then
- can be configured by setting the correct parameter depending on the type chosen.  If <<<type>>> "date" is chosen, then the parameter
- <<<date>>> should contain the values of the set ranges.  This goes for "range" and "tag" types as well.
+ The reports may use either <<<range>>>, <<<date>>>, or <<<tag>>> as the basis
+ for generating the reports. Only one can be set. The change sets can be
+ configured by setting the correct parameter for the chosen type. If <<<type>>>
+ "date" is chosen, then the parameter <<<dates>>> should contain the start and
+ stop dates for the date range. Similar configurations should be made for the
+ "range" and "tag" types.
 
- To generate the changelog reports, just add the following in your project's pom:
+ To generate the changelog reports, just add the following in your project's
+ <<<pom.xml>>>:
 
 +-----+
 <project>
@@ -45,9 +49,10 @@ Usage
 </project>
 +-----+
 
- Aside from the required plugin configuration parameters needed to generate the reports, all reports will refer to the scm
- elements inside the project descriptor for other details regarding the connection to the project's scm. An example of the
- scm element inside the pom.xml is as follows:
+ Aside from the required plugin configuration parameters needed to generate the
+ reports, all reports will refer to the <<<scm>>> elements inside the project
+ descriptor for other details regarding the connection to the project's SCM.
+ Here is an example of the scm element inside the <<<pom.xml>>>:
 
 -------------------
 <project>
@@ -61,11 +66,12 @@ Usage
 </project>
 -------------------
 
- Please refer to the Maven project descriptor for the description of the scm elements. It can be found
+ Please refer to the Maven project descriptor for the description of the
+ <<<scm>>> elements. It can be found
  {{{http://maven.apache.org/ref/current/maven-model/maven.html#class_scm}here}}.
 
- When you execute <<<mvn site>>>, you will see that the changelog, dev-activity and file-activity reports are included in
- the generated site.
+ When you execute <<<mvn site>>>, you will see that the changelog, dev-activity
+ and file-activity reports are included in the generated site.
 
  Sample Changelog report:
 
