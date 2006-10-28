@@ -15,6 +15,7 @@ import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.components.interactivity.InputHandler;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -388,7 +389,7 @@ public class InstallPluginsMojo
     {
         if ( bundleVersion == null )
         {
-            return artifact.getArtifactId() + artifact.getVersion().replace( "-", "." );
+            return artifact.getArtifactId() + StringUtils.replace( artifact.getVersion(), "-", "." );
         }
         else
         {
