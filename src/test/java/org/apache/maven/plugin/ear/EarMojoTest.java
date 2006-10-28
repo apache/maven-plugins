@@ -1,11 +1,5 @@
 package org.apache.maven.plugin.ear;
 
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.project.MavenProject;
-
-import java.io.File;
-import java.util.Properties;
-
 /**
  * @author Stephane Nicoll <stephane.nicoll@bsb.com>
  * @author $Author: sni $ (last edit)
@@ -24,11 +18,13 @@ public class EarMojoTest
         doTestProject( "project-01", new String[]{"ejb-sample-one-1.0.jar"} );
     }
 
+    /**
+     * Simple project with a bundleDir and a bundleFileName settings.
+     */
     public void testProject02()
         throws Exception
     {
-        // See http://jira.codehaus.org/browse/MNG-2571 - Uncomment to reproduce 
-        //doTestProject( "project-02", new String[]{"APP-INF/lib/ejb-sample-one-1.0.jar, ejb-sample-two.jar"});
+        doTestProject( "project-02", new String[]{"APP-INF/lib/ejb-sample-one-1.0.jar", "ejb-sample-two.jar"} );
     }
 
     /**
@@ -41,15 +37,14 @@ public class EarMojoTest
     }
 
     /**
-     * Test the classifier functionnality
+     * Test the unpackTypes functionnality
      */
     public void testProject04()
         throws Exception
     {
-        doTestProject( "project-04", new String[]{"ejb-sample-one-1.0.jar","sar-sample-one-1.0.sar"}, new boolean[]{false, true});
+        //doTestProject( "project-04", new String[]{"ejb-sample-one-1.0.jar", "sar-sample-one-1.0.sar"},
+        //               new boolean[]{false, true} );
     }
-
-
 
 
 }
