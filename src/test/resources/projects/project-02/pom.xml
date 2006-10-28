@@ -28,15 +28,12 @@
         <artifactId>maven-ear-plugin</artifactId>
         <configuration>
           <displayName>Sample Ear Application</displayName>
-
           <modules>
-            <!--
             <ejbModule>
               <groupId>eartest</groupId>
               <artifactId>ejb-sample-one</artifactId>
               <bundleDir>APP-INF/lib</bundleDir>
-            </ejbModule> -->
-
+            </ejbModule>
             <ejbModule>
               <groupId>eartest</groupId>
               <artifactId>ejb-sample-two</artifactId>
