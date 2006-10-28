@@ -24,8 +24,11 @@
 
 Using Range Type
 
-  To generate the changelog reports using the <<<type>>> "range" as the basis for generation, set the configuration in the
-  project pom as follows:
+  To generate the changelog reports showing what has changed in the last NN
+  days, you should use the "range" <<<type>>>.
+
+  The following configuration will generate reports that covers SCM activities
+  from the last 30 days. Please note that the range is inclusive.
 
 +-----+
 <project>
@@ -35,19 +38,10 @@ Using Range Type
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changelog-plugin</artifactId>
-        <reportSets>
-          <reportSet>
-            <id>dual-report</id>
-            <configuration>
-              <type>range</type>
-              <range>30</range>
-            </configuration>
-            <reports>
-              <report>changelog</report>
-              <report>file-activity</report>
-            </reports>
-          </reportSet>
-        </reportSets>
+        <configuration>
+          <type>range</type>
+          <range>30</range>
+        </configuration>
       </plugin>
     </plugins>
   </reporting>
@@ -55,5 +49,3 @@ Using Range Type
 </project>
 +-----+
 
-  The above configuration will generate the changelog and file-activity reports that covers SCM activities from the last
-  30 days. Please note that the range is inclusive.
