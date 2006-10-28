@@ -27,25 +27,37 @@ import java.util.StringTokenizer;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.deployer.ArtifactDeployer;
+import org.apache.maven.artifact.deployer.ArtifactDeploymentException;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.installer.ArtifactInstallationException;
 import org.apache.maven.artifact.installer.ArtifactInstaller;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.repository.DefaultArtifactRepository;
+import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.model.Dependency;
+import org.apache.maven.model.License;
 import org.apache.maven.model.Model;
-import org.apache.maven.model.Parent;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
+import org.codehaus.plexus.PlexusConstants;
+import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.components.interactivity.InputHandler;
+import org.codehaus.plexus.context.Context;
+import org.codehaus.plexus.context.ContextException;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -61,7 +73,18 @@ import org.codehaus.plexus.util.StringUtils;
  */
 public class MakeArtifactsMojo
     extends AbstractMojo
+    implements Contextualizable
 {
+
+    /**
+     * A pattern te <code>deployTo</code> param should match.
+     */
+    private static final Pattern DEPLOYTO_PATTERN = Pattern.compile( "(.+)::(.+)::(.+)" );
+
+    /**
+     * Plexus container, needed to manually lookup components for deploy of artifacts.
+     */
+    private PlexusContainer container;
 
     /**
      * Local maven repository.
@@ -83,6 +106,12 @@ public class MakeArtifactsMojo
      * @component
      */
     protected ArtifactInstaller installer;
+
+    /**
+     * ArtifactDeployer component.
+     * @component
+     */
+    private ArtifactDeployer deployer;
 
     /**
      * Eclipse installation dir. If not set, a value for this parameter will be asked on the command line.
@@ -107,6 +136,15 @@ public class MakeArtifactsMojo
      * @parameter expression="${stripQualifier}" default-value="true"
      */
     private boolean stripQualifier;
+
+    /**
+     * Specifies a remote repository to which generated artifacts should be deployed to. If this property is specified,
+     * artifacts are also deployed to the remote repo.
+     * The format for this parameter is <code>id::layout::url</code>
+     * 
+     * @parameter expression="${deployTo}"
+     */
+    private String deployTo;
 
     /**
      * @see org.apache.maven.plugin.Mojo#execute()
@@ -142,195 +180,284 @@ public class MakeArtifactsMojo
             throw new MojoFailureException( "Plugin directory " + pluginDir.getAbsolutePath() + " doesn't exists" );
         }
 
-        File[] files = pluginDir.listFiles( );
+        File[] files = pluginDir.listFiles();
+
+        ArtifactRepository remoteRepo = resolveRemoteRepo();
+
+        if ( remoteRepo != null )
+        {
+            getLog().info( "Will deploy artifacts to remote repository " + deployTo );
+        }
 
         for ( int j = 0; j < files.length; j++ )
         {
+            processSingleFile( files[j], remoteRepo );
 
-            File file = files[j];
+        }
 
-            getLog().info( "Processing file " + file.getAbsolutePath() );
+    }
 
-            Manifest manifest = null;
-            Properties pluginProperties = new Properties();
-            boolean wasUnpacked = false;
+    /**
+     * Process a single plugin jar/dir found in the target dir.
+     * @param file plugin jar or dir
+     * @param remoteRepo remote repository (if set)
+     * @throws MojoExecutionException if anything bad happens while parsing files
+     */
+    private void processSingleFile( File file, ArtifactRepository remoteRepo )
+        throws MojoExecutionException
+    {
 
-            /* package directories in a temp jar */
-            if ( file.isDirectory() )
-            {
-                try
-                {
-                    File manifestFile = new File( file, "META-INF/MANIFEST.MF" );
-                    if ( !manifestFile.exists() )
-                    {
-                        getLog().warn(
-                                       "Plugin in folder " + file.getAbsolutePath()
-                                           + " does not have a manifest; skipping.." );
-                        continue;
-                    }
+        getLog().info( "Processing file " + file.getAbsolutePath() );
 
-                    File tmpJar = File.createTempFile( "mvn-eclipse", null );
-                    tmpJar.deleteOnExit();
+        Manifest manifest = null;
+        Properties pluginProperties = new Properties();
+        boolean wasUnpacked = false;
 
-                    JarArchiver jarArchiver = new JarArchiver();
-
-                    jarArchiver.setDestFile( tmpJar );
-                    jarArchiver.addDirectory( file );
-                    jarArchiver.setManifest( manifestFile );
-                    jarArchiver.createArchive();
-
-                    file = tmpJar;
-                    wasUnpacked = true;
-                }
-                catch ( ArchiverException e )
-                {
-                    throw new MojoExecutionException( "Unable to jar plugin in folder " + file.getAbsolutePath(), e );
-                }
-                catch ( IOException e )
-                {
-                    throw new MojoExecutionException( "Unable to jar plugin in folder " + file.getAbsolutePath(), e );
-                }
-            }
-
-            if ( file.getName().endsWith( ".jar" ) || wasUnpacked )
-            {
-                try
-                {
-                    JarFile jar = new JarFile( file );
-                    manifest = jar.getManifest();
-                    pluginProperties = loadPluginProperties( jar );
-                }
-                catch ( IOException e )
-                {
-                    throw new MojoFailureException( "Unable to read manifest or plugin properties for "
-                        + file.getAbsolutePath() );
-                }
-            }
-            else
-            {
-                getLog().debug( "Ignoring file " + file.getAbsolutePath() );
-                continue;
-            }
-
-
-            if ( manifest == null )
-            {
-                getLog().warn( "Jar " + file.getAbsolutePath() + " does not have a manifest; skipping.." );
-                continue;
-            }
-
-            Attributes manifestEntries = manifest.getMainAttributes();
-
-            String artifactId = manifestEntries.getValue( "Bundle-SymbolicName" );
-
-            int separator = artifactId.indexOf( ";" );
-            if ( separator > 0 )
-            {
-                artifactId = StringUtils.substring( artifactId, 0, separator );
-            }
-            artifactId = StringUtils.trim( artifactId );
-
-            String version = manifestEntries.getValue( "Bundle-Version" );
-
-            if ( artifactId == null || version == null )
-            {
-                getLog().error( "Unable to read artifact/version from manifest, skipping..." );
-                continue;
-            }
-
-            if ( stripQualifier && StringUtils.countMatches( version, "." ) > 2 )
-            {
-                version = StringUtils.substring( version, 0, version.lastIndexOf( "." ) );
-            }
-
-            String name = manifestEntries.getValue( "Bundle-Name" );
-
-            // if Bundle-Name is %pluginName fetch the full name from plugin.properties
-            if ( name != null && name.startsWith( "%" ) )
-            {
-                String nameFromProperties = pluginProperties.getProperty( name.substring( 1 ) );
-                if ( nameFromProperties != null )
-                {
-                    name = nameFromProperties;
-                }
-            }
-
-            String requireBundle = manifestEntries.getValue( "Require-Bundle" );
-            Dependency[] deps = parseDependencies( requireBundle );
-
-            String groupId = null;
-            groupId = createGroupId( artifactId );
-
-            Model model = new Model();
-            model.setModelVersion( "4.0.0" );
-            model.setGroupId( groupId );
-            model.setArtifactId( artifactId );
-            model.setName( name );
-            model.setVersion( version );
-
-            /* set the pom property to install unpacked if it was unpacked */
-            if ( wasUnpacked )
-            {
-                Properties properties = new Properties();
-                properties.setProperty( InstallPluginsMojo.PROP_UNPACK_PLUGIN, Boolean.TRUE.toString() );
-                model.setProperties( properties );
-            }
-
-            if ( groupId.startsWith( "org.eclipse" ) )
-            {
-                Parent parent = new Parent();
-                parent.setGroupId( "org.eclipse" );
-                parent.setArtifactId( "eclipse" );
-                parent.setVersion( "1" );
-                model.setParent( parent );
-            }
-
-            if ( deps.length > 0 )
-            {
-                for ( int k = 0; k < deps.length; k++ )
-                {
-                    model.getDependencies().add( deps[k] );
-                }
-
-            }
-
-            FileWriter fw = null;
-            ArtifactMetadata metadata = null;
-            File pomFile = null;
-            Artifact pomArtifact = artifactFactory.createArtifact( groupId, artifactId, version, null, "pom" );
-            Artifact artifact = artifactFactory.createArtifact( groupId, artifactId, version, null, "jar" );
+        // package directories in a temp jar
+        if ( file.isDirectory() )
+        {
             try
             {
-                pomFile = File.createTempFile( "pom", ".xml" );
-                pomFile.deleteOnExit();
+                File manifestFile = new File( file, "META-INF/MANIFEST.MF" );
+                if ( !manifestFile.exists() )
+                {
+                    getLog().warn(
+                                   "Plugin in folder " + file.getAbsolutePath()
+                                       + " does not have a manifest; skipping.." );
+                    return;
+                }
 
-                fw = new FileWriter( pomFile );
-                pomFile.deleteOnExit();
-                new MavenXpp3Writer().write( fw, model );
-                metadata = new ProjectArtifactMetadata( pomArtifact, pomFile );
-                pomArtifact.addMetadata( metadata );
+                File tmpJar = File.createTempFile( "mvn-eclipse", null );
+                tmpJar.deleteOnExit();
+
+                JarArchiver jarArchiver = new JarArchiver();
+
+                jarArchiver.setDestFile( tmpJar );
+                jarArchiver.addDirectory( file );
+                jarArchiver.setManifest( manifestFile );
+                jarArchiver.createArchive();
+
+                file = tmpJar;
+                wasUnpacked = true;
+            }
+            catch ( ArchiverException e )
+            {
+                throw new MojoExecutionException( "Unable to jar plugin in folder " + file.getAbsolutePath(), e );
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException( "Error writing temporary pom file: " + e.getMessage(), e );
+                throw new MojoExecutionException( "Unable to jar plugin in folder " + file.getAbsolutePath(), e );
             }
-            finally
-            {
-                IOUtil.close( fw );
-            }
+        }
 
+        if ( file.getName().endsWith( ".jar" ) || wasUnpacked )
+        {
             try
             {
-                installer.install( pomFile, pomArtifact, localRepository );
-                installer.install( file, artifact, localRepository );
+                JarFile jar = new JarFile( file );
+                manifest = jar.getManifest();
+                pluginProperties = loadPluginProperties( jar );
             }
-            catch ( ArtifactInstallationException e )
+            catch ( IOException e )
             {
-                throw new MojoFailureException( "Unable to install artifact to local repository." );
+                throw new MojoExecutionException( "Unable to read manifest or plugin properties for "
+                    + file.getAbsolutePath() );
+            }
+        }
+        else
+        {
+            getLog().debug( "Ignoring file " + file.getAbsolutePath() );
+            return;
+        }
+
+        if ( manifest == null )
+        {
+            getLog().warn( "Jar " + file.getAbsolutePath() + " does not have a manifest; skipping.." );
+            return;
+        }
+
+        Attributes manifestEntries = manifest.getMainAttributes();
+
+        String artifactId = manifestEntries.getValue( "Bundle-SymbolicName" );
+
+        int separator = artifactId.indexOf( ";" );
+        if ( separator > 0 )
+        {
+            artifactId = StringUtils.substring( artifactId, 0, separator );
+        }
+        artifactId = StringUtils.trim( artifactId );
+
+        String version = manifestEntries.getValue( "Bundle-Version" );
+
+        if ( artifactId == null || version == null )
+        {
+            getLog().error( "Unable to read artifact/version from manifest, skipping..." );
+            return;
+        }
+
+        if ( stripQualifier && StringUtils.countMatches( version, "." ) > 2 )
+        {
+            version = StringUtils.substring( version, 0, version.lastIndexOf( "." ) );
+        }
+
+        String name = manifestEntries.getValue( "Bundle-Name" );
+
+        // if Bundle-Name is %pluginName fetch the full name from plugin.properties
+        if ( name != null && name.startsWith( "%" ) )
+        {
+            String nameFromProperties = pluginProperties.getProperty( name.substring( 1 ) );
+            if ( nameFromProperties != null )
+            {
+                name = nameFromProperties;
+            }
+        }
+
+        String requireBundle = manifestEntries.getValue( "Require-Bundle" );
+        Dependency[] deps = parseDependencies( requireBundle );
+
+        String groupId = null;
+        groupId = createGroupId( artifactId );
+
+        Model model = new Model();
+        model.setModelVersion( "4.0.0" );
+        model.setGroupId( groupId );
+        model.setArtifactId( artifactId );
+        model.setName( name );
+        model.setVersion( version );
+
+        /* set the pom property to install unpacked if it was unpacked */
+        if ( wasUnpacked )
+        {
+            Properties properties = new Properties();
+            properties.setProperty( InstallPluginsMojo.PROP_UNPACK_PLUGIN, Boolean.TRUE.toString() );
+            model.setProperties( properties );
+        }
+
+        if ( groupId.startsWith( "org.eclipse" ) )
+        {
+            // why do we need a parent?
+
+            // Parent parent = new Parent();
+            // parent.setGroupId( "org.eclipse" );
+            // parent.setArtifactId( "eclipse" );
+            // parent.setVersion( "1" );
+            // model.setParent( parent );
+
+            // infer license for know projects, everything at eclipse is licensed under EPL
+            // maybe too simplicistic, but better than nothing
+            License license = new License();
+            license.setName( "Eclipse Public License - v 1.0" );
+            license.setUrl( "http://www.eclipse.org/org/documents/epl-v10.html" );
+            model.addLicense( license );
+        }
+
+        if ( deps.length > 0 )
+        {
+            for ( int k = 0; k < deps.length; k++ )
+            {
+                model.getDependencies().add( deps[k] );
             }
 
         }
 
+        FileWriter fw = null;
+        ArtifactMetadata metadata = null;
+        File pomFile = null;
+        Artifact pomArtifact = artifactFactory.createArtifact( groupId, artifactId, version, null, "pom" );
+        Artifact artifact = artifactFactory.createArtifact( groupId, artifactId, version, null, "jar" );
+        try
+        {
+            pomFile = File.createTempFile( "pom", ".xml" );
+            pomFile.deleteOnExit();
+
+            fw = new FileWriter( pomFile );
+            pomFile.deleteOnExit();
+            new MavenXpp3Writer().write( fw, model );
+            metadata = new ProjectArtifactMetadata( pomArtifact, pomFile );
+            pomArtifact.addMetadata( metadata );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Error writing temporary pom file: " + e.getMessage(), e );
+        }
+        finally
+        {
+            IOUtil.close( fw );
+        }
+
+        if ( remoteRepo != null )
+        {
+
+            try
+            {
+                deployer.deploy( pomFile, pomArtifact, remoteRepo, localRepository );
+                deployer.deploy( pomFile, artifact, remoteRepo, localRepository );
+            }
+            catch ( ArtifactDeploymentException e )
+            {
+                throw new MojoExecutionException( "Unable to deploy artifact to repository.", e );
+            }
+        }
+        try
+        {
+            installer.install( pomFile, pomArtifact, localRepository );
+            installer.install( file, artifact, localRepository );
+        }
+        catch ( ArtifactInstallationException e )
+        {
+            throw new MojoExecutionException( "Unable to install artifact to repository.", e );
+        }
+
+    }
+
+    /**
+     * Resolves the deploy<code>deployTo</code> parameter to an <code>ArtifactRepository</code> instance (if set).
+     * 
+     * @throws MojoFailureException
+     * @throws MojoExecutionException
+     * @return ArtifactRepository instance of null if <code>deployTo</code> is not set.
+     */
+    private ArtifactRepository resolveRemoteRepo()
+        throws MojoFailureException, MojoExecutionException
+    {
+        if ( deployTo != null )
+        {
+            Matcher matcher = DEPLOYTO_PATTERN.matcher( deployTo );
+
+            if ( !matcher.matches() )
+            {
+                throw new MojoFailureException( deployTo, "Invalid syntax for repository.",
+                                                "Invalid syntax for remote repository. Use \"id::layout::url\"." );
+            }
+            else
+            {
+                String id = matcher.group( 1 ).trim();
+                String layout = matcher.group( 2 ).trim();
+                String url = matcher.group( 3 ).trim();
+
+                ArtifactRepositoryLayout repoLayout;
+                try
+                {
+                    repoLayout = (ArtifactRepositoryLayout) container.lookup( ArtifactRepositoryLayout.ROLE, layout );
+                }
+                catch ( ComponentLookupException e )
+                {
+                    throw new MojoExecutionException( "Cannot find repository layout: " + layout, e );
+                }
+
+                return new DefaultArtifactRepository( id, url, repoLayout );
+            }
+        }
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void contextualize( Context context )
+        throws ContextException
+    {
+        this.container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
     }
 
     /**
@@ -404,8 +531,8 @@ public class MakeArtifactsMojo
 
             if ( version == null )
             {
-                getLog().warn( "Missing version for artifact " + artifactId + ", skipping" );
-                continue;
+                getLog().info( "Missing version for artifact " + artifactId + ", assuming any version > 0" );
+                version = "[0,)";
             }
 
             Dependency dep = new Dependency();
@@ -421,6 +548,12 @@ public class MakeArtifactsMojo
 
     }
 
+    /**
+     * Loads the plugin.properties file from a jar, usually needed in order to resolve the artifact name.
+     * @param file jar file
+     * @return loaded Properties (or an empty properties if no plugin.properties is found)
+     * @throws IOException for exceptions while reading the jar file
+     */
     private Properties loadPluginProperties( JarFile file )
         throws IOException
     {
