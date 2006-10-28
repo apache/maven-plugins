@@ -49,7 +49,7 @@ public class MakeArtifactsTest
     {
         Dependency[] deps = mojo.parseDependencies( "org.eclipse.ui;bundle-version=\"[3.2.0,4.0.0)\","
             + "org.eclipse.ui.console;resolution:=\"optional\";bundle-version=\"[3.1.100,4.0.0)\",org.eclipse.help;"
-            + "bundle-version=\"[3.2.0,4.0.0)\",org.eclipse.core.expressions;bundle-version=\"[3.2.0,4.0.0)\"" );
+            + "bundle-version=\"[3.2.0,4.0.0)\",org.eclipse.core.expressions;bundle-version=\"[3.2.0,4.0.0)\"", false );
 
         assertEquals( 4, deps.length );
         assertEquals( "org.eclipse.ui", deps[0].getArtifactId() );
@@ -61,7 +61,41 @@ public class MakeArtifactsTest
         assertEquals( "org.eclipse.core.expressions", deps[3].getArtifactId() );
         assertEquals( "[3.2.0,4.0.0)", deps[3].getVersion() );
     }
-    
+
+    /**
+     * Tests the parsing of the "Require-Bundle" entry from a manifest.
+     */
+    public void testParseDependenciesWithQualifier()
+    {
+        Dependency[] deps = mojo.parseDependencies( "org.eclipse.ui;bundle-version=\"[3.2.0,4.0.0)\","
+            + "org.eclipse.ui.console;resolution:=\"optional\";bundle-version=\"[3.1.100,4.0.0)\",org.eclipse.help;"
+            + "bundle-version=\"[3.2.0,4.0.0)\",org.eclipse.core.expressions;bundle-version=\"[3.2.0,4.0.0)\"", true );
+
+        assertEquals( 4, deps.length );
+        assertEquals( "org.eclipse.ui", deps[0].getArtifactId() );
+        assertEquals( "[3.2.0.0,4.0.0.0)", deps[0].getVersion() );
+        assertEquals( "org.eclipse.ui.console", deps[1].getArtifactId() );
+        assertEquals( "[3.1.100.0,4.0.0.0)", deps[1].getVersion() );
+        assertEquals( "org.eclipse.help", deps[2].getArtifactId() );
+        assertEquals( "[3.2.0.0,4.0.0.0)", deps[2].getVersion() );
+        assertEquals( "org.eclipse.core.expressions", deps[3].getArtifactId() );
+        assertEquals( "[3.2.0.0,4.0.0.0)", deps[3].getVersion() );
+    }
+
+    /**
+     * Tests for addQualifierToVersionsInRange()
+     *
+     */
+    public void testAddQualifierToVersionsInRange()
+    {
+        assertEquals( "[3.2.0.0,4.0.0.0)", mojo.addQualifierToVersionsInRange( "[3.2.0,4.0.0)" ) );
+        assertEquals( "[,4.0.0.0)", mojo.addQualifierToVersionsInRange( "[,4.0.0)" ) );
+        assertEquals( "[3.2.0.0,4.0.0.0)", mojo.addQualifierToVersionsInRange( "[3.2.0.0,4.0.0.0)" ) );
+    }
+
+    /**
+     * Test the generation of a groupId from a bundle symbolic name.
+     */
     public void testCreateGroupId()
     {
         assertEquals( "test", mojo.createGroupId( "test" ) );
