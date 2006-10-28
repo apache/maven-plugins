@@ -33,10 +33,10 @@
       <question>What is Software Configuration Management or SCM?</question>
       <answer>
         <p>
-        According to Roger Pressman (in his book) Software Engineering: A Practitioner's Approach, SCM is a "set of activities
+        According to Roger Pressman (in his book) Software Engineering: A Practitioner's Approach, SCM is a <em>"set of activities
         designed to control change by identifying the work products that are likely to change, establishing relationships among
         them, defining mechanisms for managing different versions of these work products, controlling the changes imposed, and
-        auditing and reporting on the changes made."
+        auditing and reporting on the changes made."</em>
         </p>
       </answer>
     </faq>

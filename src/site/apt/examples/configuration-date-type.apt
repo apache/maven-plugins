@@ -24,8 +24,12 @@
 
 Using Date Type
 
-  To generate the changelog reports using the <<<type>>> "date" as the basis for generation, set the configuration in the
-  project pom as follows:
+  To generate the changelog reports showing what has changed between two dates,
+  you should use the "date" <<<type>>>.
+
+  With the following configuration, the generated reports will cover SCM
+  activities between Aug 1, 2005 to Sept 1, 2005. Please note that the date
+  range is inclusive.
 
 +-----+
 <project>
@@ -49,6 +53,3 @@ Using Date Type
   ...
 </project>
 +-----+
-
-  The generated changelog reports will cover SCM activities between Aug 1, 2005 to Sept 1, 2005. Please note that the
-  date range is inclusive.

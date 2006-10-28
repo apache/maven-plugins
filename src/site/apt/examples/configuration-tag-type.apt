@@ -24,8 +24,11 @@
 
 Using Tag Type
 
-  To generate the changelog reports using the <<<type>>> "tag" as the basis for generation, set the configuration in the
-  project pom as follows:
+  To generate the changelog reports showing what has changed between two tags,
+  you should use the "tag" <<<type>>>.
+
+  With the following configuration, reports will be generated that covers SCM
+  activities between the <<<alpha-2>>> tag and the <<<alpha-3>>> tag.
 
 +-----+
 <project>
@@ -35,27 +38,16 @@ Using Tag Type
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changelog-plugin</artifactId>
-        <reportSets>
-          <reportSet>
-            <id>dev-only</id>
-            <configuration>
-              <type>tag</type>
-              <tags>
-                <tag implementation="java.lang.String">alpha-2</tag>
-                <tag implementation="java.lang.String">alpha-3</tag>
-              </tags>
-            </configuration>
-            <reports>
-              <report>dev-activity</report>
-            </reports>
-          </reportSet>
-        </reportSets>
+        <configuration>
+          <type>tag</type>
+          <tags>
+            <tag implementation="java.lang.String">alpha-2</tag>
+            <tag implementation="java.lang.String">alpha-3</tag>
+          </tags>
+        </configuration>
       </plugin>
     </plugins>
   </reporting>
   ...
 </project>
 +-----+
-
-  With the above configuration, a dev-activity report that covers SCM activities between alpha-2 tag to alpha-3 tag will
-  be generated.

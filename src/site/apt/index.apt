@@ -34,13 +34,13 @@ Maven Changelog Plugin
    The Changelog Plugin has three goals:
 
    * {{{changelog-mojo.html}changelog:changelog}} generates the changelog report. The changelog report shows all the SCM activities
-     including the dates, files, and author of the revisions that occurred during the specified change sets.
+     including the dates, files, and author of the revisions that occurred during the specified change set.
 
    * {{{dev-activity-mojo.html}changelog:dev-activity}} generates the developer activity report. The dev-activity report shows a
      summary of the total commits, and the number of files changed of each developer listed in the project descriptor.
 
    * {{{file-activity-mojo.html}changelog:file-activity}} generates the file activity report. The file-activity report lists all
-     files that we're revised during the specified change set.  It is arranged in a way where the file with the most number of revisions is listed first.
+     files that were revised during the specified change set.  It is arranged in a way where the file with the most number of revisions is listed first.
 
 * Usage
 
@@ -49,6 +49,8 @@ Maven Changelog Plugin
 * Examples
 
    The following examples show how to use the Changelog Plugin in more advanced use-cases:
+
+   * {{{examples/selecting-reports.html}Selecting Reports}}
 
    * {{{examples/configuration-date-type.html}Using Date Type}}
 
