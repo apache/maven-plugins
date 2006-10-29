@@ -159,9 +159,13 @@ public class InstallPluginsMojo
             eclipseDir = new File( eclipseDirString );
         }
 
-        if ( !eclipseDir.exists() || !eclipseDir.isDirectory() )
+        if ( eclipseDir.exists() && !eclipseDir.isDirectory() )
         {
             throw new MojoFailureException( "Invalid Eclipse directory: " + eclipseDir );
+        }
+        else if ( !eclipseDir.exists() )
+        {
+            eclipseDir.mkdirs();
         }
 
         for ( Iterator it = artifacts.iterator(); it.hasNext(); )
