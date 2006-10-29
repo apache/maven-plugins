@@ -372,8 +372,7 @@ public class MakeArtifactsMojo
         Artifact artifact = artifactFactory.createArtifact( groupId, artifactId, version, null, "jar" );
         try
         {
-            pomFile = File.createTempFile( "pom", ".xml" );
-            pomFile.deleteOnExit();
+            pomFile = File.createTempFile( "pom-" + pomArtifact.getId() + "-", ".xml" );
 
             fw = new FileWriter( pomFile );
             pomFile.deleteOnExit();
@@ -390,27 +389,30 @@ public class MakeArtifactsMojo
             IOUtil.close( fw );
         }
 
-        if ( remoteRepo != null )
+        try
         {
-
-            try
+            if ( remoteRepo != null )
             {
                 deployer.deploy( pomFile, pomArtifact, remoteRepo, localRepository );
                 deployer.deploy( pomFile, artifact, remoteRepo, localRepository );
             }
-            catch ( ArtifactDeploymentException e )
+            else
             {
-                throw new MojoExecutionException( "Unable to deploy artifact to repository.", e );
+                installer.install( pomFile, pomArtifact, localRepository );
+                installer.install( file, artifact, localRepository );
             }
         }
-        try
+        catch ( ArtifactDeploymentException e )
         {
-            installer.install( pomFile, pomArtifact, localRepository );
-            installer.install( file, artifact, localRepository );
+            throw new MojoExecutionException( "Unable to deploy artifact to repository.", e );
         }
         catch ( ArtifactInstallationException e )
         {
             throw new MojoExecutionException( "Unable to install artifact to repository.", e );
+        }
+        finally
+        {
+            pomFile.delete();
         }
 
     }
