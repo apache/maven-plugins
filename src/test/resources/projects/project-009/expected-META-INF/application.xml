@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<application xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/application_1_4.xsd" version="1.4">
+  <description>The purpose of this application is to test the ApplicationXmlMojo execution with
+            custom settings.</description>
+  <display-name>Sample test application #008</display-name>
+  <module>
+    <ejb>ejb-sample-one-1.0.jar</ejb>
+  </module>
+</application>
