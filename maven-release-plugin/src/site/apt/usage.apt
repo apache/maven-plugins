@@ -39,30 +39,31 @@ mvn -Dusername=your_username release:prepare
 
 * Set where to tag the files in Subversion
 
-  These example shows how to set the repository location for all tags to be created in Subversion.
+  This example shows how to set the repository location for all tags to be created in Subversion.
   Note that it is not needed if you use the standard SVN layout, where the root project is in <<<trunk>>>, and
   there is a <<<tags>>> directory immediately above it.
 
 -------------------
 <project>
+  ...
+  <build>
     ...
-    <build>
-      ...
-      <plugins>
-        <plugin>
-          <artifactId>maven-release-plugin</artifactId>
-          <configuration>
-            <tagBase>https://svn.apache.org/repos/asf/maven/components/releases</tagBase>
-          </configuration>
-        </plugin>
-      </plugins>
-      ...
-    </build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <configuration>
+          <tagBase>https://svn.apache.org/repos/asf/maven/components/releases</tagBase>
+        </configuration>
+      </plugin>
+    </plugins>
     ...
+  </build>
+  ...
 </project>
 -------------------
 
-* Running a Dry Run
+* Do a Dry Run
 
   Since the release plugin performs a number of operations that change the project, it may be wise to do a dry run
   before a big release or on a new project. To do this, commit all of your files as if you were about to run a full
@@ -81,9 +82,9 @@ mvn release:clean
 
   This will remove all of the files created above, and the project will be ready to execute the proper release.
 
-* Running in Batch Mode
+* Run in Batch Mode
 
-  Sometimes it is desirable to do the commit/tag process on a regular interval (eg, to produce nightly or integration
+  Sometimes it is desirable to do the commit/tag process on a regular interval (e.g. to produce nightly or integration
   builds through a build server). To use the default inputs for the versions and tag information and not prompt for any
   values, use Maven's <<<--batch-mode>>> setting:
 

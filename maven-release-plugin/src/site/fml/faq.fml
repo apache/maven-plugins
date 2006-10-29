@@ -19,7 +19,7 @@
 <faqs id="FAQ" title="Frequently Asked Questions">
  <part id="General">
    <faq id="versioning">
-     <question>Releasing from a parent pom, won't all its modules have the same release version and dev version as this parent?</question>
+     <question>When releasing from a parent pom, won't all its modules have the same release version and dev version as this parent?</question>
      <answer>
        <p>Maven Release Plugin will prompt for each project's version.</p>
      </answer>

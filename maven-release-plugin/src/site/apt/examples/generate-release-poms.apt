@@ -26,15 +26,15 @@
 
 Generate Release POMs
 
-  To generate poms with resolved information (e.g. version numbers) to check the values the release plugin will use,
-  set the property generateReleasePoms to true. Resolved values will be saved in release-pom.xml
+  To generate poms with resolved information (e.g. version numbers) to check the values that the release plugin will use,
+  set the property <<<generateReleasePoms>>> to <<<true>>>. Resolved values will be saved in release-pom.xml
 
 -------
 mvn release:perform -DgenerateReleasePoms=true
 -------
 
-  This relies on <<<release.properties>>> being present from a previous release. If this is not the case, you need to
-  give the goal the name of the URL and optional tag to perform the release from. For example:
+  This relies on <<<release.properties>>> being present from a previous release preparation. If this is not the case,
+  you need to give the goal the name of the URL and optional tag to perform the release from. For example:
 
 -------
 mvn release:perform -DgenerateReleasePoms=true
