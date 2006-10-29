@@ -17,7 +17,10 @@ package org.apache.maven.plugin.ide;
  */
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,6 +28,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.jar.Attributes;
@@ -57,6 +61,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.util.IOUtil;
 
 /**
  * Abstract base plugin which takes care of the common stuff usually needed by maven IDE plugins. A
@@ -159,7 +164,10 @@ public abstract class AbstractIdeSupportMojo
     protected List reactorProjects;
 
     /**
-     * Enables/disables the downloading of source attachments. Defaults to false.
+     * Enables/disables the downloading of source attachments. Defaults to false. When this flag is <code>true</code>
+     * remote repositories are checked for sources: in order to avoid repeated check for unavailable source archives,
+     * a status cache is mantained into the target dir of the root project. Run <code>mvn:clean</code> or delete the
+     * file <code>mvn-eclipse-cache.properties</code> in order to reset this cache.
      * @parameter expression="${downloadSources}"
      */
     protected boolean downloadSources;
@@ -702,12 +710,61 @@ public abstract class AbstractIdeSupportMojo
     }
 
     /**
+     * Find the reactor target dir. executedProject doesn't have the multiproject root dir set, and the only way to
+     * extract it is iterating on parent projects.
+     * @param prj current project
+     * @return the parent target dir.
+     */
+    private File getReactorTargetDir( MavenProject prj )
+    {
+        if ( prj.getParent() != null )
+        {
+            if ( prj.getParent().getBasedir() != null && prj.getParent().getBasedir().exists() )
+            {
+                return getReactorTargetDir( prj.getParent() );
+            }
+        }
+        return new File( prj.getBuild().getDirectory() );
+    }
+
+    /**
      * Resolve source artifacts and download them if <code>downloadSources</code> is <code>true</code>. Source and
      * javadocs artifacts will be attached to the <code>IdeDependency</code>
      * @param deps resolved dependencies
      */
     private void resolveSourceArtifacts( IdeDependency[] deps )
     {
+
+        File reactorTargetDir = getReactorTargetDir( project );
+        File unavailableSourcesTmpFile = new File( reactorTargetDir, "mvn-eclipse-cache.properties" );
+
+        getLog().info( "Using source status cache: " + unavailableSourcesTmpFile.getAbsolutePath() );
+
+        // create target dir if missing
+        if ( !unavailableSourcesTmpFile.getParentFile().exists() )
+        {
+            unavailableSourcesTmpFile.getParentFile().mkdirs();
+        }
+
+        Properties unavailableSourcesCache = new Properties();
+        if ( unavailableSourcesTmpFile.exists() )
+        {
+            InputStream is = null;
+            try
+            {
+                is = new FileInputStream( unavailableSourcesTmpFile );
+                unavailableSourcesCache.load( is );
+            }
+            catch ( IOException e )
+            {
+                getLog().warn( "Unable to read source status for reactor projects" );
+            }
+            finally
+            {
+                IOUtil.close( is );
+            }
+
+        }
 
         ArtifactRepository localRepository = getLocalRepository();
         ArtifactResolver artifactResolver = getArtifactResolver();
@@ -726,32 +783,65 @@ public abstract class AbstractIdeSupportMojo
                 continue;
             }
 
-            // source artifact: use the "sources" classifier added by the source plugin
-            Artifact sourceArtifact = IdeUtils.resolveArtifactWithClassifier( dependency.getGroupId(), dependency
-                .getArtifactId(), dependency.getVersion(), "sources", localRepository, artifactResolver, //$NON-NLS-1$
-                                                                              artifactFactory, remoteRepos, getLog() );
-
-            if ( sourceArtifact.isResolved() )
+            if ( !unavailableSourcesCache.containsKey( dependency.getId() + ":sources" ) )
             {
-                dependency.setSourceAttachment( sourceArtifact.getFile() );
-            }
-            else
-            {
-                // try using a plain javadoc jar if the source jar is not available
-                Artifact javadocArtifact = IdeUtils.resolveArtifactWithClassifier( dependency.getGroupId(), dependency
-                    .getArtifactId(), dependency.getVersion(), "javadoc", localRepository, artifactResolver, //$NON-NLS-1$
-                                                                                   artifactFactory, remoteRepos,
-                                                                                   getLog() );
-
-                if ( javadocArtifact.isResolved() )
+                // source artifact: use the "sources" classifier added by the source plugin
+                Artifact sourceArtifact = IdeUtils.resolveArtifactWithClassifier( dependency.getGroupId(), dependency
+                    .getArtifactId(), dependency.getVersion(), "sources", localRepository, artifactResolver, //$NON-NLS-1$
+                                                                                  artifactFactory, remoteRepos,
+                                                                                  getLog() );
+                if ( sourceArtifact.isResolved() )
                 {
-                    dependency.setJavadocAttachment( javadocArtifact.getFile() );
+                    dependency.setSourceAttachment( sourceArtifact.getFile() );
+                }
+                else
+                {
+                    unavailableSourcesCache.put( dependency.getId() + ":sources", Boolean.TRUE.toString() );
+                    // @todo also report deps without a source attachment but with a javadoc one?
+                    missingSourceDependencies.add( dependency );
                 }
 
-                // @todo also report deps without a source attachment but with a javadoc one?
-                missingSourceDependencies.add( dependency );
+            }
+
+            // @todo we should probably not make source/javadocs exclusive
+            if ( dependency.getSourceAttachment() == null )
+            {
+                if ( !unavailableSourcesCache.containsKey( dependency.getId() + ":javadoc" ) )
+                {
+                    // try using a plain javadoc jar if the source jar is not available
+                    Artifact javadocArtifact = IdeUtils
+                        .resolveArtifactWithClassifier( dependency.getGroupId(), dependency.getArtifactId(), dependency
+                            .getVersion(), "javadoc", localRepository, artifactResolver, //$NON-NLS-1$
+                                                        artifactFactory, remoteRepos, getLog() );
+
+                    if ( javadocArtifact.isResolved() )
+                    {
+                        dependency.setJavadocAttachment( javadocArtifact.getFile() );
+                    }
+                    else
+                    {
+                        unavailableSourcesCache.put( dependency.getId() + ":javadoc", Boolean.TRUE.toString() );
+                    }
+                }
+
             }
         }
+
+        FileOutputStream fos = null;
+        try
+        {
+            fos = new FileOutputStream( unavailableSourcesTmpFile );
+            unavailableSourcesCache.store( fos, "Temporary index for unavailable sources and javadocs" );
+        }
+        catch ( IOException e )
+        {
+            getLog().warn( "Unable to cache source status for reactor projects" );
+        }
+        finally
+        {
+            IOUtil.close( fos );
+        }
+
     }
 
     /**
