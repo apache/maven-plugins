@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>ear</groupId>
-  <artifactId>maven-ear-plugin-test-project-01</artifactId>
+  <artifactId>maven-ear-plugin-test-project-006</artifactId>
   <version>99.0</version>
   <name>Maven</name>
   <packaging>ear</packaging>
   <dependencies>
     <dependency>
       <groupId>eartest</groupId>
-      <artifactId>ejb-sample-one</artifactId>
+      <artifactId>jar-sample-one</artifactId>
       <version>1.0</version>
-      <type>ejb</type>
+    </dependency>
+    <dependency>
+      <groupId>eartest</groupId>
+      <artifactId>jar-sample-two</artifactId>
+      <version>1.0</version>
     </dependency>
   </dependencies>
   <build>
@@ -20,8 +24,14 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-ear-plugin</artifactId>
-        <configuration>
-          <displayName>Sample Ear Application</displayName>
+        <configuration>          
+          <modules>
+            <javaModule>
+              <groupId>eartest</groupId>
+              <artifactId>jar-sample-one</artifactId>
+              <excluded>true</excluded>
+            </javaModule>
+          </modules>
         </configuration>
       </plugin>
     </plugins>

@@ -1,0 +1,47 @@
+ ------
+ Tests
+ ------
+ Stephane Nicoll
+ ------
+ 29 October 2006
+ ------
+
+~~ Copyright 2006 The Apache Software Foundation.
+~~
+~~ Licensed under the Apache License, Version 2.0 (the "License");
+~~ you may not use this file except in compliance with the License.
+~~ You may obtain a copy of the License at
+~~
+~~      http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing, software
+~~ distributed under the License is distributed on an "AS IS" BASIS,
+~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~ See the License for the specific language governing permissions and
+~~ limitations under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/guides/mini/guide-apt-format.html
+
+
+Ear Plugin Tests
+
+  This page lists the ear plugin integration tests. Each tests is built on top of a sample project available in
+  the {{{http://svn.apache.org/viewvc/maven/plugins/trunk/maven-ear-plugin/src/test/resources/projects/}svn repository}}.
+  This structure provides lots of concrete use cases for beginners.
+
+  * project-001: builds an EAR with a single EJB and no configuration.
+
+  * project-002: builds an EAR with a customized artifact location and a customized artifact name
+
+  * project-003: builds an EAR with a defalt bundle directory for _java_ modules
+
+  * project-004: builds an EAR with a defalt bundle directory for _java_ modules and a custom location overriding the default
+
+  * project-005: builds an EAR with a custom URI
+
+  * project-006: builds an EAR with an excluded module
+
+  * project-007: builds an EAR with a classified artifact and no extra configuration
+
+   
