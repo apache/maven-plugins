@@ -17,7 +17,6 @@ package org.apache.maven.plugin.ear;
  */
 
 import junit.framework.TestCase;
-import org.apache.maven.embedder.MavenEmbedder;
 import org.apache.maven.it.Verifier;
 import org.apache.maven.it.util.ResourceExtractor;
 
@@ -31,7 +30,7 @@ import java.util.Properties;
  * Base class for ear test cases.
  *
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
- * @version $Id: $
+ * @version $Id$
  */
 public abstract class AbstractEarPluginTestCase
     extends TestCase
@@ -40,11 +39,6 @@ public abstract class AbstractEarPluginTestCase
     protected final String FINAL_NAME_PREFIX = "maven-ear-plugin-test-";
 
     protected final String FINAL_NAME_SUFFIX = "-99.0";
-
-    /**
-     * The embedder.
-     */
-    protected MavenEmbedder maven;
 
     /**
      * The base directory.

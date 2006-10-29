@@ -71,7 +71,8 @@ Maven EAR Plugin
 
 * Usage
 
-  Instructions on how to use the EAR Plugin can be found {{{usage.html}here}}.
+  Instructions on how to use the EAR Plugin can be found {{{usage.html}here}}. See
+  also the {{{tests.html}test suite}}.
 
 * Examples
 
