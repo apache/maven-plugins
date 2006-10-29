@@ -372,7 +372,7 @@ public class MakeArtifactsMojo
         Artifact artifact = artifactFactory.createArtifact( groupId, artifactId, version, null, "jar" );
         try
         {
-            pomFile = File.createTempFile( "pom-" + pomArtifact.getId() + "-", ".xml" );
+            pomFile = File.createTempFile( "pom-", ".xml" );
 
             fw = new FileWriter( pomFile );
             pomFile.deleteOnExit();
