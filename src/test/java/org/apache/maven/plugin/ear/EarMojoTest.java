@@ -17,7 +17,6 @@ package org.apache.maven.plugin.ear;
  */
 
 /**
- *
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
@@ -49,7 +48,8 @@ public class EarMojoTest
     public void testProject003()
         throws Exception
     {
-        doTestProject( "project-003", new String[]{"APP-INF/lib/jar-sample-one-1.0.jar", "APP-INF/lib/jar-sample-two-1.0.jar"} );
+        doTestProject( "project-003", new String[]{"ejb-sample-one-1.0.jar", "APP-INF/lib/jar-sample-one-1.0.jar",
+            "APP-INF/lib/jar-sample-two-1.0.jar"} );
     }
 
     /**
@@ -59,7 +59,8 @@ public class EarMojoTest
     public void testProject004()
         throws Exception
     {
-        doTestProject( "project-004", new String[]{"jar-sample-one-1.0.jar", "APP-INF/lib/jar-sample-two-1.0.jar"} );
+        doTestProject( "project-004", new String[]{"ejb-sample-one-1.0.jar", "jar-sample-one-1.0.jar",
+            "APP-INF/lib/jar-sample-two-1.0.jar"} );
     }
 
     /**
@@ -68,7 +69,7 @@ public class EarMojoTest
     public void testProject005()
         throws Exception
     {
-        doTestProject( "project-005", new String[]{"libs/another-name.jar"} );
+        doTestProject( "project-005", new String[]{"ejb-sample-one-1.0.jar", "libs/another-name.jar"} );
     }
 
     /**
@@ -77,7 +78,7 @@ public class EarMojoTest
     public void testProject006()
         throws Exception
     {
-        doTestProject( "project-006", new String[]{"jar-sample-two-1.0.jar"} );
+        doTestProject( "project-006", new String[]{"ejb-sample-one-1.0.jar", "jar-sample-two-1.0.jar"} );
     }
 
     /**
@@ -89,16 +90,50 @@ public class EarMojoTest
         doTestProject( "project-007", new String[]{"ejb-sample-one-1.0-classified.jar"} );
     }
 
+    /**
+     * Builds an EAR with deployment descriptor configuration for J2EE 1.3.
+     */
+    public void testProject008()
+        throws Exception
+    {
+        doTestProject( "project-008", new String[]{"ejb-sample-one-1.0.jar"} );
+    }
 
+    /**
+     * Builds an EAR with deployment descriptor configuration for J2EE 1.4.
+     */
+    public void testProject009()
+        throws Exception
+    {
+        doTestProject( "project-009", new String[]{"ejb-sample-one-1.0.jar"} );
+    }
+
+    /**
+     * Builds an EAR with deployment descriptor configuration for Java EE 5.
+     */
+    public void testProject010()
+        throws Exception
+    {
+        doTestProject( "project-010", new String[]{"ejb-sample-one-1.0.jar"} );
+    }
+
+    /**
+     * Builds an EAR and make sure that deployment descriptor default settings are applied.
+     */
+    public void testProject011()
+        throws Exception
+    {
+        doTestProject( "project-011", new String[]{"ejb-sample-one-1.0.jar"} );
+    }   
 
 
     /* Need the embedder for this one since it's new code
-    public void testProject04()
-        throws Exception
-    {
-        doTestProject( "project-04", new String[]{"ejb-sample-one-1.0.jar", "sar-sample-one-1.0.sar"},
-                       new boolean[]{false, true} );
-    } */
+   public void testProject04()
+       throws Exception
+   {
+       doTestProject( "project-04", new String[]{"ejb-sample-one-1.0.jar", "sar-sample-one-1.0.sar"},
+                      new boolean[]{false, true} );
+   } */
 
 
 }
