@@ -394,7 +394,7 @@ public class MakeArtifactsMojo
             if ( remoteRepo != null )
             {
                 deployer.deploy( pomFile, pomArtifact, remoteRepo, localRepository );
-                deployer.deploy( pomFile, artifact, remoteRepo, localRepository );
+                deployer.deploy( file, artifact, remoteRepo, localRepository );
             }
             else
             {
