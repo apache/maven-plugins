@@ -19,10 +19,14 @@ package org.apache.maven.plugin.ear;
 import junit.framework.TestCase;
 import org.apache.maven.it.Verifier;
 import org.apache.maven.it.util.ResourceExtractor;
+import org.custommonkey.xmlunit.XMLAssert;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -62,9 +66,8 @@ public abstract class AbstractEarPluginTestCase
     protected File executeMojo( final String projectName, final Properties properties, boolean expectNoError )
         throws Exception
     {
-
         File testDir = ResourceExtractor.simpleExtractResources( getClass(), "/projects/" + projectName );
-        Verifier verifier = new Verifier( testDir.getAbsolutePath(), true );
+        Verifier verifier = new Verifier( testDir.getAbsolutePath());
         verifier.localRepo = localRepositoryDir.getAbsolutePath();
         verifier.executeGoal( "package" );
         // If no error is expected make sure that error logs are free
@@ -89,7 +92,6 @@ public abstract class AbstractEarPluginTestCase
     protected File executeMojo( final String projectName, final Properties properties )
         throws Exception
     {
-
         return executeMojo( projectName, properties, true );
     }
 
@@ -97,18 +99,45 @@ public abstract class AbstractEarPluginTestCase
     /**
      * Executes the specified projects and asserts the given artifacts.
      *
-     * @param projectName        the project to test
-     * @param expectedArtifacts  the list of artifacts to be found in the EAR archive
-     * @param artifactsDirectory whether the artifact is an exploded artifactsDirectory or not
+     * @param projectName               the project to test
+     * @param expectedArtifacts         the list of artifacts to be found in the EAR archive
+     * @param artifactsDirectory        whether the artifact is an exploded artifactsDirectory or not
+     * @param testDeploymentDescriptors whether we should test deployemnt descriptors
+     * @return the base directory of the project
      * @throws Exception
      */
-    protected void doTestProject( final String projectName, final String[] expectedArtifacts,
-                                  final boolean[] artifactsDirectory )
+    protected File doTestProject( final String projectName, final String[] expectedArtifacts,
+                                  final boolean[] artifactsDirectory, boolean testDeploymentDescriptors )
         throws Exception
     {
         final File baseDir = executeMojo( projectName, new Properties() );
 
         assertArchiveContent( baseDir, projectName, expectedArtifacts, artifactsDirectory );
+
+        if ( testDeploymentDescriptors )
+        {
+            assertDeploymentDescriptors( baseDir, projectName );
+        }
+
+        return baseDir;
+
+    }
+
+    /**
+     * Executes the specified projects and asserts the given artifacts. Assert the
+     * deployment descriptors are valid
+     *
+     * @param projectName        the project to test
+     * @param expectedArtifacts  the list of artifacts to be found in the EAR archive
+     * @param artifactsDirectory whether the artifact is an exploded artifactsDirectory or not
+     * @return the base directory of the project
+     * @throws Exception
+     */
+    protected File doTestProject( final String projectName, final String[] expectedArtifacts,
+                                  final boolean[] artifactsDirectory )
+        throws Exception
+    {
+        return doTestProject( projectName, expectedArtifacts, artifactsDirectory, true );
 
     }
 
@@ -116,14 +145,32 @@ public abstract class AbstractEarPluginTestCase
      * Executes the specified projects and asserts the given artifacts as
      * artifacts (non directory)
      *
-     * @param projectName       the project to test
-     * @param expectedArtifacts the list of artifacts to be found in the EAR archive
+     * @param projectName               the project to test
+     * @param expectedArtifacts         the list of artifacts to be found in the EAR archive
+     * @param testDeploymentDescriptors whether we should test deployemnt descriptors
+     * @return the base directory of the project
      * @throws Exception
      */
-    protected void doTestProject( final String projectName, final String[] expectedArtifacts )
+    protected File doTestProject( final String projectName, final String[] expectedArtifacts,
+                                  boolean testDeploymentDescriptors )
         throws Exception
     {
-        doTestProject( projectName, expectedArtifacts, new boolean[expectedArtifacts.length] );
+        return doTestProject( projectName, expectedArtifacts, new boolean[expectedArtifacts.length] );
+    }
+
+    /**
+     * Executes the specified projects and asserts the given artifacts as
+     * artifacts (non directory). Assert the deployment descriptors are valid
+     *
+     * @param projectName       the project to test
+     * @param expectedArtifacts the list of artifacts to be found in the EAR archive
+     * @return the base directory of the project
+     * @throws Exception
+     */
+    protected File doTestProject( final String projectName, final String[] expectedArtifacts )
+        throws Exception
+    {
+        return doTestProject( projectName, expectedArtifacts, true );
     }
 
     protected void assertEarArchive( final File baseDir, final String projectName )
@@ -175,7 +222,7 @@ public abstract class AbstractEarPluginTestCase
             }
         }
 
-        final List actualFiles = buildFiles( dir, expectedDirectories );
+        final List actualFiles = buildArchiveContentFiles( dir, expectedDirectories );
         assertEquals( "Artifacts mismatch " + actualFiles, artifactNames.length, actualFiles.size() );
         for ( int i = 0; i < artifactNames.length; i++ )
         {
@@ -191,7 +238,7 @@ public abstract class AbstractEarPluginTestCase
         }
     }
 
-    protected List buildFiles( final File baseDir, final List expectedDirectories )
+    protected List buildArchiveContentFiles( final File baseDir, final List expectedDirectories )
     {
         final List result = new ArrayList();
         addFiles( baseDir, result, expectedDirectories );
@@ -258,5 +305,84 @@ public abstract class AbstractEarPluginTestCase
             basedir = new File( basedirString );
         }
         return basedir;
+    }
+
+    // Generated application.xml stuff
+
+    /**
+     * Asserts that the deployment descriptors have been generated successfully.
+     * <p/>
+     * This test assumes that deployment descriptors are located in the
+     * <tt>expected-META-INF</tt> directory of the project. Note that the
+     * <tt>MANIFEST.mf</tt> file is ignored and is not tested.
+     *
+     * @param baseDir     the directory of the tested project
+     * @param projectName the name of the project
+     */
+    protected void assertDeploymentDescriptors( final File baseDir, final String projectName )
+        throws IOException
+    {
+        final File earDirectory = getEarDirectory( baseDir, projectName );
+        final File[] actualDeploymentDescriptors = getDeploymentDescriptors( new File( earDirectory, "META-INF" ) );
+        final File[] expectedDeploymentDescriptors =
+            getDeploymentDescriptors( new File( baseDir, "expected-META-INF" ) );
+
+
+        if (expectedDeploymentDescriptors == null) {
+            assertNull( "No deployment descriptor was expected", actualDeploymentDescriptors);
+        } else {
+            assertNotNull( "Missing deployment descriptor", actualDeploymentDescriptors);
+        }
+        // Make sure we have the same number of files
+        assertEquals( "Number of Deployment descriptor(s) mismatch", expectedDeploymentDescriptors.length,
+                      actualDeploymentDescriptors.length );
+
+        // Sort the files so that we have the same behavior here
+        Arrays.sort( expectedDeploymentDescriptors );
+        Arrays.sort( actualDeploymentDescriptors );
+
+        for ( int i = 0; i < expectedDeploymentDescriptors.length; i++ )
+        {
+            File expectedDeploymentDescriptor = expectedDeploymentDescriptors[i];
+            File actualDeploymentDescriptor = actualDeploymentDescriptors[i];
+
+            assertEquals( "File name mismatch", expectedDeploymentDescriptor.getName(),
+                          actualDeploymentDescriptor.getName() );
+
+            FileReader expected = null;
+            FileReader actual = null;
+            try
+            {
+                expected = new FileReader( expectedDeploymentDescriptor);
+                actual = new FileReader( actualDeploymentDescriptor);
+                XMLAssert.assertXMLEqual(
+                    "Wrong deployment descriptor generated for[" + expectedDeploymentDescriptor.getName() + "]",
+                    expected, actual );
+            }
+            catch ( Exception e )
+            {
+                e.printStackTrace();
+                fail( "Could not assert deployment descriptor " + e.getMessage() );
+            } finally {
+                if (expected != null) {
+                    expected.close();
+                }
+                if (actual != null) {
+                    actual.close();
+                }
+            }
+        }
+    }
+
+    private File[] getDeploymentDescriptors( final File ddDirectory )
+    {
+        return ddDirectory.listFiles( new FilenameFilter()
+        {
+
+            public boolean accept( File dir, String name )
+            {
+                return !name.equalsIgnoreCase( "manifest.mf" );
+            }
+        } );
     }
 }
