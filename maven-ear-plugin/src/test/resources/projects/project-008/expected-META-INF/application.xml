@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<!DOCTYPE application PUBLIC
+	"-//Sun Microsystems, Inc.//DTD J2EE Application 1.3//EN"
+	"http://java.sun.com/dtd/application_1_3.dtd">
+<application>
+  <display-name>Sample test application #008</display-name>
+  <description>The purpose of this application is to test the ApplicationXmlMojo execution with
+            custom settings.</description>
+  <module>
+    <ejb>ejb-sample-one-1.0.jar</ejb>
+  </module>
+</application>
