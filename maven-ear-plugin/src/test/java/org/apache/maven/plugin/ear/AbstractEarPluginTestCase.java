@@ -1,5 +1,21 @@
 package org.apache.maven.plugin.ear;
 
+/*
+ * Copyright 2001-2005 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import junit.framework.TestCase;
 import org.apache.maven.embedder.MavenEmbedder;
 import org.apache.maven.it.Verifier;
@@ -12,9 +28,10 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * @author Stephane Nicoll <stephane.nicoll@bsb.com>
- * @author $Author: sni $ (last edit)
- * @version $Revision: 1.5 $
+ * Base class for ear test cases.
+ *
+ * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
+ * @version $Id: $
  */
 public abstract class AbstractEarPluginTestCase
     extends TestCase
