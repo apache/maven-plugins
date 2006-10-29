@@ -30,7 +30,7 @@ Perform a release
 
    * Checkout from an SCM URL with optional tag
 
-   * Run the predefined maven goals to release the project (by default, <<<deploy site-deploy>>>)
+   * Run the predefined Maven goals to release the project (by default, <<<deploy site-deploy>>>)
 
   To execute this step, run:
 
@@ -38,8 +38,8 @@ Perform a release
 mvn release:perform
 -------
 
-  This relies on <<<release.properties>>> being present from a previous release. If this is not the case, you need to
-  give the goal the name of the URL and optional tag to perform the release from. For example:
+  This relies on <<<release.properties>>> being present from a previous release preparation. If this is not the case,
+  you need to give the goal the name of the URL and optional tag to perform the release from. For example:
 
 -------
 mvn release:perform -DconnectionUrl=scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-release-plugin-2.0

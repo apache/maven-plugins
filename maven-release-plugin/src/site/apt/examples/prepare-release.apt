@@ -28,23 +28,23 @@ Prepare a release
 
   Preparing a release executes the following steps:
 
-   * Check that there's no uncommitted changes in the sources
+   * Check that there are no uncommitted changes in the sources
 
-   * Check that there's no SNAPSHOT dependencies
+   * Check that there are no SNAPSHOT dependencies
 
    * Change the version in the poms from x-SNAPSHOT to a new version (you will be prompted for the versions to use)
 
-   * Transform the SCM information in the POM to the final destination of the tag
+   * Transform the SCM information in the POM to include the final destination of the tag
 
    * Run the project tests against the modified POMs to confirm everything is in working order
 
-   * Commit the change of versions
+   * Commit the modified POMs
 
    * Tag the code in the SCM with a version name (this will be prompted for)
 
-   * Bump the version in the poms to a new value y-SNAPSHOT (these values are prompted also)
+   * Bump the version in the POMs to a new value y-SNAPSHOT (these values will also be prompted for)
 
-   * Commit the change of versions
+   * Commit the modified POMs
 
   To execute this step, run:
 
@@ -52,8 +52,10 @@ Prepare a release
 mvn release:prepare
 -------
 
-  <<Note:>> If an error occurs, or the process is cancelled, then running this will pick up from where the last one
-  left off from. If you wish to start again, use:
+  <<Note:>> If an error occurs, or the process is cancelled, then running this command again will pick up from where the
+  last one left off.
+
+  If you wish to start again, use:
 
 -------
 mvn release:prepare -Dresume=false
@@ -65,5 +67,5 @@ mvn release:prepare -Dresume=false
 mvn release:clean release:prepare
 -------
 
-  Note that if any changes have been made to your source files they might need to be reverted before you restart the
+  <<Note:>> If any changes have been made to your source files they might need to be reverted before you restart the
   prepare process.

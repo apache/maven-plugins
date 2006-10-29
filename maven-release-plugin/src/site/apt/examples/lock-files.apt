@@ -26,15 +26,15 @@
 
 Lock Files During Release
 
-  If you want to lock the files during release operation set the property useEditMode to true. Default value of this
-  property is false.
+  If you want to lock the files during release operation set the property <<<useEditMode>>> to <<<true>>>. The default
+  value of this property is <<<false>>>.
 
 -------
 mvn release:perform -DuseEditMode=true
 -------
 
-  This relies on <<<release.properties>>> being present from a previous release. If this is not the case, you need to
-  give the goal the name of the URL and optional tag to perform the release from. For example:
+  This relies on <<<release.properties>>> being present from a previous release preparation. If this is not the case,
+  you need to give the goal the name of the URL and optional tag to perform the release from. For example:
 
 -------
 mvn release:perform -DuseEditMode=true

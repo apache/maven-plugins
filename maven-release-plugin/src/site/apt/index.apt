@@ -27,7 +27,15 @@
 Maven Release Plugin
 
   This plugin is used to release a project with Maven, saving a lot of repetitive, manual work.
-  Releasing a project takes two steps: prepare and perform.
+  Releasing a project is made in two steps: prepare and perform.
+
+* Goals Overview
+
+  * {{{clean-mojo.html}release:clean}} Clean up after a release preparation.
+
+  * {{{perform-mojo.html}release:perform}} Perform a release from SCM
+
+  * {{{prepare-mojo.html}release:prepare}} Prepare for a release in SCM.
 
 * Usage
 
