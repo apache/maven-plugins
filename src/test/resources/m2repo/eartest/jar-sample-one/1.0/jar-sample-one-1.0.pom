@@ -1,0 +1,10 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>eartest</groupId>
+  <artifactId>jar-sample-one</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0</version>
+  <distributionManagement>
+    <status>verified</status>
+  </distributionManagement>
+</project>
