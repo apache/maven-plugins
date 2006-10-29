@@ -10,6 +10,12 @@
   <dependencies>
     <dependency>
       <groupId>eartest</groupId>
+      <artifactId>ejb-sample-one</artifactId>
+      <version>1.0</version>
+      <type>ejb</type>
+    </dependency>
+    <dependency>
+      <groupId>eartest</groupId>
       <artifactId>jar-sample-one</artifactId>
       <version>1.0</version>
     </dependency>

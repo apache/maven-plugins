@@ -3,7 +3,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>ear</groupId>
-  <artifactId>maven-ear-plugin-test-project-003</artifactId>
+  <artifactId>maven-ear-plugin-test-project-010</artifactId>
   <version>99.0</version>
   <name>Maven</name>
   <packaging>ear</packaging>
@@ -14,16 +14,6 @@
       <version>1.0</version>
       <type>ejb</type>
     </dependency>
-    <dependency>
-      <groupId>eartest</groupId>
-      <artifactId>jar-sample-one</artifactId>
-      <version>1.0</version>
-    </dependency>
-    <dependency>
-      <groupId>eartest</groupId>
-      <artifactId>jar-sample-two</artifactId>
-      <version>1.0</version>
-    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -31,7 +21,13 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-ear-plugin</artifactId>
         <configuration>
-          <defaultJavaBundleDir>APP-INF/lib</defaultJavaBundleDir>
+          <displayName>Sample test application #008</displayName>
+          <description>
+            The purpose of this application is to test the ApplicationXmlMojo execution with
+            custom settings.
+          </description>
+          <encoding>UTF-8</encoding>
+          <version>5</version>
         </configuration>
       </plugin>
     </plugins>
