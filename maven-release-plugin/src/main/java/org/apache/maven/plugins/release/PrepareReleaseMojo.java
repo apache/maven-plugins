@@ -32,7 +32,6 @@ import org.apache.maven.shared.release.ReleaseFailureException;
  * @version $Id$
  * @aggregator
  * @goal prepare
- * @requiresDependencyResolution test
  * @todo [!] check how this works with version ranges
  */
 public class PrepareReleaseMojo
