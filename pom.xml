@@ -10,7 +10,7 @@
   <name>Maven Site plugin</name>
   <version>2.0-SNAPSHOT</version>
   <prerequisites>
-    <!-- TODO: this is not reasonable -->
+    <!-- TODO: this is not reasonable - we need to map a path forward for the change. We can remove this requirement by rolling back r430446 -->
     <maven>2.1-SNAPSHOT</maven>
   </prerequisites>
   <issueManagement>
