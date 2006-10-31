@@ -54,7 +54,7 @@ public class ResolveDependenciesMojo
         // get sets of dependencies
         results = this.getDependencySets( false );
 
-        results.logStatus( getLog(), outputArtifactFilename );
+        results.logStatus( getLog(), outputAbsoluteArtifactFilename );
     }
 
     /**
