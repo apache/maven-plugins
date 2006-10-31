@@ -1,0 +1,30 @@
+<projectDescription>
+  <name>maven-eclipse-plugin-test-project-22</name>
+  <comment/>
+  <projects/>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+      <arguments/>
+    </buildCommand>
+    <buildCommand>
+      <name>org.eclipse.pde.ManifestBuilder</name>
+      <arguments/>
+    </buildCommand>
+    <buildCommand>
+      <name>org.eclipse.pde.SchemaBuilder</name>
+      <arguments/>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+    <nature>org.eclipse.pde.PluginNature</nature>
+  </natures>
+  <linkedResources>
+    <link>
+      <name>junit-3.8.1.jar</name>
+      <type>1</type>
+      <location>${M2_REPO}/junit/junit/3.8.1/junit-3.8.1.jar</location>
+    </link>
+  </linkedResources>
+</projectDescription>

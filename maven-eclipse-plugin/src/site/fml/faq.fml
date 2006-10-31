@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<faqs id="FAQ" title="Frequently Asked Questions">
+ <part id="General">
+   <faq id="eclipse-plugin">
+     <question>Is this the Eclipse Plugin that allows me to run maven commands from within Eclipse IDE?</question>
+     <answer>
+       <p>No. This is a maven plugin to generate Eclipse files for a maven project. This is not an Eclipse Plugin for Maven.</p>
+     </answer>
+   </faq>
+   <faq id="import-project">
+     <question>I already did <i>mvn eclipse:eclipse</i> but when I open Eclipse, my project is not there. Where is it?</question>
+     <answer>
+       <p>You may also need to import the project created by Maven Eclipse Plugin. More information can be found <a href="usage.html#Simple Project">here</a>.</p>
+     </answer>
+   </faq>
+   <faq id="use-add-maven-repo">
+     <question>After running <i>mvn eclipse:eclipse</i>, the generated dependencies are pointing to a non-existing file. What needs to be done?</question>
+     <answer>
+       <p>Before you can setup any maven project to your Eclipse IDE, you need to define first the location of your local repository to Eclipse. This is done by using:</p><pre>eclipse:add-maven-repo</pre>
+     </answer>
+   </faq>
+   <faq id="import-javadoc">
+     <question>Can I make the Eclipse plugin to download and to attach javadocs to my libraries?</question>
+     <answer>
+       <p>Quoting what Fabrizio said in the mailing list...</p>
+       <i>
+       <p>"The current revision in svn of the Eclipse plugin (which is expected
+       to be released as soon as an usable wtp 1.0.1 build will be out) has
+       support for javadoc attachments, as an alternative to source jars."</p>
+
+       <p>"When using the downloadSources flag if a source jar is not found the
+       plugin will look for a javadoc jar. This is expecially useful for non
+       open source projects and when used with Eclipse 3.2 (in Eclipse 3.2 M4
+       javadoc view and editor tooltips also work with javadoc archives)."</p>
+
+       <p>"I didn't find useful to have both sources and javadocs attached, since
+       javadocs are automatically extracted by Eclipse: if you think this
+       should be needed please post an enhancement request in Jira with the
+       reasons... "</p>
+       </i>
+       <p>To go the the mailing list thread of this topic, click <a href="http://www.nabble.com/forum/ViewPost.jtp?post=2370602&amp;framed=y">here</a></p>
+     </answer>
+   </faq>
+ </part>
+</faqs>

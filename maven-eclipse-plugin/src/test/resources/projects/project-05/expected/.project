@@ -1,0 +1,19 @@
+<projectDescription>
+  <name>maven-eclipse-plugin-test-project-5</name>
+  <comment/>
+  <projects/>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.wst.common.modulecore.ComponentStructuralBuilder</name>
+      <arguments/>
+    </buildCommand>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+      <arguments/>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+    <nature>org.eclipse.wst.common.modulecore.ModuleCoreNature</nature>
+  </natures>
+</projectDescription>

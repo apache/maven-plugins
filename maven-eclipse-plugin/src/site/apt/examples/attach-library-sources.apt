@@ -1,0 +1,44 @@
+ ------
+ Attach Library Sources
+ ------
+ Edwin Punzalan
+ ------
+ 14 July 2006
+ ------
+
+
+Attach Library Sources
+
+  Artifacts with sources deployed can be attached to Eclipse libraries using
+  <<<downloadSources>>>.  The sources of the libraries <must> exist in the
+  repository so that the plugin can download it and attach it.
+
+  The following example shows how to do this in the command-line:
+
++-----
+mvn eclipse:eclipse -DdownloadSources=true
++-----
+
+  or in your pom.xml:
+
++-----
+<project>
+  [...]
+  <build>
+    [...]
+    <plugins>
+      [...]
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <configuration>
+          <downloadSources>true</downloadSources>
+        </configuration>
+      </plugin>
+      [...]
+    </plugins>
+    [...]
+  </build>
+  [...]
+</project>
++-----

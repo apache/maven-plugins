@@ -1,0 +1,21 @@
+<projectDescription>
+  <name>maven-eclipse-plugin-test-project-18</name>
+  <comment/>
+  <projects/>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+      <arguments/>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+  </natures>
+  <linkedResources>
+    <link>
+      <name>pom.xml</name>
+      <type>1</type>
+      <location>${basedir}/target/test-classes/projects/project-18/pom.xml</location>
+    </link>
+  </linkedResources>
+</projectDescription>
