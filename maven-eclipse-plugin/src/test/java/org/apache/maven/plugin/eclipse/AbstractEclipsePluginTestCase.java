@@ -15,17 +15,6 @@
  */
 package org.apache.maven.plugin.eclipse;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
-
 import org.apache.maven.cli.ConsoleDownloadMonitor;
 import org.apache.maven.embedder.MavenEmbedder;
 import org.apache.maven.embedder.MavenEmbedderConsoleLogger;
@@ -35,8 +24,23 @@ import org.apache.maven.monitor.event.EventMonitor;
 import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusTestCase;
+import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.jar.JarArchiver;
+import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
@@ -56,7 +60,22 @@ public abstract class AbstractEclipsePluginTestCase
      * Test repository directory.
      */
     protected File localRepositoryDir = getTestFile( "target/test-classes/m2repo" );
+    
+    /**
+     * Location in test localRepository for staging the plugin jar.
+     */
+    protected File pluginFile = new File( localRepositoryDir, "/org/apache/maven/plugins/maven-eclipse-plugin/current/maven-eclipse-plugin-current.jar" );
+    
+    /**
+     * Location in test localRepository for staging the plugin metadata.
+     */
+    protected File metadataFile = new File( localRepositoryDir, "/org/apache/maven/plugins/maven-eclipse-plugin/maven-metadata-local.xml" );
 
+    /**
+     * Location in test localRepository for staging the plugin POM.
+     */
+    protected File pomFile = new File( localRepositoryDir, "/org/apache/maven/plugins/maven-eclipse-plugin/current/maven-eclipse-plugin-current.pom" );
+    
     /**
      * @see org.codehaus.plexus.PlexusTestCase#setUp()
      */
@@ -72,7 +91,50 @@ public abstract class AbstractEclipsePluginTestCase
         this.maven.setInteractiveMode( false );
         this.maven.start();
 
+        stagePlugin();
+
         super.setUp();
+    }
+
+    protected void stagePlugin()
+        throws ArchiverException, IOException
+    {
+        pluginFile.getParentFile().mkdirs();
+        
+        JarArchiver jarArchiver = new JarArchiver();
+        jarArchiver.setDestFile( pluginFile );
+        jarArchiver.addDirectory( new File( "target/classes" ) );
+        
+        jarArchiver.createArchive();
+        
+        FileWriter writer = null;
+        try
+        {
+            metadataFile.getParentFile().mkdirs();
+            
+            writer = new FileWriter( metadataFile );
+            
+            writer.write( "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+                    "\n<metadata>" +
+                    "\n  <groupId>org.apache.maven.plugins</groupId>" +
+                    "\n  <artifactId>maven-eclipse-plugin</artifactId>" +
+                    "\n  <versioning>" +
+                    "\n    <latest>current</latest>" +
+                    "\n    <release>current</release>" +
+                    "\n    <versions>" +
+                    "\n      <version>current</version>" +
+                    "\n    </versions>" +
+                    "\n    <lastUpdated>" + System.currentTimeMillis() + "</lastUpdated>" +
+                    "\n  </versioning>" +
+                    "\n</metadata>" );
+        }
+        finally
+        {
+            IOUtil.close( writer );
+        }
+        
+        pomFile.getParentFile().mkdirs();
+        FileUtils.copyFile( new File( "pom.xml" ), pomFile );
     }
 
     /**
@@ -93,7 +155,7 @@ public abstract class AbstractEclipsePluginTestCase
     protected void testProject( String projectName )
         throws Exception
     {
-        testProject( projectName, new Properties() );
+        testProject( projectName, new Properties(), "clean", "eclipse" );
     }
 
     /**
@@ -101,8 +163,23 @@ public abstract class AbstractEclipsePluginTestCase
      * @param projectName project directory
      * @param properties additional properties
      * @throws Exception any exception generated during test
+     * @deprecated Use {@link #testProject(String,Properties,String,String)} instead
      */
     protected void testProject( String projectName, Properties properties )
+        throws Exception
+    {
+        testProject( projectName, properties, "clean", "eclipse" );
+    }
+
+    /**
+     * Execute the eclipse:eclipse goal on a test project and verify generated files.
+     * @param projectName project directory
+     * @param properties additional properties
+     * @param cleanGoal TODO
+     * @param genGoal TODO
+     * @throws Exception any exception generated during test
+     */
+    protected void testProject( String projectName, Properties properties, String cleanGoal, String genGoal )
         throws Exception
     {
 
@@ -128,8 +205,8 @@ public abstract class AbstractEclipsePluginTestCase
         }
 
         this.maven.execute( project, Arrays.asList( new String[] {
-            "org.apache.maven.plugins:maven-eclipse-plugin:clean",
-            "org.apache.maven.plugins:maven-eclipse-plugin:eclipse" } ), eventMonitor, new ConsoleDownloadMonitor(),
+            "org.apache.maven.plugins:maven-eclipse-plugin:current:" + cleanGoal,
+            "org.apache.maven.plugins:maven-eclipse-plugin:current:" + genGoal } ), eventMonitor, new ConsoleDownloadMonitor(),
                             properties, basedir );
 
         compareDirectoryContent( basedir, projectOutputDir, "" );

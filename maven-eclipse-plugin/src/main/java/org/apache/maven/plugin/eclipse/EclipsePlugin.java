@@ -439,23 +439,61 @@ public class EclipsePlugin
     public boolean setup()
         throws MojoExecutionException
     {
+        boolean ready = true;
 
-        if ( eclipseDownloadSources )
+        checkDeprecations();
+
+        ready = validate();
+        
+        String packaging = executedProject.getPackaging();
+
+        // TODO: Why are we using project in some places, and executedProject in others??
+        ArtifactHandler artifactHandler = this.project.getArtifact().getArtifactHandler();
+
+        // ear projects don't contain java sources
+        isJavaProject = Constants.LANGUAGE_JAVA.equals( artifactHandler.getLanguage() )
+            && !Constants.PROJECT_PACKAGING_EAR.equals( packaging );
+
+        setupExtras();
+
+        parseConfigurationOptions();
+        
+        // defaults
+        if ( projectnatures == null )
         {
-            // deprecated warning
-            getLog().warn( Messages.getString( "EclipsePlugin.deprecatedpar", new Object[] { //$NON-NLS-1$
-                                               "eclipse.downloadSources", //$NON-NLS-1$
-                                                   "downloadSources" } ) ); //$NON-NLS-1$
-            downloadSources = true;
+            fillDefaultNatures( packaging );
         }
 
-        if ( Arrays.binarySearch( WTP_SUPPORTED_VERSIONS, wtpversion ) < 0 )
+        if ( additionalProjectnatures != null )
         {
-            throw new MojoExecutionException( Messages
-                .getString( "EclipsePlugin.unsupportedwtp", new Object[] { //$NON-NLS-1$
-                            wtpversion, StringUtils.join( WTP_SUPPORTED_VERSIONS, " " ) } ) ); //$NON-NLS-1$
+            projectnatures.addAll( additionalProjectnatures );
         }
 
+        if ( buildcommands == null )
+        {
+            fillDefaultBuilders( packaging );
+        }
+
+        if ( additionalBuildcommands != null )
+        {
+            buildcommands.addAll( additionalBuildcommands );
+        }
+
+        if ( classpathContainers == null )
+        {
+            fillDefaultClasspathContainers( packaging );
+        }
+        else
+        {
+            verifyClasspathContainerListIsComplete();
+        }
+
+        // ready to start
+        return ready;
+    }
+
+    private void parseConfigurationOptions()
+    {
         if ( "R7".equalsIgnoreCase( wtpversion ) ) //$NON-NLS-1$
         {
             wtpVersionFloat = 0.7f;
@@ -472,10 +510,36 @@ public class EclipsePlugin
         {
             getLog().info( Messages.getString( "EclipsePlugin.wtpversion", wtpversion ) );
         }
+    }
+
+    protected void setupExtras()
+    {
+        // extension point.
+    }
+
+    protected void verifyClasspathContainerListIsComplete()
+    {
+        // this is an extension point.
+        if ( !classpathContainers.contains( COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER ) ) //$NON-NLS-1$
+        {
+            getLog().warn( Messages.getString( "EclipsePlugin.missingjrecontainer" ) ); //$NON-NLS-1$
+            classpathContainers.add( 0, COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER );
+        }
+    }
+
+    private boolean validate()
+        throws MojoExecutionException
+    {
+        // validate sanity of the current m2 project
+        if ( Arrays.binarySearch( WTP_SUPPORTED_VERSIONS, wtpversion ) < 0 )
+        {
+            throw new MojoExecutionException( Messages
+                .getString( "EclipsePlugin.unsupportedwtp", new Object[] { //$NON-NLS-1$
+                            wtpversion, StringUtils.join( WTP_SUPPORTED_VERSIONS, " " ) } ) ); //$NON-NLS-1$
+        }
 
         String packaging = executedProject.getPackaging();
 
-        // validate sanity of the current m2 project
         assertNotEmpty( executedProject.getGroupId(), POM_ELT_GROUP_ID ); //$NON-NLS-1$
         assertNotEmpty( executedProject.getArtifactId(), POM_ELT_ARTIFACT_ID ); //$NON-NLS-1$
 
@@ -512,45 +576,33 @@ public class EclipsePlugin
             }
         }
 
-        // end validate
+        validateExtras();
 
-        ArtifactHandler artifactHandler = this.project.getArtifact().getArtifactHandler();
-        // ear projects don't contain java sources
-        isJavaProject = "java".equals( artifactHandler.getLanguage() ) && !"ear".equals( packaging );
-
-        // defaults
-        if ( projectnatures == null )
-        {
-            fillDefaultNatures( packaging );
-        }
-
-        if ( additionalProjectnatures != null )
-        {
-            projectnatures.addAll( additionalProjectnatures );
-        }
-
-        if ( buildcommands == null )
-        {
-            fillDefaultBuilders( packaging );
-        }
-
-        if ( additionalBuildcommands != null )
-        {
-            buildcommands.addAll( additionalBuildcommands );
-        }
-
-        if ( classpathContainers == null )
-        {
-            fillDefaultClasspathContainers( packaging );
-        }
-        else if ( !classpathContainers.contains( COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER ) ) //$NON-NLS-1$
-        {
-            getLog().warn( Messages.getString( "EclipsePlugin.missingjrecontainer" ) ); //$NON-NLS-1$
-            classpathContainers.add( 0, COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER );
-        }
-
-        // ready to start
         return true;
+    }
+
+    protected void validateExtras()
+    {
+        // provided for extension.
+    }
+
+    private void checkDeprecations()
+    {
+        if ( eclipseDownloadSources )
+        {
+            // deprecated warning
+            getLog().warn( Messages.getString( "EclipsePlugin.deprecatedpar", new Object[] { //$NON-NLS-1$
+                                               "eclipse.downloadSources", //$NON-NLS-1$
+                                                   "downloadSources" } ) ); //$NON-NLS-1$
+            downloadSources = true;
+        }
+
+        checkExtraDeprecations();
+    }
+
+    protected void checkExtraDeprecations()
+    {
+        // provided for extension.
     }
 
     public void writeConfiguration( IdeDependency[] deps )
@@ -576,6 +628,9 @@ public class EclipsePlugin
         config.setProjectnatures( projectnatures );
         config.setSourceDirs( sourceDirs );
 
+        // NOTE: This could change the config!
+        writeExtraConfiguration( config );
+        
         if ( wtpVersionFloat == 0.7f )
         {
             new EclipseWtpmodulesWriter().init( getLog(), config ).write();
@@ -639,6 +694,23 @@ public class EclipsePlugin
                                            project.getArtifactId(), eclipseProjectDir.getAbsolutePath() } ) );
     }
 
+    /**
+     * Write any extra configuration information for the Eclipse project. This is an extension
+     * point, called before the main configurations are written.
+     * <br/>
+     * <b>
+     * NOTE: This could change the config!
+     * </b>
+     * 
+     * @param config
+     * @throws MojoExecutionException
+     */
+    protected void writeExtraConfiguration( EclipseWriterConfig config )
+        throws MojoExecutionException
+    {
+        // extension point.
+    }
+
     private void assertNotEmpty( String string, String elementName )
         throws MojoExecutionException
     {
@@ -648,7 +720,7 @@ public class EclipsePlugin
         }
     }
 
-    private void fillDefaultNatures( String packaging )
+    protected void fillDefaultNatures( String packaging )
     {
         projectnatures = new ArrayList();
 
@@ -679,7 +751,7 @@ public class EclipsePlugin
 
     }
 
-    private void fillDefaultClasspathContainers( String packaging )
+    protected void fillDefaultClasspathContainers( String packaging )
     {
         classpathContainers = new ArrayList();
         classpathContainers.add( COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER );
@@ -690,7 +762,7 @@ public class EclipsePlugin
         }
     }
 
-    private void fillDefaultBuilders( String packaging )
+    protected void fillDefaultBuilders( String packaging )
     {
         buildcommands = new ArrayList();
 
@@ -758,7 +830,7 @@ public class EclipsePlugin
         return (EclipseSourceDir[]) directories.toArray( new EclipseSourceDir[directories.size()] );
     }
 
-    private static void extractSourceDirs( Set directories, List sourceRoots, File basedir, File projectBaseDir,
+    private void extractSourceDirs( Set directories, List sourceRoots, File basedir, File projectBaseDir,
                                            boolean test, String output )
         throws MojoExecutionException
     {
@@ -784,6 +856,9 @@ public class EclipsePlugin
         for ( Iterator it = resources.iterator(); it.hasNext(); )
         {
             Resource resource = (Resource) it.next();
+            
+            System.out.println( "Processing resource dir: " + resource.getDirectory() );
+            
             String includePattern = null;
             String excludePattern = null;
 
@@ -804,6 +879,7 @@ public class EclipsePlugin
 
             if ( !resourceDirectory.exists() || !resourceDirectory.isDirectory() )
             {
+                System.out.println( "Resource dir: " + resourceDirectory + " either missing or not a directory." );
                 continue;
             }
 
@@ -826,6 +902,8 @@ public class EclipsePlugin
                 output = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, outputFile, false );
             }
 
+            System.out.println( "Adding eclipse source dir: { " + resourceDir + ", " + output + ", true, " + test + ", " + includePattern + ", " + excludePattern + " }." );
+            
             directories.add( new EclipseSourceDir( resourceDir, output, true, test, includePattern, excludePattern ) );
         }
     }
