@@ -128,9 +128,9 @@ public abstract class AbstractDependencyFilterMojo
     /**
      * Output absolute filename for resolved artifacts
      * 
-     * @parameter expression="${outputArtifactFilename}" default-value="false"
+     * @parameter expression="${outputAbsoluteArtifactFilename}" default-value="false"
      */
-    protected boolean outputArtifactFilename;
+    protected boolean outputAbsoluteArtifactFilename;
 
     abstract protected ArtifactsFilter getMarkedArtifactFilter();
 
