@@ -132,7 +132,7 @@ public class DependencyStatusSets
         }
     }
 
-    public void logStatus( Log log, boolean outputArtifactFilename )
+    public void logStatus( Log log, boolean outputAbsoluteArtifactFilename )
     {
         log.info( "" );
         log.info( "The following files have been resolved: " );
@@ -146,18 +146,19 @@ public class DependencyStatusSets
             {
                 Artifact artifact = (Artifact) i.next();
                 String artifactFilename = null;
-                if ( outputArtifactFilename )
+                if ( outputAbsoluteArtifactFilename )
                 {
                     try
                     {
-                        artifactFilename = artifact.getFile().getAbsoluteFile().getName();
+                        //we want to print the absolute file name here
+                        artifactFilename = artifact.getFile().getAbsoluteFile().getPath();
                     }
                     catch ( NullPointerException e )
                     {
                         // ignore the null pointer, we'll output a null string
                     }
                 }
-                log.info( "   " + artifact.getId() + ( outputArtifactFilename ? ":" + artifactFilename : "" ) );
+                log.info( "   " + artifact.getId() + ( outputAbsoluteArtifactFilename ? ":" + artifactFilename : "" ) );
             }
         }
 
