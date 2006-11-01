@@ -236,4 +236,15 @@ public class EarMojoTest
                        new boolean[]{false, true, false, false, true} );
     }
 
+    /**
+     * Builds an EAR with a classifier.
+     */
+    public void testProject022()
+        throws Exception
+    {
+        final File baseDir = executeMojo( "project-022", new Properties() );
+        final File expectedFile = new File( baseDir, "target/maven-ear-plugin-test-project-022-99.0-myclassifier.ear" );
+        assertTrue( "EAR archive not found", expectedFile.exists() );
+    }
+
 }

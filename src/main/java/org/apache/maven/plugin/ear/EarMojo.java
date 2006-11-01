@@ -20,6 +20,7 @@ import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
@@ -113,6 +114,14 @@ public class EarMojo
     private String unpackTypes;
 
     /**
+     * Classifier to add to the artifact generated. If given, the artifact will
+     * be an attachment instead.
+     *
+     * @parameter
+     */
+    private String classifier;
+
+    /**
      * The directory to get the resources from.
      *
      * @parameter expression="${project.build.outputDirectory}"
@@ -135,6 +144,11 @@ public class EarMojo
      * @parameter
      */
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
+
+    /**
+     * @component
+     */
+    private MavenProjectHelper projectHelper;
 
     /**
      * The archive manager.
@@ -270,7 +284,7 @@ public class EarMojo
 
         try
         {
-            File earFile = new File( outputDirectory, finalName + ".ear" );
+            File earFile = getEarFile( outputDirectory, finalName, classifier );
             MavenArchiver archiver = new MavenArchiver();
             archiver.setArchiver( jarArchiver );
             archiver.setOutputFile( earFile );
@@ -281,7 +295,14 @@ public class EarMojo
             archiver.getArchiver().addDirectory( getWorkDirectory() );
             archiver.createArchive( getProject(), archive );
 
-            project.getArtifact().setFile( earFile );
+            if ( classifier != null )
+            {
+                projectHelper.attachArtifact( getProject(), "ear", classifier, earFile );
+            }
+            else
+            {
+                getProject().getArtifact().setFile( earFile );
+            }
         }
         catch ( Exception e )
         {
@@ -351,6 +372,28 @@ public class EarMojo
             getLog().info( "Including custom manifest file[" + customManifestFile + "]" );
             archive.setManifestFile( customManifestFile );
         }
+    }
+
+    /**
+     * Returns the EAR file to generate, based on an optional classifier.
+     *
+     * @param basedir    the output directory
+     * @param finalName  the name of the ear file
+     * @param classifier an optional classifier
+     * @return the EAR file to generate
+     */
+    private static File getEarFile( String basedir, String finalName, String classifier )
+    {
+        if ( classifier == null )
+        {
+            classifier = "";
+        }
+        else if ( classifier.trim().length() > 0 && !classifier.startsWith( "-" ) )
+        {
+            classifier = "-" + classifier;
+        }
+
+        return new File( basedir, finalName + classifier + ".ear" );
     }
 
     /**
