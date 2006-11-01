@@ -22,7 +22,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
-import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
@@ -161,12 +160,12 @@ public class EarMojo
                 String type = (String) it.next();
                 if ( !EarModuleFactory.standardArtifactTypes.contains( type ) )
                 {
-                    throw new MojoExecutionException( "Invalid type["+type+"] supported types are "+ EarModuleFactory.standardArtifactTypes);
+                    throw new MojoExecutionException(
+                        "Invalid type[" + type + "] supported types are " + EarModuleFactory.standardArtifactTypes );
                 }
             }
-            getLog().debug( "Initialized unpack types "+ unpackTypesList);
+            getLog().debug( "Initialized unpack types " + unpackTypesList );
         }
-
 
         // Copy modules
         try
@@ -182,7 +181,11 @@ public class EarMojo
                         "; Did you package/install " + module.getArtifact() + "?" );
                 }
 
-                if ( unpackTypesList.contains( module.getType()) || module.shouldUnpack() )
+                // If the module is within the unpack, list make sure that no unpack wasn't forced (null or true)
+                // If the module is not in the unpack list, it should be true
+                if ( ( unpackTypesList.contains( module.getType() ) &&
+                    ( module.shouldUnpack() == null || module.shouldUnpack().booleanValue() ) ) ||
+                    ( module.shouldUnpack() != null && module.shouldUnpack().booleanValue() ) )
                 {
                     getLog().info( "Copying artifact[" + module + "] to[" + module.getUri() + "] (unpacked)" );
                     // Make sure that the destination is a directory to avoid plexus nasty stuff :)

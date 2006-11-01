@@ -50,7 +50,7 @@ public abstract class AbstractEarModule
 
     protected Boolean excluded = Boolean.FALSE;
 
-    protected Boolean unpack = Boolean.FALSE;
+    protected Boolean unpack = null;
 
     /**
      * Empty constructor to be used when the module
@@ -190,9 +190,9 @@ public abstract class AbstractEarModule
         return excluded.booleanValue();
     }
 
-    public boolean shouldUnpack()
+    public Boolean shouldUnpack()
     {
-        return unpack.booleanValue();
+        return unpack;
     }
 
     public String toString()
