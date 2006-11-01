@@ -17,7 +17,8 @@
           <!-- project implementation="org.apache.maven.plugin.pmd.stubs.DefaultConfigurationMavenProjectStub"/-->
           <sourceDirectory>${basedir}/src/test/resources/unit/default-configuration</sourceDirectory>
           <targetDirectory>${basedir}/target/test/unit/default-configuration/target</targetDirectory>
-          <failOnViolation>false</failOnViolation>
+          <failOnViolation>true</failOnViolation>
+          <failurePriority>1</failurePriority>  
             <verbose>false</verbose>  
           <language>java</language>
         </configuration>

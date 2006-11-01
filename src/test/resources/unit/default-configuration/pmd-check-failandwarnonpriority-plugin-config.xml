@@ -14,11 +14,11 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
         <configuration>
-          <!-- project implementation="org.apache.maven.plugin.pmd.stubs.DefaultConfigurationMavenProjectStub"/-->
-          <sourceDirectory>${basedir}/src/test/resources/unit/default-configuration</sourceDirectory>
-          <targetDirectory>${basedir}/target/test/unit/default-configuration/target</targetDirectory>
-          <failOnViolation>false</failOnViolation>
-            <verbose>false</verbose>  
+           <sourceDirectory>${basedir}/src/test/resources/unit/default-configuration</sourceDirectory>
+           <targetDirectory>${basedir}/target/test/unit/default-configuration/target</targetDirectory>
+           <failOnViolation>true</failOnViolation>
+           <failurePriority>3</failurePriority>  
+           <verbose>true</verbose>  
           <language>java</language>
         </configuration>
       </plugin>

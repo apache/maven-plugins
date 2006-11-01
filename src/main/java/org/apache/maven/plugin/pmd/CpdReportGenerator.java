@@ -3,8 +3,8 @@ package org.apache.maven.plugin.pmd;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
-import net.sourceforge.pmd.cpd.Match;
 import net.sourceforge.pmd.PMD;
+import net.sourceforge.pmd.cpd.Match;
 
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.plexus.util.StringUtils;
