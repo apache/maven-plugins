@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Archiver-Version: Custom Archive
+Created-By: Foo
+Built-By: sni
+Build-Jdk: 1.5.0_06
+
