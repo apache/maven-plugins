@@ -72,24 +72,22 @@ public class PmdViolationCheckMojoTest
     public void testFailurePriority()
         throws Exception
     {
-        System.out.println("testFailurePriority");
         File testPom = new File( getBasedir(),
                                  "src/test/resources/unit/default-configuration/pmd-check-failonpriority-plugin-config.xml" );
         PmdViolationCheckMojo pmdViolationMojo = (PmdViolationCheckMojo) lookupMojo( "check", testPom );
         pmdViolationMojo.execute();
 
-        System.out.println("testFailurePriority2");
         testPom = new File( getBasedir(),
                             "src/test/resources/unit/default-configuration/pmd-check-failandwarnonpriority-plugin-config.xml" );
         pmdViolationMojo = (PmdViolationCheckMojo) lookupMojo( "check", testPom );
         try
         {
             pmdViolationMojo.execute();
-            fail( "Exeception Expected" );
+            fail( "Exception Expected" );
         }
         catch ( MojoFailureException e )
         {
-            System.out.println(e.getMessage());// expected
+            System.out.println("Caught Expected Message: "+e.getMessage());// expected
         }
 
     }
