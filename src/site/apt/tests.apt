@@ -52,4 +52,24 @@ Ear Plugin Tests
 
   * project-011: builds an EAR and make sure that deployment descriptor default settings are applied
 
+  * project-012: builds an EAR and make sure that EAR resources are bundled within the EAR
+
+  * project-013: builds an EAR and make sure that EAR resources in a customized resources directory are bundled within the EAR
+
+  * project-014: builds an EAR and make sure that EAR resources are bundled within the EAR using includes and excludes
+
+  * project-015: builds an EAR and make sure that default manifest is taken into account
+
+  * project-016: builds an EAR and make sure that custom manifest is taken into account
+
+  * project-017: builds an EAR and make sure that custom application.xml is taken into account
+
+  * project-018: builds an EAR with a custom final name
+
+  * project-019: builds an EAR with unpacked archives using the unpackTypes.
+
+  * project-020: builds an EAR with unpacked archives using the unpack module attribute
+
+  * project-021: builds an EAR with unpacked archives using both unpackTypes and the unpack module attribute
+
    
