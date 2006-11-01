@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import net.sourceforge.pmd.IRuleViolation;
-import net.sourceforge.pmd.ReportListener;
 import net.sourceforge.pmd.PMD;
+import net.sourceforge.pmd.ReportListener;
 import net.sourceforge.pmd.stat.Metric;
 
 import org.codehaus.doxia.sink.Sink;
