@@ -36,24 +36,36 @@ public class PmdViolationCheckMojo
     extends AbstractPmdViolationCheckMojo
 {
     /**
+     * What priority level to fail the build on. Failures at or above this level
+     * will stop the build. Anything below will be warnings and will be
+     * displayed in the build output if verbose=true. Note: Minumum Priority = 5
+     * Maximum Priority = 0
+     * 
+     * @parameter expression="${pmd.failurePriority}" default-value="5"
+     * @required
+     */
+    private int failurePriority;
+
+    /**
      * @see org.apache.maven.plugin.AbstractMojo#execute()
      */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        executeCheck( "pmd.xml", "violation", "PMD violation" );
+        executeCheck( "pmd.xml", "violation", "PMD violation", failurePriority );
     }
 
     /**
      * Formats the failure details and prints them as an INFO message
      * 
      * @param item
-     *         parsed details about error
+     *            parsed details about error
      */
-    protected void printError( Map item )
+    protected void printError( Map item, String severity )
     {
-        
+
         StringBuffer buff = new StringBuffer( 100 );
+        buff.append( "PMD " + severity + ": " );
         buff.append( item.get( "package" ) );
         buff.append( "." ).append( item.get( "class" ) );
         buff.append( ":" ).append( item.get( "line" ) );
