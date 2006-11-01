@@ -66,10 +66,13 @@ public interface EarModule
     /**
      * Specify whether this module should be unpacked in the
      * EAR archive or not.
+     * <p/>
+     * Returns null if no configuration was specified so that
+     * defaulting may apply.
      *
      * @return true if this module should be bundled unpacked, false otherwise
      */
-    public boolean shouldUnpack();
+    public Boolean shouldUnpack();
 
     /**
      * Appends the <tt>XML</tt> representation of this module.
