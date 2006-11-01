@@ -54,6 +54,8 @@ public abstract class AbstractEarPluginTestCase
      */
     protected File localRepositoryDir = new File( getBasedir().getAbsolutePath(), "target/test-classes/m2repo" );
 
+    protected File settingsFile = new File( getBasedir().getAbsolutePath(), "target/test-classes/settings.ml" );
+
 
     /**
      * Execute the EAR plugin for the specified project.
@@ -67,7 +69,8 @@ public abstract class AbstractEarPluginTestCase
         throws Exception
     {
         File testDir = ResourceExtractor.simpleExtractResources( getClass(), "/projects/" + projectName );
-        Verifier verifier = new Verifier( testDir.getAbsolutePath());
+        // Specifying the settings here does not seem to work.
+        Verifier verifier = new Verifier( testDir.getAbsolutePath(), settingsFile.getAbsolutePath() );
         verifier.localRepo = localRepositoryDir.getAbsolutePath();
         verifier.executeGoal( "package" );
         // If no error is expected make sure that error logs are free
@@ -75,6 +78,7 @@ public abstract class AbstractEarPluginTestCase
         {
             verifier.verifyErrorFreeLog();
         }
+        verifier.resetStreams();
         assertEarArchive( testDir, projectName );
         assertEarDirectory( testDir, projectName );
 
@@ -327,11 +331,13 @@ public abstract class AbstractEarPluginTestCase
         final File[] expectedDeploymentDescriptors =
             getDeploymentDescriptors( new File( baseDir, "expected-META-INF" ) );
 
-
-        if (expectedDeploymentDescriptors == null) {
-            assertNull( "No deployment descriptor was expected", actualDeploymentDescriptors);
-        } else {
-            assertNotNull( "Missing deployment descriptor", actualDeploymentDescriptors);
+        if ( expectedDeploymentDescriptors == null )
+        {
+            assertNull( "No deployment descriptor was expected", actualDeploymentDescriptors );
+        }
+        else
+        {
+            assertNotNull( "Missing deployment descriptor", actualDeploymentDescriptors );
         }
         // Make sure we have the same number of files
         assertEquals( "Number of Deployment descriptor(s) mismatch", expectedDeploymentDescriptors.length,
@@ -353,8 +359,8 @@ public abstract class AbstractEarPluginTestCase
             FileReader actual = null;
             try
             {
-                expected = new FileReader( expectedDeploymentDescriptor);
-                actual = new FileReader( actualDeploymentDescriptor);
+                expected = new FileReader( expectedDeploymentDescriptor );
+                actual = new FileReader( actualDeploymentDescriptor );
                 XMLAssert.assertXMLEqual(
                     "Wrong deployment descriptor generated for[" + expectedDeploymentDescriptor.getName() + "]",
                     expected, actual );
@@ -363,11 +369,15 @@ public abstract class AbstractEarPluginTestCase
             {
                 e.printStackTrace();
                 fail( "Could not assert deployment descriptor " + e.getMessage() );
-            } finally {
-                if (expected != null) {
+            }
+            finally
+            {
+                if ( expected != null )
+                {
                     expected.close();
                 }
-                if (actual != null) {
+                if ( actual != null )
+                {
                     actual.close();
                 }
             }
