@@ -40,7 +40,7 @@ public class CpdViolationCheckMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        executeCheck( "cpd.xml", "duplication", "CPD duplication" );
+        executeCheck( "cpd.xml", "duplication", "CPD duplication",10 );
     }
     
     /**
@@ -48,7 +48,7 @@ public class CpdViolationCheckMojo
      * 
      * @param item
      */
-    protected void printError( Map item )
+    protected void printError( Map item, String severity )
     {
         // TODO Auto-generated method stub
         

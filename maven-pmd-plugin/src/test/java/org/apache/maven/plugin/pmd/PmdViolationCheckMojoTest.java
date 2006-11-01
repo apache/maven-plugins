@@ -16,6 +16,8 @@ package org.apache.maven.plugin.pmd;
  * limitations under the License.
  */
 
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 import java.io.File;
@@ -64,7 +66,32 @@ public class PmdViolationCheckMojoTest
         PmdViolationCheckMojo pmdViolationMojo = (PmdViolationCheckMojo) lookupMojo( "check", testPom );
         pmdViolationMojo.execute();
 
-        assertTrue( true );        
+        assertTrue( true );
+    }
+
+    public void testFailurePriority()
+        throws Exception
+    {
+        System.out.println("testFailurePriority");
+        File testPom = new File( getBasedir(),
+                                 "src/test/resources/unit/default-configuration/pmd-check-failonpriority-plugin-config.xml" );
+        PmdViolationCheckMojo pmdViolationMojo = (PmdViolationCheckMojo) lookupMojo( "check", testPom );
+        pmdViolationMojo.execute();
+
+        System.out.println("testFailurePriority2");
+        testPom = new File( getBasedir(),
+                            "src/test/resources/unit/default-configuration/pmd-check-failandwarnonpriority-plugin-config.xml" );
+        pmdViolationMojo = (PmdViolationCheckMojo) lookupMojo( "check", testPom );
+        try
+        {
+            pmdViolationMojo.execute();
+            fail( "Exeception Expected" );
+        }
+        catch ( MojoFailureException e )
+        {
+            System.out.println(e.getMessage());// expected
+        }
+
     }
 
     public void testException()
