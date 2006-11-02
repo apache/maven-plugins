@@ -3,14 +3,16 @@ package org.apache.maven.plugin.assembly.archive.phase;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
+import org.apache.maven.plugin.assembly.archive.phase.wrappers.RepoBuilderConfigSourceWrapper;
+import org.apache.maven.plugin.assembly.archive.phase.wrappers.RepoInfoWrapper;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
-import org.apache.maven.plugin.assembly.repository.RepositoryAssembler;
-import org.apache.maven.plugin.assembly.repository.RepositoryAssemblyException;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.plugins.assembly.model.Assembly;
 import org.apache.maven.plugins.assembly.model.Repository;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.repository.RepositoryAssembler;
+import org.apache.maven.shared.repository.RepositoryAssemblyException;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.logging.Logger;
@@ -234,7 +236,8 @@ public class RepositoryAssemblyPhaseTest
         {
             try
             {
-                repositoryAssembler.assemble( dir, repo, configSource );
+                repositoryAssembler.buildRemoteRepository( dir, new RepoInfoWrapper( repo ), new RepoBuilderConfigSourceWrapper( configSource ) );
+                control.setMatcher( MockControl.ALWAYS_MATCHER );
             }
             catch ( RepositoryAssemblyException e )
             {

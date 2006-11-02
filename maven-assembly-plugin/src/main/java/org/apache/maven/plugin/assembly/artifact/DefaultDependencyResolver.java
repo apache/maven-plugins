@@ -9,11 +9,11 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
-import org.apache.maven.plugin.assembly.filter.AssemblyScopeArtifactFilter;
 import org.apache.maven.plugin.assembly.utils.FilterUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.project.artifact.MavenMetadataSource;
+import org.apache.maven.shared.artifact.filter.ScopeArtifactFilter;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.logging.Logger;
 
@@ -72,7 +72,7 @@ public class DefaultDependencyResolver
     {
         List repos = aggregateRemoteArtifactRepositories( remoteRepositories, project );
 
-        ArtifactFilter filter = new AssemblyScopeArtifactFilter( scope );
+        ArtifactFilter filter = new ScopeArtifactFilter( scope );
 
         // TODO: such a call in MavenMetadataSource too - packaging not really the intention of type
         Artifact artifact =
