@@ -114,11 +114,11 @@ The Maven Assembly Plugin
 
   * {{{directory-mojo.html}assembly:directory}} Assembles an application bundle
   from an assembly descriptor or distribution into a directory. Executed from
-  the command-line.
+  the command-line.*
 
   * {{{directory-inline-mojo.html}assembly:directory-inline}} Assembles an
   application bundle or distribution into a directory. Executed within the Maven
-  Lifecycle.
+  Lifecycle.*
 
   * {{{unpack-mojo.html}assembly:unpack}} Assembles an application bundle or
   distribution from an assembly descriptor into an archive of a chosen format
@@ -127,6 +127,15 @@ The Maven Assembly Plugin
   * {{{single-mojo.html}assembly:single}} An assembly mojo created as a
   work-around for lifecycle issues until addressed in the Maven 2.1 release.
 
+  * {{{directory-single-mojo.html}assembly:directory-single}} An assembly mojo 
+  created as a work-around for lifecycle issues until addressed in the Maven 2.1 
+  release. This mojo will generate an assembly into a directory.
+  
+  []
+  
+  \* <<NOTE:>> Directory-based assemblies cannot be attached to a project for
+  deployment or installation, since they do not represent a single,
+  self-contained file which can be transferred across network connections.
 
 * Usage
 

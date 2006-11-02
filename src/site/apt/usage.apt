@@ -322,6 +322,21 @@ target
 
 * Advanced Configuration
 
+** Creating Assemblies from Multiple Projects in a Multimodule Build
+
+  In certain cases, you may need to create several assembly archives from
+  different points in a multimodule build. For this reason, two new assembly
+  mojos have been introduced: <<<assembly:single>>>, and
+  <<<assembly:directory-single>>>. These mojos will perform the usual tasks
+  associated with creating assembly archives or directories, without running in
+  a once-per-build mode. However, it's important to note that the use of the
+  <<<\<moduleSets\>>>> section in the assembly descriptor may be limited in
+  these cases, since the assembly mojo will not have access to the full list of
+  projects in the current build. See the examples entry in the
+  {{{#Resources}Resources}} section below for more information.
+
+** Creating an Executable Jar
+
   As you've no doubt noticed, the Assembly Plugin can be a very useful way to
   create a self-contained binary artifact for your project, among many other
   things. However, once you've created this self-contained jar, you will
@@ -369,9 +384,11 @@ Main-Class: org.sample.App
   
 ** GOTCHA!
 
-  At this point, the directory-oriented mojos - <<<directory>>> and
-  <<<directory-inline>>> - <<do not>> support the <<<\<archive\>>>>
-  configuration element.
+  At this point, only the <<<jar>>> assembly format supports the <<<\<archive\>>>>
+  configuration element. By definition, directory-based assembly mojos -
+  <<<assembly:directory>>>, <<<assembly:directory-inline>>>, and
+  <<<assembly:directory-single>>> - do not produce a jar-format archive, and
+  therefore do not support the <<<\<archive\>>>> element.
 
 * {Resources}
 
