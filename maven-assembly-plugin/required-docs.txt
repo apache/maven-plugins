@@ -1,0 +1,39 @@
+Assembly Plugin Required Docs
+
+* Component Descriptors:
+      o include in usage.html:
+            + how are they used?
+            + what can they specify?
+      o include examples of usage
+* Advanced Assembly Descriptor Topics: new page
+      o Wildcards for includes/excludes
+            + what does it match on?
+                  # ArtifactUtils.versionlessKey( artifact )
+                  # artifact.getDependencyConflictId()
+                  # artifact.getId()
+      o ModuleSet improvements
+            + module-set-level includes/excludes
+            + includeModuleDirectory
+            + excludeSubModuleDirectories
+            + outputDirectoryMapping at the module level
+            + sources vs. binaries sections
+                  # binaries: attachmentClassifier to look at certain attached 
+                    artifacts for a module
+                  # binaries: dependencySets section to specify which module 
+                    deps to include
+            + fileSets subsection (?)
+      o FileSet improvements
+            + useDefaultExcludes
+      o baseDirectory to provide alternate basedir for the root dir of the 
+        assembly
+      o useStrictFiltering -> Added to SetBase, so all dependency sets and 
+        module sets, etc. can use to fail the build on unused filters in those sets.
+* Examples:
+      o Update all multi-module examples to reflect improvements in <sources> 
+        and <binaries> sections.
+      o Add examples for include/exclude wildcards
+            + including filtering out artifacts with a certain classifier or 
+              type using wildcards
+      o More?
+
+

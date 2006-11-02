@@ -3,8 +3,9 @@
  ------
  Johnny R. Ruiz III <jruiz@exist.com>
  Edwin Punzalan
+ John Casey
  ------
- 21 July 2006
+ 2 November 2006
 
 ~~ Copyright 2006 The Apache Software Foundation.
 ~~
@@ -26,8 +27,9 @@
 
 Pre-defined Descriptor Files
 
-  There are three predefined descriptor formats available for reuse, packaged
-  within the Assembly Plugin.  Their descriptorIds are:
+  As of version 2.2, there are now four predefined descriptor formats available 
+  for reuse, packaged within the Assembly Plugin, instead of the original three.
+  Their descriptorIds are:
 
   * {{{#bin}bin}} - can be used for general assembly of binary packages.
 
@@ -37,12 +39,19 @@ Pre-defined Descriptor Files
 
   * {{{#src}src}} - can be used for general assembly of a source archive which can
   be used to build your project.
+  
+  * {{{#project}project}} - <<new in version 2.2>>, this is used to create an
+  assembly of the entire source project, including the Maven POM and other files
+  outside of your source directory structure, but excluding all SCM files and 
+  the target directory. <<GOTCHA:>> If you use an output directory other than
+  /target, this descriptorRef may include the output from your build process.
 
 * {bin}
 
-  Use <<<bin>>> as the <<<descriptorId>>> of your assembly to create a binary
-  distribution archive of your project. The <<<bin>>> descriptorId produces
-  the archive in three formats: tar.gz, tar.bz2, and zip.
+  Use <<<bin>>> as the <<<descriptorRef>>> of your assembly-plugin configuration 
+  in order to create a binary distribution archive of your project. 
+  This built-in descriptor produces an assembly with the classifier <<<bin>>> 
+  in three archive formats: tar.gz, tar.bz2, and zip.
 
   The assembled archive contains the binary jar produced by running
   <<<mvn package>>> plus any README, LICENSE, and NOTICE files available in the
@@ -79,10 +88,11 @@ Pre-defined Descriptor Files
 
 * {jar-with-dependencies}
 
-  Use the <<<jar-with-dependencies>>> as the <<<descriptorId>>> of your assembly
-  to create a jar archive which contains the binary output of your project along
-  with the unpacked dependencies. The <<<jar-with-dependencies>>> descriptorId
-  produces one archive in jar format.
+  Use <<<jar-with-dependencies>>> as the <<<descriptorRef>>> of your
+  assembly-plugin configuration in order to create a jar archive which contains 
+  the binary output of your project, along its the unpacked dependencies. 
+  This built-in descriptor produces an assembly with the classifier
+  <<<jar-with-dependencies>>> using the jar archive format.
 
   Below is the <<<jar-with-dependencies>>> descriptor format:
 
@@ -95,20 +105,28 @@ Pre-defined Descriptor Files
   <includeBaseDirectory>false</includeBaseDirectory>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/</outputDirectory>
+      <outputDirectory></outputDirectory>
+      <outputFileNameMapping></outputFileNameMapping>
       <unpack>true</unpack>
       <scope>runtime</scope>
     </dependencySet>
   </dependencySets>
+  <fileSets>
+    <fileSet>
+      <directory>target/classes</directory>
+      <outputDirectory></outputDirectory>
+    </fileSet>
+  </fileSets>
 </assembly>
 -----
 
 * {src}
 
-  Use <<<src>>> as the <<<descriptorId>>> of your assembly to create source
-  archives for your project.  The archive should contain enough information
-  for anyone to be able to build your project. The <<<src>>> descriptorId
-  produces the archive in three formats: tar.gz, tar.bz2, and zip.
+  Use <<<src>>> as the <<<descriptorRef>>> in your assembly-plugin configuration
+  to create source archives for your project.  The archive will contain the
+  contents of your project's <<</src>>> directory structure, for referency by
+  your users. The <<<src>>> descriptorId produces an assembly archive with the 
+  classifier <<<src>>> in three formats: tar.gz, tar.bz2, and zip.
 
   Below is the <<<src>>> descriptor format:
 
@@ -128,10 +146,45 @@ Pre-defined Descriptor Files
         <include>NOTICE*</include>
         <include>pom.xml</include>
       </includes>
+      <useDefaultExcludes>true</useDefaultExcludes>
     </fileSet>
     <fileSet>
       <directory>src</directory>
+      <useDefaultExcludes>true</useDefaultExcludes>
     </fileSet>
   </fileSets>
 </assembly>
 -----
+
+* {project}
+
+  Using the <<<project>>> <<<\<descriptorRef\>>>> in your assembly plugin
+  configuration will produce an assembly containing your entire project, minus
+  any build output that lands in the <<</target>>> directory. The resulting
+  assembly should allow your users to build your project using Maven, Ant, or
+  whatever build system you have configured in your project's normal SCM working
+  directory. It produces assemblies with the classifier <<<project>>> in 
+  three archive formats: tar.gz, tar.bz2, and zip.
+  
+  The following is the assembly descriptor for the <<<project>>> descriptorRef:
+  
+---
+<assembly>
+  <id>project</id>
+  <formats>
+    <format>tar.gz</format>
+    <format>tar.bz2</format>
+    <format>zip</format>
+  </formats>
+  <fileSets>
+    <fileSet>
+      <directory>.</directory>
+      <outputDirectory></outputDirectory>
+      <useDefaultExcludes>true</useDefaultExcludes>
+      <excludes>
+        <exclude>**/target/**</exclude>
+      </excludes>
+    </fileSet>
+  </fileSets>
+</assembly>
+---
