@@ -4,7 +4,7 @@
   John Casey
   Edwin Punzalan
   ---
-  18 July 2006
+  2 November 2006
 
 ~~ Copyright 2006 The Apache Software Foundation.
 ~~
@@ -25,6 +25,12 @@
 
 
 Maven Assembly Plugin
+
+* Status
+
+  <<Current Assembly Plugin Version is: 2.2>>
+  
+* Introduction
 
   Do you want to create a binary distribution from a Maven project that includes
   supporting scripts, configuration files, and all runtime dependencies?  You
