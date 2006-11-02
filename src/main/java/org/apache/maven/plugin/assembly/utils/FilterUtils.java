@@ -10,10 +10,10 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
-import org.apache.maven.plugin.assembly.filter.AssemblyExcludesArtifactFilter;
-import org.apache.maven.plugin.assembly.filter.AssemblyIncludesArtifactFilter;
-import org.apache.maven.plugin.assembly.filter.StatisticsReportingFilter;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.artifact.filter.PatternExcludesArtifactFilter;
+import org.apache.maven.shared.artifact.filter.PatternIncludesArtifactFilter;
+import org.apache.maven.shared.artifact.filter.StatisticsReportingArtifactFilter;
 import org.codehaus.plexus.logging.Logger;
 
 public final class FilterUtils
@@ -32,7 +32,7 @@ public final class FilterUtils
 
         if ( !includes.isEmpty() )
         {
-            AssemblyIncludesArtifactFilter includeFilter = new AssemblyIncludesArtifactFilter( includes,
+            PatternIncludesArtifactFilter includeFilter = new PatternIncludesArtifactFilter( includes,
                                                                                                actTransitively );
 
             filter.add( includeFilter );
@@ -40,7 +40,7 @@ public final class FilterUtils
         }
         if ( !excludes.isEmpty() )
         {
-            AssemblyExcludesArtifactFilter excludeFilter = new AssemblyExcludesArtifactFilter( excludes,
+            PatternExcludesArtifactFilter excludeFilter = new PatternExcludesArtifactFilter( excludes,
                                                                                                actTransitively );
 
             filter.add( excludeFilter );
@@ -62,9 +62,9 @@ public final class FilterUtils
         {
             ArtifactFilter f = (ArtifactFilter) it.next();
 
-            if ( f instanceof StatisticsReportingFilter )
+            if ( f instanceof StatisticsReportingArtifactFilter )
             {
-                ( (StatisticsReportingFilter) f ).reportMissedCriteria( logger );
+                ( (StatisticsReportingArtifactFilter) f ).reportMissedCriteria( logger );
             }
         }
     }
@@ -89,7 +89,7 @@ public final class FilterUtils
 
         if ( !includes.isEmpty() )
         {
-            ArtifactFilter includeFilter = new AssemblyIncludesArtifactFilter( includes, actTransitively );
+            ArtifactFilter includeFilter = new PatternIncludesArtifactFilter( includes, actTransitively );
 
             filter.add( includeFilter );
 
@@ -98,7 +98,7 @@ public final class FilterUtils
 
         if ( !excludes.isEmpty() )
         {
-            ArtifactFilter excludeFilter = new AssemblyExcludesArtifactFilter( excludes, actTransitively );
+            ArtifactFilter excludeFilter = new PatternExcludesArtifactFilter( excludes, actTransitively );
 
             filter.add( excludeFilter );
 
@@ -131,9 +131,9 @@ public final class FilterUtils
         {
             ArtifactFilter f = (ArtifactFilter) it.next();
 
-            if ( f instanceof StatisticsReportingFilter )
+            if ( f instanceof StatisticsReportingArtifactFilter )
             {
-                StatisticsReportingFilter sFilter = (StatisticsReportingFilter) f;
+                StatisticsReportingArtifactFilter sFilter = (StatisticsReportingArtifactFilter) f;
 
                 if ( strictFiltering && sFilter.hasMissedCriteria() )
                 {
@@ -150,9 +150,9 @@ public final class FilterUtils
         {
             ArtifactFilter f = (ArtifactFilter) it.next();
 
-            if ( f instanceof StatisticsReportingFilter )
+            if ( f instanceof StatisticsReportingArtifactFilter )
             {
-                StatisticsReportingFilter sFilter = (StatisticsReportingFilter) f;
+                StatisticsReportingArtifactFilter sFilter = (StatisticsReportingArtifactFilter) f;
 
                 if ( logger.isDebugEnabled() )
                 {

@@ -369,6 +369,16 @@
             ]]>
           </description>
         </field>
+        <field>
+          <name>filtered</name>
+          <version>1.1.0</version>
+          <description>
+          Whether to filter symbols in the files as they are copied, using
+          properties from the build configuration.
+          </description>
+          <defaultValue>false</defaultValue>
+          <type>boolean</type>
+        </field>
       </fields>
     </class>
     <class>
@@ -474,6 +484,7 @@
         </field>
         <field>
           <name>unpack</name>
+          <version>1.0.0+</version>
           <type>boolean</type>
           <defaultValue>false</defaultValue>
           <description>
@@ -482,6 +493,17 @@
             dependencies will be includes as archives (jars). Can only unpack
             jar, zip, tar.gz, and tar.bz archives. Default value is false.
           </description>
+        </field>
+        <field>
+          <name>unpackOptions</name>
+          <version>1.1.0</version>
+          <description>
+          Allows the specification of includes and excludes, along with filtering options, for items
+          unpacked from a dependency artifact.
+          </description>
+          <association>
+            <type>UnpackOptions</type>
+          </association>
         </field>
         <field>
           <name>scope</name>
@@ -691,6 +713,7 @@
         </field>
         <field>
           <name>unpack</name>
+          <version>1.0.0+</version>
           <type>boolean</type>
           <defaultValue>true</defaultValue>
           <description>
@@ -699,6 +722,17 @@
             module packages will be included as archives (jars).
             Default value is true.
           </description>
+        </field>
+        <field>
+          <name>unpackOptions</name>
+          <version>1.1.0</version>
+          <description>
+          Allows the specification of includes and excludes, along with filtering options, for items
+          unpacked from a module artifact.
+          </description>
+          <association>
+            <type>UnpackOptions</type>
+          </association>
         </field>
         <field>
           <name>outputFileNameMapping</name>
@@ -809,6 +843,47 @@
             <type>String</type>
             <multiplicity>*</multiplicity>
           </association>
+        </field>
+      </fields>
+    </class>
+    <class>
+      <name>UnpackOptions</name>
+      <version>1.1.0</version>
+      <description>
+      Specifies options for including/excluding/filtering items extracted from an archive.
+      </description>
+      <fields>
+        <field>
+          <name>includes</name>
+          <version>1.1.0</version>
+          <description>
+          Set of patterns for matching items to be included from an archive as it is unpacked.
+          </description>
+          <association>
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+        <field>
+          <name>excludes</name>
+          <version>1.1.0</version>
+          <description>
+          Set of patterns for matching items to be excluded from an archive as it is unpacked.
+          </description>
+          <association>
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+        <field>
+          <name>filtered</name>
+          <version>1.1.0</version>
+          <description>
+          Whether to filter symbols in the files as they are unpacked from the archive, using
+          properties from the build configuration.
+          </description>
+          <defaultValue>false</defaultValue>
+          <type>boolean</type>
         </field>
       </fields>
     </class>
