@@ -851,8 +851,8 @@ public class ModuleSetAssemblyPhaseTest
         macArtifacts.add( addArtifact( project2, mm, true, false ) );
 
         ( (MockAndControlForArtifact) macArtifacts.get( 1 ) ).expectGetId( "group:artifact2:jar:version" );
-        ( (MockAndControlForArtifact) macArtifacts.get( 1 ) ).expectGetDependencyTrail( Collections
-            .singletonList( "group:artifact:jar:version" ) );
+//        ( (MockAndControlForArtifact) macArtifacts.get( 1 ) ).expectGetDependencyTrail( Collections
+//            .singletonList( "group:artifact:jar:version" ) );
 
         MavenProject project3 = createProject( "group", "artifact3", "version", project2 );
         macArtifacts.add( addArtifact( project3, mm, true, true ) );

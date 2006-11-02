@@ -1,18 +1,26 @@
 package org.apache.maven.plugin.assembly.archive.phase;
 
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
+import org.apache.maven.plugin.assembly.archive.phase.wrappers.RepoBuilderConfigSourceWrapper;
+import org.apache.maven.plugin.assembly.archive.phase.wrappers.RepoInfoWrapper;
 import org.apache.maven.plugin.assembly.archive.task.AddDirectoryTask;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
-import org.apache.maven.plugin.assembly.repository.RepositoryAssembler;
-import org.apache.maven.plugin.assembly.repository.RepositoryAssemblyException;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.apache.maven.plugins.assembly.model.Assembly;
+import org.apache.maven.plugins.assembly.model.GroupVersionAlignment;
 import org.apache.maven.plugins.assembly.model.Repository;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.repository.RepositoryAssembler;
+import org.apache.maven.shared.repository.RepositoryAssemblyException;
+import org.apache.maven.shared.repository.RepositoryBuilderConfigSource;
+import org.apache.maven.shared.repository.model.RepositoryInfo;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -61,7 +69,7 @@ public class RepositoryAssemblyPhase
 
             try
             {
-                repositoryAssembler.assemble( repositoryDirectory, repository, configSource );
+                repositoryAssembler.buildRemoteRepository( repositoryDirectory, wrap( repository ), wrap( configSource ) );
             }
             catch ( RepositoryAssemblyException e )
             {
@@ -83,4 +91,14 @@ public class RepositoryAssemblyPhase
         }
     }
 
+    private RepositoryBuilderConfigSource wrap( AssemblerConfigurationSource configSource )
+    {
+        return new RepoBuilderConfigSourceWrapper( configSource );
+    }
+
+    private RepositoryInfo wrap( Repository repository )
+    {
+        return new RepoInfoWrapper( repository );
+    }
+    
 }
