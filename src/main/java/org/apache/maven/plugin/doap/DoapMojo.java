@@ -72,6 +72,7 @@ public class DoapMojo
     /**
      * The language which should be displayed in the DOAP file. The POM doesn't have any
      * notions of language yet.
+     *
      * @parameter expression="${language}" default-value="Java"
      */
     private String language;
@@ -150,8 +151,8 @@ public class DoapMojo
         element( "shortdesc", project.getDescription() );
         element( "description", project.getDescription() );
         rdfResourceElement( "bug-database", project.getIssueManagement().getUrl() );
-        rdfResourceElement( "mailing-list", project.getUrl() + "/mail-lists.html" );
-        rdfResourceElement( "download-page", project.getUrl() + "/download.html" );
+        rdfResourceElement( "mailing-list", composeUrl( project.getUrl() , "/mail-lists.html" ) );
+        rdfResourceElement( "download-page", composeUrl( project.getUrl() , "/download.html" ) );
         element( "programming-language", language );
         //TODO: how to lookup category, map it, or just declare it.
         rdfResourceElement( "category", "http://projects.apache.org/category/" + category );
@@ -247,6 +248,26 @@ public class DoapMojo
             rdfResourceElement( "foaf:mbox", "mailto:" + d.getEmail() );
             w.endElement();
             w.endElement();
+        }
+    }
+
+    /**
+     * Compose a URL from two parts: a base URL and a file path. This method
+     * makes sure that there will not be two slash '/' characters after each
+     * other.
+     *
+     * @param base The base URL
+     * @param path The file
+     */
+    private String composeUrl( String base, String path )
+    {
+        if ( base.endsWith( "/" ) && path.startsWith( "/" ) )
+        {
+            return base + path.substring( 1 );
+        }
+        else
+        {
+            return base + path;
         }
     }
 }
