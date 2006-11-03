@@ -774,7 +774,7 @@ public abstract class AbstractSiteMojo
                 }
                 catch ( ProjectBuildingException e )
                 {
-                    getLog().warn( "Unable to load parent project from repository: " + e.getMessage() );
+                    getLog().warn( "Unable to load parent project from a relative path: " + e.getMessage() );
                 }
             }
 
