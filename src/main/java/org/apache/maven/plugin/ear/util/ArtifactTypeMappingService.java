@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.ear;
+package org.apache.maven.plugin.ear.util;
 
 /*
  * Copyright 2001-2005 The Apache Software Foundation.
@@ -18,6 +18,9 @@ package org.apache.maven.plugin.ear;
 
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.PlexusConfigurationException;
+import org.apache.maven.plugin.ear.EarPluginException;
+import org.apache.maven.plugin.ear.EarModuleFactory;
+import org.apache.maven.plugin.ear.UnknownArtifactTypeException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +34,7 @@ import java.util.Map;
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id: EarModule.java 332974 2005-11-13 12:42:44Z snicoll $
  */
-class ArtifactTypeMappingService
+public class ArtifactTypeMappingService
 {
     static final String ARTIFACT_TYPE_MAPPING_ELEMENT = "artifactTypeMapping";
 
