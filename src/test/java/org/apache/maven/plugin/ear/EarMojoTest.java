@@ -288,4 +288,31 @@ public class EarMojoTest
         assertFalse("Execution should have failed", getEarArchive(baseDir, "project-026").exists());
     }
 
+     /**
+     * Builds an EAR and make sure that provided dependencies are not included in the EAR.
+     */
+    public void testProject027()
+        throws Exception
+    {
+        doTestProject( "project-027", new String[]{"ejb-sample-one-1.0.jar"} );
+    }
+
+    /**
+     * Builds an EAR and make sure that test dependencies are not included in the EAR.
+     */
+    public void testProject028()
+        throws Exception
+    {
+        doTestProject( "project-028", new String[]{"ejb-sample-one-1.0.jar"} );
+    }
+
+     /**
+     * Builds an EAR and make sure that system dependencies are not included in the EAR.
+     */
+    public void testProject029()
+        throws Exception
+    {
+        doTestProject( "project-029", new String[]{"ejb-sample-one-1.0.jar"} );
+    }
+
 }
