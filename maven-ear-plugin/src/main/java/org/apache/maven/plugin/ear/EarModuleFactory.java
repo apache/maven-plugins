@@ -17,6 +17,7 @@ package org.apache.maven.plugin.ear;
  */
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.ear.util.ArtifactTypeMappingService;
 
 import java.util.ArrayList;
 import java.util.List;

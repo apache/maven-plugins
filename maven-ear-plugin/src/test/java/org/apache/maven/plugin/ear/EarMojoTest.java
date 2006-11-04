@@ -247,4 +247,45 @@ public class EarMojoTest
         assertTrue( "EAR archive not found", expectedFile.exists() );
     }
 
+    /**
+     * Builds an EAR and make sure that a single classified dependency is detected without specifying the classifier.
+     */
+    public void testProject023()
+        throws Exception
+    {
+        doTestProject( "project-023", new String[]{"ejb-sample-one-1.0-classified.jar", "ejb-sample-two-1.0.jar"},
+                       new boolean[]{true, false} );
+    }
+
+    /**
+     * Builds an EAR and make sure that a single classified dependency is detected when specifying the classifier.
+     */
+    public void testProject024()
+        throws Exception
+    {
+        doTestProject( "project-024", new String[]{"ejb-sample-one-1.0-classified.jar", "ejb-sample-two-1.0.jar"},
+                       new boolean[]{true, false} );
+    }
+
+    /**
+     * Builds an EAR and make sure that a classified dependency with mutiple candidates is detected when specifying the classifier.
+     */
+    public void testProject025()
+        throws Exception
+    {
+        doTestProject( "project-025", new String[]{"ejb-sample-one-1.0-classified.jar", "ejb-sample-one-1.0.jar"},
+                       new boolean[]{true, false} );
+    }
+
+    /**
+     * Builds an EAR and make sure that the build fails if a unclassifed module configuration with mutiple candidates is specified.
+     */
+    public void testProject026()
+        throws Exception
+    {
+        final File baseDir = executeMojo( "project-026", new Properties( ), false);
+        // Stupido, checks that the ear archive is not there
+        assertFalse("Execution should have failed", getEarArchive(baseDir, "project-026").exists());
+    }
+
 }

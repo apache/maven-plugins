@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.ear;
+package org.apache.maven.plugin.ear.util;
 
 /*
  * Copyright 2001-2005 The Apache Software Foundation.
@@ -19,6 +19,10 @@ package org.apache.maven.plugin.ear;
 import junit.framework.TestCase;
 import org.codehaus.plexus.configuration.PlexusConfigurationException;
 import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
+import org.apache.maven.plugin.ear.util.ArtifactTypeMappingService;
+import org.apache.maven.plugin.ear.EarModuleFactory;
+import org.apache.maven.plugin.ear.UnknownArtifactTypeException;
+import org.apache.maven.plugin.ear.EarPluginException;
 
 import java.util.Iterator;
 
