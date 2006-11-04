@@ -80,7 +80,13 @@ Ear Plugin Tests
 
   * project-025: builds an EAR and make sure that a classified dependency with mutiple candidates is detected when specifying the classifier
 
-  * project-026: builds an EAR and make sure that the build fails if a unclassifed module configuration with mutiple candidates is specified.
+  * project-026: builds an EAR and make sure that the build fails if a unclassifed module configuration with mutiple candidates is specified
+
+  * project-027: builds an EAR and make sure that provided dependencies are not included in the EAR
+
+  * project-028: builds an EAR and make sure that test dependencies are not included in the EAR
+
+  * project-029: builds an EAR and make sure that system dependencies are not included in the EAR
 
   
 
