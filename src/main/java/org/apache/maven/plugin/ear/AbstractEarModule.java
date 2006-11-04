@@ -18,8 +18,8 @@ package org.apache.maven.plugin.ear;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.ear.util.ArtifactRepository;
 
-import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -43,6 +43,8 @@ public abstract class AbstractEarModule
     private String groupId;
 
     private String artifactId;
+
+    private String classifier;
 
     protected String bundleDir;
 
@@ -70,6 +72,7 @@ public abstract class AbstractEarModule
         this.artifact = a;
         this.groupId = a.getGroupId();
         this.artifactId = a.getArtifactId();
+        this.classifier = a.getClassifier();
         this.bundleDir = null;
     }
 
@@ -85,23 +88,22 @@ public abstract class AbstractEarModule
                 throw new MojoFailureException(
                     "Could not resolve artifact[" + groupId + ":" + artifactId + ":" + getType() + "]" );
             }
-
-            Iterator i = artifacts.iterator();
-            while ( i.hasNext() )
+            ArtifactRepository ar = new ArtifactRepository( artifacts );
+            artifact = ar.getUniqueArtifact( groupId, artifactId, getType(), classifier );
+            // Artifact has not been found
+            if ( artifact == null )
             {
-                Artifact a = (Artifact) i.next();
-
-                // If the groupId, the artifactId, the classifier matches and if the
-                // artifact's type is known, then we have found it.
-                if ( a.getGroupId().equals( groupId ) && a.getArtifactId().equals( artifactId ) &&
-                    ArtifactTypeMappingService.getInstance().isMappedToType( getType(), a.getType() ) )
+                Set candidates = ar.getArtifacts( groupId, artifactId, getType() );
+                if ( candidates.size() > 1 )
                 {
-                    artifact = a;
-                    return;
+                    throw new MojoFailureException( "Artifact[" + this + "] has " + candidates.size() +
+                        " candidates, please provide a classifier." );
+                }
+                else
+                {
+                    throw new MojoFailureException( "Artifact[" + this + "] " + "is not a dependency of the project." );
                 }
             }
-            // Artifact has not been found
-            throw new MojoFailureException( "Artifact[" + this + "] " + "is not a dependency of the project." );
         }
         else
         {
@@ -148,6 +150,16 @@ public abstract class AbstractEarModule
     public String getArtifactId()
     {
         return artifactId;
+    }
+
+    /**
+     * Returns the artifact's classifier.
+     *
+     * @return the artifact classifier
+     */
+    public String getClassifier()
+    {
+        return classifier;
     }
 
     /**
@@ -199,6 +211,10 @@ public abstract class AbstractEarModule
     {
         StringBuffer sb = new StringBuffer();
         sb.append( getType() ).append( ":" ).append( groupId ).append( ":" ).append( artifactId );
+        if ( classifier != null )
+        {
+            sb.append( ":" ).append( classifier );
+        }
         if ( artifact != null )
         {
             sb.append( ":" ).append( artifact.getVersion() );
@@ -236,5 +252,24 @@ public abstract class AbstractEarModule
         }
 
         return bundleDir;
+    }
+
+    /**
+     * Specify if the objects are both null or both equal.
+     *
+     * @param first  the first object
+     * @param second the second object
+     * @return true if parameters are either both null or equal
+     */
+    static boolean areNullOrEqual( Object first, Object second )
+    {
+        if ( first != null )
+        {
+            return first.equals( second );
+        }
+        else
+        {
+            return second == null;
+        }
     }
 }

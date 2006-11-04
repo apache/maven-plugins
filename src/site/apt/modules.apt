@@ -88,6 +88,9 @@ EAR Modules
   * <<artifactId>> - sets the artifactId of the ejb3 artifact you want to
   configure.
 
+  * <<classifier>> - sets the classifier of the ejb3 artifact you want to
+  configure if multiple ejb3 artifacts matches the groupId/artifact.
+
   * <<bundleDir>> - sets the location of this artifact inside the ear archive.
   If not set, this artifact will be packaged in the root of the archive.
 
@@ -113,6 +116,9 @@ EAR Modules
 
   * <<artifactId>> - sets the artifactId of the ejb-client artifact you want to
   configure.
+
+  * <<classifier>> - sets the classifier of the ejb-client artifact you want to
+  configure if multiple ejb-client artifacts matches the groupId/artifact.
 
   * <<bundleDir>> - sets the location of this artifact inside the ear archive.
   If not set, this artifact will be packaged in the root of the archive.
@@ -140,6 +146,9 @@ EAR Modules
   * <<artifactId>> - sets the artifactId of the ejb artifact you want to
   configure.
 
+  * <<classifier>> - sets the classifier of the ejb artifact you want to
+  configure if multiple ejb artifacts matches the groupId/artifact.
+
   * <<bundleDir>> - sets the location of this artifact inside the ear archive.
   If not set, this artifact will be packaged in the root of the archive.
 
@@ -165,6 +174,9 @@ EAR Modules
 
   * <<artifactId>> - sets the artifactId of the java artifact you want to
   configure.
+
+  * <<classifier>> - sets the classifier of the java artifact you want to
+  configure if multiple java artifacts matches the groupId/artifact.
 
   * <<bundleDir>> - sets the location of this artifact inside the ear archive.
   If not set, this artifact will be packaged in the root of the archive.
@@ -195,6 +207,9 @@ EAR Modules
   * <<artifactId>> - sets the artifactId of the par artifact you want to
   configure.
 
+  * <<classifier>> - sets the classifier of the par artifact you want to
+  configure if multiple par artifacts matches the groupId/artifact.
+
   * <<bundleDir>> - sets the location of this artifact inside the ear archive.
   If not set, this artifact will be packaged in the root of the archive.
 
@@ -220,6 +235,9 @@ EAR Modules
 
   * <<artifactId>> - sets the artifactId of the rar artifact you want to
   configure.
+
+  * <<classifier>> - sets the classifier of the rar artifact you want to
+  configure if multiple rar artifacts matches the groupId/artifact.
 
   * <<bundleDir>> - sets the location of this artifact inside the ear archive.
   If not set, this artifact will be packaged in the root of the archive.
@@ -247,6 +265,9 @@ EAR Modules
   * <<artifactId>> - sets the artifactId of the sar artifact you want to
   configure.
 
+  * <<classifier>> - sets the classifier of the sar artifact you want to
+  configure if multiple sar artifacts matches the groupId/artifact.
+
   * <<bundleDir>> - sets the location of this artifact inside the ear archive.
   If not set, this artifact will be packaged in the root of the archive.
 
@@ -272,6 +293,9 @@ EAR Modules
 
   * <<artifactId>> - sets the artifactId of the web artifact you want to
   configure.
+
+  * <<classifier>> - sets the classifier of the web artifact you want to
+  configure if multiple web artifacts matches the groupId/artifact.
 
   * <<bundleDir>> - sets the location of this artifact inside the ear archive.
   If not set, this artifact will be packaged in the root of the archive.
@@ -301,6 +325,9 @@ EAR Modules
   * <<artifactId>> - sets the artifactId of the wsr artifact you want to
   configure.
 
+  * <<classifier>> - sets the classifier of the wst artifact you want to
+  configure if multiple wsr artifacts matches the groupId/artifact.
+
   * <<bundleDir>> - sets the location of this artifact inside the ear archive.
   If not set, this artifact will be packaged in the root of the archive.
 
@@ -326,6 +353,10 @@ EAR Modules
 
   * <<artifactId>> - sets the artifactId of the hibernate archive artifact
   you want to configure.
+
+  * <<classifier>> - sets the classifier of the hibernate archive artifact
+  you want to configure if multiple hibernate archive  artifacts matches
+  the groupId/artifact.
 
   * <<bundleDir>> - sets the location of this artifact inside the ear archive.
   If not set, this artifact will be packaged in the root of the archive.
