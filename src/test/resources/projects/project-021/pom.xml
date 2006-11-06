@@ -50,11 +50,11 @@
               <artifactId>ejb-sample-one</artifactId>
               <unpack>false</unpack>
             </ejbModule>
-            <javaModule>
+            <jarModule>
               <groupId>eartest</groupId>
               <artifactId>jar-sample-one</artifactId>
               <unpack>false</unpack>
-            </javaModule>
+            </jarModule>
           </modules>
         </configuration>
       </plugin>

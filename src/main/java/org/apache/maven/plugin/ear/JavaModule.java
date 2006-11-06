@@ -17,71 +17,33 @@ package org.apache.maven.plugin.ear;
  */
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.MojoFailureException;
-import org.codehaus.plexus.util.xml.XMLWriter;
-
-import java.util.Set;
 
 /**
- * The {@link EarModule} implementation for a J2EE client module.
+ * The original {@link org.apache.maven.plugin.ear.EarModule} implementation
+ * of a third party library.
  *
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
+ * @deprecated the name JavaModule is really confusing since it targets a
+ *             third party library, use {@link JarModule} instead
  */
 public class JavaModule
-    extends AbstractEarModule
+    extends JarModule
 {
-    protected static final String JAVA_MODULE = "java";
 
-    private Boolean includeInApplicationXml = Boolean.FALSE;
-
+    /**
+     * @deprecated use {@link org.apache.maven.plugin.ear.JavaModule#JarModule()}  instead
+     */
     public JavaModule()
     {
-
+        super();
     }
 
-    public JavaModule( Artifact a, String defaultJavaBundleDir )
+    /**
+     * @deprecated use {@link org.apache.maven.plugin.ear.JavaModule#JarModule(org.apache.maven.artifact.Artifact,String)}} instead
+     */
+    public JavaModule( Artifact a, String defaultLibBundleDir )
     {
-        super( a );
-        setJavaBundleDir( defaultJavaBundleDir );
-
-    }
-
-    public void appendModule( XMLWriter writer, String version )
-    {
-        // Generates an entry in the application.xml only if
-        // includeInApplicationXml is set
-        if ( includeInApplicationXml.booleanValue() )
-        {
-            writer.startElement( MODULE_ELEMENT );
-            writer.startElement( JAVA_MODULE );
-            writer.writeText( getUri() );
-            writer.endElement();
-            writer.endElement();
-        }
-    }
-
-    public void resolveArtifact( Set artifacts )
-        throws EarPluginException, MojoFailureException
-    {
-        // Let's resolve the artifact
-        super.resolveArtifact( artifacts );
-
-        // If the defaultJavaBundleDir is set and no bundle dir is
-        // set, set the default as bundle dir
-        setJavaBundleDir( EarExecutionContext.getInstance().getDefaultJavaBundleDir() );
-    }
-
-    public String getType()
-    {
-        return "jar";
-    }
-
-    private void setJavaBundleDir( String defaultJavaBundleDir )
-    {
-        if ( defaultJavaBundleDir != null && bundleDir == null )
-        {
-            this.bundleDir = defaultJavaBundleDir;
-        }
+        super( a, defaultLibBundleDir );
     }
 }

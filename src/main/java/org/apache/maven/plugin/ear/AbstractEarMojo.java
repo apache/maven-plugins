@@ -86,11 +86,11 @@ public abstract class AbstractEarMojo
     protected PlexusConfiguration artifactTypeMappings;
 
     /**
-     * The default bundle dir for Java modules.
+     * The default bundle dir for libraries.
      *
-     * @parameter
+     * @parameter alias="defaultJavaBundleDir"
      */
-    private String defaultJavaBundleDir;
+    private String defaultLibBundleDir;
 
     /**
      * Directory that resources are copied to during the build.
@@ -142,7 +142,7 @@ public abstract class AbstractEarMojo
         }
 
         getLog().debug( "Initializing ear execution context" );
-        EarExecutionContext.getInstance().initialize( defaultJavaBundleDir, jbossConfiguration );
+        EarExecutionContext.getInstance().initialize( defaultLibBundleDir, jbossConfiguration );
 
         getLog().debug( "Resolving ear modules ..." );
         allModules = new ArrayList();
@@ -181,7 +181,7 @@ public abstract class AbstractEarMojo
                 if ( !isArtifactRegistered( artifact, allModules ) && !artifact.isOptional() &&
                     filter.include( artifact ) )
                 {
-                    EarModule module = EarModuleFactory.newEarModule( artifact, defaultJavaBundleDir );
+                    EarModule module = EarModuleFactory.newEarModule( artifact, defaultLibBundleDir );
                     allModules.add( module );
                 }
             }

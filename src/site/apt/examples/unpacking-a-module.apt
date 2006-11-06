@@ -43,11 +43,11 @@ Unpacking A Module
         <artifactId>maven-ear-plugin</artifactId>
         <configuration>
           <modules>
-            <javaModule>
+            <sarModule>
               <groupId>artifactGroupId</groupId>
               <artifactId>artifactId</artifactId>
               <unpack>true</unpack>
-            </javaModule>
+            </sarModule>
           </modules>
         </configuration>
       </plugin>

@@ -38,11 +38,11 @@ Customizing A Module Location
         <configuration>
            [...]
            <modules>
-             <javaModule>
+             <jarModule>
                <groupId>artifactGroupId</groupId>
                <artifactId>artifactId</artifactId>
                <bundleDir>APP-INF/lib</bundleDir>
-             </javaModule>
+             </jarModule>
           </modules>
         </configuration>
       </plugin>
@@ -50,9 +50,9 @@ Customizing A Module Location
   </build>
 +---------
 
-  Note that it is possible to specify a default bundle directory for all Java
-  modules. If a Java module has not the bundleDir property above, the default
-  one is used. Below is an example of such configuration:
+  Note that it is possible to specify a default bundle directory for all libraries.
+  If a Jar module has not the bundleDir property above, the default one is used.
+  Below is an example of such configuration:
 
 +--------
   <build>
@@ -62,13 +62,13 @@ Customizing A Module Location
         <artifactId>maven-ear-plugin</artifactId>
         <configuration>
            [...]
-           <defaultJavaBundleDir>APP-INF/lib</defaultJavaBundleDir>
+           <defaultLibBundleDir>APP-INF/lib</defaultLibBundleDir>
            <modules>
-             <javaModule>
+             <jarModule>
                <groupId>artifactGroupId</groupId>
                <artifactId>artifactId</artifactId>
                <bundleDir>/</bundleDir>
-             </javaModule>
+             </jarModule>
           </modules>
         </configuration>
       </plugin>
@@ -76,6 +76,5 @@ Customizing A Module Location
   </build>
 +---------
 
-  In the above case, Java modules will be placed in the APP-INF/lib directory
-  except the specified artifact which will be placed at the root of the EAR
-  structure.
+  In the above case, jar modules (i.e. libraries) will be placed in the APP-INF/lib directory
+  except the specified artifact which will be placed at the root of the EAR structure.

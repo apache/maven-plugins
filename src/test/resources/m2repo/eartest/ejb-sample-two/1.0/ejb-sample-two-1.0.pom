@@ -7,4 +7,14 @@
   <distributionManagement>
     <status>verified</status>
   </distributionManagement>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-ejb-plugin</artifactId>
+        <configuration>
+          <generateClient>true</generateClient>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
