@@ -105,6 +105,31 @@
       <name>John Allen</name>
     </contributor>
   </contributors>
+  <build>
+    <resources>
+      <!-- Include the apache process LICENSE and NOTICE
+           files.
+           -->
+      <resource>
+        <targetPath>META-INF</targetPath>
+        <filtering>false</filtering>
+        <directory>${basedir}</directory>
+        <includes>
+          <include>LICENSE</include>
+          <include>NOTICE</include>
+        </includes>
+      </resource>
+      <!-- Include super-pom defined main/resources
+           Removing this section will break the build.
+           Since we have defined a new build/resources
+           section for the Apache process LICENSE and NOTICE
+           files, this original default section is now
+           required. -->
+      <resource>
+        <directory>${basedir}/src/main/resources</directory>
+      </resource>
+    </resources>
+  </build>
   <reporting>
     <plugins>
       <plugin>

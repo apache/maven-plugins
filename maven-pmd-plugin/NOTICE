@@ -1,0 +1,15 @@
+Apache Maven PMD Plugin
+Copyright 2001-2006 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+Portions of this software utilize the Plexus Container, API, and
+Components.  Copyright the Codehaus. The original software is
+available from
+   http://plexus.codehaus.org/
+
+This plugin uses the PMD static source analyzer API.
+Copyright InfoEther, Inc.  The PMD software is available from
+   http://pmd.sourceforge.net/
+
