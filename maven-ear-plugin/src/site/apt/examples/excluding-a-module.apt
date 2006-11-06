@@ -38,11 +38,11 @@ Excluding A Module
         <configuration>
            [...]
            <modules>
-             <javaModule>
+             <warModule>
                <groupId>artifactGroupId</groupId>
                <artifactId>artifactId</artifactId>
                <excluded>true</excluded>
-             </javaModule>
+             </warModule>
           </modules>
         </configuration>
       </plugin>

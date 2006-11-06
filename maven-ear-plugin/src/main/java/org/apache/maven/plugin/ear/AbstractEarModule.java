@@ -34,6 +34,8 @@ public abstract class AbstractEarModule
 
     protected static final String MODULE_ELEMENT = "module";
 
+    protected static final String JAVA_MODULE = "java";
+
     private String uri;
 
     private Artifact artifact;

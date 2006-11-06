@@ -32,11 +32,11 @@
         <artifactId>maven-ear-plugin</artifactId>
         <configuration>          
           <modules>
-            <javaModule>
+            <jarModule>
               <groupId>eartest</groupId>
               <artifactId>jar-sample-one</artifactId>
               <excluded>true</excluded>
-            </javaModule>
+            </jarModule>
           </modules>
         </configuration>
       </plugin>

@@ -31,13 +31,13 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-ear-plugin</artifactId>
         <configuration>
-          <defaultJavaBundleDir>APP-INF/lib</defaultJavaBundleDir>
+          <defaultLibBundleDir>APP-INF/lib</defaultLibBundleDir>
           <modules>
-            <javaModule>
+            <jarModule>
               <groupId>eartest</groupId>
               <artifactId>jar-sample-one</artifactId>
               <bundleDir>/</bundleDir>
-            </javaModule>
+            </jarModule>
           </modules>
         </configuration>
       </plugin>

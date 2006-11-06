@@ -34,7 +34,7 @@ public class EarExecutionContext
 
     // Singleton implementation
 
-    private String defaultJavaBundleDir;
+    private String defaultLibBundleDir;
 
     private JbossConfiguration jbossConfiguration;
 
@@ -43,9 +43,9 @@ public class EarExecutionContext
 
     }
 
-    public String getDefaultJavaBundleDir()
+    public String getDefaultLibBundleDir()
     {
-        return defaultJavaBundleDir;
+        return defaultLibBundleDir;
     }
 
     public JbossConfiguration getJbossConfiguration()
@@ -58,9 +58,9 @@ public class EarExecutionContext
         return jbossConfiguration != null;
     }
 
-    protected void initialize( String defaultJavaBundleDir, JbossConfiguration jbossConfiguration )
+    protected void initialize( String defaultLibBundleDir, JbossConfiguration jbossConfiguration )
     {
-        this.defaultJavaBundleDir = defaultJavaBundleDir;
+        this.defaultLibBundleDir = defaultLibBundleDir;
         this.jbossConfiguration = jbossConfiguration;
     }
 }

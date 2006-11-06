@@ -88,6 +88,8 @@ Ear Plugin Tests
 
   * project-029: builds an EAR and make sure that system dependencies are not included in the EAR
 
+  * project-030: builds an EAR and make sure that ejb-client dependencies are detected and added in the generated application.xml
+
   
 
    
