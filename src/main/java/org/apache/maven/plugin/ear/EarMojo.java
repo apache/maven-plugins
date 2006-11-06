@@ -187,6 +187,9 @@ public class EarMojo
             for ( Iterator iter = getModules().iterator(); iter.hasNext(); )
             {
                 EarModule module = (EarModule) iter.next();
+                if (module instanceof JavaModule) {
+                    getLog().warn( "JavaModule is deprecated ("+module+"), please use JarModule instead.");
+                }
                 final File sourceFile = module.getArtifact().getFile();
                 final File destinationFile = buildDestinationFile( getWorkDirectory(), module.getUri() );
                 if ( !sourceFile.isFile() )
