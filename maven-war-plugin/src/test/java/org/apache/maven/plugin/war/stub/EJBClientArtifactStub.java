@@ -53,6 +53,11 @@ public class EJBClientArtifactStub
         return "ejb-client";
     }
 
+    public String getClassifier()
+    {
+        return "client";
+    }
+
     public String getArtifactId()
     {
         return "ejbclientartifact";
