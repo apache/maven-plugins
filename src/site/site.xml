@@ -23,12 +23,10 @@
       <item name="Filter Contexts" href="/examples/contexts.html"/>
       <item name="Multiproject" href="/examples/multiproject.html"/>
     </menu>
-
-    <!-- To be uncommented once it's up to date again
     <menu name="Architecture">
       <item name="Overview" href="/architecture/architecture.html"/>
       <item name="Check Goal" href="/architecture/clover-check.html"/>
+      <item name="Report Goal" href="/architecture/clover-report.html"/>
     </menu>
-    -->
   </body>
 </project>
