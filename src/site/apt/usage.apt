@@ -86,10 +86,10 @@ mvn package
   The context root of a Web module might be customized using the contextRoot
   parameter.
 
-  Please note that third party libraries are not included in the generated
-  application.xml (only ejb-client should be included in a <java> entry).
-  However, a jar dependency could be included in the generated application.xml
-  by specifying the <<<includeInApplicationXml>>> flag.
+  Please note that third party libraries (i.e. JarModule) are not included
+  in the generated application.xml (only ejb-client should be included in
+  a <java> entry). However, a jar dependency could be included in the
+  generated application.xml by specifying the <<<includeInApplicationXml>>> flag.
 
   It is also possible to specify a default bundle directory for all third party
   libraries.

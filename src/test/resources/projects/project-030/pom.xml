@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>ear</groupId>
-  <artifactId>maven-ear-plugin-test-project-005</artifactId>
+  <artifactId>maven-ear-plugin-test-project-030</artifactId>
   <version>99.0</version>
   <name>Maven</name>
   <packaging>ear</packaging>
@@ -16,26 +16,9 @@
     </dependency>
     <dependency>
       <groupId>eartest</groupId>
-      <artifactId>jar-sample-one</artifactId>
+      <artifactId>ejb-sample-two</artifactId>
       <version>1.0</version>
+      <type>ejb-client</type>
     </dependency>
   </dependencies>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-ear-plugin</artifactId>
-        <configuration>
-          <defaultLibBundleDir>APP-INF/lib</defaultLibBundleDir>
-          <modules>
-            <jarModule>
-              <groupId>eartest</groupId>
-              <artifactId>jar-sample-one</artifactId>
-              <uri>libs/another-name.jar</uri>
-            </jarModule>
-          </modules>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 </project>

@@ -17,15 +17,16 @@ package org.apache.maven.plugin.ear;
  */
 
 import org.apache.maven.artifact.Artifact;
+import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
- * The {@link EarModule} implementation for an Ejb-client module.
+ * The {@link EarModule} implementation for an ejb client module.
  *
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
 public class EjbClientModule
-    extends JavaModule
+    extends AbstractEarModule
 {
 
     public EjbClientModule()
@@ -34,7 +35,16 @@ public class EjbClientModule
 
     public EjbClientModule( Artifact a )
     {
-        super( a, null );
+        super( a );
+    }
+
+    public void appendModule( XMLWriter writer, String version )
+    {
+        writer.startElement( MODULE_ELEMENT );
+        writer.startElement( JAVA_MODULE );
+        writer.writeText( getUri() );
+        writer.endElement();
+        writer.endElement();
     }
 
     public String getType()

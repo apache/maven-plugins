@@ -37,11 +37,11 @@ Customizing A Module Filename
         <configuration>
            [...]
            <modules>
-             <javaModule>
+             <ejbModule>
                <groupId>artifactGroupId</groupId>
                <artifactId>artifactId</artifactId>
                <bundleFileName>anotherName-1.2.3.jar</bundleFileName>
-             </javaModule>
+             </ejbModule>
           </modules>
         </configuration>
       </plugin>

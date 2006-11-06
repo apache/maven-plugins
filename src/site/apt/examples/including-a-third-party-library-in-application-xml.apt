@@ -27,7 +27,8 @@
 Including A Third Party Library In application.xml
 
   If third party libraries need to be included in the generated application.xml, the
-  'includeInApplicationXml' flag could be used. This flag works only for java modules.
+  'includeInApplicationXml' flag could be used. This flag works only for jar modules
+  since they define third party libraries packaged within the EAR.
 
 +--------
   <build>
@@ -38,11 +39,11 @@ Including A Third Party Library In application.xml
         <configuration>
            [...]
            <modules>
-             <javaModule>
+             <jarModule>
                <groupId>artifactGroupId</groupId>
                <artifactId>artifactId</artifactId>
                <includeInApplicationXml>true</includeInApplicationXml>
-             </javaModule>
+             </jarModule>
           </modules>
         </configuration>
       </plugin>
