@@ -18,6 +18,12 @@
 
 <project>
   <body>
+    <menu name="Overview">
+      <item name="Introduction" href="index.html"/>
+      <item name="Goals" href="plugin-info.html"/>
+      <item name="Usage" href="usage.html"/>
+      <item name="FAQ" href="faq.html"/>
+    </menu>
     <menu name="Examples">
       <item name="Using a Custom Checkstyle Checker Configuration" href="/examples/custom-checker-config.html"/>
       <item name="Using Custom Checkstyle Property Expansion Definitions" href="/examples/custom-property-expansion.html"/>
