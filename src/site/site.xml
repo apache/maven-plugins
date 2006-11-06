@@ -22,6 +22,12 @@
       <item name="Ant" href="http://ant.apache.org/"/>
     </links>
 
+    <menu name="Overview">
+      <item name="Introduction" href="index.html"/>
+      <item name="Goals" href="plugin-info.html"/>
+      <item name="Usage" href="usage.html"/>
+      <item name="FAQ" href="faq.html"/>
+    </menu>
     <menu name="Examples">
       <item name="Referencing the Maven Classpaths" href="examples/classpaths.html"/>
       <item name="Using tasks Attributes" href="examples/tasksAttributes.html"/>
