@@ -23,7 +23,10 @@ import org.apache.maven.reporting.MavenReport;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Locale;
+import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
 /**
@@ -32,10 +35,6 @@ import java.util.ResourceBundle;
 public class CheckstyleReportTest
     extends AbstractMojoTestCase
 {
-    private Locale oldDefaultLocale;
-
-    private ResourceBundle bundle;
-
     /**
      * @see junit.framework.TestCase#setUp()
      */
@@ -43,12 +42,6 @@ public class CheckstyleReportTest
         throws Exception
     {
         super.setUp();
-
-        // Specify English as default Locale for messages in tests
-        oldDefaultLocale = Locale.getDefault();
-        Locale.setDefault( Locale.ENGLISH );
-        bundle = ResourceBundle.getBundle( "checkstyle-report", Locale.ENGLISH, getClass().getClassLoader() );
-
     }
 
     /**
@@ -58,9 +51,6 @@ public class CheckstyleReportTest
         throws Exception
     {
         super.tearDown();
-
-        // Restore current locale
-        Locale.setDefault( oldDefaultLocale );
     }
 
     public void testNoSource()
@@ -157,6 +147,7 @@ public class CheckstyleReportTest
         throws Exception
     {
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/" + pluginXml );
+        ResourceBundle bundle = ResourceBundle.getBundle( "checkstyle-report", Locale.getDefault(), this.getClassLoader() );
 
         Mojo mojo = lookupMojo( "checkstyle", pluginXmlFile );
 

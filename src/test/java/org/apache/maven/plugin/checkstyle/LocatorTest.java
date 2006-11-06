@@ -75,6 +75,10 @@ public class LocatorTest
 
         assertNotNull( "Test resolved file", resolvedFile );
         assertTrue( "Test resolved file exists", resolvedFile.exists() );
+        
+        File resolvedConfig = locator.resolveLocation( "config/sun_checks.xml", "sun_checks.xml" );
+        assertNotNull( "Test resolved file", resolvedConfig );
+        assertTrue( "Test resolved file exists", resolvedConfig.exists() );
     }
 
     public void testException()
