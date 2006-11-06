@@ -28,6 +28,7 @@ import org.apache.maven.plugin.war.stub.PARArtifactStub;
 import org.apache.maven.plugin.war.stub.ResourceStub;
 import org.apache.maven.plugin.war.stub.SimpleWarArtifactStub;
 import org.apache.maven.plugin.war.stub.TLDArtifactStub;
+import org.apache.maven.plugin.war.stub.EJBArtifactStubWithClassifier;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.BufferedReader;
@@ -607,6 +608,59 @@ public class WarExplodedMojoTest
         assertTrue( "ejb dup artifact not found: " + expectedEJBDupArtifact.toString(),
                     expectedEJBDupArtifact.exists() );
         
+        // house keeping
+        expectedWebSourceFile.delete();
+        expectedWebSource2File.delete();
+        expectedEJBArtifact.delete();
+        expectedEJBDupArtifact.delete();
+    }
+
+    /**
+     * @throws Exception
+     */
+    public void testExplodedWar_DuplicateWithClassifier()
+        throws Exception
+    {
+        // setup test data
+        String testId = "ExplodedWar_DuplicateWithClassifier";
+        MavenProjectArtifactsStub project = new MavenProjectArtifactsStub();
+        File webAppDirectory = new File( getTestDirectory(), testId );
+        File webAppSource = createWebAppSource( testId );
+        File classesDir = createClassesDir( testId, true );
+        EJBArtifactStub ejbArtifact = new EJBArtifactStub( getBasedir() );
+        EJBArtifactStubWithClassifier ejbArtifactDup = new EJBArtifactStubWithClassifier( getBasedir() );
+
+        File ejbFile = ejbArtifact.getFile();
+
+        // ejbArtifact has a hard coded file, only one assert is needed
+        assertTrue( "ejb not found: " + ejbFile.getAbsolutePath(), ejbFile.exists() );
+
+        // configure mojo
+
+        ejbArtifact.setGroupId( "org.sample.ejb" );
+        ejbArtifactDup.setGroupId( "org.sample.ejb" );
+
+        ejbArtifactDup.setClassifier( "classifier" );
+
+        project.addArtifact( ejbArtifact );
+        project.addArtifact( ejbArtifactDup );
+
+        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+        mojo.execute();
+
+        // validate operation
+        File expectedWebSourceFile = new File( webAppDirectory, "pansit.jsp" );
+        File expectedWebSource2File = new File( webAppDirectory, "org/web/app/last-exile.jsp" );
+        // final name form is <artifactId>-<version>.<type>
+        File expectedEJBArtifact = new File( webAppDirectory, "WEB-INF/lib/ejbartifact-0.0-Test.jar" );
+        File expectedEJBDupArtifact = new File( webAppDirectory, "WEB-INF/lib/ejbartifact-0.0-Test-classifier.jar" );
+
+        assertTrue( "source files not found: " + expectedWebSourceFile.toString(), expectedWebSourceFile.exists() );
+        assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
+        assertTrue( "ejb artifact not found: " + expectedEJBArtifact.toString(), expectedEJBArtifact.exists() );
+        assertTrue( "ejb dup artifact not found: " + expectedEJBDupArtifact.toString(),
+                    expectedEJBDupArtifact.exists() );
+
         // house keeping
         expectedWebSourceFile.delete();
         expectedWebSource2File.delete();
