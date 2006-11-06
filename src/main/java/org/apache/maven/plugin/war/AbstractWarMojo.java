@@ -1025,18 +1025,16 @@ public abstract class AbstractWarMojo
      */
     private String getDefaultFinalName( Artifact artifact )
     {
-        String type = artifact.getType();
-        if ( "ejb-client".equals( type ) )
-        {
-            return artifact.getArtifactId() + "-" + artifact.getVersion() + "-" + "client" + "." +
-                artifact.getArtifactHandler().getExtension();
-        }
-        else
-        {
-            return artifact.getArtifactId() + "-" + artifact.getVersion() + "." +
-               artifact.getArtifactHandler().getExtension();
-        }
-    }
+        String finalName = artifact.getArtifactId() + "-" + artifact.getVersion();
 
+        String classifier = artifact.getClassifier();
+        if ( ( classifier != null ) && ! ( "".equals( classifier.trim() ) ) )
+        {
+            finalName += "-" + classifier;
+        }
+
+        finalName =  finalName + "." + artifact.getArtifactHandler().getExtension();
+        return finalName;
+    }
 
 }
