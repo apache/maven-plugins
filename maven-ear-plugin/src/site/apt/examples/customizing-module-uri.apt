@@ -39,11 +39,11 @@ Customizing A Module URI
         <configuration>
            [...]
            <modules>
-             <javaModule>
+             <jarModule>
                <groupId>artifactGroupId</groupId>
                <artifactId>artifactId</artifactId>
                <uri>APP-INF/lib/anotherName-1.2.3.jar</uri>
-             </javaModule>
+             </jarModule>
           </modules>
         </configuration>
       </plugin>

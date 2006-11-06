@@ -211,7 +211,8 @@ public class EarMojoTest
     public void testProject019()
         throws Exception
     {
-        doTestProject( "project-019", new String[]{"ejb-sample-one-1.0.jar", "sar-sample-one-1.0.sar", "jar-sample-one-1.0.jar"},
+        doTestProject( "project-019",
+                       new String[]{"ejb-sample-one-1.0.jar", "sar-sample-one-1.0.sar", "jar-sample-one-1.0.jar"},
                        new boolean[]{false, true, true} );
     }
 
@@ -221,7 +222,8 @@ public class EarMojoTest
     public void testProject020()
         throws Exception
     {
-        doTestProject( "project-020", new String[]{"ejb-sample-one-1.0.jar", "sar-sample-one-1.0.sar", "jar-sample-one-1.0.jar"},
+        doTestProject( "project-020",
+                       new String[]{"ejb-sample-one-1.0.jar", "sar-sample-one-1.0.sar", "jar-sample-one-1.0.jar"},
                        new boolean[]{true, false, false} );
     }
 
@@ -233,7 +235,7 @@ public class EarMojoTest
     {
         doTestProject( "project-021", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar",
             "sar-sample-one-1.0.sar", "jar-sample-one-1.0.jar", "jar-sample-two-1.0.jar"},
-                       new boolean[]{false, true, false, false, true} );
+                                      new boolean[]{false, true, false, false, true} );
     }
 
     /**
@@ -283,12 +285,12 @@ public class EarMojoTest
     public void testProject026()
         throws Exception
     {
-        final File baseDir = executeMojo( "project-026", new Properties( ), false);
+        final File baseDir = executeMojo( "project-026", new Properties(), false );
         // Stupido, checks that the ear archive is not there
-        assertFalse("Execution should have failed", getEarArchive(baseDir, "project-026").exists());
+        assertFalse( "Execution should have failed", getEarArchive( baseDir, "project-026" ).exists() );
     }
 
-     /**
+    /**
      * Builds an EAR and make sure that provided dependencies are not included in the EAR.
      */
     public void testProject027()
@@ -306,13 +308,22 @@ public class EarMojoTest
         doTestProject( "project-028", new String[]{"ejb-sample-one-1.0.jar"} );
     }
 
-     /**
+    /**
      * Builds an EAR and make sure that system dependencies are not included in the EAR.
      */
     public void testProject029()
         throws Exception
     {
         doTestProject( "project-029", new String[]{"ejb-sample-one-1.0.jar"} );
+    }
+
+     /**
+     * Builds an EAR and make sure that ejb-client dependencies are detected and added in the generated application.xml.
+     */
+    public void testProject030()
+        throws Exception
+    {
+        doTestProject( "project-030", new String[]{"ejb-sample-one-1.0.jar","ejb-sample-two-1.0-client.jar"} );
     }
 
 }

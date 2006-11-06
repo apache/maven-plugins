@@ -52,10 +52,10 @@ public final class EarModuleFactory
      * execution configuration.
      *
      * @param artifact             the artifact
-     * @param defaultJavaBundleDir the default bundle dir for {@link JavaModule}
+     * @param defaultLibBundleDir the default bundle dir for {@link JarModule}
      * @return an ear module for this artifact
      */
-    public static EarModule newEarModule( Artifact artifact, String defaultJavaBundleDir )
+    public static EarModule newEarModule( Artifact artifact, String defaultLibBundleDir )
         throws UnknownArtifactTypeException
     {
         // Get the standard artifact type based on default config and user-defined mapping(s)
@@ -64,7 +64,7 @@ public final class EarModuleFactory
 
         if ( "jar".equals( artifactType ) )
         {
-            return new JavaModule( artifact, defaultJavaBundleDir );
+            return new JarModule( artifact, defaultLibBundleDir );
         }
         else if ( "ejb".equals( artifactType ) )
         {

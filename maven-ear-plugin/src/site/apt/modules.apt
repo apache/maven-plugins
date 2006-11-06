@@ -34,7 +34,7 @@ EAR Modules
 
   * {{{#ejbModule}ejbModule}}
 
-  * {{{#javaModule}javaModule}}
+  * {{{#jarModule}jarModule}} (previously know as javaModule and deprecated)
 
   * {{{#parModule}parModule}}
 
@@ -165,18 +165,18 @@ EAR Modules
   to its uri. Default is false.
 
 
-* {javaModule} Properties
+* {jarModule} Properties
 
-  The following configuration options are available for JavaModule:
+  The following configuration options are available for JarModule:
 
-  * <<groupId>> - sets the groupId of the java artifact you want to
+  * <<groupId>> - sets the groupId of the jar artifact you want to
   configure.
 
-  * <<artifactId>> - sets the artifactId of the java artifact you want to
+  * <<artifactId>> - sets the artifactId of the jar artifact you want to
   configure.
 
-  * <<classifier>> - sets the classifier of the java artifact you want to
-  configure if multiple java artifacts matches the groupId/artifact.
+  * <<classifier>> - sets the classifier of the jar artifact you want to
+  configure if multiple jar artifacts matches the groupId/artifact.
 
   * <<bundleDir>> - sets the location of this artifact inside the ear archive.
   If not set, this artifact will be packaged in the root of the archive.
