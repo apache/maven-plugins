@@ -18,6 +18,12 @@
 
 <project>
   <body>
+    <menu name="Overview">
+      <item name="Introduction" href="index.html"/>
+      <item name="Goals" href="plugin-info.html"/>
+      <item name="Usage" href="usage.html"/>
+      <item name="FAQ" href="faq.html"/>
+    </menu>
     <menu name="Examples">
       <item name="Custom POM" href="examples/custom-pom-installation.html"/>
       <item name="Generic POM" href="examples/generic-pom-generation.html"/>

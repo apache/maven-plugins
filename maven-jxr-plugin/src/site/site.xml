@@ -1,5 +1,11 @@
 <project>
   <body>
+    <menu name="Overview">
+      <item name="Introduction" href="index.html"/>
+      <item name="Goals" href="plugin-info.html"/>
+      <item name="Usage" href="usage.html"/>
+      <item name="FAQ" href="faq.html"/>
+    </menu>
     <menu name="Examples">
       <item name="Aggregating JXR Reports for Multi-Projects" href="/examples/aggregate.html"/>
       <item name="Linking JXR Files to Javadocs" href="/examples/linkjavadoc.html"/>

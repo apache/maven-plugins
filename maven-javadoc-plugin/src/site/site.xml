@@ -22,6 +22,12 @@
       <item name="Javadoc Tool" href="http://java.sun.com/j2se/javadoc/"/>
     </links>
 
+    <menu name="Overview">
+      <item name="Introduction" href="index.html"/>
+      <item name="Goals" href="plugin-info.html"/>
+      <item name="Usage" href="usage.html"/>
+      <item name="FAQ" href="faq.html"/>
+    </menu>
     <menu name="Examples">
       <item name="Aggregating Javadocs" href="/examples/aggregate.html"/>
       <item name="Using Alternate Doclets" href="/examples/alternate-doclet.html"/>
