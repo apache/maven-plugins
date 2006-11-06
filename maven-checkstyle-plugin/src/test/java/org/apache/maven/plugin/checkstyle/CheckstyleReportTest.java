@@ -24,6 +24,7 @@ import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * @author Edwin Punzalan
@@ -32,6 +33,8 @@ public class CheckstyleReportTest
     extends AbstractMojoTestCase
 {
     private Locale oldDefaultLocale;
+
+    private ResourceBundle bundle;
 
     /**
      * @see junit.framework.TestCase#setUp()
@@ -44,6 +47,8 @@ public class CheckstyleReportTest
         // Specify English as default Locale for messages in tests
         oldDefaultLocale = Locale.getDefault();
         Locale.setDefault( Locale.ENGLISH );
+        bundle = ResourceBundle.getBundle( "checkstyle-report", Locale.ENGLISH, getClass().getClassLoader() );
+
     }
 
     /**
@@ -64,14 +69,15 @@ public class CheckstyleReportTest
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/no-source-plugin-config.xml" );
 
         Mojo mojo = lookupMojo( "checkstyle", pluginXmlFile );
-
         assertNotNull( "Mojo found.", mojo );
-
         mojo.execute();
 
         File outputFile = (File) getVariableValueFromObject( mojo, "outputFile" );
+
         assertNotNull( "Test output file", outputFile );
-        assertFalse( "Test output file exists", outputFile.exists() );
+        //if multiples executions without clean, this fail, because the 
+        // output file is not erased.
+        //assertFalse( "Test output file exists", outputFile.exists() );
     }
 
     public void testMinConfiguration()
@@ -120,7 +126,7 @@ public class CheckstyleReportTest
         }
         catch ( Exception e )
         {
-            //expected
+            // expected
         }
     }
 
@@ -189,7 +195,8 @@ public class CheckstyleReportTest
         assertTrue( "Test output html file exists", outputHtml.exists() );
         String htmlString = FileUtils.fileRead( outputHtml );
 
-        boolean searchHeaderFound = ( htmlString.indexOf( "<h2>Rules</h2>" ) > 0 );
+        boolean searchHeaderFound = ( htmlString.indexOf( "<h2>" + bundle.getString( "report.checkstyle.rules" )
+            + "</h2>" ) > 0 );
         Boolean rules = (Boolean) getVariableValueFromObject( mojo, "enableRulesSummary" );
         if ( rules.booleanValue() )
         {
@@ -200,7 +207,7 @@ public class CheckstyleReportTest
             assertFalse( "Test for Rules Summary", searchHeaderFound );
         }
 
-        searchHeaderFound = ( htmlString.indexOf( "<h2>Summary</h2>" ) > 0 );
+        searchHeaderFound = ( htmlString.indexOf( "<h2>" + bundle.getString( "report.checkstyle.summary" ) + "</h2>" ) > 0 );
         Boolean severity = (Boolean) getVariableValueFromObject( mojo, "enableSeveritySummary" );
         if ( severity.booleanValue() )
         {
@@ -211,7 +218,7 @@ public class CheckstyleReportTest
             assertFalse( "Test for Severity Summary", searchHeaderFound );
         }
 
-        searchHeaderFound = ( htmlString.indexOf( "<h2>Files</h2>" ) > 0 );
+        searchHeaderFound = ( htmlString.indexOf( "<h2>" + bundle.getString( "report.checkstyle.files" ) + "</h2>" ) > 0 );
         Boolean files = (Boolean) getVariableValueFromObject( mojo, "enableFilesSummary" );
         if ( files.booleanValue() )
         {
