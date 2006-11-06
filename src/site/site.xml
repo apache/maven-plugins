@@ -20,6 +20,10 @@
   <body>
     <menu name="Examples">
       <item name="Sample Verifications" href="examples/sample-verifications.html"/>
-   </menu>
+    </menu>
+
+    <menu name="Reference">
+      <item name="Verifications File Format" href="verifications.html"/>
+    </menu>
   </body>
 </project>
