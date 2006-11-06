@@ -184,7 +184,7 @@ public class CheckstyleReportGenerator
     {
         sink.figure();
         sink.figureCaption();
-        sink.text( "info" );
+        sink.text( bundle.getString( "report.checkstyle.infos" ) );
         sink.figureCaption_();
         sink.figureGraphics( "images/icon_info_sml.gif" );
         sink.figure_();
@@ -194,7 +194,7 @@ public class CheckstyleReportGenerator
     {
         sink.figure();
         sink.figureCaption();
-        sink.text( "warning" );
+        sink.text( bundle.getString( "report.checkstyle.warnings" ) );
         sink.figureCaption_();
         sink.figureGraphics( "images/icon_warning_sml.gif" );
         sink.figure_();
@@ -204,7 +204,7 @@ public class CheckstyleReportGenerator
     {
         sink.figure();
         sink.figureCaption();
-        sink.text( "error" );
+        sink.text( bundle.getString( "report.checkstyle.errors" ) );
         sink.figureCaption_();
         sink.figureGraphics( "images/icon_error_sml.gif" );
         sink.figure_();
@@ -244,11 +244,11 @@ public class CheckstyleReportGenerator
         sink.tableHeaderCell_();
 
         sink.tableHeaderCell();
-        sink.text( "Violations" );
+        sink.text( bundle.getString( "report.checkstyle.violations" ) );
         sink.tableHeaderCell_();
 
         sink.tableHeaderCell();
-        sink.text( "Severity" );
+        sink.text( bundle.getString( "report.checkstyle.column.severity" ) );
         sink.tableHeaderCell_();
         sink.tableRow_();
 
@@ -261,7 +261,7 @@ public class CheckstyleReportGenerator
         {
             sink.tableRow();
             sink.tableCell();
-            sink.text( "No Rules Found." );
+            sink.text( bundle.getString( "report.checkstyle.norule" ) );
             sink.tableCell_();
             sink.tableRow_();
         }
@@ -456,19 +456,19 @@ public class CheckstyleReportGenerator
         sink.tableHeaderCell_();
 
         sink.tableHeaderCell();
-        sink.text( "Infos" );
+        sink.text( bundle.getString( "report.checkstyle.infos" ) );
         sink.nonBreakingSpace();
         iconInfo();
         sink.tableHeaderCell_();
 
         sink.tableHeaderCell();
-        sink.text( "Warnings" );
+        sink.text( bundle.getString( "report.checkstyle.warnings" ) );
         sink.nonBreakingSpace();
         iconWarning();
         sink.tableHeaderCell_();
 
         sink.tableHeaderCell();
-        sink.text( "Errors" );
+        sink.text( bundle.getString( "report.checkstyle.errors" ) );
         sink.nonBreakingSpace();
         iconError();
         sink.tableHeaderCell_();
@@ -508,17 +508,17 @@ public class CheckstyleReportGenerator
         sink.text( bundle.getString( "report.checkstyle.files" ) );
         sink.tableHeaderCell_();
         sink.tableHeaderCell();
-        sink.text( "I" );
+        sink.text( bundle.getString( "report.checkstyle.infos.abbrev" ) );
         sink.nonBreakingSpace();
         iconInfo();
         sink.tableHeaderCell_();
         sink.tableHeaderCell();
-        sink.text( "W" );
+        sink.text( bundle.getString( "report.checkstyle.warnings.abbrev" ) );
         sink.nonBreakingSpace();
         iconWarning();
         sink.tableHeaderCell_();
         sink.tableHeaderCell();
-        sink.text( "E" );
+        sink.text( bundle.getString( "report.checkstyle.errors.abbrev" ) );
         sink.nonBreakingSpace();
         iconError();
         sink.tableHeaderCell_();
@@ -602,10 +602,10 @@ public class CheckstyleReportGenerator
             sink.text( bundle.getString( "report.checkstyle.column.violation" ) );
             sink.tableHeaderCell_();
             sink.tableHeaderCell();
-            sink.text( "Message" );
+            sink.text( bundle.getString( "report.checkstyle.column.message" ) );
             sink.tableHeaderCell_();
             sink.tableHeaderCell();
-            sink.text( "Line" );
+            sink.text( bundle.getString( "report.checkstyle.column.line" ) );
             sink.tableHeaderCell_();
             sink.tableRow_();
 
