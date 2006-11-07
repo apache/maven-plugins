@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.Collections;
 
 import net.sourceforge.pmd.IRuleViolation;
 import net.sourceforge.pmd.PMD;
@@ -168,6 +169,7 @@ public class PmdReport
             try
             {
                 files = getFilesToProcess( "**/*.java" );
+                Collections.sort( files );
             }
             catch ( IOException e )
             {
