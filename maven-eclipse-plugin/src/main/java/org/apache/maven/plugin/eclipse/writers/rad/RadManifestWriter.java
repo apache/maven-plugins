@@ -151,7 +151,7 @@ public class RadManifestWriter
             
             if ( !foundMetaInfBaseDirectory )
             {
-                EclipseSourceDir dir = new EclipseSourceDir( metaInfBaseDirectory, null, true, false, null, null );
+                EclipseSourceDir dir = new EclipseSourceDir( metaInfBaseDirectory, null, true, false, null, null, false );
                 
                 EclipseSourceDir[] newSourceDirs = new EclipseSourceDir[ sourceDirs.length + 1 ];
                 newSourceDirs[ sourceDirs.length ] = dir;
