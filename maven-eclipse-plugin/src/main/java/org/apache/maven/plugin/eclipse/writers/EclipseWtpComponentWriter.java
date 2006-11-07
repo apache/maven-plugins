@@ -31,7 +31,7 @@ import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
  * Creates a .settings folder for Eclipse WTP 1.x release and writes out the configuration under it.
- * 
+ *
  * @author <a href="mailto:rahul.thakur.xdev@gmail.com">Rahul Thakur</a>
  * @author <a href="mailto:fgiust@apache.org">Fabrizio Giustina</a>
  * @version $Id$
@@ -91,16 +91,16 @@ public class EclipseWtpComponentWriter
 
         // create a .component file and write out to it
         XMLWriter writer = new PrettyPrintXMLWriter( w );
-        String packaging = config.getProject().getPackaging();
-        writeModuleTypeComponent( writer, packaging, config.getBuildOutputDirectory(), config.getSourceDirs(), config
-            .getLocalRepository() );
-        IOUtil.close( w );
 
+        writeModuleTypeComponent( writer, config.getProject().getPackaging(), config.getBuildOutputDirectory(), config.getSourceDirs(),
+            config.getLocalRepository() );
+
+        IOUtil.close( w );
     }
 
     /**
      * Writes out the module type settings for a Web Tools Project to a component file.
-     * 
+     *
      * @param writer
      * @param packaging
      * @param buildOutputDirectory
@@ -153,8 +153,8 @@ public class EclipseWtpComponentWriter
         else if ( "ear".equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
         {
             writer.startElement( ELT_WB_RESOURCE );
-            writer.addAttribute( ATTR_DEPLOY_PATH, "/" ); //$NON-NLS-1$ 
-            writer.addAttribute( ATTR_SOURCE_PATH, "/" ); //$NON-NLS-1$ 
+            writer.addAttribute( ATTR_DEPLOY_PATH, "/" ); //$NON-NLS-1$
+            writer.addAttribute( ATTR_SOURCE_PATH, "/" ); //$NON-NLS-1$
             writer.endElement();
         }
 

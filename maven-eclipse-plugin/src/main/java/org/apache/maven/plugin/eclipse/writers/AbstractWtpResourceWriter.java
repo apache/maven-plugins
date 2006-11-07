@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.apache.maven.plugin.eclipse.writers;
 
@@ -64,16 +64,14 @@ public abstract class AbstractWtpResourceWriter
     /**
      * @param project
      * @param writer
-     * @param packaging
      * @throws MojoExecutionException
      */
-    protected void writeModuleTypeAccordingToPackaging( MavenProject project, XMLWriter writer, String packaging,
-                                                        File buildOutputDirectory )
+    protected void writeModuleTypeAccordingToPackaging( MavenProject project, XMLWriter writer, File buildOutputDirectory )
         throws MojoExecutionException
     {
-        if ( "war".equals( packaging ) ) //$NON-NLS-1$
+        if ( "war".equals( project.getPackaging() ) ) //$NON-NLS-1$
         {
-            writer.addAttribute( ATTR_MODULE_TYPE_ID, "jst.web" ); //$NON-NLS-1$ 
+            writer.addAttribute( ATTR_MODULE_TYPE_ID, "jst.web" ); //$NON-NLS-1$
 
             writer.startElement( ELT_VERSION );
 
@@ -89,13 +87,13 @@ public abstract class AbstractWtpResourceWriter
             }
 
             writer.startElement( ELT_PROPERTY );
-            writer.addAttribute( ATTR_NAME, "context-root" ); //$NON-NLS-1$ 
+            writer.addAttribute( ATTR_NAME, "context-root" ); //$NON-NLS-1$
             writer.addAttribute( ATTR_VALUE, contextRoot );
             writer.endElement();
         }
-        else if ( "ejb".equals( packaging ) ) //$NON-NLS-1$
+        else if ( "ejb".equals( config.getProject().getPackaging() ) ) //$NON-NLS-1$
         {
-            writer.addAttribute( ATTR_MODULE_TYPE_ID, "jst.ejb" ); //$NON-NLS-1$ 
+            writer.addAttribute( ATTR_MODULE_TYPE_ID, "jst.ejb" ); //$NON-NLS-1$
 
             writer.startElement( ELT_VERSION );
             writer.writeText( resolveEjbVersion() );
@@ -103,15 +101,15 @@ public abstract class AbstractWtpResourceWriter
             writer.endElement();
 
             writer.startElement( ELT_PROPERTY );
-            writer.addAttribute( ATTR_NAME, "java-output-path" ); //$NON-NLS-1$ 
-            writer.addAttribute( ATTR_VALUE, "/" + //$NON-NLS-1$ 
+            writer.addAttribute( ATTR_NAME, "java-output-path" ); //$NON-NLS-1$
+            writer.addAttribute( ATTR_VALUE, "/" + //$NON-NLS-1$
                 IdeUtils.toRelativeAndFixSeparator( config.getProject().getBasedir(), buildOutputDirectory, false ) );
             writer.endElement();
 
         }
-        else if ( "ear".equals( packaging ) ) //$NON-NLS-1$
+        else if ( "ear".equals( config.getProject().getPackaging() ) ) //$NON-NLS-1$
         {
-            writer.addAttribute( ATTR_MODULE_TYPE_ID, "jst.ear" ); //$NON-NLS-1$ 
+            writer.addAttribute( ATTR_MODULE_TYPE_ID, "jst.ear" ); //$NON-NLS-1$
 
             writer.startElement( ELT_VERSION );
             writer.writeText( resolveJ2eeVersion() );
@@ -120,11 +118,11 @@ public abstract class AbstractWtpResourceWriter
         else
         {
             // jar
-            writer.addAttribute( ATTR_MODULE_TYPE_ID, "jst.utility" ); //$NON-NLS-1$ 
+            writer.addAttribute( ATTR_MODULE_TYPE_ID, "jst.utility" ); //$NON-NLS-1$
 
             writer.startElement( ELT_PROPERTY );
-            writer.addAttribute( ATTR_NAME, "java-output-path" ); //$NON-NLS-1$ 
-            writer.addAttribute( ATTR_VALUE, "/" + //$NON-NLS-1$ 
+            writer.addAttribute( ATTR_NAME, "java-output-path" ); //$NON-NLS-1$
+            writer.addAttribute( ATTR_VALUE, "/" + //$NON-NLS-1$
                 IdeUtils.toRelativeAndFixSeparator( config.getProject().getBasedir(), buildOutputDirectory, false ) );
             writer.endElement();
         }
@@ -132,7 +130,7 @@ public abstract class AbstractWtpResourceWriter
 
     /**
      * Adds dependency for Eclipse WTP project.
-     * 
+     *
      * @param writer
      * @param artifact
      * @param localRepository
@@ -187,7 +185,7 @@ public abstract class AbstractWtpResourceWriter
 
         writer.startElement( ELT_DEPENDENT_MODULE );
 
-        writer.addAttribute( ATTR_DEPLOY_PATH, "/WEB-INF/lib" ); //$NON-NLS-1$ 
+        writer.addAttribute( ATTR_DEPLOY_PATH, "/WEB-INF/lib" ); //$NON-NLS-1$
         writer.addAttribute( ATTR_HANDLE, handle );
 
         writer.startElement( ELT_DEPENDENCY_TYPE );
