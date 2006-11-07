@@ -1,8 +1,4 @@
-package org.apache.maven.plugin.eclipse.writers;
-
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,6 +11,8 @@ package org.apache.maven.plugin.eclipse.writers;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package org.apache.maven.plugin.eclipse.writers;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -52,7 +50,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 public class EclipseProjectWriter
     extends AbstractEclipseWriter
 {
-
     private static final String ELT_NAME = "name"; //$NON-NLS-1$
 
     private static final String ELT_BUILD_COMMAND = "buildCommand"; //$NON-NLS-1$
@@ -119,7 +116,7 @@ public class EclipseProjectWriter
                         Xpp3Dom buildCommandName = existingBuildCommands[j].getChild( ELT_NAME );
                         if ( buildCommandName != null )
                         {
-                            buildCommands.add( new BuildCommand( buildCommandName.getValue(), null ) );
+                            buildCommands.add( new BuildCommand( existingBuildCommands[j] ) );
                         }
                     }
                 }
@@ -203,7 +200,7 @@ public class EclipseProjectWriter
 
         for ( Iterator it = buildCommands.iterator(); it.hasNext(); )
         {
-            ((BuildCommand) it.next() ).print( writer );
+            ( (BuildCommand) it.next() ).print( writer );
         }
 
         writer.endElement(); // buildSpec
