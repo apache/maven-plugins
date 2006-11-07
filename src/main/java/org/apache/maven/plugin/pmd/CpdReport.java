@@ -23,6 +23,7 @@ import java.io.Writer;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.Collections;
 
 import net.sourceforge.pmd.cpd.CPD;
 import net.sourceforge.pmd.cpd.CSVRenderer;
@@ -87,6 +88,7 @@ public class CpdReport
             try
             {
                 List files = getFilesToProcess( "**/*.java" );
+                Collections.sort( files );
                 for ( int i = 0; i < files.size(); i++ )
                 {
                     cpd.add( (File) files.get( i ) );
