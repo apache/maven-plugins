@@ -1,8 +1,22 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
 package org.apache.maven.plugin.eclipse.writers;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -50,7 +64,7 @@ public abstract class EclipseLaunchConfigurationWriter
             throw new MojoExecutionException( "Not initialized" );
         }
 
-        FileWriter w;
+        Writer w;
 
         try
         {
@@ -59,7 +73,7 @@ public abstract class EclipseLaunchConfigurationWriter
             {
                 throw new MojoExecutionException( "Error creating directory " + extToolsDir );
             }
-            w = new FileWriter( new File( extToolsDir, filename ) );
+            w = new OutputStreamWriter( new FileOutputStream( new File( extToolsDir, filename ) ), "UTF-8" );
         }
         catch ( IOException ex )
         {
@@ -81,6 +95,10 @@ public abstract class EclipseLaunchConfigurationWriter
         writeAttribute( writer, "org.eclipse.ui.externaltools.ATTR_TRIGGERS_CONFIGURED", true );
 
         writeAttribute( writer, "org.eclipse.debug.core.appendEnvironmentVariables", isAppendEnvironmentVariables() );
+
+        writeAttribute( writer, "org.eclipse.jdt.launching.PROJECT_ATTR", config.getEclipseProjectName() );
+
+        writeAttribute( writer, "org.eclipse.jdt.launching.DEFAULT_CLASSPATH", true );
 
         writeAttribute( writer, "org.eclipse.ui.externaltools.ATTR_LOCATION", getBuilderLocation() );
 
@@ -106,17 +124,12 @@ public abstract class EclipseLaunchConfigurationWriter
         {
             MonitoredResource monitoredResource = (MonitoredResource) it.next();
 
-            workingSet+=monitoredResource.print();
+            workingSet += monitoredResource.print();
         }
 
-        workingSet+="</launchConfigurationWorkingSet>";
+        workingSet += "</launchConfigurationWorkingSet>";
 
-
-        writeAttribute(
-            writer,
-            "org.eclipse.ui.externaltools.ATTR_BUILD_SCOPE",
-            "${working_set:" + workingSet
-                + "}" );
+        writeAttribute( writer, "org.eclipse.ui.externaltools.ATTR_BUILD_SCOPE", "${working_set:" + workingSet + "}" );
 
         addAttributes( writer );
 
@@ -127,7 +140,9 @@ public abstract class EclipseLaunchConfigurationWriter
 
     protected List getMonitoredResources()
     {
-        return Collections.singletonList( new MonitoredResource( config.getEclipseProjectName(), MonitoredResource.PROJECT ) );
+        return Collections.singletonList( new MonitoredResource(
+            config.getEclipseProjectName(),
+            MonitoredResource.PROJECT ) );
     }
 
     protected abstract void addAttributes( XMLWriter writer );
@@ -182,6 +197,22 @@ public abstract class EclipseLaunchConfigurationWriter
         writer.startElement( "booleanAttribute" );
         writer.addAttribute( "key", key );
         writer.addAttribute( "value", "" + value );
+        writer.endElement();
+    }
+
+    protected static void writeAttribute( XMLWriter writer, String key, String[] values )
+    {
+        writer.startElement( "listAttribute" );
+        writer.addAttribute( "key", key );
+
+        for ( int i = 0; i < values.length; i++ )
+        {
+            String value = values[i];
+            writer.startElement( "listEntry" );
+            writer.addAttribute( "value", value );
+            writer.endElement();
+        }
+
         writer.endElement();
     }
 
