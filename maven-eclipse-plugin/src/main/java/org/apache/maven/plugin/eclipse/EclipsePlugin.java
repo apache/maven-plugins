@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -533,9 +534,14 @@ public class EclipsePlugin
         {
             fillDefaultBuilders( packaging );
         }
+        else
+        {
+            convertBuildCommandList( buildcommands );
+        }
 
         if ( additionalBuildcommands != null )
         {
+            convertBuildCommandList( additionalBuildcommands );
             buildcommands.addAll( additionalBuildcommands );
         }
 
@@ -551,6 +557,23 @@ public class EclipsePlugin
 
         // ready to start
         return true;
+    }
+
+    protected void convertBuildCommandList( List commands )
+    {
+        if ( commands != null )
+        {
+            for ( ListIterator i = commands.listIterator(); i.hasNext(); )
+            {
+                Object command = i.next();
+
+                if ( command instanceof String )
+                {
+                    command = new BuildCommand( (String) command );
+                    i.set( command );
+                }
+            }
+        }
     }
 
     public void writeConfiguration( IdeDependency[] deps )
@@ -576,12 +599,7 @@ public class EclipsePlugin
         //       <somekey>somevalue</somekey>
         //     </arguments>
 
-        List convertedBuildCommands = new ArrayList();
-        for ( Iterator it = buildcommands.iterator(); it.hasNext();)
-        {
-            convertedBuildCommands.add( new BuildCommand( (String) it.next(), null ) );
-        }
-        config.setBuildCommands( convertedBuildCommands );
+        config.setBuildCommands( buildcommands );
         config.setBuildOutputDirectory( buildOutputDirectory );
         config.setClasspathContainers( classpathContainers );
         config.setDeps( deps );
@@ -715,33 +733,33 @@ public class EclipsePlugin
 
         if ( wtpVersionFloat == 0.7f )
         {
-            buildcommands.add( BUILDER_WST_COMPONENT_STRUCTURAL ); // WTP 0.7 builder
+            buildcommands.add( new BuildCommand( BUILDER_WST_COMPONENT_STRUCTURAL ) ); // WTP 0.7 builder
         }
 
         if ( isJavaProject )
         {
-            buildcommands.add( BUILDER_JDT_CORE_JAVA );
+            buildcommands.add( new BuildCommand( BUILDER_JDT_CORE_JAVA ) );
         }
 
         if ( wtpVersionFloat >= 1.5f )
         {
-            buildcommands.add( BUILDER_WST_FACET ); // WTP 1.5 builder
+            buildcommands.add( new BuildCommand( BUILDER_WST_FACET ) ); // WTP 1.5 builder
         }
 
         if ( wtpVersionFloat >= 0.7f )
         {
-            buildcommands.add( BUILDER_WST_VALIDATION ); // WTP 0.7/1.0 builder
+            buildcommands.add( new BuildCommand( BUILDER_WST_VALIDATION ) ); // WTP 0.7/1.0 builder
         }
 
         if ( wtpVersionFloat == 0.7f )
         {
-            buildcommands.add( BUILDER_WST_COMPONENT_STRUCTURAL_DEPENDENCY_RESOLVER ); // WTP 0.7 builder
+            buildcommands.add( new BuildCommand( BUILDER_WST_COMPONENT_STRUCTURAL_DEPENDENCY_RESOLVER ) ); // WTP 0.7 builder
         }
 
         if ( pde )
         {
-            buildcommands.add( BUILDER_PDE_MANIFEST );
-            buildcommands.add( BUILDER_PDE_SCHEMA );
+            buildcommands.add( new BuildCommand( BUILDER_PDE_MANIFEST ) );
+            buildcommands.add( new BuildCommand( BUILDER_PDE_SCHEMA ) );
         }
     }
 
