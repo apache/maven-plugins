@@ -41,6 +41,11 @@ public class EclipseWriterConfig
     private File eclipseProjectDirectory;
 
     /**
+     * The name of the project in eclipse.
+     */
+    private String eclipseProjectName;
+
+    /**
      * Base project dir.
      */
     private File projectBaseDir;
@@ -82,6 +87,8 @@ public class EclipseWriterConfig
 
     /**
      * Build commands.
+     *
+     * List&lt;BuildCommand&gt;
      */
     private List buildCommands;
 
@@ -124,6 +131,24 @@ public class EclipseWriterConfig
     public void setEclipseProjectDirectory( File eclipseProjectDir )
     {
         this.eclipseProjectDirectory = eclipseProjectDir;
+    }
+
+    /**
+     * Getter for <code>eclipseProjectName</code>.
+     * @return Returns the project name used in eclipse.
+     */
+    public String getEclipseProjectName()
+    {
+        return eclipseProjectName;
+    }
+
+    /**
+     * Setter for <code>eclipseProjectName</code>.
+     * @param eclipseProjectDir the project name used in eclipse.
+     */
+    public void setEclipseProjectName( String eclipseProjectName )
+    {
+        this.eclipseProjectName = eclipseProjectName;
     }
 
     /**

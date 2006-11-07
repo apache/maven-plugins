@@ -1,8 +1,6 @@
 package org.apache.maven.plugin.eclipse;
 
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,7 +23,6 @@ package org.apache.maven.plugin.eclipse;
 public class EclipseSourceDir
     implements Comparable
 {
-
     private String path;
 
     private String output;
@@ -38,8 +35,10 @@ public class EclipseSourceDir
 
     private boolean test;
 
+    private boolean filtering;
+
     public EclipseSourceDir( String path, String output, boolean isResource, boolean test, String include,
-                             String exclude )
+                             String exclude, boolean filtering )
     {
         this.path = path;
         this.output = output;
@@ -47,11 +46,12 @@ public class EclipseSourceDir
         this.test = test;
         this.include = include;
         this.exclude = exclude;
+        this.filtering = filtering;
     }
 
     /**
      * Getter for <code>exclude</code>.
-     * 
+     *
      * @return Returns the exclude.
      */
     public String getExclude()
@@ -61,7 +61,7 @@ public class EclipseSourceDir
 
     /**
      * Setter for <code>exclude</code>.
-     * 
+     *
      * @param exclude
      *            The exclude to set.
      */
@@ -72,7 +72,7 @@ public class EclipseSourceDir
 
     /**
      * Getter for <code>include</code>.
-     * 
+     *
      * @return Returns the include.
      */
     public String getInclude()
@@ -82,7 +82,7 @@ public class EclipseSourceDir
 
     /**
      * Setter for <code>include</code>.
-     * 
+     *
      * @param include
      *            The include to set.
      */
@@ -93,7 +93,7 @@ public class EclipseSourceDir
 
     /**
      * Getter for <code>output</code>.
-     * 
+     *
      * @return Returns the output.
      */
     public String getOutput()
@@ -103,7 +103,7 @@ public class EclipseSourceDir
 
     /**
      * Setter for <code>output</code>.
-     * 
+     *
      * @param output
      *            The output to set.
      */
@@ -114,7 +114,7 @@ public class EclipseSourceDir
 
     /**
      * Getter for <code>path</code>.
-     * 
+     *
      * @return Returns the path.
      */
     public String getPath()
@@ -124,7 +124,7 @@ public class EclipseSourceDir
 
     /**
      * Setter for <code>path</code>.
-     * 
+     *
      * @param path
      *            The path to set.
      */
@@ -135,7 +135,7 @@ public class EclipseSourceDir
 
     /**
      * Getter for <code>test</code>.
-     * 
+     *
      * @return Returns the test.
      */
     public boolean isTest()
@@ -145,7 +145,7 @@ public class EclipseSourceDir
 
     /**
      * Setter for <code>test</code>.
-     * 
+     *
      * @param test
      *            The test to set.
      */
@@ -161,6 +161,14 @@ public class EclipseSourceDir
     public boolean isResource()
     {
         return this.isResource;
+    }
+
+    /**
+     * Wheter this resource should be copied with filtering.
+     */
+    public boolean isFiltering()
+    {
+        return filtering;
     }
 
     /**
@@ -186,5 +194,4 @@ public class EclipseSourceDir
     {
         return this.path.compareTo( ( (EclipseSourceDir) obj ).path );
     }
-
 }

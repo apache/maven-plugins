@@ -19,9 +19,16 @@ package org.apache.maven.plugin.eclipse.writers;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.eclipse.BuildCommand;
 import org.apache.maven.plugin.eclipse.EclipseSourceDir;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.ide.IdeDependency;
@@ -76,22 +83,22 @@ public class EclipseClasspathWriter
     /**
      * Attribute value for kind: var
      */
-    private static final String ATTR_VAR = "var"; //$NON-NLS-1$    
+    private static final String ATTR_VAR = "var"; //$NON-NLS-1$
 
     /**
      * Attribute value for kind: lib
      */
-    private static final String ATTR_LIB = "lib"; //$NON-NLS-1$      
+    private static final String ATTR_LIB = "lib"; //$NON-NLS-1$
 
     /**
      * Attribute value for kind: src
      */
-    private static final String ATTR_SRC = "src"; //$NON-NLS-1$   
+    private static final String ATTR_SRC = "src"; //$NON-NLS-1$
 
     /**
      * Attribute value for kind: src
      */
-    private static final String ATTR_CON = "con"; //$NON-NLS-1$     
+    private static final String ATTR_CON = "con"; //$NON-NLS-1$
 
     /**
      * Attribute name for source file includes in a path.
@@ -147,14 +154,57 @@ public class EclipseClasspathWriter
         // Source roots and resources
         // ----------------------------------------------------------------------
 
+        // List<EclipseSourceDir>
+        List specialSources = new ArrayList();
+
+        // Map<String,List<EclipseSourceDir>>
+        Map byOutputDir = new HashMap();
+
         for ( int j = 0; j < config.getSourceDirs().length; j++ )
         {
             EclipseSourceDir dir = config.getSourceDirs()[j];
 
+            // List<EclipseSourceDir>
+            List byOutputDirs = (List) byOutputDir.get( dir.getOutput() );
+            if ( byOutputDirs == null )
+            {
+                // ArrayList<EclipseSourceDir>
+                byOutputDir.put( dir.getOutput(), byOutputDirs = new ArrayList() );
+            }
+            byOutputDirs.add( dir );
+        }
+
+        for ( int j = 0; j < config.getSourceDirs().length; j++ )
+        {
+            EclipseSourceDir dir = config.getSourceDirs()[j];
+
+            log.debug( "Processing " + ( dir.isResource() ? "re" : "" ) + "source " + dir.getPath() + ": output="
+                + dir.getOutput() + "; default output=" + defaultOutput );
+
+            // handle resource with nested output folders
+            if ( dir.isResource() )
+            {
+                // Check if the output is a subdirectory of the default output,
+                // and if the default output has any sources that copy there.
+
+                if ( dir.getOutput() != null && !dir.getOutput().equals( defaultOutput )
+                    && dir.getOutput().startsWith( defaultOutput ) && byOutputDir.get( defaultOutput ) != null
+                    && !( (List) byOutputDir.get( defaultOutput ) ).isEmpty() )
+                {
+                    // do not specify as source since the output will be nested. Instead, mark
+                    // it as a todo, and handle it with a custom build.xml file later.
+
+                    specialSources.add( dir );
+
+                    continue;
+                }
+            }
+
             writer.startElement( ELT_CLASSPATHENTRY );
 
-            writer.addAttribute( ATTR_KIND, "src" ); //$NON-NLS-1$ 
+            writer.addAttribute( ATTR_KIND, "src" ); //$NON-NLS-1$
             writer.addAttribute( ATTR_PATH, dir.getPath() );
+
             if ( dir.getOutput() != null && !defaultOutput.equals( dir.getOutput() ) )
             {
                 writer.addAttribute( ATTR_OUTPUT, dir.getOutput() );
@@ -183,6 +233,80 @@ public class EclipseClasspathWriter
 
         }
 
+        // handle the special sources.
+        if ( !specialSources.isEmpty() )
+        {
+            log.info( "Creating maven-eclipse.xml Ant file to handle resources" );
+
+            try
+            {
+                FileWriter buildXmlWriter = new FileWriter( new File(
+                    config.getEclipseProjectDirectory(),
+                    "maven-eclipse.xml" ) );
+                PrettyPrintXMLWriter buildXmlPrinter = new PrettyPrintXMLWriter( buildXmlWriter );
+
+                buildXmlPrinter.startElement( "project" );
+                buildXmlPrinter.addAttribute( "default", "copy-resources" );
+
+                buildXmlPrinter.startElement( "target" );
+                buildXmlPrinter.addAttribute( "name", "init" );
+                // initialize filtering tokens here
+                buildXmlPrinter.endElement();
+
+                buildXmlPrinter.startElement( "target" );
+                buildXmlPrinter.addAttribute( "name", "copy-resources" );
+                buildXmlPrinter.addAttribute( "depends", "init" );
+
+                for ( Iterator it = specialSources.iterator(); it.hasNext(); )
+                {
+                    // TODO: merge source dirs on output path+filtering to reduce
+                    // <copy> tags for speed.
+                    EclipseSourceDir dir = (EclipseSourceDir) it.next();
+                    buildXmlPrinter.startElement( "copy");
+                    buildXmlPrinter.addAttribute( "todir", dir.getOutput() );
+                    buildXmlPrinter.addAttribute( "filtering", "" + dir.isFiltering() );
+
+                    buildXmlPrinter.startElement( "fileset" );
+                    buildXmlPrinter.addAttribute( "dir", dir.getPath() );
+                    if ( dir.getInclude() != null )
+                    {
+                        buildXmlPrinter.addAttribute( "includes", dir.getInclude() );
+                    }
+                    if ( dir.getExclude() != null )
+                    {
+                        buildXmlPrinter.addAttribute( "excludes", dir.getExclude() );
+                    }
+                    buildXmlPrinter.endElement();
+
+                    buildXmlPrinter.endElement();
+                }
+
+                buildXmlPrinter.endElement();
+
+                buildXmlPrinter.endElement();
+
+                IOUtil.close( buildXmlWriter );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Cannot create " + config.getEclipseProjectDirectory()
+                    + "/maven-eclipse.xml", e );
+            }
+
+            log.info( "Creating external launcher file" );
+            // now create the launcher
+            new EclipseAntExternalLaunchConfigurationWriter().init( log, config, "Maven_Ant_Builder.launch", "maven-eclipse.xml").write();
+
+            // finally add it to the project writer.
+
+            config.getBuildCommands().add(
+                new BuildCommand(
+                    "org.eclipse.ui.externaltools.ExternalToolBuilder",
+                    "LaunchConfigHandle",
+                    "<project>/" + EclipseLaunchConfigurationWriter.FILE_DOT_EXTERNAL_TOOL_BUILDERS
+                        + "Maven_Ant_Builder.launch" ) );
+        }
+
         // ----------------------------------------------------------------------
         // The default output
         // ----------------------------------------------------------------------
@@ -199,7 +323,7 @@ public class EclipseClasspathWriter
         for ( Iterator it = config.getClasspathContainers().iterator(); it.hasNext(); )
         {
             writer.startElement( ELT_CLASSPATHENTRY );
-            writer.addAttribute( ATTR_KIND, "con" ); //$NON-NLS-1$ 
+            writer.addAttribute( ATTR_KIND, "con" ); //$NON-NLS-1$
             writer.addAttribute( ATTR_PATH, (String) it.next() );
             writer.endElement(); // name
         }

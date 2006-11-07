@@ -59,15 +59,13 @@ public class EclipseWtpmodulesWriter
 
         XMLWriter writer = new PrettyPrintXMLWriter( w );
         writer.startElement( ELT_PROJECT_MODULES );
-        writer.addAttribute( ATTR_MODULE_ID, "moduleCoreId" ); //$NON-NLS-1$ 
+        writer.addAttribute( ATTR_MODULE_ID, "moduleCoreId" ); //$NON-NLS-1$
 
         writer.startElement( ELT_WB_MODULE );
         writer.addAttribute( ATTR_DEPLOY_NAME, config.getProject().getArtifactId() );
 
-        String packaging = config.getProject().getPackaging();
-
         writer.startElement( ELT_MODULE_TYPE );
-        writeModuleTypeAccordingToPackaging( config.getProject(), writer, packaging, config.getBuildOutputDirectory() );
+        writeModuleTypeAccordingToPackaging( config.getProject(), writer, config.getBuildOutputDirectory() );
         writer.endElement(); // module-type
 
         // source and resource paths.
@@ -81,7 +79,7 @@ public class EclipseWtpmodulesWriter
                                                                    "/src/main/webapp" ); //$NON-NLS-1$
 
             writer.startElement( ELT_WB_RESOURCE );
-            writer.addAttribute( ATTR_DEPLOY_PATH, "/" ); //$NON-NLS-1$ 
+            writer.addAttribute( ATTR_DEPLOY_PATH, "/" ); //$NON-NLS-1$
             writer.addAttribute( ATTR_SOURCE_PATH, "/" //$NON-NLS-1$
                 + IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), new File( config
                     .getEclipseProjectDirectory(), warSourceDirectory ), false ) );
@@ -94,8 +92,8 @@ public class EclipseWtpmodulesWriter
         else if ( "ear".equals( config.getProject().getPackaging() ) ) //$NON-NLS-1$
         {
             writer.startElement( ELT_WB_RESOURCE );
-            writer.addAttribute( ATTR_DEPLOY_PATH, "/" ); //$NON-NLS-1$ 
-            writer.addAttribute( ATTR_SOURCE_PATH, "/" ); //$NON-NLS-1$ 
+            writer.addAttribute( ATTR_DEPLOY_PATH, "/" ); //$NON-NLS-1$
+            writer.addAttribute( ATTR_SOURCE_PATH, "/" ); //$NON-NLS-1$
             writer.endElement();
 
             writeWarOrEarResources( writer, config.getProject(), config.getLocalRepository() );

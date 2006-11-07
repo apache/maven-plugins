@@ -29,6 +29,7 @@ import java.util.Set;
 
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.eclipse.BuildCommand;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.plugin.ide.IdeUtils;
@@ -118,7 +119,7 @@ public class EclipseProjectWriter
                         Xpp3Dom buildCommandName = existingBuildCommands[j].getChild( ELT_NAME );
                         if ( buildCommandName != null )
                         {
-                            buildCommands.add( buildCommandName.getValue() );
+                            buildCommands.add( new BuildCommand( buildCommandName.getValue(), null ) );
                         }
                     }
                 }
@@ -142,6 +143,7 @@ public class EclipseProjectWriter
         {
             projectnatures.add( iter.next() );
         }
+
         for ( Iterator iter = config.getBuildCommands().iterator(); iter.hasNext(); )
         {
             buildCommands.add( iter.next() );
@@ -163,7 +165,7 @@ public class EclipseProjectWriter
         writer.startElement( "projectDescription" ); //$NON-NLS-1$
 
         writer.startElement( ELT_NAME );
-        writer.writeText( config.getProject().getArtifactId() );
+        writer.writeText( config.getEclipseProjectName() );
         writer.endElement();
 
         // TODO: this entire element might be dropped if the comment is null.
@@ -201,13 +203,7 @@ public class EclipseProjectWriter
 
         for ( Iterator it = buildCommands.iterator(); it.hasNext(); )
         {
-            writer.startElement( ELT_BUILD_COMMAND );
-            writer.startElement( ELT_NAME );
-            writer.writeText( (String) it.next() );
-            writer.endElement(); // name
-            writer.startElement( "arguments" ); //$NON-NLS-1$
-            writer.endElement(); // arguments
-            writer.endElement(); // buildCommand
+            ((BuildCommand) it.next() ).print( writer );
         }
 
         writer.endElement(); // buildSpec
