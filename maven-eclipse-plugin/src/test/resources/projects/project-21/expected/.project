@@ -5,15 +5,12 @@
   <buildSpec>
     <buildCommand>
       <name>org.eclipse.jdt.core.javabuilder</name>
-      <arguments/>
     </buildCommand>
     <buildCommand>
       <name>org.eclipse.pde.ManifestBuilder</name>
-      <arguments/>
     </buildCommand>
     <buildCommand>
       <name>org.eclipse.pde.SchemaBuilder</name>
-      <arguments/>
     </buildCommand>
   </buildSpec>
   <natures>

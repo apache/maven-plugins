@@ -5,7 +5,6 @@
   <buildSpec>
     <buildCommand>
       <name>org.eclipse.wst.validation.validationbuilder</name>
-      <arguments/>
     </buildCommand>
   </buildSpec>
   <natures>

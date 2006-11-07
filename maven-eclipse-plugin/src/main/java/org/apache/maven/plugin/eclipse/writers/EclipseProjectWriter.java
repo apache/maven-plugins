@@ -1,8 +1,4 @@
-package org.apache.maven.plugin.eclipse.writers;
-
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,6 +11,8 @@ package org.apache.maven.plugin.eclipse.writers;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package org.apache.maven.plugin.eclipse.writers;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,6 +27,7 @@ import java.util.Set;
 
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.eclipse.BuildCommand;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.plugin.ide.IdeUtils;
@@ -51,7 +50,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 public class EclipseProjectWriter
     extends AbstractEclipseWriter
 {
-
     private static final String ELT_NAME = "name"; //$NON-NLS-1$
 
     private static final String ELT_BUILD_COMMAND = "buildCommand"; //$NON-NLS-1$
@@ -118,7 +116,7 @@ public class EclipseProjectWriter
                         Xpp3Dom buildCommandName = existingBuildCommands[j].getChild( ELT_NAME );
                         if ( buildCommandName != null )
                         {
-                            buildCommands.add( buildCommandName.getValue() );
+                            buildCommands.add( new BuildCommand( existingBuildCommands[j] ) );
                         }
                     }
                 }
@@ -142,6 +140,7 @@ public class EclipseProjectWriter
         {
             projectnatures.add( iter.next() );
         }
+
         for ( Iterator iter = config.getBuildCommands().iterator(); iter.hasNext(); )
         {
             buildCommands.add( iter.next() );
@@ -163,7 +162,7 @@ public class EclipseProjectWriter
         writer.startElement( "projectDescription" ); //$NON-NLS-1$
 
         writer.startElement( ELT_NAME );
-        writer.writeText( config.getProject().getArtifactId() );
+        writer.writeText( config.getEclipseProjectName() );
         writer.endElement();
 
         // TODO: this entire element might be dropped if the comment is null.
@@ -201,13 +200,7 @@ public class EclipseProjectWriter
 
         for ( Iterator it = buildCommands.iterator(); it.hasNext(); )
         {
-            writer.startElement( ELT_BUILD_COMMAND );
-            writer.startElement( ELT_NAME );
-            writer.writeText( (String) it.next() );
-            writer.endElement(); // name
-            writer.startElement( "arguments" ); //$NON-NLS-1$
-            writer.endElement(); // arguments
-            writer.endElement(); // buildCommand
+            ( (BuildCommand) it.next() ).print( writer );
         }
 
         writer.endElement(); // buildSpec
