@@ -227,6 +227,11 @@ public class CheckstyleReportGenerator
         return ret;
     }
 
+    /**
+     * Create the rules summary section of the report.
+     *
+     * @param results The results to summarize
+     */
     private void doRulesSummary( CheckstyleResults results )
     {
         if ( checkstyleConfig == null )
@@ -274,6 +279,12 @@ public class CheckstyleReportGenerator
         sink.section1_();
     }
 
+    /**
+     * Create a summary for each Checkstyle rule.
+     *
+     * @param configChildren Configurations for each Checkstyle rule
+     * @param results The results to summarize
+     */
     private void doRuleChildren( Configuration configChildren[], CheckstyleResults results )
     {
         for ( int cci = 0; cci < configChildren.length; cci++ )
@@ -292,6 +303,13 @@ public class CheckstyleReportGenerator
         }
     }
 
+    /**
+     * Create a summary for one Checkstyle rule.
+     *
+     * @param checkerConfig Configuration for the Checkstyle rule
+     * @param ruleName The name of the rule, for example "JavadocMethod"
+     * @param results The results to summarize
+     */
     private void doRuleRow( Configuration checkerConfig, String ruleName, CheckstyleResults results )
     {
         sink.tableRow();
@@ -351,11 +369,14 @@ public class CheckstyleReportGenerator
 
         sink.tableCell();
         String fixedmessage = getConfigAttribute( checkerConfig, "message", null );
-        sink.text( countRuleViolation( results.getFiles().values().iterator(), ruleName, fixedmessage ) );
+        // Grab the severity from the rule configuration, use null as default value
+        String configSeverity = getConfigAttribute( checkerConfig, "severity", null );
+        sink.text( countRuleViolation( results.getFiles().values().iterator(), ruleName, fixedmessage, configSeverity ) );
         sink.tableCell_();
 
         sink.tableCell();
-        String configSeverity = getConfigAttribute( checkerConfig, "severity", "error" );
+        // Grab the severity again from the rule configuration, this time use error as default value
+        configSeverity = getConfigAttribute( checkerConfig, "severity", "error" );
         iconSeverity( configSeverity );
         sink.nonBreakingSpace();
         sink.text( StringUtils.capitalise( configSeverity ) );
@@ -394,7 +415,16 @@ public class CheckstyleReportGenerator
         return ret;
     }
 
-    private String countRuleViolation( Iterator files, String ruleName, String message )
+    /**
+     * Count the number of violations for the given rule.
+     *
+     * @param files An iterator over the set of files that has violations
+     * @param ruleName The name of the rule
+     * @param message A message that, if it's not null, will be matched to the message from the violation
+     * @param severity A severity that, if it's not null, will be matched to the severity from the violation
+     * @return The number of rule violations
+     */
+    private String countRuleViolation( Iterator files, String ruleName, String message, String severity )
     {
         long count = 0;
         String sourceName;
@@ -429,6 +459,17 @@ public class CheckstyleReportGenerator
                         String msgWithoutSingleQuote = StringUtils.replace( message, "'", "" );
                         if ( message.equals( event.getMessage() )
                             || msgWithoutSingleQuote.equals( event.getMessage() ) )
+                        {
+                            count++;
+                        }
+                    }
+                    // Check the severity. This helps to distinguish between
+                    // different configurations for the same rule, where each
+                    // configuration has a different severity, like JavadocMetod.
+                    // See also http://jira.codehaus.org/browse/MCHECKSTYLE-41
+                    else if ( severity != null )
+                    {
+                        if ( severity.equals( event.getSeverityLevel().getName() ) )
                         {
                             count++;
                         }
