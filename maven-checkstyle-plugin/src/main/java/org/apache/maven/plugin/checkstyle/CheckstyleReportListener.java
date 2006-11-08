@@ -102,9 +102,9 @@ public class CheckstyleReportListener
      */
     public void fileStarted( AuditEvent event )
     {
-        for (Iterator it = sourceDirectories.iterator(); it.hasNext(); )
+        for ( Iterator it = sourceDirectories.iterator(); it.hasNext(); )
         {
-            File sourceDirectory = (File)it.next();
+            File sourceDirectory = (File) it.next();
 
             currentFile = StringUtils.substring( event.getFileName(), sourceDirectory.getPath().length() + 1 );
             currentFile = StringUtils.replace( currentFile, "\\", "/" );
