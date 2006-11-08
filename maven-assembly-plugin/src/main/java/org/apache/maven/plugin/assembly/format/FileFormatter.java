@@ -52,6 +52,8 @@ public class FileFormatter
         File result = source;
 
         File tempRoot = configSource.getTemporaryRootDirectory();
+        
+        AssemblyFileUtils.verifyTempDirectoryAvailability( tempRoot, logger );
 
         String sourceName = source.getName();
 
