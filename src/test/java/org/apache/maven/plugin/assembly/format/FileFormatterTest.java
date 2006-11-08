@@ -45,6 +45,26 @@ public class FileFormatterTest
         fileManager.cleanUp();
     }
 
+    public void testTemporaryRootDirectoryNotExist()
+        throws IOException, AssemblyFormattingException
+    {
+        File basedir = fileManager.createTempDir();
+        File tempRoot = new File(basedir, "tempdir");
+        configSource.getTemporaryRootDirectory();
+        configSourceControl.setReturnValue( tempRoot );
+        
+        File file = fileManager.createFile( basedir, "one.txt", "This is a\ntest." );
+
+        mockManager.replayAll();
+
+        File result = new FileFormatter( configSource, logger ).format( file, false, "dos" );
+
+        assertTrue( !file.equals(result) );
+       
+
+        mockManager.verifyAll();        
+    }
+    
     public void testShouldNotTransformOneFile()
         throws IOException, AssemblyFormattingException
     {
