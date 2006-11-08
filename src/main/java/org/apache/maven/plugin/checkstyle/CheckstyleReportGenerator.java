@@ -33,6 +33,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
+/**
+ * Generate a report based on CheckstyleResults.
+ */
 public class CheckstyleReportGenerator
 {
     private Log log;
@@ -424,8 +427,8 @@ public class CheckstyleReportGenerator
                         // Read MessageFormat Javadoc about single quote:
                         // http://java.sun.com/j2se/1.4.2/docs/api/java/text/MessageFormat.html
                         String msgWithoutSingleQuote = StringUtils.replace( message, "'", "" );
-                        if ( message.equals( event.getMessage() ) ||
-                             msgWithoutSingleQuote.equals( event.getMessage() ) )
+                        if ( message.equals( event.getMessage() )
+                            || msgWithoutSingleQuote.equals( event.getMessage() ) )
                         {
                             count++;
                         }
