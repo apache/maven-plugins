@@ -19,6 +19,7 @@ import org.codehaus.plexus.archiver.tar.TarLongFileMode;
 import org.codehaus.plexus.archiver.war.WarArchiver;
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
 import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.util.FileUtils;
 import org.easymock.MockControl;
 
 import java.io.File;
@@ -41,7 +42,8 @@ public class DefaultAssemblyArchiverTest
     }
 
     public void testCreateArchive()
-        throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
+        throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException,
+        IOException
     {
         MockManager mm = new MockManager();
 
@@ -61,6 +63,12 @@ public class DefaultAssemblyArchiverTest
         mm.add( csControl );
         
         AssemblerConfigurationSource configSource = ( AssemblerConfigurationSource ) csControl.getMock();
+        
+        File tempDir = fileManager.createTempDir();
+        FileUtils.deleteDirectory( tempDir );
+        
+        configSource.getTemporaryRootDirectory();
+        csControl.setReturnValue( tempDir, MockControl.ZERO_OR_MORE );
         
         File outDir = fileManager.createTempDir();
         

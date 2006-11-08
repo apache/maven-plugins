@@ -6,6 +6,8 @@ import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
+import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 
 import java.io.BufferedReader;
@@ -26,6 +28,29 @@ public final class AssemblyFileUtils
 
     private AssemblyFileUtils()
     {
+    }
+    
+    public static void verifyTempDirectoryAvailability( final File tempDir, final Logger logger )
+    {
+        if (!tempDir.exists()) 
+        {
+            tempDir.mkdirs();
+            
+            Runtime.getRuntime().addShutdownHook( new Thread( new Runnable()
+            {
+                public void run()
+                {
+                    try
+                    {
+                        FileUtils.deleteDirectory( tempDir );
+                    }
+                    catch ( IOException e )
+                    {
+                        logger.debug( "Failed to delete temp directory: " + tempDir, e );
+                    }
+                }
+            } ) );
+        }
     }
 
     /**
