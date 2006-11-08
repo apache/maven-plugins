@@ -371,7 +371,8 @@ public class CheckstyleReportGenerator
         String fixedmessage = getConfigAttribute( checkerConfig, "message", null );
         // Grab the severity from the rule configuration, use null as default value
         String configSeverity = getConfigAttribute( checkerConfig, "severity", null );
-        sink.text( countRuleViolation( results.getFiles().values().iterator(), ruleName, fixedmessage, configSeverity ) );
+        sink.text( countRuleViolation( results.getFiles().values().iterator(), ruleName, fixedmessage,
+                                       configSeverity ) );
         sink.tableCell_();
 
         sink.tableCell();
