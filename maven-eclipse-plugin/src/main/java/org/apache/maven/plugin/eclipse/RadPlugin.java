@@ -67,8 +67,6 @@ public class RadPlugin
 
     private static final String ORG_ECLIPSE_JDT_CORE_JAVANATURE = "org.eclipse.jdt.core.javanature";
 
-    private boolean isJavaProject;
-
     /**
      * The context root of the webapplication. This parameter is only used when
      * the current project is a war project, else it will be ignored.
@@ -111,13 +109,6 @@ public class RadPlugin
     {
         super.writeExtraConfiguration( config );
         
-        if ( isJavaProject )
-        {
-            // special case must be done first because it can add stuff to the classpath that will be 
-            // written by the superclass
-            new RadManifestWriter().init( getLog(), config ).write();
-        }
-
         new RadJ2EEWriter().init( getLog(), config ).write();
 
         new RadWebSettingsWriter( this.warContextRoot ).init( getLog(), config ).write();
@@ -134,20 +125,21 @@ public class RadPlugin
     /**
      * make room for a Manifest file. use a generated resource for JARS and for
      * WARS use the manifest in the webapp/meta-inf directory.
+     * @throws MojoExecutionException 
      */
     private void addManifestResource( EclipseWriterConfig config )
+        throws MojoExecutionException
     {
-        RadManifestWriter manifestWriter = new RadManifestWriter();
-        manifestWriter.init( getLog(), config );
-        
-        if ( manifestWriter.getMetaInfBaseDirectory( getExecutedProject() ) != null )
+        if ( isJavaProject() )
         {
-            return;
+            // special case must be done first because it can add stuff to the classpath that will be 
+            // written by the superclass
+            new RadManifestWriter().init( getLog(), config ).write();
         }
-
+        
         String packaging = getExecutedProject().getPackaging();
 
-        if ( this.isJavaProject && !Constants.PROJECT_PACKAGING_EAR.equals( packaging )
+        if ( isJavaProject() && !Constants.PROJECT_PACKAGING_EAR.equals( packaging )
             && !Constants.PROJECT_PACKAGING_WAR.equals( packaging )
             && !Constants.PROJECT_PACKAGING_EJB.equals( packaging ) )
         {
@@ -212,7 +204,7 @@ public class RadPlugin
             buildcommands.add( COM_IBM_WTP_J2EE_LIB_COPY_BUILDER );
             buildcommands.add( COM_IBM_SSE_MODEL_STRUCTUREDBUILDER );
         }
-        else if ( this.isJavaProject )
+        else if ( isJavaProject() )
         {
             buildcommands.add( ORG_ECLIPSE_JDT_CORE_JAVABUILDER );
             buildcommands.add( COM_IBM_SSE_MODEL_STRUCTUREDBUILDER );
@@ -247,7 +239,7 @@ public class RadPlugin
             projectnatures.add( COM_IBM_WTP_EJB_EJBNATURE );
             projectnatures.add( ORG_ECLIPSE_JDT_CORE_JAVANATURE );
         }
-        else if ( this.isJavaProject )
+        else if ( isJavaProject() )
         {
             projectnatures.add( ORG_ECLIPSE_JDT_CORE_JAVANATURE );
         }
@@ -304,7 +296,9 @@ public class RadPlugin
     {
         super.setupExtras();
         
-        EclipseWriterConfig config = createEclipseWriterConfig( new IdeDependency[0] );
+        IdeDependency[] deps = doDependencyResolution();
+        
+        EclipseWriterConfig config = createEclipseWriterConfig( deps );
 
         addManifestResource( config );
     }

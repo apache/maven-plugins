@@ -35,6 +35,7 @@ import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
 import org.apache.maven.shared.invoker.DefaultInvoker;
+import org.apache.maven.shared.invoker.InvocationOutputHandler;
 import org.apache.maven.shared.invoker.InvocationRequest;
 import org.apache.maven.shared.invoker.Invoker;
 import org.apache.maven.shared.invoker.MavenInvocationException;
@@ -99,6 +100,8 @@ public abstract class AbstractEclipsePluginTestCase
      * test builds.
      */
     protected static final String VERSION = "test";
+
+    private static final String BUILD_OUTPUT_DIRECTORY = "target/surefire-reports/build-output";
     
     private static String mvnHome;
 
@@ -110,6 +113,11 @@ public abstract class AbstractEclipsePluginTestCase
     protected void setUp()
         throws Exception
     {
+        if ( !installed )
+        {
+            System.out.println( "*** Running test builds; output will be directed to: " + BUILD_OUTPUT_DIRECTORY + "\n" );
+        }
+        
         synchronized( AbstractEclipsePluginTestCase.class )
         {
             if ( mvnHome == null )
@@ -168,7 +176,7 @@ public abstract class AbstractEclipsePluginTestCase
         {
             if ( !installed )
             {
-                System.out.println( "\n\n\n\n*** Installing test-version of the Eclipse plugin to: " + LOCAL_REPO_DIR + "***\n\n\n\n" );
+                System.out.println( "*** Installing test-version of the Eclipse plugin to: " + LOCAL_REPO_DIR + "\n" );
 
                 ArtifactInstaller installer = (ArtifactInstaller) lookup( ArtifactInstaller.ROLE );
                 ArtifactFactory factory = (ArtifactFactory) lookup( ArtifactFactory.ROLE );
@@ -197,8 +205,6 @@ public abstract class AbstractEclipsePluginTestCase
                 {
                     destination.getParentFile().mkdirs();
                 }
-
-                System.out.println( "Installing " + artifactFile.getPath() + " to " + destination );
 
                 installer.install( artifactFile, artifact, localRepository );
 
@@ -474,10 +480,22 @@ public abstract class AbstractEclipsePluginTestCase
         request.setGoals( goals );
 
         request.setProperties( properties );
+        
+        LoggerHandler handler = new LoggerHandler( BUILD_OUTPUT_DIRECTORY );
+        
+        request.setOutputHandler( handler );
+        request.setErrorHandler( handler );
 
-        mavenInvoker.execute( request );
+        try
+        {
+            mavenInvoker.execute( request );
+        }
+        finally
+        {
+            handler.close();
+        }
     }
-
+    
     protected MavenProject readProject( File pom )
         throws ProjectBuildingException
     {
@@ -624,5 +642,76 @@ public abstract class AbstractEclipsePluginTestCase
         IOUtil.close( reader );
 
         return lines;
+    }
+    
+    private static final class LoggerHandler implements InvocationOutputHandler
+    {
+        private static final String LS = System.getProperty( "line.separator" );
+        private final File output;
+        private FileWriter writer;
+
+        LoggerHandler( String outputBasedir )
+        {
+            NullPointerException npe = new NullPointerException();
+            StackTraceElement[] trace = npe.getStackTrace();
+            
+            File file = null;
+            
+            for ( int i = 0; i < trace.length; i++ )
+            {
+                StackTraceElement element = trace[i];
+                
+                String methodName = element.getMethodName();
+                
+                if ( methodName.startsWith( "test" ) && !methodName.equals( "testProject" ) )
+                {
+                    String classname = element.getClassName();
+                    
+                    file = new File( outputBasedir, classname + "_" + element.getMethodName() + ".build.log" );
+                    
+                    break;
+                }
+            }
+            
+            if ( file == null )
+            {
+                file = new File( outputBasedir, "unknown.build.log" );
+            }
+            
+            file.getParentFile().mkdirs();
+            
+            output = file;
+        }
+
+        public void consumeLine( String line )
+        {
+            if ( writer == null )
+            {
+                try
+                {
+                    writer = new FileWriter( output );
+                }
+                catch ( IOException e )
+                {
+                    throw new IllegalStateException( "Failed to open build log: " + output + "\n\nError: " + e.getMessage() );
+                }
+            }
+            
+            try
+            {
+                writer.write( line + LS );
+                writer.flush();
+            }
+            catch ( IOException e )
+            {
+                throw new IllegalStateException( "Failed to write to build log: " + output + " output:\n\n\'" + line + "\'\n\nError: " + e.getMessage() );
+            }
+        }
+        
+        void close()
+        {
+            IOUtil.close( writer );
+        }
+        
     }
 }

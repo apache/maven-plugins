@@ -19,6 +19,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-eclipse-plugin</artifactId>
+        <version>test</version>
         <configuration>
           <outputDir>../../../../target/project-18-test/</outputDir>
         </configuration>

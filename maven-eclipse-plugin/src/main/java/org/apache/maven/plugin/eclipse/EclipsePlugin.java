@@ -273,6 +273,11 @@ public class EclipsePlugin
      * Not a plugin parameter. Is this a java project?
      */
     private boolean isJavaProject;
+    
+    protected boolean isJavaProject()
+    {
+        return isJavaProject;
+    }
 
     /**
      * Getter for <code>buildcommands</code>.

@@ -4,15 +4,14 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>eclipse</groupId>
+		<groupId>eclipse.test</groupId>
 		<artifactId>project-rad-5</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<packaging>war</packaging>
-	<groupId>eclipse</groupId>
-	<artifactId>project-rad-2</artifactId>
+	<groupId>eclipse.test</groupId>
+	<artifactId>project-rad-5_2</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Maven</name>
 	<dependencies>
 		<dependency>
 			<groupId>maven</groupId>

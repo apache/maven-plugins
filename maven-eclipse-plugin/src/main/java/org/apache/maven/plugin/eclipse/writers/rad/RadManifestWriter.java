@@ -50,7 +50,7 @@ public class RadManifestWriter
      * 
      * @return the apsolute path to the META-INF directory
      */
-    public String getMetaInfBaseDirectory( MavenProject project )
+    private String getMetaInfBaseDirectory( MavenProject project )
     {
         String metaInfBaseDirectory = null;
         Iterator iterator = project.getResources().iterator();
@@ -69,6 +69,8 @@ public class RadManifestWriter
         if ( metaInfBaseDirectory == null && config.getProject().getPackaging().equals( Constants.PROJECT_PACKAGING_WAR ) )
         {
             metaInfBaseDirectory = config.getProject().getBasedir().getAbsolutePath() + File.separatorChar + WEBAPP_RESOURCE_DIR;
+            
+            System.out.println( "Using: " + metaInfBaseDirectory + " for location of META-INF in war project." );
             
             if ( !new File( metaInfBaseDirectory + File.separatorChar + META_INF_DIRECTORY ).exists() )
             {
@@ -103,16 +105,21 @@ public class RadManifestWriter
         if ( metaInfBaseDirectory == null )
         {
             // TODO: if this really is an error, shouldn't we stop the build??
-            log.error( Messages.getString( "EclipseCleanMojo.nofilefound", new Object[] { META_INF_DIRECTORY } ) );
-            return;
+            throw new MojoExecutionException( Messages.getString( "EclipseCleanMojo.nofilefound", new Object[] { META_INF_DIRECTORY } ) );
         }
         
         Manifest manifest = createNewManifest();
 
         File manifestFile = new File( metaInfBaseDirectory + File.separatorChar + META_INF_DIRECTORY + File.separatorChar + MANIFEST_MF_FILENAME );
 
+        System.out.println( "MANIFEST LOCATION: " + manifestFile );
+        
         if ( shouldNewManifestFileBeWritten( manifest, manifestFile ) )
         {
+            System.out.println( "Writing manifest..." );
+            
+            manifestFile.getParentFile().mkdirs();
+            
             try
             {
                 FileOutputStream stream = new FileOutputStream( manifestFile );
@@ -214,6 +221,11 @@ public class RadManifestWriter
      */
     private boolean areManifestsEqual( Manifest manifest, Manifest existingManifest )
     {
+        if ( existingManifest == null )
+        {
+            return false;
+        }
+        
         Set keys = new HashSet();
         Attributes existingMap = existingManifest.getMainAttributes();
         Attributes newMap = manifest.getMainAttributes();
@@ -306,6 +318,11 @@ public class RadManifestWriter
     private Manifest readExistingManifest( File manifestFile )
         throws IOException
     {
+        if ( !manifestFile.exists() )
+        {
+            return null;
+        }
+        
         Manifest existingManifest = new Manifest();
         FileInputStream inputStream = new FileInputStream( manifestFile );
         existingManifest.read( inputStream );
@@ -323,8 +340,10 @@ public class RadManifestWriter
      * @param manifestFile
      *            the file where the manifest
      * @return if the new manifest file must be written
+     * @throws MojoExecutionException 
      */
     private boolean shouldNewManifestFileBeWritten( Manifest manifest, File manifestFile )
+        throws MojoExecutionException
     {
         try
         {
@@ -337,7 +356,7 @@ public class RadManifestWriter
         }
         catch ( Exception e )
         {
-            log.debug( Messages.getString( "EclipseCleanMojo.nofilefound", manifestFile.getAbsolutePath() ) );
+            throw new MojoExecutionException( Messages.getString( "EclipseCleanMojo.nofilefound", manifestFile.getAbsolutePath() ), e );
         }
         return true;
     }

@@ -4,8 +4,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<packaging>ejb</packaging>
-	<groupId>eclipse</groupId>
-	<artifactId>maven-eclipse-plugin-test-project-rad-3</artifactId>
+	<groupId>eclipse.test</groupId>
+	<artifactId>project-rad-3</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Maven</name>
 	<dependencies>
