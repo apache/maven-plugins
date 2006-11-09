@@ -21,7 +21,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -444,7 +447,7 @@ public class EclipsePlugin
         checkDeprecations();
 
         ready = validate();
-        
+
         String packaging = executedProject.getPackaging();
 
         // TODO: Why are we using project in some places, and executedProject in others??
@@ -457,7 +460,7 @@ public class EclipsePlugin
         setupExtras();
 
         parseConfigurationOptions();
-        
+
         // defaults
         if ( projectnatures == null )
         {
@@ -473,9 +476,14 @@ public class EclipsePlugin
         {
             fillDefaultBuilders( packaging );
         }
+        else
+        {
+            convertBuildCommandList( buildcommands );
+        }
 
         if ( additionalBuildcommands != null )
         {
+            convertBuildCommandList( additionalBuildcommands );
             buildcommands.addAll( additionalBuildcommands );
         }
 
@@ -490,6 +498,23 @@ public class EclipsePlugin
 
         // ready to start
         return ready;
+    }
+
+    protected void convertBuildCommandList( List commands )
+    {
+        if ( commands != null )
+        {
+            for ( ListIterator i = commands.listIterator(); i.hasNext(); )
+            {
+                Object command = i.next();
+
+                if ( command instanceof String )
+                {
+                    command = new BuildCommand( (String) command );
+                    i.set( command );
+                }
+            }
+        }
     }
 
     private void parseConfigurationOptions()
@@ -513,6 +538,7 @@ public class EclipsePlugin
     }
 
     protected void setupExtras()
+        throws MojoExecutionException
     {
         // extension point.
     }
@@ -563,7 +589,13 @@ public class EclipsePlugin
         {
             eclipseProjectDir = executedProject.getFile().getParentFile();
         }
-        else if ( !eclipseProjectDir.equals( executedProject.getFile().getParentFile() ) )
+        
+        if ( !eclipseProjectDir.exists() && !eclipseProjectDir.mkdirs() )
+        {
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcreatedir", eclipseProjectDir ) ); //$NON-NLS-1$
+        }
+        
+        if ( !eclipseProjectDir.equals( executedProject.getFile().getParentFile() ) )
         {
             if ( !eclipseProjectDir.isDirectory() )
             {
@@ -608,29 +640,11 @@ public class EclipsePlugin
     public void writeConfiguration( IdeDependency[] deps )
         throws MojoExecutionException
     {
-        File projectBaseDir = executedProject.getFile().getParentFile();
-
-        // build a list of UNIQUE source dirs (both src and resources) to be
-        // used in classpath and wtpmodules
-        EclipseSourceDir[] sourceDirs = buildDirectoryList( executedProject, eclipseProjectDir, buildOutputDirectory );
-
-        EclipseWriterConfig config = new EclipseWriterConfig();
-        config.setBuildCommands( buildcommands );
-        config.setBuildOutputDirectory( buildOutputDirectory );
-        config.setClasspathContainers( classpathContainers );
-        config.setDeps( deps );
-        config.setEclipseProjectDirectory( eclipseProjectDir );
-        config.setLocalRepository( localRepository );
-        config.setManifestFile( manifest );
-        config.setPde( pde );
-        config.setProject( project );
-        config.setProjectBaseDir( projectBaseDir );
-        config.setProjectnatures( projectnatures );
-        config.setSourceDirs( sourceDirs );
+        EclipseWriterConfig config = createEclipseWriterConfig( deps );
 
         // NOTE: This could change the config!
         writeExtraConfiguration( config );
-        
+
         if ( wtpVersionFloat == 0.7f )
         {
             new EclipseWtpmodulesWriter().init( getLog(), config ).write();
@@ -692,6 +706,57 @@ public class EclipsePlugin
 
         getLog().info( Messages.getString( "EclipsePlugin.wrote", new Object[] { //$NON-NLS-1$
                                            project.getArtifactId(), eclipseProjectDir.getAbsolutePath() } ) );
+    }
+
+    protected EclipseWriterConfig createEclipseWriterConfig( IdeDependency[] deps )
+        throws MojoExecutionException
+    {
+        File projectBaseDir = executedProject.getFile().getParentFile();
+
+        // build a list of UNIQUE source dirs (both src and resources) to be
+        // used in classpath and wtpmodules
+        EclipseSourceDir[] sourceDirs = buildDirectoryList( executedProject, eclipseProjectDir, buildOutputDirectory );
+
+        EclipseWriterConfig config = new EclipseWriterConfig();
+
+        // TODO: add mojo param 'addVersionToProjectName' and if set append
+        // -version to the project name.
+        config.setEclipseProjectName( project.getArtifactId() );
+        
+        Set convertedBuildCommands = new LinkedHashSet();
+        
+        if ( buildcommands != null )
+        {
+            for ( Iterator it = buildcommands.iterator(); it.hasNext(); )
+            {
+                Object cmd = it.next();
+                
+                if ( cmd instanceof BuildCommand )
+                {
+                    convertedBuildCommands.add( (BuildCommand) cmd );
+                }
+                else
+                {
+                    convertedBuildCommands.add( new BuildCommand( (String) cmd ) );
+                }
+            }
+        }
+        
+        config.setBuildCommands( new LinkedList( convertedBuildCommands ) );
+
+        config.setBuildOutputDirectory( buildOutputDirectory );
+        config.setClasspathContainers( classpathContainers );
+        config.setDeps( deps );
+        config.setEclipseProjectDirectory( eclipseProjectDir );
+        config.setLocalRepository( localRepository );
+        config.setManifestFile( manifest );
+        config.setPde( pde );
+        config.setProject( project );
+        config.setProjectBaseDir( projectBaseDir );
+        config.setProjectnatures( projectnatures );
+        config.setSourceDirs( sourceDirs );
+
+        return config;
     }
 
     /**
@@ -768,33 +833,33 @@ public class EclipsePlugin
 
         if ( wtpVersionFloat == 0.7f )
         {
-            buildcommands.add( BUILDER_WST_COMPONENT_STRUCTURAL ); // WTP 0.7 builder
+            buildcommands.add( new BuildCommand( BUILDER_WST_COMPONENT_STRUCTURAL ) ); // WTP 0.7 builder
         }
 
         if ( isJavaProject )
         {
-            buildcommands.add( BUILDER_JDT_CORE_JAVA );
+            buildcommands.add( new BuildCommand( BUILDER_JDT_CORE_JAVA ) );
         }
 
         if ( wtpVersionFloat >= 1.5f )
         {
-            buildcommands.add( BUILDER_WST_FACET ); // WTP 1.5 builder
+            buildcommands.add( new BuildCommand( BUILDER_WST_FACET ) ); // WTP 1.5 builder
         }
 
         if ( wtpVersionFloat >= 0.7f )
         {
-            buildcommands.add( BUILDER_WST_VALIDATION ); // WTP 0.7/1.0 builder
+            buildcommands.add( new BuildCommand( BUILDER_WST_VALIDATION ) ); // WTP 0.7/1.0 builder
         }
 
         if ( wtpVersionFloat == 0.7f )
         {
-            buildcommands.add( BUILDER_WST_COMPONENT_STRUCTURAL_DEPENDENCY_RESOLVER ); // WTP 0.7 builder
+            buildcommands.add( new BuildCommand( BUILDER_WST_COMPONENT_STRUCTURAL_DEPENDENCY_RESOLVER ) ); // WTP 0.7 builder
         }
 
         if ( pde )
         {
-            buildcommands.add( BUILDER_PDE_MANIFEST );
-            buildcommands.add( BUILDER_PDE_SCHEMA );
+            buildcommands.add( new BuildCommand( BUILDER_PDE_MANIFEST ) );
+            buildcommands.add( new BuildCommand( BUILDER_PDE_SCHEMA ) );
         }
     }
 
@@ -830,8 +895,8 @@ public class EclipsePlugin
         return (EclipseSourceDir[]) directories.toArray( new EclipseSourceDir[directories.size()] );
     }
 
-    private void extractSourceDirs( Set directories, List sourceRoots, File basedir, File projectBaseDir,
-                                           boolean test, String output )
+    private void extractSourceDirs( Set directories, List sourceRoots, File basedir, File projectBaseDir, boolean test,
+                                    String output )
         throws MojoExecutionException
     {
         for ( Iterator it = sourceRoots.iterator(); it.hasNext(); )
@@ -844,7 +909,7 @@ public class EclipsePlugin
                 String sourceRoot = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, sourceRootFile, !projectBaseDir
                     .equals( basedir ) );
 
-                directories.add( new EclipseSourceDir( sourceRoot, output, false, test, null, null ) );
+                directories.add( new EclipseSourceDir( sourceRoot, output, false, test, null, null, false ) );
             }
         }
     }
@@ -856,9 +921,9 @@ public class EclipsePlugin
         for ( Iterator it = resources.iterator(); it.hasNext(); )
         {
             Resource resource = (Resource) it.next();
-            
+
             System.out.println( "Processing resource dir: " + resource.getDirectory() );
-            
+
             String includePattern = null;
             String excludePattern = null;
 
@@ -902,9 +967,10 @@ public class EclipsePlugin
                 output = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, outputFile, false );
             }
 
-            System.out.println( "Adding eclipse source dir: { " + resourceDir + ", " + output + ", true, " + test + ", " + includePattern + ", " + excludePattern + " }." );
-            
-            directories.add( new EclipseSourceDir( resourceDir, output, true, test, includePattern, excludePattern ) );
+            System.out.println( "Adding eclipse source dir: { " + resourceDir + ", " + output + ", true, " + test
+                + ", " + includePattern + ", " + excludePattern + " }." );
+
+            directories.add( new EclipseSourceDir( resourceDir, output, true, test, includePattern, excludePattern, resource.isFiltering() ) );
         }
     }
 

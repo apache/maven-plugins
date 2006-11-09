@@ -78,6 +78,11 @@ public class RadEjbClasspathWriter
         {
             new File( config.getEclipseProjectDirectory(), TARGET_WEBSPHERE_CLASSES ).mkdirs();
             File classpathFile = new File( config.getEclipseProjectDirectory(), CLASSPATH_FILE );
+            
+            if ( !classpathFile.exists() )
+            {
+                return;
+            }
             FileWriter w;
             Xpp3Dom classpath = readXMLFile( classpathFile );
             Xpp3Dom[] children = classpath.getChildren();

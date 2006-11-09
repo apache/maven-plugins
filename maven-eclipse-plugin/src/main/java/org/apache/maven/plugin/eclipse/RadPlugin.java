@@ -11,6 +11,7 @@ import org.apache.maven.plugin.eclipse.writers.rad.RadLibCopier;
 import org.apache.maven.plugin.eclipse.writers.rad.RadManifestWriter;
 import org.apache.maven.plugin.eclipse.writers.rad.RadWebSettingsWriter;
 import org.apache.maven.plugin.eclipse.writers.rad.RadWebsiteConfigWriter;
+import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.project.MavenProject;
 
 import java.io.File;
@@ -108,6 +109,8 @@ public class RadPlugin
     protected void writeExtraConfiguration( EclipseWriterConfig config )
         throws MojoExecutionException
     {
+        super.writeExtraConfiguration( config );
+        
         if ( isJavaProject )
         {
             // special case must be done first because it can add stuff to the classpath that will be 
@@ -132,9 +135,12 @@ public class RadPlugin
      * make room for a Manifest file. use a generated resource for JARS and for
      * WARS use the manifest in the webapp/meta-inf directory.
      */
-    private void addManifestResource()
+    private void addManifestResource( EclipseWriterConfig config )
     {
-        if ( new RadManifestWriter().getMetaInfBaseDirectory( getExecutedProject() ) != null )
+        RadManifestWriter manifestWriter = new RadManifestWriter();
+        manifestWriter.init( getLog(), config );
+        
+        if ( manifestWriter.getMetaInfBaseDirectory( getExecutedProject() ) != null )
         {
             return;
         }
@@ -177,6 +183,8 @@ public class RadPlugin
      */
     protected void fillDefaultBuilders( String packaging )
     {
+        super.fillDefaultBuilders( packaging );
+        
         ArrayList buildcommands = new ArrayList();
         if ( Constants.PROJECT_PACKAGING_EAR.equals( packaging ) )
         {
@@ -220,6 +228,8 @@ public class RadPlugin
      */
     protected void fillDefaultNatures( String packaging )
     {
+        super.fillDefaultNatures( packaging );
+        
         ArrayList projectnatures = new ArrayList();
         if ( Constants.PROJECT_PACKAGING_EAR.equals( packaging ) )
         {
@@ -285,8 +295,17 @@ public class RadPlugin
         return false;
     }
 
+    /**
+     * WARNING: The manifest resources added here will not have the benefit of the dependencies
+     * of the project, since that's not provided in the setup() apis...
+     */
     protected void setupExtras()
+        throws MojoExecutionException
     {
-        addManifestResource();
+        super.setupExtras();
+        
+        EclipseWriterConfig config = createEclipseWriterConfig( new IdeDependency[0] );
+
+        addManifestResource( config );
     }
 }

@@ -25,7 +25,11 @@ import java.util.jar.Manifest;
 /**
  * Create or adapt the manifest files for the RAD6 runtime dependencys.
  * attention these will not be used for the real ear these are just to get the
- * runtime enviorment using the maven dependencys.
+ * runtime enviorment using the maven dependencies.
+ * 
+ * WARNING: The manifest resources added here will not have the benefit of the dependencies
+ * of the project, since that's not provided in the setup() apis, one of the locations from which
+ * this writer is used in the RadPlugin.
  * 
  * @author <a href="mailto:nir@cfc.at">Richard van Nieuwenhoven </a>
  */

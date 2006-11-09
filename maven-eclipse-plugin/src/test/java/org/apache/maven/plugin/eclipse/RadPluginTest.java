@@ -16,12 +16,6 @@
 
 package org.apache.maven.plugin.eclipse;
 
-import java.io.File;
-import java.io.FileReader;
-import java.util.Arrays;
-import java.util.Properties;
-
-import org.apache.maven.cli.ConsoleDownloadMonitor;
 import org.apache.maven.embedder.MavenEmbedderConsoleLogger;
 import org.apache.maven.embedder.PlexusLoggerAdapter;
 import org.apache.maven.monitor.event.DefaultEventMonitor;
@@ -31,6 +25,12 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
+
+import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
@@ -50,7 +50,7 @@ public class RadPluginTest
         testProject( "project-rad-2", new Properties(), "rad-clean", "rad" );
         File generatedManifest = getTestFile( "src/test/resources/projects/project-rad-2/src/main/webapp/META-INF/MANIFEST.MF" );
         File expectedManifest = getTestFile( "src/test/resources/projects/project-rad-2/src/main/webapp/META-INF/expected_MANIFEST.MF" );
-        assertFileEquals( this.localRepositoryDir.getCanonicalPath(), generatedManifest, expectedManifest );
+        assertFileEquals( LOCAL_REPO_DIR.getCanonicalPath(), generatedManifest, expectedManifest );
 
     }
 
@@ -60,7 +60,7 @@ public class RadPluginTest
         testProject( "project-rad-3", new Properties(), "rad-clean", "rad" );
         File generatedManifest = getTestFile( "src/test/resources/projects/project-rad-3/ejbModule/META-INF/MANIFEST.MF" );
         File expectedManifest = getTestFile( "src/test/resources/projects/project-rad-3/ejbModule/META-INF/expected_MANIFEST.MF" );
-        assertFileEquals( this.localRepositoryDir.getCanonicalPath(), generatedManifest, expectedManifest );
+        assertFileEquals( LOCAL_REPO_DIR.getCanonicalPath(), generatedManifest, expectedManifest );
     }
 
     public void testProject4()
@@ -74,18 +74,18 @@ public class RadPluginTest
     {
         File basedir = getTestFile( "src/test/resources/projects/project-rad-5" );
 
-        FileUtils.deleteDirectory( getTestFile( "src/test/resources/projects/project-rad-5/project-rad-1/META-INF" ) );
-        getTestFile( "src/test/resources/projects/project-rad-5/project-rad-1/META-INF" ).mkdir();
+        FileUtils.deleteDirectory( new File( basedir, "project-rad-1/META-INF" ) );
+        new File( basedir, "project-rad-1/META-INF" ).mkdirs();
 
-        MavenProject project = this.maven.readProjectWithDependencies( new File( basedir, "pom.xml" ) );
-        MavenProject project2 = this.maven
-            .readProjectWithDependencies( new File(
-                                                    getTestFile( "src/test/resources/projects/project-rad-5/project-rad-2" ),
-                                                    "pom.xml" ) );
-        MavenProject project3 = this.maven
-            .readProjectWithDependencies( new File(
-                                                    getTestFile( "src/test/resources/projects/project-rad-5/project-rad-3" ),
-                                                    "pom.xml" ) );
+        File pom0 = new File( basedir, "pom.xml" );
+        File pom1 = new File( basedir, "project-rad-1/pom.xml" );
+        File pom2 = new File( basedir, "project-rad-2/pom.xml" );
+        File pom3 = new File( basedir, "project-rad-3/pom.xml" );
+        
+        MavenProject project = readProject( pom0 );
+        MavenProject project1 = readProject( pom1 );
+        MavenProject project2 = readProject( pom2 );
+        MavenProject project3 = readProject( pom3 );
 
         EventMonitor eventMonitor = new DefaultEventMonitor( new PlexusLoggerAdapter( new MavenEmbedderConsoleLogger() ) );
 
@@ -102,22 +102,36 @@ public class RadPluginTest
             outputDir.mkdirs();
             new File( outputDir, project.getArtifactId() );
         }
-        this.maven.execute( Arrays.asList( new MavenProject[] { project, project2, project3 } ), Arrays
-            .asList( new String[] {
-                "install",
-                "org.apache.maven.plugins:maven-eclipse-plugin:current:rad-clean",
-                "org.apache.maven.plugins:maven-eclipse-plugin:current:rad" } ), eventMonitor, new ConsoleDownloadMonitor(),
-                            new Properties(), basedir );
-        MavenProject project1 = this.maven
-            .readProjectWithDependencies( new File(
-                                                    getTestFile( "src/test/resources/projects/project-rad-5/project-rad-1" ),
-                                                    "pom.xml" ) );
-        this.maven.execute( Arrays.asList( new MavenProject[] { project1, project2, project3 } ), Arrays
-            .asList( new String[] {
-                "install",
-                "org.apache.maven.plugins:maven-eclipse-plugin:current:rad-clean",
-                "org.apache.maven.plugins:maven-eclipse-plugin:current:rad" } ), eventMonitor, new ConsoleDownloadMonitor(),
-                            new Properties(), basedir );
+        
+        List goals = new ArrayList();
+        
+        String pluginSpec = getPluginCLISpecification();
+        
+        goals.add( pluginSpec + "rad-clean" );
+        goals.add( pluginSpec + "rad" );
+        
+        Properties props = new Properties();
+        
+        executeMaven( pom0, props, goals );
+        executeMaven( pom2, props, goals );
+        executeMaven( pom3, props, goals );
+        
+        executeMaven( pom1, props, goals );
+        executeMaven( pom2, props, goals );
+        executeMaven( pom3, props, goals );
+        
+//        this.maven.execute( Arrays.asList( new MavenProject[] { project, project2, project3 } ), Arrays
+//            .asList( new String[] {
+//                "install",
+//                "org.apache.maven.plugins:maven-eclipse-plugin:current:rad-clean",
+//                "org.apache.maven.plugins:maven-eclipse-plugin:current:rad" } ), eventMonitor, new ConsoleDownloadMonitor(),
+//                            new Properties(), basedir );
+//        this.maven.execute( Arrays.asList( new MavenProject[] { project1, project2, project3 } ), Arrays
+//            .asList( new String[] {
+//                "install",
+//                "org.apache.maven.plugins:maven-eclipse-plugin:current:rad-clean",
+//                "org.apache.maven.plugins:maven-eclipse-plugin:current:rad" } ), eventMonitor, new ConsoleDownloadMonitor(),
+//                            new Properties(), basedir );
 
         // jar muss reincoliert sein
         assertTrue( getTestFile( "src/test/resources/projects/project-rad-5/project-rad-1/maven-core-98.0.jar" )
@@ -149,21 +163,21 @@ public class RadPluginTest
     public void testProject5_2()
         throws Exception
     {
-
-        FileUtils.deleteDirectory( getTestFile( "src/test/resources/projects/project-rad-5/project-rad-1/META-INF" ) );
-        FileUtils.copyDirectory( getTestFile( "src/test/resources/projects/project-rad-5/project-rad-1/META-INF-2" ),
-                                 getTestFile( "src/test/resources/projects/project-rad-5/project-rad-1/META-INF" ) );
-
         File basedir = getTestFile( "src/test/resources/projects/project-rad-5" );
-        MavenProject project = this.maven.readProjectWithDependencies( new File( basedir, "pom.xml" ) );
-        MavenProject project2 = this.maven
-            .readProjectWithDependencies( new File(
-                                                    getTestFile( "src/test/resources/projects/project-rad-5/project-rad-2" ),
-                                                    "pom.xml" ) );
-        MavenProject project3 = this.maven
-            .readProjectWithDependencies( new File(
-                                                    getTestFile( "src/test/resources/projects/project-rad-5/project-rad-3" ),
-                                                    "pom.xml" ) );
+
+        FileUtils.deleteDirectory( new File( basedir, "project-rad-1/META-INF" ) );
+        FileUtils.copyDirectory( new File( basedir, "project-rad-1/META-INF-2" ),
+                                 new File( basedir, "project-rad-1/META-INF" ) );
+
+        File pom0 = new File( basedir, "pom.xml" );
+        File pom1 = new File( basedir, "project-rad-1/pom.xml" );
+        File pom2 = new File( basedir, "project-rad-2/pom.xml" );
+        File pom3 = new File( basedir, "project-rad-3/pom.xml" );
+        
+        MavenProject project = readProject( pom0 );
+        MavenProject project1 = readProject( pom1 );
+        MavenProject project2 = readProject( pom2 );
+        MavenProject project3 = readProject( pom3 );
 
         EventMonitor eventMonitor = new DefaultEventMonitor( new PlexusLoggerAdapter( new MavenEmbedderConsoleLogger() ) );
 
@@ -180,22 +194,37 @@ public class RadPluginTest
             outputDir.mkdirs();
             new File( outputDir, project.getArtifactId() );
         }
-        this.maven.execute( Arrays.asList( new MavenProject[] { project, project2, project3 } ), Arrays
-            .asList( new String[] {
-                "install",
-                "org.apache.maven.plugins:maven-eclipse-plugin:current:rad-clean",
-                "org.apache.maven.plugins:maven-eclipse-plugin:current:rad" } ), eventMonitor, new ConsoleDownloadMonitor(),
-                            new Properties(), basedir );
-        MavenProject project1 = this.maven
-            .readProjectWithDependencies( new File(
-                                                    getTestFile( "src/test/resources/projects/project-rad-5/project-rad-1" ),
-                                                    "pom.xml" ) );
-        this.maven.execute( Arrays.asList( new MavenProject[] { project1, project2, project3 } ), Arrays
-            .asList( new String[] {
-                "install",
-                "org.apache.maven.plugins:maven-eclipse-plugin:current:rad-clean",
-                "org.apache.maven.plugins:maven-eclipse-plugin:current:rad" } ), eventMonitor, new ConsoleDownloadMonitor(),
-                            new Properties(), basedir );
+        
+        List goals = new ArrayList();
+        
+        String pluginSpec = getPluginCLISpecification();
+        
+        goals.add( pluginSpec + "rad-clean" );
+        goals.add( pluginSpec + "rad" );
+        
+        Properties props = new Properties();
+        
+        executeMaven( pom0, props, goals );
+        executeMaven( pom2, props, goals );
+        executeMaven( pom3, props, goals );
+        
+        executeMaven( pom1, props, goals );
+        executeMaven( pom2, props, goals );
+        executeMaven( pom3, props, goals );
+        
+//        this.maven.execute( Arrays.asList( new MavenProject[] { project, project2, project3 } ), Arrays
+//            .asList( new String[] {
+//                "install",
+//                "org.apache.maven.plugins:maven-eclipse-plugin:current:rad-clean",
+//                "org.apache.maven.plugins:maven-eclipse-plugin:current:rad" } ), eventMonitor, new ConsoleDownloadMonitor(),
+//                            new Properties(), basedir );
+//        
+//        this.maven.execute( Arrays.asList( new MavenProject[] { project1, project2, project3 } ), Arrays
+//            .asList( new String[] {
+//                "install",
+//                "org.apache.maven.plugins:maven-eclipse-plugin:current:rad-clean",
+//                "org.apache.maven.plugins:maven-eclipse-plugin:current:rad" } ), eventMonitor, new ConsoleDownloadMonitor(),
+//                            new Properties(), basedir );
 
         assertTrue( getTestFile( "src/test/resources/projects/project-rad-5/project-rad-1/maven-core-98.0.jar" )
             .exists() );

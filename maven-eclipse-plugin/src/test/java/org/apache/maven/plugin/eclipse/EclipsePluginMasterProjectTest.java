@@ -22,7 +22,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.maven.cli.ConsoleDownloadMonitor;
@@ -99,16 +101,27 @@ public class EclipsePluginMasterProjectTest
     public void executeMaven2WithEmbedder()
         throws Exception
     {
-        MavenProject project = maven.readProjectWithDependencies( new File( basedir, "pom.xml" ) );
-        EventMonitor eventMonitor = new DefaultEventMonitor( new PlexusLoggerAdapter( new MavenEmbedderConsoleLogger() ) );
-
+        File pom = new File( basedir, "pom.xml" );
+        
         Properties properties = new Properties();
         properties.setProperty( "wtpversion", "R7" );
 
-        this.maven.execute( project, Arrays.asList( new String[] {
-            "org.apache.maven.plugins:maven-eclipse-plugin:clean",
-            "org.apache.maven.plugins:maven-eclipse-plugin:eclipse" } ), eventMonitor, new ConsoleDownloadMonitor(),
-                            properties, this.basedir );
+        String pluginSpec = getPluginCLISpecification();
+
+        List goals = new ArrayList();
+
+        goals.add( pluginSpec + "clean" );
+        goals.add( pluginSpec + "eclipse" );
+        
+        executeMaven( pom, properties, goals );
+        
+//        MavenProject project = maven.readProjectWithDependencies( pom );
+//        EventMonitor eventMonitor = new DefaultEventMonitor( new PlexusLoggerAdapter( new MavenEmbedderConsoleLogger() ) );
+//
+//        this.maven.execute( project, Arrays.asList( new String[] {
+//            "org.apache.maven.plugins:maven-eclipse-plugin:clean",
+//            "org.apache.maven.plugins:maven-eclipse-plugin:eclipse" } ), eventMonitor, new ConsoleDownloadMonitor(),
+//                            properties, this.basedir );
     }
 
     protected void executeMaven2()
