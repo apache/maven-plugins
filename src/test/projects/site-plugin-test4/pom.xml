@@ -27,7 +27,7 @@
   <version>1.0-SNAPSHOT</version>
   <inceptionYear>2005</inceptionYear>
   <name>Maven Site Plugin Test3</name>
-  <description>An index already exists.</description> -->
+  <description>An index already exists.</description>
   <url>http://maven.apache.org</url>
   <dependencies>
     <dependency>
