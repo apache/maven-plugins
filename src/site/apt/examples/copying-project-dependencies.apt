@@ -1,16 +1,15 @@
   ------
-  Copying Direct Dependencies
+  Copying Project Dependencies
   ------
   Allan Ramirez
   Brian Fox
   ------
-  July 2006
+  Nov 2006
   ------
 
-Copying Direct Dependencies
+Copying Project Dependencies
 
-   Direct dependencies are the dependencies declared in your pom. To be able
-   to copy them with their transitive dependencies, use the
+   Project dependencies are the dependencies declared in your pom. To copy them with their transitive dependencies, use the
    <<<dependency:copy-dependencies>>> mojo and configure the plugin like
    the sample below:
 
@@ -45,7 +44,7 @@ Copying Direct Dependencies
 
 * Excluding Transitive Dependencies
 
-   As mentioned, {{{http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html}transitive dependencies}} are copied by default. However, it
+   As mentioned, {{{http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html}transitive dependencies}} are copied by default. However, they
    can also be excluded by setting the <<<excludeTransitive>>> property to
    <<true>>.
 

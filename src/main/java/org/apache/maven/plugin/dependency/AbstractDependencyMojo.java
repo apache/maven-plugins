@@ -103,10 +103,19 @@ public abstract class AbstractDependencyMojo
 
     /**
      * If the plugin should be silent.
-     * 
+     * @optional
+     * @since 2.0
      * @parameter expression="${silent}" default-value="false"
      */
     protected boolean silent;
+    
+    /**
+     * Output absolute filename for resolved artifacts
+     * @optional
+     * @since 2.0
+     * @parameter expression="${outputAbsoluteArtifactFilename}" default-value="false"
+     */
+    protected boolean outputAbsoluteArtifactFilename;
 
     private Log log;
 
@@ -159,7 +168,7 @@ public abstract class AbstractDependencyMojo
         {
             try
             {
-                theLog.info( "Copying " + artifact.getAbsolutePath() + " to " + destFile );
+                theLog.info( "Copying " + (this.outputAbsoluteArtifactFilename ? artifact.getAbsolutePath() : artifact.getName()) + " to " + destFile );
                 FileUtils.copyFile( artifact, destFile );
                 result = true;
             }
@@ -253,7 +262,7 @@ public abstract class AbstractDependencyMojo
         catch ( IOException e )
         {
             e.printStackTrace();
-            throw new MojoExecutionException( "Error unpacking file: " + file + " to: " + location + "\r\n"
+            throw new MojoExecutionException( "Error unpacking file: " + (this.outputAbsoluteArtifactFilename ? file.getAbsolutePath() : file.getName()) + " to: " + location + "\r\n"
                 + e.toString(), e );
         }
         catch ( ArchiverException e )

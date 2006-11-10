@@ -1,17 +1,17 @@
   ------
-  Unpacking the Copied Direct Dependencies
+  Unpacking Project Dependencies
   ------
   Allan Ramirez
   Brian Fox
   ------
-  July 2006
+  Nov 2006
   ------
 
-Unpacking the Copied Direct Dependencies
+Unpacking Project Dependencies
 
-  This is pretty much alike with {{{copy-direct-dependencies.html}Copying Direct Dependencies}}
-  example. The difference is that the copied direct dependencies has been unpacked,
-  including the transitive dependencies. To unpack the copied artifacts, use the
+  This is pretty similar to the {{{copying-project-dependencies.html}Copying Direct Dependencies}}
+  example. The difference is that the direct dependencies are unpacked,
+  including the transitive dependencies. To unpack the artifacts, use the
   <<<dependency:unpack-dependencies>>> mojo and configure the dependency plugin
   to something like the sample below:
 

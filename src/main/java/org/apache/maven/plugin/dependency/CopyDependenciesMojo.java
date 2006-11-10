@@ -36,6 +36,7 @@ import org.apache.maven.plugin.logging.Log;
  * @requiresDependencyResolution compile
  * @phase process-sources
  * @author brianf
+ * @since 1.0
  */
 public class CopyDependenciesMojo
     extends AbstractFromDependenciesMojo
@@ -43,7 +44,7 @@ public class CopyDependenciesMojo
 
     /**
      * Strip artifact version during copy
-     * 
+     * @optional
      * @parameter expression="${stripVersion}" default-value="false"
      * @parameter
      */
