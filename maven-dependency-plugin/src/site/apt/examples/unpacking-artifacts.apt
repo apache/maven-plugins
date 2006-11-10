@@ -1,16 +1,16 @@
   ------
-  Unpacking the Copied Specific Artifacts
+  Unpacking Specific Artifacts
   ------
   Allan Ramirez
   Brian Fox
   ------
-  July 2006
+  Nov 2006
   ------
 
-Unpacking the Copied Specific Artifacts
+Unpacking Specific Artifacts
 
-  This is pretty much alike with {{{copying-artifacts.html}Copying Specific Artifacts}}
-  example. The difference is that the copied artifacts has been unpacked.
+  This is pretty similar to the {{{copying-artifacts.html}Copying Specific Artifacts}}
+  example. The difference is that instead of copying the artifacts, they are unpacked.
   To unpack the copied artifacts, use the <<<dependency:unpack>>> mojo and
   configure the plugin into something like the sample below:
 
@@ -54,7 +54,8 @@ Unpacking the Copied Specific Artifacts
  </project>
 +---+
 
-  And after invoking <<<mvn package>>>, the copied artifacts are unpacked.
+  And after invoking <<<mvn package>>>, the artifacts are unpacked. Because checking the existence of an unpacked archive
+  is difficult to do reliably, marker files are used instead. The location of the marker files is controlled by the {{{unpack-dependencies-mojo.html#markersDirectory}markersDirectory}} parameter.
 
 
 

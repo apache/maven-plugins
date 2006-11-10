@@ -30,6 +30,7 @@ import org.apache.maven.plugin.dependency.utils.markers.SourcesFileMarkerHandler
  * @requiresDependencyResolution test
  * @phase generate-sources
  * @author brianf
+ * @since 2.0
  */
 public class ResolveDependenciesMojo
     extends AbstractResolveMojo
