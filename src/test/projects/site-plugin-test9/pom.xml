@@ -27,7 +27,7 @@
   <version>1.0-SNAPSHOT</version>
   <inceptionYear>2005</inceptionYear>
   <name>Maven Site Plugin Test9</name>
-  <description>MNG-560 honnor locales.</description> -->
+  <description>MNG-560 honnor locales.</description>
   <url>http://maven.apache.org</url>
   <dependencies>
     <dependency>
