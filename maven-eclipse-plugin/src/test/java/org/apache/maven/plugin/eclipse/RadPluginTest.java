@@ -49,7 +49,7 @@ public class RadPluginTest
         testProject( "project-rad-2", new Properties(), "rad-clean", "rad" );
         File generatedManifest = getTestFile( PROJECTS_BASEDIR + "/project-rad-2/src/main/webapp/META-INF/MANIFEST.MF" );
         File expectedManifest = getTestFile( PROJECTS_BASEDIR + "/project-rad-2/src/main/webapp/META-INF/expected_MANIFEST.MF" );
-        assertFileEquals( LOCAL_REPO_DIR.getCanonicalPath(), expectedManifest, generatedManifest );
+        assertFileEquals( localRepositoryDirectory.getCanonicalPath(), expectedManifest, generatedManifest );
 
     }
 
@@ -59,7 +59,7 @@ public class RadPluginTest
         testProject( "project-rad-3", new Properties(), "rad-clean", "rad" );
         File generatedManifest = getTestFile( PROJECTS_BASEDIR + "/project-rad-3/ejbModule/META-INF/MANIFEST.MF" );
         File expectedManifest = getTestFile( PROJECTS_BASEDIR + "/project-rad-3/ejbModule/META-INF/expected_MANIFEST.MF" );
-        assertFileEquals( LOCAL_REPO_DIR.getCanonicalPath(), expectedManifest, generatedManifest );
+        assertFileEquals( localRepositoryDirectory.getCanonicalPath(), expectedManifest, generatedManifest );
     }
 
     public void testProject4()

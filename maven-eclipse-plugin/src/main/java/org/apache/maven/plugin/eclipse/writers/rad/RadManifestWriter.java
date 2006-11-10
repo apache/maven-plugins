@@ -53,28 +53,35 @@ public class RadManifestWriter
     private String getMetaInfBaseDirectory( MavenProject project )
     {
         String metaInfBaseDirectory = null;
-        Iterator iterator = project.getResources().iterator();
-        while ( iterator.hasNext() )
+        
+        if ( config.getProject().getPackaging().equals( Constants.PROJECT_PACKAGING_WAR ) )
         {
-            metaInfBaseDirectory = ( (Resource) iterator.next() ).getDirectory();
+            metaInfBaseDirectory = config.getProject().getBasedir().getAbsolutePath() + File.separatorChar + WEBAPP_RESOURCE_DIR;
+            
+            log.debug( "Attempting to use: " + metaInfBaseDirectory + " for location of META-INF in war project." );
             
             File metaInfDirectoryFile = new File( metaInfBaseDirectory + File.separatorChar + META_INF_DIRECTORY );
             
-            if ( !metaInfDirectoryFile.isDirectory() )
+            if ( metaInfDirectoryFile.exists() && !metaInfDirectoryFile.isDirectory() )
             {
                 metaInfBaseDirectory = null;
             }
         }
         
-        if ( metaInfBaseDirectory == null && config.getProject().getPackaging().equals( Constants.PROJECT_PACKAGING_WAR ) )
+        if ( metaInfBaseDirectory == null )
         {
-            metaInfBaseDirectory = config.getProject().getBasedir().getAbsolutePath() + File.separatorChar + WEBAPP_RESOURCE_DIR;
-            
-            System.out.println( "Using: " + metaInfBaseDirectory + " for location of META-INF in war project." );
-            
-            if ( !new File( metaInfBaseDirectory + File.separatorChar + META_INF_DIRECTORY ).exists() )
+            for ( Iterator iterator = project.getResources().iterator(); iterator.hasNext(); )
             {
-                metaInfBaseDirectory = null;
+                metaInfBaseDirectory = ( (Resource) iterator.next() ).getDirectory();
+                
+                File metaInfDirectoryFile = new File( metaInfBaseDirectory + File.separatorChar + META_INF_DIRECTORY );
+                
+                log.debug( "Checking for existence of META-INF directory: " + metaInfDirectoryFile );
+                
+                if ( metaInfDirectoryFile.exists() && !metaInfDirectoryFile.isDirectory() )
+                {
+                    metaInfBaseDirectory = null;
+                }
             }
         }
         

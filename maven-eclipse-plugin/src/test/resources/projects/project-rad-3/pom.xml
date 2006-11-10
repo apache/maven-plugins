@@ -7,7 +7,6 @@
 	<groupId>eclipse.test</groupId>
 	<artifactId>project-rad-3</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Maven</name>
 	<dependencies>
 		<dependency>
 			<groupId>maven</groupId>

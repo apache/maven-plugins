@@ -15,47 +15,27 @@
  */
 package org.apache.maven.plugin.eclipse;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.installer.ArtifactInstallationException;
-import org.apache.maven.artifact.installer.ArtifactInstaller;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
-import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
-import org.apache.maven.model.Build;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.Parent;
-import org.apache.maven.model.Plugin;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectBuilder;
-import org.apache.maven.project.ProjectBuildingException;
-import org.apache.maven.project.artifact.ProjectArtifactMetadata;
-import org.apache.maven.shared.invoker.DefaultInvocationRequest;
-import org.apache.maven.shared.invoker.DefaultInvoker;
-import org.apache.maven.shared.invoker.InvocationOutputHandler;
 import org.apache.maven.shared.invoker.InvocationRequest;
-import org.apache.maven.shared.invoker.Invoker;
-import org.apache.maven.shared.invoker.MavenInvocationException;
+import org.apache.maven.shared.invoker.InvocationResult;
+import org.apache.maven.shared.test.plugin.BuildTool;
+import org.apache.maven.shared.test.plugin.PluginTestTool;
+import org.apache.maven.shared.test.plugin.ProjectTool;
+import org.apache.maven.shared.test.plugin.TestToolsException;
 import org.codehaus.classworlds.ClassRealm;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.cli.CommandLineUtils;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -70,20 +50,14 @@ public abstract class AbstractEclipsePluginTestCase
     extends PlexusTestCase
 {
 
-    private static Invoker mavenInvoker = new DefaultInvoker();
+    private BuildTool buildTool;
 
-    /**
-     * The embedder.
-     */
-    //    protected MavenEmbedder maven;
-    private ArtifactRepository localRepository;
-
-    private MavenProjectBuilder projectBuilder;
+    private ProjectTool projectTool;
 
     /**
      * Test repository directory.
      */
-    protected static final File LOCAL_REPO_DIR = getTestFile( "target/test-classes/m2repo" );
+    protected static File localRepositoryDirectory = getTestFile( "target/test-classes/m2repo" );
 
     /**
      * Group-Id for running test builds.
@@ -102,8 +76,6 @@ public abstract class AbstractEclipsePluginTestCase
     protected static final String VERSION = "test";
 
     private static final String BUILD_OUTPUT_DIRECTORY = "target/surefire-reports/build-output";
-    
-    private static String mvnHome;
 
     private static boolean installed = false;
 
@@ -115,239 +87,31 @@ public abstract class AbstractEclipsePluginTestCase
     {
         if ( !installed )
         {
-            System.out.println( "*** Running test builds; output will be directed to: " + BUILD_OUTPUT_DIRECTORY + "\n" );
+            System.out
+                .println( "*** Running test builds; output will be directed to: " + BUILD_OUTPUT_DIRECTORY + "\n" );
         }
-        
-        synchronized( AbstractEclipsePluginTestCase.class )
-        {
-            if ( mvnHome == null )
-            {
-                mvnHome = System.getProperty( "maven.home" );
-                
-                if ( mvnHome == null )
-                {
-                    Properties envVars = CommandLineUtils.getSystemEnvVars();
-                    
-                    mvnHome = envVars.getProperty( "M2_HOME" );
-                }
-            }
-            
-            if ( mvnHome != null )
-            {
-                mavenInvoker.setMavenHome( new File( mvnHome ) );
-            }
-        }
-        
-        //        this.maven = new MavenEmbedder();
-        //        this.maven.setClassLoader( Thread.currentThread().getContextClassLoader() );
-        //        this.maven.setLogger( new MavenEmbedderConsoleLogger() );
-        //        this.maven.setLocalRepositoryDirectory( LOCAL_REPO_DIR );
-        //        this.maven.setOffline( true );
-        //        this.maven.setInteractiveMode( false );
-        //        this.maven.start();
 
         super.setUp();
 
-        projectBuilder = (MavenProjectBuilder) lookup( MavenProjectBuilder.ROLE );
-        createLocalArtifactRepositoryInstance();
+        buildTool = (BuildTool) lookup( BuildTool.ROLE, "default" );
 
-        // We need to call super.setup() first, to ensure that we can use the PlexusContainer 
-        // initialized in the parent class.
-        installPluginInTestLocalRepository();
-    }
+        projectTool = (ProjectTool) lookup( ProjectTool.ROLE, "default" );
 
-    protected void createLocalArtifactRepositoryInstance()
-        throws Exception
-    {
-        ArtifactRepositoryFactory repoFactory = (ArtifactRepositoryFactory) lookup( ArtifactRepositoryFactory.ROLE );
-        ArtifactRepositoryLayout defaultLayout = (ArtifactRepositoryLayout) lookup( ArtifactRepositoryLayout.ROLE,
-                                                                                    "default" );
-
-        localRepository = repoFactory.createArtifactRepository( "local", LOCAL_REPO_DIR.toURL().toExternalForm(),
-                                                                defaultLayout, null, null );
-
-    }
-
-    protected void installPluginInTestLocalRepository()
-        throws Exception
-    {
-        // synchronizing just in case we try to parallelize later...
         synchronized ( AbstractEclipsePluginTestCase.class )
         {
             if ( !installed )
             {
-                System.out.println( "*** Installing test-version of the Eclipse plugin to: " + LOCAL_REPO_DIR + "\n" );
+                PluginTestTool pluginTestTool = (PluginTestTool) lookup( PluginTestTool.ROLE, "default" );
 
-                ArtifactInstaller installer = (ArtifactInstaller) lookup( ArtifactInstaller.ROLE );
-                ArtifactFactory factory = (ArtifactFactory) lookup( ArtifactFactory.ROLE );
+                localRepositoryDirectory = pluginTestTool.preparePluginForUnitTestingWithMavenBuilds( "test", localRepositoryDirectory );
 
-                Artifact artifact = factory.createArtifact( GROUP_ID, ARTIFACT_ID, VERSION, null, "maven-plugin" );
-
-                File pomFile = manglePom();
-                File artifactFile = new File( "target/" + ARTIFACT_ID + "-" + VERSION + ".jar" );
-                
-                artifact.addMetadata( new ProjectArtifactMetadata( artifact, pomFile ) );
-
-                Properties properties = new Properties();
-//                properties.setProperty( "maven.test.skip", "true" );
-                
-                List goals = new ArrayList();
-                goals.add( "package" );
-                
-                executeMaven( pomFile, properties, goals, false );
-                
-                artifact.setFile( artifactFile );
-
-                String localPath = localRepository.pathOf( artifact );
-
-                File destination = new File( localRepository.getBasedir(), localPath );
-                if ( !destination.getParentFile().exists() )
-                {
-                    destination.getParentFile().mkdirs();
-                }
-
-                installer.install( artifactFile, artifact, localRepository );
-
-                installLocalParentSnapshotPoms( pomFile, installer, factory, localRepository );
+                System.out.println( "*** Installed test-version of the Eclipse plugin to: " + localRepositoryDirectory
+                    + "\n" );
 
                 installed = true;
             }
         }
-    }
 
-    private File manglePom() throws IOException, XmlPullParserException
-    {
-        File input = new File( "pom.xml" );
-        
-        File output = new File( "pom-test.xml" );
-        output.deleteOnExit();
-        
-        FileReader reader = null;
-        FileWriter writer = null;
-        
-        try
-        {
-            reader = new FileReader( input );
-            writer = new FileWriter( output );
-            
-            Model model = new MavenXpp3Reader().read( reader );
-            
-            model.setVersion( "test" );
-            
-            Build build = model.getBuild();
-            if ( build == null )
-            {
-                build = new Build();
-                model.setBuild( build );
-            }
-            
-            List plugins = build.getPlugins();
-            Plugin plugin = null;
-            for ( Iterator iter = plugins.iterator(); iter.hasNext(); )
-            {
-                Plugin plug = (Plugin) iter.next();
-                
-                if ( "maven-surefire-plugin".equals( plug.getArtifactId() ) )
-                {
-                    plugin = plug;
-                    break;
-                }
-            }
-            
-            if ( plugin == null )
-            {
-                plugin = new Plugin();
-                plugin.setArtifactId( "maven-surefire-plugin" );
-                build.addPlugin( plugin );
-            }
-            
-            Xpp3Dom configDom = (Xpp3Dom) plugin.getConfiguration();
-            if ( configDom == null )
-            {
-                configDom = new Xpp3Dom( "configuration" );
-                plugin.setConfiguration( configDom );
-            }
-            
-            Xpp3Dom skipDom = new Xpp3Dom( "skip" );
-            skipDom.setValue( "true" );
-            
-            configDom.addChild( skipDom );
-            
-            new MavenXpp3Writer().write( writer, model );
-        }
-        finally
-        {
-            IOUtil.close( reader );
-            IOUtil.close( writer );
-        }
-        
-        return output;
-    }
-
-    private void installLocalParentSnapshotPoms( File pomFile, ArtifactInstaller installer, ArtifactFactory factory,
-                                                 ArtifactRepository localRepo )
-        throws IOException, XmlPullParserException, ArtifactInstallationException
-    {
-        MavenXpp3Reader pomReader = new MavenXpp3Reader();
-
-        File pom = pomFile;
-
-        boolean firstPass = true;
-
-        while ( pom != null )
-        {
-
-            if ( !pom.exists() )
-            {
-                pom = null;
-                break;
-            }
-
-            String pomGroupId = null;
-            String pomArtifactId = null;
-            String pomVersion = null;
-
-            FileReader reader = null;
-
-            File currentPom = pom;
-
-            try
-            {
-                reader = new FileReader( pom );
-
-                Model model = pomReader.read( reader );
-
-                pomGroupId = model.getGroupId();
-                pomArtifactId = model.getArtifactId();
-                pomVersion = model.getVersion();
-
-                Parent parent = model.getParent();
-                if ( parent != null )
-                {
-                    pom = new File( pom.getParentFile(), parent.getRelativePath() );
-                }
-                else
-                {
-                    pom = null;
-                }
-            }
-            finally
-            {
-                IOUtil.close( reader );
-            }
-
-            if ( !firstPass )
-            {
-                Artifact pomArtifact = factory.createProjectArtifact( pomGroupId, pomArtifactId, pomVersion );
-                pomArtifact.addMetadata( new ProjectArtifactMetadata( pomArtifact, currentPom ) );
-
-                installer.install( currentPom, pomArtifact, localRepo );
-            }
-            else
-            {
-                firstPass = false;
-            }
-        }
     }
 
     /**
@@ -356,16 +120,10 @@ public abstract class AbstractEclipsePluginTestCase
     protected void tearDown()
         throws Exception
     {
-        //        maven.stop();
-        //        super.tearDown();
-        //
-        //        Field embedderField = maven.getClass().getDeclaredField( "embedder" );
-        //        embedderField.setAccessible( true );
-        //        Embedder embedder = (Embedder) embedderField.get( maven );
+        super.tearDown();
 
         List containers = new ArrayList();
 
-        //        containers.add( embedder.getContainer() );
         containers.add( getContainer() );
 
         for ( Iterator iter = containers.iterator(); iter.hasNext(); )
@@ -424,14 +182,14 @@ public abstract class AbstractEclipsePluginTestCase
         File basedir = getTestFile( "target/test-classes/projects/" + projectName );
 
         File pom = new File( basedir, "pom.xml" );
-        
+
         String pluginSpec = getPluginCLISpecification();
 
         List goals = new ArrayList();
 
         goals.add( pluginSpec + cleanGoal );
         goals.add( pluginSpec + genGoal );
-        
+
         executeMaven( pom, properties, goals );
 
         MavenProject project = readProject( pom );
@@ -458,48 +216,73 @@ public abstract class AbstractEclipsePluginTestCase
     }
 
     protected void executeMaven( File pom, Properties properties, List goals )
-        throws MavenInvocationException
+        throws TestToolsException, ExecutionFailedException
     {
         executeMaven( pom, properties, goals, true );
     }
-    
+
     protected void executeMaven( File pom, Properties properties, List goals, boolean switchLocalRepo )
-        throws MavenInvocationException
+        throws TestToolsException, ExecutionFailedException
     {
-        InvocationRequest request = new DefaultInvocationRequest();
+        new File( BUILD_OUTPUT_DIRECTORY ).mkdirs();
         
-//        request.setDebug( true );
-        
+        NullPointerException npe = new NullPointerException();
+        StackTraceElement[] trace = npe.getStackTrace();
+
+        File buildLog = null;
+
+        for ( int i = 0; i < trace.length; i++ )
+        {
+            StackTraceElement element = trace[i];
+
+            String methodName = element.getMethodName();
+
+            if ( methodName.startsWith( "test" ) && !methodName.equals( "testProject" ) )
+            {
+                String classname = element.getClassName();
+
+                buildLog = new File( BUILD_OUTPUT_DIRECTORY, classname + "_" + element.getMethodName() + ".build.log" );
+
+                break;
+            }
+        }
+
+        if ( buildLog == null )
+        {
+            buildLog = new File( BUILD_OUTPUT_DIRECTORY, "unknown.build.log" );
+        }
+
+        InvocationRequest request = buildTool.createBasicInvocationRequest( pom, properties, goals, buildLog );
+
+        request.setDebug( true );
+
         if ( switchLocalRepo )
         {
-            request.setLocalRepositoryDirectory( LOCAL_REPO_DIR );
+            request.setLocalRepositoryDirectory( localRepositoryDirectory );
         }
-        
-        request.setPomFile( pom );
 
-        request.setGoals( goals );
-
-        request.setProperties( properties );
+        InvocationResult result = buildTool.executeMaven( request );
         
-        LoggerHandler handler = new LoggerHandler( BUILD_OUTPUT_DIRECTORY );
-        
-        request.setOutputHandler( handler );
-        request.setErrorHandler( handler );
-
-        try
+        if ( result.getExitCode() != 0 )
         {
-            mavenInvoker.execute( request );
-        }
-        finally
-        {
-            handler.close();
+            String buildLogUrl = buildLog.getAbsolutePath();
+            
+            try
+            {
+                buildLogUrl = buildLog.toURL().toExternalForm();
+            }
+            catch ( MalformedURLException e )
+            {
+            }
+            
+            throw new ExecutionFailedException( "Failed to execute build.\nPOM: " + pom + "\nGoals: " + StringUtils.join( goals.iterator(), ", " ) + "\nExit Code: " + result.getExitCode() + "\nError: " + result.getExecutionException() + "\nBuild Log: " + buildLogUrl + "\n", result );
         }
     }
-    
+
     protected MavenProject readProject( File pom )
-        throws ProjectBuildingException
+        throws TestToolsException
     {
-        return projectBuilder.build( pom, localRepository, null );
+        return projectTool.readProject( pom, localRepositoryDirectory );
     }
 
     protected String getPluginCLISpecification()
@@ -545,8 +328,9 @@ public abstract class AbstractEclipsePluginTestCase
             {
                 File file = files[j];
 
-                assertFileEquals( LOCAL_REPO_DIR.getCanonicalPath(), file, new File( projectOutputDir, additionalDir
-                    + file.getName() ) );
+                assertFileEquals( localRepositoryDirectory.getCanonicalPath(), file, new File( projectOutputDir,
+                                                                                               additionalDir
+                                                                                                   + file.getName() ) );
 
             }
         }
@@ -568,8 +352,8 @@ public abstract class AbstractEclipsePluginTestCase
             // replace some vars in the expected line, to account
             // for absolute paths that are different on each installation.
             expected = StringUtils.replace( expected, "${basedir}", basedir );
-            expected = StringUtils.replace( expected, "${M2_REPO}", LOCAL_REPO_DIR.getCanonicalPath().replace( '\\',
-                                                                                                               '/' ) );
+            expected = StringUtils.replace( expected, "${M2_REPO}", localRepositoryDirectory.getCanonicalPath()
+                .replace( '\\', '/' ) );
 
             if ( actualLines.size() <= i )
             {
@@ -643,75 +427,5 @@ public abstract class AbstractEclipsePluginTestCase
 
         return lines;
     }
-    
-    private static final class LoggerHandler implements InvocationOutputHandler
-    {
-        private static final String LS = System.getProperty( "line.separator" );
-        private final File output;
-        private FileWriter writer;
 
-        LoggerHandler( String outputBasedir )
-        {
-            NullPointerException npe = new NullPointerException();
-            StackTraceElement[] trace = npe.getStackTrace();
-            
-            File file = null;
-            
-            for ( int i = 0; i < trace.length; i++ )
-            {
-                StackTraceElement element = trace[i];
-                
-                String methodName = element.getMethodName();
-                
-                if ( methodName.startsWith( "test" ) && !methodName.equals( "testProject" ) )
-                {
-                    String classname = element.getClassName();
-                    
-                    file = new File( outputBasedir, classname + "_" + element.getMethodName() + ".build.log" );
-                    
-                    break;
-                }
-            }
-            
-            if ( file == null )
-            {
-                file = new File( outputBasedir, "unknown.build.log" );
-            }
-            
-            file.getParentFile().mkdirs();
-            
-            output = file;
-        }
-
-        public void consumeLine( String line )
-        {
-            if ( writer == null )
-            {
-                try
-                {
-                    writer = new FileWriter( output );
-                }
-                catch ( IOException e )
-                {
-                    throw new IllegalStateException( "Failed to open build log: " + output + "\n\nError: " + e.getMessage() );
-                }
-            }
-            
-            try
-            {
-                writer.write( line + LS );
-                writer.flush();
-            }
-            catch ( IOException e )
-            {
-                throw new IllegalStateException( "Failed to write to build log: " + output + " output:\n\n\'" + line + "\'\n\nError: " + e.getMessage() );
-            }
-        }
-        
-        void close()
-        {
-            IOUtil.close( writer );
-        }
-        
-    }
 }
