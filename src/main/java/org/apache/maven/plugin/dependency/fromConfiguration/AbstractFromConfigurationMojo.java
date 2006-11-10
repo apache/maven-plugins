@@ -44,20 +44,23 @@ public abstract class AbstractFromConfigurationMojo
      * 
      * @parameter expression="${outputDirectory}"
      *            default-value="${project.build.directory}/dependency"
-     * @required
+     * @optional
+     * @since 1.0
      */
     protected File outputDirectory;
 
     /**
      * Overwrite release artifacts
-     * 
+     * @optional
+     * @since 1.0
      * @parameter expression="${overWriteReleases}" default-value="false"
      */
     protected boolean overWriteReleases;
 
     /**
      * Overwrite snapshot artifacts
-     * 
+     * @optional
+     * @since 1.0
      * @parameter expression="${overWriteSnapshots}" default-value="true"
      */
     protected boolean overWriteSnapshots;
@@ -65,10 +68,11 @@ public abstract class AbstractFromConfigurationMojo
     /**
      * Collection of ArtifactItems to work on. (ArtifactItem contains groupId,
      * artifactId, version, type, location, destFile, markerFile and overwrite.)
-     * See "How To Use" and "Javadoc" for details.
+     * See "Usage" and "Javadoc" for details.
      * 
      * @parameter
      * @required
+     * @since 1.0
      */
     private ArrayList artifactItems;
 

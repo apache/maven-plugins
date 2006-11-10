@@ -22,7 +22,7 @@ import org.apache.maven.artifact.Artifact;
 /**
  * ArtifactItem represents information specified in the plugin configuration
  * section for each artifact.
- * 
+ * @since 1.0
  * @author brianf
  */
 public class ArtifactItem
@@ -88,6 +88,11 @@ public class ArtifactItem
      * Force Overwrite
      */
     private boolean doOverWrite;
+    
+    /**
+     * Check Timestamp
+     */
+    private boolean doOverWriteIfNewer;
 
     /**
      * Artifact Item

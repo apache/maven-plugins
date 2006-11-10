@@ -4,14 +4,14 @@
   Allan Ramirez
   Brian Fox
   ------
-  July 2006
+  Nov 2006
   ------
 
 Copying Specific Artifacts
 
   In copying specific artifacts, you need to bind the <<<dependency:copy>>>
   mojo to a lifecycle, configure the plugin and specify the artifacts you
-  want to copy. Just like the following:
+  want to copy. See the following example:
 
 +---+
 <project>

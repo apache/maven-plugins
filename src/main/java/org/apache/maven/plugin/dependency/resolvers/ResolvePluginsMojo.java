@@ -37,6 +37,7 @@ import org.apache.maven.project.artifact.InvalidDependencyVersionException;
  * @goal resolve-plugins
  * @phase generate-sources
  * @author brianf
+ * @since 2.0
  */
 public class ResolvePluginsMojo
     extends AbstractResolveMojo

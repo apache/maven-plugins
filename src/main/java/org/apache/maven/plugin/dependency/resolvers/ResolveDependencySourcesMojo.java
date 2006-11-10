@@ -32,6 +32,7 @@ import org.apache.maven.plugin.dependency.utils.filters.ArtifactsFilter;
  * @phase generate-sources
  * @requiresDependencyResolution test
  * @author brianf
+ * @since 2.0
  */
 public class ResolveDependencySourcesMojo
     extends AbstractResolveMojo

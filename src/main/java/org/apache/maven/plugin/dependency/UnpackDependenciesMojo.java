@@ -38,6 +38,7 @@ import org.codehaus.plexus.archiver.manager.ArchiverManager;
  * @requiresDependencyResolution compile
  * @phase process-sources
  * @author brianf
+ * @since 1.0
  */
 public class UnpackDependenciesMojo
     extends AbstractFromDependenciesMojo
