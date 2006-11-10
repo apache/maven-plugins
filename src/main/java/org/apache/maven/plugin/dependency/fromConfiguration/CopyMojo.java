@@ -30,7 +30,7 @@ import org.apache.maven.plugin.logging.Log;
  * locations.
  * 
  * @goal copy
- * 
+ * @since 1.0
  * @phase process-sources
  * @author brianf
  */

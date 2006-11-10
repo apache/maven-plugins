@@ -33,6 +33,7 @@ import org.apache.maven.plugin.dependency.utils.filters.ArtifactsFilter;
  * @execute goal=resolve-plugins
  * @requiresDependencyResolution test
  * @author brianf
+ * @since 2.0
  */
 public class GoOfflineMojo
     extends AbstractResolveMojo

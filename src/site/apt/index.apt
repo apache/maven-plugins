@@ -4,7 +4,7 @@
   Allan Ramirez
   Brian Fox
   ------
-  July 2006
+  Nov 2006
   ------
 
 Maven Dependency Plugin
@@ -23,7 +23,7 @@ Maven Dependency Plugin
   the artifacts from remote repositories if they don't exist in local.
 
   *{{{copy-dependencies-mojo.html}dependency:copy-dependencies}} takes the
-  list of direct dependencies and optionally transitive dependencies and
+  list of project direct dependencies and optionally transitive dependencies and
   copies them to a specified location, stripping the version if desired.
   This goal can also be run from the command line.
 
@@ -32,11 +32,9 @@ Maven Dependency Plugin
   *{{{unpack-dependencies-mojo.html}dependency:unpack-dependencies}} like
   copy-dependencies but unpacks.
 
-  *{{{resolve-mojo.html}dependency:resolve}} tells Maven to resolve test
-  scope dependencies and displays the version.
+  *{{{resolve-mojo.html}dependency:resolve}} tells Maven to resolve all dependencies and displays the version.
 
-  *{{{sources-mojo.html}dependency:sources}} tells Maven to resolve test
-  scope dependencies and their source attachments, and displays the version.
+  *{{{sources-mojo.html}dependency:sources}} tells Maven to resolve all dependencies and their source attachments, and displays the version.
 
   *{{{resolve-plugins-mojo.html}dependency:resolve-plugins}} Tells Maven to
   resolve plugins and their dependencies.
@@ -45,7 +43,7 @@ Maven Dependency Plugin
   everything this project is dependent on (dependencies, plugins, reports)
   in preparation for going offline.
 
-  *{{{purge-local-repository.html}dependency:purge-local-repository}} tells
+  *{{{purge-local-repository-mojo.html}dependency:purge-local-repository}} tells
   Maven to clear all dependency-artifact files out of the local repository,
   and optionally re-resolve them.
 
@@ -61,11 +59,11 @@ Maven Dependency Plugin
 
   * {{{examples/copying-artifacts.html}Copying Specific Artifacts}}
 
-  * {{{examples/copy-direct-dependencies.html}Copying Direct Dependencies}}
+  * {{{examples/copying-project-dependencies.html}Copying Project Dependencies}}
 
-  * {{{examples/copying-unpacking.html}Unpacking the Copied Specific Artifacts}}
+  * {{{examples/unpacking-artifacts.html}Unpacking Specific Artifacts}}
 
-  * {{{examples/copying-unpacking-direct-dependencies.html}Unpacking the Copied Direct Dependencies}}
+  * {{{examples/copying-project-dependencies.html}Unpacking the Project Dependencies}}
 
   []
 

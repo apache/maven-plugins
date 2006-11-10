@@ -34,7 +34,7 @@ import org.codehaus.plexus.util.FileUtils;
  * re-resolve them.
  * 
  * @author jdcasey
- * 
+ * @since 2.0
  * @goal purge-local-repository
  * @aggregator
  * 

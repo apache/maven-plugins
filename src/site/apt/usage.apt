@@ -4,7 +4,7 @@
   Allan Ramirez
   Brian Fox
   ------
-  July 2006
+  Nov 2006
   ------
 
 Usage
@@ -16,17 +16,20 @@ Usage
    in the specified location. Multiple artifacts can be defined in a single
    execution. A default output directory is specified but can be overriden for
    each ArtifactItem by setting the optional outputDirectory field. An
-   optional new name can be set to rename while copying. The artifact version
-   is optional. If not set, the plugin will attempt to resolve it from the
+   optional new name can be set to rename or the version stripped while copying. 
+   
+   The artifact version is optional. If not set, the plugin will attempt to resolve it from the
    dependencyManagement section.
 
    Artifacts are copied using the following rules:
 
      * If the <<<artifactItem / overWrite>>> is set, use that value.
 
-     * Releases use the <<<overWriteReleases>>> value (default = true)
+     * Releases use the <<<overWriteReleases>>> value (default = false)
 
      * Snapshots use the <<<overWriteSnapshots>>> value (default = false)
+     
+     * If none of the above is set, then it defaults to the <<<overWriteIfNewer>>> value (default = true) 
 
      []
 
@@ -74,8 +77,7 @@ Usage
 
    This goal can be bound to a lifecycle phase and configured in your <<<pom.xml>>>.
    It will resolve the dependencies (including transitive dependencies) from
-   the repository and place a copy in the specified location. All scopes are
-   included by default, but it can be limited to a single scope.
+   the repository and place a copy in the specified location. 
 
    The artifacts can be placed in subfolders based on type. For example:
 
@@ -97,8 +99,16 @@ Usage
    <<<mvn dependency:copy-dependencies -Dclassifer=sources>>> will try to find
    the sources for all dependencies and copy them.
 
-   By default, SNAPSHOTs are always overwritten, Releases are not. This can be
-   changed via the optional parameters.
+   	Also included is the ability to include or exclude by type (war, jar etc) and / or scope (runtime, test etc).
+
+    Artifacts are copied using the following rules:
+
+     * Releases use the <<<overWriteReleases>>> value (default = false)
+
+     * Snapshots use the <<<overWriteSnapshots>>> value (default = false)
+     
+     * If none of the above is set, then it defaults to the <<<overWriteIfNewer>>> value (default = true) 
+
 
    The goal can also be launched from the command line like:
    <<<mvn dependency:copy-dependencies [optional params]>>>
@@ -137,14 +147,15 @@ Usage
    It will resolve the artifact from the repository and place a copy in the
    specified location. Multiple artifacts can be defined in a single execution.
    A default outputDirectory is specified but can be overriden for each
-   ArtifactItem by setting the optional outputDirectory field. Artifacts are
-   unpacked using the following rules:
+   ArtifactItem by setting the optional outputDirectory field. 
 
-     *If the <<<artifactItem.overWrite>>> is set, use that value.
+ Artifacts are unpacked using the following rules:
 
-     *Releases use the <<<overWriteReleases>>> value (default = true)
+     * Releases use the <<<overWriteReleases>>> value (default = false)
 
-     *Snapshots use the <<<overWriteSnapshots>>> value (default = false)
+     * Snapshots use the <<<overWriteSnapshots>>> value (default = false)
+     
+     * If none of the above is set, then it defaults to the <<<overWriteIfNewer>>> value (default = true) 
 
    The artifact version is optional. If not set, the plugin will attempt to
    resolve from the dependencyManagement section.
@@ -180,8 +191,7 @@ Usage
 
    This goal can be bound to a lifecycle and configured in your pom.xml.
    It will resolve the dependencies (including transitive dependencies) from
-   the repository and unpack them to the specified location. All scopes are
-   included by default, but it can be limited to a single scope.
+   the repository and unpack them to the specified location.
 
    Unpack-dependencies includes transitive dependencies by default. To include
    only direct dependencies, set the excludeTransitive parameter to true.
@@ -208,10 +218,17 @@ Usage
    resolve artifacts with the classifer and type. For example:
    <<<mvn dependency:unpack-dependencies -Dclassifer=sources>>> will try to find
    the sources for all dependencies and unpack them.
+   
+   	Also included is the ability to include or exclude by type (war, jar etc) and / or scope (runtime, test etc).
 
-   By default, SNAPSHOTs are always overwritten, Releases are not. This can be
-   changed via the optional parameters.
-                                      s
+ Artifacts are copied using the following rules:
+
+     * Releases use the <<<overWriteReleases>>> value (default = false)
+
+     * Snapshots use the <<<overWriteSnapshots>>> value (default = false)
+     
+     * If none of the above is set, then it defaults to the <<<overWriteIfNewer>>> value (default = true) 
+                                      
    The goal can also be launched from the command line like:
    <<<mvn dependency:unpack-dependencies [optional params]>>>
 
@@ -271,7 +288,12 @@ Usage
   attachments if they exist.  This is useful when you want the source
   attachments downloaded to your local repository and
   you don't want to use the eclipse plugin to do this since the eclipse plugin
-  creates/overwrites the eclipse files.
+  creates/overwrites the eclipse files. 
+  
+  You can also define the <<<markersDirectory>>> either in the pom or settings
+  to be a common location for all projects. This allows the system to resolve sources faster for dependencies that don't
+  have the sources published. The plugin will store a marker file to describe if the sources where resolved or not. By placing
+  them in a common location, multiple attempts to resolve non-existent sources will be avoided.
 
 * The <<<dependency:resolve-plugins>>> mojo
 
