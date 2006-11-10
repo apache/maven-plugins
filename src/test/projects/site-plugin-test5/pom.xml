@@ -27,7 +27,7 @@
   <version>1.0-SNAPSHOT</version>
   <inceptionYear>2005</inceptionYear>
   <name>Maven Site Plugin Test5</name>
-  <description>Two indexes exists.</description> -->
+  <description>Two indexes exists.</description>
   <url>http://maven.apache.org</url>
   <dependencies>
     <dependency>
