@@ -29,7 +29,7 @@ import org.codehaus.plexus.archiver.manager.ArchiverManager;
 /**
  * Goal that retrieves a list of artifacts from the repository and unpacks them
  * in a defined location.
- * 
+ * @since 1.0
  * @goal unpack
  * @phase process-sources
  * @author brianf

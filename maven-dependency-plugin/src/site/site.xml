@@ -28,9 +28,9 @@
     </menu>
     <menu name="Examples">
       <item name="Copying Specific Artifacts" href="examples/copying-artifacts.html" />
-      <item name="Copying Direct Dependencies" href="examples/copy-direct-dependencies.html" />
-      <item name="Unpacking the Copied Specific Artifacts" href="examples/copying-unpacking.html" />
-      <item name="Unpacking the Copied Direct Dependencies" href="examples/copying-unpacking-direct-dependencies.html" />
+      <item name="Copying Project Dependencies" href="examples/copying-project-dependencies.html" />
+      <item name="Unpacking Specific Artifacts" href="examples/unpacking-artifacts.html" />
+      <item name="Unpacking the Project Dependencies" href="examples/unpacking-project-dependencies.html" />
     </menu>
     <menu name="Resources">
       <item name="Dependency Mechanism" href="http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html" />

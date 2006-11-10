@@ -41,7 +41,8 @@ public abstract class AbstractDependencyFilterMojo
 {
     /**
      * If we should exclude transitive dependencies
-     * 
+     * @since 2.0
+     * @optional
      * @parameter expression="${excludeTransitive}" default-value="false"
      */
     protected boolean excludeTransitive;
@@ -49,7 +50,7 @@ public abstract class AbstractDependencyFilterMojo
     /**
      * Comma Separated list of Types to include. Empty String indicates include
      * everything (default).
-     * 
+     * @since 2.0
      * @parameter expression="${includeTypes}" default-value=""
      * @optional
      */
@@ -58,7 +59,7 @@ public abstract class AbstractDependencyFilterMojo
     /**
      * Comma Separated list of Types to exclude. Empty String indicates don't
      * exclude anything (default). Ignored if includeTypes is used.
-     * 
+     * @since 2.0
      * @parameter expression="${excludeTypes}" default-value=""
      * @optional
      */
@@ -66,23 +67,24 @@ public abstract class AbstractDependencyFilterMojo
 
     /**
      * Scope to include. An Empty string indicates all scopes (default).
-     * 
+     * @since 2.0
      * @parameter expression="${includeScope}" default-value=""
-     * @required
+     * @optional
      */
     protected String includeScope;
 
     /**
      * Scope to exclude. An Empty string indicates no scopes (default).
-     * 
+     * @since 2.0
      * @parameter expression="${excludeScope}" default-value=""
-     * @required
+     * @optional
      */
     protected String excludeScope;
 
     /**
      * Specify classifier to look for. Example: sources
-     * 
+     * @optional
+     * @since 2.0
      * @parameter expression="${classifier}" default-value=""
      */
     protected String classifier;
@@ -90,7 +92,8 @@ public abstract class AbstractDependencyFilterMojo
     /**
      * Specify type to look for when constructing artifact based on classifier.
      * Example: java-source,jar,war
-     * 
+     * @optional
+     * @since 2.0
      * @parameter expression="${type}" default-value="java-source"
      */
     protected String type;
@@ -100,37 +103,34 @@ public abstract class AbstractDependencyFilterMojo
      * 
      * @parameter expression="${markersDirectory}"
      *            default-value="${project.build.directory}/dependency-maven-plugin-markers"
-     * @required
+     * @optional
+     * @since 1.0
      */
     protected File markersDirectory;
 
     /**
      * Overwrite release artifacts
-     * 
+     * @optional
+     * @since 1.0
      * @parameter expression="${overWriteReleases}" default-value="false"
      */
     protected boolean overWriteReleases;
 
     /**
      * Overwrite snapshot artifacts
-     * 
+     * @optional
+     * @since 1.0
      * @parameter expression="${overWriteSnapshots}" default-value="false"
      */
     protected boolean overWriteSnapshots;
 
     /**
-     * Overwrite snapshot artifacts
-     * 
+     * Overwrite artifacts that don't exist or are older than the source.
+     * @optional
+     * @since 2.0
      * @parameter expression="${overWriteIfNewer}" default-value="true"
      */
     protected boolean overWriteIfNewer;
-
-    /**
-     * Output absolute filename for resolved artifacts
-     * 
-     * @parameter expression="${outputAbsoluteArtifactFilename}" default-value="false"
-     */
-    protected boolean outputAbsoluteArtifactFilename;
 
     abstract protected ArtifactsFilter getMarkedArtifactFilter();
 
