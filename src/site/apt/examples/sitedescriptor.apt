@@ -5,7 +5,7 @@
  <vincent.siveton@gmail.com>
  Maria Odea Ching
  ------
- July 2006
+ November 2006
  ------
 
  ~~ Copyright 2006 The Apache Software Foundation.
@@ -64,7 +64,7 @@ Configuring the Site Descriptor
   <menu name="Common Links" inherit="top">
     ...
   </menu>
- ....
+ ...
 +-----+
 
 * Including Generated Content
@@ -83,7 +83,7 @@ Configuring the Site Descriptor
 +-----+
  ...
   <menu ref="modules" />
- ....
+ ...
 +-----+
 
 * Skinning
@@ -100,7 +100,7 @@ Configuring the Site Descriptor
     <artifactId>maven-classic-skin</artifactId>
     <version>1.0</version>
   </skin>
- ....
+ ...
 +-----+
 
   Note that the version is optional and, like plugins, if omitted the latest version available will be used.
@@ -108,3 +108,15 @@ Configuring the Site Descriptor
   This skin will copy the necessary resources including CSS and if necessary use the included alternate Velocity
   template to render the site.
 
+* Expressions
+
+  The <<<site.xml>>> could contained some expressions, like <<<$\{project.name\}>>>. Each expression will be
+  evaluated when site rendering.
+
+  Expressions could be:
+
+  * $\{project.*\}, for instance <<<$\{project.organization.name\}>>> referenced in <<< <project/><organization/><name/> >>>
+
+  * $\{project.properties\}, for instance <<<$\{myProperty\}>>> referenced in <<< <project/><properties/><myProperty/> >>>
+
+  * $\{environmentVariable\}, for instance <<<$\{JAVA_HOME\}>>>
