@@ -213,7 +213,7 @@ public abstract class AbstractSiteRenderingMojo
             catch ( IOException e )
             {
                 throw new MojoExecutionException(
-                                                 "The site descriptor cannot interpolated properties: " + e.getMessage(), e );
+                                                 "The site descriptor cannot interpolate properties: " + e.getMessage(), e );
             }
 
             decoration = readDecorationModel( siteDescriptorContent );
@@ -520,7 +520,7 @@ public abstract class AbstractSiteRenderingMojo
             catch ( IOException e )
             {
                 throw new MojoExecutionException(
-                                                 "The site descriptor cannot interpolated properties: " + e.getMessage(), e );
+                                                 "The site descriptor cannot interpolate properties: " + e.getMessage(), e );
             }
 
             decorationModel = readDecorationModel( siteDescriptorContent );
