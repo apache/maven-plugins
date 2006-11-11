@@ -29,8 +29,13 @@ import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.reporting.MavenReport;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.interpolation.EnvarBasedValueSource;
+import org.codehaus.plexus.util.interpolation.MapBasedValueSource;
+import org.codehaus.plexus.util.interpolation.ObjectBasedValueSource;
+import org.codehaus.plexus.util.interpolation.RegexBasedInterpolator;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -241,6 +246,7 @@ public abstract class AbstractSiteMojo
     /**
      * Get the path of the site descriptor for a given locale.
      *
+     * @param basedir the base dir
      * @param locale the locale
      * @return the site descriptor path
      */
@@ -516,6 +522,14 @@ public abstract class AbstractSiteMojo
         }
         catch ( MalformedURLException e )
         {
+            try
+            {
+                toUrl = new File( to ).toURL();
+            }
+            catch ( MalformedURLException e1 )
+            {
+                getLog().warn( "Unable to load an URL for '" + to + "': " + e.getMessage() );
+            }
         }
 
         try
@@ -524,6 +538,14 @@ public abstract class AbstractSiteMojo
         }
         catch ( MalformedURLException e )
         {
+            try
+            {
+                toUrl = new File( from ).toURL();
+            }
+            catch ( MalformedURLException e1 )
+            {
+                getLog().warn( "Unable to load an URL for '" + from + "': " + e.getMessage() );
+            }
         }
 
         if ( toUrl != null && fromUrl != null )
@@ -733,14 +755,14 @@ public abstract class AbstractSiteMojo
      * <p/>
      * TODO: once bug is fixed in Maven proper, remove this
      *
-     * @param project
+     * @param aProject
      * @return parent project URL.
      */
-    protected MavenProject getParentProject( MavenProject project )
+    protected MavenProject getParentProject( MavenProject aProject )
     {
         MavenProject parentProject = null;
 
-        MavenProject origParent = project.getParent();
+        MavenProject origParent = aProject.getParent();
         if ( origParent != null )
         {
             Iterator reactorItr = reactorProjects.iterator();
@@ -758,12 +780,12 @@ public abstract class AbstractSiteMojo
                 }
             }
 
-            if ( parentProject == null && project.getBasedir() != null )
+            if ( parentProject == null && aProject.getBasedir() != null )
             {
                 try
                 {
                     MavenProject mavenProject = mavenProjectBuilder.build(
-                        new File( project.getBasedir(), project.getModel().getParent().getRelativePath() ),
+                        new File( aProject.getBasedir(), aProject.getModel().getParent().getRelativePath() ),
                         localRepository, null );
                     if ( mavenProject.getGroupId().equals( origParent.getGroupId() ) &&
                         mavenProject.getArtifactId().equals( origParent.getArtifactId() ) &&
@@ -782,8 +804,8 @@ public abstract class AbstractSiteMojo
             {
                 try
                 {
-                    parentProject = mavenProjectBuilder.buildFromRepository( project.getParentArtifact(),
-                                                                             project.getRemoteArtifactRepositories(),
+                    parentProject = mavenProjectBuilder.buildFromRepository( aProject.getParentArtifact(),
+                                                                             aProject.getRemoteArtifactRepositories(),
                                                                              localRepository );
                 }
                 catch ( ProjectBuildingException e )
@@ -802,30 +824,48 @@ public abstract class AbstractSiteMojo
         return parentProject;
     }
 
-    protected String getInterpolatedSiteDescriptorContent( Map props, MavenProject project, String siteDescriptorContent )
+    /**
+     * Interporlating several expressions in the site descriptor content. Actually, the expressions could be on
+     * the project, the environment variables and the specific properties like <code>encoding</code>.
+     * <p/>
+     * For instance:
+     * <dl>
+     * <dt>${project.name}</dt>
+     * <dd>The value from the POM of:
+     * <p>
+     * &lt;project&gt;<br>
+     * &lt;name&gt;myProjectName&lt;/name&gt;<br>
+     * &lt;/project&gt;
+     * </p></dd>
+     * <dt>${my.value}</dt>
+     * <dd>The value from the POM of:
+     * <p>
+     * &lt;properties&gt;<br>
+     * &lt;my.value&gt;hello&lt;/my.value&gt;<br>
+     * &lt;/properties&gt;
+     * </p></dd>
+     * <dt>${JAVA_HOME}</dt>
+     * <dd>The value of JAVA_HOME in the environment variables</dd>
+     * </dl>
+     *
+     * @param props
+     * @param aProject
+     * @param siteDescriptorContent
+     * @return the site descriptor content with interpolate string
+     * @throws IOException
+     */
+    protected String getInterpolatedSiteDescriptorContent( Map props, MavenProject aProject, String siteDescriptorContent )
+        throws IOException
     {
+        RegexBasedInterpolator interpolator = new RegexBasedInterpolator();
+        interpolator.addValueSource( new EnvarBasedValueSource() );
+        interpolator.addValueSource( new ObjectBasedValueSource( aProject ) );
+        interpolator.addValueSource( new MapBasedValueSource( aProject.getProperties() ) );
+
+        siteDescriptorContent = interpolator.interpolate( siteDescriptorContent, "project" );
+
         props.put( "inputEncoding", inputEncoding );
         props.put( "outputEncoding", outputEncoding );
-
-        // TODO: interpolate ${project.*} in general
-
-        if ( project.getName() != null )
-        {
-            props.put( "project.name", project.getName() );
-        }
-        else
-        {
-            props.put( "project.name", "NO_PROJECT_NAME_SET" );
-        }
-
-        if ( project.getUrl() != null )
-        {
-            props.put( "project.url", project.getUrl() );
-        }
-        else
-        {
-            props.put( "project.url", "NO_PROJECT_URL_SET_" + project.getId() );
-        }
 
         // Legacy for the old ${parentProject} syntax
         props.put( "parentProject", "<menu ref=\"parent\"/>" );
