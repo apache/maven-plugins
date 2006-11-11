@@ -246,13 +246,13 @@ public abstract class AbstractSiteMojo
      */
     protected File getSiteDescriptorFile( File basedir, Locale locale )
     {
-        // TODO: get proper siteDirectory from site configuration of the project this relates to
+        String relativePath = getRelativePath( siteDirectory.getAbsolutePath(), basedir.getAbsolutePath() );
 
-        File siteDescriptor = new File( basedir, "src/site/site_" + locale.getLanguage() + ".xml" );
+        File siteDescriptor = new File( relativePath, "site_" + locale.getLanguage() + ".xml" );
 
         if ( !siteDescriptor.exists() )
         {
-            siteDescriptor = new File( basedir, "src/site/site.xml" );
+            siteDescriptor = new File( relativePath, "site.xml" );
         }
         return siteDescriptor;
     }
