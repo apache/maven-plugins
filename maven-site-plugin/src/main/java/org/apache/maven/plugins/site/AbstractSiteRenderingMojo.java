@@ -39,7 +39,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
@@ -207,7 +206,15 @@ public abstract class AbstractSiteRenderingMojo
         DecorationModel decoration = null;
         if ( siteDescriptorContent != null )
         {
-            siteDescriptorContent = getInterpolatedSiteDescriptorContent( props, project, siteDescriptorContent );
+            try
+            {
+                siteDescriptorContent = getInterpolatedSiteDescriptorContent( props, project, siteDescriptorContent );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException(
+                                                 "The site descriptor cannot interpolated properties: " + e.getMessage(), e );
+            }
 
             decoration = readDecorationModel( siteDescriptorContent );
         }
@@ -506,7 +513,15 @@ public abstract class AbstractSiteRenderingMojo
                 throw new MojoExecutionException( "Error reading default site descriptor: " + e.getMessage(), e );
             }
 
-            siteDescriptorContent = getInterpolatedSiteDescriptorContent( props, project, siteDescriptorContent );
+            try
+            {
+                siteDescriptorContent = getInterpolatedSiteDescriptorContent( props, project, siteDescriptorContent );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException(
+                                                 "The site descriptor cannot interpolated properties: " + e.getMessage(), e );
+            }
 
             decorationModel = readDecorationModel( siteDescriptorContent );
         }
@@ -632,8 +647,6 @@ public abstract class AbstractSiteRenderingMojo
         }
         return documents;
     }
-
-
 }
 
 
