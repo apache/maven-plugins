@@ -528,7 +528,7 @@ public abstract class AbstractSiteMojo
             }
             catch ( MalformedURLException e1 )
             {
-                getLog().warn( "Unable to load an URL for '" + to + "': " + e.getMessage() );
+                getLog().warn( "Unable to load a URL for '" + to + "': " + e.getMessage() );
             }
         }
 
@@ -544,7 +544,7 @@ public abstract class AbstractSiteMojo
             }
             catch ( MalformedURLException e1 )
             {
-                getLog().warn( "Unable to load an URL for '" + from + "': " + e.getMessage() );
+                getLog().warn( "Unable to load a URL for '" + from + "': " + e.getMessage() );
             }
         }
 
@@ -825,7 +825,7 @@ public abstract class AbstractSiteMojo
     }
 
     /**
-     * Interporlating several expressions in the site descriptor content. Actually, the expressions could be on
+     * Interpolating several expressions in the site descriptor content. Actually, the expressions could be on
      * the project, the environment variables and the specific properties like <code>encoding</code>.
      * <p/>
      * For instance:
