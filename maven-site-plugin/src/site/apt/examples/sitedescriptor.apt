@@ -110,10 +110,10 @@ Configuring the Site Descriptor
 
 * Expressions
 
-  The <<<site.xml>>> could contained some expressions, like <<<$\{project.name\}>>>. Each expression will be
-  evaluated when site rendering.
+  The <<<site.xml>>> can contain some expressions, like <<<$\{project.name\}>>>. Each expression will be
+  evaluated when the site is rendered.
 
-  Expressions could be:
+  Expressions can be:
 
   * $\{project.*\}, for instance <<<$\{project.organization.name\}>>> referenced in <<< <project/><organization/><name/> >>>
 
