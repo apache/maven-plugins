@@ -122,7 +122,14 @@ public class EclipseCleanMojo
         {
             delete( settingsDir );
         }
+        
+        cleanExtras();
+    }
 
+    protected void cleanExtras()
+        throws MojoExecutionException
+    {
+        // extension point.
     }
 
     /**
@@ -131,7 +138,7 @@ public class EclipseCleanMojo
      * @param f File to be deleted
      * @throws MojoExecutionException only if a file exists and can't be deleted
      */
-    private void delete( File f )
+    protected void delete( File f )
         throws MojoExecutionException
     {
         if ( f.isDirectory() )

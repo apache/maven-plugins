@@ -15,28 +15,31 @@
  */
 package org.apache.maven.plugin.eclipse;
 
+import org.apache.maven.plugin.ide.IdeUtils;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.invoker.InvocationRequest;
+import org.apache.maven.shared.invoker.InvocationResult;
+import org.apache.maven.shared.test.plugin.BuildTool;
+import org.apache.maven.shared.test.plugin.PluginTestTool;
+import org.apache.maven.shared.test.plugin.ProjectTool;
+import org.apache.maven.shared.test.plugin.TestToolsException;
+import org.codehaus.classworlds.ClassRealm;
+import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.PlexusTestCase;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-
-import org.apache.maven.cli.ConsoleDownloadMonitor;
-import org.apache.maven.embedder.MavenEmbedder;
-import org.apache.maven.embedder.MavenEmbedderConsoleLogger;
-import org.apache.maven.embedder.PlexusLoggerAdapter;
-import org.apache.maven.monitor.event.DefaultEventMonitor;
-import org.apache.maven.monitor.event.EventMonitor;
-import org.apache.maven.plugin.ide.IdeUtils;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.PlexusTestCase;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
@@ -47,15 +50,34 @@ public abstract class AbstractEclipsePluginTestCase
     extends PlexusTestCase
 {
 
-    /**
-     * The embedder.
-     */
-    protected MavenEmbedder maven;
+    private BuildTool buildTool;
+
+    private ProjectTool projectTool;
 
     /**
      * Test repository directory.
      */
-    protected File localRepositoryDir = getTestFile( "target/test-classes/m2repo" );
+    protected static File localRepositoryDirectory = getTestFile( "target/test-classes/m2repo" );
+
+    /**
+     * Group-Id for running test builds.
+     */
+    protected static final String GROUP_ID = "org.apache.maven.plugins";
+
+    /**
+     * Artifact-Id for running test builds.
+     */
+    protected static final String ARTIFACT_ID = "maven-eclipse-plugin";
+
+    /**
+     * Version under which the plugin was installed to the test-time local repository for running 
+     * test builds.
+     */
+    protected static final String VERSION = "test";
+
+    private static final String BUILD_OUTPUT_DIRECTORY = "target/surefire-reports/build-output";
+
+    private static boolean installed = false;
 
     /**
      * @see org.codehaus.plexus.PlexusTestCase#setUp()
@@ -63,16 +85,33 @@ public abstract class AbstractEclipsePluginTestCase
     protected void setUp()
         throws Exception
     {
-
-        this.maven = new MavenEmbedder();
-        this.maven.setClassLoader( Thread.currentThread().getContextClassLoader() );
-        this.maven.setLogger( new MavenEmbedderConsoleLogger() );
-        this.maven.setLocalRepositoryDirectory( localRepositoryDir );
-        this.maven.setOffline( true );
-        this.maven.setInteractiveMode( false );
-        this.maven.start();
+        if ( !installed )
+        {
+            System.out
+                .println( "*** Running test builds; output will be directed to: " + BUILD_OUTPUT_DIRECTORY + "\n" );
+        }
 
         super.setUp();
+
+        buildTool = (BuildTool) lookup( BuildTool.ROLE, "default" );
+
+        projectTool = (ProjectTool) lookup( ProjectTool.ROLE, "default" );
+
+        synchronized ( AbstractEclipsePluginTestCase.class )
+        {
+            if ( !installed )
+            {
+                PluginTestTool pluginTestTool = (PluginTestTool) lookup( PluginTestTool.ROLE, "default" );
+
+                localRepositoryDirectory = pluginTestTool.preparePluginForUnitTestingWithMavenBuilds( "test", localRepositoryDirectory );
+
+                System.out.println( "*** Installed test-version of the Eclipse plugin to: " + localRepositoryDirectory
+                    + "\n" );
+
+                installed = true;
+            }
+        }
+
     }
 
     /**
@@ -81,8 +120,28 @@ public abstract class AbstractEclipsePluginTestCase
     protected void tearDown()
         throws Exception
     {
-        maven.stop();
         super.tearDown();
+
+        List containers = new ArrayList();
+
+        containers.add( getContainer() );
+
+        for ( Iterator iter = containers.iterator(); iter.hasNext(); )
+        {
+            PlexusContainer container = (PlexusContainer) iter.next();
+
+            if ( container != null )
+            {
+                container.dispose();
+
+                ClassRealm realm = container.getContainerRealm();
+
+                if ( realm != null )
+                {
+                    realm.getWorld().disposeRealm( realm.getId() );
+                }
+            }
+        }
     }
 
     /**
@@ -93,7 +152,7 @@ public abstract class AbstractEclipsePluginTestCase
     protected void testProject( String projectName )
         throws Exception
     {
-        testProject( projectName, new Properties() );
+        testProject( projectName, new Properties(), "clean", "eclipse" );
     }
 
     /**
@@ -101,16 +160,39 @@ public abstract class AbstractEclipsePluginTestCase
      * @param projectName project directory
      * @param properties additional properties
      * @throws Exception any exception generated during test
+     * @deprecated Use {@link #testProject(String,Properties,String,String)} instead
      */
     protected void testProject( String projectName, Properties properties )
         throws Exception
     {
+        testProject( projectName, properties, "clean", "eclipse" );
+    }
 
+    /**
+     * Execute the eclipse:eclipse goal on a test project and verify generated files.
+     * @param projectName project directory
+     * @param properties additional properties
+     * @param cleanGoal TODO
+     * @param genGoal TODO
+     * @throws Exception any exception generated during test
+     */
+    protected void testProject( String projectName, Properties properties, String cleanGoal, String genGoal )
+        throws Exception
+    {
         File basedir = getTestFile( "target/test-classes/projects/" + projectName );
 
-        MavenProject project = maven.readProjectWithDependencies( new File( basedir, "pom.xml" ) );
+        File pom = new File( basedir, "pom.xml" );
 
-        EventMonitor eventMonitor = new DefaultEventMonitor( new PlexusLoggerAdapter( new MavenEmbedderConsoleLogger() ) );
+        String pluginSpec = getPluginCLISpecification();
+
+        List goals = new ArrayList();
+
+        goals.add( pluginSpec + cleanGoal );
+        goals.add( pluginSpec + genGoal );
+
+        executeMaven( pom, properties, goals );
+
+        MavenProject project = readProject( pom );
 
         String outputDirPath = IdeUtils.getPluginSetting( project, "maven-eclipse-plugin", "outputDir", null );
         File outputDir;
@@ -127,15 +209,99 @@ public abstract class AbstractEclipsePluginTestCase
             projectOutputDir = new File( outputDir, project.getArtifactId() );
         }
 
-        this.maven.execute( project, Arrays.asList( new String[] {
-            "org.apache.maven.plugins:maven-eclipse-plugin:clean",
-            "org.apache.maven.plugins:maven-eclipse-plugin:eclipse" } ), eventMonitor, new ConsoleDownloadMonitor(),
-                            properties, basedir );
-
         compareDirectoryContent( basedir, projectOutputDir, "" );
         compareDirectoryContent( basedir, projectOutputDir, ".settings/" );
         compareDirectoryContent( basedir, projectOutputDir, "META-INF/" );
 
+    }
+
+    protected void executeMaven( File pom, Properties properties, List goals )
+        throws TestToolsException, ExecutionFailedException
+    {
+        executeMaven( pom, properties, goals, true );
+    }
+
+    protected void executeMaven( File pom, Properties properties, List goals, boolean switchLocalRepo )
+        throws TestToolsException, ExecutionFailedException
+    {
+        new File( BUILD_OUTPUT_DIRECTORY ).mkdirs();
+        
+        NullPointerException npe = new NullPointerException();
+        StackTraceElement[] trace = npe.getStackTrace();
+
+        File buildLog = null;
+
+        for ( int i = 0; i < trace.length; i++ )
+        {
+            StackTraceElement element = trace[i];
+
+            String methodName = element.getMethodName();
+
+            if ( methodName.startsWith( "test" ) && !methodName.equals( "testProject" ) )
+            {
+                String classname = element.getClassName();
+
+                buildLog = new File( BUILD_OUTPUT_DIRECTORY, classname + "_" + element.getMethodName() + ".build.log" );
+
+                break;
+            }
+        }
+
+        if ( buildLog == null )
+        {
+            buildLog = new File( BUILD_OUTPUT_DIRECTORY, "unknown.build.log" );
+        }
+
+        InvocationRequest request = buildTool.createBasicInvocationRequest( pom, properties, goals, buildLog );
+
+        request.setDebug( true );
+
+        if ( switchLocalRepo )
+        {
+            request.setLocalRepositoryDirectory( localRepositoryDirectory );
+        }
+
+        InvocationResult result = buildTool.executeMaven( request );
+        
+        if ( result.getExitCode() != 0 )
+        {
+            String buildLogUrl = buildLog.getAbsolutePath();
+            
+            try
+            {
+                buildLogUrl = buildLog.toURL().toExternalForm();
+            }
+            catch ( MalformedURLException e )
+            {
+            }
+            
+            throw new ExecutionFailedException( "Failed to execute build.\nPOM: " + pom + "\nGoals: " + StringUtils.join( goals.iterator(), ", " ) + "\nExit Code: " + result.getExitCode() + "\nError: " + result.getExecutionException() + "\nBuild Log: " + buildLogUrl + "\n", result );
+        }
+    }
+
+    protected MavenProject readProject( File pom )
+        throws TestToolsException
+    {
+        return projectTool.readProject( pom, localRepositoryDirectory );
+    }
+
+    protected String getPluginCLISpecification()
+    {
+        String pluginSpec = GROUP_ID + ":" + ARTIFACT_ID + ":";
+
+        //        String pluginVersion = System.getProperty( "pluginVersion" );
+        //        
+        //        if ( pluginVersion != null )
+        //        {
+        //            pluginSpec += pluginVersion + ":";
+        //        }
+        //
+        //        System.out.println( "\n\nUsing Eclipse plugin version: " + pluginVersion + "\n\n" );
+
+        // try using the test-version installed during setUp()
+        pluginSpec += VERSION + ":";
+
+        return pluginSpec;
     }
 
     /**
@@ -162,8 +328,9 @@ public abstract class AbstractEclipsePluginTestCase
             {
                 File file = files[j];
 
-                assertFileEquals( localRepositoryDir.getCanonicalPath(), file,
-                                  new File( projectOutputDir, additionalDir + file.getName() ) );
+                assertFileEquals( localRepositoryDirectory.getCanonicalPath(), file, new File( projectOutputDir,
+                                                                                               additionalDir
+                                                                                                   + file.getName() ) );
 
             }
         }
@@ -185,7 +352,7 @@ public abstract class AbstractEclipsePluginTestCase
             // replace some vars in the expected line, to account
             // for absolute paths that are different on each installation.
             expected = StringUtils.replace( expected, "${basedir}", basedir );
-            expected = StringUtils.replace( expected, "${M2_REPO}", localRepositoryDir.getCanonicalPath()
+            expected = StringUtils.replace( expected, "${M2_REPO}", localRepositoryDirectory.getCanonicalPath()
                 .replace( '\\', '/' ) );
 
             if ( actualLines.size() <= i )
@@ -260,4 +427,5 @@ public abstract class AbstractEclipsePluginTestCase
 
         return lines;
     }
+
 }
