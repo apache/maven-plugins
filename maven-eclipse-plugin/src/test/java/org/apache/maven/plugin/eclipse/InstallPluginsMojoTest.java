@@ -36,7 +36,7 @@ public class InstallPluginsMojoTest
 
     private static final String VERSION = "0.0.9";
 
-    private static final String SOURCE_PATH = "M2REPO/org/codehaus/m2eclipse/" + ARTIFACT_ID + "/" + VERSION + "/"
+    private static final String SOURCE_PATH = "/org/codehaus/m2eclipse/" + ARTIFACT_ID + "/" + VERSION + "/"
         + ARTIFACT_ID + "-" + VERSION + ".jar";
 
     private File sourceFile;
@@ -170,11 +170,18 @@ public class InstallPluginsMojoTest
     {
         fileManager = new TestFileManager( "InstallPluginsMojo.test.", "" );
 
-        URL resource = Thread.currentThread().getContextClassLoader().getResource( SOURCE_PATH );
+        URL resource = null;
+        
+        resource = Thread.currentThread().getContextClassLoader().getResource( "m2repo" + SOURCE_PATH );
+        
+        if ( resource == null )
+        {
+            resource = Thread.currentThread().getContextClassLoader().getResource( "M2REPO" + SOURCE_PATH );
+        }
 
         if ( resource == null )
         {
-            throw new IllegalStateException( "Cannot find test source jar: " + SOURCE_PATH + " in context classloader!" );
+            throw new IllegalStateException( "Cannot find test source jar: (m2repo|M2REPO)" + SOURCE_PATH + " in context classloader!" );
         }
 
         sourceFile = new File( resource.getPath() );

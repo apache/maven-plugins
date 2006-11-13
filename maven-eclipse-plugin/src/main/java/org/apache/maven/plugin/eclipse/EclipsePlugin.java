@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
@@ -92,7 +94,7 @@ public class EclipsePlugin
 
     private static final String COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER = "org.eclipse.jdt.launching.JRE_CONTAINER"; //$NON-NLS-1$
 
-    private static final String REQUIRED_PLUGINS_CONTAINER = "org.eclipse.pde.core.requiredPlugins"; //$NON-NLS-1$
+    private static final String REQUIRED_PLUGINS_CONTAINER = "org.eclipse.pde.core.requiredPlugins"; //$NON-NLS-1$  
 
     //  warning, order is important for binary search
     public static final String[] WTP_SUPPORTED_VERSIONS = new String[] { "1.0", "1.5", "R7", "none" }; //$NON-NLS-1$ //$NON-NLS-2$  //$NON-NLS-3$
@@ -111,27 +113,27 @@ public class EclipsePlugin
      * List of eclipse project natures. By default the
      * <code>org.eclipse.jdt.core.javanature</code> nature plus the needed WTP
      * natures are added. Natures added using this property <strong>replace</strong> the default list.
-     *
+     * 
      * <pre>
      * &lt;projectnatures&gt;
      *    &lt;projectnature&gt;org.eclipse.jdt.core.javanature&lt;/projectnature&gt;
      *    &lt;projectnature&gt;org.eclipse.wst.common.modulecore.ModuleCoreNature&lt;/projectnature&gt;
      * &lt;/projectnatures&gt;
      * </pre>
-     *
+     * 
      * @parameter
      */
     private List projectnatures;
 
     /**
      * List of eclipse project natures to be added to the default ones.
-     *
+     * 
      * <pre>
      * &lt;additionalProjectnatures&gt;
      *    &lt;projectnature&gt;org.springframework.ide.eclipse.core.springnature&lt;/projectnature&gt;
      * &lt;/additionalProjectnatures&gt;
      * </pre>
-     *
+     * 
      * @parameter
      */
     private List additionalProjectnatures;
@@ -139,7 +141,7 @@ public class EclipsePlugin
     /**
      * List of eclipse build commands. By default the <code>org.eclipse.jdt.core.javabuilder</code> builder plus the needed
      * WTP builders are added. Configuration example:
-     *
+     * 
      * <pre>
      * &lt;buildcommands&gt;
      *    &lt;buildcommand&gt;org.eclipse.wst.common.modulecore.ComponentStructuralBuilder&lt;/buildcommand&gt;
@@ -147,27 +149,27 @@ public class EclipsePlugin
      *    &lt;buildcommand&gt;org.eclipse.wst.common.modulecore.ComponentStructuralBuilderDependencyResolver&lt;/buildcommand&gt;
      * &lt;/buildcommands&gt;
      * </pre>
-     *
+     * 
      * @parameter
      */
     private List buildcommands;
 
     /**
      * List of eclipse build commands to be added to the default ones.
-     *
+     * 
      * <pre>
      * &lt;additionalBuildcommands&gt;
      *    &lt;buildcommand&gt;org.springframework.ide.eclipse.core.springbuilder&lt;/buildcommand&gt;
      * &lt;/additionalBuildcommands&gt;
      * </pre>
-     *
+     * 
      * @parameter
      */
     private List additionalBuildcommands;
 
     /**
      * List of container classpath entries. By default the <code>org.eclipse.jdt.launching.JRE_CONTAINER</code> classpath
-     * container is added. Configuration example:
+     * container is added. Configuration example: 
      * <pre>
      * &lt;classpathContainers&gt;
      *    &lt;classpathContainer&gt;org.eclipse.jdt.launching.JRE_CONTAINER&lt;/classpathContainer&gt;
@@ -175,7 +177,7 @@ public class EclipsePlugin
      *    &lt;classpathContainer&gt;org.eclipse.jst.j2ee.internal.web.container/artifact&lt;/classpathContainer&gt;
      * &lt;/classpathContainers&gt;
      * </pre>
-     *
+     * 
      * @parameter
      */
     private List classpathContainers;
@@ -190,7 +192,7 @@ public class EclipsePlugin
 
     /**
      * Eclipse workspace directory.
-     *
+     * 
      * @parameter expression="${eclipse.workspace}" alias="outputDir"
      */
     private File eclipseProjectDir;
@@ -199,7 +201,7 @@ public class EclipsePlugin
      * When set to false, the plugin will not create sub-projects and instead
      * reference those sub-projects using the installed package in the local
      * repository
-     *
+     * 
      * @parameter expression="${eclipse.useProjectReferences}" default-value="true"
      * @required
      */
@@ -207,7 +209,7 @@ public class EclipsePlugin
 
     /**
      * The default output directory
-     *
+     * 
      * @parameter expression="${outputDirectory}" alias="outputDirectory" default-value="${project.build.outputDirectory}"
      * @required
      */
@@ -216,7 +218,7 @@ public class EclipsePlugin
     /**
      * The version of WTP for which configuration files will be generated.
      * The default value is "none" (don't generate WTP configuration), supported versions are "R7" and "1.0"
-     *
+     * 
      * @parameter expression="${wtpversion}" default-value="none"
      */
     private String wtpversion;
@@ -226,22 +228,22 @@ public class EclipsePlugin
      * the .project file. Additionally it copies all libraries to a project local directory and
      * references them instead of referencing the files in the local Maven repository. It also
      * ensured that the "Bundle-Classpath" in META-INF/MANIFEST.MF is synchronized.
-     *
+     * 
      * @parameter expression="${eclipse.pde}" default-value="false"
      */
     private boolean pde;
 
     /**
      * The relative path of the manifest file
-     *
+     * 
      * @parameter expression="${eclipse.manifest}" default-value="${basedir}/META-INF/MANIFEST.MF"
      */
     private File manifest;
 
     /**
      * Allow to configure additional generic configuration files for eclipse that will be written out to disk when
-     * running eclipse:eclipse. For each file you can specify the name and the text content.
-     *
+     * running eclipse:eclipse. FOr each file you can specify the name and the text content.
+     * 
      * <pre>
      * &lt;additionalConfig&gt;
      *    &lt;file&gt;
@@ -257,7 +259,7 @@ public class EclipsePlugin
      *    &lt;/file&gt;
      * &lt;/additionalConfig&gt;
      * </pre>
-     *
+     * 
      * @parameter
      */
     private EclipseConfigFile[] additionalConfig;
@@ -271,6 +273,11 @@ public class EclipsePlugin
      * Not a plugin parameter. Is this a java project?
      */
     private boolean isJavaProject;
+    
+    protected boolean isJavaProject()
+    {
+        return isJavaProject;
+    }
 
     /**
      * Getter for <code>buildcommands</code>.
@@ -440,84 +447,24 @@ public class EclipsePlugin
     public boolean setup()
         throws MojoExecutionException
     {
+        boolean ready = true;
 
-        if ( eclipseDownloadSources )
-        {
-            // deprecated warning
-            getLog().warn( Messages.getString( "EclipsePlugin.deprecatedpar", new Object[] { //$NON-NLS-1$
-                                               "eclipse.downloadSources", //$NON-NLS-1$
-                                                   "downloadSources" } ) ); //$NON-NLS-1$
-            downloadSources = true;
-        }
+        checkDeprecations();
 
-        if ( Arrays.binarySearch( WTP_SUPPORTED_VERSIONS, wtpversion ) < 0 )
-        {
-            throw new MojoExecutionException( Messages
-                .getString( "EclipsePlugin.unsupportedwtp", new Object[] { //$NON-NLS-1$
-                            wtpversion, StringUtils.join( WTP_SUPPORTED_VERSIONS, " " ) } ) ); //$NON-NLS-1$
-        }
-
-        if ( "R7".equalsIgnoreCase( wtpversion ) ) //$NON-NLS-1$
-        {
-            wtpVersionFloat = 0.7f;
-        }
-        else if ( "1.0".equalsIgnoreCase( wtpversion ) ) //$NON-NLS-1$
-        {
-            wtpVersionFloat = 1.0f;
-        }
-        else if ( "1.5".equalsIgnoreCase( wtpversion ) ) //$NON-NLS-1$
-        {
-            wtpVersionFloat = 1.5f;
-        }
-        if ( !"none".equalsIgnoreCase( wtpversion ) )
-        {
-            getLog().info( Messages.getString( "EclipsePlugin.wtpversion", wtpversion ) );
-        }
+        ready = validate();
 
         String packaging = executedProject.getPackaging();
 
-        // validate sanity of the current m2 project
-        assertNotEmpty( executedProject.getGroupId(), POM_ELT_GROUP_ID ); //$NON-NLS-1$
-        assertNotEmpty( executedProject.getArtifactId(), POM_ELT_ARTIFACT_ID ); //$NON-NLS-1$
-
-        if ( executedProject.getFile() == null || !executedProject.getFile().exists() )
-        {
-            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.missingpom" ) ); //$NON-NLS-1$
-        }
-
-        if ( "pom".equals( packaging ) && eclipseProjectDir == null ) //$NON-NLS-1$
-        {
-            getLog().info( Messages.getString( "EclipsePlugin.pompackaging" ) ); //$NON-NLS-1$
-            return false;
-        }
-
-        if ( "eclipse-plugin".equals( packaging ) )
-        {
-            pde = true;
-        }
-
-        if ( eclipseProjectDir == null )
-        {
-            eclipseProjectDir = executedProject.getFile().getParentFile();
-        }
-        else if ( !eclipseProjectDir.equals( executedProject.getFile().getParentFile() ) )
-        {
-            if ( !eclipseProjectDir.isDirectory() )
-            {
-                throw new MojoExecutionException( Messages.getString( "EclipsePlugin.notadir", eclipseProjectDir ) ); //$NON-NLS-1$
-            }
-            eclipseProjectDir = new File( eclipseProjectDir, executedProject.getArtifactId() );
-            if ( !eclipseProjectDir.isDirectory() && !eclipseProjectDir.mkdirs() )
-            {
-                throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcreatedir", eclipseProjectDir ) ); //$NON-NLS-1$
-            }
-        }
-
-        // end validate
-
+        // TODO: Why are we using project in some places, and executedProject in others??
         ArtifactHandler artifactHandler = this.project.getArtifact().getArtifactHandler();
+
         // ear projects don't contain java sources
-        isJavaProject = "java".equals( artifactHandler.getLanguage() ) && !"ear".equals( packaging );
+        isJavaProject = Constants.LANGUAGE_JAVA.equals( artifactHandler.getLanguage() )
+            && !Constants.PROJECT_PACKAGING_EAR.equals( packaging );
+
+        setupExtras();
+
+        parseConfigurationOptions();
 
         // defaults
         if ( projectnatures == null )
@@ -549,14 +496,13 @@ public class EclipsePlugin
         {
             fillDefaultClasspathContainers( packaging );
         }
-        else if ( !classpathContainers.contains( COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER ) ) //$NON-NLS-1$
+        else
         {
-            getLog().warn( Messages.getString( "EclipsePlugin.missingjrecontainer" ) ); //$NON-NLS-1$
-            classpathContainers.add( 0, COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER );
+            verifyClasspathContainerListIsComplete();
         }
 
         // ready to start
-        return true;
+        return ready;
     }
 
     protected void convertBuildCommandList( List commands )
@@ -576,41 +522,133 @@ public class EclipsePlugin
         }
     }
 
+    private void parseConfigurationOptions()
+    {
+        if ( "R7".equalsIgnoreCase( wtpversion ) ) //$NON-NLS-1$
+        {
+            wtpVersionFloat = 0.7f;
+        }
+        else if ( "1.0".equalsIgnoreCase( wtpversion ) ) //$NON-NLS-1$
+        {
+            wtpVersionFloat = 1.0f;
+        }
+        else if ( "1.5".equalsIgnoreCase( wtpversion ) ) //$NON-NLS-1$
+        {
+            wtpVersionFloat = 1.5f;
+        }
+        if ( !"none".equalsIgnoreCase( wtpversion ) )
+        {
+            getLog().info( Messages.getString( "EclipsePlugin.wtpversion", wtpversion ) );
+        }
+    }
+
+    protected void setupExtras()
+        throws MojoExecutionException
+    {
+        // extension point.
+    }
+
+    protected void verifyClasspathContainerListIsComplete()
+    {
+        // this is an extension point.
+        if ( !classpathContainers.contains( COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER ) ) //$NON-NLS-1$
+        {
+            getLog().warn( Messages.getString( "EclipsePlugin.missingjrecontainer" ) ); //$NON-NLS-1$
+            classpathContainers.add( 0, COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER );
+        }
+    }
+
+    private boolean validate()
+        throws MojoExecutionException
+    {
+        // validate sanity of the current m2 project
+        if ( Arrays.binarySearch( WTP_SUPPORTED_VERSIONS, wtpversion ) < 0 )
+        {
+            throw new MojoExecutionException( Messages
+                .getString( "EclipsePlugin.unsupportedwtp", new Object[] { //$NON-NLS-1$
+                            wtpversion, StringUtils.join( WTP_SUPPORTED_VERSIONS, " " ) } ) ); //$NON-NLS-1$
+        }
+
+        String packaging = executedProject.getPackaging();
+
+        assertNotEmpty( executedProject.getGroupId(), POM_ELT_GROUP_ID ); //$NON-NLS-1$
+        assertNotEmpty( executedProject.getArtifactId(), POM_ELT_ARTIFACT_ID ); //$NON-NLS-1$
+
+        if ( executedProject.getFile() == null || !executedProject.getFile().exists() )
+        {
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.missingpom" ) ); //$NON-NLS-1$
+        }
+
+        if ( "pom".equals( packaging ) && eclipseProjectDir == null ) //$NON-NLS-1$
+        {
+            getLog().info( Messages.getString( "EclipsePlugin.pompackaging" ) ); //$NON-NLS-1$
+            return false;
+        }
+
+        if ( "eclipse-plugin".equals( packaging ) )
+        {
+            pde = true;
+        }
+
+        if ( eclipseProjectDir == null )
+        {
+            eclipseProjectDir = executedProject.getFile().getParentFile();
+        }
+        
+        if ( !eclipseProjectDir.exists() && !eclipseProjectDir.mkdirs() )
+        {
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcreatedir", eclipseProjectDir ) ); //$NON-NLS-1$
+        }
+        
+        if ( !eclipseProjectDir.equals( executedProject.getFile().getParentFile() ) )
+        {
+            if ( !eclipseProjectDir.isDirectory() )
+            {
+                throw new MojoExecutionException( Messages.getString( "EclipsePlugin.notadir", eclipseProjectDir ) ); //$NON-NLS-1$
+            }
+            eclipseProjectDir = new File( eclipseProjectDir, executedProject.getArtifactId() );
+            if ( !eclipseProjectDir.isDirectory() && !eclipseProjectDir.mkdirs() )
+            {
+                throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcreatedir", eclipseProjectDir ) ); //$NON-NLS-1$
+            }
+        }
+
+        validateExtras();
+
+        return true;
+    }
+
+    protected void validateExtras()
+    {
+        // provided for extension.
+    }
+
+    private void checkDeprecations()
+    {
+        if ( eclipseDownloadSources )
+        {
+            // deprecated warning
+            getLog().warn( Messages.getString( "EclipsePlugin.deprecatedpar", new Object[] { //$NON-NLS-1$
+                                               "eclipse.downloadSources", //$NON-NLS-1$
+                                                   "downloadSources" } ) ); //$NON-NLS-1$
+            downloadSources = true;
+        }
+
+        checkExtraDeprecations();
+    }
+
+    protected void checkExtraDeprecations()
+    {
+        // provided for extension.
+    }
+
     public void writeConfiguration( IdeDependency[] deps )
         throws MojoExecutionException
     {
-        File projectBaseDir = executedProject.getFile().getParentFile();
+        EclipseWriterConfig config = createEclipseWriterConfig( deps );
 
-        // build a list of UNIQUE source dirs (both src and resources) to be
-        // used in classpath and wtpmodules
-        EclipseSourceDir[] sourceDirs = buildDirectoryList( executedProject, eclipseProjectDir, buildOutputDirectory );
-
-        EclipseWriterConfig config = new EclipseWriterConfig();
-
-        // TODO: add mojo param 'addVersionToProjectName' and if set append
-        // -version to the project name.
-        config.setEclipseProjectName( project.getArtifactId() );
-
-        // XXX TODO: change the buildCommands param to match
-        // <buildCommands>
-        //   <buildCommand>
-        //     <name>....</name>
-        //     <arguments>
-        //       <somekey>somevalue</somekey>
-        //     </arguments>
-
-        config.setBuildCommands( buildcommands );
-        config.setBuildOutputDirectory( buildOutputDirectory );
-        config.setClasspathContainers( classpathContainers );
-        config.setDeps( deps );
-        config.setEclipseProjectDirectory( eclipseProjectDir );
-        config.setLocalRepository( localRepository );
-        config.setManifestFile( manifest );
-        config.setPde( pde );
-        config.setProject( project );
-        config.setProjectBaseDir( projectBaseDir );
-        config.setProjectnatures( projectnatures );
-        config.setSourceDirs( sourceDirs );
+        // NOTE: This could change the config!
+        writeExtraConfiguration( config );
 
         if ( wtpVersionFloat == 0.7f )
         {
@@ -621,16 +659,17 @@ public class EclipsePlugin
         {
             new EclipseWtpFacetsWriter().init( getLog(), config ).write();
         }
-
         if ( wtpVersionFloat == 1.0f )
         {
+
             new EclipseWtpComponentWriter().init( getLog(), config ).write();
         }
-
         if ( wtpVersionFloat >= 1.5 )
         {
             new EclipseWtpComponent15Writer().init( getLog(), config ).write();
         }
+
+        new EclipseProjectWriter().init( getLog(), config ).write();
 
         new EclipseSettingsWriter().init( getLog(), config ).write();
 
@@ -638,8 +677,6 @@ public class EclipsePlugin
         {
             new EclipseClasspathWriter().init( getLog(), config ).write();
         }
-
-        new EclipseProjectWriter().init( getLog(), config ).write();
 
         if ( pde )
         {
@@ -676,6 +713,74 @@ public class EclipsePlugin
                                            project.getArtifactId(), eclipseProjectDir.getAbsolutePath() } ) );
     }
 
+    protected EclipseWriterConfig createEclipseWriterConfig( IdeDependency[] deps )
+        throws MojoExecutionException
+    {
+        File projectBaseDir = executedProject.getFile().getParentFile();
+
+        // build a list of UNIQUE source dirs (both src and resources) to be
+        // used in classpath and wtpmodules
+        EclipseSourceDir[] sourceDirs = buildDirectoryList( executedProject, eclipseProjectDir, buildOutputDirectory );
+
+        EclipseWriterConfig config = new EclipseWriterConfig();
+
+        // TODO: add mojo param 'addVersionToProjectName' and if set append
+        // -version to the project name.
+        config.setEclipseProjectName( project.getArtifactId() );
+        
+        Set convertedBuildCommands = new LinkedHashSet();
+        
+        if ( buildcommands != null )
+        {
+            for ( Iterator it = buildcommands.iterator(); it.hasNext(); )
+            {
+                Object cmd = it.next();
+                
+                if ( cmd instanceof BuildCommand )
+                {
+                    convertedBuildCommands.add( (BuildCommand) cmd );
+                }
+                else
+                {
+                    convertedBuildCommands.add( new BuildCommand( (String) cmd ) );
+                }
+            }
+        }
+        
+        config.setBuildCommands( new LinkedList( convertedBuildCommands ) );
+
+        config.setBuildOutputDirectory( buildOutputDirectory );
+        config.setClasspathContainers( classpathContainers );
+        config.setDeps( deps );
+        config.setEclipseProjectDirectory( eclipseProjectDir );
+        config.setLocalRepository( localRepository );
+        config.setManifestFile( manifest );
+        config.setPde( pde );
+        config.setProject( project );
+        config.setProjectBaseDir( projectBaseDir );
+        config.setProjectnatures( projectnatures );
+        config.setSourceDirs( sourceDirs );
+
+        return config;
+    }
+
+    /**
+     * Write any extra configuration information for the Eclipse project. This is an extension
+     * point, called before the main configurations are written.
+     * <br/>
+     * <b>
+     * NOTE: This could change the config!
+     * </b>
+     * 
+     * @param config
+     * @throws MojoExecutionException
+     */
+    protected void writeExtraConfiguration( EclipseWriterConfig config )
+        throws MojoExecutionException
+    {
+        // extension point.
+    }
+
     private void assertNotEmpty( String string, String elementName )
         throws MojoExecutionException
     {
@@ -685,7 +790,7 @@ public class EclipsePlugin
         }
     }
 
-    private void fillDefaultNatures( String packaging )
+    protected void fillDefaultNatures( String packaging )
     {
         projectnatures = new ArrayList();
 
@@ -716,7 +821,7 @@ public class EclipsePlugin
 
     }
 
-    private void fillDefaultClasspathContainers( String packaging )
+    protected void fillDefaultClasspathContainers( String packaging )
     {
         classpathContainers = new ArrayList();
         classpathContainers.add( COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER );
@@ -727,7 +832,7 @@ public class EclipsePlugin
         }
     }
 
-    private void fillDefaultBuilders( String packaging )
+    protected void fillDefaultBuilders( String packaging )
     {
         buildcommands = new ArrayList();
 
@@ -795,12 +900,13 @@ public class EclipsePlugin
         return (EclipseSourceDir[]) directories.toArray( new EclipseSourceDir[directories.size()] );
     }
 
-    private void extractSourceDirs( Set directories, List sourceRoots, File basedir, File projectBaseDir,
-                                           boolean test, String output )
+    private void extractSourceDirs( Set directories, List sourceRoots, File basedir, File projectBaseDir, boolean test,
+                                    String output )
         throws MojoExecutionException
     {
         for ( Iterator it = sourceRoots.iterator(); it.hasNext(); )
         {
+
             File sourceRootFile = new File( (String) it.next() );
 
             if ( sourceRootFile.isDirectory() )
@@ -808,10 +914,7 @@ public class EclipsePlugin
                 String sourceRoot = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, sourceRootFile, !projectBaseDir
                     .equals( basedir ) );
 
-                if ( !directories.add( new EclipseSourceDir( sourceRoot, output, false, test, null, null, false ) ) )
-                {
-                    getLog().warn( "Not adding source dir " + sourceRoot + "; path already present");
-                }
+                directories.add( new EclipseSourceDir( sourceRoot, output, false, test, null, null, false ) );
             }
         }
     }
@@ -823,6 +926,9 @@ public class EclipsePlugin
         for ( Iterator it = resources.iterator(); it.hasNext(); )
         {
             Resource resource = (Resource) it.next();
+
+            System.out.println( "Processing resource dir: " + resource.getDirectory() );
+
             String includePattern = null;
             String excludePattern = null;
 
@@ -843,6 +949,7 @@ public class EclipsePlugin
 
             if ( !resourceDirectory.exists() || !resourceDirectory.isDirectory() )
             {
+                System.out.println( "Resource dir: " + resourceDirectory + " either missing or not a directory." );
                 continue;
             }
 
@@ -865,10 +972,10 @@ public class EclipsePlugin
                 output = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, outputFile, false );
             }
 
-            if ( !directories.add( new EclipseSourceDir( resourceDir, output, true, test, includePattern, excludePattern, resource.isFiltering() ) ) )
-            {
-                getLog().warn( "Not adding resource dir " + resourceDir + "; path already present");
-            }
+            System.out.println( "Adding eclipse source dir: { " + resourceDir + ", " + output + ", true, " + test
+                + ", " + includePattern + ", " + excludePattern + " }." );
+
+            directories.add( new EclipseSourceDir( resourceDir, output, true, test, includePattern, excludePattern, resource.isFiltering() ) );
         }
     }
 

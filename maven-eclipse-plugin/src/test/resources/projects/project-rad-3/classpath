@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+  <classpathentry kind="src" path="ejbModule"></classpathentry>
+  <classpathentry kind="src" path="src/main/java"></classpathentry>
+  <classpathentry kind="lib" path="target/websphere/generated-classes"></classpathentry>
+  <classpathentry sourcepath="M2_REPO/maven/maven-core/98.0/maven-core-98.0-sources.jar" kind="var" path="M2_REPO/maven/maven-core/98.0/maven-core-98.0.jar"></classpathentry>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"></classpathentry>
+  <classpathentry kind="con" path="com.ibm.wtp.server.java.core.container/com.ibm.ws.ast.st.runtime.core.runtimeTarget.v60/was.base.v6"></classpathentry>
+  <classpathentry kind="output" path="target/classes"></classpathentry>
+</classpath>

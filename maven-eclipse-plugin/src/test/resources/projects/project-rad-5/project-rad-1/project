@@ -1,0 +1,18 @@
+<projectDescription>
+  <name>maven-eclipse-plugin-test-project-rad-1</name>
+  <comment/>
+  <projects/>
+  <buildSpec>
+    <buildCommand>
+      <name>com.ibm.etools.validation.validationbuilder</name>
+      <arguments/>
+    </buildCommand>
+    <buildCommand>
+      <name>com.ibm.sse.model.structuredbuilder</name>
+      <arguments/>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>com.ibm.wtp.j2ee.EARNature</nature>
+  </natures>
+</projectDescription>
