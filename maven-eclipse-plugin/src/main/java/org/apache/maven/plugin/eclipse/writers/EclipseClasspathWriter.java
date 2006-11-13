@@ -169,7 +169,9 @@ public class EclipseClasspathWriter
             if ( byOutputDirs == null )
             {
                 // ArrayList<EclipseSourceDir>
-                byOutputDir.put( dir.getOutput(), byOutputDirs = new ArrayList() );
+                byOutputDir.put(
+                    dir.getOutput() == null ? defaultOutput : dir.getOutput(),
+                    byOutputDirs = new ArrayList() );
             }
             byOutputDirs.add( dir );
         }
@@ -193,6 +195,8 @@ public class EclipseClasspathWriter
                 {
                     // do not specify as source since the output will be nested. Instead, mark
                     // it as a todo, and handle it with a custom build.xml file later.
+
+                    log.debug( "Marking as special to prevent output folder nesting: " + dir.getPath() + " (output=" + dir.getOutput() +")");
 
                     specialSources.add( dir );
 
