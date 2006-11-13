@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Application_ID" xmlns:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/application_1_4.xsd" version="1.4">
+  <description></description>
+  <display-name>maven-eclipse-plugin-test-project-rad-1</display-name>
+  <module id="WebModule_1152786147451">
+    <web>
+      <web-uri>project-rad-2.war</web-uri>
+      <context-root>project-rad-2</context-root>
+    </web>
+  </module>
+  <module id="EjbModule_1152787306499">
+    <ejb>project-rad-3.jar</ejb>
+  </module>
+</application>

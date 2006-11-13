@@ -368,6 +368,11 @@ public abstract class AbstractIdeSupportMojo
     private List missingSourceDependencies = new ArrayList();
 
     /**
+     * Cached array of resolved dependencies.
+     */
+    private IdeDependency[] ideDeps;
+
+    /**
      * @see org.codehaus.plexus.logging.LogEnabled#enableLogging(org.codehaus.plexus.logging.Logger)
      */
     public void enableLogging( Logger logger )
@@ -408,162 +413,165 @@ public abstract class AbstractIdeSupportMojo
     protected IdeDependency[] doDependencyResolution()
         throws MojoExecutionException
     {
-        MavenProject project = getProject();
-        ArtifactRepository localRepo = getLocalRepository();
-
-        List dependencies = getProject().getDependencies();
-
-        // Collect the list of resolved IdeDependencies.
-        List dependencyList = new ArrayList();
-
-        if ( dependencies != null )
+        if ( ideDeps == null )
         {
-            Map managedVersions = createManagedVersionMap( getArtifactFactory(), project.getId(), project
-                .getDependencyManagement() );
+            MavenProject project = getProject();
+            ArtifactRepository localRepo = getLocalRepository();
 
-            ArtifactResolutionResult artifactResolutionResult = null;
+            List deps = getProject().getDependencies();
 
-            try
+            // Collect the list of resolved IdeDependencies.
+            List dependencies = new ArrayList();
+
+            if ( deps != null )
             {
+                Map managedVersions = createManagedVersionMap( getArtifactFactory(), project.getId(), project
+                    .getDependencyManagement() );
 
-                List listeners = new ArrayList();
+                ArtifactResolutionResult artifactResolutionResult = null;
 
-                if ( logger.isDebugEnabled() )
+                try
                 {
-                    listeners.add( new DebugResolutionListener( logger ) );
+
+                    List listeners = new ArrayList();
+
+                    if ( logger.isDebugEnabled() )
+                    {
+                        listeners.add( new DebugResolutionListener( logger ) );
+                    }
+
+                    listeners.add( new WarningResolutionListener( logger ) );
+
+                    artifactResolutionResult = artifactCollector.collect( getProjectArtifacts(), project.getArtifact(),
+                                                                          managedVersions, localRepo, project
+                                                                              .getRemoteArtifactRepositories(),
+                                                                          getArtifactMetadataSource(), null, listeners );
+                }
+                catch ( ArtifactResolutionException e )
+                {
+                    getLog().debug( e.getMessage(), e );
+                    getLog().error(
+                                    Messages
+                                        .getString( "artifactresolution", new Object[] { //$NON-NLS-1$
+                                                    e.getGroupId(), e.getArtifactId(), e.getVersion(), e.getMessage() } ) );
+
+                    // if we are here artifactResolutionResult is null, create a project without dependencies but don't fail
+                    // (this could be a reactor projects, we don't want to fail everything)
+                    return new IdeDependency[0];
                 }
 
-                listeners.add( new WarningResolutionListener( logger ) );
+                // keep track of added reactor projects in order to avoid duplicates
+                Set emittedReactorProjectId = new HashSet();
 
-                artifactResolutionResult = artifactCollector.collect( getProjectArtifacts(), project.getArtifact(),
-                                                                      managedVersions, localRepo, project
-                                                                          .getRemoteArtifactRepositories(),
-                                                                      getArtifactMetadataSource(), null, listeners );
-            }
-            catch ( ArtifactResolutionException e )
-            {
-                getLog().debug( e.getMessage(), e );
-                getLog().error(
-                                Messages
-                                    .getString( "artifactresolution", new Object[] { //$NON-NLS-1$
-                                                e.getGroupId(), e.getArtifactId(), e.getVersion(), e.getMessage() } ) );
-
-                // if we are here artifactResolutionResult is null, create a project without dependencies but don't fail
-                // (this could be a reactor projects, we don't want to fail everything)
-                return new IdeDependency[0];
-            }
-
-            // keep track of added reactor projects in order to avoid duplicates
-            Set emittedReactorProjectId = new HashSet();
-
-            for ( Iterator i = artifactResolutionResult.getArtifactResolutionNodes().iterator(); i.hasNext(); )
-            {
-
-                ResolutionNode node = (ResolutionNode) i.next();
-                int dependencyDepth = node.getDepth();
-                Artifact art = node.getArtifact();
-                boolean isReactorProject = getUseProjectReferences() && isAvailableAsAReactorProject( art );
-
-                // don't resolve jars for reactor projects
-                if ( !isReactorProject )
-                {
-                    try
-                    {
-                        artifactResolver.resolve( art, node.getRemoteRepositories(), localRepository );
-                    }
-                    catch ( ArtifactNotFoundException e )
-                    {
-                        getLog().debug( e.getMessage(), e );
-                        getLog().warn(
-                                       Messages.getString( "artifactdownload", new Object[] { //$NON-NLS-1$
-                                                               e.getGroupId(),
-                                                               e.getArtifactId(),
-                                                               e.getVersion(),
-                                                               e.getMessage() } ) );
-                    }
-                    catch ( ArtifactResolutionException e )
-                    {
-                        getLog().debug( e.getMessage(), e );
-                        getLog().warn(
-                                       Messages.getString( "artifactresolution", new Object[] { //$NON-NLS-1$
-                                                               e.getGroupId(),
-                                                               e.getArtifactId(),
-                                                               e.getVersion(),
-                                                               e.getMessage() } ) );
-                    }
-                }
-
-                if ( !isReactorProject || emittedReactorProjectId.add( art.getGroupId() + '-' + art.getArtifactId() ) )
+                for ( Iterator i = artifactResolutionResult.getArtifactResolutionNodes().iterator(); i.hasNext(); )
                 {
 
-                    // the following doesn't work: art.getArtifactHandler().getPackaging() always returns "jar" also
-                    // if the packaging specified in pom.xml is different.
+                    ResolutionNode node = (ResolutionNode) i.next();
+                    int dependencyDepth = node.getDepth();
+                    Artifact art = node.getArtifact();
+                    boolean isReactorProject = getUseProjectReferences() && isAvailableAsAReactorProject( art );
 
-                    // osgi-bundle packaging is provided by the felix osgi plugin
-                    // eclipse-plugin packaging is provided by this eclipse plugin
-                    // String packaging = art.getArtifactHandler().getPackaging();
-                    // boolean isOsgiBundle = "osgi-bundle".equals( packaging ) || "eclipse-plugin".equals( packaging );
-
-                    // we need to check the manifest, if "Bundle-SymbolicName" is there the artifact can be considered
-                    // an osgi bundle
-                    boolean isOsgiBundle = false;
-                    String osgiSymbolicName = null;
-                    if ( art.getFile() != null )
+                    // don't resolve jars for reactor projects
+                    if ( !isReactorProject )
                     {
-                        JarFile jarFile = null;
                         try
                         {
-                            jarFile = new JarFile( art.getFile(), false, ZipFile.OPEN_READ );
-
-                            Manifest manifest = jarFile.getManifest();
-                            if ( manifest != null )
-                            {
-                                osgiSymbolicName = manifest.getMainAttributes()
-                                    .getValue( new Attributes.Name( "Bundle-SymbolicName" ) );
-                            }
+                            artifactResolver.resolve( art, node.getRemoteRepositories(), localRepository );
                         }
-                        catch ( IOException e )
+                        catch ( ArtifactNotFoundException e )
                         {
-                            getLog().info( "Unable to read jar manifest from " + art.getFile() );
+                            getLog().debug( e.getMessage(), e );
+                            getLog().warn(
+                                           Messages.getString( "artifactdownload", new Object[] { //$NON-NLS-1$
+                                                                   e.getGroupId(),
+                                                                   e.getArtifactId(),
+                                                                   e.getVersion(),
+                                                                   e.getMessage() } ) );
                         }
-                        finally
+                        catch ( ArtifactResolutionException e )
                         {
-                            if ( jarFile != null )
-                            {
-                                try
-                                {
-                                    jarFile.close();
-                                }
-                                catch ( IOException e )
-                                {
-                                    // ignore
-                                }
-                            }
+                            getLog().debug( e.getMessage(), e );
+                            getLog().warn(
+                                           Messages.getString( "artifactresolution", new Object[] { //$NON-NLS-1$
+                                                                   e.getGroupId(),
+                                                                   e.getArtifactId(),
+                                                                   e.getVersion(),
+                                                                   e.getMessage() } ) );
                         }
                     }
 
-                    isOsgiBundle = osgiSymbolicName != null;
+                    if ( !isReactorProject || emittedReactorProjectId.add( art.getGroupId() + '-' + art.getArtifactId() ) )
+                    {
 
-                    IdeDependency dep = new IdeDependency( art.getGroupId(), art.getArtifactId(), art.getVersion(),
-                                                           isReactorProject, Artifact.SCOPE_TEST
-                                                               .equals( art.getScope() ), Artifact.SCOPE_SYSTEM
-                                                               .equals( art.getScope() ), Artifact.SCOPE_PROVIDED
-                                                               .equals( art.getScope() ), art.getArtifactHandler()
-                                                               .isAddedToClasspath(), art.getFile(), art.getType(),
-                                                           isOsgiBundle, osgiSymbolicName, dependencyDepth );
+                        // the following doesn't work: art.getArtifactHandler().getPackaging() always returns "jar" also
+                        // if the packaging specified in pom.xml is different.
 
-                    dependencyList.add( dep );
+                        // osgi-bundle packaging is provided by the felix osgi plugin
+                        // eclipse-plugin packaging is provided by this eclipse plugin
+                        // String packaging = art.getArtifactHandler().getPackaging();
+                        // boolean isOsgiBundle = "osgi-bundle".equals( packaging ) || "eclipse-plugin".equals( packaging );
+
+                        // we need to check the manifest, if "Bundle-SymbolicName" is there the artifact can be considered
+                        // an osgi bundle
+                        boolean isOsgiBundle = false;
+                        String osgiSymbolicName = null;
+                        if ( art.getFile() != null )
+                        {
+                            JarFile jarFile = null;
+                            try
+                            {
+                                jarFile = new JarFile( art.getFile(), false, ZipFile.OPEN_READ );
+
+                                Manifest manifest = jarFile.getManifest();
+                                if ( manifest != null )
+                                {
+                                    osgiSymbolicName = manifest.getMainAttributes()
+                                        .getValue( new Attributes.Name( "Bundle-SymbolicName" ) );
+                                }
+                            }
+                            catch ( IOException e )
+                            {
+                                getLog().info( "Unable to read jar manifest from " + art.getFile() );
+                            }
+                            finally
+                            {
+                                if ( jarFile != null )
+                                {
+                                    try
+                                    {
+                                        jarFile.close();
+                                    }
+                                    catch ( IOException e )
+                                    {
+                                        // ignore
+                                    }
+                                }
+                            }
+                        }
+
+                        isOsgiBundle = osgiSymbolicName != null;
+
+                        IdeDependency dep = new IdeDependency( art.getGroupId(), art.getArtifactId(), art.getVersion(),
+                                                               isReactorProject, Artifact.SCOPE_TEST
+                                                                   .equals( art.getScope() ), Artifact.SCOPE_SYSTEM
+                                                                   .equals( art.getScope() ), Artifact.SCOPE_PROVIDED
+                                                                   .equals( art.getScope() ), art.getArtifactHandler()
+                                                                   .isAddedToClasspath(), art.getFile(), art.getType(),
+                                                               isOsgiBundle, osgiSymbolicName, dependencyDepth );
+
+                        dependencies.add( dep );
+                    }
+
                 }
+
+                //@todo a final report with the list of missingArtifacts?
 
             }
 
-            //@todo a final report with the list of missingArtifacts?
-
+            ideDeps = (IdeDependency[]) dependencies.toArray( new IdeDependency[dependencies.size()] );
         }
 
-        IdeDependency[] deps = (IdeDependency[]) dependencyList.toArray( new IdeDependency[dependencyList.size()] );
-
-        return deps;
+        return ideDeps;
     }
 
     /**
