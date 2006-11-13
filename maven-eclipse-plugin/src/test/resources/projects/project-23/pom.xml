@@ -11,6 +11,8 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-eclipse-plugin</artifactId>
+        <version>test</version>
+        <extensions>true</extensions>
         <configuration>
           <additionalConfig>
             <file>

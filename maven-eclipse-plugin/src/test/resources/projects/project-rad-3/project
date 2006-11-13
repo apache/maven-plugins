@@ -1,0 +1,27 @@
+<projectDescription>
+  <name>maven-eclipse-plugin-test-project-rad-3</name>
+  <comment/>
+  <projects/>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+      <arguments/>
+    </buildCommand>
+    <buildCommand>
+      <name>com.ibm.etools.validation.validationbuilder</name>
+      <arguments/>
+    </buildCommand>
+    <buildCommand>
+      <name>com.ibm.wtp.j2ee.LibCopyBuilder</name>
+      <arguments/>
+    </buildCommand>
+    <buildCommand>
+      <name>com.ibm.sse.model.structuredbuilder</name>
+      <arguments/>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>com.ibm.wtp.ejb.EJBNature</nature>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+  </natures>
+</projectDescription>

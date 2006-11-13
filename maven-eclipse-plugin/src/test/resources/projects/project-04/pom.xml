@@ -32,6 +32,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-eclipse-plugin</artifactId>
+        <version>test</version>
         <configuration>
           <wtpversion>R7</wtpversion>
           <outputDir>../../../../target/project-4-test/</outputDir>

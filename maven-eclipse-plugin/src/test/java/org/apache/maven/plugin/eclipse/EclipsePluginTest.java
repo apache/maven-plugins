@@ -138,7 +138,7 @@ public class EclipsePluginTest
     {
         Properties props = new Properties();
         props.put( "outputDirectory", "bin" );
-        testProject( "project-15", props );
+        testProject( "project-15", props, "clean", "eclipse" );
     }
 
     //Commented out: failing due to MNG-2025

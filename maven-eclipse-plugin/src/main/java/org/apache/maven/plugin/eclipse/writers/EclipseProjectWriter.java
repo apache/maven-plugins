@@ -143,7 +143,7 @@ public class EclipseProjectWriter
 
         for ( Iterator iter = config.getBuildCommands().iterator(); iter.hasNext(); )
         {
-            buildCommands.add( iter.next() );
+            buildCommands.add( (BuildCommand) iter.next() );
         }
 
         Writer w;
