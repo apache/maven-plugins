@@ -1,6 +1,6 @@
 <classpath>
   <classpathentry kind="src" path="src-main-java"/>
-  <classpathentry kind="src" path="src-main-resources" output="target/eclipse-classes/main-resources" excluding="**/*.java"/>
+  <classpathentry kind="src" path="src-main-resources" excluding="**/*.java"/>
   <classpathentry kind="src" path="src-test-java"/>
   <classpathentry kind="src" path="src-test-resources" excluding="**/*.java"/>
   <classpathentry kind="output" path="target/eclipse-classes"/>

@@ -885,8 +885,8 @@ public class EclipsePlugin
 
         // If using the standard output location, don't mix the test output into it.
         String testOutput = null;
-        boolean useFixedOutputDir = !buildOutputDirectory.equals( new File( project.getBuild().getOutputDirectory() ) );
-        if ( !useFixedOutputDir )
+        boolean useStandardOutputDir = buildOutputDirectory.equals( new File( project.getBuild().getOutputDirectory() ) );
+        if ( useStandardOutputDir )
         {
             testOutput = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, new File( project.getBuild()
                 .getTestOutputDirectory() ), false );
@@ -919,8 +919,8 @@ public class EclipsePlugin
         }
     }
 
-    private void extractResourceDirs( Set directories, List resources, MavenProject project, File basedir,
-                                      File projectBaseDir, boolean test, String output )
+    void extractResourceDirs( Set directories, List resources, MavenProject project, File basedir,
+                                      File workspaceProjectBaseDir, boolean test, String output )
         throws MojoExecutionException
     {
         for ( Iterator it = resources.iterator(); it.hasNext(); )
@@ -945,7 +945,7 @@ public class EclipsePlugin
             // TODO: figure out how to merge if the same dir is specified twice
             // with different in/exclude patterns.
 
-            File resourceDirectory = new File( resource.getDirectory() );
+            File resourceDirectory = new File( /*basedir,*/ resource.getDirectory() );
 
             if ( !resourceDirectory.exists() || !resourceDirectory.isDirectory() )
             {
@@ -953,12 +953,12 @@ public class EclipsePlugin
                 continue;
             }
 
-            String resourceDir = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, resourceDirectory, !projectBaseDir
+            String resourceDir = IdeUtils.toRelativeAndFixSeparator( workspaceProjectBaseDir, resourceDirectory, !workspaceProjectBaseDir
                 .equals( basedir ) );
 
             if ( output != null )
             {
-                File outputFile = new File( projectBaseDir, output );
+                File outputFile = new File( workspaceProjectBaseDir, output );
                 // create output dir if it doesn't exist
                 outputFile.mkdirs();
 
@@ -969,7 +969,7 @@ public class EclipsePlugin
                     outputFile.mkdirs();
                 }
 
-                output = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, outputFile, false );
+                output = IdeUtils.toRelativeAndFixSeparator( workspaceProjectBaseDir, outputFile, false );
             }
 
             System.out.println( "Adding eclipse source dir: { " + resourceDir + ", " + output + ", true, " + test
