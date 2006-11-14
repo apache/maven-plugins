@@ -30,7 +30,8 @@ Configuring the Site Descriptor
 
   You can create your own site descriptor for your project when you want to override the navigation tree for the site.
   For example, aside from the report distributions you want to put additional content to your site. In order for them
-  to be accessible in the generated site, you must configure your site descriptor.
+  to be accessible in the generated site, you must configure your site descriptor. You create the site descriptor in
+  a file called <<<site.xml>>> which should be located in your <<<src/site>>> directory.
 
 * Publish Date
 
