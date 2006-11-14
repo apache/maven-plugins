@@ -12,14 +12,10 @@ Manifest customization
 
 +-----------------+
   Manifest-Version: 1.0
-  Built-By: ${user.name}
+  Archiver-Version: Plexus Archiver
   Created-By: Apache Maven
+  Built-By: ${user.name}
   Build-Jdk: ${java.version}
-  Extension-Name: ${project.artifactId}
-  Specification-Vendor: ${project.organization.name}
-  Implementation-Vendor: ${project.organization.name}
-  Implementation-Title: ${project.description}
-  Implementation-Version: ${project.version}
 +-----------------+
 
   Configuration can be done using the <<<archive>>> element. Below you will
@@ -47,6 +43,35 @@ Manifest customization
               <url>${pom.url}</url>
               <key>value</key>
             </manifestEntries>
+          </archive>
+        </configuration>
+        ...
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++-----------------+
+
+  Starting with version 2.1, the maven-jar-plugin no longer creates the
+  Specification and Implementation details in the manifest by default.
+  If you want them you have to say so explicitly in your plugin configuration:
+
++-----------------+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        ...
+        <configuration>
+          <archive>
+            <manifest>
+              <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
           </archive>
         </configuration>
         ...
