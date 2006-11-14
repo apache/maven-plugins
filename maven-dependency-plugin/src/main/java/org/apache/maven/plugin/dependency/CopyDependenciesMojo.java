@@ -109,7 +109,7 @@ public class CopyDependenciesMojo
                                                                    this.outputDirectory, artifact );
         File destFile = new File( destDir, destFileName );
 
-        copyFile( artifact.getFile(), destFile, true );
+        copyFile( artifact.getFile(), destFile );
     }
 
     protected ArtifactsFilter getMarkedArtifactFilter()
