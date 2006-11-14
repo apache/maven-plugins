@@ -1,6 +1,6 @@
 /*
- *  Copyright 2005-2006 Brian Fox (brianefox@gmail.com)
- *
+ * Copyright Apache Software Foundation
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,7 +19,6 @@
 package org.apache.maven.plugin.dependency.utils;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
