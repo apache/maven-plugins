@@ -190,6 +190,60 @@ public class TestCopyDependenciesMojo
         assertTrue( mojo.outputDirectory.delete() );
     }
 
+    public void testCopyDependenciesMojoExcludeClassifier()
+    throws Exception
+    {
+        mojo.project.setArtifacts( stubFactory.getClassifiedArtifacts() );
+        mojo.project.setDependencyArtifacts( new HashSet() );
+        mojo.excludeClassifiers = "one";
+        mojo.execute();
+
+        // test - get all direct dependencies and verify that they exist if they
+        // do not have a classifier of "one"
+        // then delete the file and at the end, verify the folder is empty.
+        Iterator iter = mojo.project.getArtifacts().iterator();
+        while ( iter.hasNext() )
+        {
+            Artifact artifact = (Artifact) iter.next();
+            String fileName = DependencyUtil.getFormattedFileName( artifact, false );
+            File file = new File( mojo.outputDirectory, fileName );
+            assertEquals( artifact.getClassifier().equals( "one" ), !file.exists() );
+            file.delete();
+            assertFalse( file.exists() );
+        }
+        // assumes you can't delete a folder that has files.
+        assertTrue( mojo.outputDirectory.delete() );
+    }
+    
+    public void testCopyDependenciesMojoIncludeClassifier()
+    throws Exception
+    {
+        mojo.project.setArtifacts( stubFactory.getClassifiedArtifacts() );
+        mojo.project.setDependencyArtifacts( new HashSet() );
+
+        mojo.includeClassifiers = "one";
+        // if include is used, exclude should be ignored.
+        mojo.excludeClassifiers = "one";
+
+        mojo.execute();
+
+        // test - get all direct dependencies and verify that they exist only if
+        // they are a jar
+        // then delete the file and at the end, verify the folder is empty.
+        Iterator iter = mojo.project.getArtifacts().iterator();
+        while ( iter.hasNext() )
+        {
+            Artifact artifact = (Artifact) iter.next();
+            String fileName = DependencyUtil.getFormattedFileName( artifact, false );
+            File file = new File( mojo.outputDirectory, fileName );
+            assertEquals( artifact.getClassifier().equals( "one" ), file.exists() );
+            file.delete();
+            assertFalse( file.exists() );
+        }
+        // assumes you can't delete a folder that has files.
+        assertTrue( mojo.outputDirectory.delete() );
+    }
+    
     public void testCopyDependenciesMojoSubPerType()
         throws Exception
     {
