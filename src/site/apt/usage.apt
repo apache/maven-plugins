@@ -99,7 +99,7 @@ Usage
    <<<mvn dependency:copy-dependencies -Dclassifer=sources>>> will try to find
    the sources for all dependencies and copy them.
 
-   	Also included is the ability to include or exclude by type (war, jar etc) and / or scope (runtime, test etc).
+   	Also included is the ability to include or exclude by type (war, jar etc), scope (runtime, test, etc), classifier (jdk14, sources, etc) or a combination of all three.
 
     Artifacts are copied using the following rules:
 
@@ -219,7 +219,7 @@ Usage
    <<<mvn dependency:unpack-dependencies -Dclassifer=sources>>> will try to find
    the sources for all dependencies and unpack them.
    
-   	Also included is the ability to include or exclude by type (war, jar etc) and / or scope (runtime, test etc).
+   Also included is the ability to include or exclude by type (war, jar etc), scope (runtime, test, etc), classifier (jdk14, sources, etc) or a combination of all three.
 
  Artifacts are copied using the following rules:
 
