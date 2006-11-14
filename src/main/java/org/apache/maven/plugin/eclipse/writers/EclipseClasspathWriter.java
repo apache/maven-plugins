@@ -183,6 +183,8 @@ public class EclipseClasspathWriter
             log.debug( "Processing " + ( dir.isResource() ? "re" : "" ) + "source " + dir.getPath() + ": output="
                 + dir.getOutput() + "; default output=" + defaultOutput );
 
+            boolean isSpecial = false;
+            
             // handle resource with nested output folders
             if ( dir.isResource() )
             {
@@ -198,9 +200,8 @@ public class EclipseClasspathWriter
 
                     log.debug( "Marking as special to prevent output folder nesting: " + dir.getPath() + " (output=" + dir.getOutput() +")");
 
+                    isSpecial = true;
                     specialSources.add( dir );
-
-                    continue;
                 }
             }
 
@@ -209,7 +210,7 @@ public class EclipseClasspathWriter
             writer.addAttribute( ATTR_KIND, "src" ); //$NON-NLS-1$
             writer.addAttribute( ATTR_PATH, dir.getPath() );
 
-            if ( dir.getOutput() != null && !defaultOutput.equals( dir.getOutput() ) )
+            if ( !isSpecial && dir.getOutput() != null && !defaultOutput.equals( dir.getOutput() ) )
             {
                 writer.addAttribute( ATTR_OUTPUT, dir.getOutput() );
             }
