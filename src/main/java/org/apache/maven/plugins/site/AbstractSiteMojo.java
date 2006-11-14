@@ -76,7 +76,7 @@ public abstract class AbstractSiteMojo
     protected I18N i18n;
 
     /**
-     * Directory containing source for apt, fml and xdoc docs.
+     * Directory containing the site.xml file and the source for apt, fml and xdoc docs.
      *
      * @parameter expression="${basedir}/src/site"
      * @required
