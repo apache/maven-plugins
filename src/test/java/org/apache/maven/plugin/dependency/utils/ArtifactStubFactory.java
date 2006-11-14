@@ -194,6 +194,17 @@ public class ArtifactStubFactory
         return set;
     }
 
+    public Set getClassifiedArtifacts()
+        throws IOException
+    {
+        Set set = new HashSet();
+        set.add( createArtifact( "g", "a", "1.0", Artifact.SCOPE_COMPILE, "jar", "one" ) );
+        set.add( createArtifact( "g", "b", "1.0", Artifact.SCOPE_COMPILE, "jar", "two" ) );
+        set.add( createArtifact( "g", "c", "1.0", Artifact.SCOPE_COMPILE, "jar", "three" ) );
+        set.add( createArtifact( "g", "d", "1.0", Artifact.SCOPE_COMPILE, "jar", "four" ) );
+        return set;
+    }
+
     public Set getTypedArchiveArtifacts()
         throws IOException
     {
