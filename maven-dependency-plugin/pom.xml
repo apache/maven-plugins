@@ -1,191 +1,210 @@
 <!--
- * Copyright Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *-->
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License. 
+ *
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <artifactId>maven-plugins</artifactId>
-        <groupId>org.apache.maven.plugins</groupId>
-        <version>4-SNAPSHOT</version>
-    </parent>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-dependency-plugin</artifactId>
-    <packaging>maven-plugin</packaging>
-    <name>Dependency Maven Plugin</name>
-    <version>2.0-alpha-1-SNAPSHOT</version>
-    <prerequisites>
-        <maven>2.0.3</maven>
-    </prerequisites>
-    <issueManagement>
-        <system>JIRA</system>
-        <url>http://jira.codehaus.org/browse/MDEP</url>
-    </issueManagement>
-    <mailingLists>
-        <!-- duplication from maven-plugins pom - temporary until they inherit properly -->
-        <mailingList>
-            <name>Maven User List</name>
-            <subscribe>users-subscribe@maven.apache.org</subscribe>
-            <unsubscribe>users-unsubscribe@maven.apache.org</unsubscribe>
-            <post>users@maven.apache.org</post>
-            <archive>http://mail-archives.apache.org/mod_mbox/maven-users</archive>
-            <otherArchives>
-                <otherArchive>http://www.mail-archive.com/users@maven.apache.org/</otherArchive>
-                <otherArchive>http://www.nabble.com/Maven---Users-f178.html</otherArchive>
-            </otherArchives>
-        </mailingList>
-        <mailingList>
-            <name>Maven Developer List</name>
-            <subscribe>dev-subscribe@maven.apache.org</subscribe>
-            <unsubscribe>dev-unsubscribe@maven.apache.org</unsubscribe>
-            <post>dev@maven.apache.org</post>
-            <archive>http://mail-archives.apache.org/mod_mbox/maven-dev</archive>
-        </mailingList>
-        <mailingList>
-            <name>Maven Commits List</name>
-            <subscribe>commits-subscribe@maven.apache.org</subscribe>
-            <unsubscribe>commits-unsubscribe@maven.apache.org</unsubscribe>
-            <post>commits@maven.apache.org</post>
-            <archive>http://mail-archives.apache.org/mod_mbox/maven-dev</archive>
-        </mailingList>
-        <!-- duplication from maven-parent pom - temporary until they inherit properly -->
-        <mailingList>
-            <name>Maven Announcements List</name>
-            <post>announce@maven.apache.org</post>
-            <subscribe>announce-subscribe@maven.apache.org</subscribe>
-            <unsubscribe>announce-unsubscribe@maven.apache.org</unsubscribe>
-            <archive>http://mail-archives.apache.org/mod_mbox/maven-announce/</archive>
-        </mailingList>
-        <mailingList>
-            <name>Maven Issues List</name>
-            <post>issues@maven.apache.org</post>
-            <subscribe>issues-subscribe@maven.apache.org</subscribe>
-            <unsubscribe>issues-unsubscribe@maven.apache.org</unsubscribe>
-            <archive>http://mail-archives.apache.org/mod_mbox/maven-issues/</archive>
-        </mailingList>
-        <mailingList>
-            <name>Maven Notifications List</name>
-            <post>notifications@maven.apache.org</post>
-            <subscribe>notifications-subscribe@maven.apache.org</subscribe>
-            <unsubscribe>notifications-unsubscribe@maven.apache.org</unsubscribe>
-            <archive>http://mail-archives.apache.org/mod_mbox/maven-notifications/</archive>
-        </mailingList>
-    </mailingLists>
-    <developers>
-        <developer>
-            <id>brianfox</id>
-            <name>Brian Fox</name>
-            <email>brianefox@gmail.com</email>
-            <roles>
-                <role>Lead Developer</role>
-            </roles>
-            <timezone>5</timezone>
-        </developer>
-        <developer>
-            <id>dtran</id>
-            <name>Dan T. Tran</name>
-            <email>dantran@gmail.com</email>
-            <organization>
-            </organization>
-            <roles>
-                <role>Developer</role>
-            </roles>
-        </developer>
-        <developer>
-            <id>jdcasey</id>
-            <name>John Casey</name>
-            <email>casey.john.d@gmail.com</email>
-            <organization>
-            </organization>
-            <roles>
-                <role>Developer</role>
-            </roles>
-        </developer>
-    </developers>
-    <licenses>
-        <license>
-            <name>Apache License 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-            <comments>Copyright 2005-2006 Brian Fox</comments>
-        </license>
-    </licenses>
-    <build>
-        <plugins>
-            <!--
-            <plugin>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                    <source>1.4</source>
-                    <destDir>${project.build.directory}/site/javadoc</destDir>
-                </configuration>
-            </plugin>-->
-            <plugin>
-              <groupId>org.codehaus.mojo</groupId>
-              <artifactId>cobertura-maven-plugin</artifactId>
-              <executions>
-                <execution>
-                    <phase>clean</phase>
-                  <goals>
-                    <goal>clean</goal>
-                  </goals>
-                </execution>
-              </executions>
-            </plugin>
-        </plugins>
-    </build>
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-artifact</artifactId>
-            <version>2.0.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-plugin-api</artifactId>
-            <version>2.0.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-project</artifactId>
-            <version>2.0.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven.shared</groupId>
-            <artifactId>maven-plugin-testing-harness</artifactId>
-            <scope>test</scope>
-            <version>1.0-beta-1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-archiver</artifactId>
-            <version>1.0-alpha-7</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-utils</artifactId>
-            <version>1.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven.shared</groupId>
-            <artifactId>file-management</artifactId>
-            <version>1.0</version>
-        </dependency>
-    </dependencies>
-    <!--reporting>
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>maven-plugins</artifactId>
+		<groupId>org.apache.maven.plugins</groupId>
+		<version>4-SNAPSHOT</version>
+	</parent>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-dependency-plugin</artifactId>
+	<packaging>maven-plugin</packaging>
+	<name>Dependency Maven Plugin</name>
+	<version>2.0-alpha-1-SNAPSHOT</version>
+	<prerequisites>
+		<maven>2.0.3</maven>
+	</prerequisites>
+	<issueManagement>
+		<system>JIRA</system>
+		<url>http://jira.codehaus.org/browse/MDEP</url>
+	</issueManagement>
+	<mailingLists>
+		<!-- duplication from maven-plugins pom - temporary until they inherit properly -->
+		<mailingList>
+			<name>Maven User List</name>
+			<subscribe>users-subscribe@maven.apache.org</subscribe>
+			<unsubscribe>users-unsubscribe@maven.apache.org</unsubscribe>
+			<post>users@maven.apache.org</post>
+			<archive>http://mail-archives.apache.org/mod_mbox/maven-users</archive>
+			<otherArchives>
+				<otherArchive>http://www.mail-archive.com/users@maven.apache.org/</otherArchive>
+				<otherArchive>http://www.nabble.com/Maven---Users-f178.html</otherArchive>
+			</otherArchives>
+		</mailingList>
+		<mailingList>
+			<name>Maven Developer List</name>
+			<subscribe>dev-subscribe@maven.apache.org</subscribe>
+			<unsubscribe>dev-unsubscribe@maven.apache.org</unsubscribe>
+			<post>dev@maven.apache.org</post>
+			<archive>http://mail-archives.apache.org/mod_mbox/maven-dev</archive>
+		</mailingList>
+		<mailingList>
+			<name>Maven Commits List</name>
+			<subscribe>commits-subscribe@maven.apache.org</subscribe>
+			<unsubscribe>commits-unsubscribe@maven.apache.org</unsubscribe>
+			<post>commits@maven.apache.org</post>
+			<archive>http://mail-archives.apache.org/mod_mbox/maven-dev</archive>
+		</mailingList>
+		<!-- duplication from maven-parent pom - temporary until they inherit properly -->
+		<mailingList>
+			<name>Maven Announcements List</name>
+			<post>announce@maven.apache.org</post>
+			<subscribe>announce-subscribe@maven.apache.org</subscribe>
+			<unsubscribe>announce-unsubscribe@maven.apache.org</unsubscribe>
+			<archive>http://mail-archives.apache.org/mod_mbox/maven-announce/</archive>
+		</mailingList>
+		<mailingList>
+			<name>Maven Issues List</name>
+			<post>issues@maven.apache.org</post>
+			<subscribe>issues-subscribe@maven.apache.org</subscribe>
+			<unsubscribe>issues-unsubscribe@maven.apache.org</unsubscribe>
+			<archive>http://mail-archives.apache.org/mod_mbox/maven-issues/</archive>
+		</mailingList>
+		<mailingList>
+			<name>Maven Notifications List</name>
+			<post>notifications@maven.apache.org</post>
+			<subscribe>notifications-subscribe@maven.apache.org</subscribe>
+			<unsubscribe>notifications-unsubscribe@maven.apache.org</unsubscribe>
+			<archive>http://mail-archives.apache.org/mod_mbox/maven-notifications/</archive>
+		</mailingList>
+	</mailingLists>
+	<developers>
+		<developer>
+			<id>brianfox</id>
+			<name>Brian Fox</name>
+			<email>brianefox@gmail.com</email>
+			<roles>
+				<role>Lead Developer</role>
+			</roles>
+			<timezone>5</timezone>
+		</developer>
+		<developer>
+			<id>dtran</id>
+			<name>Dan T. Tran</name>
+			<email>dantran@gmail.com</email>
+			<organization>
+			</organization>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>jdcasey</id>
+			<name>John Casey</name>
+			<email>casey.john.d@gmail.com</email>
+			<organization>
+			</organization>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+	</developers>
+	<licenses>
+		<license>
+			<name>Apache License 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+			<comments>Copyright 2005-2006 Brian Fox</comments>
+		</license>
+	</licenses>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>clean</phase>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+		<resources>
+			<!-- Include the apache process LICENSE and NOTICE
+           files.
+           -->
+			<resource>
+				<targetPath>META-INF</targetPath>
+				<filtering>false</filtering>
+				<directory>${basedir}</directory>
+				<includes>
+					<include>LICENSE</include>
+					<include>NOTICE</include>
+				</includes>
+			</resource>
+			<!-- Include super-pom defined main/resources
+           Removing this section will break the build.
+           Since we have defined a new build/resources
+           section for the Apache process LICENSE and NOTICE
+           files, this original default section is now
+           required. -->
+			<resource>
+				<directory>${basedir}/src/main/resources</directory>
+			</resource>
+		</resources>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-artifact</artifactId>
+			<version>2.0.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-plugin-api</artifactId>
+			<version>2.0.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-project</artifactId>
+			<version>2.0.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven.shared</groupId>
+			<artifactId>maven-plugin-testing-harness</artifactId>
+			<scope>test</scope>
+			<version>1.0-beta-1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.plexus</groupId>
+			<artifactId>plexus-archiver</artifactId>
+			<version>1.0-alpha-7</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.plexus</groupId>
+			<artifactId>plexus-utils</artifactId>
+			<version>1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven.shared</groupId>
+			<artifactId>file-management</artifactId>
+			<version>1.0</version>
+		</dependency>
+	</dependencies>
+	<!--reporting>
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
