@@ -103,17 +103,20 @@ public abstract class AbstractDependencyMojo
 
     /**
      * If the plugin should be silent.
+     * 
      * @optional
      * @since 2.0
      * @parameter expression="${silent}" default-value="false"
      */
     protected boolean silent;
-    
+
     /**
      * Output absolute filename for resolved artifacts
+     * 
      * @optional
      * @since 2.0
-     * @parameter expression="${outputAbsoluteArtifactFilename}" default-value="false"
+     * @parameter expression="${outputAbsoluteArtifactFilename}"
+     *            default-value="false"
      */
     protected boolean outputAbsoluteArtifactFilename;
 
@@ -151,81 +154,25 @@ public abstract class AbstractDependencyMojo
      *            represents the file to copy.
      * @param destFile
      *            file name of destination file.
-     * @param log
-     *            to use for output.
-     * @param overWriteSnapshots
-     *            force Over Writing of the file
      * 
      * @throws MojoExecutionException
      *             with a message if an error occurs.
      */
-    protected boolean copyFile( File artifact, File destFile, boolean overWrite )
+    protected void copyFile( File artifact, File destFile )
         throws MojoExecutionException
     {
         Log theLog = this.getLog();
-        boolean result = false;
-        if ( !destFile.exists() || overWrite )
+        try
         {
-            try
-            {
-                theLog.info( "Copying " + (this.outputAbsoluteArtifactFilename ? artifact.getAbsolutePath() : artifact.getName()) + " to " + destFile );
-                FileUtils.copyFile( artifact, destFile );
-                result = true;
-            }
-            catch ( Exception e )
-            {
-                throw new MojoExecutionException( "Error copying artifact from " + artifact + " to " + destFile, e );
-            }
+            theLog.info( "Copying "
+                + ( this.outputAbsoluteArtifactFilename ? artifact.getAbsolutePath() : artifact.getName() ) + " to "
+                + destFile );
+            FileUtils.copyFile( artifact, destFile );
+
         }
-        else
+        catch ( Exception e )
         {
-            theLog.info( artifact.getName() + " already exists." );
-        }
-
-        return result;
-    }
-    
-    /**
-     * Unpacks the archive file, checking for a marker file to see if it should
-     * unpack again. Creates the marker file after unpacking.
-     * 
-     * @param Artifact
-     *            File to be unpacked.
-     * @param unpackDirectory
-     *            Location where to put the unpacked files. 
-     *            
-     *  @deprecated Please now use unpack()
-     * @see unpack()
-     */
-    protected void unpackFile( Artifact artifact, File unpackDirectory, File markersDirectory,
-                                   boolean overWrite )
-        throws MojoExecutionException
-    {
-        Log theLog = getLog();
-        markersDirectory.mkdirs();
-
-        File markerFile = new File( markersDirectory, artifact.getId().replace( ':', '-' ) + ".unpacked" );
-
-        if ( !markerFile.exists() || overWrite )
-        {
-            try
-            {
-                unpackDirectory.mkdirs();
-
-                unpack( artifact.getFile(), unpackDirectory);
-
-                // create marker file
-                markerFile.getParentFile().mkdirs();
-                markerFile.createNewFile();
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Error creating marker file: " + markerFile );
-            }
-        }
-        else
-        {
-            theLog.info( artifact.getFile().getName() + " already unpacked." );
+            throw new MojoExecutionException( "Error copying artifact from " + artifact + " to " + destFile, e );
         }
     }
 
@@ -237,7 +184,7 @@ public abstract class AbstractDependencyMojo
      * @param location
      *            Location where to put the unpacked files.
      */
-    protected void unpack( File file, File location)
+    protected void unpack( File file, File location )
         throws MojoExecutionException
     {
 
@@ -262,8 +209,9 @@ public abstract class AbstractDependencyMojo
         catch ( IOException e )
         {
             e.printStackTrace();
-            throw new MojoExecutionException( "Error unpacking file: " + (this.outputAbsoluteArtifactFilename ? file.getAbsolutePath() : file.getName()) + " to: " + location + "\r\n"
-                + e.toString(), e );
+            throw new MojoExecutionException( "Error unpacking file: "
+                + ( this.outputAbsoluteArtifactFilename ? file.getAbsolutePath() : file.getName() ) + " to: "
+                + location + "\r\n" + e.toString(), e );
         }
         catch ( ArchiverException e )
         {

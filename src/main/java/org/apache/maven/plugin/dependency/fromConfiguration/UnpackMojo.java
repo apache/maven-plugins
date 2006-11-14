@@ -23,12 +23,16 @@ import java.util.Iterator;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
+import org.apache.maven.plugin.dependency.utils.filters.MarkerFileFilter;
+import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
+import org.apache.maven.plugin.dependency.utils.markers.MarkerHandler;
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 
 /**
  * Goal that retrieves a list of artifacts from the repository and unpacks them
  * in a defined location.
+ * 
  * @since 1.0
  * @goal unpack
  * @phase process-sources
@@ -86,8 +90,18 @@ public final class UnpackMojo
     {
         Artifact artifact = artifactItem.getArtifact();
 
-        File location = artifactItem.getOutputDirectory();
+        MarkerHandler handler = new DefaultFileMarkerHandler( artifact, this.markersDirectory );
+        MarkerFileFilter filter = new MarkerFileFilter( this.overWriteReleases, this.overWriteSnapshots,
+                                                        this.overWriteIfNewer, handler );
 
-        unpackFile( artifact, location, this.markersDirectory, artifactItem.isDoOverWrite() );
+        if (artifactItem.isDoOverWrite() || filter.okToProcess(artifact))
+        {
+            unpack(artifact.getFile(),artifactItem.getOutputDirectory());
+            handler.setMarker();
+        }
+        else
+        {
+            this.getLog().info( artifact.getFile().getName() + " already unpacked." );
+        }
     }
 }
