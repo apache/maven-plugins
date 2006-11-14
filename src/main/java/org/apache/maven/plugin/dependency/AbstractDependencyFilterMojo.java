@@ -22,6 +22,7 @@ import java.util.Set;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
 import org.apache.maven.plugin.dependency.utils.filters.ArtifactsFilter;
+import org.apache.maven.plugin.dependency.utils.filters.ClassifierFilter;
 import org.apache.maven.plugin.dependency.utils.filters.FilterArtifacts;
 import org.apache.maven.plugin.dependency.utils.filters.ScopeFilter;
 import org.apache.maven.plugin.dependency.utils.filters.TransitivityFilter;
@@ -80,6 +81,24 @@ public abstract class AbstractDependencyFilterMojo
      * @optional
      */
     protected String excludeScope;
+
+    /**
+     * Comma Separated list of Classifiers to include. Empty String indicates include
+     * everything (default).
+     * @since 2.0
+     * @parameter expression="${includeClassifiers}" default-value=""
+     * @optional
+     */
+    protected String includeClassifiers;
+
+    /**
+     * Comma Separated list of Classifiers to exclude. Empty String indicates don't
+     * exclude anything (default). Ignored if includeClassifiers is used.
+     * @since 2.0
+     * @parameter expression="${excludeClassifiers}" default-value=""
+     * @optional
+     */
+    protected String excludeClassifiers;
 
     /**
      * Specify classifier to look for. Example: sources
@@ -158,6 +177,7 @@ public abstract class AbstractDependencyFilterMojo
         filter.addFilter( new TransitivityFilter( project.getDependencyArtifacts(), this.excludeTransitive ) );
         filter.addFilter( new ScopeFilter( this.includeScope, this.excludeScope ) );
         filter.addFilter( new TypeFilter( this.includeTypes, this.excludeTypes ) );
+        filter.addFilter( new ClassifierFilter( this.includeClassifiers, this.excludeClassifiers ) );
 
         // start with all artifacts.
         Set artifacts = project.getArtifacts();

@@ -53,8 +53,8 @@ public class TestTypeFilter
     public void testTypeParsing()
     {
         TypeFilter filter = new TypeFilter( "war,jar", "sources,zip," );
-        List includes = filter.getIncludeTypes();
-        List excludes = filter.getExcludeTypes();
+        List includes = filter.getIncludes();
+        List excludes = filter.getExcludes();
 
         assertEquals( 2, includes.size() );
         assertEquals( 2, excludes.size() );
