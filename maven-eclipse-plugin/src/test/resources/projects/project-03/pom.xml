@@ -32,16 +32,18 @@
           <exclude>**/*.properties</exclude>
         </excludes>
       </resource>
-      <resource>
-        <directory>src/main/resources</directory>
+    </resources>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
         <includes>
           <include>**/*.properties</include>
         </includes>
         <excludes>
           <exclude>**/*.xml</exclude>
         </excludes>
-      </resource>
-    </resources>
+      </testResource>
+    </testResources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
