@@ -101,7 +101,29 @@ public class CopyMojo
 
         File destFile = new File( artifactItem.getOutputDirectory(), destFileName );
 
-        copyFile( artifact.getFile(), destFile, artifactItem.isDoOverWrite() );
+        // TODO: refactor this to use the filters.
+        if ( !artifactItem.isDoOverWrite() )
+        {
+            if ( artifactItem.getArtifact().isSnapshot() )
+            {
+                artifactItem.setDoOverWrite( this.overWriteSnapshots );
+            }
+            else
+            {
+                artifactItem.setDoOverWrite( this.overWriteReleases );
+            }
+        }
+        
+        File artifactFile = artifact.getFile();
+        if ( artifactItem.isDoOverWrite()
+            || ( !destFile.exists() || ( overWriteIfNewer && artifactFile.lastModified() < destFile.lastModified() ) ) )
+        {
+            copyFile( artifactFile, destFile );
+        }
+        else
+        {
+            this.getLog().info( artifactFile + " already exists." );
+        }
     }
 
 }
