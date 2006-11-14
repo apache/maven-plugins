@@ -61,9 +61,17 @@ public abstract class AbstractFromConfigurationMojo
      * Overwrite snapshot artifacts
      * @optional
      * @since 1.0
-     * @parameter expression="${overWriteSnapshots}" default-value="true"
+     * @parameter expression="${overWriteSnapshots}" default-value="false"
      */
     protected boolean overWriteSnapshots;
+    
+    /**
+     * Overwrite if newer
+     * @optional
+     * @since 2.0
+     * @parameter expression="${overIfNewer}" default-value="true"
+     */
+    protected boolean overWriteIfNewer;
 
     /**
      * Collection of ArtifactItems to work on. (ArtifactItem contains groupId,
@@ -106,17 +114,11 @@ public abstract class AbstractFromConfigurationMojo
 
             artifactItem.setArtifact( this.getArtifact( artifactItem ) );
 
+            //TODO:refactor this
             String overWrite = artifactItem.getOverWrite();
             if ( overWrite == null )
             {
-                if ( artifactItem.getArtifact().isSnapshot() )
-                {
-                    artifactItem.setDoOverWrite( this.overWriteSnapshots );
-                }
-                else
-                {
-                    artifactItem.setDoOverWrite( this.overWriteReleases );
-                }
+                artifactItem.setDoOverWrite(false);
             }
             else
             {
@@ -198,9 +200,9 @@ public abstract class AbstractFromConfigurationMojo
      */
     private void fillMissingArtifactVersion( ArtifactItem artifact )
     {
-        this.getLog().debug(
-                             "Attempting to find missing version in " + artifact.getGroupId() + ":"
-                                 + artifact.getArtifactId() );
+       // this.getLog().debug(
+       //                      "Attempting to find missing version in " + artifact.getGroupId() + ":"
+       //                          + artifact.getArtifactId() );
 
         List list = this.project.getDependencies();
 
@@ -212,7 +214,7 @@ public abstract class AbstractFromConfigurationMojo
                 && dependency.getArtifactId().equals( artifact.getArtifactId() )
                 && dependency.getType().equals( artifact.getType() ) )
             {
-                this.getLog().debug( "Found missing version: " + dependency.getVersion() + " in dependency list." );
+//                this.getLog().debug( "Found missing version: " + dependency.getVersion() + " in dependency list." );
 
                 artifact.setVersion( dependency.getVersion() );
 
@@ -230,9 +232,9 @@ public abstract class AbstractFromConfigurationMojo
                 && dependency.getArtifactId().equals( artifact.getArtifactId() )
                 && dependency.getType().equals( artifact.getType() ) )
             {
-                this.getLog().debug(
-                                     "Found missing version: " + dependency.getVersion()
-                                         + " in dependency management list" );
+  //              this.getLog().debug(
+    //                                 "Found missing version: " + dependency.getVersion()
+      //                                   + " in dependency management list" );
 
                 artifact.setVersion( dependency.getVersion() );
             }

@@ -67,18 +67,13 @@ public class TestCopyDependenciesMojo
         throws MojoExecutionException, IOException
     {
         File src = File.createTempFile( "copy", null );
-        Random a = new Random();
-        File outputFolder2 = new File( "target/copyTo" + a.nextLong() + "/" );
 
         File dest = new File( mojo.outputDirectory, "toMe.jar" );
 
         assertFalse( dest.exists() );
 
-        assertTrue( mojo.copyFile( src, dest, false ) );
+        mojo.copyFile( src, dest );
         assertTrue( dest.exists() );
-        assertFalse( mojo.copyFile( src, dest, false ) );
-        assertTrue( mojo.copyFile( src, dest, true ) );
-
     }
 
     /**
@@ -473,9 +468,9 @@ public class TestCopyDependenciesMojo
         File copiedFile = new File( mojo.outputDirectory, DependencyUtil.getFormattedFileName( release, false ) );
 
         Thread.sleep( 100 );
-        //round up to the next second
+        // round up to the next second
         long time = System.currentTimeMillis() + 1000;
-        time = time - (time % 1000);
+        time = time - ( time % 1000 );
         copiedFile.setLastModified( time );
         Thread.sleep( 100 );
 
@@ -505,11 +500,12 @@ public class TestCopyDependenciesMojo
         File copiedFile = new File( mojo.outputDirectory, DependencyUtil.getFormattedFileName( release, false ) );
 
         Thread.sleep( 100 );
-        //round down to the last second
+        // round down to the last second
         long time = System.currentTimeMillis();
-        time = time - (time % 1000);
+        time = time - ( time % 1000 );
         copiedFile.setLastModified( time );
-        //wait at least a second for filesystems that only record to the nearest second.
+        // wait at least a second for filesystems that only record to the
+        // nearest second.
         Thread.sleep( 1000 );
 
         mojo.execute();
@@ -540,9 +536,9 @@ public class TestCopyDependenciesMojo
         File copiedFile = new File( mojo.outputDirectory, DependencyUtil.getFormattedFileName( snap, false ) );
 
         Thread.sleep( 100 );
-        //round up to the next second
+        // round up to the next second
         long time = System.currentTimeMillis() + 1000;
-        time = time - (time % 1000);
+        time = time - ( time % 1000 );
         copiedFile.setLastModified( time );
         Thread.sleep( 100 );
 
@@ -573,11 +569,12 @@ public class TestCopyDependenciesMojo
         File copiedFile = new File( mojo.outputDirectory, DependencyUtil.getFormattedFileName( snap, false ) );
 
         Thread.sleep( 100 );
-        //round down to the last second
+        // round down to the last second
         long time = System.currentTimeMillis();
-        time = time - (time % 1000);
+        time = time - ( time % 1000 );
         copiedFile.setLastModified( time );
-        //wait at least a second for filesystems that only record to the nearest second.
+        // wait at least a second for filesystems that only record to the
+        // nearest second.
         Thread.sleep( 1000 );
 
         mojo.execute();

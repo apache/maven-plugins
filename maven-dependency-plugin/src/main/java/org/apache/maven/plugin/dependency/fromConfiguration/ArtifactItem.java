@@ -90,11 +90,6 @@ public class ArtifactItem
     private boolean doOverWrite;
     
     /**
-     * Check Timestamp
-     */
-    private boolean doOverWriteIfNewer;
-
-    /**
      * Artifact Item
      */
     private Artifact artifact;
@@ -281,5 +276,4 @@ public class ArtifactItem
     {
         this.artifact = artifact;
     }
-
 }
