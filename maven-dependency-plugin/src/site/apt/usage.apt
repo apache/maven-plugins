@@ -48,7 +48,7 @@ Usage
    optional new name can be set to rename or the version stripped while copying. 
    
    The artifact version is optional. If not set, the plugin will attempt to resolve it from the
-   dependencyManagement section.
+   project dependencies and then the dependencyManagement section.
 
    Artifacts are copied using the following rules:
 
@@ -186,8 +186,8 @@ Usage
      
      * If none of the above is set, then it defaults to the <<<overWriteIfNewer>>> value (default = true) 
 
-   The artifact version is optional. If not set, the plugin will attempt to
-   resolve from the dependencyManagement section.
+   The artifact version is optional. If not set, the plugin will attempt to resolve it from the
+   project dependencies and then the dependencyManagement section.
 
 +---+
 <project>
