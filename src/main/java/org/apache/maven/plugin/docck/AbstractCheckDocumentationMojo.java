@@ -303,17 +303,17 @@ public abstract class AbstractCheckDocumentationMojo
 
         if ( StringUtils.isEmpty( project.getName() ) )
         {
-            reporter.error( "Missing tag <name>." );
+            reporter.error( "pom.xml is missing the <name> tag." );
         }
 
         if ( StringUtils.isEmpty( project.getDescription() ) )
         {
-            reporter.error( "Missing tag <description>." );
+            reporter.error( "pom.xml is missing the <description> tag." );
         }
 
         if ( StringUtils.isEmpty( project.getUrl() ) )
         {
-            reporter.error( "Missing tag <url>." );
+            reporter.error( "pom.xml is missing the <url> tag." );
         }
         else
         {
@@ -322,14 +322,14 @@ public abstract class AbstractCheckDocumentationMojo
 
         if ( project.getIssueManagement() == null )
         {
-            reporter.error( "Missing tag <issueManagement>." );
+            reporter.error( "pom.xml is missing the <issueManagement> tag." );
         }
         else
         {
             IssueManagement issueMngt = project.getIssueManagement();
             if ( StringUtils.isEmpty( issueMngt.getUrl() ) )
             {
-                reporter.error( "Missing <url> tag in <issueManagement>." );
+                reporter.error( "pom.xml is missing the <url> tag in <issueManagement>." );
             }
             else
             {
@@ -339,30 +339,30 @@ public abstract class AbstractCheckDocumentationMojo
 
         if ( project.getPrerequisites() == null )
         {
-            reporter.error( "Missing tag <prerequisites>" );
+            reporter.error( "pom.xml is missing the <prerequisites> tag." );
         }
         else
         {
             Prerequisites prereq = project.getPrerequisites();
             if ( StringUtils.isEmpty( prereq.getMaven() ) )
             {
-                reporter.error( "Missing <maven> tag in <prerequisites>" );
+                reporter.error( "pom.xml is missing the <maven> tag in <prerequisites>." );
             }
         }
 
         if ( StringUtils.isEmpty( project.getInceptionYear() ) )
         {
-            reporter.error( "Missing tag <inceptionYear>" );
+            reporter.error( "pom.xml is missing the <inceptionYear> tag." );
         }
 
         if ( project.getMailingLists().size() == 0 )
         {
-            reporter.warn( "No <mailingList> specified" );
+            reporter.warn( "pom.xml has no <mailingList> specified." );
         }
 
         if ( project.getScm() == null )
         {
-            reporter.warn( "Missing tag <scm>" );
+            reporter.warn( "pom.xml is missing the <scm> tag." );
         }
         else
         {
@@ -370,7 +370,7 @@ public abstract class AbstractCheckDocumentationMojo
             if ( StringUtils.isEmpty( scm.getConnection() ) && StringUtils.isEmpty( scm.getDeveloperConnection() )
                 && StringUtils.isEmpty( scm.getUrl() ) )
             {
-                reporter.warn( "Missing children under the <scm> tag " );
+                reporter.warn( "pom.xml is missing the child tags under the <scm> tag." );
             }
             else if ( scm.getUrl() != null )
             {
@@ -380,14 +380,14 @@ public abstract class AbstractCheckDocumentationMojo
 
         if ( project.getOrganization() == null )
         {
-            reporter.error( "Missing tag <organization>" );
+            reporter.error( "pom.xml is missing the <organization> tag." );
         }
         else
         {
             Organization org = project.getOrganization();
             if ( StringUtils.isEmpty( org.getName() ) )
             {
-                reporter.error( "Missing <name> tag in <organization>" );
+                reporter.error( "pom.xml is missing the <name> tag in <organization>." );
             }
             else if ( org.getUrl() != null )
             {
@@ -402,7 +402,7 @@ public abstract class AbstractCheckDocumentationMojo
 
         if ( licenses == null || licenses.isEmpty() )
         {
-            reporter.error( "No license(s) specified." );
+            reporter.error( "pom.xml has no <license> specified." );
         }
         else
         {
@@ -412,14 +412,14 @@ public abstract class AbstractCheckDocumentationMojo
 
                 if ( StringUtils.isEmpty( license.getName() ) )
                 {
-                    reporter.error( "Missing <name> tag in <license>" );
+                    reporter.error( "pom.xml is missing the <name> tag in <license>." );
                 }
                 else
                 {
                     String url = license.getUrl();
                     if ( StringUtils.isEmpty( url ) )
                     {
-                        reporter.error( "No license URL provided for license " + license.getName() );
+                        reporter.error( "pom.xml is missing the <url> tag for license " + license.getName() + "." );
                     }
                     else
                     {
