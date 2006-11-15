@@ -146,22 +146,22 @@ public class CheckPluginDocumentationMojo
 
                 if ( siteHtml.indexOf( "href=\"index.html\"" ) < 0 )
                 {
-                    reporter.error( "site.xml is missing link to: index.html \"Introduction\"" );
+                    reporter.error( "site.xml is missing the link to: index.html \"Introduction\"." );
                 }
 
                 if ( siteHtml.indexOf( "href=\"usage.html\"" ) < 0 )
                 {
-                    reporter.error( "site.xml is missing link to: usage.html \"Usage\"" );
+                    reporter.error( "site.xml is missing the link to: usage.html \"Usage\"." );
                 }
 
                 if ( siteHtml.indexOf( "href=\"plugin-info.html\"" ) < 0 )
                 {
-                    reporter.error( "site.xml is missing link to: plugin-info.html \"Goals\"" );
+                    reporter.error( "site.xml is missing the link to: plugin-info.html \"Goals\"." );
                 }
 
                 if ( siteHtml.indexOf( "href=\"faq.html\"" ) < 0 )
                 {
-                    reporter.error( "site.xml is missing link to: faq.html \"FAQ\"" );
+                    reporter.error( "site.xml is missing the link to: faq.html \"FAQ\"." );
                 }
             }
             catch ( IOException e )
@@ -175,26 +175,28 @@ public class CheckPluginDocumentationMojo
         // check for index.(xml|apt|html)
         if ( !findFiles( siteDirectory, "index" ) )
         {
-            errors.add( "Missing site index.(html|xml|apt)." );
+            errors.add( "There is no index file in your site directory (in html|xml|apt format)." );
         }
         */
 
         // check for usage.(xml|apt|html)
         if ( !findFiles( projectSiteDirectory, "usage" ) )
         {
-            reporter.error( "Missing base usage.(html|xml|apt)." );
+            reporter.error( "There is no usage file in your site directory (in html|xml|apt format)." );
         }
 
         // check for **/examples/**.(xml|apt|html)
         if ( !findFiles( projectSiteDirectory, "**/examples/*" ) &&
              !findFiles( projectSiteDirectory, "**/example*" ) )
         {
-            reporter.error( "Missing examples." );
+            reporter.error( "There are no example files in your site directory (in html|xml|apt format)."
+                + " They should either be called \"example*.(html|xml|apt)\""
+                + " or they should be located in the \"examples\" directory" );
         }
 
         if ( !findFiles( projectSiteDirectory, "faq" ) )
         {
-            reporter.error( "Missing base FAQ.(fml|html|xml|apt)." );
+            reporter.error( "There is no faq file in your site directory (in fml|html|xml|apt format)." );
         }
     }
 
@@ -221,12 +223,12 @@ public class CheckPluginDocumentationMojo
         }
         else
         {
-            reporter.error( "No report plugins configured." );
+            reporter.error( "pom.xml has no report plugins configured." );
         }
 
         for ( Iterator plugins = expectedPlugins.iterator(); plugins.hasNext(); )
         {
-            reporter.error( "Report plugin not found: " + plugins.next().toString() );
+            reporter.error( "pom.xml is missing the report plugin: " + plugins.next().toString() + "." );
         }
     }
 
