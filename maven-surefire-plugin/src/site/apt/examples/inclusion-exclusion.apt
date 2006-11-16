@@ -14,13 +14,13 @@ Inclusions and Exclusions of Tests
   with the following wildcard patterns:
 
    * <"**/Test*.java"> - includes all of its subdirectory and all java
-   filename that starts with "Test".
+   filenames that start with "Test".
 
    * <"**/*Test.java"> - includes all of its subdirectory and all java
-   filename that ends with "Test".
+   filenames that end with "Test".
 
    * <"**/*TestCase.java"> - includes all of its subdirectory and all java
-   filename that ends with "TestCase".
+   filenames that end with "TestCase".
 
    []
 
@@ -49,8 +49,8 @@ Inclusions and Exclusions of Tests
 
 * Exclusions
 
-  There are certain times that some tests are causing the build to fail.
-  Excluding them is one of the best workaround to continue the build.
+  There are certain times when some tests are causing the build to fail.
+  Excluding them is one of the best workarounds to continue the build.
   Exclusions can be done by configuring the <<excludes>> property of the
   plugin.
 
