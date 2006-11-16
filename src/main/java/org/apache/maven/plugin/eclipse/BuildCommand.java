@@ -22,6 +22,7 @@ import org.codehaus.plexus.util.xml.XMLWriter;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
+ * Represents a buildCommand section in the <code>.project</code> file.
  *
  * @author <a href="mailto:kenneyw@neonics.com">Kenney Westerhof</a>
  * @author Jochen Kuhnle
@@ -191,8 +192,12 @@ public class BuildCommand
         if ( obj instanceof BuildCommand )
         {
             BuildCommand b = (BuildCommand) obj;
-            return name.equals( b.name ) && ( triggers == null ? b.triggers == null : triggers.equals( b.triggers ) )
-                && ( arguments == null ? b.arguments == null : arguments.equals( b.arguments ) );
+
+            return name.equals( b.name )
+                && ( triggers == null ? b.triggers == null : triggers.equals( b.triggers ) )
+                && ( arguments == null || arguments.isEmpty()
+                    ? b.arguments == null || b.arguments.isEmpty()
+                    : arguments.equals( b.arguments ) );
         }
         else
         {
