@@ -16,6 +16,7 @@ package org.apache.maven.plugin.resources;
  * limitations under the License.
  */
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -313,8 +314,7 @@ public class ResourcesMojoTest
         String resourcesDir = project.getOutputDirectory();
         String checkString = "current working directory = " + (String) System.getProperty( "user.dir" );
 
-        assertTrue( FileUtils.fileExists( resourcesDir + "/file4.txt" ) );
-        assertTrue( fileContains( resourcesDir + "/file4.txt", checkString ) );
+        assertContent( resourcesDir + "/file4.txt", checkString );
     }
 
     /**
@@ -345,8 +345,7 @@ public class ResourcesMojoTest
         String resourcesDir = project.getOutputDirectory();
         String checkString = "current working directory = FPJ kami!!!";
 
-        assertTrue( FileUtils.fileExists( resourcesDir + "/file4.txt" ) );
-        assertTrue( fileContains( resourcesDir + "/file4.txt", checkString ) );
+        assertContent( resourcesDir + "/file4.txt", checkString );
     }
 
     /**
@@ -380,8 +379,7 @@ public class ResourcesMojoTest
         String resourcesDir = project.getOutputDirectory();
         String checkString = "current working directory=c\\:\\\\\\\\org\\\\apache\\\\test";
 
-        assertTrue( FileUtils.fileExists( resourcesDir + "/file4.properties" ) );
-        assertTrue( fileContains( resourcesDir + "/file4.properties", checkString ) );
+        assertContent( resourcesDir + "/file4.properties", checkString );
     }
 
     /**
@@ -414,37 +412,17 @@ public class ResourcesMojoTest
         String resourcesDir = project.getOutputDirectory();
         String checkString = "current working directory=testdir";
 
-        assertTrue( FileUtils.fileExists( resourcesDir + "/file4.properties" ) );
-        assertTrue( fileContains( resourcesDir + "/file4.properties", checkString ) );
+        assertContent( resourcesDir + "/file4.properties", checkString );
     }
 
-    // reads the first line of the file and compares it
-    // with data. returns true if equal
-    private boolean fileContains( String fileName, String data )
+    /**
+     * Ensures the file exists and its first line equals the given data.
+     */
+    private void assertContent( String fileName, String data )
+        throws IOException
     {
-        boolean bRetVal = false;
+        assertTrue( FileUtils.fileExists( fileName ) );
 
-        try
-        {
-            File file = new File( fileName );
-            FileReader reader = new FileReader( file );
-            char[] readChar = new char[100];
-            String readString;
-            int readSize;
-
-            readSize = reader.read( readChar );
-            readString = new String( readChar, 0, readSize );
-
-            if ( data.equals( readString ) )
-            {
-                bRetVal = true;
-            }
-        }
-        catch ( IOException io )
-        {
-            // TODO: handle exception
-        }
-
-        return bRetVal;
+        assertEquals( data, new BufferedReader( new FileReader( fileName ) ).readLine() );
     }
 }
