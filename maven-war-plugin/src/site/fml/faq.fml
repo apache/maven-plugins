@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+
+<!--
+  ~ Copyright 2006 The Apache Software Foundation.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<faqs id="FAQ" title="Frequently Asked Questions">
+ <part id="General">
+   <faq id="filtering">
+     <question>How is filtering done in the war plugin?</question>
+     <answer>
+       <p>Examples can be found <a href="examples/adding-filtering-webresources.html">here</a></p>
+     </answer>
+   </faq>
+   <faq id="classifieruse">
+     <question>How does the classifier affect artifacts in my war project?</question>
+     <answer>
+       <p>When used, the copy of the artifact in your project will have the classifier appended to its
+       filename. This can be used to differentiate duplicate artifacts.</p>
+     </answer>
+   </faq>
+   <faq id="transitiveexclude">
+     <question>How do I exclude transitive dependencies from my project?</question>
+     <answer>
+       <p>Give it a "provided" scope.</p>
+     </answer>
+   </faq>
+   <faq id="dependentwarexclude">
+     <question>What's the difference in using dependentWarExclude and provided scope?</question>
+     <answer>
+       <p>dependentWarExclude is used in <a href="examples/war-overlay.html">war overlays</a> for excluding dependent
+       war files from being included in the exploded war.</p>
+     </answer>
+   </faq>
+   <faq id="webresourcesexclude">
+     <question>How do I exclude files in my web rources?</question>
+     <answer>
+       <p>Use the webResources exclude parameter to identify the tokens to use for the filtering.</p>
+     </answer>
+   </faq>
+   <faq id="waroverlaysexclude">
+     <question>How do I exclude files when doing war overlays?</question>
+     <answer>
+       <p>Use the dependentWarExcludes parameter to identify the tokens to use for the filtering.</p>
+       <p>For more information refer to <a href="examples/adding-filtering-webresources.html">Adding and Filtering
+       External Web Resources</a></p>
+     </answer>
+   </faq>
+   <faq id="configurationdoc">
+     <question>Where can I find the documentation for the plugin's configuration?</question>
+     <answer>
+       <p>
+         For each goal, you can use the documentation from the <a href="http://maven.apache.org/plugins/maven-war-plugin/plugin-info.html">plugin site</a>.
+       </p>
+       <p>
+         If you need a specific version, generate it using site:site or use mvn help:describe \\ <br/>
+         -DgroupId=org.apache.maven.plugins -DartifactId=maven-war-plugin -Dfull=true \\ <br/>
+         -Dversion&gt;your-plugin-version-here&lt;
+       </p>
+     </answer>
+   </faq>
+ </part>
+</faqs>
