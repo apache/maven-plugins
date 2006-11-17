@@ -116,7 +116,7 @@ public class ResourcesMojo
         }
         else
         {
-            getLog().info( "Using encoding: \'" + encoding + "\' to copy filtered resources." );
+            getLog().info( "Using '" + encoding + "' to copy filtered resources." );
         }
         
         for ( Iterator i = resources.iterator(); i.hasNext(); )
@@ -129,6 +129,7 @@ public class ResourcesMojo
 
             if ( !resourceDirectory.exists() )
             {
+                getLog().info( "Resource directory does not exist: " + resourceDirectory );
                 continue;
             }
 
@@ -154,6 +155,7 @@ public class ResourcesMojo
             {
                 scanner.setIncludes( DEFAULT_INCLUDES );
             }
+
             if ( resource.getExcludes() != null && !resource.getExcludes().isEmpty() )
             {
                 scanner.setExcludes( (String[]) resource.getExcludes().toArray( EMPTY_STRING_ARRAY ) );
@@ -163,6 +165,11 @@ public class ResourcesMojo
             scanner.scan();
 
             List includedFiles = Arrays.asList( scanner.getIncludedFiles() );
+
+            getLog().info( "Copying " + includedFiles.size() + " resource"
+                + ( includedFiles.size() > 1 ? "s" : "" )
+                + ( targetPath == null ? "" : " to " + targetPath ) );
+
             for ( Iterator j = includedFiles.iterator(); j.hasNext(); )
             {
                 String name = (String) j.next();
