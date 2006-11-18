@@ -7,7 +7,7 @@
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>2-SNAPSHOT</version>
+    <version>3</version>
   </parent>
   <artifactId>maven-invoker-plugin</artifactId>
   <version>1.0-SNAPSHOT</version>
