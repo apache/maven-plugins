@@ -124,8 +124,6 @@ public class EarMojo
     /**
      * The directory to get the resources from.
      *
-     * @parameter expression="${project.build.outputDirectory}"
-     * @required
      * @deprecated
      */
     private File resourcesDir;
@@ -261,7 +259,7 @@ public class EarMojo
         // Copy resources files
         try
         {
-            if ( resourcesDir.exists() )
+            if ( resourcesDir != null && resourcesDir.exists() )
             {
                 getLog().info( "Copy ear resources to " + getWorkDirectory().getAbsolutePath() );
                 String[] fileNames = getEarFiles( resourcesDir );
