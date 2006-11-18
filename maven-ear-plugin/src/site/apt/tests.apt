@@ -90,6 +90,14 @@ Ear Plugin Tests
 
   * project-030: builds an EAR and make sure that ejb-client dependencies are detected and added in the generated application.xml
 
+  * project-031: builds an EAR with a Jboss 4 configuration specifying the security domain and the unauthenticated-principal to use
+
+  * project-032: builds an EAR with a Jboss 3.2 configuration specifying the jmx-name to use
+
+  * project-033: builds an EAR with a Jboss 4 configuration and Jboss specific modules
+
+  * project-034: builds an EAR with custom security settings
+
   
 
    

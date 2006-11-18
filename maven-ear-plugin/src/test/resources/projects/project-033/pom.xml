@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>ear</groupId>
+  <artifactId>maven-ear-plugin-test-project-033</artifactId>
+  <version>99.0</version>
+  <name>Maven</name>
+  <packaging>ear</packaging>
+  <dependencies>
+    <dependency>
+      <groupId>eartest</groupId>
+      <artifactId>ejb-sample-one</artifactId>
+      <version>1.0</version>
+      <type>ejb</type>
+    </dependency>
+    <dependency>
+      <groupId>eartest</groupId>
+      <artifactId>ejb-sample-two</artifactId>
+      <version>1.0</version>
+      <type>ejb</type>
+    </dependency>
+    <dependency>
+      <groupId>eartest</groupId>
+      <artifactId>sar-sample-one</artifactId>
+      <version>1.0</version>
+      <type>sar</type>
+    </dependency>
+    <dependency>
+      <groupId>eartest</groupId>
+      <artifactId>har-sample-one</artifactId>
+      <version>1.0</version>
+      <type>har</type>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-ear-plugin</artifactId>
+        <configuration>
+          <jboss>
+            <version>4</version>            
+          </jboss>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

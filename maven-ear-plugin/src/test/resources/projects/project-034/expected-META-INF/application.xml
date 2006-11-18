@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE application PUBLIC
+	"-//Sun Microsystems, Inc.//DTD J2EE Application 1.3//EN"
+	"http://java.sun.com/dtd/application_1_3.dtd">
+<application>
+  <display-name>maven-ear-plugin-test-project-034</display-name>
+  <module>
+    <ejb>ejb-sample-two-1.0.jar</ejb>
+  </module>
+  <module>
+    <ejb>ejb-sample-one-1.0.jar</ejb>
+  </module>
+  <security-role id="SecurityRole_1234">
+    <role-name>manager</role-name>
+  </security-role>
+  <security-role id="SecurityRole_5678">
+    <description>My cool description</description>
+    <role-name id="RoleName_12">teller</role-name>
+  </security-role>
+</application>
