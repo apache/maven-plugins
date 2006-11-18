@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE jboss-app PUBLIC
+	"-//JBoss//DTD J2EE Application 1.4//EN"
+	"http://www.jboss.org/j2ee/dtd/jboss-app_4_0.dtd">
+<jboss-app>
+  <module>
+    <har>har-sample-one-1.0.har</har>
+  </module>
+  <module>
+    <service>sar-sample-one-1.0.sar</service>
+  </module>
+</jboss-app>
