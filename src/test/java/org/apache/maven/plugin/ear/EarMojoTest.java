@@ -317,13 +317,51 @@ public class EarMojoTest
         doTestProject( "project-029", new String[]{"ejb-sample-one-1.0.jar"} );
     }
 
-     /**
+    /**
      * Builds an EAR and make sure that ejb-client dependencies are detected and added in the generated application.xml.
      */
     public void testProject030()
         throws Exception
     {
-        doTestProject( "project-030", new String[]{"ejb-sample-one-1.0.jar","ejb-sample-two-1.0-client.jar"} );
+        doTestProject( "project-030", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0-client.jar"} );
     }
+
+    /**
+     * Builds an EAR with a Jboss 4 configuration specifying the security domain and the
+     * unauthenticated-principal to use.
+     */
+    public void testProject031()
+        throws Exception
+    {
+        doTestProject( "project-031", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar"} );
+    }
+
+    /**
+     * Builds an EAR with a Jboss 3.2 configuration specifying the jmx-name to use.
+     */
+    public void testProject032()
+        throws Exception
+    {
+        doTestProject( "project-032", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar"} );
+    }
+
+    /**
+     * Builds an EAR with a Jboss 4 configuration and Jboss specific modules.
+     */
+    public void testProject033()
+        throws Exception
+    {
+        doTestProject( "project-033", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar",
+            "sar-sample-one-1.0.sar", "har-sample-one-1.0.har"} );
+    }
+
+    /**
+     * Builds an EAR with custom security settings.
+     */
+    public void testProject034()
+        throws Exception
+    {
+        doTestProject( "project-034", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar"} );
+    }    
 
 }
