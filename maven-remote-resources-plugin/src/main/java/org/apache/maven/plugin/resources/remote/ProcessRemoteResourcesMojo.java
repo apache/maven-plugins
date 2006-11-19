@@ -16,36 +16,38 @@ package org.apache.maven.plugin.resources.remote;
  * limitations under the License.
  */
 
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
+import org.apache.maven.artifact.InvalidRepositoryException;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.resources.remote.io.xpp3.RemoteResourcesBundleXpp3Reader;
-import org.apache.maven.shared.downloader.Downloader;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.ProjectUtils;
 import org.apache.maven.shared.downloader.DownloadException;
 import org.apache.maven.shared.downloader.DownloadNotFoundException;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.downloader.Downloader;
 import org.apache.velocity.VelocityContext;
-import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.codehaus.plexus.velocity.VelocityComponent;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Writer;
-import java.io.FileWriter;
-import java.util.List;
-import java.util.Iterator;
-import java.util.Enumeration;
-import java.util.ArrayList;
-import java.util.Date;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Iterator;
 
 /**
  * Pull down artifacts containing remote resources and process the resources contained
@@ -63,7 +65,7 @@ public class ProcessRemoteResourcesMojo
     private ArtifactRepository localRepository;
 
     /**
-     * @parameter expression="${project.remoteRepositories}
+     * @parameter expression="${project.repositories}
      */
     private ArrayList remoteRepositories;
 
@@ -97,6 +99,21 @@ public class ProcessRemoteResourcesMojo
      */
     private File workDirectory;
 
+    // These two things make this horrible. Maven artifact is way too complicated and the relationship between
+    // the model usage and maven-artifact needs to be reworked as well as all our tools that deal with it. The
+    // ProjectUtils should be a component so I don't have to expose the container and artifact factory here. Can't
+    // change it now because it's not released ...
+
+    /**
+     * @component
+     */
+    private ArtifactRepositoryFactory artifactRepositoryFactory;
+
+    /**
+     * @parameter expression="${session}"
+     */
+    private MavenSession mavenSession;
+
     public void execute()
         throws MojoExecutionException
     {
@@ -116,7 +133,10 @@ public class ProcessRemoteResourcesMojo
 
             try
             {
-                File artifact = downloader.download( s[0], s[1], s[2], localRepository, remoteRepositories );
+                File artifact = downloader.download( s[0], s[1], s[2], localRepository,
+                                                     ProjectUtils.buildArtifactRepositories( remoteRepositories,
+                                                                                             artifactRepositoryFactory,
+                                                                                             mavenSession.getContainer() ) );
 
                 classLoader.addURL( artifact.toURI().toURL() );
             }
@@ -125,6 +145,10 @@ public class ProcessRemoteResourcesMojo
                 throw new MojoExecutionException( "Error downloading resources JAR.", e );
             }
             catch ( DownloadNotFoundException e )
+            {
+                throw new MojoExecutionException( "Resources JAR cannot be found.", e );
+            }
+            catch( InvalidRepositoryException e )
             {
                 throw new MojoExecutionException( "Resources JAR cannot be found.", e );
             }
@@ -144,7 +168,7 @@ public class ProcessRemoteResourcesMojo
 
         context.put( "project", project );
 
-        String year = new SimpleDateFormat("yyyy").format( new Date() );
+        String year = new SimpleDateFormat( "yyyy" ).format( new Date() );
 
         context.put( "presentYear", year );
 
