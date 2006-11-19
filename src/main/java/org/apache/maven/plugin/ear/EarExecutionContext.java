@@ -1,5 +1,8 @@
 package org.apache.maven.plugin.ear;
 
+import org.apache.maven.plugin.ear.output.FileNameMapping;
+import org.apache.maven.plugin.ear.output.FileNameMappingFactory;
+
 /*
  * Copyright 2001-2005 The Apache Software Foundation.
  *
@@ -38,6 +41,8 @@ public class EarExecutionContext
 
     private JbossConfiguration jbossConfiguration;
 
+    private FileNameMapping fileNameMapping;
+
     private EarExecutionContext()
     {
 
@@ -58,9 +63,23 @@ public class EarExecutionContext
         return jbossConfiguration != null;
     }
 
-    protected void initialize( String defaultLibBundleDir, JbossConfiguration jbossConfiguration )
+    public FileNameMapping getFileNameMapping()
+    {
+        return fileNameMapping;
+    }
+
+    protected void initialize( String defaultLibBundleDir, JbossConfiguration jbossConfiguration,
+                               String fileNameMappingName )
     {
         this.defaultLibBundleDir = defaultLibBundleDir;
         this.jbossConfiguration = jbossConfiguration;
+        if ( fileNameMappingName == null || fileNameMappingName.trim().length() == 0 )
+        {
+            this.fileNameMapping = FileNameMappingFactory.INSTANCE.getDefaultFileNameMapping();
+        }
+        else
+        {
+            this.fileNameMapping = FileNameMappingFactory.INSTANCE.getFileNameMapping( fileNameMappingName );
+        }
     }
 }

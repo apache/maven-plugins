@@ -189,7 +189,7 @@ public abstract class AbstractEarModule
     {
         if ( bundleFileName == null )
         {
-            bundleFileName = artifact.getFile().getName();
+            bundleFileName = EarExecutionContext.getInstance().getFileNameMapping().mapFileName( artifact );
         }
         return bundleFileName;
     }

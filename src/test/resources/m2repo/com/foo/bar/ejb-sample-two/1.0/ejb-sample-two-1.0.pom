@@ -1,0 +1,20 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.foo.bar</groupId>
+  <artifactId>ejb-sample-two</artifactId>
+  <packaging>ejb</packaging>
+  <version>1.0</version>
+  <distributionManagement>
+    <status>verified</status>
+  </distributionManagement>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-ejb-plugin</artifactId>
+        <configuration>
+          <generateClient>true</generateClient>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
