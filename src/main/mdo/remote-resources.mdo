@@ -1,0 +1,34 @@
+<model>
+  <id>remoteResourcesBundle</id>
+  <name>RemoteResourcesBundle</name>
+  <description><![CDATA[
+    Project-local overrides to the build process based on detected or user-provided environmental parameters.
+    This is the model specification for ${basedir}/profiles.xml.
+  ]]></description>
+  <defaults>
+    <default>
+      <key>package</key>
+      <value>org.apache.maven.plugin.resources.remote</value>
+    </default>
+  </defaults>
+  <classes>
+    <class rootElement="true" xml.tagName="remoteResourcesBundle">
+      <name>RemoteResourcesBundle</name>
+      <version>1.0.0</version>
+      <description>Root element of the remote-resources.xml file.</description>
+      <fields>
+        <field>
+          <name>remoteResources</name>
+          <version>1.0.0</version>
+          <description><![CDATA[
+            Remote resources that are contained in a remote resources bundle.
+          ]]></description>
+          <association>
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+      </fields>
+    </class>
+  </classes>
+</model>
