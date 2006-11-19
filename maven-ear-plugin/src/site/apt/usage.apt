@@ -92,12 +92,18 @@ mvn package
   generated application.xml by specifying the <<<includeInApplicationXml>>> flag.
 
   It is also possible to specify a default bundle directory for all third party
-  libraries.
+  libraries by specifying the <<<defaultLibBundleDir>>> parameter.
 
   The security settings might be specified under the security parameter.
 
   The artifact's types that should be unpacked by default can be specified
   using the unpackTypes parameter
+
+  The file name mapping to use for artifacts stored in the EAR can be specified
+  using the <<<fileNameMapping>>> parameter. Valid values for this parameter
+  are <<<standard>>> (default) and <<<full>>>. By specifying <<<full>>> as file
+  name mapping, artifacts are prefixed by the <<<groupId>>> where dots have been
+  replaced by dashes.
 
   For more information on EAR modules, please see the
   {{{modules.html}modules configuration}} page.

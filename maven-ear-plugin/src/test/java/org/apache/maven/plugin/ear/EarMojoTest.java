@@ -362,6 +362,29 @@ public class EarMojoTest
         throws Exception
     {
         doTestProject( "project-034", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar"} );
-    }    
+    }
+
+    /**
+     * Builds an EAR with a full filename mapping and make sure that custom locations are not overriden.
+     */
+    public void testProject035()
+        throws Exception
+    {
+        doTestProject( "project-035", new String[]{"foo/eartest-ejb-sample-one-1.0.jar",
+            "eartest-ejb-sample-two-1.0.jar", "libs/eartest-jar-sample-one-1.0.jar",
+            "libs/eartest-jar-sample-two-1.0.jar", "sar-sample-one.sar"} );
+    }
+
+    /**
+     * Builds an EAR with a full filename mapping and make sure that groupIds with dots are replaced by dashes in filenames.
+     */
+    public void testProject036()
+        throws Exception
+    {
+        doTestProject( "project-036", new String[]{"foo/eartest-ejb-sample-one-1.0.jar",
+            "eartest-ejb-sample-two-1.0.jar", "com-foo-bar-ejb-sample-one-1.0.jar",
+            "com-foo-bar-ejb-sample-two-1.0.jar", "libs/eartest-jar-sample-one-1.0.jar",
+            "libs/eartest-jar-sample-two-1.0.jar", "sar-sample-one.sar"} );
+    }
 
 }
