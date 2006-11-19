@@ -281,19 +281,23 @@ public class EjbMojo
             }
             catch ( ArchiverException e )
             {
-                throw new MojoExecutionException( "There was a problem creating the EJB client archive: " + e.getMessage() , e );
+                throw new MojoExecutionException(
+                    "There was a problem creating the EJB client archive: " + e.getMessage(), e );
             }
             catch ( ManifestException e )
             {
-                throw new MojoExecutionException( "There was a problem creating the EJB client archive: " + e.getMessage() , e );
+                throw new MojoExecutionException(
+                    "There was a problem creating the EJB client archive: " + e.getMessage(), e );
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException( "There was a problem creating the EJB client archive: " + e.getMessage() , e );
+                throw new MojoExecutionException(
+                    "There was a problem creating the EJB client archive: " + e.getMessage(), e );
             }
             catch ( DependencyResolutionRequiredException e )
             {
-                throw new MojoExecutionException( "There was a problem creating the EJB client archive: " + e.getMessage() , e );
+                throw new MojoExecutionException(
+                    "There was a problem creating the EJB client archive: " + e.getMessage(), e );
             }
 
             // TODO: shouldn't need classifer
