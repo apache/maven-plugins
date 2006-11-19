@@ -2,7 +2,7 @@
 
 <!--
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Copyright 2001-2006 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,12 @@
       <item name="Introduction" href="index.html"/>
       <item name="Goals" href="plugin-info.html"/>
       <item name="Usage" href="usage.html"/>
-      <item name="FAQ" href="faq.html"/>
+      <!-- item name="FAQ" href="faq.html"/ -->
     </menu>
-    <!-- TODO: examples -->
+    <menu name="Examples">
+      <item name="Using the ejb client as a dependency" href="examples/ejb-client-dependency.html"/>
+      <item name="Generating an ejb jar client" href="examples/generating-ejb-client.html" />
+    </menu>
+    ${reports}
   </body>
 </project>
