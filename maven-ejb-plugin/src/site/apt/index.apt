@@ -1,0 +1,38 @@
+ ------
+ Introduction
+ ------
+ Stephane Nicoll
+ <snicoll@apache.org>
+ Pete Marvin King
+ ------
+ 15 July 2006
+ ------
+
+Maven EJB Plugin
+
+  This plugin generates J2EE Enterprise Javabean (EJB) file as well as the associated client jar.
+
+* Goals Overview
+
+  {{{ejb-mojo.html}ejb:ejb}} - used by maven for projects with ejb package type.
+ 
+* Usage 
+ 
+ Instructions on how to use the Maven EJB Plugin can be found {{{usage.html}here}}.
+ 
+* Examples
+
+  To provide you with better understanding on some usages of the Maven EJB Plugin,
+  you can take a look into the following examples:
+
+  * {{{examples/generating-ejb-client.html}Generating an ejb client}}
+ 
+  * {{{examples/ejb-client-dependency.html}Using the ejb-client as a dependency}}
+
+  []
+ 
+* Related Links
+
+  * {{{http://maven.apache.org/guides/mini/guide-manifest.html}Guide to manifest customization}}
+
+  []
