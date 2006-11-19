@@ -93,6 +93,14 @@ public abstract class AbstractEarMojo
     private String defaultLibBundleDir;
 
     /**
+     * The file name mapping to use for all dependencies included
+     * in the EAR file.
+     *
+     * @parameter
+     */
+    private String fileNameMapping;
+
+    /**
      * Directory that resources are copied to during the build.
      *
      * @parameter expression="${project.build.directory}/${project.build.finalName}"
@@ -142,7 +150,7 @@ public abstract class AbstractEarMojo
         }
 
         getLog().debug( "Initializing ear execution context" );
-        EarExecutionContext.getInstance().initialize( defaultLibBundleDir, jbossConfiguration );
+        EarExecutionContext.getInstance().initialize( defaultLibBundleDir, jbossConfiguration, fileNameMapping );
 
         getLog().debug( "Resolving ear modules ..." );
         allModules = new ArrayList();
