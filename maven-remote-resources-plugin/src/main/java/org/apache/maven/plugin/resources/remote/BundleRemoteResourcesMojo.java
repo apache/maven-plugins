@@ -44,7 +44,7 @@ public class BundleRemoteResourcesMojo
 
         try
         {
-            List resources = FileUtils.getFileNames( resourcesDirectory, null, "*~,*.bak", false );
+            List resources = FileUtils.getFileNames( resourcesDirectory, "**/*.txt,**/*.vm", "**/.svn/**", false );
 
             for ( Iterator i = resources.iterator(); i.hasNext(); )
             {
