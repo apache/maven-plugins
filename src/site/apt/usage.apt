@@ -1,0 +1,55 @@
+ ------
+ Usage
+ ------
+ Stephane Nicoll
+ <snicoll@apache.org>
+ Pete Marvin King
+ ------
+ 15 July 2006
+ ------
+
+Usage
+
+ The EJB plugin is used to package an EJB module. There are two ways to use the ejb plugin:
+  
+ * if the packaging type defined in the <<<pom.xml>>> is <<<ejb>>>, the <<<package>>> lifecycle phase can be used
+  
++--------------+
+  mvn package
++--------------+    
+  
+ * or using the <<<ejb:ejb>>> goal
+   
++--------------+
+  mvn ejb:ejb
++--------------+
+
+ []
+  
+ The plugin doesn't do any ejb specific processing during the generation of the jar except for validating the existence 
+ of an ejb deployment descriptor if the ejb version is 2.0+, but it provides the following customization:
+
+  * The ejb version to use
+  
+  * {{{examples/generating-ejb-client.html}Generating and customizing an ejb-client}}
+
+ <<The dependencies will not be package with the ejb jar.>>
+
+* Specifying the ejb version to use
+
+  In EJB3, the ejb-jar.xml deployment descriptor is not mandatory anymore. By default
+  the plugin assumes version 2.1. To use another version, configure the plugin as follows:
+
++--------
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-ejb-plugin</artifactId>
+        <configuration>
+          <ejbVersion>3.0</ejbVersion>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
++---------

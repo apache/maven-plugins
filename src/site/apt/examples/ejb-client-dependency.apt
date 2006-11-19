@@ -1,0 +1,55 @@
+ ------
+ Using the ejb-client as a dependency
+ ------
+ Pete Marvin King
+ ------
+ 15 July 2006
+ ------
+
+Using the ejb-client as a dependency
+
+ The ejb client is capable of generating another artifact aside from the primary one which is ejb. To choose the ejb client
+ as the dependency just specify the type as <<<ejb-client>>>. 
+
+* Normal way of adding an ejb dependency   
+ 
+ The following dependency declaration would include the primary ejb artifact <<<ejb-project-1.0-SNAPSHOT.jar>>> in your
+ project's package.
+ 
++------------+   
+  [...]
+  <dependencies>
+    <dependency>
+      <groupId>com.example</groupId>
+      <artifactId>ejb-project</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <type>ejb</type>
+    </dependency>
+  </dependencies>
+  [...]
++------------+   
+   
+* Using the ejb-client
+
+ Using this dependency declaration would instead use the ejb-client artifact <<<ejb-project-1.0-SNAPSHOT-client.jar>>> 
+ in your project's package.
+
++------------+   
+  [...]
+  <dependencies>
+    <dependency>
+      <groupId>com.example</groupId>
+      <artifactId>ejb-project</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <type>ejb-client</type>
+    </dependency>
+  </dependencies>
+  [...]
++------------+   
+ 
+ 
+ For more details on generating the ejb client check the {{{generating-ejb-client.html}ejb-client guide}}.
+ 
+ 
+ 
+ 
