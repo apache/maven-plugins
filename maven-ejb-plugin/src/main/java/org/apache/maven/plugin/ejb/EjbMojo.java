@@ -150,6 +150,7 @@ public class EjbMojo
      * </p>
      * @parameter default-value="2.1"
      * @required
+     * @since 2.1
      */
     private String ejbVersion;
 
