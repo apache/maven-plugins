@@ -1,0 +1,86 @@
+ ------
+ Generating an ejb client
+ ------
+ Stephane Nicoll
+ <snicoll@apache.org>
+ Pete Marvin King
+ ------
+ 15 July 2006 
+ ------
+
+Generating an ejb client
+
+ Normally a thick-client application would only need the stubs and utility classes of the ejb project.
+ The ejb plugin is capable of generating an ejb jar for client use.
+
+ To generate the ejb-client jar, you need to set <<<generateClient>>> to <<<true>>> in the plugin's configuration:
+
++--------+
+  [...]
+  <build>
+    [...]
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-ejb-plugin</artifactId>
+        <configuration>
+          <!-- this is false by default -->
+          <generateClient>true</generateClient>
+        </configuration>
+      </plugin>
+    </plugins>
+    [...]
+  </build>
+  [...]
++---------+ 
+
+* Client inclusions and exclusions
+
+  The content of the ejb-client archive can also be customized using inclusions and exclusions. 
+  
+** Default Exclusions:
+
+  *<<<\*\*/\*Bean.class>>> 
+  
+  *<<<\*\*/\*CMP.class>>>
+  
+  *<<<\*\*/\*Session.class>>>
+  
+  *<<<\*\*/package.html>>>
+
+  []
+  
+  To customize this, use <<<clientExcludes>>> and <<<clientIncludes>>> element:
+
++--------+
+  [...]
+  <build>
+    [...]
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-ejb-plugin</artifactId>
+        <configuration>
+          <clientIncludes>
+             <!-- this will include all files and directories under com/foo/bar -->
+             <clientInclude>com/foo/bar/**</clientInclude>
+             <!-- this will include all files and directories under com/foo/acme -->
+             <clientInclude>com/foo/acme/**</clientInclude>
+             <!-- this will include all files under com/example -->                          
+             <clientInclude>com/example/*</clientInclude>             
+          </clientIncludes>
+          <clientExcludes>
+             <!-- this will exclude all files under com/example -->                          
+             <clientExclude>com/example/*</clientExclude>                                     
+             <!-- this will exclude all files and directories with the name sparrow under com/jack -->
+             <clientExclude>com/jack/**/sparrow</clientExclude>                                                  
+          </clientExcludes>
+        </configuration>
+      </plugin>
+    </plugins>
+    [...]
+  </build>
+  [...]
++---------+
+
+ <<Be careful when mixing excludes and includes, excludes will have a higher priority than includes.>>
