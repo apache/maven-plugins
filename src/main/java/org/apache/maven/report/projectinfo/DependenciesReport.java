@@ -19,25 +19,18 @@ package org.apache.maven.report.projectinfo;
 import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.resolver.ArtifactCollector;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.project.MavenProjectBuilder;
-import org.apache.maven.project.ProjectBuildingException;
-import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.report.projectinfo.dependencies.Dependencies;
 import org.apache.maven.report.projectinfo.dependencies.DependenciesReportConfiguration;
-import org.apache.maven.report.projectinfo.dependencies.ReportResolutionListener;
 import org.apache.maven.report.projectinfo.dependencies.RepositoryUtils;
 import org.apache.maven.report.projectinfo.dependencies.renderer.DependenciesRenderer;
 import org.apache.maven.settings.Settings;
-import org.codehaus.plexus.PlexusConstants;
-import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.context.Context;
-import org.codehaus.plexus.context.ContextException;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
+import org.apache.maven.shared.dependency.tree.DependencyTree;
+import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
+import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
+import org.apache.maven.shared.jar.JarAnalyzerFactory;
 
-import java.util.Collections;
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * Generates the Project Dependencies report.
@@ -50,7 +43,6 @@ import java.util.Map;
  */
 public class DependenciesReport
     extends AbstractProjectInfoReport
-    implements Contextualizable
 {
     /**
      * Maven Project Builder.
@@ -73,7 +65,17 @@ public class DependenciesReport
      * @component
      */
     private WagonManager wagonManager;
+    
+    /**
+     * @component
+     */
+    private DependencyTreeBuilder dependencyTreeBuilder;
 
+    /**
+     * @component
+     */
+    private JarAnalyzerFactory jarAnalyzerFactory;
+    
     /**
      * The current user system settings for use in Maven.
      *
@@ -93,8 +95,6 @@ public class DependenciesReport
      * @parameter expression="${dependency.locations.enabled}" default-value="false"
      */
     private boolean dependencyLocationsEnabled;
-
-    private PlexusContainer container;
 
     /**
      * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
@@ -121,56 +121,33 @@ public class DependenciesReport
                                                          project.getRemoteArtifactRepositories(),
                                                          project.getPluginArtifactRepositories(), localRepository );
 
-        ReportResolutionListener listener = resolveProject();
+        DependencyTree dependencyTree = resolveProject();
 
-        Dependencies dependencies = new Dependencies( project, listener, container );
+        Dependencies dependencies = new Dependencies( project, dependencyTree, jarAnalyzerFactory );
 
         DependenciesReportConfiguration config =
             new DependenciesReportConfiguration( dependencyDetailsEnabled, dependencyLocationsEnabled );
 
         DependenciesRenderer r =
-            new DependenciesRenderer( getSink(), locale, i18n, dependencies, listener, config, repoUtils );
+            new DependenciesRenderer( getSink(), locale, i18n, dependencies, dependencyTree, config, repoUtils );
 
         repoUtils.setLog( getLog() );
         r.setLog( getLog() );
         r.render();
     }
 
-    private ReportResolutionListener resolveProject()
+    private DependencyTree resolveProject()
     {
-        Map managedVersions = null;
         try
         {
-            managedVersions = Dependencies.getManagedVersionMap( project, factory );
+            return dependencyTreeBuilder.buildDependencyTree( project, localRepository, factory,
+                                                              artifactMetadataSource, collector );
         }
-        catch ( ProjectBuildingException e )
+        catch ( DependencyTreeBuilderException e )
         {
-            getLog().error( "An error occurred while resolving project dependencies.", e );
-        }
-
-        ReportResolutionListener listener = new ReportResolutionListener();
-
-        try
-        {
-            // TODO site:run Why do we need to resolve this...
-            if ( project.getDependencyArtifacts() == null )
-            {
-                project.setDependencyArtifacts( project.createArtifacts( factory, null, null ) );
-            }
-            collector.collect( project.getDependencyArtifacts(), project.getArtifact(), managedVersions,
-                               localRepository, project.getRemoteArtifactRepositories(), artifactMetadataSource, null,
-                               Collections.singletonList( listener ) );
-        }
-        catch ( ArtifactResolutionException e )
-        {
-            getLog().error( "An error occurred while resolving project dependencies.", e );
-        }
-        catch ( InvalidDependencyVersionException e )
-        {
-            getLog().error( "An error occurred while resolving project dependencies.", e );
-        }
-
-        return listener;
+            getLog().error( "Unable to build dependency tree.", e );
+            return null;
+        } 
     }
 
     /**
@@ -179,11 +156,5 @@ public class DependenciesReport
     public String getOutputName()
     {
         return "dependencies";
-    }
-
-    public void contextualize( Context context )
-        throws ContextException
-    {
-        container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
     }
 }
