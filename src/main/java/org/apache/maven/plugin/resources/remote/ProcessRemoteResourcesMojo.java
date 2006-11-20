@@ -148,7 +148,7 @@ public class ProcessRemoteResourcesMojo
             {
                 throw new MojoExecutionException( "Resources JAR cannot be found.", e );
             }
-            catch( InvalidRepositoryException e )
+            catch ( InvalidRepositoryException e )
             {
                 throw new MojoExecutionException( "Resources JAR cannot be found.", e );
             }
@@ -201,7 +201,7 @@ public class ProcessRemoteResourcesMojo
             {
                 String resource = (String) i.next();
 
-                File f = new File( outputDirectory, resource );
+                File f = new File( outputDirectory, StringUtils.replaceOnce( resource, ".vm", ".txt" ) );
 
                 FileUtils.mkdir( f.getParentFile().getAbsolutePath() );
 
