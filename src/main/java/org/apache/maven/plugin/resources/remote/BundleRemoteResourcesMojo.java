@@ -4,6 +4,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.resources.remote.io.xpp3.RemoteResourcesBundleXpp3Writer;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.util.List;
 import java.util.Iterator;
@@ -50,7 +51,7 @@ public class BundleRemoteResourcesMojo
             {
                 String resource = (String) i.next();
 
-                remoteResourcesBundle.addRemoteResource( resource.replaceAll( "\\", "/" ) );
+                remoteResourcesBundle.addRemoteResource( StringUtils.replace( resource, '\\', '/' ) );
             }
         }
         catch ( IOException e )
