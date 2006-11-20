@@ -18,23 +18,16 @@ package org.apache.maven.report.projectinfo.dependencies;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
-import org.apache.maven.artifact.versioning.VersionRange;
-import org.apache.maven.model.Dependency;
-import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.ProjectBuildingException;
-import org.apache.maven.report.projectinfo.dependencies.ReportResolutionListener.Node;
-import org.apache.maven.shared.jar.Jar;
-import org.apache.maven.shared.jar.JarException;
+import org.apache.maven.shared.dependency.tree.DependencyNode;
+import org.apache.maven.shared.dependency.tree.DependencyTree;
+import org.apache.maven.shared.jar.JarAnalyzer;
+import org.apache.maven.shared.jar.JarAnalyzerException;
+import org.apache.maven.shared.jar.JarAnalyzerFactory;
 import org.apache.maven.shared.jar.classes.JarClasses;
-import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -43,19 +36,18 @@ import java.util.Map;
 public class Dependencies
 {
     private List projectDependencies;
+    private DependencyTree dependencyTree;
+    private JarAnalyzerFactory jarAnalyzerFactory;
 
-    private ReportResolutionListener resolvedDependencies;
-
-    private Jar jar;
-
-    public Dependencies( MavenProject project, ReportResolutionListener listener, PlexusContainer container )
+    public Dependencies( MavenProject project, DependencyTree dependencyTree, JarAnalyzerFactory jarAnalyzerFactory )
     {
-        this.projectDependencies = listener.getRootNode().getChildren();
-        this.resolvedDependencies = listener;
+        this.dependencyTree = dependencyTree;
+        this.projectDependencies = dependencyTree.getRootNode().getChildren();
+        this.jarAnalyzerFactory = jarAnalyzerFactory;
 
         /*
-        * Workaround to ensure proper File objects in the Artifacts from the ReportResolutionListener
-        */
+         * Workaround to ensure proper File objects in the Artifacts from the ReportResolutionListener
+         */
         Map projectMap = new HashMap();
         Iterator it = project.getArtifacts().iterator();
         while ( it.hasNext() )
@@ -64,60 +56,10 @@ public class Dependencies
             projectMap.put( ArtifactUtils.versionlessKey( artifact ), artifact );
         }
 
-        mapArtifactFiles( listener.getRootNode(), projectMap );
-
-        // quick fix
-        try
-        { 
-            if ( container != null )
-            {    
-                this.jar = (Jar) container.lookup( Jar.ROLE );
-            }    
-        }
-        catch ( ComponentLookupException ex )
-        {
-            //TODO: handle exception
-        }
+        mapArtifactFiles( dependencyTree.getRootNode(), projectMap );
     } 
     
-    public static Map getManagedVersionMap( MavenProject project, ArtifactFactory factory )
-        throws ProjectBuildingException
-    {
-        DependencyManagement dependencyManagement = project.getDependencyManagement();
-        Map managedVersionMap;
-
-        if ( dependencyManagement != null && dependencyManagement.getDependencies() != null )
-        {
-            managedVersionMap = new HashMap();
-            for ( Iterator i = dependencyManagement.getDependencies().iterator(); i.hasNext(); )
-            {
-                Dependency d = (Dependency) i.next();
-
-                try
-                {
-                    VersionRange versionRange = VersionRange.createFromVersionSpec( d.getVersion() );
-                    Artifact artifact = factory.createDependencyArtifact( d.getGroupId(), d.getArtifactId(),
-                                                                          versionRange, d.getType(), d.getClassifier(),
-                                                                          d.getScope() );
-                    managedVersionMap.put( d.getManagementKey(), artifact );
-                }
-                catch ( InvalidVersionSpecificationException e )
-                {
-                    throw new ProjectBuildingException( project.getId(), "Unable to parse version '" + d.getVersion() +
-                        "' for dependency '" + d.getManagementKey() + "': " + e.getMessage(), e );
-                }
-            }
-        }
-        else
-        {
-            managedVersionMap = Collections.EMPTY_MAP;
-        }
-
-        return managedVersionMap;
-    }
-
-
-    private void mapArtifactFiles( Node node, Map projectMap )
+    private void mapArtifactFiles( DependencyNode node, Map projectMap )
     {
         List childs = node.getChildren();
         if ( ( childs == null ) || childs.isEmpty() )
@@ -128,7 +70,7 @@ public class Dependencies
         Iterator it = childs.iterator();
         while ( it.hasNext() )
         {
-            Node anode = (ReportResolutionListener.Node) it.next();
+            DependencyNode anode = (DependencyNode) it.next();
             String key = ArtifactUtils.versionlessKey( anode.getArtifact() );
             Artifact projartifact = (Artifact) projectMap.get( key );
             if ( projartifact != null )
@@ -152,22 +94,14 @@ public class Dependencies
 
     public List getTransitiveDependencies()
     {
-        List deps = new ArrayList( resolvedDependencies.getArtifacts() );
+        List deps = new ArrayList( dependencyTree.getArtifacts() );
         deps.removeAll( projectDependencies );
         return deps;
     }
 
     public List getAllDependencies()
     {
-        List deps = new ArrayList();
-
-        for ( Iterator it = resolvedDependencies.getArtifacts().iterator(); it.hasNext(); )
-        {
-            ReportResolutionListener.Node node = (ReportResolutionListener.Node) it.next();
-            Artifact artifact = node.getArtifact();
-            deps.add( artifact );
-        }
-        return deps;
+        return dependencyTree.getArtifacts();
     }
 
     public Map getDependenciesByScope()
@@ -189,19 +123,14 @@ public class Dependencies
     }
 
     public JarDependencyDetails getJarDependencyDetails( Artifact artifact )
-        throws JarException
+        throws JarAnalyzerException
     {
         File artifactFile = artifact.getFile();
-        JarClasses jarClasses;
-
-        jar.setFile( artifactFile );
-        jarClasses = jar.getClasses();
+        
+        JarAnalyzer jar = jarAnalyzerFactory.getJarAnalyzer( artifactFile ); 
+        
+        JarClasses jarClasses = jar.getClasses();
 
         return new JarDependencyDetails( jarClasses, jar.isSealed(), jar.getEntries() );
-    }
-    
-    public ReportResolutionListener.Node getResolvedRoot()
-    {
-        return resolvedDependencies.getRootNode();
     }
 }
