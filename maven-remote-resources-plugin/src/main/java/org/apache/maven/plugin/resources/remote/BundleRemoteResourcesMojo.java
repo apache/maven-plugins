@@ -50,7 +50,7 @@ public class BundleRemoteResourcesMojo
             {
                 String resource = (String) i.next();
 
-                remoteResourcesBundle.addRemoteResource( resource );
+                remoteResourcesBundle.addRemoteResource( resource.replaceAll( "\\", "/" ) );
             }
         }
         catch ( IOException e )
