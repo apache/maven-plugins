@@ -13,10 +13,11 @@ import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.report.projectinfo.dependencies.Dependencies;
 import org.apache.maven.report.projectinfo.dependencies.DependenciesReportConfiguration;
 import org.apache.maven.report.projectinfo.dependencies.JarDependencyDetails;
-import org.apache.maven.report.projectinfo.dependencies.ReportResolutionListener;
 import org.apache.maven.report.projectinfo.dependencies.RepositoryUtils;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
-import org.apache.maven.shared.jar.JarException;
+import org.apache.maven.shared.dependency.tree.DependencyNode;
+import org.apache.maven.shared.dependency.tree.DependencyTree;
+import org.apache.maven.shared.jar.JarAnalyzerException;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -50,7 +51,7 @@ public class DependenciesRenderer
         JAR_SUBTYPE.add( "ejb" );
     }
 
-    private final ReportResolutionListener listener;
+    private final DependencyTree dependencyTree;
 
     private Dependencies dependencies;
 
@@ -80,15 +81,15 @@ public class DependenciesRenderer
         }
     };
 
-    public DependenciesRenderer( Sink sink, Locale locale, I18N _i18n, Dependencies _dependencies,
-                                 ReportResolutionListener listener, DependenciesReportConfiguration config,
+    public DependenciesRenderer( Sink sink, Locale _locale, I18N _i18n, Dependencies _dependencies,
+                                 DependencyTree _depTree, DependenciesReportConfiguration _config,
                                  RepositoryUtils _repoUtils )
     {
         super( sink );
 
-        this.locale = locale;
+        this.locale = _locale;
 
-        this.listener = listener;
+        this.dependencyTree = _depTree;
 
         this.repoUtils = _repoUtils;
 
@@ -96,7 +97,7 @@ public class DependenciesRenderer
 
         this.i18n = _i18n;
 
-        this.configuration = config;
+        this.configuration = _config;
     }
 
     public void setLog( Log _log )
@@ -231,7 +232,7 @@ public class DependenciesRenderer
         startSection( getReportString( "report.dependencies.graph.tree.title" ) );
         sink.paragraph();
         sink.list();
-        printDependencyListing( listener.getRootNode() );
+        printDependencyListing( dependencyTree.getRootNode() );
         sink.list_();
         sink.paragraph_();
         endSection();
@@ -342,7 +343,7 @@ public class DependenciesRenderer
                             decFormat.format( jarDetails.getPackageSize() ), jarDetails.getJdkRevision(), debugstr,
                             sealedstr} );
                     }
-                    catch ( JarException e )
+                    catch ( JarAnalyzerException e )
                     {
                         createExceptionInfoTableRow( artifact, artifactFile, e );
                     }
@@ -532,7 +533,7 @@ public class DependenciesRenderer
     private void renderSectionDependencyListing()
     {
         startSection( getReportString( "report.dependencies.graph.tables.title" ) );
-        printDescriptionsAndURLs( listener.getRootNode() );
+        printDescriptionsAndURLs( dependencyTree.getRootNode() );
         endSection();
     }
 
@@ -599,7 +600,7 @@ public class DependenciesRenderer
             artifact.getClassifier(), artifact.getType(), artifact.isOptional() ? "(optional)" : " "};
     }
 
-    private void printDependencyListing( ReportResolutionListener.Node node )
+    private void printDependencyListing( DependencyNode node )
     {
         Artifact artifact = node.getArtifact();
         String id = artifact.getDependencyConflictId();
@@ -616,7 +617,7 @@ public class DependenciesRenderer
             sink.list();
             for ( Iterator deps = node.getChildren().iterator(); deps.hasNext(); )
             {
-                ReportResolutionListener.Node dep = (ReportResolutionListener.Node) deps.next();
+                DependencyNode dep = (DependencyNode) deps.next();
                 printDependencyListing( dep );
             }
             sink.list_();
@@ -626,7 +627,7 @@ public class DependenciesRenderer
         sink.listItem_();
     }
 
-    private void printDescriptionsAndURLs( ReportResolutionListener.Node node )
+    private void printDescriptionsAndURLs( DependencyNode node )
     {
         Artifact artifact = node.getArtifact();
         String id = artifact.getDependencyConflictId();
@@ -713,7 +714,7 @@ public class DependenciesRenderer
 
             for ( Iterator deps = node.getChildren().iterator(); deps.hasNext(); )
             {
-                ReportResolutionListener.Node dep = (ReportResolutionListener.Node) deps.next();
+                DependencyNode dep = (DependencyNode) deps.next();
                 printDescriptionsAndURLs( dep );
             }
         }
