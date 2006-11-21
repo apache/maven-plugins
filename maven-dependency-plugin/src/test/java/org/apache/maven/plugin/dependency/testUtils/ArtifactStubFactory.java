@@ -20,7 +20,11 @@ package org.apache.maven.plugin.dependency.testUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -28,6 +32,7 @@ import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.plugin.dependency.fromConfiguration.ArtifactItem;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.SilentLog;
 import org.codehaus.plexus.archiver.Archiver;
@@ -95,6 +100,9 @@ public class ArtifactStubFactory
         return artifact;
     }
 
+    /*
+     * Creates a file that can be copied or unpacked based on the passed in artifact
+     */
     public void setArtifactFile( Artifact artifact )
         throws IOException
     {
@@ -294,5 +302,22 @@ public class ArtifactStubFactory
     public void setSrcFile( File srcFile )
     {
         this.srcFile = srcFile;
+    }
+    
+    public ArtifactItem getArtifactItem(Artifact artifact)
+    {
+     ArtifactItem item = new ArtifactItem(artifact);
+     return item;
+    }
+    
+    public ArrayList getArtifactItems(Collection artifacts)
+    {
+        ArrayList list = new ArrayList();
+        Iterator iter = artifacts.iterator();
+        while (iter.hasNext())
+        {
+           list.add(getArtifactItem((Artifact) iter.next()));
+        }
+        return list;
     }
 }
