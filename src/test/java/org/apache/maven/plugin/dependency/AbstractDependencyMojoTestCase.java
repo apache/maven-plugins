@@ -20,8 +20,8 @@ package org.apache.maven.plugin.dependency;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.maven.plugin.dependency.utils.ArtifactStubFactory;
-import org.apache.maven.plugin.dependency.utils.DependencyTestUtils;
+import org.apache.maven.plugin.dependency.testUtils.ArtifactStubFactory;
+import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 public class AbstractDependencyMojoTestCase

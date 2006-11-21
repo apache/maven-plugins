@@ -17,48 +17,36 @@
  * under the License.    
  */
 
-package org.apache.maven.plugin.dependency.stubs;
+package org.apache.maven.plugin.dependency.testUtils.stubs;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URI;
 
-public class StubMarkerFile
-    extends File
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.dependency.utils.markers.SourcesFileMarkerHandler;
+
+public class StubSourcesFileMarkerHandler
+    extends SourcesFileMarkerHandler
 {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
-
-    public StubMarkerFile( String pathname )
+    public StubSourcesFileMarkerHandler( Artifact artifact, File markerFilesDirectory, boolean resolved )
     {
-        super( pathname );
+        super( artifact, markerFilesDirectory, resolved );
         // TODO Auto-generated constructor stub
     }
 
-    public StubMarkerFile( URI uri )
+    protected File getMarkerFile( boolean res )
     {
-        super( uri );
-        // TODO Auto-generated constructor stub
+        String suffix;
+        if ( res )
+        {
+            suffix = ".resolved";
+        }
+        else
+        {
+            suffix = ".unresolved";
+        }
+
+        return new StubMarkerFile( this.markerFilesDirectory, this.artifact.getId().replace( ':', '-' ) + suffix );
     }
 
-    public StubMarkerFile( File parent, String child )
-    {
-        super( parent, child );
-        // TODO Auto-generated constructor stub
-    }
-
-    public StubMarkerFile( String parent, String child )
-    {
-        super( parent, child );
-        // TODO Auto-generated constructor stub
-    }
-
-    public boolean createNewFile()
-        throws IOException
-    {
-        throw new IOException( "Intended Error" );
-    }
 }

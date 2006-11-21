@@ -17,7 +17,7 @@
  * under the License.    
  */
 
-package org.apache.maven.plugin.dependency.stubs;
+package org.apache.maven.plugin.dependency.testUtils.stubs;
 /*
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
