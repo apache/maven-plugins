@@ -29,7 +29,7 @@ import junit.framework.TestCase;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.dependency.utils.ArtifactStubFactory;
+import org.apache.maven.plugin.dependency.testUtils.ArtifactStubFactory;
 import org.apache.maven.plugin.dependency.utils.SilentLog;
 import org.apache.maven.plugin.logging.Log;
 

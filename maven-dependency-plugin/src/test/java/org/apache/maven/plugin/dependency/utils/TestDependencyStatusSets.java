@@ -86,7 +86,7 @@ public class TestDependencyStatusSets
     public void testDependencyStatusLogNullFiles()
         throws IOException
     {
-        this.stubFactory.createFiles = false;
+        this.stubFactory.setCreateFiles(false);
         Set artifacts = this.stubFactory.getMixedArtifacts();
         doTestDependencyStatusLog( artifacts );
     }

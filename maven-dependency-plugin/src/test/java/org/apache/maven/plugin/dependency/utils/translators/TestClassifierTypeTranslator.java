@@ -32,7 +32,7 @@ import org.apache.maven.artifact.factory.DefaultArtifactFactory;
 import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
 import org.apache.maven.artifact.handler.manager.DefaultArtifactHandlerManager;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
-import org.apache.maven.plugin.dependency.utils.ArtifactStubFactory;
+import org.apache.maven.plugin.dependency.testUtils.ArtifactStubFactory;
 import org.apache.maven.plugin.dependency.utils.SilentLog;
 import org.apache.maven.plugin.logging.Log;
 

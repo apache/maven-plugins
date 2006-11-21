@@ -17,7 +17,7 @@
  * under the License.    
  */
 
-package org.apache.maven.plugin.dependency.stubs;
+package org.apache.maven.plugin.dependency.testUtils.stubs;
 
 import java.io.IOException;
 import java.util.List;
@@ -32,7 +32,7 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
-import org.apache.maven.plugin.dependency.utils.ArtifactStubFactory;
+import org.apache.maven.plugin.dependency.testUtils.ArtifactStubFactory;
 
 public class StubArtifactResolver
     implements ArtifactResolver
