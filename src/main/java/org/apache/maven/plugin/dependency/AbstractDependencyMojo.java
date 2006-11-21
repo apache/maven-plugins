@@ -111,7 +111,7 @@ public abstract class AbstractDependencyMojo
      * @since 2.0
      * @parameter expression="${silent}" default-value="false"
      */
-    protected boolean silent;
+    public boolean silent;
 
     /**
      * Output absolute filename for resolved artifacts
@@ -224,4 +224,83 @@ public abstract class AbstractDependencyMojo
         }
     }
 
+    /**
+     * @return Returns the factory.
+     */
+    public org.apache.maven.artifact.factory.ArtifactFactory getFactory()
+    {
+        return this.factory;
+    }
+
+    /**
+     * @param factory The factory to set.
+     */
+    public void setFactory( org.apache.maven.artifact.factory.ArtifactFactory factory )
+    {
+        this.factory = factory;
+    }
+
+    /**
+     * @return Returns the project.
+     */
+    public MavenProject getProject()
+    {
+        return this.project;
+    }
+
+    /**
+     * @return Returns the local.
+     */
+    public org.apache.maven.artifact.repository.ArtifactRepository getLocal()
+    {
+        return this.local;
+    }
+
+    /**
+     * @param local The local to set.
+     */
+    public void setLocal( org.apache.maven.artifact.repository.ArtifactRepository local )
+    {
+        this.local = local;
+    }
+
+    /**
+     * @return Returns the remoteRepos.
+     */
+    public java.util.List getRemoteRepos()
+    {
+        return this.remoteRepos;
+    }
+
+    /**
+     * @param remoteRepos The remoteRepos to set.
+     */
+    public void setRemoteRepos( java.util.List remoteRepos )
+    {
+        this.remoteRepos = remoteRepos;
+    }
+
+    /**
+     * @return Returns the resolver.
+     */
+    public org.apache.maven.artifact.resolver.ArtifactResolver getResolver()
+    {
+        return this.resolver;
+    }
+
+    /**
+     * @param resolver The resolver to set.
+     */
+    public void setResolver( org.apache.maven.artifact.resolver.ArtifactResolver resolver )
+    {
+        this.resolver = resolver;
+    }
+
+    /**
+     * @param archiverManager The archiverManager to set.
+     */
+    public void setArchiverManager( ArchiverManager archiverManager )
+    {
+        this.archiverManager = archiverManager;
+    }
 }

@@ -30,6 +30,8 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojo;
+import org.apache.maven.plugin.dependency.utils.DependencyUtil;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Abstract Parent class used by mojos that get Artifact information from the
@@ -86,13 +88,14 @@ public abstract class AbstractFromConfigurationMojo
      * @required
      * @since 1.0
      */
-    private ArrayList artifactItems;
+    protected ArrayList artifactItems;
 
     /**
      * Preprocesses the list of ArtifactItems. This method defaults the
      * outputDirectory if not set and creates the output Directory if it doesn't
      * exist.
-     * 
+     * @param removeVersion
+     *          remove the version from the filename.
      * @return An ArrayList of preprocessed ArtifactItems
      * 
      * @throws MojoExecutionException
@@ -100,7 +103,7 @@ public abstract class AbstractFromConfigurationMojo
      * 
      * @see ArtifactItem
      */
-    protected ArrayList getArtifactItems()
+    protected ArrayList getArtifactItems(boolean removeVersion)
         throws MojoExecutionException
     {
 
@@ -120,7 +123,7 @@ public abstract class AbstractFromConfigurationMojo
 
             //TODO:refactor this
             String overWrite = artifactItem.getOverWrite();
-            if ( overWrite == null )
+            if ( StringUtils.isEmpty(overWrite))
             {
                 artifactItem.setDoOverWrite(false);
             }
@@ -128,6 +131,12 @@ public abstract class AbstractFromConfigurationMojo
             {
                 artifactItem.setDoOverWrite( overWrite.equalsIgnoreCase( "true" ) );
             }
+            
+            if ( artifactItem.getDestFileName() == null )
+            {
+                artifactItem.setDestFileName(DependencyUtil.getFormattedFileName( artifactItem.getArtifact(), removeVersion ));
+            }
+
         }
         return artifactItems;
     }

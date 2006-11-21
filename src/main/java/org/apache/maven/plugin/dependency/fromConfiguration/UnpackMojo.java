@@ -67,7 +67,7 @@ public final class UnpackMojo
     public void execute()
         throws MojoExecutionException
     {
-        ArrayList artifactItems = getArtifactItems();
+        ArrayList artifactItems = getArtifactItems(false);
         Iterator iter = artifactItems.iterator();
         while ( iter.hasNext() )
         {
