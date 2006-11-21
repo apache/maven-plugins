@@ -59,8 +59,8 @@ public class TestUnpackDependenciesMojo
             + "target/test-classes/unit/unpack-dependencies-test/test.txt" ) );
 
         assertNotNull( mojo );
-        assertNotNull( mojo.project );
-        MavenProject project = mojo.project;
+        assertNotNull( mojo.getProject() );
+        MavenProject project = mojo.getProject();
 
         Set artifacts = this.stubFactory.getScopedArtifacts();
         Set directArtifacts = this.stubFactory.getReleaseAndSnapshotArtifacts();
@@ -85,7 +85,7 @@ public class TestUnpackDependenciesMojo
 
         File destFile = new File( folder, stubFactory.getUnpackableFileName( artifact ) );
 
-     /*
+        /*
          * System.out.println( "Checking file: " + destFile.getPath() ); if (
          * val != destFile.exists() ) { System.out.println( "FAIL!" ); }
          */
@@ -371,9 +371,9 @@ public class TestUnpackDependenciesMojo
         mojo.classifier = "jdk";
         mojo.type = "java-sources";
         // init classifier things
-        mojo.factory = DependencyTestUtils.getArtifactFactory();
-        mojo.resolver = new StubArtifactResolver( null, are, anfe );
-        mojo.local = new StubArtifactRepository( this.testDir.getAbsolutePath() );
+        mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
+        mojo.setResolver( new StubArtifactResolver( null, are, anfe ) );
+        mojo.setLocal( new StubArtifactRepository( this.testDir.getAbsolutePath() ) );
 
         try
         {
