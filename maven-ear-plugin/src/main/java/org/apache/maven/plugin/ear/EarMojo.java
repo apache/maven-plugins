@@ -124,6 +124,7 @@ public class EarMojo
     /**
      * The directory to get the resources from.
      *
+     * @parameter
      * @deprecated
      */
     private File resourcesDir;
