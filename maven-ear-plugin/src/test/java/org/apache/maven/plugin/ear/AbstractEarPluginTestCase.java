@@ -19,16 +19,12 @@ package org.apache.maven.plugin.ear;
 import junit.framework.TestCase;
 import org.apache.maven.it.Verifier;
 import org.apache.maven.it.util.ResourceExtractor;
-import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.custommonkey.xmlunit.XMLAssert;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.archiver.UnArchiver;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -72,10 +68,10 @@ public abstract class AbstractEarPluginTestCase
     protected File executeMojo( final String projectName, final Properties properties, boolean expectNoError )
         throws Exception
     {
-        File testDir = ResourceExtractor.simpleExtractResources( getClass(), "/projects/" + projectName );
-        Verifier verifier = new Verifier( testDir.getAbsolutePath());
+        File testDir = getTestDir( projectName );
+        Verifier verifier = new Verifier( testDir.getAbsolutePath() );
         // Let's add alternate settings.xml setting so that the latest dependencies are used
-        verifier.getCliOptions().add("-s " + settingsFile.getAbsolutePath());
+        verifier.getCliOptions().add( "-s " + settingsFile.getAbsolutePath() );
         verifier.localRepo = localRepositoryDir.getAbsolutePath();
         verifier.executeGoal( "package" );
         // If no error is expected make sure that error logs are free
@@ -313,6 +309,12 @@ public abstract class AbstractEarPluginTestCase
             basedir = new File( basedirString );
         }
         return basedir;
+    }
+
+    protected File getTestDir( String projectName )
+        throws IOException
+    {
+        return ResourceExtractor.simpleExtractResources( getClass(), "/projects/" + projectName );
     }
 
     // Generated application.xml stuff
