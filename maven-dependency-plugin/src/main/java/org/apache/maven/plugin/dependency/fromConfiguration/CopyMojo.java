@@ -17,7 +17,6 @@
  * under the License.    
  */
 
-
 package org.apache.maven.plugin.dependency.fromConfiguration;
 
 import java.io.File;
@@ -64,12 +63,12 @@ public class CopyMojo
     public void execute()
         throws MojoExecutionException
     {
-        ArrayList artifactItems = getArtifactItems();
-        Iterator iter = artifactItems.iterator();
+        ArrayList theArtifactItems = getArtifactItems( this.stripVersion );
+        Iterator iter = theArtifactItems.iterator();
         while ( iter.hasNext() )
         {
             ArtifactItem artifactItem = (ArtifactItem) iter.next();
-            copyArtifact( artifactItem, this.stripVersion );
+            copyArtifact( artifactItem);
         }
     }
 
@@ -79,31 +78,18 @@ public class CopyMojo
      * 
      * @param artifactItem
      *            containing the information about the Artifact to copy.
-     * @param removeVersion
-     *            specifies if the version should be removed from the file name
-     *            when copying.
      * @throws MojoExecutionException
      *             with a message if an error occurs.
      * 
      * @see DependencyUtil#copyFile(File, File, Log)
      * @see DependencyUtil#getFormattedFileName(Artifact, boolean)
      */
-    protected void copyArtifact( ArtifactItem artifactItem, boolean removeVersion )
+    protected void copyArtifact( ArtifactItem artifactItem )
         throws MojoExecutionException
     {
         Artifact artifact = artifactItem.getArtifact();
 
-        String destFileName = null;
-        if ( artifactItem.getDestFileName() != null )
-        {
-            destFileName = artifactItem.getDestFileName();
-        }
-        else
-        {
-            destFileName = DependencyUtil.getFormattedFileName( artifact, removeVersion );
-        }
-
-        File destFile = new File( artifactItem.getOutputDirectory(), destFileName );
+        File destFile = new File( artifactItem.getOutputDirectory(), artifactItem.getDestFileName() );
 
         // TODO: refactor this to use the filters.
         if ( !artifactItem.isDoOverWrite() )
@@ -117,7 +103,7 @@ public class CopyMojo
                 artifactItem.setDoOverWrite( this.overWriteReleases );
             }
         }
-        
+
         File artifactFile = artifact.getFile();
         if ( artifactItem.isDoOverWrite()
             || ( !destFile.exists() || ( overWriteIfNewer && artifactFile.lastModified() < destFile.lastModified() ) ) )
@@ -128,6 +114,22 @@ public class CopyMojo
         {
             this.getLog().info( artifactFile + " already exists." );
         }
+    }
+
+    /**
+     * @return Returns the stripVersion.
+     */
+    public boolean isStripVersion()
+    {
+        return this.stripVersion;
+    }
+
+    /**
+     * @param stripVersion The stripVersion to set.
+     */
+    public void setStripVersion( boolean stripVersion )
+    {
+        this.stripVersion = stripVersion;
     }
 
 }

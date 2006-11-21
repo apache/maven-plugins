@@ -52,8 +52,8 @@ public class TestCopyDependenciesMojo
         // mojo.silent = true;
 
         assertNotNull( mojo );
-        assertNotNull( mojo.project );
-        MavenProject project = mojo.project;
+        assertNotNull( mojo.getProject() );
+        MavenProject project = mojo.getProject();
 
         Set artifacts = this.stubFactory.getScopedArtifacts();
         Set directArtifacts = this.stubFactory.getReleaseAndSnapshotArtifacts();
@@ -440,9 +440,9 @@ public class TestCopyDependenciesMojo
         mojo.type = testType;
 
         // init classifier things
-        mojo.factory = DependencyTestUtils.getArtifactFactory();
-        mojo.resolver = new StubArtifactResolver( stubFactory, false, false );
-        mojo.local = new StubArtifactRepository( this.testDir.getAbsolutePath() );
+        mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
+        mojo.setResolver( new StubArtifactResolver( stubFactory, false, false ) );
+        mojo.setLocal( new StubArtifactRepository( this.testDir.getAbsolutePath() ) );
 
         mojo.execute();
 

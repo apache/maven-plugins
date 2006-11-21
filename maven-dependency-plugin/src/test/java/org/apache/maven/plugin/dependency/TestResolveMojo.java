@@ -46,9 +46,11 @@ public class TestResolveMojo
     {
         File testPom = new File( getBasedir(), "target/test-classes/unit/resolve-test/plugin-config.xml" );
         ResolveDependenciesMojo mojo = (ResolveDependenciesMojo) lookupMojo( "resolve", testPom );
+
         assertNotNull( mojo );
-        assertNotNull( mojo.project );
-        MavenProject project = mojo.project;
+        assertNotNull( mojo.getProject() );
+        MavenProject project = mojo.getProject();
+        
         mojo.silent = true;
         Set artifacts = this.stubFactory.getScopedArtifacts();
         Set directArtifacts = this.stubFactory.getReleaseAndSnapshotArtifacts();

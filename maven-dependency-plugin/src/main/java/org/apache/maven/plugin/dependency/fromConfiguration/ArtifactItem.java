@@ -26,6 +26,7 @@ import org.apache.maven.artifact.Artifact;
 /**
  * ArtifactItem represents information specified in the plugin configuration
  * section for each artifact.
+ * 
  * @since 1.0
  * @author brianf
  */
@@ -92,11 +93,26 @@ public class ArtifactItem
      * Force Overwrite
      */
     private boolean doOverWrite;
-    
+
     /**
      * Artifact Item
      */
     private Artifact artifact;
+
+    public ArtifactItem()
+    {
+        // default constructor
+    }
+
+    public ArtifactItem( Artifact artifact )
+    {
+        this.setArtifact(artifact);
+        this.setArtifactId(artifact.getArtifactId());
+        this.setClassifier(artifact.getClassifier());
+        this.setGroupId(artifact.getGroupId());
+        this.setType(artifact.getType());
+        this.setVersion(artifact.getVersion());
+    }
 
     /**
      * @return Returns the artifactId.
@@ -185,14 +201,14 @@ public class ArtifactItem
 
     public String toString()
     {
-        String ver = (version == null)? "?" : version;
-        if (this.classifier == null)
+        String ver = ( version == null ) ? "?" : version;
+        if ( this.classifier == null )
         {
-            return groupId + ":" + artifactId + ":" + ver + ":" + type;   
+            return groupId + ":" + artifactId + ":" + ver + ":" + type;
         }
         else
         {
-            return groupId + ":" + artifactId + ":" + classifier + ":" + ver + ":" + type;    
+            return groupId + ":" + artifactId + ":" + classifier + ":" + ver + ":" + type;
         }
     }
 
