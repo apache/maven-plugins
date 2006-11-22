@@ -918,7 +918,7 @@ public class CheckstyleReport
                 }
                 catch ( IOException e )
                 {
-                    throw new MavenReportException( "Unable to process header location.", e );
+                    throw new MavenReportException( "Unable to process header location: " + headerLocation, e );
                 }
             }
 
