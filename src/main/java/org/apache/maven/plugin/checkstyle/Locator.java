@@ -137,7 +137,7 @@ public class Locator
 
         if ( retFile.length() <= 0 )
         {
-            throw new IOException( "Destination file has no content." );
+            throw new IOException( "Destination file has no content: " + retFile + ". Is " + location + " empty?" );
         }
 
         return retFile;
