@@ -47,39 +47,35 @@ public final class DependencyUtil
     public static String getFormattedFileName( Artifact artifact, boolean removeVersion )
     {
         String destFileName = null;
+        String versionString = null;
         if ( !removeVersion )
         {
-            File file = artifact.getFile();
-            if ( file != null )
-            {
-                destFileName = file.getName();
-            }
-            // so it can be used offline
-            else
-            {
-                if ( StringUtils.isNotEmpty( artifact.getClassifier() ) )
-                {
-                    destFileName = artifact.getArtifactId() + "-" + artifact.getClassifier() + "-"
-                        + artifact.getVersion() + "." + artifact.getType();
-                }
-                else
-                {
-                    destFileName = artifact.getArtifactId() + "-" + artifact.getVersion() + "." + artifact.getType();
-                }
-            }
-
+            versionString = "-" + artifact.getVersion();
         }
         else
         {
-            if ( artifact.getClassifier() != null )
+            versionString = "";
+        }
+
+        File file = artifact.getFile();
+        if ( file != null )
+        {
+            destFileName = file.getName();
+        }
+        // so it can be used offline
+        else
+        {
+            if ( StringUtils.isNotEmpty( artifact.getClassifier() ) )
             {
-                destFileName = artifact.getArtifactId() + "-" + artifact.getClassifier() + "." + artifact.getType();
+                destFileName = artifact.getArtifactId() + "-" + artifact.getClassifier() + versionString + "."
+                    + artifact.getType();
             }
             else
             {
-                destFileName = artifact.getArtifactId() + "." + artifact.getType();
+                destFileName = artifact.getArtifactId() + versionString + "." + artifact.getType();
             }
         }
+
         return destFileName;
     }
 
