@@ -1,0 +1,56 @@
+ ------
+ Modifying SCM Links
+ ------
+ Dennis Lundberg
+ ------
+ November 2006
+ ------
+
+ ~~ Copyright 2006 The Apache Software Foundation.
+ ~~
+ ~~ Licensed under the Apache License, Version 2.0 (the "License");
+ ~~ you may not use this file except in compliance with the License.
+ ~~ You may obtain a copy of the License at
+ ~~
+ ~~      http://www.apache.org/licenses/LICENSE-2.0
+ ~~
+ ~~ Unless required by applicable law or agreed to in writing, software
+ ~~ distributed under the License is distributed on an "AS IS" BASIS,
+ ~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ~~ See the License for the specific language governing permissions and
+ ~~ limitations under the License.
+
+ ~~ NOTE: For help with the syntax of this file, see:
+ ~~ http://maven.apache.org/guides/mini/guide-apt-format.html
+
+
+Modifying SCM Links
+
+  The plugin normally works out of the box with the most popular web frontends
+  for SCM systems. If for some reason the links to the web frontend for your
+  SCM system are not correct, you can tweak the links by configuring the plugin
+  properly. This is done with the <<<\<displayFileDetailUrl\>>>> element.
+
+  To your aid you have a special token <<<%FILE%>>> that corresponds to the
+  relative path to the file in your repository. The path starts at the
+  project's root in your SCM system.
+
+  The following configuration will use alternate URLs to your SCM system:
+
++-----+
+<project>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changelog-plugin</artifactId>
+        <configuration>
+          <displayFileDetailUrl>http://checkstyle.cvs.sourceforge.net/checkstyle%FILE%?view=markup</displayFileDetailUrl>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+  ...
+</project>
++-----+
