@@ -57,11 +57,11 @@ Usage
 -------------------
 <project>
   ...
-    <scm>
-      <connection>scm:svn:http://server/path/to/project/trunk</connection>
-      <developerConnection>scm:svn:https://path/to/project/trunk</developerConnection>
-      <url>scm:svn:http://server/path/to/view/trunk</url>
-    </scm>
+  <scm>
+    <connection>scm:svn:http://server/path/to/project/trunk</connection>
+    <developerConnection>scm:svn:https://path/to/project/trunk</developerConnection>
+    <url>scm:svn:http://server/path/to/view/trunk</url>
+  </scm>
   ...
 </project>
 -------------------
