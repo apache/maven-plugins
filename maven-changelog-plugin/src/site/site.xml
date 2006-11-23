@@ -25,6 +25,7 @@
       <item name="FAQ" href="faq.html"/>
     </menu>
     <menu name="Examples">
+      <item name="Modifying SCM Links" href="/examples/modifying-scm-links.html"/>
       <item name="Selecting Reports" href="/examples/selecting-reports.html"/>
       <item name="Using Date Type" href="/examples/configuration-date-type.html"/>
       <item name="Using Range Type" href="/examples/configuration-range-type.html"/>
