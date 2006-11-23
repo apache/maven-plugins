@@ -32,6 +32,7 @@ import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.dependency.fromConfiguration.ArtifactItem;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.SilentLog;

@@ -60,7 +60,7 @@ public class TestDependencyUtil
 
         ArtifactHandler ah = new DefaultArtifactHandler();
         VersionRange vr = VersionRange.createFromVersion( "1.1" );
-        this.release = new DefaultArtifact( "test", "1", vr, Artifact.SCOPE_COMPILE, "jar", null, ah, false );
+        release = new DefaultArtifact( "test", "1", vr, Artifact.SCOPE_COMPILE, "jar", null, ah, false );
         artifacts.add( release );
 
         vr = VersionRange.createFromVersion( "1.1-SNAPSHOT" );
@@ -78,8 +78,6 @@ public class TestDependencyUtil
     {
 
     }
-
-
 
     public void testDirectoryName()
         throws MojoExecutionException
@@ -127,7 +125,7 @@ public class TestDependencyUtil
     public void testFileName()
         throws MojoExecutionException
     {
-        DefaultArtifact artifact = (DefaultArtifact) artifacts.get( 0 );
+        Artifact artifact = (Artifact) artifacts.get( 0 );
 
         String name = DependencyUtil.getFormattedFileName( artifact, false );
         String expectedResult = "1-1.1.jar";
@@ -136,15 +134,27 @@ public class TestDependencyUtil
         name = DependencyUtil.getFormattedFileName( artifact, true );
         expectedResult = "1.jar";
         assertTrue( expectedResult.equalsIgnoreCase( name ) );
+    }
 
-        artifact = (DefaultArtifact) artifacts.get( 1 );
-
-        name = DependencyUtil.getFormattedFileName( artifact, false );
-        expectedResult = "2-sources-1.1-SNAPSHOT.war";
-        assertTrue( expectedResult.equalsIgnoreCase( name ) );
+    public void testFileNameClassifier()
+        throws MojoExecutionException
+    {
+        ArtifactHandler ah = new DefaultArtifactHandler();
+        VersionRange vr = VersionRange.createFromVersion( "1.1-SNAPSHOT" );
+        Artifact artifact = new DefaultArtifact( "test", "2", vr, Artifact.SCOPE_PROVIDED, "war", "sources", ah, false );
+    
+        String name = DependencyUtil.getFormattedFileName( artifact, false );
+        String expectedResult = "2-sources-1.1-SNAPSHOT.war";
+        assertEquals(expectedResult,name );
 
         name = DependencyUtil.getFormattedFileName( artifact, true );
         expectedResult = "2-sources.war";
-        assertTrue( expectedResult.equalsIgnoreCase( name ) );
+        assertEquals(expectedResult,name );
+
+        artifact = new DefaultArtifact( "test", "2", vr, Artifact.SCOPE_PROVIDED, "war", "", ah, false );
+        name = DependencyUtil.getFormattedFileName( artifact, true );
+        expectedResult = "2.war";
+        assertEquals(expectedResult,name );
+
     }
 }
