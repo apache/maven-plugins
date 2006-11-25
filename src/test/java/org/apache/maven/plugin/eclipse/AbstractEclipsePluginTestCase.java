@@ -15,6 +15,20 @@
  */
 package org.apache.maven.plugin.eclipse;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+
+import junit.framework.AssertionFailedError;
+
 import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.invoker.InvocationRequest;
@@ -28,18 +42,6 @@ import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
 
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
@@ -103,7 +105,8 @@ public abstract class AbstractEclipsePluginTestCase
             {
                 PluginTestTool pluginTestTool = (PluginTestTool) lookup( PluginTestTool.ROLE, "default" );
 
-                localRepositoryDirectory = pluginTestTool.preparePluginForUnitTestingWithMavenBuilds( "test", localRepositoryDirectory );
+                localRepositoryDirectory = pluginTestTool
+                    .preparePluginForUnitTestingWithMavenBuilds( "test", localRepositoryDirectory );
 
                 System.out.println( "*** Installed test-version of the Eclipse plugin to: " + localRepositoryDirectory
                     + "\n" );
@@ -225,7 +228,7 @@ public abstract class AbstractEclipsePluginTestCase
         throws TestToolsException, ExecutionFailedException
     {
         new File( BUILD_OUTPUT_DIRECTORY ).mkdirs();
-        
+
         NullPointerException npe = new NullPointerException();
         StackTraceElement[] trace = npe.getStackTrace();
 
@@ -262,11 +265,11 @@ public abstract class AbstractEclipsePluginTestCase
         }
 
         InvocationResult result = buildTool.executeMaven( request );
-        
+
         if ( result.getExitCode() != 0 )
         {
             String buildLogUrl = buildLog.getAbsolutePath();
-            
+
             try
             {
                 buildLogUrl = buildLog.toURL().toExternalForm();
@@ -274,8 +277,10 @@ public abstract class AbstractEclipsePluginTestCase
             catch ( MalformedURLException e )
             {
             }
-            
-            throw new ExecutionFailedException( "Failed to execute build.\nPOM: " + pom + "\nGoals: " + StringUtils.join( goals.iterator(), ", " ) + "\nExit Code: " + result.getExitCode() + "\nError: " + result.getExecutionException() + "\nBuild Log: " + buildLogUrl + "\n", result );
+
+            throw new ExecutionFailedException( "Failed to execute build.\nPOM: " + pom + "\nGoals: "
+                + StringUtils.join( goals.iterator(), ", " ) + "\nExit Code: " + result.getExitCode() + "\nError: "
+                + result.getExecutionException() + "\nBuild Log: " + buildLogUrl + "\n", result );
         }
     }
 
@@ -326,11 +331,16 @@ public abstract class AbstractEclipsePluginTestCase
 
             for ( int j = 0; j < files.length; j++ )
             {
-                File file = files[j];
+                File expectedFile = files[j];
+                File actualFile = new File( projectOutputDir, additionalDir + expectedFile.getName() )
+                    .getCanonicalFile();
 
-                assertFileEquals( localRepositoryDirectory.getCanonicalPath(), file, new File( projectOutputDir,
-                                                                                               additionalDir
-                                                                                                   + file.getName() ) );
+                if ( !actualFile.exists() )
+                {
+                    throw new AssertionFailedError( "Expected file not found: " + actualFile.getAbsolutePath() );
+                }
+
+                assertFileEquals( localRepositoryDirectory.getCanonicalPath(), expectedFile, actualFile );
 
             }
         }
