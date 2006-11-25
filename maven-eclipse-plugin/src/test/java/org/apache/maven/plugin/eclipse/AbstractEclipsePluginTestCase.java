@@ -99,6 +99,26 @@ public abstract class AbstractEclipsePluginTestCase
 
         projectTool = (ProjectTool) lookup( ProjectTool.ROLE, "default" );
 
+        String mavenHome = System.getProperty( "maven.home" );
+
+        // maven.home is set by surefire when the test is run with maven, but better make the test run in IDEs without
+        // the need of additional properties
+        if ( mavenHome == null )
+        {
+            String path = System.getProperty( "java.library.path" );
+            String[] paths = StringUtils.split( path, System.getProperty( "path.separator" ) );
+            for ( int j = 0; j < paths.length; j++ )
+            {
+                String pt = paths[j];
+                if ( new File( pt, "m2" ).exists() )
+                {
+                    System.setProperty( "maven.home", new File( pt ).getParent() );
+                    break;
+                }
+
+            }
+        }
+
         synchronized ( AbstractEclipsePluginTestCase.class )
         {
             if ( !installed )
