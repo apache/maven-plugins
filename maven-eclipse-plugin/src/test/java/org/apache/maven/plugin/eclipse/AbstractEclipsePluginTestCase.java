@@ -118,6 +118,8 @@ public abstract class AbstractEclipsePluginTestCase
 
             }
         }
+        
+        System.setProperty( "MAVEN_TERMINATE_CMD", "on" );
 
         synchronized ( AbstractEclipsePluginTestCase.class )
         {
@@ -276,6 +278,8 @@ public abstract class AbstractEclipsePluginTestCase
         }
 
         InvocationRequest request = buildTool.createBasicInvocationRequest( pom, properties, goals, buildLog );
+        request.setUpdateSnapshots( false );
+        request.setShowErrors( true );
 
         request.setDebug( true );
 
@@ -370,6 +374,12 @@ public abstract class AbstractEclipsePluginTestCase
         throws IOException
     {
         List expectedLines = getLines( mavenRepo, expectedFile );
+
+        if ( !actualFile.exists() )
+        {
+            throw new AssertionFailedError( "Expected file not found: " + actualFile.getAbsolutePath() );
+        }
+
         List actualLines = getLines( mavenRepo, actualFile );
         String filename = actualFile.getName();
 
