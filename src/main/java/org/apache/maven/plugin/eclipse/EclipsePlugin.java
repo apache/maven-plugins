@@ -931,7 +931,7 @@ public class EclipsePlugin
         {
             Resource resource = (Resource) it.next();
 
-            System.out.println( "Processing resource dir: " + resource.getDirectory() );
+            getLog().debug( "Processing resource dir: " + resource.getDirectory() );
 
             String includePattern = null;
             String excludePattern = null;
@@ -953,7 +953,7 @@ public class EclipsePlugin
 
             if ( !resourceDirectory.exists() || !resourceDirectory.isDirectory() )
             {
-                System.out.println( "Resource dir: " + resourceDirectory + " either missing or not a directory." );
+                getLog().debug( "Resource dir: " + resourceDirectory + " either missing or not a directory." );
                 continue;
             }
 
@@ -976,7 +976,7 @@ public class EclipsePlugin
                 output = IdeUtils.toRelativeAndFixSeparator( workspaceProjectBaseDir, outputFile, false );
             }
 
-            System.out.println( "Adding eclipse source dir: { " + resourceDir + ", " + output + ", true, " + test
+            getLog().debug( "Adding eclipse source dir: { " + resourceDir + ", " + output + ", true, " + test
                 + ", " + includePattern + ", " + excludePattern + " }." );
 
             directories.add( new EclipseSourceDir( resourceDir, output, true, test, includePattern, excludePattern, resource.isFiltering() ) );
