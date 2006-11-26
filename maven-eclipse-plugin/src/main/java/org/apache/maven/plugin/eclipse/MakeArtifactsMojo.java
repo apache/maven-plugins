@@ -143,6 +143,15 @@ public class MakeArtifactsMojo
     private boolean stripQualifier;
 
     /**
+     * Default token to use as a qualifier. Tipically qualifiers for plugins in the same eclipse build are different.
+     * This parameter can be used to "align" qualifiers so that all the plugins coming from the same eclipse build can
+     * be easily identified. For example, setting this to "M3" will force the pluging versions to be "*.*.*.M3"
+     * 
+     * @parameter expression="${forcedQualifier}"
+     */
+    private String forcedQualifier;
+
+    /**
      * Specifies a remote repository to which generated artifacts should be deployed to. If this property is specified,
      * artifacts are also deployed to the remote repo.
      * The format for this parameter is <code>id::layout::url</code>
@@ -259,7 +268,8 @@ public class MakeArtifactsMojo
         {
             try
             {
-                JarFile jar = new JarFile( file );
+                // don't verify, jars created from unzipped plugin could have a bad signature
+                JarFile jar = new JarFile( file, false );
                 manifest = jar.getManifest();
                 pluginProperties = loadPluginProperties( jar );
             }
@@ -300,7 +310,11 @@ public class MakeArtifactsMojo
             return;
         }
 
-        if ( stripQualifier && StringUtils.countMatches( version, "." ) > 2 )
+        if ( StringUtils.isNotEmpty( forcedQualifier ) && StringUtils.countMatches( version, "." ) > 2 )
+        {
+            version = StringUtils.substring( version, 0, version.lastIndexOf( "." ) ) + "." + forcedQualifier;
+        }
+        else if ( stripQualifier && StringUtils.countMatches( version, "." ) > 2 )
         {
             version = StringUtils.substring( version, 0, version.lastIndexOf( "." ) );
         }
@@ -538,15 +552,14 @@ public class MakeArtifactsMojo
                 }
             }
 
-            if ( addQualifier )
-            {
-                version = addQualifierToVersionsInRange( version );
-            }
-
             if ( version == null )
             {
                 getLog().info( "Missing version for artifact " + artifactId + ", assuming any version > 0" );
                 version = "[0.0.0.0,)";
+            }
+            else if ( addQualifier )
+            {
+                version = addQualifierToVersionsInRange( version );
             }
 
             Dependency dep = new Dependency();
@@ -572,6 +585,12 @@ public class MakeArtifactsMojo
      */
     protected String addQualifierToVersionsInRange( String versionRange )
     {
+        // should not be called with a null versionRange, but a check doesn't hurt...
+        if ( versionRange == null )
+        {
+            return null;
+        }
+
         StringBuffer newVersionRange = new StringBuffer();
 
         Matcher matcher = VERSION_PATTERN.matcher( versionRange );

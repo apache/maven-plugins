@@ -251,7 +251,8 @@ public class InstallPluginsMojo
         Attributes attributes = null;
         try
         {
-            JarFile jar = new JarFile( artifact.getFile() );
+            // don't verify, plugins zipped by eclipse:make-artifacts could have a bad signature
+            JarFile jar = new JarFile( artifact.getFile(), false );
             Manifest manifest = jar.getManifest();
             attributes = manifest.getMainAttributes();
         }
