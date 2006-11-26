@@ -367,6 +367,11 @@ public class EclipseClasspathWriter
             path = "/" + dep.getArtifactId(); //$NON-NLS-1$
             kind = ATTR_SRC;
         }
+        else if ( dep.isReferencedProject() && config.isPde() )
+        {
+            // don't do anything, referenced projects are automatically handled by eclipse in PDE builds
+            return;
+        }
         else
         {
             File artifactPath = dep.getFile();
