@@ -18,30 +18,12 @@ package org.apache.maven.plugin.eclipse;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.maven.cli.ConsoleDownloadMonitor;
-import org.apache.maven.embedder.MavenEmbedderConsoleLogger;
-import org.apache.maven.embedder.PlexusLoggerAdapter;
-import org.apache.maven.monitor.event.DefaultEventMonitor;
-import org.apache.maven.monitor.event.EventMonitor;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.settings.MavenSettingsBuilder;
-import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.cli.CommandLineException;
-import org.codehaus.plexus.util.cli.CommandLineUtils;
-import org.codehaus.plexus.util.cli.Commandline;
-import org.codehaus.plexus.util.cli.DefaultConsumer;
-import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
-import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
  * <p>
@@ -91,18 +73,11 @@ public class EclipsePluginMasterProjectTest
         super.setUp();
     }
 
-    /**
-     * Currently disabled because:
-     * <ul>
-     *   <li>the reactor build is not run by the embedder</li>
-     * </ul>
-     * @throws Exception
-     */
-    public void executeMaven2WithEmbedder()
+    protected void executeMaven2()
         throws Exception
     {
         File pom = new File( basedir, "pom.xml" );
-        
+
         Properties properties = new Properties();
         properties.setProperty( "wtpversion", "R7" );
 
@@ -112,30 +87,17 @@ public class EclipsePluginMasterProjectTest
 
         goals.add( pluginSpec + "clean" );
         goals.add( pluginSpec + "eclipse" );
-        
-        executeMaven( pom, properties, goals );
-        
-//        MavenProject project = maven.readProjectWithDependencies( pom );
-//        EventMonitor eventMonitor = new DefaultEventMonitor( new PlexusLoggerAdapter( new MavenEmbedderConsoleLogger() ) );
-//
-//        this.maven.execute( project, Arrays.asList( new String[] {
-//            "org.apache.maven.plugins:maven-eclipse-plugin:clean",
-//            "org.apache.maven.plugins:maven-eclipse-plugin:eclipse" } ), eventMonitor, new ConsoleDownloadMonitor(),
-//                            properties, this.basedir );
-    }
 
-    protected void executeMaven2()
-        throws Exception
-    {
-        executeMaven2CommandLine();
-        // executeMaven2WithEmbedder();
+        executeMaven( pom, properties, goals );
+
     }
 
     public void testModule1Project()
         throws Exception
     {
         executeMaven2();
-        assertFileEquals( null, new File( basedir, "module-1/project" ), new File( basedir, "module-1/.project" ) );
+        assertFileEquals( null, new File( basedir, "module-1/expected/.project" ), //
+                          new File( basedir, "module-1/.project" ) );
     }
 
     public void testModule1Classpath()
@@ -165,14 +127,16 @@ public class EclipsePluginMasterProjectTest
         throws Exception
     {
         executeMaven2();
-        assertFileEquals( null, new File( basedir, "module-1/wtpmodules" ), new File( basedir, "module-1/.wtpmodules" ) );
+        assertFileEquals( null, new File( basedir, "module-1/expected/.wtpmodules" ), //
+                          new File( basedir, "module-1/.wtpmodules" ) );
     }
 
     public void testModule2Project()
         throws Exception
     {
         executeMaven2();
-        assertFileEquals( null, new File( basedir, "module-2/project" ), new File( basedir, "module-2/.project" ) );
+        assertFileEquals( null, new File( basedir, "module-2/expected/.project" ), //
+                          new File( basedir, "module-2/.project" ) );
     }
 
     public void testModule2Classpath()
@@ -246,102 +210,6 @@ public class EclipsePluginMasterProjectTest
         assertDoesNotContain( "Invalid wtpmodules", wtpmodules, "/deps-refproject-test" );
         assertDoesNotContain( "Invalid wtpmodules", wtpmodules, "/deps-refproject-optional" );
         assertDoesNotContain( "Invalid wtpmodules", wtpmodules, "/deps-refproject-provided" );
-    }
-
-    /**
-     * Execute mvn from command line.
-     * @throws Exception any exception caught is thrown during tests
-     */
-    protected void executeMaven2CommandLine()
-        throws Exception
-    {
-
-        Commandline cmd = createMaven2CommandLine( this.basedir );
-
-        int exitCode = CommandLineUtils.executeCommandLine( cmd, new DefaultConsumer(), new DefaultConsumer() );
-
-        if ( exitCode != 0 )
-        {
-            throw new CommandLineException( "The command line failed. Exit code: " + exitCode );
-        }
-    }
-
-    /**
-     * Convenience method to create a m2 command line from a given working directory.
-     *
-     * @param workingDir a not null working directory.
-     * @return the m2 command line
-     * @throws Exception any exception caught is thrown during tests
-     */
-    protected Commandline createMaven2CommandLine( File workingDir )
-        throws Exception
-    {
-        assertNotNull( "workingDir can't be null", workingDir );
-        assertTrue( "workingDir must exist", workingDir.exists() );
-
-        // read default settings and extract local repository path
-        MavenSettingsBuilder settingsBuilder = (MavenSettingsBuilder) lookup( MavenSettingsBuilder.ROLE );
-        Settings defaultSettings = settingsBuilder.buildSettings();
-
-        String settingsPath = createTestSettings( defaultSettings );
-
-        Commandline cmd = new Commandline();
-
-        cmd.setWorkingDirectory( workingDir.getCanonicalPath() );
-
-        cmd.setExecutable( "mvn" );
-        cmd.createArgument().setValue( "-Dwtpversion=R7" );
-
-        cmd.createArgument().setValue( "-s" + settingsPath );
-        cmd.createArgument().setValue( "-e" );
-
-        cmd.createArgument().setValue( "eclipse:clean" );
-        cmd.createArgument().setValue( "eclipse:eclipse" );
-
-        return cmd;
-    }
-
-    private String createTestSettings( Settings defaultSettings )
-        throws IOException
-    {
-        // prepare a temporary settings.xml
-        File settings = File.createTempFile( "settings", ".xml" );
-        settings.deleteOnExit();
-        Writer w = new FileWriter( settings );
-        XMLWriter writer = new PrettyPrintXMLWriter( w );
-        writer.startElement( "settings" );
-
-        // keep default local repository
-        writer.startElement( "localRepository" );
-        writer.writeText( defaultSettings.getLocalRepository() );
-        writer.endElement();
-
-        writer.startElement( "interactiveMode" );
-        writer.writeText( "false" );
-        writer.endElement();
-
-        writer.startElement( "mirrors" );
-        writer.startElement( "mirror" );
-
-        // add a file mirror, so that dependencies are loaded from the plugin directory
-        writer.startElement( "id" );
-        writer.writeText( "localtest" );
-        writer.endElement();
-        writer.startElement( "url" );
-        writer.writeText( "file://" + getBasedir().replace( '\\', '/' ) + "/src/test/m2repo" );
-        writer.endElement();
-        writer.startElement( "mirrorOf" );
-        writer.writeText( "central" );
-        writer.endElement();
-
-        writer.endElement();
-        writer.endElement();
-
-        writer.endElement();
-        IOUtil.close( w );
-        settings.deleteOnExit();
-
-        return settings.getCanonicalPath();
     }
 
 }
