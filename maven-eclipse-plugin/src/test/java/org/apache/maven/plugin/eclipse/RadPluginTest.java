@@ -120,7 +120,8 @@ public class RadPluginTest
 //                            new Properties(), basedir );
 
         // jar muss reincoliert sein
-        assertTrue( new File( basedir, "project-rad-1/maven-core-98.0.jar" ).exists() );
+        assertTrue( "Expected file not found: project-rad-1/maven-core-98.0.jar",
+                    new File( basedir, "project-rad-1/maven-core-98.0.jar" ).exists() );
 
         Xpp3Dom applicationXml = Xpp3DomBuilder
             .build( new FileReader( new File( basedir, "project-rad-1/META-INF/application.xml" ) ) );
@@ -195,7 +196,8 @@ public class RadPluginTest
 //                "org.apache.maven.plugins:maven-eclipse-plugin:current:rad" } ), eventMonitor, new ConsoleDownloadMonitor(),
 //                            new Properties(), basedir );
 
-        assertTrue( new File( basedir, "project-rad-1/maven-core-98.0.jar" ).exists() );
+        assertTrue( "Expected file not found: project-rad-1/maven-core-98.0.jar",
+                    new File( basedir, "project-rad-1/maven-core-98.0.jar" ).exists() );
 
         File modulemaps = new File( basedir, "project-rad-1/META-INF/.modulemaps" );
 
