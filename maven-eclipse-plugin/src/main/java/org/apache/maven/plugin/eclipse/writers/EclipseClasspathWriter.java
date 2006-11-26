@@ -20,12 +20,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.BuildCommand;
@@ -169,9 +167,8 @@ public class EclipseClasspathWriter
             if ( byOutputDirs == null )
             {
                 // ArrayList<EclipseSourceDir>
-                byOutputDir.put(
-                    dir.getOutput() == null ? defaultOutput : dir.getOutput(),
-                    byOutputDirs = new ArrayList() );
+                byOutputDir.put( dir.getOutput() == null ? defaultOutput : dir.getOutput(),
+                                 byOutputDirs = new ArrayList() );
             }
             byOutputDirs.add( dir );
         }
@@ -184,21 +181,25 @@ public class EclipseClasspathWriter
                 + dir.getOutput() + "; default output=" + defaultOutput );
 
             boolean isSpecial = false;
-            
+
             // handle resource with nested output folders
             if ( dir.isResource() )
             {
                 // Check if the output is a subdirectory of the default output,
                 // and if the default output has any sources that copy there.
 
-                if ( dir.getOutput() != null && !dir.getOutput().equals( defaultOutput )
-                    && dir.getOutput().startsWith( defaultOutput ) && byOutputDir.get( defaultOutput ) != null
-                    && !( (List) byOutputDir.get( defaultOutput ) ).isEmpty() )
+                if ( dir.getOutput() != null // resource output dir is set
+                    && !dir.getOutput().equals( defaultOutput ) // output dir is not default target/classes
+                    && dir.getOutput().startsWith( defaultOutput ) // ... but is nested
+                    && byOutputDir.get( defaultOutput ) != null // ???
+                    && !( (List) byOutputDir.get( defaultOutput ) ).isEmpty() // ???
+                )
                 {
                     // do not specify as source since the output will be nested. Instead, mark
                     // it as a todo, and handle it with a custom build.xml file later.
 
-                    log.debug( "Marking as special to prevent output folder nesting: " + dir.getPath() + " (output=" + dir.getOutput() +")");
+                    log.debug( "Marking as special to prevent output folder nesting: " + dir.getPath() + " (output="
+                        + dir.getOutput() + ")" );
 
                     isSpecial = true;
                     specialSources.add( dir );
@@ -245,9 +246,8 @@ public class EclipseClasspathWriter
 
             try
             {
-                FileWriter buildXmlWriter = new FileWriter( new File(
-                    config.getEclipseProjectDirectory(),
-                    "maven-eclipse.xml" ) );
+                FileWriter buildXmlWriter = new FileWriter( new File( config.getEclipseProjectDirectory(),
+                                                                      "maven-eclipse.xml" ) );
                 PrettyPrintXMLWriter buildXmlPrinter = new PrettyPrintXMLWriter( buildXmlWriter );
 
                 buildXmlPrinter.startElement( "project" );
@@ -267,7 +267,7 @@ public class EclipseClasspathWriter
                     // TODO: merge source dirs on output path+filtering to reduce
                     // <copy> tags for speed.
                     EclipseSourceDir dir = (EclipseSourceDir) it.next();
-                    buildXmlPrinter.startElement( "copy");
+                    buildXmlPrinter.startElement( "copy" );
                     buildXmlPrinter.addAttribute( "todir", dir.getOutput() );
                     buildXmlPrinter.addAttribute( "filtering", "" + dir.isFiltering() );
 
@@ -300,16 +300,16 @@ public class EclipseClasspathWriter
 
             log.info( "Creating external launcher file" );
             // now create the launcher
-            new EclipseAntExternalLaunchConfigurationWriter().init( log, config, "Maven_Ant_Builder.launch", "maven-eclipse.xml").write();
+            new EclipseAntExternalLaunchConfigurationWriter().init( log, config, "Maven_Ant_Builder.launch",
+                                                                    "maven-eclipse.xml" ).write();
 
             // finally add it to the project writer.
 
-            config.getBuildCommands().add(
-                new BuildCommand(
-                    "org.eclipse.ui.externaltools.ExternalToolBuilder",
-                    "LaunchConfigHandle",
-                    "<project>/" + EclipseLaunchConfigurationWriter.FILE_DOT_EXTERNAL_TOOL_BUILDERS
-                        + "Maven_Ant_Builder.launch" ) );
+            config.getBuildCommands()
+                .add(
+                      new BuildCommand( "org.eclipse.ui.externaltools.ExternalToolBuilder", "LaunchConfigHandle",
+                                        "<project>/" + EclipseLaunchConfigurationWriter.FILE_DOT_EXTERNAL_TOOL_BUILDERS
+                                            + "Maven_Ant_Builder.launch" ) );
         }
 
         // ----------------------------------------------------------------------

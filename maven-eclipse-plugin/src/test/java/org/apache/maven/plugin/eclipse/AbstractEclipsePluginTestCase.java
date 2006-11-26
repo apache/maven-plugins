@@ -236,6 +236,7 @@ public abstract class AbstractEclipsePluginTestCase
 
         compareDirectoryContent( basedir, projectOutputDir, "" );
         compareDirectoryContent( basedir, projectOutputDir, ".settings/" );
+        compareDirectoryContent( basedir, projectOutputDir, ".externalToolBuilders/" );
         compareDirectoryContent( basedir, projectOutputDir, "META-INF/" );
 
     }
