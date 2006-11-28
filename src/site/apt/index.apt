@@ -8,19 +8,19 @@
 
 Maven 2 Remote Resources Plugin
 
-  This plugin is used to retrieve JARs of resource from remote repositories,
+  This plugin is used to retrieve JARs of resources from remote repositories,
   processes those resources, and incorporate them into JARs you build with
   Maven. A very common use-case is the need to package certain resources in a
   consistent way across your organization: at Apache it is required that every
-  JAR produced contain a copy of the Apache license and a notice file that
+  JAR produced contains a copy of the Apache license and a notice file that
   references all used software in a given project.
 
 * Goals Overview
 
   * {{{bundle-mojo.html}remote-resources:bundle}} creates the resource bundle manifest required
     by the remote resource bundle processing. The manifest file, 
-    <<<${basedir}/target/classes/META-INF/maven/remoteresources.xml>>>, is created from the contents of the 
-    <<<src/main/resources>>>.
+    <<<${basedir}/target/classes/META-INF/maven/remote-resources.xml>>>, is created from the contents of the 
+    <<<src/main/resources>>> directory.
         
   * {{{process-mojo.html}remote-resources:process}} retrieves the specified
     remote resource bundles, processes them and places them in your <<<${basedir}/target/classes>>> directory.
@@ -31,9 +31,9 @@ Maven 2 Remote Resources Plugin
 
   Instructions on how to use the Remote Resources Plugin can be found {{{usage.html}here}}.
 
-* Examples
-
-  To provide you with better understanding of some usages of the Remote Resouces Plugin,
-  you can take a look at the following examples:
-
-  * {{{examples/example.html}Sample Example}}
+~~* Examples
+~~
+~~  To provide you with better understanding of some usages of the Remote Resources Plugin,
+~~  you can take a look at the following examples:
+~~
+~~  * {{{examples/example.html}Sample Example}}
