@@ -17,8 +17,13 @@ Maven 2 Remote Resources Plugin
 
 * Goals Overview
 
-  * {{{superduper-transform.html}superduper:transform}} retrieves specified
-    remote resource bundles, process them and places them in your <<<${basedir}/target/classes>>> directory.
+  * {{{bundle-mojo.html}remote-resources:bundle}} creates the resource bundle manifest required
+    by the remote resource bundle processing. The manifest file, 
+    <<<${basedir}/target/classes/META-INF/maven/remoteresources.xml>>>, is created from the contents of the 
+    <<<src/main/resources>>>.
+        
+  * {{{process-mojo.html}remote-resources:process}} retrieves the specified
+    remote resource bundles, processes them and places them in your <<<${basedir}/target/classes>>> directory.
 
   []
 
