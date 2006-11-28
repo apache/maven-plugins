@@ -26,11 +26,15 @@ public class BundleRemoteResourcesMojo
     public static final String RESOURCES_MANIFEST = "META-INF/maven/remote-resources.xml";
 
     /**
+     * The directory which contains the resources you want packaged up in this resource bundle.
+     *
      * @parameter expression="${basedir}/src/main/resources"
      */
     private File resourcesDirectory;
 
     /**
+     * The directory where you want the resource bundle manifest written to.
+     * 
      * @parameter expression="${project.build.outputDirectory}"
      */
     private File outputDirectory;

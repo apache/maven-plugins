@@ -50,7 +50,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 
 /**
- * Pull down artifacts containing remote resources and process the resources contained
+ * Pull down resourceBundles containing remote resources and process the resources contained
  * inside the artifact.
  *
  * @goal process
@@ -60,44 +60,53 @@ public class ProcessRemoteResourcesMojo
     extends AbstractMojo
 {
     /**
+     * The local repository taken from Maven's runtime. Typically $HOME/.m2/repository.
+     *
      * @parameter expression="${localRepository}
      */
     private ArtifactRepository localRepository;
 
     /**
+     * The remote repositories used as specified in your POM.
+     *
      * @parameter expression="${project.repositories}
      */
     private ArrayList remoteRepositories;
 
     /**
+     * The current Maven project.
+     *
      * @parameter expression="${project}"
      */
     private MavenProject project;
 
     /**
+     * The directory where processed resources will be placed for packaging.
+     *
      * @parameter expression="${project.build.outputDirectory}"
      */
     private File outputDirectory;
 
     /**
+     * The resource bundles that will be retrieved and processed.
+     *
      * @parameter
      */
-    private ArrayList artifacts;
+    private ArrayList resourceBundles;
 
     /**
+     * Artifact downloader.
+     *
      * @component
      */
     private Downloader downloader;
 
     /**
+     * Velocity component.
+     *
      * @component
      */
     private VelocityComponent velocity;
-
-    /**
-     * @parameter expression="${workDirectory}" default-value="${project.build.directory}/remote-resources"
-     */
-    private File workDirectory;
 
     // These two things make this horrible. Maven artifact is way too complicated and the relationship between
     // the model usage and maven-artifact needs to be reworked as well as all our tools that deal with it. The
@@ -105,6 +114,8 @@ public class ProcessRemoteResourcesMojo
     // change it now because it's not released ...
 
     /**
+     * Artifact repository factory component.
+     *
      * @component
      */
     private ArtifactRepositoryFactory artifactRepositoryFactory;
@@ -124,7 +135,7 @@ public class ProcessRemoteResourcesMojo
 
         RemoteResourcesClassLoader classLoader = new RemoteResourcesClassLoader();
 
-        for ( Iterator i = artifacts.iterator(); i.hasNext(); )
+        for ( Iterator i = resourceBundles.iterator(); i.hasNext(); )
         {
             String artifactDescriptor = (String) i.next();
 
