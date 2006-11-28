@@ -8,14 +8,38 @@
 
 Usage
 
- This plugin is used to create miraculously transform your build!
- 
-*How to miraculously transform your build
- 
- Describe here how you miraculously transform peoples' builds! 
+* How to Create a Resource Bundle
+
+ In order to turn on the bundle resource manifest generation you need to configure the 
+ plugin as follows.
 
 -------------------
+<project>
+  ...  
+  <build>
+    <plugins>
+      <!-- Turn this into a lifecycle -->
+      <plugin>      
+        <artifactId>maven-remote-resources-plugin</artifactId>        
+        <executions>
+          <execution>
+            <goals>
+              <goal>bundle</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
 
-Put your awesome example here.
+------------------- 
+ 
+ This will triggering the scanning of your <<<${basedir}/src/main/resources>>> directory and create the
+ <<<${basedir}/target/classes/META-INF/maven/remote-resources.xml>>> manifest file.
+ 
+* How to Use Remote Resource Bundles 
+
+-------------------
 
 -------------------
