@@ -9,6 +9,9 @@
   <artifactId>maven-remote-resources-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <version>1.0-SNAPSHOT</version>
+  <prerequisites>                                                                                                                                                                      
+    <maven>2.0</maven>                                                                                                                                                                 
+  </prerequisites>   
   <name>Maven Remote Resources Plugin</name>
   <description>
     Process resources packaged in JARs that have been deployed to
