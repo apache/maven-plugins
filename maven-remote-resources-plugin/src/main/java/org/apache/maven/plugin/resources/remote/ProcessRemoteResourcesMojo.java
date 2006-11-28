@@ -137,6 +137,8 @@ public class ProcessRemoteResourcesMojo
 
         RemoteResourcesClassLoader classLoader = new RemoteResourcesClassLoader();
 
+        File standardResourcesDirectory = new File( project.getBasedir(), "src/main/resources" );
+
         for ( Iterator i = resourceBundles.iterator(); i.hasNext(); )
         {
             String artifactDescriptor = (String) i.next();
@@ -212,15 +214,26 @@ public class ProcessRemoteResourcesMojo
 
             for ( Iterator i = bundle.getRemoteResources().iterator(); i.hasNext(); )
             {
-                String resource = (String) i.next();
+                String bundleResource = (String) i.next();
 
-                File f = new File( outputDirectory, StringUtils.replaceOnce( resource, ".vm", ".txt" ) );
+                String projectResource = StringUtils.replaceOnce( bundleResource, ".vm", ".txt" );
+
+                // Don't overwrite resource that are already being provided.
+
+                File projectResourceFile = new File( standardResourcesDirectory, projectResource );
+
+                if ( projectResourceFile.exists() )
+                {
+                    continue;
+                }
+
+                File f = new File( outputDirectory, projectResource );
 
                 FileUtils.mkdir( f.getParentFile().getAbsolutePath() );
 
                 Writer writer = new FileWriter( f );
 
-                velocity.getEngine().mergeTemplate( resource, context, writer );
+                velocity.getEngine().mergeTemplate( bundleResource, context, writer );
 
                 writer.close();
             }
