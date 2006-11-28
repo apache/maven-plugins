@@ -763,9 +763,12 @@ public class IdeaModuleMojo
                 containerElement.addAttribute( "level", "module" );
                 Element methodAttribute = createElement( containerElement, "attribute" );
                 methodAttribute.addAttribute( "name", "method" );
-                if ( Artifact.SCOPE_PROVIDED.equalsIgnoreCase( artifact.getScope() ) )
+                if ( Artifact.SCOPE_PROVIDED.equalsIgnoreCase( artifact.getScope() )
+                    || Artifact.SCOPE_SYSTEM.equalsIgnoreCase( artifact.getScope() )
+                    || Artifact.SCOPE_TEST.equalsIgnoreCase( artifact.getScope() ) )
                 {
-                    methodAttribute.addAttribute( "value", "0" ); // If scope is provided, do not package.
+                    // If scope is provided, system or test - do not package.
+                    methodAttribute.addAttribute( "value", "0" );
                 }
                 else
                 {
