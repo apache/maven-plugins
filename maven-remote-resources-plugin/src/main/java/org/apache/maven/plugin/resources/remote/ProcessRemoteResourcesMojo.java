@@ -121,6 +121,8 @@ public class ProcessRemoteResourcesMojo
     private ArtifactRepositoryFactory artifactRepositoryFactory;
 
     /**
+     * The Maven session.
+     * 
      * @parameter expression="${session}"
      */
     private MavenSession mavenSession;
