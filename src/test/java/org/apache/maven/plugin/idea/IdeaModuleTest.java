@@ -138,6 +138,7 @@ public class IdeaModuleTest
     {
         List expectedLibs = new ArrayList();
         expectedLibs.add( "/WEB-INF/lib/maven-model-2.0.1.jar" );
+        expectedLibs.add( "/WEB-INF/lib/jdbc-stdext-2.0.jar" );
         expectedLibs.add( "/WEB-INF/lib/junit-3.8.1.jar" );
 
         Document imlDocument = executeMojo( "src/test/module-plugin-configs/provided-dep-plugin-config.xml" );
@@ -183,7 +184,15 @@ public class IdeaModuleTest
 
             if ( "/WEB-INF/lib/maven-model-2.0.1.jar".equals( attributeValue ) )
             {
-                assertEquals( "Test library method", "0", attribute.attributeValue( "value" ) );
+                assertEquals( "Test library method for provided dependency", "0", attribute.attributeValue( "value" ) );
+            }
+            else if ( "/WEB-INF/lib/jdbc-stdext-2.0.jar".equals( attributeValue ) )
+            {
+                assertEquals( "Test library method for system dependency", "0", attribute.attributeValue( "value" ) );
+            }
+            else if ( "/WEB-INF/lib/junit-3.8.1.jar".equals( attributeValue ) )
+            {
+                assertEquals( "Test library method for test dependency", "0", attribute.attributeValue( "value" ) );
             }
             else
             {
