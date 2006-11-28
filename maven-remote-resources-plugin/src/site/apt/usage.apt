@@ -10,8 +10,7 @@ Usage
 
 * How to Create a Resource Bundle
 
- In order to turn on the bundle resource manifest generation you need to configure the 
- plugin as follows.
+ To turn on the bundle resource manifest generation you need to configure the plugin as follows:
 
 -------------------
 <project>
@@ -32,7 +31,6 @@ Usage
     </plugins>
   </build>
 </project>
-
 ------------------- 
  
  This will triggering the scanning of your <<<${basedir}/src/main/resources>>> directory and create the
@@ -40,6 +38,34 @@ Usage
  
 * How to Use Remote Resource Bundles 
 
--------------------
+ To use remote resource bundles you need to configure the plugin as follows:
 
 -------------------
+<project>
+  ...
+  <build>
+    <plugins>
+      <!-- Turn this into a lifecycle -->
+      <plugin>
+        <artifactId>maven-remote-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>process</goal>
+            </goals>
+            <configuration>
+              <resourceBundles>
+                <resourceBundle>org.apache:apache-jar-resource-bundle:1.0-SNAPSHOT</resourceBundle>
+              </resourceBundles>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
+-------------------
+
+ This will retrieve the <<<apache-jar-resource-bundle-1.0-SNAPSHOT.jar>>> from the remote repositories
+ specified in your POM, process each resource in the bundle and deposit them in your projects
+ <<<${basedir}/target/classes>>> directory. 
