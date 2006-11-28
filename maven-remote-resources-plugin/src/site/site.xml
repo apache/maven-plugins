@@ -26,14 +26,5 @@
       <item name="Usage" href="usage.html"/>
       <item name="FAQ" href="faq.html"/>
     </menu>
-    <menu name="Samples">
-      <item name="Sample Changes Report" href="changes-report.html"/>
-      <item name="Live JIRA Report" href="jira-report.html"/>
-    </menu>
-
-    <menu name="Examples">
-      <item name="Alternate Location for the changes.xml File" href="examples/alternate-changes-xml-location.html"/>
-      <item name="SMTP Authentication" href="examples/smtp-authentication.html"/>
-    </menu>
   </body>
 </project>
