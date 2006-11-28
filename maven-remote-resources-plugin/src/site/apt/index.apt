@@ -1,0 +1,34 @@
+ ------
+ Introduction
+ ------
+ Jason van Zyl
+ ------
+ 27 November 2006
+ ------
+
+Maven 2 Remote Resources Plugin
+
+  This plugin is used to retrieve JARs of resource from remote repositories,
+  processes those resources, and incorporate them into JARs you build with
+  Maven. A very common use-case is the need to package certain resources in a
+  consistent way across your organization: at Apache it is required that every
+  JAR produced contain a copy of the Apache license and a notice file that
+  references all used software in a given project.
+
+* Goals Overview
+
+  * {{{superduper-transform.html}superduper:transform}} retrieves specified
+    remote resource bundles, process them and places them in your <<<${basedir}/target/classes>>> directory.
+
+  []
+
+* Usage
+
+  Instructions on how to use the Remote Resources Plugin can be found {{{usage.html}here}}.
+
+* Examples
+
+  To provide you with better understanding of some usages of the Remote Resouces Plugin,
+  you can take a look at the following examples:
+
+  * {{{examples/example.html}Sample Example}}
