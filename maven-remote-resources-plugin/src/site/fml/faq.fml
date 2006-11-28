@@ -5,7 +5,7 @@
      <question>Why do I need to use this plugin?</question>
      <answer>
        <p>
-         This plugin great reduces the pain associated with consistent packaging concerns across
+         This plugin greatly reduces the pain associated with consistent packaging concerns across
          a large set of projects, or an entire organization. Any project can specify the use of a
          remote resource bundle and have the resources incorporated into their packaging. This means
          that you can create standard settings in a parent POM somewhere in the project hierarchy and
