@@ -38,6 +38,11 @@ public class BundleRemoteResourcesMojo
     public void execute()
         throws MojoExecutionException
     {
+        if ( !resourcesDirectory.exists() )
+        {
+            return;
+        }        
+        
         // Look at the content of ${basedir}/src/main/resources and create a manifest of the files
         // so that velocity can easily process any resources inside the JAR that need to be processed.
 
