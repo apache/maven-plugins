@@ -20,12 +20,15 @@ import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.reporting.MavenReportException;
+import org.apache.maven.model.Resource;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
+import java.util.List;
+import java.util.Iterator;
 
 /**
  * Bundles the javadoc documentation in a jar so it can be deployed to the repo.
@@ -154,7 +157,19 @@ public class JavadocJar
 
         JarArchiver archiver = new JarArchiver();
 
-        archiver.setDotFileDirectory( new File( project.getBuild().getDirectory() ) );
+        List resources = project.getBuild().getResources();
+
+        for ( Iterator i = resources.iterator(); i.hasNext(); )
+        {
+            Resource r = (Resource) i.next();
+
+            if ( r.getDirectory().endsWith( "maven-shared-archive-resources" ) )
+            {
+                archiver.addDirectory( new File( r.getDirectory() ) );
+            }
+        }
+
+        //archiver.setDotFileDirectory( new File( project.getBuild().getDirectory() ) );
 
         archiver.addDirectory( javadocFiles );
 
