@@ -154,6 +154,8 @@ public class JavadocJar
 
         JarArchiver archiver = new JarArchiver();
 
+        archiver.setDotFileDirectory( new File( project.getBuild().getDirectory() ) );
+
         archiver.addDirectory( javadocFiles );
 
         archiver.setDestFile( javadocJar );
