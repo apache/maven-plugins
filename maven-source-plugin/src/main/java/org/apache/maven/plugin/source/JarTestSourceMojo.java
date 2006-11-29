@@ -50,7 +50,7 @@ public class JarTestSourceMojo
 
             try
             {
-                createJar( outputFile, testSourceDirectories, new JarArchiver() );
+                createJar( outputFile, testSourceDirectories, createArchiver() );
             }
             catch ( IOException e )
             {
