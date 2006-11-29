@@ -58,11 +58,12 @@ public class JarDefaultSourceMojo
             else
             {
                 File outputFile = new File( outputDirectory, finalName + "-sources.jar" );
+
                 File[] sourceDirectories = getDefaultSources();
 
                 try
                 {
-                    createJar( outputFile, sourceDirectories, new JarArchiver() );
+                    createJar( outputFile, sourceDirectories, createArchiver() );
                 }
                 catch ( IOException e )
                 {
