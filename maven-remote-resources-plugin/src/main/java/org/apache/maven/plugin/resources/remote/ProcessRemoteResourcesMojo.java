@@ -84,7 +84,7 @@ public class ProcessRemoteResourcesMojo
     /**
      * The directory where processed resources will be placed for packaging.
      *
-     * @parameter expression="${project.build.directory}/remote-resources"
+     * @parameter expression="${project.build.directory}/maven-shared-archive-resources"
      */
     private File outputDirectory;
 
