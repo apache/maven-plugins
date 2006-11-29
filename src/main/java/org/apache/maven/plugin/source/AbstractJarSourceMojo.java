@@ -251,12 +251,25 @@ public abstract class AbstractJarSourceMojo
     }
 
     protected Archiver createArchiver()
+        throws ArchiverException
     {
         Archiver archiver = new JarArchiver();
 
         if ( project.getBuild() != null )
         {
-            archiver.setDotFileDirectory( new File( project.getBuild().getDirectory() ) );
+            List resources = project.getBuild().getResources();
+
+            for ( Iterator i = resources.iterator(); i.hasNext(); )
+            {
+                Resource r = (Resource) i.next();
+
+                if ( r.getDirectory().endsWith( "maven-shared-archive-resources" ) )
+                {
+                    archiver.addDirectory( new File( r.getDirectory() ) );
+                }
+            }
+
+            //archiver.setDotFileDirectory( new File( project.getBuild().getDirectory() ) );
         }
 
         return archiver;
