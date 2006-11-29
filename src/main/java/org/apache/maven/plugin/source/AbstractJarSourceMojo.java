@@ -23,6 +23,8 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.jar.JarArchiver;
+import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,6 +34,8 @@ import java.util.List;
 public abstract class AbstractJarSourceMojo
     extends AbstractMojo
 {
+    private static final String[] DEFAULT_INCLUDES = new String[]{"**/*",};
+
     /**
      * @parameter expression="${project}"
      * @readonly
@@ -62,9 +66,7 @@ public abstract class AbstractJarSourceMojo
      */
     private boolean attach = true;
 
-    /**
-     * @component
-     */
+    /** @component */
     private MavenProjectHelper projectHelper;
 
     /**
@@ -89,9 +91,7 @@ public abstract class AbstractJarSourceMojo
      */
     protected String finalName;
 
-    /**
-     * @see org.apache.maven.plugin.AbstractMojo#execute()
-     */
+    /** @see org.apache.maven.plugin.AbstractMojo#execute() */
     public abstract void execute()
         throws MojoExecutionException;
 
@@ -133,7 +133,9 @@ public abstract class AbstractJarSourceMojo
      * @param sourceDirectories
      * @return an array of File objects that contains the directories that will be included in the jar file
      */
-    protected File[] addDirectories( List compileSourceRoots, List resources, File[] sourceDirectories )
+    protected File[] addDirectories( List compileSourceRoots,
+                                     List resources,
+                                     File[] sourceDirectories )
     {
         int count = 0;
         for ( Iterator i = compileSourceRoots.iterator(); i.hasNext(); )
@@ -190,11 +192,12 @@ public abstract class AbstractJarSourceMojo
      * @param outputFile        the file name of the jar
      * @param sourceDirectories the source directories that will be included in the jar file
      */
-    protected void createJar( File outputFile, File[] sourceDirectories, Archiver archiver )
+    protected void createJar( File outputFile,
+                              File[] sourceDirectories,
+                              Archiver archiver )
         throws IOException, ArchiverException
     {
-        SourceBundler sourceBundler = new SourceBundler();
-        sourceBundler.makeSourceBundle( outputFile, sourceDirectories, archiver );
+        makeSourceBundle( outputFile, sourceDirectories, archiver );
     }
 
     /**
@@ -203,7 +206,8 @@ public abstract class AbstractJarSourceMojo
      * @param outputFile the artifact file to be attached
      * @param classifier
      */
-    protected void attachArtifact( File outputFile, String classifier )
+    protected void attachArtifact( File outputFile,
+                                   String classifier )
     {
         if ( !attach )
         {
@@ -217,4 +221,44 @@ public abstract class AbstractJarSourceMojo
         }
     }
 
+    /**
+     * Method to create an archive of the specified files
+     *
+     * @param outputFile        the destination file of the generated archive
+     * @param sourceDirectories the directory where the files to be archived are located
+     * @param archiver          the archiver object that will create the archive
+     * @throws ArchiverException
+     * @throws IOException
+     */
+    protected void makeSourceBundle( File outputFile,
+                                     File[] sourceDirectories,
+                                     Archiver archiver )
+        throws ArchiverException, IOException
+    {
+        String[] includes = DEFAULT_INCLUDES;
+
+        for ( int i = 0; i < sourceDirectories.length; i++ )
+        {
+            if ( sourceDirectories[i].exists() )
+            {
+                archiver.addDirectory( sourceDirectories[i], includes, FileUtils.getDefaultExcludes() );
+            }
+        }
+
+        archiver.setDestFile( outputFile );
+
+        archiver.createArchive();
+    }
+
+    protected Archiver createArchiver()
+    {
+        Archiver archiver = new JarArchiver();
+
+        if ( project.getBuild() != null )
+        {
+            archiver.setDotFileDirectory( new File( project.getBuild().getDirectory() ) );
+        }
+
+        return archiver;
+    }
 }
