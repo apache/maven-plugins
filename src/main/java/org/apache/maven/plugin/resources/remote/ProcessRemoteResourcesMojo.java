@@ -28,6 +28,7 @@ import org.apache.maven.project.ProjectUtils;
 import org.apache.maven.shared.downloader.DownloadException;
 import org.apache.maven.shared.downloader.DownloadNotFoundException;
 import org.apache.maven.shared.downloader.Downloader;
+import org.apache.maven.model.Resource;
 import org.apache.velocity.VelocityContext;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
@@ -83,7 +84,7 @@ public class ProcessRemoteResourcesMojo
     /**
      * The directory where processed resources will be placed for packaging.
      *
-     * @parameter expression="${project.build.outputDirectory}"
+     * @parameter expression="${project.build.directory}/remote-resources"
      */
     private File outputDirectory;
 
@@ -122,7 +123,7 @@ public class ProcessRemoteResourcesMojo
 
     /**
      * The Maven session.
-     * 
+     *
      * @parameter expression="${session}"
      */
     private MavenSession mavenSession;
@@ -222,20 +223,22 @@ public class ProcessRemoteResourcesMojo
 
                 File projectResourceFile = new File( standardResourcesDirectory, projectResource );
 
-                if ( projectResourceFile.exists() )
-                {
-                    continue;
-                }
-
                 File f = new File( outputDirectory, projectResource );
 
                 FileUtils.mkdir( f.getParentFile().getAbsolutePath() );
+                                
+                if ( projectResourceFile.exists() )
+                {
+                    FileUtils.copyFile( projectResourceFile, f );
+                }
+                else
+                {
+                    Writer writer = new FileWriter( f );
 
-                Writer writer = new FileWriter( f );
+                    velocity.getEngine().mergeTemplate( bundleResource, context, writer );
 
-                velocity.getEngine().mergeTemplate( bundleResource, context, writer );
-
-                writer.close();
+                    writer.close();
+                }
             }
         }
         catch ( IOException e )
@@ -257,5 +260,31 @@ public class ProcessRemoteResourcesMojo
         }
 
         Thread.currentThread().setContextClassLoader( old );
+
+        // ----------------------------------------------------------------------------
+        // Push our newly generated resources directory into the MavenProject so that
+        // these resources can be picked up by the process-resources phase.
+        // ----------------------------------------------------------------------------
+
+        Resource resource = new Resource();
+
+        resource.setDirectory( outputDirectory.getAbsolutePath() );
+
+        project.getResources().add( resource );
+
+        // ----------------------------------------------------------------------------
+        // Write out archiver dot file
+        // ----------------------------------------------------------------------------
+
+        try
+        {
+            File dotFile = new File( project.getBuild().getDirectory(), ".plxarc" );
+
+            FileUtils.fileWrite( dotFile.getAbsolutePath(), outputDirectory.getName() );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Error creating dot file for archiving instructions.", e );
+        }
     }
 }
