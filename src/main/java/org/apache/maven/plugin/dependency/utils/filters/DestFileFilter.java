@@ -224,7 +224,7 @@ public class DestFileFilter
         this.useSubDirectoryPerType = useSubDirectoryPerType;
     }
 
-    public boolean okToProcess( ArtifactItem item )
+    public boolean okToProcess( ArtifactItem item ) throws MojoExecutionException
     {
         boolean overWrite = false;
         boolean result = false;
