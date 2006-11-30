@@ -115,12 +115,12 @@ public class TestDestFileFilter
         DestFileFilter filter = new DestFileFilter( outputFolder );
         Artifact artifact = fact.getReleaseArtifact();
 
-        assertTrue( filter.okToProcess( artifact ) );
+        assertTrue( filter.okToProcess( artifact ,log) );
         createFile( artifact );
-        assertFalse( filter.okToProcess( artifact ) );
+        assertFalse( filter.okToProcess( artifact ,log) );
 
         filter.overWriteReleases = true;
-        assertTrue( filter.okToProcess( artifact ) );
+        assertTrue( filter.okToProcess( artifact ,log));
     }
 
     public void testDestFileSnapshot()
@@ -129,12 +129,12 @@ public class TestDestFileFilter
         DestFileFilter filter = new DestFileFilter( outputFolder );
         Artifact artifact = fact.getSnapshotArtifact();
 
-        assertTrue( filter.okToProcess( artifact ) );
+        assertTrue( filter.okToProcess( artifact ,log) );
         createFile( artifact );
-        assertFalse( filter.okToProcess( artifact ) );
+        assertFalse( filter.okToProcess( artifact ,log) );
 
         filter.overWriteSnapshots = true;
-        assertTrue( filter.okToProcess( artifact ) );
+        assertTrue( filter.okToProcess( artifact ,log) );
     }
 
     public void testDestFileStripVersion()
@@ -144,12 +144,12 @@ public class TestDestFileFilter
         Artifact artifact = fact.getSnapshotArtifact();
         filter.removeVersion = true;
 
-        assertTrue( filter.okToProcess( artifact ) );
+        assertTrue( filter.okToProcess( artifact ,log) );
         createFile( artifact, false, false, true );
-        assertFalse( filter.okToProcess( artifact ) );
+        assertFalse( filter.okToProcess( artifact ,log) );
 
         filter.overWriteSnapshots = true;
-        assertTrue( filter.okToProcess( artifact ) );
+        assertTrue( filter.okToProcess( artifact ,log) );
     }
 
     public void testDestFileSubPerArtifact()
@@ -159,12 +159,12 @@ public class TestDestFileFilter
         Artifact artifact = fact.getSnapshotArtifact();
         filter.useSubDirectoryPerArtifact = true;
 
-        assertTrue( filter.okToProcess( artifact ) );
+        assertTrue( filter.okToProcess( artifact ,log) );
         createFile( artifact, true, false, false );
-        assertFalse( filter.okToProcess( artifact ) );
+        assertFalse( filter.okToProcess( artifact ,log) );
 
         filter.overWriteSnapshots = true;
-        assertTrue( filter.okToProcess( artifact ) );
+        assertTrue( filter.okToProcess( artifact ,log) );
     }
 
     public void testDestFileSubPerType()
@@ -174,12 +174,12 @@ public class TestDestFileFilter
         Artifact artifact = fact.getSnapshotArtifact();
         filter.useSubDirectoryPerType = true;
 
-        assertTrue( filter.okToProcess( artifact ) );
+        assertTrue( filter.okToProcess( artifact ,log) );
         createFile( artifact, false, true, false );
-        assertFalse( filter.okToProcess( artifact ) );
+        assertFalse( filter.okToProcess( artifact ,log) );
 
         filter.overWriteSnapshots = true;
-        assertTrue( filter.okToProcess( artifact ) );
+        assertTrue( filter.okToProcess( artifact ,log) );
     }
 
     public void testDestFileOverwriteIfNewer()
@@ -190,17 +190,23 @@ public class TestDestFileFilter
         fact.setCreateFiles( true );
         Artifact artifact = fact.getSnapshotArtifact();
         File artifactFile = artifact.getFile();
-        artifactFile.setLastModified( artifactFile.lastModified() - 1000 );
+        artifactFile.setLastModified( artifactFile.lastModified() );
         filter.overWriteIfNewer = true;
 
-        assertTrue( filter.okToProcess( artifact ) );
+        //should pass because the file doesn't exist yet.
+        assertTrue( filter.okToProcess( artifact ,log) );
 
+        //create the file in the destination
         File destFile = createFile( artifact, false, false, false );
-        assertTrue( filter.okToProcess( artifact ) );
+        
+        //set the last modified timestamp to be older than the source
+        destFile.setLastModified( artifactFile.lastModified()-1000 );
+        assertTrue( filter.okToProcess( artifact ,log) );
 
-        destFile.setLastModified( destFile.lastModified() - 2000 );
+        //now set the last modified timestamp to be newer than the source
+        destFile.setLastModified( artifactFile.lastModified() + 1000 );
 
-        assertFalse( filter.okToProcess( artifact ) );
+        assertFalse( filter.okToProcess( artifact ,log) );
     }
 
     public void testGettersSetters()
