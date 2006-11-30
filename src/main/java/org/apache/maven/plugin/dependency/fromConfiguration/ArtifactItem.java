@@ -41,7 +41,6 @@ package org.apache.maven.plugin.dependency.fromConfiguration;
 import java.io.File;
 
 import org.apache.maven.artifact.Artifact;
-import org.codehaus.plexus.archiver.util.FilterSupport;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -113,7 +112,7 @@ public class ArtifactItem
     /**
      * Force Overwrite
      */
-    private boolean doOverWrite;
+    private boolean needsProcessing;
 
     /**
      * Artifact Item
@@ -137,7 +136,7 @@ public class ArtifactItem
 
     private final String filterEmptyString(String in)
     {
-        if (in.equals(""))
+        if (in == null || in.equals(""))
         {
             return null;
         }
@@ -278,20 +277,20 @@ public class ArtifactItem
     }
 
     /**
-     * @return Returns the doOverWrite.
+     * @return Returns the needsProcessing.
      */
-    public boolean isDoOverWrite()
+    public boolean isNeedsProcessing()
     {
-        return this.doOverWrite;
+        return this.needsProcessing;
     }
 
     /**
-     * @param doOverWrite
-     *            The doOverWrite to set.
+     * @param needsProcessing
+     *            The needsProcessing to set.
      */
-    public void setDoOverWrite( boolean doOverWrite )
+    public void setNeedsProcessing( boolean needsProcessing )
     {
-        this.doOverWrite = doOverWrite;
+        this.needsProcessing = needsProcessing;
     }
 
     /**
