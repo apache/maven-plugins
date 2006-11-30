@@ -55,7 +55,7 @@ import org.apache.maven.plugin.logging.Log;
  * 
  */
 public class MarkerFileFilter
-    implements ArtifactsFilter
+    extends AbstractArtifactsFilter
 {
 
     boolean overWriteReleases;
@@ -91,7 +91,7 @@ public class MarkerFileFilter
         while ( iter.hasNext() )
         {
             Artifact artifact = (Artifact) iter.next();
-            if ( okToProcess( artifact ) )
+            if ( doOverwrite( artifact ) )
             {
                 result.add( artifact );
             }
@@ -99,7 +99,7 @@ public class MarkerFileFilter
         return result;
     }
 
-    public boolean okToProcess( Artifact artifact )
+    protected boolean doOverwrite( Artifact artifact )
         throws MojoExecutionException
     {
         boolean overWrite = false;
