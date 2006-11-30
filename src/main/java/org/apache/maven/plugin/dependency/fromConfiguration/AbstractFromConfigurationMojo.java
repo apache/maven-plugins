@@ -50,6 +50,7 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojo;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
+import org.apache.maven.plugin.dependency.utils.filters.ArtifactItemFilter;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -112,6 +113,8 @@ public abstract class AbstractFromConfigurationMojo
      */
     protected ArrayList artifactItems;
 
+    abstract ArtifactItemFilter getMarkedArtifactFilter( ArtifactItem item );
+
     /**
      * Preprocesses the list of ArtifactItems. This method defaults the
      * outputDirectory if not set and creates the output Directory if it doesn't
@@ -129,11 +132,11 @@ public abstract class AbstractFromConfigurationMojo
     protected ArrayList getArtifactItems( boolean removeVersion )
         throws MojoExecutionException
     {
-        if (artifactItems == null || artifactItems.size() < 1)
+        if ( artifactItems == null || artifactItems.size() < 1 )
         {
-            throw new MojoExecutionException("There are no artifactItems configured.");
+            throw new MojoExecutionException( "There are no artifactItems configured." );
         }
-        
+
         Iterator iter = artifactItems.iterator();
         while ( iter.hasNext() )
         {
@@ -146,35 +149,44 @@ public abstract class AbstractFromConfigurationMojo
             }
             artifactItem.getOutputDirectory().mkdirs();
 
-            //make sure we have a version.
+            // make sure we have a version.
             if ( StringUtils.isEmpty( artifactItem.getVersion() ) )
             {
                 fillMissingArtifactVersion( artifactItem );
             }
-            
+
             artifactItem.setArtifact( this.getArtifact( artifactItem ) );
 
-            // TODO:refactor this
-            String overWrite = artifactItem.getOverWrite();
-            if ( StringUtils.isEmpty( overWrite ) )
-            {
-                artifactItem.setDoOverWrite( false );
-            }
-            else
-            {
-                artifactItem.setDoOverWrite( overWrite.equalsIgnoreCase( "true" ) );
-            }
-
-            if ( artifactItem.getDestFileName() == null )
+            if ( StringUtils.isEmpty( artifactItem.getDestFileName() ) )
             {
                 artifactItem.setDestFileName( DependencyUtil.getFormattedFileName( artifactItem.getArtifact(),
                                                                                    removeVersion ) );
-            }
+            }   
             
+            artifactItem.setNeedsProcessing(checkIfProcessingNeeded(artifactItem));
         }
         return artifactItems;
     }
 
+    private boolean checkIfProcessingNeeded(ArtifactItem item) throws MojoExecutionException
+    {
+        boolean result = false;
+        if ( StringUtils.equalsIgnoreCase( item.getOverWrite(), "true" ) )
+        {
+            result = true;
+        }
+        else if (StringUtils.equalsIgnoreCase( item.getOverWrite(), "false" ))
+        {
+            result = false;
+        }
+        else
+        {
+            ArtifactItemFilter filter = getMarkedArtifactFilter( item );
+            result = filter.okToProcess( item );
+        }
+        return result;
+    }
+    
     /**
      * Resolves the Artifact from the remote repository if nessessary. If no
      * version is specified, it will be retrieved from the dependency list or
@@ -233,13 +245,11 @@ public abstract class AbstractFromConfigurationMojo
     private void fillMissingArtifactVersion( ArtifactItem artifact )
         throws MojoExecutionException
     {
-        if ( !findDependencyVersion( artifact, project.getDependencies() ) )
+        if ( !findDependencyVersion( artifact, project.getDependencies() )
+            && !findDependencyVersion( artifact, project.getDependencyManagement().getDependencies() ) )
         {
-            if ( !findDependencyVersion( artifact, project.getDependencyManagement().getDependencies() ) )
-            {
-                throw new MojoExecutionException( "Unable to find artifact version of " + artifact.getGroupId() + ":"
-                    + artifact.getArtifactId() + " in either dependency list or in project's dependency management." );
-            }
+            throw new MojoExecutionException( "Unable to find artifact version of " + artifact.getGroupId() + ":"
+                + artifact.getArtifactId() + " in either dependency list or in project's dependency management." );
         }
     }
 

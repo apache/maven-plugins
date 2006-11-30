@@ -58,11 +58,10 @@ public class ResolveFileFilter
         super( true, true, true, handler );
     }
 
-    public boolean okToProcess( Artifact artifact )
+    protected boolean doOverwrite( Artifact artifact )
         throws MojoExecutionException
-    {
+    {        
         handler.setArtifact( artifact );
-
         return ( !handler.isMarkerSet() );
     }
 }
