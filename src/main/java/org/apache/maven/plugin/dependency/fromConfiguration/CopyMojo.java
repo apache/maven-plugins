@@ -45,6 +45,8 @@ import java.util.Iterator;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
+import org.apache.maven.plugin.dependency.utils.filters.DestFileFilter;
+import org.apache.maven.plugin.dependency.utils.filters.ArtifactItemFilter;
 import org.apache.maven.plugin.logging.Log;
 
 /**
@@ -87,7 +89,14 @@ public class CopyMojo
         while ( iter.hasNext() )
         {
             ArtifactItem artifactItem = (ArtifactItem) iter.next();
-            copyArtifact( artifactItem);
+            if (artifactItem.isNeedsProcessing())
+            {
+                copyArtifact( artifactItem);
+            }
+            else
+            {
+                this.getLog().info(artifactItem+" already exists in "+ artifactItem.getOutputDirectory());
+            }
         }
     }
 
@@ -106,35 +115,19 @@ public class CopyMojo
     protected void copyArtifact( ArtifactItem artifactItem )
         throws MojoExecutionException
     {
-        Artifact artifact = artifactItem.getArtifact();
-
         File destFile = new File( artifactItem.getOutputDirectory(), artifactItem.getDestFileName() );
 
-        // TODO: refactor this to use the filters.
-        if ( !artifactItem.isDoOverWrite() )
-        {
-            if ( artifactItem.getArtifact().isSnapshot() )
-            {
-                artifactItem.setDoOverWrite( this.overWriteSnapshots );
-            }
-            else
-            {
-                artifactItem.setDoOverWrite( this.overWriteReleases );
-            }
-        }
-
-        File artifactFile = artifact.getFile();
-        if ( artifactItem.isDoOverWrite()
-            || ( !destFile.exists() || ( overWriteIfNewer && artifactFile.lastModified() < destFile.lastModified() ) ) )
-        {
-            copyFile( artifactFile, destFile );
-        }
-        else
-        {
-            this.getLog().info( artifactFile + " already exists." );
-        }
+        copyFile( artifactItem.getArtifact().getFile(), destFile );
     }
 
+    protected ArtifactItemFilter getMarkedArtifactFilter(ArtifactItem item)
+    {
+        ArtifactItemFilter destinationNameOverrideFilter = new DestFileFilter( this.overWriteReleases, this.overWriteSnapshots, this.overWriteIfNewer,
+                                   false, false, this.stripVersion,
+                                   item.getOutputDirectory() );
+        return destinationNameOverrideFilter;
+    }
+    
     /**
      * @return Returns the stripVersion.
      */

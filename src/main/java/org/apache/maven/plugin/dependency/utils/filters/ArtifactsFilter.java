@@ -43,6 +43,7 @@ package org.apache.maven.plugin.dependency.utils.filters;
 
 import java.util.Set;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 
@@ -55,4 +56,6 @@ public interface ArtifactsFilter
     public Set filter( Set artifacts, Log log )
         throws MojoExecutionException;
 
+    public boolean okToProcess( Artifact artifact, Log log )
+        throws MojoExecutionException;
 }

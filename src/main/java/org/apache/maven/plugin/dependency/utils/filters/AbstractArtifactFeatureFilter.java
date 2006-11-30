@@ -39,6 +39,7 @@ package org.apache.maven.plugin.dependency.utils.filters;
  */
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -53,7 +54,9 @@ import java.util.Set;
  * 
  * @author <a href="richardv@mxtelecom.com">Richard van der Hoff</a>
  */
-public abstract class AbstractArtifactFeatureFilter implements ArtifactsFilter {
+public abstract class AbstractArtifactFeatureFilter
+    extends AbstractArtifactsFilter
+{
     /** The list of types or classifiers to include */
     private List includes;
 
@@ -65,17 +68,20 @@ public abstract class AbstractArtifactFeatureFilter implements ArtifactsFilter {
 
     /** The configuration string for the exclude list - comma separated */
     private String excludeString;
-    
-    /** The name of the feature we are filtering on - for logging - "Classifiers" or "Types" */
+
+    /**
+     * The name of the feature we are filtering on - for logging - "Classifiers"
+     * or "Types"
+     */
     private String featureName;
-    
+
     public AbstractArtifactFeatureFilter( String include, String exclude, String featureName )
     {
         setExcludes( exclude );
         setIncludes( include );
         this.featureName = featureName;
     }
-    
+
     /**
      * This function determines if filtering needs to be performed. Excludes are
      * ignored if Includes are used.
@@ -91,14 +97,14 @@ public abstract class AbstractArtifactFeatureFilter implements ArtifactsFilter {
 
         if ( this.includes != null && !this.includes.isEmpty() )
         {
-            log.debug( "Including only "+featureName+": " + this.includeString );
+            log.debug( "Including only " + featureName + ": " + this.includeString );
             results = filterIncludes( artifacts, this.includes );
         }
         else
         {
             if ( this.excludes != null && !this.excludes.isEmpty() )
             {
-                log.debug( "Excluding "+featureName+": " + this.excludeString );
+                log.debug( "Excluding " + featureName + ": " + this.excludeString );
                 results = filterExcludes( artifacts, this.excludes );
             }
         }
@@ -129,9 +135,10 @@ public abstract class AbstractArtifactFeatureFilter implements ArtifactsFilter {
             {
                 Artifact artifact = (Artifact) iter.next();
 
-                // if the classifier or type of the artifact matches the feature to include, add to the
+                // if the classifier or type of the artifact matches the feature
+                // to include, add to the
                 // results
-                if ( getArtifactFeature(artifact).equals( include ) )
+                if ( getArtifactFeature( artifact ).equals( include ) )
                 {
                     result.add( artifact );
                 }
@@ -160,7 +167,7 @@ public abstract class AbstractArtifactFeatureFilter implements ArtifactsFilter {
         {
             boolean exclude = false;
             Artifact artifact = (Artifact) iter.next();
-            String artifactFeature = getArtifactFeature(artifact);
+            String artifactFeature = getArtifactFeature( artifact );
 
             // look through all types or classifiers. If no matches are found
             // then it can be added to the results.
@@ -184,15 +191,15 @@ public abstract class AbstractArtifactFeatureFilter implements ArtifactsFilter {
         return result;
     }
 
-
-    
     /**
-     * Should return the type or classifier of the given artifact, so that we can filter it
+     * Should return the type or classifier of the given artifact, so that we
+     * can filter it
      * 
-     * @param artifact  artifact to return type or classifier of
+     * @param artifact
+     *            artifact to return type or classifier of
      * @return type or classifier
      */
-    protected abstract String getArtifactFeature(Artifact artifact);
+    protected abstract String getArtifactFeature( Artifact artifact );
 
     public void setExcludes( String excludeString )
     {
@@ -203,7 +210,6 @@ public abstract class AbstractArtifactFeatureFilter implements ArtifactsFilter {
             this.excludes = Arrays.asList( StringUtils.split( excludeString, "," ) );
         }
     }
-
 
     public void setIncludes( String includeString )
     {
