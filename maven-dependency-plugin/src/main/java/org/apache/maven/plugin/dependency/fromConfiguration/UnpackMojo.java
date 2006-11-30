@@ -17,7 +17,6 @@
  * under the License.    
  */
 
-
 package org.apache.maven.plugin.dependency.fromConfiguration;
 
 /*
@@ -46,6 +45,8 @@ import java.util.Iterator;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
+import org.apache.maven.plugin.dependency.utils.filters.ArtifactsFilter;
+import org.apache.maven.plugin.dependency.utils.filters.ArtifactItemFilter;
 import org.apache.maven.plugin.dependency.utils.filters.MarkerFileFilter;
 import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
 import org.apache.maven.plugin.dependency.utils.markers.MarkerHandler;
@@ -86,12 +87,19 @@ public final class UnpackMojo
     public void execute()
         throws MojoExecutionException
     {
-        ArrayList artifactItems = getArtifactItems(false);
+        ArrayList artifactItems = getArtifactItems( false );
         Iterator iter = artifactItems.iterator();
         while ( iter.hasNext() )
         {
             ArtifactItem artifactItem = (ArtifactItem) iter.next();
+            if (artifactItem.isNeedsProcessing())
+            {
             unpackArtifact( artifactItem );
+            }
+            else
+            {
+                this.getLog().info( artifactItem.getArtifact().getFile().getName() + " already unpacked." );
+            }
         }
     }
 
@@ -114,17 +122,15 @@ public final class UnpackMojo
         Artifact artifact = artifactItem.getArtifact();
 
         MarkerHandler handler = new DefaultFileMarkerHandler( artifact, this.markersDirectory );
-        MarkerFileFilter filter = new MarkerFileFilter( this.overWriteReleases, this.overWriteSnapshots,
-                                                        this.overWriteIfNewer, handler );
 
-        if (artifactItem.isDoOverWrite() || filter.okToProcess(artifact))
-        {
-            unpack(artifact.getFile(),artifactItem.getOutputDirectory());
-            handler.setMarker();
-        }
-        else
-        {
-            this.getLog().info( artifact.getFile().getName() + " already unpacked." );
-        }
+        unpack( artifact.getFile(), artifactItem.getOutputDirectory() );
+        handler.setMarker();
+
+    }
+
+    ArtifactItemFilter getMarkedArtifactFilter( ArtifactItem item )
+    {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
