@@ -111,7 +111,8 @@ public final class UnpackMojo
 
     ArtifactItemFilter getMarkedArtifactFilter( ArtifactItem item )
     {
-        // TODO Auto-generated method stub
-        return null;
+        MarkerHandler handler = new DefaultFileMarkerHandler( item.getArtifact(), this.markersDirectory );
+        
+        return new MarkerFileFilter(this.overWriteReleases,this.overWriteSnapshots,this.overWriteIfNewer,handler);
     }
 }
