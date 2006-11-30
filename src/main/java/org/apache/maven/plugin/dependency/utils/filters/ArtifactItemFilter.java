@@ -1,4 +1,4 @@
-<!--
+ /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,24 +15,20 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License. 
+ */
+/**
+ * 
+ */
+package org.apache.maven.plugin.dependency.utils.filters;
+
+import org.apache.maven.plugin.dependency.fromConfiguration.ArtifactItem;
+
+/**
+ * @author brianf
  *
--->
-<project>
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-dependency-plugin</artifactId>
-          <configuration>
-              <project implementation="org.apache.maven.plugin.dependency.testUtils.stubs.DependencyProjectStub"/>
-          </configuration>
-      </plugin>
-    </plugins>
-  </build>
-    <dependencies>
-        <dependency>
-          <groupId>org.apache.maven</groupId>
-          <artifactId>maven-artifact</artifactId>
-          <version>2.0.4</version>
-        </dependency>
-    </dependencies>
-</project>
+ */
+public interface ArtifactItemFilter
+{
+
+    public boolean okToProcess ( ArtifactItem item);
+}
