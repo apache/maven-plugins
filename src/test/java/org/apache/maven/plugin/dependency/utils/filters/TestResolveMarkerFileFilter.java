@@ -83,7 +83,8 @@ public class TestResolveMarkerFileFilter
         artifacts = fact.getReleaseAndSnapshotArtifacts();
     }
 
-    protected void tearDown() throws IOException
+    protected void tearDown()
+        throws IOException
     {
         DependencyTestUtils.removeDirectory( outputFolder );
     }
@@ -92,16 +93,15 @@ public class TestResolveMarkerFileFilter
         throws MojoExecutionException, IOException
     {
         SourcesFileMarkerHandler handler = new SourcesFileMarkerHandler( outputFolder );
-        ResolveFileFilter filter = new ResolveFileFilter( handler );
-
-        handler = new SourcesFileMarkerHandler( outputFolder );
-
+  
         Artifact artifact = fact.getReleaseArtifact();
         handler.setArtifact( artifact );
-
-        assertTrue( filter.okToProcess( artifact ) );
+  
+        ResolveFileFilter filter = new ResolveFileFilter( handler );
+     
+        assertTrue( filter.okToProcess( artifact , log));
         handler.setMarker();
-        assertFalse( filter.okToProcess( artifact ) );
+        assertFalse( filter.okToProcess( artifact, log ));
     }
 
 }
