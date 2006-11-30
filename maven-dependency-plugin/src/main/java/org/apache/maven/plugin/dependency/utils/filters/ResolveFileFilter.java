@@ -24,6 +24,7 @@ package org.apache.maven.plugin.dependency.utils.filters;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.dependency.fromConfiguration.ArtifactItem;
 import org.apache.maven.plugin.dependency.utils.markers.MarkerHandler;
 
 /**
@@ -39,10 +40,10 @@ public class ResolveFileFilter
         super( true, true, true, handler );
     }
 
-    protected boolean doOverwrite( Artifact artifact )
-        throws MojoExecutionException
+    public boolean okToProcess( ArtifactItem item )
+    throws MojoExecutionException
     {        
-        handler.setArtifact( artifact );
+        handler.setArtifact( item.getArtifact() );
         return ( !handler.isMarkerSet() );
     }
 }

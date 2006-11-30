@@ -28,6 +28,7 @@ import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.dependency.fromConfiguration.ArtifactItem;
 import org.apache.maven.plugin.dependency.utils.markers.MarkerHandler;
 import org.apache.maven.plugin.logging.Log;
 
@@ -37,6 +38,7 @@ import org.apache.maven.plugin.logging.Log;
  */
 public class MarkerFileFilter
     extends AbstractArtifactsFilter
+    implements ArtifactItemFilter
 {
 
     boolean overWriteReleases;
@@ -72,7 +74,7 @@ public class MarkerFileFilter
         while ( iter.hasNext() )
         {
             Artifact artifact = (Artifact) iter.next();
-            if ( doOverwrite( artifact ) )
+            if ( okToProcess( new ArtifactItem( artifact ) ) )
             {
                 result.add( artifact );
             }
@@ -80,9 +82,10 @@ public class MarkerFileFilter
         return result;
     }
 
-    protected boolean doOverwrite( Artifact artifact )
+    public boolean okToProcess( ArtifactItem item )
         throws MojoExecutionException
     {
+        Artifact artifact = item.getArtifact();
         boolean overWrite = false;
         boolean result = false;
         if ( ( artifact.isSnapshot() && this.overWriteSnapshots )
