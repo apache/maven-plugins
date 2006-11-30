@@ -150,7 +150,11 @@ public class DoapMojo
         rdfResourceElement( "asfext:pmc", project.getUrl() );
         element( "shortdesc", project.getDescription() );
         element( "description", project.getDescription() );
-        rdfResourceElement( "bug-database", project.getIssueManagement().getUrl() );
+
+        if ( project.getIssueManagement() != null )
+        {
+            rdfResourceElement( "bug-database", project.getIssueManagement().getUrl() );
+        }
         rdfResourceElement( "mailing-list", composeUrl( project.getUrl() , "/mail-lists.html" ) );
         rdfResourceElement( "download-page", composeUrl( project.getUrl() , "/download.html" ) );
         element( "programming-language", language );
