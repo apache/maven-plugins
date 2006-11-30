@@ -104,10 +104,7 @@ public class TestUnpackDependenciesMojo
 
         File destFile = new File( folder, stubFactory.getUnpackableFileName( artifact ) );
 
-        /*
-         * System.out.println( "Checking file: " + destFile.getPath() ); if (
-         * val != destFile.exists() ) { System.out.println( "FAIL!" ); }
-         */
+       
         assertEquals( val, destFile.exists() );
         assertMarkerFile( val, artifact );
     }

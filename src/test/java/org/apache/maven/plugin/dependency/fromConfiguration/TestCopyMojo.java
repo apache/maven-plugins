@@ -22,9 +22,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.model.Dependency;
@@ -33,6 +36,7 @@ import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
 import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.testUtils.stubs.StubArtifactRepository;
 import org.apache.maven.plugin.dependency.testUtils.stubs.StubArtifactResolver;
+import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.project.MavenProject;
 
 public class TestCopyMojo
@@ -88,26 +92,11 @@ public class TestCopyMojo
         mojo.artifactItems = list;
 
         ArtifactItem result = getSingleArtifactItem( false );
-        assertFalse( result.isDoOverWrite() );
-
-        item.setOverWrite( "true" );
-        result = getSingleArtifactItem( false );
-        assertTrue( result.isDoOverWrite() );
         assertEquals( mojo.outputDirectory, result.getOutputDirectory() );
 
-        item.setOverWrite( "false" );
-        result = getSingleArtifactItem( false );
-        assertFalse( result.isDoOverWrite() );
-
-        item.setOverWrite( "" );
-        result = getSingleArtifactItem( false );
-        assertFalse( result.isDoOverWrite() );
-
-        item.setOverWrite( "blah" );
         File output = new File( mojo.outputDirectory, "override" );
         item.setOutputDirectory( output );
         result = getSingleArtifactItem( false );
-        assertFalse( result.isDoOverWrite() );
         assertEquals( output, result.getOutputDirectory() );
     }
 
@@ -290,28 +279,29 @@ public class TestCopyMojo
         assertEquals( "2.1", item.getVersion() );
     }
 
-    public List getDependencyMgtList(ArtifactItem item)
+    public List getDependencyMgtList( ArtifactItem item )
     {
         Dependency dep = new Dependency();
-        dep.setArtifactId(item.getArtifactId());
-        dep.setClassifier(item.getClassifier());
-        dep.setGroupId(item.getGroupId());
-        dep.setType(item.getType());
-        dep.setVersion("3.0-SNAPSHOT");
-        
+        dep.setArtifactId( item.getArtifactId() );
+        dep.setClassifier( item.getClassifier() );
+        dep.setGroupId( item.getGroupId() );
+        dep.setType( item.getType() );
+        dep.setVersion( "3.0-SNAPSHOT" );
+
         Dependency dep2 = new Dependency();
-        dep2.setArtifactId(item.getArtifactId());
-        dep2.setClassifier("classifier");
-        dep2.setGroupId(item.getGroupId());
-        dep2.setType(item.getType());
-        dep2.setVersion("3.1");
-        
-        List list = new ArrayList(2);
-        list.add(dep2);
-        list.add(dep);
-        
+        dep2.setArtifactId( item.getArtifactId() );
+        dep2.setClassifier( "classifier" );
+        dep2.setGroupId( item.getGroupId() );
+        dep2.setType( item.getType() );
+        dep2.setVersion( "3.1" );
+
+        List list = new ArrayList( 2 );
+        list.add( dep2 );
+        list.add( dep );
+
         return list;
     }
+
     public void testMissingVersionFromDependencyMgt()
         throws MojoExecutionException
     {
@@ -321,8 +311,7 @@ public class TestCopyMojo
         item.setClassifier( "" );
         item.setGroupId( "groupId" );
         item.setType( "type" );
-        
-        
+
         MavenProject project = mojo.getProject();
         project.setDependencies( getDependencyList( item ) );
 
@@ -335,114 +324,260 @@ public class TestCopyMojo
 
         ArrayList list = new ArrayList();
         list.add( item );
-        
+
         mojo.artifactItems = list;
 
         project.getDependencyManagement().setDependencies( getDependencyMgtList( item ) );
 
         mojo.execute();
-        System.out.println("resolved:"+item.toString());
+
         this.assertFileExists( item, true );
         assertEquals( "3.0-SNAPSHOT", item.getVersion() );
     }
+
     public void testMissingVersionFromDependencyMgtWithClassifier()
-    throws MojoExecutionException
-{
-    ArtifactItem item = new ArtifactItem();
-
-    item.setArtifactId( "artifactId" );
-    item.setClassifier( "classifier" );
-    item.setGroupId( "groupId" );
-    item.setType( "type" );
-    
-    
-    MavenProject project = mojo.getProject();
-    project.setDependencies( getDependencyList( item ) );
-
-    item = new ArtifactItem();
-
-    item.setArtifactId( "artifactId-2" );
-    item.setClassifier( "classifier" );
-    item.setGroupId( "groupId" );
-    item.setType( "type" );
-
-    ArrayList list = new ArrayList();
-    list.add( item );
-    
-    mojo.artifactItems = list;
-
-    project.getDependencyManagement().setDependencies( getDependencyMgtList( item ) );
-
-    mojo.execute();
-    System.out.println("resolved:"+item.toString());
-    this.assertFileExists( item, true );
-    assertEquals( "3.1", item.getVersion() );
-}
-    
-    public void testArtifactNotFound()
-    throws Exception
-{
-    dotestArtifactExceptions( false, true );
-}
-
-public void testArtifactResolutionException()
-    throws Exception
-{
-    dotestArtifactExceptions( true, false );
-}
-
-public void dotestArtifactExceptions( boolean are, boolean anfe )
-    throws Exception
-{
-    ArtifactItem item = new ArtifactItem();
-
-    item.setArtifactId( "artifactId" );
-    item.setClassifier( "" );
-    item.setGroupId( "groupId" );
-    item.setType( "type" );
-    item.setVersion("1.0");
-
-    ArrayList list = new ArrayList();
-    list.add( item );
-    mojo.artifactItems = list;
-    
-    // init classifier things
-    mojo.setFactory(DependencyTestUtils.getArtifactFactory());
-    mojo.setResolver(new StubArtifactResolver( null, are, anfe ));
-    mojo.setLocal(new StubArtifactRepository( this.testDir.getAbsolutePath() ));
-
-    try
+        throws MojoExecutionException
     {
+        ArtifactItem item = new ArtifactItem();
+
+        item.setArtifactId( "artifactId" );
+        item.setClassifier( "classifier" );
+        item.setGroupId( "groupId" );
+        item.setType( "type" );
+
+        MavenProject project = mojo.getProject();
+        project.setDependencies( getDependencyList( item ) );
+
+        item = new ArtifactItem();
+
+        item.setArtifactId( "artifactId-2" );
+        item.setClassifier( "classifier" );
+        item.setGroupId( "groupId" );
+        item.setType( "type" );
+
+        ArrayList list = new ArrayList();
+        list.add( item );
+
+        mojo.artifactItems = list;
+
+        project.getDependencyManagement().setDependencies( getDependencyMgtList( item ) );
+
         mojo.execute();
-        fail( "ExpectedException" );
-    }
-    catch ( MojoExecutionException e )
-    {
-        if (are)
-        {
-            assertEquals("Unable to resolve artifact.",e.getMessage());
-        }
-        else
-        {
-            assertEquals("Unable to find artifact.",e.getMessage());
-        }
-    }
-}
 
-public void testNoArtifactItems()
+        this.assertFileExists( item, true );
+        assertEquals( "3.1", item.getVersion() );
+    }
+
+    public void testArtifactNotFound()
+        throws Exception
+    {
+        dotestArtifactExceptions( false, true );
+    }
+
+    public void testArtifactResolutionException()
+        throws Exception
+    {
+        dotestArtifactExceptions( true, false );
+    }
+
+    public void dotestArtifactExceptions( boolean are, boolean anfe )
+        throws Exception
+    {
+        ArtifactItem item = new ArtifactItem();
+
+        item.setArtifactId( "artifactId" );
+        item.setClassifier( "" );
+        item.setGroupId( "groupId" );
+        item.setType( "type" );
+        item.setVersion( "1.0" );
+
+        ArrayList list = new ArrayList();
+        list.add( item );
+        mojo.artifactItems = list;
+
+        // init classifier things
+        mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
+        mojo.setResolver( new StubArtifactResolver( null, are, anfe ) );
+        mojo.setLocal( new StubArtifactRepository( this.testDir.getAbsolutePath() ) );
+
+        try
+        {
+            mojo.execute();
+            fail( "ExpectedException" );
+        }
+        catch ( MojoExecutionException e )
+        {
+            if ( are )
+            {
+                assertEquals( "Unable to resolve artifact.", e.getMessage() );
+            }
+            else
+            {
+                assertEquals( "Unable to find artifact.", e.getMessage() );
+            }
+        }
+    }
+
+    public void testNoArtifactItems()
+    {
+        try
+        {
+            mojo.getArtifactItems( false );
+            fail( "Expected Exception" );
+        }
+        catch ( MojoExecutionException e )
+        {
+            assertEquals( "There are no artifactItems configured.", e.getMessage() );
+        }
+
+    }
+
+    public void testCopyDontOverWriteReleases()
+        throws IOException, MojoExecutionException, InterruptedException
+    {
+        stubFactory.setCreateFiles( true );
+        Artifact release = stubFactory.getReleaseArtifact();
+        release.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+
+        ArtifactItem item = new ArtifactItem( release );
+
+        ArrayList list = new ArrayList( 1 );
+        list.add( item );
+        mojo.artifactItems = list;
+
+        mojo.overWriteIfNewer = false;
+
+        mojo.execute();
+
+        File copiedFile = new File( item.getOutputDirectory(), item.getDestFileName() );
+
+        Thread.sleep( 100 );
+        // round up to the next second
+        long time = System.currentTimeMillis() + 1000;
+        time = time - ( time % 1000 );
+        copiedFile.setLastModified( time );
+        Thread.sleep( 100 );
+
+        mojo.execute();
+
+        assertEquals( time, copiedFile.lastModified() );
+    }
+
+    public void testCopyDontOverWriteSnapshots()
+        throws IOException, MojoExecutionException, InterruptedException
+    {
+        stubFactory.setCreateFiles( true );
+        Artifact artifact = stubFactory.getSnapshotArtifact();
+        artifact.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+
+        ArtifactItem item = new ArtifactItem( artifact );
+
+        ArrayList list = new ArrayList( 1 );
+        list.add( item );
+        mojo.artifactItems = list;
+
+        mojo.overWriteIfNewer = false;
+
+        mojo.execute();
+
+        File copiedFile = new File( item.getOutputDirectory(), item.getDestFileName() );
+
+        Thread.sleep( 100 );
+        // round up to the next second
+        long time = System.currentTimeMillis() + 1000;
+        time = time - ( time % 1000 );
+        copiedFile.setLastModified( time );
+        Thread.sleep( 100 );
+
+        mojo.execute();
+
+        assertEquals( time, copiedFile.lastModified() );
+    }
+
+    public void testCopyOverWriteReleases()
+        throws IOException, MojoExecutionException, InterruptedException
+    {
+        stubFactory.setCreateFiles( true );
+        Artifact release = stubFactory.getReleaseArtifact();
+        release.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+
+        ArtifactItem item = new ArtifactItem( release );
+
+        ArrayList list = new ArrayList( 1 );
+        list.add( item );
+        mojo.artifactItems = list;
+
+        mojo.overWriteIfNewer = false;
+        mojo.overWriteReleases = true;
+        mojo.execute();
+
+        File copiedFile = new File( item.getOutputDirectory(), item.getDestFileName() );
+
+        // round up to the next second
+        long time = System.currentTimeMillis() - 2000;
+        copiedFile.setLastModified( time );
+
+        mojo.execute();
+
+        assertTrue( time < copiedFile.lastModified() );
+    }
+
+    public void testCopyOverWriteSnapshot()
+        throws IOException, MojoExecutionException, InterruptedException
+    {
+        stubFactory.setCreateFiles( true );
+        Artifact artifact = stubFactory.getSnapshotArtifact();
+        artifact.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+
+        ArtifactItem item = new ArtifactItem( artifact );
+
+        ArrayList list = new ArrayList( 1 );
+        list.add( item );
+        mojo.artifactItems = list;
+
+        mojo.overWriteIfNewer = false;
+        mojo.overWriteReleases = false;
+        mojo.overWriteSnapshots = true;
+        mojo.execute();
+
+        File copiedFile = new File( item.getOutputDirectory(), item.getDestFileName() );
+
+        // round up to the next second
+        long time = System.currentTimeMillis() - 2000;
+        copiedFile.setLastModified( time );
+
+        mojo.execute();
+
+        assertTrue( time < copiedFile.lastModified() );
+    }
+    
+    public void testCopyOverWriteIfNewer()
+    throws IOException, MojoExecutionException, InterruptedException
 {
-    try
-    {
-        mojo.getArtifactItems(false);
-        fail("Expected Exception");
-    }
-    catch ( MojoExecutionException e )
-    {
-        assertEquals("There are no artifactItems configured.",e.getMessage());
-    }
+    stubFactory.setCreateFiles( true );
+    Artifact artifact = stubFactory.getSnapshotArtifact();
+    artifact.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+
+    ArtifactItem item = new ArtifactItem( artifact );
+
+    ArrayList list = new ArrayList( 1 );
+    list.add( item );
+    mojo.artifactItems = list;
+    mojo.overWriteIfNewer = true;
+    mojo.execute();
+
+    File copiedFile = new File( item.getOutputDirectory(), item.getDestFileName() );
+
+    // set dest to be old
+    long time = System.currentTimeMillis() - 10000;
+    copiedFile.setLastModified( time );
     
+    //set source to be newer
+    artifact.getFile().setLastModified(time + 4000);
+    mojo.execute();
+
+    assertTrue( time < copiedFile.lastModified() );
 }
-    
     // TODO: test overwrite / overwrite if newer / overwrite release / overwrite
     // snapshot
 
