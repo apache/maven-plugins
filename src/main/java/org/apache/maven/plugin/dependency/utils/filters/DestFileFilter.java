@@ -29,15 +29,18 @@ import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.dependency.fromConfiguration.ArtifactItem;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.logging.Log;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * @author brianf
  * 
  */
 public class DestFileFilter
-    implements ArtifactsFilter
+    extends AbstractArtifactsFilter
+    implements ArtifactItemFilter
 {
 
     boolean overWriteReleases;
@@ -54,7 +57,7 @@ public class DestFileFilter
 
     File outputFileDirectory;
 
-    public DestFileFilter (File outputFileDirectory)
+    public DestFileFilter( File outputFileDirectory )
     {
         this.outputFileDirectory = outputFileDirectory;
         overWriteReleases = false;
@@ -64,6 +67,7 @@ public class DestFileFilter
         useSubDirectoryPerType = false;
         removeVersion = false;
     }
+
     public DestFileFilter( boolean overWriteReleases, boolean overWriteSnapshots, boolean overWriteIfNewer,
                           boolean useSubDirectoryPerArtifact, boolean useSubDirectoryPerType, boolean removeVersion,
                           File outputFileDirectory )
@@ -93,37 +97,11 @@ public class DestFileFilter
         while ( iter.hasNext() )
         {
             Artifact artifact = (Artifact) iter.next();
-            if ( okToProcess( artifact ) )
+            if (okToProcess( new ArtifactItem(artifact) ) )
             {
                 result.add( artifact );
             }
         }
-        return result;
-    }
-
-    public boolean okToProcess( Artifact artifact )
-        throws MojoExecutionException
-    {
-        boolean overWrite = false;
-        boolean result = false;
-        if ( ( artifact.isSnapshot() && this.overWriteSnapshots )
-            || ( !artifact.isSnapshot() && this.overWriteReleases ) )
-        {
-            overWrite = true;
-        }
-
-        File destFolder = DependencyUtil.getFormattedOutputDirectory( this.useSubDirectoryPerType,
-                                                                      this.useSubDirectoryPerArtifact,
-                                                                      this.outputFileDirectory, artifact );
-        File destFile = new File( destFolder, DependencyUtil.getFormattedFileName( artifact, this.removeVersion ) );
-
-        if ( overWrite
-            || ( !destFile.exists() || ( overWriteIfNewer && artifact.getFile().lastModified() < destFile
-                .lastModified() ) ) )
-        {
-            result = true;
-        }
-
         return result;
     }
 
@@ -177,6 +155,7 @@ public class DestFileFilter
     {
         this.overWriteIfNewer = overWriteIfNewer;
     }
+
     /**
      * @return Returns the outputFileDirectory.
      */
@@ -184,13 +163,16 @@ public class DestFileFilter
     {
         return this.outputFileDirectory;
     }
+
     /**
-     * @param outputFileDirectory The outputFileDirectory to set.
+     * @param outputFileDirectory
+     *            The outputFileDirectory to set.
      */
     public void setOutputFileDirectory( File outputFileDirectory )
     {
         this.outputFileDirectory = outputFileDirectory;
     }
+
     /**
      * @return Returns the removeVersion.
      */
@@ -198,13 +180,16 @@ public class DestFileFilter
     {
         return this.removeVersion;
     }
+
     /**
-     * @param removeVersion The removeVersion to set.
+     * @param removeVersion
+     *            The removeVersion to set.
      */
     public void setRemoveVersion( boolean removeVersion )
     {
         this.removeVersion = removeVersion;
     }
+
     /**
      * @return Returns the useSubDirectoryPerArtifact.
      */
@@ -212,13 +197,16 @@ public class DestFileFilter
     {
         return this.useSubDirectoryPerArtifact;
     }
+
     /**
-     * @param useSubDirectoryPerArtifact The useSubDirectoryPerArtifact to set.
+     * @param useSubDirectoryPerArtifact
+     *            The useSubDirectoryPerArtifact to set.
      */
     public void setUseSubDirectoryPerArtifact( boolean useSubDirectoryPerArtifact )
     {
         this.useSubDirectoryPerArtifact = useSubDirectoryPerArtifact;
     }
+
     /**
      * @return Returns the useSubDirectoryPerType.
      */
@@ -226,11 +214,51 @@ public class DestFileFilter
     {
         return this.useSubDirectoryPerType;
     }
+
     /**
-     * @param useSubDirectoryPerType The useSubDirectoryPerType to set.
+     * @param useSubDirectoryPerType
+     *            The useSubDirectoryPerType to set.
      */
     public void setUseSubDirectoryPerType( boolean useSubDirectoryPerType )
     {
         this.useSubDirectoryPerType = useSubDirectoryPerType;
+    }
+
+    public boolean okToProcess( ArtifactItem item )
+    {
+        boolean overWrite = false;
+        boolean result = false;
+        Artifact artifact = item.getArtifact();
+        
+        if ( ( artifact.isSnapshot() && this.overWriteSnapshots )
+            || ( !artifact.isSnapshot() && this.overWriteReleases ) )
+        {
+            overWrite = true;
+        }
+
+        File destFolder = item.getOutputDirectory();
+        if ( destFolder == null )
+        {
+            destFolder = DependencyUtil.getFormattedOutputDirectory( this.useSubDirectoryPerType, this.useSubDirectoryPerArtifact,
+                                                        this.outputFileDirectory, artifact );
+        }
+        
+        File destFile = null;
+        if (StringUtils.isEmpty(item.getDestFileName()))
+        {
+            destFile = new File( destFolder, DependencyUtil.getFormattedFileName( artifact, this.removeVersion ) );
+        }
+        else
+        {
+            destFile = new File (destFolder,item.getDestFileName());
+        }   
+     
+        if ( overWrite
+            || ( !destFile.exists() || ( overWriteIfNewer && artifact.getFile().lastModified() > destFile
+                .lastModified() ) ) )
+        {
+            result = true;
+        }
+        return result;
     }
 }

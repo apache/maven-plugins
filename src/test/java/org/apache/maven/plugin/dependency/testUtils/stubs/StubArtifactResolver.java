@@ -17,7 +17,7 @@
  * under the License.    
  */
 
-package org.apache.maven.plugin.dependency.stubs;
+package org.apache.maven.plugin.dependency.testUtils.stubs;
 
 import java.io.IOException;
 import java.util.List;
@@ -32,7 +32,7 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
-import org.apache.maven.plugin.dependency.utils.ArtifactStubFactory;
+import org.apache.maven.plugin.dependency.testUtils.ArtifactStubFactory;
 
 public class StubArtifactResolver
     implements ArtifactResolver
@@ -52,6 +52,10 @@ public class StubArtifactResolver
         this.factory = factory;
     }
 
+    /*
+     * Creates dummy file and sets it in the artifact to simulate resolution (non-Javadoc)
+     * @see org.apache.maven.artifact.resolver.ArtifactResolver#resolve(org.apache.maven.artifact.Artifact, java.util.List, org.apache.maven.artifact.repository.ArtifactRepository)
+     */
     public void resolve( Artifact artifact, List remoteRepositories, ArtifactRepository localRepository )
         throws ArtifactResolutionException, ArtifactNotFoundException
     {

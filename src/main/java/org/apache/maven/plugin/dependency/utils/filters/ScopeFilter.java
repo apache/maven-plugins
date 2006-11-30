@@ -30,7 +30,7 @@ import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.StringUtils;
 
 public class ScopeFilter
-    implements ArtifactsFilter
+    extends AbstractArtifactsFilter
 {
 
     private String includeScope;

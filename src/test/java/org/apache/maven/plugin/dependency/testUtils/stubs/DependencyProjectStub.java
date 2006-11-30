@@ -17,7 +17,7 @@
  * under the License.    
  */
 
-package org.apache.maven.plugin.dependency.stubs;
+package org.apache.maven.plugin.dependency.testUtils.stubs;
 /*
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -86,6 +86,8 @@ public class DependencyProjectStub
 
     private MavenProject parent;
 
+    private List dependencies;
+    
     private File file;
 
     private List collectedProjects;
@@ -108,6 +110,8 @@ public class DependencyProjectStub
 
     private Set dependencyArtifacts;
 
+    private DependencyManagement dependencyManagement;
+    
     private Artifact artifact;
 
     private Map artifactMap;
@@ -253,17 +257,26 @@ public class DependencyProjectStub
 
     public void setDependencies( List list )
     {
-
+        dependencies = list;
     }
 
     public List getDependencies()
     {
-        return Collections.singletonList( "" );
+        if (dependencies == null)
+        {
+            dependencies = Collections.EMPTY_LIST;
+        }
+        return dependencies;
     }
 
     public DependencyManagement getDependencyManagement()
     {
-        return null;
+        if (dependencyManagement == null)
+        {
+            dependencyManagement = new DependencyManagement();
+        }
+        
+        return dependencyManagement;
     }
 
     public void addCompileSourceRoot( String string )

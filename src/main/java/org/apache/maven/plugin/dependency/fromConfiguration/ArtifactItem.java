@@ -22,10 +22,12 @@ package org.apache.maven.plugin.dependency.fromConfiguration;
 import java.io.File;
 
 import org.apache.maven.artifact.Artifact;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * ArtifactItem represents information specified in the plugin configuration
  * section for each artifact.
+ * 
  * @since 1.0
  * @author brianf
  */
@@ -91,13 +93,39 @@ public class ArtifactItem
     /**
      * Force Overwrite
      */
-    private boolean doOverWrite;
-    
+    private boolean needsProcessing;
+
     /**
      * Artifact Item
      */
     private Artifact artifact;
 
+    public ArtifactItem()
+    {
+        // default constructor
+    }
+
+    public ArtifactItem( Artifact artifact )
+    {
+        this.setArtifact(artifact);
+        this.setArtifactId(artifact.getArtifactId());
+        this.setClassifier(artifact.getClassifier());
+        this.setGroupId(artifact.getGroupId());
+        this.setType(artifact.getType());
+        this.setVersion(artifact.getVersion());
+    }
+
+    private final String filterEmptyString(String in)
+    {
+        if (in == null || in.equals(""))
+        {
+            return null;
+        }
+        else
+        {
+            return in;
+        }
+    }
     /**
      * @return Returns the artifactId.
      */
@@ -112,7 +140,7 @@ public class ArtifactItem
      */
     public void setArtifactId( String artifact )
     {
-        this.artifactId = artifact;
+        this.artifactId = filterEmptyString(artifact);
     }
 
     /**
@@ -129,7 +157,7 @@ public class ArtifactItem
      */
     public void setGroupId( String groupId )
     {
-        this.groupId = groupId;
+        this.groupId = filterEmptyString(groupId);
     }
 
     /**
@@ -146,7 +174,7 @@ public class ArtifactItem
      */
     public void setType( String type )
     {
-        this.type = type;
+        this.type = filterEmptyString(type);
     }
 
     /**
@@ -163,7 +191,7 @@ public class ArtifactItem
      */
     public void setVersion( String version )
     {
-        this.version = version;
+        this.version = filterEmptyString(version);
     }
 
     /**
@@ -180,19 +208,18 @@ public class ArtifactItem
      */
     public void setClassifier( String classifier )
     {
-        this.classifier = classifier;
+        this.classifier = filterEmptyString(classifier);
     }
 
     public String toString()
     {
-        String ver = (version == null)? "?" : version;
-        if (this.classifier == null)
+        if ( this.classifier == null )
         {
-            return groupId + ":" + artifactId + ":" + ver + ":" + type;   
+            return groupId + ":" + artifactId + ":" + StringUtils.defaultString(version,"?") + ":" + type;
         }
         else
         {
-            return groupId + ":" + artifactId + ":" + classifier + ":" + ver + ":" + type;    
+            return groupId + ":" + artifactId + ":" + classifier + ":" + StringUtils.defaultString(version,"?") + ":" + type;
         }
     }
 
@@ -227,24 +254,24 @@ public class ArtifactItem
      */
     public void setDestFileName( String destFileName )
     {
-        this.destFileName = destFileName;
+        this.destFileName = filterEmptyString(destFileName);
     }
 
     /**
-     * @return Returns the doOverWrite.
+     * @return Returns the needsProcessing.
      */
-    public boolean isDoOverWrite()
+    public boolean isNeedsProcessing()
     {
-        return this.doOverWrite;
+        return this.needsProcessing;
     }
 
     /**
-     * @param doOverWrite
-     *            The doOverWrite to set.
+     * @param needsProcessing
+     *            The needsProcessing to set.
      */
-    public void setDoOverWrite( boolean doOverWrite )
+    public void setNeedsProcessing( boolean needsProcessing )
     {
-        this.doOverWrite = doOverWrite;
+        this.needsProcessing = needsProcessing;
     }
 
     /**

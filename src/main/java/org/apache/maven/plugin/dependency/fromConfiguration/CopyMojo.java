@@ -17,7 +17,6 @@
  * under the License.    
  */
 
-
 package org.apache.maven.plugin.dependency.fromConfiguration;
 
 import java.io.File;
@@ -27,6 +26,8 @@ import java.util.Iterator;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
+import org.apache.maven.plugin.dependency.utils.filters.DestFileFilter;
+import org.apache.maven.plugin.dependency.utils.filters.ArtifactItemFilter;
 import org.apache.maven.plugin.logging.Log;
 
 /**
@@ -64,12 +65,19 @@ public class CopyMojo
     public void execute()
         throws MojoExecutionException
     {
-        ArrayList artifactItems = getArtifactItems();
-        Iterator iter = artifactItems.iterator();
+        ArrayList theArtifactItems = getArtifactItems( this.stripVersion );
+        Iterator iter = theArtifactItems.iterator();
         while ( iter.hasNext() )
         {
             ArtifactItem artifactItem = (ArtifactItem) iter.next();
-            copyArtifact( artifactItem, this.stripVersion );
+            if (artifactItem.isNeedsProcessing())
+            {
+                copyArtifact( artifactItem);
+            }
+            else
+            {
+                this.getLog().info(artifactItem+" already exists in "+ artifactItem.getOutputDirectory());
+            }
         }
     }
 
@@ -79,55 +87,42 @@ public class CopyMojo
      * 
      * @param artifactItem
      *            containing the information about the Artifact to copy.
-     * @param removeVersion
-     *            specifies if the version should be removed from the file name
-     *            when copying.
      * @throws MojoExecutionException
      *             with a message if an error occurs.
      * 
      * @see DependencyUtil#copyFile(File, File, Log)
      * @see DependencyUtil#getFormattedFileName(Artifact, boolean)
      */
-    protected void copyArtifact( ArtifactItem artifactItem, boolean removeVersion )
+    protected void copyArtifact( ArtifactItem artifactItem )
         throws MojoExecutionException
     {
-        Artifact artifact = artifactItem.getArtifact();
+        File destFile = new File( artifactItem.getOutputDirectory(), artifactItem.getDestFileName() );
 
-        String destFileName = null;
-        if ( artifactItem.getDestFileName() != null )
-        {
-            destFileName = artifactItem.getDestFileName();
-        }
-        else
-        {
-            destFileName = DependencyUtil.getFormattedFileName( artifact, removeVersion );
-        }
+        copyFile( artifactItem.getArtifact().getFile(), destFile );
+    }
 
-        File destFile = new File( artifactItem.getOutputDirectory(), destFileName );
+    protected ArtifactItemFilter getMarkedArtifactFilter(ArtifactItem item)
+    {
+        ArtifactItemFilter destinationNameOverrideFilter = new DestFileFilter( this.overWriteReleases, this.overWriteSnapshots, this.overWriteIfNewer,
+                                   false, false, this.stripVersion,
+                                   item.getOutputDirectory() );
+        return destinationNameOverrideFilter;
+    }
+    
+    /**
+     * @return Returns the stripVersion.
+     */
+    public boolean isStripVersion()
+    {
+        return this.stripVersion;
+    }
 
-        // TODO: refactor this to use the filters.
-        if ( !artifactItem.isDoOverWrite() )
-        {
-            if ( artifactItem.getArtifact().isSnapshot() )
-            {
-                artifactItem.setDoOverWrite( this.overWriteSnapshots );
-            }
-            else
-            {
-                artifactItem.setDoOverWrite( this.overWriteReleases );
-            }
-        }
-        
-        File artifactFile = artifact.getFile();
-        if ( artifactItem.isDoOverWrite()
-            || ( !destFile.exists() || ( overWriteIfNewer && artifactFile.lastModified() < destFile.lastModified() ) ) )
-        {
-            copyFile( artifactFile, destFile );
-        }
-        else
-        {
-            this.getLog().info( artifactFile + " already exists." );
-        }
+    /**
+     * @param stripVersion The stripVersion to set.
+     */
+    public void setStripVersion( boolean stripVersion )
+    {
+        this.stripVersion = stripVersion;
     }
 
 }

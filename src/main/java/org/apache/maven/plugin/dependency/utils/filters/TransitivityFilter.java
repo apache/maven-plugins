@@ -17,7 +17,6 @@
  * under the License.    
  */
 
-
 package org.apache.maven.plugin.dependency.utils.filters;
 
 import java.util.HashSet;
@@ -28,7 +27,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.logging.Log;
 
 public class TransitivityFilter
-    implements ArtifactsFilter
+    extends AbstractArtifactsFilter
 {
 
     private boolean excludeTransitive;

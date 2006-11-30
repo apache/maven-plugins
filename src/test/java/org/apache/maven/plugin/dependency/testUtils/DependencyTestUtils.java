@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.dependency.utils;
+package org.apache.maven.plugin.dependency.testUtils;
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -27,6 +27,7 @@ import org.apache.maven.artifact.factory.DefaultArtifactFactory;
 import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
 import org.apache.maven.artifact.handler.manager.DefaultArtifactHandlerManager;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.dependency.utils.SilentLog;
 import org.apache.maven.shared.model.fileset.FileSet;
 import org.apache.maven.shared.model.fileset.util.FileSetManager;
 import org.codehaus.plexus.util.ReflectionUtils;
