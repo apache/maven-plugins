@@ -21,6 +21,7 @@ Assembly Plugin Required Docs
                     artifacts for a module
                   # binaries: dependencySets section to specify which module 
                     deps to include
+                  # includes/excludes still present for backward compat ONLY
             + fileSets subsection (?)
       o FileSet improvements
             + useDefaultExcludes
