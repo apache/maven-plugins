@@ -6,11 +6,6 @@ Assembly Plugin Required Docs
             + what can they specify?
       o include examples of usage
 * Advanced Assembly Descriptor Topics: new page
-      o Wildcards for includes/excludes
-            + what does it match on?
-                  # ArtifactUtils.versionlessKey( artifact )
-                  # artifact.getDependencyConflictId()
-                  # artifact.getId()
       o ModuleSet improvements
             + module-set-level includes/excludes
             + includeModuleDirectory
