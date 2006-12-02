@@ -245,7 +245,7 @@ public class ModuleSetAssemblyPhaseTest
         macTask.expectGetFinalName( "final-name" );
         macTask.expectIsSnapshot( false );
         macTask.expectGetArtifactHandler();
-
+        
         int mode = Integer.parseInt( "777", 8 );
 
         macTask.expectAddFile( "out/artifact", mode );
@@ -261,13 +261,14 @@ public class ModuleSetAssemblyPhaseTest
         bin.setOutputDirectory( "out" );
         bin.setFileMode( "777" );
         bin.setUnpack( false );
+        bin.setIncludeDependencies( false );
 
         ms.setBinaries( bin );
 
         assembly.addModuleSet( ms );
 
         Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
-
+        
         mm.replayAll();
 
         createPhase( logger, null ).execute( assembly, macTask.archiver, macTask.configSource );
@@ -328,6 +329,7 @@ public class ModuleSetAssemblyPhaseTest
 
         ModuleBinaries binaries = new ModuleBinaries();
 
+        binaries.setIncludeDependencies( false );
         binaries.setUnpack( false );
         binaries.setFileMode( "777" );
         binaries.setOutputDirectory( "out" );
@@ -404,6 +406,7 @@ public class ModuleSetAssemblyPhaseTest
 
         ModuleBinaries binaries = new ModuleBinaries();
 
+        binaries.setIncludeDependencies( false );
         binaries.setUnpack( false );
         binaries.setFileMode( "777" );
         binaries.setOutputDirectory( "out" );
