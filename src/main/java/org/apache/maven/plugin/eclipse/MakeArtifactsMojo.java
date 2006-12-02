@@ -82,7 +82,7 @@ public class MakeArtifactsMojo
     private static final Pattern DEPLOYTO_PATTERN = Pattern.compile( "(.+)::(.+)::(.+)" );
 
     /**
-     * A pattern for a 3 digit osgi version number.
+     * A pattern for a 4 digit osgi version number.
      */
     private static final Pattern VERSION_PATTERN = Pattern.compile( "(([0-9]+\\.)+[0-9]+)" );
 
@@ -310,14 +310,7 @@ public class MakeArtifactsMojo
             return;
         }
 
-        if ( StringUtils.isNotEmpty( forcedQualifier ) && StringUtils.countMatches( version, "." ) > 2 )
-        {
-            version = StringUtils.substring( version, 0, version.lastIndexOf( "." ) ) + "." + forcedQualifier;
-        }
-        else if ( stripQualifier && StringUtils.countMatches( version, "." ) > 2 )
-        {
-            version = StringUtils.substring( version, 0, version.lastIndexOf( "." ) );
-        }
+        version = osgiVersionToMavenVersion( version, forcedQualifier, stripQualifier );
 
         String name = manifestEntries.getValue( "Bundle-Name" );
 
@@ -332,7 +325,7 @@ public class MakeArtifactsMojo
         }
 
         String requireBundle = manifestEntries.getValue( "Require-Bundle" );
-        Dependency[] deps = parseDependencies( requireBundle, !this.stripQualifier );
+        Dependency[] deps = parseDependencies( requireBundle );
 
         String groupId = null;
         groupId = createGroupId( artifactId );
@@ -432,6 +425,36 @@ public class MakeArtifactsMojo
     }
 
     /**
+     * The 4th (build) token MUST be separed with "-" and not with "." in maven. A version with 4 dots is not parsed,
+     * and the whole string is considered a qualifier. See tests in DefaultArtifactVersion for reference.
+     * @param version initial version
+     * @param forcedQualifier build number
+     * @param stripQualifier always remove 4th token in version
+     * @return converted version
+     */
+    protected String osgiVersionToMavenVersion( String version, String forcedQualifier, boolean stripQualifier )
+    {
+        if ( stripQualifier && StringUtils.countMatches( version, "." ) > 2 )
+        {
+            version = StringUtils.substring( version, 0, version.lastIndexOf( "." ) );
+        }
+        else if ( StringUtils.countMatches( version, "." ) > 2 )
+        {
+            int lastDot = version.lastIndexOf( "." );
+            if ( StringUtils.isNotEmpty( forcedQualifier ) )
+            {
+                version = StringUtils.substring( version, 0, lastDot ) + "-" + forcedQualifier;
+            }
+            else
+            {
+                version = StringUtils.substring( version, 0, lastDot ) + "-"
+                    + StringUtils.substring( version, lastDot + 1, version.length() );
+            }
+        }
+        return version;
+    }
+
+    /**
      * Resolves the deploy<code>deployTo</code> parameter to an <code>ArtifactRepository</code> instance (if set).
      * 
      * @throws MojoFailureException
@@ -506,11 +529,9 @@ public class MakeArtifactsMojo
     /**
      * Parses the "Require-Bundle" and convert it to a list of dependencies.
      * @param requireBundle "Require-Bundle" entry
-     * @param addQualifier if true, a 4th version digit is added to dependency versions. This is required for maven to
-     * allow dependencies with a qualifier to match the version range.
      * @return an array of <code>Dependency</code>
      */
-    protected Dependency[] parseDependencies( String requireBundle, boolean addQualifier )
+    protected Dependency[] parseDependencies( String requireBundle )
     {
         if ( requireBundle == null )
         {
@@ -555,12 +576,10 @@ public class MakeArtifactsMojo
             if ( version == null )
             {
                 getLog().info( "Missing version for artifact " + artifactId + ", assuming any version > 0" );
-                version = "[0.0.0.0,)";
+                version = "[0,)";
             }
-            else if ( addQualifier )
-            {
-                version = addQualifierToVersionsInRange( version );
-            }
+
+            version = fixBuildNumberSeparator( version );
 
             Dependency dep = new Dependency();
             dep.setArtifactId( artifactId );
@@ -576,14 +595,11 @@ public class MakeArtifactsMojo
     }
 
     /**
-     * Adds a qualifier (4th digit) to each version in a range. This is needed in maven poms in order to make dependency
-     * ranges work when using qualifiers while generating artifacts.
-     * In maven the range <code>[3.2.0,4.0.0)</code> doesn't match version <code>3.2.100.v20060905</code>, while
-     * <code>[3.2.0.0,4.0.0.0)</code> do.
+     * Fix the separator for the 4th token in a versions. In maven this must be "-", in OSGI it's "."
      * @param versionRange input range
      * @return modified version range
      */
-    protected String addQualifierToVersionsInRange( String versionRange )
+    protected String fixBuildNumberSeparator( String versionRange )
     {
         // should not be called with a null versionRange, but a check doesn't hurt...
         if ( versionRange == null )
@@ -597,12 +613,16 @@ public class MakeArtifactsMojo
 
         while ( matcher.find() )
         {
-            String currentVersion = matcher.group();
-            int digitsToAdd = 3 - StringUtils.countMatches( currentVersion, "." );
-            if ( digitsToAdd > 0 )
+            String group = matcher.group();
+
+            if ( StringUtils.countMatches( group, "." ) > 2 )
             {
-                matcher.appendReplacement( newVersionRange, matcher.group() + ".0" );
+                // build number found, fix it
+                int lastDot = group.lastIndexOf( "." );
+                group = StringUtils.substring( group, 0, lastDot ) + "-"
+                    + StringUtils.substring( group, lastDot + 1, group.length() );
             }
+            matcher.appendReplacement( newVersionRange, group );
         }
 
         matcher.appendTail( newVersionRange );
