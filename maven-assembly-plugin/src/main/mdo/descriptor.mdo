@@ -689,11 +689,11 @@
           <name>includeDependencies</name>
           <version>1.0.0+</version>
           <type>boolean</type>
-          <defaultValue>false</defaultValue>
+          <defaultValue>true</defaultValue>
           <description>
           If set to true, the plugin will include the direct and transitive dependencies of
           of the project modules included here.  Otherwise, it will only include the module
-          packages only. Default value is false.
+          packages only. Default value is true.
           </description>
         </field>
         <field>
