@@ -7,6 +7,7 @@ import org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase;
 import org.apache.maven.plugin.assembly.filter.ComponentsXmlArchiverFileFilter;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
+import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.apache.maven.plugins.assembly.model.Assembly;
 import org.codehaus.plexus.archiver.ArchiveFileFilter;
 import org.codehaus.plexus.archiver.Archiver;
@@ -77,7 +78,17 @@ public class DefaultAssemblyArchiver
 
         try
         {
-            Archiver archiver = createArchiver( format, assembly.isIncludeBaseDirectory(), configSource.getFinalName(), configSource.getTarLongFileMode(), componentsXmlFilter );
+            String finalName = configSource.getFinalName();
+            String specifiedBasedir = assembly.getBaseDirectory();
+            
+            String basedir = finalName;
+            
+            if ( specifiedBasedir != null )
+            {
+                basedir = AssemblyFormatUtils.getOutputDirectory( specifiedBasedir, configSource.getProject(), finalName );
+            }
+            
+            Archiver archiver = createArchiver( format, assembly.isIncludeBaseDirectory(), basedir, configSource.getTarLongFileMode(), componentsXmlFilter );
 
             for ( Iterator phaseIterator = assemblyPhases.iterator(); phaseIterator.hasNext(); )
             {
@@ -114,11 +125,12 @@ public class DefaultAssemblyArchiver
      * @param includeBaseDir 
      * @param tarLongFileMode
      * @param finalName 
+     * @param string 
      * @return archiver Archiver generated
      * @throws org.codehaus.plexus.archiver.ArchiverException
      * @throws org.codehaus.plexus.archiver.manager.NoSuchArchiverException
      */
-    protected Archiver createArchiver( String format, boolean includeBaseDir, String finalName,
+    protected Archiver createArchiver( String format, boolean includeBaseDir, String finalName, 
                                        String tarLongFileMode, ComponentsXmlArchiverFileFilter componentsXmlFilter )
         throws ArchiverException, NoSuchArchiverException
     {

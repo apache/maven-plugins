@@ -151,4 +151,9 @@ public class PrefixingProxyArchiver
         delegate.setIncludeEmptyDirs( includeEmptyDirs );
     }
 
+    public void setDotFileDirectory( File dotFileDirectory )
+    {
+        throw new UnsupportedOperationException( "Undocumented feature of plexus-archiver; this is not yet supported." );
+    }
+
 }

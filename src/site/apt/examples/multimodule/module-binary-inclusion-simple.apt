@@ -54,7 +54,6 @@ Including Module Binaries
       </includes>
       <binaries>
         <outputDirectory>modules/${artifactId}</outputDirectory>
-        <includeDependencies>true</includeDependencies>
         <unpack>false</unpack>
       </binaries>
     </moduleSet>
