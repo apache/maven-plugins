@@ -1,0 +1,478 @@
+  ---
+  Advanced Module-Set Topics
+  ---
+  John Casey
+  ---
+  1 December 2006
+  ---
+
+~~ Copyright 2006 The Apache Software Foundation.
+~~
+~~ Licensed under the Apache License, Version 2.0 (the "License");
+~~ you may not use this file except in compliance with the License.
+~~ You may obtain a copy of the License at
+~~
+~~      http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing, software
+~~ distributed under the License is distributed on an "AS IS" BASIS,
+~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~ See the License for the specific language governing permissions and
+~~ limitations under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/guides/mini/guide-apt-format.html
+
+
+Advanced Module-Set Topics
+
+* Quick Note
+
+  Some of the topics in this document refer to more general topics or
+  improvements in the assembly descriptor as a whole. For more information, see
+  the {{{advanced-descriptor-topics.html}Advanced Assembly-Descriptor Topics}}
+  page.
+
+* Including and Excluding Modules using a ModuleSet
+
+  As you are no doubt aware, Maven 2.0 introduces advanced handling of
+  multimodule builds. These are builds which contain multiple, often
+  interrelated projects. In these builds, project hierarchy is established
+  through use of the <<<modules>>> section of the POM, where parent POMs specify
+  their children in a <<<modules>>> section. Other relationships, like
+  interdependency, also exist within multimodule builds; however, these are
+  beyond the scope of this document.
+  
+  When constructing an assembly from any parent-level project in a multimodule
+  build, it's possible to process this parent-POM's descendent modules, and
+  include them in some form within the resulting assembly artifact. By default,
+  the entire module hierarchy below the current project is available for
+  inclusion or exclusion. Also, include/exclude patterns for modules are matched
+  using the artifact-matching rules explained in the <<Advanced
+  Assembly-Descriptor Topics>> document.
+  
+  The following examples describe how to select certain modules in the project
+  hierarchy using basic artifact includes/excludes. It does <<not>> describe
+  what to do with the selected modules; to learn about the actions available for
+  selected modules, see {{including module sources}} and {{including module
+  binaries}} below. For other, more advanced module-handling options, read on!
+  
+** Example: Select one from a set of child projects
+
+  Given the following project structure, and all appropriate module references
+  in the parent POM:
+  
+---
++ parent (groupId: org.test, artifactId: parent)
+  |
+  + child1 (groupId: org.test, artifactId: child1)
+  |
+  + child2 (groupId: org.test, artifactId: child2)
+---
+
+  We can select <<just>> the child1 module using the following <<<moduleSet>>>:
+  
+---
+<assembly>
+  [...]
+  <moduleSets>
+    [...]
+    <moduleSet>
+      <includes>
+        <include>org.test:child1</include>
+      </includes>
+    </moduleSet>
+  </moduleSets>
+  [...]
+</assembly>
+---
+
+  <NOTE: It's important to remember that, if the child1 project itself had
+  children, those children would not be included just because the child1 project
+  was included. Each module is matched separately.>
+  
+~~ [jdcasey] TODO: Amend this once we've handled the case where you want to process
+~~ the entire inheritance/dependency trail. We'll need a flag to say "Include
+~~ my ancestry when matching for includes/excludes", and have that apply
+~~ appropriately to the transitive dependency trail in a dependencySet, or a
+~~ module hierarchy in a moduleSet.
+
+* Quick Note on <<<outputFileNameMapping>>> within ModuleSets
+
+  When used from within a <<<moduleSet>>>, all <<<outputFileNameMapping>>>
+  configurations with expressions like <<<$\{artifactId\}>>> <extract information
+  from the artifact in question.>
+  
+** Example: Setting <<<outputFileNameMapping>>> from <<<moduleSet/binaries>>>
+
+  Given a module with the following:
+  
+---
+Group Id: org.test
+Artifact Id: project
+Version: 1.0.1
+Type: jar
+---
+
+  The following <<<outputFileNameMapping>>>:
+  
+---
+${groupId}-${artifactId}-${version}.${extension}
+---
+
+  Will result in a file called <<<org.test-project-1.0.jar>>> being created
+  within the assembly.
+  
+  <NOTE: The expression <<<$\{extension\}>>> is mapped to the file extension
+  supplied by the ArtifactHandler for the type <<<jar>>>. It's important to
+  remember that the file extension <<need not be .jar>>.>
+
+* {Including Module Sources}
+
+  Once you've selected certain modules to be included in the assembly, you have
+  to determine what you want included from each module. This usually depends on
+  the purpose of the assembly. For instance, if you're building a binary 
+  assembly, for use in a runtime context, you probably want to include module
+  binaries only (see the {{Including Module Binaries}} section below). However,
+  if your assembly is meant to include project sources, either as a reference or
+  to allow users to build your project (or for some other reason altogether),
+  then you're probably interested in the <<<sources>>> section of the
+  <<<moduleSet>>>.
+  
+  Processing module sources is a fileSet-based activity. That is, sources are
+  included or excluded based on file-matching patterns, or explicit
+  <<<fileSet>>> subsections. <<For backward compatibility only>>, the
+  <<<\<sources/\>>>> section itself supports <<<includes>>> and <<<excludes>>>
+  that can help determine which files from a module's directory should be
+  processed. Starting in version 2.2 of the assembly plugin, the
+  <<<\<sources/\>>>> section supports a <<<\<fileSets/\>>>> subsection, which is
+  the preferred way of selecting module-source files for processing.
+  
+** Example: including the <<<src>>> directory from each selected module
+
+  In this example, we'll explore how to include the <<<src>>> directory <<only>>
+  for each module selected by the moduleSet. This is useful to provide a source
+  reference for your project to users.
+
+---
+<assembly>
+  [...]
+  <moduleSets>
+    [...]
+    <moduleSet>
+      [...]
+      <sources>
+        <fileSets>
+          <fileSet>
+            <directory>src</directory>
+          </fileSet>
+        </fileSets>
+      </sources>
+    </moduleSet>
+  </moduleSets>
+</assembly>
+---
+
+** Example: Including a buildable project directory for each selected module
+
+  In this example, we'll explore how to include an entire buildable project
+  directory, for each selected module, within your assembly. This is useful to
+  give your users the chance to tinker with your project, then build it on their
+  own.
+  
+---
+<assembly>
+  [...]
+  <moduleSets>
+    [...]
+    <moduleSet>
+      [...]
+      <sources>
+        <fileSets>
+          <fileSet>
+            <excludes>
+              <exclude>target/**</exclude>
+            </excludes>
+          </fileSet>
+        </fileSets>
+      </sources>
+    </moduleSet>
+  </moduleSets>
+</assembly>
+---
+
+  <NOTE: We exclude the target directory, since this is assumed to be temporary
+  storage for files produced during the course of a Maven build. Permanent
+  project files are not meant to reside here...>
+  
+** Consolidating All Module Sources into a Single Directory Structure
+
+  Normally, each module processed by the assembly plugin is placed within its
+  own directory structure inside the assembly root directory. For module
+  sources, the default name of this module-specific directory is the module's
+  <<<artifactId>>>.
+  
+  However, in some cases you may want to consolidate module sources into the
+  same directory structure, based in the assembly root directory. To do this,
+  simply set the <<<includeModuleDirectory>>> flag to <<<false>>>.
+  
+*** Example: Copy all module sources into a single <<<src>>> directory
+
+  When providing a source reference to users, you may want to produce a single, 
+  consolidated source directory containing all of the source files from your 
+  multimodule hierarchy.
+  
+---
+<assembly>
+  [...]
+  <moduleSets>
+    [...]
+    <moduleSet>
+      [...]
+      <sources>
+        <includeModuleDirectory>false</includeModuleDirectory>
+        <fileSets>
+          <fileSet>
+            <outputDirectory>src</outputDirectory>
+            <includes>
+              <include>src/**</include>
+            </includes>
+          </fileSet>
+        </fileSets>
+      </sources>
+    </moduleSet>
+  </moduleSets>
+</assembly>
+---
+
+** Excluding Modules of Modules from Direct Assembly Processing
+
+  When dealing with project sources in a complex multimodule build consisting of
+  several layers of module groupings, it's sometimes desirable to process only
+  the top layer of modules, and provide <<<fileSet>>> specifications to handle
+  sub-modules. This can make it much easier to preserve the project-directory
+  structure, since it doesn't force all modules - regardless of their location
+  within the project hierarchy - through a flat module-processing mechanism.
+  Processing only the first level of modules is the default configuration for
+  the <<<sources>>> section of a <<<moduleSet>>>.
+  
+  To explicitly process modules of modules - sub-modules, that is - simply use 
+  the <<<excludeSubModuleDirectories>>> flag, set to <<<false>>>.
+  
+*** Example: Providing a shallow source-directory structure for reference
+
+  Consider the case where you want to preserve the context of all source files 
+  within your project hierarchy, according to the project in which they belong.
+  At the same time, you want to avoid confusing users with a complex nesting of
+  projects within projects, and present a simple list of projects to browse.
+  
+  If your project hierarchy looks like this:
+  
+---
++ application
+  |
+  + src
+  |
+  + project1
+  | |
+  | + src
+  | |
+  | + project1-child1
+  | | |
+  | | + src
+  | |
+  | + project1-child2
+  | | |
+  | | + src
+  |
+  + project2
+    |
+    + src
+    |
+    + project2-child1
+      |
+      + src
+---
+
+  You may want it to look like this in the resulting assembly:
+  
+---
++ application
+| |
+| + src
+|
++ project1
+| |
+| + src
+|
++ project1-child1
+| |
+| + src
+|
++ project1-child2
+| |
+| + src
+|
++ project2
+| |
+| + src
+|
++ project2-child1
+  |
+  + src
+---
+
+  To accomplish this restructuring, simply use the
+  <<<excludeSubModuleDirectories>>> flag, as follows:
+
+---
+<assembly>
+  [...]
+  <moduleSets>
+    [...]
+    <moduleSet>
+      [...]
+      <sources>
+        <excludeSubModuleDirectories>false</excludeSubModuleDirectories>
+        <fileSets>
+          <fileSet>
+            <includes>
+              <include>src/**</include>
+            </includes>
+          </fileSet>
+        </fileSets>
+      </sources>
+    </moduleSet>
+  </moduleSets>
+</assembly>
+---
+
+* {Including Module Binaries}
+
+  In cases where your assembly artifact is meant to be used in a runtime
+  context, you'll most likely want to include the binaries from any modules 
+  processed by the assembly plugin. This can be as simple as adding the module's
+  jar artifact to your assembly archive; or, it can involve selectively
+  including the dependencies of that module in addition to the module's own jar.
+  
+  At any rate, processing module binaries is an artifact-based activity.
+  Accordingly, selection of the appropriate artifacts for a given module follows
+  the artifact inclusion rules explained in the <<Advanced Assembly-Descriptor 
+  Topics>> document.
+  
+  Once you've selected <which> artifacts should be processed for a particular 
+  module, you have several options for <how> to process them. In its simplest
+  form, the <<<binaries>>> section of a <<<moduleSet>>> has many of the same
+  characteristics as a <<<dependencySet>>>. That is, you have the option to
+  specify an <<<outputDirectory>>>, and you can choose whether to unpack the
+  artifact(s) - the default action will unpack them.
+
+** Processing a Module's Attachment Artifacts
+
+  Sometimes it's important to have the option to add artifacts from a module
+  that are not the main project artifact. Such artifacts might include javadocs,
+  project sources, or even other assembly artifacts.
+  
+*** Example: Including other assemblies within the current assembly
+
+  Suppose we have the following project structure:
+  
+---
++ application
+  |
+  + app-db
+  |
+  + app-web
+  |
+  + app-site
+---
+
+  Further, suppose that the assembly plugin is currently executing at the
+  <<<application>>> level, but that another assembly archive has been created 
+  previously for the <<<app-site>>> project. This other assembly archive is a
+  zip file containing the project website. We want to include a copy of this
+  website in the application distribution assembly, which we are creating now.
+  
+  Finally, suppose that the website-attachment has a classifier of <<<site>>>
+  taken from the assemblyId.
+  
+  Since the zipfile containing the website produced by <<<app-site>>> is an
+  attached artifact in that module, we'll need to extract that artifact instead
+  of the main project artifact.
+  
+---
+<assembly>
+  [...]
+  <moduleSets>
+    <moduleSet>
+      <includes>
+        <include>*:app-site</include>
+      </includes>
+      <binaries>
+        <attachmentClassifier>site</attachmentClassifier>
+        <outputDirectory>doc</outputDirectory>
+        <outputFileNameMapping>website.${extension}</outputFileNameMapping>
+      </binaries>
+    </moduleSet>
+    [...]
+  </moduleSets>
+</assembly>
+---
+
+** Excluding Module Dependencies
+
+  Just like any binary, modules usually have runtime dependencies, without which
+  they will simply fail to execute. By default, module dependencies are included
+  when the module itself is included. However, as we saw in the above example,
+  there are times when this may not be appropriate.
+  
+  In the above example, the module binary included was an assembly artifact that
+  contained the website for the application. Other assemblies might embody a
+  completely self-contained version of the module's binaries, with all
+  dependency classes unpacked and inlined within the archive.
+  
+  In short, sometimes we want to turn off automatic dependency inclusion. We can
+  achieve this by setting the <<<includeDependencies>>> flag to <<<false>>>.
+  
+*** Example: Including a <<<jar-with-dependencies>>> module assembly
+
+  Suppose we have the following project structure:
+  
+---
++ application
+  |
+  + app-db
+  |
+  + app-web
+---
+
+  Further, suppose that the assembly plugin is currently executing at the
+  <<<app-web>>> level, but that another assembly archive has been created 
+  previously for the <<<app-db>>> project using the built-in 
+  <<<jar-with-dependencies>>> assembly descriptor. This assembly archive
+  contains all of the module dependencies, so it's not necessary to include this
+  module's dependencies in the current assembly.
+
+---
+<assembly>
+  [...]
+  <moduleSets>
+    <moduleSet>
+      <includes>
+        <include>*:app-db</include>
+      </includes>
+      <binaries>
+        <attachmentClassifier>jar-with-dependencies</attachmentClassifier>
+        <outputDirectory>lib</outputDirectory>
+        <outputFileNameMapping>${artifactId}-${version}-${classifier}.${extension}</outputFileNameMapping>
+      </binaries>
+    </moduleSet>
+    [...]
+  </moduleSets>
+</assembly>
+---
+
+  <NOTE: The <<<binaries>>> section still accommodates direct <<<\<includes/\>>>> 
+  and <<<\<excludes/\>>>> subsections, for specifying which module-dependencies 
+  to include in the assembly. However, these are deprecated, and only provided
+  for backward compatibility.>

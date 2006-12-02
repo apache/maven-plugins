@@ -48,9 +48,6 @@ Advanced Assembly-Descriptor Topics
         strings, <<<type>>> is <<<'jar'>>> by default, and <<<classifier>>> is 
         omitted if null.
   
-                  # ArtifactUtils.versionlessKey( artifact )
-                  # artifact.getDependencyConflictId()
-                  # artifact.getId()
         * <<<groupId:artifactId:type:classifier>>>
           ( <<<artifact.getDependencyConflictId()>>> )
         
@@ -108,3 +105,170 @@ Advanced Assembly-Descriptor Topics
 *:war:*
 ---
 
+** Example: Exclude all source-jar dependencies.
+
+  In this example, we're dealing with the fact that project sources are
+  often distributed using jar files, in addition to normal binaries. We want to
+  filter out any source-jar files (they'll be marked with a <<<sources>>>
+  classifier) from the binary jars.
+  
+---
+<assembly>
+  [...]
+  <dependencySets>
+    <dependencySet>
+      <includes>
+        <include>*:jar:*</include>
+      </includes>
+      <excludes>
+        <exclude>*:sources</exclude>
+      </excludes>
+    </dependencySet>
+  </dependencySets>
+  [...]
+</assembly>
+---
+
+* Including Subversion Metadata Directories in a FileSet
+
+  For most use cases, it's important to avoid adding metadata files from your
+  source-control system, such as Subversion's <<<.svn>>> directories. Such
+  metadata can increase the size of the resulting assembly vastly. By default,
+  the assembly plugin will exclude metadata files for most common source-control
+  systems from the <<<fileSet>>>s specified in the descriptor.
+  
+  On the other hand, what if you <wanted> to include Subversion metadata
+  directories? Starting with version 2.2, the assembly plugin offers the 
+  <<<useDefaultExcludes>>> option on all <<<fileSet>>> elements, in order to 
+  accommodate this use case.
+  
+** Example: Bundle project sources for a developer-quickstart pack
+
+  In this example, let's examine what happens if you have a large project in
+  source control. This project contains a large number of sizable files that
+  haven't changed since the day they were added, in the early stages of the 
+  project's lifetime. You want to enable potential developers to get started
+  quickly, without checking out hundreds of 10-megabyte files first.
+  
+  The compression incorporated with many archiving formats can offer an
+  advantage here. If we create a project assembly, including Subversion metadata
+  directories, developers should be able to download the assembly artifact and
+  expand it, then simply type <<<svn up>>>.
+  
+---
+<assembly>
+  [...]
+  <fileSets>
+    <fileSet>
+      <useDefaultExcludes>false</useDefaultExcludes>
+      <excludes>
+        <exclude>**/target/**</exclude>
+      </excludes>
+    </fileSet>
+  </fileSets>
+  [...]
+</assembly>
+---
+
+  <NOTE: You'll notice that we're excluding all target directories; these are a
+  form of "calculated" and otherwise transient data, and generally shouldn't be 
+  included in archives, unless your goal is to create project binaries or
+  similar.>
+  
+* Using Strict-Filtering to Catch Obsolete Patterns or Incorrect Builds
+
+  At times, you want to build in a set of sanity checks when creating your
+  assembly, to ensure that what goes into the assembly artifact is what you
+  intended. One way you can do this is by enabling <<<useStrictFiltering>>> on
+  your <<<dependencySets>>>, <<<moduleSets>>>, and <<<fileSets>>>.
+  
+  <<<useStrictFiltering>>> is a flag that tells the assembly plugin to track
+  each include/exclude pattern to make sure it's used during creation of the
+  assembly. This way, if the assembly-descriptor author intended for a particular 
+  file or artifact to be present, he can add an include/exclude pattern to the 
+  descriptor to ensure that file/artifact is present, and then set the 
+  <<<useStrictFiltering>>> flag. If the pattern isn't used to match at least one 
+  file during assembly creation, the build will fail and the user will receive a 
+  message notifying him of the unused patterns.
+  
+** Example: Ensuring the LICENSE.txt file is included in a jar
+
+  In this example, we want to make sure that our project jar contains the
+  project's open source license language, in order to be compliant with our
+  software foundation's policies.
+  
+---
+<assembly>
+  [...]
+  <fileSets>
+    <fileSet>
+      <useStrictFiltering>true</useStrictFiltering>
+      <outputDirectory>META-INF</outputDirectory>
+      <includes>
+        <include>LICENSE.txt</include>
+      </includes>
+    </fileSet>
+    [...]
+  </fileSets>
+  [...]
+</assembly>
+---
+
+  If a developer inadvertently removes the LICENSE.txt from the project
+  directory, the assembly plugin should refuse to build this assembly.
+  
+* Using an Alternative Assembly Base Directory
+
+  In many cases, assemblies should have all files arranged under one assembly
+  base directory. This way, a user who expands the assembly will have all of the
+  contents collected in a nice, neat directory structure, rather than spread
+  throughout the current working directory. This is achieved using the
+  <<<includeBaseDirectory>>> flag, and this flag is set to <<<true>>> by
+  default, which will result in the project's <<<artifactId-version>>> being 
+  used as the assembly base directory.
+  
+  However, in some special cases you may want to use a different directory name
+  for the root of your assembly. Starting in the 2.2 version of the assembly
+  plugin, this use case is addressed using the <<<baseDirectory>>> element of
+  the assembly descriptor. With this element, you can use POM expressions and 
+  static strings to specify the name of the assembly root directory.
+  
+** Example: Eclipse-style invariable directory name for the Maven assembly
+
+  In this example, let's explore what would happen if we wanted Maven to use the
+  Eclipse approach for naming the root directory in its distribution assemblies.
+  This way, instead of expanding the distribution to find a new
+  <<<maven-2.0.4>>> directory, you'd find a <<<maven>>> directory. Additionally,
+  consider that the distribution assembly is currently built from the
+  <<<maven-core>>> project, which means we shouldn't use the <<<artifactId>>> as
+  part of the assembly root directory.
+  
+---
+<assembly>
+  [...]
+  <baseDirectory>maven</baseDirectory>
+  [...]
+</assembly>
+---
+
+  Now, imagine that the distribution assembly were created in the top-level
+  <<<maven>>> project. Now, we <can> use the <<<artifactId>>>, and probably
+  should, just to minimize the maintenance of these files.
+  
+---
+<assembly>
+  [...]
+  <baseDirectory>${artifactId}</baseDirectory>
+  [...]
+</assembly>
+---
+
+* Advanced ModuleSet Topics
+
+  One of the most complex sections of the assembly descriptor is the
+  <<<moduleSets>>> section. In fact, so many improvements have been made to this
+  section that we feel it warrants its own <"Advanced Topics"> page.
+  
+  * Go to {{{advanced-module-set-topics.html}Advanced Module-Set Topics}}.
+  
+  []
