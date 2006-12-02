@@ -482,6 +482,10 @@ public class ComponentsXmlArchiverFileFilterTest
         {
             throw new UnsupportedOperationException( "not supported" );
         }
+
+        public void setDotFileDirectory( File dotFileDirectory )
+        {
+        }
     }
 
 }
