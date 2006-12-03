@@ -52,6 +52,7 @@ import net.sourceforge.pmd.renderers.XMLRenderer;
 
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.doxia.sink.Sink;
+import org.codehaus.plexus.resource.ResourceManager;
 
 /**
  * Implement the PMD report.
@@ -64,7 +65,6 @@ import org.codehaus.doxia.sink.Sink;
 public class PmdReport
     extends AbstractPmdReport
 {
-
     /**
      * The target JDK to analyse based on. Should match the target used in the compiler plugin. Valid values are
      * currently <code>1.3</code>, <code>1.4</code>, <code>1.5</code>.
@@ -104,25 +104,22 @@ public class PmdReport
      */
     private String sourceEncoding;
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
-     */
+    /** @component */
+    private ResourceManager locator;
+
+    /** @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale) */
     public String getName( Locale locale )
     {
         return getBundle( locale ).getString( "report.pmd.name" );
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getDescription(java.util.Locale)
-     */
+    /** @see org.apache.maven.reporting.MavenReport#getDescription(java.util.Locale) */
     public String getDescription( Locale locale )
     {
         return getBundle( locale ).getString( "report.pmd.description" );
     }
 
-    /**
-     * @see org.apache.maven.reporting.AbstractMavenReport#executeReport(java.util.Locale)
-     */
+    /** @see org.apache.maven.reporting.AbstractMavenReport#executeReport(java.util.Locale) */
     public void executeReport( Locale locale )
         throws MavenReportException
     {
@@ -146,7 +143,6 @@ public class PmdReport
             ruleContext.setReport( report );
             reportSink.beginDocument();
 
-            Locator locator = new Locator( getLog() );
             RuleSetFactory ruleSetFactory = new RuleSetFactory();
             ruleSetFactory.setMinimumPriority( this.minimumPriority );
             RuleSet[] sets = new RuleSet[rulesets.length];
@@ -158,6 +154,7 @@ public class PmdReport
                     getLog().debug( "Preparing ruleset: " + set );
                     File ruleset = locator.resolveLocation( set, getLocationTemp( set ) );
                     InputStream rulesInput = new FileInputStream( ruleset );
+
                     sets[idx] = ruleSetFactory.createRuleSet( rulesInput );
                 }
             }
@@ -183,7 +180,6 @@ public class PmdReport
             {
                 File file = (File) i.next();
 
-                
                 // TODO: lazily call beginFile in case there are no rules
 
                 reportSink.beginFile( file );
@@ -195,8 +191,7 @@ public class PmdReport
                         // PMD closes this Reader even though it did not open it so we have
                         // to open a new one with every call to processFile().
                         Reader reader = hasEncoding ? new InputStreamReader( new FileInputStream( file ),
-                                                                             sourceEncoding )
-                            : new FileReader( file );
+                                                                             sourceEncoding ) : new FileReader( file );
                         pmd.processFile( reader, sets[idx], ruleContext );
                     }
                     catch ( UnsupportedEncodingException e1 )
@@ -205,18 +200,20 @@ public class PmdReport
                     }
                     catch ( FileNotFoundException e2 )
                     {
-                    	getLog().warn("Error opening source file: " + file);
-                    	reportSink.ruleViolationAdded(new ProcessingErrorRuleViolation(file, e2.getLocalizedMessage()) );
+                        getLog().warn( "Error opening source file: " + file );
+                        reportSink.ruleViolationAdded(
+                            new ProcessingErrorRuleViolation( file, e2.getLocalizedMessage() ) );
                     }
                     catch ( Exception e3 )
                     {
                         getLog().warn( "Failure executing PMD for: " + file, e3 );
-                        reportSink.ruleViolationAdded(new ProcessingErrorRuleViolation(file, e3.getLocalizedMessage()) );
+                        reportSink.ruleViolationAdded(
+                            new ProcessingErrorRuleViolation( file, e3.getLocalizedMessage() ) );
                     }
                 }
                 reportSink.endFile( file );
             }
-         
+
             reportSink.endDocument();
 
             if ( !isHtml() )
@@ -268,26 +265,24 @@ public class PmdReport
     public PMD getPMD()
     {
         PMD pmd = new PMD();
-        
+
         if ( "1.5".equals( targetJdk ) )
         {
-            pmd.setJavaVersion(SourceType.JAVA_15);
+            pmd.setJavaVersion( SourceType.JAVA_15 );
         }
         else if ( "1.4".equals( targetJdk ) )
         {
-        	pmd.setJavaVersion(SourceType.JAVA_14);
+            pmd.setJavaVersion( SourceType.JAVA_14 );
         }
         else if ( "1.3".equals( targetJdk ) )
         {
-        	pmd.setJavaVersion(SourceType.JAVA_13);
+            pmd.setJavaVersion( SourceType.JAVA_13 );
         }
-        
+
         return pmd;
     }
 
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getOutputName()
-     */
+    /** @see org.apache.maven.reporting.MavenReport#getOutputName() */
     public String getOutputName()
     {
         return "pmd";
@@ -345,67 +340,81 @@ public class PmdReport
 
         return renderer;
     }
-    
-    /**
-     * @author <a href="mailto:douglass.doug@gmail.com">Doug Douglass</a>
-     */
-    private static class ProcessingErrorRuleViolation implements IRuleViolation {
-    	
-    	private String filename;
-    	
-    	private String description;
-    	
-    	public ProcessingErrorRuleViolation(File file, String description) {
-    		filename = file.getPath();
-    		this.description = description;
-    	}
 
-		public String getFilename() {
-			return this.filename;
-		}
+    /** @author <a href="mailto:douglass.doug@gmail.com">Doug Douglass</a> */
+    private static class ProcessingErrorRuleViolation
+        implements IRuleViolation
+    {
 
-		public int getBeginLine() {
-			return 0;
-		}
+        private String filename;
 
-		public int getBeginColumn() {
-			return 0;
-		}
+        private String description;
 
-		public int getEndLine() {
-			return 0;
-		}
+        public ProcessingErrorRuleViolation( File file,
+                                             String description )
+        {
+            filename = file.getPath();
+            this.description = description;
+        }
 
-		public int getEndColumn() {
-			return 0;
-		}
+        public String getFilename()
+        {
+            return this.filename;
+        }
 
-		public Rule getRule() {
-			return null;
-		}
+        public int getBeginLine()
+        {
+            return 0;
+        }
 
-		public String getDescription() {			
-			return this.description;
-		}
+        public int getBeginColumn()
+        {
+            return 0;
+        }
 
-		public String getPackageName() {
-			return null;
-		}
+        public int getEndLine()
+        {
+            return 0;
+        }
 
-		public String getMethodName() {
-			return null;
-		}
+        public int getEndColumn()
+        {
+            return 0;
+        }
 
-		public String getClassName() {
-			return null;
-		}
+        public Rule getRule()
+        {
+            return null;
+        }
 
-		public boolean isSuppressed() {
-			return false;
-		}
+        public String getDescription()
+        {
+            return this.description;
+        }
 
-		public String getVariableName() {
-			return null;
-		}
+        public String getPackageName()
+        {
+            return null;
+        }
+
+        public String getMethodName()
+        {
+            return null;
+        }
+
+        public String getClassName()
+        {
+            return null;
+        }
+
+        public boolean isSuppressed()
+        {
+            return false;
+        }
+
+        public String getVariableName()
+        {
+            return null;
+        }
     }
 }
