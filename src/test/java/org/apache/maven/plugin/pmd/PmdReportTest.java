@@ -87,6 +87,7 @@ public class PmdReportTest
     {
         File testPom = new File( getBasedir(),
                                  "src/test/resources/unit/custom-configuration/custom-configuration-plugin-config.xml" );
+
         PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
         mojo.execute();
 
