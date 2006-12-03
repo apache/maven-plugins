@@ -49,6 +49,8 @@ import org.codehaus.plexus.util.StringInputStream;
 import org.codehaus.plexus.util.StringOutputStream;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.velocity.VelocityComponent;
+import org.codehaus.plexus.resource.ResourceManager;
+import org.codehaus.plexus.resource.loader.FileResourceLoader;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -429,7 +431,12 @@ public class CheckstyleReport
 
     private StringOutputStream stringOutputStream;
 
-    private Locator locator;
+    /**
+     * @component
+     * @required
+     * @readonly
+     */
+    private ResourceManager locator;
 
     /**
      * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
@@ -470,7 +477,7 @@ public class CheckstyleReport
     {
         return siteRenderer;
     }
-
+    
     /**
      * @see org.apache.maven.reporting.AbstractMavenReport#executeReport(java.util.Locale)
      */
@@ -478,6 +485,10 @@ public class CheckstyleReport
         throws MavenReportException
     {
         mergeDeprecatedInfo();
+
+        locator.addSearchPath( FileResourceLoader.ID , project.getFile().getParentFile().getAbsolutePath() );
+
+        locator.setOutputDirectory( new File( project.getBuild().getDirectory() ) );
 
         if ( !canGenerateReport() )
         {
@@ -488,7 +499,7 @@ public class CheckstyleReport
         //        for when we start using maven-shared-io and maven-shared-monitor...
         //        locator = new Locator( new MojoLogMonitorAdaptor( getLog() ) );
 
-        locator = new Locator( getLog(), new File( project.getBuild().getDirectory() ) );
+        //locator = new Locator( getLog(), new File( project.getBuild().getDirectory() ) );
 
         String configFile = getConfigFile();
         Properties overridingProperties = getOverridingProperties();
@@ -914,6 +925,7 @@ public class CheckstyleReport
                 try
                 {
                     File headerFile = locator.resolveLocation( headerLocation, "checkstyle-header.txt" );
+
                     if ( headerFile != null )
                     {
                         p.setProperty( "checkstyle.header.file", headerFile.getAbsolutePath() );
@@ -951,6 +963,7 @@ public class CheckstyleReport
         try
         {
             File configFile = locator.resolveLocation( configLocation, "checkstyle-checker.xml" );
+            
             if ( configFile == null )
             {
                 throw new MavenReportException( "Unable to process null config location." );
