@@ -20,8 +20,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Taskdef;
+import org.codehaus.plexus.resource.ResourceManager;
 
-import java.io.IOException;
 import java.io.File;
 
 /**
@@ -113,9 +113,10 @@ public abstract class AbstractCloverMojo extends AbstractMojo
     private MavenProject project;
 
     /**
-     * Resource locator.
+     * Resource manager used to locate any Clover license file provided by the user.
+     * @component
      */
-    private Locator locator;
+    private ResourceManager resourceManager;
 
     /**
      * {@inheritDoc}
@@ -123,22 +124,17 @@ public abstract class AbstractCloverMojo extends AbstractMojo
      */
     public void execute() throws MojoExecutionException
     {
-        if (this.locator == null)
-        {
-            this.locator = new DefaultLocator( getLog(), new File( this.project.getBuild().getDirectory() ) );
-        }
-
         registerLicenseFile();
     }
 
-    public void setLocator(Locator locator)
+    public void setResourceManager(ResourceManager resourceManager)
     {
-        this.locator = locator;
+        this.resourceManager = resourceManager;
     }
 
-    public Locator getLocator()
+    public ResourceManager getResourceManager()
     {
-        return this.locator;
+        return this.resourceManager;
     }
 
     /**
@@ -158,11 +154,12 @@ public abstract class AbstractCloverMojo extends AbstractMojo
         {
             try
             {
-                license = getLocator().resolveLocation(this.licenseLocation, "clover.license").getPath();
+                license = getResourceManager().getResourceAsFile(this.licenseLocation).getPath();
+                getLog().debug("Loading license from classpath [" + license + "]");
             }
-            catch (IOException e)
+            catch (Exception e)
             {
-                throw new MojoExecutionException("Failed to load license file", e);
+                throw new MojoExecutionException("Failed to load license file [" + this.licenseLocation + "]", e);
             }
         }
         else if (this.licenseFile != null)
@@ -175,6 +172,7 @@ public abstract class AbstractCloverMojo extends AbstractMojo
             license = getClass().getResource("/clover.license").getFile();
         }
 
+        getLog().debug("Using license file [" + license + "]");
         System.setProperty("clover.license.path", license);
     }
 
