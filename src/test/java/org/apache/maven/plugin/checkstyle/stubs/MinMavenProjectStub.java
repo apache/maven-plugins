@@ -107,4 +107,11 @@ public class MinMavenProjectStub
 
         return build;
     }
+
+    public File getFile()
+    {
+        File file = new File( getBasedir(), "pom.xml" );
+
+        return file; 
+    }
 }
