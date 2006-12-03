@@ -16,10 +16,10 @@
 package org.apache.maven.plugin.clover.internal;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.clover.internal.Locator;
 import org.apache.maven.plugin.clover.internal.AbstractCloverMojo;
 import org.jmock.MockObjectTestCase;
 import org.jmock.Mock;
+import org.codehaus.plexus.resource.ResourceManager;
 
 import java.io.File;
 
@@ -43,15 +43,15 @@ public class CloverMojoTest extends MockObjectTestCase
     {
         TestableAbstractCloverMojo mojo = new TestableAbstractCloverMojo();
 
-        Mock mockLocator = mock( Locator.class );
-        mojo.setLocator( (Locator) mockLocator.proxy() );
+        Mock mockResourceManager = mock( ResourceManager.class );
+        mojo.setResourceManager( (ResourceManager) mockResourceManager.proxy() );
 
         // Ensure that the system property is not already set
         System.setProperty( "clover.license.path", "" );
 
         mojo.setLicenseLocation( "build-tools/clover.license" );
-        mockLocator.expects( once() ).method( "resolveLocation" )
-            .with( eq( "build-tools/clover.license" ), eq( "clover.license" ) )
+        mockResourceManager.expects( once() ).method( "getResourceAsFile" )
+            .with( eq( "build-tools/clover.license" ) )
             .will( returnValue( new File( "targetFile" ) ) );
 
         mojo.registerLicenseFile();

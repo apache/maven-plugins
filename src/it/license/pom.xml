@@ -1,0 +1,14 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-clover-plugin-sample-license</artifactId>
+  <packaging>pom</packaging>
+  <name>Maven Clover Plugin License Sample</name>
+  <description>Maven Clover Plugin License Sample</description>
+  <version>1.0-SNAPSHOT</version>
+  <modules>
+    <module>build-tools</module>
+    <module>project</module>
+  </modules>
+</project>
+      
