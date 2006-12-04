@@ -24,12 +24,11 @@ under the License.
      <question>Why do I need to use this plugin?</question>
      <answer>
        <p>
-         This plugin greatly reduces the pain associated with consistent packaging concerns across
-         a large set of projects, or an entire organization. Any project can specify the use of a
-         remote resource bundle and have the resources incorporated into their packaging. This means
-         that you can create standard settings in a parent POM somewhere in the project hierarchy and
-         have all projects use package common resources in standard way like licenses, other legal 
-         notices and disclaimers, or anything else that may be common.
+         It is essential that you provide some form of integration testing for your projects and the Invoker Plugin
+         tries to make is easy for you to create integration tests for your Maven Plugins, new Lifecycles, or any other
+         type of Maven component that you've created. Currently the Invoker Plugin forks Maven to execute the specified
+         projects, but it is hoped that soon we will integrate the Maven Embedder into the mix to allow you run your
+         projects in process for great speed.
        </p>
      </answer>
    </faq>
