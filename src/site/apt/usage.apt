@@ -7,15 +7,76 @@
  ------
 
 Usage
-
- This plugin is used to create miraculously transform your build!
+  
+* How to use the invoker plugin
  
-*How to miraculously transform your build
- 
- Describe here how you miraculously transform peoples' builds! 
+ Below is an example of how the invoker plugin is used to test the maven-antrun-plugin. We are 
+ executing a set of Maven projects and ensuring everything is all right:
 
 -------------------
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-invoker-plugin</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <configuration>
+          <debug>true</debug>
+          <projectsDirectory>src/it</projectsDirectory>
+          <pomIncludes>
+            <pomInclude>**/pom.xml</pomInclude>
+          </pomIncludes>
+        </configuration>
+        <executions>
+          <execution>
+            <id>integration-test</id>
+            <phase>integration-test</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
+-------------------
 
-Put your awesome example here.
+ Here is an example of how the invoker plugin is used with the maven-assembly-plugin to run a set
+ of Maven projects and then verfier they output with a Beanshell script:
 
 -------------------
+<project>
+  <build>
+    <plugins>
+      <plugin>                                                                                                                                                     
+        <artifactId>maven-invoker-plugin</artifactId>                                                                                                              
+        <configuration>                                                                                                                                            
+          <debug>true</debug>                                                                                                                                      
+          <projectsDirectory>src/it</projectsDirectory>                                                                                                            
+          <pomIncludes>                                                                                                                                            
+            <pomInclude>**/pom.xml</pomInclude>                                                                                                                    
+          </pomIncludes>                                                                                                                                           
+          <pomExcludes>                                                                                                                                            
+            <pomExclude>**/child*/pom.xml</pomExclude>                                                                                                             
+            <pomExclude>**/module*/pom.xml</pomExclude>                                                                                                            
+          </pomExcludes>                                                                                                                                           
+          <postBuildHookScript>verify.bsh</postBuildHookScript>                                                                                                    
+        </configuration>                                                                                                                                           
+        <executions>                                                                                                                                               
+          <execution>                                                                                                                                              
+            <id>integration-test</id>                                                                                                                              
+            <phase>integration-test</phase>                                                                                                                        
+            <goals>                                                                                                                                                
+              <goal>run</goal>                                                                                                                                     
+            </goals>                                                                                                                                               
+          </execution>                                                                                                                                             
+       </executions>                                                                                                                                               
+      </plugin>              
+    </plugins>
+  </build>          
+</project>          
+-------------------
+          
