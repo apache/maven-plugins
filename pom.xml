@@ -166,7 +166,7 @@
                 </goals>
                 <configuration>
                   <resourceBundles>
-                    <resourceBundle>org.apache:apache-jar-resource-bundle:1.0-SNAPSHOT</resourceBundle>
+                    <resourceBundle>org.apache:apache-jar-resource-bundle:1.0</resourceBundle>
                   </resourceBundles>
                 </configuration>
               </execution>
