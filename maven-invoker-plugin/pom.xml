@@ -10,6 +10,9 @@
   </parent>
   <artifactId>maven-invoker-plugin</artifactId>
   <version>1.0-SNAPSHOT</version>
+  <prerequisites>                                                                                                                                                      
+    <maven>2.0</maven>                                                                                                                                                 
+  </prerequisites>   
   <packaging>maven-plugin</packaging>
   <name>Maven Invoker Plugin</name>
   <dependencies>
