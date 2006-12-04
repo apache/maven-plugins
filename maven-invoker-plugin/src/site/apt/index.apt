@@ -8,23 +8,15 @@
 
 Maven 2 Invoker Plugin
 
-  This plugin is used to transform your development life. Don't bother with self-help
-  books on how to get over your build-time blues. Just use this plugin and
-  everything will miraculously change.
+ The invoker Plugin is used to run a set of Maven projects and makes sure that each
+ project execution is successful, and optionally verifies the output from a given project execution. 
 
 * Goals Overview
 
-  * {{{superduper-transform.html}superduper:transform}} performs the miraculous build transformation.
+  * {{{invoker-run.html}invoker:run}} runs a set of Maven projects that you have configured in your POM.
 
   []
 
 * Usage
 
-  Instructions on how to use the SuperDuper Plugin can be found {{{usage.html}here}}.
-
-* Examples
-
-  To provide you with better understanding of some usages of the SuperDuper Plugin,
-  you can take a look at the following examples:
-
-  * {{{examples/sample-example.html}Sample Example}}
+  Instructions on how to use the Invoker Plugin can be found {{{usage.html}here}}.
