@@ -182,53 +182,58 @@
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-api</artifactId>
-      <version>1.0-beta-3</version>
+            <version>${maven-scm.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-manager-plexus</artifactId>
-      <version>1.0-beta-3</version>
+            <version>${maven-scm.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-provider-bazaar</artifactId>
-      <version>1.0-beta-3</version>
+            <version>${maven-scm.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-provider-clearcase</artifactId>
-      <version>1.0-beta-3</version>
+            <version>${maven-scm.version}</version>
     </dependency>
     <!-- Replace this cvs provider by a pure java cvs provider when it will be available -->
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-provider-cvsexe</artifactId>
-      <version>1.0-beta-3</version>
+            <version>${maven-scm.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-provider-local</artifactId>
-      <version>1.0-beta-3</version>
+            <version>${maven-scm.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-provider-perforce</artifactId>
-      <version>1.0-beta-3</version>
+            <version>${maven-scm.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-provider-starteam</artifactId>
-      <version>1.0-beta-3</version>
+            <version>${maven-scm.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-provider-svnexe</artifactId>
-      <version>1.0-beta-3</version>
+            <version>${maven-scm.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.scm</groupId>
+      <artifactId>maven-scm-provider-synergy</artifactId>
+            <version>${maven-scm.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-provider-vss</artifactId>
-      <version>1.0-beta-3</version>
+      <version>${maven-scm.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -237,4 +242,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <properties>
+    <maven-scm.version>1.0-SNAPSHOT</maven-scm.version>
+  </properties>
 </project>
