@@ -24,6 +24,7 @@ import org.apache.maven.scm.command.checkin.CheckInScmResult;
 import org.apache.maven.scm.command.checkout.CheckOutScmResult;
 import org.apache.maven.scm.command.diff.DiffScmResult;
 import org.apache.maven.scm.command.edit.EditScmResult;
+import org.apache.maven.scm.command.list.ListScmResult;
 import org.apache.maven.scm.command.remove.RemoveScmResult;
 import org.apache.maven.scm.command.status.StatusScmResult;
 import org.apache.maven.scm.command.tag.TagScmResult;
@@ -47,6 +48,12 @@ public class ScmProviderStub
     implements ScmProvider
 {
     public AddScmResult add( ScmRepository scmRepository, ScmFileSet scmFileSet )
+        throws ScmException
+    {
+        return null;
+    }
+
+    public AddScmResult add( ScmRepository scmRepository, ScmFileSet scmFileSet, String message )
         throws ScmException
     {
         return null;
@@ -192,5 +199,21 @@ public class ScmProviderStub
     public List validateScmUrl( String string, char c )
     {
         return null;
+    }
+
+    public ListScmResult list( ScmRepository repository, ScmFileSet fileSet, boolean recursive, String tag )
+        throws ScmException
+    {
+        return null;
+    }
+
+    public String sanitizeTagName( String tag )
+    {
+        return tag;
+    }
+
+    public boolean validateTagName( String tag )
+    {
+        return true;
     }
 }
