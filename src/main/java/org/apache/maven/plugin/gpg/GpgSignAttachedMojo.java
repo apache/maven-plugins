@@ -19,36 +19,39 @@ package org.apache.maven.plugin.gpg;
  * under the License.
  */
 
-import java.util.List;
-import java.util.Iterator;
-import java.util.ArrayList;
-
-import java.io.File;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-
+import org.apache.commons.lang.SystemUtils;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.commons.lang.SystemUtils;
-
-import org.codehaus.plexus.util.cli.Commandline;
-import org.codehaus.plexus.util.cli.CommandLineUtils;
-import org.codehaus.plexus.util.cli.DefaultConsumer;
+import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
+import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.codehaus.plexus.util.cli.CommandLineException;
+import org.codehaus.plexus.util.cli.CommandLineUtils;
+import org.codehaus.plexus.util.cli.Commandline;
+import org.codehaus.plexus.util.cli.DefaultConsumer;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
- * Sign project attached artifacts with GnuPG.
+ * Sign project artifact, the POM, and attached artifacts with GnuPG for deployment.
  *
- * @version $Rev: 470156 $ $Date$
- * @goal gpg-sign-attached
- * @phase verify
+ * @goal sign
+ * @execute phase="verify"
+ * @author Jason van Zyl
+ * @author Jason Dillon
  */
 public class GpgSignAttachedMojo
     extends AbstractMojo
 {
+    public static final String SIGNATURE_EXTENSION = ".asc";
+
     /**
      * The passphrase to use when signing.
      *
@@ -73,33 +76,80 @@ public class GpgSignAttachedMojo
      * @required
      * @readonly
      */
-    private MavenProjectHelper projectHelper = null;
+    private MavenProjectHelper projectHelper;
+
+    /**
+     * Maven ProjectHelper
+     *
+     * @component
+     * @required
+     * @readonly
+     */
+    private ArtifactHandlerManager artifactHandlerManager;
+
 
     public void execute()
         throws MojoExecutionException
     {
-        List artifacts = new ArrayList();
+        // ----------------------------------------------------------------------------
+        // What we need to generateSignatureForArtifact here
+        // ----------------------------------------------------------------------------
 
-        artifacts.add( project.getArtifact() );
+        List signingBundles = new ArrayList();
 
-        artifacts.addAll( project.getAttachedArtifacts() );
+        // ----------------------------------------------------------------------------
+        // Project artifact
+        // ----------------------------------------------------------------------------                
 
-        for ( Iterator i = artifacts.iterator(); i.hasNext(); )
+        File projectArtifact = getProjectFile( project.getBuild().getDirectory(), project.getBuild().getFinalName() );
+
+        File projectArtifactSignature = generateSignatureForArtifact( projectArtifact );
+
+        signingBundles.add( new SigningBundle( project.getArtifact().getType(), projectArtifactSignature ) );
+
+        // ----------------------------------------------------------------------------
+        // POM
+        // ----------------------------------------------------------------------------
+
+        File pomSignature = generateSignatureForArtifact( project.getFile() );
+
+        signingBundles.add( new SigningBundle( "pom", pomSignature ) );
+
+        // ----------------------------------------------------------------------------
+        // Attached artifacts
+        // ----------------------------------------------------------------------------
+
+        for ( Iterator i = project.getAttachedArtifacts().iterator(); i.hasNext(); )
         {
             Artifact artifact = (Artifact) i.next();
 
             File file = artifact.getFile();
 
-            File signature = sign( file );
-            
-            projectHelper.attachArtifact( project, artifact.getType() + ".asc", "asc", signature );
+            File signature = generateSignatureForArtifact( file );
+
+            signingBundles.add( new SigningBundle( artifact.getType(), signature ) );
+        }
+
+        // ----------------------------------------------------------------------------
+        // Attach all the signatures
+        // ----------------------------------------------------------------------------
+
+        for ( Iterator i = signingBundles.iterator(); i.hasNext(); )
+        {
+            SigningBundle bundle = (SigningBundle) i.next();
+
+            // Get the correct artifact handler to we can create the right extension.
+            ArtifactHandler ah = artifactHandlerManager.getArtifactHandler( bundle.getArtifactType() );
+
+            // We don't want a classifier, we just want to add the extension ".asc" 
+            projectHelper.attachArtifact( project, ah.getExtension() + SIGNATURE_EXTENSION, "", bundle.getSignature() );
         }
     }
 
-    private File sign( File file )
+    private File generateSignatureForArtifact( File file )
         throws MojoExecutionException
     {
-        File signature = new File( file + ".asc" );
+        File signature = new File( file + SIGNATURE_EXTENSION );
 
         if ( signature.exists() )
         {
@@ -107,11 +157,11 @@ public class GpgSignAttachedMojo
         }
 
         Commandline cmd = new Commandline();
-        
+
         cmd.setExecutable( "gpg" + ( SystemUtils.IS_OS_WINDOWS ? ".exe" : "" ) );
 
         cmd.createArgument().setValue( "--passphrase-fd" );
-        
+
         cmd.createArgument().setValue( "0" );
 
         cmd.createArgument().setValue( "--armor" );
@@ -138,5 +188,15 @@ public class GpgSignAttachedMojo
         }
 
         return signature;
+    }
+
+    //TODO: This must be made to work generally or the packaging plugins must
+    // set the project artifact as part of what they do. We should not have to
+    // guess or synthesize what project artifact is here. It should have happened
+    // already. We'll settle for JAR files right now.
+    protected File getProjectFile( String basedir,
+                                   String finalName )
+    {
+        return new File( basedir, finalName + ".jar" );
     }
 }
