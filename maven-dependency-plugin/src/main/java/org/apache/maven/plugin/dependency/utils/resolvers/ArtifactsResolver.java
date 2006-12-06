@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.dependency.utils.resolvers;
+
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -20,7 +22,6 @@
 /**
  * 
  */
-package org.apache.maven.plugin.dependency.utils.resolvers;
 
 import java.util.Set;
 

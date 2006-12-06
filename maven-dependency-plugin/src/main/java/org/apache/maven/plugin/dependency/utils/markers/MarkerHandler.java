@@ -1,4 +1,6 @@
-/* 
+package org.apache.maven.plugin.dependency.utils.markers;
+
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,7 +22,6 @@
 /**
  * 
  */
-package org.apache.maven.plugin.dependency.utils.markers;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -31,18 +32,18 @@ import org.apache.maven.plugin.MojoExecutionException;
  */
 public interface MarkerHandler
 {
-    public boolean isMarkerSet()
+    boolean isMarkerSet()
         throws MojoExecutionException;
 
-    public void setMarker()
+    void setMarker()
         throws MojoExecutionException;
 
-    public boolean clearMarker()
+    boolean clearMarker()
         throws MojoExecutionException;
 
-    public boolean isMarkerOlder( Artifact artifact )
+    boolean isMarkerOlder( Artifact artifact )
         throws MojoExecutionException;
 
-    public void setArtifact( Artifact artifact );
+    void setArtifact( Artifact artifact );
 
 }

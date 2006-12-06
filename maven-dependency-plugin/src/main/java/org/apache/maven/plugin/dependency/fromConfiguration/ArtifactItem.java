@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.dependency.fromConfiguration;
+
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,8 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.    
  */
-
-package org.apache.maven.plugin.dependency.fromConfiguration;
 
 import java.io.File;
 
@@ -107,17 +107,17 @@ public class ArtifactItem
 
     public ArtifactItem( Artifact artifact )
     {
-        this.setArtifact(artifact);
-        this.setArtifactId(artifact.getArtifactId());
-        this.setClassifier(artifact.getClassifier());
-        this.setGroupId(artifact.getGroupId());
-        this.setType(artifact.getType());
-        this.setVersion(artifact.getVersion());
+        this.setArtifact( artifact );
+        this.setArtifactId( artifact.getArtifactId() );
+        this.setClassifier( artifact.getClassifier() );
+        this.setGroupId( artifact.getGroupId() );
+        this.setType( artifact.getType() );
+        this.setVersion( artifact.getVersion() );
     }
 
-    private final String filterEmptyString(String in)
+    private String filterEmptyString( String in )
     {
-        if (in == null || in.equals(""))
+        if ( in == null || in.equals( "" ) )
         {
             return null;
         }
@@ -126,6 +126,7 @@ public class ArtifactItem
             return in;
         }
     }
+
     /**
      * @return Returns the artifactId.
      */
@@ -140,7 +141,7 @@ public class ArtifactItem
      */
     public void setArtifactId( String artifact )
     {
-        this.artifactId = filterEmptyString(artifact);
+        this.artifactId = filterEmptyString( artifact );
     }
 
     /**
@@ -157,7 +158,7 @@ public class ArtifactItem
      */
     public void setGroupId( String groupId )
     {
-        this.groupId = filterEmptyString(groupId);
+        this.groupId = filterEmptyString( groupId );
     }
 
     /**
@@ -174,7 +175,7 @@ public class ArtifactItem
      */
     public void setType( String type )
     {
-        this.type = filterEmptyString(type);
+        this.type = filterEmptyString( type );
     }
 
     /**
@@ -191,7 +192,7 @@ public class ArtifactItem
      */
     public void setVersion( String version )
     {
-        this.version = filterEmptyString(version);
+        this.version = filterEmptyString( version );
     }
 
     /**
@@ -208,18 +209,19 @@ public class ArtifactItem
      */
     public void setClassifier( String classifier )
     {
-        this.classifier = filterEmptyString(classifier);
+        this.classifier = filterEmptyString( classifier );
     }
 
     public String toString()
     {
         if ( this.classifier == null )
         {
-            return groupId + ":" + artifactId + ":" + StringUtils.defaultString(version,"?") + ":" + type;
+            return groupId + ":" + artifactId + ":" + StringUtils.defaultString( version, "?" ) + ":" + type;
         }
         else
         {
-            return groupId + ":" + artifactId + ":" + classifier + ":" + StringUtils.defaultString(version,"?") + ":" + type;
+            return groupId + ":" + artifactId + ":" + classifier + ":" + StringUtils.defaultString( version, "?" )
+                + ":" + type;
         }
     }
 
@@ -254,7 +256,7 @@ public class ArtifactItem
      */
     public void setDestFileName( String destFileName )
     {
-        this.destFileName = filterEmptyString(destFileName);
+        this.destFileName = filterEmptyString( destFileName );
     }
 
     /**
