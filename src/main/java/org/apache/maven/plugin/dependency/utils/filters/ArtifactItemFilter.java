@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.dependency.utils.filters;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,10 +18,10 @@
  * specific language governing permissions and limitations
  * under the License. 
  */
+
 /**
  * 
  */
-package org.apache.maven.plugin.dependency.utils.filters;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.fromConfiguration.ArtifactItem;
@@ -31,6 +33,6 @@ import org.apache.maven.plugin.dependency.fromConfiguration.ArtifactItem;
 public interface ArtifactItemFilter
 {
 
-    public boolean okToProcess( ArtifactItem item )
+    boolean okToProcess( ArtifactItem item )
         throws MojoExecutionException;
 }

@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.dependency.fromConfiguration;
+
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,8 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.    
  */
-
-package org.apache.maven.plugin.dependency.fromConfiguration;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -142,21 +142,22 @@ public abstract class AbstractFromConfigurationMojo
             {
                 artifactItem.setDestFileName( DependencyUtil.getFormattedFileName( artifactItem.getArtifact(),
                                                                                    removeVersion ) );
-            }   
-            
-            artifactItem.setNeedsProcessing(checkIfProcessingNeeded(artifactItem));
+            }
+
+            artifactItem.setNeedsProcessing( checkIfProcessingNeeded( artifactItem ) );
         }
         return artifactItems;
     }
 
-    private boolean checkIfProcessingNeeded(ArtifactItem item) throws MojoExecutionException
+    private boolean checkIfProcessingNeeded( ArtifactItem item )
+        throws MojoExecutionException
     {
         boolean result = false;
         if ( StringUtils.equalsIgnoreCase( item.getOverWrite(), "true" ) )
         {
             result = true;
         }
-        else if (StringUtils.equalsIgnoreCase( item.getOverWrite(), "false" ))
+        else if ( StringUtils.equalsIgnoreCase( item.getOverWrite(), "false" ) )
         {
             result = false;
         }
@@ -167,7 +168,7 @@ public abstract class AbstractFromConfigurationMojo
         }
         return result;
     }
-    
+
     /**
      * Resolves the Artifact from the remote repository if nessessary. If no
      * version is specified, it will be retrieved from the dependency list or
@@ -242,7 +243,7 @@ public abstract class AbstractFromConfigurationMojo
      *            representing configured file.
      * @param list
      *            list of dependencies to search.
-     * @returns the found dependency
+     * @return the found dependency
      */
     private boolean findDependencyVersion( ArtifactItem artifact, List list )
     {

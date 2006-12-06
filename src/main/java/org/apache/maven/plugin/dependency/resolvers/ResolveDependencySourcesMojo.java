@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.dependency.resolvers;
+
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,10 +19,6 @@
  * under the License.    
  */
 
-
-package org.apache.maven.plugin.dependency.resolvers;
-
-import java.io.File;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -42,9 +40,9 @@ public class ResolveDependencySourcesMojo
     extends AbstractResolveMojo
 {
 
-    private static final String SOURCE_TYPE = "java-source";
+   // private static final String SOURCE_TYPE = "java-source";
 
-    private static final String SOURCE_CLASSIFIER = "sources";
+  //  private static final String SOURCE_CLASSIFIER = "sources";
 
     /**
      * If the plugin should exclude Transitive dependencies.
@@ -68,14 +66,14 @@ public class ResolveDependencySourcesMojo
      *            default-value="${project.build.directory}/dependency-maven-plugin-markers"
      * @required
      */
-    private File markersDirectory;
+//    private File markersDirectory;
 
     /**
      * Use Marker Files
      * 
      * @parameter expression="${dependency.useMarkers}" default-value="false"
      */
-    private boolean useMarkers;
+//    private boolean useMarkers;
 
     /**
      * Main entry into mojo. Gets the list of dependencies and iterates through
@@ -116,7 +114,6 @@ public class ResolveDependencySourcesMojo
 
     protected ArtifactsFilter getMarkedArtifactFilter()
     {
-        // TODO Auto-generated method stub
         return null;
     }
 }

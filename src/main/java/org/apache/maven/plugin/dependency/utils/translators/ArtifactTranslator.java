@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.dependency.utils.translators;
+
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -19,8 +21,8 @@
 
 /**
  * 
+ * 
  */
-package org.apache.maven.plugin.dependency.utils.translators;
 
 import java.util.Set;
 
@@ -32,5 +34,5 @@ import org.apache.maven.plugin.logging.Log;
  */
 public interface ArtifactTranslator
 {
-    public Set translate( Set artifacts, Log log );
+    Set translate( Set artifacts, Log log );
 }

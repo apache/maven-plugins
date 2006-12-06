@@ -1,4 +1,6 @@
-/* 
+package org.apache.maven.plugin.dependency.utils.markers;
+
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,7 +22,6 @@
 /**
  * 
  */
-package org.apache.maven.plugin.dependency.utils.markers;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,10 +44,10 @@ public class SourcesFileMarkerHandler
         super( markerFilesDirectory );
     }
 
-    public SourcesFileMarkerHandler( Artifact artifact, File markerFilesDirectory, boolean resolved )
+    public SourcesFileMarkerHandler( Artifact artifact, File markerFilesDirectory, boolean isResolved )
     {
         super( artifact, markerFilesDirectory );
-        this.resolved = resolved;
+        this.resolved = isResolved;
     }
 
     /**
@@ -62,8 +63,8 @@ public class SourcesFileMarkerHandler
     /**
      * Get MarkerFile, exposed for unit testing purposes
      * 
-     * @param res
-     * @return
+     * @param is resolved or not.
+     * @return marker file for this artifact.
      */
     protected File getMarkerFile( boolean res )
     {
@@ -185,8 +186,8 @@ public class SourcesFileMarkerHandler
      * @param resolved
      *            The resolved to set.
      */
-    public void setResolved( boolean resolved )
+    public void setResolved( boolean isResolved )
     {
-        this.resolved = resolved;
+        this.resolved = isResolved;
     }
 }
