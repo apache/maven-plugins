@@ -1,2 +1,2 @@
 clean
-assembly:directory
+org.apache.maven.plugins:maven-assembly-plugin:testing:directory
