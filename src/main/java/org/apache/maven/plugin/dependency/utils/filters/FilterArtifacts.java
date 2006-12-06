@@ -1,4 +1,6 @@
-/* 
+package org.apache.maven.plugin.dependency.utils.filters;
+
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,7 +22,6 @@
 /**
  * 
  */
-package org.apache.maven.plugin.dependency.utils.filters;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -54,13 +55,15 @@ public class FilterArtifacts
     /**
      * Appends the specified element to the end of this list.
      * 
-     * @param o
+     * @param filter
      *            element to be appended to this list.
-     * @return <tt>true</tt> (as per the general contract of Collection.add).
      */
     public void addFilter( ArtifactsFilter filter )
     {
-        filters.add( filter );
+        if ( filter != null )
+        {
+            filters.add( filter );
+        }
     }
 
     /**
@@ -78,7 +81,10 @@ public class FilterArtifacts
      */
     public void addFilter( int index, ArtifactsFilter filter )
     {
-        filters.add( index, filter );
+        if ( filter != null )
+        {
+            filters.add( index, filter );
+        }
     }
 
     public Set filter( Set artifacts, Log log )
@@ -90,7 +96,15 @@ public class FilterArtifacts
         {
             // log(artifacts,log);
             ArtifactsFilter filter = (ArtifactsFilter) filterIterator.next();
-            artifacts = filter.filter( artifacts, log );
+            try
+            {
+                artifacts = filter.filter( artifacts, log );
+            }
+            catch ( NullPointerException e )
+            {
+                // don't do anything, just skip this.
+                continue;
+            }
         }
 
         return artifacts;

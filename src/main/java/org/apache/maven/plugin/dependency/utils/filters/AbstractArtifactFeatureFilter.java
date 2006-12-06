@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.dependency.utils.filters;
+
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,18 +19,15 @@
  * under the License.    
  */
 
-package org.apache.maven.plugin.dependency.utils.filters;
-
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
-import org.codehaus.plexus.util.StringUtils;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.logging.Log;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * This is the common base class of ClassifierFilter and TypeFilter
@@ -56,11 +55,11 @@ public abstract class AbstractArtifactFeatureFilter
      */
     private String featureName;
 
-    public AbstractArtifactFeatureFilter( String include, String exclude, String featureName )
+    public AbstractArtifactFeatureFilter( String include, String exclude, String theFeatureName )
     {
         setExcludes( exclude );
         setIncludes( include );
-        this.featureName = featureName;
+        featureName = theFeatureName;
     }
 
     /**

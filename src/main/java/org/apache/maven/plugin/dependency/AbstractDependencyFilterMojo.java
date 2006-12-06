@@ -1,4 +1,6 @@
-/* 
+package org.apache.maven.plugin.dependency;
+
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.    
  */
-package org.apache.maven.plugin.dependency;
 
 import java.io.File;
 import java.util.HashSet;
@@ -45,6 +46,7 @@ public abstract class AbstractDependencyFilterMojo
 {
     /**
      * If we should exclude transitive dependencies
+     * 
      * @since 2.0
      * @optional
      * @parameter expression="${excludeTransitive}" default-value="false"
@@ -54,6 +56,7 @@ public abstract class AbstractDependencyFilterMojo
     /**
      * Comma Separated list of Types to include. Empty String indicates include
      * everything (default).
+     * 
      * @since 2.0
      * @parameter expression="${includeTypes}" default-value=""
      * @optional
@@ -63,6 +66,7 @@ public abstract class AbstractDependencyFilterMojo
     /**
      * Comma Separated list of Types to exclude. Empty String indicates don't
      * exclude anything (default). Ignored if includeTypes is used.
+     * 
      * @since 2.0
      * @parameter expression="${excludeTypes}" default-value=""
      * @optional
@@ -71,6 +75,7 @@ public abstract class AbstractDependencyFilterMojo
 
     /**
      * Scope to include. An Empty string indicates all scopes (default).
+     * 
      * @since 2.0
      * @parameter expression="${includeScope}" default-value=""
      * @optional
@@ -79,6 +84,7 @@ public abstract class AbstractDependencyFilterMojo
 
     /**
      * Scope to exclude. An Empty string indicates no scopes (default).
+     * 
      * @since 2.0
      * @parameter expression="${excludeScope}" default-value=""
      * @optional
@@ -86,8 +92,9 @@ public abstract class AbstractDependencyFilterMojo
     protected String excludeScope;
 
     /**
-     * Comma Separated list of Classifiers to include. Empty String indicates include
-     * everything (default).
+     * Comma Separated list of Classifiers to include. Empty String indicates
+     * include everything (default).
+     * 
      * @since 2.0
      * @parameter expression="${includeClassifiers}" default-value=""
      * @optional
@@ -95,8 +102,9 @@ public abstract class AbstractDependencyFilterMojo
     protected String includeClassifiers;
 
     /**
-     * Comma Separated list of Classifiers to exclude. Empty String indicates don't
-     * exclude anything (default). Ignored if includeClassifiers is used.
+     * Comma Separated list of Classifiers to exclude. Empty String indicates
+     * don't exclude anything (default). Ignored if includeClassifiers is used.
+     * 
      * @since 2.0
      * @parameter expression="${excludeClassifiers}" default-value=""
      * @optional
@@ -105,6 +113,7 @@ public abstract class AbstractDependencyFilterMojo
 
     /**
      * Specify classifier to look for. Example: sources
+     * 
      * @optional
      * @since 2.0
      * @parameter expression="${classifier}" default-value=""
@@ -114,6 +123,7 @@ public abstract class AbstractDependencyFilterMojo
     /**
      * Specify type to look for when constructing artifact based on classifier.
      * Example: java-source,jar,war
+     * 
      * @optional
      * @since 2.0
      * @parameter expression="${type}" default-value="java-source"
@@ -132,6 +142,7 @@ public abstract class AbstractDependencyFilterMojo
 
     /**
      * Overwrite release artifacts
+     * 
      * @optional
      * @since 1.0
      * @parameter expression="${overWriteReleases}" default-value="false"
@@ -140,6 +151,7 @@ public abstract class AbstractDependencyFilterMojo
 
     /**
      * Overwrite snapshot artifacts
+     * 
      * @optional
      * @since 1.0
      * @parameter expression="${overWriteSnapshots}" default-value="false"
@@ -148,13 +160,14 @@ public abstract class AbstractDependencyFilterMojo
 
     /**
      * Overwrite artifacts that don't exist or are older than the source.
+     * 
      * @optional
      * @since 2.0
      * @parameter expression="${overWriteIfNewer}" default-value="true"
      */
     protected boolean overWriteIfNewer;
 
-    abstract protected ArtifactsFilter getMarkedArtifactFilter();
+    protected abstract ArtifactsFilter getMarkedArtifactFilter();
 
     /**
      * Retrieves dependencies, either direct only or all including transitive.
