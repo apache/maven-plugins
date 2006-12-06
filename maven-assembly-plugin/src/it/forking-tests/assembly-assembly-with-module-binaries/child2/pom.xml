@@ -1,6 +1,6 @@
 <?xml version="1.0"?><project>
   <parent>
-    <artifactId>assembly-attached-with-module-binaries</artifactId>
+    <artifactId>assembly-assembly-with-module-binaries</artifactId>
     <groupId>org.apache.maven.plugins.assembly.it</groupId>
     <version>1.0</version>
   </parent>

@@ -1,1 +1,1 @@
-package assembly:directory
+package org.apache.maven.plugins:maven-assembly-plugin:testing:directory
