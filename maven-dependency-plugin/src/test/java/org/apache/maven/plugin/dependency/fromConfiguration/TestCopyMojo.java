@@ -1,3 +1,4 @@
+package org.apache.maven.plugin.dependency.fromConfiguration;
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,27 +17,21 @@
  * specific language governing permissions and limitations
  * under the License.    
  */
-package org.apache.maven.plugin.dependency.fromConfiguration;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
 import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.testUtils.stubs.StubArtifactRepository;
 import org.apache.maven.plugin.dependency.testUtils.stubs.StubArtifactResolver;
-import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.project.MavenProject;
 
 public class TestCopyMojo
@@ -117,9 +112,9 @@ public class TestCopyMojo
 
     public void testMojoDefaults()
     {
-        CopyMojo mojo = new CopyMojo();
+        CopyMojo themojo = new CopyMojo();
 
-        assertFalse( mojo.isStripVersion() );
+        assertFalse( themojo.isStripVersion() );
     }
 
     public void testCopyFile()
@@ -550,34 +545,34 @@ public class TestCopyMojo
 
         assertTrue( time < copiedFile.lastModified() );
     }
-    
+
     public void testCopyOverWriteIfNewer()
-    throws IOException, MojoExecutionException, InterruptedException
-{
-    stubFactory.setCreateFiles( true );
-    Artifact artifact = stubFactory.getSnapshotArtifact();
-    artifact.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+        throws IOException, MojoExecutionException, InterruptedException
+    {
+        stubFactory.setCreateFiles( true );
+        Artifact artifact = stubFactory.getSnapshotArtifact();
+        artifact.getFile().setLastModified( System.currentTimeMillis() - 2000 );
 
-    ArtifactItem item = new ArtifactItem( artifact );
+        ArtifactItem item = new ArtifactItem( artifact );
 
-    ArrayList list = new ArrayList( 1 );
-    list.add( item );
-    mojo.artifactItems = list;
-    mojo.overWriteIfNewer = true;
-    mojo.execute();
+        ArrayList list = new ArrayList( 1 );
+        list.add( item );
+        mojo.artifactItems = list;
+        mojo.overWriteIfNewer = true;
+        mojo.execute();
 
-    File copiedFile = new File( item.getOutputDirectory(), item.getDestFileName() );
+        File copiedFile = new File( item.getOutputDirectory(), item.getDestFileName() );
 
-    // set dest to be old
-    long time = System.currentTimeMillis() - 10000;
-    copiedFile.setLastModified( time );
-    
-    //set source to be newer
-    artifact.getFile().setLastModified(time + 4000);
-    mojo.execute();
+        // set dest to be old
+        long time = System.currentTimeMillis() - 10000;
+        copiedFile.setLastModified( time );
 
-    assertTrue( time < copiedFile.lastModified() );
-}
+        // set source to be newer
+        artifact.getFile().setLastModified( time + 4000 );
+        mojo.execute();
+
+        assertTrue( time < copiedFile.lastModified() );
+    }
     // TODO: test overwrite / overwrite if newer / overwrite release / overwrite
     // snapshot
 

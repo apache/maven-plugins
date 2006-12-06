@@ -1,4 +1,6 @@
-/* 
+package org.apache.maven.plugin.dependency.utils.markers;
+
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,7 +22,6 @@
 /**
  * 
  */
-package org.apache.maven.plugin.dependency.utils.markers;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,15 +40,15 @@ public class DefaultFileMarkerHandler
 
     protected File markerFilesDirectory;
 
-    public DefaultFileMarkerHandler( File markerFilesDirectory )
+    public DefaultFileMarkerHandler( File theMarkerFilesDirectory )
     {
-        this.markerFilesDirectory = markerFilesDirectory;
+        this.markerFilesDirectory = theMarkerFilesDirectory;
     }
 
-    public DefaultFileMarkerHandler( Artifact artifact, File markerFilesDirectory )
+    public DefaultFileMarkerHandler( Artifact theArtifact, File theMarkerFilesDirectory )
     {
-        this.artifact = artifact;
-        this.markerFilesDirectory = markerFilesDirectory;
+        this.artifact = theArtifact;
+        this.markerFilesDirectory = theMarkerFilesDirectory;
     }
 
     /**
