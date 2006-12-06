@@ -109,6 +109,24 @@ public final class UnpackMojo
     {
         MarkerHandler handler = new DefaultFileMarkerHandler( item.getArtifact(), this.markersDirectory );
 
-        return new MarkerFileFilter( this.overWriteReleases, this.overWriteSnapshots, this.overWriteIfNewer, handler );
+        return new MarkerFileFilter( this.isOverWriteReleases(), this.isOverWriteSnapshots(),
+                                     this.isOverWriteIfNewer(), handler );
+    }
+
+    /**
+     * @return Returns the markersDirectory.
+     */
+    public File getMarkersDirectory()
+    {
+        return this.markersDirectory;
+    }
+
+    /**
+     * @param theMarkersDirectory
+     *            The markersDirectory to set.
+     */
+    public void setMarkersDirectory( File theMarkersDirectory )
+    {
+        this.markersDirectory = theMarkersDirectory;
     }
 }

@@ -54,7 +54,7 @@ public abstract class AbstractFromConfigurationMojo
      * @optional
      * @since 1.0
      */
-    protected File outputDirectory;
+    private File outputDirectory;
 
     /**
      * Overwrite release artifacts
@@ -63,7 +63,7 @@ public abstract class AbstractFromConfigurationMojo
      * @since 1.0
      * @parameter expression="${overWriteReleases}" default-value="false"
      */
-    protected boolean overWriteReleases;
+    private boolean overWriteReleases;
 
     /**
      * Overwrite snapshot artifacts
@@ -72,7 +72,7 @@ public abstract class AbstractFromConfigurationMojo
      * @since 1.0
      * @parameter expression="${overWriteSnapshots}" default-value="false"
      */
-    protected boolean overWriteSnapshots;
+    private boolean overWriteSnapshots;
 
     /**
      * Overwrite if newer
@@ -81,7 +81,7 @@ public abstract class AbstractFromConfigurationMojo
      * @since 2.0
      * @parameter expression="${overIfNewer}" default-value="true"
      */
-    protected boolean overWriteIfNewer;
+    private boolean overWriteIfNewer;
 
     /**
      * Collection of ArtifactItems to work on. (ArtifactItem contains groupId,
@@ -92,7 +92,7 @@ public abstract class AbstractFromConfigurationMojo
      * @required
      * @since 1.0
      */
-    protected ArrayList artifactItems;
+    private ArrayList artifactItems;
 
     abstract ArtifactItemFilter getMarkedArtifactFilter( ArtifactItem item );
 
@@ -264,5 +264,85 @@ public abstract class AbstractFromConfigurationMojo
             }
         }
         return result;
+    }
+
+    /**
+     * @return Returns the artifactItems.
+     */
+    public ArrayList getArtifactItems()
+    {
+        return this.artifactItems;
+    }
+
+    /**
+     * @param theArtifactItems The artifactItems to set.
+     */
+    public void setArtifactItems( ArrayList theArtifactItems )
+    {
+        this.artifactItems = theArtifactItems;
+    }
+
+    /**
+     * @return Returns the outputDirectory.
+     */
+    public File getOutputDirectory()
+    {
+        return this.outputDirectory;
+    }
+
+    /**
+     * @param theOutputDirectory The outputDirectory to set.
+     */
+    public void setOutputDirectory( File theOutputDirectory )
+    {
+        this.outputDirectory = theOutputDirectory;
+    }
+
+    /**
+     * @return Returns the overWriteIfNewer.
+     */
+    public boolean isOverWriteIfNewer()
+    {
+        return this.overWriteIfNewer;
+    }
+
+    /**
+     * @param theOverWriteIfNewer The overWriteIfNewer to set.
+     */
+    public void setOverWriteIfNewer( boolean theOverWriteIfNewer )
+    {
+        this.overWriteIfNewer = theOverWriteIfNewer;
+    }
+
+    /**
+     * @return Returns the overWriteReleases.
+     */
+    public boolean isOverWriteReleases()
+    {
+        return this.overWriteReleases;
+    }
+
+    /**
+     * @param theOverWriteReleases The overWriteReleases to set.
+     */
+    public void setOverWriteReleases( boolean theOverWriteReleases )
+    {
+        this.overWriteReleases = theOverWriteReleases;
+    }
+
+    /**
+     * @return Returns the overWriteSnapshots.
+     */
+    public boolean isOverWriteSnapshots()
+    {
+        return this.overWriteSnapshots;
+    }
+
+    /**
+     * @param theOverWriteSnapshots The overWriteSnapshots to set.
+     */
+    public void setOverWriteSnapshots( boolean theOverWriteSnapshots )
+    {
+        this.overWriteSnapshots = theOverWriteSnapshots;
     }
 }
