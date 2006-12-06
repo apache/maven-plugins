@@ -1,4 +1,6 @@
-/* 
+package org.apache.maven.plugin.dependency.utils;
+
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,7 +22,6 @@
 /**
  * 
  */
-package org.apache.maven.plugin.dependency.utils;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -154,12 +155,13 @@ public class DependencyStatusSets
                 {
                     try
                     {
-                        //we want to print the absolute file name here
+                        // we want to print the absolute file name here
                         artifactFilename = artifact.getFile().getAbsoluteFile().getPath();
                     }
                     catch ( NullPointerException e )
                     {
                         // ignore the null pointer, we'll output a null string
+                        artifactFilename = null;
                     }
                 }
                 log.info( "   " + artifact.getId() + ( outputAbsoluteArtifactFilename ? ":" + artifactFilename : "" ) );

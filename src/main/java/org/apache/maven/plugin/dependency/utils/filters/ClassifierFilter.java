@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.dependency.utils.filters;
+
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,21 +19,23 @@
  * under the License.    
  */
 
-package org.apache.maven.plugin.dependency.utils.filters;
-
 import org.apache.maven.artifact.Artifact;
 
-public class ClassifierFilter extends AbstractArtifactFeatureFilter
+public class ClassifierFilter
+    extends AbstractArtifactFeatureFilter
 {
     public ClassifierFilter( String include, String exclude )
     {
-        super(include,exclude,"Classifiers");
+        super( include, exclude, "Classifiers" );
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.maven.plugin.dependency.utils.filters.AbstractArtifactFeatureFilter#getArtifactFeature(org.apache.maven.artifact.Artifact)
      */
-    protected String getArtifactFeature(Artifact artifact) {
+    protected String getArtifactFeature( Artifact artifact )
+    {
         return artifact.getClassifier();
     }
- }
+}

@@ -1,3 +1,4 @@
+package org.apache.maven.plugin.dependency.testUtils.stubs;
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -15,22 +16,6 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.    
- */
-
-package org.apache.maven.plugin.dependency.testUtils.stubs;
-/*
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 
 import java.io.File;
@@ -87,7 +72,7 @@ public class DependencyProjectStub
     private MavenProject parent;
 
     private List dependencies;
-    
+
     private File file;
 
     private List collectedProjects;
@@ -102,31 +87,31 @@ public class DependencyProjectStub
 
     private List pluginArtifactRepositories;
 
-    private ArtifactRepository releaseArtifactRepository;
+//    private ArtifactRepository releaseArtifactRepository;
 
-    private ArtifactRepository snapshotArtifactRepository;
+ //   private ArtifactRepository snapshotArtifactRepository;
 
     private List activeProfiles;
 
     private Set dependencyArtifacts;
 
     private DependencyManagement dependencyManagement;
-    
+
     private Artifact artifact;
 
-    private Map artifactMap;
+//    private Map artifactMap;
 
     private Model originalModel;
 
-    private Map pluginArtifactMap;
+ //   private Map pluginArtifactMap;
 
-    private Map reportArtifactMap;
+ //   private Map reportArtifactMap;
 
-    private Map extensionArtifactMap;
+ //   private Map extensionArtifactMap;
 
-    private Map projectReferences;
+ //   private Map projectReferences;
 
-    private Build buildOverlay;
+ //   private Build buildOverlay;
 
     private boolean executionRoot;
 
@@ -262,7 +247,7 @@ public class DependencyProjectStub
 
     public List getDependencies()
     {
-        if (dependencies == null)
+        if ( dependencies == null )
         {
             dependencies = Collections.EMPTY_LIST;
         }
@@ -271,11 +256,11 @@ public class DependencyProjectStub
 
     public DependencyManagement getDependencyManagement()
     {
-        if (dependencyManagement == null)
+        if ( dependencyManagement == null )
         {
             dependencyManagement = new DependencyManagement();
         }
-        
+
         return dependencyManagement;
     }
 
@@ -421,32 +406,32 @@ public class DependencyProjectStub
 
     public void setArtifactMap( Map artifactMap )
     {
-        this.artifactMap = artifactMap;
+    //    this.artifactMap = artifactMap;
     }
 
     public void setPluginArtifactMap( Map pluginArtifactMap )
     {
-        this.pluginArtifactMap = pluginArtifactMap;
+        //this.pluginArtifactMap = pluginArtifactMap;
     }
 
     public void setReportArtifactMap( Map reportArtifactMap )
     {
-        this.reportArtifactMap = reportArtifactMap;
+     //   this.reportArtifactMap = reportArtifactMap;
     }
 
     public void setExtensionArtifactMap( Map extensionArtifactMap )
     {
-        this.extensionArtifactMap = extensionArtifactMap;
+       // this.extensionArtifactMap = extensionArtifactMap;
     }
 
     public void setProjectReferences( Map projectReferences )
     {
-        this.projectReferences = projectReferences;
+        //this.projectReferences = projectReferences;
     }
 
     public void setBuildOverlay( Build buildOverlay )
     {
-        this.buildOverlay = buildOverlay;
+        //this.buildOverlay = buildOverlay;
     }
 
     public void setCompileDependencies( List compileDependencies )
@@ -967,12 +952,12 @@ public class DependencyProjectStub
 
     public void setReleaseArtifactRepository( ArtifactRepository artifactRepository )
     {
-        this.releaseArtifactRepository = artifactRepository;
+   //     this.releaseArtifactRepository = artifactRepository;
     }
 
     public void setSnapshotArtifactRepository( ArtifactRepository artifactRepository )
     {
-        this.snapshotArtifactRepository = artifactRepository;
+     //   this.snapshotArtifactRepository = artifactRepository;
     }
 
     public void setOriginalModel( Model model )
@@ -1036,7 +1021,7 @@ public class DependencyProjectStub
         return defaultGoal;
     }
 
-    public Artifact replaceWithActiveArtifact( Artifact artifact )
+    public Artifact replaceWithActiveArtifact( Artifact theArtifact )
     {
         return null;
     }

@@ -1,4 +1,6 @@
-/* 
+package org.apache.maven.plugin.dependency;
+
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,8 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.    
  */
-
-package org.apache.maven.plugin.dependency;
 
 import java.io.File;
 
@@ -45,6 +45,7 @@ public abstract class AbstractFromDependenciesMojo
     /**
      * Place each type of file in a separate subdirectory. (example
      * /outputDirectory/jars /outputDirectory/wars etc)
+     * 
      * @since 2.0
      * @parameter expression="${useSubDirectoryPerType}" default-value="false"
      * @optional
@@ -54,6 +55,7 @@ public abstract class AbstractFromDependenciesMojo
     /**
      * Place each file in a separate subdirectory. (example
      * /outputDirectory/junit-junit-3.8.1)
+     * 
      * @since 2.0
      * @parameter expression="${useSubDirectoryPerArtifact}"
      *            default-value="false"

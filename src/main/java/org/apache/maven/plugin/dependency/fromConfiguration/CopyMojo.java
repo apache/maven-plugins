@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.dependency.fromConfiguration;
+
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,18 +19,13 @@
  * under the License.    
  */
 
-package org.apache.maven.plugin.dependency.fromConfiguration;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.dependency.utils.DependencyUtil;
-import org.apache.maven.plugin.dependency.utils.filters.DestFileFilter;
 import org.apache.maven.plugin.dependency.utils.filters.ArtifactItemFilter;
-import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.dependency.utils.filters.DestFileFilter;
 
 /**
  * Goal that copies a list of artifacts from the repository to defined
@@ -70,13 +67,13 @@ public class CopyMojo
         while ( iter.hasNext() )
         {
             ArtifactItem artifactItem = (ArtifactItem) iter.next();
-            if (artifactItem.isNeedsProcessing())
+            if ( artifactItem.isNeedsProcessing() )
             {
-                copyArtifact( artifactItem);
+                copyArtifact( artifactItem );
             }
             else
             {
-                this.getLog().info(artifactItem+" already exists in "+ artifactItem.getOutputDirectory());
+                this.getLog().info( artifactItem + " already exists in " + artifactItem.getOutputDirectory() );
             }
         }
     }
@@ -101,14 +98,16 @@ public class CopyMojo
         copyFile( artifactItem.getArtifact().getFile(), destFile );
     }
 
-    protected ArtifactItemFilter getMarkedArtifactFilter(ArtifactItem item)
+    protected ArtifactItemFilter getMarkedArtifactFilter( ArtifactItem item )
     {
-        ArtifactItemFilter destinationNameOverrideFilter = new DestFileFilter( this.overWriteReleases, this.overWriteSnapshots, this.overWriteIfNewer,
-                                   false, false, this.stripVersion,
-                                   item.getOutputDirectory() );
+        ArtifactItemFilter destinationNameOverrideFilter = new DestFileFilter( this.overWriteReleases,
+                                                                               this.overWriteSnapshots,
+                                                                               this.overWriteIfNewer, false, false,
+                                                                               this.stripVersion, item
+                                                                                   .getOutputDirectory() );
         return destinationNameOverrideFilter;
     }
-    
+
     /**
      * @return Returns the stripVersion.
      */
@@ -118,7 +117,8 @@ public class CopyMojo
     }
 
     /**
-     * @param stripVersion The stripVersion to set.
+     * @param stripVersion
+     *            The stripVersion to set.
      */
     public void setStripVersion( boolean stripVersion )
     {

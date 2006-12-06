@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.dependency.resolvers;
+
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,9 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.    
  */
-
-
-package org.apache.maven.plugin.dependency.resolvers;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -86,7 +85,7 @@ public class ResolvePluginsMojo
                 }
                 if ( !excludeTransitive )
                 {
-                    Set transitiveDependencies = this.resolveArtifactDependencies( plugin);
+                    Set transitiveDependencies = this.resolveArtifactDependencies( plugin );
                     if ( !silent )
                     {
                         for ( Iterator transIter = transitiveDependencies.iterator(); transIter.hasNext(); )

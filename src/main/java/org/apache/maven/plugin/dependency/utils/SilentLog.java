@@ -1,4 +1,6 @@
-/* 
+package org.apache.maven.plugin.dependency.utils;
+
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,8 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.    
  */
-
-package org.apache.maven.plugin.dependency.utils;
 
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.logging.Logger;
@@ -97,61 +97,61 @@ public class SilentLog
     public void debug( String message )
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void debug( String message, Throwable throwable )
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void info( String message )
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void info( String message, Throwable throwable )
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void warn( String message )
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void warn( String message, Throwable throwable )
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void error( String message )
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void error( String message, Throwable throwable )
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void fatalError( String message )
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void fatalError( String message, Throwable throwable )
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     public boolean isFatalErrorEnabled()

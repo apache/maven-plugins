@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.dependency.fromConfiguration;
+
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,22 +19,16 @@
  * under the License.    
  */
 
-package org.apache.maven.plugin.dependency.fromConfiguration;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.dependency.utils.DependencyUtil;
-import org.apache.maven.plugin.dependency.utils.filters.ArtifactsFilter;
 import org.apache.maven.plugin.dependency.utils.filters.ArtifactItemFilter;
 import org.apache.maven.plugin.dependency.utils.filters.MarkerFileFilter;
 import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
 import org.apache.maven.plugin.dependency.utils.markers.MarkerHandler;
-import org.apache.maven.plugin.logging.Log;
-import org.codehaus.plexus.archiver.manager.ArchiverManager;
 
 /**
  * Goal that retrieves a list of artifacts from the repository and unpacks them
@@ -68,14 +64,14 @@ public final class UnpackMojo
     public void execute()
         throws MojoExecutionException
     {
-        ArrayList artifactItems = getArtifactItems( false );
-        Iterator iter = artifactItems.iterator();
+        ArrayList processedItems = getArtifactItems( false );
+        Iterator iter = processedItems.iterator();
         while ( iter.hasNext() )
         {
             ArtifactItem artifactItem = (ArtifactItem) iter.next();
-            if (artifactItem.isNeedsProcessing())
+            if ( artifactItem.isNeedsProcessing() )
             {
-            unpackArtifact( artifactItem );
+                unpackArtifact( artifactItem );
             }
             else
             {
@@ -112,7 +108,7 @@ public final class UnpackMojo
     ArtifactItemFilter getMarkedArtifactFilter( ArtifactItem item )
     {
         MarkerHandler handler = new DefaultFileMarkerHandler( item.getArtifact(), this.markersDirectory );
-        
-        return new MarkerFileFilter(this.overWriteReleases,this.overWriteSnapshots,this.overWriteIfNewer,handler);
+
+        return new MarkerFileFilter( this.overWriteReleases, this.overWriteSnapshots, this.overWriteIfNewer, handler );
     }
 }

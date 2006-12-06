@@ -1,4 +1,6 @@
-/* 
+package org.apache.maven.plugin.dependency.utils.translators;
+
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -14,13 +16,12 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
- * under the License.    
+ * under the License.
  */
 
 /**
  * 
  */
-package org.apache.maven.plugin.dependency.utils.translators;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -45,11 +46,11 @@ public class ClassifierTypeTranslator
 
     private ArtifactFactory factory;
 
-    public ClassifierTypeTranslator( String classifier, String type, ArtifactFactory factory )
+    public ClassifierTypeTranslator( String theClassifier, String theType, ArtifactFactory theFactory )
     {
-        this.classifier = classifier;
-        this.type = type;
-        this.factory = factory;
+        this.classifier = theClassifier;
+        this.type = theType;
+        this.factory = theFactory;
     }
 
     /*
@@ -106,22 +107,6 @@ public class ClassifierTypeTranslator
         return results;
     }
 
-    /**
-     * @return Returns the classifier.
-     */
-    public String getClassifier()
-    {
-        return this.classifier;
-    }
-
-    /**
-     * @param classifier
-     *            The classifier to set.
-     */
-    public void setClassifier( String classifier )
-    {
-        this.classifier = classifier;
-    }
 
     /**
      * @return Returns the type.
@@ -135,9 +120,25 @@ public class ClassifierTypeTranslator
      * @param type
      *            The type to set.
      */
-    public void setType( String type )
+    public void setType( String theType )
     {
-        this.type = type;
+        this.type = theType;
+    }
+
+    /**
+     * @return Returns the classifier.
+     */
+    public String getClassifier()
+    {
+        return this.classifier;
+    }
+
+    /**
+     * @param theClassifier The classifier to set.
+     */
+    public void setClassifier( String theClassifier )
+    {
+        this.classifier = theClassifier;
     }
 
 }

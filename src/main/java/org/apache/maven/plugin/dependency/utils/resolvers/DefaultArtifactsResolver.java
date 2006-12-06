@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.dependency.utils.resolvers;
+
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -19,8 +21,8 @@
 
 /**
  * 
+ * 
  */
-package org.apache.maven.plugin.dependency.utils.resolvers;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -50,13 +52,13 @@ public class DefaultArtifactsResolver
 
     boolean stopOnFailure;
 
-    public DefaultArtifactsResolver( ArtifactResolver resolver, ArtifactRepository local, List remoteRepositories,
-                                    boolean stopOnFailure )
+    public DefaultArtifactsResolver( ArtifactResolver theResolver, ArtifactRepository theLocal,
+                                    List theRemoteRepositories, boolean theStopOnFailure )
     {
-        this.resolver = resolver;
-        this.local = local;
-        this.remoteRepositories = remoteRepositories;
-        this.stopOnFailure = stopOnFailure;
+        this.resolver = theResolver;
+        this.local = theLocal;
+        this.remoteRepositories = theRemoteRepositories;
+        this.stopOnFailure = theStopOnFailure;
     }
 
     /*

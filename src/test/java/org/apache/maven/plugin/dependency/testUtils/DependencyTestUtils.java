@@ -17,6 +17,7 @@ package org.apache.maven.plugin.dependency.testUtils;
  * specific language governing permissions and limitations
  * under the License.    
  */
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -26,7 +27,6 @@ import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.factory.DefaultArtifactFactory;
 import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
 import org.apache.maven.artifact.handler.manager.DefaultArtifactHandlerManager;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.SilentLog;
 import org.apache.maven.shared.model.fileset.FileSet;
 import org.apache.maven.shared.model.fileset.util.FileSetManager;
@@ -44,7 +44,7 @@ public class DependencyTestUtils
      * @throws MojoExecutionException
      *             When a directory failed to get deleted.
      */
-    static public void removeDirectory( File dir )
+    public static void removeDirectory( File dir )
         throws IOException
     {
         if ( dir != null )
@@ -59,7 +59,7 @@ public class DependencyTestUtils
         }
     }
 
-    static public ArtifactFactory getArtifactFactory()
+    public static ArtifactFactory getArtifactFactory()
         throws IllegalAccessException
     {
         ArtifactFactory artifactFactory;

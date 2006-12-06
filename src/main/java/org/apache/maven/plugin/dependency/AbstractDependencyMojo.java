@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.dependency;
+
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,8 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.    
  */
-
-package org.apache.maven.plugin.dependency;
 
 import java.io.File;
 import java.io.IOException;
@@ -233,7 +233,8 @@ public abstract class AbstractDependencyMojo
     }
 
     /**
-     * @param factory The factory to set.
+     * @param factory
+     *            The factory to set.
      */
     public void setFactory( org.apache.maven.artifact.factory.ArtifactFactory factory )
     {
@@ -257,7 +258,8 @@ public abstract class AbstractDependencyMojo
     }
 
     /**
-     * @param local The local to set.
+     * @param local
+     *            The local to set.
      */
     public void setLocal( org.apache.maven.artifact.repository.ArtifactRepository local )
     {
@@ -273,7 +275,8 @@ public abstract class AbstractDependencyMojo
     }
 
     /**
-     * @param remoteRepos The remoteRepos to set.
+     * @param remoteRepos
+     *            The remoteRepos to set.
      */
     public void setRemoteRepos( java.util.List remoteRepos )
     {
@@ -289,7 +292,8 @@ public abstract class AbstractDependencyMojo
     }
 
     /**
-     * @param resolver The resolver to set.
+     * @param resolver
+     *            The resolver to set.
      */
     public void setResolver( org.apache.maven.artifact.resolver.ArtifactResolver resolver )
     {
@@ -297,7 +301,8 @@ public abstract class AbstractDependencyMojo
     }
 
     /**
-     * @param archiverManager The archiverManager to set.
+     * @param archiverManager
+     *            The archiverManager to set.
      */
     public void setArchiverManager( ArchiverManager archiverManager )
     {

@@ -1,3 +1,4 @@
+package org.apache.maven.plugin.dependency.testUtils.stubs;
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,8 +17,6 @@
  * specific language governing permissions and limitations
  * under the License.    
  */
-
-package org.apache.maven.plugin.dependency.testUtils.stubs;
 
 import java.io.IOException;
 import java.util.List;
@@ -53,8 +52,12 @@ public class StubArtifactResolver
     }
 
     /*
-     * Creates dummy file and sets it in the artifact to simulate resolution (non-Javadoc)
-     * @see org.apache.maven.artifact.resolver.ArtifactResolver#resolve(org.apache.maven.artifact.Artifact, java.util.List, org.apache.maven.artifact.repository.ArtifactRepository)
+     * Creates dummy file and sets it in the artifact to simulate resolution
+     * (non-Javadoc)
+     * 
+     * @see org.apache.maven.artifact.resolver.ArtifactResolver#resolve(org.apache.maven.artifact.Artifact,
+     *      java.util.List,
+     *      org.apache.maven.artifact.repository.ArtifactRepository)
      */
     public void resolve( Artifact artifact, List remoteRepositories, ArtifactRepository localRepository )
         throws ArtifactResolutionException, ArtifactNotFoundException

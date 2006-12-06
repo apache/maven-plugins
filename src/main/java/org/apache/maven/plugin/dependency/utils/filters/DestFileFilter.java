@@ -1,4 +1,6 @@
-/* 
+package org.apache.maven.plugin.dependency.utils.filters;
+
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,7 +22,6 @@
 /**
  * 
  */
-package org.apache.maven.plugin.dependency.utils.filters;
 
 import java.io.File;
 import java.util.HashSet;
@@ -97,7 +98,7 @@ public class DestFileFilter
         while ( iter.hasNext() )
         {
             Artifact artifact = (Artifact) iter.next();
-            if (okToProcess( new ArtifactItem(artifact) ) )
+            if ( okToProcess( new ArtifactItem( artifact ) ) )
             {
                 result.add( artifact );
             }
@@ -224,12 +225,13 @@ public class DestFileFilter
         this.useSubDirectoryPerType = useSubDirectoryPerType;
     }
 
-    public boolean okToProcess( ArtifactItem item ) throws MojoExecutionException
+    public boolean okToProcess( ArtifactItem item )
+        throws MojoExecutionException
     {
         boolean overWrite = false;
         boolean result = false;
         Artifact artifact = item.getArtifact();
-        
+
         if ( ( artifact.isSnapshot() && this.overWriteSnapshots )
             || ( !artifact.isSnapshot() && this.overWriteReleases ) )
         {
@@ -239,20 +241,21 @@ public class DestFileFilter
         File destFolder = item.getOutputDirectory();
         if ( destFolder == null )
         {
-            destFolder = DependencyUtil.getFormattedOutputDirectory( this.useSubDirectoryPerType, this.useSubDirectoryPerArtifact,
-                                                        this.outputFileDirectory, artifact );
+            destFolder = DependencyUtil.getFormattedOutputDirectory( this.useSubDirectoryPerType,
+                                                                     this.useSubDirectoryPerArtifact,
+                                                                     this.outputFileDirectory, artifact );
         }
-        
+
         File destFile = null;
-        if (StringUtils.isEmpty(item.getDestFileName()))
+        if ( StringUtils.isEmpty( item.getDestFileName() ) )
         {
             destFile = new File( destFolder, DependencyUtil.getFormattedFileName( artifact, this.removeVersion ) );
         }
         else
         {
-            destFile = new File (destFolder,item.getDestFileName());
-        }   
-     
+            destFile = new File( destFolder, item.getDestFileName() );
+        }
+
         if ( overWrite
             || ( !destFile.exists() || ( overWriteIfNewer && artifact.getFile().lastModified() > destFile
                 .lastModified() ) ) )
