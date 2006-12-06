@@ -100,9 +100,9 @@ public class CopyMojo
 
     protected ArtifactItemFilter getMarkedArtifactFilter( ArtifactItem item )
     {
-        ArtifactItemFilter destinationNameOverrideFilter = new DestFileFilter( this.overWriteReleases,
-                                                                               this.overWriteSnapshots,
-                                                                               this.overWriteIfNewer, false, false,
+        ArtifactItemFilter destinationNameOverrideFilter = new DestFileFilter( this.isOverWriteReleases(),
+                                                                               this.isOverWriteSnapshots(),
+                                                                               this.isOverWriteIfNewer(), false, false,
                                                                                this.stripVersion, item
                                                                                    .getOutputDirectory() );
         return destinationNameOverrideFilter;

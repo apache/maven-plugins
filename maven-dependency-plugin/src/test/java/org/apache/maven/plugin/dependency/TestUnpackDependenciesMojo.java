@@ -52,7 +52,7 @@ public class TestUnpackDependenciesMojo
         // mojo.silent = true;
 
         // it needs to get the archivermanager
-        stubFactory.setUnpackableFile( mojo.archiverManager );
+        stubFactory.setUnpackableFile( mojo.getArchiverManager() );
         // i'm using one file repeatedly to archive so I can test the name
         // programmatically.
         stubFactory.setSrcFile( new File( getBasedir() + File.separatorChar
