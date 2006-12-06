@@ -135,7 +135,14 @@ public class SourcesFileMarkerHandler
         // get the other file if it exists.
         File clearMarker = getMarkerFile( !this.resolved );
         // create marker file
+        try {
         marker.getParentFile().mkdirs();
+        }
+        catch (NullPointerException e)
+        {
+            //parent is null, ignore it.
+        }
+        
         try
         {
             marker.createNewFile();

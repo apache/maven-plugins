@@ -1,4 +1,5 @@
 package org.apache.maven.plugin.dependency.fromConfiguration;
+
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -32,15 +33,17 @@ import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
 import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.testUtils.stubs.StubArtifactRepository;
 import org.apache.maven.plugin.dependency.testUtils.stubs.StubArtifactResolver;
+import org.apache.maven.plugin.dependency.utils.DependencyUtil;
+import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
 import org.apache.maven.project.MavenProject;
 
-public class TestCopyMojo
+public class TestUnpackMojo
     extends AbstractDependencyMojoTestCase
 {
 
-    CopyMojo mojo;
+    UnpackMojo mojo;
 
-    public TestCopyMojo()
+    public TestUnpackMojo()
     {
         super();
     }
@@ -48,17 +51,25 @@ public class TestCopyMojo
     protected void setUp()
         throws Exception
     {
-        super.setUp( "copy", false );
+        super.setUp( "unpack", true );
 
-        File testPom = new File( getBasedir(), "target/test-classes/unit/copy-test/plugin-config.xml" );
-        mojo = (CopyMojo) lookupMojo( "copy", testPom );
-        mojo.setOutputDirectory(new File( this.testDir, "outputDirectory" ));
+        File testPom = new File( getBasedir(), "target/test-classes/unit/unpack-test/plugin-config.xml" );
+        mojo = (UnpackMojo) lookupMojo( "unpack", testPom );
+        mojo.setOutputDirectory( new File( this.testDir, "outputDirectory" ) );
+        mojo.setMarkersDirectory( new File( this.testDir, "markers" ) );
         // mojo.silent = true;
 
         assertNotNull( mojo );
         assertNotNull( mojo.getProject() );
         // MavenProject project = mojo.getProject();
         // init classifier things
+        // it needs to get the archivermanager
+        stubFactory.setUnpackableFile( mojo.getArchiverManager() );
+        // i'm using one file repeatedly to archive so I can test the name
+        // programmatically.
+        stubFactory.setSrcFile( new File( getBasedir() + File.separatorChar
+            + "target/test-classes/unit/unpack-dependencies-test/test.txt" ) );
+
         mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
         mojo.setResolver( new StubArtifactResolver( stubFactory, false, false ) );
         mojo.setLocal( new StubArtifactRepository( this.testDir.getAbsolutePath() ) );
@@ -84,7 +95,7 @@ public class TestCopyMojo
         ArrayList list = new ArrayList( 1 );
         list.add( item );
 
-        mojo.setArtifactItems(list);
+        mojo.setArtifactItems( list );
 
         ArtifactItem result = getSingleArtifactItem( false );
         assertEquals( mojo.getOutputDirectory(), result.getOutputDirectory() );
@@ -95,38 +106,38 @@ public class TestCopyMojo
         assertEquals( output, result.getOutputDirectory() );
     }
 
-    public void assertFilesExist( Collection items, boolean exist )
+    public void assertMarkerFiles( Collection items, boolean exist )
     {
         Iterator iter = items.iterator();
         while ( iter.hasNext() )
         {
-            assertFileExists( (ArtifactItem) iter.next(), exist );
+            assertMarkerFile( exist, (ArtifactItem) iter.next() );
         }
     }
 
-    public void assertFileExists( ArtifactItem item, boolean exist )
+    public void assertMarkerFile( boolean val, ArtifactItem item )
     {
-        File file = new File( item.getOutputDirectory(), item.getDestFileName() );
-        assertEquals( exist, file.exists() );
+        DefaultFileMarkerHandler handle = new DefaultFileMarkerHandler( item.getArtifact(), mojo.getMarkersDirectory() );
+        try
+        {
+            assertEquals( val, handle.isMarkerSet() );
+        }
+        catch ( MojoExecutionException e )
+        {
+            fail( e.getLongMessage() );
+        }
     }
 
-    public void testMojoDefaults()
-    {
-        CopyMojo themojo = new CopyMojo();
-
-        assertFalse( themojo.isStripVersion() );
-    }
-
-    public void testCopyFile()
+    public void testUnpackFile()
         throws IOException, MojoExecutionException
     {
         ArrayList list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
 
-        mojo.setArtifactItems(list);
+        mojo.setArtifactItems( list );
 
         mojo.execute();
 
-        assertFilesExist( list, true );
+        assertMarkerFiles( list, true );
     }
 
     public void testCopyToLocation()
@@ -136,50 +147,11 @@ public class TestCopyMojo
         ArtifactItem item = (ArtifactItem) list.get( 0 );
         item.setOutputDirectory( new File( mojo.getOutputDirectory(), "testOverride" ) );
 
-        mojo.setArtifactItems(list);
+        mojo.setArtifactItems( list );
 
         mojo.execute();
 
-        assertFilesExist( list, true );
-    }
-
-    public void testCopyStripVersion()
-        throws IOException, MojoExecutionException
-    {
-        ArrayList list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
-        ArtifactItem item = (ArtifactItem) list.get( 0 );
-        item.setOutputDirectory( new File( mojo.getOutputDirectory(), "testOverride" ) );
-        mojo.setStripVersion( true );
-
-        mojo.setArtifactItems(list);
-
-        mojo.execute();
-
-        assertFilesExist( list, true );
-    }
-
-    public void testNonClassifierStrip()
-        throws IOException, MojoExecutionException
-    {
-        ArrayList list = stubFactory.getArtifactItems( stubFactory.getReleaseAndSnapshotArtifacts() );
-        mojo.setStripVersion( true );
-        mojo.setArtifactItems(list);
-
-        mojo.execute();
-
-        assertFilesExist( list, true );
-    }
-
-    public void testNonClassifierNoStrip()
-        throws IOException, MojoExecutionException
-    {
-        ArrayList list = stubFactory.getArtifactItems( stubFactory.getReleaseAndSnapshotArtifacts() );
-
-        mojo.setArtifactItems(list);
-
-        mojo.execute();
-
-        assertFilesExist( list, true );
+        assertMarkerFiles( list, true );
     }
 
     public void testMissingVersionNotFound()
@@ -194,7 +166,7 @@ public class TestCopyMojo
 
         ArrayList list = new ArrayList();
         list.add( item );
-        mojo.setArtifactItems(list);
+        mojo.setArtifactItems( list );
 
         try
         {
@@ -238,17 +210,17 @@ public class TestCopyMojo
         item.setArtifactId( "artifactId" );
         item.setClassifier( "" );
         item.setGroupId( "groupId" );
-        item.setType( "type" );
+        item.setType( "jar" );
 
         ArrayList list = new ArrayList();
         list.add( item );
-        mojo.setArtifactItems(list);
+        mojo.setArtifactItems( list );
 
         MavenProject project = mojo.getProject();
         project.setDependencies( getDependencyList( item ) );
 
         mojo.execute();
-        this.assertFileExists( item, true );
+        assertMarkerFile( true, item );
         assertEquals( "2.0-SNAPSHOT", item.getVersion() );
     }
 
@@ -260,17 +232,17 @@ public class TestCopyMojo
         item.setArtifactId( "artifactId" );
         item.setClassifier( "classifier" );
         item.setGroupId( "groupId" );
-        item.setType( "type" );
+        item.setType( "war" );
 
         ArrayList list = new ArrayList();
         list.add( item );
-        mojo.setArtifactItems(list);
+        mojo.setArtifactItems( list );
 
         MavenProject project = mojo.getProject();
         project.setDependencies( getDependencyList( item ) );
 
         mojo.execute();
-        this.assertFileExists( item, true );
+        assertMarkerFile( true, item );
         assertEquals( "2.1", item.getVersion() );
     }
 
@@ -305,7 +277,7 @@ public class TestCopyMojo
         item.setArtifactId( "artifactId" );
         item.setClassifier( "" );
         item.setGroupId( "groupId" );
-        item.setType( "type" );
+        item.setType( "jar" );
 
         MavenProject project = mojo.getProject();
         project.setDependencies( getDependencyList( item ) );
@@ -315,18 +287,17 @@ public class TestCopyMojo
         item.setArtifactId( "artifactId-2" );
         item.setClassifier( "" );
         item.setGroupId( "groupId" );
-        item.setType( "type" );
+        item.setType( "jar" );
 
         ArrayList list = new ArrayList();
         list.add( item );
 
-        mojo.setArtifactItems(list);
+        mojo.setArtifactItems( list );
 
         project.getDependencyManagement().setDependencies( getDependencyMgtList( item ) );
 
         mojo.execute();
-
-        this.assertFileExists( item, true );
+        assertMarkerFile( true, item );
         assertEquals( "3.0-SNAPSHOT", item.getVersion() );
     }
 
@@ -338,7 +309,7 @@ public class TestCopyMojo
         item.setArtifactId( "artifactId" );
         item.setClassifier( "classifier" );
         item.setGroupId( "groupId" );
-        item.setType( "type" );
+        item.setType( "jar" );
 
         MavenProject project = mojo.getProject();
         project.setDependencies( getDependencyList( item ) );
@@ -348,18 +319,18 @@ public class TestCopyMojo
         item.setArtifactId( "artifactId-2" );
         item.setClassifier( "classifier" );
         item.setGroupId( "groupId" );
-        item.setType( "type" );
+        item.setType( "jar" );
 
         ArrayList list = new ArrayList();
         list.add( item );
 
-        mojo.setArtifactItems(list);
+        mojo.setArtifactItems( list );
 
         project.getDependencyManagement().setDependencies( getDependencyMgtList( item ) );
 
         mojo.execute();
 
-        this.assertFileExists( item, true );
+        assertMarkerFile( true, item );
         assertEquals( "3.1", item.getVersion() );
     }
 
@@ -388,7 +359,7 @@ public class TestCopyMojo
 
         ArrayList list = new ArrayList();
         list.add( item );
-        mojo.setArtifactItems(list);
+        mojo.setArtifactItems( list );
 
         // init classifier things
         mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
@@ -426,7 +397,7 @@ public class TestCopyMojo
         }
 
     }
-
+/*
     public void testCopyDontOverWriteReleases()
         throws IOException, MojoExecutionException, InterruptedException
     {
@@ -438,9 +409,9 @@ public class TestCopyMojo
 
         ArrayList list = new ArrayList( 1 );
         list.add( item );
-        mojo.setArtifactItems(list);
+        mojo.setArtifactItems( list );
 
-       mojo.setOverWriteIfNewer(false);
+        mojo.setOverWriteIfNewer( false );
 
         mojo.execute();
 
@@ -469,9 +440,9 @@ public class TestCopyMojo
 
         ArrayList list = new ArrayList( 1 );
         list.add( item );
-        mojo.setArtifactItems(list);
+        mojo.setArtifactItems( list );
 
-       mojo.setOverWriteIfNewer(false);
+        mojo.setOverWriteIfNewer( false );
 
         mojo.execute();
 
@@ -500,10 +471,10 @@ public class TestCopyMojo
 
         ArrayList list = new ArrayList( 1 );
         list.add( item );
-        mojo.setArtifactItems(list);
+        mojo.setArtifactItems( list );
 
-       mojo.setOverWriteIfNewer(false);
-        mojo.setOverWriteReleases(true);
+        mojo.setOverWriteIfNewer( false );
+        mojo.setOverWriteReleases( true );
         mojo.execute();
 
         File copiedFile = new File( item.getOutputDirectory(), item.getDestFileName() );
@@ -528,11 +499,11 @@ public class TestCopyMojo
 
         ArrayList list = new ArrayList( 1 );
         list.add( item );
-        mojo.setArtifactItems(list);
+        mojo.setArtifactItems( list );
 
-       mojo.setOverWriteIfNewer(false);
-        mojo.setOverWriteReleases(false);
-       mojo.setOverWriteSnapshots(true);
+        mojo.setOverWriteIfNewer( false );
+        mojo.setOverWriteReleases( false );
+        mojo.setOverWriteSnapshots( true );
         mojo.execute();
 
         File copiedFile = new File( item.getOutputDirectory(), item.getDestFileName() );
@@ -557,8 +528,8 @@ public class TestCopyMojo
 
         ArrayList list = new ArrayList( 1 );
         list.add( item );
-        mojo.setArtifactItems(list);
-       mojo.setOverWriteIfNewer(true);
+        mojo.setArtifactItems( list );
+        mojo.setOverWriteIfNewer( true );
         mojo.execute();
 
         File copiedFile = new File( item.getOutputDirectory(), item.getDestFileName() );
@@ -573,7 +544,8 @@ public class TestCopyMojo
 
         assertTrue( time < copiedFile.lastModified() );
     }
-    // TODO: test overwrite / overwrite if newer / overwrite release / overwrite
-    // snapshot
-
+    */
 }
+// TODO: test overwrite / overwrite if newer / overwrite release / overwrite
+// snapshot
+

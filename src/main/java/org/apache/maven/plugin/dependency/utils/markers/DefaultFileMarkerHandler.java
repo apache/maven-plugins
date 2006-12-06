@@ -101,7 +101,14 @@ public class DefaultFileMarkerHandler
     {
         File marker = getMarkerFile();
         // create marker file
-        marker.getParentFile().mkdirs();
+        try
+        {
+            marker.getParentFile().mkdirs();
+        }
+        catch ( NullPointerException e )
+        {
+            // parent is null, ignore it.
+        }
         try
         {
             marker.createNewFile();
