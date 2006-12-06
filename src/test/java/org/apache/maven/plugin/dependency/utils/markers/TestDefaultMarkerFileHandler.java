@@ -176,4 +176,12 @@ public class TestDefaultMarkerFileHandler
         handler.setMarkerFilesDirectory( outputFolder );
         assertSame( outputFolder, handler.getMarkerFilesDirectory() );
     }
+    
+    public void testNullParent() throws MojoExecutionException
+    {
+        DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler(null,null);
+        handler.setArtifact( (Artifact) artifacts.get( 0 ) );
+        handler.setMarker();
+        assertTrue(handler.isMarkerSet());
+    }
 }
