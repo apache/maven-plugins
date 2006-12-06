@@ -271,4 +271,19 @@ public class TestSourcesMarkerFileHandler
         handler.setResolved( false );
         assertFalse( handler.isResolved() );
     }
+    
+    public void testNullParent() throws MojoExecutionException
+    {
+        DefaultFileMarkerHandler handler = new SourcesFileMarkerHandler(null,null,false);
+        handler.setArtifact( (Artifact) artifacts.get( 0 ) );
+        handler.setMarker();
+        assertTrue(handler.isMarkerSet());
+    }
+    public void testNullParentResolved() throws MojoExecutionException
+    {
+        DefaultFileMarkerHandler handler = new SourcesFileMarkerHandler(null,null,true);
+        handler.setArtifact( (Artifact) artifacts.get( 0 ) );
+        handler.setMarker();
+        assertTrue(handler.isMarkerSet());
+    }
 }
