@@ -26,10 +26,10 @@
 
 Maven Assembly Plugin
 
-* Status
-
-  <<Current Assembly Plugin Version is: 2.2>>
-  
+~~ * Status
+~~ 
+~~   <<Current Assembly Plugin Version is: 2.2>>
+~~   
 * Introduction
 
   Do you want to create a binary distribution from a Maven project that includes
