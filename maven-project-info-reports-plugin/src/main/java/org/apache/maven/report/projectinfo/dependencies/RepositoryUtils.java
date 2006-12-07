@@ -141,7 +141,6 @@ public class RepositoryUtils
             {
                 wagon.connect( repository, auth );
             }
-
             return ( wagon.resourceExists( repo.pathOf( artifact ) ) );
         }
         catch ( ConnectionException e )
@@ -162,6 +161,11 @@ public class RepositoryUtils
         catch ( AuthorizationException e )
         {
             log.error( "Unable to connect to: " + repo.getUrl(), e );
+            return false;
+        }
+        catch ( AbstractMethodError e )
+        {
+            log.error( "Wagon " + wagon.getClass().getName() + " does not support the resourceExists method" );
             return false;
         }
         finally
