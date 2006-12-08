@@ -243,6 +243,6 @@
     </dependency>
   </dependencies>
   <properties>
-    <maven-scm.version>1.0-SNAPSHOT</maven-scm.version>
+    <maven-scm.version>1.0-beta-4</maven-scm.version>
   </properties>
 </project>
