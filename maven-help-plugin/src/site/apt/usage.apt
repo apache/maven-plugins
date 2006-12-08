@@ -25,6 +25,19 @@ Usage
 mvn help:active-profiles -Doutput=/path/to/file
 +-----+
 
+* The <<<help:dependencies>>> Mojo
+
+  The <<<dependencies>>> mojo is used to view the dependency hierarchy of the project currently being built.
+  It will output the resolved tree of dependencies that the Maven build process actually uses.
+
+  Optionally, the output parameter can be specified to divert this output to a file.
+
+  You can execute this mojo using the following command:
+
++-----+
+mvn help:dependencies -Doutput=/path/to/file
++-----+
+
 * The <<<help:describe>>> Mojo
 
   The <<<describe>>> mojo is used to discover information about Maven plugins. Given a plugin prefix or groupId, artifactId,
