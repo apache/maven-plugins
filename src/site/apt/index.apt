@@ -15,9 +15,11 @@ Maven 2 Help Plugin
 
 * Goals Overview
 
-  The Help plugin has 4 goals:
+  The Help plugin has the following goals:
 
   * {{{active-profiles-mojo.html}help:active-profiles}} lists the profiles which are currently active for the build.
+
+  * {{{dependencies-mojo.html}help:dependencies}} prints out the dependency tree for the project.
 
   * {{{describe-mojo.html}help:describe}} describes the attirbutes of a plugin and/or plugin mojo. For its execution, it requires
     the groupId and artifactId or the plugin prefix of the plugin to be specified.
