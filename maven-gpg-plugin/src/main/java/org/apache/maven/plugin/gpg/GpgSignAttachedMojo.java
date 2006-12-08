@@ -97,15 +97,18 @@ public class GpgSignAttachedMojo
 
         List signingBundles = new ArrayList();
 
-        // ----------------------------------------------------------------------------
-        // Project artifact
-        // ----------------------------------------------------------------------------                
+        if ( !"pom".equals( project.getPackaging() ) )
+        {
+            // ----------------------------------------------------------------------------
+            // Project artifact
+            // ----------------------------------------------------------------------------                
 
-        File projectArtifact = getProjectFile( project.getBuild().getDirectory(), project.getBuild().getFinalName() );
+            File projectArtifact = getProjectFile( project.getBuild().getDirectory(), project.getBuild().getFinalName() );
 
-        File projectArtifactSignature = generateSignatureForArtifact( projectArtifact );
+            File projectArtifactSignature = generateSignatureForArtifact( projectArtifact );
 
-        signingBundles.add( new SigningBundle( project.getArtifact().getType(), projectArtifactSignature ) );
+            signingBundles.add( new SigningBundle( project.getArtifact().getType(), projectArtifactSignature ) );
+        }
 
         // ----------------------------------------------------------------------------
         // POM
