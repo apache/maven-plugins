@@ -43,7 +43,7 @@ import java.util.ArrayList;
  * Sign project artifact, the POM, and attached artifacts with GnuPG for deployment.
  *
  * @goal sign
- * @execute phase="verify"
+ * @phase verify
  * @author Jason van Zyl
  * @author Jason Dillon
  */
