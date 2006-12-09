@@ -162,5 +162,72 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>stageRelease</id>
+      <build>
+        <plugins>
+          <!-- We want the sources JAR published with the release -->
+          <plugin>
+            <inherited>true</inherited>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <!-- We want the JavaDoc JAR published with the release -->
+          <plugin>
+            <inherited>true</inherited>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <!-- We want to deploy the artifact to a staging location for perusal -->          
+          <plugin>
+            <inherited>true</inherited>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-deploy-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>deploy</goal>
+                </goals>
+                <configuration>
+                  <updateReleaseInfo>true</updateReleaseInfo>
+                  <altDeploymentRepository>jvanzyl::default::scp://people.apache.org/x1/home/jvanzyl/public_html/stage</altDeploymentRepository>              
+                </configuration>                
+              </execution>
+            </executions>            
+          </plugin>
+          <!-- We want to deploy the site to a staging location for perusal -->
+          <plugin>
+            <artifactId>maven-site-plugin</artifactId>
+            <version>2.0-SNAPSHOT</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>stage-deploy</goal>
+                </goals>
+                <configuration>
+                  <stagingSiteURL>scp://people.apache.org/x1/home/jvanzyl/public_html/stage</stagingSiteURL>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>                    
+        </plugins>
+      </build>
+    </profile>       
   </profiles>
 </project>
