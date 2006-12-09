@@ -163,6 +163,7 @@
       </build>
     </profile>
     <profile>
+      <!-- Problems: it's running twice, and not signing JavaDoc and Source JARs -->
       <id>stageRelease</id>
       <build>
         <plugins>
@@ -226,6 +227,18 @@
               </execution>
             </executions>
           </plugin>                    
+          <!-- We want to sign the artifact, the POM, and all attached artifacts -->
+          <plugin>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>                              
         </plugins>
       </build>
     </profile>       
