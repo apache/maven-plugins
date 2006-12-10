@@ -55,8 +55,7 @@
           <description><![CDATA[
             When this is set to <code>true</code> the plugin checks that the
             file or directory exists. When set to <code>false</code> it checks
-            that the file or directory does <strong>not</strong> exist. The
-            default value is <code>true</code>.
+            that the file or directory does <strong>not</strong> exist.
           ]]></description>
           <defaultValue>true</defaultValue>
           <type>boolean</type>
