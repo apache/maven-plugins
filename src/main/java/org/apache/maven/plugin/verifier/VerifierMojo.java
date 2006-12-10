@@ -112,7 +112,8 @@ public class VerifierMojo
 
             for ( Iterator i = verifications.getFiles().iterator(); i.hasNext(); )
             {
-                org.apache.maven.plugin.verifier.model.File file = (org.apache.maven.plugin.verifier.model.File) i.next();
+                org.apache.maven.plugin.verifier.model.File file =
+                    (org.apache.maven.plugin.verifier.model.File) i.next();
 
                 // Transform the file to check into an absolute path prefixing the basedir if
                 // the location is relative
