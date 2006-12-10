@@ -28,7 +28,7 @@ under the License.
          a large set of projects, or an entire organization. Any project can specify the use of a
          remote resource bundle and have the resources incorporated into their packaging. This means
          that you can create standard settings in a parent POM somewhere in the project hierarchy and
-         have all projects use package common resources in standard way like licenses, other legal 
+         have all projects use package common resources in a standard way like licenses, other legal 
          notices and disclaimers, or anything else that may be common.
        </p>
      </answer>
