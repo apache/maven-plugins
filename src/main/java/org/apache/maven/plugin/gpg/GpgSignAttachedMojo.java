@@ -27,6 +27,7 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
 import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
@@ -38,14 +39,16 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Sign project artifact, the POM, and attached artifacts with GnuPG for deployment.
  *
- * @goal sign
- * @phase verify
  * @author Jason van Zyl
  * @author Jason Dillon
+ * @goal sign
+ * @phase verify
  */
 public class GpgSignAttachedMojo
     extends AbstractMojo
@@ -103,7 +106,8 @@ public class GpgSignAttachedMojo
             // Project artifact
             // ----------------------------------------------------------------------------                
 
-            File projectArtifact = getProjectFile( project.getBuild().getDirectory(), project.getBuild().getFinalName() );
+            File projectArtifact =
+                getProjectFile( project.getBuild().getDirectory(), project.getBuild().getFinalName() );
 
             File projectArtifactSignature = generateSignatureForArtifact( projectArtifact );
 
@@ -137,15 +141,29 @@ public class GpgSignAttachedMojo
         // Attach all the signatures
         // ----------------------------------------------------------------------------
 
+        ArtifactHandler handler = new DefaultArtifactHandler( "asc" );
+
+        Map map = new HashMap();
+
+        map.put( "asc", handler );
+
+        artifactHandlerManager.addHandlers( map );
+
         for ( Iterator i = signingBundles.iterator(); i.hasNext(); )
         {
             SigningBundle bundle = (SigningBundle) i.next();
 
-            // Get the correct artifact handler to we can create the right extension.
             ArtifactHandler ah = artifactHandlerManager.getArtifactHandler( bundle.getArtifactType() );
 
-            // We don't want a classifier, we just want to add the extension ".asc" 
-            projectHelper.attachArtifact( project, ah.getExtension() + SIGNATURE_EXTENSION, "", bundle.getSignature() );
+            if ( ah.getClassifier() != null )
+            {
+                projectHelper.attachArtifact( project, "asc", ah.getClassifier() + "." + ah.getExtension(),
+                                              bundle.getSignature() );
+            }
+            else
+            {
+                projectHelper.attachArtifact( project, ah.getExtension() + ".asc", null, bundle.getSignature() );
+            }
         }
     }
 
