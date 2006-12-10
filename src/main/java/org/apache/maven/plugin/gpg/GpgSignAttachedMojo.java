@@ -84,7 +84,7 @@ public class GpgSignAttachedMojo
     private MavenProjectHelper projectHelper;
 
     /**
-     * Maven ProjectHelper
+     * Maven ArtifactHandlerManager
      *
      * @component
      * @required
@@ -218,7 +218,7 @@ public class GpgSignAttachedMojo
         }
         catch ( CommandLineException e )
         {
-            throw new MojoExecutionException( "Unable to execute java command", e );
+            throw new MojoExecutionException( "Unable to execute gpg command", e );
         }
 
         return signature;
