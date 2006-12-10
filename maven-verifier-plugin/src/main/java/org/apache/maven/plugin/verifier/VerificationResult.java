@@ -61,7 +61,7 @@ public class VerificationResult
 
     public boolean hasFailures()
     {
-        return !getExistenceFailures().isEmpty() || !getNonExistenceFailures().isEmpty() ||
-            !getContentFailures().isEmpty();
+        return !getExistenceFailures().isEmpty() || !getNonExistenceFailures().isEmpty()
+            || !getContentFailures().isEmpty();
     }
 }
