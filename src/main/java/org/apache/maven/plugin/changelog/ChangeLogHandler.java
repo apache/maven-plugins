@@ -118,7 +118,8 @@ public class ChangeLogHandler
                 {
                     ms = bufEntry.getDate().getTime();
                 }
-                bufEntry.setDate( new Date( ms + new SimpleDateFormat( currentPattern ).parse( bufData ).getTime() + TimeZone.getDefault().getRawOffset()) );
+                bufEntry.setDate( new Date( ms + new SimpleDateFormat( currentPattern ).parse( bufData ).getTime()
+                    + TimeZone.getDefault().getRawOffset() ) );
             }
             catch ( ParseException e )
             {
