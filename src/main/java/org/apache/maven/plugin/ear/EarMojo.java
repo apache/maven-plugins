@@ -197,7 +197,13 @@ public class EarMojo
                         "; Did you package/install " + module.getArtifact() + "?" );
                 }
 
-                // If the module is within the unpack, list make sure that no unpack wasn't forced (null or true)
+                if (destinationFile.getCanonicalPath().equals(sourceFile.getCanonicalPath()))
+                {
+                    getLog().info( "Skipping artifact[" + module + "], as it already exists at[" + module.getUri() + "]" );
+                    continue;
+                }
+
+                // If the module is within the unpack list, make sure that no unpack wasn't forced (null or true)
                 // If the module is not in the unpack list, it should be true
                 if ( ( unpackTypesList.contains( module.getType() ) &&
                     ( module.shouldUnpack() == null || module.shouldUnpack().booleanValue() ) ) ||
