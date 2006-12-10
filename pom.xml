@@ -170,8 +170,8 @@
           <!-- We want the sources JAR published with the release -->
           <plugin>
             <inherited>true</inherited>
-            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-source-plugin</artifactId>
+            <version>2.0.2-SNAPSHOT</version>            
             <executions>
               <execution>
                 <id>attach-sources</id>
@@ -184,8 +184,8 @@
           <!-- We want the JavaDoc JAR published with the release -->
           <plugin>
             <inherited>true</inherited>
-            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
+            <version>2.2-SNAPSHOT</version>            
             <executions>
               <execution>
                 <id>attach-javadocs</id>
@@ -196,12 +196,14 @@
             </executions>
           </plugin>
           <!-- We want to deploy the artifact to a staging location for perusal -->          
+          <!-- can't configure this twice of the deploy phase runs twice
           <plugin>
-            <inherited>true</inherited>
-            <groupId>org.apache.maven.plugins</groupId>
+            <inherited>true</inherited>          
             <artifactId>maven-deploy-plugin</artifactId>
+            <version>2.3-SNAPSHOT</version>
             <executions>
               <execution>
+                <id>release-deploy</id>
                 <goals>
                   <goal>deploy</goal>
                 </goals>
@@ -212,6 +214,7 @@
               </execution>
             </executions>            
           </plugin>
+          -->
           <!-- We want to deploy the site to a staging location for perusal -->
           <plugin>
             <artifactId>maven-site-plugin</artifactId>
@@ -238,7 +241,23 @@
                 </goals>
               </execution>
             </executions>
-          </plugin>                              
+          </plugin>
+          <!-- We want to package up license resources in the JARs produced -->  
+          <plugin>
+            <artifactId>maven-remote-resources-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>process</goal>
+                </goals>
+                <configuration>
+                  <resourceBundles>
+                    <resourceBundle>org.apache:apache-jar-resource-bundle:1.0</resourceBundle>
+                  </resourceBundles>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>                                      
         </plugins>
       </build>
     </profile>       
