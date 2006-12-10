@@ -1,8 +1,10 @@
  ------
- Basic Usage :: Genesis Tools Plugin for Maven 2
+ Usage
  ------
+ Dennis Lundberg
  ------
- $Rev: 470158 $ $Date$
+ 10 December 2006
+ ------
 
 ~~ 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -13,7 +15,7 @@
 ~~ "License"); you may not use this file except in compliance
 ~~ with the License.  You may obtain a copy of the License at
 ~~
-~~  http://www.apache.org/licenses/LICENSE-2.0
+~~   http://www.apache.org/licenses/LICENSE-2.0
 ~~
 ~~ Unless required by applicable law or agreed to in writing,
 ~~ software distributed under the License is distributed on an
@@ -23,157 +25,44 @@
 ~~ under the License.
 ~~ 
 
-Java Version Control
-
- Allow builds to fail quickly if the Java version is not correct.
-
-* Require a specific Java version
-
- This will only allow the build to function if the Java version is 1.4.1, any other version will cause a build failure.
- 
- NOTE: That for 1.4.1 you specify 1.41.  The version should have only one decimal.
-
-+----------+
-<plugin>
-    <groupId>org.apache.geronimo.genesis.plugins</groupId>
-    <artifactId>tools-maven-plugin</artifactId>
-    <executions>
-        <execution>
-            <phase>validate</phase>
-            <goals>
-                <goal>require-java-version</goal>
-            </goals>
-            <configuration>
-                <version>1.41</version>
-            </configuration>
-        </execution>
-    </executions>
-</plugin>
-+----------+
-
-* Require Java version greater than or equal
-
- Specify the '+' token as a suffix to the version number.
- 
- This will only allow the build to function if the Java version is 1.4 or grater.
-
- For example 1.4.1 or 1.5, but not 1.3.
-
-+----------+
-<plugin>
-    <groupId>org.apache.geronimo.genesis.plugins</groupId>
-    <artifactId>tools-maven-plugin</artifactId>
-    <executions>
-        <execution>
-            <phase>validate</phase>
-            <goals>
-                <goal>require-java-version</goal>
-            </goals>
-            <configuration>
-                <version>1.4+</version>
-            </configuration>
-        </execution>
-    </executions>
-</plugin>
-+----------+
-
-* Require Java version in the same group
-
- Specify the '*' token as a suffix to the version number.
- 
- This will only allow the build to function if the Java version is 1.4 or grater in the same group.
-
- For example 1.4.1 or 1.4.2, but not 1.5.
-
-+----------+
-<plugin>
-    <groupId>org.apache.geronimo.genesis.plugins</groupId>
-    <artifactId>tools-maven-plugin</artifactId>
-    <executions>
-        <execution>
-            <phase>validate</phase>
-            <goals>
-                <goal>require-java-version</goal>
-            </goals>
-            <configuration>
-                <version>1.4*</version>
-            </configuration>
-        </execution>
-    </executions>
-</plugin>
-+----------+
-
-Other Tools
-
-* Copy legal files
-
- Copy <<<LICENSE[.txt]>>>, <<<NOTICE[.txt]>>> and <<<DISCLAIMER[.txt].>>> to <<<target/classes/META-INF>>>
- for inclusion into archives.
-
-+----------+
-<plugin>
-    <groupId>org.apache.geronimo.genesis.plugins</groupId>
-    <artifactId>tools-maven-plugin</artifactId>
-    <executions>
-        <execution>
-            <id>install-legal-files</id>
-            <phase>generate-resources</phase>
-            <goals>
-                <goal>copy-legal-files</goal>
-            </goals>
-        </execution>
-    </executions>
-</plugin>
-+----------+
-
- The list of files to include can be configured explicitly if desired.
-
-+----------+
-<plugin>
-    <groupId>org.apache.geronimo.genesis.plugins</groupId>
-    <artifactId>tools-maven-plugin</artifactId>
-    <executions>
-        <execution>
-            <id>install-legal-files</id>
-            <phase>generate-resources</phase>
-            <goals>
-                <goal>copy-legal-files</goal>
-            </goals>
-            <configuration>
-                <fileset>
-                    <basedir>${pom.basedir}</basedir>
-                    <includes>
-                        <include>*.txt</include>
-                    </includes>
-                </fileset>
-            <configuration>
-        </execution>
-    </executions>
-</plugin>
-+----------+
+Usage
 
 * Sign artifacts with GnuPG
 
  Signs all of a project's attached artifacts with GnuPG.
 
- You need to specify the passphrase with a <<<-Dpassphrase=thephrase>>> on the command line.
- <<<gpg>>> also needs to be on the search path.
- 
  You need to have previously configured the default key.
+ 
+ <<<gpg>>> also needs to be on the search path.
+
+ First you add the plugin to your <<<pom.xml>>> like this:
 
 +----------+
-<plugin>
-    <groupId>org.apache.geronimo.genesis.plugins</groupId>
-    <artifactId>tools-maven-plugin</artifactId>
-    <executions>
-        <execution>
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <executions>
+          <execution>
             <id>sign-artifacts</id>
             <phase>verify</phase>
             <goals>
-                <goal>gpg-sign-attached</goal>
+              <goal>sign</goal>
             </goals>
-        </execution>
-    </executions>
-</plugin>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
 +----------+
 
+ Then you need to specify the passphrase on the command line. Like this:
+
++----------+
+mvn verify -Dpassphrase=thephrase
++----------+
