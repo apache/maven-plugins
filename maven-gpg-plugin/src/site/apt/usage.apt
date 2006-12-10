@@ -6,7 +6,6 @@
  10 December 2006
  ------
 
-~~ 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
 ~~ or more contributor license agreements.  See the NOTICE file
 ~~ distributed with this work for additional information
@@ -23,19 +22,18 @@
 ~~ KIND, either express or implied.  See the License for the
 ~~ specific language governing permissions and limitations
 ~~ under the License.
-~~ 
 
 Usage
 
 * Sign artifacts with GnuPG
 
- Signs all of a project's attached artifacts with GnuPG.
+  Signs all of a project's attached artifacts with GnuPG.
 
- You need to have previously configured the default key.
- 
- <<<gpg>>> also needs to be on the search path.
+  You need to have previously configured the default key.
 
- First you add the plugin to your <<<pom.xml>>> like this:
+  <<<gpg>>> also needs to be on the search path.
+
+  First you add the plugin to your <<<pom.xml>>> like this:
 
 +----------+
 <project>
@@ -61,7 +59,7 @@ Usage
 </project>
 +----------+
 
- Then you need to specify the passphrase on the command line. Like this:
+  Then you specify the passphrase on the command line. Like this:
 
 +----------+
 mvn verify -Dpassphrase=thephrase
