@@ -9,7 +9,9 @@
   <packaging>maven-plugin</packaging>
   <version>1.0-SNAPSHOT</version>
   <name>maven-gpg-plugin Maven Mojo</name>
-  <url>http://maven.apache.org</url>
+  <prerequisites>
+    <maven>2.0</maven>
+  </prerequisites>
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
