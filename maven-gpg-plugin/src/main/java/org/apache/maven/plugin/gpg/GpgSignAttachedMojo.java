@@ -32,10 +32,12 @@ import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.DefaultConsumer;
+import org.codehaus.plexus.util.FileUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
@@ -118,7 +120,18 @@ public class GpgSignAttachedMojo
         // POM
         // ----------------------------------------------------------------------------
 
-        File pomSignature = generateSignatureForArtifact( project.getFile() );
+        File pomToSign = new File( project.getBuild().getDirectory(), project.getBuild().getFinalName() + ".pom" );
+
+        try
+        {
+            FileUtils.copyFile( project.getFile(), pomToSign );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Error copying POM for signing.", e );
+        }
+
+        File pomSignature = generateSignatureForArtifact( pomToSign );
 
         signingBundles.add( new SigningBundle( "pom", pomSignature ) );
 
