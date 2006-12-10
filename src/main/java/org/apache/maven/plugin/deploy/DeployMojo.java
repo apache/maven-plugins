@@ -113,6 +113,8 @@ public class DeployMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        System.out.println( "altDeploymentRepository = " + altDeploymentRepository );
+
         ArtifactRepository repo = getDeploymentRepository();
 
         String protocol = repo.getProtocol();
@@ -186,6 +188,8 @@ public class DeployMojo
 
         if ( altDeploymentRepository != null )
         {
+            getLog().info( "Using alternate deployment repository " + altDeploymentRepository );
+
             Matcher matcher = ALT_REPO_SYNTAX_PATTERN.matcher( altDeploymentRepository );
 
             if ( !matcher.matches() )
