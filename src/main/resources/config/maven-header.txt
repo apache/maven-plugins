@@ -9,7 +9,7 @@
 ^ \* "License"\)\; you may not use this file except in compliance\s*$
 ^ \* with the License.  You may obtain a copy of the License at\s*$
 ^ \*\s*$
-^ \* http://www\.apache\.org/licenses/LICENSE-2\.0\s*$
+^ \*   http://www\.apache\.org/licenses/LICENSE-2\.0\s*$
 ^ \*\s*$
 ^ \* Unless required by applicable law or agreed to in writing,\s*$
 ^ \* software distributed under the License is distributed on an\s*$
