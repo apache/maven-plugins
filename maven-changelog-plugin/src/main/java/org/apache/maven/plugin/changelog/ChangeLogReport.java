@@ -272,7 +272,7 @@ public class ChangeLogReport
     protected String displayFileDetailUrl;
 
     // temporary field holder while generating the report
-    private String rpt_Repository, rpt_OneRepoParam, rpt_MultiRepoParam;
+    private String rptRepository, rptOneRepoParam, rptMultiRepoParam;
 
     // field for SCM Connection URL
     private String connection;
@@ -314,8 +314,8 @@ public class ChangeLogReport
 
         if ( outputXML.exists() )
         {
-            if ( outputXMLExpiration > 0 &&
-                 outputXMLExpiration * 60000 > System.currentTimeMillis() - outputXML.lastModified() )
+            if ( outputXMLExpiration > 0
+                && outputXMLExpiration * 60000 > System.currentTimeMillis() - outputXML.lastModified() )
             {
                 try
                 {
@@ -726,8 +726,8 @@ public class ChangeLogReport
         }
         else
         {
-            throw new MavenReportException( "The type parameter has an invalid value: " + type +
-                ".  The value should be \"range\", \"date\", or \"tag\"." );
+            throw new MavenReportException( "The type parameter has an invalid value: " + type
+                + ".  The value should be \"range\", \"date\", or \"tag\"." );
         }
     }
 
@@ -937,7 +937,7 @@ public class ChangeLogReport
 
         initReportUrls();
 
-        List sortedEntries = new ArrayList(entries);
+        List sortedEntries = new ArrayList( entries );
         Collections.sort( sortedEntries, new Comparator()
         {
             public int compare( Object arg0, Object arg1 )
@@ -998,24 +998,24 @@ public class ChangeLogReport
 
             if ( idx > 0 )
             {
-                rpt_Repository = scmUrl.substring( 0, idx );
+                rptRepository = scmUrl.substring( 0, idx );
 
                 if ( scmUrl.equals( displayFileDetailUrl ) )
                 {
-                    String rpt_TmpMultiRepoParam = scmUrl.substring( rpt_Repository.length() );
+                    String rptTmpMultiRepoParam = scmUrl.substring( rptRepository.length() );
 
-                    rpt_OneRepoParam = "?" + rpt_TmpMultiRepoParam.substring( 1 );
+                    rptOneRepoParam = "?" + rptTmpMultiRepoParam.substring( 1 );
 
-                    rpt_MultiRepoParam = "&" + rpt_TmpMultiRepoParam.substring( 1 );
+                    rptMultiRepoParam = "&" + rptTmpMultiRepoParam.substring( 1 );
                 }
             }
             else
             {
-                rpt_Repository = scmUrl;
+                rptRepository = scmUrl;
 
-                rpt_OneRepoParam = "";
+                rptOneRepoParam = "";
 
-                rpt_MultiRepoParam = "";
+                rptMultiRepoParam = "";
             }
         }
     }
@@ -1091,7 +1091,7 @@ public class ChangeLogReport
             if ( !scmUrl.equals( displayFileDetailUrl ) )
             {
                 // Use the given URL to create links to the files
-                if( displayFileDetailUrl.indexOf( FILE_TOKEN ) > 0 )
+                if ( displayFileDetailUrl.indexOf( FILE_TOKEN ) > 0 )
                 {
                     linkFile = displayFileDetailUrl.replaceAll( FILE_TOKEN, name );
                 }
@@ -1114,25 +1114,25 @@ public class ChangeLogReport
             else if ( connection.startsWith( "scm:clearcase" ) )
             {
                 String path = getAbsolutePath( displayFileDetailUrl, name );
-                linkFile = path + rpt_OneRepoParam;
+                linkFile = path + rptOneRepoParam;
             }
             else if ( connection.indexOf( "cvsmonitor.pl" ) > 0 )
             {
-                String module = rpt_OneRepoParam.replaceAll( "^.*(&amp;module=.*?(?:&amp;|$)).*$", "$1" );
+                String module = rptOneRepoParam.replaceAll( "^.*(&amp;module=.*?(?:&amp;|$)).*$", "$1" );
                 linkFile = displayFileDetailUrl + "?cmd=viewBrowseFile" + module + "&file=" + name;
                 if ( revision != null )
                 {
                     linkRev =
-                        rpt_Repository + "?cmd=viewBrowseVersion" + module + "&file=" + name + "&version=" + revision;
+                        rptRepository + "?cmd=viewBrowseVersion" + module + "&file=" + name + "&version=" + revision;
                 }
             }
             else
             {
                 String path = getAbsolutePath( displayFileDetailUrl, name );
-                linkFile = path + rpt_OneRepoParam;
+                linkFile = path + rptOneRepoParam;
                 if ( revision != null )
                 {
-                    linkRev = path + "?rev=" + revision + "&content-type=text/vnd.viewcvs-markup" + rpt_MultiRepoParam;
+                    linkRev = path + "?rev=" + revision + "&content-type=text/vnd.viewcvs-markup" + rptMultiRepoParam;
                 }
             }
         }
