@@ -1,4 +1,26 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.maven.plugin.eclipse;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Resource;
@@ -13,10 +35,6 @@ import org.apache.maven.plugin.eclipse.writers.rad.RadWebSettingsWriter;
 import org.apache.maven.plugin.eclipse.writers.rad.RadWebsiteConfigWriter;
 import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.project.MavenProject;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * Generates the rad-6 configuration files.
@@ -108,7 +126,7 @@ public class RadPlugin
         throws MojoExecutionException
     {
         super.writeExtraConfiguration( config );
-        
+
         new RadJ2EEWriter().init( getLog(), config ).write();
 
         new RadWebSettingsWriter( this.warContextRoot ).init( getLog(), config ).write();
@@ -136,30 +154,30 @@ public class RadPlugin
             // written by the superclass
             new RadManifestWriter().init( getLog(), config ).write();
         }
-        
+
         String packaging = getExecutedProject().getPackaging();
 
         if ( isJavaProject() && !Constants.PROJECT_PACKAGING_EAR.equals( packaging )
             && !Constants.PROJECT_PACKAGING_WAR.equals( packaging )
             && !Constants.PROJECT_PACKAGING_EJB.equals( packaging ) )
         {
-            
+
             String generatedResourceDir = this.project.getBasedir().getAbsolutePath() + File.separatorChar
                 + GENERATED_RESOURCE_DIRNAME;
-            
+
             String metainfDir = generatedResourceDir + File.separatorChar + "META-INF";
-            
+
             new File( metainfDir ).mkdirs();
-            
+
             final Resource resource = new Resource();
-            
+
             getLog().debug( "Adding " + GENERATED_RESOURCE_DIRNAME + " to resources" );
-            
+
             resource.setDirectory( generatedResourceDir );
-            
+
             this.executedProject.addResource( resource );
         }
-        
+
         if ( Constants.PROJECT_PACKAGING_WAR.equals( packaging ) )
         {
             new File( this.project.getBasedir().getAbsolutePath() + File.separatorChar + "src" + File.separatorChar
@@ -176,7 +194,7 @@ public class RadPlugin
     protected void fillDefaultBuilders( String packaging )
     {
         super.fillDefaultBuilders( packaging );
-        
+
         ArrayList buildcommands = new ArrayList();
         if ( Constants.PROJECT_PACKAGING_EAR.equals( packaging ) )
         {
@@ -221,7 +239,7 @@ public class RadPlugin
     protected void fillDefaultNatures( String packaging )
     {
         super.fillDefaultNatures( packaging );
-        
+
         ArrayList projectnatures = new ArrayList();
         if ( Constants.PROJECT_PACKAGING_EAR.equals( packaging ) )
         {
@@ -295,9 +313,9 @@ public class RadPlugin
         throws MojoExecutionException
     {
         super.setupExtras();
-        
+
         IdeDependency[] deps = doDependencyResolution();
-        
+
         EclipseWriterConfig config = createEclipseWriterConfig( deps );
 
         addManifestResource( config );
