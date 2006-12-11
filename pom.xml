@@ -112,6 +112,18 @@
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/</developerConnection>
     <url>http://svn.apache.org/viewcvs.cgi/maven/plugins/trunk/</url>
   </scm>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-release-plugin</artifactId>
+          <configuration>
+            <tagBase>https://svn.apache.org/repos/asf/maven/plugins/tags</tagBase>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>  
   <reporting>
     <plugins>
     </plugins>
