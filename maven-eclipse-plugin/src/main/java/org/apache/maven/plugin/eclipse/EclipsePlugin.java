@@ -1,20 +1,22 @@
-package org.apache.maven.plugin.eclipse;
-
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
+package org.apache.maven.plugin.eclipse;
 
 import java.io.File;
 import java.io.IOException;
@@ -889,7 +891,8 @@ public class EclipsePlugin
 
         // If using the standard output location, don't mix the test output into it.
         String testOutput = null;
-        boolean useStandardOutputDir = buildOutputDirectory.equals( new File( project.getBuild().getOutputDirectory() ) );
+        boolean useStandardOutputDir = buildOutputDirectory
+            .equals( new File( project.getBuild().getOutputDirectory() ) );
         if ( useStandardOutputDir )
         {
             testOutput = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, new File( project.getBuild()
@@ -924,7 +927,7 @@ public class EclipsePlugin
     }
 
     void extractResourceDirs( Set directories, List resources, MavenProject project, File basedir,
-                                      File workspaceProjectBaseDir, boolean test, String output )
+                              File workspaceProjectBaseDir, boolean test, String output )
         throws MojoExecutionException
     {
         for ( Iterator it = resources.iterator(); it.hasNext(); )
@@ -949,7 +952,7 @@ public class EclipsePlugin
             // TODO: figure out how to merge if the same dir is specified twice
             // with different in/exclude patterns.
 
-            File resourceDirectory = new File( /*basedir,*/ resource.getDirectory() );
+            File resourceDirectory = new File( /*basedir,*/resource.getDirectory() );
 
             if ( !resourceDirectory.exists() || !resourceDirectory.isDirectory() )
             {
@@ -957,8 +960,8 @@ public class EclipsePlugin
                 continue;
             }
 
-            String resourceDir = IdeUtils.toRelativeAndFixSeparator( workspaceProjectBaseDir, resourceDirectory, !workspaceProjectBaseDir
-                .equals( basedir ) );
+            String resourceDir = IdeUtils.toRelativeAndFixSeparator( workspaceProjectBaseDir, resourceDirectory,
+                                                                     !workspaceProjectBaseDir.equals( basedir ) );
 
             if ( output != null )
             {
@@ -976,10 +979,12 @@ public class EclipsePlugin
                 output = IdeUtils.toRelativeAndFixSeparator( workspaceProjectBaseDir, outputFile, false );
             }
 
-            getLog().debug( "Adding eclipse source dir: { " + resourceDir + ", " + output + ", true, " + test
-                + ", " + includePattern + ", " + excludePattern + " }." );
+            getLog().debug(
+                            "Adding eclipse source dir: { " + resourceDir + ", " + output + ", true, " + test + ", "
+                                + includePattern + ", " + excludePattern + " }." );
 
-            directories.add( new EclipseSourceDir( resourceDir, output, true, test, includePattern, excludePattern, resource.isFiltering() ) );
+            directories.add( new EclipseSourceDir( resourceDir, output, true, test, includePattern, excludePattern,
+                                                   resource.isFiltering() ) );
         }
     }
 

@@ -1,20 +1,22 @@
-package org.apache.maven.plugin.ide;
-
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
+package org.apache.maven.plugin.ide;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -451,9 +453,11 @@ public abstract class AbstractIdeSupportMojo
                 {
                     getLog().debug( e.getMessage(), e );
                     getLog().error(
-                                    Messages
-                                        .getString( "artifactresolution", new Object[] { //$NON-NLS-1$
-                                                    e.getGroupId(), e.getArtifactId(), e.getVersion(), e.getMessage() } ) );
+                                    Messages.getString( "artifactresolution", new Object[] { //$NON-NLS-1$
+                                                            e.getGroupId(),
+                                                            e.getArtifactId(),
+                                                            e.getVersion(),
+                                                            e.getMessage() } ) );
 
                     // if we are here artifactResolutionResult is null, create a project without dependencies but don't fail
                     // (this could be a reactor projects, we don't want to fail everything)
@@ -500,7 +504,8 @@ public abstract class AbstractIdeSupportMojo
                         }
                     }
 
-                    if ( !isReactorProject || emittedReactorProjectId.add( art.getGroupId() + '-' + art.getArtifactId() ) )
+                    if ( !isReactorProject
+                        || emittedReactorProjectId.add( art.getGroupId() + '-' + art.getArtifactId() ) )
                     {
 
                         // the following doesn't work: art.getArtifactHandler().getPackaging() always returns "jar" also
@@ -552,10 +557,10 @@ public abstract class AbstractIdeSupportMojo
                         isOsgiBundle = osgiSymbolicName != null;
 
                         IdeDependency dep = new IdeDependency( art.getGroupId(), art.getArtifactId(), art.getVersion(),
-                                                               isReactorProject, Artifact.SCOPE_TEST
-                                                                   .equals( art.getScope() ), Artifact.SCOPE_SYSTEM
-                                                                   .equals( art.getScope() ), Artifact.SCOPE_PROVIDED
-                                                                   .equals( art.getScope() ), art.getArtifactHandler()
+                                                               isReactorProject, Artifact.SCOPE_TEST.equals( art
+                                                                   .getScope() ), Artifact.SCOPE_SYSTEM.equals( art
+                                                                   .getScope() ), Artifact.SCOPE_PROVIDED.equals( art
+                                                                   .getScope() ), art.getArtifactHandler()
                                                                    .isAddedToClasspath(), art.getFile(), art.getType(),
                                                                isOsgiBundle, osgiSymbolicName, dependencyDepth );
 
