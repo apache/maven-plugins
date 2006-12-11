@@ -1,26 +1,22 @@
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
-
 package org.apache.maven.plugin.eclipse;
-
-import org.apache.maven.plugin.ide.IdeUtils;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 
 import java.io.File;
 import java.io.FileReader;
@@ -28,15 +24,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.maven.plugin.ide.IdeUtils;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
+
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
  */
 public class RadPluginTest
     extends AbstractEclipsePluginTestCase
 {
-    
+
     private static final String PROJECTS_BASEDIR = "target/test-classes/projects";
-    
+
     public void testProject1()
         throws Exception
     {
@@ -48,7 +50,8 @@ public class RadPluginTest
     {
         testProject( "project-rad-2", new Properties(), "rad-clean", "rad" );
         File generatedManifest = getTestFile( PROJECTS_BASEDIR + "/project-rad-2/src/main/webapp/META-INF/MANIFEST.MF" );
-        File expectedManifest = getTestFile( PROJECTS_BASEDIR + "/project-rad-2/src/main/webapp/META-INF/expected_MANIFEST.MF" );
+        File expectedManifest = getTestFile( PROJECTS_BASEDIR
+            + "/project-rad-2/src/main/webapp/META-INF/expected_MANIFEST.MF" );
         assertFileEquals( localRepositoryDirectory.getCanonicalPath(), expectedManifest, generatedManifest );
 
     }
@@ -58,7 +61,8 @@ public class RadPluginTest
     {
         testProject( "project-rad-3", new Properties(), "rad-clean", "rad" );
         File generatedManifest = getTestFile( PROJECTS_BASEDIR + "/project-rad-3/ejbModule/META-INF/MANIFEST.MF" );
-        File expectedManifest = getTestFile( PROJECTS_BASEDIR + "/project-rad-3/ejbModule/META-INF/expected_MANIFEST.MF" );
+        File expectedManifest = getTestFile( PROJECTS_BASEDIR
+            + "/project-rad-3/ejbModule/META-INF/expected_MANIFEST.MF" );
         assertFileEquals( localRepositoryDirectory.getCanonicalPath(), expectedManifest, generatedManifest );
     }
 
@@ -77,7 +81,7 @@ public class RadPluginTest
         new File( basedir, "project-rad-1/META-INF" ).mkdirs();
 
         File pom0 = new File( basedir, "pom.xml" );
-        
+
         MavenProject project = readProject( pom0 );
 
         String outputDirPath = IdeUtils.getPluginSetting( project, "maven-eclipse-plugin", "outputDir", null );
@@ -93,31 +97,31 @@ public class RadPluginTest
             outputDir.mkdirs();
             new File( outputDir, project.getArtifactId() );
         }
-        
+
         List goals = new ArrayList();
-        
+
         String pluginSpec = getPluginCLISpecification();
-        
+
         goals.add( pluginSpec + "rad-clean" );
         goals.add( pluginSpec + "rad" );
         goals.add( "install" );
-        
+
         Properties props = new Properties();
-        
+
         executeMaven( pom0, props, goals );
-        
-//        this.maven.execute( Arrays.asList( new MavenProject[] { project, project2, project3 } ), Arrays
-//            .asList( new String[] {
-//                "install",
-//                "org.apache.maven.plugins:maven-eclipse-plugin:current:rad-clean",
-//                "org.apache.maven.plugins:maven-eclipse-plugin:current:rad" } ), eventMonitor, new ConsoleDownloadMonitor(),
-//                            new Properties(), basedir );
-//        this.maven.execute( Arrays.asList( new MavenProject[] { project1, project2, project3 } ), Arrays
-//            .asList( new String[] {
-//                "install",
-//                "org.apache.maven.plugins:maven-eclipse-plugin:current:rad-clean",
-//                "org.apache.maven.plugins:maven-eclipse-plugin:current:rad" } ), eventMonitor, new ConsoleDownloadMonitor(),
-//                            new Properties(), basedir );
+
+        //        this.maven.execute( Arrays.asList( new MavenProject[] { project, project2, project3 } ), Arrays
+        //            .asList( new String[] {
+        //                "install",
+        //                "org.apache.maven.plugins:maven-eclipse-plugin:current:rad-clean",
+        //                "org.apache.maven.plugins:maven-eclipse-plugin:current:rad" } ), eventMonitor, new ConsoleDownloadMonitor(),
+        //                            new Properties(), basedir );
+        //        this.maven.execute( Arrays.asList( new MavenProject[] { project1, project2, project3 } ), Arrays
+        //            .asList( new String[] {
+        //                "install",
+        //                "org.apache.maven.plugins:maven-eclipse-plugin:current:rad-clean",
+        //                "org.apache.maven.plugins:maven-eclipse-plugin:current:rad" } ), eventMonitor, new ConsoleDownloadMonitor(),
+        //                            new Properties(), basedir );
 
         // jar muss reincoliert sein
         assertTrue( "Expected file not found: project-rad-1/maven-core-98.0.jar",
@@ -125,7 +129,7 @@ public class RadPluginTest
 
         Xpp3Dom applicationXml = Xpp3DomBuilder
             .build( new FileReader( new File( basedir, "project-rad-1/META-INF/application.xml" ) ) );
-        
+
         Xpp3Dom modulesmapsXml = Xpp3DomBuilder
             .build( new FileReader( new File( basedir, "project-rad-1/META-INF/.modulemaps" ) ) );
 
@@ -153,7 +157,7 @@ public class RadPluginTest
         FileUtils.deleteDirectory( new File( basedir, "project-rad-1/META-INF" ) );
 
         File pom0 = new File( basedir, "pom.xml" );
-        
+
         MavenProject project = readProject( pom0 );
 
         String outputDirPath = IdeUtils.getPluginSetting( project, "maven-eclipse-plugin", "outputDir", null );
@@ -169,32 +173,31 @@ public class RadPluginTest
             outputDir.mkdirs();
             new File( outputDir, project.getArtifactId() );
         }
-        
+
         List goals = new ArrayList();
-        
+
         String pluginSpec = getPluginCLISpecification();
-        
+
         goals.add( pluginSpec + "rad-clean" );
         goals.add( pluginSpec + "rad" );
-        
+
         Properties props = new Properties();
-        
+
         executeMaven( pom0, props, goals );
-        
-    
-//        this.maven.execute( Arrays.asList( new MavenProject[] { project, project2, project3 } ), Arrays
-//            .asList( new String[] {
-//                "install",
-//                "org.apache.maven.plugins:maven-eclipse-plugin:current:rad-clean",
-//                "org.apache.maven.plugins:maven-eclipse-plugin:current:rad" } ), eventMonitor, new ConsoleDownloadMonitor(),
-//                            new Properties(), basedir );
-//        
-//        this.maven.execute( Arrays.asList( new MavenProject[] { project1, project2, project3 } ), Arrays
-//            .asList( new String[] {
-//                "install",
-//                "org.apache.maven.plugins:maven-eclipse-plugin:current:rad-clean",
-//                "org.apache.maven.plugins:maven-eclipse-plugin:current:rad" } ), eventMonitor, new ConsoleDownloadMonitor(),
-//                            new Properties(), basedir );
+
+        //        this.maven.execute( Arrays.asList( new MavenProject[] { project, project2, project3 } ), Arrays
+        //            .asList( new String[] {
+        //                "install",
+        //                "org.apache.maven.plugins:maven-eclipse-plugin:current:rad-clean",
+        //                "org.apache.maven.plugins:maven-eclipse-plugin:current:rad" } ), eventMonitor, new ConsoleDownloadMonitor(),
+        //                            new Properties(), basedir );
+        //        
+        //        this.maven.execute( Arrays.asList( new MavenProject[] { project1, project2, project3 } ), Arrays
+        //            .asList( new String[] {
+        //                "install",
+        //                "org.apache.maven.plugins:maven-eclipse-plugin:current:rad-clean",
+        //                "org.apache.maven.plugins:maven-eclipse-plugin:current:rad" } ), eventMonitor, new ConsoleDownloadMonitor(),
+        //                            new Properties(), basedir );
 
         assertTrue( "Expected file not found: project-rad-1/maven-core-98.0.jar",
                     new File( basedir, "project-rad-1/maven-core-98.0.jar" ).exists() );
@@ -202,23 +205,23 @@ public class RadPluginTest
         File modulemaps = new File( basedir, "project-rad-1/META-INF/.modulemaps" );
 
         assertNotNull( modulemaps );
-        
+
         File application = new File( basedir, "project-rad-1/META-INF/application.xml" );
-        
+
         Xpp3Dom applicationXml = Xpp3DomBuilder.build( new FileReader( application ) );
-        
+
         Xpp3Dom[] children = applicationXml.getChildren( "module" );
-        
+
         assertEquals( 2, children.length );
-        
+
         boolean ejbVerified = false;
         boolean warVerified = false;
-        
+
         for ( int i = 0; i < children.length; i++ )
         {
             Xpp3Dom child = children[i];
-            
-            if ( child.getAttribute( "id" ).startsWith( "WebModule_") )
+
+            if ( child.getAttribute( "id" ).startsWith( "WebModule_" ) )
             {
                 assertEquals( "project-rad-5_2.war", child.getChild( "web" ).getChild( "web-uri" ).getValue() );
                 warVerified = true;
@@ -229,7 +232,7 @@ public class RadPluginTest
                 ejbVerified = true;
             }
         }
-        
+
         assertTrue( warVerified );
         assertTrue( ejbVerified );
     }

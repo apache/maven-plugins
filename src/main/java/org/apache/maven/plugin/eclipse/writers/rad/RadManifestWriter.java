@@ -1,15 +1,22 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.maven.plugin.eclipse.writers.rad;
-
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.model.Resource;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.eclipse.Constants;
-import org.apache.maven.plugin.eclipse.EclipseSourceDir;
-import org.apache.maven.plugin.eclipse.Messages;
-import org.apache.maven.plugin.eclipse.writers.AbstractEclipseWriter;
-import org.apache.maven.plugin.eclipse.writers.AbstractWtpResourceWriter;
-import org.apache.maven.plugin.ide.IdeDependency;
-import org.apache.maven.project.MavenProject;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,6 +28,17 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
+
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.model.Resource;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.eclipse.Constants;
+import org.apache.maven.plugin.eclipse.EclipseSourceDir;
+import org.apache.maven.plugin.eclipse.Messages;
+import org.apache.maven.plugin.eclipse.writers.AbstractEclipseWriter;
+import org.apache.maven.plugin.eclipse.writers.AbstractWtpResourceWriter;
+import org.apache.maven.plugin.ide.IdeDependency;
+import org.apache.maven.project.MavenProject;
 
 /**
  * Create or adapt the manifest files for the RAD6 runtime dependencys.
@@ -53,38 +71,39 @@ public class RadManifestWriter
     private String getMetaInfBaseDirectory( MavenProject project )
     {
         String metaInfBaseDirectory = null;
-        
+
         if ( config.getProject().getPackaging().equals( Constants.PROJECT_PACKAGING_WAR ) )
         {
-            metaInfBaseDirectory = config.getProject().getBasedir().getAbsolutePath() + File.separatorChar + WEBAPP_RESOURCE_DIR;
-            
+            metaInfBaseDirectory = config.getProject().getBasedir().getAbsolutePath() + File.separatorChar
+                + WEBAPP_RESOURCE_DIR;
+
             log.debug( "Attempting to use: " + metaInfBaseDirectory + " for location of META-INF in war project." );
-            
+
             File metaInfDirectoryFile = new File( metaInfBaseDirectory + File.separatorChar + META_INF_DIRECTORY );
-            
+
             if ( metaInfDirectoryFile.exists() && !metaInfDirectoryFile.isDirectory() )
             {
                 metaInfBaseDirectory = null;
             }
         }
-        
+
         if ( metaInfBaseDirectory == null )
         {
             for ( Iterator iterator = project.getResources().iterator(); iterator.hasNext(); )
             {
                 metaInfBaseDirectory = ( (Resource) iterator.next() ).getDirectory();
-                
+
                 File metaInfDirectoryFile = new File( metaInfBaseDirectory + File.separatorChar + META_INF_DIRECTORY );
-                
+
                 log.debug( "Checking for existence of META-INF directory: " + metaInfDirectoryFile );
-                
+
                 if ( metaInfDirectoryFile.exists() && !metaInfDirectoryFile.isDirectory() )
                 {
                     metaInfBaseDirectory = null;
                 }
             }
         }
-        
+
         return metaInfBaseDirectory;
     }
 
@@ -108,35 +127,37 @@ public class RadManifestWriter
         throws MojoExecutionException
     {
         String metaInfBaseDirectory = getMetaInfBaseDirectory( config.getProject() );
-        
+
         if ( metaInfBaseDirectory == null )
         {
             // TODO: if this really is an error, shouldn't we stop the build??
-            throw new MojoExecutionException( Messages.getString( "EclipseCleanMojo.nofilefound", new Object[] { META_INF_DIRECTORY } ) );
+            throw new MojoExecutionException( Messages.getString( "EclipseCleanMojo.nofilefound",
+                                                                  new Object[] { META_INF_DIRECTORY } ) );
         }
-        
+
         Manifest manifest = createNewManifest();
 
-        File manifestFile = new File( metaInfBaseDirectory + File.separatorChar + META_INF_DIRECTORY + File.separatorChar + MANIFEST_MF_FILENAME );
+        File manifestFile = new File( metaInfBaseDirectory + File.separatorChar + META_INF_DIRECTORY
+            + File.separatorChar + MANIFEST_MF_FILENAME );
 
         System.out.println( "MANIFEST LOCATION: " + manifestFile );
-        
+
         if ( shouldNewManifestFileBeWritten( manifest, manifestFile ) )
         {
             System.out.println( "Writing manifest..." );
-            
+
             manifestFile.getParentFile().mkdirs();
-            
+
             try
             {
                 FileOutputStream stream = new FileOutputStream( manifestFile );
-                
+
                 manifest.write( stream );
-                
+
                 stream.close();
-                
+
                 verifyManifestBasedirInSourceDirs( metaInfBaseDirectory );
-                
+
             }
             catch ( Exception e )
             {
@@ -151,31 +172,31 @@ public class RadManifestWriter
     private void verifyManifestBasedirInSourceDirs( String metaInfBaseDirectory )
     {
         EclipseSourceDir[] sourceDirs = config.getSourceDirs();
-        
+
         if ( sourceDirs != null )
         {
             boolean foundMetaInfBaseDirectory = false;
-            
+
             for ( int i = 0; i < sourceDirs.length; i++ )
             {
                 EclipseSourceDir esd = sourceDirs[i];
-                
+
                 if ( esd.getPath().equals( metaInfBaseDirectory ) )
                 {
                     foundMetaInfBaseDirectory = true;
                     break;
                 }
             }
-            
+
             if ( !foundMetaInfBaseDirectory )
             {
                 EclipseSourceDir dir = new EclipseSourceDir( metaInfBaseDirectory, null, true, false, null, null, false );
-                
-                EclipseSourceDir[] newSourceDirs = new EclipseSourceDir[ sourceDirs.length + 1 ];
-                newSourceDirs[ sourceDirs.length ] = dir;
-                
+
+                EclipseSourceDir[] newSourceDirs = new EclipseSourceDir[sourceDirs.length + 1];
+                newSourceDirs[sourceDirs.length] = dir;
+
                 System.arraycopy( sourceDirs, 0, newSourceDirs, 0, sourceDirs.length );
-                
+
                 config.setSourceDirs( newSourceDirs );
             }
         }
@@ -232,7 +253,7 @@ public class RadManifestWriter
         {
             return false;
         }
-        
+
         Set keys = new HashSet();
         Attributes existingMap = existingManifest.getMainAttributes();
         Attributes newMap = manifest.getMainAttributes();
@@ -270,12 +291,12 @@ public class RadManifestWriter
     {
         StringBuffer stringBuffer = new StringBuffer();
         IdeDependency[] deps = config.getDeps();
-        
+
         for ( int index = 0; index < deps.length; index++ )
         {
             addDependencyToClassPath( stringBuffer, deps[index] );
         }
-        
+
         return stringBuffer.toString();
     }
 
@@ -329,7 +350,7 @@ public class RadManifestWriter
         {
             return null;
         }
-        
+
         Manifest existingManifest = new Manifest();
         FileInputStream inputStream = new FileInputStream( manifestFile );
         existingManifest.read( inputStream );
@@ -363,7 +384,8 @@ public class RadManifestWriter
         }
         catch ( Exception e )
         {
-            throw new MojoExecutionException( Messages.getString( "EclipseCleanMojo.nofilefound", manifestFile.getAbsolutePath() ), e );
+            throw new MojoExecutionException( Messages.getString( "EclipseCleanMojo.nofilefound", manifestFile
+                .getAbsolutePath() ), e );
         }
         return true;
     }
