@@ -14,13 +14,17 @@ Configuring Source Plugin
 <project>
   ...
   <build>
-    <groupId>org.apache.maven.plugin</groupId>
-    <artifactId>maven-source-plugin</artifactId>
-    <configuration>
-      <outputDirectory>/absolute/path/to/the/output/directory</outputDirectory>
-      <finalName>filename-of-generated-jar-file</finalName>
-      <attach>false</attach>
-    </configuration>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <configuration>
+          <outputDirectory>/absolute/path/to/the/output/directory</outputDirectory>
+          <finalName>filename-of-generated-jar-file</finalName>
+          <attach>false</attach>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
   ...
 </project>
