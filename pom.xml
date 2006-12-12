@@ -66,7 +66,7 @@
   <distributionManagement>
     <site>
       <id>apache.website</id>
-      <url>scp://people.apache.org/www/maven.apache.org/plugins/</url>
+      <url>scp://people.apache.org/www/maven.apache.org/plugins/${pom.artifactId}/${version}</url>
     </site>
   </distributionManagement>
   <modules>
@@ -123,7 +123,7 @@
         </plugin>
       </plugins>
     </pluginManagement>
-  </build>  
+  </build>
   <reporting>
     <plugins>
     </plugins>
@@ -175,15 +175,15 @@
       </build>
     </profile>
     <profile>
-      <!-- Problems: it's running twice, and not signing JavaDoc and Source JARs -->
-      <id>stageRelease</id>
+      <!-- Problems: it's not signing JavaDoc and Source JARs -->
+      <id>staging</id>
       <build>
         <plugins>
           <!-- We want the sources JAR published with the release -->
           <plugin>
             <inherited>true</inherited>
             <artifactId>maven-source-plugin</artifactId>
-            <version>2.0.2-SNAPSHOT</version>            
+            <version>2.0.2-SNAPSHOT</version>
             <executions>
               <execution>
                 <id>attach-sources</id>
@@ -197,7 +197,7 @@
           <plugin>
             <inherited>true</inherited>
             <artifactId>maven-javadoc-plugin</artifactId>
-            <version>2.2-SNAPSHOT</version>            
+            <version>2.2-SNAPSHOT</version>
             <executions>
               <execution>
                 <id>attach-javadocs</id>
@@ -207,26 +207,16 @@
               </execution>
             </executions>
           </plugin>
-          <!-- We want to deploy the artifact to a staging location for perusal -->          
-          <!-- can't configure this twice of the deploy phase runs twice
+          <!-- We want to deploy the artifact to a staging location for perusal -->
           <plugin>
-            <inherited>true</inherited>          
+            <inherited>true</inherited>
             <artifactId>maven-deploy-plugin</artifactId>
             <version>2.3-SNAPSHOT</version>
-            <executions>
-              <execution>
-                <id>release-deploy</id>
-                <goals>
-                  <goal>deploy</goal>
-                </goals>
-                <configuration>
-                  <updateReleaseInfo>true</updateReleaseInfo>
-                  <altDeploymentRepository>jvanzyl::default::scp://people.apache.org/x1/home/jvanzyl/public_html/stage</altDeploymentRepository>              
-                </configuration>                
-              </execution>
-            </executions>            
+            <configuration>
+              <updateReleaseInfo>true</updateReleaseInfo>
+              <altDeploymentRepository>${deploy.altRepository}</altDeploymentRepository>
+            </configuration>
           </plugin>
-          -->
           <!-- We want to deploy the site to a staging location for perusal -->
           <plugin>
             <artifactId>maven-site-plugin</artifactId>
@@ -237,15 +227,18 @@
                   <goal>stage-deploy</goal>
                 </goals>
                 <configuration>
-                  <stagingSiteURL>scp://people.apache.org/x1/home/jvanzyl/public_html/stage</stagingSiteURL>
+                  <stagingSiteURL>${staging.siteURL}</stagingSiteURL>
                 </configuration>
               </execution>
             </executions>
-          </plugin>                    
+          </plugin>
           <!-- We want to sign the artifact, the POM, and all attached artifacts -->
           <plugin>
             <artifactId>maven-gpg-plugin</artifactId>
             <version>1.0-SNAPSHOT</version>
+            <configuration>
+              <passphrase>${gpg.passphrase}</passphrase>
+            </configuration>
             <executions>
               <execution>
                 <goals>
@@ -254,7 +247,7 @@
               </execution>
             </executions>
           </plugin>
-          <!-- We want to package up license resources in the JARs produced -->  
+          <!-- We want to package up license resources in the JARs produced -->
           <plugin>
             <artifactId>maven-remote-resources-plugin</artifactId>
             <executions>
@@ -269,9 +262,9 @@
                 </configuration>
               </execution>
             </executions>
-          </plugin>                                      
+          </plugin>
         </plugins>
       </build>
-    </profile>       
+    </profile>
   </profiles>
 </project>
