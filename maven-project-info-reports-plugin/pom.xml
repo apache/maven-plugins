@@ -124,27 +124,27 @@
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-dependency-tree</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>1.0-alpha-2</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.wagon</groupId>
       <artifactId>wagon-provider-api</artifactId>
-      <version>1.0-beta-2-SNAPSHOT</version>
+      <version>${wagon.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.wagon</groupId>
       <artifactId>wagon-ssh</artifactId>
-      <version>1.0-beta-2-SNAPSHOT</version>
+      <version>${wagon.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.wagon</groupId>
       <artifactId>wagon-file</artifactId>
-      <version>1.0-beta-2-SNAPSHOT</version>
+      <version>${wagon.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.wagon</groupId>
       <artifactId>wagon-http-lightweight</artifactId>
-      <version>1.0-beta-2-SNAPSHOT</version>
+      <version>${wagon.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
@@ -194,4 +194,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <properties>
+    <wagon.version>1.0-beta-2</wagon.version>
+  </properties>
 </project>
