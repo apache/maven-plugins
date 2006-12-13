@@ -66,7 +66,7 @@
   <distributionManagement>
     <site>
       <id>apache.website</id>
-      <url>scp://people.apache.org/www/maven.apache.org/plugins/${pom.artifactId}/${version}</url>
+      <url>scp://people.apache.org/www/maven.apache.org/plugins/</url>
     </site>
   </distributionManagement>
   <modules>
