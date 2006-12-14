@@ -78,7 +78,7 @@ public class TestUnpackMojo
     public ArtifactItem getSingleArtifactItem( boolean removeVersion )
         throws MojoExecutionException
     {
-        ArrayList list = mojo.getArtifactItems( removeVersion );
+        ArrayList list = mojo.getProcessedArtifactItems( removeVersion );
         return (ArtifactItem) list.get( 0 );
     }
 
@@ -388,7 +388,7 @@ public class TestUnpackMojo
     {
         try
         {
-            mojo.getArtifactItems( false );
+            mojo.getProcessedArtifactItems( false );
             fail( "Expected Exception" );
         }
         catch ( MojoExecutionException e )

@@ -110,7 +110,7 @@ public abstract class AbstractFromConfigurationMojo
      * 
      * @see ArtifactItem
      */
-    protected ArrayList getArtifactItems( boolean removeVersion )
+    protected ArrayList getProcessedArtifactItems( boolean removeVersion )
         throws MojoExecutionException
     {
         if ( artifactItems == null || artifactItems.size() < 1 )
