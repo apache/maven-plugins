@@ -1,7 +1,6 @@
 This is an "svn status" after I created a bridge to make the site plugin work with doxia-1.0-alpha-7.
-I have also disable the interpolation in the site descriptor because it relied on code that is not
-available in plexus-utils used in 2.0.4. I have also added the necessary
-plexus-utils code to make the site descriptor interpolation work in 2.0.4
+I have also added the necessary plexus-utils code to make the site descriptor 
+interpolation work in 2.0.4
 
 When maven can move doxia and plexus out of the core then the site plugin
 can be upgraded to the new doxia and plexus-utils and these directories
