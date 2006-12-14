@@ -106,10 +106,9 @@ public class GpgSignAttachedMojo
         {
             // ----------------------------------------------------------------------------
             // Project artifact
-            // ----------------------------------------------------------------------------                
+            // ----------------------------------------------------------------------------
 
-            File projectArtifact =
-                getProjectFile( project.getBuild().getDirectory(), project.getBuild().getFinalName() );
+            File projectArtifact = project.getArtifact().getFile();
 
             File projectArtifactSignature = generateSignatureForArtifact( projectArtifact );
 
@@ -147,7 +146,7 @@ public class GpgSignAttachedMojo
 
             File signature = generateSignatureForArtifact( file );
 
-            signingBundles.add( new SigningBundle( artifact.getType(), signature ) );
+            signingBundles.add( new SigningBundle( artifact.getType(), artifact.getClassifier(), signature ) );
         }
 
         // ----------------------------------------------------------------------------
@@ -168,9 +167,10 @@ public class GpgSignAttachedMojo
 
             ArtifactHandler ah = artifactHandlerManager.getArtifactHandler( bundle.getArtifactType() );
 
-            if ( ah.getClassifier() != null )
+            if ( bundle.getClassifier() != null )
             {
-                projectHelper.attachArtifact( project, "asc", ah.getClassifier() + "." + ah.getExtension(),
+
+                projectHelper.attachArtifact( project, "asc", bundle.getClassifier() + "." + ah.getExtension(),
                                               bundle.getSignature() );
             }
             else
