@@ -1,4 +1,5 @@
 package org.apache.maven.plugin.dependency.utils;
+
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -60,11 +61,11 @@ public class TestDependencyUtil
 
         ArtifactHandler ah = new DefaultArtifactHandler();
         VersionRange vr = VersionRange.createFromVersion( "1.1" );
-        release = new DefaultArtifact( "test", "1", vr, Artifact.SCOPE_COMPILE, "jar", null, ah, false );
+        release = new DefaultArtifact( "test", "one", vr, Artifact.SCOPE_COMPILE, "jar", null, ah, false );
         artifacts.add( release );
 
         vr = VersionRange.createFromVersion( "1.1-SNAPSHOT" );
-        snap = new DefaultArtifact( "test", "2", vr, Artifact.SCOPE_PROVIDED, "war", "sources", ah, false );
+        snap = new DefaultArtifact( "test", "two", vr, Artifact.SCOPE_PROVIDED, "war", "sources", ah, false );
         artifacts.add( snap );
 
         // pick random output location
@@ -92,12 +93,12 @@ public class TestDependencyUtil
         assertTrue( expectedResult.equalsIgnoreCase( name.getAbsolutePath() ) );
 
         name = DependencyUtil.getFormattedOutputDirectory( false, true, folder, (Artifact) artifacts.get( 0 ) );
-        expectedResult = folder.getAbsolutePath() + File.separatorChar + "test-1-jar-1.1";
-        assertTrue( expectedResult.equalsIgnoreCase( name.getAbsolutePath() ) );
+        expectedResult = folder.getAbsolutePath() + File.separatorChar + "test-one-jar-1.1";
+        assertEquals( expectedResult, name.getAbsolutePath());
 
         name = DependencyUtil.getFormattedOutputDirectory( true, true, folder, (Artifact) artifacts.get( 0 ) );
-        expectedResult = folder.getAbsolutePath() + File.separatorChar + "jars" + File.separatorChar + "test-1-jar-1.1";
-        assertTrue( expectedResult.equalsIgnoreCase( name.getAbsolutePath() ) );
+        expectedResult = folder.getAbsolutePath() + File.separatorChar + "jars" + File.separatorChar + "test-one-jar-1.1";
+        assertEquals( expectedResult, name.getAbsolutePath() );
     }
 
     public void testDirectoryName2()
@@ -110,16 +111,16 @@ public class TestDependencyUtil
 
         name = DependencyUtil.getFormattedOutputDirectory( true, false, folder, (Artifact) artifacts.get( 1 ) );
         String expectedResult = folder.getAbsolutePath() + File.separatorChar + "wars";
-        assertTrue( expectedResult.equalsIgnoreCase( name.getAbsolutePath() ) );
+        assertEquals( expectedResult, name.getAbsolutePath() );
 
         name = DependencyUtil.getFormattedOutputDirectory( false, true, folder, (Artifact) artifacts.get( 1 ) );
-        expectedResult = folder.getAbsolutePath() + File.separatorChar + "test-2-war-sources-1.1-SNAPSHOT";
-        assertTrue( expectedResult.equalsIgnoreCase( name.getAbsolutePath() ) );
+        expectedResult = folder.getAbsolutePath() + File.separatorChar + "test-two-war-sources-1.1-SNAPSHOT";
+        assertEquals( expectedResult, name.getAbsolutePath() );
 
         name = DependencyUtil.getFormattedOutputDirectory( true, true, folder, (Artifact) artifacts.get( 1 ) );
         expectedResult = folder.getAbsolutePath() + File.separatorChar + "wars" + File.separatorChar
-            + "test-2-war-sources-1.1-SNAPSHOT";
-        assertTrue( expectedResult.equalsIgnoreCase( name.getAbsolutePath() ) );
+            + "test-two-war-sources-1.1-SNAPSHOT";
+        assertEquals( expectedResult, name.getAbsolutePath() );
     }
 
     public void testFileName()
@@ -128,12 +129,11 @@ public class TestDependencyUtil
         Artifact artifact = (Artifact) artifacts.get( 0 );
 
         String name = DependencyUtil.getFormattedFileName( artifact, false );
-        String expectedResult = "1-1.1.jar";
-        assertTrue( expectedResult.equalsIgnoreCase( name ) );
-
+        String expectedResult = "one-1.1.jar";
+        assertEquals( expectedResult, name );
         name = DependencyUtil.getFormattedFileName( artifact, true );
-        expectedResult = "1.jar";
-        assertTrue( expectedResult.equalsIgnoreCase( name ) );
+        expectedResult = "one.jar";
+        assertEquals( expectedResult, name );
     }
 
     public void testFileNameClassifier()
