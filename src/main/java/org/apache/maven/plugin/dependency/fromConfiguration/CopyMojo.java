@@ -62,7 +62,7 @@ public class CopyMojo
     public void execute()
         throws MojoExecutionException
     {
-        ArrayList theArtifactItems = getArtifactItems( this.stripVersion );
+        ArrayList theArtifactItems = getProcessedArtifactItems( this.stripVersion );
         Iterator iter = theArtifactItems.iterator();
         while ( iter.hasNext() )
         {
