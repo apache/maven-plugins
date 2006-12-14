@@ -203,6 +203,8 @@ public class ProcessRemoteResourcesMojo
             {
                 // Won't happen.
             }
+
+            bundleCount++;
         }
 
         ClassLoader old = Thread.currentThread().getContextClassLoader();
@@ -319,7 +321,5 @@ public class ProcessRemoteResourcesMojo
         {
             throw new MojoExecutionException( "Error creating dot file for archiving instructions.", e );
         }
-
-        bundleCount++;
     }
 }
