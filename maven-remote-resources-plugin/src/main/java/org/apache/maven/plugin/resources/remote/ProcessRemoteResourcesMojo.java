@@ -173,9 +173,9 @@ public class ProcessRemoteResourcesMojo
                     position = bundleCount + "th";
                 }
 
-                throw new MojoExecutionException(
-                    "The " + position + " resource bundle configured must specify a groupId, artifactId, and version for a remote resource bundle. " +
-                        "Must be of the form <resourceBundle>groupId:artifactId:version</resourceBundle>" );
+                throw new MojoExecutionException( "The " + position +
+                    " resource bundle configured must specify a groupId, artifactId, and version for a remote resource bundle. " +
+                    "Must be of the form <resourceBundle>groupId:artifactId:version</resourceBundle>" );
             }
 
             try
@@ -230,45 +230,47 @@ public class ProcessRemoteResourcesMojo
 
         try
         {
-            Enumeration e = classLoader.getResources( BundleRemoteResourcesMojo.RESOURCES_MANIFEST );
-
-            URL url = (URL) e.nextElement();
-
-            URLConnection conn = url.openConnection();
-
-            conn.connect();
-
-            reader = new InputStreamReader( conn.getInputStream() );
-
-            RemoteResourcesBundleXpp3Reader bundleReader = new RemoteResourcesBundleXpp3Reader();
-
-            RemoteResourcesBundle bundle = bundleReader.read( reader );
-
-            for ( Iterator i = bundle.getRemoteResources().iterator(); i.hasNext(); )
+            for ( Enumeration e = classLoader.getResources( BundleRemoteResourcesMojo.RESOURCES_MANIFEST );
+                  e.hasMoreElements(); )
             {
-                String bundleResource = (String) i.next();
+                URL url = (URL) e.nextElement();
 
-                String projectResource = StringUtils.replaceOnce( bundleResource, ".vm", ".txt" );
+                URLConnection conn = url.openConnection();
 
-                // Don't overwrite resource that are already being provided.
+                conn.connect();
 
-                File projectResourceFile = new File( standardResourcesDirectory, projectResource );
+                reader = new InputStreamReader( conn.getInputStream() );
 
-                File f = new File( outputDirectory, projectResource );
+                RemoteResourcesBundleXpp3Reader bundleReader = new RemoteResourcesBundleXpp3Reader();
 
-                FileUtils.mkdir( f.getParentFile().getAbsolutePath() );
+                RemoteResourcesBundle bundle = bundleReader.read( reader );
 
-                if ( projectResourceFile.exists() )
+                for ( Iterator i = bundle.getRemoteResources().iterator(); i.hasNext(); )
                 {
-                    FileUtils.copyFile( projectResourceFile, f );
-                }
-                else
-                {
-                    Writer writer = new FileWriter( f );
+                    String bundleResource = (String) i.next();
 
-                    velocity.getEngine().mergeTemplate( bundleResource, context, writer );
+                    String projectResource = StringUtils.replaceOnce( bundleResource, ".vm", ".txt" );
 
-                    writer.close();
+                    // Don't overwrite resource that are already being provided.
+
+                    File projectResourceFile = new File( standardResourcesDirectory, projectResource );
+
+                    File f = new File( outputDirectory, projectResource );
+
+                    FileUtils.mkdir( f.getParentFile().getAbsolutePath() );
+
+                    if ( projectResourceFile.exists() )
+                    {
+                        FileUtils.copyFile( projectResourceFile, f );
+                    }
+                    else
+                    {
+                        Writer writer = new FileWriter( f );
+
+                        velocity.getEngine().mergeTemplate( bundleResource, context, writer );
+
+                        writer.close();
+                    }
                 }
             }
         }
