@@ -60,7 +60,7 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
  * then making file by file copy.  For file protocol, the files are copied
  * directly to the destination directory.
  *
- * @author <a href="mailto:michal@codehaus.org">Michal Maczka</a>
+ * @author <a href="mailto:michal@org.codehaus.org">Michal Maczka</a>
  * @version $Id$
  * @goal deploy
  */
