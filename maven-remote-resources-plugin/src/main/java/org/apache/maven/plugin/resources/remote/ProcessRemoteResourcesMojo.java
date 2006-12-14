@@ -143,12 +143,40 @@ public class ProcessRemoteResourcesMojo
 
         File standardResourcesDirectory = new File( project.getBasedir(), "src/main/resources" );
 
+        int bundleCount = 1;
+
         for ( Iterator i = resourceBundles.iterator(); i.hasNext(); )
         {
             String artifactDescriptor = (String) i.next();
 
             // groupId:artifactId:version
             String[] s = StringUtils.split( artifactDescriptor, ":" );
+
+            if ( s.length != 3 )
+            {
+                String position;
+
+                if ( bundleCount == 1 )
+                {
+                    position = "1st";
+                }
+                else if ( bundleCount == 2 )
+                {
+                    position = "2nd";
+                }
+                else if ( bundleCount == 3 )
+                {
+                    position = "3rd";
+                }
+                else
+                {
+                    position = bundleCount + "th";
+                }
+
+                throw new MojoExecutionException(
+                    "The " + position + " resource bundle configured must specify a groupId, artifactId, and version for a remote resource bundle. " +
+                        "Must be of the form <resourceBundle>groupId:artifactId:version</resourceBundle>" );
+            }
 
             try
             {
@@ -229,7 +257,7 @@ public class ProcessRemoteResourcesMojo
                 File f = new File( outputDirectory, projectResource );
 
                 FileUtils.mkdir( f.getParentFile().getAbsolutePath() );
-                                
+
                 if ( projectResourceFile.exists() )
                 {
                     FileUtils.copyFile( projectResourceFile, f );
@@ -289,5 +317,7 @@ public class ProcessRemoteResourcesMojo
         {
             throw new MojoExecutionException( "Error creating dot file for archiving instructions.", e );
         }
+
+        bundleCount++;
     }
 }
