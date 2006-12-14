@@ -46,6 +46,9 @@ public final class DependencyUtil
      */
     public static String getFormattedFileName( Artifact artifact, boolean removeVersion )
     {
+        //TODO: I used to sometimes pull the artifact directly from the artifact but this 
+        //causes problems with tests. Need to think about the implications of always
+        //constructing the file name. Could the filename ever not match the constructed one?
         String destFileName = null;
         String versionString = null;
         if ( !removeVersion )
@@ -56,24 +59,14 @@ public final class DependencyUtil
         {
             versionString = "";
         }
-
-        File file = artifact.getFile();
-        if ( file != null )
+        if ( StringUtils.isNotEmpty( artifact.getClassifier() ) )
         {
-            destFileName = file.getName();
+            destFileName = artifact.getArtifactId() + "-" + artifact.getClassifier() + versionString + "."
+                + artifact.getType();
         }
-        // so it can be used offline
         else
         {
-            if ( StringUtils.isNotEmpty( artifact.getClassifier() ) )
-            {
-                destFileName = artifact.getArtifactId() + "-" + artifact.getClassifier() + versionString + "."
-                    + artifact.getType();
-            }
-            else
-            {
-                destFileName = artifact.getArtifactId() + versionString + "." + artifact.getType();
-            }
+            destFileName = artifact.getArtifactId() + versionString + "." + artifact.getType();
         }
 
         return destFileName;
