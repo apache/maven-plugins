@@ -26,13 +26,24 @@ public class SigningBundle
 {
     private String artifactType;
 
+    private String classifier;
+
     private File signature;
 
     public SigningBundle( String artifactType,
                           File signature )
     {
         this.artifactType = artifactType;
+       
+        this.signature = signature;
+    }
 
+
+    public SigningBundle( String artifactType, String classifier,
+                          File signature )
+    {
+        this.artifactType = artifactType;
+        this.classifier = classifier;
         this.signature = signature;
     }
 
@@ -44,5 +55,10 @@ public class SigningBundle
     public File getSignature()
     {
         return signature;
+    }
+
+    public String getClassifier()
+    {
+        return classifier;
     }
 }
