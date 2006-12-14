@@ -858,6 +858,7 @@ public abstract class AbstractSiteMojo
         throws IOException
     {
         RegexBasedInterpolator interpolator = new RegexBasedInterpolator();
+
         interpolator.addValueSource( new EnvarBasedValueSource() );
         interpolator.addValueSource( new ObjectBasedValueSource( aProject ) );
         interpolator.addValueSource( new MapBasedValueSource( aProject.getProperties() ) );
