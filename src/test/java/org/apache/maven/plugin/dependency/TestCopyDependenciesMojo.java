@@ -464,7 +464,7 @@ public class TestCopyDependenciesMojo
                     useType = testType;
                 }
             }
-            String fileName = artifact.getArtifactId() + useClassifier + "-" + artifact.getVersion() + "." + useType;
+            String fileName = artifact.getArtifactId() + "-" + artifact.getVersion() + useClassifier + "." + useType;
             File file = new File( mojo.outputDirectory, fileName );
 
             if ( !file.exists() )
