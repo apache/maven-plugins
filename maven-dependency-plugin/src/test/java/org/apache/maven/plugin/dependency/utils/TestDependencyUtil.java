@@ -94,10 +94,11 @@ public class TestDependencyUtil
 
         name = DependencyUtil.getFormattedOutputDirectory( false, true, folder, (Artifact) artifacts.get( 0 ) );
         expectedResult = folder.getAbsolutePath() + File.separatorChar + "test-one-jar-1.1";
-        assertEquals( expectedResult, name.getAbsolutePath());
+        assertEquals( expectedResult, name.getAbsolutePath() );
 
         name = DependencyUtil.getFormattedOutputDirectory( true, true, folder, (Artifact) artifacts.get( 0 ) );
-        expectedResult = folder.getAbsolutePath() + File.separatorChar + "jars" + File.separatorChar + "test-one-jar-1.1";
+        expectedResult = folder.getAbsolutePath() + File.separatorChar + "jars" + File.separatorChar
+            + "test-one-jar-1.1";
         assertEquals( expectedResult, name.getAbsolutePath() );
     }
 
@@ -141,10 +142,38 @@ public class TestDependencyUtil
     {
         ArtifactHandler ah = new DefaultArtifactHandler();
         VersionRange vr = VersionRange.createFromVersion( "1.1-SNAPSHOT" );
-        Artifact artifact = new DefaultArtifact( "test", "two", vr, Artifact.SCOPE_PROVIDED, "war", "sources", ah, false );
+        Artifact artifact = new DefaultArtifact( "test", "two", vr, Artifact.SCOPE_PROVIDED, "war", "sources", ah,
+                                                 false );
 
         String name = DependencyUtil.getFormattedFileName( artifact, false );
         String expectedResult = "two-1.1-SNAPSHOT-sources.war";
+        assertEquals( expectedResult, name );
+
+        name = DependencyUtil.getFormattedFileName( artifact, true );
+        expectedResult = "two-sources.war";
+        assertEquals( expectedResult, name );
+
+        artifact = new DefaultArtifact( "test", "two", vr, Artifact.SCOPE_PROVIDED, "war", "", ah, false );
+        name = DependencyUtil.getFormattedFileName( artifact, true );
+        expectedResult = "two.war";
+        assertEquals( expectedResult, name );
+
+    }
+
+    public void testFileNameClassifierWithFile()
+        throws MojoExecutionException
+    {
+        //specifically testing the default operation that getFormattedFileName returns
+        //the actual name of the file if available unless remove version is set.
+        ArtifactHandler ah = new DefaultArtifactHandler();
+        VersionRange vr = VersionRange.createFromVersion( "1.1-SNAPSHOT" );
+        Artifact artifact = new DefaultArtifact( "test", "two", vr, Artifact.SCOPE_PROVIDED, "war", "sources", ah,
+                                                 false );
+        File file = new File("/target","test-file-name.jar");
+        artifact.setFile(file);
+
+        String name = DependencyUtil.getFormattedFileName( artifact, false );
+        String expectedResult = "test-file-name.jar";
         assertEquals( expectedResult, name );
 
         name = DependencyUtil.getFormattedFileName( artifact, true );
