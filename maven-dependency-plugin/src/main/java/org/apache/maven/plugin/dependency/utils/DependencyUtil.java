@@ -57,16 +57,21 @@ public final class DependencyUtil
             versionString = "";
         }
 
-        String classifierString = "";
-
-        if ( StringUtils.isNotEmpty( artifact.getClassifier() ) )
+        if ( artifact.getFile() != null )
         {
-            classifierString = "-" + artifact.getClassifier();
+            destFileName = artifact.getFile().getName();
         }
+        else //if offline
+        {
+            String classifierString = "";
 
-        destFileName = artifact.getArtifactId() + versionString + classifierString + "."
-            + artifact.getType();
+            if ( StringUtils.isNotEmpty( artifact.getClassifier() ) )
+            {
+                classifierString = "-" + artifact.getClassifier();
+            }
 
+            destFileName = artifact.getArtifactId() + versionString + classifierString + "." + artifact.getType();
+        }
         return destFileName;
     }
 
