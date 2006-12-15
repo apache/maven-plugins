@@ -141,19 +141,19 @@ public class TestDependencyUtil
     {
         ArtifactHandler ah = new DefaultArtifactHandler();
         VersionRange vr = VersionRange.createFromVersion( "1.1-SNAPSHOT" );
-        Artifact artifact = new DefaultArtifact( "test", "2", vr, Artifact.SCOPE_PROVIDED, "war", "sources", ah, false );
+        Artifact artifact = new DefaultArtifact( "test", "two", vr, Artifact.SCOPE_PROVIDED, "war", "sources", ah, false );
 
         String name = DependencyUtil.getFormattedFileName( artifact, false );
-        String expectedResult = "2-sources-1.1-SNAPSHOT.war";
+        String expectedResult = "two-1.1-SNAPSHOT-sources.war";
         assertEquals( expectedResult, name );
 
         name = DependencyUtil.getFormattedFileName( artifact, true );
-        expectedResult = "2-sources.war";
+        expectedResult = "two-sources.war";
         assertEquals( expectedResult, name );
 
-        artifact = new DefaultArtifact( "test", "2", vr, Artifact.SCOPE_PROVIDED, "war", "", ah, false );
+        artifact = new DefaultArtifact( "test", "two", vr, Artifact.SCOPE_PROVIDED, "war", "", ah, false );
         name = DependencyUtil.getFormattedFileName( artifact, true );
-        expectedResult = "2.war";
+        expectedResult = "two.war";
         assertEquals( expectedResult, name );
 
     }
