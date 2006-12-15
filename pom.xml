@@ -118,6 +118,8 @@ under the License.
       <version>2.0.4</version>
     </dependency>
     <!--
+    This can be added back in when either maven's core swizzle's its
+    internal dependencies or we upgrade across the board.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
