@@ -860,16 +860,25 @@ public abstract class AbstractSiteMojo
         RegexBasedInterpolator interpolator = new RegexBasedInterpolator();
 
         interpolator.addValueSource( new EnvarBasedValueSource() );
+
         interpolator.addValueSource( new ObjectBasedValueSource( aProject ) );
+
         interpolator.addValueSource( new MapBasedValueSource( aProject.getProperties() ) );
 
         siteDescriptorContent = interpolator.interpolate( siteDescriptorContent, "project" );
 
         props.put( "inputEncoding", inputEncoding );
+
         props.put( "outputEncoding", outputEncoding );
 
         // Legacy for the old ${parentProject} syntax
         props.put( "parentProject", "<menu ref=\"parent\"/>" );
+
+        // Legacy for the old ${modules} syntax
+        props.put( "modules", "<menu ref=\"modules\"/>" );
+
+        // Legacy for the old ${reports} syntax
+        props.put( "reports", "<menu ref=\"reports\"/>" );
 
         return StringUtils.interpolate( siteDescriptorContent, props );
     }
