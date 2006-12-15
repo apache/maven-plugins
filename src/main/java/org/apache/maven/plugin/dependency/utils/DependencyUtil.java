@@ -42,13 +42,10 @@ public final class DependencyUtil
      * @param removeVersion
      *            Specifies if the version should be removed from the file name.
      * @return Formatted file name in the format
-     *         artifactId-[classifier-][version].[type]
+     *         artifactId-[version]-[classifier].[type]
      */
     public static String getFormattedFileName( Artifact artifact, boolean removeVersion )
     {
-        //TODO: I used to sometimes pull the artifact directly from the artifact but this 
-        //causes problems with tests. Need to think about the implications of always
-        //constructing the file name. Could the filename ever not match the constructed one?
         String destFileName = null;
         String versionString = null;
         if ( !removeVersion )
@@ -59,15 +56,16 @@ public final class DependencyUtil
         {
             versionString = "";
         }
+
+        String classifierString = "";
+
         if ( StringUtils.isNotEmpty( artifact.getClassifier() ) )
         {
-            destFileName = artifact.getArtifactId() + "-" + artifact.getClassifier() + versionString + "."
-                + artifact.getType();
+            classifierString = "-" + artifact.getClassifier();
         }
-        else
-        {
-            destFileName = artifact.getArtifactId() + versionString + "." + artifact.getType();
-        }
+
+        destFileName = artifact.getArtifactId() + versionString + classifierString + "."
+            + artifact.getType();
 
         return destFileName;
     }
