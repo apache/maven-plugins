@@ -245,4 +245,14 @@ public class EclipsePluginTest
         testProject( "project-25" );
     }
 
+    /**
+     * Test different compiler settings for test sources.
+     * @throws Exception any exception thrown during test
+     */
+    public void testProject26()
+        throws Exception
+    {
+        testProject( "project-26" );
+    }
+
 }

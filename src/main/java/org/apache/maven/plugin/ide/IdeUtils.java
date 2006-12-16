@@ -31,6 +31,7 @@ import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.model.Plugin;
+import org.apache.maven.model.PluginExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
@@ -44,6 +45,20 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
  */
 public class IdeUtils
 {
+    /**
+     * compiler plugin id.
+     */
+    private static final String ARTIFACT_MAVEN_COMPILER_PLUGIN = "maven-compiler-plugin"; //$NON-NLS-1$
+
+    /**
+     * 'target' property for maven-compiler-plugin.
+     */
+    private static final String PROPERTY_TARGET = "target"; //$NON-NLS-1$
+
+    /**
+     * 'source' property for maven-compiler-plugin.
+     */
+    private static final String PROPERTY_SOURCE = "source"; //$NON-NLS-1$
 
     private IdeUtils()
     {
@@ -183,4 +198,69 @@ public class IdeUtils
         }
         return null;
     }
+
+    /**
+     * Returns the target version configured for the compiler plugin. Returns the minimum version required to compile
+     * both standard and test sources, if settings are different.
+     * @param project maven project
+     * @return java target version
+     */
+    public static String getCompilerTargetVersion( MavenProject project )
+    {
+        return IdeUtils.getCompilerPluginSetting( project, PROPERTY_TARGET );
+    }
+
+    /**
+     * Returns the source version configured for the compiler plugin. Returns the minimum version required to compile
+     * both standard and test sources, if settings are different.
+     * @param project maven project
+     * @return java source version
+     */
+    public static String getCompilerSourceVersion( MavenProject project )
+    {
+        return IdeUtils.getCompilerPluginSetting( project, PROPERTY_SOURCE );
+    }
+
+    /**
+     * Returns a compiler plugin settings, considering also settings altered in plugin executions .
+     * @param project maven project
+     * @return option value (may be null)
+     */
+    public static String getCompilerPluginSetting( MavenProject project, String optionName )
+    {
+        String value = null;
+
+        for ( Iterator it = project.getModel().getBuild().getPlugins().iterator(); it.hasNext(); )
+        {
+            Plugin plugin = (Plugin) it.next();
+
+            if ( plugin.getArtifactId().equals( ARTIFACT_MAVEN_COMPILER_PLUGIN ) )
+            {
+                Xpp3Dom o = (Xpp3Dom) plugin.getConfiguration();
+
+                // this is the default setting
+                if ( o != null && o.getChild( optionName ) != null )
+                {
+                    value = o.getChild( optionName ).getValue();
+                }
+
+                List executions = plugin.getExecutions();
+
+                // a different source/target version can be configured for test sources compilation
+                for ( Iterator iter = executions.iterator(); iter.hasNext(); )
+                {
+                    PluginExecution execution = (PluginExecution) iter.next();
+                    o = (Xpp3Dom) execution.getConfiguration();
+
+                    if ( o != null && o.getChild( optionName ) != null )
+                    {
+                        value = o.getChild( optionName ).getValue();
+                    }
+                }
+            }
+        }
+
+        return value;
+    }
+
 }
