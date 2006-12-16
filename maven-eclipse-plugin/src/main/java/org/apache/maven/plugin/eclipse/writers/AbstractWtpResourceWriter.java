@@ -277,10 +277,10 @@ public abstract class AbstractWtpResourceWriter
 
     protected String resolveJavaVersion()
     {
-        String version = IdeUtils.getPluginSetting( config.getProject(), "maven-compiler-plugin", "target", null ); //$NON-NLS-1$ //$NON-NLS-2$
+        String version = IdeUtils.getCompilerTargetVersion( config.getProject() );
         if ( version == null )
         {
-            IdeUtils.getPluginSetting( config.getProject(), "maven-compiler-plugin", "source", null ); //$NON-NLS-1$ //$NON-NLS-2$
+            IdeUtils.getCompilerSourceVersion( config.getProject() );
         }
 
         if ( "1.5".equals( version ) || "5".equals( version ) ) //$NON-NLS-1$ //$NON-NLS-2$
