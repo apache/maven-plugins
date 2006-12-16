@@ -39,16 +39,6 @@ public class EclipseSettingsWriter
     extends AbstractEclipseWriter
 {
 
-    /**
-     * 'target' property for maven-compiler-plugin.
-     */
-    private static final String PROPERTY_TARGET = "target"; //$NON-NLS-1$
-
-    /**
-     * 'source' property for maven-compiler-plugin.
-     */
-    private static final String PROPERTY_SOURCE = "source"; //$NON-NLS-1$
-
     private static final String JDK_1_2_SOURCES = "1.2"; //$NON-NLS-1$
 
     private static final String FILE_ECLIPSE_JDT_CORE_PREFS = "org.eclipse.jdt.core.prefs"; //$NON-NLS-1$
@@ -61,8 +51,6 @@ public class EclipseSettingsWriter
 
     private static final String PROP_JDT_CORE_COMPILER_SOURCE = "org.eclipse.jdt.core.compiler.source"; //$NON-NLS-1$
 
-    private static final String ARTIFACT_MAVEN_COMPILER_PLUGIN = "maven-compiler-plugin"; //$NON-NLS-1$
-
     /**
      * @see org.apache.maven.plugin.eclipse.writers.EclipseWriter#write()
      */
@@ -73,10 +61,8 @@ public class EclipseSettingsWriter
         // check if it's necessary to create project specific settings
         Properties coreSettings = new Properties();
 
-        String source = IdeUtils.getPluginSetting( config.getProject(), ARTIFACT_MAVEN_COMPILER_PLUGIN,
-                                                   PROPERTY_SOURCE, null );
-        String target = IdeUtils.getPluginSetting( config.getProject(), ARTIFACT_MAVEN_COMPILER_PLUGIN,
-                                                   PROPERTY_TARGET, null );
+        String source = IdeUtils.getCompilerSourceVersion( config.getProject() );
+        String target = IdeUtils.getCompilerTargetVersion( config.getProject() );
 
         if ( source != null )
         {
