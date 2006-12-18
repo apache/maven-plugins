@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+  <groupId>org.apache.maven.plugins.site-plugin-test</groupId>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>site-plugin-test12</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <description>MSITE-201: ${modules} renders as [] causing parse error</description>
+</project>
