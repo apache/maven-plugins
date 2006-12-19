@@ -58,6 +58,16 @@ public class InvokerMojo
     extends AbstractMojo
 {
     /**
+     * Flag used to suppress the summary output notifying of successes and failures. If set to true,
+     * the only indication of the build's success or failure will be the effect it has on the main
+     * build (if it fails, the main build should fail as well). If streamLogs is enabled, the sub-build
+     * summary will also provide an indication. By default, this parameter is set to false.
+     * 
+     * @parameter default-value="false"
+     */
+    private boolean suppressSummaries;
+    
+    /**
      * Flag used to determine whether the build logs should be output to the normal mojo log.
      * 
      * @parameter expression="${invoker.streamLogs}" default-value="false"
@@ -138,6 +148,13 @@ public class InvokerMojo
      * @parameter expression="${invoker.testPropertiesFile}" default-value="test.properties"
      */
     private String testPropertiesFile;
+    
+    /**
+     * Common set of test properties to pass in on each IT's command line, via -D parameters.
+     * 
+     * @parameter
+     */
+    private Properties testProperties;
 
     /**
      * Whether to show errors in the build output.
@@ -189,28 +206,31 @@ public class InvokerMojo
             runBuild( pom, failures );
         }
 
-        final StringBuffer summary = new StringBuffer();
-        summary.append( "\n\n" );
-        summary.append( "---------------------------------------\n" );
-        summary.append( "Execution Summary:\n" );
-        summary.append( "Builds Passing: " ).append( includedPoms.length - failures.size() ).append( "\n" );
-        summary.append( "Builds Failing: " ).append( failures.size() ).append( "\n" );
-        summary.append( "---------------------------------------\n" );
-
-        if ( !failures.isEmpty() )
+        if ( !suppressSummaries )
         {
-            summary.append( "\nThe following builds failed:\n" );
+            final StringBuffer summary = new StringBuffer();
+            summary.append( "\n\n" );
+            summary.append( "---------------------------------------\n" );
+            summary.append( "Execution Summary:\n" );
+            summary.append( "Builds Passing: " ).append( includedPoms.length - failures.size() ).append( "\n" );
+            summary.append( "Builds Failing: " ).append( failures.size() ).append( "\n" );
+            summary.append( "---------------------------------------\n" );
 
-            for ( final Iterator it = failures.iterator(); it.hasNext(); )
+            if ( !failures.isEmpty() )
             {
-                final String pom = ( String ) it.next();
-                summary.append( "\n*  " ).append( pom );
+                summary.append( "\nThe following builds failed:\n" );
+
+                for ( final Iterator it = failures.iterator(); it.hasNext(); )
+                {
+                    final String pom = ( String ) it.next();
+                    summary.append( "\n*  " ).append( pom );
+                }
+
+                summary.append( "\n" );
             }
 
-            summary.append( "\n" );
+            getLog().info( summary.toString() );
         }
-
-        getLog().info( summary.toString() );
 
         if ( !failures.isEmpty() )
         {
@@ -292,9 +312,21 @@ public class InvokerMojo
 
             try
             {
-                final Properties testProperties = loadTestProperties( basedir );
+                Properties collectedTestProperties = new Properties();
+                
+                if ( testProperties != null )
+                {
+                    collectedTestProperties.putAll( testProperties );
+                }
+                
+                final Properties loadedProperties = loadTestProperties( basedir );
+                
+                if ( loadedProperties != null )
+                {
+                    collectedTestProperties.putAll( loadedProperties );
+                }
 
-                request.setProperties( testProperties );
+                request.setProperties( collectedTestProperties );
             }
             catch ( final IOException e )
             {
@@ -355,24 +387,33 @@ public class InvokerMojo
 
             if ( executionException != null )
             {
-                getLog().info( "...FAILED. See " + outputLog.getAbsolutePath() + " for details." );
+                if ( !suppressSummaries )
+                {
+                    getLog().info( "...FAILED. See " + outputLog.getAbsolutePath() + " for details." );
+                }
                 failures.add( pom );
             }
             else if ( result.getExitCode() != 0 )
             {
-                getLog().info(
-                                "...FAILED[code=" + result.getExitCode() + "]. See " + outputLog.getAbsolutePath()
-                                                + " for details." );
+                if ( !suppressSummaries )
+                {
+                    getLog().info(
+                                   "...FAILED[code=" + result.getExitCode() + "]. See " + outputLog.getAbsolutePath()
+                                       + " for details." );
+                }
 
                 failures.add( pom );
             }
             else if ( !verify( basedir, pom, failures, logger ) )
             {
-                getLog().info( "...FAILED[verify script returned false]." );
+                if ( !suppressSummaries )
+                {
+                    getLog().info( "...FAILED[verify script returned false]." );
+                }
 
                 failures.add( pom );
             }
-            else
+            else if (!suppressSummaries )
             {
                 getLog().info( "...SUCCESS." );
             }
