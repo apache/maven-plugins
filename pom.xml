@@ -102,8 +102,6 @@
     <module>maven-resources-plugin</module>
     <module>maven-site-plugin</module>
     <module>maven-source-plugin</module>
-    <module>maven-surefire-plugin</module>
-    <module>maven-surefire-report-plugin</module>
     <module>maven-war-plugin</module>
     <module>maven-verifier-plugin</module>
   </modules>
