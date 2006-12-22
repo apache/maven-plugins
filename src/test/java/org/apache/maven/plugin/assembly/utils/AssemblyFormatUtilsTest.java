@@ -5,8 +5,8 @@ import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
+import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
-import org.apache.maven.plugins.assembly.model.Assembly;
 import org.apache.maven.project.MavenProject;
 import org.easymock.MockControl;
 

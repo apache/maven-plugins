@@ -3,7 +3,7 @@ package org.apache.maven.plugin.assembly.utils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
-import org.apache.maven.plugins.assembly.model.Assembly;
+import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.interpolation.ObjectBasedValueSource;

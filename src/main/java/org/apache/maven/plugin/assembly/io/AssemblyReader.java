@@ -3,7 +3,7 @@ package org.apache.maven.plugin.assembly.io;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
-import org.apache.maven.plugins.assembly.model.Assembly;
+import org.apache.maven.plugin.assembly.model.Assembly;
 
 import java.io.File;
 import java.io.Reader;
