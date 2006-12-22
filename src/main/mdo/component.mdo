@@ -43,7 +43,7 @@
   <defaults>
     <default>
       <key>package</key>
-      <value>org.apache.maven.plugins.assembly.model</value>
+      <value>org.apache.maven.plugin.assembly.model</value>
     </default>
   </defaults>
   <classes>
