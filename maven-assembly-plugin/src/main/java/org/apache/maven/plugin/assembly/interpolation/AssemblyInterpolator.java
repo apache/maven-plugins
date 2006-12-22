@@ -16,9 +16,9 @@ package org.apache.maven.plugin.assembly.interpolation;
  * limitations under the License.
  */
 
-import org.apache.maven.plugins.assembly.model.Assembly;
-import org.apache.maven.plugins.assembly.model.io.xpp3.AssemblyXpp3Reader;
-import org.apache.maven.plugins.assembly.model.io.xpp3.AssemblyXpp3Writer;
+import org.apache.maven.plugin.assembly.model.Assembly;
+import org.apache.maven.plugin.assembly.model.io.xpp3.AssemblyXpp3Reader;
+import org.apache.maven.plugin.assembly.model.io.xpp3.AssemblyXpp3Writer;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.logging.Logger;

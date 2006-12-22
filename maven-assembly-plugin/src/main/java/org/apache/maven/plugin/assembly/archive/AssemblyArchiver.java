@@ -3,7 +3,7 @@ package org.apache.maven.plugin.assembly.archive;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
-import org.apache.maven.plugins.assembly.model.Assembly;
+import org.apache.maven.plugin.assembly.model.Assembly;
 
 import java.io.File;
 

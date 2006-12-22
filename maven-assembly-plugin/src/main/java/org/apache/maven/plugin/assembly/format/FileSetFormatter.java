@@ -28,7 +28,7 @@ public class FileSetFormatter
         this.logger = logger;
     }
 
-    public File formatFileSetForAssembly( File archiveBaseDir, org.apache.maven.plugins.assembly.model.FileSet set )
+    public File formatFileSetForAssembly( File archiveBaseDir, org.apache.maven.plugin.assembly.model.FileSet set )
         throws AssemblyFormattingException, IOException
     {
         File formattedDir = archiveBaseDir;
