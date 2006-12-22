@@ -6,7 +6,7 @@ import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.task.AddDependencySetsTask;
 import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
-import org.apache.maven.plugins.assembly.model.Assembly;
+import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.logging.AbstractLogEnabled;

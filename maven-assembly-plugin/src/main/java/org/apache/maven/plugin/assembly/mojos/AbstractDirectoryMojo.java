@@ -24,7 +24,7 @@ import org.apache.maven.plugin.assembly.archive.AssemblyArchiver;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.io.AssemblyReadException;
 import org.apache.maven.plugin.assembly.io.AssemblyReader;
-import org.apache.maven.plugins.assembly.model.Assembly;
+import org.apache.maven.plugin.assembly.model.Assembly;
 
 import java.util.Iterator;
 import java.util.List;

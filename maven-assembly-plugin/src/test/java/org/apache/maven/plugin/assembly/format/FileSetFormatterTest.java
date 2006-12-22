@@ -6,10 +6,10 @@ import java.io.IOException;
 import junit.framework.TestCase;
 
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
+import org.apache.maven.plugin.assembly.model.FileSet;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
-import org.apache.maven.plugins.assembly.model.FileSet;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.easymock.MockControl;

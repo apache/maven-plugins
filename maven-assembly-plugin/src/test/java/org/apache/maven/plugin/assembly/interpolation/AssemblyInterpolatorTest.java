@@ -1,8 +1,8 @@
 package org.apache.maven.plugin.assembly.interpolation;
 
 import org.apache.maven.model.Model;
-import org.apache.maven.plugins.assembly.model.Assembly;
-import org.apache.maven.plugins.assembly.model.DependencySet;
+import org.apache.maven.plugin.assembly.model.Assembly;
+import org.apache.maven.plugin.assembly.model.DependencySet;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;

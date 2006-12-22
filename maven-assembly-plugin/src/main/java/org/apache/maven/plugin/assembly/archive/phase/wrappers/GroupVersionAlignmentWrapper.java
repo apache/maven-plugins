@@ -1,6 +1,6 @@
 package org.apache.maven.plugin.assembly.archive.phase.wrappers;
 
-import org.apache.maven.plugins.assembly.model.GroupVersionAlignment;
+import org.apache.maven.plugin.assembly.model.GroupVersionAlignment;
 
 import java.util.List;
 
