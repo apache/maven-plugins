@@ -4,7 +4,7 @@ import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.task.AddFileSetsTask;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
-import org.apache.maven.plugins.assembly.model.Assembly;
+import org.apache.maven.plugin.assembly.model.Assembly;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 

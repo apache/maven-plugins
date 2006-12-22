@@ -7,10 +7,10 @@ import org.apache.maven.plugin.assembly.archive.phase.wrappers.RepoBuilderConfig
 import org.apache.maven.plugin.assembly.archive.phase.wrappers.RepoInfoWrapper;
 import org.apache.maven.plugin.assembly.archive.task.AddDirectoryTask;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
+import org.apache.maven.plugin.assembly.model.Assembly;
+import org.apache.maven.plugin.assembly.model.GroupVersionAlignment;
+import org.apache.maven.plugin.assembly.model.Repository;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
-import org.apache.maven.plugins.assembly.model.Assembly;
-import org.apache.maven.plugins.assembly.model.GroupVersionAlignment;
-import org.apache.maven.plugins.assembly.model.Repository;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.repository.RepositoryAssembler;
 import org.apache.maven.shared.repository.RepositoryAssemblyException;
