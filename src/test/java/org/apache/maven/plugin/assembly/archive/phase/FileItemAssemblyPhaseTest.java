@@ -145,6 +145,213 @@ public class FileItemAssemblyPhaseTest
         mm.verifyAll();
     }
 
+    public void testExecute_WithOutputDirectory()
+        throws Exception
+    {
+        MockManager mm = new MockManager();
+
+        MockAndControlForConfigSource macCS = new MockAndControlForConfigSource( mm );
+
+        File basedir = fileManager.createTempDir();
+
+        File readmeFile = fileManager.createFile( basedir, "README.txt", "This is a test file for README.txt." );
+        File licenseFile = fileManager.createFile( basedir, "LICENSE.txt", "This is a test file for LICENSE.txt." );
+        File configFile = fileManager.createFile( basedir, "config/config.txt", "This is a test file for config/config.txt" );
+
+        macCS.expectGetBasedir( basedir );
+
+        File tempRoot = fileManager.createTempDir();
+
+        macCS.expectGetTemporaryRootDirectory( tempRoot );
+
+        macCS.expectGetProject( new MavenProject( new Model() ) );
+
+        macCS.expectGetFinalName( "final-name" );
+
+        MockAndControlForLogger macLogger = new MockAndControlForLogger( mm );
+
+        MockAndControlForArchiver macArchiver = new MockAndControlForArchiver( mm );
+
+        Assembly assembly = new Assembly();
+        assembly.setId( "test" );
+        assembly.setIncludeBaseDirectory( true );
+
+        FileItem readmeFileItem = new FileItem();
+        readmeFileItem.setSource( "README.txt" );
+        readmeFileItem.setOutputDirectory( "" );
+        readmeFileItem.setFiltered( false );
+        readmeFileItem.setLineEnding( "keep" );
+        readmeFileItem.setFileMode( "777" );
+
+        FileItem licenseFileItem = new FileItem();
+        licenseFileItem.setSource( "LICENSE.txt" );
+        licenseFileItem.setOutputDirectory( "/" );
+        licenseFileItem.setFiltered( false );
+        licenseFileItem.setLineEnding( "keep" );
+        licenseFileItem.setFileMode( "777" );
+
+        FileItem configFileItem = new FileItem();
+        configFileItem.setSource( "config/config.txt" );
+        configFileItem.setOutputDirectory( "config" );
+        configFileItem.setFiltered( false );
+        configFileItem.setLineEnding( "keep" );
+        configFileItem.setFileMode( "777" );
+
+        macArchiver.expectAddFile( readmeFile, "README.txt", Integer.parseInt( "777", 8 ) );
+        macArchiver.expectAddFile( licenseFile, "LICENSE.txt", Integer.parseInt( "777", 8 ) );
+        macArchiver.expectAddFile( configFile, "config/config.txt", Integer.parseInt( "777", 8 ) );
+
+        assembly.addFile( readmeFileItem );
+        assembly.addFile( licenseFileItem );
+        assembly.addFile( configFileItem );
+
+        mm.replayAll();
+
+        createPhase( macLogger.logger ).execute( assembly, macArchiver.archiver, macCS.configSource );
+
+        mm.verifyAll();
+    }
+
+    public void testExecute_WithOutputDirectoryAndDestName()
+        throws Exception
+    {
+        MockManager mm = new MockManager();
+
+        MockAndControlForConfigSource macCS = new MockAndControlForConfigSource( mm );
+
+        File basedir = fileManager.createTempDir();
+
+        File readmeFile = fileManager.createFile( basedir, "README.txt", "This is a test file for README.txt." );
+        File licenseFile = fileManager.createFile( basedir, "LICENSE.txt", "This is a test file for LICENSE.txt." );
+        File configFile = fileManager.createFile( basedir, "config/config.txt",
+                                                  "This is a test file for config/config.txt" );
+
+        macCS.expectGetBasedir( basedir );
+
+        File tempRoot = fileManager.createTempDir();
+
+        macCS.expectGetTemporaryRootDirectory( tempRoot );
+
+        macCS.expectGetProject( new MavenProject( new Model() ) );
+
+        macCS.expectGetFinalName( "final-name" );
+
+        MockAndControlForLogger macLogger = new MockAndControlForLogger( mm );
+
+        MockAndControlForArchiver macArchiver = new MockAndControlForArchiver( mm );
+
+        Assembly assembly = new Assembly();
+        assembly.setId( "test" );
+        assembly.setIncludeBaseDirectory( true );
+
+        FileItem readmeFileItem = new FileItem();
+        readmeFileItem.setSource( "README.txt" );
+        readmeFileItem.setOutputDirectory( "" );
+        readmeFileItem.setDestName( "README_renamed.txt" );
+        readmeFileItem.setFiltered( false );
+        readmeFileItem.setLineEnding( "keep" );
+        readmeFileItem.setFileMode( "777" );
+
+        FileItem licenseFileItem = new FileItem();
+        licenseFileItem.setSource( "LICENSE.txt" );
+        licenseFileItem.setOutputDirectory( "/" );
+        licenseFileItem.setDestName( "LICENSE_renamed.txt" );
+        licenseFileItem.setFiltered( false );
+        licenseFileItem.setLineEnding( "keep" );
+        licenseFileItem.setFileMode( "777" );
+
+        FileItem configFileItem = new FileItem();
+        configFileItem.setSource( "config/config.txt" );
+        configFileItem.setDestName( "config_renamed.txt" );
+        configFileItem.setOutputDirectory( "config" );
+        configFileItem.setFiltered( false );
+        configFileItem.setLineEnding( "keep" );
+        configFileItem.setFileMode( "777" );
+
+        macArchiver.expectAddFile( readmeFile, "README_renamed.txt", Integer.parseInt( "777", 8 ) );
+        macArchiver.expectAddFile( licenseFile, "LICENSE_renamed.txt", Integer.parseInt( "777", 8 ) );
+        macArchiver.expectAddFile( configFile, "config/config_renamed.txt", Integer.parseInt( "777", 8 ) );
+
+        assembly.addFile( readmeFileItem );
+        assembly.addFile( licenseFileItem );
+        assembly.addFile( configFileItem );
+
+        mm.replayAll();
+
+        createPhase( macLogger.logger ).execute( assembly, macArchiver.archiver, macCS.configSource );
+
+        mm.verifyAll();
+    }
+
+    public void testExecute_WithOutputDirectoryAndDestNameAndIncludeBaseDirectoryFalse()
+        throws Exception
+    {
+        MockManager mm = new MockManager();
+
+        MockAndControlForConfigSource macCS = new MockAndControlForConfigSource( mm );
+
+        File basedir = fileManager.createTempDir();
+
+        File readmeFile = fileManager.createFile( basedir, "README.txt", "This is a test file for README.txt." );
+        File licenseFile = fileManager.createFile( basedir, "LICENSE.txt", "This is a test file for LICENSE.txt." );
+        File configFile = fileManager.createFile( basedir, "config/config.txt",
+                                                  "This is a test file for config/config.txt" );
+
+        macCS.expectGetBasedir( basedir );
+
+        File tempRoot = fileManager.createTempDir();
+
+        macCS.expectGetTemporaryRootDirectory( tempRoot );
+
+        macCS.expectGetProject( new MavenProject( new Model() ) );
+
+        macCS.expectGetFinalName( "final-name" );
+
+        MockAndControlForLogger macLogger = new MockAndControlForLogger( mm );
+
+        MockAndControlForArchiver macArchiver = new MockAndControlForArchiver( mm );
+
+        Assembly assembly = new Assembly();
+        assembly.setId( "test" );
+        assembly.setIncludeBaseDirectory( false );
+
+        FileItem readmeFileItem = new FileItem();
+        readmeFileItem.setSource( "README.txt" );
+        readmeFileItem.setDestName( "README_renamed.txt" );
+        readmeFileItem.setFiltered( false );
+        readmeFileItem.setLineEnding( "keep" );
+        readmeFileItem.setFileMode( "777" );
+
+        FileItem licenseFileItem = new FileItem();
+        licenseFileItem.setSource( "LICENSE.txt" );
+        licenseFileItem.setDestName( "LICENSE_renamed.txt" );
+        licenseFileItem.setFiltered( false );
+        licenseFileItem.setLineEnding( "keep" );
+        licenseFileItem.setFileMode( "777" );
+
+        FileItem configFileItem = new FileItem();
+        configFileItem.setSource( "config/config.txt" );
+        configFileItem.setDestName( "config_renamed.txt" );
+        configFileItem.setOutputDirectory( "config" );
+        configFileItem.setFiltered( false );
+        configFileItem.setLineEnding( "keep" );
+        configFileItem.setFileMode( "777" );
+
+        macArchiver.expectAddFile( readmeFile, "README_renamed.txt", Integer.parseInt( "777", 8 ) );
+        macArchiver.expectAddFile( licenseFile, "LICENSE_renamed.txt", Integer.parseInt( "777", 8 ) );
+        macArchiver.expectAddFile( configFile, "config/config_renamed.txt", Integer.parseInt( "777", 8 ) );
+
+        assembly.addFile( readmeFileItem );
+        assembly.addFile( licenseFileItem );
+        assembly.addFile( configFileItem );
+
+        mm.replayAll();
+
+        createPhase( macLogger.logger ).execute( assembly, macArchiver.archiver, macCS.configSource );
+
+        mm.verifyAll();
+    }
+
     private FileItemAssemblyPhase createPhase( Logger logger )
     {
         FileItemAssemblyPhase phase = new FileItemAssemblyPhase();
