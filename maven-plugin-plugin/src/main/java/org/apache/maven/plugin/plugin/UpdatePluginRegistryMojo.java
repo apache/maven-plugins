@@ -1,19 +1,22 @@
 package org.apache.maven.plugin.plugin;
 
 /*
- * Copyright 2001-2006 The Apache Software Foundation.
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
 import org.apache.maven.artifact.ArtifactUtils;
@@ -36,7 +39,7 @@ import java.util.Date;
 
 /**
  * Update the user plugin registry (if it's in use) to reflect the version we're installing.
- * 
+ *
  * @goal updateRegistry
  * @phase install
  */
@@ -82,7 +85,7 @@ public class UpdatePluginRegistryMojo
     private String version;
 
     /**
-     * Plexus component for retrieving the plugin registry info. 
+     * Plexus component for retrieving the plugin registry info.
      *
      * @component role="org.apache.maven.plugin.registry.MavenPluginRegistryBuilder"
      */
@@ -97,7 +100,8 @@ public class UpdatePluginRegistryMojo
         }
     }
 
-    private void updatePluginVersionInRegistry( String groupId, String artifactId, String version ) throws MojoExecutionException
+    private void updatePluginVersionInRegistry( String groupId, String artifactId, String version )
+        throws MojoExecutionException
     {
         PluginRegistry pluginRegistry;
         try
@@ -122,16 +126,15 @@ public class UpdatePluginRegistryMojo
             if ( PluginRegistry.GLOBAL_LEVEL.equals( plugin.getSourceLevel() ) )
             {
                 // do nothing. We don't rewrite the globals, under any circumstances.
-                getLog().warn(
-                               "Cannot update registered version for plugin {" + groupId + ":" + artifactId
-                                   + "}; it is specified in the global registry." );
+                getLog().warn( "Cannot update registered version for plugin {" + groupId + ":" + artifactId +
+                    "}; it is specified in the global registry." );
             }
             else
             {
                 plugin.setUseVersion( version );
 
-                SimpleDateFormat format = new SimpleDateFormat(
-                                                                org.apache.maven.plugin.registry.Plugin.LAST_CHECKED_DATE_FORMAT );
+                SimpleDateFormat format =
+                    new SimpleDateFormat( org.apache.maven.plugin.registry.Plugin.LAST_CHECKED_DATE_FORMAT );
 
                 plugin.setLastChecked( format.format( new Date() ) );
             }
@@ -174,9 +177,8 @@ public class UpdatePluginRegistryMojo
             }
             catch ( IOException e )
             {
-                getLog().warn(
-                               "Cannot rewrite user-level plugin-registry.xml with new plugin version of plugin: \'"
-                                   + groupId + ":" + artifactId + "\'.", e );
+                getLog().warn( "Cannot rewrite user-level plugin-registry.xml with new plugin version of plugin: \'" +
+                    groupId + ":" + artifactId + "\'.", e );
             }
             finally
             {
