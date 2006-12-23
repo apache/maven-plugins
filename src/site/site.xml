@@ -19,19 +19,23 @@
   ~ under the License.
   -->
 
-<project>
+<project name="Maven Plugin Plugin">
   <body>
+
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
       <item name="Goals" href="plugin-info.html"/>
       <item name="Usage" href="usage.html"/>
       <item name="FAQ" href="faq.html"/>
     </menu>
-    <menu name="Developers">
-      <item name="Multiple Language Support: Redesign Notes" href="multiple-language-support.html"/>
-    </menu>
+
     <menu name="Examples">
       <item name="Configuring Generation of Plugin Descriptor" href="/examples/generate-descriptor.html"/>
     </menu>
+    
+    <menu name="Developers">
+      <item name="Multiple Language Support: Redesign Notes" href="multiple-language-support.html"/>
+    </menu>
   </body>
 </project>
+
