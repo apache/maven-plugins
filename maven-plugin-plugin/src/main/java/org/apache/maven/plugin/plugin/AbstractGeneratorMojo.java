@@ -31,6 +31,7 @@ import org.apache.maven.tools.plugin.util.PluginUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
 
 /**
  * @author <a href="mailto:jason@maven.org">Jason van Zyl</a>
@@ -62,6 +63,31 @@ public abstract class AbstractGeneratorMojo
      */
     protected String goalPrefix;
 
+    /**
+     * The names of extractors to use.
+     * <p/>
+     * If not set, all extractors will be used. If set to an empty extractor name, no extractors
+     * will be used.
+     * <p/>
+     * Example:
+     * <p/>
+     * <pre>
+     *  &lt;!-- Use all extractors --&gt;
+     *  &lt;extractors/&gt;
+     *  &lt;!-- Use no extractors --&gt;
+     *  &lt;extractors&gt;
+     *      &lt;extractor/&gt;
+     *  &lt;/extractors&gt;
+     *  &lt;!-- Use only bsh extractor --&gt;
+     *  &lt;extractors&gt;
+     *      &lt;extractor&gt;bsh&lt;/extractor&gt;
+     *  &lt;/extractors&gt;
+     * </pre>
+     *
+     * @parameter
+     */
+    protected Set/* <String> */extractors;
+
     protected abstract File getOutputDirectory();
 
     protected abstract Generator createGenerator();
@@ -84,6 +110,8 @@ public abstract class AbstractGeneratorMojo
             getLog().warn(
                 "Goal prefix is: " + goalPrefix + "; Maven currently expects it to be " + defaultGoalPrefix );
         }
+
+        mojoScanner.setActiveExtractors( extractors );
 
         // TODO: could use this more, eg in the writing of the plugin descriptor!
         PluginDescriptor pluginDescriptor = new PluginDescriptor();
