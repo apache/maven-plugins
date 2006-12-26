@@ -16,15 +16,15 @@
  * specific language governing permissions and limitations
  * under the License. 
  *
+
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd' xmlns='http://maven.apache.org/POM/4.0.0'>
 
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>maven-plugins</artifactId>
 		<groupId>org.apache.maven.plugins</groupId>
-		<version>5</version>
+		<version>7</version>
 	</parent>
 	<groupId>org.apache.maven.plugins</groupId>
 	<artifactId>maven-dependency-plugin</artifactId>
@@ -39,7 +39,8 @@
 		<url>http://jira.codehaus.org/browse/MDEP</url>
 	</issueManagement>
 	<mailingLists>
-		<!-- duplication from maven-plugins pom - temporary until they inherit properly -->
+		    <!-- duplication from maven-plugins pom - temporary until they inherit properly 
+    -->
 		<mailingList>
 			<name>Maven User List</name>
 			<subscribe>users-subscribe@maven.apache.org</subscribe>
@@ -65,7 +66,8 @@
 			<post>commits@maven.apache.org</post>
 			<archive>http://mail-archives.apache.org/mod_mbox/maven-dev</archive>
 		</mailingList>
-		<!-- duplication from maven-parent pom - temporary until they inherit properly -->
+		    <!-- duplication from maven-parent pom - temporary until they inherit properly 
+    -->
 		<mailingList>
 			<name>Maven Announcements List</name>
 			<post>announce@maven.apache.org</post>
@@ -143,9 +145,10 @@
 			</plugin>
 		</plugins>
 		<resources>
-			<!-- Include the apache process LICENSE and NOTICE
+			      <!-- Include the apache process LICENSE and NOTICE
            files.
-           -->
+           
+      -->
 			<resource>
 				<targetPath>META-INF</targetPath>
 				<filtering>false</filtering>
@@ -155,12 +158,13 @@
 					<include>NOTICE</include>
 				</includes>
 			</resource>
-			<!-- Include super-pom defined main/resources
+			      <!-- Include super-pom defined main/resources
            Removing this section will break the build.
            Since we have defined a new build/resources
            section for the Apache process LICENSE and NOTICE
            files, this original default section is now
-           required. -->
+           required. 
+      -->
 			<resource>
 				<directory>${basedir}/src/main/resources</directory>
 			</resource>
@@ -204,7 +208,7 @@
 			<version>1.0</version>
 		</dependency>
 	</dependencies>
-	<!--reporting>
+	  <!--reporting>
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -212,5 +216,7 @@
         <version>2.0-beta-1</version>
       </plugin>
     </plugins>
-  </reporting-->
+  </reporting
+  -->
 </project>
+
