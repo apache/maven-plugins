@@ -27,7 +27,7 @@ under the License.
   <artifactId>maven-war-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Maven War Plugin</name>
-  <version>2.0.2-SNAPSHOT</version>
+  <version>2.0.2</version>
   <prerequisites>
     <maven>2.0.1</maven>
   </prerequisites>
@@ -69,4 +69,10 @@ under the License.
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <scm>
+    <connection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-war-plugin-2.0.2</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-war-plugin-2.0.2</developerConnection>
+    <url>https://svn.apache.org/repos/asf/maven/plugins/tags/maven-war-plugin-2.0.2</url>
+  </scm>
 </project>
