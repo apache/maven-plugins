@@ -10,7 +10,7 @@
   <groupId>org.apache.maven.plugins</groupId>
   <artifactId>maven-plugins</artifactId>
   <packaging>pom</packaging>
-  <version>6</version>
+  <version>7</version>
   <name>Maven Plugins</name>
   <description>Maven Plugins</description>
   <url>http://maven.apache.org/plugins/</url>
@@ -268,5 +268,94 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <!-- 
+       | When doing a direct release to a production repository use the following command to prepare the release:
+       | 
+       | mvn -PdirectRelease release:prepare
+       |
+       | When doing a direct release to a production repository use the following command to perform the release:       
+       |
+       | mvn release:perform -DuseReleaseProfile=false
+       |
+       | You see here that we want to disable the profile that is buried in the Super POM
+       -->       
+      <id>directRelease</id>
+      <build>
+        <plugins>
+          <!-- We want the sources JAR published with the release -->
+          <plugin>
+            <inherited>true</inherited>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>2.0.2</version>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <!-- We want the JavaDoc JAR published with the release -->
+          <plugin>
+            <inherited>true</inherited>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>2.2</version>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <!-- We want to sign the artifact, the POM, and all attached artifacts -->
+          <plugin>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.0-alpha-1</version>
+            <configuration>
+              <passphrase>${gpg.passphrase}</passphrase>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <!-- We want to package up license resources in the JARs produced -->
+          <plugin>
+            <artifactId>maven-remote-resources-plugin</artifactId>
+            <version>1.0-alpha-1</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>process</goal>
+                </goals>
+                <configuration>
+                  <resourceBundles>
+                    <resourceBundle>org.apache:apache-jar-resource-bundle:1.0</resourceBundle>
+                  </resourceBundles>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <!-- Since we are ignoring the release profile we need to use the deploy plugin with the update release info option -->
+          <plugin>
+            <inherited>true</inherited>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-deploy-plugin</artifactId>
+            <!-- We don't need any staging for this -->
+            <version>2.2.1</version>
+            <configuration>
+              <updateReleaseInfo>true</updateReleaseInfo>
+            </configuration>
+          </plugin>          
+        </plugins>
+      </build>
+    </profile>    
   </profiles>
 </project>
