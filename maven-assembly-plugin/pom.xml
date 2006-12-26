@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-
+<?xml version='1.0'?>
 <!--
   ~ Copyright 2006 The Apache Software Foundation.
   ~
@@ -14,9 +13,9 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
-  -->
-
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  
+-->
+<project xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd' xmlns='http://maven.apache.org/POM/4.0.0'>
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
@@ -50,7 +49,8 @@
     <url>http://jira.codehaus.org/browse/MASSEMBLY</url>
   </issueManagement>
   <mailingLists>
-    <!-- duplication from maven-plugins pom - temporary until they inherit properly -->
+        <!-- duplication from maven-plugins pom - temporary until they inherit properly 
+    -->
     <mailingList>
       <name>Maven User List</name>
       <subscribe>users-subscribe@maven.apache.org</subscribe>
@@ -76,7 +76,8 @@
       <post>commits@maven.apache.org</post>
       <archive>http://mail-archives.apache.org/mod_mbox/maven-dev</archive>
     </mailingList>
-    <!-- duplication from maven-parent pom - temporary until they inherit properly -->
+        <!-- duplication from maven-parent pom - temporary until they inherit properly 
+    -->
     <mailingList>
       <name>Maven Announcements List</name>
       <post>announce@maven.apache.org</post>
@@ -298,10 +299,11 @@
       <artifactId>maven-archiver</artifactId>
       <version>2.2</version>
     </dependency>
-    <!-- FIXME: upgrade to p-u 1.4 when available, to fix
+        <!-- FIXME: upgrade to p-u 1.4 when available, to fix
          workaround in DefaultAssemblyReader for NPE caused
          by DirectoryScanner.scandir(..) and UnixFileSystem's
          implementation of File.list().
+    
     -->
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -361,3 +363,4 @@
     </dependency>
   </dependencies>
 </project>
+
