@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.net.JarURLConnection;
 import java.net.URL;
 import java.util.Collections;
 
@@ -77,7 +78,7 @@ public class ManifestCreationFinalizerTest
         
         archiver.createArchive();
         
-        URL resource = new URL( "jar:file:" + file.getAbsolutePath() + "!/META-INF/MANIFEST.MF" );
+        URL resource = new URL( "jar:file:" + file.getAbsolutePath() + "!/META-INF/MANIFEST.MF" );      
         
         BufferedReader reader = new BufferedReader( new InputStreamReader( resource.openStream() ) );
         
@@ -86,6 +87,9 @@ public class ManifestCreationFinalizerTest
         IOUtil.copy( reader, writer );
         
         assertTrue( writer.toString().indexOf( "Main-Class: Stuff" ) > -1 );
+        
+        // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4823678
+        ((JarURLConnection)resource.openConnection()).getJarFile().close();        
     }
 
     private final class MockAndControlForArchiver
