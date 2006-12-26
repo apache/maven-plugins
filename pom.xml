@@ -22,7 +22,7 @@
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>6</version>
+    <version>7</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.maven.plugins</groupId>
