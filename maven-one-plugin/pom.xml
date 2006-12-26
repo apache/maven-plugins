@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?><project>
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>4-SNAPSHOT</version>
+    <version>7</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>maven-one-plugin</artifactId>
@@ -17,7 +18,8 @@
     <url>http://jira.codehaus.org/browse/MONE</url>
   </issueManagement>
   <mailingLists>
-    <!-- duplication from maven-plugins pom - temporary until they inherit properly -->
+        <!-- duplication from maven-plugins pom - temporary until they inherit properly 
+    -->
     <mailingList>
       <name>Maven User List</name>
       <subscribe>users-subscribe@maven.apache.org</subscribe>
@@ -43,7 +45,8 @@
       <post>commits@maven.apache.org</post>
       <archive>http://mail-archives.apache.org/mod_mbox/maven-dev</archive>
     </mailingList>
-    <!-- duplication from maven-parent pom - temporary until they inherit properly -->
+        <!-- duplication from maven-parent pom - temporary until they inherit properly 
+    -->
     <mailingList>
       <name>Maven Announcements List</name>
       <post>announce@maven.apache.org</post>
@@ -120,3 +123,4 @@
     </plugins>
   </reporting>
 </project>
+
