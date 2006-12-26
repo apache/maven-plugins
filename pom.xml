@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version='1.0' encoding='UTF-8'?>
 <!--
   ~ Copyright 2006 The Apache Software Foundation.
   ~
@@ -14,11 +13,9 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
--->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+-->
+<project xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd' xmlns='http://maven.apache.org/POM/4.0.0'>
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
@@ -52,7 +49,8 @@
       <artifactId>maven-plugin-api</artifactId>
       <version>2.0.2</version>
     </dependency>
-    <!-- For Maven 2.0.4 -->
+        <!-- For Maven 2.0.4 
+    -->
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
@@ -167,7 +165,8 @@
               </pomIncludes>
               <postBuildHookScript>verify.bsh</postBuildHookScript>
               <goals>
-                  <!-- Install to the target local-repo -->
+                                  <!-- Install to the target local-repo 
+                -->
                 <goal>install ant:ant</goal>
               </goals>
               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
@@ -182,7 +181,8 @@
               </execution>
             </executions>
           </plugin>
-          <!--  Verify the results by calling Ant -->
+                    <!--  Verify the results by calling Ant 
+          -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-antrun-plugin</artifactId>
@@ -192,20 +192,14 @@
                 <phase>post-integration-test</phase>
                 <configuration>
                   <tasks>
-                    <ant antfile="${basedir}/src/it/ear-it/build.xml"
-                         dir="${basedir}/src/it/ear-it" target="clean"/>
-                    <ant antfile="${basedir}/src/it/ear-it/build.xml"
-                         dir="${basedir}/src/it/ear-it" target="package"/>
+                    <ant dir='${basedir}/src/it/ear-it' antfile='${basedir}/src/it/ear-it/build.xml' target='clean'/>
+                    <ant dir='${basedir}/src/it/ear-it' antfile='${basedir}/src/it/ear-it/build.xml' target='package'/>
 
-                    <ant antfile="${basedir}/src/it/webapp-it/build.xml"
-                         dir="${basedir}/src/it/webapp-it" target="clean"/>
-                    <ant antfile="${basedir}/src/it/webapp-it/build.xml"
-                         dir="${basedir}/src/it/webapp-it" target="package"/>
+                    <ant dir='${basedir}/src/it/webapp-it' antfile='${basedir}/src/it/webapp-it/build.xml' target='clean'/>
+                    <ant dir='${basedir}/src/it/webapp-it' antfile='${basedir}/src/it/webapp-it/build.xml' target='package'/>
 
-                    <ant antfile="${basedir}/src/it/plugin-it/build.xml"
-                         dir="${basedir}/src/it/plugin-it" target="clean"/>
-                    <ant antfile="${basedir}/src/it/plugin-it/build.xml"
-                         dir="${basedir}/src/it/plugin-it" target="package"/>
+                    <ant dir='${basedir}/src/it/plugin-it' antfile='${basedir}/src/it/plugin-it/build.xml' target='clean'/>
+                    <ant dir='${basedir}/src/it/plugin-it' antfile='${basedir}/src/it/plugin-it/build.xml' target='package'/>
                   </tasks>
                 </configuration>
                 <goals>
@@ -219,3 +213,4 @@
     </profile>
   </profiles>
 </project>
+
