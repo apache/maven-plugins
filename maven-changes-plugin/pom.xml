@@ -12,13 +12,13 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
-  -->
-
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  
+-->
+<project xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd' xmlns='http://maven.apache.org/POM/4.0.0'>
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>4-SNAPSHOT</version>
+    <version>7</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>maven-changes-plugin</artifactId>
@@ -33,7 +33,8 @@
     <url>http://jira.codehaus.org/browse/MCHANGES</url>
   </issueManagement>
   <mailingLists>
-    <!-- duplication from maven-plugins pom - temporary until they inherit properly -->
+        <!-- duplication from maven-plugins pom - temporary until they inherit properly 
+    -->
     <mailingList>
       <name>Maven User List</name>
       <subscribe>users-subscribe@maven.apache.org</subscribe>
@@ -59,7 +60,8 @@
       <post>commits@maven.apache.org</post>
       <archive>http://mail-archives.apache.org/mod_mbox/maven-commits/</archive>
     </mailingList>
-    <!-- duplication from maven-parent pom - temporary until they inherit properly -->
+        <!-- duplication from maven-parent pom - temporary until they inherit properly 
+    -->
     <mailingList>
       <name>Maven Announcements List</name>
       <post>announce@maven.apache.org</post>
@@ -121,8 +123,9 @@
       <version>1.0-alpha-2</version>
     </dependency>
     <dependency>
-      <!--  forces use of javamail 1.4 since it's the only version available in the repo. We should remove this as soon
-        as the dependency in plexus-mail-sender-javamail will be update  -->
+            <!--  forces use of javamail 1.4 since it's the only version available in the repo. We should remove this as soon
+        as the dependency in plexus-mail-sender-javamail will be update  
+      -->
       <groupId>javax.mail</groupId>
       <artifactId>mail</artifactId>
       <version>1.4</version>
@@ -174,3 +177,4 @@
     </plugins>
   </reporting>
 </project>
+
