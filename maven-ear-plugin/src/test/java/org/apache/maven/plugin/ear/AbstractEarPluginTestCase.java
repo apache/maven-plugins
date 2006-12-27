@@ -21,6 +21,7 @@ package org.apache.maven.plugin.ear;
 
 import junit.framework.TestCase;
 import org.apache.maven.it.Verifier;
+import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.util.ResourceExtractor;
 import org.custommonkey.xmlunit.XMLAssert;
 
@@ -76,7 +77,20 @@ public abstract class AbstractEarPluginTestCase
         // Let's add alternate settings.xml setting so that the latest dependencies are used
         verifier.getCliOptions().add( "-s " + settingsFile.getAbsolutePath() );
         verifier.localRepo = localRepositoryDir.getAbsolutePath();
-        verifier.executeGoal( "package" );
+
+        // On linux and macOSX, an exception is thrown if a build failure occurs underneath
+        try
+        {
+            verifier.executeGoal( "package" );
+        }
+        catch ( VerificationException e )
+        {
+            //@TODO needs to be handled nicely in the verifier
+            if (expectNoError || e.getMessage().indexOf( "Exit code was non-zero") == -1) {
+                throw e;
+            }
+        }
+
         // If no error is expected make sure that error logs are free
         if ( expectNoError )
         {
