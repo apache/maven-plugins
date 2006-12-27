@@ -17,6 +17,7 @@ import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.jar.Manifest;
 import org.codehaus.plexus.archiver.jar.ManifestException;
+import org.codehaus.plexus.util.IOUtil;
 
 public class ManifestCreationFinalizer
     extends AbstractArchiveFinalizer
@@ -50,17 +51,23 @@ public class ManifestCreationFinalizer
 
                 if ( manifestFile != null )
                 {
+                    FileReader manifestFileReader = null;
                     try
                     {
-                        manifest = new Manifest( new FileReader( manifestFile ) );
+                        manifestFileReader = new FileReader( manifestFile );
+                        manifest = new Manifest( manifestFileReader );
                     }
                     catch ( FileNotFoundException e )
                     {
-                        throw new ArchiverException( "Manifest not found: " + e.getMessage() );
+                        throw new ArchiverException( "Manifest not found: " + e.getMessage(), e );
                     }
                     catch ( IOException e )
                     {
                         throw new ArchiverException( "Error processing manifest: " + e.getMessage(), e );
+                    }
+                    finally
+                    {
+                        IOUtil.close( manifestFileReader );
                     }
                 }
                 else
