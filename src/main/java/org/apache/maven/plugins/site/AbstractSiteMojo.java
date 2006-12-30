@@ -543,7 +543,7 @@ public abstract class AbstractSiteMojo
         {
             try
             {
-                toUrl = new File( from ).toURL();
+                fromUrl = new File( from ).toURL();
             }
             catch ( MalformedURLException e1 )
             {
