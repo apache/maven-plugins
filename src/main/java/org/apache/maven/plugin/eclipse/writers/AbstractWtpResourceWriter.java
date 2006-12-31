@@ -283,9 +283,17 @@ public abstract class AbstractWtpResourceWriter
             IdeUtils.getCompilerSourceVersion( config.getProject() );
         }
 
-        if ( "1.5".equals( version ) || "5".equals( version ) ) //$NON-NLS-1$ //$NON-NLS-2$
+        if ( "1.5".equals( version ) ) //$NON-NLS-1$ //$NON-NLS-2$
         {
             version = "5.0";// see MECLIPSE-47 eclipse only accept 5.0 as a valid version //$NON-NLS-1$
+        }
+        else if ( "1.6".equals( version ) ) //$NON-NLS-1$ //$NON-NLS-2$
+        {
+            version = "6.0";
+        }
+        else if ( version != null && version.length() == 1 )
+        {
+            version = version + ".0";// 5->5.0  6->6.0  7->7.0 //$NON-NLS-1$
         }
 
         return version == null ? "1.4" : version; //$NON-NLS-1$
