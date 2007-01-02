@@ -63,4 +63,52 @@ public abstract class AbstractFromDependenciesMojo
      */
     protected boolean useSubDirectoryPerArtifact;
 
+    /**
+     * @return Returns the outputDirectory.
+     */
+    public File getOutputDirectory()
+    {
+        return this.outputDirectory;
+    }
+
+    /**
+     * @param theOutputDirectory The outputDirectory to set.
+     */
+    public void setOutputDirectory( File theOutputDirectory )
+    {
+        this.outputDirectory = theOutputDirectory;
+    }
+
+    /**
+     * @return Returns the useSubDirectoryPerArtifact.
+     */
+    public boolean isUseSubDirectoryPerArtifact()
+    {
+        return this.useSubDirectoryPerArtifact;
+    }
+
+    /**
+     * @param theUseSubDirectoryPerArtifact The useSubDirectoryPerArtifact to set.
+     */
+    public void setUseSubDirectoryPerArtifact( boolean theUseSubDirectoryPerArtifact )
+    {
+        this.useSubDirectoryPerArtifact = theUseSubDirectoryPerArtifact;
+    }
+
+    /**
+     * @return Returns the useSubDirectoryPerType.
+     */
+    public boolean isUseSubDirectoryPerType()
+    {
+        return this.useSubDirectoryPerType;
+    }
+
+    /**
+     * @param theUseSubDirectoryPerType The useSubDirectoryPerType to set.
+     */
+    public void setUseSubDirectoryPerType( boolean theUseSubDirectoryPerType )
+    {
+        this.useSubDirectoryPerType = theUseSubDirectoryPerType;
+    }
+
 }

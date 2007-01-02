@@ -655,7 +655,7 @@ public class TestCopyDependenciesMojo
     public void testGetDependencies()
         throws MojoExecutionException
     {
-        assertEquals( mojo.getDependencies( true ).toString(), mojo.getDependencySets( true ).getResolvedDependencies()
+        assertEquals( mojo.getResolvedDependencies( true ).toString(), mojo.getDependencySets( true ).getResolvedDependencies()
             .toString() );
     }
 }

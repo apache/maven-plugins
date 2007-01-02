@@ -1,4 +1,5 @@
 package org.apache.maven.plugin.dependency.utils.markers;
+
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -271,19 +272,33 @@ public class TestSourcesMarkerFileHandler
         handler.setResolved( false );
         assertFalse( handler.isResolved() );
     }
-    
-    public void testNullParent() throws MojoExecutionException
+
+    public void testNullParent()
+        throws MojoExecutionException
     {
-        DefaultFileMarkerHandler handler = new SourcesFileMarkerHandler(null,null,false);
+        // the parent isn't set so this will create the marker in the local
+        // folder. We must clear the
+        // marker to avoid leaving test droppings in root.
+        DefaultFileMarkerHandler handler = new SourcesFileMarkerHandler( null, null, false );
         handler.setArtifact( (Artifact) artifacts.get( 0 ) );
         handler.setMarker();
-        assertTrue(handler.isMarkerSet());
+        assertTrue( handler.isMarkerSet() );
+        handler.clearMarker();
+        assertFalse( handler.isMarkerSet() );
     }
-    public void testNullParentResolved() throws MojoExecutionException
+
+    public void testNullParentResolved()
+        throws MojoExecutionException
     {
-        DefaultFileMarkerHandler handler = new SourcesFileMarkerHandler(null,null,true);
+        // the parent isn't set so this will create the marker in the local
+        // folder. We must clear the
+        // marker to avoid leaving test droppings in root.
+        DefaultFileMarkerHandler handler = new SourcesFileMarkerHandler( null, null, true );
         handler.setArtifact( (Artifact) artifacts.get( 0 ) );
         handler.setMarker();
-        assertTrue(handler.isMarkerSet());
+        assertTrue( handler.isMarkerSet() );
+        handler.clearMarker();
+        assertFalse( handler.isMarkerSet() );
+
     }
 }

@@ -90,5 +90,17 @@ public class DependencyTestUtils
 
         field.set( object, value );
     }
+    
+    public static void setFileModifiedTime(File file) throws InterruptedException
+    {
+        Thread.sleep( 100 );
+        // round down to the last second
+        long time = System.currentTimeMillis();
+        time = time - ( time % 1000 );
+        file.setLastModified( time );
+        // wait at least a second for filesystems that only record to the
+        // nearest second.
+        Thread.sleep( 1000 );
+    }
 
 }
