@@ -28,6 +28,7 @@ import org.apache.maven.artifact.factory.DefaultArtifactFactory;
 import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
 import org.apache.maven.artifact.handler.manager.DefaultArtifactHandlerManager;
 import org.apache.maven.plugin.dependency.utils.SilentLog;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.shared.model.fileset.FileSet;
 import org.apache.maven.shared.model.fileset.util.FileSetManager;
 import org.codehaus.plexus.util.ReflectionUtils;
@@ -49,7 +50,8 @@ public class DependencyTestUtils
     {
         if ( dir != null )
         {
-            FileSetManager fileSetManager = new FileSetManager( new SilentLog(), false );
+            Log log = new SilentLog();
+            FileSetManager fileSetManager = new FileSetManager( log, false );
 
             FileSet fs = new FileSet();
             fs.setDirectory( dir.getPath() );
