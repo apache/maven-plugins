@@ -35,7 +35,7 @@ import org.apache.maven.plugin.dependency.utils.filters.DestFileFilter;
  * location.
  * 
  * @goal copy-dependencies
- * @requiresDependencyResolution compile
+ * @requiresDependencyResolution test
  * @phase process-sources
  * @author brianf
  * @since 1.0

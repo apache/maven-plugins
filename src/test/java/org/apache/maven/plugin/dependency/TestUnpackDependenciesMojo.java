@@ -89,7 +89,7 @@ public class TestUnpackDependenciesMojo
                                                                   mojo.useSubDirectoryPerArtifact,
                                                                   mojo.outputDirectory, artifact );
 
-        File destFile = new File( folder, stubFactory.getUnpackableFileName( artifact ) );
+        File destFile = new File( folder, ArtifactStubFactory.getUnpackableFileName( artifact ) );
 
         assertEquals( val, destFile.exists() );
         assertMarkerFile( val, artifact );
