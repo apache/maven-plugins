@@ -176,7 +176,7 @@ public abstract class AbstractDependencyFilterMojo
      * @throws MojoExecutionException
      *             if an error occured.
      */
-    protected Set getDependencies( boolean stopOnFailure )
+    protected Set getResolvedDependencies( boolean stopOnFailure )
         throws MojoExecutionException
     {
         DependencyStatusSets status = getDependencySets( stopOnFailure );
@@ -268,6 +268,22 @@ public abstract class AbstractDependencyFilterMojo
         skippedArtifacts.removeAll( unMarkedArtifacts );
 
         return new DependencyStatusSets( unMarkedArtifacts, null, skippedArtifacts );
+    }
+
+    /**
+     * @return Returns the markersDirectory.
+     */
+    public File getMarkersDirectory()
+    {
+        return this.markersDirectory;
+    }
+
+    /**
+     * @param theMarkersDirectory The markersDirectory to set.
+     */
+    public void setMarkersDirectory( File theMarkersDirectory )
+    {
+        this.markersDirectory = theMarkersDirectory;
     }
 
     // TODO: Set marker files.

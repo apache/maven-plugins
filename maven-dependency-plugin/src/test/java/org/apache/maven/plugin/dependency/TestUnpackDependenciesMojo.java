@@ -1,4 +1,5 @@
 package org.apache.maven.plugin.dependency;
+
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -19,6 +20,7 @@ package org.apache.maven.plugin.dependency;
  */
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -26,6 +28,7 @@ import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.dependency.testUtils.ArtifactStubFactory;
 import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.testUtils.stubs.StubArtifactRepository;
 import org.apache.maven.plugin.dependency.testUtils.stubs.StubArtifactResolver;
@@ -37,6 +40,10 @@ import org.codehaus.plexus.util.StringUtils;
 public class TestUnpackDependenciesMojo
     extends AbstractDependencyMojoTestCase
 {
+
+    private final String UNPACKABLE_FILE = "test.txt";
+
+    private final String UNPACKABLE_FILE_PATH = "target/test-classes/unit/unpack-dependencies-test/" + UNPACKABLE_FILE;
 
     UnpackDependenciesMojo mojo;
 
@@ -55,8 +62,7 @@ public class TestUnpackDependenciesMojo
         stubFactory.setUnpackableFile( mojo.getArchiverManager() );
         // i'm using one file repeatedly to archive so I can test the name
         // programmatically.
-        stubFactory.setSrcFile( new File( getBasedir() + File.separatorChar
-            + "target/test-classes/unit/unpack-dependencies-test/test.txt" ) );
+        stubFactory.setSrcFile( new File( getBasedir() + File.separatorChar + UNPACKABLE_FILE_PATH ) );
 
         assertNotNull( mojo );
         assertNotNull( mojo.getProject() );
@@ -380,115 +386,176 @@ public class TestUnpackDependenciesMojo
         {
         }
     }
-    /*
-     * public void testDontOverWriteRelease() throws MojoExecutionException,
-     * InterruptedException, IOException {
-     * 
-     * Set artifacts = new HashSet(); Artifact release =
-     * stubFactory.getReleaseArtifact(); release.getFile().setLastModified(
-     * System.currentTimeMillis() - 2000 );
-     * 
-     * artifacts.add( release );
-     * 
-     * mojo.project.setArtifacts( artifacts );
-     * mojo.project.setDependencyArtifacts( artifacts );
-     * 
-     * mojo.overWriteIfNewer = false;
-     * 
-     * mojo.execute();
-     * 
-     * File copiedFile = new File( mojo.outputDirectory,
-     * DependencyUtil.getFormattedFileName( release, false ) );
-     * 
-     * Thread.sleep( 100 ); long time = System.currentTimeMillis();
-     * copiedFile.setLastModified( time ); Thread.sleep( 100 );
-     * 
-     * mojo.execute();
-     * 
-     * assertEquals( time, copiedFile.lastModified() ); }
-     * 
-     * public void testOverWriteRelease() throws MojoExecutionException,
-     * InterruptedException, IOException {
-     * 
-     * Set artifacts = new HashSet(); Artifact release =
-     * stubFactory.getReleaseArtifact(); release.getFile().setLastModified(
-     * System.currentTimeMillis() - 2000 );
-     * 
-     * artifacts.add( release );
-     * 
-     * mojo.project.setArtifacts( artifacts );
-     * mojo.project.setDependencyArtifacts( artifacts );
-     * 
-     * mojo.overWriteReleases = true; mojo.overWriteIfNewer = false;
-     * 
-     * mojo.execute();
-     * 
-     * File copiedFile = new File( mojo.outputDirectory,
-     * DependencyUtil.getFormattedFileName( release, false ) );
-     * 
-     * Thread.sleep( 100 ); long time = System.currentTimeMillis();
-     * copiedFile.setLastModified( time ); Thread.sleep( 100 );
-     * 
-     * mojo.execute();
-     * 
-     * assertTrue( time < copiedFile.lastModified() ); }
-     * 
-     * public void testDontOverWriteSnap() throws MojoExecutionException,
-     * InterruptedException, IOException {
-     * 
-     * Set artifacts = new HashSet(); Artifact snap =
-     * stubFactory.getSnapshotArtifact(); snap.getFile().setLastModified(
-     * System.currentTimeMillis() - 2000 );
-     * 
-     * artifacts.add( snap );
-     * 
-     * mojo.project.setArtifacts( artifacts );
-     * mojo.project.setDependencyArtifacts( artifacts );
-     * 
-     * mojo.overWriteReleases = false; mojo.overWriteSnapshots = false;
-     * mojo.overWriteIfNewer = false;
-     * 
-     * mojo.execute();
-     * 
-     * File copiedFile = new File( mojo.outputDirectory,
-     * DependencyUtil.getFormattedFileName( snap, false ) );
-     * 
-     * Thread.sleep( 100 ); long time = System.currentTimeMillis();
-     * copiedFile.setLastModified( time ); Thread.sleep( 100 );
-     * 
-     * mojo.execute();
-     * 
-     * assertEquals( time, copiedFile.lastModified() ); }
-     * 
-     * public void testOverWriteSnap() throws MojoExecutionException,
-     * InterruptedException, IOException {
-     * 
-     * Set artifacts = new HashSet(); Artifact snap =
-     * stubFactory.getSnapshotArtifact(); snap.getFile().setLastModified(
-     * System.currentTimeMillis() - 2000 );
-     * 
-     * artifacts.add( snap );
-     * 
-     * mojo.project.setArtifacts( artifacts );
-     * mojo.project.setDependencyArtifacts( artifacts );
-     * 
-     * mojo.overWriteReleases = false; mojo.overWriteSnapshots = true;
-     * mojo.overWriteIfNewer = false;
-     * 
-     * mojo.execute();
-     * 
-     * File copiedFile = new File( mojo.outputDirectory,
-     * DependencyUtil.getFormattedFileName( snap, false ) );
-     * 
-     * Thread.sleep( 100 ); long time = System.currentTimeMillis();
-     * copiedFile.setLastModified( time ); Thread.sleep( 100 );
-     * 
-     * mojo.execute();
-     * 
-     * assertTrue( time < copiedFile.lastModified() ); }
-     * 
-     * public void testGetDependencies() throws MojoExecutionException {
-     * assertSame( mojo.getDependencies( true ), mojo.getDependencySets( true
-     * ).getResolvedDependencies() ); }
-     */
+
+    public File getUnpackedFile( Artifact artifact )
+    {
+        File destDir = DependencyUtil.getFormattedOutputDirectory( mojo.isUseSubDirectoryPerType(), mojo
+            .isUseSubDirectoryPerArtifact(), mojo.getOutputDirectory(), artifact );
+        File unpacked = new File( destDir, ArtifactStubFactory.getUnpackableFileName( artifact ) );
+        assertTrue( unpacked.exists() );
+        return unpacked;
+    }
+
+    public DefaultFileMarkerHandler getUnpackedMarkerHandler( Artifact artifact )
+    {
+        return new DefaultFileMarkerHandler( artifact, mojo.getMarkersDirectory() );
+    }
+
+    public void testDontOverWriteRelease()
+        throws MojoExecutionException, InterruptedException, IOException
+    {
+
+        Set artifacts = new HashSet();
+        Artifact release = stubFactory.getReleaseArtifact();
+        release.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+
+        artifacts.add( release );
+
+        mojo.project.setArtifacts( artifacts );
+        mojo.project.setDependencyArtifacts( artifacts );
+
+        mojo.overWriteIfNewer = false;
+
+        mojo.execute();
+
+        assertUnpacked( release, false );
+    }
+
+    public void testOverWriteRelease()
+        throws MojoExecutionException, InterruptedException, IOException
+    {
+
+        Set artifacts = new HashSet();
+        Artifact release = stubFactory.getReleaseArtifact();
+        release.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+
+        artifacts.add( release );
+
+        mojo.project.setArtifacts( artifacts );
+        mojo.project.setDependencyArtifacts( artifacts );
+
+        mojo.overWriteReleases = true;
+        mojo.overWriteIfNewer = false;
+
+        mojo.execute();
+
+        assertUnpacked( release, true );
+    }
+
+    public void testDontOverWriteSnap()
+        throws MojoExecutionException, InterruptedException, IOException
+    {
+
+        Set artifacts = new HashSet();
+        Artifact snap = stubFactory.getSnapshotArtifact();
+        snap.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+
+        artifacts.add( snap );
+
+        mojo.project.setArtifacts( artifacts );
+        mojo.project.setDependencyArtifacts( artifacts );
+
+        mojo.overWriteReleases = false;
+        mojo.overWriteSnapshots = false;
+        mojo.overWriteIfNewer = false;
+
+        mojo.execute();
+
+        assertUnpacked( snap, false );
+    }
+
+    public void testOverWriteSnap()
+        throws MojoExecutionException, InterruptedException, IOException
+    {
+
+        Set artifacts = new HashSet();
+        Artifact snap = stubFactory.getSnapshotArtifact();
+        snap.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+
+        artifacts.add( snap );
+
+        mojo.project.setArtifacts( artifacts );
+        mojo.project.setDependencyArtifacts( artifacts );
+
+        mojo.overWriteReleases = false;
+        mojo.overWriteSnapshots = true;
+        mojo.overWriteIfNewer = false;
+
+        mojo.execute();
+
+        assertUnpacked( snap, true );
+
+    }
+
+    public void testOverWriteIfNewer()
+        throws MojoExecutionException, InterruptedException, IOException
+    {
+
+        Set artifacts = new HashSet();
+        Artifact snap = stubFactory.getSnapshotArtifact();
+        snap.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+
+        artifacts.add( snap );
+
+        mojo.project.setArtifacts( artifacts );
+        mojo.project.setDependencyArtifacts( artifacts );
+
+        mojo.overWriteReleases = false;
+        mojo.overWriteSnapshots = false;
+        mojo.overWriteIfNewer = false;
+
+        mojo.execute();
+
+        File unpackedFile = getUnpackedFile( snap );
+
+        Thread.sleep( 100 );
+        // round down to the last second
+        long time = System.currentTimeMillis();
+        time = time - ( time % 1000 );
+        // set source to be newer and dest to be a known value.
+        snap.getFile().setLastModified( time + 3000 );
+        unpackedFile.setLastModified( time );
+        // wait at least a second for filesystems that only record to the
+        // nearest second.
+        Thread.sleep( 1000 );
+
+        assertEquals( time, unpackedFile.lastModified() );
+        mojo.execute();
+
+        // make sure it didn't overwrite
+        assertEquals( time, unpackedFile.lastModified() );
+
+        mojo.overWriteIfNewer = true;
+
+        mojo.execute();
+
+        assertTrue( time != unpackedFile.lastModified() );
+    }
+
+    public void assertUnpacked( Artifact artifact, boolean overWrite )
+        throws InterruptedException, MojoExecutionException
+    {
+        File unpackedFile = getUnpackedFile( artifact );
+
+        Thread.sleep( 100 );
+        // round down to the last second
+        long time = System.currentTimeMillis();
+        time = time - ( time % 1000 );
+        unpackedFile.setLastModified( time );
+        // wait at least a second for filesystems that only record to the
+        // nearest second.
+        Thread.sleep( 1000 );
+
+        assertEquals( time, unpackedFile.lastModified() );
+        mojo.execute();
+
+        if ( overWrite )
+        {
+            assertTrue( time != unpackedFile.lastModified() );
+        }
+        else
+        {
+            assertEquals( time, unpackedFile.lastModified() );
+        }
+    }
 }
