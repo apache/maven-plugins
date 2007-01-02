@@ -36,7 +36,7 @@ import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler
  * location.
  * 
  * @goal unpack-dependencies
- * @requiresDependencyResolution compile
+ * @requiresDependencyResolution test
  * @phase process-sources
  * @author brianf
  * @since 1.0
