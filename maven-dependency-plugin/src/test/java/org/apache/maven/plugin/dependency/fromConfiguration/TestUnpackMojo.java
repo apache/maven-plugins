@@ -34,7 +34,6 @@ import org.apache.maven.plugin.dependency.testUtils.ArtifactStubFactory;
 import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.testUtils.stubs.StubArtifactRepository;
 import org.apache.maven.plugin.dependency.testUtils.stubs.StubArtifactResolver;
-import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
 import org.apache.maven.project.MavenProject;
 
