@@ -30,6 +30,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
+import org.apache.maven.plugin.dependency.testUtils.ArtifactStubFactory;
 import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.testUtils.stubs.StubArtifactRepository;
 import org.apache.maven.plugin.dependency.testUtils.stubs.StubArtifactResolver;
@@ -140,7 +141,7 @@ public class TestUnpackMojo
         assertMarkerFiles( list, true );
     }
 
-    public void testCopyToLocation()
+    public void testUnpackToLocation()
         throws IOException, MojoExecutionException
     {
         ArrayList list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
@@ -397,8 +398,8 @@ public class TestUnpackMojo
         }
 
     }
-/*
-    public void testCopyDontOverWriteReleases()
+
+    public void testUnpackDontOverWriteReleases()
         throws IOException, MojoExecutionException, InterruptedException
     {
         stubFactory.setCreateFiles( true );
@@ -415,21 +416,10 @@ public class TestUnpackMojo
 
         mojo.execute();
 
-        File copiedFile = new File( item.getOutputDirectory(), item.getDestFileName() );
-
-        Thread.sleep( 100 );
-        // round up to the next second
-        long time = System.currentTimeMillis() + 1000;
-        time = time - ( time % 1000 );
-        copiedFile.setLastModified( time );
-        Thread.sleep( 100 );
-
-        mojo.execute();
-
-        assertEquals( time, copiedFile.lastModified() );
+        assertUnpacked( item, false );
     }
 
-    public void testCopyDontOverWriteSnapshots()
+    public void testUnpackDontOverWriteSnapshots()
         throws IOException, MojoExecutionException, InterruptedException
     {
         stubFactory.setCreateFiles( true );
@@ -446,21 +436,10 @@ public class TestUnpackMojo
 
         mojo.execute();
 
-        File copiedFile = new File( item.getOutputDirectory(), item.getDestFileName() );
-
-        Thread.sleep( 100 );
-        // round up to the next second
-        long time = System.currentTimeMillis() + 1000;
-        time = time - ( time % 1000 );
-        copiedFile.setLastModified( time );
-        Thread.sleep( 100 );
-
-        mojo.execute();
-
-        assertEquals( time, copiedFile.lastModified() );
+        assertUnpacked( item, false );
     }
 
-    public void testCopyOverWriteReleases()
+    public void testUnpackOverWriteReleases()
         throws IOException, MojoExecutionException, InterruptedException
     {
         stubFactory.setCreateFiles( true );
@@ -477,18 +456,10 @@ public class TestUnpackMojo
         mojo.setOverWriteReleases( true );
         mojo.execute();
 
-        File copiedFile = new File( item.getOutputDirectory(), item.getDestFileName() );
-
-        // round up to the next second
-        long time = System.currentTimeMillis() - 2000;
-        copiedFile.setLastModified( time );
-
-        mojo.execute();
-
-        assertTrue( time < copiedFile.lastModified() );
+        assertUnpacked( item, true );
     }
 
-    public void testCopyOverWriteSnapshot()
+    public void testUnpackOverWriteSnapshot()
         throws IOException, MojoExecutionException, InterruptedException
     {
         stubFactory.setCreateFiles( true );
@@ -506,18 +477,10 @@ public class TestUnpackMojo
         mojo.setOverWriteSnapshots( true );
         mojo.execute();
 
-        File copiedFile = new File( item.getOutputDirectory(), item.getDestFileName() );
-
-        // round up to the next second
-        long time = System.currentTimeMillis() - 2000;
-        copiedFile.setLastModified( time );
-
-        mojo.execute();
-
-        assertTrue( time < copiedFile.lastModified() );
+        assertUnpacked( item, true );
     }
 
-    public void testCopyOverWriteIfNewer()
+    public void testUnpackOverWriteIfNewer()
         throws IOException, MojoExecutionException, InterruptedException
     {
         stubFactory.setCreateFiles( true );
@@ -532,20 +495,56 @@ public class TestUnpackMojo
         mojo.setOverWriteIfNewer( true );
         mojo.execute();
 
-        File copiedFile = new File( item.getOutputDirectory(), item.getDestFileName() );
+        Thread.sleep( 100 );
+        File unpackedFile = getUnpackedFile( item );
 
-        // set dest to be old
-        long time = System.currentTimeMillis() - 10000;
-        copiedFile.setLastModified( time );
+        // round down to the last second
+        long time = System.currentTimeMillis();
+        time = time - ( time % 1000 );
+
+        // set to known value
+        unpackedFile.setLastModified( time );
 
         // set source to be newer
         artifact.getFile().setLastModified( time + 4000 );
+        assertTrue( time == unpackedFile.lastModified() );
         mojo.execute();
 
-        assertTrue( time < copiedFile.lastModified() );
+        assertTrue( time != unpackedFile.lastModified() );
     }
-    */
-}
-// TODO: test overwrite / overwrite if newer / overwrite release / overwrite
-// snapshot
 
+    public void assertUnpacked( ArtifactItem item, boolean overWrite )
+        throws InterruptedException, MojoExecutionException
+    {
+
+        File unpackedFile = getUnpackedFile( item );
+
+        Thread.sleep( 100 );
+        // round down to the last second
+        long time = System.currentTimeMillis();
+        time = time - ( time % 1000 );
+        unpackedFile.setLastModified( time );
+
+        assertEquals( time, unpackedFile.lastModified() );
+        mojo.execute();
+
+        if ( overWrite )
+        {
+            assertTrue( time != unpackedFile.lastModified() );
+        }
+        else
+        {
+            assertEquals( time, unpackedFile.lastModified() );
+        }
+    }
+
+    public File getUnpackedFile( ArtifactItem item )
+    {
+        File unpackedFile = new File( item.getOutputDirectory(), ArtifactStubFactory.getUnpackableFileName( item
+            .getArtifact() ) );
+        
+        assertTrue(unpackedFile.exists());
+        return unpackedFile;
+
+    }
+}

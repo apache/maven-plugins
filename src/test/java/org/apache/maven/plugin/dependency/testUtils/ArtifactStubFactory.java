@@ -145,7 +145,7 @@ public class ArtifactStubFactory
         artifact.setFile( theFile );
     }
 
-    public String getUnpackableFileName( Artifact artifact )
+    static public String getUnpackableFileName( Artifact artifact )
     {
         return "" + artifact.getGroupId() + "-" + artifact.getArtifactId() + "-" + artifact.getVersion() + "-"
             + artifact.getClassifier() + "-" + artifact.getType() + ".txt";

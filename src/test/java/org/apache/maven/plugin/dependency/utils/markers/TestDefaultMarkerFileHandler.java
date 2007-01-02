@@ -179,9 +179,13 @@ public class TestDefaultMarkerFileHandler
     
     public void testNullParent() throws MojoExecutionException
     {
+        //the parent isn't set so this will create the marker in the local folder. We must clear the
+        //marker to avoid leaving test droppings in root.
         DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler(null,null);
         handler.setArtifact( (Artifact) artifacts.get( 0 ) );
         handler.setMarker();
         assertTrue(handler.isMarkerSet());
+        handler.clearMarker();
+        assertFalse(handler.isMarkerSet());
     }
 }
