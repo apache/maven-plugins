@@ -512,7 +512,13 @@ public class TestUnpackMojo
         log.error("Unpacked Time:"+unpackedFile.lastModified());
         // set source to be newer
         artifact.getFile().setLastModified( time + 4000 );
+        
+        //manually set markerfile (must match getMarkerFile in DefaultMarkerFileHandler)
+        File marker = new File( mojo.getMarkersDirectory(), artifact.getId().replace( ':', '-' ) + ".marker" );
+        marker.setLastModified(time);
+        
         log.error("Source Time: "+artifact.getFile().lastModified());
+        log.error("Marker Time: "+marker.lastModified());
         assertTrue( time == unpackedFile.lastModified() );
         log.error("Executing...");
         mojo.execute();
