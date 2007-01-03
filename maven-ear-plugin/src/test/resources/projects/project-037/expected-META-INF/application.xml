@@ -22,7 +22,10 @@ under the License.
 	"-//Sun Microsystems, Inc.//DTD J2EE Application 1.3//EN"
 	"http://java.sun.com/dtd/application_1_3.dtd">
 <application>
-  <display-name>maven-ear-plugin-test-project-030</display-name>
+  <display-name>maven-ear-plugin-test-project-037</display-name>
+  <module>
+    <java>ejb-sample-two-1.0-client.jar</java>
+  </module>
   <module>
     <ejb>ejb-sample-one-1.0.jar</ejb>
   </module>
