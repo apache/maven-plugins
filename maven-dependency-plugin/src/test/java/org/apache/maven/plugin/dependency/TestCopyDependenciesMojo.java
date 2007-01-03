@@ -1,4 +1,5 @@
 package org.apache.maven.plugin.dependency;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -655,7 +656,111 @@ public class TestCopyDependenciesMojo
     public void testGetDependencies()
         throws MojoExecutionException
     {
-        assertEquals( mojo.getResolvedDependencies( true ).toString(), mojo.getDependencySets( true ).getResolvedDependencies()
-            .toString() );
+        assertEquals( mojo.getResolvedDependencies( true ).toString(), mojo.getDependencySets( true )
+            .getResolvedDependencies().toString() );
     }
+
+    public void testCopyDependenciesMojoExcludeProvidedScope()
+        throws Exception
+    {
+        mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
+        mojo.project.setDependencyArtifacts( new HashSet() );
+        mojo.excludeScope = "provided";
+        // mojo.silent = false;
+
+        mojo.execute();
+
+        Iterator iter = mojo.project.getArtifacts().iterator();
+        while ( iter.hasNext() )
+        {
+            Artifact artifact = (Artifact) iter.next();
+            String fileName = DependencyUtil.getFormattedFileName( artifact, false );
+            File file = new File( mojo.outputDirectory, fileName );
+            assertEquals( artifact.getScope().equals( "provided" ), !file.exists() );
+            file.delete();
+            assertFalse( file.exists() );
+        }
+
+    }
+
+    public void testCopyDependenciesMojoExcludeSystemScope()
+        throws Exception
+    {
+        mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
+        mojo.project.setDependencyArtifacts( new HashSet() );
+        mojo.excludeScope = "system";
+        // mojo.silent = false;
+
+        mojo.execute();
+
+        Iterator iter = mojo.project.getArtifacts().iterator();
+        while ( iter.hasNext() )
+        {
+            Artifact artifact = (Artifact) iter.next();
+            String fileName = DependencyUtil.getFormattedFileName( artifact, false );
+            File file = new File( mojo.outputDirectory, fileName );
+            assertEquals( artifact.getScope().equals( "system" ), !file.exists() );
+            file.delete();
+            assertFalse( file.exists() );
+        }
+
+    }
+
+    public void testCopyDependenciesMojoExcludeCompileScope()
+    throws Exception
+{
+    mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
+    mojo.project.setDependencyArtifacts( new HashSet() );
+    mojo.excludeScope = "compile";
+    mojo.execute();
+    ScopeArtifactFilter saf = new ScopeArtifactFilter( mojo.excludeScope );
+
+    Iterator iter = mojo.project.getArtifacts().iterator();
+    while ( iter.hasNext() )
+    {
+        Artifact artifact = (Artifact) iter.next();
+        String fileName = DependencyUtil.getFormattedFileName( artifact, false );
+        File file = new File( mojo.outputDirectory, fileName );
+
+        assertEquals( !saf.include( artifact ), file.exists() );
+    }
+}
+
+public void testCopyDependenciesMojoExcludeTestScope() throws IOException
+{
+    mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
+    mojo.project.setDependencyArtifacts( new HashSet() );
+    mojo.excludeScope = "test";
+
+    try
+    {
+        mojo.execute();
+        fail("expected an exception");
+    }
+    catch ( MojoExecutionException e )
+    {
+     
+    }
+    
+}
+
+public void testCopyDependenciesMojoExcludeRuntimeScope()
+    throws Exception
+{
+    mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
+    mojo.project.setDependencyArtifacts( new HashSet() );
+    mojo.excludeScope = "runtime";
+    mojo.execute();
+    ScopeArtifactFilter saf = new ScopeArtifactFilter( mojo.excludeScope );
+
+    Iterator iter = mojo.project.getArtifacts().iterator();
+    while ( iter.hasNext() )
+    {
+        Artifact artifact = (Artifact) iter.next();
+        String fileName = DependencyUtil.getFormattedFileName( artifact, false );
+        File file = new File( mojo.outputDirectory, fileName );
+
+        assertEquals( !saf.include( artifact ), file.exists() );
+    }
+}
 }
