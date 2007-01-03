@@ -500,6 +500,9 @@ public class TestUnpackMojo
         // round down to the last second
         long time = System.currentTimeMillis();
         time = time - ( time % 1000 );
+        
+        //go back 10 more seconds for linux
+        time-=10000;
 
         // set to known value
         unpackedFile.setLastModified( time );
