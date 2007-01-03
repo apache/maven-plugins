@@ -88,7 +88,7 @@ Ear Plugin Tests
 
   * project-029: builds an EAR and make sure that system dependencies are not included in the EAR
 
-  * project-030: builds an EAR and make sure that ejb-client dependencies are detected and added in the generated application.xml
+  * project-030: builds an EAR and make sure that ejb-client dependencies are detected and not added by default in the generated application.xml
 
   * project-031: builds an EAR with a Jboss 4 configuration specifying the security domain and the unauthenticated-principal to use
 
@@ -101,6 +101,8 @@ Ear Plugin Tests
   * project-035: builds an EAR with a full filename mapping and make sure that custom locations are not overriden
 
   * project-036: builds an EAR with a full filename mapping and make sure that groupIds with dots are replaced by dashes in filenames
+
+  * project-037: builds an EAR and make sure that ejb-client dependencies are detected and added in the generated application.xml if includeInApplicationXml is set
 
   
 

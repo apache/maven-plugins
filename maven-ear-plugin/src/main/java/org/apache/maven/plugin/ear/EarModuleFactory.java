@@ -83,7 +83,7 @@ public final class EarModuleFactory
         }
         else if ( "ejb-client".equals( artifactType ) )
         {
-            return new EjbClientModule( artifact );
+            return new EjbClientModule( artifact, null );
         }
         else if ( "rar".equals( artifactType ) )
         {

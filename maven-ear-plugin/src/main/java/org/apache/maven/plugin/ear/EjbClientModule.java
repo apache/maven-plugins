@@ -29,25 +29,18 @@ import org.codehaus.plexus.util.xml.XMLWriter;
  * @version $Id$
  */
 public class EjbClientModule
-    extends AbstractEarModule
+    extends JarModule
 {
 
     public EjbClientModule()
     {
+        super();
     }
 
-    public EjbClientModule( Artifact a )
-    {
-        super( a );
-    }
 
-    public void appendModule( XMLWriter writer, String version )
+    public EjbClientModule( Artifact a, String defaultLibBundleDir )
     {
-        writer.startElement( MODULE_ELEMENT );
-        writer.startElement( JAVA_MODULE );
-        writer.writeText( getUri() );
-        writer.endElement();
-        writer.endElement();
+        super( a, defaultLibBundleDir );
     }
 
     public String getType()
