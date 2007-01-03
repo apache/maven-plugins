@@ -280,6 +280,17 @@ Usage
      the plugin to only copy if the source is newer than the destination (or it doesn't exist in the destination). (for unpack, this checks the existence of the marker file, created in the <<<markersDirectory>>> path.
      To avoid unexpected behavior after <<<mvn clean>>>, this path should normally be contained within the <<</target>>> hierarchy.)
      
+   Examples:
+     
+     * Using the default settings (<<<overWriteReleases>>> = false, <<<overWriteSnapshots>>> = false, <<<overWriteIfNewer>>> = true), then a release or snapshot artifact will
+     only over write the destination if the source is newer than the destination (or marker file if unpacking).
+     
+     * If <<<overWriteReleases>>> = true, then a release artifact (ie <<<foo-1.0.jar>>>) will always overwrite.
+     
+     * If <<<overWriteSnapshots>>> = true, then a snapshot artifact (ie <<<foo-1.0-SNAPSHOT.jar>>>) will always overwrite.
+     
+     * If all of the values are false, then a copy/unpack will only occur if it doesn't exist in the destination (or <<<markersDirectory>>> if unpacking).
+     
      
 
 * The <<<dependency:resolve>>> mojo
