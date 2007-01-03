@@ -321,7 +321,8 @@ public class EarMojoTest
     }
 
     /**
-     * Builds an EAR and make sure that ejb-client dependencies are detected and added in the generated application.xml.
+     * Builds an EAR and make sure that ejb-client dependencies are detected and not added by default in the
+     * generated application.xml.
      */
     public void testProject030()
         throws Exception
@@ -388,6 +389,16 @@ public class EarMojoTest
             "eartest-ejb-sample-two-1.0.jar", "com-foo-bar-ejb-sample-one-1.0.jar",
             "com-foo-bar-ejb-sample-two-1.0.jar", "libs/eartest-jar-sample-one-1.0.jar",
             "libs/eartest-jar-sample-two-1.0.jar", "sar-sample-one.sar"} );
+    }
+
+    /**
+     * Builds an EAR and make sure that ejb-client dependencies are detected and added in the generated application.xml if
+     * includeInApplicationXml is set.
+     */
+    public void testProject037()
+        throws Exception
+    {
+        doTestProject( "project-037", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0-client.jar"} );
     }
 
 }
