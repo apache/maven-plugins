@@ -120,7 +120,7 @@ public class ScopeFilter
             }
             else
             {
-                excludeSingleScope( artifacts, excludeScope );
+                results = excludeSingleScope( artifacts, excludeScope );
             }
         }
 
