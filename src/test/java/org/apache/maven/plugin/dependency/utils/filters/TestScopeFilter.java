@@ -133,7 +133,11 @@ public class TestScopeFilter
     {
         ScopeFilter filter = new ScopeFilter( "", Artifact.SCOPE_PROVIDED );
         Set result = filter.filter( artifacts, log );
+        assertNotNull(result);
+        assertTrue( result.size() > 0 );
         Iterator iter = result.iterator();
+        assertNotNull(result);
+        assertTrue( result.size() > 0 );
         while ( iter.hasNext() )
         {
             Artifact artifact = (Artifact) iter.next();
@@ -147,6 +151,8 @@ public class TestScopeFilter
         ScopeFilter filter = new ScopeFilter( "", Artifact.SCOPE_SYSTEM );
         Set result = filter.filter( artifacts, log );
         Iterator iter = result.iterator();
+        assertNotNull(result);
+        assertTrue( result.size() > 0 );
         while ( iter.hasNext() )
         {
             Artifact artifact = (Artifact) iter.next();

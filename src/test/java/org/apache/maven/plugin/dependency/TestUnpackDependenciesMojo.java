@@ -150,6 +150,96 @@ public class TestUnpackDependenciesMojo
         }
     }
 
+    public void testUnpackDependenciesMojoExcludeProvidedScope()
+        throws Exception
+    {
+        mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
+        mojo.project.setDependencyArtifacts( new HashSet() );
+        mojo.excludeScope = "provided";
+        // mojo.silent = false;
+
+        mojo.execute();
+
+        Iterator iter = mojo.project.getArtifacts().iterator();
+        while ( iter.hasNext() )
+        {
+            Artifact artifact = (Artifact) iter.next();
+            assertUnpacked( !artifact.getScope().equals( "provided" ), artifact );
+        }
+
+    }
+
+    public void testUnpackDependenciesMojoExcludeSystemScope()
+        throws Exception
+    {
+        mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
+        mojo.project.setDependencyArtifacts( new HashSet() );
+        mojo.excludeScope = "system";
+        // mojo.silent = false;
+
+        mojo.execute();
+
+        Iterator iter = mojo.project.getArtifacts().iterator();
+        while ( iter.hasNext() )
+        {
+            Artifact artifact = (Artifact) iter.next();
+            assertUnpacked( !artifact.getScope().equals( "system" ), artifact );
+        }
+
+    }
+
+    public void testUnpackDependenciesMojoExcludeCompileScope()
+        throws Exception
+    {
+        mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
+        mojo.project.setDependencyArtifacts( new HashSet() );
+        mojo.excludeScope = "compile";
+        mojo.execute();
+        ScopeArtifactFilter saf = new ScopeArtifactFilter( mojo.excludeScope );
+
+        Iterator iter = mojo.project.getArtifacts().iterator();
+        while ( iter.hasNext() )
+        {
+            Artifact artifact = (Artifact) iter.next();
+            assertUnpacked( !saf.include( artifact ), artifact );
+        }
+    }
+
+    public void testUnpackDependenciesMojoExcludeTestScope() throws IOException
+    {
+        mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
+        mojo.project.setDependencyArtifacts( new HashSet() );
+        mojo.excludeScope = "test";
+
+        try
+        {
+            mojo.execute();
+            fail("expected an exception");
+        }
+        catch ( MojoExecutionException e )
+        {
+           
+        }
+        
+    }
+
+    public void testUnpackDependenciesMojoExcludeRuntimeScope()
+        throws Exception
+    {
+        mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
+        mojo.project.setDependencyArtifacts( new HashSet() );
+        mojo.excludeScope = "runtime";
+        mojo.execute();
+        ScopeArtifactFilter saf = new ScopeArtifactFilter( mojo.excludeScope );
+
+        Iterator iter = mojo.project.getArtifacts().iterator();
+        while ( iter.hasNext() )
+        {
+            Artifact artifact = (Artifact) iter.next();
+            assertUnpacked( !saf.include( artifact ), artifact );
+        }
+    }
+
     public void testUnpackDependenciesMojoIncludeType()
         throws Exception
     {
