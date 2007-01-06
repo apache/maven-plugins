@@ -16,6 +16,9 @@ package org.apache.maven.plugins.repository.stubs;
  * limitations under the License.
  */
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Scm;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
@@ -70,4 +73,11 @@ public class NoLicenseFileMavenProjectStub
     {
         this.build = build;
     }
+
+    public List getLicenses()
+    {
+        return new ArrayList();
+    }
+    
+    
 }

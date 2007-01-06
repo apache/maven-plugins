@@ -17,8 +17,10 @@ package org.apache.maven.plugins.repository;
  */
 
 import java.io.File;
+import java.util.List;
 
 import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
+import org.apache.maven.model.License;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
@@ -36,8 +38,6 @@ public class BundleCreateMojo
     extends AbstractMojo
 {
     public static final String POM = "pom.xml";
-
-    public static final String LICENSE = "LICENSE.txt";
 
     /**
      * @parameter expression="${basedir}"
@@ -83,6 +83,7 @@ public class BundleCreateMojo
         // scm url
         // description
         // dependencies
+        // licenses
         // ----------------------------------------------------------------------
 
         validate( project.getName(), "project.name" );
@@ -98,18 +99,16 @@ public class BundleCreateMojo
 
         validate( project.getDescription(), "project.description" );
 
+        if ( project.getLicenses().isEmpty() )
+        {
+            throw new MojoExecutionException( "At least one license must be defined." );
+        }
+        
         // ----------------------------------------------------------------------
         //
         // ----------------------------------------------------------------------
 
         File pom = new File( basedir, POM );
-
-        File license = new File( basedir, LICENSE );
-
-        if ( !license.exists() )
-        {
-            throw new MojoExecutionException( LICENSE + " file is missing. Cannot create upload bundle." );
-        }
 
         String finalName = project.getBuild().getFinalName();
 
@@ -128,8 +127,6 @@ public class BundleCreateMojo
         try
         {
             jarArchiver.addFile( pom, POM );
-
-            jarArchiver.addFile( license, LICENSE );
 
             jarArchiver.addFile( artifact, artifact.getName() );
 
