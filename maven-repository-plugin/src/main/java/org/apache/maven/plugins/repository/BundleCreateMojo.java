@@ -80,7 +80,6 @@ public class BundleCreateMojo
         // name
         // version
         // url
-        // scm url
         // description
         // dependencies
         // licenses
@@ -89,13 +88,6 @@ public class BundleCreateMojo
         validate( project.getName(), "project.name" );
 
         validate( project.getUrl(), "project.url" );
-
-        if ( project.getScm() == null )
-        {
-            throw new MojoExecutionException( "Project scm element is null." );
-        }
-
-        validate( project.getScm().getConnection(), "project.scm.connection" );
 
         validate( project.getDescription(), "project.description" );
 
