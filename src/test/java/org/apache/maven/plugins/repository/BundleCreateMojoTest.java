@@ -324,16 +324,11 @@ public class BundleCreateMojoTest
 
         File testPom = new File( getBasedir(), "src/test/resources/unit/no-scm/pom.xml" );
 
-        try
-        {
-            BundleCreateMojo mojo = (BundleCreateMojo) lookupMojo( "bundle-create", testPom );
-            mojo.execute();
-            fail( "Must throw an exception on a project element scm is null" );
-        }
-        catch ( Exception e )
-        {
-            assertTrue( true );
-        }
+        BundleCreateMojo mojo = (BundleCreateMojo) lookupMojo( "bundle-create", testPom );
+        mojo.execute();
+        
+        // MREPOSITORY-2 project.scm.connection should not be required for bundle-create
+        // fail( "Must throw an exception on a project element scm is null" );
 
     }
 
