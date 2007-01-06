@@ -90,9 +90,6 @@ public class BundleCreateMojoTest
             assertEquals( entry.getName(), "default-configuration.jar" );
 
             entry = (ZipEntry) entries.nextElement();
-            assertEquals( entry.getName(), "LICENSE.txt" );
-
-            entry = (ZipEntry) entries.nextElement();
             assertEquals( entry.getName(), "pom.xml" );
 
             entry = (ZipEntry) entries.nextElement();
@@ -148,9 +145,6 @@ public class BundleCreateMojoTest
 
             entry = (ZipEntry) entries.nextElement();
             assertEquals( entry.getName(), "no-javadocjar.jar" );
-
-            entry = (ZipEntry) entries.nextElement();
-            assertEquals( entry.getName(), "LICENSE.txt" );
 
             entry = (ZipEntry) entries.nextElement();
             assertEquals( entry.getName(), "pom.xml" );
@@ -210,9 +204,6 @@ public class BundleCreateMojoTest
             assertEquals( entry.getName(), "no-sourcesjar.jar" );
 
             entry = (ZipEntry) entries.nextElement();
-            assertEquals( entry.getName(), "LICENSE.txt" );
-
-            entry = (ZipEntry) entries.nextElement();
             assertEquals( entry.getName(), "pom.xml" );
 
             entry = (ZipEntry) entries.nextElement();
@@ -267,9 +258,6 @@ public class BundleCreateMojoTest
         {
             ZipEntry entry = (ZipEntry) entries.nextElement();
             assertEquals( entry.getName(), "no-javadoc-sources.jar" );
-
-            entry = (ZipEntry) entries.nextElement();
-            assertEquals( entry.getName(), "LICENSE.txt" );
 
             entry = (ZipEntry) entries.nextElement();
             assertEquals( entry.getName(), "pom.xml" );
@@ -354,7 +342,7 @@ public class BundleCreateMojoTest
      *
      * @throws Exception
      */
-    public void testNoLicenseFile()
+    public void testNoLicense()
         throws Exception
     {
 
