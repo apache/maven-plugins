@@ -1,29 +1,31 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.maven.plugins.repository;
 
-/*
- * Copyright 2005-2006 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+import java.io.File;
+import java.io.IOException;
+import java.util.Enumeration;
 
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.codehaus.plexus.archiver.zip.ZipEntry;
 import org.codehaus.plexus.archiver.zip.ZipFile;
 import org.codehaus.plexus.util.FileUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Enumeration;
 
 /**
  * @author <a href="mailto:oching@exist.com">Maria Odea Ching</a>
@@ -50,8 +52,8 @@ public class BundleCreateMojoTest
 
         try
         {
-            createTestJars( "default-configuration", true, true,
-                            getBasedir() + "/target/test/unit/default-configuration/target" );
+            createTestJars( "default-configuration", true, true, getBasedir()
+                + "/target/test/unit/default-configuration/target" );
         }
         catch ( IOException ie )
         {
@@ -70,8 +72,8 @@ public class BundleCreateMojoTest
             e.printStackTrace();
         }
 
-        File bundleSource =
-            new File( getBasedir(), "target/test/unit/default-configuration/target/default-configuration-bundle.jar" );
+        File bundleSource = new File( getBasedir(),
+                                      "target/test/unit/default-configuration/target/default-configuration-bundle.jar" );
         assertTrue( FileUtils.fileExists( bundleSource.getAbsolutePath() ) );
 
         ZipFile jar = new ZipFile( bundleSource );
@@ -226,8 +228,8 @@ public class BundleCreateMojoTest
 
         try
         {
-            createTestJars( "no-javadoc-sources", false, false,
-                            getBasedir() + "/target/test/unit/no-javadoc-sources/target" );
+            createTestJars( "no-javadoc-sources", false, false, getBasedir()
+                + "/target/test/unit/no-javadoc-sources/target" );
         }
         catch ( IOException ie )
         {
@@ -246,8 +248,8 @@ public class BundleCreateMojoTest
             e.printStackTrace();
         }
 
-        File bundleSource =
-            new File( getBasedir(), "target/test/unit/no-javadoc-sources/target/no-javadoc-sources-bundle.jar" );
+        File bundleSource = new File( getBasedir(),
+                                      "target/test/unit/no-javadoc-sources/target/no-javadoc-sources-bundle.jar" );
         assertTrue( FileUtils.fileExists( bundleSource.getAbsolutePath() ) );
 
         ZipFile jar = new ZipFile( bundleSource );
@@ -282,8 +284,8 @@ public class BundleCreateMojoTest
 
         try
         {
-            createTestJars( "invalid-packaging", false, false,
-                            getBasedir() + "/target/test/unit/invalid-packaging/target" );
+            createTestJars( "invalid-packaging", false, false, getBasedir()
+                + "/target/test/unit/invalid-packaging/target" );
         }
         catch ( IOException ie )
         {
@@ -326,7 +328,7 @@ public class BundleCreateMojoTest
 
         BundleCreateMojo mojo = (BundleCreateMojo) lookupMojo( "bundle-create", testPom );
         mojo.execute();
-        
+
         // MREPOSITORY-2 project.scm.connection should not be required for bundle-create
         // fail( "Must throw an exception on a project element scm is null" );
 
@@ -343,8 +345,7 @@ public class BundleCreateMojoTest
 
         try
         {
-            createTestJars( "no-license-file", false, false,
-                            getBasedir() + "/target/test/unit/no-license-file/target" );
+            createTestJars( "no-license-file", false, false, getBasedir() + "/target/test/unit/no-license-file/target" );
         }
         catch ( IOException ie )
         {
@@ -376,8 +377,7 @@ public class BundleCreateMojoTest
     {
         try
         {
-            createTestJars( "no-project-name", false, false,
-                            getBasedir() + "/target/test/unit/no-project-name/target" );
+            createTestJars( "no-project-name", false, false, getBasedir() + "/target/test/unit/no-project-name/target" );
         }
         catch ( IOException ie )
         {
