@@ -212,7 +212,7 @@ public class IdeaMojo
         mojo.initParam( executedProject, artifactFactory, localRepo, artifactResolver, artifactMetadataSource, getLog(),
                         overwrite, executedProject, reactorProjects, wagonManager, linkModules, useFullNames,
                         downloadSources, sourceClassifier, downloadJavadocs, javadocClassifier, libraries, macros,
-                        exclude, dependenciesAsLibraries, deploymentDescriptorFile, ideaPlugin );
+                        exclude, dependenciesAsLibraries, deploymentDescriptorFile, ideaPlugin, ideaVersion );
 
         mojo.rewriteModule();
     }

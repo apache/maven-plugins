@@ -210,8 +210,8 @@ public class IdeaModuleTest
         throws Exception
     {
         List expectedLibs = new ArrayList();
-        expectedLibs.add( "/WEB-INF/lib/maven-model-2.0.1.jar" );
-        expectedLibs.add( "/WEB-INF/lib/junit-3.8.1.jar" );
+        expectedLibs.add( "/lib/maven-model-2.0.1.jar" );
+        expectedLibs.add( "/lib/junit-3.8.1.jar" );
 
         Document imlDocument = executeMojo( "src/test/module-plugin-configs/min-ejb-plugin-config.xml" );
 
@@ -555,7 +555,7 @@ public class IdeaModuleTest
                 assertEquals( "Test Library module method", "6", method.attributeValue( "value" ) );
 
                 Element uri = findElementByNameAttribute( containerElement, "attribute", "URI" );
-                assertEquals( "Test Library module method", "/WEB-INF/classes", uri.attributeValue( "value" ) );
+                assertEquals( "Test Library module method", "/lib/plugin-reactor-project-42.jar", uri.attributeValue( "value" ) );
 
                 ejbModuleFound = true;
             }
