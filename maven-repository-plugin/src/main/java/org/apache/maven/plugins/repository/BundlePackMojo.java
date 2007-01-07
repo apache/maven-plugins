@@ -57,7 +57,10 @@ public class BundlePackMojo
     public static final String POM = "pom.xml";
 
     /**
-     * @parameter expression="${component.org.codehaus.plexus.archiver.Archiver#jar}"
+     * Jar archiver.
+     * @parameter expression="{component.org.codehaus.plexus.archiver.Archiver#jar}"
+     * @required
+     * @readonly
      */
     protected JarArchiver jarArchiver;
 
@@ -90,25 +93,31 @@ public class BundlePackMojo
 
     /**
      * @component
+     * @required
+     * @readonly
      */
     protected InputHandler inputHandler;
 
     /**
+     * Directory where the upload-bundle will be created.
      * @parameter expression="${basedir}"
      */
     protected String basedir;
 
     /**
+     * GroupId for the artifact to create an upload bundle for.
      * @parameter expression="${groupId}"
      */
     protected String groupId;
 
     /**
+     * ArtifactId for the artifact to create an upload bundle for.
      * @parameter expression="${artifactId}"
      */
     protected String artifactId;
 
     /**
+     * Version for the artifact to create an upload bundle for.
      * @parameter expression="${version}"
      */
     protected String version;

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<faqs id="FAQ" title="Frequently Asked Questions">
+  <part id="General">
+    <faq id="including-sources">
+      <question>How can I create an upload bundle containing sources and javadoc for a project?</question>
+      <answer>
+        <p>You can do that by running the javadoc:jar and sources:jar goals before repository:bundle-create:</p>
+        <p>
+          <code>mvn sources:jar javadoc:jar repository:bundle-create</code>
+        </p>
+      </answer>
+    </faq>
+    <faq id="bundle-pack">
+      <question>How can I create an upload bunde for a project that I don't build using maven?</question>
+      <answer>
+        <p>
+          You can manually add the artifact to your local repository, creating a pom and optionally adding source and
+          javadoc jars. Then you can run "mvn repository:bundle-pack" that will prompt you for groupId, artifactId and
+          version and generate a bundle you can use for an upload request.
+        </p>
+      </answer>
+    </faq>
+  </part>
+</faqs>
