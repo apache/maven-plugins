@@ -172,6 +172,15 @@ public class IdeaModuleMojo
      */
     private boolean ideaPlugin;
 
+    /**
+     * Specify the version of idea to use.  This is needed to identify the default formatting of
+     * project-jdk-name used by idea.  Currently supports 4.x and 5.x. <p/> This will only be used
+     * when parameter jdkName is not set.
+     *
+     * @parameter expression="${ideaVersion}" default-value="5.x"
+     */
+    private String ideaVersion;
+
     private Set macros;
 
     public void initParam( MavenProject project, ArtifactFactory artifactFactory, ArtifactRepository localRepo,
@@ -180,7 +189,8 @@ public class IdeaModuleMojo
                            WagonManager wagonManager, boolean linkModules, boolean useFullNames,
                            boolean downloadSources, String sourceClassifier, boolean downloadJavadocs,
                            String javadocClassifier, Library[] libraries, Set macros, String exclude,
-                           boolean useShortDependencyNames, String deploymentDescriptorFile, boolean ideaPlugin )
+                           boolean useShortDependencyNames, String deploymentDescriptorFile, boolean ideaPlugin,
+                           String ideaVersion )
     {
         super.initParam( project, artifactFactory, localRepo, artifactResolver, artifactMetadataSource, log,
                          overwrite );
@@ -212,6 +222,8 @@ public class IdeaModuleMojo
         this.deploymentDescriptorFile = deploymentDescriptorFile;
 
         this.ideaPlugin = ideaPlugin;
+
+        this.ideaVersion = ideaVersion;
     }
 
     /**
@@ -575,6 +587,8 @@ public class IdeaModuleMojo
 
     private void addEjbModule( Element module )
     {
+        String ejbVersion = getPluginSetting( "maven-ejb-plugin", "ejbVersion", "2.x" );
+
         module.addAttribute( "type", "J2EE_EJB_MODULE" );
 
         String explodedDir = executedProject.getBuild().getDirectory() + "/" + executedProject.getArtifactId();
@@ -585,7 +599,9 @@ public class IdeaModuleMojo
         setting.addAttribute( "value", getModuleFileUrl( explodedDir ) );
 
         component = findComponent( module, "EjbModuleProperties" );
-        addDeploymentDescriptor( component, "ejb-jar.xml", "2.x", "src/main/resources/META-INF/ejb-jar.xml" );
+        Element deployDescElement =
+            addDeploymentDescriptor( component, "ejb-jar.xml", ejbVersion, "src/main/resources/META-INF/ejb-jar.xml" );
+        deployDescElement.addAttribute( "optional", ejbVersion.startsWith( "3" ) + "" );
 
         removeOldElements( component, "containerElement" );
         List artifacts = executedProject.getTestArtifacts();
@@ -604,19 +620,27 @@ public class IdeaModuleMojo
                 methodAttribute.addAttribute( "value", "6" );
                 Element uriAttribute = createElement( containerElement, "attribute" );
                 uriAttribute.addAttribute( "name", "URI" );
-                uriAttribute.addAttribute( "value", "/WEB-INF/classes" );
+                uriAttribute.addAttribute( "value", "/lib/" + artifact.getArtifactId() + ".jar" );
             }
             else if ( artifact.getFile() != null )
             {
                 containerElement.addAttribute( "type", "library" );
                 containerElement.addAttribute( "level", "module" );
-                containerElement.addAttribute( "name", artifact.getArtifactId() );
+
+                //no longer needed in IntelliJ 6
+                if ( StringUtils.isEmpty( ideaVersion ) || !ideaVersion.startsWith( "6" ) )
+                {
+                    containerElement.addAttribute( "name", artifact.getArtifactId() );
+                }
+
                 Element methodAttribute = createElement( containerElement, "attribute" );
                 methodAttribute.addAttribute( "name", "method" );
                 methodAttribute.addAttribute( "value", "2" );
                 Element uriAttribute = createElement( containerElement, "attribute" );
                 uriAttribute.addAttribute( "name", "URI" );
-                uriAttribute.addAttribute( "value", "/WEB-INF/lib/" + artifact.getFile().getName() );
+                uriAttribute.addAttribute( "value", "/lib/" + artifact.getFile().getName() );
+                Element urlElement = createElement( containerElement, "url" );
+                urlElement.setText( getLibraryUrl( artifact ) );
             }
         }
     }
@@ -763,9 +787,9 @@ public class IdeaModuleMojo
                 containerElement.addAttribute( "level", "module" );
                 Element methodAttribute = createElement( containerElement, "attribute" );
                 methodAttribute.addAttribute( "name", "method" );
-                if ( Artifact.SCOPE_PROVIDED.equalsIgnoreCase( artifact.getScope() )
-                    || Artifact.SCOPE_SYSTEM.equalsIgnoreCase( artifact.getScope() )
-                    || Artifact.SCOPE_TEST.equalsIgnoreCase( artifact.getScope() ) )
+                if ( Artifact.SCOPE_PROVIDED.equalsIgnoreCase( artifact.getScope() ) ||
+                    Artifact.SCOPE_SYSTEM.equalsIgnoreCase( artifact.getScope() ) ||
+                    Artifact.SCOPE_TEST.equalsIgnoreCase( artifact.getScope() ) )
                 {
                     // If scope is provided, system or test - do not package.
                     methodAttribute.addAttribute( "value", "0" );
@@ -792,7 +816,8 @@ public class IdeaModuleMojo
         element.addAttribute( "url", getModuleFileUrl( warSrc ) );
     }
 
-    private void addPluginModule( Element module ){
+    private void addPluginModule( Element module )
+    {
         module.addAttribute( "type", "PLUGIN_MODULE" );
 
         // this is where the META-INF/plugin.xml file is located
