@@ -32,6 +32,9 @@
   <packaging>maven-plugin</packaging>
   <name>Maven Repository Plugin</name>
   <version>2.1-SNAPSHOT</version>
+  <prerequisites>
+    <maven>2.0</maven>
+  </prerequisites>
   <issueManagement>
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MREPOSITORY</url>

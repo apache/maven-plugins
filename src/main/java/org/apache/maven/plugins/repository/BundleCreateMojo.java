@@ -28,7 +28,7 @@ import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Goal which touches a timestamp file.
+ * Goal which creates an upload bundle for a project built with maven.
  *
  * @goal bundle-create
  * @execute phase="package"
@@ -40,22 +40,29 @@ public class BundleCreateMojo
     public static final String POM = "pom.xml";
 
     /**
+     * Base directory.
      * @parameter expression="${basedir}"
      */
     private String basedir;
 
     /**
+     * The current maven project.
      * @parameter expression="${project}"
      */
     private MavenProject project;
 
     /**
-     * @parameter expression="${component.org.codehaus.plexus.archiver.Archiver#jar}"
+     * Jar archiver.
+     * @parameter expression="{component.org.codehaus.plexus.archiver.Archiver#jar}"
+     * @required
+     * @readonly
      */
     private JarArchiver jarArchiver;
 
     /**
-     * @parameter expression="${component.org.apache.maven.artifact.handler.manager.ArtifactHandlerManager}"
+     * @component role="org.apache.maven.artifact.handler.manager.ArtifactHandlerManager"
+     * @required
+     * @readonly
      */
     private ArtifactHandlerManager artifactHandlerManager;
 
