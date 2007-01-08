@@ -21,7 +21,7 @@
   Allan Ramirez
   Brian Fox
   ------
-  Nov 2006
+  Jan 2007
   ------
 
 Usage
@@ -50,15 +50,7 @@ Usage
    The artifact version is optional. If not set, the plugin will attempt to resolve it from the
    project dependencies and then the dependencyManagement section.
 
-   Artifacts are copied using the following rules:
-
-     * If the <<<artifactItem / overWrite>>> is set, use that value.
-
-     * Releases use the <<<overWriteReleases>>> value (default = false)
-
-     * Snapshots use the <<<overWriteSnapshots>>> value (default = false)
-     
-     * If none of the above is set, then it defaults to the <<<overWriteIfNewer>>> value (default = true) 
+   See the {{#Overwrite Rules}} section for rules about how overwriting is handled.
 
      []
 
@@ -130,13 +122,7 @@ Usage
 
    	Also included is the ability to include or exclude by type (war, jar etc), scope (runtime, test, etc), classifier (jdk14, sources, etc) or a combination of all three.
 
-    Artifacts are copied using the following rules:
-
-     * Releases use the <<<overWriteReleases>>> value (default = false)
-
-     * Snapshots use the <<<overWriteSnapshots>>> value (default = false)
-     
-     * If none of the above is set, then it defaults to the <<<overWriteIfNewer>>> value (default = true) 
+   See the {{#Overwrite Rules}} section for rules about how overwriting is handled.
 
 
    The goal can also be launched from the command line like:
@@ -178,13 +164,7 @@ Usage
    A default outputDirectory is specified but can be overriden for each
    ArtifactItem by setting the optional outputDirectory field. 
 
- Artifacts are unpacked using the following rules:
-
-     * Releases use the <<<overWriteReleases>>> value (default = false)
-
-     * Snapshots use the <<<overWriteSnapshots>>> value (default = false)
-     
-     * If none of the above is set, then it defaults to the <<<overWriteIfNewer>>> value (default = true) 
+   See the {{#Overwrite Rules}} section for rules about how overwriting is handled.
 
    The artifact version is optional. If not set, the plugin will attempt to resolve it from the
    project dependencies and then the dependencyManagement section.
@@ -250,13 +230,7 @@ Usage
    
    Also included is the ability to include or exclude by type (war, jar etc), scope (runtime, test, etc), classifier (jdk14, sources, etc) or a combination of all three.
 
- Artifacts are copied using the following rules:
-
-     * Releases use the <<<overWriteReleases>>> value (default = false)
-
-     * Snapshots use the <<<overWriteSnapshots>>> value (default = false)
-     
-     * If none of the above is set, then it defaults to the <<<overWriteIfNewer>>> value (default = true) 
+   See the {{#Overwrite Rules}} section for rules about how overwriting is handled.
                                       
    The goal can also be launched from the command line like:
    <<<mvn dependency:unpack-dependencies [optional params]>>>
@@ -287,6 +261,37 @@ Usage
   [...]
 </project>
 +---+
+
+* {Overwrite Rules}
+
+    Artifacts are copied or unpacked using the following rules:
+
+     * If the artifact doesn't exist in the destination, then copy/unpack it.
+     
+     Otherwise:
+     
+     * For copy/unpack mojo only: if <<<artifactItem / overWrite>>> or <<<overWrite>>> is true, then it will force an overwrite.
+     
+     * Releases check the <<<overWriteReleases>>> value (default = false). If true, then it will force an overwrite.
+
+     * Snapshots check the <<<overWriteSnapshots>>> value (default = false). If true, then it will force an overwrite.
+     
+     * If none of the above is set to true, then it defaults to the <<<overWriteIfNewer>>> value (default = true). This value, if true, causes
+     the plugin to only copy if the source is newer than the destination (or it doesn't exist in the destination). (for unpack, this checks the existence of the marker file, created in the <<<markersDirectory>>> path.
+     To avoid unexpected behavior after <<<mvn clean>>>, this path should normally be contained within the <<</target>>> hierarchy.)
+     
+   Examples:
+     
+     * Using the default settings (<<<overWriteReleases>>> = false, <<<overWriteSnapshots>>> = false, <<<overWriteIfNewer>>> = true), then a release or snapshot artifact will
+     only over write the destination if the source is newer than the destination (or marker file if unpacking).
+     
+     * If <<<overWriteReleases>>> = true, then a release artifact (ie <<<foo-1.0.jar>>>) will always overwrite.
+     
+     * If <<<overWriteSnapshots>>> = true, then a snapshot artifact (ie <<<foo-1.0-SNAPSHOT.jar>>>) will always overwrite.
+     
+     * If all of the values are false, then a copy/unpack will only occur if it doesn't exist in the destination (or <<<markersDirectory>>> if unpacking).
+     
+     
 
 * The <<<dependency:resolve>>> mojo
 

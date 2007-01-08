@@ -29,7 +29,7 @@
 	<groupId>org.apache.maven.plugins</groupId>
 	<artifactId>maven-dependency-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
-	<name>Dependency Maven Plugin</name>
+	<name>Maven Dependency Plugin</name>
 	<version>2.0-alpha-1-SNAPSHOT</version>
 	<prerequisites>
 		<maven>2.0.3</maven>
@@ -148,7 +148,7 @@
 			      <!-- Include the apache process LICENSE and NOTICE
            files.
            
-      -->
+      --><!--
 			<resource>
 				<targetPath>META-INF</targetPath>
 				<filtering>false</filtering>
@@ -157,7 +157,7 @@
 					<include>LICENSE</include>
 					<include>NOTICE</include>
 				</includes>
-			</resource>
+			</resource>-->
 			      <!-- Include super-pom defined main/resources
            Removing this section will break the build.
            Since we have defined a new build/resources

@@ -35,6 +35,7 @@ import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.testUtils.stubs.StubArtifactRepository;
 import org.apache.maven.plugin.dependency.testUtils.stubs.StubArtifactResolver;
 import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 
 public class TestUnpackMojo
@@ -500,15 +501,19 @@ public class TestUnpackMojo
         // round down to the last second
         long time = System.currentTimeMillis();
         time = time - ( time % 1000 );
-
+        //go back 10 more seconds for linux
+        time-=10000;
         // set to known value
         unpackedFile.setLastModified( time );
-
         // set source to be newer
         artifact.getFile().setLastModified( time + 4000 );
+        
+        //manually set markerfile (must match getMarkerFile in DefaultMarkerFileHandler)
+        File marker = new File( mojo.getMarkersDirectory(), artifact.getId().replace( ':', '-' ) + ".marker" );
+        marker.setLastModified(time);
+        
         assertTrue( time == unpackedFile.lastModified() );
-        mojo.execute();
-
+        mojo.execute();  
         assertTrue( time != unpackedFile.lastModified() );
     }
 

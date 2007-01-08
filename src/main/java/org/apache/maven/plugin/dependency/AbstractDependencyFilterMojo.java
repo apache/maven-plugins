@@ -83,7 +83,7 @@ public abstract class AbstractDependencyFilterMojo
     protected String includeScope;
 
     /**
-     * Scope to exclude. An Empty string indicates no scopes (default).
+     * Scope to exclude. An Empty string indicates no scopes (default). Ignored if includeScope is used.
      * 
      * @since 2.0
      * @parameter expression="${excludeScope}" default-value=""
