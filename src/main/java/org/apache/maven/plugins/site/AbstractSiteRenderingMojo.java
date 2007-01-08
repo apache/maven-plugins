@@ -65,8 +65,20 @@ public abstract class AbstractSiteRenderingMojo
     extends AbstractSiteMojo
 {
     /**
-     * module type exclusion mappings
-     * ex: fml -> **\/*-m1.fml  (excludes -m1.fml files)
+     * Module type exclusion mappings
+     * ex: <code>fml  -> **&#47;*-m1.fml</code>  (excludes fml files ending in '-m1.fml' recursively)
+     * <p/>
+     * The configuration looks like this:
+     * <pre>
+     *   &lt;moduleExcludes&gt;
+     *     &lt;moduleType&gt;filename1.ext,**&#47;*sample.ext&lt;/moduleType&gt;
+     *     &lt;!-- moduleType can be one of 'apt', 'fml' or 'xdoc'. --&gt;
+     *     &lt;!-- The value is a comma separated list of           --&gt;
+     *     &lt;!-- filenames or fileset patterns.                   --&gt;
+     *     &lt;!-- Here's an example:                               --&gt;
+     *     &lt;xdoc&gt;changes.xml,navigation.xml&lt;/xdoc&gt;
+     *   &lt;/moduleExcludes&gt;
+     * </pre>
      *
      * @parameter
      */
