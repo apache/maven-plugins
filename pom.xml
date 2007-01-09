@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.apache.maven</groupId>
     <artifactId>maven-plugin-surrogate-parent</artifactId>
-    <version>5</version>
+    <version>6-SNAPSHOT</version>
     <relativePath>../pom/maven-plugin-surrogate-parent/pom.xml</relativePath>
   </parent>
   <groupId>org.apache.maven.plugins</groupId>
