@@ -123,10 +123,6 @@
       </plugins>
     </pluginManagement>
   </build>
-  <reporting>
-    <plugins>
-    </plugins>
-  </reporting>
   <profiles>
     <profile>
       <id>ciProfile</id>
