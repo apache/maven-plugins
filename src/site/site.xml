@@ -16,7 +16,7 @@
   ~ limitations under the License.
   -->
 
-<project>
+<project name="Plugins">
   <!-- TODO: banners, skin, publish date, version should be inherited from Maven itself -->
   <bannerLeft>
     <name>${project.name}</name>
