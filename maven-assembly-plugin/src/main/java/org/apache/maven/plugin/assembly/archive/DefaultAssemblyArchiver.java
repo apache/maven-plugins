@@ -26,7 +26,6 @@ import org.codehaus.plexus.logging.AbstractLogEnabled;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -49,12 +48,12 @@ public class DefaultAssemblyArchiver
      * @plexus.requirement role="org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase"
      */
     private List assemblyPhases;
-    
+
     public DefaultAssemblyArchiver()
     {
         // needed for plexus
     }
-    
+
     // introduced for testing.
     public DefaultAssemblyArchiver( ArchiverManager archiverManager, List assemblyPhases )
     {
@@ -67,9 +66,9 @@ public class DefaultAssemblyArchiver
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
     {
         String filename = fullName + "." + format;
-        
+
         AssemblyFileUtils.verifyTempDirectoryAvailability( configSource.getTemporaryRootDirectory(), getLogger() );
-        
+
         ComponentsXmlArchiverFileFilter componentsXmlFilter = new ComponentsXmlArchiverFileFilter();
 
         File outputDirectory = configSource.getOutputDirectory();
@@ -80,25 +79,27 @@ public class DefaultAssemblyArchiver
         {
             String finalName = configSource.getFinalName();
             String specifiedBasedir = assembly.getBaseDirectory();
-            
+
             String basedir = finalName;
-            
+
             if ( specifiedBasedir != null )
             {
-                basedir = AssemblyFormatUtils.getOutputDirectory( specifiedBasedir, configSource.getProject(), finalName );
+                basedir = AssemblyFormatUtils.getOutputDirectory( specifiedBasedir, configSource.getProject(),
+                                                                  finalName );
             }
-            
-            Archiver archiver = createArchiver( format, assembly.isIncludeBaseDirectory(), basedir, configSource.getTarLongFileMode(), componentsXmlFilter );
+
+            Archiver archiver = createArchiver( format, assembly.isIncludeBaseDirectory(), basedir, configSource,
+                                                componentsXmlFilter );
 
             for ( Iterator phaseIterator = assemblyPhases.iterator(); phaseIterator.hasNext(); )
             {
-                AssemblyArchiverPhase phase = ( AssemblyArchiverPhase ) phaseIterator.next();
+                AssemblyArchiverPhase phase = (AssemblyArchiverPhase) phaseIterator.next();
 
                 phase.execute( assembly, archiver, configSource );
             }
 
             archiver.setDestFile( destFile );
-            
+
             archiver.createArchive();
         }
         catch ( ArchiverException e )
@@ -123,25 +124,26 @@ public class DefaultAssemblyArchiver
      * @param format
      *            Archive format
      * @param includeBaseDir 
-     * @param tarLongFileMode
+     * @param configSource
      * @param finalName 
      * @param string 
      * @return archiver Archiver generated
      * @throws org.codehaus.plexus.archiver.ArchiverException
      * @throws org.codehaus.plexus.archiver.manager.NoSuchArchiverException
      */
-    protected Archiver createArchiver( String format, boolean includeBaseDir, String finalName, 
-                                       String tarLongFileMode, ComponentsXmlArchiverFileFilter componentsXmlFilter )
+    protected Archiver createArchiver( String format, boolean includeBaseDir, String finalName,
+                                       AssemblerConfigurationSource configSource,
+                                       ComponentsXmlArchiverFileFilter componentsXmlFilter )
         throws ArchiverException, NoSuchArchiverException
     {
         Archiver archiver;
         if ( format.startsWith( "tar" ) )
         {
-            archiver = createTarArchiver( format, tarLongFileMode );
+            archiver = createTarArchiver( format, configSource.getTarLongFileMode() );
         }
         else if ( "war".equals( format ) )
         {
-            archiver = createWarArchiver( );
+            archiver = createWarArchiver();
         }
         else
         {
@@ -150,8 +152,8 @@ public class DefaultAssemblyArchiver
 
         configureArchiverFilters( archiver, componentsXmlFilter );
 
-        configureArchiverFinalizers( archiver, componentsXmlFilter );
-        
+        configureArchiverFinalizers( archiver, format, configSource, componentsXmlFilter );
+
         if ( includeBaseDir )
         {
             archiver = new PrefixingProxyArchiver( finalName, archiver );
@@ -160,11 +162,24 @@ public class DefaultAssemblyArchiver
         return archiver;
     }
 
-    protected void configureArchiverFinalizers( Archiver archiver, ComponentsXmlArchiverFileFilter componentsXmlFilter )
+    protected void configureArchiverFinalizers( Archiver archiver, String format,
+                                                AssemblerConfigurationSource configSource,
+                                                ComponentsXmlArchiverFileFilter componentsXmlFilter )
     {
         if ( archiver instanceof FinalizerEnabled )
         {
-            ( ( FinalizerEnabled ) archiver ).setArchiveFinalizers( Collections.singletonList( componentsXmlFilter ) );
+            List finalizers = new ArrayList();
+
+            finalizers.add( componentsXmlFilter );
+
+            if ( "jar".equals( format ) )
+            {
+                finalizers.add( new ManifestCreationFinalizer( configSource.getProject(), configSource
+                    .getJarArchiveConfiguration() ) );
+            }
+
+            ( (FinalizerEnabled) archiver ).setArchiveFinalizers( finalizers );
+
         }
     }
 
@@ -185,14 +200,14 @@ public class DefaultAssemblyArchiver
                 filters.add( JAR_SECURITY_FILE_FILTER );
             }
 
-            ( ( FilterEnabled ) archiver ).setArchiveFilters( filters );
+            ( (FilterEnabled) archiver ).setArchiveFilters( filters );
         }
     }
 
     protected Archiver createWarArchiver()
         throws NoSuchArchiverException
     {
-        WarArchiver warArchiver = ( WarArchiver ) this.archiverManager.getArchiver( "war" );
+        WarArchiver warArchiver = (WarArchiver) this.archiverManager.getArchiver( "war" );
         warArchiver.setIgnoreWebxml( false ); // See MNG-1274
 
         return warArchiver;
@@ -201,7 +216,7 @@ public class DefaultAssemblyArchiver
     protected Archiver createTarArchiver( String format, String tarLongFileMode )
         throws NoSuchArchiverException, ArchiverException
     {
-        TarArchiver tarArchiver = ( TarArchiver ) this.archiverManager.getArchiver( "tar" );
+        TarArchiver tarArchiver = (TarArchiver) this.archiverManager.getArchiver( "tar" );
         int index = format.indexOf( '.' );
         if ( index >= 0 )
         {
@@ -232,7 +247,7 @@ public class DefaultAssemblyArchiver
         tarFileMode.setValue( tarLongFileMode );
 
         tarArchiver.setLongfile( tarFileMode );
-        
+
         return tarArchiver;
     }
 
