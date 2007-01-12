@@ -1,5 +1,7 @@
 package org.apache.maven.plugin.assembly.archive;
 
+import org.apache.maven.archiver.MavenArchiveConfiguration;
+import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase;
@@ -8,6 +10,8 @@ import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.archiver.ArchiveFinalizer;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.FilterEnabled;
@@ -20,12 +24,16 @@ import org.codehaus.plexus.archiver.war.WarArchiver;
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.FileUtils;
+import org.easymock.ArgumentsMatcher;
 import org.easymock.MockControl;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -90,9 +98,6 @@ public class DefaultAssemblyArchiverTest
         configSource.getOutputDirectory();
         csControl.setReturnValue( outDir );
         
-        configSource.getTarLongFileMode();
-        csControl.setReturnValue( null );
-        
         configSource.getFinalName();
         csControl.setReturnValue( "finalName" );
         
@@ -117,6 +122,14 @@ public class DefaultAssemblyArchiverTest
         MockAndControlForArchiverManager macArchiverManager = new MockAndControlForArchiverManager( mm );
 
         macArchiverManager.expectGetArchiver( "tar", ttArchiver );
+        
+        MockControl configCtl = MockControl.createControl( AssemblerConfigurationSource.class );
+        AssemblerConfigurationSource configSource = (AssemblerConfigurationSource) configCtl.getMock();
+        
+        configSource.getTarLongFileMode();
+        configCtl.setReturnValue( TarLongFileMode.FAIL, MockControl.ZERO_OR_MORE );
+        
+        mm.add( configCtl );
 
         ComponentsXmlArchiverFileFilter filter = new ComponentsXmlArchiverFileFilter();
 
@@ -125,7 +138,7 @@ public class DefaultAssemblyArchiverTest
         DefaultAssemblyArchiver subject =
             createSubject( macArchiverManager.archiverManager, Collections.EMPTY_LIST, null );
 
-        subject.createArchiver( "tar", false, "finalName", TarLongFileMode.FAIL, filter );
+        subject.createArchiver( "tar", false, "finalName", configSource, filter );
 
         assertNull( ttArchiver.compressionMethod );
         assertEquals( TarLongFileMode.FAIL, ttArchiver.longFileMode.getValue() );
@@ -192,7 +205,7 @@ public class DefaultAssemblyArchiverTest
         DefaultAssemblyArchiver subject =
             createSubject( macArchiverManager.archiverManager, Collections.EMPTY_LIST, null );
 
-        subject.configureArchiverFinalizers( macArchiverManager.archiver, filter );
+        subject.configureArchiverFinalizers( macArchiverManager.archiver, "format", null, filter );
 
         mm.verifyAll();
     }
@@ -204,16 +217,37 @@ public class DefaultAssemblyArchiverTest
         MockAndControlForArchiverManager macArchiverManager = new MockAndControlForArchiverManager( mm );
 
         macArchiverManager.createArchiver( TestFinalizerFilteredArchiver.class );
-        macArchiverManager.expectSetArchiverFinalizers();
+        
+        Set finalizerClasses = new HashSet();
+        finalizerClasses.add( ComponentsXmlArchiverFileFilter.class );
+        finalizerClasses.add( ManifestCreationFinalizer.class );
+        
+        macArchiverManager.expectSetArchiverFinalizers( finalizerClasses );
 
         ComponentsXmlArchiverFileFilter filter = new ComponentsXmlArchiverFileFilter();
+        
+        MockControl configCtl = MockControl.createControl( AssemblerConfigurationSource.class );
+        AssemblerConfigurationSource configSource = (AssemblerConfigurationSource) configCtl.getMock();
+        
+        Model model = new Model();
+        model.setGroupId( "group" );
+        model.setArtifactId( "artifact" );
+        model.setVersion( "1" );
+        
+        configSource.getProject();
+        configCtl.setReturnValue( new MavenProject( model ), MockControl.ZERO_OR_MORE );
+        
+        configSource.getJarArchiveConfiguration();
+        configCtl.setReturnValue( new MavenArchiveConfiguration() );
+        
+        mm.add( configCtl );
 
         mm.replayAll();
 
         DefaultAssemblyArchiver subject =
             createSubject( macArchiverManager.archiverManager, Collections.EMPTY_LIST, null );
 
-        subject.configureArchiverFinalizers( macArchiverManager.archiver, filter );
+        subject.configureArchiverFinalizers( macArchiverManager.archiver, "jar", configSource, filter );
 
         mm.verifyAll();
     }
@@ -427,6 +461,36 @@ public class DefaultAssemblyArchiverTest
         {
             ( ( FinalizerEnabled ) archiver ).setArchiveFinalizers( null );
             archiverControl.setMatcher( MockControl.ALWAYS_MATCHER );
+        }
+
+        void expectSetArchiverFinalizers( final Set finalizerClasses )
+        {
+            ( ( FinalizerEnabled ) archiver ).setArchiveFinalizers( null );
+            archiverControl.setMatcher( new ArgumentsMatcher()
+            {
+
+                public boolean matches( Object[] expected, Object[] actual )
+                {
+                    boolean match = true;
+                    List actualClasses = (List) actual[0];
+                    
+                    Set finClasses = new HashSet( finalizerClasses );
+                    
+                    for ( Iterator it = actualClasses.iterator(); it.hasNext(); )
+                    {
+                        ArchiveFinalizer finalizer = (ArchiveFinalizer) it.next();
+                        match = match && finClasses.remove( finalizer.getClass() );
+                    }
+                    
+                    return match;
+                }
+
+                public String toString( Object[] arguments )
+                {
+                    return "Matcher for finalizer-classes: " + finalizerClasses;
+                }
+                
+            });
         }
 
         void expectSetArchiverFilters()
