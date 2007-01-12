@@ -35,21 +35,6 @@ public final class AssemblyFileUtils
         if (!tempDir.exists()) 
         {
             tempDir.mkdirs();
-            
-            Runtime.getRuntime().addShutdownHook( new Thread( new Runnable()
-            {
-                public void run()
-                {
-                    try
-                    {
-                        FileUtils.deleteDirectory( tempDir );
-                    }
-                    catch ( IOException e )
-                    {
-                        logger.debug( "Failed to delete temp directory: " + tempDir, e );
-                    }
-                }
-            } ) );
         }
     }
 
