@@ -35,7 +35,6 @@ import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.testUtils.stubs.StubArtifactRepository;
 import org.apache.maven.plugin.dependency.testUtils.stubs.StubArtifactResolver;
 import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 
 public class TestUnpackMojo
@@ -58,7 +57,7 @@ public class TestUnpackMojo
         mojo = (UnpackMojo) lookupMojo( "unpack", testPom );
         mojo.setOutputDirectory( new File( this.testDir, "outputDirectory" ) );
         mojo.setMarkersDirectory( new File( this.testDir, "markers" ) );
-        // mojo.silent = true;
+        mojo.silent = true;
 
         assertNotNull( mojo );
         assertNotNull( mojo.getProject() );
