@@ -29,7 +29,9 @@ under the License.
         <configuration>
           <outputDirectory>${basedir}/target/test/unit/default-configuration/target</outputDirectory>
           <finalName>default-configuration</finalName>
+          <!--
           <executedProject implementation="org.apache.maven.plugin.source.stubs.DefaultConfigurationMavenProjectStub"/>
+          -->
           <project implementation="org.apache.maven.plugin.source.stubs.DefaultConfigurationMavenProjectStub"/>
         </configuration>
       </plugin>

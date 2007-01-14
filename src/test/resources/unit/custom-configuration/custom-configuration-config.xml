@@ -28,7 +28,9 @@ under the License.
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
         <configuration>
+          <!--
           <executedProject implementation="org.apache.maven.plugin.source.stubs.CustomConfigurationMavenProjectStub"/>
+          -->
           <project implementation="org.apache.maven.plugin.source.stubs.CustomConfigurationMavenProjectStub"/>
           <outputDirectory>${basedir}/target/test/unit/custom-configuration/target</outputDirectory>
           <finalName>custom-configuration</finalName>
