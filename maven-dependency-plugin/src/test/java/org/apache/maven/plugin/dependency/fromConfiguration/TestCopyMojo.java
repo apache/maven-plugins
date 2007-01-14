@@ -55,7 +55,7 @@ public class TestCopyMojo
         File testPom = new File( getBasedir(), "target/test-classes/unit/copy-test/plugin-config.xml" );
         mojo = (CopyMojo) lookupMojo( "copy", testPom );
         mojo.setOutputDirectory( new File( this.testDir, "outputDirectory" ) );
-        // mojo.silent = true;
+        mojo.silent = true;
 
         assertNotNull( mojo );
         assertNotNull( mojo.getProject() );
