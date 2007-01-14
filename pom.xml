@@ -1,5 +1,23 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License. 
+ *
+-->
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>maven-plugins</artifactId>
@@ -10,7 +28,7 @@
 	<artifactId>maven-dependency-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
 	<name>Maven Dependency Plugin</name>
-	<version>2.0-alpha-1</version>
+	<version>2.0-alpha-2-SNAPSHOT</version>
 	<prerequisites>
 		<maven>2.0.3</maven>
 	</prerequisites>
@@ -129,7 +147,7 @@
            files.
            
       -->
-			<resource>
+<!--			<resource>
 				<targetPath>META-INF</targetPath>
 				<filtering>false</filtering>
 				<directory>${basedir}</directory>
@@ -137,7 +155,7 @@
 					<include>LICENSE</include>
 					<include>NOTICE</include>
 				</includes>
-			</resource>
+			</resource>-->
 			      <!-- Include super-pom defined main/resources
            Removing this section will break the build.
            Since we have defined a new build/resources
@@ -197,10 +215,4 @@
       </plugin>
     </plugins>
   </reporting -->
-
-  <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-dependency-plugin-2.0-alpha-1</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-dependency-plugin-2.0-alpha-1</developerConnection>
-    <url>https://svn.apache.org/repos/asf/maven/plugins/tags/maven-dependency-plugin-2.0-alpha-1</url>
-  </scm>
 </project>
