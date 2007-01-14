@@ -30,10 +30,9 @@ import java.util.Enumeration;
 /**
  * @author <a href="mailto:oching@exist.com">Maria Odea Ching</a>
  */
-public class JarTestSourceMojoTest
+public class SourceJarMojoTest
     extends AbstractMojoTestCase
 {
-
     protected void setUp()
         throws Exception
     {
@@ -41,7 +40,6 @@ public class JarTestSourceMojoTest
         super.setUp();
         
     }
-
 
     public void testDefaultConfiguration()
         throws Exception
@@ -51,17 +49,21 @@ public class JarTestSourceMojoTest
 
         try
         {
-            JarTestSourceMojo mojo = (JarTestSourceMojo) lookupMojo( "test-jar", testPom );
+            SourceJarMojo mojo = (SourceJarMojo) lookupMojo( "jar", testPom );
+            
             mojo.execute();
         }
         catch ( Exception e )
         {
+            fail( "Cannot execute mojo!" );
+
             e.printStackTrace();
         }
 
         //check if the jar file exists
-        File sourceJar = new File( getBasedir(),
-                                   "target/test/unit/default-configuration/target/default-configuration-test-sources.jar" );
+        File sourceJar =
+            new File( getBasedir(), "target/test/unit/default-configuration/target/default-configuration-sources.jar" );
+
         assertTrue( FileUtils.fileExists( sourceJar.getAbsolutePath() ) );
 
         ZipFile jar = new ZipFile( sourceJar );
@@ -71,10 +73,10 @@ public class JarTestSourceMojoTest
         if ( entries.hasMoreElements() )
         {
             ZipEntry entry = (ZipEntry) entries.nextElement();
-            assertEquals( entry.getName(), "test-default-configuration.properties" );
+            assertEquals( entry.getName(), "default-configuration.properties" );
 
             entry = (ZipEntry) entries.nextElement();
-            assertEquals( entry.getName(), "def/configuration/AppTest.java" );
+            assertEquals( entry.getName(), "def/configuration/App.java" );
 
             entry = (ZipEntry) entries.nextElement();
             assertEquals( entry.getName(), "def/configuration/" );
@@ -91,15 +93,18 @@ public class JarTestSourceMojoTest
 
     }
 
+
     public void testCustomConfiguration()
         throws Exception
     {
+
         File testPom =
             new File( getBasedir(), "src/test/resources/unit/custom-configuration/custom-configuration-config.xml" );
 
         try
         {
-            JarTestSourceMojo mojo = (JarTestSourceMojo) lookupMojo( "test-jar", testPom );
+            SourceJarMojo mojo = (SourceJarMojo) lookupMojo( "jar", testPom );
+
             mojo.execute();
         }
         catch ( Exception e )
@@ -108,8 +113,9 @@ public class JarTestSourceMojoTest
         }
 
         //check if the jar file exists
-        File sourceJar = new File( getBasedir(),
-                                   "target/test/unit/custom-configuration/target/custom-configuration-test-sources.jar" );
+        File sourceJar =
+            new File( getBasedir(), "target/test/unit/custom-configuration/target/custom-configuration-sources.jar" );
+
         assertTrue( FileUtils.fileExists( sourceJar.getAbsolutePath() ) );
 
         //verify the contents of the jar file
@@ -120,10 +126,10 @@ public class JarTestSourceMojoTest
         if ( entries.hasMoreElements() )
         {
             ZipEntry entry = (ZipEntry) entries.nextElement();
-            assertEquals( entry.getName(), "test-custom-configuration.properties" );
+            assertEquals( entry.getName(), "custom-configuration.properties" );
 
             entry = (ZipEntry) entries.nextElement();
-            assertEquals( entry.getName(), "custom/configuration/AppTest.java" );
+            assertEquals( entry.getName(), "custom/configuration/App.java" );
 
             entry = (ZipEntry) entries.nextElement();
             assertEquals( entry.getName(), "custom/configuration/" );
@@ -149,7 +155,7 @@ public class JarTestSourceMojoTest
 
         try
         {
-            JarTestSourceMojo mojo = (JarTestSourceMojo) lookupMojo( "test-jar", testPom );
+            SourceJarMojo mojo = (SourceJarMojo) lookupMojo( "jar", testPom );
             mojo.execute();
         }
         catch ( Exception e )
@@ -158,8 +164,31 @@ public class JarTestSourceMojoTest
         }
 
         File sourceJar =
-            new File( getBasedir(), "target/test/unit/invalid-packaging/target/invalid-packaging-test-sources.jar" );
+            new File( getBasedir(), "target/test/unit/invalid-packaging/target/invalid-packaging-sources.jar" );
         assertFalse( FileUtils.fileExists( sourceJar.getAbsolutePath() ) );
+
+    }
+
+    public void testGetterMethods()
+        throws Exception
+    {
+        File testPom =
+            new File( getBasedir(), "src/test/resources/unit/custom-configuration/custom-configuration-config.xml" );
+
+        try
+        {
+            SourceJarMojo mojo = (SourceJarMojo) lookupMojo( "jar", testPom );
+
+            mojo.execute();
+
+            //assertNotNull( mojo.getPackaging() );
+            //assertNotNull( mojo.getProject() );
+            //assertNotNull( mojo.getExecutedProject() );
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
 
     }
 
@@ -168,4 +197,5 @@ public class JarTestSourceMojoTest
     {
 
     }
+
 }
