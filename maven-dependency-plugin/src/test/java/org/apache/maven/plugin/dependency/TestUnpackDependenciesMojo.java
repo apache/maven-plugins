@@ -205,7 +205,8 @@ public class TestUnpackDependenciesMojo
         }
     }
 
-    public void testUnpackDependenciesMojoExcludeTestScope() throws IOException
+    public void testUnpackDependenciesMojoExcludeTestScope()
+        throws IOException
     {
         mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
         mojo.project.setDependencyArtifacts( new HashSet() );
@@ -214,13 +215,13 @@ public class TestUnpackDependenciesMojo
         try
         {
             mojo.execute();
-            fail("expected an exception");
+            fail( "expected an exception" );
         }
         catch ( MojoExecutionException e )
         {
-           
+
         }
-        
+
     }
 
     public void testUnpackDependenciesMojoExcludeRuntimeScope()

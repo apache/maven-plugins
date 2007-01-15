@@ -31,11 +31,10 @@ import org.apache.maven.plugin.dependency.testUtils.AbstractArtifactFeatureFilte
 import org.apache.maven.plugin.dependency.testUtils.ArtifactStubFactory;
 
 /**
- * @author brianf Test case for ClassifierFilter
+ * @author clove TestCases for ArtifactFilter
  * @see org.apache.maven.plugin.dependency.testUtils.AbstractArtifactFeatureFilterTestCase
- * 
  */
-public class TestClassifierFilter
+public class TestArtifactFilter
     extends AbstractArtifactFeatureFilterTestCase
 {
 
@@ -43,17 +42,15 @@ public class TestClassifierFilter
         throws Exception
     {
         super.setUp();
-        filterClass = ClassifierFilter.class;
+        filterClass = ArtifactIdFilter.class;
         ArtifactStubFactory factory = new ArtifactStubFactory( null, false );
-        artifacts = factory.getClassifiedArtifacts();
-
+        artifacts = factory.getArtifactArtifacts();
     }
 
     public void testParsing()
         throws Exception
     {
         parsing();
-
     }
 
     public void testFiltering()
@@ -64,7 +61,7 @@ public class TestClassifierFilter
         while ( iter.hasNext() )
         {
             Artifact artifact = (Artifact) iter.next();
-            assertTrue( artifact.getClassifier().equals( "one" ) || artifact.getClassifier().equals( "two" ) );
+            assertTrue( artifact.getArtifactId().equals( "one" ) || artifact.getArtifactId().equals( "two" ) );
         }
     }
 
@@ -76,7 +73,7 @@ public class TestClassifierFilter
         while ( iter.hasNext() )
         {
             Artifact artifact = (Artifact) iter.next();
-            assertTrue( artifact.getClassifier().equals( "two" ) || artifact.getClassifier().equals( "four" ) );
+            assertTrue( artifact.getArtifactId().equals( "two" ) || artifact.getArtifactId().equals( "four" ) );
         }
     }
 
