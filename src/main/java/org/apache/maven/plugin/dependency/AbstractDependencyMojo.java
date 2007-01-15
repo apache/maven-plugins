@@ -21,6 +21,7 @@ package org.apache.maven.plugin.dependency;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.List;
 
 import org.apache.maven.plugin.AbstractMojo;
@@ -33,6 +34,7 @@ import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.ReflectionUtils;
 
 /**
  * @author brianf
@@ -203,6 +205,11 @@ public abstract class AbstractDependencyMojo
 
             unArchiver.setDestDirectory( location );
 
+            if (this.silent)
+            {
+                silenceUnarchiver(unArchiver);
+            }
+            
             unArchiver.extract();
         }
         catch ( NoSuchArchiverException e )
@@ -221,6 +228,24 @@ public abstract class AbstractDependencyMojo
             e.printStackTrace();
             throw new MojoExecutionException( "Error unpacking file: " + file + " to: " + location + "\r\n"
                 + e.toString(), e );
+        }
+    }
+
+    private void silenceUnarchiver( UnArchiver unArchiver )
+    {
+        // dangerous but handle any errors. It's the only way to silence the
+        // unArchiver.
+        try
+        {
+            Field field = ReflectionUtils.getFieldByNameIncludingSuperclasses( "logger", unArchiver.getClass() );
+
+            field.setAccessible( true );
+
+            field.set( unArchiver, this.getLog() );
+        }
+        catch ( Exception e )
+        {
+            // was a nice try. Don't bother logging because the log is silent.
         }
     }
 

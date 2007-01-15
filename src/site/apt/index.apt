@@ -21,7 +21,7 @@
   Allan Ramirez
   Brian Fox
   ------
-  Nov 2006
+  Jan 2007
   ------
 
 Maven Dependency Plugin
@@ -32,7 +32,7 @@ Maven Dependency Plugin
 
 * Goals Overview
 
-  Dependency plugin has 9 goals:
+  Dependency plugin has 10 goals:
 
   *{{{copy-mojo.html}dependency:copy}} takes a list of artifacts defined in
   the plugin configuration section and copies them to a specified location,
@@ -63,6 +63,10 @@ Maven Dependency Plugin
   *{{{purge-local-repository-mojo.html}dependency:purge-local-repository}} tells
   Maven to clear all dependency-artifact files out of the local repository,
   and optionally re-resolve them.
+
+  *{{{build-classpath-mojo.html}dependency:build-classpath}} tells
+  Maven to output the path of the dependencies from the local repository in a classpath format to be used in java -cp
+
 
   []
 
