@@ -27,7 +27,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -39,13 +38,13 @@ import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.filters.ArtifactsFilter;
 
 /**
- * Goal that copies the project dependencies from the repository to a defined
- * location.
+ *  This goal will output a classpath string of dependencies from the local repository to a file or log.
  * 
  * @goal build-classpath
  * @requiresDependencyResolution compile
- * @phase process-sources
+ * @phase generate-sources
  * @author ankostis
+ * @since 2.0-alpha-2
  */
 public class BuildClasspathMojo
     extends AbstractDependencyFilterMojo
@@ -53,7 +52,7 @@ public class BuildClasspathMojo
 {
 
     /**
-     * Strip artifact version during copy
+     * Strip artifact version during copy (only works if prefix is set)
      * 
      * @parameter expression="${stripVersion}" default-value="false"
      * @parameter

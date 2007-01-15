@@ -402,3 +402,60 @@ mvn dependency:prune-local-repository -DresolutionFuzziness=artifactId
   correct resolution.
 
 
+* The <<<dependency:build-classpath>>> mojo
+
+   Since: 2.0-alpha-2
+   
+   This goal will output a classpath string of dependencies from the local repository to a file or log. For instance, the file would contain a classpath string like this:
+
++---+
+/home/foo/.m2/repository/org/java/utils/util/util-1.0.jar:/home/foo/.m2/ ....
++---+  
+
+  The resulting file could then be used like this:
+  
++---+
+java -cp `cat resultFile` MyClass
++---+
+
+  In its simplest form, to output the classpath to the log, the mojo can be called like this:
+
++---+
+mvn dependency:build-classpath
++---+
+
+  or to write the classpath to cp.txt.:
+
++---+
+mvn dependency:build-classpath -Dmaven.dep.cpFile=cp.txt
++---+
+
+  The goal can also be bound to a lifecycle phase with the following configuration:
+  
++---+  
+  <project>
+  [...]
+  <build>
+   <plugins>
+     <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>build-classpath</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>build-classpath</goal>
+            </goals>
+            <configuration>
+                <!-- configure the plugin here -->
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++---+
+ 
