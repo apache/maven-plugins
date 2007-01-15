@@ -13,7 +13,7 @@ Maven 2 Invoker Plugin
 
 * Goals Overview
 
-  * {{{plugin-run.html}invoker:run}} runs a set of Maven projects that you have configured in your POM.
+  * {{{run-mojo.html}invoker:run}} runs a set of Maven projects that you have configured in your POM.
 
   []
 
