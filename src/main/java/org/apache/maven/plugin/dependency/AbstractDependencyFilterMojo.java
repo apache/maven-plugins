@@ -25,9 +25,11 @@ import java.util.Set;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
+import org.apache.maven.plugin.dependency.utils.filters.ArtifactIdFilter;
 import org.apache.maven.plugin.dependency.utils.filters.ArtifactsFilter;
 import org.apache.maven.plugin.dependency.utils.filters.ClassifierFilter;
 import org.apache.maven.plugin.dependency.utils.filters.FilterArtifacts;
+import org.apache.maven.plugin.dependency.utils.filters.GroupIdFilter;
 import org.apache.maven.plugin.dependency.utils.filters.ScopeFilter;
 import org.apache.maven.plugin.dependency.utils.filters.TransitivityFilter;
 import org.apache.maven.plugin.dependency.utils.filters.TypeFilter;
@@ -38,8 +40,11 @@ import org.apache.maven.plugin.dependency.utils.translators.ClassifierTypeTransl
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * @author brianf
+ * Class that excapusulates the plugin parameters, and contains methods that
+ * handle dependency filtering
  * 
+ * @author brianf
+ * @see org.apache.maven.plugin.dependency.AbstractDependencyMojo
  */
 public abstract class AbstractDependencyFilterMojo
     extends AbstractDependencyMojo
@@ -83,7 +88,8 @@ public abstract class AbstractDependencyFilterMojo
     protected String includeScope;
 
     /**
-     * Scope to exclude. An Empty string indicates no scopes (default). Ignored if includeScope is used.
+     * Scope to exclude. An Empty string indicates no scopes (default). Ignored
+     * if includeScope is used.
      * 
      * @since 2.0
      * @parameter expression="${excludeScope}" default-value=""
@@ -131,12 +137,50 @@ public abstract class AbstractDependencyFilterMojo
     protected String type;
 
     /**
+     * Comma Seperated list of Artifact names too exclude. Ignored if
+     * includeArtifacts is used.
+     * 
+     * @since 2.0
+     * @optional
+     * @parameter expression="${excludeArtifactIds}" default-value=""
+     */
+    protected String excludeArtifactIds;
+
+    /**
+     * Comma Seperated list of Artifact names to include.
+     * 
+     * @since 2.0
+     * @optional
+     * @parameter expression="${includeArtifactIds}" default-value=""
+     */
+    protected String includeArtifactIds;
+
+    /**
+     * Comma Seperated list of GroupId Names to exclude. Ignored if
+     * includeGroupsIds is used.
+     * 
+     * @since 2.0
+     * @optional
+     * @parameter expression="${excludeGroupIds}" default-value=""
+     */
+    protected String excludeGroupIds;
+
+    /**
+     * Comma Seperated list of GroupIds to include.
+     * 
+     * @since 2.0
+     * @optional
+     * @parameter expression="${includeGroupIds}" default-value=""
+     */
+    protected String includeGroupIds;
+
+    /**
      * Directory to store flag files
      * 
      * @parameter expression="${markersDirectory}"
      *            default-value="${project.build.directory}/dependency-maven-plugin-markers"
      * @optional
-     * @since 1.0
+     * @since 2.0
      */
     protected File markersDirectory;
 
@@ -184,6 +228,17 @@ public abstract class AbstractDependencyFilterMojo
         return status.getResolvedDependencies();
     }
 
+    /**
+     * 
+     * Method creates filters and filters the projects dependencies. This method
+     * also transforms the dependencies if classifier is set. The dependencies
+     * are filtered in least specific to most specific order
+     * 
+     * @param stopOnFailure
+     * @return DependencyStatusSets - Bean of TreeSets that contains information
+     *         on the projects dependencies
+     * @throws MojoExecutionException
+     */
     protected DependencyStatusSets getDependencySets( boolean stopOnFailure )
         throws MojoExecutionException
     {
@@ -194,6 +249,8 @@ public abstract class AbstractDependencyFilterMojo
         filter.addFilter( new ScopeFilter( this.includeScope, this.excludeScope ) );
         filter.addFilter( new TypeFilter( this.includeTypes, this.excludeTypes ) );
         filter.addFilter( new ClassifierFilter( this.includeClassifiers, this.excludeClassifiers ) );
+        filter.addFilter( new GroupIdFilter( this.includeGroupIds, this.excludeGroupIds ) );
+        filter.addFilter( new ArtifactIdFilter( this.includeArtifactIds, this.excludeArtifactIds ) );
 
         // start with all artifacts.
         Set artifacts = project.getArtifacts();
@@ -215,6 +272,16 @@ public abstract class AbstractDependencyFilterMojo
         return status;
     }
 
+    /**
+     * 
+     * Transform artifacts
+     * 
+     * @param artifacts
+     * @param stopOnFailure
+     * @return DependencyStatusSets - Bean of TreeSets that contains information
+     *         on the projects dependencies
+     * @throws MojoExecutionException
+     */
     protected DependencyStatusSets getClassifierTranslatedDependencies( Set artifacts, boolean stopOnFailure )
         throws MojoExecutionException
     {
@@ -252,6 +319,13 @@ public abstract class AbstractDependencyFilterMojo
         return status;
     }
 
+    /**
+     * Filter the marked dependencies
+     * 
+     * @param artifacts
+     * @return
+     * @throws MojoExecutionException
+     */
     protected DependencyStatusSets filterMarkedDependencies( Set artifacts )
         throws MojoExecutionException
     {
@@ -279,7 +353,8 @@ public abstract class AbstractDependencyFilterMojo
     }
 
     /**
-     * @param theMarkersDirectory The markersDirectory to set.
+     * @param theMarkersDirectory
+     *            The markersDirectory to set.
      */
     public void setMarkersDirectory( File theMarkersDirectory )
     {

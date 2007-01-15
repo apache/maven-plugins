@@ -1,4 +1,5 @@
 package org.apache.maven.plugin.dependency.testUtils;
+
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -243,6 +244,28 @@ public class ArtifactStubFactory
         return set;
     }
 
+    public Set getArtifactArtifacts()
+        throws IOException
+    {
+        Set set = new HashSet();
+        set.add( createArtifact( "g", "one", "1.0", Artifact.SCOPE_COMPILE, "jar", "a" ) );
+        set.add( createArtifact( "g", "two", "1.0", Artifact.SCOPE_COMPILE, "jar", "a" ) );
+        set.add( createArtifact( "g", "three", "1.0", Artifact.SCOPE_COMPILE, "jar", "a" ) );
+        set.add( createArtifact( "g", "four", "1.0", Artifact.SCOPE_COMPILE, "jar", "a" ) );
+        return set;
+    }
+
+    public Set getGroupIdArtifacts()
+        throws IOException
+    {
+        Set set = new HashSet();
+        set.add( createArtifact( "one", "group-one", "1.0", Artifact.SCOPE_COMPILE, "jar", "a" ) );
+        set.add( createArtifact( "two", "group-two", "1.0", Artifact.SCOPE_COMPILE, "jar", "a" ) );
+        set.add( createArtifact( "three", "group-three", "1.0", Artifact.SCOPE_COMPILE, "jar", "a" ) );
+        set.add( createArtifact( "four", "group-four", "1.0", Artifact.SCOPE_COMPILE, "jar", "a" ) );
+        return set;
+    }
+
     public Set getMixedArtifacts()
         throws IOException
     {
@@ -320,4 +343,5 @@ public class ArtifactStubFactory
         }
         return list;
     }
+
 }
