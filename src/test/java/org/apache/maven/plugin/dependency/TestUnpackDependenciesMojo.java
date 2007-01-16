@@ -394,6 +394,81 @@ public class TestUnpackDependenciesMojo
         }
     }
 
+    public void testUnpackDependenciesMojoIncludeArtifactId()
+        throws Exception
+    {
+        mojo.project.setArtifacts( stubFactory.getArtifactArtifacts() );
+        mojo.project.setDependencyArtifacts( new HashSet() );
+
+        mojo.includeArtifactIds = "one";
+        // if include is used, exclude should be ignored.
+        mojo.excludeArtifactIds = "one";
+
+        mojo.execute();
+
+        Iterator iter = mojo.project.getArtifacts().iterator();
+        while ( iter.hasNext() )
+        {
+            Artifact artifact = (Artifact) iter.next();
+            assertUnpacked( artifact.getArtifactId().equals( "one" ), artifact );
+        }
+    }
+
+    public void testUnpackDependenciesMojoExcludeArtifactId()
+        throws Exception
+    {
+        mojo.project.setArtifacts( stubFactory.getArtifactArtifacts() );
+        mojo.project.setDependencyArtifacts( new HashSet() );
+        mojo.excludeArtifactIds = "one";
+        mojo.execute();
+
+        // test - get all direct dependencies and verify that they exist if they
+        // do not have a classifier of "one"
+        // then delete the file and at the end, verify the folder is empty.
+        Iterator iter = mojo.project.getArtifacts().iterator();
+        while ( iter.hasNext() )
+        {
+            Artifact artifact = (Artifact) iter.next();
+            assertUnpacked( !artifact.getArtifactId().equals( "one" ), artifact );
+        }
+    }
+
+    public void testUnpackDependenciesMojoExcludeGroupId()
+        throws Exception
+    {
+        mojo.project.setArtifacts( stubFactory.getGroupIdArtifacts() );
+        mojo.project.setDependencyArtifacts( new HashSet() );
+        mojo.excludeGroupIds = "one";
+        mojo.execute();
+
+        Iterator iter = mojo.project.getArtifacts().iterator();
+        while ( iter.hasNext() )
+        {
+            Artifact artifact = (Artifact) iter.next();
+            assertUnpacked( !artifact.getGroupId().equals( "one" ), artifact );
+        }
+    }
+
+    public void testUnpackDependenciesMojoIncludeGroupId()
+        throws Exception
+    {
+        mojo.project.setArtifacts( stubFactory.getGroupIdArtifacts() );
+        mojo.project.setDependencyArtifacts( new HashSet() );
+        mojo.includeGroupIds = "one";
+        // if include is used, exclude should be ignored.
+        mojo.excludeGroupIds = "one";
+
+        mojo.execute();
+
+        Iterator iter = mojo.project.getArtifacts().iterator();
+        while ( iter.hasNext() )
+        {
+            Artifact artifact = (Artifact) iter.next();
+            // Testing with artifact id because group id is not in filename
+            assertUnpacked( artifact.getGroupId().equals( "one" ), artifact );
+        }
+    }
+
     public void testCDMClassifier()
         throws Exception
     {
