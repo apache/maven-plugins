@@ -30,9 +30,9 @@ import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
-import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.dependency.fromConfiguration.ArtifactItem;
+import org.apache.maven.plugin.dependency.testUtils.stubs.DefaultArtifactHandlerStub;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.SilentLog;
 import org.codehaus.plexus.archiver.Archiver;
@@ -90,7 +90,8 @@ public class ArtifactStubFactory
                                    String type, String classifier, boolean optional )
         throws IOException
     {
-        ArtifactHandler ah = new DefaultArtifactHandler();
+        ArtifactHandler ah = new DefaultArtifactHandlerStub(type,classifier);
+        
         Artifact artifact = new DefaultArtifact( groupId, artifactId, versionRange, scope, type, classifier, ah,
                                                  optional );
         if ( createFiles )
