@@ -72,7 +72,7 @@ public final class DependencyUtil
                 classifierString = "-" + artifact.getClassifier();
             }
 
-            destFileName = artifact.getArtifactId() + versionString + classifierString + "." + artifact.getType();
+            destFileName = artifact.getArtifactId() + versionString + classifierString + "." + artifact.getArtifactHandler().getExtension();
         }
         return destFileName;
     }
