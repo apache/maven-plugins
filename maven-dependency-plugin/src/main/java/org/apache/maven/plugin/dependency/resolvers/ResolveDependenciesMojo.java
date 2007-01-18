@@ -39,6 +39,14 @@ import org.apache.maven.plugin.dependency.utils.markers.SourcesFileMarkerHandler
 public class ResolveDependenciesMojo
     extends AbstractResolveMojo
 {
+    
+    /**
+     * If we should display the scope when resolving
+     * 
+     * @parameter expression="${mdep.outputScope}" default-value="true"
+     * @since 2.0-alpha-2
+     */
+    protected boolean outputScope;
 
     /**
      * Only used to store results for integration test validation
@@ -59,7 +67,7 @@ public class ResolveDependenciesMojo
         // get sets of dependencies
         results = this.getDependencySets( false );
 
-        results.logStatus( getLog(), outputAbsoluteArtifactFilename );
+        results.logStatus( getLog(), outputAbsoluteArtifactFilename, outputScope );
     }
 
     /**
