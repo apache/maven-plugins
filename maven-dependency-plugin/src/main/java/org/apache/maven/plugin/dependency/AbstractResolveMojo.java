@@ -48,13 +48,6 @@ public abstract class AbstractResolveMojo
     protected MavenProjectBuilder mavenProjectBuilder;
     
     /**
-     * If we should display the scope when resolving
-     * 
-     * @parameter expression="${mdep.outputScope}" default-value="true"
-     */
-    protected boolean outputScope;
-
-    /**
      * This method resolves the dependency artifacts from the project.
      * 
      * @param theProject
