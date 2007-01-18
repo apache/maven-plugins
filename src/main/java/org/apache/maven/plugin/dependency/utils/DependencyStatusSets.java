@@ -139,6 +139,11 @@ public class DependencyStatusSets
 
     public void logStatus( Log log, boolean outputAbsoluteArtifactFilename )
     {
+        logStatus( log, outputAbsoluteArtifactFilename, true );
+    }
+
+    public void logStatus( Log log, boolean outputAbsoluteArtifactFilename, boolean outputScope )
+    {
         log.info( "" );
         log.info( "The following files have been resolved: " );
         if ( this.resolvedDependencies == null || this.resolvedDependencies.isEmpty() )
@@ -164,7 +169,9 @@ public class DependencyStatusSets
                         artifactFilename = null;
                     }
                 }
-                log.info( "   " + artifact.getId() + ( outputAbsoluteArtifactFilename ? ":" + artifactFilename : "" ) );
+                log.info( "   " + artifact.getId()
+                    + ( outputAbsoluteArtifactFilename ? ":" + artifactFilename : "" )
+                    + ( outputScope ? " (scope = " + artifact.getScope() + ")" : "" ));
             }
         }
 
