@@ -134,6 +134,10 @@ public class TestDependencyStatusSets
         dss = new DependencyStatusSets( artifacts, artifacts, artifacts );
         dss.logStatus( log, false );
         dss.logStatus( log, true );
+        dss.logStatus( log, false ,true);
+        dss.logStatus( log, true , true);
+        dss.logStatus( log, false , false);
+        dss.logStatus( log, true , false);
 
     }
 }
