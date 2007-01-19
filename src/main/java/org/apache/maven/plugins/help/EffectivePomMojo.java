@@ -39,6 +39,12 @@ import java.util.List;
 public class EffectivePomMojo
     extends AbstractMojo
 {
+    /**
+     * @parameter expression="${project}"
+     * @required
+     * @readonly
+     */
+    private MavenProject project;
 
     /**
      * The projects in the current build. The effective-POM for
@@ -64,13 +70,23 @@ public class EffectivePomMojo
         throws MojoExecutionException
     {
         StringBuffer message = new StringBuffer();
-        
-        for ( Iterator it = projects.iterator(); it.hasNext(); )
+
+        if ( projects.get( 0 ).equals( project ) )
         {
-            MavenProject project = (MavenProject) it.next();
-            
+            // this is normal in aggregation mode.
+
+            for ( Iterator it = projects.iterator(); it.hasNext(); )
+            {
+                MavenProject project = (MavenProject) it.next();
+                
+                getEffectivePom( project, message );
+                
+                message.append( "\n\n" );
+            }
+        }
+        else
+        {
             getEffectivePom( project, message );
-            
             message.append( "\n\n" );
         }
         
