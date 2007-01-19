@@ -116,8 +116,6 @@ public class DeployMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        System.out.println( "altDeploymentRepository = " + altDeploymentRepository );
-
         ArtifactRepository repo = getDeploymentRepository();
 
         String protocol = repo.getProtocol();
