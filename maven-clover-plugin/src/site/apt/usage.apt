@@ -222,19 +222,24 @@
 
   Clover allows specifying {{{http://cenqua.com/clover/doc/adv/contexts.html}block contexts}}
   (i.e. elements to be excluded from the Test Percentage Coverage). To configure a block context use
-  the <<<contextFilters>>> element. For example to exclude <<<try>>> and <<<static>>> block contexts, you would
-  write:
+  the <<<contextFilters>>> element in the <<<reporting>>> section. For example to exclude <<<try>>> and <<<static>>>
+  block contexts, you would write:
 
 +--------
 [...]
-  <plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-clover-plugin</artifactId>
-    <configuration>
-      <contextFilters>try,static</contextFilters>
-    </configuration>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clover-plugin</artifactId>
+        <configuration>
+          <contextFilters>try,static</contextFilters>
+        </configuration>
 [...]
 +---------
+
+  Note that the <<<contextFilters>>> element has to be specified within the <<<reporting>>> section and will not
+  work if you specify it in the <<<build>>> section.
 
   <Back to {{{usage.html}top}}.>
 
