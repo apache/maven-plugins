@@ -5,18 +5,6 @@
 	<artifactId>mdep-50-it</artifactId>
 	<version>1</version>
 	<packaging>jar</packaging>
-	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>[3.7,4.0)</version>
-		</dependency>
-		<dependency>
-			<groupId>ant</groupId>
-			<artifactId>ant</artifactId>
-			<version>1.6</version>
-		</dependency>
-	</dependencies>
 	<build>
 		<defaultGoal>generate-sources</defaultGoal>
 		<plugins>
@@ -37,6 +25,11 @@
 									<groupId>junit</groupId>
 									<artifactId>junit</artifactId>
 									<version>[3.7,4.0)</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>ant</groupId>
+									<artifactId>ant</artifactId>
+									<version>[1.1,1.5)</version>
 								</artifactItem>
 							</artifactItems>
 						</configuration>

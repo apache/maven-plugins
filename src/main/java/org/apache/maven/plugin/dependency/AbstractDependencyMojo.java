@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.List;
 
+import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
+import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.SilentLog;
@@ -61,6 +63,22 @@ public abstract class AbstractDependencyMojo
      */
     protected org.apache.maven.artifact.resolver.ArtifactResolver resolver;
 
+    /**
+     * Artifact collector, needed to resolve dependencies.
+     * 
+     * @component role="org.apache.maven.artifact.resolver.ArtifactCollector"
+     * @required
+     * @readonly
+     */
+    protected ArtifactCollector artifactCollector;
+
+    /**
+     * @component role="org.apache.maven.artifact.metadata.ArtifactMetadataSource" hint="maven"
+     * @required
+     * @readonly
+     */
+    protected ArtifactMetadataSource artifactMetadataSource;
+    
     /**
      * Location of the local repository.
      * 
