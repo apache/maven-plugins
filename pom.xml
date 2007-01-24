@@ -3,9 +3,9 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.apache.maven</groupId>
-    <artifactId>maven-plugin-surrogate-parent</artifactId>
-    <version>6-SNAPSHOT</version>
-    <relativePath>../pom/maven-plugin-surrogate-parent/pom.xml</relativePath>
+    <artifactId>maven-parent</artifactId>
+    <version>5-SNAPSHOT</version>
+    <relativePath>../pom/maven/pom.xml</relativePath>
   </parent>
   <groupId>org.apache.maven.plugins</groupId>
   <artifactId>maven-plugins</artifactId>
@@ -203,49 +203,13 @@
         </plugins>
       </build>
     </profile>
-    <profile>
-      <id>release-profile</id>
-      <activation>
-        <property>
-          <name>performRelease</name>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-          <!-- We want to sign the artifact, the POM, and all attached artifacts -->
-          <plugin>
-            <artifactId>maven-gpg-plugin</artifactId>
-            <version>1.0-alpha-1</version>
-            <configuration>
-              <passphrase>${gpg.passphrase}</passphrase>
-            </configuration>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>sign</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-          <!-- We want to package up license resources in the JARs produced -->
-          <plugin>
-            <artifactId>maven-remote-resources-plugin</artifactId>
-            <version>1.0-alpha-1</version>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>process</goal>
-                </goals>
-                <configuration>
-                  <resourceBundles>
-                    <resourceBundle>org.apache:apache-jar-resource-bundle:1.0</resourceBundle>
-                  </resourceBundles>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>    
   </profiles>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugin-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>
