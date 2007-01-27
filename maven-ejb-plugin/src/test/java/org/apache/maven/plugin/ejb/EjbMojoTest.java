@@ -23,9 +23,11 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.ejb.stub.MavenProjectResourcesStub;
 import org.apache.maven.plugin.ejb.utils.JarContentChecker;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.jar.JarFile;
 
@@ -37,7 +39,9 @@ import java.util.jar.JarFile;
 public class EjbMojoTest
     extends AbstractMojoTestCase
 {
-    private static final String defaultPOMPath = "target/test-classes/unit/ejbmojotest/plugin-config.xml";
+    static final String DEFAULT_POM_PATH = "target/test-classes/unit/ejbmojotest/plugin-config.xml";
+
+    static final String DEFAULT_JAR_NAME = "testJar";
 
     public void setUp()
         throws Exception
@@ -54,129 +58,112 @@ public class EjbMojoTest
     /**
      * check test environment
      *
-     * @throws Exception
+     * @throws Exception if any exception occurs
      */
     public void testTestEnvironment()
         throws Exception
     {
-        File pomFile = new File( getBasedir(), defaultPOMPath );
-        EjbMojo mojo = (EjbMojo) lookupMojo( "ejb", pomFile );
-
-        assertNotNull( mojo );
+        // Perform lookup on the Mojo to make sure everything is ok
+        lookupMojo();
     }
 
     /**
-     * basic jar creation test
+     * Basic jar creation test.
      *
-     * @throws Exception
+     * @throws Exception if any exception occurs
      */
-    public void testJarCreation_WithoutClientJar()
+    public void testDefaultWithoutClientJar()
         throws Exception
     {
-        File pomFile = new File( getBasedir(), defaultPOMPath );
-        EjbMojo mojo = (EjbMojo) lookupMojo( "ejb", pomFile );
+        final MavenProjectResourcesStub project = createTestProject( "default-noclient" );
+        final EjbMojo mojo = lookupMojoWithDefaultSettings( project );
 
-        assertNotNull( mojo );
+        setupDefaultProject( project );
 
-        // this will automatically create the isolated
-        // test environment
-        MavenProjectResourcesStub project = new MavenProjectResourcesStub( "jarCreation_WithoutClientJar" );
-
-        // create the necessary test files
-
-        // put this on the target dir
-        project.addFile( "META-INF/ejb-jar.xml", MavenProjectResourcesStub.OUTPUT_FILE );
-        // put this on the root dir
-        project.addFile( "pom.xml", MavenProjectResourcesStub.ROOT_FILE );
-        // start creating the environment
-        project.setupBuildEnvironment();
-
-        // configure mojo
-        String jarName = "testJar";
-
-        setVariableValueToObject( mojo, "basedir", project.getBuild().getDirectory() );
-        setVariableValueToObject( mojo, "outputDirectory", project.getBuild().getOutputDirectory() );
-        setVariableValueToObject( mojo, "jarName", jarName );
         setVariableValueToObject( mojo, "generateClient", "false" );
-        setVariableValueToObject( mojo, "clientExcludes", new LinkedList() );
-        setVariableValueToObject( mojo, "clientIncludes", new LinkedList() );
-        setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "ejbVersion", "2.1" );
 
         mojo.execute();
 
-        // validate jar creation
-        String checkedJarFile = project.getBuild().getDirectory() + "/" + jarName + ".jar";
-        String checkedClientJarFile = project.getBuild().getDirectory() + "/" + jarName + "-client.jar";
-
-        assertTrue( FileUtils.fileExists( checkedJarFile ) );
-        assertFalse( FileUtils.fileExists( checkedClientJarFile ) );
+        assertJarCreation( project, true, false );
     }
 
     /**
-     * basic jar creation test with client jar
+     * Classified jar creation test.
      *
-     * @throws Exception
+     * @throws Exception if any exception occurs
      */
-    public void testJarCreation_WithClientJar()
+    public void testClassifiedJarWithoutClientJar()
         throws Exception
     {
-        File pomFile = new File( getBasedir(), defaultPOMPath );
-        EjbMojo mojo = (EjbMojo) lookupMojo( "ejb", pomFile );
+        final MavenProjectResourcesStub project = createTestProject( "classified-noclient" );
+        final EjbMojo mojo = lookupMojoWithDefaultSettings( project );
 
-        assertNotNull( mojo );
+        setupDefaultProject( project );
 
-        // this will automatically create the isolated
-        // test environment
-        MavenProjectResourcesStub project = new MavenProjectResourcesStub( "jarCreation_WithClientJar" );
+        setVariableValueToObject( mojo, "generateClient", "false" );
+        setVariableValueToObject( mojo, "ejbVersion", "2.1" );
+        setVariableValueToObject( mojo, "classifier", "classified" );
 
-        // set up test files
+        mojo.execute();
 
-        // put this on the target dir
-        project.addFile( "META-INF/ejb-jar.xml", MavenProjectResourcesStub.OUTPUT_FILE );
-        // put this on the root dir
-        project.addFile( "pom.xml", MavenProjectResourcesStub.ROOT_FILE );
-        // start creating the environment
-        project.setupBuildEnvironment();
+        assertJarCreation( project, true, false, "classified" );
+    }
 
-        // configure mojo
-        String jarName = "testJar";
+    /**
+     * Basic jar creation test with client jar.
+     *
+     * @throws Exception if any exception occurs
+     */
+    public void testDefaultWithClientJar()
+        throws Exception
+    {
+        final MavenProjectResourcesStub project = createTestProject( "default-client" );
+        final EjbMojo mojo = lookupMojoWithDefaultSettings( project );
 
-        setVariableValueToObject( mojo, "basedir", project.getBuild().getDirectory() );
-        setVariableValueToObject( mojo, "outputDirectory", project.getBuild().getOutputDirectory() );
-        setVariableValueToObject( mojo, "jarName", jarName );
+        setupDefaultProject( project );
+
         setVariableValueToObject( mojo, "generateClient", "true" );
-        setVariableValueToObject( mojo, "clientExcludes", new LinkedList() );
-        setVariableValueToObject( mojo, "clientIncludes", new LinkedList() );
-        setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "ejbVersion", "2.1" );
 
         mojo.execute();
 
-        // validate jar creation
-        String checkedJarFile = project.getBuild().getDirectory() + "/" + jarName + ".jar";
-        String checkedClientJarFile = project.getBuild().getDirectory() + "/" + jarName + "-client.jar";
-
-        assertTrue( FileUtils.fileExists( checkedJarFile ) );
-        assertTrue( FileUtils.fileExists( checkedClientJarFile ) );
+        assertJarCreation( project, true, true );
     }
 
     /**
-     * default ejb jar inclusion and exclusion
+     * Classified jar creation test with client jar.
      *
-     * @throws Exception
+     * @throws Exception if any exception occurs
+     */
+    public void testClassifiedJarWithClientJar()
+        throws Exception
+    {
+        final MavenProjectResourcesStub project = createTestProject( "classified-client" );
+        final EjbMojo mojo = lookupMojoWithDefaultSettings( project );
+
+        setupDefaultProject( project );
+
+        setVariableValueToObject( mojo, "generateClient", "true" );
+        setVariableValueToObject( mojo, "ejbVersion", "2.1" );
+        setVariableValueToObject( mojo, "classifier", "classified" );
+
+        mojo.execute();
+
+        assertJarCreation( project, true, true, "classified" );
+    }
+
+    /**
+     * Default ejb jar inclusion and exclusion test.
+     *
+     * @throws Exception if any exception occurs
      */
     public void testDefaultInclusionsExclusions()
         throws Exception
     {
-        File pomFile = new File( getBasedir(), defaultPOMPath );
-        EjbMojo mojo = (EjbMojo) lookupMojo( "ejb", pomFile );
 
-        assertNotNull( mojo );
-
-        // this will automatically create the isolated
-        // test environment
-        MavenProjectResourcesStub project = new MavenProjectResourcesStub( "defaultInclusionsExclusions" );
+        final MavenProjectResourcesStub project = createTestProject( "includes-excludes-default" );
+        final EjbMojo mojo = lookupMojoWithDefaultSettings( project );
 
         // put this on the target output dir
         project.addFile( "META-INF/ejb-jar.xml", MavenProjectResourcesStub.OUTPUT_FILE );
@@ -190,53 +177,29 @@ public class EjbMojoTest
         // start creating the environment
         project.setupBuildEnvironment();
 
-        // set up test data
-        String jarName = "testJar";
-
-        setVariableValueToObject( mojo, "basedir", project.getBuild().getDirectory() );
-        setVariableValueToObject( mojo, "outputDirectory", project.getBuild().getOutputDirectory() );
-        setVariableValueToObject( mojo, "jarName", jarName );
         setVariableValueToObject( mojo, "generateClient", "false" );
-        setVariableValueToObject( mojo, "clientExcludes", new LinkedList() );
-        setVariableValueToObject( mojo, "clientIncludes", new LinkedList() );
-        setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "ejbVersion", "2.1" );
 
         mojo.execute();
 
-        // validate jar creation
-        JarContentChecker inclusionChecker = new JarContentChecker();
-        String checkedJarFile = project.getBuild().getDirectory() + "/" + jarName + ".jar";
-
-        // set expected jar contents
-        inclusionChecker.addFile( new File( "META-INF/MANIFEST.MF" ) );
-        inclusionChecker.addFile( new File( "META-INF/ejb-jar.xml" ) );
-        inclusionChecker.addFile( new File( "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml" ) );
-        inclusionChecker.addFile( new File( "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties" ) );
-        inclusionChecker.addFile( new File( "org/sample/ejb/AppBean.class" ) );
-        inclusionChecker.addFile( new File( "org/sample/ejb/AppCMP.class" ) );
-        inclusionChecker.addFile( new File( "org/sample/ejb/AppSession.class" ) );
-
-        assertTrue( FileUtils.fileExists( checkedJarFile ) );
-        assertTrue( inclusionChecker.isOK( new JarFile( checkedJarFile ) ) );
+        assertJarCreation( project, true, false );
+        assertJarContent( project, new String[]{"META-INF/MANIFEST.MF", "META-INF/ejb-jar.xml",
+            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
+            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties", "org/sample/ejb/AppBean.class",
+            "org/sample/ejb/AppCMP.class", "org/sample/ejb/AppSession.class"}, null );
     }
 
     /**
-     * client jar default inclusion and exclusion test
+     * Client jar default inclusion and exclusion test.
      *
-     * @throws Exception
+     * @throws Exception if any exception occurs
      */
     public void testClientJarDefaultInclusionsExclusions()
         throws Exception
     {
-        File pomFile = new File( getBasedir(), defaultPOMPath );
-        EjbMojo mojo = (EjbMojo) lookupMojo( "ejb", pomFile );
 
-        assertNotNull( mojo );
-
-        // this will automatically create the isolated
-        // test environment
-        MavenProjectResourcesStub project = new MavenProjectResourcesStub( "clientJarDefaultInclusionsExclusions" );
+        final MavenProjectResourcesStub project = createTestProject( "includes-excludes-client" );
+        final EjbMojo mojo = lookupMojoWithDefaultSettings( project );
 
         // put this on the target output dir
         project.addFile( "META-INF/ejb-jar.xml", MavenProjectResourcesStub.OUTPUT_FILE );
@@ -251,58 +214,32 @@ public class EjbMojoTest
         // start creating the environment
         project.setupBuildEnvironment();
 
-        // set up test data
-        String jarName = "testJar";
-
-        setVariableValueToObject( mojo, "basedir", project.getBuild().getDirectory() );
-        setVariableValueToObject( mojo, "outputDirectory", project.getBuild().getOutputDirectory() );
-        setVariableValueToObject( mojo, "jarName", jarName );
         setVariableValueToObject( mojo, "generateClient", "true" );
-        setVariableValueToObject( mojo, "clientExcludes", new LinkedList() );
-        setVariableValueToObject( mojo, "clientIncludes", new LinkedList() );
-        setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "ejbVersion", "2.1" );
 
         mojo.execute();
 
-        // validate jar creation
-        JarContentChecker inclusionChecker = new JarContentChecker();
-        JarContentChecker exclusionChecker = new JarContentChecker();
-        String checkedJarFile = project.getBuild().getDirectory() + "/" + jarName + "-client.jar";
-
-        // set expected jar contents
-        inclusionChecker.addFile( new File( "META-INF/MANIFEST.MF" ) );
-        inclusionChecker.addFile( new File( "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml" ) );
-        inclusionChecker.addFile( new File( "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties" ) );
-        inclusionChecker.addFile( new File( "org/sample/ejb/AppStub.class" ) );
-
-        // files not included
-        exclusionChecker.addFile( new File( "META-INF/ejb-jar.xml" ) );
-        exclusionChecker.addFile( new File( "org/sample/ejb/AppBean.class" ) );
-        exclusionChecker.addFile( new File( "org/sample/ejb/AppCMP.class" ) );
-        exclusionChecker.addFile( new File( "org/sample/ejb/AppSession.class" ) );
-
-        assertTrue( FileUtils.fileExists( checkedJarFile ) );
-        assertTrue( inclusionChecker.isOK( new JarFile( checkedJarFile ) ) );
-        assertFalse( exclusionChecker.isOK( new JarFile( checkedJarFile ) ) );
+        assertJarCreation( project, true, true );
+        assertClientJarContent( project, new String[]{"META-INF/MANIFEST.MF",
+            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
+            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties", "org/sample/ejb/AppStub.class"},
+                                         new String[]{"META-INF/ejb-jar.xml", "org/sample/ejb/AppBean.class",
+                                             "org/sample/ejb/AppCMP.class", "org/sample/ejb/AppSession.class"} );
     }
 
     /**
-     * client jar inclusion test
+     * Client jar inclusion test.
      *
-     * @throws Exception
+     * @throws Exception if any exception occurs
      */
     public void testClientJarInclusions()
         throws Exception
     {
-        File pomFile = new File( getBasedir(), defaultPOMPath );
-        EjbMojo mojo = (EjbMojo) lookupMojo( "ejb", pomFile );
+        final LinkedList inclusions = new LinkedList();
+        inclusions.add( "**/*Include.class" );
 
-        assertNotNull( mojo );
-
-        // this will automatically create the isolated
-        // test environment
-        MavenProjectResourcesStub project = new MavenProjectResourcesStub( "clientJarInclusions" );
+        final MavenProjectResourcesStub project = createTestProject( "client-includes" );
+        final EjbMojo mojo = lookupMojoWithSettings( project, inclusions, new LinkedList() );
 
         // put this on the target output dir
         project.addFile( "META-INF/ejb-jar.xml", MavenProjectResourcesStub.OUTPUT_FILE );
@@ -315,61 +252,32 @@ public class EjbMojoTest
         // start creating the environment
         project.setupBuildEnvironment();
 
-        // set up test data
-        String jarName = "testJar";
-        LinkedList inclusions = new LinkedList();
-
-        inclusions.add( "**/*Include.class" );
-
-        setVariableValueToObject( mojo, "basedir", project.getBuild().getDirectory() );
-        setVariableValueToObject( mojo, "outputDirectory", project.getBuild().getOutputDirectory() );
-        setVariableValueToObject( mojo, "jarName", jarName );
         setVariableValueToObject( mojo, "generateClient", "true" );
-        setVariableValueToObject( mojo, "clientExcludes", new LinkedList() );
-        setVariableValueToObject( mojo, "clientIncludes", inclusions );
-        setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "ejbVersion", "2.1" );
 
         mojo.execute();
 
-        // validate jar creation
-        JarContentChecker inclusionChecker = new JarContentChecker();
-        JarContentChecker exclusionChecker = new JarContentChecker();
-        String checkedJarFile = project.getBuild().getDirectory() + "/" + jarName + "-client.jar";
-
-        // set expected jar contents
-        inclusionChecker.addFile( new File( "META-INF/MANIFEST.MF" ) );
-        inclusionChecker.addFile( new File( "org/sample/ejb/AppInclude.class" ) );
-
-        // read the packaging conventions first for this one
-        inclusionChecker.addFile( new File( "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml" ) );
-        inclusionChecker.addFile( new File( "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties" ) );
-
-        // files not included
-        exclusionChecker.addFile( new File( "META-INF/ejb-jar.xml" ) );
-        exclusionChecker.addFile( new File( "org/sample/ejb/AppExclude.class" ) );
-
-        assertTrue( FileUtils.fileExists( checkedJarFile ) );
-        assertTrue( inclusionChecker.isOK( new JarFile( checkedJarFile ) ) );
-        assertFalse( exclusionChecker.isOK( new JarFile( checkedJarFile ) ) );
+        assertJarCreation( project, true, true );
+        assertClientJarContent( project, new String[]{"META-INF/MANIFEST.MF",
+            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
+            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties", "org/sample/ejb/AppInclude.class"},
+                                         new String[]{"META-INF/ejb-jar.xml", "org/sample/ejb/AppExclude.class"} );
     }
 
     /**
-     * client jar exclusions test
+     * Client jar exclusions test.
      *
-     * @throws Exception
+     * @throws Exception if any exception occurs
      */
     public void testClientJarExclusions()
         throws Exception
     {
-        File pomFile = new File( getBasedir(), defaultPOMPath );
-        EjbMojo mojo = (EjbMojo) lookupMojo( "ejb", pomFile );
 
-        assertNotNull( mojo );
+        final LinkedList exclusions = new LinkedList();
+        exclusions.add( "**/*Exclude.class" );
 
-        // this will automatically create the isolated
-        // test environment
-        MavenProjectResourcesStub project = new MavenProjectResourcesStub( "clientJarExclusions" );
+        final MavenProjectResourcesStub project = createTestProject( "client-excludes" );
+        final EjbMojo mojo = lookupMojoWithSettings( project, new LinkedList(), exclusions );
 
         // put this on the target output dir
         project.addFile( "META-INF/ejb-jar.xml", MavenProjectResourcesStub.OUTPUT_FILE );
@@ -382,81 +290,39 @@ public class EjbMojoTest
         // start creating the environment
         project.setupBuildEnvironment();
 
-        // set up test data
-        String jarName = "testJar";
-        LinkedList exclusions = new LinkedList();
-
-        exclusions.add( "**/*Exclude.class" );
-
-        setVariableValueToObject( mojo, "basedir", project.getBuild().getDirectory() );
-        setVariableValueToObject( mojo, "outputDirectory", project.getBuild().getOutputDirectory() );
-        setVariableValueToObject( mojo, "jarName", jarName );
         setVariableValueToObject( mojo, "generateClient", "true" );
-        setVariableValueToObject( mojo, "clientExcludes", exclusions );
-        setVariableValueToObject( mojo, "clientIncludes", new LinkedList() );
-        setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "ejbVersion", "2.1" );
 
         mojo.execute();
 
-        // validate jar creation
-        JarContentChecker inclusionChecker = new JarContentChecker();
-        JarContentChecker exclusionChecker = new JarContentChecker();
-        String checkedJarFile = project.getBuild().getDirectory() + "/" + jarName + "-client.jar";
+        assertJarCreation( project, true, true );
+        assertClientJarContent( project, new String[]{"META-INF/MANIFEST.MF",
+            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
+            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties", "org/sample/ejb/AppInclude.class"},
+                                         new String[]{"META-INF/ejb-jar.xml", "org/sample/ejb/AppExclude.class"} );
 
-        // set expected jar contents
-        inclusionChecker.addFile( new File( "META-INF/MANIFEST.MF" ) );
-        inclusionChecker.addFile( new File( "org/sample/ejb/AppInclude.class" ) );
-
-        // read the packaging conventions first for this one
-        inclusionChecker.addFile( new File( "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml" ) );
-        inclusionChecker.addFile( new File( "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties" ) );
-
-        // files not included
-        exclusionChecker.addFile( new File( "META-INF/ejb-jar.xml" ) );
-        exclusionChecker.addFile( new File( "org/sample/ejb/AppExclude.class" ) );
-
-        assertTrue( FileUtils.fileExists( checkedJarFile ) );
-        assertTrue( inclusionChecker.isOK( new JarFile( checkedJarFile ) ) );
-        assertFalse( exclusionChecker.isOK( new JarFile( checkedJarFile ) ) );
     }
 
     /**
-     * tests if the mojo throws an exception when the EJB version is < 3.0
+     * Tests if the mojo throws an exception when the EJB version is < 3.0
      * and no deployment descriptor is present. The case with deployment descriptor
-     * present is covered by the testJarCreation* tests.
+     * present is covered by previous tests.
      *
-     * @throws Exception
+     * @throws Exception if any exception occurs
      */
-    public void testEjbCompliance_2_1_WithoutDescriptor()
+    public void testEjbComplianceVersionTwoDotOneWithoutDescriptor()
         throws Exception
     {
-        File pomFile = new File( getBasedir(), defaultPOMPath );
-        EjbMojo mojo = (EjbMojo) lookupMojo( "ejb", pomFile );
-
-        assertNotNull( mojo );
-
-        // this will automatically create the isolated
-        // test environment
-        MavenProjectResourcesStub project = new MavenProjectResourcesStub( "testEjbCompliance_2_1_WithoutDescriptor" );
-
-        // create the necessary test files
+        final MavenProjectResourcesStub project = createTestProject( "compliance-nodescriptor-2.1" );
+        final EjbMojo mojo = lookupMojoWithDefaultSettings( project );
 
         // put this on the root dir
         project.addFile( "pom.xml", MavenProjectResourcesStub.ROOT_FILE );
+
         // start creating the environment
         project.setupBuildEnvironment();
 
-        // configure mojo
-        String jarName = "testJar";
-
-        setVariableValueToObject( mojo, "basedir", project.getBuild().getDirectory() );
-        setVariableValueToObject( mojo, "outputDirectory", project.getBuild().getOutputDirectory() );
-        setVariableValueToObject( mojo, "jarName", jarName );
         setVariableValueToObject( mojo, "generateClient", "false" );
-        setVariableValueToObject( mojo, "clientExcludes", new LinkedList() );
-        setVariableValueToObject( mojo, "clientIncludes", new LinkedList() );
-        setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "ejbVersion", "2.1" );
 
         try
@@ -466,6 +332,7 @@ public class EjbMojoTest
         }
         catch ( MojoExecutionException e )
         {
+            // OK
         }
     }
 
@@ -473,22 +340,82 @@ public class EjbMojoTest
      * Tests if the jar is created under EJB version 3.0 with
      * deployment descriptor present.
      *
-     * @throws Exception
+     * @throws Exception if any exception occurs
      */
-    public void testEjbCompliance_3_0_WithDescriptor()
+    public void testEjbComplianceVersionThreeWithDescriptor()
         throws Exception
     {
-        File pomFile = new File( getBasedir(), defaultPOMPath );
+
+        final MavenProjectResourcesStub project = createTestProject( "compliance-descriptor-3" );
+        final EjbMojo mojo = lookupMojoWithDefaultSettings( project );
+
+        // put this on the target dir
+        project.addFile( "META-INF/ejb-jar.xml", MavenProjectResourcesStub.OUTPUT_FILE );
+
+        // put this on the root dir
+        project.addFile( "pom.xml", MavenProjectResourcesStub.ROOT_FILE );
+
+        // start creating the environment
+        project.setupBuildEnvironment();
+
+        setVariableValueToObject( mojo, "generateClient", "false" );
+        setVariableValueToObject( mojo, "ejbVersion", "3.0" );
+
+        mojo.execute();
+
+        assertJarCreation( project, true, false );
+
+    }
+
+    /**
+     * Tests if the jar is created under EJB version 3.0 without
+     * deployment descriptor present.
+     *
+     * @throws Exception if any exception occurs
+     */
+    public void testEjbCompliance_3_0_WithoutDescriptor()
+        throws Exception
+    {
+        final MavenProjectResourcesStub project = createTestProject( "compliance-nodescriptor-3" );
+        final EjbMojo mojo = lookupMojoWithDefaultSettings( project );
+
+        // put this on the root dir
+        project.addFile( "pom.xml", MavenProjectResourcesStub.ROOT_FILE );
+
+        // start creating the environment
+        project.setupBuildEnvironment();
+
+        setVariableValueToObject( mojo, "generateClient", "false" );
+        setVariableValueToObject( mojo, "ejbVersion", "3.0" );
+
+        mojo.execute();
+
+        assertJarCreation( project, true, false );
+    }
+
+
+    protected EjbMojo lookupMojo()
+        throws Exception
+    {
+        File pomFile = new File( getBasedir(), DEFAULT_POM_PATH );
         EjbMojo mojo = (EjbMojo) lookupMojo( "ejb", pomFile );
 
         assertNotNull( mojo );
 
+        return mojo;
+    }
+
+    protected MavenProjectResourcesStub createTestProject( final String testName )
+        throws Exception
+    {
         // this will automatically create the isolated
         // test environment
-        MavenProjectResourcesStub project = new MavenProjectResourcesStub( "testEjbCompliance_3_0_WithDescriptor" );
+        return new MavenProjectResourcesStub( testName );
+    }
 
-        // create the necessary test files
-
+    protected void setupDefaultProject( final MavenProjectResourcesStub project )
+        throws Exception
+    {
         // put this on the target dir
         project.addFile( "META-INF/ejb-jar.xml", MavenProjectResourcesStub.OUTPUT_FILE );
         // put this on the root dir
@@ -496,66 +423,102 @@ public class EjbMojoTest
         // start creating the environment
         project.setupBuildEnvironment();
 
-        // configure mojo
-        String jarName = "testJar";
-
-        setVariableValueToObject( mojo, "basedir", project.getBuild().getDirectory() );
-        setVariableValueToObject( mojo, "outputDirectory", project.getBuild().getOutputDirectory() );
-        setVariableValueToObject( mojo, "jarName", jarName );
-        setVariableValueToObject( mojo, "generateClient", "false" );
-        setVariableValueToObject( mojo, "clientExcludes", new LinkedList() );
-        setVariableValueToObject( mojo, "clientIncludes", new LinkedList() );
-        setVariableValueToObject( mojo, "project", project );
-        setVariableValueToObject( mojo, "ejbVersion", "3.0" );
-
-        mojo.execute();
-
-        // validate jar creation
-        String checkedJarFile = project.getBuild().getDirectory() + "/" + jarName + ".jar";
-        assertTrue( FileUtils.fileExists( checkedJarFile ) );
     }
 
-    /**
-     * Tests if the jar is created under EJB version 3.0 without
-     * deployment descriptor present.
-     *
-     * @throws Exception
-     */
-    public void testEjbCompliance_3_0_WithoutDescriptor()
+    protected EjbMojo lookupMojoWithSettings( final MavenProject project, LinkedList clientIncludes,
+                                              LinkedList clientExcludes )
         throws Exception
     {
-        File pomFile = new File( getBasedir(), defaultPOMPath );
-        EjbMojo mojo = (EjbMojo) lookupMojo( "ejb", pomFile );
-
-        assertNotNull( mojo );
-
-        // this will automatically create the isolated
-        // test environment
-        MavenProjectResourcesStub project = new MavenProjectResourcesStub( "testEjbCompliance_3_0_WithoutDescriptor" );
-
-        // create the necessary test files
-
-        // put this on the root dir
-        project.addFile( "pom.xml", MavenProjectResourcesStub.ROOT_FILE );
-        // start creating the environment
-        project.setupBuildEnvironment();
-
-        // configure mojo
-        String jarName = "testJar";
-
+        final EjbMojo mojo = lookupMojo();
+        setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "basedir", project.getBuild().getDirectory() );
         setVariableValueToObject( mojo, "outputDirectory", project.getBuild().getOutputDirectory() );
-        setVariableValueToObject( mojo, "jarName", jarName );
-        setVariableValueToObject( mojo, "generateClient", "false" );
-        setVariableValueToObject( mojo, "clientExcludes", new LinkedList() );
-        setVariableValueToObject( mojo, "clientIncludes", new LinkedList() );
-        setVariableValueToObject( mojo, "project", project );
-        setVariableValueToObject( mojo, "ejbVersion", "3.0" );
+        setVariableValueToObject( mojo, "jarName", DEFAULT_JAR_NAME );
+        setVariableValueToObject( mojo, "clientExcludes", clientExcludes );
+        setVariableValueToObject( mojo, "clientIncludes", clientIncludes );
 
-        mojo.execute();
+        return mojo;
+    }
 
-        // validate jar creation
-        String checkedJarFile = project.getBuild().getDirectory() + "/" + jarName + ".jar";
-        assertTrue( FileUtils.fileExists( checkedJarFile ) );
+    protected EjbMojo lookupMojoWithDefaultSettings( final MavenProject project )
+        throws Exception
+    {
+        return lookupMojoWithSettings( project, new LinkedList(), new LinkedList() );
+    }
+
+
+    protected void assertJarCreation( final MavenProject project, boolean ejbJarCreated, boolean ejbClientJarCreated,
+                                      String classifer )
+    {
+        String checkedJarFile;
+        if ( classifer == null )
+        {
+            checkedJarFile = project.getBuild().getDirectory() + "/" + DEFAULT_JAR_NAME + ".jar";
+        }
+        else
+        {
+            checkedJarFile = project.getBuild().getDirectory() + "/" + DEFAULT_JAR_NAME + "-" + classifer + ".jar";
+        }
+
+        final String checkedClientJarFile = project.getBuild().getDirectory() + "/" + DEFAULT_JAR_NAME + "-client.jar";
+
+        assertEquals( "Invalid value for ejb-jar creation", ejbJarCreated, FileUtils.fileExists( checkedJarFile ) );
+        assertEquals( "Invalid value for ejb-jar client creation", ejbClientJarCreated,
+                      FileUtils.fileExists( checkedClientJarFile ) );
+
+    }
+
+    protected void assertJarCreation( final MavenProject project, boolean ejbJarCreated, boolean ejbClientJarCreated )
+    {
+        assertJarCreation( project, ejbJarCreated, ejbClientJarCreated, null );
+
+    }
+
+    private void doAssertJarContent( final MavenProject project, final String fileName, final String[] expectedFiles,
+                                     final String[] unexpectedFiles )
+        throws IOException
+    {
+        String checkedJarFile = project.getBuild().getDirectory() + "/" + fileName;
+        if ( expectedFiles != null )
+        {
+            final JarContentChecker inclusionChecker = new JarContentChecker();
+
+            // set expected jar contents
+            for ( int i = 0; i < expectedFiles.length; i++ )
+            {
+                String expectedFile = expectedFiles[i];
+                inclusionChecker.addFile( new File( expectedFile ) );
+            }
+            assertTrue( inclusionChecker.isOK( new JarFile( checkedJarFile ) ) );
+        }
+        if ( unexpectedFiles != null )
+        {
+            final JarContentChecker exclusionChecker = new JarContentChecker();
+            for ( int i = 0; i < unexpectedFiles.length; i++ )
+            {
+                String unexpectedFile = unexpectedFiles[i];
+                exclusionChecker.addFile( new File( unexpectedFile ) );
+            }
+            assertFalse( exclusionChecker.isOK( new JarFile( checkedJarFile ) ) );
+        }
+
+
+    }
+
+    protected void assertJarContent( final MavenProject project, final String[] expectedFiles,
+                                     final String[] unexpectedFiles )
+        throws IOException
+    {
+
+        doAssertJarContent( project, DEFAULT_JAR_NAME + ".jar", expectedFiles, unexpectedFiles );
+    }
+
+    protected void assertClientJarContent( final MavenProject project, final String[] expectedFiles,
+                                           final String[] unexpectedFiles )
+        throws IOException
+    {
+
+        doAssertJarContent( project, DEFAULT_JAR_NAME + "-client.jar", expectedFiles, unexpectedFiles );
+
     }
 }

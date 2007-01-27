@@ -48,8 +48,8 @@ public class EjbMojo
     // TODO: will null work instead?
     private static final String[] DEFAULT_INCLUDES = new String[]{"**/**"};
 
-    private static final String[] DEFAULT_EXCLUDES = new String[]{"**/*Bean.class", "**/*CMP.class",
-        "**/*Session.class", "**/package.html"};
+    private static final String[] DEFAULT_EXCLUDES =
+        new String[]{"**/*Bean.class", "**/*CMP.class", "**/*Session.class", "**/package.html"};
 
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
@@ -82,6 +82,14 @@ public class EjbMojo
     private String jarName;
 
     /**
+     * Classifier to add to the artifact generated. If given, the artifact will
+     * be an attachment instead.
+     *
+     * @parameter
+     */
+    private String classifier;
+
+    /**
      * Whether the ejb client jar should be generated or not. Default
      * is false.
      *
@@ -102,6 +110,7 @@ public class EjbMojo
      * </pre>
      * <br/>Attribute is used only if client jar is generated.
      * <br/>Default exclusions: **&#47;*Bean.class, **&#47;*CMP.class, **&#47;*Session.class, **&#47;package.html
+     *
      * @parameter
      */
     private List clientExcludes;
@@ -117,6 +126,7 @@ public class EjbMojo
      * </pre>
      * <br/>Attribute is used only if client jar is generated.
      * <br/>Default value: **&#47;**
+     *
      * @parameter
      */
     private List clientIncludes;
@@ -137,20 +147,17 @@ public class EjbMojo
      * @required
      */
     private JarArchiver jarArchiver;
-    
+
     /**
-     * <p>
-     * What EJB version should the ejb-plugin generate? ejbVersion can be "2.x" or "3.x" 
-     * (where x is a digit), defaulting to "2.1".  When ejbVersion is "3.x", the 
+     * What EJB version should the ejb-plugin generate? ejbVersion can be "2.x" or "3.x"
+     * (where x is a digit), defaulting to "2.1".  When ejbVersion is "3.x", the
      * ejb-jar.xml file is optional.
-     * </p>
-     * 
-     * <p>
+     * <p/>
      * Usage:
      * <pre>
      * &lt;ejbVersion&gt;3.0&lt;&#47;ejbVersion&gt;
      * </pre>
-     * </p>
+     *
      * @parameter default-value="2.1"
      * @required
      * @since 2.1
@@ -194,7 +201,7 @@ public class EjbMojo
             getLog().info( "Building ejb " + jarName + " with ejbVersion " + ejbVersion );
         }
 
-        File jarFile = new File( basedir, jarName + ".jar" );
+        File jarFile = getEJBJarFile( basedir, jarName, classifier );
 
         MavenArchiver archiver = new MavenArchiver();
 
@@ -207,48 +214,55 @@ public class EjbMojo
         /* test EJB version compliance */
         if ( !ejbVersion.matches( "\\A[2-3]\\.[0-9]\\z" ) )
         {
-            throw new MojoExecutionException( "ejbVersion is not valid: " + ejbVersion
-                + ". Must be 2.x or 3.x (where x is a digit)" );
+            throw new MojoExecutionException(
+                "ejbVersion is not valid: " + ejbVersion + ". Must be 2.x or 3.x (where x is a digit)" );
         }
 
         if ( ejbVersion.matches( "\\A2\\.[0-9]\\z" ) && !deploymentDescriptor.exists() )
         {
-            throw new MojoExecutionException( "Error assembling EJB: " + EJB_JAR_XML
-                + " is required for ejbVersion 2.x" );
+            throw new MojoExecutionException(
+                "Error assembling EJB: " + EJB_JAR_XML + " is required for ejbVersion 2.x" );
         }
 
         try
         {
             archiver.getArchiver().addDirectory( new File( outputDirectory ), DEFAULT_INCLUDES,
-                                                 new String[] { EJB_JAR_XML, "**/package.html" } );
-
+                                                 new String[]{EJB_JAR_XML, "**/package.html"} );
 
             if ( deploymentDescriptor.exists() )
             {
                 archiver.getArchiver().addFile( deploymentDescriptor, EJB_JAR_XML );
             }
-            
+
             // create archive
             archiver.createArchive( project, archive );
         }
         catch ( ArchiverException e )
         {
-            throw new MojoExecutionException( "There was a problem creating the EJB archive: " + e.getMessage() , e );
+            throw new MojoExecutionException( "There was a problem creating the EJB archive: " + e.getMessage(), e );
         }
         catch ( ManifestException e )
         {
-            throw new MojoExecutionException( "There was a problem creating the EJB archive: " + e.getMessage() , e );
+            throw new MojoExecutionException( "There was a problem creating the EJB archive: " + e.getMessage(), e );
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "There was a problem creating the EJB archive: " + e.getMessage() , e );
+            throw new MojoExecutionException( "There was a problem creating the EJB archive: " + e.getMessage(), e );
         }
         catch ( DependencyResolutionRequiredException e )
         {
-            throw new MojoExecutionException( "There was a problem creating the EJB archive: " + e.getMessage() , e );
+            throw new MojoExecutionException( "There was a problem creating the EJB archive: " + e.getMessage(), e );
         }
 
-        project.getArtifact().setFile( jarFile );
+        // Handle the classifier if necessary
+        if ( classifier != null )
+        {
+            projectHelper.attachArtifact( project, "ejb", classifier, jarFile );
+        }
+        else
+        {
+            project.getArtifact().setFile( jarFile );
+        }
 
         if ( new Boolean( generateClient ).booleanValue() )
         {
@@ -308,4 +322,27 @@ public class EjbMojo
             projectHelper.attachArtifact( project, "ejb-client", "client", clientJarFile );
         }
     }
+
+    /**
+     * Returns the EJB Jar file to generate, based on an optional classifier.
+     *
+     * @param basedir    the output directory
+     * @param finalName  the name of the ear file
+     * @param classifier an optional classifier
+     * @return the EJB file to generate
+     */
+    private static File getEJBJarFile( String basedir, String finalName, String classifier )
+    {
+        if ( classifier == null )
+        {
+            classifier = "";
+        }
+        else if ( classifier.trim().length() > 0 && !classifier.startsWith( "-" ) )
+        {
+            classifier = "-" + classifier;
+        }
+
+        return new File( basedir, finalName + classifier + ".jar" );
+    }
+
 }
