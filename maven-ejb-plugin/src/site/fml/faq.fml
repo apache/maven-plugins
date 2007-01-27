@@ -52,5 +52,12 @@ under the License.
         </p>
       </answer>
     </faq>
+   <faq id="classifieruse">
+     <question>How does the classifier affect artifacts in my ejb project?</question>
+     <answer>
+       <p>When used, the copy of the artifact in your project will have the classifier appended to its
+       filename. This can be used to differentiate duplicate artifacts.</p>
+     </answer>
+   </faq>
   </part>
 </faqs>
