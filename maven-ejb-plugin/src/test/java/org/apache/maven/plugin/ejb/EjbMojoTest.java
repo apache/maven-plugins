@@ -305,6 +305,45 @@ public class EjbMojoTest
 
 
     /**
+     * Client jar inclusion test with a sub-package.
+     *
+     * @throws Exception if any exception occurs
+     */
+    public void testClientJarInclusionsWithSubPackage()
+        throws Exception
+    {
+        final LinkedList inclusions = new LinkedList();
+        inclusions.add( "org/sample/ejb/*.class" );
+
+        final MavenProjectResourcesStub project = createTestProject( "client-includes-subpackage" );
+        final EjbMojo mojo = lookupMojoWithSettings( project, inclusions, new LinkedList() );
+
+        // put this on the target output dir
+        project.addFile( "META-INF/ejb-jar.xml", MavenProjectResourcesStub.OUTPUT_FILE );
+        project.addFile( "org/sample/ejb/App.class", MavenProjectResourcesStub.OUTPUT_FILE );
+        project.addFile( "org/sample/ejb/impl/AppImpl.class", MavenProjectResourcesStub.OUTPUT_FILE );
+
+        // put this on the root dir
+        project.addFile( "pom.xml", MavenProjectResourcesStub.ROOT_FILE );
+
+        // start creating the environment
+        project.setupBuildEnvironment();
+
+        setVariableValueToObject( mojo, "generateClient", "true" );
+        setVariableValueToObject( mojo, "ejbVersion", "2.1" );
+
+        mojo.execute();
+
+        assertJarCreation( project, true, true );
+        assertClientJarContent( project, new String[]{"META-INF/MANIFEST.MF",
+            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
+            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties", "org/sample/ejb/App.class"},
+                                         new String[]{"META-INF/ejb-jar.xml", "org/sample/ejb/impl/AppImpl.class",
+                                             "org/sample/ejb/impl"} );
+    }
+
+
+    /**
      * Client jar exclusions test that leaves an empty package.
      *
      * @throws Exception if any exception occurs
@@ -341,7 +380,8 @@ public class EjbMojoTest
         assertClientJarContent( project, new String[]{"META-INF/MANIFEST.MF",
             "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
             "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties", "org/sample/ejb2/AppTwo.class"},
-                                         new String[]{"META-INF/ejb-jar.xml", "org/sample/ejb/AppOne.class", "org/sample/ejb"} );
+                                         new String[]{"META-INF/ejb-jar.xml", "org/sample/ejb/AppOne.class",
+                                             "org/sample/ejb"} );
 
     }
 
