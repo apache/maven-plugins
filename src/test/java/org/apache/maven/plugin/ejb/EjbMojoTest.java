@@ -303,6 +303,48 @@ public class EjbMojoTest
 
     }
 
+
+    /**
+     * Client jar exclusions test that leaves an empty package.
+     *
+     * @throws Exception if any exception occurs
+     */
+    public void testClientJarExclusionsWithEmptyPackage()
+        throws Exception
+    {
+
+        final LinkedList exclusions = new LinkedList();
+        exclusions.add( "org/sample/ejb/**" );
+
+        final MavenProjectResourcesStub project = createTestProject( "client-excludes-emptypackage" );
+        final EjbMojo mojo = lookupMojoWithSettings( project, new LinkedList(), exclusions );
+
+        // put this on the target output dir
+        project.addFile( "META-INF/ejb-jar.xml", MavenProjectResourcesStub.OUTPUT_FILE );
+        project.addFile( "org/sample/ejb/AppOne.class", MavenProjectResourcesStub.OUTPUT_FILE );
+        project.addFile( "org/sample/ejb2/AppTwo.class", MavenProjectResourcesStub.OUTPUT_FILE );
+
+        // put this on the root dir
+        project.addFile( "pom.xml", MavenProjectResourcesStub.ROOT_FILE );
+
+        // start creating the environment
+        project.setupBuildEnvironment();
+
+        setVariableValueToObject( mojo, "generateClient", "true" );
+        setVariableValueToObject( mojo, "ejbVersion", "2.1" );
+
+        mojo.execute();
+
+        assertJarCreation( project, true, true );
+
+        // We check that the created jar does not contain the org/sample/ejb package empty
+        assertClientJarContent( project, new String[]{"META-INF/MANIFEST.MF",
+            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
+            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties", "org/sample/ejb2/AppTwo.class"},
+                                         new String[]{"META-INF/ejb-jar.xml", "org/sample/ejb/AppOne.class", "org/sample/ejb"} );
+
+    }
+
     /**
      * Tests if the mojo throws an exception when the EJB version is < 3.0
      * and no deployment descriptor is present. The case with deployment descriptor
