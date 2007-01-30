@@ -31,6 +31,7 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
 import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
+import org.apache.maven.plugin.dependency.testUtils.stubs.StubArtifactCollector;
 import org.apache.maven.plugin.dependency.testUtils.stubs.StubArtifactRepository;
 import org.apache.maven.plugin.dependency.testUtils.stubs.StubArtifactResolver;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
@@ -64,6 +65,8 @@ public class TestCopyMojo
         mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
         mojo.setResolver( new StubArtifactResolver( stubFactory, false, false ) );
         mojo.setLocal( new StubArtifactRepository( this.testDir.getAbsolutePath() ) );
+        mojo.setArtifactCollector( new StubArtifactCollector());
+    
     }
 
     public ArtifactItem getSingleArtifactItem( boolean removeVersion )
