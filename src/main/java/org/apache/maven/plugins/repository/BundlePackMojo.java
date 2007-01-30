@@ -58,7 +58,7 @@ public class BundlePackMojo
 
     /**
      * Jar archiver.
-     * @parameter expression="{component.org.codehaus.plexus.archiver.Archiver#jar}"
+     * @parameter expression="${component.org.codehaus.plexus.archiver.Archiver#jar}"
      * @required
      * @readonly
      */

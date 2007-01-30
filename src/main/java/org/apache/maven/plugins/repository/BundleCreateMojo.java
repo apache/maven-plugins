@@ -18,14 +18,14 @@
  */
 package org.apache.maven.plugins.repository;
 
-import java.io.File;
-
 import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.util.StringUtils;
+
+import java.io.File;
 
 /**
  * Goal which creates an upload bundle for a project built with maven.
@@ -53,7 +53,7 @@ public class BundleCreateMojo
 
     /**
      * Jar archiver.
-     * @parameter expression="{component.org.codehaus.plexus.archiver.Archiver#jar}"
+     * @parameter expression="${component.org.codehaus.plexus.archiver.Archiver#jar}"
      * @required
      * @readonly
      */
