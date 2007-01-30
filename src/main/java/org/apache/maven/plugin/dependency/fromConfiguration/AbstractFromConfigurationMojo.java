@@ -28,23 +28,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
-import org.apache.maven.artifact.resolver.DebugResolutionListener;
 import org.apache.maven.artifact.resolver.ResolutionNode;
-import org.apache.maven.artifact.resolver.WarningResolutionListener;
-import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
-import org.apache.maven.artifact.resolver.filter.ExcludesArtifactFilter;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
-import org.apache.maven.model.Exclusion;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojo;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
@@ -186,74 +180,7 @@ public abstract class AbstractFromConfigurationMojo
         return result;
     }
 
-    /**
-     * Returns the list of project artifacts. Also artifacts generated from
-     * referenced projects will be added, but with the <code>resolved</code>
-     * property set to true.
-     * 
-     * @return list of projects artifacts
-     * @throws MojoExecutionException
-     *             if unable to parse dependency versions
-     */
-    private Set getProjectArtifacts()
-        throws MojoExecutionException
-    {
-        // keep it sorted, this should avoid random classpath order in tests
-        Set artifacts = new TreeSet();
-
-        for ( Iterator dependencies = getProject().getDependencies().iterator(); dependencies.hasNext(); )
-        {
-            Dependency dependency = (Dependency) dependencies.next();
-
-            String groupId = dependency.getGroupId();
-            String artifactId = dependency.getArtifactId();
-            VersionRange versionRange;
-            try
-            {
-                versionRange = VersionRange.createFromVersionSpec( dependency.getVersion() );
-            }
-            catch ( InvalidVersionSpecificationException e )
-            {
-                throw new MojoExecutionException( "unable to parse version", e );
-            }
-
-            String type = dependency.getType();
-            if ( type == null )
-            {
-                type = "jar"; //$NON-NLS-1$
-            }
-            String classifier = dependency.getClassifier();
-            boolean optional = dependency.isOptional();
-            String scope = dependency.getScope();
-            if ( scope == null )
-            {
-                scope = Artifact.SCOPE_COMPILE;
-            }
-
-            Artifact art = factory.createDependencyArtifact( groupId, artifactId, versionRange, type, classifier,
-                                                             scope, optional );
-
-            if ( scope.equalsIgnoreCase( Artifact.SCOPE_SYSTEM ) )
-            {
-                art.setFile( new File( dependency.getSystemPath() ) );
-            }
-
-            List exclusions = new ArrayList();
-            for ( Iterator j = dependency.getExclusions().iterator(); j.hasNext(); )
-            {
-                Exclusion e = (Exclusion) j.next();
-                exclusions.add( e.getGroupId() + ":" + e.getArtifactId() ); //$NON-NLS-1$
-            }
-
-            ArtifactFilter newFilter = new ExcludesArtifactFilter( exclusions );
-
-            art.setDependencyFilter( newFilter );
-
-            artifacts.add( art );
-        }
-
-        return artifacts;
-    }
+  
 
     /**
      * Resolves the Artifact from the remote repository if nessessary. If no

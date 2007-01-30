@@ -351,4 +351,36 @@ public abstract class AbstractDependencyMojo
     {
         this.archiverManager = archiverManager;
     }
+
+    /**
+     * @return Returns the artifactCollector.
+     */
+    public ArtifactCollector getArtifactCollector()
+    {
+        return this.artifactCollector;
+    }
+
+    /**
+     * @param theArtifactCollector The artifactCollector to set.
+     */
+    public void setArtifactCollector( ArtifactCollector theArtifactCollector )
+    {
+        this.artifactCollector = theArtifactCollector;
+    }
+
+    /**
+     * @return Returns the artifactMetadataSource.
+     */
+    public ArtifactMetadataSource getArtifactMetadataSource()
+    {
+        return this.artifactMetadataSource;
+    }
+
+    /**
+     * @param theArtifactMetadataSource The artifactMetadataSource to set.
+     */
+    public void setArtifactMetadataSource( ArtifactMetadataSource theArtifactMetadataSource )
+    {
+        this.artifactMetadataSource = theArtifactMetadataSource;
+    }
 }
