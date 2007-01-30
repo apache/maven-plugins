@@ -21,13 +21,24 @@ package org.apache.maven.plugin.dependency.fromConfiguration;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
+import org.apache.maven.artifact.resolver.ResolutionNode;
+import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
+import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Dependency;
+import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojo;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
@@ -169,6 +180,8 @@ public abstract class AbstractFromConfigurationMojo
         return result;
     }
 
+  
+
     /**
      * Resolves the Artifact from the remote repository if nessessary. If no
      * version is specified, it will be retrieved from the dependency list or
@@ -188,21 +201,48 @@ public abstract class AbstractFromConfigurationMojo
     {
         Artifact artifact;
 
+        Map managedVersions = createManagedVersionMap( factory, project.getId(), project.getDependencyManagement() );
+        VersionRange vr;
+        try
+        {
+            vr = VersionRange.createFromVersionSpec( artifactItem.getVersion() );
+        }
+        catch ( InvalidVersionSpecificationException e1 )
+        {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+            vr = VersionRange.createFromVersion( artifactItem.getVersion() );
+        }
+
         if ( StringUtils.isEmpty( artifactItem.getClassifier() ) )
         {
-            artifact = factory.createArtifact( artifactItem.getGroupId(), artifactItem.getArtifactId(), artifactItem
-                .getVersion(), Artifact.SCOPE_PROVIDED, artifactItem.getType() );
+            artifact = factory.createDependencyArtifact( artifactItem.getGroupId(), artifactItem.getArtifactId(), vr,
+                                                         artifactItem.getType(), null, Artifact.SCOPE_COMPILE );
         }
         else
         {
-            artifact = factory.createArtifactWithClassifier( artifactItem.getGroupId(), artifactItem.getArtifactId(),
-                                                             artifactItem.getVersion(), artifactItem.getType(),
-                                                             artifactItem.getClassifier() );
+            artifact = factory.createDependencyArtifact( artifactItem.getGroupId(), artifactItem.getArtifactId(), vr,
+                                                         artifactItem.getType(), artifactItem.getClassifier(), Artifact.SCOPE_COMPILE );
         }
 
         try
         {
-            resolver.resolve( artifact, remoteRepos, local );
+            List listeners = new ArrayList();
+
+            Set theSet = new HashSet();
+            theSet.add( artifact );
+            ArtifactResolutionResult artifactResolutionResult = artifactCollector.collect( theSet, project
+                .getArtifact(), managedVersions, this.local, project.getRemoteArtifactRepositories(),
+                                                                                           artifactMetadataSource,
+                                                                                           null, listeners );
+            Iterator iter = artifactResolutionResult.getArtifactResolutionNodes().iterator();
+            while ( iter.hasNext() )
+            {
+                ResolutionNode node = (ResolutionNode) iter.next();
+                artifact = node.getArtifact();
+            }
+
+             resolver.resolve( artifact, remoteRepos, local );
         }
         catch ( ArtifactResolutionException e )
         {
@@ -266,6 +306,40 @@ public abstract class AbstractFromConfigurationMojo
         return result;
     }
 
+    private Map createManagedVersionMap( ArtifactFactory artifactFactory, String projectId,
+                                        DependencyManagement dependencyManagement )
+        throws MojoExecutionException
+    {
+        Map map;
+        if ( dependencyManagement != null && dependencyManagement.getDependencies() != null )
+        {
+            map = new HashMap();
+            for ( Iterator i = dependencyManagement.getDependencies().iterator(); i.hasNext(); )
+            {
+                Dependency d = (Dependency) i.next();
+
+                try
+                {
+                    VersionRange versionRange = VersionRange.createFromVersionSpec( d.getVersion() );
+                    Artifact artifact = artifactFactory.createDependencyArtifact( d.getGroupId(), d.getArtifactId(),
+                                                                                  versionRange, d.getType(), d
+                                                                                      .getClassifier(), d.getScope(), d
+                                                                                      .isOptional() );
+                    map.put( d.getManagementKey(), artifact );
+                }
+                catch ( InvalidVersionSpecificationException e )
+                {
+                    throw new MojoExecutionException( "Unable to parse version", e );
+                }
+            }
+        }
+        else
+        {
+            map = Collections.EMPTY_MAP;
+        }
+        return map;
+    }
+
     /**
      * @return Returns the artifactItems.
      */
@@ -275,7 +349,8 @@ public abstract class AbstractFromConfigurationMojo
     }
 
     /**
-     * @param theArtifactItems The artifactItems to set.
+     * @param theArtifactItems
+     *            The artifactItems to set.
      */
     public void setArtifactItems( ArrayList theArtifactItems )
     {
@@ -291,7 +366,8 @@ public abstract class AbstractFromConfigurationMojo
     }
 
     /**
-     * @param theOutputDirectory The outputDirectory to set.
+     * @param theOutputDirectory
+     *            The outputDirectory to set.
      */
     public void setOutputDirectory( File theOutputDirectory )
     {
@@ -307,7 +383,8 @@ public abstract class AbstractFromConfigurationMojo
     }
 
     /**
-     * @param theOverWriteIfNewer The overWriteIfNewer to set.
+     * @param theOverWriteIfNewer
+     *            The overWriteIfNewer to set.
      */
     public void setOverWriteIfNewer( boolean theOverWriteIfNewer )
     {
@@ -323,7 +400,8 @@ public abstract class AbstractFromConfigurationMojo
     }
 
     /**
-     * @param theOverWriteReleases The overWriteReleases to set.
+     * @param theOverWriteReleases
+     *            The overWriteReleases to set.
      */
     public void setOverWriteReleases( boolean theOverWriteReleases )
     {
@@ -339,7 +417,8 @@ public abstract class AbstractFromConfigurationMojo
     }
 
     /**
-     * @param theOverWriteSnapshots The overWriteSnapshots to set.
+     * @param theOverWriteSnapshots
+     *            The overWriteSnapshots to set.
      */
     public void setOverWriteSnapshots( boolean theOverWriteSnapshots )
     {
