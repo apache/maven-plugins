@@ -58,27 +58,21 @@ public class BundlePackMojo
 
     /**
      * Jar archiver.
-     * @parameter expression="${component.org.codehaus.plexus.archiver.Archiver#jar}"
-     * @required
-     * @readonly
+     * @component role="org.codehaus.plexus.archiver.Archiver" roleHint="jar"
      */
     protected JarArchiver jarArchiver;
 
     /**
      * Artifact resolver.
      * 
-     * @component role="org.apache.maven.artifact.resolver.ArtifactResolver"
-     * @required
-     * @readonly
+     * @component
      */
     protected ArtifactResolver artifactResolver;
 
     /**
      * Artifact factory.
      * 
-     * @component role="org.apache.maven.artifact.factory.ArtifactFactory"
-     * @required
-     * @readonly
+     * @component
      */
     protected ArtifactFactory artifactFactory;
 
@@ -93,8 +87,6 @@ public class BundlePackMojo
 
     /**
      * @component
-     * @required
-     * @readonly
      */
     protected InputHandler inputHandler;
 
