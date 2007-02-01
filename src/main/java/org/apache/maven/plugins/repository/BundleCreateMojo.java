@@ -53,16 +53,12 @@ public class BundleCreateMojo
 
     /**
      * Jar archiver.
-     * @parameter expression="${component.org.codehaus.plexus.archiver.Archiver#jar}"
-     * @required
-     * @readonly
+     * @component role="org.codehaus.plexus.archiver.Archiver" roleHint="jar"
      */
     private JarArchiver jarArchiver;
 
     /**
-     * @component role="org.apache.maven.artifact.handler.manager.ArtifactHandlerManager"
-     * @required
-     * @readonly
+     * @component
      */
     private ArtifactHandlerManager artifactHandlerManager;
 
