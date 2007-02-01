@@ -822,10 +822,12 @@ public class AntBuildWriter
     private void writePackageTarget( XMLWriter writer )
         throws IOException
     {
+        String synonym = null; // type of the package we are creating (for example jar)
         AntBuildWriterUtil.writeCommentText( writer, "Package target", 1 );
 
         writer.startElement( "target" );
         writer.addAttribute( "name", "package" );
+
         if ( !AntBuildWriterUtil.isPomPackaging( project ) )
         {
             writer.addAttribute( "depends", "compile,test" );
@@ -848,14 +850,17 @@ public class AntBuildWriter
             if ( AntBuildWriterUtil.isJarPackaging( project ) )
             {
                 AntBuildWriterUtil.writeJarTask( writer, project );
+                synonym = "jar";
             }
             else if ( AntBuildWriterUtil.isEarPackaging( project ) )
             {
                 AntBuildWriterUtil.writeEarTask( writer, project );
+                synonym = "ear";
             }
             else if ( AntBuildWriterUtil.isWarPackaging( project ) )
             {
                 AntBuildWriterUtil.writeWarTask( writer, project, localRepository );
+                synonym = "war";
             }
             else
             {
@@ -869,6 +874,19 @@ public class AntBuildWriter
         writer.endElement(); // target
 
         AntBuildWriterUtil.writeLineBreak( writer );
+
+        if ( synonym != null )
+        {
+            AntBuildWriterUtil.writeCommentText( writer,
+                                                 "A dummy target for the package named after the type it creates", 1 );
+            writer.startElement( "target" );
+            writer.addAttribute( "name", synonym );
+            writer.addAttribute( "depends", "package" );
+            writer.addAttribute( "description", "Builds the " + synonym + " for the application " );
+            writer.endElement(); //target
+
+            AntBuildWriterUtil.writeLineBreak( writer );
+        }
     }
 
     private void writeCompileTasks( XMLWriter writer, File basedir, String outputDirectory, List compileSourceRoots,
