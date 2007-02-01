@@ -156,7 +156,7 @@ under the License.
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0</version>
             <configuration>
               <debug>true</debug>
               <projectsDirectory>src/it</projectsDirectory>
@@ -167,8 +167,7 @@ under the License.
               </pomIncludes>
               <postBuildHookScript>verify.bsh</postBuildHookScript>
               <goals>
-                                  <!-- Install to the target local-repo 
-                -->
+                <!-- Install to the target local-repo -->
                 <goal>install ant:ant</goal>
               </goals>
               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
@@ -183,8 +182,7 @@ under the License.
               </execution>
             </executions>
           </plugin>
-                    <!--  Verify the results by calling Ant 
-          -->
+          <!--  Verify the results by calling Ant -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-antrun-plugin</artifactId>
