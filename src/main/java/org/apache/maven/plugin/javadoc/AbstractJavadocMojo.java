@@ -297,7 +297,8 @@ public abstract class AbstractJavadocMojo
     private String excludePackageNames;
 
     /**
-     * Specifies the directories where extension classes reside. Separate directories in dirlist with semicolons (;).
+     * Specifies the directories where extension classes reside. Separate directories in dirlist with a colon (:)
+     * on Solaris and a semi-colon (;) on Windows.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#extdirs">extdirs</a>.
      *
@@ -410,7 +411,8 @@ public abstract class AbstractJavadocMojo
     private String source;
 
     /**
-     * Specifies the source paths where the subpackages are located. The paths are separated by '<code>;</code>'.
+     * Specifies the source paths where the subpackages are located. The paths are separated with a colon (:)
+     * on Solaris and a semi-colon (;) on Windows.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#sourcepath">sourcepath</a>.
      *
@@ -762,7 +764,7 @@ public abstract class AbstractJavadocMojo
 
     /**
      * Specifies whether the stylesheet to be used is the maven javadoc stylesheet or java's default stylesheet
-     * when a <i>stylesheetfile</i> parameter is not specified. Possible values: maven or java.
+     * when a <i>stylesheetfile</i> parameter is not specified. Possible values: "maven" or "java".
      *
      * @parameter expression="${stylesheet}" default-value="java"
      */
@@ -1941,7 +1943,7 @@ public abstract class AbstractJavadocMojo
      * @param repeatKey   repeat or not the key in the command line
      * @param splitValue  if <code>true</code> given value will be tokenized by comma
      */
-    private void addArgIfNotEmpty( List arguments, String key, String value, 
+    private void addArgIfNotEmpty( List arguments, String key, String value,
         boolean repeatKey, boolean splitValue )
     {
         if ( StringUtils.isNotEmpty( value ) )
@@ -1956,11 +1958,11 @@ public abstract class AbstractJavadocMojo
                 while ( token.hasMoreTokens() )
                 {
                     String current = token.nextToken().trim();
-    
+
                     if ( StringUtils.isNotEmpty( current ) )
                     {
                         arguments.add( current );
-    
+
                         if ( token.hasMoreTokens() && repeatKey )
                         {
                             arguments.add( key );
@@ -1972,7 +1974,7 @@ public abstract class AbstractJavadocMojo
             }
         }
     }
-    
+
     /**
      * Convenience method to add an argument to the <code>command line</code>
      * if the the value is not null or empty.
