@@ -18,6 +18,7 @@ package org.apache.maven.plugin.changes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Iterator;
 
 /**
  * A release in a changes.xml file.
@@ -26,6 +27,15 @@ import java.util.List;
  */
 public class Release
 {
+    public static final String ADD_ACTION = "add";
+
+    public static final String FIX_ACTION = "fix";
+
+    public static final String UPDATE_ACTION = "update";
+
+    public static final String REMOVE_ACTION = "remove";
+
+
     private List action;
 
     private String dateRelease;
@@ -45,6 +55,10 @@ public class Release
 
     public List getAction()
     {
+        if (action == null)
+        {
+            action = new ArrayList();
+        }
         return action;
     }
 
@@ -85,5 +99,31 @@ public class Release
     public String getVersion()
     {
         return version;
+    }
+
+    /**
+     * Returns the actions for the specified type.
+     *
+     * @param actionType the action type
+     * @return the actions with the specified type
+     */
+    public List getActions( final String actionType )
+    {
+        final List result = new ArrayList();
+        if ( getAction() == null )
+        {
+            return new ArrayList();
+        }
+        final Iterator it = getAction().iterator();
+        while ( it.hasNext() )
+        {
+            Action action = (Action) it.next();
+            if ( actionType.equals( action.getType() ) )
+            {
+                result.add( action );
+            }
+        }
+
+        return result;
     }
 }
