@@ -19,6 +19,7 @@ package org.apache.maven.plugin.changes;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.apache.maven.doxia.module.HtmlTools;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugin.logging.Log;
 
@@ -184,7 +185,7 @@ public class ChangesReportGenerator
 
             sink.tableRow();
 
-            sinkCellLink( sink, release.getVersion(), "#" + release.getVersion() );
+            sinkCellLink( sink, release.getVersion(), "#" + HtmlTools.encodeId( release.getVersion() ) );
 
             sinkCell( sink, release.getDateRelease() );
 
