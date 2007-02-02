@@ -99,9 +99,10 @@ public class AnnouncementMojo
     private String finalName;
 
     /**
-     * URL where the artifact can be downloaded.
-     *
-     * @parameter expression="${project.url}/${project.build.finalName}.jar"
+     * URL where the artifact can be downloaded. If not specified,
+     * no URL is used.
+     * 
+     * @parameter
      */
     private String urlDownload;
 

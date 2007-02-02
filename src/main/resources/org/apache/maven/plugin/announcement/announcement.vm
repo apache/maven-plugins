@@ -58,13 +58,13 @@ o ${action} #if($!issue != "") Issue: $issue. #end#if($!dueto != "")Thanks to $d
 #set($dueto="")
 #end
 #end
-
 ## End of main loop
 #end
+#if ($urlDownload)
 
 For a manual installation, you can download the ${finalName} here:
-
 ${urlDownload}
+#end
 
 Have fun!
 -${developmentTeam}
