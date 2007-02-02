@@ -287,6 +287,11 @@ public class CheckstyleReport
      * <code>${project.build.directory}/checkstyle-supressions.xml</code>
      * file before being passed to checkstyle for loading.</p>
      *
+     * <p>
+     * See <code>suppressionsFileExpression</code> for the property that will be made available
+     * to your checkstyle configuration.
+     * </p>
+     *
      * @parameter expression="${checkstyle.suppressions.location}"
      * @since 2.0-beta-2
      */
@@ -296,6 +301,7 @@ public class CheckstyleReport
      * The key to be used in the properties for the suppressions file.
      *
      * @parameter expression="${checkstyle.suppression.expression}"
+     * default-value="checkstyle.suppressions.file"
      * @since 2.1
      */
     private String suppressionsFileExpression;
@@ -477,7 +483,7 @@ public class CheckstyleReport
     {
         return siteRenderer;
     }
-    
+
     /**
      * @see org.apache.maven.reporting.AbstractMavenReport#executeReport(java.util.Locale)
      */
@@ -963,7 +969,7 @@ public class CheckstyleReport
         try
         {
             File configFile = locator.resolveLocation( configLocation, "checkstyle-checker.xml" );
-            
+
             if ( configFile == null )
             {
                 throw new MavenReportException( "Unable to process null config location." );
