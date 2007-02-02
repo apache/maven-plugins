@@ -60,6 +60,7 @@ Using a Suppressions Filter
         <configuration>
           <configLocation>checkstyle.xml</configLocation>
           <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
+          <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
         </configuration>
       </plugin>
     </plugins>
