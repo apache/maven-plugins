@@ -23,6 +23,8 @@ import org.apache.maven.doxia.module.HtmlTools;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugin.logging.Log;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * Generates a changes report.
  *
@@ -111,11 +113,11 @@ public class ChangesReportGenerator
 
             sink.rawText( action.getAction() );
 
-            if ( action.getIssue() != null )
+            if ( StringUtils.isNotEmpty( action.getIssue() ) )
             {
                 sink.text( " " + bundle.getString( "report.changes.text.fixes" ) + " " );
 
-                if ( this.url == null || this.url.trim().equals( "" ) )
+                if ( StringUtils.isEmpty( url ) )
                 {
                     sink.text( action.getIssue() );
 
@@ -134,11 +136,11 @@ public class ChangesReportGenerator
                 sink.text( "." );
             }
 
-            if ( action.getDueTo() != null )
+            if ( StringUtils.isNotEmpty( action.getDueTo() ) )
             {
                 sink.text( " " + bundle.getString( "report.changes.text.thanx" ) + " " );
 
-                if ( action.getDueToEmail() != null )
+                if ( StringUtils.isNotEmpty( action.getDueToEmail() ) )
                 {
                     sinkLink( sink, action.getDueTo(), "mailto:" + action.getDueToEmail() );
                 }
