@@ -233,7 +233,7 @@ public abstract class AbstractJiraDownloader
                         fullURL += "&fixfor=" + getFixFor();
                     }
 
-                    fullURL += createFilter();
+                    fullURL += "&" + createFilter();
 
                     fullURL += ( "&tempMax=" + nbEntriesMax + "&reset=true&decorator=none" );
 
