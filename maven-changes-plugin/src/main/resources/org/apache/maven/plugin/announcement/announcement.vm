@@ -2,23 +2,17 @@ The ${developmentTeam} is pleased to announce the ${finalName} release!
 
 ${introduction}
 
+#if ($release.getAction().size() == 0)
+No changes defined in ths version.
+#else
 Changes in this version include:
 
-#foreach($actionsN in $release.getAction())
-#if($actionsN.getType()=="add")
-#set($hasNew = 1)
-#end
-#end
-#if($hasNew==1)
-
-New Features:
-
-#end
-#foreach($actions in $release.getAction())
-#if($actions.getType()=="add")
-#set($action=$actions.getAction())
-#set($issue=$actions.getIssue())
-#set($dueto=$actions.getDueTo())
+#if ($release.getActions('add').size() !=0)
+New features:
+#foreach($actionItem in $release.getActions('add'))
+#set($action=$actionItem.getAction())
+#set($issue=$actionItem.getIssue())
+#set($dueto=$actionItem.getDueTo())
 o ${action} #if($!issue != "") Issue: $issue. #end#if($!dueto != "")Thanks to $dueto. #end
 
 #set($issue="")
@@ -26,21 +20,12 @@ o ${action} #if($!issue != "") Issue: $issue. #end#if($!dueto != "")Thanks to $d
 #end 
 #end
 
-#foreach($actionsF in $release.getAction())
-#if($actionsF.getType()=="add")
-#set($hasFix = 1)
-#end
-#end
-#if($hasFix == 1)
-
+#if ($release.getActions('fix').size() !=0)
 Fixed Bugs:
-
-#end
-#foreach( $actions in $release.getAction() )
-#if( $actions.getType() == "fix" )
-#set( $action = $actions.getAction())
-#set($issue=$actions.getIssue())
-#set($dueto=$actions.getDueTo())
+#foreach($actionItem in $release.getActions('fix'))
+#set($action=$actionItem.getAction())
+#set($issue=$actionItem.getIssue())
+#set($dueto=$actionItem.getDueTo())
 o ${action} #if($!issue != "") Issue: $issue. #end#if($!dueto != "")Thanks to $dueto. #end
 
 #set($issue="")
@@ -48,21 +33,12 @@ o ${action} #if($!issue != "") Issue: $issue. #end#if($!dueto != "")Thanks to $d
 #end
 #end
 
-#foreach($actionsC in $release.getAction())
-#if($actionsC.getType()=="add")
-#set($hasFix = 1)
-#end
-#end
-#if($hasFix == 1)
-
+#if ($release.getActions('update').size() !=0)
 Changes:
-
-#end
-#foreach( $actions in $release.getAction() )
-#if( $actions.getType() == "update" )
-#set( $action = $actions.getAction() )
-#set($issue=$actions.getIssue())
-#set($dueto=$actions.getDueTo())
+#foreach($actionItem in $release.getActions('update'))
+#set($action=$actionItem.getAction())
+#set($issue=$actionItem.getIssue())
+#set($dueto=$actionItem.getDueTo())
 o ${action} #if($!issue != "") Issue: $issue. #end#if($!dueto != "")Thanks to $dueto. #end
 
 #set($issue="")
@@ -70,21 +46,12 @@ o ${action} #if($!issue != "") Issue: $issue. #end#if($!dueto != "")Thanks to $d
 #end
 #end
 
-#foreach($actionsR in $release.getAction())
-#if($actionsR.getType()=="add")
-#set($hasFix = 1)
-#end
-#end
-#if($hasFix == 1)
-
+#if ($release.getActions('remove').size() !=0)
 Removed:
-
-#end
-#foreach( $actions in $release.getAction() )
-#if( $actions.getType() == "remove" )
-#set( $action = $actions.getAction() )
-#set($issue=$actions.getIssue())
-#set($dueto=$actions.getDueTo())
+#foreach($actionItem in $release.getActions('remove'))
+#set($action=$actionItem.getAction())
+#set($issue=$actionItem.getIssue())
+#set($dueto=$actionItem.getDueTo())
 o ${action} #if($!issue != "") Issue: $issue. #end#if($!dueto != "")Thanks to $dueto. #end
 
 #set($issue="")
@@ -92,11 +59,12 @@ o ${action} #if($!issue != "") Issue: $issue. #end#if($!dueto != "")Thanks to $d
 #end
 #end
 
+## End of main loop
+#end
 
 For a manual installation, you can download the ${finalName} here:
 
 ${urlDownload}
-
 
 Have fun!
 -${developmentTeam}
