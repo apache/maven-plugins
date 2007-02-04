@@ -189,8 +189,9 @@ public class EarMojo
             for ( Iterator iter = getModules().iterator(); iter.hasNext(); )
             {
                 EarModule module = (EarModule) iter.next();
-                if (module instanceof JavaModule) {
-                    getLog().warn( "JavaModule is deprecated ("+module+"), please use JarModule instead.");
+                if ( module instanceof JavaModule )
+                {
+                    getLog().warn( "JavaModule is deprecated (" + module + "), please use JarModule instead." );
                 }
                 final File sourceFile = module.getArtifact().getFile();
                 final File destinationFile = buildDestinationFile( getWorkDirectory(), module.getUri() );
@@ -200,9 +201,10 @@ public class EarMojo
                         "; Did you package/install " + module.getArtifact() + "?" );
                 }
 
-                if (destinationFile.getCanonicalPath().equals(sourceFile.getCanonicalPath()))
+                if ( destinationFile.getCanonicalPath().equals( sourceFile.getCanonicalPath() ) )
                 {
-                    getLog().info( "Skipping artifact[" + module + "], as it already exists at[" + module.getUri() + "]" );
+                    getLog().info(
+                        "Skipping artifact[" + module + "], as it already exists at[" + module.getUri() + "]" );
                     continue;
                 }
 
@@ -219,8 +221,16 @@ public class EarMojo
                 }
                 else
                 {
-                    getLog().info( "Copying artifact[" + module + "] to[" + module.getUri() + "]" );
-                    FileUtils.copyFile( module.getArtifact().getFile(), destinationFile );
+                    if ( sourceFile.lastModified() > destinationFile.lastModified() )
+                    {
+                        getLog().info( "Copying artifact[" + module + "] to[" + module.getUri() + "]" );
+                        FileUtils.copyFile( sourceFile, destinationFile );
+                    }
+                    else
+                    {
+                        getLog().debug( "Skipping artifact[" + module + "], as it is already up to date at[" +
+                            module.getUri() + "]" );
+                    }
                 }
             }
         }
