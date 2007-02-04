@@ -19,156 +19,43 @@ package org.apache.maven.plugin.source;
  * under the License.
  */
 
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.codehaus.plexus.archiver.zip.ZipEntry;
-import org.codehaus.plexus.archiver.zip.ZipFile;
-import org.codehaus.plexus.util.FileUtils;
-
 import java.io.File;
-import java.util.Enumeration;
+import java.util.Properties;
 
 /**
  * @author <a href="mailto:oching@exist.com">Maria Odea Ching</a>
  */
 public class TestSourceJarMojoTest
-    extends AbstractMojoTestCase
+    extends AbstractSourcePluginTestCase
 {
 
-    protected void setUp()
+    public void testProject002()
         throws Exception
     {
-        // required for mojo lookups to work
-        super.setUp();
-        
+        doTestProjectWithTestSourceArchive( "project-002", new String[]{"test-default-configuration.properties",
+            "foo/project002/AppTest.java", "foo/project002/", "foo/", "META-INF/MANIFEST.MF", "META-INF/"
+
+        } );
     }
 
-
-    public void testDefaultConfiguration()
+    public void testProject004()
         throws Exception
     {
-        File testPom =
-            new File( getBasedir(), "src/test/resources/unit/default-configuration/default-configuration-config.xml" );
+        doTestProjectWithTestSourceArchive( "project-004", new String[]{"test-default-configuration.properties",
+            "foo/project004/AppTest.java", "foo/project004/", "foo/", "META-INF/MANIFEST.MF", "META-INF/"
 
-        try
-        {
-            TestSourceJarMojo mojo = (TestSourceJarMojo) lookupMojo( "test-jar", testPom );
-            mojo.execute();
-        }
-        catch ( Exception e )
-        {
-            fail( "Cannot execute mojo." );
-            
-            e.printStackTrace();
-        }
+        } );
+    }
 
-        //check if the jar file exists
-        File sourceJar = new File( getBasedir(),
-                                   "target/test/unit/default-configuration/target/default-configuration-test-sources.jar" );
-
-        assertTrue( FileUtils.fileExists( sourceJar.getAbsolutePath() ) );
-
-        ZipFile jar = new ZipFile( sourceJar );
-        Enumeration entries = jar.getEntries();
-        assertTrue( entries.hasMoreElements() );
-
-        if ( entries.hasMoreElements() )
-        {
-            ZipEntry entry = (ZipEntry) entries.nextElement();
-            assertEquals( entry.getName(), "test-default-configuration.properties" );
-
-            entry = (ZipEntry) entries.nextElement();
-            assertEquals( entry.getName(), "def/configuration/AppTest.java" );
-
-            entry = (ZipEntry) entries.nextElement();
-            assertEquals( entry.getName(), "def/configuration/" );
-
-            entry = (ZipEntry) entries.nextElement();
-            assertEquals( entry.getName(), "def/" );
-
-            entry = (ZipEntry) entries.nextElement();
-            assertEquals( entry.getName(), "META-INF/MANIFEST.MF" );
-
-            entry = (ZipEntry) entries.nextElement();
-            assertEquals( entry.getName(), "META-INF/" );
-        }
+    public void testProject006()
+        throws Exception
+    {
+        final File baseDir = executeMojo( "project-006", new Properties() );
+        // Now make sure that no archive got created
+        final File expectedFile = getTestSourceArchive( baseDir, "project-006" );
+        assertFalse( "Test source archive should not have been created[" + expectedFile.getAbsolutePath() + "]",
+                     expectedFile.exists() );
 
     }
 
-    public void testCustomConfiguration()
-        throws Exception
-    {
-        File testPom =
-            new File( getBasedir(), "src/test/resources/unit/custom-configuration/custom-configuration-config.xml" );
-
-        try
-        {
-            TestSourceJarMojo mojo = (TestSourceJarMojo) lookupMojo( "test-jar", testPom );
-            mojo.execute();
-        }
-        catch ( Exception e )
-        {
-            e.printStackTrace();
-        }
-
-        //check if the jar file exists
-        File sourceJar = new File( getBasedir(),
-                                   "target/test/unit/custom-configuration/target/custom-configuration-test-sources.jar" );
-        assertTrue( FileUtils.fileExists( sourceJar.getAbsolutePath() ) );
-
-        //verify the contents of the jar file
-        ZipFile jar = new ZipFile( sourceJar );
-        Enumeration entries = jar.getEntries();
-        assertTrue( entries.hasMoreElements() );
-
-        if ( entries.hasMoreElements() )
-        {
-            ZipEntry entry = (ZipEntry) entries.nextElement();
-            assertEquals( entry.getName(), "test-custom-configuration.properties" );
-
-            entry = (ZipEntry) entries.nextElement();
-            assertEquals( entry.getName(), "custom/configuration/AppTest.java" );
-
-            entry = (ZipEntry) entries.nextElement();
-            assertEquals( entry.getName(), "custom/configuration/" );
-
-            entry = (ZipEntry) entries.nextElement();
-            assertEquals( entry.getName(), "custom/" );
-
-            entry = (ZipEntry) entries.nextElement();
-            assertEquals( entry.getName(), "META-INF/MANIFEST.MF" );
-
-            entry = (ZipEntry) entries.nextElement();
-            assertEquals( entry.getName(), "META-INF/" );
-        }
-
-
-    }
-
-    public void testInvalidPackaging()
-        throws Exception
-    {
-        File testPom =
-            new File( getBasedir(), "src/test/resources/unit/invalid-packaging/invalid-packaging-config.xml" );
-
-        try
-        {
-            TestSourceJarMojo mojo = (TestSourceJarMojo) lookupMojo( "test-jar", testPom );
-            mojo.execute();
-        }
-        catch ( Exception e )
-        {
-            e.printStackTrace();
-        }
-
-        File sourceJar =
-            new File( getBasedir(), "target/test/unit/invalid-packaging/target/invalid-packaging-test-sources.jar" );
-        assertFalse( FileUtils.fileExists( sourceJar.getAbsolutePath() ) );
-
-    }
-
-    protected void tearDown()
-        throws Exception
-    {
-
-    }
 }

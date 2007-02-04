@@ -70,7 +70,9 @@ public abstract class AbstractSourceJarMojo
      */
     private boolean attach = true;
 
-    /** @component */
+    /**
+     * @component
+     */
     private MavenProjectHelper projectHelper;
 
     /**
@@ -101,10 +103,14 @@ public abstract class AbstractSourceJarMojo
     //
     //MAPI: how to make this backward compatible
 
-    /** @parameter expression="${aggregate}" default-value="true" */
+    /**
+     * @parameter expression="${aggregate}" default-value="true"
+     */
     protected boolean aggregate;
 
-    /** @parameter expression="${reactorProjects}" */
+    /**
+     * @parameter expression="${reactorProjects}"
+     */
     protected List reactorProjects;
 
     protected abstract String getClassifier();
@@ -113,7 +119,9 @@ public abstract class AbstractSourceJarMojo
 
     protected abstract List getResources( MavenProject project );
 
-    /** @see org.apache.maven.plugin.AbstractMojo#execute() */
+    /**
+     * @see org.apache.maven.plugin.AbstractMojo#execute()
+     */
     public void execute()
         throws MojoExecutionException
     {
@@ -132,7 +140,7 @@ public abstract class AbstractSourceJarMojo
     protected void packageSources( List projects )
         throws MojoExecutionException
     {
-        if ( "pom".equals( packaging ) && !aggregate )
+        if ( "pom".equals( packaging ) )
         {
             getLog().info( "NOT adding sources to attached artifacts for packaging: \'" + packaging + "\'." );
         }
@@ -177,12 +185,15 @@ public abstract class AbstractSourceJarMojo
                 {
                     projectHelper.attachArtifact( project, "java-source", getClassifier(), outputFile );
                 }
+                else
+                {
+                    getLog().info( "NOT adding java-sources to attached artifacts list." );
+                }
             }
         }
     }
 
-    protected void archiveProjectContent( MavenProject project,
-                                      Archiver archiver )
+    protected void archiveProjectContent( MavenProject project, Archiver archiver )
         throws MojoExecutionException
     {
         for ( Iterator i = getSources( project ).iterator(); i.hasNext(); )
@@ -222,7 +233,7 @@ public abstract class AbstractSourceJarMojo
 
                 String[] excludes;
 
-                if ( resourceIncludes == null || resourceIncludes.size() == 0 )
+                if ( resourceExcludes == null || resourceExcludes.size() == 0 )
                 {
                     excludes = FileUtils.getDefaultExcludes();
                 }
@@ -242,8 +253,7 @@ public abstract class AbstractSourceJarMojo
      * @param outputFile the artifact file to be attached
      * @param classifier
      */
-    protected void attachArtifact( File outputFile,
-                                   String classifier )
+    protected void attachArtifact( File outputFile, String classifier )
     {
     }
 
@@ -270,10 +280,7 @@ public abstract class AbstractSourceJarMojo
         return archiver;
     }
 
-    protected void addDirectory( Archiver archiver,
-                                 File sourceDirectory,
-                                 String[] includes,
-                                 String[] excludes )
+    protected void addDirectory( Archiver archiver, File sourceDirectory, String[] includes, String[] excludes )
         throws MojoExecutionException
     {
         try
