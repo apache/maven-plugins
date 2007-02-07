@@ -149,7 +149,7 @@ documentedproject-1.0-SNAPSHOT.war
 
  The default directory for the exploded war is <<<target/\<finalName\>>>>. The finalName is usually in the form
  of \<artifact\>-\<version\>. 
- This default directory can be overridden by specifying the webAppDirectory plugin parameter.
+ This default directory can be overridden by specifying the webappDirectory plugin parameter.
   
 +-------+
 <project>
@@ -161,7 +161,7 @@ documentedproject-1.0-SNAPSHOT.war
         <artifactId>maven-war-plugin</artifactId>
         <version>2.0</version>
         <configuration>
-           <webAppDirectory>/sample/servlet/container/deploy/directory<webAppDirectory>    
+           <webappDirectory>/sample/servlet/container/deploy/directory<webappDirectory>    
         </configuration>
       </plugin>
     </plugins>
