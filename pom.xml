@@ -8,7 +8,7 @@
   <artifactId>maven-ejb-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Maven EJB Plugin</name>
-  <version>2.1</version>
+  <version>2.1.1-SNAPSHOT</version>
   <prerequisites>
     <maven>2.0.4</maven>
   </prerequisites>  
@@ -90,10 +90,4 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-ejb-plugin-2.1</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-ejb-plugin-2.1</developerConnection>
-    <url>https://svn.apache.org/repos/asf/maven/plugins/tags/maven-ejb-plugin-2.1</url>
-  </scm>
 </project>
