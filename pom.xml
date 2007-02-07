@@ -37,8 +37,7 @@ under the License.
     <url>http://jira.codehaus.org/browse/MEJB</url>
   </issueManagement>
   <mailingLists>
-        <!-- duplication from maven-plugins pom - temporary until they inherit properly 
-    -->
+     <!-- duplication from maven-plugins pom - temporary until they inherit properly -->
     <mailingList>
       <name>Maven User List</name>
       <subscribe>users-subscribe@maven.apache.org</subscribe>
