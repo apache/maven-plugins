@@ -118,7 +118,7 @@ public abstract class AbstractArtifactFeatureFilter
                 // if the classifier or type of the artifact matches the feature
                 // to include, add to the
                 // results
-                if ( getArtifactFeature( artifact ).equals( include ) )
+                if ( compareFeatures( getArtifactFeature( artifact ), include ) )
                 {
                     result.add( artifact );
                 }
@@ -155,7 +155,7 @@ public abstract class AbstractArtifactFeatureFilter
             while ( excludeIter.hasNext() )
             {
                 String excludeFeature = (String) excludeIter.next();
-                if ( artifactFeature.equals( excludeFeature ) )
+                if (compareFeatures(artifactFeature, excludeFeature ) )
                 {
                     exclude = true;
                     break;
@@ -215,5 +215,15 @@ public abstract class AbstractArtifactFeatureFilter
     public List getIncludes()
     {
         return this.includes;
+    }
+    
+    /**
+     * Allows Feature comparison to be customized
+     * @param lhs String artifact's feature
+     * @param rhs String feature from exclude or include list
+     * @return boolean true if features match
+     */
+    protected boolean compareFeatures(String lhs, String rhs){
+    	return(lhs.equals(rhs));
     }
 }
