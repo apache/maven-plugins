@@ -63,6 +63,17 @@ public abstract class AbstractFromDependenciesMojo
      */
     protected boolean useSubDirectoryPerArtifact;
 
+    
+    /**
+     * This only applies if the classifier parameter is used.
+     * 
+     * @since 2.0-alpha-2
+     * @parameter expression="${mdep.failOnMissingClassifierArtifact}"
+     *            default-value="true"
+     * @optional
+     */
+    protected boolean failOnMissingClassifierArtifact = true;
+    
     /**
      * @return Returns the outputDirectory.
      */
