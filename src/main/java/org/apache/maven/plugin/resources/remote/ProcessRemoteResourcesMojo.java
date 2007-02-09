@@ -21,12 +21,15 @@ package org.apache.maven.plugin.resources.remote;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.InvalidRepositoryException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.resources.remote.io.xpp3.RemoteResourcesBundleXpp3Reader;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectUtils;
 import org.apache.maven.shared.downloader.DownloadException;
 import org.apache.maven.shared.downloader.DownloadNotFoundException;
@@ -39,10 +42,14 @@ import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.codehaus.plexus.velocity.VelocityComponent;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -52,12 +59,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Pull down resourceBundles containing remote resources and process the resources contained
  * inside the artifact.
  *
  * @goal process
+ * @requiresDependencyResolution runtime
  * @phase generate-resources
  */
 public class ProcessRemoteResourcesMojo
@@ -90,14 +99,31 @@ public class ProcessRemoteResourcesMojo
      * @parameter expression="${project.build.directory}/maven-shared-archive-resources"
      */
     private File outputDirectory;
+    
+    /**
+     * The directory containing extra information appended to the generated resources.
+     *
+     * @parameter expression="${basedir}/src/main/appended-resources"
+     */
+    private File appendedResourcesDirectory;
 
     /**
      * The resource bundles that will be retrieved and processed.
      *
      * @parameter
+     * @required
      */
     private ArrayList resourceBundles;
-
+    
+    /**
+     * The list of resources defined for the project.
+     *
+     * @parameter expression="${project.resources}"
+     * @required
+     */
+    private List resources;
+    
+    
     /**
      * Artifact downloader.
      *
@@ -130,6 +156,17 @@ public class ProcessRemoteResourcesMojo
      * @parameter expression="${session}"
      */
     private MavenSession mavenSession;
+    
+    
+   /**
+    * Artifact factory, needed to create projects from the artifacts.
+    *
+    * @component role="org.apache.maven.project.MavenProjectBuilder"
+    * @required
+    * @readonly
+    */
+   protected MavenProjectBuilder mavenProjectBuilder;
+
 
     public void execute()
         throws MojoExecutionException
@@ -140,8 +177,6 @@ public class ProcessRemoteResourcesMojo
         }
 
         RemoteResourcesClassLoader classLoader = new RemoteResourcesClassLoader();
-
-        File standardResourcesDirectory = new File( project.getBasedir(), "src/main/resources" );
 
         int bundleCount = 1;
 
@@ -216,7 +251,8 @@ public class ProcessRemoteResourcesMojo
         VelocityContext context = new VelocityContext();
 
         context.put( "project", project );
-
+        context.put( "projects", getProjects() );
+        
         String year = new SimpleDateFormat( "yyyy" ).format( new Date() );
 
         context.put( "presentYear", year );
@@ -251,26 +287,41 @@ public class ProcessRemoteResourcesMojo
                 {
                     String bundleResource = (String) i.next();
 
-                    String projectResource = StringUtils.replaceOnce( bundleResource, ".vm", ".txt" );
+                    String projectResource = bundleResource;
+
+
+                    if ( projectResource.endsWith(".vm") )
+                    {
+                        projectResource = projectResource.substring( 0, projectResource.length() - 3 );
+                    }
 
                     // Don't overwrite resource that are already being provided.
-
-                    File projectResourceFile = new File( standardResourcesDirectory, projectResource );
 
                     File f = new File( outputDirectory, projectResource );
 
                     FileUtils.mkdir( f.getParentFile().getAbsolutePath() );
 
-                    if ( projectResourceFile.exists() )
+                    if ( !copyResourceIfExists(f, projectResource) )
                     {
-                        FileUtils.copyFile( projectResourceFile, f );
-                    }
-                    else
-                    {
-                        Writer writer = new FileWriter( f );
+                        PrintWriter writer = new PrintWriter( new FileWriter( f ) );
 
                         velocity.getEngine().mergeTemplate( bundleResource, context, writer );
 
+                        File appendedResourceFile = new File( appendedResourcesDirectory, projectResource);
+                        if ( appendedResourceFile.exists() ) 
+                        {
+                            FileReader freader = new FileReader( appendedResourceFile );
+                            BufferedReader breader = new BufferedReader( freader );
+                            
+                            String line = breader.readLine();
+                   
+                            while ( line != null )
+                            {
+                                writer.println( line );
+                                line = breader.readLine();
+                            }
+                        }
+                        
                         writer.close();
                     }
                 }
@@ -321,5 +372,54 @@ public class ProcessRemoteResourcesMojo
         {
             throw new MojoExecutionException( "Error creating dot file for archiving instructions.", e );
         }
+    }
+    
+    protected List getProjects()
+        throws MojoExecutionException
+    {
+        List projects = new ArrayList();
+        for ( Iterator it = project.getArtifacts().iterator() ; it.hasNext() ; ) 
+        {
+            Artifact artifact = (Artifact) it.next();
+            try {
+                MavenProject p = mavenProjectBuilder.buildFromRepository(artifact,
+                                                        remoteRepositories,
+                                                        localRepository,
+                                                        true);
+                projects.add(p);
+            } catch (ProjectBuildingException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            
+        }
+        return projects;
+    }
+    
+    protected boolean copyResourceIfExists(File file, String relFileName)
+        throws IOException 
+    {
+        for ( Iterator i = resources.iterator(); i.hasNext(); )
+        {
+            Resource resource = (Resource) i.next();
+            File resourceDirectory = new File( resource.getDirectory() );
+
+            if ( !resourceDirectory.exists() )
+            {
+                continue;
+            }
+            //TODO - really should use the resource includes/excludes and name mapping
+            File source = new File(resourceDirectory, relFileName);
+            
+            if ( source.exists() )
+            {
+                //TODO - should use filters here
+                FileUtils.copyFile(source, file);
+                
+                return true;
+            }
+            
+        }
+        return false;
     }
 }
