@@ -357,6 +357,7 @@ public class ProcessRemoteResourcesMojo
         resource.setDirectory( outputDirectory.getAbsolutePath() );
 
         project.getResources().add( resource );
+        project.getTestResources().add( resource );
 
         // ----------------------------------------------------------------------------
         // Write out archiver dot file
