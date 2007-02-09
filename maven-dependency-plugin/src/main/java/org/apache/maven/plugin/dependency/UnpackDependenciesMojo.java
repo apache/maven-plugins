@@ -59,7 +59,7 @@ public class UnpackDependenciesMojo
     public void execute()
         throws MojoExecutionException
     {
-        DependencyStatusSets dss = getDependencySets( true );
+        DependencyStatusSets dss = getDependencySets( this.failOnMissingClassifierArtifact );
         Set artifacts = dss.getResolvedDependencies();
 
         for ( Iterator i = artifacts.iterator(); i.hasNext(); )
