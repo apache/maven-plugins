@@ -227,7 +227,8 @@ public abstract class AbstractFromConfigurationMojo
 
         try
         {
-            List listeners = new ArrayList();
+            //mdep-50 - rolledback for now because it's breaking some functionality.
+         /*   List listeners = new ArrayList();
 
             Set theSet = new HashSet();
             theSet.add( artifact );
@@ -240,7 +241,7 @@ public abstract class AbstractFromConfigurationMojo
             {
                 ResolutionNode node = (ResolutionNode) iter.next();
                 artifact = node.getArtifact();
-            }
+            }*/
 
              resolver.resolve( artifact, remoteRepos, local );
         }
