@@ -1,4 +1,5 @@
 package org.apache.maven.plugin.dependency.utils.filters;
+
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -133,10 +134,10 @@ public class TestScopeFilter
     {
         ScopeFilter filter = new ScopeFilter( "", Artifact.SCOPE_PROVIDED );
         Set result = filter.filter( artifacts, log );
-        assertNotNull(result);
+        assertNotNull( result );
         assertTrue( result.size() > 0 );
         Iterator iter = result.iterator();
-        assertNotNull(result);
+        assertNotNull( result );
         assertTrue( result.size() > 0 );
         while ( iter.hasNext() )
         {
@@ -151,7 +152,7 @@ public class TestScopeFilter
         ScopeFilter filter = new ScopeFilter( "", Artifact.SCOPE_SYSTEM );
         Set result = filter.filter( artifacts, log );
         Iterator iter = result.iterator();
-        assertNotNull(result);
+        assertNotNull( result );
         assertTrue( result.size() > 0 );
         while ( iter.hasNext() )
         {

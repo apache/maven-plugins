@@ -33,6 +33,15 @@ public abstract class AbstractFromDependenciesMojo
 {
 
     /**
+     * Strip artifact version during copy
+     * 
+     * @optional
+     * @parameter expression="${stripVersion}" default-value="false"
+     * @parameter
+     */
+    protected boolean stripVersion = false;
+
+    /**
      * Default location used for mojo unless overridden in ArtifactItem
      * 
      * @parameter expression="${outputDirectory}"
@@ -63,7 +72,6 @@ public abstract class AbstractFromDependenciesMojo
      */
     protected boolean useSubDirectoryPerArtifact;
 
-    
     /**
      * This only applies if the classifier parameter is used.
      * 
@@ -73,7 +81,7 @@ public abstract class AbstractFromDependenciesMojo
      * @optional
      */
     protected boolean failOnMissingClassifierArtifact = true;
-    
+
     /**
      * @return Returns the outputDirectory.
      */
@@ -83,7 +91,8 @@ public abstract class AbstractFromDependenciesMojo
     }
 
     /**
-     * @param theOutputDirectory The outputDirectory to set.
+     * @param theOutputDirectory
+     *            The outputDirectory to set.
      */
     public void setOutputDirectory( File theOutputDirectory )
     {
@@ -99,7 +108,8 @@ public abstract class AbstractFromDependenciesMojo
     }
 
     /**
-     * @param theUseSubDirectoryPerArtifact The useSubDirectoryPerArtifact to set.
+     * @param theUseSubDirectoryPerArtifact
+     *            The useSubDirectoryPerArtifact to set.
      */
     public void setUseSubDirectoryPerArtifact( boolean theUseSubDirectoryPerArtifact )
     {
@@ -115,11 +125,32 @@ public abstract class AbstractFromDependenciesMojo
     }
 
     /**
-     * @param theUseSubDirectoryPerType The useSubDirectoryPerType to set.
+     * @param theUseSubDirectoryPerType
+     *            The useSubDirectoryPerType to set.
      */
     public void setUseSubDirectoryPerType( boolean theUseSubDirectoryPerType )
     {
         this.useSubDirectoryPerType = theUseSubDirectoryPerType;
+    }
+
+    public boolean isFailOnMissingClassifierArtifact()
+    {
+        return failOnMissingClassifierArtifact;
+    }
+
+    public void setFailOnMissingClassifierArtifact( boolean failOnMissingClassifierArtifact )
+    {
+        this.failOnMissingClassifierArtifact = failOnMissingClassifierArtifact;
+    }
+
+    public boolean isStripVersion()
+    {
+        return stripVersion;
+    }
+
+    public void setStripVersion( boolean stripVersion )
+    {
+        this.stripVersion = stripVersion;
     }
 
 }

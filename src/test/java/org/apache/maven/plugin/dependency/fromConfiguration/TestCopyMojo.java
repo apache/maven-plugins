@@ -65,8 +65,8 @@ public class TestCopyMojo
         mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
         mojo.setResolver( new StubArtifactResolver( stubFactory, false, false ) );
         mojo.setLocal( new StubArtifactRepository( this.testDir.getAbsolutePath() ) );
-        mojo.setArtifactCollector( new StubArtifactCollector());
-    
+        mojo.setArtifactCollector( new StubArtifactCollector() );
+
     }
 
     public ArtifactItem getSingleArtifactItem( boolean removeVersion )
@@ -163,7 +163,6 @@ public class TestCopyMojo
 
         assertFilesExist( list, true );
     }
-
 
     public void testNonClassifierStrip()
         throws IOException, MojoExecutionException
