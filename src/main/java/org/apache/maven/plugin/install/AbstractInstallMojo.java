@@ -16,15 +16,15 @@ package org.apache.maven.plugin.install;
  * limitations under the License.
  */
 
-import org.apache.maven.archiva.digest.Digester;
-import org.apache.maven.archiva.digest.DigesterException;
-import org.apache.maven.archiva.digest.Md5Digester;
-import org.apache.maven.archiva.digest.Sha1Digester;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.installer.ArtifactInstaller;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.codehaus.plexus.digest.Digester;
+import org.codehaus.plexus.digest.DigesterException;
+import org.codehaus.plexus.digest.Md5Digester;
+import org.codehaus.plexus.digest.Sha1Digester;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
@@ -63,29 +63,17 @@ public abstract class AbstractInstallMojo
 
     /**
      * Digester for MD5.
+     * 
+     * @component role-hint="md5"
      */
     protected Digester md5Digester;
 
     /**
      * Digester for SHA-1.
+     * 
+     * @component role-hint="sha1"
      */
     protected Digester sha1Digester;
-
-    /**
-     * Constructor. The digesters are instantiated here.
-     */
-    public AbstractInstallMojo()
-    {
-        try
-        {
-            md5Digester = new Md5Digester();
-            sha1Digester = new Sha1Digester();
-        }
-        catch ( NoSuchAlgorithmException e )
-        {
-            new RuntimeException( e );
-        }
-    }
 
     protected void installCheckSum( File file, boolean isPom )
         throws MojoExecutionException
