@@ -321,7 +321,8 @@ public class TestCopyDependenciesMojo
         {
             Artifact artifact = (Artifact) iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
-            File folder = DependencyUtil.getFormattedOutputDirectory( true, false, mojo.outputDirectory, artifact );
+            File folder = DependencyUtil.getFormattedOutputDirectory( true, false, false, mojo.outputDirectory,
+                                                                      artifact );
             File file = new File( folder, fileName );
             assertTrue( file.exists() );
         }
@@ -338,7 +339,8 @@ public class TestCopyDependenciesMojo
         {
             Artifact artifact = (Artifact) iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
-            File folder = DependencyUtil.getFormattedOutputDirectory( false, true, mojo.outputDirectory, artifact );
+            File folder = DependencyUtil.getFormattedOutputDirectory( false, true, false, mojo.outputDirectory,
+                                                                      artifact );
             File file = new File( folder, fileName );
             assertTrue( file.exists() );
         }
@@ -358,108 +360,50 @@ public class TestCopyDependenciesMojo
         {
             Artifact artifact = (Artifact) iter.next();
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
-            File folder = DependencyUtil.getFormattedOutputDirectory( true, true, mojo.outputDirectory, artifact );
+            File folder = DependencyUtil
+                .getFormattedOutputDirectory( true, true, false, mojo.outputDirectory, artifact );
             File file = new File( folder, fileName );
             assertTrue( file.exists() );
         }
     }
 
-    public void testCopyDependenciesMojoIncludeCompileScope()
+    public void testCopyDependenciesMojoSubPerArtifactRemoveVersion()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet() );
-        mojo.includeScope = "compile";
+        mojo.useSubDirectoryPerArtifact = true;
+        mojo.stripVersion = true;
         mojo.execute();
-        ScopeArtifactFilter saf = new ScopeArtifactFilter( mojo.includeScope );
 
         Iterator iter = mojo.project.getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = (Artifact) iter.next();
-            String fileName = DependencyUtil.getFormattedFileName( artifact, false );
-            File file = new File( mojo.outputDirectory, fileName );
-
-            assertEquals( saf.include( artifact ), file.exists() );
+            String fileName = DependencyUtil.getFormattedFileName( artifact, true );
+            File folder = DependencyUtil
+                .getFormattedOutputDirectory( false, true, true, mojo.outputDirectory, artifact );
+            File file = new File( folder, fileName );
+            assertTrue( file.exists() );
         }
     }
 
-    public void testCopyDependenciesMojoIncludeTestScope()
+    public void testCopyDependenciesMojoSubPerArtifactAndTypeRemoveVersion()
         throws Exception
     {
-        mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
+        mojo.project.setArtifacts( stubFactory.getTypedArtifacts() );
         mojo.project.setDependencyArtifacts( new HashSet() );
-        mojo.includeScope = "test";
-
-        mojo.execute();
-        ScopeArtifactFilter saf = new ScopeArtifactFilter( mojo.includeScope );
-
-        Iterator iter = mojo.project.getArtifacts().iterator();
-        while ( iter.hasNext() )
-        {
-            Artifact artifact = (Artifact) iter.next();
-            String fileName = DependencyUtil.getFormattedFileName( artifact, false );
-            File file = new File( mojo.outputDirectory, fileName );
-
-            assertEquals( saf.include( artifact ), file.exists() );
-        }
-    }
-
-    public void testCopyDependenciesMojoIncludeRuntimeScope()
-        throws Exception
-    {
-        mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet() );
-        mojo.includeScope = "runtime";
-        mojo.execute();
-        ScopeArtifactFilter saf = new ScopeArtifactFilter( mojo.includeScope );
-
-        Iterator iter = mojo.project.getArtifacts().iterator();
-        while ( iter.hasNext() )
-        {
-            Artifact artifact = (Artifact) iter.next();
-            String fileName = DependencyUtil.getFormattedFileName( artifact, false );
-            File file = new File( mojo.outputDirectory, fileName );
-
-            assertEquals( saf.include( artifact ), file.exists() );
-        }
-    }
-
-    public void testCopyDependenciesMojoIncludeprovidedScope()
-        throws Exception
-    {
-        mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet() );
-        mojo.includeScope = "provided";
-
-        mojo.execute();
-        Iterator iter = mojo.project.getArtifacts().iterator();
-        while ( iter.hasNext() )
-        {
-            Artifact artifact = (Artifact) iter.next();
-            String fileName = DependencyUtil.getFormattedFileName( artifact, false );
-            File file = new File( mojo.outputDirectory, fileName );
-            assertEquals( Artifact.SCOPE_PROVIDED.equals( artifact.getScope() ), file.exists() );
-        }
-    }
-
-    public void testCopyDependenciesMojoIncludesystemScope()
-        throws Exception
-    {
-        mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
-        mojo.project.setDependencyArtifacts( new HashSet() );
-        mojo.includeScope = "system";
-
+        mojo.useSubDirectoryPerArtifact = true;
+        mojo.useSubDirectoryPerType = true;
+        mojo.stripVersion = true;
         mojo.execute();
 
         Iterator iter = mojo.project.getArtifacts().iterator();
         while ( iter.hasNext() )
         {
             Artifact artifact = (Artifact) iter.next();
-            String fileName = DependencyUtil.getFormattedFileName( artifact, false );
-            File file = new File( mojo.outputDirectory, fileName );
-
-            assertEquals( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ), file.exists() );
+            String fileName = DependencyUtil.getFormattedFileName( artifact, true );
+            File folder = DependencyUtil.getFormattedOutputDirectory( true, true, true, mojo.outputDirectory, artifact );
+            File file = new File( folder, fileName );
+            assertTrue( file.exists() );
         }
     }
 

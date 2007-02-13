@@ -107,7 +107,6 @@ public class ClassifierTypeTranslator
         return results;
     }
 
-
     /**
      * @return Returns the type.
      */
@@ -134,7 +133,8 @@ public class ClassifierTypeTranslator
     }
 
     /**
-     * @param theClassifier The classifier to set.
+     * @param theClassifier
+     *            The classifier to set.
      */
     public void setClassifier( String theClassifier )
     {

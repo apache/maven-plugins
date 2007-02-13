@@ -155,7 +155,7 @@ public abstract class AbstractArtifactFeatureFilter
             while ( excludeIter.hasNext() )
             {
                 String excludeFeature = (String) excludeIter.next();
-                if (compareFeatures(artifactFeature, excludeFeature ) )
+                if ( compareFeatures( artifactFeature, excludeFeature ) )
                 {
                     exclude = true;
                     break;
@@ -216,14 +216,18 @@ public abstract class AbstractArtifactFeatureFilter
     {
         return this.includes;
     }
-    
+
     /**
      * Allows Feature comparison to be customized
-     * @param lhs String artifact's feature
-     * @param rhs String feature from exclude or include list
+     * 
+     * @param lhs
+     *            String artifact's feature
+     * @param rhs
+     *            String feature from exclude or include list
      * @return boolean true if features match
      */
-    protected boolean compareFeatures(String lhs, String rhs){
-    	return(lhs.equals(rhs));
+    protected boolean compareFeatures( String lhs, String rhs )
+    {
+        return ( lhs.equals( rhs ) );
     }
 }

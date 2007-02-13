@@ -50,7 +50,7 @@ public class TestBuildClasspathMojo
         assertNotNull( mojo.getProject() );
         MavenProject project = mojo.getProject();
 
-        //mojo.silent = true;
+        // mojo.silent = true;
         Set artifacts = this.stubFactory.getScopedArtifacts();
         Set directArtifacts = this.stubFactory.getReleaseAndSnapshotArtifacts();
         artifacts.addAll( directArtifacts );

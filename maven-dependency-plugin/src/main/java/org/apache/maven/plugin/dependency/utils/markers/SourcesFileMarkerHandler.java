@@ -63,7 +63,8 @@ public class SourcesFileMarkerHandler
     /**
      * Get MarkerFile, exposed for unit testing purposes
      * 
-     * @param is resolved or not.
+     * @param is
+     *            resolved or not.
      * @return marker file for this artifact.
      */
     protected File getMarkerFile( boolean res )
@@ -135,14 +136,15 @@ public class SourcesFileMarkerHandler
         // get the other file if it exists.
         File clearMarker = getMarkerFile( !this.resolved );
         // create marker file
-        try {
-        marker.getParentFile().mkdirs();
-        }
-        catch (NullPointerException e)
+        try
         {
-            //parent is null, ignore it.
+            marker.getParentFile().mkdirs();
         }
-        
+        catch ( NullPointerException e )
+        {
+            // parent is null, ignore it.
+        }
+
         try
         {
             marker.createNewFile();

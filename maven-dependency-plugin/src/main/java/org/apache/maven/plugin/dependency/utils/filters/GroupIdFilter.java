@@ -75,15 +75,16 @@ public class GroupIdFilter
     {
         return artifact.getGroupId();
     }
-    
+
     /*
      * (non-Javadoc)
      * 
      * @see org.apache.maven.plugin.dependency.utils.filters.AbstractArtifactFeatureFilter#compareFeatures(String,String)
      */
-    
-    protected boolean compareFeatures(String lhs, String rhs){
-    	return lhs.startsWith(rhs);
+
+    protected boolean compareFeatures( String lhs, String rhs )
+    {
+        return lhs.startsWith( rhs );
     }
-    
+
 }

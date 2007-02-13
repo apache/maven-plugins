@@ -1,4 +1,5 @@
 package org.apache.maven.plugin.dependency.utils;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -134,10 +135,10 @@ public class TestDependencyStatusSets
         dss = new DependencyStatusSets( artifacts, artifacts, artifacts );
         dss.logStatus( log, false );
         dss.logStatus( log, true );
-        dss.logStatus( log, false ,true);
-        dss.logStatus( log, true , true);
-        dss.logStatus( log, false , false);
-        dss.logStatus( log, true , false);
+        dss.logStatus( log, false, true );
+        dss.logStatus( log, true, true );
+        dss.logStatus( log, false, false );
+        dss.logStatus( log, true, false );
 
     }
 }

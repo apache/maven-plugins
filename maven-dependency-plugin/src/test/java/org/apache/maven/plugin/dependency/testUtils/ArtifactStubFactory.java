@@ -90,8 +90,8 @@ public class ArtifactStubFactory
                                    String type, String classifier, boolean optional )
         throws IOException
     {
-        ArtifactHandler ah = new DefaultArtifactHandlerStub(type,classifier);
-        
+        ArtifactHandler ah = new DefaultArtifactHandlerStub( type, classifier );
+
         Artifact artifact = new DefaultArtifact( groupId, artifactId, versionRange, scope, type, classifier, ah,
                                                  optional );
         if ( createFiles )

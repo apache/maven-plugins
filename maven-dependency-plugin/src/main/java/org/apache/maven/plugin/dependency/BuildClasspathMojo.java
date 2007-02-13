@@ -38,7 +38,8 @@ import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.filters.ArtifactsFilter;
 
 /**
- *  This goal will output a classpath string of dependencies from the local repository to a file or log.
+ * This goal will output a classpath string of dependencies from the local
+ * repository to a file or log.
  * 
  * @goal build-classpath
  * @requiresDependencyResolution compile
@@ -83,7 +84,7 @@ public class BuildClasspathMojo
      * @parameter default-value="false" expression="${maven.dep.regenerateFile}"
      */
     private boolean regenerateFile;
-    
+
     /**
      * Main entry into mojo. Gets the list of dependencies and iterates through
      * calling copyArtifact.
@@ -105,7 +106,7 @@ public class BuildClasspathMojo
         }
 
         List artList = new ArrayList( artifacts );
-            
+
         StringBuffer sb = new StringBuffer();
         Iterator i = artList.iterator();
 
@@ -258,13 +259,16 @@ public class BuildClasspathMojo
     /**
      * Compares artifacts lexicographically, using pattern
      * [group_id][artifact_id][version].
-     * @param arg1 first object
-     * @param arg2 second object
-     * @return  the value <code>0</code> if the argument string is equal to
-     *          this string; a value less than <code>0</code> if this string
-     *          is lexicographically less than the string argument; and a
-     *          value greater than <code>0</code> if this string is
-     *          lexicographically greater than the string argument.
+     * 
+     * @param arg1
+     *            first object
+     * @param arg2
+     *            second object
+     * @return the value <code>0</code> if the argument string is equal to
+     *         this string; a value less than <code>0</code> if this string is
+     *         lexicographically less than the string argument; and a value
+     *         greater than <code>0</code> if this string is lexicographically
+     *         greater than the string argument.
      */
     public int compare( Object arg1, Object arg2 )
     {

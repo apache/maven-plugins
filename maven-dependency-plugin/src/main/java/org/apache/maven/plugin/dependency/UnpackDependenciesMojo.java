@@ -67,7 +67,8 @@ public class UnpackDependenciesMojo
             Artifact artifact = (Artifact) i.next();
             File destDir = DependencyUtil.getFormattedOutputDirectory( this.useSubDirectoryPerType,
                                                                        this.useSubDirectoryPerArtifact,
-                                                                       this.outputDirectory, artifact );
+                                                                       this.stripVersion, this.outputDirectory,
+                                                                       artifact );
 
             unpack( artifact.getFile(), destDir );
             DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( artifact, this.markersDirectory );
