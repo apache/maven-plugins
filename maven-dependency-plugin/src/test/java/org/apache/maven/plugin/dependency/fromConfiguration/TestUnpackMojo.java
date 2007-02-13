@@ -74,7 +74,7 @@ public class TestUnpackMojo
         mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
         mojo.setResolver( new StubArtifactResolver( stubFactory, false, false ) );
         mojo.setLocal( new StubArtifactRepository( this.testDir.getAbsolutePath() ) );
-        mojo.setArtifactCollector( new StubArtifactCollector());
+        mojo.setArtifactCollector( new StubArtifactCollector() );
     }
 
     public ArtifactItem getSingleArtifactItem( boolean removeVersion )
@@ -502,19 +502,20 @@ public class TestUnpackMojo
         // round down to the last second
         long time = System.currentTimeMillis();
         time = time - ( time % 1000 );
-        //go back 10 more seconds for linux
-        time-=10000;
+        // go back 10 more seconds for linux
+        time -= 10000;
         // set to known value
         unpackedFile.setLastModified( time );
         // set source to be newer
         artifact.getFile().setLastModified( time + 4000 );
-        
-        //manually set markerfile (must match getMarkerFile in DefaultMarkerFileHandler)
+
+        // manually set markerfile (must match getMarkerFile in
+        // DefaultMarkerFileHandler)
         File marker = new File( mojo.getMarkersDirectory(), artifact.getId().replace( ':', '-' ) + ".marker" );
-        marker.setLastModified(time);
-        
+        marker.setLastModified( time );
+
         assertTrue( time == unpackedFile.lastModified() );
-        mojo.execute();  
+        mojo.execute();
         assertTrue( time != unpackedFile.lastModified() );
     }
 
@@ -547,8 +548,8 @@ public class TestUnpackMojo
     {
         File unpackedFile = new File( item.getOutputDirectory(), ArtifactStubFactory.getUnpackableFileName( item
             .getArtifact() ) );
-        
-        assertTrue(unpackedFile.exists());
+
+        assertTrue( unpackedFile.exists() );
         return unpackedFile;
 
     }

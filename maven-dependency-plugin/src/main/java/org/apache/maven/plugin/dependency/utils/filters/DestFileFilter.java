@@ -243,7 +243,8 @@ public class DestFileFilter
         {
             destFolder = DependencyUtil.getFormattedOutputDirectory( this.useSubDirectoryPerType,
                                                                      this.useSubDirectoryPerArtifact,
-                                                                     this.outputFileDirectory, artifact );
+                                                                     this.removeVersion, this.outputFileDirectory,
+                                                                     artifact );
         }
 
         File destFile = null;

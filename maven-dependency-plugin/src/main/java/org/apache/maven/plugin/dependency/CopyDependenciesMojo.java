@@ -45,15 +45,6 @@ public class CopyDependenciesMojo
 {
 
     /**
-     * Strip artifact version during copy
-     * 
-     * @optional
-     * @parameter expression="${stripVersion}" default-value="false"
-     * @parameter
-     */
-    protected boolean stripVersion = false;
-
-    /**
      * Main entry into mojo. Gets the list of dependencies and iterates through
      * calling copyArtifact.
      * 
@@ -106,7 +97,7 @@ public class CopyDependenciesMojo
         String destFileName = DependencyUtil.getFormattedFileName( artifact, removeVersion );
 
         File destDir = DependencyUtil.getFormattedOutputDirectory( this.useSubDirectoryPerType,
-                                                                   this.useSubDirectoryPerArtifact,
+                                                                   this.useSubDirectoryPerArtifact, this.stripVersion,
                                                                    this.outputDirectory, artifact );
         File destFile = new File( destDir, destFileName );
 

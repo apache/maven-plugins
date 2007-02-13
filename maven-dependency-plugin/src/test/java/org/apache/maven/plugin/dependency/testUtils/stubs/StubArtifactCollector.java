@@ -36,7 +36,7 @@ import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 
 /**
  * @author brianf
- *
+ * 
  */
 public class StubArtifactCollector
     implements ArtifactCollector
@@ -51,8 +51,16 @@ public class StubArtifactCollector
         // TODO Auto-generated constructor stub
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.maven.artifact.resolver.ArtifactCollector#collect(java.util.Set, org.apache.maven.artifact.Artifact, org.apache.maven.artifact.repository.ArtifactRepository, java.util.List, org.apache.maven.artifact.metadata.ArtifactMetadataSource, org.apache.maven.artifact.resolver.filter.ArtifactFilter, java.util.List)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.maven.artifact.resolver.ArtifactCollector#collect(java.util.Set,
+     *      org.apache.maven.artifact.Artifact,
+     *      org.apache.maven.artifact.repository.ArtifactRepository,
+     *      java.util.List,
+     *      org.apache.maven.artifact.metadata.ArtifactMetadataSource,
+     *      org.apache.maven.artifact.resolver.filter.ArtifactFilter,
+     *      java.util.List)
      */
     public ArtifactResolutionResult collect( Set theArtifacts, Artifact theOriginatingArtifact,
                                             ArtifactRepository theLocalRepository, List theRemoteRepositories,
@@ -64,16 +72,24 @@ public class StubArtifactCollector
         ArtifactResolutionResult arr = new ArtifactResolutionResult();
 
         Iterator iter = theArtifacts.iterator();
-        while (iter.hasNext())
-        {  
-            nodes.add(new ResolutionNode((Artifact) iter.next(),theRemoteRepositories));
+        while ( iter.hasNext() )
+        {
+            nodes.add( new ResolutionNode( (Artifact) iter.next(), theRemoteRepositories ) );
         }
-        arr.setArtifactResolutionNodes(nodes);
+        arr.setArtifactResolutionNodes( nodes );
         return arr;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.maven.artifact.resolver.ArtifactCollector#collect(java.util.Set, org.apache.maven.artifact.Artifact, java.util.Map, org.apache.maven.artifact.repository.ArtifactRepository, java.util.List, org.apache.maven.artifact.metadata.ArtifactMetadataSource, org.apache.maven.artifact.resolver.filter.ArtifactFilter, java.util.List)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.maven.artifact.resolver.ArtifactCollector#collect(java.util.Set,
+     *      org.apache.maven.artifact.Artifact, java.util.Map,
+     *      org.apache.maven.artifact.repository.ArtifactRepository,
+     *      java.util.List,
+     *      org.apache.maven.artifact.metadata.ArtifactMetadataSource,
+     *      org.apache.maven.artifact.resolver.filter.ArtifactFilter,
+     *      java.util.List)
      */
     public ArtifactResolutionResult collect( Set theArtifacts, Artifact theOriginatingArtifact, Map theManagedVersions,
                                             ArtifactRepository theLocalRepository, List theRemoteRepositories,
@@ -85,11 +101,11 @@ public class StubArtifactCollector
         ArtifactResolutionResult arr = new ArtifactResolutionResult();
 
         Iterator iter = theArtifacts.iterator();
-        while (iter.hasNext())
-        {  
-            nodes.add(new ResolutionNode((Artifact) iter.next(),theRemoteRepositories));
+        while ( iter.hasNext() )
+        {
+            nodes.add( new ResolutionNode( (Artifact) iter.next(), theRemoteRepositories ) );
         }
-        arr.setArtifactResolutionNodes(nodes);
+        arr.setArtifactResolutionNodes( nodes );
         return arr;
     }
 

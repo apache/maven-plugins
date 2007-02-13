@@ -73,12 +73,13 @@ public abstract class AbstractDependencyMojo
     protected ArtifactCollector artifactCollector;
 
     /**
-     * @component role="org.apache.maven.artifact.metadata.ArtifactMetadataSource" hint="maven"
+     * @component role="org.apache.maven.artifact.metadata.ArtifactMetadataSource"
+     *            hint="maven"
      * @required
      * @readonly
      */
     protected ArtifactMetadataSource artifactMetadataSource;
-    
+
     /**
      * Location of the local repository.
      * 
@@ -223,11 +224,11 @@ public abstract class AbstractDependencyMojo
 
             unArchiver.setDestDirectory( location );
 
-            if (this.silent)
+            if ( this.silent )
             {
-                silenceUnarchiver(unArchiver);
+                silenceUnarchiver( unArchiver );
             }
-            
+
             unArchiver.extract();
         }
         catch ( NoSuchArchiverException e )
@@ -361,7 +362,8 @@ public abstract class AbstractDependencyMojo
     }
 
     /**
-     * @param theArtifactCollector The artifactCollector to set.
+     * @param theArtifactCollector
+     *            The artifactCollector to set.
      */
     public void setArtifactCollector( ArtifactCollector theArtifactCollector )
     {
@@ -377,7 +379,8 @@ public abstract class AbstractDependencyMojo
     }
 
     /**
-     * @param theArtifactMetadataSource The artifactMetadataSource to set.
+     * @param theArtifactMetadataSource
+     *            The artifactMetadataSource to set.
      */
     public void setArtifactMetadataSource( ArtifactMetadataSource theArtifactMetadataSource )
     {

@@ -19,7 +19,6 @@ package org.apache.maven.plugin.dependency.resolvers;
  * under the License.    
  */
 
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractResolveMojo;
 import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
@@ -39,7 +38,7 @@ import org.apache.maven.plugin.dependency.utils.markers.SourcesFileMarkerHandler
 public class ResolveDependenciesMojo
     extends AbstractResolveMojo
 {
-    
+
     /**
      * If we should display the scope when resolving
      * 

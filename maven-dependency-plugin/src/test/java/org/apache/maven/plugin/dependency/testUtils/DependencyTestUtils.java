@@ -1,4 +1,5 @@
 package org.apache.maven.plugin.dependency.testUtils;
+
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -92,8 +93,9 @@ public class DependencyTestUtils
 
         field.set( object, value );
     }
-    
-    public static void setFileModifiedTime(File file) throws InterruptedException
+
+    public static void setFileModifiedTime( File file )
+        throws InterruptedException
     {
         Thread.sleep( 100 );
         // round down to the last second
