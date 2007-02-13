@@ -46,7 +46,7 @@ public abstract class AbstractResolveMojo
      * @readonly
      */
     protected MavenProjectBuilder mavenProjectBuilder;
-    
+
     /**
      * This method resolves the dependency artifacts from the project.
      * 

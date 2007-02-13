@@ -32,6 +32,7 @@ import org.codehaus.plexus.util.StringUtils;
  */
 public final class DependencyUtil
 {
+
     /**
      * Builds the file name. If removeVersion is set, then the file name must be
      * reconstructed from the artifactId, Classifier (if used) and Type.
@@ -48,12 +49,14 @@ public final class DependencyUtil
     {
         String destFileName = null;
 
-        //if there is a file and we aren't stripping the version, just get the name directly
+        // if there is a file and we aren't stripping the version, just get the
+        // name directly
         if ( artifact.getFile() != null && !removeVersion )
         {
             destFileName = artifact.getFile().getName();
         }
-        else //if offline
+        else
+        // if offline
         {
             String versionString = null;
             if ( !removeVersion )
@@ -64,7 +67,7 @@ public final class DependencyUtil
             {
                 versionString = "";
             }
-            
+
             String classifierString = "";
 
             if ( StringUtils.isNotEmpty( artifact.getClassifier() ) )
@@ -72,7 +75,8 @@ public final class DependencyUtil
                 classifierString = "-" + artifact.getClassifier();
             }
 
-            destFileName = artifact.getArtifactId() + versionString + classifierString + "." + artifact.getArtifactHandler().getExtension();
+            destFileName = artifact.getArtifactId() + versionString + classifierString + "."
+                + artifact.getArtifactHandler().getExtension();
         }
         return destFileName;
     }
@@ -92,18 +96,18 @@ public final class DependencyUtil
      * @return a formatted File object to use for output.
      */
     public static File getFormattedOutputDirectory( boolean useSubdirsPerType, boolean useSubdirPerArtifact,
-                                                   File outputDirectory, Artifact artifact )
+                                                   boolean removeVersion, File outputDirectory, Artifact artifact )
     {
         File result = null;
+        String artifactString = getDependencyId(artifact,removeVersion);
 
-        // get id but convert the chars so it's safe as a folder name.
-        String artifactId = artifact.getId().replace( ':', '-' );
+        
         if ( !useSubdirsPerType )
         {
             if ( useSubdirPerArtifact )
             {
 
-                result = new File( outputDirectory.getAbsolutePath() + File.separatorChar + artifactId
+                result = new File( outputDirectory.getAbsolutePath() + File.separatorChar + artifactString
                     + File.separatorChar );
             }
             else
@@ -116,7 +120,7 @@ public final class DependencyUtil
             if ( useSubdirPerArtifact )
             {
                 result = new File( outputDirectory.getAbsolutePath() + File.separatorChar + artifact.getType() + "s"
-                    + File.separatorChar + artifactId + File.separatorChar );
+                    + File.separatorChar + artifactString + File.separatorChar );
             }
             else
             {
@@ -127,5 +131,37 @@ public final class DependencyUtil
 
         return result;
 
+    }
+    
+    private static String getDependencyId(Artifact artifact,boolean removeVersion)
+    {
+        StringBuffer sb = new StringBuffer();
+        
+        sb.append( artifact.getArtifactId() );
+        
+        if (StringUtils.isNotEmpty(artifact.getClassifier()))
+        {
+            sb.append("-");
+            sb.append(artifact.getClassifier());
+        }
+        
+        if (!removeVersion)
+        {
+            sb.append("-");
+            sb.append(artifact.getVersion());
+            sb.append("-");
+            sb.append( artifact.getType() );
+        }
+        else
+        {
+            //if the classifier and type are the same (sources), then don't repeat.
+            //avoids names like foo-sources-sources
+            if (!StringUtils.equals(artifact.getClassifier(),artifact.getType()))
+            {
+                sb.append("-");
+                sb.append( artifact.getType() );
+            }
+        }     
+        return sb.toString();
     }
 }
