@@ -85,35 +85,35 @@ public class TestGroupIdFilter
     {
         filtering3();
     }
-    
-    public void testFiltering4()
-    	throws Exception
-    {
-    	SilentLog log = new SilentLog();
-    	// include o* from groupIds one,two should leave one
-    	Set result = filtering();
-    	assertTrue(result.size()==2);
-    	GroupIdFilter filter = new GroupIdFilter("o",null);
-    	result = filter.filter(result, log);
-    	Iterator iter = result.iterator();
-    	while( iter.hasNext() )
-    	{
-    		Artifact artifact = (Artifact) iter.next();
-    		assertTrue(artifact.getGroupId().equals("one"));
-    		
-    	}
 
-    	// exclude on* from groupIds one,two should leave two
-    	result = filtering();
-    	assertTrue(result.size()==2);
-    	filter = new GroupIdFilter(null,"on");
-    	result = filter.filter(result, log);
-    	iter = result.iterator();
-    	while( iter.hasNext() )
-    	{
-    		Artifact artifact = (Artifact) iter.next();
-    		assertTrue(artifact.getGroupId().equals("two"));
-    		
-    	}
+    public void testFiltering4()
+        throws Exception
+    {
+        SilentLog log = new SilentLog();
+        // include o* from groupIds one,two should leave one
+        Set result = filtering();
+        assertTrue( result.size() == 2 );
+        GroupIdFilter filter = new GroupIdFilter( "o", null );
+        result = filter.filter( result, log );
+        Iterator iter = result.iterator();
+        while ( iter.hasNext() )
+        {
+            Artifact artifact = (Artifact) iter.next();
+            assertTrue( artifact.getGroupId().equals( "one" ) );
+
+        }
+
+        // exclude on* from groupIds one,two should leave two
+        result = filtering();
+        assertTrue( result.size() == 2 );
+        filter = new GroupIdFilter( null, "on" );
+        result = filter.filter( result, log );
+        iter = result.iterator();
+        while ( iter.hasNext() )
+        {
+            Artifact artifact = (Artifact) iter.next();
+            assertTrue( artifact.getGroupId().equals( "two" ) );
+
+        }
     }
 }

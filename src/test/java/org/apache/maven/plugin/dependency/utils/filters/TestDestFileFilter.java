@@ -1,4 +1,5 @@
 package org.apache.maven.plugin.dependency.utils.filters;
+
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -81,7 +82,7 @@ public class TestDestFileFilter
         throws IOException
     {
         File destFolder = DependencyUtil.getFormattedOutputDirectory( useSubDirectoryPerType,
-                                                                      useSubDirectoryPerArtifact, outputFolder,
+                                                                      useSubDirectoryPerArtifact, false, outputFolder,
                                                                       artifact );
         File destFile = new File( destFolder, DependencyUtil.getFormattedFileName( artifact, removeVersion ) );
 

@@ -180,8 +180,6 @@ public abstract class AbstractFromConfigurationMojo
         return result;
     }
 
-  
-
     /**
      * Resolves the Artifact from the remote repository if nessessary. If no
      * version is specified, it will be retrieved from the dependency list or
@@ -222,28 +220,29 @@ public abstract class AbstractFromConfigurationMojo
         else
         {
             artifact = factory.createDependencyArtifact( artifactItem.getGroupId(), artifactItem.getArtifactId(), vr,
-                                                         artifactItem.getType(), artifactItem.getClassifier(), Artifact.SCOPE_COMPILE );
+                                                         artifactItem.getType(), artifactItem.getClassifier(),
+                                                         Artifact.SCOPE_COMPILE );
         }
 
         try
         {
-            //mdep-50 - rolledback for now because it's breaking some functionality.
-         /*   List listeners = new ArrayList();
+            // mdep-50 - rolledback for now because it's breaking some
+            // functionality.
+            /*
+             * List listeners = new ArrayList();
+             * 
+             * Set theSet = new HashSet(); theSet.add( artifact );
+             * ArtifactResolutionResult artifactResolutionResult =
+             * artifactCollector.collect( theSet, project .getArtifact(),
+             * managedVersions, this.local,
+             * project.getRemoteArtifactRepositories(), artifactMetadataSource,
+             * null, listeners ); Iterator iter =
+             * artifactResolutionResult.getArtifactResolutionNodes().iterator();
+             * while ( iter.hasNext() ) { ResolutionNode node = (ResolutionNode)
+             * iter.next(); artifact = node.getArtifact(); }
+             */
 
-            Set theSet = new HashSet();
-            theSet.add( artifact );
-            ArtifactResolutionResult artifactResolutionResult = artifactCollector.collect( theSet, project
-                .getArtifact(), managedVersions, this.local, project.getRemoteArtifactRepositories(),
-                                                                                           artifactMetadataSource,
-                                                                                           null, listeners );
-            Iterator iter = artifactResolutionResult.getArtifactResolutionNodes().iterator();
-            while ( iter.hasNext() )
-            {
-                ResolutionNode node = (ResolutionNode) iter.next();
-                artifact = node.getArtifact();
-            }*/
-
-             resolver.resolve( artifact, remoteRepos, local );
+            resolver.resolve( artifact, remoteRepos, local );
         }
         catch ( ArtifactResolutionException e )
         {
