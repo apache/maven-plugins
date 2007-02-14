@@ -58,8 +58,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Pull down resourceBundles containing remote resources and process the resources contained
@@ -114,6 +116,22 @@ public class ProcessRemoteResourcesMojo
      * @required
      */
     private ArrayList resourceBundles;
+
+
+    /**
+     * Additional properties to be passed to velocity.
+     *
+     * Several properties are automatically added:
+     *   project - the current MavenProject 
+     *   projects - the list of dependency projects
+     *   projectTimespan - the timespan of the current project (requires inceptionYear in pom)
+     *
+     * See <a href="http://maven.apache.org/ref/current/maven-project/apidocs/org/apache/maven/project/MavenProject.html">
+     * the javadoc for MavenProject</a> for information about the properties on the MavenProject. 
+     *
+     * @parameter
+     */
+    private Map properties = new HashMap();
     
     /**
      * The list of resources defined for the project.
@@ -248,7 +266,7 @@ public class ProcessRemoteResourcesMojo
 
         InputStreamReader reader = null;
 
-        VelocityContext context = new VelocityContext();
+        VelocityContext context = new VelocityContext(properties);
 
         context.put( "project", project );
         context.put( "projects", getProjects() );
@@ -416,6 +434,9 @@ public class ProcessRemoteResourcesMojo
             {
                 //TODO - should use filters here
                 FileUtils.copyFile(source, file);
+                
+                //exclude the original (so eclipse doesn't complain about duplicate resources)
+                resource.addExclude(relFileName);
                 
                 return true;
             }
