@@ -62,7 +62,7 @@ Usage
   ...
   <scm>
     <connection>scm:svn:http://server/path/to/project/trunk</connection>
-    <developerConnection>scm:svn:https://path/to/project/trunk</developerConnection>
+    <developerConnection>scm:svn:https://server/path/to/project/trunk</developerConnection>
     <url>scm:svn:http://server/path/to/view/trunk</url>
   </scm>
   ...
