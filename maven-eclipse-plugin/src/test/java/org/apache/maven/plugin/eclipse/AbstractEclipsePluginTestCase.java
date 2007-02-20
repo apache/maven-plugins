@@ -113,9 +113,9 @@ public abstract class AbstractEclipsePluginTestCase
             for ( int j = 0; j < paths.length; j++ )
             {
                 String pt = paths[j];
-                if ( new File( pt, "m2" ).exists() )
+                if ( new File( pt, "mvn" ).exists() )
                 {
-                    System.setProperty( "maven.home", new File( pt ).getParent() );
+                    System.setProperty( "maven.home", new File( pt ).getAbsoluteFile().getParent() );
                     break;
                 }
 
