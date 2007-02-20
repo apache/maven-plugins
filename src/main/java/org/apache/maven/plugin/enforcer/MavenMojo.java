@@ -19,23 +19,86 @@ package org.apache.maven.plugin.enforcer;
  * under the License.
  */
 
+import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.execution.RuntimeInformation;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Goal which fails the build if Maven isn't the correct version
- *
- * @goal maven
+ * Goal which fails the build if Maven isn't the correct mavenVersion
  * 
+ * @goal maven
+ * @author Brian Fox
  * @phase process-sources
  */
 public class MavenMojo
     extends AbstractMojo
 {
+    /**
+     * Used to look up Artifacts in the remote repository.
+     * 
+     * @parameter expression="${component.org.apache.maven.execution.RuntimeInformation}"
+     * @required
+     * @readonly
+     */
+    protected RuntimeInformation rti;
+
+    /**
+     * Specify the required Version of Maven.
+     * Some examples are
+     * <ul>
+     *   <li><code>2.0.4</code> Version 2.0.4</li>
+     *   <li><code>[2.0,2.1)</code> Versions 2.0 (included) to 2.1 (not included)</li>
+     *   <li><code>[2.0,2.1]</code> Versions 2.0 to 2.1 (both included)</li>
+     *   <li><code>[2.0.5,)</code> Versions 2.0.5 and higher</li>
+     *   <li><code>(,2.0.5],[2.1.1,)</code> Versions up to 2.0.5 (included) and 2.1.1 or higher</li>
+     * </ul>
+     * 
+     * @parameter expression="${enforcer.maven.version}" default-value=""
+     * @required
+     */
+    private String mavenVersion = null;
+
+    /**
+     * Flag to warn only if the mavenVersion check fails.
+     * 
+     * @parameter expression="${enforcer.maven.warn}" default-value="false"
+     */
+    private boolean warn = false;
 
     public void execute()
         throws MojoExecutionException
     {
-    
+        if (StringUtils.isEmpty(this.mavenVersion))
+        {
+            throw new MojoExecutionException("MavenVersion can't be empty.");
+        }
+        
+        ArtifactVersion version = rti.getApplicationVersion();
+        VersionRange vr;
+        
+        vr = VersionRange.createFromVersion(this.mavenVersion);
+        
+        Log log = this.getLog();
+        String msg = "Detected Maven Version: "+ version;
+        if (vr.containsVersion(version))
+        {
+            log.debug(msg+" is allowed.");
+        }
+        else
+        {
+            String error = msg+" is not in the allowed range: "+vr;
+            if (warn)
+            {
+                log.warn(error);
+            }
+            else
+            {
+                throw new MojoExecutionException(error);
+            }
+        }
     }
 }
