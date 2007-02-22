@@ -77,6 +77,17 @@ public class AntMojoTest
     }
 
     /**
+     * Method to test Project with no dependencies
+     *
+     * @throws Exception
+     */
+    public void testProjectWithJavadoc()
+        throws Exception
+    {
+        invokeAntMojo( "ant-javadoc-test" );
+    }
+
+    /**
      * Invoke Ant mojo.
      * <br/>
      * The Maven test project should be in a directory called <code>testProject</code> in  "src/test/resources/unit/" directory.

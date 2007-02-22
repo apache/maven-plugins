@@ -24,15 +24,17 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.StringTokenizer;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Plugin;
+import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.wagon.PathUtils;
 import org.apache.xpath.XPathAPI;
@@ -42,6 +44,8 @@ import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.XMLWriter;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Utility class for the <code>AntBuildWriter</code> class.
@@ -138,8 +142,7 @@ public class AntBuildWriterUtil
      */
     public static void writeAntVersionHeader( XMLWriter writer )
     {
-        writeCommentText( writer, "Ant build file (http://ant.apache.org/) for Ant 1.6.2 or above.",
-                                             0 );
+        writeCommentText( writer, "Ant build file (http://ant.apache.org/) for Ant 1.6.2 or above.", 0 );
     }
 
     /**
@@ -250,7 +253,8 @@ public class AntBuildWriterUtil
     }
 
     /**
-     * Convenience method to write XML comment between two comment line break. The XML comment block is also indented.
+     * Convenience method to write XML comment between two comment line break.
+     * The XML comment block is also indented.
      *
      * @param writer not null
      * @param comment
@@ -295,7 +299,255 @@ public class AntBuildWriterUtil
     }
 
     /**
-     * Convenience method to write XML jar task
+     * Convenience method to write XML Ant javadoc task
+     *
+     * @param writer not null
+     * @param project not null
+     * @param wrapper not null
+     * @throws IOException if any
+     */
+    public static void writeJavadocTask( XMLWriter writer, MavenProject project, ArtifactResolverWrapper wrapper )
+        throws IOException
+    {
+        List sources = new ArrayList();
+        for ( Iterator it = project.getCompileSourceRoots().iterator(); it.hasNext(); )
+        {
+            String source = (String) it.next();
+
+            if ( new File( source ).exists() )
+            {
+                sources.add( source );
+            }
+        }
+
+        // No sources
+        if ( sources.size() == 0 )
+        {
+            return;
+        }
+
+        writer.startElement( "javadoc" );
+        String sourcepath = getMavenJavadocPluginBasicOption( project, "sourcepath", null );
+        if ( sourcepath == null )
+        {
+            StringBuffer sb = new StringBuffer();
+            String[] compileSourceRoots = (String[]) sources.toArray( new String[0] );
+            for ( int i = 0; i < compileSourceRoots.length; i++ )
+            {
+                sb.append( "${maven.build.srcDir." ).append( i ).append( "}" );
+
+                if ( i < ( compileSourceRoots.length - 1 ) )
+                {
+                    sb.append( File.pathSeparatorChar );
+                }
+            }
+            writer.addAttribute( "sourcepath", sb.toString() );
+            addWrapAttribute( writer, "javadoc", "packagenames", "*", 3 );
+        }
+        else
+        {
+            writer.addAttribute( "sourcepath", sourcepath );
+        }
+        addWrapAttribute( writer, "javadoc", "destdir",
+                          getMavenJavadocPluginBasicOption( project, "destdir",
+                                                            "${maven.reporting.outputDirectory}/apidocs" ), 3 );
+        addWrapAttribute( writer, "javadoc", "extdirs", getMavenJavadocPluginBasicOption( project, "extdirs", null ), 3 );
+
+        addWrapAttribute( writer, "javadoc", "overview", getMavenJavadocPluginBasicOption( project, "overview", null ),
+                          3 );
+        addWrapAttribute( writer, "javadoc", "access",
+                          getMavenJavadocPluginBasicOption( project, "show", "protected" ), 3 );
+        addWrapAttribute( writer, "javadoc", "old", getMavenJavadocPluginBasicOption( project, "old", "false" ), 3 );
+        addWrapAttribute( writer, "javadoc", "verbose",
+                          getMavenJavadocPluginBasicOption( project, "verbose", "false" ), 3 );
+        addWrapAttribute( writer, "javadoc", "locale", getMavenJavadocPluginBasicOption( project, "locale", null ), 3 );
+        addWrapAttribute( writer, "javadoc", "encoding", getMavenJavadocPluginBasicOption( project, "encoding", null ),
+                          3 );
+        addWrapAttribute( writer, "javadoc", "version", getMavenJavadocPluginBasicOption( project, "version", "true" ),
+                          3 );
+        addWrapAttribute( writer, "javadoc", "use", getMavenJavadocPluginBasicOption( project, "use", "true" ), 3 );
+        addWrapAttribute( writer, "javadoc", "author", getMavenJavadocPluginBasicOption( project, "author", "true" ), 3 );
+        addWrapAttribute( writer, "javadoc", "splitindex", getMavenJavadocPluginBasicOption( project, "splitindex",
+                                                                                             "false" ), 3 );
+        addWrapAttribute( writer, "javadoc", "windowtitle", getMavenJavadocPluginBasicOption( project, "windowtitle",
+                                                                                              null ), 3 );
+        addWrapAttribute( writer, "javadoc", "nodeprecated", getMavenJavadocPluginBasicOption( project, "nodeprecated",
+                                                                                               "false" ), 3 );
+        addWrapAttribute( writer, "javadoc", "nodeprecatedlist", getMavenJavadocPluginBasicOption( project,
+                                                                                                   "nodeprecatedlist",
+                                                                                                   "false" ), 3 );
+        addWrapAttribute( writer, "javadoc", "notree", getMavenJavadocPluginBasicOption( project, "notree", "false" ),
+                          3 );
+        addWrapAttribute( writer, "javadoc", "noindex",
+                          getMavenJavadocPluginBasicOption( project, "noindex", "false" ), 3 );
+        addWrapAttribute( writer, "javadoc", "nohelp", getMavenJavadocPluginBasicOption( project, "nohelp", "false" ),
+                          3 );
+        addWrapAttribute( writer, "javadoc", "nonavbar",
+                          getMavenJavadocPluginBasicOption( project, "nonavbar", "false" ), 3 );
+        addWrapAttribute( writer, "javadoc", "serialwarn", getMavenJavadocPluginBasicOption( project, "serialwarn",
+                                                                                             "false" ), 3 );
+        addWrapAttribute( writer, "javadoc", "helpfile", getMavenJavadocPluginBasicOption( project, "helpfile", null ),
+                          3 );
+        addWrapAttribute( writer, "javadoc", "stylesheetfile",
+                          getMavenJavadocPluginBasicOption( project, "stylesheetfile", null ), 3 );
+        addWrapAttribute( writer, "javadoc", "charset", getMavenJavadocPluginBasicOption( project, "charset",
+                                                                                          "ISO-8859-1" ), 3 );
+        addWrapAttribute( writer, "javadoc", "docencoding", getMavenJavadocPluginBasicOption( project, "docencoding",
+                                                                                              null ), 3 );
+        addWrapAttribute( writer, "javadoc", "excludepackagenames",
+                          getMavenJavadocPluginBasicOption( project, "excludepackagenames", null ), 3 );
+        addWrapAttribute( writer, "javadoc", "source", getMavenJavadocPluginBasicOption( project, "source", null ), 3 );
+        addWrapAttribute( writer, "javadoc", "linksource", getMavenJavadocPluginBasicOption( project, "linksource",
+                                                                                             "false" ), 3 );
+        addWrapAttribute( writer, "javadoc", "breakiterator", getMavenJavadocPluginBasicOption( project,
+                                                                                                "breakiterator",
+                                                                                                "false" ), 3 );
+        addWrapAttribute( writer, "javadoc", "noqualifier", getMavenJavadocPluginBasicOption( project, "noqualifier",
+                                                                                              null ), 3 );
+        // miscellaneous
+        addWrapAttribute( writer, "javadoc", "maxmemory",
+                          getMavenJavadocPluginBasicOption( project, "maxmemory", null ), 3 );
+        addWrapAttribute( writer, "javadoc", "additionalparam", getMavenJavadocPluginBasicOption( project,
+                                                                                                  "additionalparam",
+                                                                                                  null ), 3 );
+
+        // Nested arg
+        String doctitle = getMavenJavadocPluginBasicOption( project, "doctitle", null );
+        if ( doctitle != null )
+        {
+            writer.startElement( "doctitle" );
+            writer.writeText( "<![CDATA[" + doctitle + "]]>" );
+            writer.endElement(); // doctitle
+        }
+        String header = getMavenJavadocPluginBasicOption( project, "header", null );
+        if ( header != null )
+        {
+            writer.startElement( "header" );
+            writer.writeText( "<![CDATA[" + header + "]]>" );
+            writer.endElement(); // header
+        }
+        String footer = getMavenJavadocPluginBasicOption( project, "footer", null );
+        if ( footer != null )
+        {
+            writer.startElement( "footer" );
+            writer.writeText( "<![CDATA[" + footer + "]]>" );
+            writer.endElement(); // footer
+        }
+        String bottom = getMavenJavadocPluginBasicOption( project, "bottom", null );
+        if ( bottom != null )
+        {
+            writer.startElement( "bottom" );
+            writer.writeText( "<![CDATA[" + bottom + "]]>" );
+            writer.endElement(); // bottom
+        }
+
+        Map[] links = getMavenJavadocPluginOptions( project, "links", null );
+        if ( links != null )
+        {
+            for ( int i = 0; i < links.length; i++ )
+            {
+                writer.startElement( "link" );
+                writer.addAttribute( "href", (String) links[i].get( "link" ) );
+                writer.endElement(); // link
+            }
+        }
+
+        Map[] offlineLinks = getMavenJavadocPluginOptions( project, "offlineLinks", null );
+        if ( offlineLinks != null )
+        {
+            for ( int i = 0; i < offlineLinks.length; i++ )
+            {
+                writer.startElement( "link" );
+                writer.addAttribute( "href", (String) offlineLinks[i].get( "url" ) );
+                addWrapAttribute( writer, "javadoc", "offline", "true", 4 );
+                writer.endElement(); // link
+            }
+        }
+
+        Map[] groups = getMavenJavadocPluginOptions( project, "groups", null );
+        if ( groups != null )
+        {
+            for ( int i = 0; i < groups.length; i++ )
+            {
+                writer.startElement( "group" );
+                writer.addAttribute( "title", (String) groups[i].get( "title" ) );
+                addWrapAttribute( writer, "javadoc", "package", (String) groups[i].get( "package" ), 4 );
+                writer.endElement(); // group
+            }
+        }
+
+        // TODO Handle docletArtifacts
+        String doclet = getMavenJavadocPluginBasicOption( project, "doclet", null );
+        if ( doclet != null )
+        {
+            String docletpath = getMavenJavadocPluginBasicOption( project, "docletpath", null );
+            if ( StringUtils.isNotEmpty( docletpath ) )
+            {
+                writer.startElement( "doclet" );
+                writer.addAttribute( "name", doclet );
+                addWrapAttribute( writer, "javadoc", "path", docletpath, 4 );
+                writer.endElement(); // doclet
+            }
+            else
+            {
+                Map docletArtifact = getMavenJavadocPluginOption( project, "docletArtifact", null );
+                String path = wrapper.getArtifactAbsolutePath( (String) docletArtifact.get( "groupId" ),
+                                                               (String) docletArtifact.get( "artifactId" ),
+                                                               (String) docletArtifact.get( "version" ) );
+                path = StringUtils.replace( path, wrapper.getLocalRepository().getBasedir(), "${maven.repo.local}" );
+
+                writer.startElement( "doclet" );
+                writer.addAttribute( "name", doclet );
+                addWrapAttribute( writer, "javadoc", "path", path, 4 );
+                writer.endElement(); // doclet
+            }
+        }
+
+        // TODO Handle taglets
+        String taglet = getMavenJavadocPluginBasicOption( project, "taglet", null );
+        if ( taglet != null )
+        {
+            String tagletpath = getMavenJavadocPluginBasicOption( project, "tagletpath", null );
+            if ( StringUtils.isNotEmpty( tagletpath ) )
+            {
+                writer.startElement( "taglet" );
+                writer.addAttribute( "name", taglet );
+                addWrapAttribute( writer, "javadoc", "path", tagletpath, 4 );
+                writer.endElement(); // taglet
+            }
+            else
+            {
+                Map tagletArtifact = getMavenJavadocPluginOption( project, "tagletArtifact", null );
+                String path = wrapper.getArtifactAbsolutePath( (String) tagletArtifact.get( "groupId" ),
+                                                               (String) tagletArtifact.get( "artifactId" ),
+                                                               (String) tagletArtifact.get( "version" ) );
+                path = StringUtils.replace( path, wrapper.getLocalRepository().getBasedir(), "${maven.repo.local}" );
+
+                writer.startElement( "taglet" );
+                writer.addAttribute( "name", taglet );
+                addWrapAttribute( writer, "javadoc", "path", path, 4 );
+                writer.endElement(); // taglet
+            }
+        }
+
+        Map[] tags = getMavenJavadocPluginOptions( project, "tags", null );
+        if ( tags != null )
+        {
+            for ( int i = 0; i < tags.length; i++ )
+            {
+                writer.startElement( "tag" );
+                writer.addAttribute( "name", (String) tags[i].get( "name" ) );
+                addWrapAttribute( writer, "javadoc", "scope", (String) tags[i].get( "placement" ), 4 );
+                addWrapAttribute( writer, "javadoc", "description", (String) tags[i].get( "head" ), 4 );
+                writer.endElement(); // tag
+            }
+        }
+
+        writer.endElement(); // javadoc
+    }
+
+    /**
+     * Convenience method to write XML Ant jar task
      *
      * @param writer not null
      * @param project not null
@@ -306,24 +558,24 @@ public class AntBuildWriterUtil
     {
         writer.startElement( "jar" );
         writer.addAttribute( "jarfile", "${maven.build.dir}/${maven.build.finalName}.jar" );
-        addWrapAttribute( writer, "jar", "compress", getMavenJarPluginConfiguration( project, "archive//compress",
-                                                                                     "true" ), 3 );
-        addWrapAttribute( writer, "jar", "index", getMavenJarPluginConfiguration( project, "archive//index", "false" ),
-                          3 );
-        if ( getMavenJarPluginConfiguration( project, "archive//manifestFile", null ) != null )
+        addWrapAttribute( writer, "jar", "compress",
+                          getMavenJarPluginBasicOption( project, "archive//compress", "true" ), 3 );
+        addWrapAttribute( writer, "jar", "index", getMavenJarPluginBasicOption( project, "archive//index", "false" ), 3 );
+        if ( getMavenJarPluginBasicOption( project, "archive//manifestFile", null ) != null )
         {
-            addWrapAttribute( writer, "jar", "manifest",
-                              getMavenJarPluginConfiguration( project, "archive//manifestFile", null ), 3 );
+            addWrapAttribute( writer, "jar", "manifest", getMavenJarPluginBasicOption( project,
+                                                                                       "archive//manifestFile", null ),
+                              3 );
         }
         addWrapAttribute( writer, "jar", "basedir", "${maven.build.outputDir}", 3 );
         addWrapAttribute( writer, "jar", "excludes", "**/package.html", 3 );
-        if ( getMavenJarPluginConfiguration( project, "archive//manifest", null ) != null )
+        if ( getMavenJarPluginBasicOption( project, "archive//manifest", null ) != null )
         {
             writer.startElement( "manifest" );
             writer.startElement( "attribute" );
             writer.addAttribute( "name", "Main-Class" );
             addWrapAttribute( writer, "attribute", "value",
-                              getMavenJarPluginConfiguration( project, "archive//manifest//mainClass", null ), 5 );
+                              getMavenJarPluginBasicOption( project, "archive//manifest//mainClass", null ), 5 );
             writer.endElement(); // attribute
             writer.endElement(); // manifest
         }
@@ -331,7 +583,7 @@ public class AntBuildWriterUtil
     }
 
     /**
-     * Convenience method to write XML ear task
+     * Convenience method to write XML Ant ear task
      *
      * @param writer not null
      * @param project not null
@@ -345,30 +597,30 @@ public class AntBuildWriterUtil
         writer.startElement( "ear" );
         writer.addAttribute( "destfile", "${maven.build.dir}/${maven.build.finalName}.ear" );
         addWrapAttribute( writer, "ear", "basedir", "${maven.build.dir}/${maven.build.finalName}", 3 );
-        addWrapAttribute( writer, "ear", "compress", getMavenEarPluginConfiguration( project, "archive//compress",
-                                                                                     "true" ), 3 );
-        addWrapAttribute( writer, "ear", "includes ", getMavenEarPluginConfiguration( project, "includes", null ), 3 );
-        addWrapAttribute( writer, "ear", "excludes", getMavenEarPluginConfiguration( project, "excludes", null ), 3 );
-        if ( getMavenEarPluginConfiguration( project, "applicationXml", null ) != null )
+        addWrapAttribute( writer, "ear", "compress",
+                          getMavenEarPluginBasicOption( project, "archive//compress", "true" ), 3 );
+        addWrapAttribute( writer, "ear", "includes ", getMavenEarPluginBasicOption( project, "includes", null ), 3 );
+        addWrapAttribute( writer, "ear", "excludes", getMavenEarPluginBasicOption( project, "excludes", null ), 3 );
+        if ( getMavenEarPluginBasicOption( project, "applicationXml", null ) != null )
         {
-            addWrapAttribute( writer, "ear", "appxml",
-                              getMavenEarPluginConfiguration( project, "applicationXml", null ), 3 );
+            addWrapAttribute( writer, "ear", "appxml", getMavenEarPluginBasicOption( project, "applicationXml", null ),
+                              3 );
         }
         else
         {
             // Generated appxml
             addWrapAttribute( writer, "ear", "appxml", "${maven.build.dir}/application.xml", 3 );
         }
-        if ( getMavenEarPluginConfiguration( project, "manifestFile", null ) != null )
+        if ( getMavenEarPluginBasicOption( project, "manifestFile", null ) != null )
         {
-            addWrapAttribute( writer, "ear", "manifest",
-                              getMavenEarPluginConfiguration( project, "manifestFile", null ), 3 );
+            addWrapAttribute( writer, "ear", "manifest", getMavenEarPluginBasicOption( project, "manifestFile", null ),
+                              3 );
         }
         writer.endElement(); // ear
     }
 
     /**
-     * Convenience method to write XML war task
+     * Convenience method to write XML Ant war task
      *
      * @param writer not null
      * @param project not null
@@ -383,21 +635,21 @@ public class AntBuildWriterUtil
         writer.startElement( "war" );
         writer.addAttribute( "destfile", "${maven.build.dir}/${maven.build.finalName}.war" );
         addWrapAttribute( writer, "war", "basedir", "${maven.build.outputDir}", 3 );
-        addWrapAttribute( writer, "war", "compress", getMavenWarPluginConfiguration( project, "archive//compress",
-                                                                                     "true" ), 3 );
-        if ( getMavenWarPluginConfiguration( project, "webXml", null ) != null )
+        addWrapAttribute( writer, "war", "compress",
+                          getMavenWarPluginBasicOption( project, "archive//compress", "true" ), 3 );
+        if ( getMavenWarPluginBasicOption( project, "webXml", null ) != null )
         {
-            addWrapAttribute( writer, "war", "webxml", getMavenWarPluginConfiguration( project, "webXml", null ), 3 );
+            addWrapAttribute( writer, "war", "webxml", getMavenWarPluginBasicOption( project, "webXml", null ), 3 );
         }
         else
         {
             // Default
             addWrapAttribute( writer, "war", "webxml", "${basedir}/src/main/webapp/WEB-INF/web.xml", 3 );
         }
-        if ( getMavenWarPluginConfiguration( project, "manifestFile", null ) != null )
+        if ( getMavenWarPluginBasicOption( project, "manifestFile", null ) != null )
         {
-            addWrapAttribute( writer, "war", "manifest",
-                              getMavenWarPluginConfiguration( project, "manifestFile", null ), 3 );
+            addWrapAttribute( writer, "war", "manifest", getMavenWarPluginBasicOption( project, "manifestFile", null ),
+                              3 );
         }
         writer.startElement( "lib" );
         writer.addAttribute( "dir", "${maven.build.dir}/${maven.build.finalName}/WEB-INF/lib" );
@@ -482,64 +734,138 @@ public class AntBuildWriterUtil
     }
 
     /**
-     * Return the optionName value defined in a project for the "maven-compiler-plugin" plugin.
+     * Return the <code>optionName</code> value defined in a project for the "maven-compiler-plugin" plugin.
      *
      * @param project not null
-     * @param optionName
-     * @param defaultValue
-     * @return the value for the option name (comma separated value in the case of list) or null if not found
+     * @param optionName the option name wanted
+     * @param defaultValue a default value
+     * @return the value for the option name or the default value. Could be null if not found.
      * @throws IOException if any
      */
-    public static String getMavenCompilerPluginConfiguration( MavenProject project, String optionName,
-                                                             String defaultValue )
+    public static String getMavenCompilerPluginBasicOption( MavenProject project, String optionName, String defaultValue )
         throws IOException
     {
-        return getMavenPluginConfiguration( project, "maven-compiler-plugin", optionName, defaultValue );
+        return getMavenPluginBasicOption( project, "maven-compiler-plugin", optionName, defaultValue );
     }
 
     /**
-     * Return the optionName value defined in a project for the "maven-jar-plugin" plugin.
+     * Return the map of <code>optionName</code> value defined in a project for the "maven-compiler-plugin" plugin.
      *
      * @param project not null
-     * @param optionName
-     * @param defaultValue
-     * @return the value for the option name (comma separated value in the case of list) or null if not found
+     * @param optionName the option name wanted
+     * @param defaultValue a default value
+     * @return the map for the option name or the default value. Could be null if not found.
      * @throws IOException if any
      */
-    public static String getMavenJarPluginConfiguration( MavenProject project, String optionName, String defaultValue )
+    public static Map getMavenCompilerPluginOption( MavenProject project, String optionName, String defaultValue )
         throws IOException
     {
-        return getMavenPluginConfiguration( project, "maven-jar-plugin", optionName, defaultValue );
+        return getMavenPluginOption( project, "maven-compiler-plugin", optionName, defaultValue );
     }
 
     /**
-     * Return the optionName value defined in a project for the "maven-ear-plugin" plugin.
+     * Return an array of map of <code>optionName</code> value defined in a project for the "maven-compiler-plugin" plugin.
      *
      * @param project not null
-     * @param optionName
-     * @param defaultValue
-     * @return the value for the option name (comma separated value in the case of list) or null if not found
+     * @param optionName the option name wanted
+     * @param defaultValue a default value
+     * @return the array of option name or the default value. Could be null if not found.
      * @throws IOException if any
      */
-    public static String getMavenEarPluginConfiguration( MavenProject project, String optionName, String defaultValue )
+    public static Map[] getMavenCompilerPluginOptions( MavenProject project, String optionName, String defaultValue )
         throws IOException
     {
-        return getMavenPluginConfiguration( project, "maven-ear-plugin", optionName, defaultValue );
+        return getMavenPluginOptions( project, "maven-compiler-plugin", optionName, defaultValue );
     }
 
     /**
-     * Return the optionName value defined in a project for the "maven-war-plugin" plugin.
+     * Return the <code>optionName</code> value defined in a project for the "maven-javadoc-plugin" plugin.
      *
      * @param project not null
-     * @param optionName
-     * @param defaultValue
-     * @return the value for the option name (comma separated value in the case of list) or null if not found
+     * @param optionName the option name wanted
+     * @param defaultValue a default value
+     * @return the value for the option name or the default value. Could be null if not found.
      * @throws IOException if any
      */
-    public static String getMavenWarPluginConfiguration( MavenProject project, String optionName, String defaultValue )
+    public static String getMavenJavadocPluginBasicOption( MavenProject project, String optionName, String defaultValue )
         throws IOException
     {
-        return getMavenPluginConfiguration( project, "maven-war-plugin", optionName, defaultValue );
+        return getMavenPluginBasicOption( project, "maven-javadoc-plugin", optionName, defaultValue );
+    }
+
+    /**
+     * Return a map of <code>optionName</code> value defined in a project for the "maven-javadoc-plugin" plugin.
+     *
+     * @param project not null
+     * @param optionName the option name wanted
+     * @param defaultValue a default value
+     * @return the map for the option name or the default value. Could be null if not found.
+     * @throws IOException if any
+     */
+    public static Map getMavenJavadocPluginOption( MavenProject project, String optionName, String defaultValue )
+        throws IOException
+    {
+        return getMavenPluginOption( project, "maven-javadoc-plugin", optionName, defaultValue );
+    }
+
+    /**
+     * Return an array of map of <code>optionName</code> value defined in a project for the "maven-javadoc-plugin" plugin.
+     *
+     * @param project not null
+     * @param optionName the option name wanted
+     * @param defaultValue a default value
+     * @return an array of option name. Could be null if not found.
+     * @throws IOException if any
+     */
+    public static Map[] getMavenJavadocPluginOptions( MavenProject project, String optionName, String defaultValue )
+        throws IOException
+    {
+        return getMavenPluginOptions( project, "maven-javadoc-plugin", optionName, defaultValue );
+    }
+
+    /**
+     * Return the <code>optionName</code> value defined in a project for the "maven-jar-plugin" plugin.
+     *
+     * @param project not null
+     * @param optionName the option name wanted
+     * @param defaultValue a default value
+     * @return the value for the option name or the default value. Could be null if not found.
+     * @throws IOException if any
+     */
+    public static String getMavenJarPluginBasicOption( MavenProject project, String optionName, String defaultValue )
+        throws IOException
+    {
+        return getMavenPluginBasicOption( project, "maven-jar-plugin", optionName, defaultValue );
+    }
+
+    /**
+     * Return the <code>optionName</code> value defined in a project for the "maven-ear-plugin" plugin.
+     *
+     * @param project not null
+     * @param optionName the option name wanted
+     * @param defaultValue a default value
+     * @return the value for the option name or the default value. Could be null if not found.
+     * @throws IOException if any
+     */
+    public static String getMavenEarPluginBasicOption( MavenProject project, String optionName, String defaultValue )
+        throws IOException
+    {
+        return getMavenPluginBasicOption( project, "maven-ear-plugin", optionName, defaultValue );
+    }
+
+    /**
+     * Return the <code>optionName</code> value defined in a project for the "maven-war-plugin" plugin.
+     *
+     * @param project not null
+     * @param optionName the option name wanted
+     * @param defaultValue a default value
+     * @return the value for the option name or the default value. Could be null if not found.
+     * @throws IOException if any
+     */
+    public static String getMavenWarPluginBasicOption( MavenProject project, String optionName, String defaultValue )
+        throws IOException
+    {
+        return getMavenPluginBasicOption( project, "maven-war-plugin", optionName, defaultValue );
     }
 
     // ----------------------------------------------------------------------
@@ -547,61 +873,323 @@ public class AntBuildWriterUtil
     // ----------------------------------------------------------------------
 
     /**
-     * Return the optionName value defined in a project for a given artifactId plugin.
+     * Return the value for the option <code>optionName</code> defined in a project with the given
+     * <code>artifactId</code> plugin.
+     * <br/>
+     * Example:
+     * <table>
+     *   <tr>
+     *     <td>Configuration</td>
+     *     <td>Result</td>
+     *   </tr>
+     *   <tr>
+     *     <td><pre>&lt;option&gt;value&lt;/option&gt;</pre></td>
+     *     <td><pre>value</pre></td>
+     *   </tr>
+     * </table>
      *
      * @param project not null
-     * @param pluginArtifact not null
-     * @param optionName an Xpath expression from the plugin <code>&lt;configuration/&gt;</code>
-     * @param defaultValue
-     * @return the value for the option name (comma separated value in the case of list) or null if not found
+     * @param pluginArtifactId not null
+     * @param optionName an <code>Xpath</code> expression from the plugin <code>&lt;configuration/&gt;</code>
+     * @param defaultValue could be null
+     * @return the value for the option name or null if not found
      * @throws IOException if any
      */
-    private static String getMavenPluginConfiguration( MavenProject project, String pluginArtifact, String optionName,
-                                                      String defaultValue )
+    private static String getMavenPluginBasicOption( MavenProject project, String pluginArtifactId, String optionName,
+                                                    String defaultValue )
         throws IOException
     {
+        return (String) getMavenPluginConfigurationsImpl( project, pluginArtifactId, optionName, defaultValue )
+            .get( optionName );
+    }
+
+    /**
+     * Return a Map for the option <code>optionName</code> defined in a project with the given
+     * <code>artifactId</code> plugin.
+     * <br/>
+     * Example:
+     * <table>
+     *   <tr>
+     *     <td>Configuration</td>
+     *     <td>Result</td>
+     *   </tr>
+     *   <tr>
+     *     <td><pre>
+     * &lt;option&gt;
+     *  &lt;param1&gt;value1&lt;/param1&gt;
+     *  &lt;param2&gt;value2&lt;/param2&gt;
+     * &lt;/option&gt;
+     * </pre></td>
+     *     <td><pre>{param1=value1, param2=value2}<pre></td>
+     *   </tr>
+     * </table>
+     *
+     * @param project not null
+     * @param pluginArtifactId not null
+     * @param optionName an <code>Xpath</code> expression from the plugin <code>&lt;configuration/&gt;</code>
+     * @param defaultValue could be null
+     * @return the value for the option name or null if not found
+     * @throws IOException if any
+     */
+    private static Map getMavenPluginOption( MavenProject project, String pluginArtifactId, String optionName,
+                                            String defaultValue )
+        throws IOException
+    {
+        return (Map) getMavenPluginConfigurationsImpl( project, pluginArtifactId, optionName, defaultValue )
+            .get( optionName );
+    }
+
+    /**
+     * Return an array of Map for the option <code>optionName</code> defined in a project with the given
+     * <code>artifactId</code> plugin.
+     * <br/>
+     * Example:
+     * <table>
+     *   <tr>
+     *     <td>Configuration</td>
+     *     <td>Result</td>
+     *   </tr>
+     *   <tr>
+     *     <td><pre>
+     * &lt;options&gt;
+     *   &lt;option&gt;
+     *    &lt;param1&gt;value1&lt;/param1&gt;
+     *    &lt;param2&gt;value2&lt;/param2&gt;
+     *   &lt;/option&gt;
+     *   &lt;option&gt;
+     *    &lt;param1&gt;value1&lt;/param1&gt;
+     *    &lt;param2&gt;value2&lt;/param2&gt;
+     *   &lt;/option&gt;
+     * &lt;/options&gt;
+     * </pre></td>
+     *     <td><pre>[{option=[{param1=value1, param2=value2}]}, {option=[{param1=value1, param2=value2}]<pre></td>
+     *   </tr>
+     * </table>
+     *
+     * @param project not null
+     * @param pluginArtifactId not null
+     * @param optionName an <code>Xpath</code> expression from the plugin <code>&lt;configuration/&gt;</code>
+     * @param defaultValue could be null
+     * @return the value for the option name  or null if not found
+     * @throws IOException if any
+     */
+    private static Map[] getMavenPluginOptions( MavenProject project, String pluginArtifactId, String optionName,
+                                               String defaultValue )
+        throws IOException
+    {
+        return (Map[]) getMavenPluginConfigurationsImpl( project, pluginArtifactId, optionName, defaultValue )
+            .get( optionName );
+    }
+
+    /**
+     * Return a Map for the option <code>optionName</code> defined in a project with the given
+     * <code>artifactId</code> plugin.
+     * <br/>
+     * Example:
+     * <table>
+     *   <tr>
+     *     <td>Configuration</td>
+     *     <td>Result</td>
+     *   </tr>
+     *   <tr>
+     *     <td><pre>&lt;option&gt;value&lt;/option&gt;</pre></td>
+     *     <td><pre>{option=value}</pre></td>
+     *   </tr>
+     *   <tr>
+     *     <td><pre>
+     * &lt;option&gt;
+     *  &lt;param1&gt;value1&lt;/param1&gt;
+     *  &lt;param2&gt;value2&lt;/param2&gt;
+     * &lt;/option&gt;
+     * </pre></td>
+     *     <td><pre>{option={param1=value1, param2=value2}}<pre></td>
+     *   </tr>
+     *   <tr>
+     *     <td><pre>
+     * &lt;options&gt;
+     *   &lt;option&gt;
+     *    &lt;param1&gt;value1&lt;/param1&gt;
+     *    &lt;param2&gt;value2&lt;/param2&gt;
+     *   &lt;/option&gt;
+     *   &lt;option&gt;
+     *    &lt;param1&gt;value1&lt;/param1&gt;
+     *    &lt;param2&gt;value2&lt;/param2&gt;
+     *   &lt;/option&gt;
+     * &lt;/options&gt;
+     * </pre></td>
+     *     <td><pre>{options=[{option=[{param1=value1, param2=value2}]}, {option=[{param1=value1, param2=value2}]}]<pre></td>
+     *   </tr>
+     * </table>
+     *
+     * @param project not null
+     * @param pluginArtifactId not null
+     * @param optionName an <code>Xpath</code> expression from the plugin <code>&lt;configuration/&gt;</code>
+     * @param defaultValue could be null
+     * @return a map with the options found
+     * @throws IOException if any
+     */
+    private static Map getMavenPluginConfigurationsImpl( MavenProject project, String pluginArtifactId,
+                                                        String optionName, String defaultValue )
+        throws IOException
+    {
+        List plugins = new ArrayList();
+        for ( Iterator it = project.getModel().getReporting().getPlugins().iterator(); it.hasNext(); )
+        {
+            plugins.add( it.next() );
+        }
         for ( Iterator it = project.getModel().getBuild().getPlugins().iterator(); it.hasNext(); )
         {
-            Plugin plugin = (Plugin) it.next();
+            plugins.add( it.next() );
+        }
 
-            if ( ( plugin.getGroupId().equals( "org.apache.maven.plugins" ) )
-                && ( plugin.getArtifactId().equals( pluginArtifact ) ) )
+        for ( Iterator it = plugins.iterator(); it.hasNext(); )
+        {
+            Object next = it.next();
+
+            Xpp3Dom pluginConf = null;
+
+            if ( next instanceof Plugin )
             {
-                Xpp3Dom pluginConf = (Xpp3Dom) plugin.getConfiguration();
+                Plugin plugin = (Plugin) next;
 
-                if ( pluginConf != null )
+                // using out-of-box Maven plugins
+                if ( !( ( plugin.getGroupId().equals( "org.apache.maven.plugins" ) ) && ( plugin.getArtifactId()
+                    .equals( pluginArtifactId ) ) ) )
                 {
-                    StringBuffer sb = new StringBuffer();
-                    try
+                    continue;
+                }
+
+                pluginConf = (Xpp3Dom) plugin.getConfiguration();
+            }
+
+            if ( next instanceof ReportPlugin )
+            {
+                ReportPlugin reportPlugin = (ReportPlugin) next;
+
+                // using out-of-box Maven plugins
+                if ( !( ( reportPlugin.getGroupId().equals( "org.apache.maven.plugins" ) ) && ( reportPlugin
+                    .getArtifactId().equals( pluginArtifactId ) ) ) )
+                {
+                    continue;
+                }
+
+                pluginConf = (Xpp3Dom) reportPlugin.getConfiguration();
+            }
+
+            if ( pluginConf == null )
+            {
+                continue;
+            }
+
+            try
+            {
+                Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+                    .parse( new StringInputStream( pluginConf.toString() ) );
+
+                XObject obj = XPathAPI.eval( doc, "//configuration/" + optionName );
+
+                NodeList nodeList = obj.nodelist();
+                if ( isList( nodeList.item( 0 ) ) )
+                {
+                    /*
+                     * <optionNames>
+                     *   <optionName>
+                     *    <param1>value1</param1>
+                     *    <param2>value2</param2>
+                     *   </optionName>
+                     * </optionNames>
+                     */
+                    Map options = new HashMap();
+
+                    List optionNames = new ArrayList();
+                    NodeList childs = nodeList.item( 0 ).getChildNodes();
+                    for ( int i = 0; i < childs.getLength(); i++ )
                     {
-                        Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-                            .parse( new StringInputStream( pluginConf.toString() ) );
-
-                        XObject obj = XPathAPI.eval( doc, "//configuration//" + optionName );
-
-                        if ( StringUtils.isNotEmpty( obj.toString() ) )
+                        if ( childs.item( i ).getNodeType() == Node.ELEMENT_NODE )
                         {
-                            StringTokenizer token = new StringTokenizer( obj.toString(), "\n " );
-                            while ( token.hasMoreTokens() )
+                            Map option = new HashMap();
+
+                            obj = XPathAPI.eval( doc, "//configuration/" + childs.item( i ).getNodeName() );
+
+                            if ( StringUtils.isNotEmpty( obj.toString() ) )
                             {
-                                sb.append( token.nextToken().trim() );
-                                if ( token.hasMoreElements() )
+                                Map properties = new HashMap();
+                                NodeList childs2 = childs.item( i ).getChildNodes();
+                                if ( childs2.getLength() > 0 )
                                 {
-                                    sb.append( "," );
+                                    for ( int j = 0; j < childs2.getLength(); j++ )
+                                    {
+                                        if ( childs2.item( j ).getNodeType() == Node.ELEMENT_NODE )
+                                        {
+                                            properties.put( childs2.item( j ).getNodeName(), childs2.item( j )
+                                                .getFirstChild().getNodeValue() );
+                                        }
+                                    }
+                                    option.put( childs.item( i ).getNodeName(), properties );
                                 }
                             }
-                            return sb.toString();
+                            else
+                            {
+                                option.put( childs.item( i ).getNodeName(), childs.item( i ).getFirstChild()
+                                    .getNodeValue() );
+                            }
+
+                            optionNames.add( option );
                         }
                     }
-                    catch ( Exception e )
-                    {
-                        throw new IOException( "Exception occured" + e.getMessage() );
-                    }
+
+                    options.put( optionName, optionNames.toArray( new Map[0] ) );
+
+                    return options;
                 }
+
+                /*
+                 * <optionName>
+                 *  <param1>value1</param1>
+                 *  <param2>value2</param2>
+                 * </optionName>
+                 */
+                if ( StringUtils.isNotEmpty( obj.toString() ) )
+                {
+                    Map option = new HashMap();
+
+                    NodeList childs = nodeList.item( 0 ).getChildNodes();
+                    if ( childs.getLength() > 1 )
+                    {
+                        Map parameters = new HashMap();
+
+                        for ( int i = 0; i < childs.getLength(); i++ )
+                        {
+                            if ( childs.item( i ).getNodeType() == Node.ELEMENT_NODE )
+                            {
+                                parameters.put( childs.item( i ).getNodeName(), childs.item( i ).getFirstChild()
+                                    .getNodeValue() );
+                            }
+                        }
+
+                        option.put( optionName, parameters );
+                    }
+                    else
+                    {
+                        /*
+                         * <optionName>value1</optionName>
+                         */
+                        option.put( optionName, obj.toString() );
+                    }
+
+                    return option;
+                }
+            }
+            catch ( Exception e )
+            {
+                throw new IOException( "Exception occured: " + e.getMessage() );
             }
         }
 
-        return defaultValue;
+        Map properties = new HashMap();
+        properties.put( optionName, defaultValue );
+
+        return properties;
     }
 
     /**
@@ -634,5 +1222,51 @@ public class AntBuildWriterUtil
                 }
             }
         }
+    }
+
+    /**
+     * Check if a given <code>node</code> is a list of nodes or not.
+     * <br/>
+     * For instance, the node <code>options</code> is a list of <code>option</code> in the following case:
+     *<pre>
+     * &lt;options&gt;
+     *   &lt;option&gt;
+     *    &lt;param1&gt;value1&lt;/param1&gt;
+     *    &lt;param2&gt;value2&lt;/param2&gt;
+     *   &lt;/option&gt;
+     *   &lt;option&gt;
+     *    &lt;param1&gt;value1&lt;/param1&gt;
+     *    &lt;param2&gt;value2&lt;/param2&gt;
+     *   &lt;/option&gt;
+     * &lt;/options&gt;
+     * </pre>
+     *
+     * @param node a given node
+     * @return true if the node is a list, false otherwise.
+     */
+    private static boolean isList( Node node )
+    {
+        if ( node == null )
+        {
+            return false;
+        }
+
+        NodeList childs = node.getChildNodes();
+
+        boolean isList = false;
+        String lastNodeName = null;
+        for ( int i = 0; i < childs.getLength(); i++ )
+        {
+            if ( childs.item( i ).getNodeType() == Node.ELEMENT_NODE )
+            {
+                if ( i != 0 )
+                {
+                    isList = isList || ( childs.item( i ).getNodeName().equals( lastNodeName ) );
+                }
+                lastNodeName = childs.item( i ).getNodeName();
+            }
+        }
+
+        return isList;
     }
 }
