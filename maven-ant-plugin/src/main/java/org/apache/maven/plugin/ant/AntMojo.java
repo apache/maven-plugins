@@ -19,14 +19,16 @@ package org.apache.maven.plugin.ant;
  * under the License.
  */
 
+import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 
-import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Generate Ant build files.
@@ -49,12 +51,33 @@ public class AntMojo
     private MavenProject project;
 
     /**
-     * The location of the local repository.
+     * Used for resolving artifacts
+     *
+     * @component
+     */
+    private ArtifactResolver resolver;
+
+    /**
+     * Factory for creating artifact objects
+     *
+     * @component
+     */
+    private ArtifactFactory factory;
+
+    /**
+     * The local repository where the artifacts are located
      *
      * @parameter expression="${localRepository}"
      * @required
      */
     private ArtifactRepository localRepository;
+
+    /**
+     * The remote repositories where artifacts are located
+     *
+     * @parameter expression="${project.remoteArtifactRepositories}"
+     */
+    private List remoteRepositories;
 
     /**
      * The current user system settings for use in Maven.
@@ -78,8 +101,11 @@ public class AntMojo
     public void execute()
         throws MojoExecutionException
     {
-        AntBuildWriter antBuildWriter = new AntBuildWriter( project, new File( localRepository.getBasedir() ),
-                                                            settings, overwrite );
+        ArtifactResolverWrapper artifactResolverWrapper = ArtifactResolverWrapper.getInstance( resolver, factory,
+                                                                                       localRepository,
+                                                                                       remoteRepositories );
+
+        AntBuildWriter antBuildWriter = new AntBuildWriter( project, artifactResolverWrapper, settings, overwrite );
 
         try
         {
