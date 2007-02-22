@@ -26,5 +26,13 @@
         </p>
       </answer>
     </faq>
+    <faq id="What are the generated key tasks">
+      <question>What are the generated key tasks?</question>
+      <answer>
+        <p>
+          The key tasks are: clean, compile, compile-tests, test, javadoc, package.
+        </p>
+      </answer>
+    </faq>
   </part>
 </faqs>

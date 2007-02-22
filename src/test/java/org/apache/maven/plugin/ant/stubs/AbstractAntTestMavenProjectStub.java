@@ -31,6 +31,7 @@ import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Reporting;
 import org.apache.maven.model.Repository;
 import org.apache.maven.model.Resource;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -91,6 +92,8 @@ public abstract class AbstractAntTestMavenProjectStub
         build.setTestOutputDirectory( getBasedir().getAbsolutePath() + "/target/test-classes" );
 
         setBuild( build );
+
+        getModel().setReporting( new Reporting() );
     }
 
     /**
@@ -179,6 +182,14 @@ public abstract class AbstractAntTestMavenProjectStub
     public Properties getProperties()
     {
         return getModel().getProperties();
+    }
+
+    /**
+     * @see org.apache.maven.project.MavenProject#getReporting()
+     */
+    public Reporting getReporting()
+    {
+        return getModel().getReporting();
     }
 
     /**
