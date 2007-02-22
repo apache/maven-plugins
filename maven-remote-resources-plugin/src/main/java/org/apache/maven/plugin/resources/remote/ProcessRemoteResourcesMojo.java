@@ -48,6 +48,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Writer;
@@ -286,6 +287,7 @@ public class ProcessRemoteResourcesMojo
 
         try
         {
+            
             for ( Enumeration e = classLoader.getResources( BundleRemoteResourcesMojo.RESOURCES_MANIFEST );
                   e.hasMoreElements(); )
             {
@@ -296,52 +298,59 @@ public class ProcessRemoteResourcesMojo
                 conn.connect();
 
                 reader = new InputStreamReader( conn.getInputStream() );
+                               
+                try {
 
-                RemoteResourcesBundleXpp3Reader bundleReader = new RemoteResourcesBundleXpp3Reader();
-
-                RemoteResourcesBundle bundle = bundleReader.read( reader );
-
-                for ( Iterator i = bundle.getRemoteResources().iterator(); i.hasNext(); )
-                {
-                    String bundleResource = (String) i.next();
-
-                    String projectResource = bundleResource;
-
-
-                    if ( projectResource.endsWith(".vm") )
+                    RemoteResourcesBundleXpp3Reader bundleReader = new RemoteResourcesBundleXpp3Reader();
+    
+                    RemoteResourcesBundle bundle = bundleReader.read( reader );
+    
+                    for ( Iterator i = bundle.getRemoteResources().iterator(); i.hasNext(); )
                     {
-                        projectResource = projectResource.substring( 0, projectResource.length() - 3 );
-                    }
-
-                    // Don't overwrite resource that are already being provided.
-
-                    File f = new File( outputDirectory, projectResource );
-
-                    FileUtils.mkdir( f.getParentFile().getAbsolutePath() );
-
-                    if ( !copyResourceIfExists(f, projectResource) )
-                    {
-                        PrintWriter writer = new PrintWriter( new FileWriter( f ) );
-
-                        velocity.getEngine().mergeTemplate( bundleResource, context, writer );
-
-                        File appendedResourceFile = new File( appendedResourcesDirectory, projectResource);
-                        if ( appendedResourceFile.exists() ) 
+                        String bundleResource = (String) i.next();
+    
+                        String projectResource = bundleResource;
+    
+    
+                        if ( projectResource.endsWith(".vm") )
                         {
-                            FileReader freader = new FileReader( appendedResourceFile );
-                            BufferedReader breader = new BufferedReader( freader );
-                            
-                            String line = breader.readLine();
-                   
-                            while ( line != null )
-                            {
-                                writer.println( line );
-                                line = breader.readLine();
+                            projectResource = projectResource.substring( 0, projectResource.length() - 3 );
+                        }
+    
+                        // Don't overwrite resource that are already being provided.
+    
+                        File f = new File( outputDirectory, projectResource );
+    
+                        FileUtils.mkdir( f.getParentFile().getAbsolutePath() );
+    
+                        if ( !copyResourceIfExists(f, projectResource) )
+                        {
+                            PrintWriter writer = new PrintWriter( new FileWriter( f ) );
+    
+                            try {
+                                velocity.getEngine().mergeTemplate( bundleResource, context, writer );
+    
+                                File appendedResourceFile = new File( appendedResourcesDirectory, projectResource);
+                                if ( appendedResourceFile.exists() ) 
+                                {
+                                    FileReader freader = new FileReader( appendedResourceFile );
+                                    BufferedReader breader = new BufferedReader( freader );
+                                    
+                                    String line = breader.readLine();
+                           
+                                    while ( line != null )
+                                    {
+                                        writer.println( line );
+                                        line = breader.readLine();
+                                    }
+                                }
+                            } finally {
+                                writer.close();
                             }
                         }
-                        
-                        writer.close();
                     }
+                } finally {
+                    reader.close();
                 }
             }
         }
@@ -356,11 +365,6 @@ public class ProcessRemoteResourcesMojo
         catch ( Exception e )
         {
             throw new MojoExecutionException( "Error rendering velocity resource.", e );
-        }
-
-        finally
-        {
-            IOUtil.close( reader );
         }
 
         Thread.currentThread().setContextClassLoader( old );
@@ -430,7 +434,8 @@ public class ProcessRemoteResourcesMojo
             //TODO - really should use the resource includes/excludes and name mapping
             File source = new File(resourceDirectory, relFileName);
             
-            if ( source.exists() )
+            if ( source.exists() 
+                && !source.equals(file))
             {
                 //TODO - should use filters here
                 FileUtils.copyFile(source, file);
