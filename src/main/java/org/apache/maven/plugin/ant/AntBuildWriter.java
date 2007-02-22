@@ -77,6 +77,8 @@ public class AntBuildWriter
 
     private MavenProject project;
 
+    private ArtifactResolverWrapper artifactResolverWrapper;
+
     private File localRepository;
 
     private Settings settings;
@@ -85,14 +87,16 @@ public class AntBuildWriter
 
     /**
      * @param project
-     * @param localRepository
+     * @param artifactResolverWrapper
      * @param settings
      * @param overwrite
      */
-    public AntBuildWriter( MavenProject project, File localRepository, Settings settings, boolean overwrite )
+    public AntBuildWriter( MavenProject project, ArtifactResolverWrapper artifactResolverWrapper, Settings settings,
+                          boolean overwrite )
     {
         this.project = project;
-        this.localRepository = localRepository;
+        this.artifactResolverWrapper = artifactResolverWrapper;
+        this.localRepository = new File( artifactResolverWrapper.getLocalRepository().getBasedir() );
         this.settings = settings;
         this.overwrite = overwrite;
     }
@@ -186,6 +190,10 @@ public class AntBuildWriter
                     .toRelative( project.getBasedir(), array[i].getDirectory() ) );
             }
         }
+
+        addProperty( properties, "maven.test.reports", "${maven.build.dir}/test-reports" );
+
+        addProperty( properties, "maven.reporting.outputDirectory", "${maven.build.dir}/site" );
 
         // ----------------------------------------------------------------------
         // Settings properties
@@ -281,6 +289,11 @@ public class AntBuildWriter
         // ----------------------------------------------------------------------
 
         writeTestTargets( writer, testCompileSourceRoots );
+
+        // ----------------------------------------------------------------------
+        // <target name="javadoc" />
+        // ----------------------------------------------------------------------
+        writeJavadocTarget( writer );
 
         // ----------------------------------------------------------------------
         // <target name="package" />
@@ -469,6 +482,11 @@ public class AntBuildWriter
         writer.startElement( "property" );
         writer.addAttribute( "name", "maven.test.reports" );
         writer.addAttribute( "value", "${maven.build.dir}/test-reports" );
+        writer.endElement(); // property
+
+        writer.startElement( "property" );
+        writer.addAttribute( "name", "maven.reporting.outputDirectory" );
+        writer.addAttribute( "value", "${maven.build.dir}/site" );
         writer.endElement(); // property
 
         // ----------------------------------------------------------------------
@@ -814,6 +832,42 @@ public class AntBuildWriter
     }
 
     /**
+     * Write javadoc target in the writer depending the packaging of the project.
+     *
+     * @param writer
+     * @throws IOException if any
+     */
+    private void writeJavadocTarget( XMLWriter writer )
+        throws IOException
+    {
+        AntBuildWriterUtil.writeCommentText( writer, "Javadoc target", 1 );
+
+        writer.startElement( "target" );
+        writer.addAttribute( "name", "javadoc" );
+        writer.addAttribute( "description", "Generates the Javadoc of the application" );
+
+        if ( AntBuildWriterUtil.isPomPackaging( project ) )
+        {
+            if ( project.getModules() != null )
+            {
+                for ( Iterator it = project.getModules().iterator(); it.hasNext(); )
+                {
+                    String moduleSubPath = (String) it.next();
+                    AntBuildWriterUtil.writeAntTask( writer, project, moduleSubPath, "javadoc" );
+                }
+            }
+        }
+        else
+        {
+            AntBuildWriterUtil.writeJavadocTask( writer, project, artifactResolverWrapper );
+        }
+
+        writer.endElement(); // target
+
+        AntBuildWriterUtil.writeLineBreak( writer );
+    }
+
+    /**
      * Write package target in the writer depending the packaging of the project.
      *
      * @param writer
@@ -882,7 +936,7 @@ public class AntBuildWriter
             writer.startElement( "target" );
             writer.addAttribute( "name", synonym );
             writer.addAttribute( "depends", "package" );
-            writer.addAttribute( "description", "Builds the " + synonym + " for the application " );
+            writer.addAttribute( "description", "Builds the " + synonym + " for the application" );
             writer.endElement(); //target
 
             AntBuildWriterUtil.writeLineBreak( writer );
@@ -901,32 +955,34 @@ public class AntBuildWriter
         {
             writer.startElement( "javac" );
             writer.addAttribute( "destdir", outputDirectory );
-            AntBuildWriterUtil.addWrapAttribute( writer, "javac", "includes", AntBuildWriterUtil
-                .getMavenCompilerPluginConfiguration( project, "includes", null ), 3 );
-            AntBuildWriterUtil.addWrapAttribute( writer, "javac", "excludes", AntBuildWriterUtil
-                .getMavenCompilerPluginConfiguration( project, "excludes", null ), 3 );
+            Map[] includes = AntBuildWriterUtil.getMavenCompilerPluginOptions( project, "includes", null );
+            AntBuildWriterUtil.addWrapAttribute( writer, "javac", "includes", getCommaSeparatedList( includes,
+                                                                                                     "include" ), 3 );
+            Map[] excludes = AntBuildWriterUtil.getMavenCompilerPluginOptions( project, "excludes", null );
+            AntBuildWriterUtil.addWrapAttribute( writer, "javac", "excludes", getCommaSeparatedList( excludes,
+                                                                                                     "exclude" ), 3 );
             AntBuildWriterUtil.addWrapAttribute( writer, "javac", "encoding", AntBuildWriterUtil
-                .getMavenCompilerPluginConfiguration( project, "encoding", null ), 3 );
+                .getMavenCompilerPluginBasicOption( project, "encoding", null ), 3 );
             AntBuildWriterUtil.addWrapAttribute( writer, "javac", "nowarn", AntBuildWriterUtil
-                .getMavenCompilerPluginConfiguration( project, "showWarnings", "false" ), 3 );
+                .getMavenCompilerPluginBasicOption( project, "showWarnings", "false" ), 3 );
             AntBuildWriterUtil.addWrapAttribute( writer, "javac", "debug", AntBuildWriterUtil
-                .getMavenCompilerPluginConfiguration( project, "debug", "true" ), 3 );
+                .getMavenCompilerPluginBasicOption( project, "debug", "true" ), 3 );
             AntBuildWriterUtil.addWrapAttribute( writer, "javac", "optimize", AntBuildWriterUtil
-                .getMavenCompilerPluginConfiguration( project, "optimize", "false" ), 3 );
+                .getMavenCompilerPluginBasicOption( project, "optimize", "false" ), 3 );
             AntBuildWriterUtil.addWrapAttribute( writer, "javac", "deprecation", AntBuildWriterUtil
-                .getMavenCompilerPluginConfiguration( project, "showDeprecation", "true" ), 3 );
+                .getMavenCompilerPluginBasicOption( project, "showDeprecation", "true" ), 3 );
             AntBuildWriterUtil.addWrapAttribute( writer, "javac", "target", AntBuildWriterUtil
-                .getMavenCompilerPluginConfiguration( project, "target", null ), 3 );
+                .getMavenCompilerPluginBasicOption( project, "target", null ), 3 );
             AntBuildWriterUtil.addWrapAttribute( writer, "javac", "verbose", AntBuildWriterUtil
-                .getMavenCompilerPluginConfiguration( project, "verbose", "false" ), 3 );
+                .getMavenCompilerPluginBasicOption( project, "verbose", "false" ), 3 );
             AntBuildWriterUtil.addWrapAttribute( writer, "javac", "fork", AntBuildWriterUtil
-                .getMavenCompilerPluginConfiguration( project, "fork", "false" ), 3 );
+                .getMavenCompilerPluginBasicOption( project, "fork", "false" ), 3 );
             AntBuildWriterUtil.addWrapAttribute( writer, "javac", "memoryMaximumSize", AntBuildWriterUtil
-                .getMavenCompilerPluginConfiguration( project, "meminitial", null ), 3 );
+                .getMavenCompilerPluginBasicOption( project, "meminitial", null ), 3 );
             AntBuildWriterUtil.addWrapAttribute( writer, "javac", "memoryInitialSize", AntBuildWriterUtil
-                .getMavenCompilerPluginConfiguration( project, "maxmem", null ), 3 );
+                .getMavenCompilerPluginBasicOption( project, "maxmem", null ), 3 );
             AntBuildWriterUtil.addWrapAttribute( writer, "javac", "source", AntBuildWriterUtil
-                .getMavenCompilerPluginConfiguration( project, "source", null ), 3 );
+                .getMavenCompilerPluginBasicOption( project, "source", null ), 3 );
 
             String[] compileSourceRootsArray = (String[]) compileSourceRoots.toArray( new String[0] );
             for ( int i = 0; i < compileSourceRootsArray.length; i++ )
@@ -1108,5 +1164,42 @@ public class AntBuildWriter
     private static void addProperty( Properties properties, String name, String value )
     {
         properties.put( name, StringUtils.isNotEmpty( value ) ? value : "" );
+    }
+
+    /**
+     * @param includes an array of includes or exludes map
+     * @param key a key wanted in the map, like <code>include</code> or <code>exclude</code>
+     * @return a String with comma-separated value of a key in each map
+     */
+    private static String getCommaSeparatedList( Map[] includes, String key )
+    {
+        if ( ( includes == null ) || ( includes.length == 0 ) )
+        {
+            return null;
+        }
+
+        StringBuffer sb = new StringBuffer();
+        for ( int i = 0; i < includes.length; i++ )
+        {
+            String s = (String) includes[i].get( key );
+            if ( StringUtils.isEmpty( s ) )
+            {
+                continue;
+            }
+
+            sb.append( s );
+
+            if ( i < ( includes.length - 1 ) )
+            {
+                sb.append( "," );
+            }
+        }
+
+        if ( sb.length() == 0 )
+        {
+            return null;
+        }
+
+        return sb.toString();
     }
 }

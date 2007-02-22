@@ -58,7 +58,7 @@ public class AntBuildWriterUtilTest
     {
         StringWriter s = new StringWriter();
         XMLWriter writer = new PrettyPrintXMLWriter( s );
-        AntBuildWriterUtil.writeComment( writer, "This is a short text");
+        AntBuildWriterUtil.writeComment( writer, "This is a short text" );
         StringBuffer sb = new StringBuffer();
         sb.append( "<!-- This is a short text                                                   -->" ).append( '\n' );
         assertTrue( s.toString().equals( sb.toString() ) );
@@ -71,9 +71,9 @@ public class AntBuildWriterUtilTest
     {
         StringWriter s = new StringWriter();
         XMLWriter writer = new PrettyPrintXMLWriter( s );
-        AntBuildWriterUtil.writeComment( writer, "Maven is a software project management and comprehension tool. " +
-                "Based on the concept of a project object model (POM), Maven can manage a project's build, reporting " +
-                "and documentation from a central piece of information." );
+        AntBuildWriterUtil.writeComment( writer, "Maven is a software project management and comprehension tool. "
+            + "Based on the concept of a project object model (POM), Maven can manage a project's build, reporting "
+            + "and documentation from a central piece of information." );
         StringBuffer sb = new StringBuffer();
         sb.append( "<!-- Maven is a software project management and comprehension tool. Based   -->" ).append( '\n' );
         sb.append( "<!-- on the concept of a project object model (POM), Maven can manage a     -->" ).append( '\n' );
@@ -101,9 +101,10 @@ public class AntBuildWriterUtilTest
 
         MavenProject project = maven.readProjectWithDependencies( testPom );
 
-        assertEquals( AntBuildWriterUtil.getMavenCompilerPluginConfiguration( project, "debug", null ), "true" );
-        assertEquals( AntBuildWriterUtil.getMavenCompilerPluginConfiguration( project, "includes", null ),
-                      "**/*.java,**/*.jad" );
+        assertEquals( AntBuildWriterUtil.getMavenCompilerPluginBasicOption( project, "debug", null ), "true" );
+
+        assertNotNull( AntBuildWriterUtil.getMavenCompilerPluginOptions( project, "includes", null ) );
+        assertEquals( AntBuildWriterUtil.getMavenCompilerPluginOptions( project, "includes", null ).length, 2 );
 
         maven.stop();
     }
@@ -127,9 +128,39 @@ public class AntBuildWriterUtilTest
 
         MavenProject project = maven.readProjectWithDependencies( testPom );
 
-        assertEquals( AntBuildWriterUtil.getMavenWarPluginConfiguration( project, "warName", null ), "mywebapp" );
-        assertTrue( AntBuildWriterUtil.getMavenWarPluginConfiguration( project, "webXml", null )
+        assertEquals( AntBuildWriterUtil.getMavenWarPluginBasicOption( project, "warName", null ), "mywebapp" );
+        assertTrue( AntBuildWriterUtil.getMavenWarPluginBasicOption( project, "webXml", null )
             .endsWith( "/src/main/webapp/WEB-INF/web.xml" ) );
+
+        maven.stop();
+    }
+
+    /**
+     * Test method for 'org.apache.maven.plugin.ant.AntBuildWriterUtil.getMavenJavadocPluginConfiguration(MavenProject, String, String)'
+     *
+     * @throws Exception
+     */
+    public void testGetMavenJavadocPluginConfiguration()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(), "src/test/resources/unit/ant-javadoc-test/pom.xml" );
+
+        MavenEmbedder maven = new MavenEmbedder();
+        maven.setClassLoader( Thread.currentThread().getContextClassLoader() );
+        maven.setLogger( new MavenEmbedderConsoleLogger() );
+        maven.setLocalRepositoryDirectory( getTestFile( "target/local-repo" ) );
+        maven.setOffline( true );
+        maven.start();
+
+        MavenProject project = maven.readProjectWithDependencies( testPom );
+
+        assertEquals( AntBuildWriterUtil.getMavenJavadocPluginBasicOption( project, "doclet", null ), "gr.spinellis.umlgraph.doclet.UmlGraphDoc" );
+
+        assertNotNull( AntBuildWriterUtil.getMavenJavadocPluginOptions( project, "links", null ) );
+        assertEquals( AntBuildWriterUtil.getMavenJavadocPluginOptions( project, "links", null ).length, 2 );
+
+        assertNotNull( AntBuildWriterUtil.getMavenJavadocPluginOptions( project, "docletArtifacts", null ) );
+        assertEquals( AntBuildWriterUtil.getMavenJavadocPluginOptions( project, "docletArtifacts", null ).length, 2 );
 
         maven.stop();
     }
