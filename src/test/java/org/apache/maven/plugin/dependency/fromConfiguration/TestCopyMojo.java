@@ -571,6 +571,7 @@ public class TestCopyMojo
 
         // set dest to be old
         long time = System.currentTimeMillis() - 10000;
+        time = time - ( time % 1000 );
         copiedFile.setLastModified( time );
 
         // set source to be newer
@@ -579,7 +580,6 @@ public class TestCopyMojo
 
         assertTrue( time < copiedFile.lastModified() );
     }
-    // TODO: test overwrite / overwrite if newer / overwrite release / overwrite
-    // snapshot
+
 
 }
