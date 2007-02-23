@@ -36,7 +36,7 @@ public abstract class AbstractFromDependenciesMojo
      * Strip artifact version during copy
      * 
      * @optional
-     * @parameter expression="${stripVersion}" default-value="false"
+     * @parameter expression="${mdep.stripVersion}" default-value="false"
      * @parameter
      */
     protected boolean stripVersion = false;
@@ -52,21 +52,30 @@ public abstract class AbstractFromDependenciesMojo
     protected File outputDirectory;
 
     /**
+     * Place each artifact in the same directory layout as a default repository.
+     * <br/>example: /outputDirectory/junit/junit/3.8.1/junit-3.8.1.jar
+     * @since 2.0-alpha-2
+     * @parameter expression="${mdep.useRepositoryLayout}" default-value="false"
+     * @optional
+     */
+    protected boolean useRepositoryLayout;
+
+    /**
      * Place each type of file in a separate subdirectory. (example
      * /outputDirectory/jars /outputDirectory/wars etc)
      * 
      * @since 2.0
-     * @parameter expression="${useSubDirectoryPerType}" default-value="false"
+     * @parameter expression="${mdep.useSubDirectoryPerType}" default-value="false"
      * @optional
      */
     protected boolean useSubDirectoryPerType;
 
     /**
      * Place each file in a separate subdirectory. (example
-     * /outputDirectory/junit-junit-3.8.1)
+     * /outputDirectory/junit-3.8.1-jar)
      * 
      * @since 2.0
-     * @parameter expression="${useSubDirectoryPerArtifact}"
+     * @parameter expression="${mdep.useSubDirectoryPerArtifact}"
      *            default-value="false"
      * @optional
      */
@@ -153,4 +162,22 @@ public abstract class AbstractFromDependenciesMojo
         this.stripVersion = stripVersion;
     }
 
+    /**
+     * 
+     * @return true, if dependencies must be planted in a repository layout
+     */
+    public boolean isUseRepositoryLayout()
+    {
+        return useRepositoryLayout;
+    }
+
+    /**
+     * 
+     * @param useRepositoryLayout -
+     *            true if dependencies must be planted in a repository layout
+     */
+    public void setUseRepositoryLayout( boolean useRepositoryLayout )
+    {
+        this.useRepositoryLayout = useRepositoryLayout;
+    }
 }

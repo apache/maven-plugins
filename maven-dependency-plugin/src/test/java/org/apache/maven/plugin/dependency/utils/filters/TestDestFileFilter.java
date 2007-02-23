@@ -82,8 +82,8 @@ public class TestDestFileFilter
         throws IOException
     {
         File destFolder = DependencyUtil.getFormattedOutputDirectory( useSubDirectoryPerType,
-                                                                      useSubDirectoryPerArtifact, false, outputFolder,
-                                                                      artifact );
+                                                                      useSubDirectoryPerArtifact, false, false,
+                                                                      outputFolder, artifact );
         File destFile = new File( destFolder, DependencyUtil.getFormattedFileName( artifact, removeVersion ) );
 
         destFile.getParentFile().mkdirs();

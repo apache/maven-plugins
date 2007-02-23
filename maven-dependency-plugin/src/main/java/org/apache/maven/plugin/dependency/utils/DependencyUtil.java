@@ -86,8 +86,13 @@ public final class DependencyUtil
      * 
      * @param useSubdirsPerType
      *            if a new sub directory should be used for each type.
-     * @param useSubdirsPerArtifact
+     * @param useSubdirPerArtifact
      *            if a new sub directory should be used for each artifact.
+     * @param useRepositoryLayout
+     *            if dependendies must be moved into a Maven repository layout, if
+     *            set, other settings will be ignored.
+     * @param removeVersion
+     *            if the version must not be mentioned in the filename
      * @param outputDirectory
      *            base outputDirectory.
      * @param artifact
@@ -96,72 +101,64 @@ public final class DependencyUtil
      * @return a formatted File object to use for output.
      */
     public static File getFormattedOutputDirectory( boolean useSubdirsPerType, boolean useSubdirPerArtifact,
-                                                   boolean removeVersion, File outputDirectory, Artifact artifact )
+                                                   boolean useRepositoryLayout, boolean removeVersion,
+                                                   File outputDirectory, Artifact artifact )
     {
-        File result = null;
-        String artifactString = getDependencyId(artifact,removeVersion);
-
-        
-        if ( !useSubdirsPerType )
+        StringBuffer sb = new StringBuffer( 128 );
+        if ( useRepositoryLayout )
         {
-            if ( useSubdirPerArtifact )
-            {
-
-                result = new File( outputDirectory.getAbsolutePath() + File.separatorChar + artifactString
-                    + File.separatorChar );
-            }
-            else
-            {
-                result = outputDirectory;
-            }
+            // group id
+            sb.append( artifact.getGroupId().replace( '.', File.separatorChar ) ).append( File.separatorChar );
+            // artifact id
+            sb.append( artifact.getArtifactId() ).append( File.separatorChar );
+            // version
+            sb.append( artifact.getVersion() ).append( File.separatorChar );
         }
         else
         {
+            if ( useSubdirsPerType )
+            {
+                sb.append( artifact.getType() ).append( "s" ).append( File.separatorChar );
+            }
             if ( useSubdirPerArtifact )
             {
-                result = new File( outputDirectory.getAbsolutePath() + File.separatorChar + artifact.getType() + "s"
-                    + File.separatorChar + artifactString + File.separatorChar );
-            }
-            else
-            {
-                result = new File( outputDirectory.getAbsolutePath() + File.separatorChar + artifact.getType() + "s"
-                    + File.separatorChar );
+                String artifactString = getDependencyId( artifact, removeVersion );
+                sb.append( artifactString ).append( File.separatorChar );
             }
         }
-
-        return result;
-
+        return new File( outputDirectory, sb.toString() );
     }
-    
-    private static String getDependencyId(Artifact artifact,boolean removeVersion)
+
+    private static String getDependencyId( Artifact artifact, boolean removeVersion )
     {
         StringBuffer sb = new StringBuffer();
-        
+
         sb.append( artifact.getArtifactId() );
-        
-        if (StringUtils.isNotEmpty(artifact.getClassifier()))
+
+        if ( StringUtils.isNotEmpty( artifact.getClassifier() ) )
         {
-            sb.append("-");
-            sb.append(artifact.getClassifier());
+            sb.append( "-" );
+            sb.append( artifact.getClassifier() );
         }
-        
-        if (!removeVersion)
+
+        if ( !removeVersion )
         {
-            sb.append("-");
-            sb.append(artifact.getVersion());
-            sb.append("-");
+            sb.append( "-" );
+            sb.append( artifact.getVersion() );
+            sb.append( "-" );
             sb.append( artifact.getType() );
         }
         else
         {
-            //if the classifier and type are the same (sources), then don't repeat.
-            //avoids names like foo-sources-sources
-            if (!StringUtils.equals(artifact.getClassifier(),artifact.getType()))
+            // if the classifier and type are the same (sources), then don't
+            // repeat.
+            // avoids names like foo-sources-sources
+            if ( !StringUtils.equals( artifact.getClassifier(), artifact.getType() ) )
             {
-                sb.append("-");
+                sb.append( "-" );
                 sb.append( artifact.getType() );
             }
-        }     
+        }
         return sb.toString();
     }
 }
