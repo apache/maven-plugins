@@ -24,6 +24,7 @@ import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.execution.RuntimeInformation;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -35,7 +36,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @phase process-sources
  */
 public class MavenMojo
-    extends AbstractMojo
+    extends abstractVersionEnforcer
 {
     /**
      * Used to look up Artifacts in the remote repository.
@@ -70,35 +71,9 @@ public class MavenMojo
     private boolean warn = false;
 
     public void execute()
-        throws MojoExecutionException
+        throws MojoExecutionException, MojoFailureException
     {
-        if (StringUtils.isEmpty(this.mavenVersion))
-        {
-            throw new MojoExecutionException("MavenVersion can't be empty.");
-        }
-        
         ArtifactVersion version = rti.getApplicationVersion();
-        VersionRange vr;
-        
-        vr = VersionRange.createFromVersion(this.mavenVersion);
-        
-        Log log = this.getLog();
-        String msg = "Detected Maven Version: "+ version;
-        if (vr.containsVersion(version))
-        {
-            log.debug(msg+" is allowed.");
-        }
-        else
-        {
-            String error = msg+" is not in the allowed range: "+vr;
-            if (warn)
-            {
-                log.warn(error);
-            }
-            else
-            {
-                throw new MojoExecutionException(error);
-            }
-        }
+        this.enforceVersion("Maven",this.mavenVersion,version,this.warn);
     }
 }

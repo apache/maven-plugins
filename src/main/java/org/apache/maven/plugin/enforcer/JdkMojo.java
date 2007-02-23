@@ -19,8 +19,12 @@ package org.apache.maven.plugin.enforcer;
  * under the License.
  */
 
+import org.apache.commons.lang.SystemUtils;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 
 /**
  * Goal which fails the build if the jdk isn't the correct version
@@ -30,12 +34,34 @@ import org.apache.maven.plugin.MojoExecutionException;
  * @phase process-sources
  */
 public class JdkMojo
-    extends AbstractMojo
+    extends abstractVersionEnforcer
 {
+    /**
+     * Specify the required Version of Maven.
+     * Some examples are
+     * <ul>
+     *   <li><code>2.0.4</code> Version 2.0.4</li>
+     *   <li><code>[2.0,2.1)</code> Versions 2.0 (included) to 2.1 (not included)</li>
+     *   <li><code>[2.0,2.1]</code> Versions 2.0 to 2.1 (both included)</li>
+     *   <li><code>[2.0.5,)</code> Versions 2.0.5 and higher</li>
+     *   <li><code>(,2.0.5],[2.1.1,)</code> Versions up to 2.0.5 (included) and 2.1.1 or higher</li>
+     * </ul>
+     * 
+     * @parameter expression="${enforcer.jdk.version}" default-value=""
+     * @required
+     */
+    private String jdkVersion = null;
 
+    /**
+     * Flag to warn only if the mavenVersion check fails.
+     * 
+     * @parameter expression="${enforcer.jdk.warn}" default-value="false"
+     */
+    private boolean warn = false;
     public void execute()
-        throws MojoExecutionException
+        throws MojoExecutionException, MojoFailureException
     {
-    
+        ArtifactVersion version = new DefaultArtifactVersion(SystemUtils.JAVA_VERSION_TRIMMED.replace('_','-'));
+        this.enforceVersion("JDK",this.jdkVersion,version,this.warn);
     }
 }
