@@ -99,7 +99,7 @@ public class TestCopyDependenciesMojo
      * 
      * @throws Exception
      */
-    public void testCopyDependenciesMojo()
+    public void testMojo()
         throws Exception
     {
         mojo.execute();
@@ -116,7 +116,7 @@ public class TestCopyDependenciesMojo
         }
     }
 
-    public void testCopyDependenciesMojoStripVersion()
+    public void testStripVersion()
         throws Exception
     {
         mojo.stripVersion = true;
@@ -132,7 +132,7 @@ public class TestCopyDependenciesMojo
         }
     }
 
-    public void testCopyDependenciesMojoNoTransitive()
+    public void testNoTransitive()
         throws Exception
     {
         mojo.excludeTransitive = true;
@@ -148,7 +148,7 @@ public class TestCopyDependenciesMojo
         }
     }
 
-    public void testCopyDependenciesMojoExcludeType()
+    public void testExcludeType()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getTypedArtifacts() );
@@ -166,7 +166,7 @@ public class TestCopyDependenciesMojo
         }
     }
 
-    public void testCopyDependenciesMojoIncludeType()
+    public void testIncludeType()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getTypedArtifacts() );
@@ -188,7 +188,7 @@ public class TestCopyDependenciesMojo
         }
     }
 
-    public void testCopyDependenciesMojoExcludeArtifactId()
+    public void testExcludeArtifactId()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getArtifactArtifacts() );
@@ -206,7 +206,7 @@ public class TestCopyDependenciesMojo
         }
     }
 
-    public void testCopyDependenciesMojoIncludeArtifactId()
+    public void testIncludeArtifactId()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getArtifactArtifacts() );
@@ -228,7 +228,7 @@ public class TestCopyDependenciesMojo
         }
     }
 
-    public void testCopyDependenciesMojoIncludeGroupId()
+    public void testIncludeGroupId()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getGroupIdArtifacts() );
@@ -249,7 +249,7 @@ public class TestCopyDependenciesMojo
         }
     }
 
-    public void testCopyDependenciesMojoExcludeGroupId()
+    public void testExcludeGroupId()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getGroupIdArtifacts() );
@@ -268,7 +268,7 @@ public class TestCopyDependenciesMojo
         }
     }
 
-    public void testCopyDependenciesMojoExcludeClassifier()
+    public void testExcludeClassifier()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getClassifiedArtifacts() );
@@ -286,7 +286,7 @@ public class TestCopyDependenciesMojo
         }
     }
 
-    public void testCopyDependenciesMojoIncludeClassifier()
+    public void testIncludeClassifier()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getClassifiedArtifacts() );
@@ -308,7 +308,7 @@ public class TestCopyDependenciesMojo
         }
     }
 
-    public void testCopyDependenciesMojoSubPerType()
+    public void testSubPerType()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getTypedArtifacts() );
@@ -328,7 +328,7 @@ public class TestCopyDependenciesMojo
         }
     }
 
-    public void testCopyDependenciesMojoSubPerArtifact()
+    public void testSubPerArtifact()
         throws Exception
     {
         mojo.useSubDirectoryPerArtifact = true;
@@ -346,7 +346,7 @@ public class TestCopyDependenciesMojo
         }
     }
 
-    public void testCopyDependenciesMojoSubPerArtifactAndType()
+    public void testSubPerArtifactAndType()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getTypedArtifacts() );
@@ -367,7 +367,7 @@ public class TestCopyDependenciesMojo
         }
     }
 
-    public void testCopyDependenciesMojoRepositoryLayout()
+    public void testRepositoryLayout()
         throws Exception
     {
         mojo.useRepositoryLayout = true;
@@ -385,7 +385,7 @@ public class TestCopyDependenciesMojo
         }
     }
 
-    public void testCopyDependenciesMojoSubPerArtifactRemoveVersion()
+    public void testSubPerArtifactRemoveVersion()
         throws Exception
     {
         mojo.useSubDirectoryPerArtifact = true;
@@ -404,7 +404,7 @@ public class TestCopyDependenciesMojo
         }
     }
 
-    public void testCopyDependenciesMojoSubPerArtifactAndTypeRemoveVersion()
+    public void testSubPerArtifactAndTypeRemoveVersion()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getTypedArtifacts() );
@@ -429,22 +429,22 @@ public class TestCopyDependenciesMojo
     public void testCDMClassifier()
         throws Exception
     {
-        dotestCopyDependenciesMojoClassifierType( "jdk14", null );
+        dotestClassifierType( "jdk14", null );
     }
 
     public void testCDMType()
         throws Exception
     {
-        dotestCopyDependenciesMojoClassifierType( null, "sources" );
+        dotestClassifierType( null, "sources" );
     }
 
     public void testCDMClassifierType()
         throws Exception
     {
-        dotestCopyDependenciesMojoClassifierType( "jdk14", "sources" );
+        dotestClassifierType( "jdk14", "sources" );
     }
 
-    public void dotestCopyDependenciesMojoClassifierType( String testClassifier, String testType )
+    public void dotestClassifierType( String testClassifier, String testType )
         throws Exception
     {
         mojo.classifier = testClassifier;
@@ -669,7 +669,7 @@ public class TestCopyDependenciesMojo
             .getResolvedDependencies().toString() );
     }
 
-    public void testCopyDependenciesMojoExcludeProvidedScope()
+    public void testExcludeProvidedScope()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
@@ -692,7 +692,7 @@ public class TestCopyDependenciesMojo
 
     }
 
-    public void testCopyDependenciesMojoExcludeSystemScope()
+    public void testExcludeSystemScope()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
@@ -715,7 +715,7 @@ public class TestCopyDependenciesMojo
 
     }
 
-    public void testCopyDependenciesMojoExcludeCompileScope()
+    public void testExcludeCompileScope()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
@@ -735,7 +735,7 @@ public class TestCopyDependenciesMojo
         }
     }
 
-    public void testCopyDependenciesMojoExcludeTestScope()
+    public void testExcludeTestScope()
         throws IOException
     {
         mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
@@ -754,7 +754,7 @@ public class TestCopyDependenciesMojo
 
     }
 
-    public void testCopyDependenciesMojoExcludeRuntimeScope()
+    public void testExcludeRuntimeScope()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );

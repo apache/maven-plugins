@@ -109,7 +109,7 @@ public class TestUnpackDependenciesMojo
         }
     }
 
-    public void testUnpackDependenciesMojo()
+    public void testMojo()
         throws Exception
     {
         mojo.execute();
@@ -121,7 +121,7 @@ public class TestUnpackDependenciesMojo
         }
     }
 
-    public void testUnpackDependenciesMojoNoTransitive()
+    public void testNoTransitive()
         throws Exception
     {
         mojo.excludeTransitive = true;
@@ -134,7 +134,7 @@ public class TestUnpackDependenciesMojo
         }
     }
 
-    public void testUnpackDependenciesMojoExcludeType()
+    public void testExcludeType()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getTypedArchiveArtifacts() );
@@ -151,7 +151,7 @@ public class TestUnpackDependenciesMojo
         }
     }
 
-    public void testUnpackDependenciesMojoExcludeProvidedScope()
+    public void testExcludeProvidedScope()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
@@ -170,7 +170,7 @@ public class TestUnpackDependenciesMojo
 
     }
 
-    public void testUnpackDependenciesMojoExcludeSystemScope()
+    public void testExcludeSystemScope()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
@@ -189,7 +189,7 @@ public class TestUnpackDependenciesMojo
 
     }
 
-    public void testUnpackDependenciesMojoExcludeCompileScope()
+    public void testExcludeCompileScope()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
@@ -206,7 +206,7 @@ public class TestUnpackDependenciesMojo
         }
     }
 
-    public void testUnpackDependenciesMojoExcludeTestScope()
+    public void testExcludeTestScope()
         throws IOException
     {
         mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
@@ -225,7 +225,7 @@ public class TestUnpackDependenciesMojo
 
     }
 
-    public void testUnpackDependenciesMojoExcludeRuntimeScope()
+    public void testExcludeRuntimeScope()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
@@ -242,7 +242,7 @@ public class TestUnpackDependenciesMojo
         }
     }
 
-    public void testUnpackDependenciesMojoIncludeType()
+    public void testIncludeType()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getTypedArchiveArtifacts() );
@@ -263,7 +263,7 @@ public class TestUnpackDependenciesMojo
         }
     }
 
-    public void testUnpackDependenciesMojoSubPerType()
+    public void testSubPerType()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getTypedArchiveArtifacts() );
@@ -279,7 +279,7 @@ public class TestUnpackDependenciesMojo
         }
     }
 
-    public void testUnpackDependenciesMojoSubPerArtifact()
+    public void testSubPerArtifact()
         throws Exception
     {
         mojo.useSubDirectoryPerArtifact = true;
@@ -293,7 +293,7 @@ public class TestUnpackDependenciesMojo
         }
     }
 
-    public void testUnpackDependenciesMojoSubPerArtifactAndType()
+    public void testSubPerArtifactAndType()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getTypedArchiveArtifacts() );
@@ -310,7 +310,7 @@ public class TestUnpackDependenciesMojo
         }
     }
 
-    public void testUnpackDependenciesMojoSubPerArtifactRemoveVersion()
+    public void testSubPerArtifactRemoveVersion()
         throws Exception
     {
         mojo.useSubDirectoryPerArtifact = true;
@@ -325,7 +325,7 @@ public class TestUnpackDependenciesMojo
         }
     }
 
-    public void testUnpackDependenciesMojoSubPerArtifactAndTypeRemoveVersion()
+    public void testSubPerArtifactAndTypeRemoveVersion()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getTypedArchiveArtifacts() );
@@ -343,7 +343,7 @@ public class TestUnpackDependenciesMojo
         }
     }
 
-    public void testUnpackDependenciesMojoIncludeCompileScope()
+    public void testIncludeCompileScope()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
@@ -360,7 +360,7 @@ public class TestUnpackDependenciesMojo
         }
     }
 
-    public void testUnpackDependenciesMojoIncludeTestScope()
+    public void testIncludeTestScope()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
@@ -378,7 +378,7 @@ public class TestUnpackDependenciesMojo
         }
     }
 
-    public void testUnpackDependenciesMojoIncludeRuntimeScope()
+    public void testIncludeRuntimeScope()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
@@ -395,7 +395,7 @@ public class TestUnpackDependenciesMojo
         }
     }
 
-    public void testUnpackDependenciesMojoIncludeprovidedScope()
+    public void testIncludeprovidedScope()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
@@ -411,7 +411,7 @@ public class TestUnpackDependenciesMojo
         }
     }
 
-    public void testUnpackDependenciesMojoIncludesystemScope()
+    public void testIncludesystemScope()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getScopedArtifacts() );
@@ -428,7 +428,7 @@ public class TestUnpackDependenciesMojo
         }
     }
 
-    public void testUnpackDependenciesMojoIncludeArtifactId()
+    public void testIncludeArtifactId()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getArtifactArtifacts() );
@@ -448,7 +448,7 @@ public class TestUnpackDependenciesMojo
         }
     }
 
-    public void testUnpackDependenciesMojoExcludeArtifactId()
+    public void testExcludeArtifactId()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getArtifactArtifacts() );
@@ -467,7 +467,7 @@ public class TestUnpackDependenciesMojo
         }
     }
 
-    public void testUnpackDependenciesMojoExcludeGroupId()
+    public void testExcludeGroupId()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getGroupIdArtifacts() );
@@ -483,7 +483,7 @@ public class TestUnpackDependenciesMojo
         }
     }
 
-    public void testUnpackDependenciesMojoIncludeGroupId()
+    public void testIncludeGroupId()
         throws Exception
     {
         mojo.project.setArtifacts( stubFactory.getGroupIdArtifacts() );
@@ -506,22 +506,22 @@ public class TestUnpackDependenciesMojo
     public void testCDMClassifier()
         throws Exception
     {
-        dotestUnpackDependenciesMojoClassifierType( "jdk14", null );
+        dotestClassifierType( "jdk14", null );
     }
 
     public void testCDMType()
         throws Exception
     {
-        dotestUnpackDependenciesMojoClassifierType( null, "zip" );
+        dotestClassifierType( null, "zip" );
     }
 
     public void testCDMClassifierType()
         throws Exception
     {
-        dotestUnpackDependenciesMojoClassifierType( "jdk14", "war" );
+        dotestClassifierType( "jdk14", "war" );
     }
 
-    public void dotestUnpackDependenciesMojoClassifierType( String testClassifier, String testType )
+    public void dotestClassifierType( String testClassifier, String testType )
         throws Exception
     {
         mojo.classifier = testClassifier;
@@ -709,7 +709,6 @@ public class TestUnpackDependenciesMojo
 
         File unpackedFile = getUnpackedFile( snap );
 
-        Thread.sleep( 100 );
         // round down to the last second
         long time = System.currentTimeMillis();
         time = time - ( time % 1000 );

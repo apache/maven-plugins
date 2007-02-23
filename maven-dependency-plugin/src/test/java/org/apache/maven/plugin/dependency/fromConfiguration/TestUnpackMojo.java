@@ -495,8 +495,6 @@ public class TestUnpackMojo
         mojo.setArtifactItems( list );
         mojo.setOverWriteIfNewer( true );
         mojo.execute();
-
-        Thread.sleep( 100 );
         File unpackedFile = getUnpackedFile( item );
 
         // round down to the last second
