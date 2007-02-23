@@ -54,6 +54,8 @@ public class DestFileFilter
 
     boolean useSubDirectoryPerType;
 
+    boolean useRepositoryLayout;
+
     boolean removeVersion;
 
     File outputFileDirectory;
@@ -70,14 +72,15 @@ public class DestFileFilter
     }
 
     public DestFileFilter( boolean overWriteReleases, boolean overWriteSnapshots, boolean overWriteIfNewer,
-                          boolean useSubDirectoryPerArtifact, boolean useSubDirectoryPerType, boolean removeVersion,
-                          File outputFileDirectory )
+                          boolean useSubDirectoryPerArtifact, boolean useSubDirectoryPerType,
+                          boolean useRepositoryLayout, boolean removeVersion, File outputFileDirectory )
     {
         this.overWriteReleases = overWriteReleases;
         this.overWriteSnapshots = overWriteSnapshots;
         this.overWriteIfNewer = overWriteIfNewer;
         this.useSubDirectoryPerArtifact = useSubDirectoryPerArtifact;
         this.useSubDirectoryPerType = useSubDirectoryPerType;
+        this.useRepositoryLayout = useRepositoryLayout;
         this.removeVersion = removeVersion;
         this.outputFileDirectory = outputFileDirectory;
     }
@@ -225,6 +228,25 @@ public class DestFileFilter
         this.useSubDirectoryPerType = useSubDirectoryPerType;
     }
 
+    /**
+     * 
+     * @return Returns the useRepositoryLayout
+     */
+    public boolean isUseRepositoryLayout()
+    {
+        return useRepositoryLayout;
+    }
+
+    /**
+     * 
+     * @param useRepositoryLayout
+     *            the useRepositoryLayout to set
+     */
+    public void setUseRepositoryLayout( boolean useRepositoryLayout )
+    {
+        this.useRepositoryLayout = useRepositoryLayout;
+    }
+
     public boolean okToProcess( ArtifactItem item )
         throws MojoExecutionException
     {
@@ -241,10 +263,9 @@ public class DestFileFilter
         File destFolder = item.getOutputDirectory();
         if ( destFolder == null )
         {
-            destFolder = DependencyUtil.getFormattedOutputDirectory( this.useSubDirectoryPerType,
-                                                                     this.useSubDirectoryPerArtifact,
-                                                                     this.removeVersion, this.outputFileDirectory,
-                                                                     artifact );
+            destFolder = DependencyUtil.getFormattedOutputDirectory( useSubDirectoryPerType,
+                                                                     useSubDirectoryPerArtifact, useRepositoryLayout,
+                                                                     removeVersion, this.outputFileDirectory, artifact );
         }
 
         File destFile = null;

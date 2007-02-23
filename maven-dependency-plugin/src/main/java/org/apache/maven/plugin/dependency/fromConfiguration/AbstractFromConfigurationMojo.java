@@ -23,18 +23,14 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
-import org.apache.maven.artifact.resolver.ResolutionNode;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Dependency;
@@ -72,7 +68,7 @@ public abstract class AbstractFromConfigurationMojo
      * 
      * @optional
      * @since 1.0
-     * @parameter expression="${overWriteReleases}" default-value="false"
+     * @parameter expression="${mdep.overWriteReleases}" default-value="false"
      */
     private boolean overWriteReleases;
 
@@ -81,7 +77,7 @@ public abstract class AbstractFromConfigurationMojo
      * 
      * @optional
      * @since 1.0
-     * @parameter expression="${overWriteSnapshots}" default-value="false"
+     * @parameter expression="${mdep.overWriteSnapshots}" default-value="false"
      */
     private boolean overWriteSnapshots;
 
@@ -90,7 +86,7 @@ public abstract class AbstractFromConfigurationMojo
      * 
      * @optional
      * @since 2.0
-     * @parameter expression="${overIfNewer}" default-value="true"
+     * @parameter expression="${mdep.overIfNewer}" default-value="true"
      */
     private boolean overWriteIfNewer;
 
@@ -199,7 +195,7 @@ public abstract class AbstractFromConfigurationMojo
     {
         Artifact artifact;
 
-        Map managedVersions = createManagedVersionMap( factory, project.getId(), project.getDependencyManagement() );
+  //      Map managedVersions = createManagedVersionMap( factory, project.getId(), project.getDependencyManagement() );
         VersionRange vr;
         try
         {
