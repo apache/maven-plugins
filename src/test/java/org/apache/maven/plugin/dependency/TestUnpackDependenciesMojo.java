@@ -86,7 +86,8 @@ public class TestUnpackDependenciesMojo
     public void assertUnpacked( boolean val, Artifact artifact )
     {
         File folder = DependencyUtil.getFormattedOutputDirectory( mojo.useSubDirectoryPerType,
-                                                                  mojo.useSubDirectoryPerArtifact, mojo.stripVersion,
+                                                                  mojo.useSubDirectoryPerArtifact,
+                                                                  mojo.useRepositoryLayout, mojo.stripVersion,
                                                                   mojo.outputDirectory, artifact );
 
         File destFile = new File( folder, ArtifactStubFactory.getUnpackableFileName( artifact ) );
@@ -308,39 +309,39 @@ public class TestUnpackDependenciesMojo
             assertUnpacked( artifact );
         }
     }
-    
+
     public void testUnpackDependenciesMojoSubPerArtifactRemoveVersion()
-    throws Exception
-{
-    mojo.useSubDirectoryPerArtifact = true;
-    mojo.stripVersion = true;
-    mojo.execute();
-
-    Iterator iter = mojo.project.getArtifacts().iterator();
-    while ( iter.hasNext() )
+        throws Exception
     {
-        Artifact artifact = (Artifact) iter.next();
-        assertUnpacked( artifact );
+        mojo.useSubDirectoryPerArtifact = true;
+        mojo.stripVersion = true;
+        mojo.execute();
+
+        Iterator iter = mojo.project.getArtifacts().iterator();
+        while ( iter.hasNext() )
+        {
+            Artifact artifact = (Artifact) iter.next();
+            assertUnpacked( artifact );
+        }
     }
-}
 
-public void testUnpackDependenciesMojoSubPerArtifactAndTypeRemoveVersion()
-    throws Exception
-{
-    mojo.project.setArtifacts( stubFactory.getTypedArchiveArtifacts() );
-    mojo.project.setDependencyArtifacts( new HashSet() );
-    mojo.useSubDirectoryPerArtifact = true;
-    mojo.useSubDirectoryPerType = true;
-    mojo.stripVersion = true;
-    mojo.execute();
-
-    Iterator iter = mojo.project.getArtifacts().iterator();
-    while ( iter.hasNext() )
+    public void testUnpackDependenciesMojoSubPerArtifactAndTypeRemoveVersion()
+        throws Exception
     {
-        Artifact artifact = (Artifact) iter.next();
-        assertUnpacked( artifact );
+        mojo.project.setArtifacts( stubFactory.getTypedArchiveArtifacts() );
+        mojo.project.setDependencyArtifacts( new HashSet() );
+        mojo.useSubDirectoryPerArtifact = true;
+        mojo.useSubDirectoryPerType = true;
+        mojo.stripVersion = true;
+        mojo.execute();
+
+        Iterator iter = mojo.project.getArtifacts().iterator();
+        while ( iter.hasNext() )
+        {
+            Artifact artifact = (Artifact) iter.next();
+            assertUnpacked( artifact );
+        }
     }
-}
 
     public void testUnpackDependenciesMojoIncludeCompileScope()
         throws Exception
@@ -589,7 +590,8 @@ public void testUnpackDependenciesMojoSubPerArtifactAndTypeRemoveVersion()
     public File getUnpackedFile( Artifact artifact )
     {
         File destDir = DependencyUtil.getFormattedOutputDirectory( mojo.isUseSubDirectoryPerType(), mojo
-            .isUseSubDirectoryPerArtifact(), mojo.stripVersion, mojo.getOutputDirectory(), artifact );
+            .isUseSubDirectoryPerArtifact(), mojo.useRepositoryLayout, mojo.stripVersion, mojo.getOutputDirectory(),
+                                                                   artifact );
         File unpacked = new File( destDir, ArtifactStubFactory.getUnpackableFileName( artifact ) );
         assertTrue( unpacked.exists() );
         return unpacked;

@@ -76,7 +76,6 @@ public class TestCopyDependenciesMojo2
 
     }
 
-
     public void testCopyDependenciesMojoIncludeCompileScope()
         throws Exception
     {

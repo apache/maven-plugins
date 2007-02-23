@@ -43,7 +43,7 @@ public class CopyMojo
     /**
      * Strip artifact version during copy
      * 
-     * @parameter expression="${stripVersion}" default-value="false"
+     * @parameter expression="${mdep.stripVersion}" default-value="false"
      * @parameter
      */
     private boolean stripVersion = false;
@@ -101,7 +101,7 @@ public class CopyMojo
     protected ArtifactItemFilter getMarkedArtifactFilter( ArtifactItem item )
     {
         ArtifactItemFilter destinationNameOverrideFilter = new DestFileFilter( this.isOverWriteReleases(), this
-            .isOverWriteSnapshots(), this.isOverWriteIfNewer(), false, false, this.stripVersion, item
+            .isOverWriteSnapshots(), this.isOverWriteIfNewer(), false, false, false, this.stripVersion, item
             .getOutputDirectory() );
         return destinationNameOverrideFilter;
     }
