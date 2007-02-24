@@ -68,10 +68,8 @@ public class AntRunMojoTest
     public void testDefaultProject()
         throws Exception
     {
-        /*
         String result = invokeMaven( "antrun-default-test", new Properties() );
         assertTrue( result.indexOf( "[echo] Hello World!" ) != -1 );
-        */
     }
 
     /**
@@ -82,7 +80,6 @@ public class AntRunMojoTest
     public void testTasksAttributesProject()
         throws Exception
     {
-        /*
         Properties properties = new Properties();
 
         String result = invokeMaven( "tasksattributes-test", properties );
@@ -91,7 +88,6 @@ public class AntRunMojoTest
         properties.put( "maven.test.skip", "true" );
         result = invokeMaven( "tasksattributes-test", properties );
         assertTrue( result.indexOf( "[echo] To skip me" ) == -1 );
-        */
     }
 
     /**
