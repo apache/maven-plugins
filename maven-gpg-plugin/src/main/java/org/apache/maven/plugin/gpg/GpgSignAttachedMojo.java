@@ -28,16 +28,21 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
+import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.DefaultConsumer;
 import org.codehaus.plexus.util.FileUtils;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PushbackInputStream;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
@@ -49,6 +54,7 @@ import java.util.Map;
  *
  * @author Jason van Zyl
  * @author Jason Dillon
+ * @author Daniel Kulp
  * @goal sign
  * @phase verify
  */
@@ -60,14 +66,14 @@ public class GpgSignAttachedMojo
     /**
      * The passphrase to use when signing.
      *
-     * @parameter expression="${passphrase}"
+     * @parameter expression="${gpg.passphrase}"
      */
     private String passphrase;
 
     /**
      * The "name" of the key to sign with.  Passed to gpg as --local-user.
      * 
-     * @parameter expression="${keyname}"
+     * @parameter expression="${gpg.keyname}"
      */
     private String keyname;
 
@@ -76,10 +82,18 @@ public class GpgSignAttachedMojo
      * Passes --use-agent or --no-use-agent to gpg.   If using an agent,
      * the password is optional as the agent will provide it.
      * 
-     * @parameter expression="${useAgent}" default-value="false"
+     * @parameter expression="${gpg.useagent}" default-value="false"
      * @required
      */
     private boolean useAgent;
+    
+    /**
+     * Skip doing the gpg signing
+     * 
+     * @parameter expression="${gpg.skip}" default-value="false"
+     * @required
+     */
+    private boolean skip;
 
 
     /**
@@ -108,12 +122,42 @@ public class GpgSignAttachedMojo
      * @readonly
      */
     private ArtifactHandlerManager artifactHandlerManager;
+    
+    /**
+     * @parameter expression="${settings}"
+     * @required
+     * @readonly
+     */
+    protected Settings settings;
 
 
     public void execute()
         throws MojoExecutionException
     {
 
+        if ( skip ) 
+        {
+            //We're skipping the signing stuff
+            return;
+        }
+        
+        if ( !useAgent && null == passphrase )
+        {
+            if ( !settings.isInteractiveMode() )
+            {
+                throw new MojoExecutionException("Cannot obtain passphrase in batch mode");
+            }
+            try 
+            {
+                getPassphrase();
+            }
+            catch (IOException e) 
+            {
+                throw new MojoExecutionException("Exception reading password", e);
+            }
+        }
+        
+        
         // ----------------------------------------------------------------------------
         // What we need to generateSignatureForArtifact here
         // ----------------------------------------------------------------------------
@@ -272,4 +316,70 @@ public class GpgSignAttachedMojo
     {
         return new File( basedir, finalName + ".jar" );
     }
+    
+    protected void getPassphrase() throws IOException
+    {
+        //TODO: with JDK 1.6, we could call System.console().readPassword("GPG Passphrase: ", null);
+        
+        System.out.print("GPG Passphrase: ");
+        MaskingThread thread = new MaskingThread();
+        thread.start();
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+
+        passphrase = in.readLine();
+
+        // stop masking
+        thread.stopMasking();
+    }
+    
+    
+    // based on ideas from http://java.sun.com/developer/technicalArticles/Security/pwordmask/
+    class MaskingThread extends Thread
+    {
+        private volatile boolean stop;
+
+       /**
+        * Begin masking until asked to stop.
+        */
+        public void run()
+        {
+            //this needs to be high priority to make sure the characters don't
+            //really get to the screen.
+            
+            int priority = Thread.currentThread().getPriority();
+            Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+
+            try {
+                stop = false;
+                while(!stop)
+                { 
+                    //print a backspace + * to overwrite anything they type
+                    System.out.print("\010*");
+                    try
+                    {
+                        //attempt masking at this rate
+                        Thread.sleep(1);
+                    }
+                    catch (InterruptedException iex)
+                    {
+                        Thread.currentThread().interrupt();
+                        return;
+                    }
+                }
+            }
+            finally
+            {
+                // restore the original priority
+                Thread.currentThread().setPriority(priority);
+            }
+        }
+
+        /**
+         * Instruct the thread to stop masking.
+         */
+        public void stopMasking() {
+            this.stop = true;
+        }
+    }    
 }
