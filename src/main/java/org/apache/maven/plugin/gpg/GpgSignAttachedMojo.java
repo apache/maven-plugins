@@ -61,9 +61,26 @@ public class GpgSignAttachedMojo
      * The passphrase to use when signing.
      *
      * @parameter expression="${passphrase}"
-     * @required
      */
     private String passphrase;
+
+    /**
+     * The "name" of the key to sign with.  Passed to gpg as --local-user.
+     * 
+     * @parameter expression="${keyname}"
+     */
+    private String keyname;
+
+
+    /**
+     * Passes --use-agent or --no-use-agent to gpg.   If using an agent,
+     * the password is optional as the agent will provide it.
+     * 
+     * @parameter expression="${useAgent}" default-value="false"
+     * @required
+     */
+    private boolean useAgent;
+
 
     /**
      * The maven project.
@@ -96,6 +113,7 @@ public class GpgSignAttachedMojo
     public void execute()
         throws MojoExecutionException
     {
+
         // ----------------------------------------------------------------------------
         // What we need to generateSignatureForArtifact here
         // ----------------------------------------------------------------------------
@@ -194,9 +212,32 @@ public class GpgSignAttachedMojo
 
         cmd.setExecutable( "gpg" + ( SystemUtils.IS_OS_WINDOWS ? ".exe" : "" ) );
 
-        cmd.createArgument().setValue( "--passphrase-fd" );
+        if ( useAgent )
+        {
+            cmd.createArgument().setValue( "--use-agent" );
+        }
+        else
+        {
+            cmd.createArgument().setValue( "--no-use-agent" );
+        }
 
-        cmd.createArgument().setValue( "0" );
+        InputStream in = null;
+        if ( null != passphrase) 
+        {
+            cmd.createArgument().setValue( "--passphrase-fd" );
+
+            cmd.createArgument().setValue( "0" );
+
+            // Prepare the input stream which will be used to pass the passphrase to the executable
+            in = new ByteArrayInputStream( passphrase.getBytes() );
+        }
+
+        if ( null != keyname)
+        {
+            cmd.createArgument().setValue( "--local-user" );
+
+            cmd.createArgument().setValue( keyname );
+        }
 
         cmd.createArgument().setValue( "--armor" );
 
@@ -204,8 +245,6 @@ public class GpgSignAttachedMojo
 
         cmd.createArgument().setFile( file );
 
-        // Prepare the input stream which will be used to pass the passphrase to the executable
-        InputStream in = new ByteArrayInputStream( passphrase.getBytes() );
 
         try
         {
