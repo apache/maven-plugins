@@ -255,7 +255,7 @@ documentedproject-1.0-SNAPSHOT.war
        <!-- specifying a filter will override the filter list under build -->    
        <filters>
          <filter>properties/config.prop</filter>
-       </filters    
+       </filters>
        <webResources>
          <resource>
            <directory>resource2</directory>
