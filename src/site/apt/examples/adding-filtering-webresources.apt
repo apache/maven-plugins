@@ -254,7 +254,7 @@ documentedproject-1.0-SNAPSHOT.war
        <!-- the default value is the filter list under build -->
        <!-- specifying a filter will override the filter list under build -->    
        <filters>
-         <filter>properties/config.prop</filters>
+         <filter>properties/config.prop</filter>
        </filters    
        <webResources>
          <resource>
