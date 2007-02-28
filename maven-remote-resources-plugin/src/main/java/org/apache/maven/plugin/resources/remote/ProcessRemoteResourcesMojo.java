@@ -78,16 +78,16 @@ public class ProcessRemoteResourcesMojo
     /**
      * The local repository taken from Maven's runtime. Typically $HOME/.m2/repository.
      *
-     * @parameter expression="${localRepository}
+     * @parameter expression="${localRepository}"
      */
     private ArtifactRepository localRepository;
 
     /**
      * The remote repositories used as specified in your POM.
      *
-     * @parameter expression="${project.repositories}
+     * @parameter expression="${project.repositories}"
      */
-    private ArrayList remoteRepositories;
+    private List remoteRepositories;
 
     /**
      * The current Maven project.
@@ -116,7 +116,7 @@ public class ProcessRemoteResourcesMojo
      * @parameter
      * @required
      */
-    private ArrayList resourceBundles;
+    private List resourceBundles;
 
 
     /**
