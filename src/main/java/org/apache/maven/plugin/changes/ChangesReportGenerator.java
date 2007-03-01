@@ -128,8 +128,6 @@ public class ChangesReportGenerator
 
                     sink.text( action.getIssue() );
 
-                    sinkFigure( "images/external.png", sink );
-
                     sink.link_();
 
                 }

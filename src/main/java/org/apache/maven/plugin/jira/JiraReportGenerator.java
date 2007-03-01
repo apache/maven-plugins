@@ -105,7 +105,7 @@ public class JiraReportGenerator
 
             sink.text( issue.getKey() );
 
-            sinkFigure( sink, "images/external.png" );
+            sink.link_();
 
             sink.tableCell_();
 
