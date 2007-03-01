@@ -33,7 +33,7 @@
 	<issueManagement>
 		<system>JIRA</system>
 		<url>http://jira.codehaus.org/browse/MNG</url>
-	</issueManagement>
+	</issueManagement> 
 	<mailingLists>
 		<!-- duplication from maven-plugins pom - temporary until they inherit properly 
     -->
