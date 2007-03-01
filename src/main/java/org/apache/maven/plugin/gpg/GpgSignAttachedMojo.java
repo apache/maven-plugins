@@ -135,13 +135,14 @@ public class GpgSignAttachedMojo
         throws MojoExecutionException
     {
 
+        String pass = passphrase;
         if ( skip ) 
         {
             //We're skipping the signing stuff
             return;
         }
         
-        if ( !useAgent && null == passphrase )
+        if ( !useAgent && null == pass )
         {
             if ( !settings.isInteractiveMode() )
             {
@@ -149,7 +150,7 @@ public class GpgSignAttachedMojo
             }
             try 
             {
-                getPassphrase();
+                pass = getPassphrase();
             }
             catch (IOException e) 
             {
@@ -172,7 +173,7 @@ public class GpgSignAttachedMojo
 
             File projectArtifact = project.getArtifact().getFile();
 
-            File projectArtifactSignature = generateSignatureForArtifact( projectArtifact );
+            File projectArtifactSignature = generateSignatureForArtifact( projectArtifact, pass );
 
             signingBundles.add( new SigningBundle( project.getArtifact().getType(), projectArtifactSignature ) );
         }
@@ -192,7 +193,7 @@ public class GpgSignAttachedMojo
             throw new MojoExecutionException( "Error copying POM for signing.", e );
         }
 
-        File pomSignature = generateSignatureForArtifact( pomToSign );
+        File pomSignature = generateSignatureForArtifact( pomToSign, pass );
 
         signingBundles.add( new SigningBundle( "pom", pomSignature ) );
 
@@ -206,7 +207,7 @@ public class GpgSignAttachedMojo
 
             File file = artifact.getFile();
 
-            File signature = generateSignatureForArtifact( file );
+            File signature = generateSignatureForArtifact( file, pass );
 
             signingBundles.add( new SigningBundle( artifact.getType(), artifact.getClassifier(), signature ) );
         }
@@ -242,7 +243,7 @@ public class GpgSignAttachedMojo
         }
     }
 
-    private File generateSignatureForArtifact( File file )
+    private File generateSignatureForArtifact( File file , String pass)
         throws MojoExecutionException
     {
         File signature = new File( file + SIGNATURE_EXTENSION );
@@ -266,14 +267,14 @@ public class GpgSignAttachedMojo
         }
 
         InputStream in = null;
-        if ( null != passphrase) 
+        if ( null != pass) 
         {
             cmd.createArgument().setValue( "--passphrase-fd" );
 
             cmd.createArgument().setValue( "0" );
 
             // Prepare the input stream which will be used to pass the passphrase to the executable
-            in = new ByteArrayInputStream( passphrase.getBytes() );
+            in = new ByteArrayInputStream( pass.getBytes() );
         }
 
         if ( null != keyname)
@@ -317,20 +318,42 @@ public class GpgSignAttachedMojo
         return new File( basedir, finalName + ".jar" );
     }
     
-    protected void getPassphrase() throws IOException
+    private MavenProject findReactorProject(MavenProject prj) {
+        if ( prj.getParent() != null )
+        {
+            if ( prj.getParent().getBasedir() != null && prj.getParent().getBasedir().exists() )
+            {
+                return findReactorProject( prj.getParent() );
+            }
+        }
+        return prj;
+    }
+    
+    protected String getPassphrase() throws IOException
     {
-        //TODO: with JDK 1.6, we could call System.console().readPassword("GPG Passphrase: ", null);
-        
-        System.out.print("GPG Passphrase: ");
-        MaskingThread thread = new MaskingThread();
-        thread.start();
-
-        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-
-        passphrase = in.readLine();
-
-        // stop masking
-        thread.stopMasking();
+        String pass = project.getProperties().getProperty("gpg.passphrase");
+        if (pass == null) 
+        {
+            MavenProject prj2 = findReactorProject(project);
+            pass = prj2.getProperties().getProperty("gpg.passphrase");
+        }
+        if (pass == null) 
+        {
+            //TODO: with JDK 1.6, we could call System.console().readPassword("GPG Passphrase: ", null);
+            
+            System.out.print("GPG Passphrase: ");
+            MaskingThread thread = new MaskingThread();
+            thread.start();
+    
+            BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+    
+            pass = in.readLine();
+    
+            // stop masking
+            thread.stopMasking();
+        }
+        findReactorProject(project).getProperties().setProperty("gpg.passphrase", pass);
+        return pass;
     }
     
     
