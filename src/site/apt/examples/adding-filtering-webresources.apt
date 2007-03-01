@@ -160,7 +160,7 @@ documentedproject-1.0-SNAPSHOT.war
             <directory>resource2</directory>
             <!-- there's no default value for this -->
             <excludes>
-               <exclude>**/image2</exlude>                     
+               <exclude>**/image2</exclude>                     
             </excludes>
           </resource>
         </webResources>
@@ -186,7 +186,7 @@ documentedproject-1.0-SNAPSHOT.war
           <includes>          
           <!-- there's no default value for this -->
           <excludes>
-             <exclude>**/*.jpg</exlude>
+             <exclude>**/*.jpg</exclude>
           </excludes>
         </resource>
       </webResources>
@@ -207,7 +207,7 @@ documentedproject-1.0-SNAPSHOT.war
     <excludes>
        <exclude>*pattern3/pattern3</exclude>
        <exclude>pattern4/pattern4</exclude>
-    </exludes>
+    </excludes>
   [...]
 +----------+      
   
@@ -267,7 +267,7 @@ documentedproject-1.0-SNAPSHOT.war
            <!-- enable filtering -->
            <filtering>true</filtering>
            <excludes>
-              <exclude>**/properties<exclude>
+              <exclude>**/properties</exclude>
            </excludes>
          </resource>
        </webResources>
@@ -344,7 +344,7 @@ documentedproject-1.0-SNAPSHOT.war
            <!-- enable filtering -->
            <filtering>true</filtering>
            <excludes>
-              <exclude>**/properties<exclude>
+              <exclude>**/properties</exclude>
            </excludes>
          </resource>        
         </resource>
