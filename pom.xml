@@ -132,7 +132,7 @@
       <plugin>
         <groupId>org.codehaus.modello</groupId>
         <artifactId>modello-maven-plugin</artifactId>
-        <version>1.0-alpha-8</version>
+        <version>1.0-alpha-14</version>
         <executions>
           <execution>
             <id>descriptor</id>
@@ -361,6 +361,6 @@
       <version>1.0-FCS</version>
       <scope>test</scope>
     </dependency>
-  </dependencies>
+  </dependencies> 
 </project>
 
