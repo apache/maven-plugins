@@ -122,6 +122,22 @@ public abstract class AbstractJxrReport
     private String stylesheet;
 
     /**
+     * A list of exclude patterns to use. By default no files are excluded.
+     *
+     * @parameter expression="${excludes}"
+     * @since 2.1
+     */
+    private ArrayList excludes;
+
+    /**
+     * A list of include patterns to use. By default all .java files are included.
+     *
+     * @parameter expression="${includes}"
+     * @since 2.1
+     */
+    private ArrayList includes;
+
+    /**
      * The projects in the reactor for aggregation report.
      *
      * @parameter expression="${reactorProjects}"
@@ -231,6 +247,15 @@ public abstract class AbstractJxrReport
         jxr.setOutputEncoding( outputEncoding );
         jxr.setRevision( "HEAD" );
         jxr.setJavadocLinkDir( getJavadocLocation() );
+        // Set include/exclude patterns on the jxr instance
+        if ( excludes != null && !excludes.isEmpty() )
+        {
+            jxr.setExcludes( (String[]) excludes.toArray( new String[0] ) );
+        }
+        if ( includes != null && !includes.isEmpty() )
+        {
+            jxr.setIncludes( (String[]) includes.toArray( new String[0] ) );
+        }
 
         jxr.xref( sourceDirs, templateDir, windowTitle, docTitle, getBottomText( project.getInceptionYear() ) );
 
