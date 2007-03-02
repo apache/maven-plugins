@@ -29,6 +29,7 @@ import java.io.IOException;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
+ * @author <a href="mailto:dennisl@apache.org">Dennis Lundberg</a>
  */
 public class JxrReportTest
     extends AbstractMojoTestCase
@@ -254,6 +255,54 @@ public class JxrReportTest
                                   "target/test/unit/nojavadocdir-test/target/site/xref/nojavadocdir/test/App.html" ) );
         assertTrue( str.toLowerCase().indexOf( "/apidocs/nojavadocdir/test/app.html".toLowerCase() ) != -1 );
 
+    }
+
+    /**
+     * Test the plugin with an exclude configuration.
+     *
+     * @throws Exception
+     */
+    public void testExclude()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(),
+                                 "src/test/resources/unit/exclude-configuration/exclude-configuration-plugin-config.xml" );
+        JxrReport mojo = (JxrReport) lookupMojo( "jxr", testPom );
+        mojo.execute();
+
+        // check that the non-excluded xref files were generated
+        File generatedFile = new File( getBasedir(),
+                                       "target/test/unit/exclude-configuration/target/site/xref/exclude/configuration/App.html" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        // check that the excluded xref files were not generated
+        generatedFile = new File( getBasedir(),
+                                  "target/test/unit/exclude-configuration/target/site/xref/exclude/configuration/AppSample.html" );
+        assertFalse( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+    }
+
+    /**
+     * Test the plugin with an include configuration.
+     *
+     * @throws Exception
+     */
+    public void testInclude()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(),
+                                 "src/test/resources/unit/include-configuration/include-configuration-plugin-config.xml" );
+        JxrReport mojo = (JxrReport) lookupMojo( "jxr", testPom );
+        mojo.execute();
+
+        // check that the included xref files were generated
+        File generatedFile = new File( getBasedir(),
+                                       "target/test/unit/include-configuration/target/site/xref/include/configuration/App.html" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        // check that the non-included xref files were not generated
+        generatedFile = new File( getBasedir(),
+                                  "target/test/unit/include-configuration/target/site/xref/include/configuration/AppSample.html" );
+        assertFalse( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
     }
 
     public void testExceptions()
