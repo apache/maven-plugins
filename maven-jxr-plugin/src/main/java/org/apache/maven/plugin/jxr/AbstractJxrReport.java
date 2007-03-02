@@ -242,7 +242,7 @@ public abstract class AbstractJxrReport
      * Get the bottom text to be displayed at the lower part of the generated JXR reports.
      *
      * @param inceptionYear the year when the project was started
-     * @return  a String that contains the bottom text to be displayed in the lower part of the generrated JXR reports
+     * @return  a String that contains the bottom text to be displayed in the lower part of the generated JXR reports
      */
     private String getBottomText( String inceptionYear )
     {
@@ -251,7 +251,11 @@ public abstract class AbstractJxrReport
 
         String bottom = StringUtils.replace( this.bottom, "{currentYear}", year );
 
-        if ( inceptionYear != null )
+        if ( inceptionYear == null )
+        {
+            bottom = StringUtils.replace( bottom, "{inceptionYear}-", "" );
+        }
+        else
         {
             if ( inceptionYear.equals( year ) )
             {
