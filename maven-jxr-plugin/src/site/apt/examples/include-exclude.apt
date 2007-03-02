@@ -1,0 +1,73 @@
+ ------
+ Including/Excluding Source Files
+ ------
+ Dennis Lundberg
+ ------
+ 2 March 2007
+ ------
+
+Including/Excluding Source Files
+
+ To include or exclude files from the generated JXR files, you need to
+ configure the JXR plugin in your <<<pom.xml>>>. This is done using patterns
+ similar to those used in Ant.
+
+*Including files
+
+  The default is to include all java files. The pattern <<<**/*.java>>> is used
+  to achieve this. If you want to use a different pattern you just configure it
+  in your pom.xml like this:
+
++-----+
+<project>
+  ...
+  <reporting>
+    <plugins>
+      ...
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <configuration>
+          ...
+          <includes>
+            <include>**/include/*.java</include>
+          <includes>
+          ...
+        </configuration>
+      </plugin>
+    </plugins>
+  ...
+  </reporting>
+  ...
+</project>
++-----+
+
+*Excluding files
+
+  By default no files are excluded. You can exclude files by configuring your
+  pom.xml. If you want to exclude all your abstract classes a configuration
+  like this might be useful:
+
++-----+
+<project>
+  ...
+  <reporting>
+    <plugins>
+      ...
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <configuration>
+          ...
+          <excludes>
+            <exclude>**/Abstract*.java</exclude>
+          </excludes>
+          ...
+        </configuration>
+      </plugin>
+    </plugins>
+  ...
+  </reporting>
+  ...
+</project>
++-----+

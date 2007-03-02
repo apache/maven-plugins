@@ -27,6 +27,7 @@ under the License.
     </menu>
     <menu name="Examples">
       <item name="Aggregating JXR Reports for Multi-Projects" href="/examples/aggregate.html"/>
+      <item name="Including/Excluding Source Files" href="/examples/include-exclude.html"/>
       <item name="Linking JXR Files to Javadocs" href="/examples/linkjavadoc.html"/>
       <item name="JXR Sample Report" href="/xref/index.html"/>
     </menu>
