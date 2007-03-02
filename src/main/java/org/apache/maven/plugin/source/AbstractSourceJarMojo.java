@@ -45,34 +45,16 @@ public abstract class AbstractSourceJarMojo
      * @readonly
      * @required
      */
-    private MavenProject project;
-
-    /**
-     * @parameter expression="${project.packaging}"
-     * @readonly
-     * @required
-     */
-    protected String packaging;
-
-    /**
-     * The project where the plugin is currently being executed.
-     * The default value is populated from maven.
-     *
-     * @parameter expression="${executedProject}"
-     * @required
-     */
-    private MavenProject executedProject;
+    protected MavenProject project;
 
     /**
      * Specifies whether or not to attach the artifact to the project
      *
      * @parameter expression="${attach}" default-value="true"
      */
-    private boolean attach = true;
+    private boolean attach;
 
-    /**
-     * @component
-     */
+    /** @component */
     private MavenProjectHelper projectHelper;
 
     /**
@@ -97,20 +79,7 @@ public abstract class AbstractSourceJarMojo
      */
     protected String finalName;
 
-    //MAPI: how to programatically tell maven we will do aggregation, so that I don't have to create a separate mojo.
-    //      we just want to do the right thing 99% of the time. Would be know by running with other goals what to do.
-    // sources/javadoc: what are the cases
-    //
-    //MAPI: how to make this backward compatible
-
-    /**
-     * @parameter expression="${aggregate}" default-value="true"
-     */
-    protected boolean aggregate;
-
-    /**
-     * @parameter expression="${reactorProjects}"
-     */
+    /** @parameter expression="${reactorProjects}" */
     protected List reactorProjects;
 
     protected abstract String getClassifier();
@@ -119,19 +88,17 @@ public abstract class AbstractSourceJarMojo
 
     protected abstract List getResources( MavenProject project );
 
-    /**
-     * @see org.apache.maven.plugin.AbstractMojo#execute()
-     */
+    /** @see org.apache.maven.plugin.AbstractMojo#execute() */
     public void execute()
         throws MojoExecutionException
     {
-        // This is working around a problem with the test harness where the reactorProjects is always null.
+        packageSources( project );
+    }
 
-        if ( reactorProjects != null )
-        {
-            packageSources( reactorProjects );
-        }
-        else
+    protected void packageSources( MavenProject project )
+        throws MojoExecutionException
+    {
+        if ( !"pom".equals( project.getPackaging() ) )
         {
             packageSources( Arrays.asList( new Object[]{project} ) );
         }
@@ -140,60 +107,58 @@ public abstract class AbstractSourceJarMojo
     protected void packageSources( List projects )
         throws MojoExecutionException
     {
-        if ( "pom".equals( packaging ) )
+        if ( project.getArtifact().getClassifier() != null )
         {
-            getLog().info( "NOT adding sources to attached artifacts for packaging: \'" + packaging + "\'." );
+            getLog().warn( "NOT adding sources to artifacts with classifier as Maven only supports one classifier " +
+                "per artifact. Current artifact [" + project.getArtifact().getId() + "] has a [" +
+                project.getArtifact().getClassifier() + "] classifier." );
         }
         else
         {
-            if ( project.getArtifact().getClassifier() != null )
+            Archiver archiver = createArchiver();
+
+            for ( Iterator i = projects.iterator(); i.hasNext(); )
             {
-                getLog().warn(
-                    "NOT adding sources to artifacts with classifier as Maven only supports one classifier " +
-                        "per artifact. Current artifact [" + project.getArtifact().getId() + "] has a [" +
-                        project.getArtifact().getClassifier() + "] classifier." );
+                MavenProject project = getProject( (MavenProject) i.next() );
+
+                if ( "pom".equals( project.getPackaging() ) )
+                {
+                    continue;
+                }
+
+                archiveProjectContent( project, archiver );
+            }
+
+            File outputFile = new File( outputDirectory, finalName + "-" + getClassifier() + ".jar" );
+
+            try
+            {
+                archiver.setDestFile( outputFile );
+
+                archiver.createArchive();
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Error creating source archive: " + e.getMessage(), e );
+            }
+            catch ( ArchiverException e )
+            {
+                throw new MojoExecutionException( "Error creating source archive: " + e.getMessage(), e );
+            }
+
+            if ( attach )
+            {
+                projectHelper.attachArtifact( project, "java-source", getClassifier(), outputFile );
             }
             else
             {
-                Archiver archiver = createArchiver();
-
-                for ( Iterator i = projects.iterator(); i.hasNext(); )
-                {
-                    MavenProject p = (MavenProject) i.next();
-
-                    archiveProjectContent( p, archiver );
-                }
-
-                File outputFile = new File( outputDirectory, finalName + "-" + getClassifier() + ".jar" );
-
-                try
-                {
-                    archiver.setDestFile( outputFile );
-
-                    archiver.createArchive();
-                }
-                catch ( IOException e )
-                {
-                    throw new MojoExecutionException( "Error creating source archive: " + e.getMessage(), e );
-                }
-                catch ( ArchiverException e )
-                {
-                    throw new MojoExecutionException( "Error creating source archive: " + e.getMessage(), e );
-                }
-
-                if ( attach )
-                {
-                    projectHelper.attachArtifact( project, "java-source", getClassifier(), outputFile );
-                }
-                else
-                {
-                    getLog().info( "NOT adding java-sources to attached artifacts list." );
-                }
+                getLog().info( "NOT adding java-sources to attached artifacts list." );
             }
         }
     }
 
-    protected void archiveProjectContent( MavenProject project, Archiver archiver )
+    protected void archiveProjectContent( MavenProject project,
+                                          Archiver archiver )
         throws MojoExecutionException
     {
         for ( Iterator i = getSources( project ).iterator(); i.hasNext(); )
@@ -208,6 +173,7 @@ public abstract class AbstractSourceJarMojo
             }
         }
 
+        //MAPI: this should be taken from the resources plugin
         for ( Iterator i = getResources( project ).iterator(); i.hasNext(); )
         {
             Resource resource = (Resource) i.next();
@@ -253,7 +219,8 @@ public abstract class AbstractSourceJarMojo
      * @param outputFile the artifact file to be attached
      * @param classifier
      */
-    protected void attachArtifact( File outputFile, String classifier )
+    protected void attachArtifact( File outputFile,
+                                   String classifier )
     {
     }
 
@@ -280,7 +247,10 @@ public abstract class AbstractSourceJarMojo
         return archiver;
     }
 
-    protected void addDirectory( Archiver archiver, File sourceDirectory, String[] includes, String[] excludes )
+    protected void addDirectory( Archiver archiver,
+                                 File sourceDirectory,
+                                 String[] includes,
+                                 String[] excludes )
         throws MojoExecutionException
     {
         try
@@ -290,6 +260,18 @@ public abstract class AbstractSourceJarMojo
         catch ( ArchiverException e )
         {
             throw new MojoExecutionException( "Error adding directory to source archive.", e );
+        }
+    }
+
+    protected MavenProject getProject( MavenProject project )
+    {
+        if ( project.getExecutionProject() != null )
+        {
+            return project.getExecutionProject();
+        }
+        else
+        {
+            return project;
         }
     }
 }
