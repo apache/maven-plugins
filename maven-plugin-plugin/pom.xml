@@ -36,7 +36,7 @@
   </description>
   <inceptionYear>2001</inceptionYear>
   <prerequisites>
-    <maven>2.0.4</maven>
+    <maven>2.0.5</maven>
   </prerequisites>
   <issueManagement>
     <system>JIRA</system>
