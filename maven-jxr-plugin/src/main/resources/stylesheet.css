@@ -95,22 +95,22 @@ hr {
 }
 
 /* JXR style sheet */
-#jxr_comment
+.jxr_comment
 {
     color: #390;
 }
 
-#jxr_javadoccomment
+.jxr_javadoccomment
 {
     color: #A00;
 }
 
-#jxr_string
+.jxr_string
 {
     color: #009;
 }
 
-#jxr_keyword
+.jxr_keyword
 {
     color: #000;
 }
