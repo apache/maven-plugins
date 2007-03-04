@@ -22,6 +22,7 @@ package org.apache.maven.plugin.jxr;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.jxr.JXR;
 import org.apache.maven.jxr.JxrException;
+import org.apache.maven.model.Organization;
 import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
@@ -100,7 +101,7 @@ public abstract class AbstractJxrReport
     /**
      * String uses at the bottom of the Xref HTML files.
      *
-     * @parameter expression="${bottom}" default-value="Copyright &copy; {inceptionYear}-{currentYear} ${project.organization.name}. All Rights Reserved."
+     * @parameter expression="${bottom}" default-value="Copyright &copy; {inceptionYear}-{currentYear} {projectOrganizationName}. All Rights Reserved."
      */
     private String bottom;
 
@@ -257,7 +258,7 @@ public abstract class AbstractJxrReport
             jxr.setIncludes( (String[]) includes.toArray( new String[0] ) );
         }
 
-        jxr.xref( sourceDirs, templateDir, windowTitle, docTitle, getBottomText( project.getInceptionYear() ) );
+        jxr.xref( sourceDirs, templateDir, windowTitle, docTitle, getBottomText( project.getInceptionYear(), project.getOrganization() ) );
 
         // and finally copy the stylesheet
         copyRequiredResources( destinationDirectory );
@@ -267,9 +268,10 @@ public abstract class AbstractJxrReport
      * Get the bottom text to be displayed at the lower part of the generated JXR reports.
      *
      * @param inceptionYear the year when the project was started
+     * @param organization the organization for the project
      * @return  a String that contains the bottom text to be displayed in the lower part of the generated JXR reports
      */
-    private String getBottomText( String inceptionYear )
+    private String getBottomText( String inceptionYear, Organization organization )
     {
         int actualYear = Calendar.getInstance().get( Calendar.YEAR );
         String year = String.valueOf( actualYear );
@@ -291,6 +293,16 @@ public abstract class AbstractJxrReport
                 bottom = StringUtils.replace( bottom, "{inceptionYear}", inceptionYear );
             }
         }
+
+        if ( organization != null && StringUtils.isNotEmpty( organization.getName() ) )
+        {
+            bottom = StringUtils.replace( bottom, "{projectOrganizationName}", organization.getName() );
+        }
+        else
+        {
+            bottom = StringUtils.replace( bottom, " {projectOrganizationName}", "" );
+        }
+
         return bottom;
     }
 
