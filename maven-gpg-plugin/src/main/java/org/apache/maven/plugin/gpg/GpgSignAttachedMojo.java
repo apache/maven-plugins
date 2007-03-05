@@ -341,11 +341,18 @@ public class GpgSignAttachedMojo
         {
             //TODO: with JDK 1.6, we could call System.console().readPassword("GPG Passphrase: ", null);
             
+            BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+            while (System.in.available() != 0)
+            {
+                //there's some junk already on the input stream, consume it
+                //so we can get the real passphrase
+                System.in.read();
+            }
+            
             System.out.print("GPG Passphrase: ");
             MaskingThread thread = new MaskingThread();
             thread.start();
     
-            BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     
             pass = in.readLine();
     
