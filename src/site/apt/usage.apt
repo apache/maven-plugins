@@ -62,5 +62,7 @@ Usage
   Then you specify the passphrase on the command line. Like this:
 
 +----------+
-mvn verify -Dpassphrase=thephrase
+mvn verify -Dgpg.passphrase=thephrase
 +----------+
+
+  If you don't specify a passphrase, it will prompt for one.

@@ -37,5 +37,7 @@ mvn deploy
  your private key on the command line. Like this:
 
 +----------+
-mvn deploy -Dpassphrase=thephrase
+mvn deploy -Dgpg.passphrase=thephrase
 +----------+
+
+  If you don't specify a passphrase, it will prompt for one.
