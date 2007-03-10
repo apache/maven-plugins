@@ -52,6 +52,9 @@ under the License.
             <exclude>**/Sample.java</exclude>
             <exclude>**/AnotherSample.java</exclude>
           </excludes>
+          <compileSourceRoots>
+            <compileSourceRoot>${basedir}/src/test/resources/unit/custom-configuration/</compileSourceRoot>
+          </compileSourceRoots>          
         </configuration>
         <dependencies>
           <dependency>

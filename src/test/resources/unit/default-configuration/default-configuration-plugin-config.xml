@@ -40,6 +40,10 @@ under the License.
           <linkXRef>true</linkXRef>
           <xrefLocation>${basedir}/target/test/unit/default-configuration/target/site/xref</xrefLocation>
           <sourceEncoding>ISO-8859-1</sourceEncoding>
+          
+          <compileSourceRoots>
+            <compileSourceRoot>${basedir}/src/test/resources/unit/default-configuration/</compileSourceRoot>
+          </compileSourceRoots>
         </configuration>
         <dependencies>
           <dependency>

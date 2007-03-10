@@ -69,9 +69,17 @@ public class PmdViolationCheckMojo
 
         StringBuffer buff = new StringBuffer( 100 );
         buff.append( "PMD " + severity + ": " );
-        buff.append( item.get( "package" ) );
-        buff.append( "." ).append( item.get( "class" ) );
-        buff.append( ":" ).append( item.get( "line" ) );
+        if ( item.containsKey( "package" ) )
+        {
+            buff.append( item.get( "package" ) );
+            buff.append( "." );
+        }
+        if ( item.containsKey( "class" ) )
+        {
+            buff.append( item.get( "class" ) );
+            buff.append( ":" );
+        }
+        buff.append( item.get( "line" ) );
         buff.append( " Rule:" ).append( item.get( "rule" ) );
         buff.append( " Priority:" ).append( item.get( "priority" ) );
         buff.append( " " ).append( item.get( "text" ) ).append( "." );
