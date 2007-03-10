@@ -40,6 +40,11 @@ under the License.
           <linkXRef>false</linkXRef>
           <xrefLocation>${basedir}/target/test/unit/default-configuration/target/site/xref</xrefLocation>
           <minimumTokens>100</minimumTokens>
+          
+          <compileSourceRoots>
+            <compileSourceRoot>${basedir}/src/test/resources/unit/default-configuration/</compileSourceRoot>
+          </compileSourceRoots>
+          
         </configuration>
       </plugin>
     </plugins>

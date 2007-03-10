@@ -43,6 +43,9 @@ under the License.
           <excludes>
             <exclude>**/Sample.java</exclude>
           </excludes>
+          <compileSourceRoots>
+            <compileSourceRoot>${basedir}/src/test/resources/unit/custom-configuration/</compileSourceRoot>
+          </compileSourceRoots>          
         </configuration>
       </plugin>
     </plugins>
