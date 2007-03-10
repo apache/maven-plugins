@@ -104,6 +104,7 @@ public abstract class AbstractPmdReport
      * A list of files to exclude from checking. Can contain ant-style wildcards and double wildcards.
      *
      * @parameter
+     * @since 2.2
      */
     private String[] excludes;
     
@@ -111,6 +112,7 @@ public abstract class AbstractPmdReport
      * A list of files to include from checking. Can contain ant-style wildcards and double wildcards.  
      * Defaults to **\/*.java
      *
+     * @since 2.2
      * @parameter
      */
     private String[] includes;
@@ -123,22 +125,32 @@ public abstract class AbstractPmdReport
      *
      * @parameter expression="${project.compileSourceRoots}"
      * @required
+     * @readonly
      */
     private List compileSourceRoots;
     
     /**
-     * The source directories containing the test-source to be compiled.
+     * The source directories containing the test-sources to be compiled.
      *
      * @parameter expression="${project.testCompileSourceRoots}"
      * @required
+     * @readonly
      */
     private List testSourceRoots;
     
-
+    /**
+     * The project source directories that should be excluded.
+     *
+     * @since 2.2
+     * @parameter
+     */
+    private List excludeRoots;
+    
     /**
      * Run PMD on the tests
      *
      * @parameter default-value="false"
+     * @since 2.2
      */
     protected boolean includeTests;
     
@@ -208,6 +220,23 @@ public abstract class AbstractPmdReport
     protected List getFilesToProcess( )
         throws IOException
     {
+        if ( excludeRoots == null )
+        {
+            excludeRoots = Collections.EMPTY_LIST;
+        }
+        List excludeRootFiles = new ArrayList(excludeRoots.size());
+        
+        for (Iterator it = excludeRoots.iterator(); it.hasNext();) 
+        {
+            String root = (String)it.next();
+            File file = new File(root);
+            if ( file.exists()
+                && file.isDirectory())
+            {
+                excludeRootFiles.add(file);
+            }
+        }
+        
         String excluding = getIncludeExcludeString( excludes );
         String including = getIncludeExcludeString( includes );
         List files = new ArrayList();
@@ -238,10 +267,11 @@ public abstract class AbstractPmdReport
             String root = (String)it.next();
             File sourceDirectory = new File(root);
             if ( sourceDirectory.exists()
-                && sourceDirectory.isDirectory() )
+                && sourceDirectory.isDirectory()
+                && !excludeRootFiles.contains(sourceDirectory))
             {
                 files.addAll( FileUtils.getFiles( sourceDirectory, including, excludesStr.toString() ) );
-            }            
+            }
         }
         
         if ( includeTests )
@@ -250,11 +280,13 @@ public abstract class AbstractPmdReport
             {
                 String root = (String)it.next();
                 File sourceDirectory = new File(root);
+                
                 if ( sourceDirectory.exists()
-                    && sourceDirectory.isDirectory() )
+                    && sourceDirectory.isDirectory()
+                    && !excludeRootFiles.contains(sourceDirectory))
                 {
                     files.addAll( FileUtils.getFiles( sourceDirectory, including, excludesStr.toString() ) );
-                }            
+                }
             }
         }
         return files;
