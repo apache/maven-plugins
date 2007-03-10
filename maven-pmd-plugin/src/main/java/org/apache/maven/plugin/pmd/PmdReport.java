@@ -168,7 +168,7 @@ public class PmdReport
             List files;
             try
             {
-                files = getFilesToProcess( "**/*.java" );
+                files = getFilesToProcess( );
                 Collections.sort( files );
             }
             catch ( IOException e )
@@ -224,6 +224,13 @@ public class PmdReport
                 try
                 {
                     Writer writer = new FileWriter( new File( targetDirectory, "pmd." + format ) );
+                    writer.write( buffer, 0, buffer.length() );
+                    writer.close();
+
+                    File siteDir = new File(targetDirectory, "site");
+                    siteDir.mkdirs();
+                    writer = new FileWriter( new File( siteDir,
+                                                         "pmd." + format ) );
                     writer.write( buffer, 0, buffer.length() );
                     writer.close();
                 }

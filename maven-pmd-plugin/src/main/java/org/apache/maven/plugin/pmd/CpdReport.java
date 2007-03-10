@@ -90,7 +90,7 @@ public class CpdReport
             CPD cpd = new CPD(minimumTokens, new JavaLanguage());
             try
             {
-                List files = getFilesToProcess( "**/*.java" );
+                List files = getFilesToProcess( );
                 Collections.sort( files );
                 for ( int i = 0; i < files.size(); i++ )
                 {
@@ -118,6 +118,15 @@ public class CpdReport
                     Writer writer = new FileWriter( new File( targetDirectory, "cpd." + format ) );
                     writer.write( buffer, 0, buffer.length() );
                     writer.close();
+                    
+                    
+                    File siteDir = new File(targetDirectory, "site");
+                    siteDir.mkdirs();
+                    writer = new FileWriter( new File( siteDir,
+                                                         "cpd." + format ) );
+                    writer.write( buffer, 0, buffer.length() );
+                    writer.close();
+                    
                 }
                 catch ( IOException ioe )
                 {
