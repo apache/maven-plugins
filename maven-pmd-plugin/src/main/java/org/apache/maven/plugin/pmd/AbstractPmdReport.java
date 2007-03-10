@@ -21,6 +21,7 @@ package org.apache.maven.plugin.pmd;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -105,6 +106,42 @@ public abstract class AbstractPmdReport
      * @parameter
      */
     private String[] excludes;
+    
+    /**
+     * A list of files to include from checking. Can contain ant-style wildcards and double wildcards.  
+     * Defaults to **\/*.java
+     *
+     * @parameter
+     */
+    private String[] includes;
+
+    
+    
+    
+    /**
+     * The source directories containing the sources to be compiled.
+     *
+     * @parameter expression="${project.compileSourceRoots}"
+     * @required
+     */
+    private List compileSourceRoots;
+    
+    /**
+     * The source directories containing the test-source to be compiled.
+     *
+     * @parameter expression="${project.testCompileSourceRoots}"
+     * @required
+     */
+    private List testSourceRoots;
+    
+
+    /**
+     * Run PMD on the tests
+     *
+     * @parameter default-value="false"
+     */
+    protected boolean includeTests;
+    
 
     /**
      * @see org.apache.maven.reporting.AbstractMavenReport#getProject()
@@ -168,32 +205,57 @@ public abstract class AbstractPmdReport
      * @return a List of the files where the PMD tool will be executed
      * @throws java.io.IOException
      */
-    protected List getFilesToProcess( String includes )
+    protected List getFilesToProcess( )
         throws IOException
     {
-        String excluding = getExclusionsString( excludes );
-        List files = Collections.EMPTY_LIST;
-
-        File dir = new File( project.getBuild().getSourceDirectory() );
-        if ( dir.exists() )
+        String excluding = getIncludeExcludeString( excludes );
+        String including = getIncludeExcludeString( includes );
+        List files = new ArrayList();
+        
+        if ( "".equals(including) )
         {
+            including = "**/*.java";
+        }
 
-            StringBuffer excludesStr = new StringBuffer();
-            if ( StringUtils.isNotEmpty( excluding ) )
+        StringBuffer excludesStr = new StringBuffer();
+        if ( StringUtils.isNotEmpty( excluding ) )
+        {
+            excludesStr.append( excluding );
+        }
+        String[] defaultExcludes = FileUtils.getDefaultExcludes();
+        for ( int i = 0; i < defaultExcludes.length; i++ )
+        {
+            if ( excludesStr.length() > 0 )
             {
-                excludesStr.append( excluding );
+                excludesStr.append( "," );
             }
-            String[] defaultExcludes = FileUtils.getDefaultExcludes();
-            for ( int i = 0; i < defaultExcludes.length; i++ )
+            excludesStr.append( defaultExcludes[i] );
+        }
+        getLog().debug( "Excluded files: '" + excludesStr + "'" );
+
+        for ( Iterator it = compileSourceRoots.iterator(); it.hasNext();)
+        {
+            String root = (String)it.next();
+            File sourceDirectory = new File(root);
+            if ( sourceDirectory.exists()
+                && sourceDirectory.isDirectory() )
             {
-                if ( excludesStr.length() > 0 )
+                files.addAll( FileUtils.getFiles( sourceDirectory, including, excludesStr.toString() ) );
+            }            
+        }
+        
+        if ( includeTests )
+        {
+            for ( Iterator it = testSourceRoots.iterator(); it.hasNext();)
+            {
+                String root = (String)it.next();
+                File sourceDirectory = new File(root);
+                if ( sourceDirectory.exists()
+                    && sourceDirectory.isDirectory() )
                 {
-                    excludesStr.append( "," );
-                }
-                excludesStr.append( defaultExcludes[i] );
+                    files.addAll( FileUtils.getFiles( sourceDirectory, including, excludesStr.toString() ) );
+                }            
             }
-            getLog().debug( "Excluded files: '" + excludesStr + "'" );
-            files = FileUtils.getFiles( dir, includes, excludesStr.toString() );
         }
         return files;
     }
@@ -204,23 +266,23 @@ public abstract class AbstractPmdReport
      * @param exclude the array of Strings that contains the files to be excluded
      * @return a String that contains the concatenates file names
      */
-    private String getExclusionsString( String[] exclude )
+    private String getIncludeExcludeString( String[] arr )
     {
-        StringBuffer excludes = new StringBuffer();
+        StringBuffer str = new StringBuffer();
 
-        if ( exclude != null )
+        if ( arr != null )
         {
-            for ( int index = 0; index < exclude.length; index++ )
+            for ( int index = 0; index < arr.length; index++ )
             {
-                if ( excludes.length() > 0 )
+                if ( str.length() > 0 )
                 {
-                    excludes.append( ',' );
+                    str.append( ',' );
                 }
-                excludes.append( exclude[index] );
+                str.append( arr[index] );
             }
         }
 
-        return excludes.toString();
+        return str.toString();
     }
 
 
