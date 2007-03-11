@@ -92,7 +92,6 @@
     <module>maven-install-plugin</module>
     <module>maven-jar-plugin</module>
     <module>maven-javadoc-plugin</module>
-    <module>maven-jxr-plugin</module>
     <module>maven-one-plugin</module>
     <module>maven-plugin-plugin</module>
     <module>maven-pmd-plugin</module>
