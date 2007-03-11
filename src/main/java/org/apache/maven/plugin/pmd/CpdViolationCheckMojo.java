@@ -20,6 +20,7 @@ package org.apache.maven.plugin.pmd;
  */
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -37,13 +38,25 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 public class CpdViolationCheckMojo
     extends AbstractPmdViolationCheckMojo
 {
+
+    /**
+     * Skip the CPD violation checks.  Most useful on the command line
+     * via "-Dmaven.cpd.skip=true".
+     *
+     * @parameter expression="${maven.cpd.skip}" default-value="false"
+     */
+    private boolean skip;
+    
     /**
      * @see org.apache.maven.plugin.AbstractMojo#execute()
      */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        executeCheck( "cpd.xml", "duplication", "CPD duplication",10 );
+        if ( !skip )
+        {
+            executeCheck( "cpd.xml", "duplication", "CPD duplication", 0 );
+        }
     }
     
     /**
@@ -54,7 +67,6 @@ public class CpdViolationCheckMojo
     protected void printError( Map item, String severity )
     {
         // TODO Auto-generated method stub
-        
     }
 
     protected Map getErrorDetails( XmlPullParser xpp )

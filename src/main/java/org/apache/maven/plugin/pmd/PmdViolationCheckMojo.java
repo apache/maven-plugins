@@ -50,12 +50,23 @@ public class PmdViolationCheckMojo
     private int failurePriority;
 
     /**
+     * Skip the PMD checks.  Most useful on the command line
+     * via "-Dmaven.pmd.skip=true".
+     *
+     * @parameter expression="${maven.pmd.skip}" default-value="false"
+     */
+    private boolean skip;
+    
+    /**
      * @see org.apache.maven.plugin.AbstractMojo#execute()
      */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        executeCheck( "pmd.xml", "violation", "PMD violation", failurePriority );
+        if ( !skip )
+        {
+            executeCheck( "pmd.xml", "violation", "PMD violation", failurePriority );
+        }
     }
 
     /**

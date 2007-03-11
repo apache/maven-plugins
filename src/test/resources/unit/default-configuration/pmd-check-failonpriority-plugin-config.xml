@@ -34,7 +34,6 @@ under the License.
         <artifactId>maven-pmd-plugin</artifactId>
         <configuration>
           <!-- project implementation="org.apache.maven.plugin.pmd.stubs.DefaultConfigurationMavenProjectStub"/-->
-          <sourceDirectory>${basedir}/src/test/resources/unit/default-configuration</sourceDirectory>
           <targetDirectory>${basedir}/target/test/unit/default-configuration/target</targetDirectory>
           <failOnViolation>true</failOnViolation>
           <failurePriority>1</failurePriority>  
