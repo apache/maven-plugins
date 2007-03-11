@@ -271,21 +271,43 @@ public abstract class AbstractPmdReport
             }
         }
         
-        List directories = new ArrayList(compileSourceRoots);
-        List testdirectories = new ArrayList();
+        List directories = new ArrayList();
+        
+        for ( Iterator i = compileSourceRoots.iterator(); i.hasNext(); )
+        {
+            String root = (String) i.next();
+            File sroot = new File(root);
+            directories.add( new PmdFileInfo( project, sroot, sourceXref) );
+        }
+        
         if ( includeTests )
         {
-            testdirectories.addAll(testSourceRoots);
+            for ( Iterator i = testSourceRoots.iterator(); i.hasNext(); )
+            {
+                String root = (String) i.next();
+                File sroot = new File(root);
+                directories.add( new PmdFileInfo( project, sroot, testXref) );
+            }
         }
         if ( aggregate )
         {
             for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
             {
                 MavenProject localProject = (MavenProject) i.next();
-                directories.addAll(localProject.getCompileSourceRoots());
+                for ( Iterator i2 = localProject.getCompileSourceRoots().iterator(); i2.hasNext(); )
+                {
+                    String root = (String) i2.next();
+                    File sroot = new File(root);
+                    directories.add( new PmdFileInfo( localProject, sroot, sourceXref) );
+                }
                 if ( includeTests )
                 {
-                    testdirectories.addAll(localProject.getTestCompileSourceRoots());
+                    for ( Iterator i2 = localProject.getTestCompileSourceRoots().iterator(); i2.hasNext(); )
+                    {
+                        String root = (String) i2.next();
+                        File sroot = new File(root);
+                        directories.add( new PmdFileInfo( localProject, sroot, testXref) );
+                    }
                 }
             }
   
@@ -318,8 +340,8 @@ public abstract class AbstractPmdReport
 
         for ( Iterator it = directories.iterator(); it.hasNext();)
         {
-            String root = (String)it.next();
-            File sourceDirectory = new File(root);
+            PmdFileInfo finfo = (PmdFileInfo) it.next();
+            File sourceDirectory = finfo.getSourceDirectory();
             if ( sourceDirectory.exists()
                 && sourceDirectory.isDirectory()
                 && !excludeRootFiles.contains(sourceDirectory))
@@ -327,25 +349,11 @@ public abstract class AbstractPmdReport
                 List newfiles = FileUtils.getFiles( sourceDirectory, including, excludesStr.toString() );
                 for ( Iterator it2 = newfiles.iterator(); it2.hasNext(); )
                 {
-                    files.put( it2.next(), new Object[] { sourceDirectory , sourceXref });
+                    files.put( it2.next(), finfo);
                 }
             }
         }        
-        for ( Iterator it = testdirectories.iterator(); it.hasNext();)
-        {
-            String root = (String)it.next();
-            File testDirectory = new File(root);
-            if ( testDirectory.exists()
-                && testDirectory.isDirectory()
-                && !excludeRootFiles.contains(testDirectory))
-            {
-                List newfiles = FileUtils.getFiles( testDirectory, including, excludesStr.toString() );
-                for ( Iterator it2 = newfiles.iterator(); it2.hasNext(); )
-                {
-                    files.put( it2.next(), new Object[] { testDirectory , testXref });
-                }
-            }
-        }        
+                
         return files;
     }
 

@@ -27,6 +27,7 @@ import java.util.ResourceBundle;
 import net.sourceforge.pmd.PMD;
 import net.sourceforge.pmd.cpd.Match;
 
+import org.apache.maven.project.MavenProject;
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -43,12 +44,15 @@ public class CpdReportGenerator
     private Map fileMap;
 
     private ResourceBundle bundle;
+    
+    private boolean aggregate;
 
-    public CpdReportGenerator( Sink sink, Map fileMap, ResourceBundle bundle )
+    public CpdReportGenerator( Sink sink, Map fileMap, ResourceBundle bundle, boolean aggregate )
     {
         this.sink = sink;
         this.fileMap = fileMap;
         this.bundle = bundle;
+        this.aggregate = aggregate;
     }
 
     /**
@@ -118,18 +122,20 @@ public class CpdReportGenerator
             String filename1 = match.getFirstMark().getTokenSrcID();
             
             File file = new File( filename1 );
-            Object fileInfo[] = (Object[]) fileMap.get( file );
-            File sourceDirectory = (File) fileInfo[0];
-            String xrefLocation = (String) fileInfo[1];
+            PmdFileInfo fileInfo = (PmdFileInfo) fileMap.get( file );
+            File sourceDirectory = fileInfo.getSourceDirectory();
+            String xrefLocation = fileInfo.getXrefLocation();
+            MavenProject projectFile1 = fileInfo.getProject();
             
             filename1 = StringUtils.substring( filename1, sourceDirectory.getAbsolutePath().length() + 1 );
 
             String filename2 = match.getSecondMark().getTokenSrcID();
             file = new File( filename2 );
-            fileInfo = (Object[]) fileMap.get( file );
-            sourceDirectory = (File) fileInfo[0];
-            String xrefLocation2 = (String) fileInfo[1];
+            fileInfo = (PmdFileInfo) fileMap.get( file );
+            sourceDirectory = fileInfo.getSourceDirectory();
+            String xrefLocation2 = fileInfo.getXrefLocation();
             filename2 = StringUtils.substring( filename2, sourceDirectory.getAbsolutePath().length() + 1 );
+            MavenProject projectFile2 = fileInfo.getProject();
 
             String code = match.getSourceCodeSlice();
             int line1 = match.getFirstMark().getBeginLine();
@@ -141,6 +147,12 @@ public class CpdReportGenerator
             sink.tableHeaderCell();
             sink.text( bundle.getString( "report.cpd.column.file" ) );
             sink.tableHeaderCell_();
+            if ( aggregate )
+            {
+                sink.tableHeaderCell();
+                sink.text( bundle.getString( "report.cpd.column.project" ) );
+                sink.tableHeaderCell_();
+            }
             sink.tableHeaderCell();
             sink.text( bundle.getString( "report.cpd.column.line" ) );
             sink.tableHeaderCell_();
@@ -151,6 +163,12 @@ public class CpdReportGenerator
             sink.tableCell();
             sink.text( filename1 );
             sink.tableCell_();
+            if ( aggregate )
+            {
+                sink.tableCell();
+                sink.text( projectFile1.getName() );
+                sink.tableCell_();
+            }
             sink.tableCell();
 
             if ( xrefLocation != null )
@@ -172,7 +190,16 @@ public class CpdReportGenerator
             sink.tableCell();
             sink.text( filename2 );
             sink.tableCell_();
+            if ( aggregate )
+            {
+                sink.tableCell();
+                sink.text( projectFile2.getName() );
+                sink.tableCell_();
+            }
             sink.tableCell();
+            
+            
+            
             if ( xrefLocation != null )
             {
                 sink.link( xrefLocation2 + "/" + filename2.replaceAll( "\\.java$", ".html" ).replace( '\\', '/' ) + "#" +
@@ -189,8 +216,13 @@ public class CpdReportGenerator
             // Source snippet
             sink.tableRow();
 
+            
+            int colspan = 2;
+            if ( aggregate ) {
+                colspan = 3;
+            }        
             // TODO Cleaner way to do this?
-            sink.rawText( "<td colspan='2'>" );
+            sink.rawText( "<td colspan='" + colspan + "'>" );
             sink.verbatim( false );
             sink.text( code );
             sink.verbatim_();

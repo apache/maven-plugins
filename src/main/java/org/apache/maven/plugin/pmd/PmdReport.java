@@ -138,7 +138,7 @@ public class PmdReport
             RuleContext ruleContext = new RuleContext();
             Report report = new Report();
             // TODO: use source roots instead
-            PmdReportListener reportSink = new PmdReportListener( sink, getBundle( locale ) );
+            PmdReportListener reportSink = new PmdReportListener( sink, getBundle( locale ), aggregate );
 
             report.addListener( reportSink );
             ruleContext.setReport( report );
@@ -193,14 +193,12 @@ public class PmdReport
             {
                 Map.Entry entry = (Map.Entry) i.next();
                 File file = (File) entry.getKey();
-                Object fileInfo[] = (Object[]) entry.getValue();
-                File sourceDir = (File) fileInfo[0];
-                String xrefLoc = (String) fileInfo[1];
+                PmdFileInfo fileInfo = (PmdFileInfo) entry.getValue();
+                File sourceDir = fileInfo.getSourceDirectory();
 
                 // TODO: lazily call beginFile in case there are no rules
 
-                reportSink.beginFile( file , sourceDir );
-                reportSink.setXrefLocation( xrefLoc );
+                reportSink.beginFile( file , fileInfo );
                 ruleContext.setSourceCodeFilename( file.getAbsolutePath() );
                 for ( int idx = 0; idx < rulesets.length; idx++ )
                 {
