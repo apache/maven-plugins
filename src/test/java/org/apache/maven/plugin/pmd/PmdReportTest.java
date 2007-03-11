@@ -72,6 +72,7 @@ public class PmdReportTest
         String str =
             readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" ) );
 
+        
         assertTrue( str.indexOf( "/xref/def/configuration/App.html#31" ) != -1 );
 
         assertTrue( str.indexOf( "/xref/def/configuration/AppSample.html#45" ) != -1 );
