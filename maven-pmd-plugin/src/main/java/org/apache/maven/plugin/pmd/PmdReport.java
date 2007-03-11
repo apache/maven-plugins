@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.Iterator;
@@ -54,7 +55,9 @@ import net.sourceforge.pmd.renderers.XMLRenderer;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.plexus.resource.ResourceManager;
+import org.codehaus.plexus.resource.loader.FileResourceCreationException;
 import org.codehaus.plexus.resource.loader.FileResourceLoader;
+import org.codehaus.plexus.resource.loader.ResourceNotFoundException;
 
 /**
  * Implement the PMD report.
@@ -137,7 +140,6 @@ public class PmdReport
             PMD pmd = getPMD();
             RuleContext ruleContext = new RuleContext();
             Report report = new Report();
-            // TODO: use source roots instead
             PmdReportListener reportSink = new PmdReportListener( sink, getBundle( locale ), aggregate );
 
             report.addListener( reportSink );
@@ -153,7 +155,7 @@ public class PmdReport
                 {
                     String set = rulesets[idx];
                     getLog().debug( "Preparing ruleset: " + set );
-                    File ruleset = locator.resolveLocation( set, getLocationTemp( set ) );
+                    File ruleset = locator.getResourceAsFile( set, getLocationTemp( set ) );
                     InputStream rulesInput = null;
                     if ( null == ruleset)
                     {
@@ -176,6 +178,14 @@ public class PmdReport
             {
                 throw new MavenReportException( e.getMessage(), e );
             }
+            catch (ResourceNotFoundException e)
+            {
+                throw new MavenReportException( e.getMessage(), e );
+            }
+            catch (FileResourceCreationException e)
+            {
+                throw new MavenReportException( e.getMessage(), e );
+            }
 
             boolean hasEncoding = sourceEncoding != null;
 
@@ -194,7 +204,6 @@ public class PmdReport
                 Map.Entry entry = (Map.Entry) i.next();
                 File file = (File) entry.getKey();
                 PmdFileInfo fileInfo = (PmdFileInfo) entry.getValue();
-                File sourceDir = fileInfo.getSourceDirectory();
 
                 // TODO: lazily call beginFile in case there are no rules
 
@@ -236,9 +245,13 @@ public class PmdReport
             {
                 // Use the PMD renderers to render in any format aside from HTML.
                 Renderer r = createRenderer();
-                String buffer = r.render( report );
+                StringWriter stringwriter = new StringWriter();
+                
                 try
                 {
+                    r.render( stringwriter, report );
+                    String buffer = stringwriter.toString();
+                    
                     Writer writer = new FileWriter( new File( targetDirectory, "pmd." + format ) );
                     writer.write( buffer, 0, buffer.length() );
                     writer.close();
