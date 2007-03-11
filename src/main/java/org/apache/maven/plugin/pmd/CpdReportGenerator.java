@@ -19,7 +19,9 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
+import java.io.File;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import net.sourceforge.pmd.PMD;
@@ -38,18 +40,15 @@ public class CpdReportGenerator
 {
     private Sink sink;
 
-    private String sourceDirectory;
+    private Map fileMap;
 
     private ResourceBundle bundle;
 
-    private String xrefLocation;
-
-    public CpdReportGenerator( Sink sink, String sourceDirectory, ResourceBundle bundle, String xrefLocation )
+    public CpdReportGenerator( Sink sink, Map fileMap, ResourceBundle bundle )
     {
         this.sink = sink;
-        this.sourceDirectory = sourceDirectory;
+        this.fileMap = fileMap;
         this.bundle = bundle;
-        this.xrefLocation = xrefLocation;
     }
 
     /**
@@ -117,10 +116,20 @@ public class CpdReportGenerator
         {
             Match match = (Match) matches.next();
             String filename1 = match.getFirstMark().getTokenSrcID();
-            filename1 = StringUtils.substring( filename1, sourceDirectory.length() + 1 );
+            
+            File file = new File( filename1 );
+            Object fileInfo[] = (Object[]) fileMap.get( file );
+            File sourceDirectory = (File) fileInfo[0];
+            String xrefLocation = (String) fileInfo[1];
+            
+            filename1 = StringUtils.substring( filename1, sourceDirectory.getAbsolutePath().length() + 1 );
 
             String filename2 = match.getSecondMark().getTokenSrcID();
-            filename2 = StringUtils.substring( filename2, sourceDirectory.length() + 1 );
+            file = new File( filename2 );
+            fileInfo = (Object[]) fileMap.get( file );
+            sourceDirectory = (File) fileInfo[0];
+            String xrefLocation2 = (String) fileInfo[1];
+            filename2 = StringUtils.substring( filename2, sourceDirectory.getAbsolutePath().length() + 1 );
 
             String code = match.getSourceCodeSlice();
             int line1 = match.getFirstMark().getBeginLine();
@@ -166,7 +175,7 @@ public class CpdReportGenerator
             sink.tableCell();
             if ( xrefLocation != null )
             {
-                sink.link( xrefLocation + "/" + filename2.replaceAll( "\\.java$", ".html" ).replace( '\\', '/' ) + "#" +
+                sink.link( xrefLocation2 + "/" + filename2.replaceAll( "\\.java$", ".html" ).replace( '\\', '/' ) + "#" +
                     line2 );
             }
             sink.text( String.valueOf( line2 ) );

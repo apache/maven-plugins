@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -32,6 +33,7 @@ import java.util.Map;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.xml.pull.MXParser;
 import org.codehaus.plexus.util.xml.pull.XmlPullParser;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -74,25 +76,38 @@ public abstract class AbstractPmdViolationCheckMojo
     private String language;
 
     /**
-     * The project source directory.
-     * 
-     * @parameter expression="${project.build.sourceDirectory}"
-     * @required
-     * @readonly
+     * Whether to build an aggregated report at the root, or build individual reports.
+     *
+     * @parameter expression="${aggregate}" default-value="false"
+     * @since 2.2
      */
-    private File sourceDirectory;
-
+    protected boolean aggregate;
+    
     /**
      * Print details of check failures to build output
      * 
      * @parameter expression="${pmd.verbose}" default-value="false"
      */
     private boolean verbose;
+    
+    /**
+     * The project to analyse.
+     *
+     * @parameter expression="${project}"
+     * @required
+     * @readonly
+     */
+    protected MavenProject project;
 
     protected void executeCheck( String filename, String tagName, String key, int failurePriority )
         throws MojoFailureException, MojoExecutionException
     {
-        if ( "java".equals( language ) && sourceDirectory.exists() )
+        if ( aggregate && !project.isExecutionRoot() )
+        {
+            return;
+        }
+        
+        if ( "java".equals( language ) || aggregate )
         {
             File outputFile = new File( targetDirectory, filename );
             if ( outputFile.exists() )
