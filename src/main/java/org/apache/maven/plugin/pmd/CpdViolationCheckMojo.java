@@ -55,7 +55,7 @@ public class CpdViolationCheckMojo
     {
         if ( !skip )
         {
-            executeCheck( "cpd.xml", "duplication", "CPD duplication", 0 );
+            executeCheck( "cpd.xml", "duplication", "CPD duplication", 10 );
         }
     }
     
@@ -66,13 +66,71 @@ public class CpdViolationCheckMojo
      */
     protected void printError( Map item, String severity )
     {
-        // TODO Auto-generated method stub
+        String lines = (String) item.get( "lines" );
+        
+        
+        StringBuffer buff = new StringBuffer( 100 );
+        buff.append( "CPD " + severity + ": Found " );
+        buff.append(lines).append(" lines of duplicated code at locations:");
+        this.getLog().info( buff.toString() );
+        
+        buff.setLength(0);
+        buff.append("    ");
+        Map file = (Map)item.get( "file" );
+        buff.append( file.get( "path" ) );
+        buff.append(" line ").append( file.get("line") );
+        this.getLog().info( buff.toString() );
+        
+        buff.setLength(0);
+        buff.append("    ");
+        file = (Map)item.get( "file1" );
+        buff.append( file.get( "path" ) );
+        buff.append(" line ").append( file.get("line") );
+        this.getLog().info( buff.toString() );
     }
 
     protected Map getErrorDetails( XmlPullParser xpp )
         throws XmlPullParserException, IOException
     {
-        // TODO Auto-generated method stub
-        return null;
+        int index = 0;
+        int attributeCount = 0;
+        HashMap msgs = new HashMap();
+
+        attributeCount = xpp.getAttributeCount();
+        while ( index < attributeCount )
+        {
+            msgs.put( xpp.getAttributeName( index ), xpp.getAttributeValue( index ) );
+
+            index++;
+        }
+
+        int tp = xpp.next();
+        while ( tp != XmlPullParser.END_TAG )
+        {
+            // get the tag's text
+            switch ( tp ) 
+            {
+            case XmlPullParser.TEXT:
+                msgs.put( "text", xpp.getText().trim() );
+                break;
+            case XmlPullParser.START_TAG:
+                {
+                    String nm = xpp.getName();
+                    if ( msgs.containsKey( nm ) )
+                    {
+                        int cnt = 1;
+                        while ( msgs.containsKey( nm + cnt) )
+                        {
+                            ++cnt;
+                        }
+                        nm = nm + cnt;
+                    }
+                    msgs.put( nm, getErrorDetails( xpp ) );
+                    break;
+                }
+            }
+            tp = xpp.next();
+        }
+        return msgs;
     }
 }
