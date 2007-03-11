@@ -106,7 +106,7 @@ public class CpdReport
             cpd.go();
 
             CpdReportGenerator gen =
-                new CpdReportGenerator( getSink(), files, getBundle( locale ) );
+                new CpdReportGenerator( getSink(), files, getBundle( locale ), aggregate );
             gen.generate( cpd.getMatches() );
 
             if ( !isHtml() )
