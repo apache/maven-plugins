@@ -33,7 +33,6 @@ under the License.
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
         <configuration>
-           <sourceDirectory>${basedir}/src/test/resources/unit/default-configuration</sourceDirectory>
            <targetDirectory>${basedir}/target/test/unit/default-configuration/target</targetDirectory>
            <failOnViolation>true</failOnViolation>
            <failurePriority>3</failurePriority>  

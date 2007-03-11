@@ -33,6 +33,7 @@ import java.io.Writer;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Collections;
 
@@ -53,6 +54,7 @@ import net.sourceforge.pmd.renderers.XMLRenderer;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.plexus.resource.ResourceManager;
+import org.codehaus.plexus.resource.loader.FileResourceLoader;
 
 /**
  * Implement the PMD report.
@@ -104,9 +106,14 @@ public class PmdReport
      */
     private String sourceEncoding;
 
-    /** @component */
+    /**
+     * @component
+     * @required
+     * @readonly
+     */
     private ResourceManager locator;
-
+    
+    
     /** @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale) */
     public String getName( Locale locale )
     {
@@ -131,13 +138,7 @@ public class PmdReport
             RuleContext ruleContext = new RuleContext();
             Report report = new Report();
             // TODO: use source roots instead
-            String sourceDirectory = project.getBuild().getSourceDirectory();
-            PmdReportListener reportSink = new PmdReportListener( sink, sourceDirectory, getBundle( locale ) );
-            String location = constructXRefLocation();
-            if ( location != null )
-            {
-                reportSink.setXrefLocation( location );
-            }
+            PmdReportListener reportSink = new PmdReportListener( sink, getBundle( locale ) );
 
             report.addListener( reportSink );
             ruleContext.setReport( report );
@@ -153,7 +154,20 @@ public class PmdReport
                     String set = rulesets[idx];
                     getLog().debug( "Preparing ruleset: " + set );
                     File ruleset = locator.resolveLocation( set, getLocationTemp( set ) );
-                    InputStream rulesInput = new FileInputStream( ruleset );
+                    InputStream rulesInput = null;
+                    if ( null == ruleset)
+                    {
+                        //  workaround bug in resource manager when run in reporting mode
+                        rulesInput = this.getClass().getClassLoader().getResourceAsStream( set );
+                    }
+                    else
+                    {
+                        rulesInput = new FileInputStream( ruleset );
+                    }
+                    if ( null == rulesInput )
+                    {
+                        throw new MavenReportException( "Cold not resolve " + set );
+                    }
 
                     sets[idx] = ruleSetFactory.createRuleSet( rulesInput );
                 }
@@ -165,24 +179,28 @@ public class PmdReport
 
             boolean hasEncoding = sourceEncoding != null;
 
-            List files;
+            Map files;
             try
             {
                 files = getFilesToProcess( );
-                Collections.sort( files );
             }
             catch ( IOException e )
             {
-                throw new MavenReportException( "Can't parse " + sourceDirectory, e );
+                throw new MavenReportException( "Can't get file list", e );
             }
 
-            for ( Iterator i = files.iterator(); i.hasNext(); )
+            for ( Iterator i = files.entrySet().iterator(); i.hasNext(); )
             {
-                File file = (File) i.next();
+                Map.Entry entry = (Map.Entry) i.next();
+                File file = (File) entry.getKey();
+                Object fileInfo[] = (Object[]) entry.getValue();
+                File sourceDir = (File) fileInfo[0];
+                String xrefLoc = (String) fileInfo[1];
 
                 // TODO: lazily call beginFile in case there are no rules
 
-                reportSink.beginFile( file );
+                reportSink.beginFile( file , sourceDir );
+                reportSink.setXrefLocation( xrefLoc );
                 ruleContext.setSourceCodeFilename( file.getAbsolutePath() );
                 for ( int idx = 0; idx < rulesets.length; idx++ )
                 {
