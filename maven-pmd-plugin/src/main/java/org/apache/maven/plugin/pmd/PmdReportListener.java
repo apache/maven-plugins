@@ -52,19 +52,22 @@ public class PmdReportListener
 
     private ResourceBundle bundle;
 
-    private String xrefLocation;
+    private PmdFileInfo fileInfo;
 
     private List violations = new ArrayList();
 
+    private boolean aggregate;
+    
     // The number of erroneous files
     private int fileCount = 0;
 
     //private List metrics = new ArrayList();
 
-    public PmdReportListener( Sink sink, ResourceBundle bundle )
+    public PmdReportListener( Sink sink, ResourceBundle bundle, boolean aggregate )
     {
         this.sink = sink;
         this.bundle = bundle;
+        this.aggregate = aggregate;
     }
 
     private String getTitle()
@@ -78,7 +81,12 @@ public class PmdReportListener
         {
             sink.section2();
             sink.sectionTitle2();
-            sink.text( currentFilename );
+            String title = currentFilename;
+            if ( aggregate ) 
+            {
+                title = fileInfo.getProject().getName() + " - " + currentFilename;
+            }
+            sink.text( title );
             sink.sectionTitle2_();
 
             sink.table();
@@ -137,6 +145,7 @@ public class PmdReportListener
 
     private void outputLineLink( int line )
     {
+        String xrefLocation = fileInfo.getXrefLocation();
         if ( xrefLocation != null )
         {
             sink.link( xrefLocation + "/" + currentFilename.replaceAll( "\\.java$", ".html" ) + "#" + line );
@@ -191,9 +200,11 @@ public class PmdReportListener
         // TODO files summary
     }
 
-    public void beginFile( File file, File sourceDir )
+    public void beginFile( File file, PmdFileInfo finfo )
     {
-        currentFilename = StringUtils.substring( file.getAbsolutePath(), sourceDir.getAbsolutePath().length() + 1 );
+        fileInfo = finfo;
+        currentFilename = StringUtils.substring( file.getAbsolutePath(),
+                                                 finfo.getSourceDirectory().getAbsolutePath().length() + 1 );
         currentFilename = StringUtils.replace( currentFilename, "\\", "/" );
         fileInitialized = false;
     }
@@ -289,13 +300,4 @@ public class PmdReportListener
         sink.close();
     }
 
-    public String getXrefLocation()
-    {
-        return xrefLocation;
-    }
-
-    public void setXrefLocation( String xrefLocation )
-    {
-        this.xrefLocation = xrefLocation;
-    }
 }
