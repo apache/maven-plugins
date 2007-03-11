@@ -23,8 +23,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Collections;
 
@@ -88,13 +90,13 @@ public class CpdReport
         if ( !skip && canGenerateReport() )
         {         
             CPD cpd = new CPD(minimumTokens, new JavaLanguage());
+            Map files = null;
             try
             {
-                List files = getFilesToProcess( );
-                Collections.sort( files );
-                for ( int i = 0; i < files.size(); i++ )
+                files = getFilesToProcess( );
+                for ( Iterator it = files.keySet().iterator(); it.hasNext(); ) 
                 {
-                    cpd.add( (File) files.get( i ) );
+                    cpd.add( (File) it.next() );
                 }
             }
             catch (IOException e)
@@ -103,9 +105,8 @@ public class CpdReport
             }
             cpd.go();
 
-            String src = getProject().getBuild().getSourceDirectory();
             CpdReportGenerator gen =
-                new CpdReportGenerator( getSink(), src, getBundle( locale ), constructXRefLocation() );
+                new CpdReportGenerator( getSink(), files, getBundle( locale ) );
             gen.generate( cpd.getMatches() );
 
             if ( !isHtml() )

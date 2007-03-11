@@ -46,8 +46,6 @@ public class PmdReportListener
 {
     private Sink sink;
 
-    private String sourceDirectory;
-
     private String currentFilename;
 
     private boolean fileInitialized;
@@ -63,10 +61,9 @@ public class PmdReportListener
 
     //private List metrics = new ArrayList();
 
-    public PmdReportListener( Sink sink, String sourceDirectory, ResourceBundle bundle )
+    public PmdReportListener( Sink sink, ResourceBundle bundle )
     {
         this.sink = sink;
-        this.sourceDirectory = sourceDirectory;
         this.bundle = bundle;
     }
 
@@ -194,9 +191,9 @@ public class PmdReportListener
         // TODO files summary
     }
 
-    public void beginFile( File file )
+    public void beginFile( File file, File sourceDir )
     {
-        currentFilename = StringUtils.substring( file.getAbsolutePath(), sourceDirectory.length() + 1 );
+        currentFilename = StringUtils.substring( file.getAbsolutePath(), sourceDir.getAbsolutePath().length() + 1 );
         currentFilename = StringUtils.replace( currentFilename, "\\", "/" );
         fileInitialized = false;
     }
