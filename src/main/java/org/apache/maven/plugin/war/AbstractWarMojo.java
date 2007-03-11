@@ -153,6 +153,7 @@ public abstract class AbstractWarMojo
      * set (default) the file is copied with its standard name.
      *
      * @parameter
+     * @since 2.0.3
      */
     private String outputFileNameMapping;
 
