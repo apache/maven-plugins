@@ -33,6 +33,7 @@ under the License.
       <item name="War Manifest Customization" href="examples/war-manifest-guide.html"/>
       <item name="Rapid Testing Using Jetty6" href="examples/rapid-testing-jetty6-plugin.html"/>
       <item name="Creating Skinny WARs" href="examples/skinny-wars.html"/>
+      <item name="Using the file name mapping" href="examples/file-name-mapping.html"/>
     </menu>
   </body>
 </project>
