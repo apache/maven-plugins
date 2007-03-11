@@ -149,6 +149,14 @@ public abstract class AbstractWarMojo
     private File workDirectory;
 
     /**
+     * The file name mapping to use to copy libraries and tlds. If no file mapping is
+     * set (default) the file is copied with its standard name.
+     *
+     * @parameter
+     */
+    private String outputFileNameMapping;
+
+    /**
      * To look up Archiver/UnArchiver implementations
      *
      * @parameter expression="${component.org.codehaus.plexus.archiver.manager.ArchiverManager}"
@@ -161,6 +169,12 @@ public abstract class AbstractWarMojo
     private static final String META_INF = "META-INF";
 
     private static final String[] DEFAULT_INCLUDES = {"**/**"};
+
+    private static final String DEFAULT_FILE_NAME_MAPPING_CLASSIFIER =
+        "${artifactId}-${version}-${classifier}.${extension}";
+
+    private static final String DEFAULT_FILE_NAME_MAPPING =
+        "${artifactId}-${version}.${extension}";
 
     /**
      * The comma separated list of tokens to include in the WAR.
@@ -264,6 +278,16 @@ public abstract class AbstractWarMojo
         this.containerConfigXML = containerConfigXML;
     }
 
+    public String getOutputFileNameMapping()
+    {
+        return outputFileNameMapping;
+    }
+
+    public void setOutputFileNameMapping( String outputFileNameMapping )
+    {
+        this.outputFileNameMapping = outputFileNameMapping;
+    }
+
     /**
      * Returns a string array of the excludes to be used
      * when assembling/copying the war.
@@ -355,12 +379,12 @@ public abstract class AbstractWarMojo
     private Map getBuildFilterProperties()
         throws MojoExecutionException
     {
-        
+
         Map filterProperties = new Properties();
-        
+
         // System properties
         filterProperties.putAll( System.getProperties() );
-        
+
         // Project properties
         filterProperties.putAll( project.getProperties() );
 
@@ -406,8 +430,8 @@ public abstract class AbstractWarMojo
             if ( webappDirectory.exists() )
             {
                 String[] fileNames = getWarFiles( resource );
-                String targetPath = (resource.getTargetPath() == null) ? "" : resource.getTargetPath();
-                File destination = new File(webappDirectory,targetPath); 
+                String targetPath = ( resource.getTargetPath() == null ) ? "" : resource.getTargetPath();
+                File destination = new File( webappDirectory, targetPath );
                 for ( int i = 0; i < fileNames.length; i++ )
                 {
                     if ( resource.isFiltering() )
@@ -566,7 +590,7 @@ public abstract class AbstractWarMojo
         for ( Iterator iter = artifacts.iterator(); iter.hasNext(); )
         {
             Artifact artifact = (Artifact) iter.next();
-            String targetFileName = getDefaultFinalName( artifact );
+            String targetFileName = getFinalName( artifact );
 
             getLog().debug( "Processing: " + targetFileName );
 
@@ -644,7 +668,7 @@ public abstract class AbstractWarMojo
         for ( Iterator iter = artifacts.iterator(); iter.hasNext(); )
         {
             Artifact artifact = (Artifact) iter.next();
-            String candidate = getDefaultFinalName( artifact );
+            String candidate = getFinalName( artifact );
             if ( identifiers.contains( candidate ) )
             {
                 duplicates.add( candidate );
@@ -1021,23 +1045,29 @@ public abstract class AbstractWarMojo
     }
 
     /**
-     * Converts the filename of an artifact to artifactId-version.type format.
+     * Returns the final name of the specified artifact.
+     * <p/>
+     * If the <tt>outputFileNameMapping</tt> is set, it is used, otherwise
+     * the standard naming scheme is used.
      *
-     * @param artifact
-     * @return converted filename of the artifact
+     * @param artifact the artifact
+     * @return the converted filename of the artifact
      */
-    private String getDefaultFinalName( Artifact artifact )
+    private String getFinalName( Artifact artifact )
     {
-        String finalName = artifact.getArtifactId() + "-" + artifact.getVersion();
-
-        String classifier = artifact.getClassifier();
-        if ( ( classifier != null ) && ! ( "".equals( classifier.trim() ) ) )
-        {
-            finalName += "-" + classifier;
+        if (outputFileNameMapping != null) {
+            return MappingUtils.evaluateFileNameMapping( outputFileNameMapping, artifact);
         }
 
-        finalName =  finalName + "." + artifact.getArtifactHandler().getExtension();
-        return finalName;
+        String classifier = artifact.getClassifier();
+        if ( ( classifier != null ) && !( "".equals( classifier.trim() ) ) )
+        {
+            return MappingUtils.evaluateFileNameMapping( DEFAULT_FILE_NAME_MAPPING_CLASSIFIER, artifact);
+        }
+        else {
+            return MappingUtils.evaluateFileNameMapping( DEFAULT_FILE_NAME_MAPPING, artifact);
+        }
+
     }
 
 }
