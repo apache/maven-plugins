@@ -22,7 +22,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>8-SNAPSHOT</version>
+    <version>8</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <prerequisites>
