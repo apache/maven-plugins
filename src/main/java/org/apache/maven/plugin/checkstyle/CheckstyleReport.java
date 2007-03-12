@@ -103,9 +103,10 @@ public class CheckstyleReport
     }
 
     /**
-     * skip entire check
+     * Skip entire check.
      * 
      * @parameter expression="${checkstyle.skip}" default-value="false"
+     * @since 2.2
      */
     private boolean skip;
 
@@ -319,7 +320,7 @@ public class CheckstyleReport
      * This parameter is resolved as resource, URL, then file. If successfully
      * resolved, the contents of the suppressions XML is copied into the
      * <code>${project.build.directory}/checkstyle-supressions.xml</code> file
-     * before being passed to checkstyle for loading.
+     * before being passed to Checkstyle for loading.
      * </p>
      * 
      * <p>
@@ -342,10 +343,10 @@ public class CheckstyleReport
     private String suppressionsFileExpression;
 
     /**
-     * Specifies the location of the supperssions XML file to use. The plugin
+     * Specifies the location of the suppressions XML file to use. The plugin
      * defines a Checkstyle property named
      * <code>checkstyle.suppressions.file</code> with the value of this
-     * property. This allows using the Checkstyle property your own custom
+     * property. This allows using the Checkstyle property in your own custom
      * checkstyle configuration file when specifying a suppressions file.
      * 
      * @parameter
