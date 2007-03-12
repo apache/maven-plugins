@@ -571,6 +571,7 @@ public class CheckstyleReport
                 CheckstyleResults results;
 
                 moduleFactory = getModuleFactory();
+                
                 config = ConfigurationLoader.loadConfiguration( configFile,
                                                                 new PropertiesExpander( overridingProperties ) );
                 results = executeCheckstyle( config, moduleFactory );
@@ -776,7 +777,7 @@ public class CheckstyleReport
         }
 
         FilterSet filterSet = getSuppressions();
-
+        
         Checker checker = new Checker();
 
         // setup classloader, needed to avoid "Unable to get class information
@@ -1090,15 +1091,10 @@ public class CheckstyleReport
     private FilterSet getSuppressions()
         throws MavenReportException
     {
-        if ( suppressionsFileExpression != null )
-        {
-            return null;
-        }
-
         try
         {
             File suppressionsFile = locator.resolveLocation( suppressionsLocation, "checkstyle-suppressions.xml" );
-
+            
             if ( suppressionsFile == null )
             {
                 return null;
