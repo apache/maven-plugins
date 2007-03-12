@@ -39,8 +39,8 @@ Using Rule Sets
         <artifactId>maven-pmd-plugin</artifactId>
         <configuration>
           <rulesets>
-            <ruleset>/rules/braces.xml</ruleset>
-            <ruleset>/rules/naming.xml</ruleset>
+            <ruleset>/rulesets/braces.xml</ruleset>
+            <ruleset>/rulesets/naming.xml</ruleset>
             <ruleset>d:\rulesets\strings.xml</ruleset>
             <ruleset>http://localhost/design.xml</ruleset>
           </rulesets>
