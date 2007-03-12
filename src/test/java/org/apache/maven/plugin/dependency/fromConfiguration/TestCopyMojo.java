@@ -235,6 +235,7 @@ public class TestCopyMojo
 
         return list;
     }
+   
 
     public void testMissingVersionFromDependencies()
         throws MojoExecutionException
@@ -258,6 +259,32 @@ public class TestCopyMojo
         assertEquals( "2.0-SNAPSHOT", item.getVersion() );
     }
 
+    public void testMissingVersionFromDependenciesLooseMatch()
+    throws MojoExecutionException
+{
+    ArtifactItem item = new ArtifactItem();
+
+    item.setArtifactId( "artifactId" );
+    item.setClassifier( "" );
+    item.setGroupId( "groupId" );
+    item.setType( "type" );
+
+    MavenProject project = mojo.getProject();
+    project.setDependencies( getDependencyList( item ) );
+    
+    item.setClassifier( "sources" );
+    item.setType( "jar" );
+    
+    ArrayList list = new ArrayList();
+    list.add( item );
+    mojo.setArtifactItems( list );
+    
+    mojo.execute();
+    this.assertFileExists( item, true );
+    assertEquals( "2.1", item.getVersion() );
+}
+
+    
     public void testMissingVersionFromDependenciesWithClassifier()
         throws MojoExecutionException
     {
@@ -336,6 +363,40 @@ public class TestCopyMojo
         assertEquals( "3.0-SNAPSHOT", item.getVersion() );
     }
 
+    public void testMissingVersionFromDependencyMgtLooseMatch()
+    throws MojoExecutionException
+{
+    ArtifactItem item = new ArtifactItem();
+
+    item.setArtifactId( "artifactId" );
+    item.setClassifier( "" );
+    item.setGroupId( "groupId" );
+    item.setType( "type" );
+
+    MavenProject project = mojo.getProject();
+    project.setDependencies( getDependencyList( item ) );
+
+    item = new ArtifactItem();
+
+    item.setArtifactId( "artifactId-2" );
+    item.setClassifier( "" );
+    item.setGroupId( "groupId" );
+    item.setType( "type" );
+
+    ArrayList list = new ArrayList();
+    list.add( item );
+
+    mojo.setArtifactItems( list );
+
+    project.getDependencyManagement().setDependencies( getDependencyMgtList( item ) );
+
+    item.setType( "jar" );
+    mojo.execute();
+
+    this.assertFileExists( item, true );
+    assertEquals( "3.1", item.getVersion() );
+}
+    
     public void testMissingVersionFromDependencyMgtWithClassifier()
         throws MojoExecutionException
     {
