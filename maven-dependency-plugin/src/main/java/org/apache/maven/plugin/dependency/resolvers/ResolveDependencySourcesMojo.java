@@ -25,7 +25,10 @@ import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractResolveMojo;
+import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
 import org.apache.maven.plugin.dependency.utils.filters.ArtifactsFilter;
+import org.apache.maven.plugin.dependency.utils.filters.ResolveFileFilter;
+import org.apache.maven.plugin.dependency.utils.markers.SourcesFileMarkerHandler;
 
 /**
  * Goal that resolves the project source dependencies from the repository.
@@ -34,45 +37,21 @@ import org.apache.maven.plugin.dependency.utils.filters.ArtifactsFilter;
  * @phase generate-sources
  * @requiresDependencyResolution test
  * @author brianf
- * @since 2.0
+ * @since 2.0-alpha2
  */
 public class ResolveDependencySourcesMojo
     extends AbstractResolveMojo
 {
 
-    // private static final String SOURCE_TYPE = "java-source";
+    private static final String SOURCE_TYPE = "java-source";
 
-    // private static final String SOURCE_CLASSIFIER = "sources";
-
-    /**
-     * If the plugin should exclude Transitive dependencies.
-     * 
-     * @parameter expression="${excludeTransitive}" default-value="false"
-     */
-    private boolean excludeTransitive;
+    private static final String SOURCE_CLASSIFIER = "sources";
 
     /**
-     * The mojo compares artifact groupIds against this string using
-     * string.startsWith to see if they should be resolved.
-     * 
-     * @parameter expression="${groupId}" default-value=""
+     * Only used to store results for integration test validation
      */
-    private String groupId;
-
-    /**
-     * Directory to store flag files
-     * 
-     * @parameter expression="${dependency.resolveMarkersDirectory}"
-     *            default-value="${project.build.directory}/dependency-maven-plugin-markers"
-     * @required
-     */
-    // private File markersDirectory;
-    /**
-     * Use Marker Files
-     * 
-     * @parameter expression="${dependency.useMarkers}" default-value="false"
-     */
-    // private boolean useMarkers;
+    DependencyStatusSets results;
+    
     /**
      * Main entry into mojo. Gets the list of dependencies and iterates through
      * resolving the source jars.
@@ -84,34 +63,36 @@ public class ResolveDependencySourcesMojo
     public void execute()
         throws MojoExecutionException
     {
-        // Loop through all artifacts
-        Set artifacts;
-        if ( !excludeTransitive )
+        this.classifier = SOURCE_CLASSIFIER;
+        this.type = SOURCE_TYPE;
+        // get sets of dependencies
+        results = this.getDependencySets( false );
+        
+        SourcesFileMarkerHandler handler = new SourcesFileMarkerHandler(this.markersDirectory);
+        handler.setResolved( true );
+        
+        Iterator iter = results.getResolvedDependencies().iterator();
+        while (iter.hasNext())
         {
-            artifacts = project.getArtifacts();
+            Artifact artifact = (Artifact) iter.next();
+            handler.setArtifact( artifact );
+            handler.setMarker();
         }
-        else
+        
+        handler.setResolved( false );
+        iter = results.getUnResolvedDependencies().iterator();
+        while (iter.hasNext())
         {
-            artifacts = project.getDependencyArtifacts();
+            Artifact artifact = (Artifact) iter.next();
+            handler.setArtifact( artifact );
+            handler.setMarker();
         }
 
-        if ( groupId != null && !"".equals( groupId ) )
-        {
-            Iterator iter = artifacts.iterator();
-            while ( iter.hasNext() )
-            {
-                Artifact artifact = (Artifact) iter.next();
-                if ( !artifact.getGroupId().startsWith( groupId ) )
-                {
-                    iter.remove();
-                }
-            }
-        }
-
+        results.logStatus( getLog(), outputAbsoluteArtifactFilename, false );
     }
 
     protected ArtifactsFilter getMarkedArtifactFilter()
     {
-        return null;
+        return new ResolveFileFilter( new SourcesFileMarkerHandler( this.markersDirectory ) );
     }
 }
