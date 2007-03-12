@@ -62,7 +62,7 @@ public class CheckstyleViolationCheckMojo
     private String outputFileFormat;
 
     /**
-     * do we fail the build on a violation?
+     * Do we fail the build on a violation?
      * 
      * @parameter expression="${checkstyle.failOnViolation}"
      *            default-value="true"
@@ -70,9 +70,10 @@ public class CheckstyleViolationCheckMojo
     private boolean failOnViolation;
 
     /**
-     * skip entire check
+     * Skip entire check.
      * 
      * @parameter expression="${checkstyle.skip}" default-value="false"
+     * @since 2.2
      */
     private boolean skip;
 
