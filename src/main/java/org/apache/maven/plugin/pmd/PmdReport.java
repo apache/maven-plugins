@@ -134,151 +134,141 @@ public class PmdReport
     {
         if ( !skip && canGenerateReport() )
         {
-            Sink sink = getSink();
-
-            PMD pmd = getPMD();
-            RuleContext ruleContext = new RuleContext();
-            Report report = new Report();
-            PmdReportListener reportSink = new PmdReportListener( sink, getBundle( locale ), aggregate );
-
-            report.addListener( reportSink );
-            ruleContext.setReport( report );
-            reportSink.beginDocument();
-
-            RuleSetFactory ruleSetFactory = new RuleSetFactory();
-            ruleSetFactory.setMinimumPriority( this.minimumPriority );
-            RuleSet[] sets = new RuleSet[rulesets.length];
+            ClassLoader origLoader = Thread.currentThread().getContextClassLoader();
             try
             {
-                for ( int idx = 0; idx < rulesets.length; idx++ )
-                {
-                    String set = rulesets[idx];
-                    getLog().debug( "Preparing ruleset: " + set );
-                    File ruleset = null;
-                    Exception exception = null;
-                    try
-                    {
-                        ruleset = locator.getResourceAsFile( set, getLocationTemp( set ) );
-
-                    }
-                    catch ( ResourceNotFoundException e )
-                    {
-                        exception = e;
-                    }
-                    catch ( FileResourceCreationException e )
-                    {
-                        exception = e;
-                    }
-                    //  workaround bug in resource manager when run in reporting mode
-                    // in reporting mode, the current classloader isn't in the ResourceManager.
-                    if (exception != null)
-                    {
-                        URL url = this.getClass().getClassLoader().getResource( set );
-                        if ( url != null )
-                        {
-                            ruleset = new File( getLocationTemp( set ) );
-                            FileUtils.copyURLToFile( url, ruleset );
-                        }
-                        else
-                        {
-                            throw new MavenReportException( exception.getMessage(), exception );
-                        }
-                    }
-                    
-                    if ( null == ruleset )
-                    {
-                        throw new MavenReportException( "Cold not resolve " + set );
-                    }
-
-                    InputStream rulesInput = new FileInputStream( ruleset );
-                    sets[idx] = ruleSetFactory.createRuleSet( rulesInput );
-                }
-            }
-            catch ( IOException e )
-            {
-                throw new MavenReportException( e.getMessage(), e );
-            }
-
-            boolean hasEncoding = sourceEncoding != null;
-
-            Map files;
-            try
-            {
-                files = getFilesToProcess( );
-            }
-            catch ( IOException e )
-            {
-                throw new MavenReportException( "Can't get file list", e );
-            }
-
-            for ( Iterator i = files.entrySet().iterator(); i.hasNext(); )
-            {
-                Map.Entry entry = (Map.Entry) i.next();
-                File file = (File) entry.getKey();
-                PmdFileInfo fileInfo = (PmdFileInfo) entry.getValue();
-
-                // TODO: lazily call beginFile in case there are no rules
-
-                reportSink.beginFile( file , fileInfo );
-                ruleContext.setSourceCodeFilename( file.getAbsolutePath() );
-                for ( int idx = 0; idx < rulesets.length; idx++ )
-                {
-                    try
-                    {
-                        // PMD closes this Reader even though it did not open it so we have
-                        // to open a new one with every call to processFile().
-                        Reader reader = hasEncoding ? new InputStreamReader( new FileInputStream( file ),
-                                                                             sourceEncoding ) : new FileReader( file );
-                        pmd.processFile( reader, sets[idx], ruleContext );
-                    }
-                    catch ( UnsupportedEncodingException e1 )
-                    {
-                        throw new MavenReportException( "Encoding '" + sourceEncoding + "' is not supported.", e1 );
-                    }
-                    catch ( FileNotFoundException e2 )
-                    {
-                        getLog().warn( "Error opening source file: " + file );
-                        reportSink.ruleViolationAdded(
-                            new ProcessingErrorRuleViolation( file, e2.getLocalizedMessage() ) );
-                    }
-                    catch ( Exception e3 )
-                    {
-                        getLog().warn( "Failure executing PMD for: " + file, e3 );
-                        reportSink.ruleViolationAdded(
-                            new ProcessingErrorRuleViolation( file, e3.getLocalizedMessage() ) );
-                    }
-                }
-                reportSink.endFile( file );
-            }
-
-            reportSink.endDocument();
-
-            if ( !isHtml() )
-            {
-                // Use the PMD renderers to render in any format aside from HTML.
-                Renderer r = createRenderer();
-                StringWriter stringwriter = new StringWriter();
+                Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader() );
                 
+                Sink sink = getSink();
+    
+                PMD pmd = getPMD();
+                RuleContext ruleContext = new RuleContext();
+                Report report = new Report();
+                PmdReportListener reportSink = new PmdReportListener( sink, getBundle( locale ), aggregate );
+    
+                report.addListener( reportSink );
+                ruleContext.setReport( report );
+                reportSink.beginDocument();
+    
+                RuleSetFactory ruleSetFactory = new RuleSetFactory();
+                ruleSetFactory.setMinimumPriority( this.minimumPriority );
+                RuleSet[] sets = new RuleSet[rulesets.length];
                 try
                 {
-                    r.render( stringwriter, report );
-                    String buffer = stringwriter.toString();
-                    
-                    Writer writer = new FileWriter( new File( targetDirectory, "pmd." + format ) );
-                    writer.write( buffer, 0, buffer.length() );
-                    writer.close();
-
-                    File siteDir = new File( targetDirectory, "site" );
-                    siteDir.mkdirs();
-                    writer = new FileWriter( new File( siteDir,
-                                                         "pmd." + format ) );
-                    writer.write( buffer, 0, buffer.length() );
-                    writer.close();
+                    for ( int idx = 0; idx < rulesets.length; idx++ )
+                    {
+                        String set = rulesets[idx];
+                        getLog().debug( "Preparing ruleset: " + set );
+                        File ruleset = null;
+                        ruleset = locator.getResourceAsFile( set, getLocationTemp( set ) );
+                        
+                        if ( null == ruleset )
+                        {
+                            throw new MavenReportException( "Cold not resolve " + set );
+                        }
+    
+                        InputStream rulesInput = new FileInputStream( ruleset );
+                        sets[idx] = ruleSetFactory.createRuleSet( rulesInput );
+                    }
                 }
-                catch ( IOException ioe )
+                catch ( IOException e )
                 {
-                    throw new MavenReportException( ioe.getMessage(), ioe );
+                    throw new MavenReportException( e.getMessage(), e );
                 }
+                catch ( ResourceNotFoundException e )
+                {
+                    throw new MavenReportException( e.getMessage(), e );
+                }
+                catch ( FileResourceCreationException e )
+                {
+                    throw new MavenReportException( e.getMessage(), e );
+                }
+    
+                boolean hasEncoding = sourceEncoding != null;
+    
+                Map files;
+                try
+                {
+                    files = getFilesToProcess( );
+                }
+                catch ( IOException e )
+                {
+                    throw new MavenReportException( "Can't get file list", e );
+                }
+    
+                for ( Iterator i = files.entrySet().iterator(); i.hasNext(); )
+                {
+                    Map.Entry entry = (Map.Entry) i.next();
+                    File file = (File) entry.getKey();
+                    PmdFileInfo fileInfo = (PmdFileInfo) entry.getValue();
+    
+                    // TODO: lazily call beginFile in case there are no rules
+    
+                    reportSink.beginFile( file , fileInfo );
+                    ruleContext.setSourceCodeFilename( file.getAbsolutePath() );
+                    for ( int idx = 0; idx < rulesets.length; idx++ )
+                    {
+                        try
+                        {
+                            // PMD closes this Reader even though it did not open it so we have
+                            // to open a new one with every call to processFile().
+                            Reader reader = hasEncoding ? new InputStreamReader( new FileInputStream( file ),
+                                                                                 sourceEncoding ) : new FileReader( file );
+                            pmd.processFile( reader, sets[idx], ruleContext );
+                        }
+                        catch ( UnsupportedEncodingException e1 )
+                        {
+                            throw new MavenReportException( "Encoding '" + sourceEncoding + "' is not supported.", e1 );
+                        }
+                        catch ( FileNotFoundException e2 )
+                        {
+                            getLog().warn( "Error opening source file: " + file );
+                            reportSink.ruleViolationAdded(
+                                new ProcessingErrorRuleViolation( file, e2.getLocalizedMessage() ) );
+                        }
+                        catch ( Exception e3 )
+                        {
+                            getLog().warn( "Failure executing PMD for: " + file, e3 );
+                            reportSink.ruleViolationAdded(
+                                new ProcessingErrorRuleViolation( file, e3.getLocalizedMessage() ) );
+                        }
+                    }
+                    reportSink.endFile( file );
+                }
+    
+                reportSink.endDocument();
+    
+                if ( !isHtml() )
+                {
+                    // Use the PMD renderers to render in any format aside from HTML.
+                    Renderer r = createRenderer();
+                    StringWriter stringwriter = new StringWriter();
+                    
+                    try
+                    {
+                        r.render( stringwriter, report );
+                        String buffer = stringwriter.toString();
+                        
+                        Writer writer = new FileWriter( new File( targetDirectory, "pmd." + format ) );
+                        writer.write( buffer, 0, buffer.length() );
+                        writer.close();
+    
+                        File siteDir = new File( targetDirectory, "site" );
+                        siteDir.mkdirs();
+                        writer = new FileWriter( new File( siteDir,
+                                                             "pmd." + format ) );
+                        writer.write( buffer, 0, buffer.length() );
+                        writer.close();
+                    }
+                    catch ( IOException ioe )
+                    {
+                        throw new MavenReportException( ioe.getMessage(), ioe );
+                    }
+                }
+            }
+            finally
+            {
+                Thread.currentThread().setContextClassLoader( origLoader );
             }
         }
     }
