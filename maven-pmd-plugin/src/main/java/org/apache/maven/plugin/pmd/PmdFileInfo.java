@@ -9,7 +9,7 @@ package org.apache.maven.plugin.pmd;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -23,16 +23,17 @@ import java.io.File;
 
 import org.apache.maven.project.MavenProject;
 
-public class PmdFileInfo {
+public class PmdFileInfo 
+{
     
-    MavenProject project;
-    File sourceDir;
-    String xref;
+    private MavenProject project;
+    private File sourceDir;
+    private String xref;
     
     
-    public PmdFileInfo(MavenProject project,
+    public PmdFileInfo( MavenProject project,
                        File dir,
-                       String x) 
+                       String x ) 
     {
         this.project = project;
         this.sourceDir = dir;

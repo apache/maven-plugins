@@ -9,7 +9,7 @@ package org.apache.maven.plugin.pmd;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -24,11 +24,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.Collections;
 
 import net.sourceforge.pmd.cpd.CPD;
 import net.sourceforge.pmd.cpd.CSVRenderer;
@@ -89,7 +87,7 @@ public class CpdReport
     {
         if ( !skip && canGenerateReport() )
         {         
-            CPD cpd = new CPD(minimumTokens, new JavaLanguage());
+            CPD cpd = new CPD( minimumTokens, new JavaLanguage() );
             Map files = null;
             try
             {
@@ -99,9 +97,9 @@ public class CpdReport
                     cpd.add( (File) it.next() );
                 }
             }
-            catch (IOException e)
+            catch ( IOException e )
             {
-                throw new MavenReportException(e.getMessage(), e);
+                throw new MavenReportException( e.getMessage(), e );
             }
             cpd.go();
 
@@ -121,7 +119,7 @@ public class CpdReport
                     writer.close();
                     
                     
-                    File siteDir = new File(targetDirectory, "site");
+                    File siteDir = new File( targetDirectory, "site" );
                     siteDir.mkdirs();
                     writer = new FileWriter( new File( siteDir,
                                                          "cpd." + format ) );
