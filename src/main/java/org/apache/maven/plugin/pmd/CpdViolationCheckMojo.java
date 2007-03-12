@@ -87,6 +87,11 @@ public class CpdViolationCheckMojo
         buff.append( file.get( "path" ) );
         buff.append( " line " ).append( file.get( "line" ) );
         this.getLog().info( buff.toString() );
+        
+        Map codefrag = (Map) item.get( "codefragment" );
+        String codefragstr = (String) codefrag.get( "text" );
+        this.getLog().debug( "CPD " + severity + ": Code Fragment " );
+        this.getLog().debug( codefragstr );
     }
 
     protected Map getErrorDetails( XmlPullParser xpp )
