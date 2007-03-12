@@ -74,7 +74,7 @@ import java.util.ResourceBundle;
 
 /**
  * Perform checkstyle analysis, and generate report on violations.
- *
+ * 
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @author <a href="mailto:joakim@erdfelt.com">Joakim Erdfelt</a>
@@ -103,8 +103,15 @@ public class CheckstyleReport
     }
 
     /**
+     * skip entire check
+     * 
+     * @parameter expression="${checkstyle.skip}" default-value="false"
+     */
+    private boolean skip;
+
+    /**
      * Specifies the directory where the report will be generated
-     *
+     * 
      * @parameter default-value="${project.reporting.outputDirectory}"
      * @required
      */
@@ -112,117 +119,133 @@ public class CheckstyleReport
 
     /**
      * Specifies if the Rules summary should be enabled or not.
-     *
+     * 
      * @parameter expression="${checkstyle.enable.rules.summary}"
-     * default-value="true"
+     *            default-value="true"
      */
     private boolean enableRulesSummary;
 
     /**
      * Specifies if the Severity summary should be enabled or not.
-     *
+     * 
      * @parameter expression="${checkstyle.enable.severity.summary}"
-     * default-value="true"
+     *            default-value="true"
      */
     private boolean enableSeveritySummary;
 
     /**
      * Specifies if the Files summary should be enabled or not.
-     *
+     * 
      * @parameter expression="${checkstyle.enable.files.summary}"
-     * default-value="true"
+     *            default-value="true"
      */
     private boolean enableFilesSummary;
 
     /**
      * Specifies if the RSS should be enabled or not.
-     *
-     * @parameter expression="${checkstyle.enable.rss}"
-     * default-value="true"
+     * 
+     * @parameter expression="${checkstyle.enable.rss}" default-value="true"
      */
     private boolean enableRSS;
 
     /**
      * Specifies the names filter of the source files to be used for checkstyle
-     *
+     * 
      * @parameter expression="${checkstyle.includes}" default-value="**\/*.java"
      * @required
      */
     private String includes;
 
     /**
-     * Specifies the names filter of the source files to be excluded for checkstyle
-     *
+     * Specifies the names filter of the source files to be excluded for
+     * checkstyle
+     * 
      * @parameter expression="${checkstyle.excludes}"
      */
     private String excludes;
 
     /**
-     * <p>Specifies the location of the XML configuration to use.</p>
-     *
-     * <p>Potential values are a filesystem path, a URL, or a classpath
-     * resource.  This parameter expects that the contents of the location
-     * conform to the xml format (Checkstyle
-     * <a href="http://checkstyle.sourceforge.net/config.html#Modules">Checker
-     * module</a>) configuration of rulesets.</p>
-     *
-     * <p>This parameter is resolved as resource, URL, then file.
-     * If successfully resolved, the contents of the configuration is copied into the
+     * <p>
+     * Specifies the location of the XML configuration to use.
+     * </p>
+     * 
+     * <p>
+     * Potential values are a filesystem path, a URL, or a classpath resource.
+     * This parameter expects that the contents of the location conform to the
+     * xml format (Checkstyle <a
+     * href="http://checkstyle.sourceforge.net/config.html#Modules">Checker
+     * module</a>) configuration of rulesets.
+     * </p>
+     * 
+     * <p>
+     * This parameter is resolved as resource, URL, then file. If successfully
+     * resolved, the contents of the configuration is copied into the
      * <code>${project.build.directory}/checkstyle-configuration.xml</code>
-     * file before being passed to checkstyle as a configuration.</p>
-     *
-     * <p>There are 4 predefined rulesets.</p>
-     *
+     * file before being passed to checkstyle as a configuration.
+     * </p>
+     * 
+     * <p>
+     * There are 4 predefined rulesets.
+     * </p>
+     * 
      * <ul>
      * <li><code>config/sun_checks.xml</code>: Sun Checks.</li>
      * <li><code>config/turbine_checks.xml</code>: Turbine Checks.</li>
      * <li><code>config/avalon_checks.xml</code>: Avalon Checks.</li>
      * <li><code>config/maven_checks.xml</code>: Maven Source Checks.</li>
      * </ul>
-     *
-     * @parameter expression="${checkstyle.config.location}" default-value="config/sun_checks.xml"
+     * 
+     * @parameter expression="${checkstyle.config.location}"
+     *            default-value="config/sun_checks.xml"
      */
     private String configLocation;
 
     /**
-     * Specifies what predefined check set to use. Available sets are
-     * "sun" (for the Sun coding conventions), "turbine", and "avalon".
-     * Default is sun.
-     *
+     * Specifies what predefined check set to use. Available sets are "sun" (for
+     * the Sun coding conventions), "turbine", and "avalon". Default is sun.
+     * 
      * @parameter default-value="sun"
      * @deprecated Use configLocation instead.
      */
     private String format;
 
     /**
-     * <p>Specifies the location of the properties file.</p>
-     *
-     * <p>This parameter is resolved as URL, File, then resource.
-     * If successfully resolved, the contents of the properties location is copied into the
+     * <p>
+     * Specifies the location of the properties file.
+     * </p>
+     * 
+     * <p>
+     * This parameter is resolved as URL, File, then resource. If successfully
+     * resolved, the contents of the properties location is copied into the
      * <code>${project.build.directory}/checkstyle-checker.properties</code>
-     * file before being passed to checkstyle for loading.</p>
-     *
-     * <p>The contents of the <code>propertiesLocation</code> will be made
-     * available to checkstyle for specifying values for parameters within
-     * the xml configuration (specified in the <code>configLocation</code>
-     * parameter).</p>
-     *
+     * file before being passed to checkstyle for loading.
+     * </p>
+     * 
+     * <p>
+     * The contents of the <code>propertiesLocation</code> will be made
+     * available to checkstyle for specifying values for parameters within the
+     * xml configuration (specified in the <code>configLocation</code>
+     * parameter).
+     * </p>
+     * 
      * @parameter expression="${checkstyle.properties.location}"
      * @since 2.0-beta-2
      */
     private String propertiesLocation;
 
     /**
-     * Specifies the location of the checkstyle properties that will be used to check the source.
-     *
+     * Specifies the location of the checkstyle properties that will be used to
+     * check the source.
+     * 
      * @parameter
      * @deprecated Use propertiesLocation instead.
      */
     private File propertiesFile;
 
     /**
-     * Specifies the URL of the checkstyle properties that will be used to check the source.
-     *
+     * Specifies the URL of the checkstyle properties that will be used to check
+     * the source.
+     * 
      * @parameter
      * @deprecated Use propertiesLocation instead.
      */
@@ -230,18 +253,24 @@ public class CheckstyleReport
 
     /**
      * Allows for specifying raw property expansion information.
-     *
+     * 
      * @parameter
      */
     private String propertyExpansion;
 
     /**
-     * <p>Specifies the location of the License file (a.k.a. the header file)
-     * that can be used by Checkstyle to verify that source code has the
-     * correct copyright.</p>
-     * <p>You need to use ${checkstyle.header.file} in your checkstyle xml configuration
-     * to reference the name of this header file.</p>
-     * <p>For instance:</p>
+     * <p>
+     * Specifies the location of the License file (a.k.a. the header file) that
+     * can be used by Checkstyle to verify that source code has the correct
+     * copyright.
+     * </p>
+     * <p>
+     * You need to use ${checkstyle.header.file} in your checkstyle xml
+     * configuration to reference the name of this header file.
+     * </p>
+     * <p>
+     * For instance:
+     * </p>
      * <p>
      * <code>
      * &lt;module name="RegexpHeader">
@@ -249,16 +278,18 @@ public class CheckstyleReport
      * &lt;/module>
      * </code>
      * </p>
-     *
-     * @parameter expression="${checkstyle.header.file}" default-value="LICENSE.txt"
+     * 
+     * @parameter expression="${checkstyle.header.file}"
+     *            default-value="LICENSE.txt"
      * @since 2.0-beta-2
      */
     private String headerLocation;
 
     /**
-     * Specifies the location of the License file (a.k.a. the header file) that is used by Checkstyle
-     * to verify that source code has the correct copyright.
-     *
+     * Specifies the location of the License file (a.k.a. the header file) that
+     * is used by Checkstyle to verify that source code has the correct
+     * copyright.
+     * 
      * @parameter expression="${basedir}/LICENSE.txt"
      * @deprecated Use headerLocation instead.
      */
@@ -266,32 +297,36 @@ public class CheckstyleReport
 
     /**
      * Specifies the cache file used to speed up Checkstyle on successive runs.
-     *
+     * 
      * @parameter default-value="${project.build.directory}/checkstyle-cachefile"
      */
     private String cacheFile;
 
     /**
-     * If null, the checkstyle task will display violations on stdout. Otherwise, the text file will be
-     * created with the violations.
-     *
+     * If null, the checkstyle task will display violations on stdout.
+     * Otherwise, the text file will be created with the violations.
+     * 
      * @parameter
      */
     private File useFile;
 
     /**
-     * <p>Specifies the location of the suppressions XML file to use.</p>
-     *
-     * <p>This parameter is resolved as resource, URL, then file.
-     * If successfully resolved, the contents of the suppressions XML is copied into the
-     * <code>${project.build.directory}/checkstyle-supressions.xml</code>
-     * file before being passed to checkstyle for loading.</p>
-     *
      * <p>
-     * See <code>suppressionsFileExpression</code> for the property that will be made available
-     * to your checkstyle configuration.
+     * Specifies the location of the suppressions XML file to use.
      * </p>
-     *
+     * 
+     * <p>
+     * This parameter is resolved as resource, URL, then file. If successfully
+     * resolved, the contents of the suppressions XML is copied into the
+     * <code>${project.build.directory}/checkstyle-supressions.xml</code> file
+     * before being passed to checkstyle for loading.
+     * </p>
+     * 
+     * <p>
+     * See <code>suppressionsFileExpression</code> for the property that will
+     * be made available to your checkstyle configuration.
+     * </p>
+     * 
      * @parameter expression="${checkstyle.suppressions.location}"
      * @since 2.0-beta-2
      */
@@ -299,59 +334,65 @@ public class CheckstyleReport
 
     /**
      * The key to be used in the properties for the suppressions file.
-     *
+     * 
      * @parameter expression="${checkstyle.suppression.expression}"
-     * default-value="checkstyle.suppressions.file"
+     *            default-value="checkstyle.suppressions.file"
      * @since 2.1
      */
     private String suppressionsFileExpression;
 
     /**
-     * Specifies the location of the supperssions XML file to use. The plugin defines a Checkstyle
-     * property named <code>checkstyle.suppressions.file</code> with the value of this
-     * property. This allows using the Checkstyle property your own custom checkstyle
-     * configuration file when specifying a suppressions file.
-     *
+     * Specifies the location of the supperssions XML file to use. The plugin
+     * defines a Checkstyle property named
+     * <code>checkstyle.suppressions.file</code> with the value of this
+     * property. This allows using the Checkstyle property your own custom
+     * checkstyle configuration file when specifying a suppressions file.
+     * 
      * @parameter
      * @deprecated Use suppressionsLocation instead.
      */
     private String suppressionsFile;
 
     /**
-     * Specifies the path and filename to save the checkstyle output.  The format of the output file is
-     * determined by the <code>outputFileFormat</code>
-     *
+     * Specifies the path and filename to save the checkstyle output. The format
+     * of the output file is determined by the <code>outputFileFormat</code>
+     * 
      * @parameter expression="${checkstyle.output.file}"
-     * default-value="${project.build.directory}/checkstyle-result.xml"
+     *            default-value="${project.build.directory}/checkstyle-result.xml"
      */
     private File outputFile;
 
     /**
-     * Specifies the format of the output to be used when writing to the output file. Valid values are
-     * "plain" and "xml"
-     *
+     * Specifies the format of the output to be used when writing to the output
+     * file. Valid values are "plain" and "xml"
+     * 
      * @parameter expression="${checkstyle.output.format}" default-value="xml"
      */
     private String outputFileFormat;
 
     /**
-     * <p>Specifies the location of the package names XML to be used to configure
-     * the Checkstyle <a href="http://checkstyle.sourceforge.net/config.html#Packages">Packages</a>.</p>
-     *
-     * <p>This parameter is resolved as resource, URL, then file.
-     * If resolved to a resource, or a URL, the contents of the package names
-     * XML is copied into the
-     * <code>${project.build.directory}/checkstyle-packagenames.xml</code>
-     * file before being passed to checkstyle for loading.</p>
-     *
+     * <p>
+     * Specifies the location of the package names XML to be used to configure
+     * the Checkstyle <a
+     * href="http://checkstyle.sourceforge.net/config.html#Packages">Packages</a>.
+     * </p>
+     * 
+     * <p>
+     * This parameter is resolved as resource, URL, then file. If resolved to a
+     * resource, or a URL, the contents of the package names XML is copied into
+     * the <code>${project.build.directory}/checkstyle-packagenames.xml</code>
+     * file before being passed to checkstyle for loading.
+     * </p>
+     * 
      * @parameter
      * @since 2.0-beta-2
      */
     private String packageNamesLocation;
 
     /**
-     * Specifies the location of the package names XML to be used to configure Checkstyle
-     *
+     * Specifies the location of the package names XML to be used to configure
+     * Checkstyle
+     * 
      * @parameter
      * @deprecated Use packageNamesLocation instead.
      */
@@ -359,36 +400,37 @@ public class CheckstyleReport
 
     /**
      * Specifies if the build should fail upon a violation.
-     *
+     * 
      * @parameter default-value="false"
      */
     private boolean failsOnError;
 
     /**
      * Specifies the location of the source directory to be used for Checkstyle
-     *
+     * 
      * @parameter default-value="${project.build.sourceDirectory}"
      * @required
      */
     private File sourceDirectory;
 
     /**
-     * Specifies the location of the test source directory to be used for Checkstyle
-     *
+     * Specifies the location of the test source directory to be used for
+     * Checkstyle
+     * 
      * @parameter default-value="${project.build.testSourceDirectory}"
      */
     private File testSourceDirectory;
 
     /**
      * Include or not the test source directory to be used for Checkstyle
-     *
+     * 
      * @parameter default-value="${false}"
      */
     private boolean includeTestSourceDirectory;
 
     /**
      * The Maven Project Object
-     *
+     * 
      * @parameter default-value="${project}"
      * @required
      * @readonly
@@ -397,15 +439,15 @@ public class CheckstyleReport
 
     /**
      * Output errors to console.
-     *
+     * 
      * @parameter default-value="false"
      */
     private boolean consoleOutput;
 
     /**
-     * Link the violation line numbers to the source xref. Defaults to true and will link
-     * automatically if jxr plugin is being used.
-     *
+     * Link the violation line numbers to the source xref. Defaults to true and
+     * will link automatically if jxr plugin is being used.
+     * 
      * @parameter expression="${linkXRef}" default-value="true"
      * @since 2.1
      */
@@ -413,7 +455,7 @@ public class CheckstyleReport
 
     /**
      * Location of the Xrefs to link to.
-     *
+     * 
      * @parameter default-value="${project.reporting.outputDirectory}/xref"
      */
     private File xrefLocation;
@@ -427,7 +469,7 @@ public class CheckstyleReport
 
     /**
      * Velocity Component
-     *
+     * 
      * @component role="org.codehaus.plexus.velocity.VelocityComponent"
      * @required
      */
@@ -490,58 +532,64 @@ public class CheckstyleReport
     public void executeReport( Locale locale )
         throws MavenReportException
     {
-        mergeDeprecatedInfo();
-
-        locator.addSearchPath( FileResourceLoader.ID , project.getFile().getParentFile().getAbsolutePath() );
-
-        locator.setOutputDirectory( new File( project.getBuild().getDirectory() ) );
-
-        if ( !canGenerateReport() )
+        if ( !skip )
         {
-            getLog().info( "Source directory does not exist - skipping report." );
-            return;
+            mergeDeprecatedInfo();
+
+            locator.addSearchPath( FileResourceLoader.ID, project.getFile().getParentFile().getAbsolutePath() );
+
+            locator.setOutputDirectory( new File( project.getBuild().getDirectory() ) );
+
+            if ( !canGenerateReport() )
+            {
+                getLog().info( "Source directory does not exist - skipping report." );
+                return;
+            }
+
+            // for when we start using maven-shared-io and
+            // maven-shared-monitor...
+            // locator = new Locator( new MojoLogMonitorAdaptor( getLog() ) );
+
+            // locator = new Locator( getLog(), new File(
+            // project.getBuild().getDirectory() ) );
+
+            String configFile = getConfigFile();
+            Properties overridingProperties = getOverridingProperties();
+            ModuleFactory moduleFactory;
+            Configuration config;
+            CheckstyleResults results;
+
+            ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
+
+            try
+            {
+                // checkstyle will always use the context classloader in order
+                // to load resources (dtds),
+                // so we have to fix it
+                ClassLoader checkstyleClassLoader = PackageNamesLoader.class.getClassLoader();
+                Thread.currentThread().setContextClassLoader( checkstyleClassLoader );
+
+                moduleFactory = getModuleFactory();
+                config = ConfigurationLoader.loadConfiguration( configFile,
+                                                                new PropertiesExpander( overridingProperties ) );
+                results = executeCheckstyle( config, moduleFactory );
+            }
+            catch ( CheckstyleException e )
+            {
+                throw new MavenReportException( "Failed during checkstyle configuration", e );
+            }
+
+            ResourceBundle bundle = getBundle( locale );
+            generateReportStatics();
+            generateMainReport( results, config, moduleFactory, bundle );
+            if ( enableRSS )
+            {
+                generateRSS( results );
+            }
+
+            // be sure to restore original context classloader
+            Thread.currentThread().setContextClassLoader( currentClassLoader );
         }
-
-        //        for when we start using maven-shared-io and maven-shared-monitor...
-        //        locator = new Locator( new MojoLogMonitorAdaptor( getLog() ) );
-
-        //locator = new Locator( getLog(), new File( project.getBuild().getDirectory() ) );
-
-        String configFile = getConfigFile();
-        Properties overridingProperties = getOverridingProperties();
-        ModuleFactory moduleFactory;
-        Configuration config;
-        CheckstyleResults results;
-
-        ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
-
-        try
-        {
-            // checkstyle will always use the context classloader in order to load resources (dtds),
-            // so we have to fix it
-            ClassLoader checkstyleClassLoader = PackageNamesLoader.class.getClassLoader();
-            Thread.currentThread().setContextClassLoader( checkstyleClassLoader );
-
-            moduleFactory = getModuleFactory();
-            config =
-                ConfigurationLoader.loadConfiguration( configFile, new PropertiesExpander( overridingProperties ) );
-            results = executeCheckstyle( config, moduleFactory );
-        }
-        catch ( CheckstyleException e )
-        {
-            throw new MavenReportException( "Failed during checkstyle configuration", e );
-        }
-
-        ResourceBundle bundle = getBundle( locale );
-        generateReportStatics();
-        generateMainReport( results, config, moduleFactory, bundle );
-        if ( enableRSS )
-        {
-            generateRSS( results );
-        }
-
-        // be sure to restore original context classloader
-        Thread.currentThread().setContextClassLoader( currentClassLoader );
     }
 
     private void generateReportStatics()
@@ -638,7 +686,8 @@ public class CheckstyleReport
             relativePath = relativePath + "/" + xrefLocation.getName();
             if ( xrefLocation.exists() )
             {
-                // XRef was already generated by manual execution of a lifecycle binding
+                // XRef was already generated by manual execution of a lifecycle
+                // binding
                 generator.setXrefLocation( relativePath );
             }
             else
@@ -665,8 +714,9 @@ public class CheckstyleReport
     }
 
     /**
-     * Merge in the deprecated parameters to the new ones, unless the new parameters have values.
-     *
+     * Merge in the deprecated parameters to the new ones, unless the new
+     * parameters have values.
+     * 
      * @deprecated Remove when deprecated params are removed.
      */
     private void mergeDeprecatedInfo()
@@ -725,7 +775,8 @@ public class CheckstyleReport
 
         Checker checker = new Checker();
 
-        // setup classloader, needed to avoid "Unable to get class information for ..." errors
+        // setup classloader, needed to avoid "Unable to get class information
+        // for ..." errors
         List classPathStrings;
         try
         {
@@ -804,7 +855,8 @@ public class CheckstyleReport
 
         if ( failsOnError && nbErrors > 0 )
         {
-            // TODO: should be a failure, not an error. Report is not meant to throw an exception here (so site would
+            // TODO: should be a failure, not an error. Report is not meant to
+            // throw an exception here (so site would
             // work regardless of config), but should record this information
             throw new MavenReportException( "There are " + nbErrors + " checkstyle errors." );
         }
@@ -846,8 +898,8 @@ public class CheckstyleReport
             else
             {
                 // TODO: failure if not a report
-                throw new MavenReportException(
-                    "Invalid output file format: (" + outputFileFormat + "). Must be 'plain' or 'xml'." );
+                throw new MavenReportException( "Invalid output file format: (" + outputFileFormat
+                    + "). Must be 'plain' or 'xml'." );
             }
         }
 
