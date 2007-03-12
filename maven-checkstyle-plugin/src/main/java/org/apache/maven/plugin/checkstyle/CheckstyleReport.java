@@ -1009,7 +1009,10 @@ public class CheckstyleReport
         {
             String suppresionFile = getSuppressionLocation();
 
-            p.setProperty( suppressionsFileExpression, suppresionFile );
+            if ( suppresionFile != null )
+            {
+                p.setProperty( suppressionsFileExpression, suppresionFile );
+            }
         }
 
         return p;
