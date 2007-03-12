@@ -71,21 +71,21 @@ public class CpdViolationCheckMojo
         
         StringBuffer buff = new StringBuffer( 100 );
         buff.append( "CPD " + severity + ": Found " );
-        buff.append(lines).append(" lines of duplicated code at locations:");
+        buff.append( lines ).append( " lines of duplicated code at locations:" );
         this.getLog().info( buff.toString() );
         
-        buff.setLength(0);
-        buff.append("    ");
-        Map file = (Map)item.get( "file" );
+        buff.setLength( 0 );
+        buff.append( "    " );
+        Map file = (Map) item.get( "file" );
         buff.append( file.get( "path" ) );
-        buff.append(" line ").append( file.get("line") );
+        buff.append( " line " ).append( file.get( "line" ) );
         this.getLog().info( buff.toString() );
         
-        buff.setLength(0);
-        buff.append("    ");
-        file = (Map)item.get( "file1" );
+        buff.setLength( 0 );
+        buff.append( "    " );
+        file = (Map) item.get( "file1" );
         buff.append( file.get( "path" ) );
-        buff.append(" line ").append( file.get("line") );
+        buff.append( " line " ).append( file.get( "line" ) );
         this.getLog().info( buff.toString() );
     }
 
@@ -119,7 +119,7 @@ public class CpdViolationCheckMojo
                     if ( msgs.containsKey( nm ) )
                     {
                         int cnt = 1;
-                        while ( msgs.containsKey( nm + cnt) )
+                        while ( msgs.containsKey( nm + cnt ) )
                         {
                             ++cnt;
                         }
@@ -128,6 +128,7 @@ public class CpdViolationCheckMojo
                     msgs.put( nm, getErrorDetails( xpp ) );
                     break;
                 }
+            default:
             }
             tp = xpp.next();
         }

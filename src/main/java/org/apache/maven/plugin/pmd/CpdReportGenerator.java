@@ -9,7 +9,7 @@ package org.apache.maven.plugin.pmd;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -173,8 +173,8 @@ public class CpdReportGenerator
 
             if ( xrefLocation != null )
             {
-                sink.link( xrefLocation + "/" + filename1.replaceAll( "\\.java$", ".html" ).replace( '\\', '/' ) + "#" +
-                    line1 );
+                sink.link( xrefLocation + "/" + filename1.replaceAll( "\\.java$", ".html" ).replace( '\\', '/' ) 
+                           + "#" + line1 );
             }
             sink.text( String.valueOf( line1 ) );
             if ( xrefLocation != null )
@@ -202,8 +202,8 @@ public class CpdReportGenerator
             
             if ( xrefLocation != null )
             {
-                sink.link( xrefLocation2 + "/" + filename2.replaceAll( "\\.java$", ".html" ).replace( '\\', '/' ) + "#" +
-                    line2 );
+                sink.link( xrefLocation2 + "/" + filename2.replaceAll( "\\.java$", ".html" ).replace( '\\', '/' ) 
+                           + "#" + line2 );
             }
             sink.text( String.valueOf( line2 ) );
             if ( xrefLocation != null )
@@ -218,8 +218,9 @@ public class CpdReportGenerator
 
             
             int colspan = 2;
-            if ( aggregate ) {
-                colspan = 3;
+            if ( aggregate ) 
+            {
+                ++colspan;
             }        
             // TODO Cleaner way to do this?
             sink.rawText( "<td colspan='" + colspan + "'>" );

@@ -9,7 +9,7 @@ package org.apache.maven.plugin.pmd;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -113,8 +113,8 @@ public class PmdReportListener
         {
             public int compare( Object o1, Object o2 )
             {
-                return ( (IRuleViolation) o1 ).getBeginLine() -
-                    ( (IRuleViolation) o2 ).getBeginLine();
+                return ( (IRuleViolation) o1 ).getBeginLine() 
+                    - ( (IRuleViolation) o2 ).getBeginLine();
             }
         } );
 
