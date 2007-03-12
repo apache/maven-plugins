@@ -27,8 +27,8 @@ FAQs
 
  * The PMD report takes a long time to generate.  Is there any way to skip the PMD or CPD reports temporarily?
 
- Yes, each report supports a skip parameter which you can pass on the command line, <<<-Dmaven.pmd.skip=true>>> and
- <<<-Dmaven.cpd.skip=true>>> respectively.
+ Yes, each report supports a skip parameter which you can pass on the command line, <<<-Dpmd.skip=true>>> and
+ <<<-Dcpd.skip=true>>> respectively.
 
  * I want to generate one of the reports but not the other.  How can I permanently skip PMD or CPD?
 
