@@ -87,51 +87,62 @@ public class CpdReport
     {
         if ( !skip && canGenerateReport() )
         {         
-            CPD cpd = new CPD( minimumTokens, new JavaLanguage() );
-            Map files = null;
+            ClassLoader origLoader = Thread.currentThread().getContextClassLoader();
             try
             {
-                files = getFilesToProcess( );
-                for ( Iterator it = files.keySet().iterator(); it.hasNext(); ) 
-                {
-                    cpd.add( (File) it.next() );
-                }
-            }
-            catch ( IOException e )
-            {
-                throw new MavenReportException( e.getMessage(), e );
-            }
-            cpd.go();
-
-            CpdReportGenerator gen =
-                new CpdReportGenerator( getSink(), files, getBundle( locale ), aggregate );
-            gen.generate( cpd.getMatches() );
-
-            if ( !isHtml() )
-            {
-                Renderer r = createRenderer();
-                String buffer = r.render( cpd.getMatches() );
+                Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader() );
+                
+                CPD cpd = new CPD( minimumTokens, new JavaLanguage() );
+                Map files = null;
                 try
                 {
-                    targetDirectory.mkdirs();
-                    Writer writer = new FileWriter( new File( targetDirectory, "cpd." + format ) );
-                    writer.write( buffer, 0, buffer.length() );
-                    writer.close();
-                    
-                    
-                    File siteDir = new File( targetDirectory, "site" );
-                    siteDir.mkdirs();
-                    writer = new FileWriter( new File( siteDir,
-                                                         "cpd." + format ) );
-                    writer.write( buffer, 0, buffer.length() );
-                    writer.close();
-                    
+                    files = getFilesToProcess( );
+                    for ( Iterator it = files.keySet().iterator(); it.hasNext(); ) 
+                    {
+                        cpd.add( (File) it.next() );
+                    }
                 }
-                catch ( IOException ioe )
+                catch ( IOException e )
                 {
-                    throw new MavenReportException( ioe.getMessage(), ioe );
+                    throw new MavenReportException( e.getMessage(), e );
+                }
+                cpd.go();
+    
+                CpdReportGenerator gen =
+                    new CpdReportGenerator( getSink(), files, getBundle( locale ), aggregate );
+                gen.generate( cpd.getMatches() );
+    
+                if ( !isHtml() )
+                {
+                    Renderer r = createRenderer();
+                    String buffer = r.render( cpd.getMatches() );
+                    try
+                    {
+                        targetDirectory.mkdirs();
+                        Writer writer = new FileWriter( new File( targetDirectory, "cpd." + format ) );
+                        writer.write( buffer, 0, buffer.length() );
+                        writer.close();
+                        
+                        
+                        File siteDir = new File( targetDirectory, "site" );
+                        siteDir.mkdirs();
+                        writer = new FileWriter( new File( siteDir,
+                                                             "cpd." + format ) );
+                        writer.write( buffer, 0, buffer.length() );
+                        writer.close();
+                        
+                    }
+                    catch ( IOException ioe )
+                    {
+                        throw new MavenReportException( ioe.getMessage(), ioe );
+                    }
                 }
             }
+            finally
+            {
+                Thread.currentThread().setContextClassLoader( origLoader );
+            }
+
         }
     }
 
