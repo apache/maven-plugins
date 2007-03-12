@@ -9,7 +9,7 @@ package org.apache.maven.plugin.pmd;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -31,12 +31,11 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.net.URL;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.Collections;
 
 import net.sourceforge.pmd.IRuleViolation;
 import net.sourceforge.pmd.PMD;
@@ -56,8 +55,8 @@ import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.plexus.resource.ResourceManager;
 import org.codehaus.plexus.resource.loader.FileResourceCreationException;
-import org.codehaus.plexus.resource.loader.FileResourceLoader;
 import org.codehaus.plexus.resource.loader.ResourceNotFoundException;
+import org.codehaus.plexus.util.FileUtils;
 
 /**
  * Implement the PMD report.
@@ -100,7 +99,7 @@ public class PmdReport
      *
      * @parameter
      */
-    private String[] rulesets = new String[]{"rulesets/basic.xml", "rulesets/unusedcode.xml", "rulesets/imports.xml",};
+    private String[] rulesets = new String[]{"rulesets/basic.xml", "rulesets/unusedcode.xml", "rulesets/imports.xml", };
 
     /**
      * The file encoding to use when reading the java source.
@@ -155,34 +154,47 @@ public class PmdReport
                 {
                     String set = rulesets[idx];
                     getLog().debug( "Preparing ruleset: " + set );
-                    File ruleset = locator.getResourceAsFile( set, getLocationTemp( set ) );
-                    InputStream rulesInput = null;
-                    if ( null == ruleset)
+                    File ruleset = null;
+                    Exception exception = null;
+                    try
                     {
-                        //  workaround bug in resource manager when run in reporting mode
-                        rulesInput = this.getClass().getClassLoader().getResourceAsStream( set );
+                        ruleset = locator.getResourceAsFile( set, getLocationTemp( set ) );
+
                     }
-                    else
+                    catch ( ResourceNotFoundException e )
                     {
-                        rulesInput = new FileInputStream( ruleset );
+                        exception = e;
                     }
-                    if ( null == rulesInput )
+                    catch ( FileResourceCreationException e )
+                    {
+                        exception = e;
+                    }
+                    //  workaround bug in resource manager when run in reporting mode
+                    // in reporting mode, the current classloader isn't in the ResourceManager.
+                    if (exception != null)
+                    {
+                        URL url = this.getClass().getClassLoader().getResource( set );
+                        if ( url != null )
+                        {
+                            ruleset = new File( getLocationTemp( set ) );
+                            FileUtils.copyURLToFile( url, ruleset );
+                        }
+                        else
+                        {
+                            throw new MavenReportException( exception.getMessage(), exception );
+                        }
+                    }
+                    
+                    if ( null == ruleset )
                     {
                         throw new MavenReportException( "Cold not resolve " + set );
                     }
 
+                    InputStream rulesInput = new FileInputStream( ruleset );
                     sets[idx] = ruleSetFactory.createRuleSet( rulesInput );
                 }
             }
             catch ( IOException e )
-            {
-                throw new MavenReportException( e.getMessage(), e );
-            }
-            catch (ResourceNotFoundException e)
-            {
-                throw new MavenReportException( e.getMessage(), e );
-            }
-            catch (FileResourceCreationException e)
             {
                 throw new MavenReportException( e.getMessage(), e );
             }
@@ -256,7 +268,7 @@ public class PmdReport
                     writer.write( buffer, 0, buffer.length() );
                     writer.close();
 
-                    File siteDir = new File(targetDirectory, "site");
+                    File siteDir = new File( targetDirectory, "site" );
                     siteDir.mkdirs();
                     writer = new FileWriter( new File( siteDir,
                                                          "pmd." + format ) );

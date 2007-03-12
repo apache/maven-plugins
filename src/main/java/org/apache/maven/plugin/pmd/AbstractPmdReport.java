@@ -9,7 +9,7 @@ package org.apache.maven.plugin.pmd;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
@@ -258,16 +257,16 @@ public abstract class AbstractPmdReport
         {
             excludeRoots = Collections.EMPTY_LIST;
         }
-        List excludeRootFiles = new ArrayList(excludeRoots.size());
+        List excludeRootFiles = new ArrayList( excludeRoots.size() );
         
-        for (Iterator it = excludeRoots.iterator(); it.hasNext();) 
+        for ( Iterator it = excludeRoots.iterator(); it.hasNext(); ) 
         {
-            String root = (String)it.next();
-            File file = new File(root);
+            String root = (String) it.next();
+            File file = new File( root );
             if ( file.exists()
-                && file.isDirectory())
+                && file.isDirectory() )
             {
-                excludeRootFiles.add(file);
+                excludeRootFiles.add( file );
             }
         }
         
@@ -276,8 +275,8 @@ public abstract class AbstractPmdReport
         for ( Iterator i = compileSourceRoots.iterator(); i.hasNext(); )
         {
             String root = (String) i.next();
-            File sroot = new File(root);
-            directories.add( new PmdFileInfo( project, sroot, sourceXref) );
+            File sroot = new File( root );
+            directories.add( new PmdFileInfo( project, sroot, sourceXref ) );
         }
         
         if ( includeTests )
@@ -285,8 +284,8 @@ public abstract class AbstractPmdReport
             for ( Iterator i = testSourceRoots.iterator(); i.hasNext(); )
             {
                 String root = (String) i.next();
-                File sroot = new File(root);
-                directories.add( new PmdFileInfo( project, sroot, testXref) );
+                File sroot = new File( root );
+                directories.add( new PmdFileInfo( project, sroot, testXref ) );
             }
         }
         if ( aggregate )
@@ -297,16 +296,16 @@ public abstract class AbstractPmdReport
                 for ( Iterator i2 = localProject.getCompileSourceRoots().iterator(); i2.hasNext(); )
                 {
                     String root = (String) i2.next();
-                    File sroot = new File(root);
-                    directories.add( new PmdFileInfo( localProject, sroot, sourceXref) );
+                    File sroot = new File( root );
+                    directories.add( new PmdFileInfo( localProject, sroot, sourceXref ) );
                 }
                 if ( includeTests )
                 {
                     for ( Iterator i2 = localProject.getTestCompileSourceRoots().iterator(); i2.hasNext(); )
                     {
                         String root = (String) i2.next();
-                        File sroot = new File(root);
-                        directories.add( new PmdFileInfo( localProject, sroot, testXref) );
+                        File sroot = new File( root );
+                        directories.add( new PmdFileInfo( localProject, sroot, testXref ) );
                     }
                 }
             }
@@ -317,7 +316,7 @@ public abstract class AbstractPmdReport
         String including = getIncludeExcludeString( includes );
         Map files = new TreeMap();
         
-        if ( "".equals(including) )
+        if ( "".equals( including ) )
         {
             including = "**/*.java";
         }
@@ -338,18 +337,18 @@ public abstract class AbstractPmdReport
         }
         getLog().debug( "Excluded files: '" + excludesStr + "'" );
 
-        for ( Iterator it = directories.iterator(); it.hasNext();)
+        for ( Iterator it = directories.iterator(); it.hasNext(); )
         {
             PmdFileInfo finfo = (PmdFileInfo) it.next();
             File sourceDirectory = finfo.getSourceDirectory();
             if ( sourceDirectory.exists()
                 && sourceDirectory.isDirectory()
-                && !excludeRootFiles.contains(sourceDirectory))
+                && !excludeRootFiles.contains( sourceDirectory ) )
             {
                 List newfiles = FileUtils.getFiles( sourceDirectory, including, excludesStr.toString() );
                 for ( Iterator it2 = newfiles.iterator(); it2.hasNext(); )
                 {
-                    files.put( it2.next(), finfo);
+                    files.put( it2.next(), finfo );
                 }
             }
         }        
@@ -400,7 +399,7 @@ public abstract class AbstractPmdReport
 
         // if format is XML, we need to output it even if the file list is empty
         // so the "check" goals can check for failures
-        if ( "xml".equals(format) )
+        if ( "xml".equals( format ) )
         {
             return true;
         }
@@ -414,7 +413,7 @@ public abstract class AbstractPmdReport
         }
         catch ( IOException e )
         {
-            getLog().error(e);
+            getLog().error( e );
         }
         return true;
     }
