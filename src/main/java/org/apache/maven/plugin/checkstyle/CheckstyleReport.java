@@ -553,12 +553,6 @@ public class CheckstyleReport
             // locator = new Locator( getLog(), new File(
             // project.getBuild().getDirectory() ) );
 
-            String configFile = getConfigFile();
-            Properties overridingProperties = getOverridingProperties();
-            ModuleFactory moduleFactory;
-            Configuration config;
-            CheckstyleResults results;
-
             ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
 
             try
@@ -568,27 +562,37 @@ public class CheckstyleReport
                 // so we have to fix it
                 ClassLoader checkstyleClassLoader = PackageNamesLoader.class.getClassLoader();
                 Thread.currentThread().setContextClassLoader( checkstyleClassLoader );
+                
+
+                String configFile = getConfigFile();
+                Properties overridingProperties = getOverridingProperties();
+                ModuleFactory moduleFactory;
+                Configuration config;
+                CheckstyleResults results;
 
                 moduleFactory = getModuleFactory();
                 config = ConfigurationLoader.loadConfiguration( configFile,
                                                                 new PropertiesExpander( overridingProperties ) );
                 results = executeCheckstyle( config, moduleFactory );
+                
+                ResourceBundle bundle = getBundle( locale );
+                generateReportStatics();
+                generateMainReport( results, config, moduleFactory, bundle );
+                if ( enableRSS )
+                {
+                    generateRSS( results );
+                }
+
             }
             catch ( CheckstyleException e )
             {
                 throw new MavenReportException( "Failed during checkstyle configuration", e );
             }
-
-            ResourceBundle bundle = getBundle( locale );
-            generateReportStatics();
-            generateMainReport( results, config, moduleFactory, bundle );
-            if ( enableRSS )
+            finally
             {
-                generateRSS( results );
+                //be sure to restore original context classloader
+                Thread.currentThread().setContextClassLoader( currentClassLoader );
             }
-
-            // be sure to restore original context classloader
-            Thread.currentThread().setContextClassLoader( currentClassLoader );
         }
     }
 
