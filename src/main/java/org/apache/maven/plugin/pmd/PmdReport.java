@@ -90,7 +90,7 @@ public class PmdReport
      * Skip the PMD report generation.  Most useful on the command line
      * via "-Dmaven.pmd.skip=true".
      *
-     * @parameter expression="${maven.pmd.skip}" default-value="false"
+     * @parameter expression="${pmd.skip}" default-value="false"
      */
     private boolean skip;
 
