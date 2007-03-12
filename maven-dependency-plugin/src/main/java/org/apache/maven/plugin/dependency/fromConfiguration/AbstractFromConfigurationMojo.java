@@ -195,7 +195,8 @@ public abstract class AbstractFromConfigurationMojo
     {
         Artifact artifact;
 
-  //      Map managedVersions = createManagedVersionMap( factory, project.getId(), project.getDependencyManagement() );
+        // Map managedVersions = createManagedVersionMap( factory,
+        // project.getId(), project.getDependencyManagement() );
         VersionRange vr;
         try
         {
@@ -256,6 +257,8 @@ public abstract class AbstractFromConfigurationMojo
      * Tries to find missing version from dependancy list and dependency
      * management. If found, the artifact is updated with the correct version.
      * 
+     * It will first look for an exact match on artifactId/groupId/classifier/type and if it doesn't find
+     * a match, it will try again looking for artifactId and groupId only.
      * @param artifact
      *            representing configured file.
      * @throws MojoExecutionException
@@ -263,8 +266,12 @@ public abstract class AbstractFromConfigurationMojo
     private void fillMissingArtifactVersion( ArtifactItem artifact )
         throws MojoExecutionException
     {
-        if ( !findDependencyVersion( artifact, project.getDependencies() )
-            && !findDependencyVersion( artifact, project.getDependencyManagement().getDependencies() ) )
+        if ( !findDependencyVersion( artifact, project.getDependencies(), false )
+            && ( project.getDependencyManagement() == null || !findDependencyVersion( artifact, project
+                .getDependencyManagement().getDependencies(), false ) )
+            && !findDependencyVersion( artifact, project.getDependencies(), true )
+            && ( project.getDependencyManagement() == null || !findDependencyVersion( artifact, project
+                .getDependencyManagement().getDependencies(), true ) ) )
         {
             throw new MojoExecutionException( "Unable to find artifact version of " + artifact.getGroupId() + ":"
                 + artifact.getArtifactId() + " in either dependency list or in project's dependency management." );
@@ -279,18 +286,21 @@ public abstract class AbstractFromConfigurationMojo
      *            representing configured file.
      * @param list
      *            list of dependencies to search.
+     * @param looseMatch
+     *            only look at artifactId and groupId
      * @return the found dependency
      */
-    private boolean findDependencyVersion( ArtifactItem artifact, List list )
+    private boolean findDependencyVersion( ArtifactItem artifact, List list, boolean looseMatch )
     {
         boolean result = false;
+
         for ( int i = 0; i < list.size(); i++ )
         {
             Dependency dependency = (Dependency) list.get( i );
             if ( StringUtils.equals( dependency.getArtifactId(), artifact.getArtifactId() )
                 && StringUtils.equals( dependency.getGroupId(), artifact.getGroupId() )
-                && StringUtils.equals( dependency.getClassifier(), artifact.getClassifier() )
-                && StringUtils.equals( dependency.getType(), artifact.getType() ) )
+                && ( looseMatch || StringUtils.equals( dependency.getClassifier(), artifact.getClassifier() ) )
+                && ( looseMatch || StringUtils.equals( dependency.getType(), artifact.getType() ) ) )
             {
 
                 artifact.setVersion( dependency.getVersion() );
@@ -299,11 +309,12 @@ public abstract class AbstractFromConfigurationMojo
                 break;
             }
         }
+
         return result;
     }
 
     private Map createManagedVersionMap( ArtifactFactory artifactFactory, String projectId,
-                                        DependencyManagement dependencyManagement )
+                                         DependencyManagement dependencyManagement )
         throws MojoExecutionException
     {
         Map map;
