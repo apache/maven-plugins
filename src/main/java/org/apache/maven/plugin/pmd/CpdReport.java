@@ -61,7 +61,7 @@ public class CpdReport
      * Skip the PMD report generation.  Most useful on the command line
      * via "-Dmaven.cpd.skip=true".
      *
-     * @parameter expression="${maven.cpd.skip}" default-value="false"
+     * @parameter expression="${cpd.skip}" default-value="false"
      */
     private boolean skip;
 
