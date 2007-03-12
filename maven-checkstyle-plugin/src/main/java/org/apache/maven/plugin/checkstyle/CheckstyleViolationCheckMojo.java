@@ -32,10 +32,10 @@ import java.io.FileReader;
 import java.io.IOException;
 
 /**
- * Perform a violation check against the last Checkstyle run to see if there are any violations.
- * It reads the Checkstyle output file, counts the number of violations found and displays it on the
- * console.
- *
+ * Perform a violation check against the last Checkstyle run to see if there are
+ * any violations. It reads the Checkstyle output file, counts the number of
+ * violations found and displays it on the console.
+ * 
  * @author <a href="mailto:joakim@erdfelt.net">Joakim Erdfelt</a>
  * @goal check
  * @phase verify
@@ -45,28 +45,36 @@ public class CheckstyleViolationCheckMojo
     extends AbstractMojo
 {
     /**
-     * Specifies the path and filename to save the Checkstyle output.  The format of the output file is
-     * determined by the <code>outputFileFormat</code>
-     *
+     * Specifies the path and filename to save the Checkstyle output. The format
+     * of the output file is determined by the <code>outputFileFormat</code>
+     * 
      * @parameter expression="${checkstyle.output.file}"
-     * default-value="${project.build.directory}/checkstyle-result.xml"
+     *            default-value="${project.build.directory}/checkstyle-result.xml"
      */
     private File outputFile;
 
     /**
-     * Specifies the format of the output to be used when writing to the output file. Valid values are
-     * "plain" and "xml"
-     *
+     * Specifies the format of the output to be used when writing to the output
+     * file. Valid values are "plain" and "xml"
+     * 
      * @parameter expression="${checkstyle.output.format}" default-value="xml"
      */
     private String outputFileFormat;
 
     /**
      * do we fail the build on a violation?
-     *
-     * @parameter expression="${checkstyle.failOnViolation}" default-value="true"
+     * 
+     * @parameter expression="${checkstyle.failOnViolation}"
+     *            default-value="true"
      */
     private boolean failOnViolation;
+
+    /**
+     * skip entire check
+     * 
+     * @parameter expression="${checkstyle.skip}" default-value="false"
+     */
+    private boolean skip;
 
     /**
      * @see org.apache.maven.plugin.Mojo#execute()
@@ -74,47 +82,51 @@ public class CheckstyleViolationCheckMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        if ( !"xml".equals( outputFileFormat ) )
+        if ( !skip )
         {
-            throw new MojoExecutionException(
-                "Output format is '" + outputFileFormat + "', checkstyle:check requires format to be 'xml'." );
-        }
-
-        if ( !outputFile.exists() )
-        {
-            getLog().info(
-                "Unable to perform checkstyle:check, " + "unable to find checkstyle:checkstyle outputFile." );
-            return;
-        }
-
-        try
-        {
-            XmlPullParser xpp = new MXParser();
-            FileReader freader = new FileReader( outputFile );
-            BufferedReader breader = new BufferedReader( freader );
-            xpp.setInput( breader );
-
-            int violations = countViolations( xpp );
-            if ( violations > 0 )
+            if ( !"xml".equals( outputFileFormat ) )
             {
-                if ( failOnViolation )
-                {
-                    throw new MojoFailureException(
-                        "You have " + violations + " Checkstyle violation" + ( ( violations > 1 ) ? "s" : "" ) + "." );
-                }
-
-                getLog().warn( "checkstyle:check violations detected but failOnViolation set to false" );
+                throw new MojoExecutionException( "Output format is '" + outputFileFormat
+                    + "', checkstyle:check requires format to be 'xml'." );
             }
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Unable to read Checkstyle results xml: " + outputFile.getAbsolutePath(),
-                                              e );
-        }
-        catch ( XmlPullParserException e )
-        {
-            throw new MojoExecutionException( "Unable to read Checkstyle results xml: " + outputFile.getAbsolutePath(),
-                                              e );
+
+            if ( !outputFile.exists() )
+            {
+                getLog().info(
+                               "Unable to perform checkstyle:check, "
+                                   + "unable to find checkstyle:checkstyle outputFile." );
+                return;
+            }
+
+            try
+            {
+                XmlPullParser xpp = new MXParser();
+                FileReader freader = new FileReader( outputFile );
+                BufferedReader breader = new BufferedReader( freader );
+                xpp.setInput( breader );
+
+                int violations = countViolations( xpp );
+                if ( violations > 0 )
+                {
+                    if ( failOnViolation )
+                    {
+                        throw new MojoFailureException( "You have " + violations + " Checkstyle violation"
+                            + ( ( violations > 1 ) ? "s" : "" ) + "." );
+                    }
+
+                    getLog().warn( "checkstyle:check violations detected but failOnViolation set to false" );
+                }
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Unable to read Checkstyle results xml: "
+                    + outputFile.getAbsolutePath(), e );
+            }
+            catch ( XmlPullParserException e )
+            {
+                throw new MojoExecutionException( "Unable to read Checkstyle results xml: "
+                    + outputFile.getAbsolutePath(), e );
+            }
         }
     }
 
