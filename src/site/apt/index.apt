@@ -47,3 +47,5 @@ Maven Eclipse Plugin
   * {{{examples/attach-library-sources.html}Attach Library Sources}}
 
   * {{{examples/provide-project-natures-and-build-commands.html}Provide Project Natures and Build Commands}}
+
+  * {{{examples/additional-facets.html}Adding additional facets}}

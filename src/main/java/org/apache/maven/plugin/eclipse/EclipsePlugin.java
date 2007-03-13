@@ -27,6 +27,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -139,6 +140,19 @@ public class EclipsePlugin
      * @parameter
      */
     private List additionalProjectnatures;
+    
+    /**
+     * List of eclipse project facets to be added to the default ones.
+     * 
+     * <pre>
+     * &lt;additionalProjectFacets&gt;
+     *    &lt;jst.jsf&gt;1.1&lt;jst.jsf/&gt;
+     * &lt;/additionalProjectFacets&gt;
+     * </pre>
+     *
+     * @parameter
+     */
+    private Map additionalProjectFacets;
 
     /**
      * List of eclipse build commands. By default the <code>org.eclipse.jdt.core.javabuilder</code> builder plus the needed
@@ -770,6 +784,7 @@ public class EclipsePlugin
         config.setProject( project );
         config.setProjectBaseDir( projectBaseDir );
         config.setProjectnatures( projectnatures );
+        config.setProjectFacets( additionalProjectFacets );
         config.setSourceDirs( sourceDirs );
 
         return config;
@@ -940,7 +955,6 @@ public class EclipsePlugin
     {
         for ( Iterator it = resources.iterator(); it.hasNext(); )
         {
-
             Resource resource = (Resource) it.next();
 
             getLog().debug( "Processing resource dir: " + resource.getDirectory() );
