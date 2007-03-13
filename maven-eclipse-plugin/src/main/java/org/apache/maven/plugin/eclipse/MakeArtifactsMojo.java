@@ -567,12 +567,17 @@ public class MakeArtifactsMojo
 
             String artifactId = bundleTokens[0];
             String version = null;
+            boolean optional = false;
             for ( int k = 1; k < bundleTokens.length; k++ )
             {
                 String string = bundleTokens[k];
                 if ( string.startsWith( "bundle-version=" ) )
                 {
                     version = StringUtils.strip( StringUtils.substring( string, string.indexOf( "=" ) + 1 ), "\"" );
+                }
+                else if ( string.equalsIgnoreCase( "resolution:=optional" ) )
+                {
+                    optional = true;
                 }
             }
 
@@ -588,6 +593,7 @@ public class MakeArtifactsMojo
             dep.setArtifactId( artifactId );
             dep.setGroupId( createGroupId( artifactId ) );
             dep.setVersion( version );
+            dep.setOptional( optional );
 
             dependencies.add( dep );
 
