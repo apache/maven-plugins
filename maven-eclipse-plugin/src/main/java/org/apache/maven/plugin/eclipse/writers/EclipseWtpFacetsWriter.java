@@ -21,6 +21,8 @@ package org.apache.maven.plugin.eclipse.writers;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.Messages;
@@ -157,7 +159,35 @@ public class EclipseWtpFacetsWriter
         writer.addAttribute( ATTR_FACET, FACET_JST_JAVA );
         writer.addAttribute( ATTR_VERSION, resolveJavaVersion() );
         writer.endElement(); // installed
+        
+        writeAdditionalProjectFacets( writer );
+        
         writer.endElement(); // faceted-project
+    }
+    
+    /**
+     * Writes out any additional project facets specified in the plugin configuration
+     * 
+     * @param writer
+     * @param packaging
+     */
+    private void writeAdditionalProjectFacets( XMLWriter writer )
+    {
+        if ( config.getProjectFacets() == null )
+        {
+            return;
+        }
+        
+        Iterator facetIterator = config.getProjectFacets().entrySet().iterator();
+        while ( facetIterator.hasNext() )
+        {
+            Entry facetEntry = (Entry) facetIterator.next();
+
+            writer.startElement( ELT_INSTALLED );
+            writer.addAttribute( ATTR_FACET, (String) facetEntry.getKey() );
+            writer.addAttribute( ATTR_VERSION, (String) facetEntry.getValue() );
+            writer.endElement(); // installed
+        }
     }
 
 }
