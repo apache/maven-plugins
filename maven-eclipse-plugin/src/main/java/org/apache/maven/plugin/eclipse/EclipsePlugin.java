@@ -900,8 +900,11 @@ public class EclipsePlugin
             .equals( new File( project.getBuild().getOutputDirectory() ) );
         if ( useStandardOutputDir )
         {
+            getLog().debug("testOutput toRelativeAndFixSeparator " + projectBaseDir + " , " + project.getBuild()
+                    .getTestOutputDirectory());
             testOutput = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, new File( project.getBuild()
                 .getTestOutputDirectory() ), false );
+            getLog().debug("testOutput after toRelative : " + testOutput);
         }
 
         extractSourceDirs( directories, project.getTestCompileSourceRoots(), basedir, projectBaseDir, true, testOutput );
@@ -932,11 +935,12 @@ public class EclipsePlugin
     }
 
     void extractResourceDirs( Set directories, List resources, MavenProject project, File basedir,
-                              File workspaceProjectBaseDir, boolean test, String output )
+                              File workspaceProjectBaseDir, boolean test, final String output )
         throws MojoExecutionException
     {
         for ( Iterator it = resources.iterator(); it.hasNext(); )
         {
+
             Resource resource = (Resource) it.next();
 
             getLog().debug( "Processing resource dir: " + resource.getDirectory() );
@@ -967,10 +971,14 @@ public class EclipsePlugin
 
             String resourceDir = IdeUtils.toRelativeAndFixSeparator( workspaceProjectBaseDir, resourceDirectory,
                                                                      !workspaceProjectBaseDir.equals( basedir ) );
-
-            if ( output != null )
+            String thisOutput = output;
+            if ( thisOutput != null )
             {
-                File outputFile = new File( workspaceProjectBaseDir, output );
+                // sometimes thisOutput is already an absolute path
+                File outputFile = new File( thisOutput );
+                if(!outputFile.isAbsolute()){
+                    outputFile = new File( workspaceProjectBaseDir, thisOutput );
+                }
                 // create output dir if it doesn't exist
                 outputFile.mkdirs();
 
@@ -981,14 +989,16 @@ public class EclipsePlugin
                     outputFile.mkdirs();
                 }
 
-                output = IdeUtils.toRelativeAndFixSeparator( workspaceProjectBaseDir, outputFile, false );
+                getLog().debug(
+                        "Making relative and fixing separator: { " + workspaceProjectBaseDir + ", " +  outputFile + ", false }." );
+                thisOutput = IdeUtils.toRelativeAndFixSeparator( workspaceProjectBaseDir, outputFile, false );
             }
 
             getLog().debug(
-                            "Adding eclipse source dir: { " + resourceDir + ", " + output + ", true, " + test + ", "
+                            "Adding eclipse source dir: { " + resourceDir + ", " + thisOutput + ", true, " + test + ", "
                                 + includePattern + ", " + excludePattern + " }." );
 
-            directories.add( new EclipseSourceDir( resourceDir, output, true, test, includePattern, excludePattern,
+            directories.add( new EclipseSourceDir( resourceDir, thisOutput, true, test, includePattern, excludePattern,
                                                    resource.isFiltering() ) );
         }
     }
