@@ -135,18 +135,22 @@ public class EclipseOSGiManifestWriter
                     continue;
                 }
 
-                if ( line.startsWith( ENTRY_BUNDLE_CLASSPATH ) )
+                // Note that this could be the empty string, if we encounter
+                // a field that we weren't expecting to be multi-line.
+                String name = line.substring( 0, line.indexOf( ":" ) + 1 );
+                
+                if ( name.equalsIgnoreCase( ENTRY_BUNDLE_CLASSPATH ) )
                 {
                     inBundleClasspathEntry = true;
                 }
-                else if ( line.startsWith( ENTRY_BUNDLE_NAME ) )
+                else if ( name.equalsIgnoreCase( ENTRY_BUNDLE_NAME ) )
                 {
                     manifestSb.append( ENTRY_BUNDLE_NAME );
                     manifestSb.append( " " );
                     manifestSb.append( config.getProject().getName() );
                     manifestSb.append( NEWLINE );
                 }
-                else if ( line.startsWith( ENTRY_BUNDLE_SYMBOLICNAME ) )
+                else if ( name.equalsIgnoreCase( ENTRY_BUNDLE_SYMBOLICNAME ) )
                 {
                     manifestSb.append( ENTRY_BUNDLE_SYMBOLICNAME );
                     manifestSb.append( " " );
@@ -154,14 +158,14 @@ public class EclipseOSGiManifestWriter
                     manifestSb.append( ";singleton:=true" );
                     manifestSb.append( NEWLINE );
                 }
-                else if ( line.startsWith( ENTRY_BUNDLE_VERSION ) )
+                else if ( name.equalsIgnoreCase( ENTRY_BUNDLE_VERSION ) )
                 {
                     manifestSb.append( ENTRY_BUNDLE_VERSION );
                     manifestSb.append( " " );
                     manifestSb.append( getNormalizedVersion( config.getProject().getVersion() ) );
                     manifestSb.append( NEWLINE );
                 }
-                else if ( line.startsWith( ENTRY_BUNDLE_VENDOR ) && config.getProject().getOrganization() != null )
+                else if ( name.equalsIgnoreCase( ENTRY_BUNDLE_VENDOR ) && config.getProject().getOrganization() != null )
                 {
                     manifestSb.append( ENTRY_BUNDLE_VENDOR );
                     manifestSb.append( " " );
