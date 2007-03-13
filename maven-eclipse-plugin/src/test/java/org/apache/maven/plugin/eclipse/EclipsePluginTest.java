@@ -254,5 +254,15 @@ public class EclipsePluginTest
     {
         testProject( "project-26" );
     }
+    
+    /**
+     * Test additional project facets specified.
+     * @throws Exception any exception thrown during test
+     */
+    public void testProject27()
+        throws Exception
+    {
+        testProject( "project-27" );
+    }
 
 }
