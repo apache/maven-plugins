@@ -78,6 +78,28 @@ public class IdeUtils
                 .getAbsolutePath() ), e );
         }
     }
+    
+    public static String getProjectName( MavenProject project, boolean addVersionToProjectName )
+    {
+        return getProjectName( project.getArtifactId(), project.getVersion(), addVersionToProjectName );
+    }
+    
+    public static String getProjectName( IdeDependency dep, boolean addVersionToProjectName )
+    {
+        return getProjectName( dep.getArtifactId(), dep.getVersion(), addVersionToProjectName );
+    }
+    
+    private static String getProjectName( String artifactId, String version, boolean addVersionToProjectName )
+    {
+        if( addVersionToProjectName )
+        {
+            return artifactId + '-' + version;
+        }
+        else
+        {
+            return artifactId;
+        }
+    }
 
     public static String toRelativeAndFixSeparator( File basedir, File fileToAdd, boolean replaceSlashesWithDashes )
         throws MojoExecutionException

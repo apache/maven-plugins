@@ -104,6 +104,11 @@ public class EclipseWriterConfig
      * Classpath containers.
      */
     private List classpathContainers;
+    
+    /**
+     * Appends the version number to the project name if <tt>true</tt>.
+     */
+    private boolean addVersionToProjectName;
 
     /**
      * Getter for <code>deps</code>.
@@ -113,7 +118,7 @@ public class EclipseWriterConfig
     {
         return this.deps;
     }
-
+    
     /**
      * Setter for <code>deps</code>.
      * @param deps The deps to set.
@@ -355,5 +360,21 @@ public class EclipseWriterConfig
     public void setProjectBaseDir( File projectBaseDir )
     {
         this.projectBaseDir = projectBaseDir;
+    }
+
+    /**
+     * Getter for <code>addVersionToProjectName</code>.
+     */
+    public boolean isAddVersionToProjectName()
+    {
+        return addVersionToProjectName;
+    }
+    
+    /**
+     * Setter for <code>addVersionToProjectName</code>.
+     */
+    public void setAddVersionToProjectName( boolean addVersionToProjectName )
+    {
+        this.addVersionToProjectName = addVersionToProjectName;
     }
 }

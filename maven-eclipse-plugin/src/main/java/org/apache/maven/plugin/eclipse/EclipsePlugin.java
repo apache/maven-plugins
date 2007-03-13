@@ -279,6 +279,14 @@ public class EclipsePlugin
      * @parameter
      */
     private EclipseConfigFile[] additionalConfig;
+    
+    /**
+     * If set to <tt>true</tt>, the version number of the artifact is appended
+     * to the name of the generated Eclipse project.
+     * 
+     * @parameter expression="${eclipse.addVersionToProjectName}" default-value="false"
+     */
+    private boolean addVersionToProjectName;
 
     /**
      * Parsed wtp version.
@@ -460,6 +468,22 @@ public class EclipsePlugin
     public void setAdditionalProjectnatures( List additionalProjectnatures )
     {
         this.additionalProjectnatures = additionalProjectnatures;
+    }
+    
+    /**
+     * Getter for <code>addVersionToProjectName</code>.
+     */
+    public boolean isAddVersionToProjectName()
+    {
+        return addVersionToProjectName;
+    }
+    
+    /**
+     * Setter for <code>addVersionToProjectName</code>.
+     */
+    public void setAddVersionToProjectName( boolean addVersionToProjectName )
+    {
+        this.addVersionToProjectName = addVersionToProjectName;
     }
 
     /**
@@ -749,9 +773,7 @@ public class EclipsePlugin
 
         EclipseWriterConfig config = new EclipseWriterConfig();
 
-        // TODO: add mojo param 'addVersionToProjectName' and if set append
-        // -version to the project name.
-        config.setEclipseProjectName( project.getArtifactId() );
+        config.setEclipseProjectName( IdeUtils.getProjectName( project, isAddVersionToProjectName() ) );
 
         Set convertedBuildCommands = new LinkedHashSet();
 
@@ -786,6 +808,7 @@ public class EclipsePlugin
         config.setProjectnatures( projectnatures );
         config.setProjectFacets( additionalProjectFacets );
         config.setSourceDirs( sourceDirs );
+        config.setAddVersionToProjectName( isAddVersionToProjectName() );
 
         return config;
     }
