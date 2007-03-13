@@ -20,6 +20,7 @@ package org.apache.maven.plugin.eclipse.writers;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.eclipse.EclipseSourceDir;
@@ -86,6 +87,11 @@ public class EclipseWriterConfig
      * Project natures.
      */
     private List projectnatures;
+    
+    /**
+     * Project facets.
+     */
+    private Map projectFacets;
 
     /**
      * Build commands.
@@ -313,6 +319,24 @@ public class EclipseWriterConfig
     public void setProjectnatures( List projectnatures )
     {
         this.projectnatures = projectnatures;
+    }
+
+    /**
+     * Getter for <code>projectFacets</code>.
+     * @return Returns the projectFacets
+     */
+    public Map getProjectFacets()
+    {
+        return projectFacets;
+    }
+
+    /**
+     * Setter for <code>projectFacets</code>
+     * @param projectFacets The projectFacets to set.
+     */
+    public void setProjectFacets( Map projectFacets )
+    {
+        this.projectFacets = projectFacets;
     }
 
     /**
