@@ -192,7 +192,7 @@ public class EclipseProjectWriter
                 if ( dep.isReferencedProject() )
                 {
                     writer.startElement( "project" ); //$NON-NLS-1$
-                    writer.writeText( dep.getArtifactId() );
+                    writer.writeText( IdeUtils.getProjectName( dep, config.isAddVersionToProjectName() ) );
                     writer.endElement();
                 }
             }
