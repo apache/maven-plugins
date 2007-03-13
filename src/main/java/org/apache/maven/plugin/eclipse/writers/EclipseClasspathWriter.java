@@ -366,7 +366,7 @@ public class EclipseClasspathWriter
 
         if ( dep.isReferencedProject() && !config.isPde() )
         {
-            path = "/" + dep.getArtifactId(); //$NON-NLS-1$
+            path = "/" + IdeUtils.getProjectName( dep, config.isAddVersionToProjectName() ); //$NON-NLS-1$
             kind = ATTR_SRC;
         }
         else if ( dep.isReferencedProject() && config.isPde() )
