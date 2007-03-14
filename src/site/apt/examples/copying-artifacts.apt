@@ -21,7 +21,7 @@
   Allan Ramirez
   Brian Fox
   ------
-  Nov 2006
+  Mar 2007
   ------
 
 Copying Specific Artifacts
@@ -71,7 +71,7 @@ Copying Specific Artifacts
 +---+
 
     Then after executing <<<mvn package>>> the artifact (junit) is copied to the
-    givin alternateLocation.
+    given alternateLocation.
 
     The <<<dependency:copy>>> goal can also be used to copy the just built
     artifact to a custom location if desired. It must be bound after the
@@ -113,3 +113,41 @@ Copying Specific Artifacts
 </project>
 +---+
 
+{Copying From the Command Line}:
+  
+	If you intend to configure this mojo for execution on the command line using:
+
++---+
+mvn dependency:copy
++---+
+
+	you must not put the configuration inside the <executions> tag. Your configuration should look like this:
+	
++---+
+<project>
+  [...]
+  <build>
+   <plugins>
+     <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <configuration>
+          <artifactItems>
+            <artifactItem>
+              <groupId>[ groupId ]</groupId>
+              <artifactId>[ artifactId ]</artifactId>
+              <version>[ version ]</version>
+              <type>[ packaging ]</type>
+              <overWrite>[ true or false ]</overWrite>
+              <outputDirectory>[ output directory ]</outputDirectory>
+              <destFileName>[ filename ]</destFileName>
+            </artifactItem>
+          </artifactItems>
+          <!-- other configurations here -->
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++---+	
