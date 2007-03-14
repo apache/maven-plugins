@@ -24,29 +24,18 @@ import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.execution.ReactorManager;
-import org.apache.maven.monitor.event.EventDispatcher;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.resources.remote.stub.MavenProjectResourcesStub;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.settings.Settings;
-import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Properties;
-import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
 
@@ -102,7 +91,7 @@ public class RemoteResourcesMojoTest
     {
         buildResourceBundle( "default-createbundle",
                             new String[] { "SIMPLE.txt" },
-                            null);
+                            null );
     }
     
     public void testSimpleBundles()
@@ -112,20 +101,20 @@ public class RemoteResourcesMojoTest
         final ProcessRemoteResourcesMojo mojo = lookupProcessMojoWithSettings( project ,
                                                                         new String[] {
                                                                             "test:test:1.0"
-                                                                        });
+                                                                        } );
 
         setupDefaultProject( project );
         
         ArtifactRepository repo = (ArtifactRepository) getVariableValueFromObject( mojo, "localRepository" );
-        String path = repo.pathOf(new DefaultArtifact( "test",
+        String path = repo.pathOf( new DefaultArtifact( "test",
                                                         "test",
-                                                        VersionRange.createFromVersion("1.0"),
+                                                        VersionRange.createFromVersion( "1.0" ),
                                                         null,
                                                         "jar",
                                                         "",
-                                                        new DefaultArtifactHandler() ));
+                                                        new DefaultArtifactHandler() ) );
         
-        File file = new File(repo.getBasedir() + "/" + path + ".jar");
+        File file = new File( repo.getBasedir() + "/" + path + ".jar" );
         file.getParentFile().mkdirs();
         buildResourceBundle( "default-simplebundles-create",
                              new String[] { "SIMPLE.txt" },
@@ -135,8 +124,8 @@ public class RemoteResourcesMojoTest
         mojo.execute();
         
         file = (File) getVariableValueFromObject( mojo, "outputDirectory" );
-        file = new File(file, "SIMPLE.txt"); 
-        assertTrue(file.exists());
+        file = new File( file, "SIMPLE.txt" ); 
+        assertTrue( file.exists() );
     }
         
     public void testFilteredBundles()
@@ -146,20 +135,20 @@ public class RemoteResourcesMojoTest
         final ProcessRemoteResourcesMojo mojo = lookupProcessMojoWithSettings( project ,
                                                                         new String[] {
                                                                             "test:test:1.1"
-                                                                        });
+                                                                        } );
     
         setupDefaultProject( project );
         
         ArtifactRepository repo = (ArtifactRepository) getVariableValueFromObject( mojo, "localRepository" );
-        String path = repo.pathOf(new DefaultArtifact( "test",
+        String path = repo.pathOf( new DefaultArtifact( "test",
                                                         "test",
-                                                        VersionRange.createFromVersion("1.1"),
+                                                        VersionRange.createFromVersion( "1.1" ),
                                                         null,
                                                         "jar",
                                                         "",
-                                                        new DefaultArtifactHandler() ));
+                                                        new DefaultArtifactHandler() ) );
         
-        File file = new File(repo.getBasedir() + "/" + path + ".jar");
+        File file = new File( repo.getBasedir() + "/" + path + ".jar" );
         file.getParentFile().mkdirs();
         buildResourceBundle( "default-filterbundles-create",
                              new String[] { "FILTER.txt.vm" },
@@ -171,58 +160,58 @@ public class RemoteResourcesMojoTest
         mojo.execute();
         
         file = (File) getVariableValueFromObject( mojo, "outputDirectory" );
-        file = new File(file, "FILTER.txt"); 
-        assertTrue(file.exists());
+        file = new File( file, "FILTER.txt" ); 
+        assertTrue( file.exists() );
         
-        String data = FileUtils.fileRead(file);
-        assertTrue(data.indexOf("2007") != -1);
-        assertTrue(data.indexOf("default-filterbundles") != -1);
+        String data = FileUtils.fileRead( file );
+        assertTrue( data.indexOf( "2007" ) != -1 );
+        assertTrue( data.indexOf( "default-filterbundles" ) != -1 );
     }
 
-    protected void buildResourceBundle(String id,
+    protected void buildResourceBundle( String id,
                                        String resourceNames[],
-                                       File jarName)
+                                       File jarName )
     throws Exception 
     {
         final MavenProjectResourcesStub project = createTestProject( id );
 
-        final File resourceDir = new File(project.getBasedir() + "/src/main/resources");
+        final File resourceDir = new File( project.getBasedir() + "/src/main/resources" );
         final BundleRemoteResourcesMojo mojo = lookupBundleMojoWithSettings( project , resourceDir );
         
         setupDefaultProject( project );
         
-        for (int x = 0; x < resourceNames.length; x++)
+        for ( int x = 0; x < resourceNames.length; x++ )
         {
-            File resource = new File(resourceDir, resourceNames[x]);
-            URL source = getClass().getResource("/" + resourceNames[x]);
+            File resource = new File( resourceDir, resourceNames[x] );
+            URL source = getClass().getResource( "/" + resourceNames[x] );
         
-            FileUtils.copyURLToFile(source, resource);
+            FileUtils.copyURLToFile( source, resource );
         }
         
         mojo.execute();
         
-        File xmlFile = new File(project.getBasedir() + "/target/classes/META-INF/maven/remote-resources.xml");
-        assertTrue(xmlFile.exists());
+        File xmlFile = new File( project.getBasedir() + "/target/classes/META-INF/maven/remote-resources.xml" );
+        assertTrue( xmlFile.exists() );
         
-        String data = FileUtils.fileRead(xmlFile);
-        for (int x = 0; x < resourceNames.length; x++)
+        String data = FileUtils.fileRead( xmlFile );
+        for ( int x = 0; x < resourceNames.length; x++ )
         {
-            assertTrue(data.indexOf(resourceNames[x]) != -1);
+            assertTrue( data.indexOf( resourceNames[x] ) != -1 );
         }
         
-        if ( null != jarName)
+        if ( null != jarName )
         {
-            JarOutputStream jar = new JarOutputStream( new FileOutputStream(jarName) );
-            jar.putNextEntry(new ZipEntry("META-INF/maven/remote-resources.xml"));
-            jar.write(data.getBytes());
+            JarOutputStream jar = new JarOutputStream( new FileOutputStream( jarName ) );
+            jar.putNextEntry( new ZipEntry( "META-INF/maven/remote-resources.xml" ) );
+            jar.write( data.getBytes() );
             jar.closeEntry();
 
-            for (int x = 0; x < resourceNames.length; x++)
+            for ( int x = 0; x < resourceNames.length; x++ )
             {
-                File resource = new File(resourceDir, resourceNames[x]);
-                data = FileUtils.fileRead(resource);
-                jar.putNextEntry(new ZipEntry(resourceNames[x]));
-                jar.write(data.getBytes());
+                File resource = new File( resourceDir, resourceNames[x] );
+                data = FileUtils.fileRead( resource );
+                jar.putNextEntry( new ZipEntry( resourceNames[x] ) );
+                jar.write( data.getBytes() );
                 jar.closeEntry();
             }
             jar.close();
@@ -243,7 +232,7 @@ public class RemoteResourcesMojoTest
     {
         // put this on the root dir
         project.addFile( "pom.xml", MavenProjectResourcesStub.ROOT_FILE );
-        project.setInceptionYear("2007");
+        project.setInceptionYear( "2007" );
         // start creating the environment
         project.setupBuildEnvironment();
     }
@@ -262,17 +251,17 @@ public class RemoteResourcesMojoTest
     protected BundleRemoteResourcesMojo lookupBundleMojoWithDefaultSettings( final MavenProject project )
         throws Exception
     {
-        File resourceDir = new File(project.getBasedir() + "/src/main/resources");
-        return lookupBundleMojoWithSettings(project, resourceDir);
+        File resourceDir = new File( project.getBasedir() + "/src/main/resources" );
+        return lookupBundleMojoWithSettings( project, resourceDir );
     }
     protected BundleRemoteResourcesMojo lookupBundleMojoWithSettings( final MavenProject project,
-                                                                      File resourceDir)
+                                                                      File resourceDir )
     throws Exception
     {
         final BundleRemoteResourcesMojo mojo = lookupBundleMojo();
     
         setVariableValueToObject( mojo, "resourcesDirectory", resourceDir );
-        setVariableValueToObject( mojo, "outputDirectory", new File(project.getBuild().getOutputDirectory()) );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
         return mojo;
     }
 
@@ -289,14 +278,14 @@ public class RemoteResourcesMojoTest
 
 
     protected ProcessRemoteResourcesMojo lookupProcessMojoWithSettings( final MavenProject project,
-                                                                 String bundles[])
+                                                                 String bundles[] )
         throws Exception
     {
-        return lookupProcessMojoWithSettings( project, new ArrayList(Arrays.asList(bundles)));
+        return lookupProcessMojoWithSettings( project, new ArrayList( Arrays.asList( bundles ) ) );
     }
     
     protected ProcessRemoteResourcesMojo lookupProcessMojoWithSettings( final MavenProject project,
-                                                                 ArrayList bundles)
+                                                                 ArrayList bundles )
         throws Exception
     {
         final ProcessRemoteResourcesMojo mojo = lookupProcessMojo();
@@ -306,18 +295,18 @@ public class RemoteResourcesMojoTest
                                     null, //ArtifactRepository localRepository,
                                     null, //EventDispatcher eventDispatcher,
                                     null, //ReactorManager reactorManager, 
-                                    Arrays.asList(new String[] {"install"}),
+                                    Arrays.asList( new String[] {"install"} ),
                                     project.getBasedir().toString(),
                                     new Properties(),
-                                    Calendar.getInstance().getTime());
+                                    Calendar.getInstance().getTime() );
 
         
         setVariableValueToObject( mojo, "project", project );
-        setVariableValueToObject( mojo, "outputDirectory", new File(project.getBuild().getOutputDirectory()) );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
         setVariableValueToObject( mojo, "resourceBundles", bundles );
         setVariableValueToObject( mojo, "mavenSession", session );
-        setVariableValueToObject( mojo, "remoteRepositories", project.getRemoteArtifactRepositories());
-        setVariableValueToObject( mojo, "resources", project.getResources());
+        setVariableValueToObject( mojo, "remoteRepositories", project.getRemoteArtifactRepositories() );
+        setVariableValueToObject( mojo, "resources", project.getResources() );
         return mojo;
     }
 
