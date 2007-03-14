@@ -74,6 +74,44 @@ Unpacking Specific Artifacts
   And after invoking <<<mvn package>>>, the artifacts are unpacked. Because checking the existence of an unpacked archive
   is difficult to do reliably, marker files are used instead. The location of the marker files is controlled by the {{{unpack-dependencies-mojo.html#markersDirectory}markersDirectory}} parameter.
 
+{Unpacking From the Command Line}:
+
+  If you intend to configure this mojo for execution on the command line using:
+
++---+
+mvn dependency:unpack
++---+
+
+	you must not put the configuration inside the <executions> tag. Your configuration should look like this:
+	
++---+
+<project>
+  [...]
+  <build>
+   <plugins>
+     <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <configuration>
+          <artifactItems>
+            <artifactItem>
+              <groupId>[ groupId ]</groupId>
+              <artifactId>[ artifactId ]</artifactId>
+              <version>[ version ]</version>
+              <type>[ packaging ]</type>
+              <overWrite>[ true or false ]</overWrite>
+              <outputDirectory>[ output directory ]</outputDirectory>
+              <destFileName>[ filename ]</destFileName>
+            </artifactItem>
+          </artifactItems>
+          <!-- other configurations here -->
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++---+	
 
 
 
