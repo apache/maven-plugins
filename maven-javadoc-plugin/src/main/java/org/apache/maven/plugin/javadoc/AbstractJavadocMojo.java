@@ -1639,6 +1639,10 @@ public abstract class AbstractJavadocMojo
     /**
      * Method to get the path of the doclet artifacts used in the -docletpath option.
      *
+     * Either docletArtifact or doclectArtifacts can be defined and used, not both, docletArtifact
+     * takes precedence over doclectArtifacts. docletPath is always appended to any result path
+     * definition.
+     *
      * @return the path to jar file that contains doclet class file separated with a colon (:)
      * on Solaris and a semi-colon (;) on Windows
      * @throws MavenReportException
@@ -1647,10 +1651,7 @@ public abstract class AbstractJavadocMojo
         throws MavenReportException
     {
         StringBuffer path = new StringBuffer();
-
-        if ( ( docletArtifact != null ) && ( StringUtils.isNotEmpty( docletArtifact.getGroupId() ) )
-            && ( StringUtils.isNotEmpty( docletArtifact.getArtifactId() ) )
-            && ( StringUtils.isNotEmpty( docletArtifact.getVersion() ) ) )
+        if ( !isDocletArtifactEmpty( docletArtifact ) )
         {
             path.append( getArtifactAbsolutePath( docletArtifact ) );
         }
@@ -1658,7 +1659,7 @@ public abstract class AbstractJavadocMojo
         {
             for ( int i = 0; i < docletArtifacts.length; i++ )
             {
-                if ( docletArtifacts[i] != null )
+                if ( !isDocletArtifactEmpty( docletArtifacts[i] ) )
                 {
                     path.append( getArtifactAbsolutePath( docletArtifacts[i] ) );
 
@@ -1669,7 +1670,8 @@ public abstract class AbstractJavadocMojo
                 }
             }
         }
-        else
+
+        if ( !StringUtils.isEmpty( docletPath ) )
         {
             path.append( docletPath );
         }
@@ -1682,6 +1684,17 @@ public abstract class AbstractJavadocMojo
         }
 
         return path.toString();
+    }
+
+    private boolean isDocletArtifactEmpty( DocletArtifact docletArtifact )
+    {
+        if ( docletArtifact == null )
+        {
+            return true;
+        }
+        return ( StringUtils.isEmpty( docletArtifact.getGroupId() )
+            && StringUtils.isEmpty( docletArtifact.getArtifactId() ) && StringUtils.isEmpty( docletArtifact
+            .getVersion() ) );
     }
 
     /**
