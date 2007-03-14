@@ -4,9 +4,11 @@ import junit.framework.TestCase;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Properties;
+import java.util.Arrays;
 import java.util.Enumeration;
-
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.zip.ZipEntry;
 
 import org.apache.maven.it.Verifier;
@@ -233,7 +235,6 @@ public abstract class AbstractSourcePluginTestCase
     protected void assertJarContent( final File jarFile, final String[] expectedFiles )
         throws IOException
     {
-
         ZipFile jar = new ZipFile( jarFile );
         Enumeration entries = jar.getEntries();
 
@@ -244,15 +245,17 @@ public abstract class AbstractSourcePluginTestCase
         else
         {
             assertTrue( entries.hasMoreElements() );
-            for ( int i = 0; i < expectedFiles.length; i++ )
+
+            Set expected = new TreeSet( Arrays.asList( expectedFiles ) );
+
+            while ( entries.hasMoreElements() )
             {
-                String expectedFile = expectedFiles[i];
                 ZipEntry entry = (ZipEntry) entries.nextElement();
-                assertEquals( expectedFile, entry.getName() );
+
+                assertTrue( "Not expecting " + entry.getName() + " in " + jarFile, expected.remove( entry.getName() ) );
             }
 
-            // Now we are done, assert that there is no more element
-            assertFalse( "Jar file contains more elements than expected", entries.hasMoreElements() );
+            assertTrue( "Missing entries " + expected.toString() + " in " + jarFile, expected.isEmpty() );
         }
     }
 }
