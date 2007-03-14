@@ -29,6 +29,24 @@
             plugin to use is the maven-dependency-plugin. 
         </p>
      </answer>
-   </faq>
+      </faq>
+      <faq id="question">
+     <question>When executing mvn dependency:unpack or dependency:copy from the command line, I get "One or more required plugin parameters are invalid/missing for 'dependency:unpack'"</question>
+	 <answer>
+	 	<p>
+	 		In order for this to work, you must configure the ArtifactItems as shown <a href="examples\copying-artifacts.html#Copying From the Command Line">here</a>. Note that when executing a plugin from 
+	 		the command line, you must put the configuration tag outside of the executions.
+	 		
+	 		If you haven't done this correctly, the error will look like this:
+	 		<pre>
+	 		[0] inside the definition for plugin: 'maven-dependency-plugin'specify the following:
+	 		<configuration>
+			  ...
+			  <artifactItems>VALUE</artifactItems>
+			</configuration>.
+	 		</pre>
+	 	</p>
+	 </answer>	
+  </faq>
  </part>
 </faqs>
