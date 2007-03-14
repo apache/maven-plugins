@@ -170,13 +170,5 @@ under the License.
     </plugins>
   </reporting>
 
-  <!-- asm is not available in central yet.   Temporarily point to objectweb to get it -->
-  <repositories>
-    <repository>
-      <id>objectweb</id>
-      <name>Objectweb Maven Repository</name>
-      <url>http://maven.objectweb.org/maven2/</url>
-    </repository>
-  </repositories>
 </project>
 
