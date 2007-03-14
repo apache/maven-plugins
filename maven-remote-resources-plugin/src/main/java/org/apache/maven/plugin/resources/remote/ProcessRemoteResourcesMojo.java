@@ -19,6 +19,7 @@ package org.apache.maven.plugin.resources.remote;
  * under the License.
  */
 
+import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.Artifact;
@@ -37,21 +38,17 @@ import org.apache.maven.shared.downloader.Downloader;
 import org.apache.maven.model.Resource;
 import org.apache.velocity.VelocityContext;
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.codehaus.plexus.velocity.VelocityComponent;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -168,7 +165,14 @@ public class ProcessRemoteResourcesMojo
      * @component
      */
     private ArtifactRepositoryFactory artifactRepositoryFactory;
-
+    
+    /**
+     * Artifact factory, needed to create artifacts.
+     *
+     * @component
+     */
+    private ArtifactFactory artifactFactory;
+    
     /**
      * The Maven session.
      *
@@ -178,7 +182,7 @@ public class ProcessRemoteResourcesMojo
     
     
    /**
-    * Artifact factory, needed to create projects from the artifacts.
+    * ProjectBuilder, needed to create projects from the artifacts.
     *
     * @component role="org.apache.maven.project.MavenProjectBuilder"
     * @required
@@ -227,17 +231,18 @@ public class ProcessRemoteResourcesMojo
                     position = bundleCount + "th";
                 }
 
-                throw new MojoExecutionException( "The " + position +
-                    " resource bundle configured must specify a groupId, artifactId, and version for a remote resource bundle. " +
-                    "Must be of the form <resourceBundle>groupId:artifactId:version</resourceBundle>" );
+                throw new MojoExecutionException( "The " + position
+                    + " resource bundle configured must specify a groupId, artifactId, and" 
+                    + " version for a remote resource bundle. " 
+                    + "Must be of the form <resourceBundle>groupId:artifactId:version</resourceBundle>" );
             }
 
             try
             {
                 File artifact = downloader.download( s[0], s[1], s[2], localRepository,
                                                      ProjectUtils.buildArtifactRepositories( remoteRepositories,
-                                                                                             artifactRepositoryFactory,
-                                                                                             mavenSession.getContainer() ) );
+                                                         artifactRepositoryFactory,
+                                                         mavenSession.getContainer() ) );
 
                 classLoader.addURL( artifact.toURI().toURL() );
             }
@@ -267,7 +272,7 @@ public class ProcessRemoteResourcesMojo
 
         InputStreamReader reader = null;
 
-        VelocityContext context = new VelocityContext(properties);
+        VelocityContext context = new VelocityContext( properties );
 
         context.put( "project", project );
         context.put( "projects", getProjects() );
@@ -299,7 +304,8 @@ public class ProcessRemoteResourcesMojo
 
                 reader = new InputStreamReader( conn.getInputStream() );
                                
-                try {
+                try 
+                {
 
                     RemoteResourcesBundleXpp3Reader bundleReader = new RemoteResourcesBundleXpp3Reader();
     
@@ -312,7 +318,7 @@ public class ProcessRemoteResourcesMojo
                         String projectResource = bundleResource;
     
     
-                        if ( projectResource.endsWith(".vm") )
+                        if ( projectResource.endsWith( ".vm" ) )
                         {
                             projectResource = projectResource.substring( 0, projectResource.length() - 3 );
                         }
@@ -323,14 +329,15 @@ public class ProcessRemoteResourcesMojo
     
                         FileUtils.mkdir( f.getParentFile().getAbsolutePath() );
     
-                        if ( !copyResourceIfExists(f, projectResource) )
+                        if ( !copyResourceIfExists( f, projectResource ) )
                         {
                             PrintWriter writer = new PrintWriter( new FileWriter( f ) );
     
-                            try {
+                            try 
+                            {
                                 velocity.getEngine().mergeTemplate( bundleResource, context, writer );
     
-                                File appendedResourceFile = new File( appendedResourcesDirectory, projectResource);
+                                File appendedResourceFile = new File( appendedResourcesDirectory, projectResource );
                                 if ( appendedResourceFile.exists() ) 
                                 {
                                     FileReader freader = new FileReader( appendedResourceFile );
@@ -344,12 +351,16 @@ public class ProcessRemoteResourcesMojo
                                         line = breader.readLine();
                                     }
                                 }
-                            } finally {
+                            }
+                            finally
+                            {
                                 writer.close();
                             }
                         }
                     }
-                } finally {
+                }
+                finally
+                {
                     reader.close();
                 }
             }
@@ -389,6 +400,8 @@ public class ProcessRemoteResourcesMojo
         {
             File dotFile = new File( project.getBuild().getDirectory(), ".plxarc" );
 
+            FileUtils.mkdir( dotFile.getParentFile().getAbsolutePath() );
+
             FileUtils.fileWrite( dotFile.getAbsolutePath(), outputDirectory.getName() );
         }
         catch ( IOException e )
@@ -404,22 +417,38 @@ public class ProcessRemoteResourcesMojo
         for ( Iterator it = project.getArtifacts().iterator() ; it.hasNext() ; ) 
         {
             Artifact artifact = (Artifact) it.next();
-            try {
-                MavenProject p = mavenProjectBuilder.buildFromRepository(artifact,
+            try 
+            {
+                if ( artifact.isSnapshot() )
+                {
+                    artifact = artifactFactory.createDependencyArtifact( artifact.getGroupId(),
+                                                                         artifact.getArtifactId(),
+                                                                         artifact.getVersionRange(),
+                                                                         artifact.getType(),
+                                                                         artifact.getClassifier(),
+                                                                         artifact.getScope(),
+                                                                         null,
+                                                                         artifact.isOptional() );
+                    artifact.setVersion( artifact.getBaseVersion() );
+                }
+                
+                getLog().debug("Building project for " + artifact);
+                MavenProject p = mavenProjectBuilder.buildFromRepository( artifact,
                                                         remoteRepositories,
                                                         localRepository,
-                                                        true);
-                projects.add(p);
-            } catch (ProjectBuildingException e) {
+                                                        true );
+                projects.add( p );
+            }
+            catch ( ProjectBuildingException e )
+            {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            
         }
         return projects;
     }
     
-    protected boolean copyResourceIfExists(File file, String relFileName)
+    protected boolean copyResourceIfExists( File file, String relFileName )
         throws IOException 
     {
         for ( Iterator i = resources.iterator(); i.hasNext(); )
@@ -432,16 +461,16 @@ public class ProcessRemoteResourcesMojo
                 continue;
             }
             //TODO - really should use the resource includes/excludes and name mapping
-            File source = new File(resourceDirectory, relFileName);
+            File source = new File( resourceDirectory, relFileName );
             
             if ( source.exists() 
-                && !source.equals(file))
+                && !source.equals( file ) )
             {
                 //TODO - should use filters here
-                FileUtils.copyFile(source, file);
+                FileUtils.copyFile( source, file );
                 
                 //exclude the original (so eclipse doesn't complain about duplicate resources)
-                resource.addExclude(relFileName);
+                resource.addExclude( relFileName );
                 
                 return true;
             }
