@@ -1243,7 +1243,7 @@ public abstract class AbstractJavadocMojo
 
             for ( Iterator i = sourcePaths.iterator(); i.hasNext(); )
             {
-                String sourceDirectory = (String) i.next();
+                File sourceDirectory = new File((String) i.next());
                 addFilesFromSource( files, sourceDirectory, excludedPackages );
             }
         }
@@ -2216,7 +2216,7 @@ public abstract class AbstractJavadocMojo
      * @param excludePackages package names to be excluded in the javadoc
      * @return a StringBuffer that contains the appended file names of the files to be included in the javadoc
      */
-    private static List getIncludedFiles( String sourceDirectory, String[] fileList, String[] excludePackages )
+    private static List getIncludedFiles( File sourceDirectory, String[] fileList, String[] excludePackages )
     {
         List files = new ArrayList();
 
@@ -2242,13 +2242,15 @@ public abstract class AbstractJavadocMojo
                 }
                 else
                 {
-                    if ( fileList[j].startsWith( sourceDirectory + File.separatorChar + excludeName[0] ) )
+                    if ( fileList[j].startsWith( sourceDirectory.toString() + File.separatorChar + excludeName[0] ) )
                     {
                         if ( excludeName[0].endsWith( String.valueOf( File.separatorChar ) ) )
                         {
                             int i = fileList[j].lastIndexOf( File.separatorChar );
                             String packageName = fileList[j].substring( 0, i + 1 );
-                            if ( packageName.equals( sourceDirectory + File.separatorChar + excludeName[0] )
+                            File currentPackage = new File(packageName);
+                            File excludedPackage = new File(sourceDirectory, excludeName[0]);
+                            if ( currentPackage.equals( excludedPackage  )
                                 && fileList[j].substring( i ).indexOf( ".java" ) != -1 )
                             {
                                 include = true;
@@ -2331,9 +2333,9 @@ public abstract class AbstractJavadocMojo
      * @param files           the variable that contains the appended filenames of the files to be included in the javadoc
      * @param excludePackages the packages to be excluded in the javadocs
      */
-    private static void addFilesFromSource( List files, String sourceDirectory, String[] excludePackages )
+    private static void addFilesFromSource( List files, File sourceDirectory, String[] excludePackages )
     {
-        String[] fileList = FileUtils.getFilesFromExtension( sourceDirectory, new String[] { "java" } );
+        String[] fileList = FileUtils.getFilesFromExtension( sourceDirectory.getPath(), new String[] { "java" } );
         if ( fileList != null && fileList.length != 0 )
         {
             List tmpFiles = getIncludedFiles( sourceDirectory, fileList, excludePackages );
