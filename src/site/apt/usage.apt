@@ -538,6 +538,7 @@ mvn dependency:build-classpath -Dmaven.dep.cpFile=cp.txt
 
 * The <<<dependency:analyze>>> mojo
 
+	Coming soon in 2.0-alpha-3:
 	This mojo can be executed from the command line:
 	
 +---+
