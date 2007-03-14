@@ -9,7 +9,7 @@ package org.apache.maven.plugin.javadoc;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -73,6 +73,7 @@ import org.codehaus.plexus.util.cli.DefaultConsumer;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @requiresDependencyResolution compile
  * @execute phase="generate-sources"
+ * @aggregator
  */
 public abstract class AbstractJavadocMojo
     extends AbstractMojo
@@ -1338,6 +1339,12 @@ public abstract class AbstractJavadocMojo
                     MavenProject project = (MavenProject) i.next();
 
                     List sourceRoots = project.getCompileSourceRoots();
+
+                    if ( project.getExecutionProject() != null )
+                    {
+                        sourceRoots.addAll( project.getExecutionProject().getCompileSourceRoots() );
+                    }
+
                     ArtifactHandler artifactHandler = project.getArtifact().getArtifactHandler();
                     if ( "java".equals( artifactHandler.getLanguage() ) )
                     {
@@ -1956,7 +1963,7 @@ public abstract class AbstractJavadocMojo
      * @param repeatKey   repeat or not the key in the command line
      * @param splitValue  if <code>true</code> given value will be tokenized by comma
      */
-    private void addArgIfNotEmpty( List arguments, String key, String value,
+    private void addArgIfNotEmpty( List arguments, String key, String value, 
         boolean repeatKey, boolean splitValue )
     {
         if ( StringUtils.isNotEmpty( value ) )
@@ -1971,11 +1978,11 @@ public abstract class AbstractJavadocMojo
                 while ( token.hasMoreTokens() )
                 {
                     String current = token.nextToken().trim();
-
+    
                     if ( StringUtils.isNotEmpty( current ) )
                     {
                         arguments.add( current );
-
+    
                         if ( token.hasMoreTokens() && repeatKey )
                         {
                             arguments.add( key );
@@ -1987,7 +1994,7 @@ public abstract class AbstractJavadocMojo
             }
         }
     }
-
+    
     /**
      * Convenience method to add an argument to the <code>command line</code>
      * if the the value is not null or empty.
