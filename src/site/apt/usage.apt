@@ -21,7 +21,7 @@
   Allan Ramirez
   Brian Fox
   ------
-  Jan 2007
+  Mar 2007
   ------
 
 Usage
@@ -54,7 +54,7 @@ Usage
 
      []
 
-   Configure the plugin something like this:
+   Configure the plugin something like this if you intend to bind it to execute along with your build:
 
 +---+
 <project>
@@ -93,6 +93,43 @@ Usage
   [...]
 </project>
 +---+
+  
+	If you intend to configure this mojo for execution on the command line using:
+
++---+
+mvn dependency:copy
++---+
+
+	you must not put the configuration inside the <executions> tag. Your configuration should look like this:
+		
++---+
+<project>
+  [...]
+  <build>
+   <plugins>
+     <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <configuration>
+          <artifactItems>
+            <artifactItem>
+              <groupId>[ groupId ]</groupId>
+              <artifactId>[ artifactId ]</artifactId>
+              <version>[ version ]</version>
+              <type>[ packaging ]</type>
+              <overWrite>[ true or false ]</overWrite>
+              <outputDirectory>[ output directory ]</outputDirectory>
+              <destFileName>[ filename ]</destFileName>
+            </artifactItem>
+          </artifactItems>
+          <!-- other configurations here -->
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++---+	
 
 * The <<<dependency:copy-dependencies>>> mojo
 
@@ -168,7 +205,9 @@ Usage
 
    The artifact version is optional. If not set, the plugin will attempt to resolve it from the
    project dependencies and then the dependencyManagement section.
-
+   
+   Configure the plugin something like this if you intend to bind it to execute along with your build:
+   
 +---+
 <project>
   [...]
@@ -195,6 +234,44 @@ Usage
   [...]
 </project>
 +---+
+
+	If you intend to configure this mojo for execution on the command line using:
+
++---+
+mvn dependency:unpack
++---+
+
+	you must not put the configuration inside the <executions> tag. Your configuration should look like this:
+	
++---+
+<project>
+  [...]
+  <build>
+   <plugins>
+     <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <configuration>
+          <artifactItems>
+            <artifactItem>
+              <groupId>[ groupId ]</groupId>
+              <artifactId>[ artifactId ]</artifactId>
+              <version>[ version ]</version>
+              <type>[ packaging ]</type>
+              <overWrite>[ true or false ]</overWrite>
+              <outputDirectory>[ output directory ]</outputDirectory>
+              <destFileName>[ filename ]</destFileName>
+            </artifactItem>
+          </artifactItems>
+          <!-- other configurations here -->
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++---+	
+
 
 * The <<<dependency:unpack-dependencies>>> mojo
 
@@ -458,4 +535,35 @@ mvn dependency:build-classpath -Dmaven.dep.cpFile=cp.txt
   [...]
 </project>
 +---+
+
+* The <<<dependency:analyze>>> mojo
+
+	This mojo can be executed from the command line:
+	
++---+
+mvn dependency:analyze
++---+
+
+	Sample output:
+
++---+
+[INFO] [dependency:analyze]
+[INFO] Used declared dependencies:
+[INFO]    org.codehaus.plexus:plexus-archiver:jar:1.0-alpha-7:compile
+[INFO]    junit:junit:jar:3.8.1:test
+[INFO]    org.codehaus.plexus:plexus-container-default:jar:1.0-alpha-9:compile
+[INFO]    org.apache.maven:maven-model:jar:2.0.5:compile
+[INFO]    org.apache.maven:maven-project:jar:2.0.5:compile
+[INFO]    org.apache.maven.shared:file-management:jar:1.1:compile
+[INFO]    org.codehaus.plexus:plexus-utils:jar:1.1:compile
+[INFO]    org.apache.maven:maven-artifact:jar:2.0.5:compile
+[INFO]    org.apache.maven:maven-plugin-api:jar:2.0.5:compile
+[INFO]    org.apache.maven.shared:maven-plugin-testing-harness:jar:1.0-beta-1:test
+[INFO]    org.apache.maven.shared:maven-dependency-analyzer:jar:1.0-SNAPSHOT:compile
+[INFO] Used undeclared dependencies:
+[INFO]    None
+[INFO] Unused declared dependencies:
+[INFO]    None
++---+
+
  

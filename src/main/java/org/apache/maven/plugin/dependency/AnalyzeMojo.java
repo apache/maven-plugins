@@ -39,6 +39,7 @@ import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzerExce
  * @goal analyze
  * @requiresDependencyResolution test
  * @execute phase="test-compile"
+ * @since 2.0-alpha-3
  */
 public class AnalyzeMojo extends AbstractMojo
 {
