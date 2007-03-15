@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <packaging>ejb</packaging>
+  <groupId>eclipse</groupId>
+  <artifactId>maven-eclipse-plugin-test-project-30</artifactId>
+  <version>99.0</version>
+  <name>Maven</name>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-ejb_3.0_spec</artifactId>
+      <version>1.0</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin</artifactId>
+<!--        <version>test</version>-->
+        <configuration>
+          <wtpversion>1.5</wtpversion>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
