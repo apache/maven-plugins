@@ -19,9 +19,9 @@ package org.apache.maven.artifact.versioning;
  * under the License.
  */
 
-import junit.framework.TestCase;
-
 import java.util.List;
+
+import junit.framework.TestCase;
 
 /**
  * Tests version range construction.
@@ -67,6 +67,7 @@ public class VersionRangeTest
         assertNull( CHECK_UPPER_BOUND, restriction.getUpperBound() );
         assertFalse( CHECK_UPPER_BOUND_INCLUSIVE, restriction.isUpperBoundInclusive() );
 
+        //why is this not the same as the test above? Is 1.0 not the same as [1.0] in functionality?
         range = VersionRange.createFromVersionSpec( "[1.0]" );
         restrictions = range.getRestrictions();
         assertEquals( CHECK_NUM_RESTRICTIONS, 1, restrictions.size() );
@@ -624,6 +625,29 @@ public class VersionRangeTest
         assertEquals( CHECK_NUM_RESTRICTIONS, 0, restrictions.size() );
     }
 
+    public void testContains() throws InvalidVersionSpecificationException
+    {
+        ArtifactVersion actualVersion = new DefaultArtifactVersion( "2.0.5" );
+        assertTrue( enforceVersion( "2.0.5", actualVersion ) );
+        assertTrue( enforceVersion( "[2.0.5]", actualVersion ) );
+        assertFalse( enforceVersion( "2.0.6", actualVersion ) );
+        assertFalse( enforceVersion( "[2.0.6]", actualVersion ) );
+        assertTrue( enforceVersion( "[2.0,2.1]", actualVersion ) );
+        assertFalse( enforceVersion( "[2.0,2.0.3]", actualVersion ) );
+        assertTrue( enforceVersion( "[2.0,2.0.5]", actualVersion ) );
+        assertFalse( enforceVersion( "[2.0,2.0.5)", actualVersion ) );
+    }
+
+    public boolean enforceVersion( String requiredVersionRange, ArtifactVersion actualVersion )
+        throws InvalidVersionSpecificationException
+    {
+        VersionRange vr = null;
+
+        vr = VersionRange.createFromVersionSpec( requiredVersionRange );
+
+        return vr.containsVersion( actualVersion );
+    }
+    
     private void checkInvalidRange( String version )
     {
         try

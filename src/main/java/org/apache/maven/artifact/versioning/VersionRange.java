@@ -533,13 +533,24 @@ public class VersionRange
     public boolean containsVersion( ArtifactVersion version )
     {
         boolean matched = false;
-        for ( Iterator i = restrictions.iterator(); i.hasNext() && !matched; )
+
+        if ( this.recommendedVersion == null )
         {
-            Restriction restriction = (Restriction) i.next();
-            if ( restriction.containsVersion( version ) )
+
+            for ( Iterator i = restrictions.iterator(); i.hasNext() && !matched; )
             {
-                matched = true;
+                Restriction restriction = (Restriction) i.next();
+                if ( restriction.containsVersion( version ) )
+                {
+                    matched = true;
+                }
             }
+        }
+        else
+        {
+//          only singular versions ever have a recommendedVersion
+            int compareTo = recommendedVersion.compareTo( version );
+            matched = (compareTo == 0);
         }
         return matched;
     }
