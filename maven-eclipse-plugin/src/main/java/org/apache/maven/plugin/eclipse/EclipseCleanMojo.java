@@ -90,13 +90,6 @@ public class EclipseCleanMojo
     private File basedir;
 
     /**
-     * Is it an PDE project?
-     * 
-     * @parameter expression="${eclipse.pde}" default-value="false"
-     */
-    private boolean pde;
-
-    /**
      * @see org.apache.maven.plugin.AbstractMojo#execute()
      */
     public void execute()

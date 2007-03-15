@@ -93,16 +93,6 @@ public class IdeDependency
     private boolean osgiBundle;
 
     /**
-     * If this jar is an osgi bundle, this is its Bundle-SymbolicName?
-     */
-    private String osgiSymbolicName;
-
-    /**
-     * Depth of this dependency in the transitive dependency trail.
-     */
-    private int dependencyDepth;
-
-    /**
      * 
      * @param groupId Group id
      * @param artifactId Artifact id
@@ -136,9 +126,6 @@ public class IdeDependency
 
         // needed for OSGI support
         this.osgiBundle = osgiBundle;
-        this.osgiSymbolicName = osgiSymbolicName;
-        this.dependencyDepth = dependencyDepth;
-
         // file and type
         this.file = file;
         this.type = type;

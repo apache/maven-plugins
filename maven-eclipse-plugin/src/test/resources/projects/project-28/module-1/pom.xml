@@ -1,0 +1,26 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>eclipse.project28</groupId>
+    <artifactId>master-test</artifactId>
+    <version>1.0</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  <groupId>eclipse.project28</groupId>
+  <artifactId>war-test</artifactId>
+  <version>28</version>
+  <packaging>war</packaging>
+  <name>War Project</name>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <configuration>
+          <wtpversion>1.5</wtpversion>
+        </configuration>
+      </plugin>
+    </plugins>    
+  </build>
+</project>
