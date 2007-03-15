@@ -71,11 +71,6 @@ public class EclipseClasspathWriter
     private static final String ATTR_PATH = "path"; //$NON-NLS-1$
 
     /**
-     * Used for exported classpath entries.
-     */
-    private static final String ATTR_EXPORTED = "exported"; //$NON-NLS-1$
-
-    /**
      * Attribute for kind - Container (con), Variable (var)..etc.
      */
     private static final String ATTR_KIND = "kind"; //$NON-NLS-1$
@@ -94,11 +89,6 @@ public class EclipseClasspathWriter
      * Attribute value for kind: src
      */
     private static final String ATTR_SRC = "src"; //$NON-NLS-1$
-
-    /**
-     * Attribute value for kind: src
-     */
-    private static final String ATTR_CON = "con"; //$NON-NLS-1$
 
     /**
      * Attribute name for source file includes in a path.

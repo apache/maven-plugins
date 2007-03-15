@@ -18,18 +18,13 @@
  */
 package org.apache.maven.plugin.ide;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.PluginExecution;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -37,6 +32,11 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
@@ -199,22 +199,22 @@ public class IdeUtils
     /**
      * Extracts the version of the first matching dependency in the given list.
      * 
-     * @param artifactNames artifact names to compare against for extracting version
-     * @param artifacts Collection of dependencies for our project
+     * @param artifactIds artifact names to compare against for extracting version
+     * @param dependencies Collection of dependencies for our project
      * @param len expected length of the version sub-string
      * @return
      */
-    public static String getDependencyVersion( String[] artifactNames, Set artifacts, int len )
+    public static String getDependencyVersion( String[] artifactIds, List dependencies, int len )
     {
-        for ( Iterator itr = artifacts.iterator(); itr.hasNext(); )
+        for ( int j = 0; j < artifactIds.length; j++ )
         {
-            Artifact artifact = (Artifact) itr.next();
-            for ( int j = 0; j < artifactNames.length; j++ )
+            String id = artifactIds[j];
+            for ( Iterator itr = dependencies.iterator(); itr.hasNext(); )
             {
-                String name = artifactNames[j];
-                if ( name.equals( artifact.getArtifactId() ) )
+                Dependency dependency = (Dependency) itr.next();
+                if ( id.equals( dependency.getArtifactId() ) )
                 {
-                    return StringUtils.substring( artifact.getVersion(), 0, len );
+                    return StringUtils.substring( dependency.getVersion(), 0, len );
                 }
             }
         }
