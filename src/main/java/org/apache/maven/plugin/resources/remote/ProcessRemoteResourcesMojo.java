@@ -398,11 +398,14 @@ public class ProcessRemoteResourcesMojo
 
         try
         {
-            File dotFile = new File( project.getBuild().getDirectory(), ".plxarc" );
+            if ( outputDirectory.exists() )
+            {
+                File dotFile = new File( project.getBuild().getDirectory(), ".plxarc" );
 
-            FileUtils.mkdir( dotFile.getParentFile().getAbsolutePath() );
-
-            FileUtils.fileWrite( dotFile.getAbsolutePath(), outputDirectory.getName() );
+                FileUtils.mkdir( dotFile.getParentFile().getAbsolutePath() );
+                
+                FileUtils.fileWrite( dotFile.getAbsolutePath(), outputDirectory.getName() );
+            }
         }
         catch ( IOException e )
         {
