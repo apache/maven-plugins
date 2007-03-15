@@ -18,26 +18,25 @@
  */
 package org.apache.maven.plugin.eclipse.writers;
 
-import java.io.File;
-import java.util.Iterator;
-
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.XMLWriter;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Base class to hold common constants used by extending classes.
+ * 
  * @author <a href="mailto:rahul.thakur.xdev@gmail.com">Rahul Thakur</a>
  * @author <a href="mailto:fgiust@users.sourceforge.net">Fabrizio Giustina</a>
  */
-public abstract class AbstractWtpResourceWriter
-    extends AbstractEclipseWriter
+public abstract class AbstractWtpResourceWriter extends AbstractEclipseWriter
 {
 
     private static final String ELT_DEPENDENCY_TYPE = "dependency-type"; //$NON-NLS-1$
@@ -82,8 +81,7 @@ public abstract class AbstractWtpResourceWriter
      * @throws MojoExecutionException
      */
     protected void writeModuleTypeAccordingToPackaging( MavenProject project, XMLWriter writer,
-                                                        File buildOutputDirectory )
-        throws MojoExecutionException
+                                                        File buildOutputDirectory ) throws MojoExecutionException
     {
         if ( "war".equals( project.getPackaging() ) ) //$NON-NLS-1$
         {
@@ -119,7 +117,8 @@ public abstract class AbstractWtpResourceWriter
             writer.startElement( ELT_PROPERTY );
             writer.addAttribute( ATTR_NAME, "java-output-path" ); //$NON-NLS-1$
             writer.addAttribute( ATTR_VALUE, "/" + //$NON-NLS-1$
-                IdeUtils.toRelativeAndFixSeparator( config.getProject().getBasedir(), buildOutputDirectory, false ) );
+                            IdeUtils.toRelativeAndFixSeparator( config.getProject().getBasedir(), buildOutputDirectory,
+                                                                false ) );
             writer.endElement();
 
         }
@@ -139,14 +138,15 @@ public abstract class AbstractWtpResourceWriter
             writer.startElement( ELT_PROPERTY );
             writer.addAttribute( ATTR_NAME, "java-output-path" ); //$NON-NLS-1$
             writer.addAttribute( ATTR_VALUE, "/" + //$NON-NLS-1$
-                IdeUtils.toRelativeAndFixSeparator( config.getProject().getBasedir(), buildOutputDirectory, false ) );
+                            IdeUtils.toRelativeAndFixSeparator( config.getProject().getBasedir(), buildOutputDirectory,
+                                                                false ) );
             writer.endElement();
         }
     }
 
     /**
      * Adds dependency for Eclipse WTP project.
-     *
+     * 
      * @param writer
      * @param artifact
      * @param localRepository
@@ -187,15 +187,17 @@ public abstract class AbstractWtpResourceWriter
 
             if ( dep.isSystemScoped() )
             {
-                handle = "module:/classpath/lib/" //$NON-NLS-1$
-                    + IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), repoFile, false );
+                handle =
+                    "module:/classpath/lib/" //$NON-NLS-1$
+                                    + IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(),
+                                                                          repoFile, false );
             }
             else
             {
                 File localRepositoryFile = new File( localRepository.getBasedir() );
 
                 handle = "module:/classpath/var/M2_REPO/" //$NON-NLS-1$
-                    + IdeUtils.toRelativeAndFixSeparator( localRepositoryFile, repoFile, false );
+                                + IdeUtils.toRelativeAndFixSeparator( localRepositoryFile, repoFile, false );
             }
         }
 
@@ -224,7 +226,7 @@ public abstract class AbstractWtpResourceWriter
             // NB war is needed for ear projects, we suppose nobody adds a war dependency to a war/jar project
             // exclude test and provided deps
             if ( ( !dep.isTestDependency() && !dep.isProvided() )
-                && ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type ) || "war".equals( type ) ) ) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                            && ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type ) || "war".equals( type ) ) ) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             {
                 addDependency( writer, dep, localRepository, config.getProject().getBasedir() );
             }
@@ -233,18 +235,42 @@ public abstract class AbstractWtpResourceWriter
 
     protected String resolveServletVersion()
     {
-        String[] artifactNames = new String[] { "servlet-api", "servletapi", "geronimo-spec-servlet" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        String[] artifactIds = new String[] { "servlet-api", "servletapi", "geronimo-spec-servlet" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-        String version = IdeUtils.getDependencyVersion( artifactNames, config.getProject().getArtifacts(), 3 );
+        String version = IdeUtils.getDependencyVersion( artifactIds, config.getProject().getDependencies(), 3 );
+
+        // For new Geronimo APIs, the version of the artifact isn't the one of the spec
         if ( version == null )
         {
-            // none of the above specified matched, try geronimo-spec-j2ee
-            artifactNames = new String[] { "geronimo-spec-j2ee" }; //$NON-NLS-1$
-            version = IdeUtils.getDependencyVersion( artifactNames, config.getProject().getArtifacts(), 3 );
-            if ( version != null )
+            if ( IdeUtils.getDependencyVersion( new String[] { "geronimo-servlet_2.4_spec" },
+                                                config.getProject().getDependencies(), 3 ) != null )
+                return "2.4";
+        }
+        if ( version == null )
+        {
+            if ( IdeUtils.getDependencyVersion( new String[] { "geronimo-servlet_2.5_spec" },
+                                                config.getProject().getDependencies(), 3 ) != null )
+                return "2.5";
+        }
+
+        if ( version == null )
+        {
+            // No servlet dependency detected. Try to resolve the servlet
+            // version from J2EE/JEE.
+            String versionJEE = resolveJ2eeVersionWithoutDefault();
+
+            if ( versionJEE != null )
             {
-                String j2eeMinorVersion = StringUtils.substring( version, 2, 3 );
-                version = "2." + j2eeMinorVersion; //$NON-NLS-1$
+                // A J2EE version was found, now determine the servlet
+                // version to be used from it.
+                Map conversionTable = new HashMap();
+                conversionTable.put( "1.3", "2.3" );
+                conversionTable.put( "1.4", "2.4" );
+                conversionTable.put( "5", "2.5" );
+                if ( conversionTable.containsKey( versionJEE ) )
+                {
+                    version = (String) conversionTable.get( versionJEE );
+                }
             }
         }
         return version == null ? "2.4" : version; //$NON-NLS-1$
@@ -252,26 +278,68 @@ public abstract class AbstractWtpResourceWriter
 
     protected String resolveEjbVersion()
     {
-        String version = null;
-        // @todo this is the default, find real ejb version from dependencies
+        String[] artifactIds = new String[] { "ejb", "geronimo-spec-ejb" }; //$NON-NLS-1$
 
+        String version = IdeUtils.getDependencyVersion( artifactIds, config.getProject().getDependencies(), 3 );
+
+        // For new Geronimo APIs, the version of the artifact isn't the one of the spec
+        if ( version == null )
+        {
+            if ( IdeUtils.getDependencyVersion( new String[] { "geronimo-ejb_2.1_spec" },
+                                                config.getProject().getDependencies(), 3 ) != null )
+                return "2.1";
+        }
+        if ( version == null )
+        {
+            if ( IdeUtils.getDependencyVersion( new String[] { "geronimo-ejb_3.0_spec" },
+                                                config.getProject().getDependencies(), 3 ) != null )
+                return "3.0";
+        }
+
+        if ( version == null )
+        {
+            // No ejb dependency detected. Try to resolve the ejb
+            // version from J2EE/JEE.
+            String versionJEE = resolveJ2eeVersionWithoutDefault();
+
+            if ( versionJEE != null )
+            {
+                // A J2EE version was found, now determine the ejb
+                // version to be used from it.
+                Map conversionTable = new HashMap();
+                conversionTable.put( "1.3", "2.0" );
+                conversionTable.put( "1.4", "2.1" );
+                conversionTable.put( "5", "3.0" );
+                if ( conversionTable.containsKey( versionJEE ) )
+                {
+                    version = (String) conversionTable.get( versionJEE );
+                }
+            }
+        }
         return version == null ? "2.1" : version; //$NON-NLS-1$
     }
 
     protected String resolveJ2eeVersion()
     {
-        // Take a guess as to what version of J2EE they're using; assume 1.3
-        // See: http://maven.apache.org/guides/mini/guide-coping-with-sun-jars.html
-        String version = "1.3";
-        for ( Iterator it = config.getProject().getDependencies().iterator(); it.hasNext(); )
+        String version = resolveJ2eeVersionWithoutDefault();
+
+        return version == null ? "1.3" : version; //$NON-NLS-1$
+    }
+
+    protected String resolveJ2eeVersionWithoutDefault()
+    {
+        String[] artifactIds = new String[] { "javaee-api", "j2ee", "geronimo-spec-j2ee" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+        String version = IdeUtils.getDependencyVersion( artifactIds, config.getProject().getDependencies(), 3 );
+
+        // For new Geronimo APIs, the version of the artifact isn't the one of the spec
+        if ( version == null )
         {
-            Dependency d = (Dependency) it.next();
-            if ( "javax.j2ee".equals( d.getGroupId() ) && "j2ee".equals( d.getArtifactId() ) )
-            {
-                version = d.getVersion();
-                break;
-            }
+            if ( IdeUtils.getDependencyVersion( new String[] { "geronimo-j2ee_1.4_spec" },
+                                                config.getProject().getDependencies(), 3 ) != null )
+                return "1.4";
         }
+
         return version;
     }
 
@@ -280,7 +348,7 @@ public abstract class AbstractWtpResourceWriter
         String version = IdeUtils.getCompilerTargetVersion( config.getProject() );
         if ( version == null )
         {
-            IdeUtils.getCompilerSourceVersion( config.getProject() );
+            version = IdeUtils.getCompilerSourceVersion( config.getProject() );
         }
 
         if ( "1.5".equals( version ) ) //$NON-NLS-1$ //$NON-NLS-2$
@@ -293,7 +361,7 @@ public abstract class AbstractWtpResourceWriter
         }
         else if ( version != null && version.length() == 1 )
         {
-            version = version + ".0";// 5->5.0  6->6.0  7->7.0 //$NON-NLS-1$
+            version = version + ".0";// 5->5.0 6->6.0 7->7.0 //$NON-NLS-1$
         }
 
         return version == null ? "1.4" : version; //$NON-NLS-1$

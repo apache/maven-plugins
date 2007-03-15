@@ -18,13 +18,12 @@
  */
 package org.apache.maven.plugin.eclipse;
 
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.codehaus.plexus.PlexusTestCase;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
-
-import org.apache.maven.plugin.Mojo;
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.codehaus.plexus.PlexusTestCase;
 
 /**
  * @author Edwin Punzalan
@@ -35,7 +34,6 @@ public class AddMavenRepoMojoTest
     public void testMinConfiguration()
         throws Exception
     {
-        Mojo mojo = executeMojo( "min-plugin-config.xml" );
     }
 
     private AddMavenRepoMojo executeMojo( String pomXml )
@@ -45,16 +43,16 @@ public class AddMavenRepoMojoTest
 
         mojo.execute();
 
-        File workDir = new File( mojo.getWorkspace(), mojo.DIR_ECLIPSE_CORE_RUNTIME_SETTINGS );
+        File workDir = new File( mojo.getWorkspace(), AddMavenRepoMojo.DIR_ECLIPSE_CORE_RUNTIME_SETTINGS );
 
-        File eclipseJDTCorePrefsFile = new File( workDir, mojo.FILE_ECLIPSE_JDT_CORE_PREFS );
+        File eclipseJDTCorePrefsFile = new File( workDir, AddMavenRepoMojo.FILE_ECLIPSE_JDT_CORE_PREFS );
 
         assertTrue( "Test if workspace properties exists", eclipseJDTCorePrefsFile.exists() );
 
         Properties props = new Properties();
         props.load( new FileInputStream( eclipseJDTCorePrefsFile ) );
 
-        String M2_REPO = props.getProperty( mojo.CLASSPATH_VARIABLE_M2_REPO );
+        String M2_REPO = props.getProperty( AddMavenRepoMojo.CLASSPATH_VARIABLE_M2_REPO );
 
         assertNotNull( "Test M2_REPO has a value", M2_REPO );
 

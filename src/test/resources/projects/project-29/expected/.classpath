@@ -1,0 +1,6 @@
+<classpath>
+  <classpathentry kind="src" path="src/main/java"/>
+  <classpathentry kind="output" path="target/classes"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/geronimo/specs/geronimo-ejb_3.0_spec/1.0/geronimo-ejb_3.0_spec-1.0.jar"/>
+</classpath>
