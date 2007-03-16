@@ -26,6 +26,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
@@ -39,7 +40,7 @@ public class PmdReportTest
         super.setUp();
         FileUtils.deleteDirectory( new File( getBasedir(), "target/test/unit" ) );
     }
-
+    
     public void testDefaultConfiguration()
         throws Exception
     {
@@ -78,6 +79,51 @@ public class PmdReportTest
         assertTrue( str.indexOf( "/xref/def/configuration/AppSample.html#45" ) != -1 );
     }
 
+    
+    public void testFileURL()
+        throws Exception
+    {
+        FileUtils.copyDirectoryStructure(
+            new File( getBasedir(), "src/test/resources/unit/default-configuration/jxr-files" ),
+            new File( getBasedir(), "target/test/unit/default-configuration/target/site" ) );
+    
+        File testPom = new File( getBasedir(),
+                                 "src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" );
+        PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
+        
+        URL url = getClass().getClassLoader().getResource( "rulesets/basic.xml" );
+        URL url2 = getClass().getClassLoader().getResource( "rulesets/unusedcode.xml" );
+        URL url3 = getClass().getClassLoader().getResource( "rulesets/imports.xml" );
+        mojo.setRulesets( new String[] { url.toString(), url2.toString() , url3.toString() } );
+        
+        mojo.execute();
+    
+        //check if the PMD files were generated
+        File generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/pmd.xml" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+    
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/basic.xml" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+    
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/imports.xml" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+    
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/unusedcode.xml" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+    
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+    
+        //check if there's a link to the JXR files
+        String str =
+            readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" ) );
+    
+        
+        assertTrue( str.indexOf( "/xref/def/configuration/App.html#31" ) != -1 );
+    
+        assertTrue( str.indexOf( "/xref/def/configuration/AppSample.html#45" ) != -1 );
+    }  
+    
     /**
      * With custom rulesets
      *
@@ -159,11 +205,7 @@ public class PmdReportTest
         }
     }
 
-    protected void tearDown()
-        throws Exception
-    {
 
-    }
 
     /**
      * Read the contents of the specified file object into a string
