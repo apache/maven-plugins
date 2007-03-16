@@ -19,12 +19,12 @@ package org.apache.maven.plugin.assembly.interpolation;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.io.xpp3.AssemblyXpp3Reader;
 import org.apache.maven.plugin.assembly.model.io.xpp3.AssemblyXpp3Writer;
+import org.apache.maven.plugin.assembly.utils.CommandLineUtils;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.introspection.ReflectionValueExtractor;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
@@ -92,16 +92,7 @@ public class AssemblyInterpolator
     public AssemblyInterpolator()
         throws IOException
     {
-        // FIXME: Once Maven (all supported versions in the wild) are using plexus-utils >= 1.3, 
-        // we should remove this.
-        try
-        {
-            envars = CommandLineUtils.getSystemEnvVars( false );
-        }
-        catch( NoSuchMethodError e )
-        {
-            envars = CommandLineUtils.getSystemEnvVars();
-        }
+        envars = CommandLineUtils.getSystemEnvVars( false );
     }
 
     public Assembly interpolate( Assembly assembly, MavenProject project, Map context )
