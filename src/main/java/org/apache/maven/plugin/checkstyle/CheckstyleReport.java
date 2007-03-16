@@ -50,7 +50,9 @@ import org.codehaus.plexus.util.StringOutputStream;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.velocity.VelocityComponent;
 import org.codehaus.plexus.resource.ResourceManager;
+import org.codehaus.plexus.resource.loader.FileResourceCreationException;
 import org.codehaus.plexus.resource.loader.FileResourceLoader;
+import org.codehaus.plexus.resource.loader.URLResourceLoader;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -58,6 +60,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -538,6 +541,7 @@ public class CheckstyleReport
             mergeDeprecatedInfo();
 
             locator.addSearchPath( FileResourceLoader.ID, project.getFile().getParentFile().getAbsolutePath() );
+            locator.addSearchPath( "url", "" );
 
             locator.setOutputDirectory( new File( project.getBuild().getDirectory() ) );
 
@@ -1029,17 +1033,23 @@ public class CheckstyleReport
     {
         try
         {
-            File configFile = locator.resolveLocation( configLocation, "checkstyle-checker.xml" );
+            File configFile = locator.getResourceAsFile( configLocation, "checkstyle-checker.xml" );
 
             if ( configFile == null )
             {
-                throw new MavenReportException( "Unable to process null config location." );
+                throw new MavenReportException( "Unable to process config location: " + configLocation );
             }
             return configFile.getAbsolutePath();
         }
-        catch ( IOException e )
+        catch (org.codehaus.plexus.resource.loader.ResourceNotFoundException e) 
         {
-            throw new MavenReportException( "Unable to find configuration file location.", e );
+            throw new MavenReportException( "Unable to find configuration file at location "
+                                            + configLocation, e );
+        }
+        catch (FileResourceCreationException e) 
+        {
+            throw new MavenReportException( "Unable to process configuration file location "
+                                            + configLocation, e );
         }
 
     }
