@@ -170,7 +170,6 @@ under the License.
     </plugins>
   </reporting>
 
-
   <scm>
     <connection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-pmd-plugin-2.2</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-pmd-plugin-2.2</developerConnection>

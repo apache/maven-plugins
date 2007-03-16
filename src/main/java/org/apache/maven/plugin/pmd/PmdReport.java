@@ -55,6 +55,7 @@ import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.plexus.resource.ResourceManager;
 import org.codehaus.plexus.resource.loader.FileResourceCreationException;
+import org.codehaus.plexus.resource.loader.FileResourceLoader;
 import org.codehaus.plexus.resource.loader.ResourceNotFoundException;
 import org.codehaus.plexus.util.FileUtils;
 
@@ -128,10 +129,20 @@ public class PmdReport
         return getBundle( locale ).getString( "report.pmd.description" );
     }
 
+    public void setRulesets( String[] rules )
+    {
+        rulesets = rules;
+    }
+    
     /** @see org.apache.maven.reporting.AbstractMavenReport#executeReport(java.util.Locale) */
     public void executeReport( Locale locale )
         throws MavenReportException
     {
+        //configure ResourceManager
+        locator.addSearchPath( FileResourceLoader.ID, project.getFile().getParentFile().getAbsolutePath() );
+        locator.addSearchPath( "url", "" );
+        locator.setOutputDirectory( new File( project.getBuild().getDirectory() ) );
+
         if ( !skip && canGenerateReport() )
         {
             ClassLoader origLoader = Thread.currentThread().getContextClassLoader();
@@ -291,7 +302,7 @@ public class PmdReport
             loc = loc.substring( loc.lastIndexOf( '\\' ) + 1 );
         }
         getLog().debug( "Before: " + name + " After: " + loc );
-        return project.getBuild().getDirectory() + File.separator + loc;
+        return loc;
     }
 
     /**
