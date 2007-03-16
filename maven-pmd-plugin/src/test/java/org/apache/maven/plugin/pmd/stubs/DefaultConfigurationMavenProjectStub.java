@@ -80,6 +80,9 @@ public class DefaultConfigurationMavenProjectStub
         List compileSourceRoots = new ArrayList();
         compileSourceRoots.add( basedir + "/src/test/resources/unit/default-configuration/def/configuration" );
         setCompileSourceRoots( compileSourceRoots );
+        
+        File file = new File(getBasedir().getAbsolutePath() + "/pom.xml");
+        setFile(file);
 
         Artifact artifact = new PmdPluginArtifactStub( getGroupId(), getArtifactId(), getVersion(), getPackaging() );
         artifact.setArtifactHandler( new DefaultArtifactHandlerStub() );

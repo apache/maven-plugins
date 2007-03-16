@@ -80,6 +80,8 @@ public class InvalidFormatMavenProjectStub
         Artifact artifact = new PmdPluginArtifactStub( getGroupId(), getArtifactId(), getVersion(), getPackaging() );
         artifact.setArtifactHandler( new DefaultArtifactHandlerStub() );
         setArtifact( artifact );
+        
+        setFile(new File(getBasedir().getAbsolutePath() + "/pom.xml"));
 
     }
 
