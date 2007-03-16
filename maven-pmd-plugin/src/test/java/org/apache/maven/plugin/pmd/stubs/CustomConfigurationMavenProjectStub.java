@@ -85,6 +85,7 @@ public class CustomConfigurationMavenProjectStub
         artifact.setArtifactHandler( new DefaultArtifactHandlerStub() );
         setArtifact( artifact );
 
+        setFile(new File(getBasedir().getAbsolutePath() + "/pom.xml"));
     }
 
     public void setBuild( Build build )
