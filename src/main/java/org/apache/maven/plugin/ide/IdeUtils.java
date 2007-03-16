@@ -250,9 +250,26 @@ public class IdeUtils
      */
     public static String getCompilerPluginSetting( MavenProject project, String optionName )
     {
+        String value = findCompilerPluginSettingInPlugins( project.getModel().getBuild().getPlugins(), optionName );
+        if ( value == null && project.getModel().getBuild().getPluginManagement() != null )
+        {
+            value =
+                findCompilerPluginSettingInPlugins( project.getModel().getBuild().getPluginManagement().getPlugins(),
+                                                    optionName );
+        }
+        return value;
+    }
+    
+    /**
+     * Returns a compiler plugin settings from a list of plugins .
+     * @param project maven project
+     * @return option value (may be null)
+     */
+    private static String findCompilerPluginSettingInPlugins( List plugins, String optionName )
+    {
         String value = null;
 
-        for ( Iterator it = project.getModel().getBuild().getPlugins().iterator(); it.hasNext(); )
+        for ( Iterator it = plugins.iterator(); it.hasNext(); )
         {
             Plugin plugin = (Plugin) it.next();
 
@@ -281,8 +298,6 @@ public class IdeUtils
                 }
             }
         }
-
         return value;
     }
-
 }
