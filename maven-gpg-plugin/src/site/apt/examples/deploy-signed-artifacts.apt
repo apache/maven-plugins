@@ -41,3 +41,24 @@ mvn deploy -Dgpg.passphrase=thephrase
 +----------+
 
   If you don't specify a passphrase, it will prompt for one.
+
+
+
+Issue with invalid signatures on the pom files
+  
+  Maven 2.0.5 fixes a problem where the pom files would end up changing between 
+  signing them and deploying them.   If the signatures on the pom files are invalid, 
+  make sure you upgrade to Maven 2.0.5.
+
+
+Install/Deploy without configuring the plugin in the pom
+ 
+  Currently this is not easily accomplished.   gpg signs the artifacts attached to the
+  build at the point that gpg runs.   However, we want to "inject" the gpg into the phases.
+  What MIGHT work is:
+
++----------+
+mvn verify gpg:sign install:install deploy:deploy
++----------+
+
+  However, if there are other plugins configured for phases after the verify phase, they will not be run.
