@@ -28,7 +28,7 @@ under the License.
   <artifactId>maven-pmd-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Maven PMD Plugin</name>
-  <version>2.3-SNAPSHOT</version>
+  <version>2.2-SNAPSHOT</version>
   <inceptionYear>2005</inceptionYear>
   <issueManagement>
     <system>JIRA</system>
