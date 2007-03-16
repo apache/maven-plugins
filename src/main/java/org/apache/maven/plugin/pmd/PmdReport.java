@@ -129,6 +129,11 @@ public class PmdReport
         return getBundle( locale ).getString( "report.pmd.description" );
     }
 
+    public void setRulesets( String[] rules )
+    {
+        rulesets = rules;
+    }
+    
     /** @see org.apache.maven.reporting.AbstractMavenReport#executeReport(java.util.Locale) */
     public void executeReport( Locale locale )
         throws MavenReportException
