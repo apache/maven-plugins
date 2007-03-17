@@ -114,12 +114,12 @@ public class AddArtifactTask
 
     public void setDirectoryMode( String rawDirectoryMode )
     {
-        this.directoryMode = Integer.parseInt( rawDirectoryMode, 8 );
+        this.directoryMode = Integer.decode( rawDirectoryMode ).intValue();
     }
 
     public void setFileMode( String rawFileMode )
     {
-        this.fileMode = Integer.parseInt( rawFileMode, 8 );
+        this.fileMode = Integer.decode( rawFileMode ).intValue();
     }
 
     public void setExcludes( List excludes )
