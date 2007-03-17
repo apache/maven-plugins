@@ -123,6 +123,7 @@
           <description>
             Sets the base directory of the resulting assembly archive. If this is not
             set and includeBaseDirectory == true, ${project.build.finalName} will be used instead.
+            (Since 2.2)
           </description>
         </field>
         <field>
@@ -246,7 +247,7 @@
           When specified as true, any include/exclude patterns which aren't used to filter an actual
           artifact during assembly creation will cause the build to fail with an error. This is meant
           to highlight obsolete inclusions or exclusions, or else signal that the assembly descriptor
-          is incorrectly configured.
+          is incorrectly configured. (Since 2.2)
           </description>
         </field>
         <field>
@@ -257,7 +258,7 @@
           <description>
             Whether standard exclusion patterns, such as those matching CVS and Subversion
             metadata files, should be used when calculating the files affected by this set.
-            For backward compatibility, the default value is true.
+            For backward compatibility, the default value is true. (Since 2.2)
           </description>
         </field>
         <field>
@@ -374,7 +375,7 @@
           <version>1.1.0</version>
           <description>
           Whether to filter symbols in the files as they are copied, using
-          properties from the build configuration.
+          properties from the build configuration. (Since 2.2)
           </description>
           <defaultValue>false</defaultValue>
           <type>boolean</type>
@@ -499,7 +500,7 @@
           <version>1.1.0</version>
           <description>
           Allows the specification of includes and excludes, along with filtering options, for items
-          unpacked from a dependency artifact.
+          unpacked from a dependency artifact. (Since 2.2)
           </description>
           <association>
             <type>UnpackOptions</type>
@@ -542,7 +543,7 @@
           <description>
           If set to false, the plugin will exclude sub-modules from processing in this ModuleSet.
           Otherwise, it will process all sub-modules, each subject to include/exclude rules.
-          Default value is true.
+          Default value is true. (Since 2.2)
           </description>
         </field>
         <field>
@@ -620,7 +621,7 @@
           <description>
             <![CDATA[
             Specifies which groups of files from each included module to include in the assembly. A
-            fileSet is specified by providing one or more of &lt;fileSet&gt; subelements.
+            fileSet is specified by providing one or more of &lt;fileSet&gt; subelements. (Since 2.2)
             ]]>
           </description>
         </field>
@@ -632,7 +633,7 @@
           <description>
             <![CDATA[
             Specifies whether the module's finalName should be prepended to the outputDirectory 
-            values of any fileSets applied to it. Default value is true.
+            values of any fileSets applied to it. Default value is true. (Since 2.2)
             ]]>
           </description>
         </field>
@@ -647,7 +648,7 @@
             from fileSets applied to that module. This might be useful if you only mean to copy
             the sources for the exact module list matched by this ModuleSet, ignoring (or processing
             separately) the modules which exist in directories below the current one. 
-            Default value is true.
+            Default value is true. (Since 2.2)
             ]]>
           </description>
         </field>
@@ -659,7 +660,7 @@
           <description>
             Sets the mapping pattern for all module base-directories included in this assembly.
             NOTE: This field is only used if includeModuleDirectory == true.
-            Default is the module's ${artifactId}.
+            Default is the module's ${artifactId}. (Since 2.2)
           </description>
         </field>
       </fields>
@@ -682,7 +683,7 @@
           When specified, the attachmentClassifier will cause the assembler to look at artifacts
           attached to the module instead of the main project artifact. If it can find an attached
           artifact matching the specified classifier, it will use it; otherwise, it will throw an
-          exception.
+          exception. (Since 2.2)
           </description>
         </field>
         <field>
@@ -707,7 +708,7 @@
             <![CDATA[
             Specifies which dependencies of the module to include in the assembly. A
             dependencySet is specified by providing one or more of
-            &lt;dependencySet&gt; subelements.
+            &lt;dependencySet&gt; subelements. (Since 2.2)
             ]]>
           </description>
         </field>
@@ -728,8 +729,8 @@
           <version>1.1.0</version>
           <description>
           Allows the specification of includes and excludes, along with filtering options, for items
-          unpacked from a module artifact.
-          </description>
+          unpacked from a module artifact. (Since 2.2)
+          </description> 
           <association>
             <type>UnpackOptions</type>
           </association>
@@ -799,7 +800,7 @@
           <required>true</required>
           <description>
             Specifies the scope for artifacts included in this repository.
-            Default scope value is "runtime".
+            Default scope value is "runtime". (Since 2.2)
           </description>
         </field>
       </fields>
@@ -850,14 +851,14 @@
       <name>UnpackOptions</name>
       <version>1.1.0</version>
       <description>
-      Specifies options for including/excluding/filtering items extracted from an archive.
+      Specifies options for including/excluding/filtering items extracted from an archive. (Since 2.2)
       </description>
       <fields>
         <field>
           <name>includes</name>
           <version>1.1.0</version>
           <description>
-          Set of patterns for matching items to be included from an archive as it is unpacked.
+          Set of patterns for matching items to be included from an archive as it is unpacked. (Since 2.2)
           </description>
           <association>
             <type>String</type>
@@ -868,7 +869,7 @@
           <name>excludes</name>
           <version>1.1.0</version>
           <description>
-          Set of patterns for matching items to be excluded from an archive as it is unpacked.
+          Set of patterns for matching items to be excluded from an archive as it is unpacked. (Since 2.2)
           </description>
           <association>
             <type>String</type>
@@ -880,7 +881,7 @@
           <version>1.1.0</version>
           <description>
           Whether to filter symbols in the files as they are unpacked from the archive, using
-          properties from the build configuration.
+          properties from the build configuration. (Since 2.2)
           </description>
           <defaultValue>false</defaultValue>
           <type>boolean</type>
