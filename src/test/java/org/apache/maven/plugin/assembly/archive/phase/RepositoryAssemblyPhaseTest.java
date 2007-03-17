@@ -89,7 +89,7 @@ public class RepositoryAssemblyPhaseTest
         repo.setDirectoryMode( "777" );
         repo.setFileMode( "777" );
         
-        int mode = Integer.parseInt( "777", 8 );
+        int mode = Integer.decode( "777" ).intValue();
         
         File outDir = new File( tempRoot, "out" );
         

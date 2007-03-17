@@ -192,7 +192,7 @@ public class AddDependencySetsTask
 
         try
         {
-            archiver.addFile( source, target, Integer.parseInt( dependencySet.getFileMode(), 8 ) );
+            archiver.addFile( source, target, Integer.decode( dependencySet.getFileMode() ).intValue() );
         }
         catch ( ArchiverException e )
         {
