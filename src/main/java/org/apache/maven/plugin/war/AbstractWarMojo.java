@@ -174,8 +174,7 @@ public abstract class AbstractWarMojo
     private static final String DEFAULT_FILE_NAME_MAPPING_CLASSIFIER =
         "${artifactId}-${version}-${classifier}.${extension}";
 
-    private static final String DEFAULT_FILE_NAME_MAPPING =
-        "${artifactId}-${version}.${extension}";
+    private static final String DEFAULT_FILE_NAME_MAPPING = "${artifactId}-${version}.${extension}";
 
     /**
      * The comma separated list of tokens to include in the WAR.
@@ -540,7 +539,8 @@ public abstract class AbstractWarMojo
             for ( Iterator it = webResources.iterator(); it.hasNext(); )
             {
                 Resource resource = (Resource) it.next();
-                if ( !(new File(resource.getDirectory())).isAbsolute() ) {
+                if ( !( new File( resource.getDirectory() ) ).isAbsolute() )
+                {
                     resource.setDirectory( project.getBasedir() + File.separator + resource.getDirectory() );
                 }
                 copyResources( resource, webappDirectory, filterProperties );
@@ -569,7 +569,7 @@ public abstract class AbstractWarMojo
 
         File libDirectory = new File( webinfDir, "lib" );
 
-	    File servicesDirectory = new File( webinfDir, "services" );
+        File servicesDirectory = new File( webinfDir, "services" );
 
         File tldDirectory = new File( webinfDir, "tld" );
 
@@ -616,13 +616,14 @@ public abstract class AbstractWarMojo
                 {
                     copyFileIfModified( artifact.getFile(), new File( tldDirectory, targetFileName ) );
                 }
-		        else if("aar".equals(type))
+                else if ( "aar".equals( type ) )
                 {
                     copyFileIfModified( artifact.getFile(), new File( servicesDirectory, targetFileName ) );
                 }
                 else
                 {
-                    if ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type ) )
+                    if ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type ) ||
+                        "test-jar".equals( type ) )
                     {
                         copyFileIfModified( artifact.getFile(), new File( libDirectory, targetFileName ) );
                     }
@@ -1065,17 +1066,19 @@ public abstract class AbstractWarMojo
      */
     private String getFinalName( Artifact artifact )
     {
-        if (outputFileNameMapping != null) {
-            return MappingUtils.evaluateFileNameMapping( outputFileNameMapping, artifact);
+        if ( outputFileNameMapping != null )
+        {
+            return MappingUtils.evaluateFileNameMapping( outputFileNameMapping, artifact );
         }
 
         String classifier = artifact.getClassifier();
         if ( ( classifier != null ) && !( "".equals( classifier.trim() ) ) )
         {
-            return MappingUtils.evaluateFileNameMapping( DEFAULT_FILE_NAME_MAPPING_CLASSIFIER, artifact);
+            return MappingUtils.evaluateFileNameMapping( DEFAULT_FILE_NAME_MAPPING_CLASSIFIER, artifact );
         }
-        else {
-            return MappingUtils.evaluateFileNameMapping( DEFAULT_FILE_NAME_MAPPING, artifact);
+        else
+        {
+            return MappingUtils.evaluateFileNameMapping( DEFAULT_FILE_NAME_MAPPING, artifact );
         }
 
     }
