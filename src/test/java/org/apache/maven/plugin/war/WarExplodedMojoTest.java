@@ -32,6 +32,7 @@ import org.apache.maven.plugin.war.stub.ResourceStub;
 import org.apache.maven.plugin.war.stub.SimpleWarArtifactStub;
 import org.apache.maven.plugin.war.stub.TLDArtifactStub;
 import org.apache.maven.plugin.war.stub.EJBArtifactStubWithClassifier;
+import org.apache.maven.plugin.war.stub.AarArtifactStub;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.BufferedReader;
@@ -569,6 +570,43 @@ public class WarExplodedMojoTest
         expectedWebSourceFile.delete();
         expectedWebSource2File.delete();
         expectedPARArtifact.delete();
+    }
+
+    public void testExplodedWarWithAar()
+        throws Exception
+    {
+        // setup test data
+        String testId = "ExplodedWarWithAar";
+        MavenProjectArtifactsStub project = new MavenProjectArtifactsStub();
+        File webAppDirectory = new File( getTestDirectory(), testId );
+        File webAppSource = createWebAppSource( testId );
+        File classesDir = createClassesDir( testId, true );
+        // Fake here since the aar artifact handler does not exist: no biggie
+        ArtifactHandler artifactHandler = (ArtifactHandler) lookup( ArtifactHandler.ROLE, "jar" );
+        ArtifactStub aarArtifact = new AarArtifactStub( getBasedir(), artifactHandler );
+        File aarFile = aarArtifact.getFile();
+
+        assertTrue( "jar not found: " + aarFile.toString(), aarFile.exists() );
+
+        // configure mojo
+        project.addArtifact( aarArtifact );
+        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+        mojo.execute();
+
+        // validate operation
+        File expectedWebSourceFile = new File( webAppDirectory, "pansit.jsp" );
+        File expectedWebSource2File = new File( webAppDirectory, "org/web/app/last-exile.jsp" );
+        // final name form is <artifactId>-<version>.<type>
+        File expectedJarArtifact = new File( webAppDirectory, "WEB-INF/services/aarartifact-0.0-Test.jar" );
+
+        assertTrue( "source files not found: " + expectedWebSourceFile.toString(), expectedWebSourceFile.exists() );
+        assertTrue( "source files not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
+        assertTrue( "jar artifact not found: " + expectedJarArtifact.toString(), expectedJarArtifact.exists() );
+
+        // house keeping
+        expectedWebSourceFile.delete();
+        expectedWebSource2File.delete();
+        expectedJarArtifact.delete();
     }
 
     /**

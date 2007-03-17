@@ -569,6 +569,8 @@ public abstract class AbstractWarMojo
 
         File libDirectory = new File( webinfDir, "lib" );
 
+	    File servicesDirectory = new File( webinfDir, "services" );
+
         File tldDirectory = new File( webinfDir, "tld" );
 
         File webappClassesDirectory = new File( webappDirectory, WEB_INF + "/classes" );
@@ -613,6 +615,10 @@ public abstract class AbstractWarMojo
                 if ( "tld".equals( type ) )
                 {
                     copyFileIfModified( artifact.getFile(), new File( tldDirectory, targetFileName ) );
+                }
+		        else if("aar".equals(type))
+                {
+                    copyFileIfModified( artifact.getFile(), new File( servicesDirectory, targetFileName ) );
                 }
                 else
                 {
