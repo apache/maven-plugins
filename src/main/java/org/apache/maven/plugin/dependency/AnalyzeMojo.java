@@ -66,21 +66,21 @@ public class AnalyzeMojo
     /**
      * Check for dependency / dependencyMgt conflicts
      * 
-     * @parameter expression=${mdep.checkDepMgt}
+     * @parameter expression="${mdep.checkDepMgt}"
      */
     private boolean checkDependencyMgt = true;
 
     /**
      * Check dependency conflicts
      * 
-     * @parameter expression=${mdep.checkDependencies}
+     * @parameter expression="${mdep.checkDependencies}"
      */
     private boolean checkDependencies = false;
 
     /**
      * Fail Build on problem
      * 
-     * @parameter expression=${mdep.failBuild}
+     * @parameter expression="${mdep.failBuild}"
      */
     private boolean failBuild = false;
 
@@ -104,7 +104,7 @@ public class AnalyzeMojo
         boolean result = false;
         if ( this.checkDependencies )
         {
-            checkDependencies();
+            result = checkDependencies();
         }
 
         if ( this.checkDependencyMgt )
@@ -120,9 +120,10 @@ public class AnalyzeMojo
 
     // private methods --------------------------------------------------------
 
-    private void checkDependencies()
+    private boolean checkDependencies()
         throws MojoExecutionException
     {
+        boolean result = false;
         try
         {
             ProjectDependencyAnalysis analysis = analyzer.analyze( project );
@@ -144,6 +145,7 @@ public class AnalyzeMojo
             throw new MojoExecutionException( "Cannot analyze dependencies", exception );
         }
 
+        return result;
     }
 
     private boolean checkDependencyManagement()
@@ -176,17 +178,19 @@ public class AnalyzeMojo
             while ( iter.hasNext() )
             {
                 Artifact artifact = (Artifact) iter.next();
-               // getLog().info( "a:"+getArtifactManagementKey( artifact ) );
+                // getLog().info( "a:"+getArtifactManagementKey( artifact ) );
                 // see if this artifact matches anything in the dependencyMgt
                 // list
                 Dependency dep = (Dependency) map.get( getArtifactManagementKey( artifact ) );
                 if ( dep != null )
                 {
-                 //   getLog().info( "Compare:" + dep.getManagementKey()+" v:"+dep.getVersion()+"a:"+artifact.getVersion());
-                   // ArtifactVersion depVersion = new DefaultArtifactVersion(dep.getVersion());
-                    ArtifactVersion artifactVersion = new DefaultArtifactVersion(artifact.getVersion());
-                    
-                    if (!artifact.isSnapshot() && !dep.getVersion().equals( artifact.getVersion() ) )
+                    // getLog().info( "Compare:" + dep.getManagementKey()+"
+                    // v:"+dep.getVersion()+"a:"+artifact.getVersion());
+                    // ArtifactVersion depVersion = new
+                    // DefaultArtifactVersion(dep.getVersion());
+                    ArtifactVersion artifactVersion = new DefaultArtifactVersion( artifact.getVersion() );
+
+                    if ( !artifact.isSnapshot() && !dep.getVersion().equals( artifact.getVersion() ) )
 
                     {
                         logMismatch( artifact, dep );
@@ -233,9 +237,9 @@ public class AnalyzeMojo
             throw new MojoExecutionException( "Invalid params: Artifact:" + artifact + " Dependency:" + dependency );
         }
 
-        getLog().info(
-                       "   Resolved Dependency: " + dependency.getManagementKey() +":"+dependency.getVersion()+ " Dependency Management: "
-                           + getArtifactManagementKey( artifact )+":"+artifact.getVersion() );
+        getLog().info("\tDependency: " + dependency.getManagementKey());
+        getLog().info( "\t\tDepMgt  : " + artifact.getVersion());
+        getLog().info( "\t\tResolved: " + dependency.getVersion() );
     }
 
     private String getArtifactManagementKey( Artifact artifact )
