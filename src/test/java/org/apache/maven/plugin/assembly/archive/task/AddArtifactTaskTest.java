@@ -87,8 +87,8 @@ public class AddArtifactTaskTest
     public void testShouldAddArchiveFileWithUnpackAndModes()
         throws ArchiveCreationException, AssemblyFormattingException
     {
-        int directoryMode = Integer.parseInt( "777", 8 );
-        int fileMode = Integer.parseInt( "777", 8 );
+        int directoryMode = Integer.decode( "777" ).intValue();
+        int fileMode = Integer.decode( "777" ).intValue();
         
         mac.expectModeChange( -1, -1, directoryMode, fileMode, 2 );
         mac.expectIsSnapshot( false );

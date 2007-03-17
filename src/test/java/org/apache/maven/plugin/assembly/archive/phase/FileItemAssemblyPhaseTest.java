@@ -89,7 +89,7 @@ public class FileItemAssemblyPhaseTest
         fi.setLineEnding( "keep" );
         fi.setFileMode( "777" );
 
-        macArchiver.expectAddFile( file, "file.txt", Integer.parseInt( "777", 8 ) );
+        macArchiver.expectAddFile( file, "file.txt", Integer.decode( "777" ).intValue() );
 
         assembly.addFile( fi );
 
@@ -134,7 +134,7 @@ public class FileItemAssemblyPhaseTest
         fi.setLineEnding( "keep" );
         fi.setFileMode( "777" );
 
-        macArchiver.expectAddFile( file, "file.txt", Integer.parseInt( "777", 8 ) );
+        macArchiver.expectAddFile( file, "file.txt", Integer.decode( "777" ).intValue() );
 
         assembly.addFile( fi );
 
@@ -197,9 +197,9 @@ public class FileItemAssemblyPhaseTest
         configFileItem.setLineEnding( "keep" );
         configFileItem.setFileMode( "777" );
 
-        macArchiver.expectAddFile( readmeFile, "README.txt", Integer.parseInt( "777", 8 ) );
-        macArchiver.expectAddFile( licenseFile, "LICENSE.txt", Integer.parseInt( "777", 8 ) );
-        macArchiver.expectAddFile( configFile, "config/config.txt", Integer.parseInt( "777", 8 ) );
+        macArchiver.expectAddFile( readmeFile, "README.txt", Integer.decode( "777" ).intValue() );
+        macArchiver.expectAddFile( licenseFile, "LICENSE.txt", Integer.decode( "777" ).intValue() );
+        macArchiver.expectAddFile( configFile, "config/config.txt", Integer.decode( "777" ).intValue() );
 
         assembly.addFile( readmeFileItem );
         assembly.addFile( licenseFileItem );
@@ -268,9 +268,9 @@ public class FileItemAssemblyPhaseTest
         configFileItem.setLineEnding( "keep" );
         configFileItem.setFileMode( "777" );
 
-        macArchiver.expectAddFile( readmeFile, "README_renamed.txt", Integer.parseInt( "777", 8 ) );
-        macArchiver.expectAddFile( licenseFile, "LICENSE_renamed.txt", Integer.parseInt( "777", 8 ) );
-        macArchiver.expectAddFile( configFile, "config/config_renamed.txt", Integer.parseInt( "777", 8 ) );
+        macArchiver.expectAddFile( readmeFile, "README_renamed.txt", Integer.decode( "777" ).intValue() );
+        macArchiver.expectAddFile( licenseFile, "LICENSE_renamed.txt", Integer.decode( "777" ).intValue() );
+        macArchiver.expectAddFile( configFile, "config/config_renamed.txt", Integer.decode( "777" ).intValue() );
 
         assembly.addFile( readmeFileItem );
         assembly.addFile( licenseFileItem );
@@ -337,9 +337,9 @@ public class FileItemAssemblyPhaseTest
         configFileItem.setLineEnding( "keep" );
         configFileItem.setFileMode( "777" );
 
-        macArchiver.expectAddFile( readmeFile, "README_renamed.txt", Integer.parseInt( "777", 8 ) );
-        macArchiver.expectAddFile( licenseFile, "LICENSE_renamed.txt", Integer.parseInt( "777", 8 ) );
-        macArchiver.expectAddFile( configFile, "config/config_renamed.txt", Integer.parseInt( "777", 8 ) );
+        macArchiver.expectAddFile( readmeFile, "README_renamed.txt", Integer.decode( "777" ).intValue() );
+        macArchiver.expectAddFile( licenseFile, "LICENSE_renamed.txt", Integer.decode( "777" ).intValue() );
+        macArchiver.expectAddFile( configFile, "config/config_renamed.txt", Integer.decode( "777" ).intValue() );
 
         assembly.addFile( readmeFileItem );
         assembly.addFile( licenseFileItem );
