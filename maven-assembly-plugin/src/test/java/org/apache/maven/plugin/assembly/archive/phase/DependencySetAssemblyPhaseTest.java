@@ -56,7 +56,7 @@ public class DependencySetAssemblyPhaseTest
         macTask.expectCSGetRepositories( null, null );
         macTask.expectResolveDependencies( Collections.singleton( macTask.artifact ) );
 
-        macTask.expectAddFile( "out/artifact", 8 );
+        macTask.expectAddFile( "out/artifact", 10 );
 
         project.setArtifacts( Collections.singleton( macTask.artifact ) );
 

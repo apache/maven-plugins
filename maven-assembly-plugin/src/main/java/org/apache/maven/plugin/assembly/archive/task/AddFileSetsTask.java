@@ -117,8 +117,8 @@ public class AddFileSetsTask
 
             AddDirectoryTask task = new AddDirectoryTask( fileSetDir );
 
-            task.setDirectoryMode( Integer.parseInt( fileSet.getDirectoryMode(), 8 ) );
-            task.setFileMode( Integer.parseInt( fileSet.getFileMode(), 8 ) );
+            task.setDirectoryMode( Integer.decode( fileSet.getDirectoryMode() ).intValue() );
+            task.setFileMode( Integer.decode( fileSet.getFileMode() ).intValue() );
             task.setUseDefaultExcludes( fileSet.isUseDefaultExcludes() );
             task.setExcludes( fileSet.getExcludes() );
             task.setIncludes( fileSet.getIncludes() );

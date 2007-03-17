@@ -1,6 +1,5 @@
 package org.apache.maven.plugin.assembly.archive.phase;
 
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.phase.wrappers.RepoBuilderConfigSourceWrapper;
@@ -8,10 +7,8 @@ import org.apache.maven.plugin.assembly.archive.phase.wrappers.RepoInfoWrapper;
 import org.apache.maven.plugin.assembly.archive.task.AddDirectoryTask;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
-import org.apache.maven.plugin.assembly.model.GroupVersionAlignment;
 import org.apache.maven.plugin.assembly.model.Repository;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.repository.RepositoryAssembler;
 import org.apache.maven.shared.repository.RepositoryAssemblyException;
 import org.apache.maven.shared.repository.RepositoryBuilderConfigSource;
@@ -20,7 +17,6 @@ import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -82,8 +78,8 @@ public class RepositoryAssemblyPhase
             
             AddDirectoryTask task = new AddDirectoryTask( repositoryDirectory );
             
-            task.setDirectoryMode( Integer.parseInt( repository.getDirectoryMode(), 8 ) );
-            task.setFileMode( Integer.parseInt( repository.getFileMode(), 8 ) );
+            task.setDirectoryMode( Integer.decode( repository.getDirectoryMode() ).intValue() );
+            task.setFileMode( Integer.decode( repository.getFileMode() ).intValue() );
             task.setUseDefaultExcludes( repository.isUseDefaultExcludes() );
             task.setOutputDirectory( outputDirectory );
             
