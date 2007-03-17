@@ -94,11 +94,11 @@ public class AddDependencySetsTaskTest
         if ( unpack )
         {
             macTask.expectAddArchivedFileSet( outputLocation + "/artifact/", null, null );
-            macTask.expectModeChange( -1, -1, 8, 8, 2 );
+            macTask.expectModeChange( -1, -1, 10, 10, 2 );
         }
         else
         {
-            macTask.expectAddFile( outputLocation + "/artifact", 8 );
+            macTask.expectAddFile( outputLocation + "/artifact", 10 );
         }
 
         macTask.expectCSGetFinalName( "final-name" );

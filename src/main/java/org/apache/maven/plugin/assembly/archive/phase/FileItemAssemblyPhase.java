@@ -80,7 +80,7 @@ public class FileItemAssemblyPhase
 
             try
             {
-                archiver.addFile( source, target, Integer.parseInt( fileItem.getFileMode(), 8 ) );
+                archiver.addFile( source, target, Integer.decode( fileItem.getFileMode() ).intValue() );
             }
             catch ( ArchiverException e )
             {
