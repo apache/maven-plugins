@@ -540,6 +540,9 @@ public abstract class AbstractWarMojo
             for ( Iterator it = webResources.iterator(); it.hasNext(); )
             {
                 Resource resource = (Resource) it.next();
+                if ( !(new File(resource.getDirectory())).isAbsolute() ) {
+                    resource.setDirectory( project.getBasedir() + File.separator + resource.getDirectory() );
+                }
                 copyResources( resource, webappDirectory, filterProperties );
             }
         }
