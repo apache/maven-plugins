@@ -19,27 +19,27 @@ package org.apache.maven.plugin.enforcer;
  * under the License.
  */
 
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
-import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
-import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.execution.RuntimeInformation;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Goal which fails the build if the jdk isn't the correct version
+ * Goal which fails the build if the specified version isn't allowed.
  * 
  * @goal enforce
- * @author Brian Fox
+ * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @phase process-sources
  */
 public class enforce
-    extends AbstractMojo
+    extends abstractVersionEnforcer
 {
     /**
      * Used to look up Artifacts in the remote repository.
@@ -85,93 +85,51 @@ public class enforce
     private String jdkVersion = null;
 
     /**
-     * Flag to warn only if the mavenVersion check fails.
-     * 
-     * @parameter expression="${enforcer.warn}" default-value="false"
-     */
-    private boolean warn = false;
-
-    /**
      * 
      */
     public enforce()
     {
         super();
-        // TODO Auto-generated constructor stub
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.maven.plugin.Mojo#execute()
-     */
+    
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
         if ( StringUtils.isNotEmpty( this.mavenVersion ) )
         {
-            ArtifactVersion version = rti.getApplicationVersion();
-            this.enforceVersion( "Maven", this.mavenVersion, version, this.warn );
+            ArtifactVersion detectedMavenVersion = rti.getApplicationVersion();
+            enforceVersion( "Maven", this.mavenVersion, detectedMavenVersion );
         }
 
         if ( StringUtils.isNotEmpty( this.jdkVersion ) )
         {
-            ArtifactVersion version = new DefaultArtifactVersion(fixJDKVersion(SystemUtils.JAVA_VERSION_TRIMMED));
-            
-            this.enforceVersion( "JDK", fixJDKVersion(this.jdkVersion), version, this.warn );
+            ArtifactVersion detectedJdkVersion = new DefaultArtifactVersion(
+                                                                             fixJDKVersion( SystemUtils.JAVA_VERSION_TRIMMED ) );
+            enforceVersion( "JDK", this.jdkVersion, detectedJdkVersion );
         }
 
     }
 
-    public String fixJDKVersion( String jdkVersion )
+    /**
+     * Converts a jdk string from 1.5.0-11 to a single 3 digit version like
+     * 1.5.0
+     */
+    public String fixJDKVersion( String theJdkVersion )
     {
+        theJdkVersion = theJdkVersion.replaceAll( "_|-", "." );
+        String tokenArray[] = StringUtils.split( theJdkVersion, "." );
+        List tokens = Arrays.asList( tokenArray );
+        StringBuffer buffer = new StringBuffer( theJdkVersion.length() );
 
-       /* String token[] = StringUtils.split( jdkVersion.replace( '_', '.' ), "." );
-        StringBuffer buffer = new StringBuffer( jdkVersion.length() );
-        for ( int i = 0; i <= 2; i++ )
+        Iterator iter = tokens.iterator();
+        for ( int i = 0; i < tokens.size() && i < 3; i++ )
         {
-            buffer.append( token[i] );
-            buffer.append( "." );
+            buffer.append( iter.next() );
+            buffer.append( '.' );
         }
 
         String version = buffer.toString();
-        return StringUtils.stripEnd(version,".");
-        */
-        return jdkVersion;
-    }
-
-    public void enforceVersion( String variableName, String requiredVersionRange, ArtifactVersion actualVersion,
-                               boolean warn )
-        throws MojoExecutionException, MojoFailureException
-    {
-        VersionRange vr = null;
-        try
-        {
-            vr = VersionRange.createFromVersionSpec( requiredVersionRange );
-        }
-        catch ( InvalidVersionSpecificationException e )
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        Log log = this.getLog();
-        String msg = "Detected " + variableName + " Version: " + actualVersion;
-        if ( vr.containsVersion( actualVersion ) )
-        {
-            log.debug( msg + " is allowed." );
-        }
-        else
-        {
-            String error = msg + " is not in the allowed range: " + vr;
-            if ( warn )
-            {
-                log.warn( error );
-            }
-            else
-            {
-                throw new MojoExecutionException( error );
-            }
-        }
+        return StringUtils.stripEnd( version, "." );
     }
 }
