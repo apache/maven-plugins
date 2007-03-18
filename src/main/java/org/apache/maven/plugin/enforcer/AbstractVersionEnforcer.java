@@ -3,8 +3,11 @@
  */
 package org.apache.maven.plugin.enforcer;
 
+import java.util.Iterator;
+
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
+import org.apache.maven.artifact.versioning.Restriction;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -16,19 +19,19 @@ import org.codehaus.plexus.util.StringUtils;
  * @author brianf
  * 
  */
-public abstract class abstractVersionEnforcer
+public abstract class AbstractVersionEnforcer
     extends AbstractMojo
 {
 
     /**
-     * Flag to warn only if a version check fails.
+     * Flag to fail the build if a version check fails.
      * 
-     * @parameter expression="${enforcer.warn}" default-value="false"
+     * @parameter expression="${enforcer.fail}" default-value="true"
      */
-    private boolean warn = false;
+    private boolean fail = true;
 
     public boolean enforceVersion( String variableName, String requiredVersionRange, ArtifactVersion actualVersion )
-        throws MojoExecutionException, MojoFailureException
+        throws MojoExecutionException
     {
         boolean allowed = false;
         if ( StringUtils.isEmpty( requiredVersionRange ) )
@@ -41,9 +44,11 @@ public abstract class abstractVersionEnforcer
             VersionRange vr;
             Log log = this.getLog();
             String msg = "Detected " + variableName + " Version: " + actualVersion;
+            
+            //stort circuit check if the strings are exactly equal
             if ( actualVersion.toString().equals( requiredVersionRange ) )
             {
-                log.debug( msg + " is allowed." );
+                log.info( msg + " is allowed in the range " + requiredVersionRange + "." );
                 allowed = true;
             }
             else
@@ -52,15 +57,15 @@ public abstract class abstractVersionEnforcer
                 {
                     vr = VersionRange.createFromVersionSpec( requiredVersionRange );
 
-                    if ( vr.containsVersion( actualVersion ) || vr.toString().equals( requiredVersionRange ) )
+                    if ( containsVersion( vr, actualVersion ) )
                     {
-                        log.debug( msg + " is allowed." );
+                        log.info( msg + " is allowed in the range " + requiredVersionRange + "." );
                         allowed = true;
                     }
                     else
                     {
-                        String error = msg + " is not in the allowed range: " + vr;
-                        if ( warn )
+                        String error = msg + " is not in the allowed range " + vr + ".";
+                        if ( !fail )
                         {
                             log.warn( error );
                         }
@@ -72,11 +77,60 @@ public abstract class abstractVersionEnforcer
                 }
                 catch ( InvalidVersionSpecificationException e )
                 {
-                    throw new MojoExecutionException("The requested "+ variableName+" version "+ requiredVersionRange+" is invalid.",e);
+                    throw new MojoExecutionException( "The requested " + variableName + " version "
+                        + requiredVersionRange + " is invalid.", e );
                 }
             }
-
-            return allowed;
         }
+        return allowed;
+    }
+
+    /**
+     * Copied from Artifact.VersionRange. This is tweaked to handle singular
+     * ranges properly. Currently the default containsVersion method assumes a
+     * singular version means allow everything. This method assumes that "2.0.4" ==
+     * "[2.0.4,)"
+     * 
+     */
+    public static boolean containsVersion( VersionRange allowedRange, ArtifactVersion version )
+    {
+        boolean matched = false;
+        ArtifactVersion recommendedVersion = allowedRange.getRecommendedVersion();
+        if ( recommendedVersion == null )
+        {
+
+            for ( Iterator i = allowedRange.getRestrictions().iterator(); i.hasNext() && !matched; )
+            {
+                Restriction restriction = (Restriction) i.next();
+                if ( restriction.containsVersion( version ) )
+                {
+                    matched = true;
+                }
+            }
+        }
+        else
+        {
+            // only singular versions ever have a recommendedVersion
+            int compareTo = recommendedVersion.compareTo( version );
+            matched = ( compareTo <= 0 );
+        }
+        return matched;
+    }
+
+    /**
+     * @return the fail
+     */
+    public boolean isFail()
+    {
+        return this.fail;
+    }
+
+    /**
+     * @param theWarn
+     *            the fail to set
+     */
+    public void setFail( boolean theWarn )
+    {
+        this.fail = theWarn;
     }
 }

@@ -38,8 +38,8 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @phase process-sources
  */
-public class enforce
-    extends abstractVersionEnforcer
+public class EnforceMojo
+    extends AbstractVersionEnforcer
 {
     /**
      * Used to look up Artifacts in the remote repository.
@@ -87,26 +87,34 @@ public class enforce
     /**
      * 
      */
-    public enforce()
+    public EnforceMojo()
     {
         super();
     }
 
     
     public void execute()
-        throws MojoExecutionException, MojoFailureException
+        throws MojoExecutionException
     {
+        boolean foundVersionToCheck = false;
         if ( StringUtils.isNotEmpty( this.mavenVersion ) )
         {
+            foundVersionToCheck = true;
             ArtifactVersion detectedMavenVersion = rti.getApplicationVersion();
             enforceVersion( "Maven", this.mavenVersion, detectedMavenVersion );
         }
 
         if ( StringUtils.isNotEmpty( this.jdkVersion ) )
         {
+            foundVersionToCheck = true;
             ArtifactVersion detectedJdkVersion = new DefaultArtifactVersion(
                                                                              fixJDKVersion( SystemUtils.JAVA_VERSION_TRIMMED ) );
             enforceVersion( "JDK", this.jdkVersion, detectedJdkVersion );
+        }
+        
+        if (!foundVersionToCheck)
+        {
+            throw new MojoExecutionException("There is no version range specified to be checked.");
         }
 
     }
@@ -115,7 +123,7 @@ public class enforce
      * Converts a jdk string from 1.5.0-11 to a single 3 digit version like
      * 1.5.0
      */
-    public String fixJDKVersion( String theJdkVersion )
+    public static String fixJDKVersion( String theJdkVersion )
     {
         theJdkVersion = theJdkVersion.replaceAll( "_|-", "." );
         String tokenArray[] = StringUtils.split( theJdkVersion, "." );
@@ -132,4 +140,59 @@ public class enforce
         String version = buffer.toString();
         return StringUtils.stripEnd( version, "." );
     }
+
+
+    /**
+     * @return the jdkVersion
+     */
+    public String getJdkVersion()
+    {
+        return this.jdkVersion;
+    }
+
+
+    /**
+     * @param theJdkVersion the jdkVersion to set
+     */
+    public void setJdkVersion( String theJdkVersion )
+    {
+        this.jdkVersion = theJdkVersion;
+    }
+
+
+    /**
+     * @return the mavenVersion
+     */
+    public String getMavenVersion()
+    {
+        return this.mavenVersion;
+    }
+
+
+    /**
+     * @param theMavenVersion the mavenVersion to set
+     */
+    public void setMavenVersion( String theMavenVersion )
+    {
+        this.mavenVersion = theMavenVersion;
+    }
+
+
+    /**
+     * @return the rti
+     */
+    public RuntimeInformation getRti()
+    {
+        return this.rti;
+    }
+
+
+    /**
+     * @param theRti the rti to set
+     */
+    public void setRti( RuntimeInformation theRti )
+    {
+        this.rti = theRti;
+    }
+  
 }
