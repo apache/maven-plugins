@@ -1,0 +1,14 @@
+
+<assembly>
+  <id>bug-example</id>
+  <formats>
+    <format>dir</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <files>
+    <file>
+      <source>TODO.txt</source>
+      <outputDirectory>/</outputDirectory>
+    </file>
+  </files>
+</assembly>
