@@ -538,13 +538,13 @@ mvn dependency:build-classpath -Dmaven.dep.cpFile=cp.txt
 
 * The <<<dependency:analyze>>> mojo
 
-	Coming soon in 2.0-alpha-3:
 	This mojo can be executed from the command line:
 	
 +---+
 mvn dependency:analyze
 +---+
 
+	This mojo also performs the checks described in the analyze-dep-mht section.
 	Sample output:
 
 +---+
@@ -567,4 +567,36 @@ mvn dependency:analyze
 [INFO]    None
 +---+
 
+* The <<<dependency:analyze-dep-mgt>>> mojo
+
+	This mojo looks at the dependencies after final resolution and looks for mismatches in your dependencyManagement section. 
+	In versions of maven prior to 2.0.6, it was possible to inherit versions that didn't match your dependencyManagement. See {{{http://jira.codehaus.org/browse/MNG-1577}MNG-1577}} for more info.
+	
+	If this mojo detects issues, you should attempt to resolve the discrepancies before upgrading to 2.0.6 to avoid any surprises. This can be done by upgrading or downgrading the version in dependencyManagement to match what is actually
+	being included at runtime, or you can specify a dependency in your project to override what is being included. You can check the results by rerunning this mojo.
+	If you decide to override by using a dependency, be sure to note it so you can remove it later after upgrading to 2.0.6. You could also use the dependency:analyze mojo to uncover this unused direct dependency.
+	
+	Note: Because Maven 2.0.6 fixes the problems this mojo is meant to detect, it will do nothing in versions of Maven greater than 2.0.5.
+
+	This mojo can be executed from the command line:
+	
++---+
+mvn dependency:analyze-dep-mgt
++---+
+
+	Sample output:
+
++---+
+[INFO] Found Resolved Dependency / DependencyManagement mismatches:
+[INFO]  Dependency: commons-lang:commons-lang:jar
+[INFO]          DepMgt  : 1.0
+[INFO]          Resolved: 2.3
+[INFO]  Dependency: commons-digester:commons-digester:jar
+[INFO]          DepMgt  : 1.6
+[INFO]          Resolved: 1.7
+[INFO]  Dependency: javax.servlet:servlet-api:jar
+[INFO]          DepMgt  : 2.3
+[INFO]          Resolved: 2.4
+[WARNING] Potential problems found in Dependency Management
++---+
  

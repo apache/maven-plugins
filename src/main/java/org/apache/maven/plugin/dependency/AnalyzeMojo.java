@@ -19,17 +19,11 @@ package org.apache.maven.plugin.dependency;
  * under the License.
  */
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.versioning.ArtifactVersion;
-import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
-import org.apache.maven.model.Dependency;
-import org.apache.maven.model.DependencyManagement;
+import org.apache.maven.execution.RuntimeInformation;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -37,16 +31,16 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalysis;
 import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzer;
 import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzerException;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
- * 
+ * This goal analyzes your project's dependencies and lists dependencies that should be declared, but are not, and dependencies that are declared but unused.
+ * It also executes the analyze-dep-mgt goal.
  * 
  * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
  * @version $Id$
  * @goal analyze
  * @requiresDependencyResolution test
- * 
+ * @execute phase="test-compile"
  * @since 2.0-alpha-3
  */
 public class AnalyzeMojo
@@ -64,23 +58,9 @@ public class AnalyzeMojo
     private MavenProject project;
 
     /**
-     * Check for dependency / dependencyMgt conflicts
-     * 
-     * @parameter expression="${mdep.checkDepMgt}"
-     */
-    private boolean checkDependencyMgt = true;
-
-    /**
-     * Check dependency conflicts
-     * 
-     * @parameter expression="${mdep.checkDependencies}"
-     */
-    private boolean checkDependencies = false;
-
-    /**
      * Fail Build on problem
      * 
-     * @parameter expression="${mdep.failBuild}"
+     * @parameter expression="${mdep.analyze.failBuild}"
      */
     private boolean failBuild = false;
 
@@ -92,6 +72,15 @@ public class AnalyzeMojo
      * @readonly
      */
     private ProjectDependencyAnalyzer analyzer;
+    
+    /**
+     * Used to look up Artifacts in the remote repository.
+     * 
+     * @parameter expression="${component.org.apache.maven.execution.RuntimeInformation}"
+     * @required
+     * @readonly
+     */
+    protected RuntimeInformation rti;
 
     // Mojo methods -----------------------------------------------------------
 
@@ -101,21 +90,21 @@ public class AnalyzeMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        boolean result = false;
-        if ( this.checkDependencies )
-        {
-            result = checkDependencies();
-        }
-
-        if ( this.checkDependencyMgt )
-        {
-            result = checkDependencyManagement();
-        }
+        boolean result = checkDependencies();
 
         if ( result && this.failBuild )
         {
-            throw new MojoExecutionException( "Found errors." );
+            throw new MojoExecutionException( "Found Dependency errors." );
         }
+        
+        //now do AnalyzeDepMgt (put this in a lifecycle later)
+        AnalyzeDepMgt adm = new AnalyzeDepMgt();
+        adm.setLog( getLog() );
+        adm.setProject( this.project );
+        adm.setFailBuild( this.failBuild );
+        adm.setPluginContext( this.getPluginContext() );
+        adm.setRti( rti );
+        adm.execute();
     }
 
     // private methods --------------------------------------------------------
@@ -134,11 +123,20 @@ public class AnalyzeMojo
 
             getLog().info( "Used undeclared dependencies:" );
 
-            logArtifacts( analysis.getUsedUndeclaredArtifacts() );
+            Set usedUndeclared = analysis.getUsedUndeclaredArtifacts();
+            logArtifacts( usedUndeclared );
 
             getLog().info( "Unused declared dependencies:" );
 
-            logArtifacts( analysis.getUnusedDeclaredArtifacts() );
+            Set unusedDeclared = analysis.getUnusedDeclaredArtifacts();
+            logArtifacts( unusedDeclared );
+            
+            if ((usedUndeclared != null && !usedUndeclared.isEmpty())
+                || unusedDeclared!=null && !unusedDeclared.isEmpty())
+            {
+                getLog().warn( "Potential problems discovered." );
+                result = true;
+            }
         }
         catch ( ProjectDependencyAnalyzerException exception )
         {
@@ -146,70 +144,6 @@ public class AnalyzeMojo
         }
 
         return result;
-    }
-
-    private boolean checkDependencyManagement()
-        throws MojoExecutionException
-    {
-        boolean foundMismatch = false;
-
-        getLog().info( "Found Resolved Dependency / DependencyManagement mismatches:" );
-
-        List depMgtDependencies = null;
-        DependencyManagement depMgt = project.getDependencyManagement();
-        if ( depMgt != null )
-        {
-            depMgtDependencies = depMgt.getDependencies();
-        }
-
-        if ( depMgtDependencies != null && !depMgtDependencies.isEmpty() )
-        {
-            // put all the dependencies from depMgt into a map for quick lookup
-            Map map = new HashMap();
-            Iterator iter = depMgtDependencies.iterator();
-            while ( iter.hasNext() )
-            {
-                Dependency dependency = (Dependency) iter.next();
-                map.put( dependency.getManagementKey(), dependency );
-            }
-
-            Set allDependencies = project.getArtifacts();
-            iter = allDependencies.iterator();
-            while ( iter.hasNext() )
-            {
-                Artifact artifact = (Artifact) iter.next();
-                // getLog().info( "a:"+getArtifactManagementKey( artifact ) );
-                // see if this artifact matches anything in the dependencyMgt
-                // list
-                Dependency dep = (Dependency) map.get( getArtifactManagementKey( artifact ) );
-                if ( dep != null )
-                {
-                    // getLog().info( "Compare:" + dep.getManagementKey()+"
-                    // v:"+dep.getVersion()+"a:"+artifact.getVersion());
-                    // ArtifactVersion depVersion = new
-                    // DefaultArtifactVersion(dep.getVersion());
-                    ArtifactVersion artifactVersion = new DefaultArtifactVersion( artifact.getVersion() );
-
-                    if ( !artifact.isSnapshot() && !dep.getVersion().equals( artifact.getVersion() ) )
-
-                    {
-                        logMismatch( artifact, dep );
-                        foundMismatch = true;
-                    }
-                }
-            }
-        }
-        else
-        {
-            getLog().info( "   Nothing in DepMgt." );
-        }
-
-        if ( !foundMismatch )
-        {
-            getLog().info( "   None" );
-        }
-
-        return foundMismatch;
     }
 
     private void logArtifacts( Set artifacts )
@@ -228,23 +162,4 @@ public class AnalyzeMojo
             }
         }
     }
-
-    private void logMismatch( Artifact artifact, Dependency dependency )
-        throws MojoExecutionException
-    {
-        if ( artifact == null || dependency == null )
-        {
-            throw new MojoExecutionException( "Invalid params: Artifact:" + artifact + " Dependency:" + dependency );
-        }
-
-        getLog().info("\tDependency: " + dependency.getManagementKey());
-        getLog().info( "\t\tDepMgt  : " + artifact.getVersion());
-        getLog().info( "\t\tResolved: " + dependency.getVersion() );
-    }
-
-    private String getArtifactManagementKey( Artifact artifact )
-    {
-        return artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getType()
-            + ( !StringUtils.isEmpty( artifact.getClassifier() ) ? ":" + artifact.getClassifier() : "" );
-    }
-}
+ }
