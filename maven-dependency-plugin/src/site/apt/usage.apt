@@ -576,8 +576,8 @@ mvn dependency:analyze
 	being included at runtime, or you can specify a dependency in your project to override what is being included. You can check the results by rerunning this mojo.
 	If you decide to override by using a dependency, be sure to note it so you can remove it later after upgrading to 2.0.6. You could also use the dependency:analyze mojo to uncover this unused direct dependency.
 	
-	Note: Because Maven 2.0.6 fixes the problems this mojo is meant to detect, it will do nothing in versions of Maven greater than 2.0.5.
-
+	This mojo is also usefull for just detecting projects that override the dependencyManagement directly. Set ignoreDirect to false to detect these otherwise normal conditions.
+	
 	This mojo can be executed from the command line:
 	
 +---+
