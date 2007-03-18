@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Generates the project site.
@@ -59,6 +60,7 @@ public class SiteMojo
      * @parameter expression="${generateReports}" default-value="true"
      */
     private boolean generateReports;
+
 
     /**
      * Generate the project site
@@ -105,7 +107,8 @@ public class SiteMojo
         }
     }
 
-    private void renderLocale( Locale locale, List reports )
+    private void renderLocale( Locale locale,
+                               List reports )
         throws IOException, RendererException, MojoFailureException, MojoExecutionException
     {
         SiteRenderingContext context = createSiteRenderingContext( locale );

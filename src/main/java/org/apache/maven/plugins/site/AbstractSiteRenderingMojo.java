@@ -451,6 +451,9 @@ public abstract class AbstractSiteRenderingMojo
             attributes.put( "outputEncoding", outputEncoding );
         }
 
+        // Put any of the properties in directly into the Velocity context
+        attributes.putAll( project.getProperties() );
+
         DecorationModel decorationModel = getDecorationModel( locale );
         if ( template != null )
         {
