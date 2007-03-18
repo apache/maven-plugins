@@ -81,6 +81,13 @@ public class AnalyzeMojo
      * @readonly
      */
     protected RuntimeInformation rti;
+    
+    /**
+     * Ignore Direct Dependency Overrides of dependencyManagement section.
+     * 
+     * @parameter expression="${mdep.analyze.ignore.direct}"
+     */
+    private boolean ignoreDirect = true;
 
     // Mojo methods -----------------------------------------------------------
 
@@ -104,6 +111,7 @@ public class AnalyzeMojo
         adm.setFailBuild( this.failBuild );
         adm.setPluginContext( this.getPluginContext() );
         adm.setRti( rti );
+        adm.setIgnoreDirect( this.ignoreDirect );
         adm.execute();
     }
 
