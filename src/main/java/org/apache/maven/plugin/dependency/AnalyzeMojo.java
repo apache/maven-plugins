@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.execution.RuntimeInformation;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -74,15 +73,6 @@ public class AnalyzeMojo
     private ProjectDependencyAnalyzer analyzer;
     
     /**
-     * Used to look up Artifacts in the remote repository.
-     * 
-     * @parameter expression="${component.org.apache.maven.execution.RuntimeInformation}"
-     * @required
-     * @readonly
-     */
-    protected RuntimeInformation rti;
-    
-    /**
      * Ignore Direct Dependency Overrides of dependencyManagement section.
      * 
      * @parameter expression="${mdep.analyze.ignore.direct}"
@@ -110,7 +100,6 @@ public class AnalyzeMojo
         adm.setProject( this.project );
         adm.setFailBuild( this.failBuild );
         adm.setPluginContext( this.getPluginContext() );
-        adm.setRti( rti );
         adm.setIgnoreDirect( this.ignoreDirect );
         adm.execute();
     }
