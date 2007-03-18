@@ -1,7 +1,25 @@
-/**
- * 
- */
 package org.apache.maven.plugin.enforcer;
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import junit.framework.TestCase;
 
 import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
@@ -11,10 +29,9 @@ import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
-import junit.framework.TestCase;
-
 /**
- * @author brianf
+ * Exhaustively check the enforcer mojo.
+ * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * 
  */
 public class TestEnforceMojo
@@ -137,46 +154,46 @@ public class TestEnforceMojo
             }
         }
     }
-    
+
     public void testEnforceMojo()
     {
         EnforceMojo mojo = new EnforceMojo();
         mojo.setFail( true );
         mojo.setRti( new MockRuntimeInformation() );
-        
+
         try
         {
             mojo.execute();
-            fail("Expected to receive exception because no required version ranges are set.");
+            fail( "Expected to receive exception because no required version ranges are set." );
         }
         catch ( MojoExecutionException e )
         {
             mojo.getLog().info( "Caught Expected Exception: " + e.getLocalizedMessage() );
         }
-        
+
         try
         {
             mojo.setMavenVersion( "2.0.6" );
             mojo.execute();
-            fail("Expected to receive exception because 2.0.5 does not contain 2.0.6");
+            fail( "Expected to receive exception because 2.0.5 does not contain 2.0.6" );
         }
         catch ( MojoExecutionException e )
         {
             mojo.getLog().info( "Caught Expected Exception: " + e.getLocalizedMessage() );
         }
-        
+
         try
         {
             mojo.setMavenVersion( null );
-            mojo.setJdkVersion( "("+EnforceMojo.fixJDKVersion( SystemUtils.JAVA_VERSION_TRIMMED) +",]");
+            mojo.setJdkVersion( "(" + EnforceMojo.fixJDKVersion( SystemUtils.JAVA_VERSION_TRIMMED ) + ",]" );
             mojo.execute();
-            fail("Expected to receive exception because I have set the lowerbounds noninclusive.");
+            fail( "Expected to receive exception because I have set the lowerbounds noninclusive." );
         }
         catch ( MojoExecutionException e )
         {
             mojo.getLog().info( "Caught Expected Exception: " + e.getLocalizedMessage() );
         }
-        
+
         try
         {
             mojo.setMavenVersion( null );
@@ -185,20 +202,20 @@ public class TestEnforceMojo
         }
         catch ( MojoExecutionException e )
         {
-           fail("Did not expect an exception. Received:"+e.getLocalizedMessage());
+            fail( "Did not expect an exception. Received:" + e.getLocalizedMessage() );
         }
-        
+
         try
         {
             mojo.setFail( false );
             mojo.setMavenVersion( null );
-            mojo.setJdkVersion( "("+EnforceMojo.fixJDKVersion( SystemUtils.JAVA_VERSION_TRIMMED) +",]");
+            mojo.setJdkVersion( "(" + EnforceMojo.fixJDKVersion( SystemUtils.JAVA_VERSION_TRIMMED ) + ",]" );
             mojo.execute();
         }
         catch ( MojoExecutionException e )
         {
-           fail("Did not expect an exception. Received:"+e.getLocalizedMessage());
+            fail( "Did not expect an exception. Received:" + e.getLocalizedMessage() );
         }
-        
+
     }
 }

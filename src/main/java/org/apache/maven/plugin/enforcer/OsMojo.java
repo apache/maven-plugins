@@ -19,24 +19,32 @@ package org.apache.maven.plugin.enforcer;
  * under the License.
  */
 
+import org.apache.maven.execution.RuntimeInformation;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 
 /**
  * Goal which fails the build if the os isn't the correct version
- *
+ * 
  * @goal os
- * @author brian fox
+ * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @phase process-sources
  */
 public class OsMojo
     extends AbstractMojo
 {
 
-
+    /**
+     * Runtime information containing Maven Version.
+     * 
+     * @parameter expression="${component.org.apache.maven.execution.RuntimeInformation}"
+     * @required
+     * @readonly
+     */
+    protected RuntimeInformation rti;
     public void execute()
         throws MojoExecutionException
     {
-    
+
     }
 }
