@@ -274,11 +274,27 @@ public abstract class AbstractAntlrMojo
             // ----------------------------------------------------------------------
             // Call Antlr
             // ----------------------------------------------------------------------
-
-            SecurityManager oldSm = System.getSecurityManager();
+            boolean failedSetManager = false;
+            SecurityManager oldSm = null;
+            try 
+            {
+                oldSm = System.getSecurityManager();
+                System.setSecurityManager( NoExitSecurityManager.INSTANCE );
+            } 
+            catch (SecurityException ex) 
+            {
+                //ANTLR-12
+                oldSm = null;
+                failedSetManager = true;
+                //ignore, in embedded environment the security manager can already be set.
+                // in such a case assume the exit call is handled properly..
+                getLog().warn("Cannot set custom SecurityManager. " +
+                        "Antlr's call to System.exit() can cause application shutdown " +
+                        "if not handled by the current SecurityManager.");
+            }
+            
             PrintStream oldErr = System.err;
 
-            System.setSecurityManager( NoExitSecurityManager.INSTANCE );
             OutputStream errOS = new StringOutputStream();
             PrintStream err = new PrintStream( errOS );
             System.setErr( err );
@@ -289,20 +305,26 @@ public abstract class AbstractAntlrMojo
             }
             catch ( SecurityException e )
             {
-                if ( !e.getMessage().equals( "exitVM-0" ) )
+                if ( e.getMessage().equals( "exitVM-0" ) ||
+                     e.getClass().getName().equals("org.netbeans.core.execution.ExitSecurityException" ) )  //netbeans IDE Sec Manager.
                 {
-                    throw new MojoExecutionException( "Antlr execution failed: " + e.getMessage(), e );
-                }
-
-                if ( ( errOS.toString().indexOf( "exitVM-" ) != -1 ) &&
-                     ( errOS.toString().indexOf( "exitVM-0" ) == -1 ) )
+                    //ANTLR-12
+                    //now basically every secutiry manager could set different message, how to handle in generic way?
+                    //probably only by external execution
+                    /// in case of NetBeans SecurityManager, it's not possible to distinguish exit codes, rather swallow than fail.
+                    getLog().debug(e);
+                } 
+                else 
                 {
-                    throw new MojoExecutionException( "Antlr execution failed. Error output:\n" + errOS, e );
+                    throw new MojoExecutionException( "Antlr execution failed: " + e.getMessage() + 
+                                                      "\n Error output:\n" + errOS, e );
                 }
             }
             finally
             {
-                System.setSecurityManager( oldSm );
+                if ( ! failedSetManager ) {
+                    System.setSecurityManager( oldSm );
+                }
                 System.setErr( oldErr );
 
                 System.err.println( errOS.toString() );
