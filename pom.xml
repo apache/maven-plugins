@@ -165,6 +165,11 @@
 			<artifactId>plexus-container-default</artifactId>
 			<version>1.0-alpha-9</version>
 		</dependency>
+		<dependency>
+		    <groupId>org.apache.maven.shared</groupId>
+		    <artifactId>maven-dependency-analyzer</artifactId>
+		    <version>1.0-alpha-1</version>
+		</dependency>
 	</dependencies>
 	<!--reporting>
     <plugins>
