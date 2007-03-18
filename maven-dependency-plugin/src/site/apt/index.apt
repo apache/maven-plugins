@@ -32,7 +32,7 @@ Maven Dependency Plugin
 
 * Goals Overview
 
-  Dependency plugin has several goals:
+  The Dependency plugin has several goals:
 
   *{{{copy-mojo.html}dependency:copy}} takes a list of artifacts defined in
   the plugin configuration section and copies them to a specified location,
