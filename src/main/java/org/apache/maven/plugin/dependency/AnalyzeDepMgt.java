@@ -38,9 +38,12 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- *  This mojo looks at the dependencies after final resolution and looks for mismatches in your dependencyManagement section. 
- *  In versions of maven prior to 2.0.6, it was possible to inherit versions that didn't match your dependencyManagement. See <a href="http://jira.codehaus.org/browse/MNG-1577">MNG-1577</a> for more info. 
- *  Note: Because Maven 2.0.6 fixes the problems this mojo is meant to detect, it will do nothing in versions of Maven greater than 2.0.5.
+ * This mojo looks at the dependencies after final resolution and looks for
+ * mismatches in your dependencyManagement section. In versions of maven prior
+ * to 2.0.6, it was possible to inherit versions that didn't match your
+ * dependencyManagement. See <a
+ * href="http://jira.codehaus.org/browse/MNG-1577">MNG-1577</a> for more info.
+ * This mojo is also usefull for just detecting projects that override the dependencyManagement directly. Set ignoreDirect to false to detect these otherwise normal conditions.
  * 
  * @author <a href="mailto:brianefox@gmail.com">Brian Fox</a>
  * @version $Id: AnalyzeMojo.java 519377 2007-03-17 17:37:26Z brianf $
@@ -70,6 +73,13 @@ public class AnalyzeDepMgt
     private boolean failBuild = false;
 
     /**
+     * Ignore Direct Dependency Overrides of dependencyManagement section.
+     * 
+     * @parameter expression="${mdep.analyze.ignore.direct}"
+     */
+    private boolean ignoreDirect = true;
+
+    /**
      * Used to look up Artifacts in the remote repository.
      * 
      * @parameter expression="${component.org.apache.maven.execution.RuntimeInformation}"
@@ -86,22 +96,17 @@ public class AnalyzeDepMgt
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        ArtifactVersion version = rti.getApplicationVersion();
-        ArtifactVersion checkVersion = new DefaultArtifactVersion( "2.0.6" );
-        if ( version.compareTo( checkVersion ) < 0 )
+        boolean result = checkDependencyManagement();
+        if ( result )
         {
-            boolean result = checkDependencyManagement();
-            if ( result )
-            {
-                if ( this.failBuild )
+            if ( this.failBuild )
 
-                {
-                    throw new MojoExecutionException( "Found Dependency errors." );
-                }
-                else
-                {
-                    getLog().warn( "Potential problems found in Dependency Management " );
-                }
+            {
+                throw new MojoExecutionException( "Found Dependency errors." );
+            }
+            else
+            {
+                getLog().warn( "Potential problems found in Dependency Management " );
             }
         }
     }
@@ -134,11 +139,15 @@ public class AnalyzeDepMgt
             }
 
             Set allDependencies = project.getArtifacts();
-            
-            //don't warn if a dependency that is directly listed overrides depMgt. That's ok.
-            Set directDependencies = project.getDependencyArtifacts();
-            allDependencies.removeAll( directDependencies );
-       
+
+            // don't warn if a dependency that is directly listed overrides
+            // depMgt. That's ok.
+            if ( this.ignoreDirect )
+            {
+                Set directDependencies = project.getDependencyArtifacts();
+                allDependencies.removeAll( directDependencies );
+            }
+
             iter = allDependencies.iterator();
             while ( iter.hasNext() )
             {
@@ -232,10 +241,28 @@ public class AnalyzeDepMgt
     }
 
     /**
-     * @param theRti the rti to set
+     * @param theRti
+     *            the rti to set
      */
     public void setRti( RuntimeInformation theRti )
     {
         this.rti = theRti;
+    }
+
+    /**
+     * @return the ignoreDirect
+     */
+    public boolean isIgnoreDirect()
+    {
+        return this.ignoreDirect;
+    }
+
+    /**
+     * @param theIgnoreDirect
+     *            the ignoreDirect to set
+     */
+    public void setIgnoreDirect( boolean theIgnoreDirect )
+    {
+        this.ignoreDirect = theIgnoreDirect;
     }
 }
