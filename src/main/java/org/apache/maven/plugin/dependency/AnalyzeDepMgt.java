@@ -28,7 +28,6 @@ import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
-import org.apache.maven.execution.RuntimeInformation;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.plugin.AbstractMojo;
@@ -79,14 +78,6 @@ public class AnalyzeDepMgt
      */
     private boolean ignoreDirect = true;
 
-    /**
-     * Used to look up Artifacts in the remote repository.
-     * 
-     * @parameter expression="${component.org.apache.maven.execution.RuntimeInformation}"
-     * @required
-     * @readonly
-     */
-    protected RuntimeInformation rti;
 
     // Mojo methods -----------------------------------------------------------
 
@@ -144,6 +135,7 @@ public class AnalyzeDepMgt
             // depMgt. That's ok.
             if ( this.ignoreDirect )
             {
+                getLog().info( "\tIgnoring Direct Dependencies." );
                 Set directDependencies = project.getDependencyArtifacts();
                 allDependencies.removeAll( directDependencies );
             }
@@ -230,23 +222,6 @@ public class AnalyzeDepMgt
     public void setProject( MavenProject theProject )
     {
         this.project = theProject;
-    }
-
-    /**
-     * @return the rti
-     */
-    public RuntimeInformation getRti()
-    {
-        return this.rti;
-    }
-
-    /**
-     * @param theRti
-     *            the rti to set
-     */
-    public void setRti( RuntimeInformation theRti )
-    {
-        this.rti = theRti;
     }
 
     /**
