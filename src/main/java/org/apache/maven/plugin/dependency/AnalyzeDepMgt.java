@@ -134,20 +134,18 @@ public class AnalyzeDepMgt
             }
 
             Set allDependencies = project.getArtifacts();
+            
+            //don't warn if a dependency that is directly listed overrides depMgt. That's ok.
+            Set directDependencies = project.getDependencyArtifacts();
+            allDependencies.removeAll( directDependencies );
+       
             iter = allDependencies.iterator();
             while ( iter.hasNext() )
             {
                 Artifact artifact = (Artifact) iter.next();
-                // getLog().info( "a:"+getArtifactManagementKey( artifact ) );
-                // see if this artifact matches anything in the dependencyMgt
-                // list
                 Dependency dep = (Dependency) map.get( getArtifactManagementKey( artifact ) );
                 if ( dep != null )
                 {
-                    // getLog().info( "Compare:" + dep.getManagementKey()+"
-                    // v:"+dep.getVersion()+"a:"+artifact.getVersion());
-                    // ArtifactVersion depVersion = new
-                    // DefaultArtifactVersion(dep.getVersion());
                     ArtifactVersion artifactVersion = new DefaultArtifactVersion( artifact.getVersion() );
 
                     if ( !artifact.isSnapshot() && !dep.getVersion().equals( artifact.getVersion() ) )
