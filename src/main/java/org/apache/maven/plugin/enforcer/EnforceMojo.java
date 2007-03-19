@@ -94,27 +94,29 @@ public class EnforceMojo
     public void execute()
         throws MojoExecutionException
     {
-        boolean foundVersionToCheck = false;
-        if ( StringUtils.isNotEmpty( this.mavenVersion ) )
+        if ( !skip )
         {
-            foundVersionToCheck = true;
-            ArtifactVersion detectedMavenVersion = rti.getApplicationVersion();
-            enforceVersion( "Maven", this.mavenVersion, detectedMavenVersion );
-        }
+            boolean foundVersionToCheck = false;
+            if ( StringUtils.isNotEmpty( this.mavenVersion ) )
+            {
+                foundVersionToCheck = true;
+                ArtifactVersion detectedMavenVersion = rti.getApplicationVersion();
+                enforceVersion( "Maven", this.mavenVersion, detectedMavenVersion );
+            }
 
-        if ( StringUtils.isNotEmpty( this.jdkVersion ) )
-        {
-            foundVersionToCheck = true;
-            ArtifactVersion detectedJdkVersion = new DefaultArtifactVersion(
-                                                                             fixJDKVersion( SystemUtils.JAVA_VERSION_TRIMMED ) );
-            enforceVersion( "JDK", this.jdkVersion, detectedJdkVersion );
-        }
+            if ( StringUtils.isNotEmpty( this.jdkVersion ) )
+            {
+                foundVersionToCheck = true;
+                ArtifactVersion detectedJdkVersion = new DefaultArtifactVersion(
+                                                                                 fixJDKVersion( SystemUtils.JAVA_VERSION_TRIMMED ) );
+                enforceVersion( "JDK", this.jdkVersion, detectedJdkVersion );
+            }
 
-        if ( !foundVersionToCheck )
-        {
-            throw new MojoExecutionException( "There is no version range specified to be checked." );
+            if ( !foundVersionToCheck )
+            {
+                throw new MojoExecutionException( "There is no version range specified to be checked." );
+            }
         }
-
     }
 
     /**
