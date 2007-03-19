@@ -79,6 +79,7 @@ under the License.
   </contributors>
   <properties>
     <doxiaVersion>1.0-alpha-9-SNAPSHOT</doxiaVersion>
+    <doxiaSiteVersion>1.0-SNAPSHOT</doxiaSiteVersion>
   </properties>
   <dependencies>
     <dependency>
@@ -104,12 +105,12 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-decoration-model</artifactId>
-      <version>${doxiaVersion}</version>
+      <version>${doxiaSiteVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-site-renderer</artifactId>
-      <version>${doxiaVersion}</version>
+      <version>${doxiaSiteVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
