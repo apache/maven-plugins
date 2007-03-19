@@ -37,8 +37,8 @@ import org.codehaus.plexus.util.StringUtils;
  * in META-INF/MANIFEST.MF is synchronized with the POM by adding all dependencies that don't have the
  * scope provided.
  * 
- * @todo move this to use the code from
- * <a href="http://svn.apache.org/viewvc/incubator/felix/trunk/tools/maven2/maven-osgi-plugin/">Maven OSGi plugin</a>
+ * @deprecated use <a href="http://cwiki.apache.org/FELIX/bundle-plugin-for-maven-bnd.html/">Maven Bundle plugin</a> from Felix
+ * Still waiting for them to apply the <code>bundle:manifest</code> goal in <a href="https://issues.apache.org/jira/browse/FELIX-199">FELIX-199</a>
  */
 public class EclipseOSGiManifestWriter
     extends AbstractEclipseWriter
