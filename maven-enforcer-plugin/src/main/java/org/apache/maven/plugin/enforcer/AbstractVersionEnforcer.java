@@ -24,7 +24,6 @@ import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.Restriction;
 import org.apache.maven.artifact.versioning.VersionRange;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.StringUtils;
@@ -34,15 +33,10 @@ import org.codehaus.plexus.util.StringUtils;
  * 
  */
 public abstract class AbstractVersionEnforcer
-    extends AbstractMojo
+    extends AbstractEnforcer
 {
 
-    /**
-     * Flag to fail the build if a version check fails.
-     * 
-     * @parameter expression="${enforcer.fail}" default-value="true"
-     */
-    private boolean fail = true;
+
 
     public boolean enforceVersion( String variableName, String requiredVersionRange, ArtifactVersion actualVersion )
         throws MojoExecutionException
