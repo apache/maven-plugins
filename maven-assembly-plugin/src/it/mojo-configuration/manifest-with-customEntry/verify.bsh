@@ -1,0 +1,20 @@
+import java.io.*;
+import java.util.jar.*;
+import java.util.*;
+import java.net.*;
+
+File file = new File( basedir, "target/manifest-with-customEntry-1-jar-with-dependencies.jar" );
+
+System.out.println( "file: " + file + " exists? " + file.exists() );
+
+JarFile jarFile = new JarFile( file );
+
+Manifest mf = jarFile.getManifest();
+
+Attributes attrs = mf.getMainAttributes();
+
+String mode = (String) attrs.get( new Attributes.Name( "mode" ) );
+
+System.out.println( "Got mode: " + mode );
+
+return "development".equals( mode );
