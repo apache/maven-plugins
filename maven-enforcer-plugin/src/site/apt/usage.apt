@@ -1,0 +1,121 @@
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~ http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.    
+ 
+  ------
+  Usage
+  ------
+  Brian Fox
+  ------
+  Mar 2007
+  ------
+
+Usage
+ 
+  Brief examples on how to use the enforcer goals.
+ 
+* Generic Plugin configuration information
+
+  See the following links for information about including and configuring plugins in your project:
+  
+  *{{{http://maven.apache.org/guides/mini/guide-configuring-plugins.html}Configuring Plugins}}
+  
+  *{{{http://maven.apache.org/guides/plugin/guide-java-plugin-development.html}Plugin Development}}
+
+  *{{{http://maven.apache.org/guides/introduction/introduction-to-plugin-prefix-mapping.html}Plugin Prefix}}
+  
+  []
+
+* The <<<enforcer:enforce>>> mojo
+
+   This goal is meant to be bound to a lifecycle phase and configured in your
+   <<<pom.xml>>>. This goal can enforce a specific range of allowed versions for Maven and the JDK.
+   
+   The standard Maven version range syntax is supported with one minor change for ease of use (denoted with *):
+   
+
+*----------*--------------+
+| Range    | Meaning      |
+*----------*--------------+
+| 1.0      | x \>\= 1.0 \* The default maven meaning for 1.0 is everything (,) but with 1.0 recommended. Obviously this doesn't work for enforcing versions here, so it has been redefined as a minimum version.
+  |
+*----------*--------------+
+| (,1.0]   | x \<\= 1.0     |
+*----------*--------------+
+| (,1.0)   | x \< 1.0      |
+*----------*--------------+
+| [1.0]    | x \=\= 1.0     |
+*----------*--------------+
+| [1.0,)   | x \>\= 1.0     |
+*----------*--------------+
+| (1.0,)   | x \> 1.0      |
+*----------*--------------+
+| (1.0,2.0)| 1.0 \>\= x \<\= 2.0     |
+*----------*--------------+
+| [1.0,2.0]| 1.0 \> x \< 2.0     |
+*----------*--------------+
+| (,1.0],[1.2,)   |x \<\= 1.0 or x \>\= 1.2. Multiple sets are comma-separated |
+*----------*--------------+
+| (,1.1),(1.1,) |x !\= 1.1 |
+*----------*--------------+
+
+
+   The JDK version is retrieved and the following processing occurs before being checked:
+   
+  [[1]] Drop all non-numeric characters preceeding the first number. (build 1.5.0_11-b03 becomes 1.5.0_11-b03)
+  
+  [[2]] Replace all '_' and '-' with '.' (1.5.0_11-b03 becomes 1.5.0.11.b03)
+  
+  [[3]] Split the string on '.' and take the first 3 sections. (1.5.0.11.b03 becomes 1.5.0)
+  
+  []
+   
+   This preprocessing normalizes various JDK version strings into a standard x.y.z version number. Your required range should therefore use the x.y.z format for comparison.
+  
+   To enforce only the Maven version, do not specify a JDK version and vice versa. At least one must be set.
+   
+   By default, the mojo will fail the build if a check does not succeed. If you would like a warning instead, set <<fail>> to false.
+   
+   Configure the plugin something like this if you intend to bind it to execute along with your build:
+
++---+
+<project>
+  [...]
+  <build>
+   <plugins>
+     <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce-versions</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+            <mavenVersion>2.0.6</mavenVersion>
+            <jdkVersion>1.5.0</jdkVersion>
+            <fail>true</fail>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++---+
+  
