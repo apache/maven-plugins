@@ -1,0 +1,11 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.apache.maven.plugins.site-plugin-test</groupId>
+  <artifactId>site-plugin-test13</artifactId>
+  <version>1.0</version>
+  <packaging>pom</packaging>
+  <description>
+    MSITE-202: bundle site-plugin locale en not found.
+  </description>
+  <url>http://localhost/test-project-13</url>
+</project>

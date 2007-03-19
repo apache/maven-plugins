@@ -1,0 +1,62 @@
+ ------
+ Creating a Skin for the Maven 2 Site Plugin
+ ------
+ Brett Porter
+ ------
+ May 11, 2005
+ ------
+
+ ~~ Copyright 2005-2006 The Apache Software Foundation.
+ ~~
+ ~~ Licensed under the Apache License, Version 2.0 (the "License");
+ ~~ you may not use this file except in compliance with the License.
+ ~~ You may obtain a copy of the License at
+ ~~
+ ~~      http://www.apache.org/licenses/LICENSE-2.0
+ ~~
+ ~~ Unless required by applicable law or agreed to in writing, software
+ ~~ distributed under the License is distributed on an "AS IS" BASIS,
+ ~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ~~ See the License for the specific language governing permissions and
+ ~~ limitations under the License.
+
+ ~~ NOTE: For help with the syntax of this file, see:
+ ~~ http://maven.apache.org/guides/mini/guide-apt-format.html
+
+
+Creating a Skin for the Maven 2 Site Plugin
+
+* About
+
+  A Maven 2 site skin contains the following elements:
+
+    * Resources to copy into each project (such as images used by the CSS)
+
+    * A <<<maven-theme.css>>> file, containing the visual styling.
+
+    * An optional Velocity template for an alternate HTML rendering of the site.
+
+  For a sample skin, see {{{http://svn.apache.org/viewvc/maven/skins/trunk/maven-classic-skin}http://svn.apache.org/viewvc/maven/skins/trunk/maven-classic-skin}}
+
+* Building
+
+  A skin is built like any other JAR - with a <<<packaging>>> of <<<jar>>>. No additional plugins are needed.
+
+  Resources should be put in the normal <<<src/main/resources>>> directory.
+
+  Once the JAR is built and deployed, it can be used by projects.
+
+* Constructing the CSS
+
+  <<More information is needed here on constructing the CSS.>>
+
+  If you are interested in constructing your own CSS, it is recommended that you copy an existing skin's
+  <<<maven-theme.css>>> file and modify it to suit your needs.
+
+* Customizing the HTML output with a Velocity template
+
+  <<Details on the velocity template variables and use should be included>>.
+
+  The format of the velocity template is currently out of scope for this document. To attempt this, start by copying
+  <<<default-site.vm>>> from the <<<doxia-site-renderer>>> JAR to <<<src/main/resources/META-INF/maven/site.vm>>>
+  and modify it to your needs.

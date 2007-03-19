@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<project name="Maven">
+  <publishDate format="dd MMM yyyy"/>
+
+  <body>
+    <links>
+      <item name="Apache" href="http://www.apache.org/"/>
+    </links>
+
+    <menu name="Quick Links">
+      <item name="Developers Guide" href="/devguide/index.html"/>
+      <item name="Configuration Schema" href="/configuration/index.html"/>
+    </menu>
+
+    ${reports}
+
+    ${modules}
+  </body>
+</project>
