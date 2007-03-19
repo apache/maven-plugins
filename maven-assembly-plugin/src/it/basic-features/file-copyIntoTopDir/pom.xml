@@ -12,7 +12,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
-        <!-- <version>testing</version> -->
+        <version>testing</version>
         <configuration>
           <descriptors>
             <descriptor>src/assemble/bin.xml</descriptor>
