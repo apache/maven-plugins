@@ -61,6 +61,30 @@ public class ScmReport
     private String checkoutDirectoryName;
 
     /**
+     * The scm anonymous connection url.
+     *
+     * @parameter default-value="${project.scm.connection}"
+     * @since 2.1
+     */
+    private String anonymousConnection;
+
+    /**
+     * The scm developer connection url.
+     *
+     * @parameter default-value="${project.scm.developerConnection}"
+     * @since 2.1
+     */
+    private String developerConnection;
+
+    /**
+     * The scm web access url.
+     *
+     * @parameter default-value="${project.scm.url}"
+     * @since 2.1
+     */
+    private String webAccessUrl;
+
+    /**
      * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
      */
     public String getName( Locale locale )
@@ -82,7 +106,8 @@ public class ScmReport
     public void executeReport( Locale locale )
     {
         ScmRenderer r =
-            new ScmRenderer( scmManager, getSink(), getProject().getModel(), i18n, locale, checkoutDirectoryName );
+            new ScmRenderer( scmManager, getSink(), getProject().getModel(), i18n, locale, checkoutDirectoryName,
+                    webAccessUrl, anonymousConnection, developerConnection );
 
         r.render();
     }
@@ -115,7 +140,10 @@ public class ScmReport
 
         private String checkoutDirectoryName;
 
-        ScmRenderer( ScmManager scmManager, Sink sink, Model model, I18N i18n, Locale locale, String checkoutDirName )
+        private String webAccessUrl;
+
+        ScmRenderer( ScmManager scmManager, Sink sink, Model model, I18N i18n, Locale locale, String checkoutDirName,
+                     String webAccessUrl, String anonymousConnection, String devConnection )
         {
             super( sink );
 
@@ -128,6 +156,13 @@ public class ScmReport
             this.locale = locale;
 
             this.checkoutDirectoryName = checkoutDirName;
+
+            this.webAccessUrl = webAccessUrl;
+
+            this.anonymousConnection = anonymousConnection;
+
+            this.devConnection = devConnection;
+
         }
 
         /**
@@ -155,9 +190,6 @@ public class ScmReport
                 return;
             }
 
-            anonymousConnection = scm.getConnection();
-            devConnection = scm.getDeveloperConnection();
-
             if ( StringUtils.isEmpty( anonymousConnection ) && StringUtils.isEmpty( devConnection ) &&
                 StringUtils.isEmpty( scm.getUrl() ) )
             {
@@ -177,7 +209,7 @@ public class ScmReport
             renderOverViewSection( anonymousRepository );
 
             // Web access section
-            renderWebAccesSection( scm.getUrl() );
+            renderWebAccesSection( webAccessUrl );
 
             // Anonymous access section if needed
             renderAnonymousAccessSection( anonymousRepository );
