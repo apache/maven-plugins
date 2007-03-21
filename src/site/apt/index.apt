@@ -53,6 +53,8 @@ Maven Project Info Reports Plugin
 
   * {{{examples/individual-reports.html}Running Individual Reports}}
 
+  * {{{examples/scm-report.html}Customizing the SCM Report}}
+
   * {{{project-info.html}Overview of the reports generated for this plugin}}
 
 * Related Links
