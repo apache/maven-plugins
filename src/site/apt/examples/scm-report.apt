@@ -1,0 +1,47 @@
+ ------
+ Maven 2 Project Info Report Plugin - SCM Report
+ ------
+ The Maven Team
+ ------
+ 12 March 2007
+ 
+SCM Report
+
+  By default, the SCM Report uses the information configured (or inherited)
+  in the <<<<scm>>>> element of <<<pom.xml>>>. To override these values,
+  you can configure the webAccessUrl, anonymousConnection and
+  developerConnection properties.
+
+  This feature is useful when the project website is stored in
+  a separate module, and you want the SCM report to give instructions for
+  checking out the project trunk.
+
+  <Note: this feature is available in version 2.1+>
+
++-----------------+
+  <project>
+     [...]
+     <scm>
+        <connection>scm:svn:http://svn.example.org/repo/project/trunk/site</connection>
+        <developerConnection>scm:svn:https://svn.example.org/repo/project/trunk/site</developerConnection>
+        <url>http://svn.example.org/viewvc/project/trunk/site</url>
+     </scm>
+     [...]
+        <reporting>
+           [...]
+            <plugins>
+              <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-project-info-reports-plugin</artifactId>
+                  <configuration>
+                     <webAccessUrl>http://svn.example.org/viewvc/project/trunk</webAccessUrl>
+                     <anonymousConnection>scm:svn:http://svn.example.org/repo/project/trunk</anonymousConnection>
+                     <developerConnection>scm:svn:https://svn.example.org/repo/project/trunk</developerConnection>
+                  </configuration>
+              </plugin>
+            </plugins>
+           [...]
+        <reporting>
+     [...]
+  </project>
++-----------------+
