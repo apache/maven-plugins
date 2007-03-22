@@ -19,7 +19,7 @@ package org.apache.maven.plugin.changes;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import org.apache.maven.doxia.module.HtmlTools;
+import org.apache.maven.doxia.util.HtmlTools;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugin.logging.Log;
 
