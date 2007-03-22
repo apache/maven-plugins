@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.enforcer;
+package org.apache.maven.plugin.enforcer.rules;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -33,12 +33,27 @@ import org.codehaus.plexus.util.StringUtils;
  * 
  */
 public abstract class AbstractVersionEnforcer
-    extends AbstractEnforcer
 {
 
+    /**
+     * Specify the required version. Some examples are
+     * <ul>
+     * <li><code>2.0.4</code> Version 2.0.4</li>
+     * <li><code>[2.0,2.1)</code> Versions 2.0 (included) to 2.1 (not
+     * included)</li>
+     * <li><code>[2.0,2.1]</code> Versions 2.0 to 2.1 (both included)</li>
+     * <li><code>[2.0.5,)</code> Versions 2.0.5 and higher</li>
+     * <li><code>(,2.0.5],[2.1.1,)</code> Versions up to 2.0.5 (included) and
+     * 2.1.1 or higher</li>
+     * </ul>
+     * 
+     * @parameter
+     * @required
+     */
+    protected String version = null;
 
-
-    public boolean enforceVersion( String variableName, String requiredVersionRange, ArtifactVersion actualVersion )
+    public boolean enforceVersion( Log log, String variableName, String requiredVersionRange,
+                                   ArtifactVersion actualVersion )
         throws MojoExecutionException
     {
         boolean allowed = false;
@@ -50,7 +65,6 @@ public abstract class AbstractVersionEnforcer
         {
 
             VersionRange vr;
-            Log log = this.getLog();
             String msg = "Detected " + variableName + " Version: " + actualVersion;
 
             // stort circuit check if the strings are exactly equal
@@ -73,14 +87,8 @@ public abstract class AbstractVersionEnforcer
                     else
                     {
                         String error = msg + " is not in the allowed range " + vr + ".";
-                        if ( !fail )
-                        {
-                            log.warn( error );
-                        }
-                        else
-                        {
-                            throw new MojoExecutionException( error );
-                        }
+
+                        throw new MojoExecutionException( error );
                     }
                 }
                 catch ( InvalidVersionSpecificationException e )
@@ -123,22 +131,5 @@ public abstract class AbstractVersionEnforcer
             matched = ( compareTo <= 0 );
         }
         return matched;
-    }
-
-    /**
-     * @return the fail
-     */
-    public boolean isFail()
-    {
-        return this.fail;
-    }
-
-    /**
-     * @param theWarn
-     *            the fail to set
-     */
-    public void setFail( boolean theWarn )
-    {
-        this.fail = theWarn;
     }
 }
