@@ -143,16 +143,16 @@ public class AnalyzeDepMgt
             iter = allDependencies.iterator();
             while ( iter.hasNext() )
             {
-                Artifact artifact = (Artifact) iter.next();
-                Dependency dep = (Dependency) map.get( getArtifactManagementKey( artifact ) );
-                if ( dep != null )
+                Artifact dependencyArtifact = (Artifact) iter.next();
+                Dependency depFromDepMgt = (Dependency) map.get( getArtifactManagementKey( dependencyArtifact ) );
+                if ( depFromDepMgt != null )
                 {
-                    ArtifactVersion artifactVersion = new DefaultArtifactVersion( artifact.getVersion() );
+                    ArtifactVersion artifactVersion = new DefaultArtifactVersion( dependencyArtifact.getVersion() );
 
-                    if ( !artifact.isSnapshot() && !dep.getVersion().equals( artifact.getVersion() ) )
+                    if ( !dependencyArtifact.isSnapshot() && !depFromDepMgt.getVersion().equals( dependencyArtifact.getVersion() ) )
 
                     {
-                        logMismatch( artifact, dep );
+                        logMismatch( dependencyArtifact, depFromDepMgt );
                         foundMismatch = true;
                     }
                 }
@@ -171,17 +171,17 @@ public class AnalyzeDepMgt
         return foundMismatch;
     }
 
-    private void logMismatch( Artifact artifact, Dependency dependency )
+    private void logMismatch( Artifact dependencyArtifact, Dependency dependencyFromDepMgt )
         throws MojoExecutionException
     {
-        if ( artifact == null || dependency == null )
+        if ( dependencyArtifact == null || dependencyFromDepMgt == null )
         {
-            throw new MojoExecutionException( "Invalid params: Artifact:" + artifact + " Dependency:" + dependency );
+            throw new MojoExecutionException( "Invalid params: Artifact:" + dependencyArtifact + " Dependency:" + dependencyFromDepMgt );
         }
 
-        getLog().info( "\tDependency: " + dependency.getManagementKey() );
-        getLog().info( "\t\tDepMgt  : " + artifact.getVersion() );
-        getLog().info( "\t\tResolved: " + dependency.getVersion() );
+        getLog().info( "\tDependency: " + dependencyFromDepMgt.getManagementKey() );
+        getLog().info( "\t\tDepMgt  : " + dependencyFromDepMgt.getVersion() );
+        getLog().info( "\t\tResolved: " + dependencyArtifact.getVersion() );
     }
 
     private String getArtifactManagementKey( Artifact artifact )
