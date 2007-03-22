@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.apache.maven.plugin.enforcer.rules;
+package org.apache.maven.plugin.enforcer;
 
 import java.util.Iterator;
 import java.util.Locale;

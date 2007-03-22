@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.apache.maven.plugin.enforcer.rules;
+package org.apache.maven.plugin.enforcer;
 
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;

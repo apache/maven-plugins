@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.enforcer.rules;
+package org.apache.maven.plugin.enforcer;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
