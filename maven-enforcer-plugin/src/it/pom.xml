@@ -14,10 +14,10 @@
                         <id>enforce</id>
                         <configuration>
 						     <rules>
-						         <requireJavaVersion implementation="org.apache.maven.plugin.enforcer.rules.RequireJavaVersion">
+						         <requireJavaVersion>
 						             <version>[1.3,1.6]</version>
 						         </requireJavaVersion>
-						         <requireMavenVersion implementation="org.apache.maven.plugin.enforcer.rules.RequireMavenVersion">
+						         <requireMavenVersion>
 						             <version>2.0.6</version>
 						         </requireMavenVersion>
 						     </rules>
