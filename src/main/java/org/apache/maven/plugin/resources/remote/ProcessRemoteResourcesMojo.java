@@ -122,6 +122,14 @@ public class ProcessRemoteResourcesMojo
      */
     private List resourceBundles;
 
+    
+    /**
+     * Skip remote-resource processing
+     * 
+     * @parameter expression="${remoteresources.skip}" default-value="false"
+     * @since 1.0-alpha-5
+     */
+    private boolean skip;
 
     /**
      * Additional properties to be passed to velocity.
@@ -201,6 +209,11 @@ public class ProcessRemoteResourcesMojo
     public void execute()
         throws MojoExecutionException
     {
+        if ( skip )
+        {
+            return;
+        }
+        
         String inceptionYear = project.getInceptionYear();
         String year = new SimpleDateFormat( "yyyy" ).format( new Date() );
         
