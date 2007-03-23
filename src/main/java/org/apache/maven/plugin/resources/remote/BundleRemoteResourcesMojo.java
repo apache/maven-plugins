@@ -22,9 +22,11 @@ package org.apache.maven.plugin.resources.remote;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.resources.remote.io.xpp3.RemoteResourcesBundleXpp3Writer;
+import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Iterator;
 import java.io.File;
@@ -43,6 +45,12 @@ public class BundleRemoteResourcesMojo
     extends AbstractMojo
 {
     public static final String RESOURCES_MANIFEST = "META-INF/maven/remote-resources.xml";
+    
+    private static String[] DEFAULT_INCLUDES = new String [] {
+                                                              "**/*.txt",
+                                                              "**/*.vm",
+                                                   };
+
 
     /**
      * The directory which contains the resources you want packaged up in this resource bundle.
@@ -57,7 +65,24 @@ public class BundleRemoteResourcesMojo
      * @parameter expression="${project.build.outputDirectory}"
      */
     private File outputDirectory;
+    
+    
+    /**
+     * A list of files to include. Can contain ant-style wildcards and double wildcards.
+     * The default includes are 
+     * <code>**&#47;*.txt   **&#47;*.vm</code>
+     * 
+     * @parameter
+     */
+    private String[] includes;
 
+    /**
+     * A list of files to exclude. Can contain ant-style wildcards and double wildcards.  
+     *
+     * @parameter
+     */
+    private String[] excludes;
+    
     public void execute()
         throws MojoExecutionException
     {
@@ -71,22 +96,36 @@ public class BundleRemoteResourcesMojo
 
         RemoteResourcesBundle remoteResourcesBundle = new RemoteResourcesBundle();
 
-        try
+        DirectoryScanner scanner = new DirectoryScanner();
+
+        scanner.setBasedir( resourcesDirectory );
+        if ( includes != null && includes.length != 0 )
         {
-            List resources = FileUtils.getFileNames( resourcesDirectory, "**/*.txt,**/*.vm", "**/.svn/**", false );
-
-            for ( Iterator i = resources.iterator(); i.hasNext(); )
-            {
-                String resource = (String) i.next();
-
-                remoteResourcesBundle.addRemoteResource( StringUtils.replace( resource, '\\', '/' ) );
-            }
+            scanner.setIncludes( includes );
         }
-        catch ( IOException e )
+        else
         {
-            throw new MojoExecutionException( "Error scanning resources.", e );
+            scanner.setIncludes( DEFAULT_INCLUDES );
         }
 
+        if ( excludes != null && excludes.length != 0 )
+        {
+            scanner.setExcludes( excludes );
+        }
+
+        scanner.addDefaultExcludes();
+        scanner.scan();
+
+        List includedFiles = Arrays.asList( scanner.getIncludedFiles() );
+
+        for ( Iterator i = includedFiles.iterator(); i.hasNext(); )
+        {
+            String resource = (String) i.next();
+
+            remoteResourcesBundle.addRemoteResource( StringUtils.replace( resource, '\\', '/' ) );
+        }
+
+        
         RemoteResourcesBundleXpp3Writer w = new RemoteResourcesBundleXpp3Writer();
 
         try
