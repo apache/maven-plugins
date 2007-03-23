@@ -87,6 +87,12 @@ public class AnalyzeMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        if ( "pom".equals( project.getPackaging() ) )
+        {
+            getLog().info( "Skipping pom project" );
+            return;
+        }
+                        
         boolean result = checkDependencies();
 
         if ( result && this.failBuild )
