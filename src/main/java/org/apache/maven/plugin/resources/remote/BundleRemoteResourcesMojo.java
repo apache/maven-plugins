@@ -73,6 +73,7 @@ public class BundleRemoteResourcesMojo
      * <code>**&#47;*.txt   **&#47;*.vm</code>
      * 
      * @parameter
+     * @Since 1.0-alpha-5
      */
     private String[] includes;
 
@@ -80,6 +81,7 @@ public class BundleRemoteResourcesMojo
      * A list of files to exclude. Can contain ant-style wildcards and double wildcards.  
      *
      * @parameter
+     * @Since 1.0-alpha-5
      */
     private String[] excludes;
     
