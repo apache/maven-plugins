@@ -35,8 +35,7 @@ import java.io.Writer;
 import java.io.FileWriter;
 
 /**
- * Pull down artifacts containing remote resources and process the resources contained
- * inside the artifact.
+ * Bundle up the resources that should be considered as a remote-resource
  *
  * @goal bundle
  * @phase generate-resources
@@ -69,11 +68,11 @@ public class BundleRemoteResourcesMojo
     
     /**
      * A list of files to include. Can contain ant-style wildcards and double wildcards.
-     * The default includes are 
+     * The default includes are
      * <code>**&#47;*.txt   **&#47;*.vm</code>
      * 
      * @parameter
-     * @Since 1.0-alpha-5
+     * @since 1.0-alpha-5
      */
     private String[] includes;
 
@@ -81,7 +80,7 @@ public class BundleRemoteResourcesMojo
      * A list of files to exclude. Can contain ant-style wildcards and double wildcards.  
      *
      * @parameter
-     * @Since 1.0-alpha-5
+     * @since 1.0-alpha-5
      */
     private String[] excludes;
     
