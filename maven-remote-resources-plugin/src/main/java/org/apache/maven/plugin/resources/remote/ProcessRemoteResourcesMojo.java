@@ -22,6 +22,7 @@ package org.apache.maven.plugin.resources.remote;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
+import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.InvalidRepositoryException;
 import org.apache.maven.execution.MavenSession;
@@ -194,9 +195,13 @@ public class ProcessRemoteResourcesMojo
     public void execute()
         throws MojoExecutionException
     {
-        if ( StringUtils.isEmpty( project.getInceptionYear() ) )
+        String inceptionYear = project.getInceptionYear();
+        String year = new SimpleDateFormat( "yyyy" ).format( new Date() );
+        
+        if ( StringUtils.isEmpty( inceptionYear ) )
         {
-            throw new MojoExecutionException( "You must specify an inceptionYear." );
+            getLog().info("inceptionYear not specified, defaulting to " + year);
+            inceptionYear = year;
         }
 
         RemoteResourcesClassLoader classLoader = new RemoteResourcesClassLoader();
@@ -277,8 +282,6 @@ public class ProcessRemoteResourcesMojo
         context.put( "project", project );
         context.put( "projects", getProjects() );
         
-        String year = new SimpleDateFormat( "yyyy" ).format( new Date() );
-
         context.put( "presentYear", year );
 
         if ( project.getInceptionYear().equals( year ) )
@@ -317,10 +320,11 @@ public class ProcessRemoteResourcesMojo
     
                         String projectResource = bundleResource;
     
-    
+                        boolean doVelocity = false;
                         if ( projectResource.endsWith( ".vm" ) )
                         {
                             projectResource = projectResource.substring( 0, projectResource.length() - 3 );
+                            doVelocity = true;
                         }
     
                         // Don't overwrite resource that are already being provided.
@@ -331,30 +335,40 @@ public class ProcessRemoteResourcesMojo
     
                         if ( !copyResourceIfExists( f, projectResource ) )
                         {
-                            PrintWriter writer = new PrintWriter( new FileWriter( f ) );
-    
-                            try 
+                            if ( doVelocity) 
                             {
-                                velocity.getEngine().mergeTemplate( bundleResource, context, writer );
-    
-                                File appendedResourceFile = new File( appendedResourcesDirectory, projectResource );
-                                if ( appendedResourceFile.exists() ) 
+                                PrintWriter writer = new PrintWriter( new FileWriter( f ) );
+                                try 
                                 {
-                                    FileReader freader = new FileReader( appendedResourceFile );
-                                    BufferedReader breader = new BufferedReader( freader );
-                                    
-                                    String line = breader.readLine();
-                           
-                                    while ( line != null )
+                                    velocity.getEngine().mergeTemplate( bundleResource, context, writer );
+        
+                                    File appendedResourceFile = new File( appendedResourcesDirectory, projectResource );
+                                    if ( appendedResourceFile.exists() ) 
                                     {
-                                        writer.println( line );
-                                        line = breader.readLine();
+                                        FileReader freader = new FileReader( appendedResourceFile );
+                                        BufferedReader breader = new BufferedReader( freader );
+                                        
+                                        String line = breader.readLine();
+                               
+                                        while ( line != null )
+                                        {
+                                            writer.println( line );
+                                            line = breader.readLine();
+                                        }
                                     }
                                 }
+                                finally
+                                {
+                                    writer.close();
+                                }
                             }
-                            finally
+                            else
                             {
-                                writer.close();
+                                URL resUrl = classLoader.getResource( bundleResource );
+                                if ( resUrl != null )
+                                {
+                                    FileUtils.copyURLToFile( resUrl, f );
+                                }
                             }
                         }
                     }
@@ -424,17 +438,16 @@ public class ProcessRemoteResourcesMojo
             {
                 if ( artifact.isSnapshot() )
                 {
+                    VersionRange rng = VersionRange.createFromVersion(artifact.getBaseVersion());
                     artifact = artifactFactory.createDependencyArtifact( artifact.getGroupId(),
                                                                          artifact.getArtifactId(),
-                                                                         artifact.getVersionRange(),
+                                                                         rng,
                                                                          artifact.getType(),
                                                                          artifact.getClassifier(),
                                                                          artifact.getScope(),
                                                                          null,
                                                                          artifact.isOptional() );
-                    artifact.setVersion( artifact.getBaseVersion() );
                 }
-                
                 getLog().debug("Building project for " + artifact);
                 MavenProject p = mavenProjectBuilder.buildFromRepository( artifact,
                                                         remoteRepositories,
