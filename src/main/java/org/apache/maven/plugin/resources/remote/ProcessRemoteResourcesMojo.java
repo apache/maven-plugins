@@ -65,6 +65,12 @@ import java.util.Map;
 /**
  * Pull down resourceBundles containing remote resources and process the resources contained
  * inside the artifact.
+ * <p/>
+ * Resources that end in ".vm" are treated as velocity templates.  For those, the ".vm" is 
+ * stripped off for the final artifact name and it's  fed through velocity to have properties
+ * expanded, conditions processed, etc...
+ * <p/>
+ * Resources that don't end in ".vm" are copied "as is". 
  *
  * @goal process
  * @requiresDependencyResolution runtime
@@ -119,12 +125,12 @@ public class ProcessRemoteResourcesMojo
 
     /**
      * Additional properties to be passed to velocity.
-     *
-     * Several properties are automatically added:
-     *   project - the current MavenProject 
-     *   projects - the list of dependency projects
-     *   projectTimespan - the timespan of the current project (requires inceptionYear in pom)
-     *
+     * <p/>
+     * Several properties are automatically added:<br/>
+     *   project - the current MavenProject <br/>
+     *   projects - the list of dependency projects<br/>
+     *   projectTimespan - the timespan of the current project (requires inceptionYear in pom)<br/>
+     * <p/>
      * See <a href="http://maven.apache.org/ref/current/maven-project/apidocs/org/apache/maven/project/MavenProject.html">
      * the javadoc for MavenProject</a> for information about the properties on the MavenProject. 
      *
