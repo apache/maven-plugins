@@ -131,7 +131,8 @@ public abstract class AbstractCloverMojo extends AbstractMojo
 
     protected void registerLicenseFile() throws MojoExecutionException
     {
-        AbstractCloverMojo.registerLicenseFile(getResourceManager(), this.licenseLocation, getLog());
+        AbstractCloverMojo.registerLicenseFile(getResourceManager(), this.licenseLocation, getLog(),
+            this.getClass().getClassLoader());
     }
 
     /**
@@ -146,8 +147,8 @@ public abstract class AbstractCloverMojo extends AbstractMojo
      *
      * @throws MojoExecutionException when the license file cannot be found
      */
-    public static void registerLicenseFile(ResourceManager resourceManager, String licenseLocation, Log logger)
-        throws MojoExecutionException
+    public static void registerLicenseFile(ResourceManager resourceManager, String licenseLocation, Log logger,
+        ClassLoader classloader) throws MojoExecutionException
     {
         String license;
 
@@ -165,7 +166,7 @@ public abstract class AbstractCloverMojo extends AbstractMojo
         }
         else
         {
-            license = Log.class.getResource("/clover.license").getFile();
+            license = classloader.getResource("/clover.license").getFile();
         }
 
         logger.debug("Using license file [" + license + "]");
