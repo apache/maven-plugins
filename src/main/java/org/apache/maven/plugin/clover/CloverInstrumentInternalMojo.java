@@ -41,11 +41,12 @@ import java.util.Collections;
 /**
  * Instrument source roots.
  *
- * <p><b>Note: Do not call this MOJO directly. It is meant to be called in a custom forked lifecycle by the other
+ * <p><b>Note 1: Do not call this MOJO directly. It is meant to be called in a custom forked lifecycle by the other
  * Clover plugin MOJOs.</b></p>
+ * <p><b>Note 2: We bind this mojo to the "validate" phase so that it executes prior to any other mojos</b></p>
  *
  * @goal instrumentInternal
- * @phase generate-sources
+ * @phase validate
  * @requiresDependencyResolution test
  *
  * @author <a href="mailto:vmassol@apache.org">Vincent Massol</a>
