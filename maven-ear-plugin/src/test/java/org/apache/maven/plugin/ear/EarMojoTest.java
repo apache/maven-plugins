@@ -401,4 +401,15 @@ public class EarMojoTest
         doTestProject( "project-037", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0-client.jar"} );
     }
 
+    /**
+     * Builds an EAR and make sure that a non-classified dependency with mutiple candidates is
+     * detected when specifying the mainArtifactId as classifier.
+     */
+    public void testProject038()
+        throws Exception
+    {
+        doTestProject( "project-038", new String[]{"ejb-sample-one-1.0-classified.jar", "ejb-sample-one-1.0.jar"},
+                       new boolean[]{false, true} );
+    }
+
 }

@@ -93,7 +93,7 @@ public abstract class AbstractEarModule
                 throw new MojoFailureException(
                     "Could not resolve artifact[" + groupId + ":" + artifactId + ":" + getType() + "]" );
             }
-            ArtifactRepository ar = new ArtifactRepository( artifacts );
+            final ArtifactRepository ar = EarExecutionContext.getInstance().getArtifactRepository();
             artifact = ar.getUniqueArtifact( groupId, artifactId, getType(), classifier );
             // Artifact has not been found
             if ( artifact == null )

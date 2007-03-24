@@ -21,6 +21,8 @@ package org.apache.maven.plugin.ear;
 
 import org.apache.maven.plugin.ear.output.FileNameMapping;
 import org.apache.maven.plugin.ear.output.FileNameMappingFactory;
+import org.apache.maven.plugin.ear.util.ArtifactRepository;
+import org.apache.maven.project.MavenProject;
 
 /**
  * Contains various runtime parameters used to customize the generated EAR file.
@@ -44,6 +46,9 @@ public class EarExecutionContext
     private JbossConfiguration jbossConfiguration;
 
     private FileNameMapping fileNameMapping;
+
+    private ArtifactRepository artifactRepository;
+
 
     private EarExecutionContext()
     {
@@ -70,9 +75,15 @@ public class EarExecutionContext
         return fileNameMapping;
     }
 
-    protected void initialize( String defaultLibBundleDir, JbossConfiguration jbossConfiguration,
+    public ArtifactRepository getArtifactRepository()
+    {
+        return artifactRepository;
+    }
+
+    protected void initialize( MavenProject project, String mainArtifactId, String defaultLibBundleDir, JbossConfiguration jbossConfiguration,
                                String fileNameMappingName )
     {
+        this.artifactRepository = new ArtifactRepository( project.getArtifacts(), mainArtifactId);
         this.defaultLibBundleDir = defaultLibBundleDir;
         this.jbossConfiguration = jbossConfiguration;
         if ( fileNameMappingName == null || fileNameMappingName.trim().length() == 0 )
