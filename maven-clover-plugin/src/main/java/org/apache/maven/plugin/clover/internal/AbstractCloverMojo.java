@@ -17,6 +17,7 @@ package org.apache.maven.plugin.clover.internal;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Taskdef;
@@ -47,15 +48,6 @@ public abstract class AbstractCloverMojo extends AbstractMojo
      * @required
      */
     private String cloverMergeDatabase;
-
-    /**
-     * A Clover license file to be used by the plugin. If not specified, the Clover plugin uses a default evaluation
-     * license.
-     *
-     * @parameter
-     * @deprecated As of Clover plugin v2.1, use licenseLocation instead
-     */
-    private String licenseFile;
 
     /**
      * A Clover license file to be used by the plugin. The plugin tries to resolve this parameter first as a resource,
@@ -137,42 +129,46 @@ public abstract class AbstractCloverMojo extends AbstractMojo
         return this.resourceManager;
     }
 
+    protected void registerLicenseFile() throws MojoExecutionException
+    {
+        AbstractCloverMojo.registerLicenseFile(getResourceManager(), this.licenseLocation, getLog());
+    }
+
     /**
      * Registers the license file for Clover runtime by setting the <code>clover.license.path</code> system property.
      * If the user has configured the <code>licenseLocation</code> parameter the plugin tries to resolve it first as a
      * resource, then as a URL, and then as a file location on the filesystem. If the <code>licenseLocation</code>
      * parameter has not been defined by the user we look up a default Clover license in the classpath in
      * <code>/clover.license</code>.
+     * </p>
+     * Note: We're defining this method as static because it is also required in the report mojo and reporting mojos
+     * and main mojos cannot share anything right now. See http://jira.codehaus.org/browse/MNG-1886.
      *
      * @throws MojoExecutionException when the license file cannot be found
      */
-    protected void registerLicenseFile() throws MojoExecutionException
+    public static void registerLicenseFile(ResourceManager resourceManager, String licenseLocation, Log logger)
+        throws MojoExecutionException
     {
         String license;
 
-        if (this.licenseLocation != null)
+        if (licenseLocation != null)
         {
             try
             {
-                license = getResourceManager().getResourceAsFile(this.licenseLocation).getPath();
-                getLog().debug("Loading license from classpath [" + license + "]");
+                license = resourceManager.getResourceAsFile(licenseLocation).getPath();
+                logger.debug("Loading license from classpath [" + license + "]");
             }
             catch (Exception e)
             {
-                throw new MojoExecutionException("Failed to load license file [" + this.licenseLocation + "]", e);
+                throw new MojoExecutionException("Failed to load license file [" + licenseLocation + "]", e);
             }
-        }
-        else if (this.licenseFile != null)
-        {
-            getLog().warn("Deprecation warning: please use licenseLocation instead of LicenseFile");
-            license = this.licenseFile;
         }
         else
         {
-            license = getClass().getResource("/clover.license").getFile();
+            license = Log.class.getResource("/clover.license").getFile();
         }
 
-        getLog().debug("Using license file [" + license + "]");
+        logger.debug("Using license file [" + license + "]");
         System.setProperty("clover.license.path", license);
     }
 

@@ -23,7 +23,9 @@ import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugin.clover.internal.AbstractCloverMojo;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.tools.ant.Project;
+import org.codehaus.plexus.resource.ResourceManager;
 
 import java.io.File;
 import java.util.*;
@@ -162,10 +164,34 @@ public class CloverReportMojo extends AbstractMavenReport
     private List reactorProjects;
 
     /**
+     * A Clover license file to be used by the plugin. The plugin tries to resolve this parameter first as a resource,
+     * then as a URL, and then as a file location on the filesystem.
+     *
+     * @parameter
+     */
+    private String licenseLocation;
+
+    /**
+     * Resource manager used to locate any Clover license file provided by the user.
+     * @component
+     */
+    private ResourceManager resourceManager;
+
+    /**
      * @see org.apache.maven.reporting.AbstractMavenReport#executeReport(java.util.Locale)
      */
     public void executeReport( Locale locale ) throws MavenReportException
     {
+        // Register the Clover license
+        try
+        {
+            AbstractCloverMojo.registerLicenseFile(this.resourceManager, this.licenseLocation, getLog());
+        }
+        catch (MojoExecutionException e)
+        {
+            throw new MavenReportException("Failed to locate Clover license", e);
+        }
+
         // Ensure the output directory exists
         this.outputDirectory.mkdirs();
 
