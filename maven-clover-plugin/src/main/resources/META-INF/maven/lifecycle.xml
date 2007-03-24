@@ -3,7 +3,7 @@
     <id>clover</id>
     <phases>
       <phase>
-        <id>generate-sources</id>
+        <id>validate</id>
         <executions>
           <execution>
             <configuration>
