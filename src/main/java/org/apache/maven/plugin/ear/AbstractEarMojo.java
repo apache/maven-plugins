@@ -118,6 +118,13 @@ public abstract class AbstractEarMojo
      */
     private PlexusConfiguration jboss;
 
+    /**
+     * The id to use to define the main artifact (e.g. the artifact without
+     * a classifier) when there is multiple candidates.
+     *
+     * @parameter
+     */
+    private String mainArtifactId = "none";
 
     private List earModules;
 
@@ -153,7 +160,7 @@ public abstract class AbstractEarMojo
         }
 
         getLog().debug( "Initializing ear execution context" );
-        EarExecutionContext.getInstance().initialize( defaultLibBundleDir, jbossConfiguration, fileNameMapping );
+        EarExecutionContext.getInstance().initialize( project, mainArtifactId, defaultLibBundleDir, jbossConfiguration, fileNameMapping );
 
         getLog().debug( "Resolving ear modules ..." );
         allModules = new ArrayList();

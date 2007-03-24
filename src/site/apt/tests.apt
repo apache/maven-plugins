@@ -104,6 +104,7 @@ Ear Plugin Tests
 
   * project-037: builds an EAR and make sure that ejb-client dependencies are detected and added in the generated application.xml if includeInApplicationXml is set
 
+  * project-038: builds an EAR and make sure that a non-classified dependency with mutiple candidates is detected when specifying the mainArtifactId as classifier
   
 
    
