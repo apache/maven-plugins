@@ -38,16 +38,18 @@ public class ArtifactRepositoryTest
         throws Exception
     {
         super.setUp();
-        ArtifactTypeMappingService.getInstance().configure( null);
+        ArtifactTypeMappingService.getInstance().configure( null );
     }
 
     public static final String DEFAULT_GROUPID = "eartest";
 
     public static final String DEFAULT_TYPE = "jar";
 
+    public static final String MAIN_ARTIFACT_ID = "none";
+
     public void testEmptyRepository()
     {
-        ArtifactRepository repo = new ArtifactRepository( createArtifacts( null ) );
+        ArtifactRepository repo = new ArtifactRepository( createArtifacts( null ), MAIN_ARTIFACT_ID );
         assertNull( repo.getUniqueArtifact( "ear", "ar", "jar" ) );
         assertNull( repo.getUniqueArtifact( "ear", "ar", "jar", null ) );
         assertNull( repo.getUniqueArtifact( "ear", "ar", "jar", "class" ) );
@@ -55,14 +57,16 @@ public class ArtifactRepositoryTest
 
     public void testRepositoryWithOneUnclassifiedArtifact()
     {
-        ArtifactRepository repo = new ArtifactRepository( createArtifacts( new String[]{"myartifact"} ) );
+        ArtifactRepository repo =
+            new ArtifactRepository( createArtifacts( new String[]{"myartifact"} ), MAIN_ARTIFACT_ID );
         assertNotNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar" ) );
         assertNotNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar", null ) );
     }
 
     public void testRepositoryWithOneClassifiedArtifact()
     {
-        ArtifactRepository repo = new ArtifactRepository( createArtifacts( new String[]{"myartifact"}, null, null, new String[]{"classified"} ) );
+        ArtifactRepository repo = new ArtifactRepository(
+            createArtifacts( new String[]{"myartifact"}, null, null, new String[]{"classified"} ), MAIN_ARTIFACT_ID );
         assertNotNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar" ) );
         assertNotNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar", "classified" ) );
         assertNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar", "wrong" ) );
@@ -70,13 +74,27 @@ public class ArtifactRepositoryTest
 
     public void testRepositoryWithMultipleClassifiedArtifacts()
     {
-        ArtifactRepository repo = new ArtifactRepository( createArtifacts( new String[]{"myartifact", "myartifact",
-            "myartifact"}, null, null, new String[]{"class1", "class2", "class3"} ) );
+        ArtifactRepository repo = new ArtifactRepository( createArtifacts(
+            new String[]{"myartifact", "myartifact", "myartifact"}, null, null,
+            new String[]{"class1", "class2", "class3"} ), MAIN_ARTIFACT_ID );
 
         assertNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar" ) );
         assertNotNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar", "class1" ) );
         assertNotNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar", "class2" ) );
         assertNotNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar", "class3" ) );
+        assertNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar", "wrong" ) );
+    }
+
+    public void testRepositoryWithMultipleClassifiedArtifactsAndMainArtifact()
+    {
+        ArtifactRepository repo = new ArtifactRepository( createArtifacts(
+            new String[]{"myartifact", "myartifact", "myartifact"}, null, null,
+            new String[]{"class1", "class2", null} ), MAIN_ARTIFACT_ID );
+
+        assertNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar" ) );
+        assertNotNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar", "class1" ) );
+        assertNotNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar", "class2" ) );
+        assertNotNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar", MAIN_ARTIFACT_ID ) );
         assertNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar", "wrong" ) );
     }
 

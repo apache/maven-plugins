@@ -35,16 +35,20 @@ public class ArtifactRepository
 {
     private final Set artifacts;
 
+    private final String mainArtifactId;
+
     private final ArtifactTypeMappingService artifactTypeMappingService;
 
     /**
      * Creates a new repository wih the specified artifacts.
      *
      * @param artifacts the artifacts
+     * @param mainArtifactId the id to use for the main artifact (no classifier)
      */
-    public ArtifactRepository( Set artifacts )
+    public ArtifactRepository( Set artifacts, String mainArtifactId )
     {
         this.artifacts = artifacts;
+        this.mainArtifactId = mainArtifactId;
         this.artifactTypeMappingService = ArtifactTypeMappingService.getInstance();
     }
 
@@ -62,20 +66,32 @@ public class ArtifactRepository
      * @param groupId    the group id
      * @param artifactId the artifact id
      * @param type       the type
+     * @param classifier the classifier
      * @return the artifact or null if no artifact were found
      */
     public Artifact getUniqueArtifact( String groupId, String artifactId, String type, String classifier )
     {
-        final Set candidates = getArtifacts( groupId, artifactId, type);
-        if (candidates.size() == 0) {
+        final Set candidates = getArtifacts( groupId, artifactId, type );
+        if ( candidates.size() == 0 )
+        {
             return null;
-        } else if (candidates.size() == 1 && classifier == null) {
+        }
+        else if ( candidates.size() == 1 && classifier == null )
+        {
             return (Artifact) candidates.iterator().next();
-        } else if (classifier != null) {
+        }
+        else if ( classifier != null )
+        {
             final Iterator it = candidates.iterator();
-            while (it.hasNext()) {
+            while ( it.hasNext() )
+            {
                 Artifact a = (Artifact) it.next();
-                if (classifier.equals( a.getClassifier())) {
+                if ( a.getClassifier() == null && classifier.equals( mainArtifactId ) )
+                {
+                    return a;
+                }
+                else if ( classifier.equals( a.getClassifier() ) )
+                {
                     return a;
                 }
             }
@@ -102,7 +118,7 @@ public class ArtifactRepository
      */
     public Artifact getUniqueArtifact( String groupId, String artifactId, String type )
     {
-        return getUniqueArtifact( groupId, artifactId, type, null);
+        return getUniqueArtifact( groupId, artifactId, type, null );
     }
 
     /**
