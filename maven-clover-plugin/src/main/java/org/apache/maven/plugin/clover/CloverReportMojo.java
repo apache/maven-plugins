@@ -185,7 +185,8 @@ public class CloverReportMojo extends AbstractMavenReport
         // Register the Clover license
         try
         {
-            AbstractCloverMojo.registerLicenseFile(this.resourceManager, this.licenseLocation, getLog());
+            AbstractCloverMojo.registerLicenseFile(this.resourceManager, this.licenseLocation, getLog(),
+                this.getClass().getClassLoader());
         }
         catch (MojoExecutionException e)
         {
