@@ -25,8 +25,8 @@ import java.io.File;
  * Abstract Parent class used by mojos that get Artifact information from the
  * project dependencies.
  * 
- * @author brianf
- * 
+ * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
+ * @version $Id$
  */
 public abstract class AbstractFromDependenciesMojo
     extends AbstractDependencyFilterMojo

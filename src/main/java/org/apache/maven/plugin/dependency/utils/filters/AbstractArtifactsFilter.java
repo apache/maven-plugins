@@ -29,7 +29,10 @@ import org.apache.maven.plugin.logging.Log;
 public abstract class AbstractArtifactsFilter
     implements ArtifactsFilter
 {
-
+    /**
+     * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
+     * @version $Id$
+     */
     public boolean okToProcess( Artifact artifact, Log log )
         throws MojoExecutionException
     {

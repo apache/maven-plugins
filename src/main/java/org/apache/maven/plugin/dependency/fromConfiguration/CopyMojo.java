@@ -34,7 +34,8 @@ import org.apache.maven.plugin.dependency.utils.filters.DestFileFilter;
  * @goal copy
  * @since 1.0
  * @phase process-sources
- * @author brianf
+ * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
+ * @version $Id$
  */
 public class CopyMojo
     extends AbstractFromConfigurationMojo
