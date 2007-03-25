@@ -45,6 +45,7 @@ import org.apache.maven.plugin.dependency.utils.filters.ArtifactsFilter;
  * @requiresDependencyResolution compile
  * @phase generate-sources
  * @author ankostis
+ * @version $Id$
  * @since 2.0-alpha-2
  */
 public class BuildClasspathMojo

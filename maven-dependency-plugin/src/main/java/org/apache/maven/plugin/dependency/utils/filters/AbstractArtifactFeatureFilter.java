@@ -33,6 +33,7 @@ import org.codehaus.plexus.util.StringUtils;
  * This is the common base class of ClassifierFilter and TypeFilter
  * 
  * @author <a href="richardv@mxtelecom.com">Richard van der Hoff</a>
+ * @version $Id$
  */
 public abstract class AbstractArtifactFeatureFilter
     extends AbstractArtifactsFilter

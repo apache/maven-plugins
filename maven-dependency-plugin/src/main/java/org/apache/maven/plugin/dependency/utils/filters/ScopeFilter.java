@@ -29,6 +29,10 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.StringUtils;
 
+/**
+ * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
+ * @version $Id$
+ */
 public class ScopeFilter
     extends AbstractArtifactsFilter
 {

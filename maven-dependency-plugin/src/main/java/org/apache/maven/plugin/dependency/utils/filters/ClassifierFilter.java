@@ -21,6 +21,11 @@ package org.apache.maven.plugin.dependency.utils.filters;
 
 import org.apache.maven.artifact.Artifact;
 
+/**
+ * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
+ * @version $Id$
+ * 
+ */
 public class ClassifierFilter
     extends AbstractArtifactFeatureFilter
 {

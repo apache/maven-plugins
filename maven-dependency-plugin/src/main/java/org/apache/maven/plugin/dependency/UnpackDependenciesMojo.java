@@ -38,7 +38,8 @@ import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler
  * @goal unpack-dependencies
  * @requiresDependencyResolution test
  * @phase process-sources
- * @author brianf
+ * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
+ * @version $Id$
  * @since 1.0
  */
 public class UnpackDependenciesMojo
