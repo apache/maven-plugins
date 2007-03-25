@@ -32,8 +32,9 @@ import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzer;
 import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzerException;
 
 /**
- * This goal analyzes your project's dependencies and lists dependencies that should be declared, but are not, and dependencies that are declared but unused.
- * It also executes the analyze-dep-mgt goal.
+ * This goal analyzes your project's dependencies and lists dependencies that
+ * should be declared, but are not, and dependencies that are declared but
+ * unused. It also executes the analyze-dep-mgt goal.
  * 
  * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
  * @version $Id$
@@ -71,13 +72,20 @@ public class AnalyzeMojo
      * @readonly
      */
     private ProjectDependencyAnalyzer analyzer;
-    
+
     /**
      * Ignore Direct Dependency Overrides of dependencyManagement section.
      * 
      * @parameter expression="${mdep.analyze.ignore.direct}"
      */
     private boolean ignoreDirect = true;
+
+    /**
+     * Ignore Runtime,Provide,Test,System scopes for unused dependency analysis
+     * 
+     * @parameter expression="${mdep.analyze.ignore.noncompile}"
+     */
+    private boolean ignoreNonCompile = true;
 
     // Mojo methods -----------------------------------------------------------
 
@@ -92,15 +100,15 @@ public class AnalyzeMojo
             getLog().info( "Skipping pom project" );
             return;
         }
-                        
+
         boolean result = checkDependencies();
 
         if ( result && this.failBuild )
         {
             throw new MojoExecutionException( "Found Dependency errors." );
         }
-        
-        //now do AnalyzeDepMgt (put this in a lifecycle later)
+
+        // now do AnalyzeDepMgt (put this in a lifecycle later)
         AnalyzeDepMgt adm = new AnalyzeDepMgt();
         adm.setLog( getLog() );
         adm.setProject( this.project );
@@ -122,20 +130,33 @@ public class AnalyzeMojo
 
             getLog().info( "Used declared dependencies:" );
 
-            logArtifacts( analysis.getUsedDeclaredArtifacts() );
+            logArtifacts( analysis.getUsedDeclaredArtifacts(), false );
 
             getLog().info( "Used undeclared dependencies:" );
 
             Set usedUndeclared = analysis.getUsedUndeclaredArtifacts();
-            logArtifacts( usedUndeclared );
+            logArtifacts( usedUndeclared, true );
 
             getLog().info( "Unused declared dependencies:" );
 
             Set unusedDeclared = analysis.getUnusedDeclaredArtifacts();
-            logArtifacts( unusedDeclared );
-            
-            if ((usedUndeclared != null && !usedUndeclared.isEmpty())
-                || unusedDeclared!=null && !unusedDeclared.isEmpty())
+
+            if ( ignoreNonCompile )
+            {
+                Iterator iter = unusedDeclared.iterator();
+                while ( iter.hasNext() )
+                {
+                    Artifact artifact = (Artifact) iter.next();
+                    if ( !artifact.getScope().equals( Artifact.SCOPE_COMPILE ) )
+                    {
+                        iter.remove();
+                    }
+                }
+            }
+            logArtifacts( unusedDeclared, false );
+
+            if ( ( usedUndeclared != null && !usedUndeclared.isEmpty() ) || unusedDeclared != null
+                && !unusedDeclared.isEmpty() )
             {
                 getLog().warn( "Potential problems discovered." );
                 result = true;
@@ -149,20 +170,34 @@ public class AnalyzeMojo
         return result;
     }
 
-    private void logArtifacts( Set artifacts )
+    private void logArtifacts( Set artifacts, boolean warn )
     {
         if ( artifacts.isEmpty() )
         {
-            getLog().info( "   None" );
+            if ( warn )
+            {
+                getLog().warn( "   None" );
+            }
+            else
+            {
+                getLog().info( "   None" );
+            }
         }
         else
         {
             for ( Iterator iterator = artifacts.iterator(); iterator.hasNext(); )
             {
                 Artifact artifact = (Artifact) iterator.next();
+                if ( warn )
+                {
+                    getLog().warn( "   " + artifact );
+                }
+                else
+                {
+                    getLog().info( "   " + artifact );
+                }
 
-                getLog().info( "   " + artifact );
             }
         }
     }
- }
+}
