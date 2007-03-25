@@ -37,7 +37,7 @@ import org.codehaus.plexus.util.StringUtils;
  * Os profile activation so the same values are allowed here.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @version $Id: AnalyzeMojo.java 522157 2007-03-25 04:34:54Z brianf $
+ * @version $Id$
  */
 public class RequireOS
     implements EnforcementRule
