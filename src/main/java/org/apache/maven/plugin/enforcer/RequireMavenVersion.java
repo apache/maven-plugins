@@ -4,10 +4,8 @@
 package org.apache.maven.plugin.enforcer;
 
 import org.apache.maven.artifact.versioning.ArtifactVersion;
-import org.apache.maven.execution.MavenSession;
 import org.apache.maven.execution.RuntimeInformation;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
 /**
@@ -19,15 +17,14 @@ public class RequireMavenVersion
     implements EnforcementRule
 {
 
-    public void execute( MavenSession session, Log log )
+    public void execute( EnforcementRuleHelper helper )
         throws MojoExecutionException
     {
         try
         {
-            RuntimeInformation rti = (RuntimeInformation) session
-                .lookup( "org.apache.maven.execution.RuntimeInformation" );
+            RuntimeInformation rti = helper.getRuntimeInformation( );
             ArtifactVersion detectedMavenVersion = rti.getApplicationVersion();
-            enforceVersion( log, "Maven", this.version, detectedMavenVersion );
+            enforceVersion( helper.getLog(), "Maven", this.version, detectedMavenVersion );
         }
         catch ( ComponentLookupException e )
         {
