@@ -32,6 +32,7 @@ import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
+import org.apache.maven.model.Exclusion;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -157,9 +158,9 @@ public class AnalyzeDepMgt
             Iterator exclusionIter = exclusionErrors.iterator();
             while ( exclusionIter.hasNext() )
             {
-                Artifact exclusion = (Artifact) iter.next();
+                Artifact exclusion = (Artifact) exclusionIter.next();
                 getLog().info(
-                               getArtifactManagementKey( exclusion ) + " was excluded in DepMgt, but version "
+                               StringUtils.stripEnd( getArtifactManagementKey( exclusion ),":") + " was excluded in DepMgt, but version "
                                    + exclusion.getVersion() + " has been found in the dependency tree." );
                 foundError = true;
             }
@@ -173,16 +174,17 @@ public class AnalyzeDepMgt
                 Dependency depMgtDependency = (Dependency) mismatch.get( resolvedArtifact );
                 logMismatch( resolvedArtifact, depMgtDependency );
             }
+            if ( !foundError )
+            {
+                getLog().info( "   None" );
+            }
         }
         else
         {
             getLog().info( "   Nothing in DepMgt." );
         }
 
-        if ( !foundError )
-        {
-            getLog().info( "   None" );
-        }
+
 
         return foundError;
     }
@@ -204,8 +206,8 @@ public class AnalyzeDepMgt
             Iterator exclusionIter = exclusionList.iterator();
             while ( exclusionIter.hasNext() )
             {
-                Dependency exclusion = (Dependency) exclusionIter.next();
-                exclusions.put( exclusion.getManagementKey(), exclusion );
+                Exclusion exclusion = (Exclusion) exclusionIter.next();
+                exclusions.put( getExclusionKey( exclusion ), exclusion );
             }
         }
         return exclusions;
@@ -230,7 +232,7 @@ public class AnalyzeDepMgt
         while ( iter.hasNext() )
         {
             Artifact artifact = (Artifact) iter.next();
-            if ( exclusions.containsKey( getArtifactManagementKey( artifact ) ) )
+            if ( exclusions.containsKey( getExclusionKey( artifact ) ) )
             {
                 list.add( artifact );
             }
@@ -239,6 +241,16 @@ public class AnalyzeDepMgt
         return list;
     }
 
+    public String getExclusionKey(Artifact artifact)
+    {
+        return artifact.getGroupId()+":"+artifact.getArtifactId();
+    }
+    
+    public String getExclusionKey(Exclusion ex)
+    {
+        return ex.getGroupId()+":"+ex.getArtifactId();
+    }
+    
     /**
      * Calculate the mismatches between the DependencyManagement and resolved
      * artifacts
@@ -293,7 +305,7 @@ public class AnalyzeDepMgt
                 + dependencyFromDepMgt );
         }
 
-        getLog().info( "\tDependency: " + dependencyFromDepMgt.getManagementKey() );
+        getLog().info( "\tDependency: " + StringUtils.stripEnd(dependencyFromDepMgt.getManagementKey(),":") );
         getLog().info( "\t\tDepMgt  : " + dependencyFromDepMgt.getVersion() );
         getLog().info( "\t\tResolved: " + dependencyArtifact.getVersion() );
     }
