@@ -29,7 +29,8 @@ import org.codehaus.plexus.util.StringUtils;
  * section for each artifact.
  * 
  * @since 1.0
- * @author brianf
+ * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
+ * @version $Id$
  */
 public class ArtifactItem
 {

@@ -22,6 +22,10 @@ package org.apache.maven.plugin.dependency.utils;
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.logging.Logger;
 
+/**
+ * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
+ * @version $Id$
+ */
 public class SilentLog
     implements Log, Logger
 {
