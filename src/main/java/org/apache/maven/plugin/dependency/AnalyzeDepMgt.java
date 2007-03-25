@@ -50,7 +50,7 @@ import org.codehaus.plexus.util.StringUtils;
  * otherwise normal conditions.
  * 
  * @author <a href="mailto:brianefox@gmail.com">Brian Fox</a>
- * @version $Id: AnalyzeMojo.java 519377 2007-03-17 17:37:26Z brianf $
+ * @version $Id$
  * @goal analyze-dep-mgt
  * @requiresDependencyResolution test
  * @since 2.0-alpha-3
@@ -72,14 +72,14 @@ public class AnalyzeDepMgt
     /**
      * Fail the build if a problem is detected.
      * 
-     * @parameter expression="${mdep.analyze.failBuild}"
+     * @parameter expression="${mdep.analyze.failBuild}" default-value="false"
      */
     private boolean failBuild = false;
 
     /**
      * Ignore Direct Dependency Overrides of dependencyManagement section.
      * 
-     * @parameter expression="${mdep.analyze.ignore.direct}"
+     * @parameter expression="${mdep.analyze.ignore.direct}" default-value="true"
      */
     private boolean ignoreDirect = true;
 

@@ -35,7 +35,8 @@ import org.apache.maven.plugin.dependency.utils.filters.ArtifactsFilter;
  * @goal go-offline
  * @execute goal=resolve-plugins
  * @requiresDependencyResolution test
- * @author brianf
+ * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
+ * @version $Id$
  * @since 2.0
  */
 public class GoOfflineMojo

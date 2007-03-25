@@ -36,7 +36,8 @@ import org.apache.maven.plugin.dependency.utils.markers.SourcesFileMarkerHandler
  * @goal sources
  * @phase generate-sources
  * @requiresDependencyResolution test
- * @author brianf
+ * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
+ * @version $Id$
  * @since 2.0-alpha2
  */
 public class ResolveDependencySourcesMojo
