@@ -1,26 +1,43 @@
-/**
- * 
- */
 package org.apache.maven.plugin.enforcer;
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Set;
 
-import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Activation;
 import org.apache.maven.model.ActivationOS;
 import org.apache.maven.model.Profile;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.profiles.activation.OperatingSystemProfileActivator;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.util.Os;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * @author brianf
+ * This rule checks that the OS is allowed by combinations of family, name,
+ * version and cpu architecture. The behavior is exactly the same as the Maven
+ * Os profile activation so the same values are allowed here.
  * 
+ * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
+ * @version $Id: AnalyzeMojo.java 522157 2007-03-25 04:34:54Z brianf $
  */
 public class RequireOS
     implements EnforcementRule
@@ -41,41 +58,26 @@ public class RequireOS
      * <li>z/os</li>
      * <li>os/400</li>
      * </ul>
-     * 
-     * @parameter expression="${enforcer.os.family}"
-     * 
      */
     private String family = null;
 
     /**
      * Runtime information containing Maven Version.
-     * 
-     * @parameter expression="${enforcer.os.name}"
-     * 
      */
     private String name = null;
 
     /**
      * Runtime information containing Maven Version.
-     * 
-     * @parameter expression="${enforcer.os.version}"
-     * 
      */
     private String version = null;
 
     /**
      * Runtime information containing Maven Version.
-     * 
-     * @parameter expression="${enforcer.os.arch}"
-     * 
      */
     private String arch = null;
 
     /**
      * Display detected OS information.
-     * 
-     * @parameter expression="${enforcer.os.display}" default-value=false
-     * 
      */
     private boolean display = false;
 
@@ -89,7 +91,7 @@ public class RequireOS
 
     public void execute( EnforcementRuleHelper helper )
         throws MojoExecutionException
-    {        
+    {
         if ( isValidFamily( this.family ) )
         {
             if ( !isAllowed() )
@@ -120,6 +122,11 @@ public class RequireOS
         }
     }
 
+    /**
+     * Helper method to determine the current OS family.
+     * 
+     * @return name of current OS family.
+     */
     public String determineOsFamily()
     {
         Iterator iter = this.getValidFamilies().iterator();
@@ -134,6 +141,14 @@ public class RequireOS
         return null;
     }
 
+    /**
+     * Helper method to determine if the current OS is allowed based on the
+     * injected values for family, name, version and arch.
+     * 
+     * @return true if the version is allowed.
+     * @throws MojoExecutionException
+     *             if all parameters are empty.
+     */
     public boolean isAllowed()
         throws MojoExecutionException
     {
@@ -150,6 +165,12 @@ public class RequireOS
         }
     }
 
+    /**
+     * Helper method to check that at least one of family, name, version or arch
+     * is set.
+     * 
+     * @return true if all parameters are empty.
+     */
     public boolean allParamsEmpty()
     {
         return ( StringUtils.isEmpty( family ) && StringUtils.isEmpty( arch ) && StringUtils.isEmpty( name ) && StringUtils
@@ -157,6 +178,11 @@ public class RequireOS
 
     }
 
+    /**
+     * Creates a Profile object that contains the activation information
+     * 
+     * @return a properly populated profile to be used for OS validation.
+     */
     private Profile createProfile()
     {
         Profile profile = new Profile();
@@ -164,6 +190,11 @@ public class RequireOS
         return profile;
     }
 
+    /**
+     * Creates an Activation object that contains the ActivationOS information.
+     * 
+     * @return a properly populated Activation object.
+     */
     private Activation createActivation()
     {
         Activation activation = new Activation();
@@ -172,6 +203,11 @@ public class RequireOS
         return activation;
     }
 
+    /**
+     * Creates an ActivationOS object containing family, name, version and arch.
+     * 
+     * @return a properly populated ActivationOS object.
+     */
     private ActivationOS createOsBean()
     {
         ActivationOS os = new ActivationOS();
@@ -184,6 +220,28 @@ public class RequireOS
         return os;
     }
 
+    /**
+     * Helper method to check if the given family is in the following list:
+     * <ul>
+     * <li>dos</li>
+     * <li>mac</li>
+     * <li>netware</li>
+     * <li>os/2</li>
+     * <li>tandem</li>
+     * <li>unix</li>
+     * <li>windows</li>
+     * <li>win9x</li>
+     * <li>z/os</li>
+     * <li>os/400</li>
+     * </ul>
+     * 
+     * Note: '!' is allowed at the beginning of the string and still considered
+     * valid.
+     * 
+     * @param theFamily
+     *            the family to check.
+     * @return true if one of the valid families.
+     */
     public boolean isValidFamily( String theFamily )
     {
 

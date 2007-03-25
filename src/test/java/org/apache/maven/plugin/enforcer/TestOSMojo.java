@@ -19,13 +19,10 @@ package org.apache.maven.plugin.enforcer;
  * under the License.
  */
 
-import java.util.Iterator;
-import java.util.Locale;
+import java.util.HashSet;
+import java.util.Set;
 
 import junit.framework.TestCase;
-
-import org.apache.maven.plugin.MojoExecutionException;
-import org.codehaus.plexus.util.Os;
 
 /**
  * Exhaustively check the OS mojo.
@@ -35,7 +32,10 @@ import org.codehaus.plexus.util.Os;
  */
 public class TestOSMojo
     extends TestCase
-{/*
+{
+    Set set = new HashSet();
+
+    /*
      * public void testOS() throws MojoExecutionException { Os os = new Os();
      * 
      * OsMojo mojo = new OsMojo(); mojo.displayOSInfo();
@@ -100,4 +100,5 @@ public class TestOSMojo
     {
 
     }
+
 }

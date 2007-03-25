@@ -30,6 +30,7 @@ import org.apache.maven.plugin.logging.Log;
  * @goal enforce
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @phase process-sources
+ * @version $Id: AnalyzeMojo.java 522157 2007-03-25 04:34:54Z brianf $
  */
 public class EnforceMojo
     extends AbstractMojo
