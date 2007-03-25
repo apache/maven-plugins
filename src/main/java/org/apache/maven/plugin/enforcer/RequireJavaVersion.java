@@ -33,7 +33,7 @@ import org.codehaus.plexus.util.StringUtils;
  * This rule checks that the Java version is allowed.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @version $Id: AnalyzeMojo.java 522157 2007-03-25 04:34:54Z brianf $
+ * @version $Id$
  */
 public class RequireJavaVersion
     extends AbstractVersionEnforcer

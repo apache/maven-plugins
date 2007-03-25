@@ -28,7 +28,7 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
  * This rule checks that the Maven version is allowd.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @version $Id: AnalyzeMojo.java 522157 2007-03-25 04:34:54Z brianf $
+ * @version $Id$
  */
 public class RequireMavenVersion
     extends AbstractVersionEnforcer

@@ -25,7 +25,7 @@ import org.apache.maven.plugin.MojoExecutionException;
  * Inteface to be implemented by any rules executed by the enforcer.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @version $Id: AnalyzeMojo.java 522157 2007-03-25 04:34:54Z brianf $
+ * @version $Id$
  */
 public interface EnforcementRule
 {
