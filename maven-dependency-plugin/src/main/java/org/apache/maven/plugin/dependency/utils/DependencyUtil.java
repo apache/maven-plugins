@@ -27,8 +27,8 @@ import org.codehaus.plexus.util.StringUtils;
 /**
  * Utility class with static helper methods
  * 
- * @author brianf
- * 
+ * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
+ * @version $Id$
  */
 public final class DependencyUtil
 {

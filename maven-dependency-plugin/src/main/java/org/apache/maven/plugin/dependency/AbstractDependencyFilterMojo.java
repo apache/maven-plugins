@@ -43,7 +43,8 @@ import org.codehaus.plexus.util.StringUtils;
  * Class that excapusulates the plugin parameters, and contains methods that
  * handle dependency filtering
  * 
- * @author brianf
+ * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
+ * @version $Id$
  * @see org.apache.maven.plugin.dependency.AbstractDependencyMojo
  */
 public abstract class AbstractDependencyFilterMojo

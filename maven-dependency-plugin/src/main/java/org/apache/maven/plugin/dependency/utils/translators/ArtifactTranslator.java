@@ -29,8 +29,8 @@ import java.util.Set;
 import org.apache.maven.plugin.logging.Log;
 
 /**
- * @author brianf
- * 
+ * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
+ * @version $Id$
  */
 public interface ArtifactTranslator
 {

@@ -76,14 +76,14 @@ public class AnalyzeMojo
     /**
      * Ignore Direct Dependency Overrides of dependencyManagement section.
      * 
-     * @parameter expression="${mdep.analyze.ignore.direct}"
+     * @parameter expression="${mdep.analyze.ignore.direct}" default-value="true"
      */
     private boolean ignoreDirect = true;
 
     /**
      * Ignore Runtime,Provide,Test,System scopes for unused dependency analysis
      * 
-     * @parameter expression="${mdep.analyze.ignore.noncompile}"
+     * @parameter expression="${mdep.analyze.ignore.noncompile}" default-value="true"
      */
     private boolean ignoreNonCompile = true;
 

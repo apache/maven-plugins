@@ -26,6 +26,10 @@ import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.logging.Log;
 
+/**
+ * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
+ * @version $Id$
+ */
 public class TransitivityFilter
     extends AbstractArtifactsFilter
 {
