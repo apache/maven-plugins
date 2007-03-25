@@ -32,7 +32,7 @@ import org.codehaus.plexus.util.StringUtils;
  * Containts the common code to compare a version against a version range.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @version $Id: AnalyzeMojo.java 522157 2007-03-25 04:34:54Z brianf $
+ * @version $Id$
  */
 public abstract class AbstractVersionEnforcer
 {
