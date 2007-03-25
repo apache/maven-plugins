@@ -19,8 +19,6 @@ package org.apache.maven.plugin.enforcer;
  * under the License.
  */
 
-import java.util.Map;
-
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -71,16 +69,17 @@ public class EnforceMojo
         if ( !skip )
         {
             Log log = this.getLog();
+            EnforcementRuleHelper helper = new DefaultEnforcementRuleHelper( session, log );
             try
             {
                 for ( int i = 0; i < rules.length; i++ )
                 {
-                    rules[i].execute( session, log );
+                    rules[i].execute( helper );
                 }
             }
             catch ( MojoExecutionException e )
             {
-                if (fail)
+                if ( fail )
                 {
                     throw e;
                 }
