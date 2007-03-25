@@ -29,8 +29,10 @@ import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
+ * Containts the common code to compare a version against a version range.
  * 
+ * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
+ * @version $Id: AnalyzeMojo.java 522157 2007-03-25 04:34:54Z brianf $
  */
 public abstract class AbstractVersionEnforcer
 {
@@ -52,6 +54,22 @@ public abstract class AbstractVersionEnforcer
      */
     protected String version = null;
 
+    /**
+     * Compares the specified version to see if it is allowed by the defined
+     * version range.
+     * 
+     * @param log
+     * @param variableName
+     *            name of variable to use in messages (Example: "Maven" or
+     *            "Java" etc).
+     * @param requiredVersionRange
+     *            range of allowed versions.
+     * @param actualVersion
+     *            the version to be checked.
+     * @return
+     * @throws MojoExecutionException
+     *             if the version is not allowed.
+     */
     public boolean enforceVersion( Log log, String variableName, String requiredVersionRange,
                                    ArtifactVersion actualVersion )
         throws MojoExecutionException
@@ -107,6 +125,12 @@ public abstract class AbstractVersionEnforcer
      * singular version means allow everything. This method assumes that "2.0.4" ==
      * "[2.0.4,)"
      * 
+     * @param allowedRange
+     *            range of allowed versions.
+     * @param version
+     *            the version to be checked.
+     * 
+     * @return true if the version is contained by the range.
      */
     public static boolean containsVersion( VersionRange allowedRange, ArtifactVersion version )
     {
