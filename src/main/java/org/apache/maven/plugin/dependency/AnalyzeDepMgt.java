@@ -19,7 +19,9 @@ package org.apache.maven.plugin.dependency;
  * under the License.
  */
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +44,9 @@ import org.codehaus.plexus.util.StringUtils;
  * to 2.0.6, it was possible to inherit versions that didn't match your
  * dependencyManagement. See <a
  * href="http://jira.codehaus.org/browse/MNG-1577">MNG-1577</a> for more info.
- * This mojo is also usefull for just detecting projects that override the dependencyManagement directly. Set ignoreDirect to false to detect these otherwise normal conditions.
+ * This mojo is also usefull for just detecting projects that override the
+ * dependencyManagement directly. Set ignoreDirect to false to detect these
+ * otherwise normal conditions.
  * 
  * @author <a href="mailto:brianefox@gmail.com">Brian Fox</a>
  * @version $Id: AnalyzeMojo.java 519377 2007-03-17 17:37:26Z brianf $
@@ -78,7 +82,6 @@ public class AnalyzeDepMgt
      */
     private boolean ignoreDirect = true;
 
-
     // Mojo methods -----------------------------------------------------------
 
     /*
@@ -102,16 +105,20 @@ public class AnalyzeDepMgt
         }
     }
 
-    // private methods --------------------------------------------------------
-
+    /**
+     * Does the work of checking the DependencyManagement Section.
+     * @return true if errors are found.
+     * @throws MojoExecutionException
+     */
     private boolean checkDependencyManagement()
         throws MojoExecutionException
     {
-        boolean foundMismatch = false;
+        boolean foundError = false;
 
         getLog().info( "Found Resolved Dependency / DependencyManagement mismatches:" );
 
         List depMgtDependencies = null;
+
         DependencyManagement depMgt = project.getDependencyManagement();
         if ( depMgt != null )
         {
@@ -121,15 +128,20 @@ public class AnalyzeDepMgt
         if ( depMgtDependencies != null && !depMgtDependencies.isEmpty() )
         {
             // put all the dependencies from depMgt into a map for quick lookup
-            Map map = new HashMap();
+            Map depMgtMap = new HashMap();
+            Map exclusions = new HashMap();
             Iterator iter = depMgtDependencies.iterator();
             while ( iter.hasNext() )
             {
-                Dependency dependency = (Dependency) iter.next();
-                map.put( dependency.getManagementKey(), dependency );
+                Dependency depMgtDependency = (Dependency) iter.next();
+                depMgtMap.put( depMgtDependency.getManagementKey(), depMgtDependency );
+
+                // now put all the exclusions into a map for quick lookup
+                exclusions.putAll( addExclusions( depMgtDependency.getExclusions() ) );
             }
 
-            Set allDependencies = project.getArtifacts();
+            // get dependencies for the project (including transitive)
+            Set allDependencyArtifacts = new HashSet( project.getArtifacts() );
 
             // don't warn if a dependency that is directly listed overrides
             // depMgt. That's ok.
@@ -137,25 +149,29 @@ public class AnalyzeDepMgt
             {
                 getLog().info( "\tIgnoring Direct Dependencies." );
                 Set directDependencies = project.getDependencyArtifacts();
-                allDependencies.removeAll( directDependencies );
+                allDependencyArtifacts.removeAll( directDependencies );
             }
 
-            iter = allDependencies.iterator();
-            while ( iter.hasNext() )
+            // log exclusion errors
+            List exclusionErrors = getExclusionErrors( exclusions, allDependencyArtifacts );
+            Iterator exclusionIter = exclusionErrors.iterator();
+            while ( exclusionIter.hasNext() )
             {
-                Artifact dependencyArtifact = (Artifact) iter.next();
-                Dependency depFromDepMgt = (Dependency) map.get( getArtifactManagementKey( dependencyArtifact ) );
-                if ( depFromDepMgt != null )
-                {
-                    ArtifactVersion artifactVersion = new DefaultArtifactVersion( dependencyArtifact.getVersion() );
+                Artifact exclusion = (Artifact) iter.next();
+                getLog().info(
+                               getArtifactManagementKey( exclusion ) + " was excluded in DepMgt, but version "
+                                   + exclusion.getVersion() + " has been found in the dependency tree." );
+                foundError = true;
+            }
 
-                    if ( !dependencyArtifact.isSnapshot() && !depFromDepMgt.getVersion().equals( dependencyArtifact.getVersion() ) )
-
-                    {
-                        logMismatch( dependencyArtifact, depFromDepMgt );
-                        foundMismatch = true;
-                    }
-                }
+            // find and log version mismatches
+            Map mismatch = getMismatch( depMgtMap, allDependencyArtifacts );
+            Iterator mismatchIter = mismatch.keySet().iterator();
+            while ( mismatchIter.hasNext() )
+            {
+                Artifact resolvedArtifact = (Artifact) mismatchIter.next();
+                Dependency depMgtDependency = (Dependency) mismatch.get( resolvedArtifact );
+                logMismatch( resolvedArtifact, depMgtDependency );
             }
         }
         else
@@ -163,20 +179,118 @@ public class AnalyzeDepMgt
             getLog().info( "   Nothing in DepMgt." );
         }
 
-        if ( !foundMismatch )
+        if ( !foundError )
         {
             getLog().info( "   None" );
         }
 
-        return foundMismatch;
+        return foundError;
     }
 
-    private void logMismatch( Artifact dependencyArtifact, Dependency dependencyFromDepMgt )
+    /**
+     * Returns a map of the exclusions using the Dependency ManagementKey as the
+     * keyset.
+     * 
+     * @param exclusionList
+     *            to be added to the map.
+     * @return a map of the exclusions using the Dependency ManagementKey as the
+     *         keyset.
+     */
+    public Map addExclusions( List exclusionList )
+    {
+        Map exclusions = new HashMap();
+        if ( exclusionList != null )
+        {
+            Iterator exclusionIter = exclusionList.iterator();
+            while ( exclusionIter.hasNext() )
+            {
+                Dependency exclusion = (Dependency) exclusionIter.next();
+                exclusions.put( exclusion.getManagementKey(), exclusion );
+            }
+        }
+        return exclusions;
+    }
+
+    /**
+     * Returns a List of the artifacts that should have been excluded, but where
+     * found in the dependency tree.
+     * 
+     * @param exclusions
+     *            a map of the DependencyManagement exclusions, with the
+     *            ManagementKey as the key and Dependency as the value.
+     * @param allDependencyArtifacts
+     *            resolved artifacts to be compared.
+     * @return list of artifacts that should have been excluded.
+     */
+    public List getExclusionErrors( Map exclusions, Set allDependencyArtifacts )
+    {
+        List list = new ArrayList();
+
+        Iterator iter = allDependencyArtifacts.iterator();
+        while ( iter.hasNext() )
+        {
+            Artifact artifact = (Artifact) iter.next();
+            if ( exclusions.containsKey( getArtifactManagementKey( artifact ) ) )
+            {
+                list.add( artifact );
+            }
+        }
+
+        return list;
+    }
+
+    /**
+     * Calculate the mismatches between the DependencyManagement and resolved
+     * artifacts
+     * 
+     * @param depMgtMap
+     *            contains the Dependency.GetManagementKey as the keyset for
+     *            quick lookup.
+     * @param allDependencyArtifacts
+     *            contains the set of all artifacts to compare.
+     * @return a map containing the resolved artifact as the key and the listed
+     *         dependency as the value.
+     */
+    public Map getMismatch( Map depMgtMap, Set allDependencyArtifacts )
+    {
+        Map mismatchMap = new HashMap();
+
+        Iterator iter = allDependencyArtifacts.iterator();
+        while ( iter.hasNext() )
+        {
+            Artifact dependencyArtifact = (Artifact) iter.next();
+            Dependency depFromDepMgt = (Dependency) depMgtMap.get( getArtifactManagementKey( dependencyArtifact ) );
+            if ( depFromDepMgt != null )
+            {
+                ArtifactVersion artifactVersion = new DefaultArtifactVersion( dependencyArtifact.getVersion() );
+
+                if ( !dependencyArtifact.isSnapshot()
+                    && !depFromDepMgt.getVersion().equals( dependencyArtifact.getVersion() ) )
+                {
+                    mismatchMap.put( dependencyArtifact, depFromDepMgt );
+                }
+            }
+        }
+        return mismatchMap;
+    }
+
+    /**
+     * This function displays the log to the screen showing the versions and
+     * information about the artifacts that don't match.
+     * 
+     * @param dependencyArtifact
+     *            the artifact that was resolved.
+     * @param dependencyFromDepMgt
+     *            the dependency listed in the DependencyManagement section.
+     * @throws MojoExecutionException
+     */
+    public void logMismatch( Artifact dependencyArtifact, Dependency dependencyFromDepMgt )
         throws MojoExecutionException
     {
         if ( dependencyArtifact == null || dependencyFromDepMgt == null )
         {
-            throw new MojoExecutionException( "Invalid params: Artifact:" + dependencyArtifact + " Dependency:" + dependencyFromDepMgt );
+            throw new MojoExecutionException( "Invalid params: Artifact:" + dependencyArtifact + " Dependency:"
+                + dependencyFromDepMgt );
         }
 
         getLog().info( "\tDependency: " + dependencyFromDepMgt.getManagementKey() );
@@ -184,10 +298,18 @@ public class AnalyzeDepMgt
         getLog().info( "\t\tResolved: " + dependencyArtifact.getVersion() );
     }
 
-    private String getArtifactManagementKey( Artifact artifact )
+    /**
+     * This function returns a string comparable with
+     * Dependency.GetManagementKey.
+     * 
+     * @param artifact
+     *            to gen the key for
+     * @return a string in the form: groupId:ArtifactId:Type[:Classifier]
+     */
+    public String getArtifactManagementKey( Artifact artifact )
     {
         return artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getType()
-            + ( !StringUtils.isEmpty( artifact.getClassifier() ) ? ":" + artifact.getClassifier() : "" );
+            + (( artifact.getClassifier() !=null ) ? ":" + artifact.getClassifier() : "" );
     }
 
     /**
