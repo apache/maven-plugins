@@ -266,6 +266,10 @@ public class DependencyProjectStub
         return dependencies;
     }
 
+    public void setDependencyManagement(DependencyManagement depMgt)
+    {
+        this.dependencyManagement = depMgt;
+    }
     public DependencyManagement getDependencyManagement()
     {
         if ( dependencyManagement == null )
