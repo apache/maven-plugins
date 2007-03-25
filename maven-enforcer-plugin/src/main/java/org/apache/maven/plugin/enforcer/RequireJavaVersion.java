@@ -13,6 +13,7 @@ import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -24,19 +25,18 @@ public class RequireJavaVersion
     implements EnforcementRule
 {
 
-
-
     /*
      * (non-Javadoc)
      * 
      * @see org.apache.maven.plugin.enforcer.rules.EnforcementRule#execute()
      */
-    public void execute( MavenSession session, Log log )
+    public void execute( EnforcementRuleHelper helper )
         throws MojoExecutionException
     {
+
         ArtifactVersion detectedJdkVersion = new DefaultArtifactVersion(
                                                                          fixJDKVersion( SystemUtils.JAVA_VERSION_TRIMMED ) );
-        enforceVersion( log, "JDK", version, detectedJdkVersion );
+        enforceVersion( helper.getLog(), "JDK", version, detectedJdkVersion );
     }
 
     /**

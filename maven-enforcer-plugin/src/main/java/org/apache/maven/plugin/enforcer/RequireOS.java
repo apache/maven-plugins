@@ -14,6 +14,7 @@ import org.apache.maven.model.Profile;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.profiles.activation.OperatingSystemProfileActivator;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.util.Os;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -86,10 +87,9 @@ public class RequireOS
 
     public static final String OS_VERSION = System.getProperty( "os.version" ).toLowerCase( Locale.US );
 
-    public void execute( MavenSession session, Log log )
+    public void execute( EnforcementRuleHelper helper )
         throws MojoExecutionException
-    {
-
+    {        
         if ( isValidFamily( this.family ) )
         {
             if ( !isAllowed() )
