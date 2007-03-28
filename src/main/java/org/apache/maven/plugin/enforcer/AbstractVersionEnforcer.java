@@ -151,4 +151,20 @@ public abstract class AbstractVersionEnforcer
         }
         return matched;
     }
+
+    /**
+     * @return the version
+     */
+    public String getVersion()
+    {
+        return this.version;
+    }
+
+    /**
+     * @param theVersion the version to set
+     */
+    public void setVersion( String theVersion )
+    {
+        this.version = theVersion;
+    }
 }

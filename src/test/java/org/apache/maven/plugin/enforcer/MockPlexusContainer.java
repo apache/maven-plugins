@@ -6,6 +6,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.maven.execution.DefaultRuntimeInformation;
+import org.apache.maven.execution.RuntimeInformation;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.classworlds.ClassRealm;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.PlexusContainerException;
@@ -326,7 +329,15 @@ public class MockPlexusContainer
     public Object lookup( String theComponentKey )
         throws ComponentLookupException
     {
-        // TODO Auto-generated method stub
+        if ( theComponentKey.equals( MavenProject.class.getName() ) )
+        {
+            return new MavenProject();
+        }
+        else if ( theComponentKey.equals( RuntimeInformation.class.getName() ) )
+        {
+            return new DefaultRuntimeInformation();
+        }
+
         return null;
     }
 
