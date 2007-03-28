@@ -21,7 +21,9 @@ package org.apache.maven.plugin.enforcer;
 
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.execution.RuntimeInformation;
-import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.shared.enforcer.rule.api.EnforcerRule;
+import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleException;
+import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleHelper;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
 /**
@@ -32,11 +34,11 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
  */
 public class RequireMavenVersion
     extends AbstractVersionEnforcer
-    implements EnforcementRule
+    implements EnforcerRule
 {
 
-    public void execute( EnforcementRuleHelper helper )
-        throws MojoExecutionException
+    public void execute( EnforcerRuleHelper helper )
+        throws EnforcerRuleException
     {
         try
         {
@@ -46,7 +48,7 @@ public class RequireMavenVersion
         }
         catch ( ComponentLookupException e )
         {
-            throw new MojoExecutionException( "Unable to lookup the component: RuntimeInformation", e );
+            throw new EnforcerRuleException( "Unable to lookup the component: RuntimeInformation", e );
         }
 
     }

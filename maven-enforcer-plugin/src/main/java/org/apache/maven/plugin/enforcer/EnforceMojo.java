@@ -23,13 +23,16 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.shared.enforcer.rule.api.EnforcerRule;
+import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleException;
+import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleHelper;
 
 /**
- * This goal checks for required versions of Maven and/or the JDK
+ * This goal executes the defined enforcer-rules once per module.
  * 
  * @goal enforce
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @phase process-sources
+ * @phase verify
  * @version $Id$
  */
 public class EnforceMojo
@@ -62,34 +65,122 @@ public class EnforceMojo
      * @parameter
      * @required
      */
-    private EnforcementRule[] rules;
+    private EnforcerRule[] rules;
 
     public void execute()
         throws MojoExecutionException
     {
+        Log log = this.getLog();
         if ( !skip )
         {
-            Log log = this.getLog();
-            EnforcementRuleHelper helper = new DefaultEnforcementRuleHelper( session, log );
-            try
+            if ( rules != null && rules.length > 0 )
             {
-                for ( int i = 0; i < rules.length; i++ )
+                String currentRule = "Unknown";
+
+                EnforcerRuleHelper helper = new DefaultEnforcementRuleHelper( session, log );
+                try
                 {
-                    rules[i].execute( helper );
+                    for ( int i = 0; i < rules.length; i++ )
+                    {
+                        EnforcerRule rule = rules[i];
+                        if ( rule != null )
+                        {
+                            currentRule = rule.getClass().getSimpleName();
+                            log.debug( "Executing rule: " + currentRule );
+                            rules[i].execute( helper );
+                        }
+                    }
+                }
+                catch ( EnforcerRuleException e )
+                {
+                    if ( fail )
+                    {
+                        throw new MojoExecutionException( currentRule + " failed with message: " + e.getMessage(), e );
+                    }
+                    else
+                    {
+                        log.warn( e.getLocalizedMessage() );
+                    }
                 }
             }
-            catch ( MojoExecutionException e )
+            else
             {
-                if ( fail )
-                {
-                    throw e;
-                }
-                else
-                {
-                    log.warn( e.getLocalizedMessage() );
-                }
+                throw new MojoExecutionException(
+                                                  "No rules are configured. Use the skip flag if you want to disable execution." );
             }
         }
+        else
+        {
+            log.info( "Skipping Rule Enforcement." );
+        }
+    }
+
+    /**
+     * @return the fail
+     */
+    public boolean isFail()
+    {
+        return this.fail;
+    }
+
+    /**
+     * @param theFail
+     *            the fail to set
+     */
+    public void setFail( boolean theFail )
+    {
+        this.fail = theFail;
+    }
+
+    /**
+     * @return the rules
+     */
+    public EnforcerRule[] getRules()
+    {
+        return this.rules;
+    }
+
+    /**
+     * @param theRules
+     *            the rules to set
+     */
+    public void setRules( EnforcerRule[] theRules )
+    {
+        this.rules = theRules;
+    }
+
+    /**
+     * @return the session
+     */
+    public MavenSession getSession()
+    {
+        return this.session;
+    }
+
+    /**
+     * @param theSession
+     *            the session to set
+     */
+    public void setSession( MavenSession theSession )
+    {
+        this.session = theSession;
+    }
+
+    /**
+     * @return the skip
+     */
+    public boolean isSkip()
+    {
+        return this.skip;
+    }
+
+    /**
+     * @param theSkip
+     *            the skip to set
+     */
+    public void setSkip( boolean theSkip )
+    {
+        this.skip = theSkip;
     }
 
 }
