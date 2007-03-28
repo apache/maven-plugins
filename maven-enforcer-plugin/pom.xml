@@ -172,5 +172,10 @@
             <artifactId>commons-lang</artifactId>
 			<version>2.3</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.maven.shared</groupId>
+            <artifactId>maven-enforcer-rule-api</artifactId>
+			<version>1.0-alpha-1-SNAPSHOT</version>
+        </dependency>
 	</dependencies>
 </project>

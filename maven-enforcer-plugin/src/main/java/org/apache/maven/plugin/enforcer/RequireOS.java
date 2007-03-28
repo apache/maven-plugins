@@ -19,6 +19,7 @@ package org.apache.maven.plugin.enforcer;
  * under the License.
  */
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Set;
@@ -26,8 +27,11 @@ import java.util.Set;
 import org.apache.maven.model.Activation;
 import org.apache.maven.model.ActivationOS;
 import org.apache.maven.model.Profile;
-import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.profiles.activation.OperatingSystemProfileActivator;
+import org.apache.maven.shared.enforcer.rule.api.EnforcerRule;
+import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleException;
+import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleHelper;
 import org.codehaus.plexus.util.Os;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -40,7 +44,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @version $Id$
  */
 public class RequireOS
-    implements EnforcementRule
+    implements EnforcerRule
 {
 
     /**
@@ -89,9 +93,35 @@ public class RequireOS
 
     public static final String OS_VERSION = System.getProperty( "os.version" ).toLowerCase( Locale.US );
 
-    public void execute( EnforcementRuleHelper helper )
-        throws MojoExecutionException
+    public RequireOS()
     {
+        validFamilies = new HashSet();
+        validFamilies.add( "dos" );
+        validFamilies.add( "mac" );
+        validFamilies.add( "netware" );
+        validFamilies.add( "os/2" );
+        validFamilies.add( "tandem" );
+        validFamilies.add( "unix" );
+        validFamilies.add( "windows" );
+        validFamilies.add( "win9x" );
+        validFamilies.add( "z/os" );
+        validFamilies.add( "os/400" );
+    }
+
+    public void execute( EnforcerRuleHelper helper )
+        throws EnforcerRuleException
+    {
+        if ( display )
+        {
+            displayOSInfo( helper.getLog() );
+        }
+
+        if ( allParamsEmpty() )
+        {
+            throw new EnforcerRuleException(
+                                             "All parameters can not be empty. You must pick at least one of (family, name, version, arch) or use -Denforcer.os.display=true to see the current OS information." );
+        }
+
         if ( isValidFamily( this.family ) )
         {
             if ( !isAllowed() )
@@ -101,25 +131,32 @@ public class RequireOS
                     + ( arch != null ? " Arch=" + arch : "" ) + ( family != null ? " Family=" + family : "" )
                     + ( name != null ? " Name=" + name : "" ) + ( version != null ? " Version=" + version : "" ) );
 
-                throw new MojoExecutionException( msg );
+                throw new EnforcerRuleException( msg );
             }
         }
         else
         {
-            // if display was chosen, don't complain about the family.
-            if ( !display )
+            StringBuffer buffer = new StringBuffer( 50 );
+            Iterator iter = validFamilies.iterator();
+            while ( iter.hasNext() )
             {
-                StringBuffer buffer = new StringBuffer( 50 );
-                Iterator iter = validFamilies.iterator();
-                while ( iter.hasNext() )
-                {
-                    buffer.append( iter.next() );
-                    buffer.append( ", " );
-                }
-                String help = StringUtils.stripEnd( buffer.toString().trim(), "." );
-                throw new MojoExecutionException( "Invalid Family type used. Valid family types are: " + help );
+                buffer.append( iter.next() );
+                buffer.append( ", " );
             }
+            String help = StringUtils.stripEnd( buffer.toString().trim(), "." );
+            throw new EnforcerRuleException( "Invalid Family type used. Valid family types are: " + help );
         }
+    }
+
+    /**
+     * Log the current OS information
+     * 
+     * @param log
+     */
+    public void displayOSInfo( Log log )
+    {
+        log.info( "OS Info: Arch: " + RequireOS.OS_ARCH + " Family: " + determineOsFamily() + " Name: "
+            + RequireOS.OS_NAME + " Version: " + RequireOS.OS_VERSION );
     }
 
     /**
@@ -129,7 +166,7 @@ public class RequireOS
      */
     public String determineOsFamily()
     {
-        Iterator iter = this.getValidFamilies().iterator();
+        Iterator iter = getValidFamilies().iterator();
         while ( iter.hasNext() )
         {
             String fam = (String) iter.next();
@@ -146,23 +183,12 @@ public class RequireOS
      * injected values for family, name, version and arch.
      * 
      * @return true if the version is allowed.
-     * @throws MojoExecutionException
-     *             if all parameters are empty.
      */
     public boolean isAllowed()
-        throws MojoExecutionException
     {
-        if ( !allParamsEmpty() )
-        {
-            OperatingSystemProfileActivator activator = new OperatingSystemProfileActivator();
+        OperatingSystemProfileActivator activator = new OperatingSystemProfileActivator();
 
-            return activator.isActive( createProfile() );
-        }
-        else
-        {
-            throw new MojoExecutionException(
-                                              "All parameters can not be empty. You must pick at least one of (family, name, version, arch) or use -Denforcer.os.display=true to see the current OS information." );
-        }
+        return activator.isActive( createProfile() );
     }
 
     /**

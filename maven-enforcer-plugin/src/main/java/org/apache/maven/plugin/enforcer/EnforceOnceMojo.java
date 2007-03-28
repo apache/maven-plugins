@@ -1,5 +1,7 @@
 package org.apache.maven.plugin.enforcer;
 
+import org.apache.maven.plugin.MojoExecutionException;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -19,29 +21,21 @@ package org.apache.maven.plugin.enforcer;
  * under the License.
  */
 
-import org.apache.maven.plugin.MojoExecutionException;
-
 /**
- * Inteface to be implemented by any rules executed by the enforcer.
+ * This goal executes the defined enforcer-rules once per build.
  * 
+ * @goal enforce-once
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
+ * @phase verify
+ * @aggregator
  * @version $Id$
  */
-public interface EnforcementRule
+public class EnforceOnceMojo
+    extends EnforceMojo
 {
-    /**
-     * This is the inteface into the rule. This method should throw an exception
-     * containing a reason message if the rule fails the check. The plugin will
-     * then decide based on the fail flag if it should stop or just log the
-     * message as a warning.
-     * 
-     * @param helper
-     *            The helper provides access to the log, MavenSession and has
-     *            helpers to get at common components. It is also able to look
-     *            up components by class name.
-     * @throws MojoExecutionException
-     */
-    public void execute( EnforcementRuleHelper helper )
-        throws MojoExecutionException;
-
+    public void execute()
+        throws MojoExecutionException
+    {
+        super.execute();
+    }
 }
