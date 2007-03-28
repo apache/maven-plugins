@@ -51,12 +51,14 @@ public class TestEnforceMojo
         
         EnforcerRule[] rules = new EnforcerRule[10];
         rules[0] = new MockEnforcerRule(true);
+        rules[1] = new MockEnforcerRule(true);
         mojo.setRules( rules );
         
         mojo.execute();
         
         try
         {
+            mojo.setFailFast( false );
             mojo.setFail( true );
             mojo.execute();
             fail("Expected a Mojo Execution Exception.");
@@ -66,9 +68,24 @@ public class TestEnforceMojo
             System.out.println("Caught Expected Exception:"+e.getLocalizedMessage());
         }
 
-        ((MockEnforcerRule) rules[0]).setFailRule(false);
+        try
+        {
+            mojo.setFailFast( true );
+            mojo.setFail( true );
+            mojo.execute();
+            fail("Expected a Mojo Execution Exception.");
+        }
+        catch ( MojoExecutionException e )
+        {
+            System.out.println("Caught Expected Exception:"+e.getLocalizedMessage());
+        }
         
+        ((MockEnforcerRule) rules[0]).setFailRule(false);
+        ((MockEnforcerRule) rules[1]).setFailRule(false);
         mojo.execute();
         
+
+
+    
     }
 }
