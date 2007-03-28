@@ -10,6 +10,7 @@ import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.DependencySet;
+import org.apache.maven.plugin.assembly.model.UnpackOptions;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.apache.maven.plugin.assembly.utils.FilterUtils;
 import org.apache.maven.project.MavenProject;
@@ -127,6 +128,13 @@ public class AddDependencySetsTask
                 task.setDirectoryMode( dependencySet.getDirectoryMode() );
                 task.setFileMode( dependencySet.getFileMode() );
                 task.setUnpack( dependencySet.isUnpack() );
+
+                UnpackOptions opts = dependencySet.getUnpackOptions();
+                if ( dependencySet.isUnpack() && opts != null )
+                {
+                    task.setIncludes( opts.getIncludes() );
+                    task.setExcludes( opts.getExcludes() );
+                }
 
                 task.execute( archiver, configSource );
             }
