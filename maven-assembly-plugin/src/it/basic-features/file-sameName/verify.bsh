@@ -1,0 +1,28 @@
+import java.io.*;
+import java.net.*;
+import java.util.jar.*;
+
+boolean result = true;
+
+try
+{
+    File a = new File( basedir, "target/parent-1.0-massembly-148-example.dir/a/file.txt");
+    File b = new File( basedir, "target/parent-1.0-massembly-148-example.dir/b/file.txt");
+    if(result) {
+        BufferedReader r = new BufferedReader(new FileReader(a));
+        String s = r.readLine();
+        result = s.equals("file A");
+    }
+    if(result) {
+        BufferedReader r = new BufferedReader(new FileReader(b));
+        String s = r.readLine();
+        result = s.equals("file B");
+    }
+}
+catch( IOException e )
+{
+    e.printStackTrace();
+    result = false;
+}
+
+return result;
