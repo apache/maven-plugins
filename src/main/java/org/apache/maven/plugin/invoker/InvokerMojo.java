@@ -25,13 +25,16 @@ import bsh.Interpreter;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.shared.invoker.CommandLineConfigurationException;
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
 import org.apache.maven.shared.invoker.InvocationRequest;
 import org.apache.maven.shared.invoker.InvocationResult;
 import org.apache.maven.shared.invoker.Invoker;
+import org.apache.maven.shared.invoker.MavenCommandLineBuilder;
 import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.apache.maven.shared.model.fileset.FileSet;
 import org.apache.maven.shared.model.fileset.util.FileSetManager;
+import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.cli.CommandLineException;
 
@@ -90,6 +93,13 @@ public class InvokerMojo
      * @parameter expression="${invoker.projectsDirectory}" default-value="${basedir}/src/projects/"
      */
     private File projectsDirectory;
+    
+    /**
+     * Directory to which projects should be cloned prior to execution.
+     * 
+     * @parameter
+     */
+    private File cloneProjectsTo;
     
     /**
      * A single POM to build, skipping any scanning parameters and behavior.
@@ -184,20 +194,57 @@ public class InvokerMojo
         throws MojoExecutionException, MojoFailureException
     {
         String[] includedPoms;
-        try
+        if ( pom != null )
         {
-            includedPoms = getPoms();
+            try
+            {
+                projectsDirectory = pom.getCanonicalFile().getParentFile();
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Failed to discover projectsDirectory from pom File parameter. Reason: "
+                    + e.getMessage(), e );
+            }
+            
+            includedPoms = new String[]{ pom.getName() };
         }
-        catch ( final IOException e )
+        else
         {
-            throw new MojoExecutionException( "Error retrieving POM list from includes, excludes, "
-                            + "and IT directory. Reason: " + e.getMessage(), e );
+            try
+            {
+                includedPoms = getPoms();
+            }
+            catch ( final IOException e )
+            {
+                throw new MojoExecutionException( "Error retrieving POM list from includes, excludes, "
+                                + "and projects directory. Reason: " + e.getMessage(), e );
+            }
         }
+        
 
         if ( includedPoms == null || includedPoms.length < 1 )
         {
             getLog().info( "No test-projects were selected for execution." );
             return;
+        }
+        
+        File projectsDir = projectsDirectory;
+        
+        if ( cloneProjectsTo != null )
+        {
+            cloneProjectsTo.mkdirs();
+            
+            try
+            {
+                cloneProjects( includedPoms );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Failed to clone projects from: " + projectsDirectory + " to: "
+                    + cloneProjectsTo + ". Reason: " + e.getMessage(), e );
+            }
+            
+            projectsDir = cloneProjectsTo;
         }
 
         final List failures = new ArrayList();
@@ -206,7 +253,7 @@ public class InvokerMojo
         {
             final String pom = includedPoms[i];
 
-            runBuild( pom, failures );
+            runBuild( projectsDir, pom, failures );
         }
 
         if ( !suppressSummaries )
@@ -237,19 +284,86 @@ public class InvokerMojo
 
         if ( !failures.isEmpty() )
         {
-            throw new MojoFailureException( this, "One or more builds failed.", failures.size() + " builds failed." );
+            String message = failures.size() + " builds failed.";
+            
+            throw new MojoFailureException( this, message, message );
         }
     }
 
-    private void runBuild( final String pom, final List failures )
+    private void cloneProjects( String[] includedPoms )
+        throws IOException
+    {
+        List clonedSubpaths = new ArrayList();
+        
+        for ( int i = 0; i < includedPoms.length; i++ )
+        {
+            String subpath = includedPoms[i];
+            int lastSep = subpath.lastIndexOf( File.separator );
+            
+            if ( lastSep > -1 )
+            {
+                subpath = subpath.substring( 0, lastSep );
+            }
+            else
+            {
+                subpath = ".";
+            }
+            
+            // avoid copying subdirs that are already cloned.
+            if ( !alreadyCloned( subpath, clonedSubpaths ) )
+            {
+                // avoid creating new files that point to dir/.
+                if ( ".".equals( subpath ) )
+                {
+                    String cloneSubdir = normalizePath( cloneProjectsTo, projectsDirectory.getCanonicalPath() );
+                    
+                    // avoid infinite recursion if the cloneTo path is a subdirectory.
+                    if ( cloneSubdir != null )
+                    {
+                        File temp = File.createTempFile( "pre-invocation-clone.", "" );
+                        temp.delete();
+                        temp.mkdirs();
+                        
+                        FileUtils.copyDirectoryStructure( projectsDirectory, temp );
+                        
+                        FileUtils.deleteDirectory( new File( temp, cloneSubdir ) );
+                        
+                        FileUtils.copyDirectoryStructure( temp, cloneProjectsTo );
+                    }
+                    else
+                    {
+                        FileUtils.copyDirectoryStructure( projectsDirectory, cloneProjectsTo );
+                    }
+                }
+                else
+                {
+                    FileUtils.copyDirectoryStructure( new File( projectsDirectory, subpath ), new File( cloneProjectsTo, subpath ) );
+                }
+                
+                clonedSubpaths.add( subpath );
+            }
+        }
+    }
+
+    private boolean alreadyCloned( String subpath, List clonedSubpaths )
+    {
+        for ( Iterator iter = clonedSubpaths.iterator(); iter.hasNext(); )
+        {
+            String path = (String) iter.next();
+            
+            if ( ".".equals( path ) || subpath.startsWith( path ) )
+            {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    private void runBuild( final File projectsDir, final String pom, final List failures )
         throws MojoExecutionException
     {
-        File pomFile = new File( pom );
-        
-        if ( !pomFile.isAbsolute() )
-        {
-            pomFile = new File( projectsDirectory, pom );
-        }
+        File pomFile = new File( projectsDir, pom );
         
         final File basedir = pomFile.getParentFile();
 
@@ -371,6 +485,15 @@ public class InvokerMojo
             }
 
             request.setPomFile( pomFile );
+            
+            try
+            {
+                getLog().debug( "Executing: " + new MavenCommandLineBuilder().build( request ) );
+            }
+            catch ( CommandLineConfigurationException e )
+            {
+                getLog().debug( "Failed to display command line: " + e.getMessage() );
+            }
 
             InvocationResult result = null;
 
@@ -588,9 +711,11 @@ public class InvokerMojo
     private String[] getPoms()
         throws IOException
     {
+        String[] poms;
+        
         if ( pom != null && pom.exists() )
         {
-            return new String[]{ pom.getAbsolutePath() };
+            poms = new String[]{ pom.getAbsolutePath() };
         }
         else
         {
@@ -604,7 +729,62 @@ public class InvokerMojo
 
             final FileSetManager fsm = new FileSetManager( getLog() );
 
-            return fsm.getIncludedFiles( fs );
+            poms = fsm.getIncludedFiles( fs );
+        }
+        
+        poms = normalizePomPaths( poms );
+        
+        return poms;
+    }
+
+    private String[] normalizePomPaths( String[] poms )
+        throws IOException
+    {
+        String projectsDirPath = projectsDirectory.getCanonicalPath();
+        
+        String[] results = new String[poms.length];
+        for ( int i = 0; i < poms.length; i++ )
+        {
+            String pomPath = poms[i];
+            
+            File pom = new File( pomPath );
+            
+            if ( !pom.isAbsolute() )
+            {
+                pom = new File( projectsDirectory, pomPath );
+            }
+            
+            String normalizedPath = normalizePath( pom, projectsDirPath );
+            
+            if ( normalizedPath == null )
+            {
+                normalizedPath = pomPath;
+            }
+            
+            results[i] = normalizedPath;
+        }
+        
+        return results;
+    }
+
+    private String normalizePath( File path, String withinDirPath )
+        throws IOException
+    {
+        String normalizedPath = path.getCanonicalPath();
+        
+        if ( normalizedPath.startsWith( withinDirPath ) )
+        {
+            normalizedPath = normalizedPath.substring( withinDirPath.length() );
+            if ( normalizedPath.startsWith( File.separator ) )
+            {
+                normalizedPath = normalizedPath.substring( File.separator.length() );
+            }
+            
+            return normalizedPath;
+        }
+        else
+        {
+            return null;
         }
     }
 
