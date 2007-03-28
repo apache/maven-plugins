@@ -19,6 +19,13 @@ package org.apache.maven.plugin.enforcer;
  * under the License.
  */
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -62,44 +69,91 @@ public class EnforceMojo
     protected boolean skip = false;
 
     /**
+     * Fail on the first rule that doesn't pass
+     * 
+     * @parameter expression="${enforcer.failFast}" default-value="false"
+     */
+    protected boolean failFast = false;
+
+    /**
      * @parameter
      * @required
      */
     private EnforcerRule[] rules;
 
+    /**
+     * Entry point to the mojo
+     */
     public void execute()
         throws MojoExecutionException
     {
         Log log = this.getLog();
+
+        // the entire execution can be easily skipped
         if ( !skip )
         {
+            // list to store exceptions
+            ArrayList list = new ArrayList();
+
+            // make sure the rules exist
             if ( rules != null && rules.length > 0 )
             {
                 String currentRule = "Unknown";
 
+                // create my helper
                 EnforcerRuleHelper helper = new DefaultEnforcementRuleHelper( session, log );
-                try
+
+                // if we are only warning, then disable failFast
+                if ( !fail )
                 {
-                    for ( int i = 0; i < rules.length; i++ )
+                    failFast = false;
+                }
+
+                // go through each rule unless
+                for ( int i = 0; i < rules.length; i++ )
+                {
+
+                    // prevent against empty rules
+                    EnforcerRule rule = rules[i];
+                    if ( rule != null )
                     {
-                        EnforcerRule rule = rules[i];
-                        if ( rule != null )
+                        // store the current rule for loggin purposes
+                        currentRule = rule.getClass().getSimpleName();
+                        log.debug( "Executing rule: " + currentRule );
+                        try
                         {
-                            currentRule = rule.getClass().getSimpleName();
-                            log.debug( "Executing rule: " + currentRule );
+                            // execute the rule
                             rules[i].execute( helper );
+                        }
+                        catch ( EnforcerRuleException e )
+                        {
+                            // i can throw an exception because failfast will be
+                            // false if fail is false.
+                            if ( failFast )
+                            {
+                                throw new MojoExecutionException( currentRule + " failed with message: "
+                                    + e.getMessage(), e );
+                            }
+                            else
+                            {
+                                list.add( "Rule "+i+": "+currentRule+" failed with message: " + e.getMessage());
+                            }
                         }
                     }
                 }
-                catch ( EnforcerRuleException e )
+
+                // if we found anything
+                if ( !list.isEmpty() )
                 {
+                    Iterator iter = list.iterator();
+                    while ( iter.hasNext() )
+                    {
+                        String failure = (String) iter.next();
+                        log.warn( failure );
+                    }
                     if ( fail )
                     {
-                        throw new MojoExecutionException( currentRule + " failed with message: " + e.getMessage(), e );
-                    }
-                    else
-                    {
-                        log.warn( e.getLocalizedMessage() );
+                        throw new MojoExecutionException( "Some rules have failed." );
                     }
                 }
             }
@@ -181,6 +235,22 @@ public class EnforceMojo
     public void setSkip( boolean theSkip )
     {
         this.skip = theSkip;
+    }
+
+    /**
+     * @return the failFast
+     */
+    public boolean isFailFast()
+    {
+        return this.failFast;
+    }
+
+    /**
+     * @param theFailFast the failFast to set
+     */
+    public void setFailFast( boolean theFailFast )
+    {
+        this.failFast = theFailFast;
     }
 
 }
