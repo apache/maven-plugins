@@ -26,7 +26,9 @@ import java.util.List;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
-import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.shared.enforcer.rule.api.EnforcerRule;
+import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleException;
+import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleHelper;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -37,11 +39,11 @@ import org.codehaus.plexus.util.StringUtils;
  */
 public class RequireJavaVersion
     extends AbstractVersionEnforcer
-    implements EnforcementRule
+    implements EnforcerRule
 {
 
-    public void execute( EnforcementRuleHelper helper )
-        throws MojoExecutionException
+    public void execute( EnforcerRuleHelper helper )
+        throws EnforcerRuleException
     {
 
         ArtifactVersion detectedJdkVersion = new DefaultArtifactVersion(

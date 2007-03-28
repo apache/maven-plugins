@@ -23,6 +23,7 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.execution.RuntimeInformation;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleHelper;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
 /**
@@ -34,7 +35,7 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
  * @version $Id$
  */
 public class DefaultEnforcementRuleHelper
-    implements EnforcementRuleHelper
+    implements EnforcerRuleHelper
 {
     Log log;
 

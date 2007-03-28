@@ -26,6 +26,7 @@ import org.apache.maven.artifact.versioning.Restriction;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleException;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -66,18 +67,15 @@ public abstract class AbstractVersionEnforcer
      *            range of allowed versions.
      * @param actualVersion
      *            the version to be checked.
-     * @return
      * @throws MojoExecutionException
      *             if the version is not allowed.
      */
-    public boolean enforceVersion( Log log, String variableName, String requiredVersionRange,
-                                   ArtifactVersion actualVersion )
-        throws MojoExecutionException
+    public void enforceVersion( Log log, String variableName, String requiredVersionRange, ArtifactVersion actualVersion )
+        throws EnforcerRuleException
     {
-        boolean allowed = false;
         if ( StringUtils.isEmpty( requiredVersionRange ) )
         {
-            throw new MojoExecutionException( variableName + " version can't be empty." );
+            throw new EnforcerRuleException( variableName + " version can't be empty." );
         }
         else
         {
@@ -89,7 +87,6 @@ public abstract class AbstractVersionEnforcer
             if ( actualVersion.toString().equals( requiredVersionRange ) )
             {
                 log.info( msg + " is allowed in the range " + requiredVersionRange + "." );
-                allowed = true;
             }
             else
             {
@@ -100,23 +97,21 @@ public abstract class AbstractVersionEnforcer
                     if ( containsVersion( vr, actualVersion ) )
                     {
                         log.info( msg + " is allowed in the range " + requiredVersionRange + "." );
-                        allowed = true;
                     }
                     else
                     {
                         String error = msg + " is not in the allowed range " + vr + ".";
 
-                        throw new MojoExecutionException( error );
+                        throw new EnforcerRuleException( error );
                     }
                 }
                 catch ( InvalidVersionSpecificationException e )
                 {
-                    throw new MojoExecutionException( "The requested " + variableName + " version "
+                    throw new EnforcerRuleException( "The requested " + variableName + " version "
                         + requiredVersionRange + " is invalid.", e );
                 }
             }
         }
-        return allowed;
     }
 
     /**
@@ -132,7 +127,7 @@ public abstract class AbstractVersionEnforcer
      * 
      * @return true if the version is contained by the range.
      */
-    public static boolean containsVersion( VersionRange allowedRange, ArtifactVersion version )
+    public boolean containsVersion( VersionRange allowedRange, ArtifactVersion version )
     {
         boolean matched = false;
         ArtifactVersion recommendedVersion = allowedRange.getRecommendedVersion();
