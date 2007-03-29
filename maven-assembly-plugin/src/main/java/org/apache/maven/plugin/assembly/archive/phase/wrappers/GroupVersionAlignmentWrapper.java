@@ -5,6 +5,7 @@ import org.apache.maven.plugin.assembly.model.GroupVersionAlignment;
 import java.util.List;
 
 public class GroupVersionAlignmentWrapper
+    implements org.apache.maven.shared.repository.model.GroupVersionAlignment
 {
 
     private final GroupVersionAlignment alignment;
