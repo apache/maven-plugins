@@ -8,10 +8,12 @@ import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.FileItem;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
+import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.easymock.MockControl;
 
 import java.io.File;
@@ -89,7 +91,7 @@ public class FileItemAssemblyPhaseTest
         fi.setLineEnding( "keep" );
         fi.setFileMode( "777" );
 
-        macArchiver.expectAddFile( file, "file.txt", Integer.decode( "777" ).intValue() );
+        macArchiver.expectAddFile( file, "file.txt", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
 
         assembly.addFile( fi );
 
@@ -134,7 +136,7 @@ public class FileItemAssemblyPhaseTest
         fi.setLineEnding( "keep" );
         fi.setFileMode( "777" );
 
-        macArchiver.expectAddFile( file, "file.txt", Integer.decode( "777" ).intValue() );
+        macArchiver.expectAddFile( file, "file.txt", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
 
         assembly.addFile( fi );
 
@@ -197,9 +199,9 @@ public class FileItemAssemblyPhaseTest
         configFileItem.setLineEnding( "keep" );
         configFileItem.setFileMode( "777" );
 
-        macArchiver.expectAddFile( readmeFile, "README.txt", Integer.decode( "777" ).intValue() );
-        macArchiver.expectAddFile( licenseFile, "LICENSE.txt", Integer.decode( "777" ).intValue() );
-        macArchiver.expectAddFile( configFile, "config/config.txt", Integer.decode( "777" ).intValue() );
+        macArchiver.expectAddFile( readmeFile, "README.txt", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
+        macArchiver.expectAddFile( licenseFile, "LICENSE.txt", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
+        macArchiver.expectAddFile( configFile, "config/config.txt", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
 
         assembly.addFile( readmeFileItem );
         assembly.addFile( licenseFileItem );
@@ -268,9 +270,9 @@ public class FileItemAssemblyPhaseTest
         configFileItem.setLineEnding( "keep" );
         configFileItem.setFileMode( "777" );
 
-        macArchiver.expectAddFile( readmeFile, "README_renamed.txt", Integer.decode( "777" ).intValue() );
-        macArchiver.expectAddFile( licenseFile, "LICENSE_renamed.txt", Integer.decode( "777" ).intValue() );
-        macArchiver.expectAddFile( configFile, "config/config_renamed.txt", Integer.decode( "777" ).intValue() );
+        macArchiver.expectAddFile( readmeFile, "README_renamed.txt", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
+        macArchiver.expectAddFile( licenseFile, "LICENSE_renamed.txt", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
+        macArchiver.expectAddFile( configFile, "config/config_renamed.txt", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
 
         assembly.addFile( readmeFileItem );
         assembly.addFile( licenseFileItem );
@@ -337,9 +339,9 @@ public class FileItemAssemblyPhaseTest
         configFileItem.setLineEnding( "keep" );
         configFileItem.setFileMode( "777" );
 
-        macArchiver.expectAddFile( readmeFile, "README_renamed.txt", Integer.decode( "777" ).intValue() );
-        macArchiver.expectAddFile( licenseFile, "LICENSE_renamed.txt", Integer.decode( "777" ).intValue() );
-        macArchiver.expectAddFile( configFile, "config/config_renamed.txt", Integer.decode( "777" ).intValue() );
+        macArchiver.expectAddFile( readmeFile, "README_renamed.txt", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
+        macArchiver.expectAddFile( licenseFile, "LICENSE_renamed.txt", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
+        macArchiver.expectAddFile( configFile, "config/config_renamed.txt", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
 
         assembly.addFile( readmeFileItem );
         assembly.addFile( licenseFileItem );

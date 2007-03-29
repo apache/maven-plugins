@@ -38,7 +38,7 @@ public class DependencySetAssemblyPhaseTest
         ds.setOutputFileNameMapping( "artifact" );
         ds.setUnpack( false );
         ds.setScope( Artifact.SCOPE_COMPILE );
-        ds.setFileMode( Integer.toString( 8, 8 ) );
+        ds.setFileMode( Integer.toString( 10, 8 ) );
         
         Assembly assembly = new Assembly();
         
