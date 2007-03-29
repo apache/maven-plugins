@@ -78,8 +78,8 @@ public class AddDependencySetsTaskTest
         ds.setUnpack( unpack );
         ds.setScope( Artifact.SCOPE_COMPILE );
 
-        ds.setDirectoryMode( Integer.toString( 8, 8 ) );
-        ds.setFileMode( Integer.toString( 8, 8 ) );
+        ds.setDirectoryMode( Integer.toString( 10, 8 ) );
+        ds.setFileMode( Integer.toString( 10, 8 ) );
 
         MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mockManager );
 
