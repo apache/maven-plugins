@@ -13,6 +13,7 @@ import org.apache.maven.plugin.assembly.model.DependencySet;
 import org.apache.maven.plugin.assembly.model.UnpackOptions;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.apache.maven.plugin.assembly.utils.FilterUtils;
+import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
@@ -120,7 +121,7 @@ public class AddDependencySetsTask
             }
             else
             {
-                AddArtifactTask task = new AddArtifactTask( depArtifact );
+                AddArtifactTask task = new AddArtifactTask( depArtifact, logger );
 
                 task.setProject( depProject );
                 task.setOutputDirectory( dependencySet.getOutputDirectory(), defaultOutputDirectory );
@@ -200,7 +201,7 @@ public class AddDependencySetsTask
 
         try
         {
-            archiver.addFile( source, target, Integer.decode( dependencySet.getFileMode() ).intValue() );
+            archiver.addFile( source, target, TypeConversionUtils.modeToInt( dependencySet.getFileMode(), logger ) );
         }
         catch ( ArchiverException e )
         {
