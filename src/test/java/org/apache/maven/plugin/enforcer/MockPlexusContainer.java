@@ -55,6 +55,26 @@ public class MockPlexusContainer
     /*
      * (non-Javadoc)
      * 
+     * @see org.codehaus.plexus.PlexusContainer#lookup(java.lang.String)
+     */
+    public Object lookup( String theComponentKey )
+        throws ComponentLookupException
+    {
+        if ( theComponentKey.equals( MavenProject.class.getName() ) )
+        {
+            return new MavenProject();
+        }
+        else if ( theComponentKey.equals( RuntimeInformation.class.getName() ) )
+        {
+            return new MockRuntimeInformation();
+        }
+
+        return null;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.codehaus.plexus.PlexusContainer#addComponentDescriptor(org.codehaus.plexus.component.repository.ComponentDescriptor)
      */
     public void addComponentDescriptor( ComponentDescriptor theComponentDescriptor )
@@ -338,26 +358,6 @@ public class MockPlexusContainer
     {
         // TODO Auto-generated method stub
         return false;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.codehaus.plexus.PlexusContainer#lookup(java.lang.String)
-     */
-    public Object lookup( String theComponentKey )
-        throws ComponentLookupException
-    {
-        if ( theComponentKey.equals( MavenProject.class.getName() ) )
-        {
-            return new MavenProject();
-        }
-        else if ( theComponentKey.equals( RuntimeInformation.class.getName() ) )
-        {
-            return new DefaultRuntimeInformation();
-        }
-
-        return null;
     }
 
     /*

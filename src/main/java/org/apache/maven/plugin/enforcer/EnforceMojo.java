@@ -76,6 +76,7 @@ public class EnforceMojo
     protected boolean failFast = false;
 
     /**
+     * List of objects that implement the EnforcerRule interface to execute.
      * @parameter
      * @required
      */

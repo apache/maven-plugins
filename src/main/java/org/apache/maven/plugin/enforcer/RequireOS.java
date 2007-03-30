@@ -63,27 +63,27 @@ public class RequireOS
      * <li>os/400</li>
      * </ul>
      */
-    private String family = null;
+    public String family = null;
 
     /**
      * Runtime information containing Maven Version.
      */
-    private String name = null;
+    public String name = null;
 
     /**
      * Runtime information containing Maven Version.
      */
-    private String version = null;
+    public String version = null;
 
     /**
      * Runtime information containing Maven Version.
      */
-    private String arch = null;
+    public String arch = null;
 
     /**
      * Display detected OS information.
      */
-    private boolean display = false;
+    public boolean display = false;
 
     private Set validFamilies = null;
 
