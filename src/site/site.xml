@@ -28,6 +28,7 @@
       <item name="FAQ" href="faq.html"/>
     </menu>
     <menu name="Examples">
+   	  <item name="Preparing Dependencies for Maven 2.0.6 / 2.1" href="examples/preparing-dependencies.html"/>
       <item name="Copying Specific Artifacts" href="examples/copying-artifacts.html" />
       <item name="Copying Project Dependencies" href="examples/copying-project-dependencies.html" />
       <item name="Unpacking Specific Artifacts" href="examples/unpacking-artifacts.html" />

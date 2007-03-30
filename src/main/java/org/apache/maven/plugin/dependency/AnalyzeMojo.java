@@ -174,14 +174,7 @@ public class AnalyzeMojo
     {
         if ( artifacts.isEmpty() )
         {
-            if ( warn )
-            {
-                getLog().warn( "   None" );
-            }
-            else
-            {
-                getLog().info( "   None" );
-            }
+            getLog().info( "   None" );
         }
         else
         {

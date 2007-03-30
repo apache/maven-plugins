@@ -578,7 +578,7 @@ mvn dependency:analyze
 	
 	This mojo is also usefull for just detecting projects that override the dependencyManagement directly. Set ignoreDirect to false to detect these otherwise normal conditions.
 	
-	NOTE: In 2.0-alpha-3, the Labels shown in the output are reversed. This is corrected in 2.0-alpha-4: See MDEP-78.
+	NOTE: In 2.0-alpha-3, the Labels shown in the output are reversed. This is corrected in 2.0-alpha-4: See MDEP-78. Use mvn -U to update to alpha-4.
 	
 	This mojo can be executed from the command line:
 	

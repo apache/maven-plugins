@@ -48,7 +48,8 @@ Copying Project Dependencies
             <configuration>
               <outputDirectory>${project.build.directory}/alternateLocation</outputDirectory>
               <overWriteReleases>false</overWriteReleases>
-              <overWriteSnapshots>true</overWriteSnapshots>
+              <overWriteSnapshots>false</overWriteSnapshots>
+              <overWriteIfNewer>true</overWriteIfNewer>
             </configuration>
           </execution>
         </executions>
