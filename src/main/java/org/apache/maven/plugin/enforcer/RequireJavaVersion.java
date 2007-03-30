@@ -26,6 +26,7 @@ import java.util.List;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.shared.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleHelper;
@@ -45,9 +46,19 @@ public class RequireJavaVersion
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
+        String java_version = SystemUtils.JAVA_VERSION_TRIMMED;
+        Log log = helper.getLog();
 
-        ArtifactVersion detectedJdkVersion = new DefaultArtifactVersion(
-                                                                         fixJDKVersion( SystemUtils.JAVA_VERSION_TRIMMED ) );
+        log.debug( "Detected Java String: " + java_version );
+        java_version = normalizeJDKVersion( java_version );
+        log.debug( "Normalized Java String: " + java_version );
+
+        ArtifactVersion detectedJdkVersion = new DefaultArtifactVersion( java_version );
+        
+        log.debug( "Parsed Version: Major: " + detectedJdkVersion.getMajorVersion() + " Minor: "
+            + detectedJdkVersion.getMinorVersion() + " Incremental: " + detectedJdkVersion.getIncrementalVersion()
+            + " Build: " + detectedJdkVersion.getBuildNumber() + " Qualifier: " + detectedJdkVersion.getQualifier() );
+        
         enforceVersion( helper.getLog(), "JDK", version, detectedJdkVersion );
     }
 
@@ -59,8 +70,9 @@ public class RequireJavaVersion
      *            to be converted.
      * @return the converted string.
      */
-    public static String fixJDKVersion( String theJdkVersion )
+    public static String normalizeJDKVersion( String theJdkVersion )
     {
+
         theJdkVersion = theJdkVersion.replaceAll( "_|-", "." );
         String tokenArray[] = StringUtils.split( theJdkVersion, "." );
         List tokens = Arrays.asList( tokenArray );
@@ -69,7 +81,11 @@ public class RequireJavaVersion
         Iterator iter = tokens.iterator();
         for ( int i = 0; i < tokens.size() && i < 4; i++ )
         {
-            buffer.append( iter.next() );
+            String section = (String) iter.next();
+            section = section.replaceAll( "[^0-9]", "" );
+
+            buffer.append( Integer.parseInt( section ) );
+
             if ( i != 2 )
             {
                 buffer.append( '.' );

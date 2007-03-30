@@ -33,7 +33,7 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id: EnforceMojo.java 523156 2007-03-28 03:53:54Z brianf $
  */
-public class DisplayOsMojo
+public class DisplayInfoMojo
     extends AbstractMojo
 {
     /**
@@ -59,9 +59,9 @@ public class DisplayOsMojo
             RequireJavaVersion java = new RequireJavaVersion();
             getLog().info(
                            "JDK Version: " + SystemUtils.JAVA_VERSION + " normalized as: "
-                               + java.fixJDKVersion( SystemUtils.JAVA_VERSION_TRIMMED ) );
+                               + java.normalizeJDKVersion( SystemUtils.JAVA_VERSION_TRIMMED ) );
             RequireOS os = new RequireOS();
-            os.displayOSInfo( getLog() );
+            os.displayOSInfo( getLog(), true );
 
         }
         catch ( ComponentLookupException e )

@@ -40,8 +40,9 @@ public class TestRequireOS
     public void testOS()
     {
         Log log = new SystemStreamLog();
+      
         RequireOS rule = new RequireOS();
-        rule.displayOSInfo( log );
+        rule.displayOSInfo( log, true );
 
         Iterator iter = rule.getValidFamilies().iterator();
         String validFamily = null;
