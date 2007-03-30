@@ -36,23 +36,26 @@ public class TestRequireJavaVersion
     public void testFixJDKVersion()
     {
         // test that we only take the first 3 versions for comparision
-        assertEquals( "1.5.0-11", RequireJavaVersion.fixJDKVersion( "1.5.0_11" ) );
-        assertEquals( "1.5.1", RequireJavaVersion.fixJDKVersion( "1.5.1" ) );
-        assertEquals( "1.5.2-1", RequireJavaVersion.fixJDKVersion( "1.5.2-1.b11" ) );
-        assertEquals( "1.5.3-11", RequireJavaVersion.fixJDKVersion( "1.5.3_11" ) );
-        assertEquals( "1.5.4-5", RequireJavaVersion.fixJDKVersion( "1.5.4.5_11" ) );
-        assertEquals( "1.5.5-6", RequireJavaVersion.fixJDKVersion( "1.5.5.6_11.2" ) );
+        assertEquals( "1.5.0-11", RequireJavaVersion.normalizeJDKVersion( "1.5.0_11" ) );
+        assertEquals( "1.5.1", RequireJavaVersion.normalizeJDKVersion( "1.5.1" ) );
+        assertEquals( "1.5.2-1", RequireJavaVersion.normalizeJDKVersion( "1.5.2-1.b11" ) );
+        assertEquals( "1.5.3-11", RequireJavaVersion.normalizeJDKVersion( "1.5.3_11" ) );
+        assertEquals( "1.5.4-5", RequireJavaVersion.normalizeJDKVersion( "1.5.4.5_11" ) );
+        assertEquals( "1.5.5-6", RequireJavaVersion.normalizeJDKVersion( "1.5.5.6_11.2" ) );
 
         // test for non-standard versions
-        assertEquals( "1.5.0-11", RequireJavaVersion.fixJDKVersion( "1-5-0-11" ) );
-        assertEquals( "1.5.0-11", RequireJavaVersion.fixJDKVersion( "1-_5-_0-_11" ) );
-        assertEquals( "1.5.0-11", RequireJavaVersion.fixJDKVersion( "1_5_0_11" ) );
+        assertEquals( "1.5.0-11", RequireJavaVersion.normalizeJDKVersion( "1-5-0-11" ) );
+        assertEquals( "1.5.0-11", RequireJavaVersion.normalizeJDKVersion( "1-_5-_0-_11" ) );
+        assertEquals( "1.5.0-11", RequireJavaVersion.normalizeJDKVersion( "1_5_0_11" ) );
+        assertEquals( "1.5.0-7", RequireJavaVersion.normalizeJDKVersion( "1.5.0-07" ) );
+        assertEquals( "1.5.0-7", RequireJavaVersion.normalizeJDKVersion( "1.5.0-b7" ) );
+        assertEquals( "1.5.0-7", RequireJavaVersion.normalizeJDKVersion( "1.5.0-;7" ) );
     }
 
     public void testRule()
         throws EnforcerRuleException
     {
-        String thisVersion = RequireJavaVersion.fixJDKVersion( SystemUtils.JAVA_VERSION_TRIMMED );
+        String thisVersion = RequireJavaVersion.normalizeJDKVersion( SystemUtils.JAVA_VERSION_TRIMMED );
 
         RequireJavaVersion rule = new RequireJavaVersion();
         rule.setVersion( thisVersion );
@@ -62,7 +65,7 @@ public class TestRequireJavaVersion
 
         // test the singular version
         rule.execute( helper );
-
+   
         // exclude this version
         rule.setVersion( "(" + thisVersion );
 

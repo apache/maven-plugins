@@ -35,11 +35,13 @@ Require Java Version
 
    The JDK version is retrieved and the following processing occurs before being checked:
    
-  [[1]] Drop all non-numeric characters preceeding the first number. (build 1.5.0_11-b03 becomes 1.5.0_11-b03)
+  [[1]] Drop all non-numeric characters preceeding the first number. (build 1.5.0_07-b03 becomes 1.5.0_07-b03)
   
-  [[2]] Replace all '_' and '-' with '.' (1.5.0_11-b03 becomes 1.5.0.11.b03)
+  [[2]] Replace all '_' and '-' with '.' (1.5.0_07-b03 becomes 1.5.0.07.b03)
   
-  [[3]] Split the string on '.' and take the first 3 sections, separated by '.' and add '-' followed by the forth section (1.5.0.11.b03 becomes 1.5.0-11)
+  [[3]] Remove all non digit characters "[^0-9] and convert each section using Integer.parseInt() (1.5.0_07-b03 becomes 1.5.0.7.3)
+  
+  [[3]] Split the string on '.' and take the first 3 sections, separated by '.' and add '-' followed by the forth section (1.5.0.7.3 becomes 1.5.0-7)
   
   []
    
