@@ -11,7 +11,6 @@ import org.apache.maven.plugin.assembly.format.FileFormatter;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.FileItem;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
-import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
@@ -81,7 +80,7 @@ public class FileItemAssemblyPhase
 
             try
             {
-                archiver.addFile( source, target, TypeConversionUtils.modeToInt( fileItem.getFileMode(), getLogger() ) );
+                archiver.addFile( source, target, Integer.decode( fileItem.getFileMode() ).intValue() );
             }
             catch ( ArchiverException e )
             {

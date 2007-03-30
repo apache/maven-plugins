@@ -17,7 +17,6 @@ import org.apache.maven.plugin.assembly.model.ModuleSet;
 import org.apache.maven.plugin.assembly.model.ModuleSources;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
-import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.codehaus.plexus.logging.Logger;
@@ -247,7 +246,7 @@ public class ModuleSetAssemblyPhaseTest
         macTask.expectIsSnapshot( false );
         macTask.expectGetArtifactHandler();
         
-        int mode = TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
+        int mode = Integer.decode( "777" ).intValue();
 
         macTask.expectAddFile( "out/artifact", mode );
 
@@ -326,7 +325,7 @@ public class ModuleSetAssemblyPhaseTest
         macTask.expectGetFinalName( "final-name" );
         macTask.expectIsSnapshot( false );
         macTask.expectGetArtifactHandler();
-        macTask.expectAddFile( "out/artifact", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
+        macTask.expectAddFile( "out/artifact", Integer.decode( "777" ).intValue() );
 
         ModuleBinaries binaries = new ModuleBinaries();
 
@@ -403,7 +402,7 @@ public class ModuleSetAssemblyPhaseTest
         macTask.expectGetFinalName( "final-name" );
         macTask.expectIsSnapshot( false );
         macTask.expectGetArtifactHandler();
-        macTask.expectAddFile( "out/artifact", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
+        macTask.expectAddFile( "out/artifact", Integer.decode( "777" ).intValue() );
 
         ModuleBinaries binaries = new ModuleBinaries();
 
@@ -439,7 +438,7 @@ public class ModuleSetAssemblyPhaseTest
         macTask.expectGetFinalName( "final-name" );
         macTask.expectIsSnapshot( false );
         macTask.expectGetArtifactHandler();
-        macTask.expectAddFile( "out/artifact", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
+        macTask.expectAddFile( "out/artifact", Integer.decode( "777" ).intValue() );
 
         ModuleBinaries binaries = new ModuleBinaries();
 
@@ -469,7 +468,7 @@ public class ModuleSetAssemblyPhaseTest
 
         macDepArtifact.expectGetFile( artifactFile );
 
-        macTask.expectAddFile( artifactFile, "out/dep", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
+        macTask.expectAddFile( artifactFile, "out/dep", Integer.decode( "777" ).intValue() );
 
         MavenProject depProject = createProject( "group", "dep", "version", null );
 
@@ -506,7 +505,7 @@ public class ModuleSetAssemblyPhaseTest
         macTask.expectGetFinalName( "final-name" );
         macTask.expectIsSnapshot( false );
         macTask.expectGetArtifactHandler();
-        macTask.expectAddFile( "out/artifact", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
+        macTask.expectAddFile( "out/artifact", Integer.decode( "777" ).intValue() );
 
         ModuleBinaries binaries = new ModuleBinaries();
 
@@ -530,7 +529,7 @@ public class ModuleSetAssemblyPhaseTest
 
         macDepArtifact.expectGetFile( artifactFile );
 
-        macTask.expectAddFile( artifactFile, "out/dep", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
+        macTask.expectAddFile( artifactFile, "out/dep", Integer.decode( "777" ).intValue() );
 
         MavenProject depProject = createProject( "group", "dep", "version", null );
 
@@ -639,7 +638,7 @@ public class ModuleSetAssemblyPhaseTest
         macTask.expectIsSnapshot( false );
         macTask.expectGetArtifactHandler();
 
-        macTask.expectAddFile( "out/artifact", TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
+        macTask.expectAddFile( "out/artifact", Integer.decode( "777" ).intValue() );
 
         ModuleBinaries binaries = new ModuleBinaries();
         binaries.setOutputDirectory( "out" );
@@ -699,7 +698,7 @@ public class ModuleSetAssemblyPhaseTest
 
         macTask.expectGetArchiveBaseDirectory();
 
-        int mode = TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
+        int mode = Integer.decode( "777" ).intValue();
         int[] modes = { -1, -1, mode, mode };
 
         macTask.expectAdditionOfSingleFileSet( project, project.getBasedir(), "final-name", false, modes, 1, true,

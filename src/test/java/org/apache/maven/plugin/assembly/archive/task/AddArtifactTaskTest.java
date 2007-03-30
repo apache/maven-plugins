@@ -5,10 +5,7 @@ import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForAddArtifactTask;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
-import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.codehaus.plexus.archiver.ArchiverException;
-import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.logging.console.ConsoleLogger;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -52,7 +49,7 @@ public class AddArtifactTaskTest
 
     private AddArtifactTask createTask( Artifact artifact )
     {
-        AddArtifactTask task = new AddArtifactTask( artifact, new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
+        AddArtifactTask task = new AddArtifactTask( artifact );
 
         task.setFileNameMapping( "artifact" );
 
@@ -90,8 +87,8 @@ public class AddArtifactTaskTest
     public void testShouldAddArchiveFileWithUnpackAndModes()
         throws ArchiveCreationException, AssemblyFormattingException
     {
-        int directoryMode = TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
-        int fileMode = TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
+        int directoryMode = Integer.decode( "777" ).intValue();
+        int fileMode = Integer.decode( "777" ).intValue();
         
         mac.expectModeChange( -1, -1, directoryMode, fileMode, 2 );
         mac.expectIsSnapshot( false );

@@ -232,7 +232,7 @@ public class ModuleSetAssemblyPhase
                             + "Please ensure the package phase is run before the assembly is generated." );
         }
 
-        AddArtifactTask task = new AddArtifactTask( artifact, getLogger() );
+        AddArtifactTask task = new AddArtifactTask( artifact );
 
         task.setFileNameMapping( binaries.getOutputFileNameMapping() );
         task.setOutputDirectory( binaries.getOutputDirectory() );

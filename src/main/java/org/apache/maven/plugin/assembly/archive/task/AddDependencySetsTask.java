@@ -10,10 +10,8 @@ import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.DependencySet;
-import org.apache.maven.plugin.assembly.model.UnpackOptions;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.apache.maven.plugin.assembly.utils.FilterUtils;
-import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
@@ -121,7 +119,7 @@ public class AddDependencySetsTask
             }
             else
             {
-                AddArtifactTask task = new AddArtifactTask( depArtifact, logger );
+                AddArtifactTask task = new AddArtifactTask( depArtifact );
 
                 task.setProject( depProject );
                 task.setOutputDirectory( dependencySet.getOutputDirectory(), defaultOutputDirectory );
@@ -129,13 +127,6 @@ public class AddDependencySetsTask
                 task.setDirectoryMode( dependencySet.getDirectoryMode() );
                 task.setFileMode( dependencySet.getFileMode() );
                 task.setUnpack( dependencySet.isUnpack() );
-
-                UnpackOptions opts = dependencySet.getUnpackOptions();
-                if ( dependencySet.isUnpack() && opts != null )
-                {
-                    task.setIncludes( opts.getIncludes() );
-                    task.setExcludes( opts.getExcludes() );
-                }
 
                 task.execute( archiver, configSource );
             }
@@ -201,7 +192,7 @@ public class AddDependencySetsTask
 
         try
         {
-            archiver.addFile( source, target, TypeConversionUtils.modeToInt( dependencySet.getFileMode(), logger ) );
+            archiver.addFile( source, target, Integer.decode( dependencySet.getFileMode() ).intValue() );
         }
         catch ( ArchiverException e )
         {

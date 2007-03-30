@@ -11,7 +11,6 @@ import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.format.FileSetFormatter;
 import org.apache.maven.plugin.assembly.model.FileSet;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
-import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.logging.Logger;
@@ -118,8 +117,8 @@ public class AddFileSetsTask
 
             AddDirectoryTask task = new AddDirectoryTask( fileSetDir );
 
-            task.setDirectoryMode( TypeConversionUtils.modeToInt( fileSet.getDirectoryMode(), logger ) );
-            task.setFileMode( TypeConversionUtils.modeToInt( fileSet.getFileMode(), logger ) );
+            task.setDirectoryMode( Integer.decode( fileSet.getDirectoryMode() ).intValue() );
+            task.setFileMode( Integer.decode( fileSet.getFileMode() ).intValue() );
             task.setUseDefaultExcludes( fileSet.isUseDefaultExcludes() );
             task.setExcludes( fileSet.getExcludes() );
             task.setIncludes( fileSet.getIncludes() );

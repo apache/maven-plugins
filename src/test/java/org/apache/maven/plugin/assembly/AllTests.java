@@ -22,7 +22,6 @@ import org.apache.maven.plugin.assembly.utils.FilterUtilsTest;
 import org.apache.maven.plugin.assembly.utils.ProjectUtilsTest;
 import org.apache.maven.plugin.assembly.utils.PropertiesInterpolationValueSourceTest;
 import org.apache.maven.plugin.assembly.utils.PropertyUtilsTest;
-import org.apache.maven.plugin.assembly.utils.TypeConversionUtilsTest;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -56,7 +55,6 @@ public class AllTests
         suite.addTestSuite( PropertyUtilsTest.class );
         suite.addTestSuite( AssemblyFormatUtilsTest.class );
         suite.addTestSuite( DefaultAssemblyReaderTest.class );
-        suite.addTestSuite( TypeConversionUtilsTest.class );
         //$JUnit-END$
         return suite;
     }

@@ -12,15 +12,14 @@ import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
-import org.codehaus.plexus.logging.Logger;
 
 public class AddArtifactTask
     implements ArchiverTask
 {
 
-    private String directoryMode;
+    private int directoryMode = -1;
 
-    private String fileMode;
+    private int fileMode = -1;
 
     private boolean unpack = false;
 
@@ -36,12 +35,9 @@ public class AddArtifactTask
 
     private String outputFileNameMapping;
 
-    private final Logger logger;
-
-    public AddArtifactTask( Artifact artifact, Logger logger )
+    public AddArtifactTask( Artifact artifact )
     {
         this.artifact = artifact;
-        this.logger = logger;
     }
 
     public void execute( Archiver archiver, AssemblerConfigurationSource configSource )
@@ -70,14 +66,14 @@ public class AddArtifactTask
 
             try
             {
-                if ( fileMode != null )
+                if ( fileMode > -1 )
                 {
-                    archiver.setDefaultFileMode( TypeConversionUtils.modeToInt( fileMode, logger ) );
+                    archiver.setDefaultFileMode( fileMode );
                 }
 
-                if ( directoryMode != null )
+                if ( directoryMode > -1 )
                 {
-                    archiver.setDefaultDirectoryMode( TypeConversionUtils.modeToInt( directoryMode, logger ) );
+                    archiver.setDefaultDirectoryMode( directoryMode );
                 }
 
                 archiver.addArchivedFileSet( artifact.getFile(), outputLocation, includesArray, excludesArray );
@@ -97,13 +93,11 @@ public class AddArtifactTask
         {
             try
             {
-                if ( fileMode != null )
+                if ( fileMode > -1 )
                 {
                     File artifactFile = artifact.getFile();
                     
-                    int mode = TypeConversionUtils.modeToInt( fileMode, logger );
-                    
-                    archiver.addFile( artifactFile, outputLocation, mode );
+                    archiver.addFile( artifactFile, outputLocation, fileMode );
                 }
                 else
                 {
@@ -118,14 +112,14 @@ public class AddArtifactTask
         }
     }
 
-    public void setDirectoryMode( String directoryMode )
+    public void setDirectoryMode( String rawDirectoryMode )
     {
-        this.directoryMode = directoryMode;
+        this.directoryMode = Integer.decode( rawDirectoryMode ).intValue();
     }
 
-    public void setFileMode( String fileMode )
+    public void setFileMode( String rawFileMode )
     {
-        this.fileMode = fileMode;
+        this.fileMode = Integer.decode( rawFileMode ).intValue();
     }
 
     public void setExcludes( List excludes )
