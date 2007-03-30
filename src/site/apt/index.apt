@@ -33,7 +33,9 @@ Maven Enforcer Plugin - The Loving Iron Fist of Maven\x99
 
   *{{{enforce-mojo.html}enforcer:enforce}} executes rules for each project in a multi-project build.
   
-  *{{{enforce-once-mojo.html}enforcer:os}} executes rules once per build.
+  *{{{enforce-once-mojo.html}enforcer:enforce-once}} executes rules once per build.
+  
+  *{{{display-info-mojo.html}enforcer:display-info}} display the current information as detected by the standard rules.
 
 * Usage
 
