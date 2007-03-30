@@ -16,28 +16,19 @@
 ~~ under the License.    
  
   ------
-  Introduction
+  Standard Rules
   ------
   Brian Fox
   ------
   Mar 2007
   ------
 
-Maven Enforcer Plugin - The Loving Iron Fist of Maven\x99
+Standard Rules
 
-	The Enforcer plugin provides goals to control certain environmental constraints such as Maven Version, JDK version, and OS family.
-
-* Goals Overview
-
-  The Enforcer plugin has two goals:
-
-  *{{{enforce-mojo.html}enforcer:enforce}} executes rules for each project in a multi-project build.
-  
-  *{{{enforce-once-mojo.html}enforcer:os}} executes rules once per build.
-
-* Usage
-
-  Instructions on how to use the enforcer plugin can be found {{{usage.html}here}}.
-
-
-
+	The following standard rules ship along with the enforcer plugin:
+	
+	* {{{requireMavenVersion.html}requireMavenVersion}} - enforces the Maven version.
+	
+	* {{{requireJavaVersion.html}requireJavaVersion}} - enforces the JDK version.
+	
+	* {{{requireJavaVersion.html}requireOS}} - enforces the OS / CPU Archictecture.

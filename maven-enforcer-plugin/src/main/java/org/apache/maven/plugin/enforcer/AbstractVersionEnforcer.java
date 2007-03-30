@@ -53,7 +53,7 @@ public abstract class AbstractVersionEnforcer
      * @parameter
      * @required
      */
-    protected String version = null;
+    public String version = null;
 
     /**
      * Compares the specified version to see if it is allowed by the defined

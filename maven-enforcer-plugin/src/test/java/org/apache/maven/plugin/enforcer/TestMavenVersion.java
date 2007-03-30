@@ -34,37 +34,34 @@ public class TestMavenVersion
     extends TestCase
 {
     public void testRule()
-    throws EnforcerRuleException
-{
-    
-        
-    String thisVersion = RequireJavaVersion.fixJDKVersion( SystemUtils.JAVA_VERSION_TRIMMED );
-
-    RequireJavaVersion rule = new RequireJavaVersion();
-    rule.setVersion( thisVersion );
-
-    EnforcerRuleHelper helper = new DefaultEnforcementRuleHelper( EnforcerTestUtils.getMavenSession(),
-                                                                  new SystemStreamLog() );
-
-    // test the singular version
-    rule.execute( helper );
-
-    // exclude this version
-    rule.setVersion( "(" + thisVersion );
-
-    try
+        throws EnforcerRuleException
     {
+
+        RequireMavenVersion rule = new RequireMavenVersion();
+        rule.setVersion( "2.0.5" );
+
+        EnforcerRuleHelper helper = new DefaultEnforcementRuleHelper( EnforcerTestUtils.getMavenSession(),
+                                                                      new SystemStreamLog() );
+
+        // test the singular version
         rule.execute( helper );
-        fail( "Expected an exception." );
-    }
-    catch ( EnforcerRuleException e )
-    {
-        // expected to catch this.
-    }
-    
-    //this shouldn't crash
-    rule.setVersion( SystemUtils.JAVA_VERSION_TRIMMED );
-    rule.execute( helper );
 
-}
+        // exclude this version
+        rule.setVersion( "(2.0.5" );
+
+        try
+        {
+            rule.execute( helper );
+            fail( "Expected an exception." );
+        }
+        catch ( EnforcerRuleException e )
+        {
+            // expected to catch this.
+        }
+
+        // this shouldn't crash
+        rule.setVersion( SystemUtils.JAVA_VERSION_TRIMMED );
+        rule.execute( helper );
+
+    }
 }
