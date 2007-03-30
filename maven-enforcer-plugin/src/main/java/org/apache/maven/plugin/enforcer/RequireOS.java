@@ -111,10 +111,8 @@ public class RequireOS
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
-        if ( display )
-        {
-            displayOSInfo( helper.getLog() );
-        }
+
+        displayOSInfo( helper.getLog(), display );
 
         if ( allParamsEmpty() )
         {
@@ -153,10 +151,19 @@ public class RequireOS
      * 
      * @param log
      */
-    public void displayOSInfo( Log log )
+    public void displayOSInfo( Log log, boolean info )
     {
-        log.info( "OS Info: Arch: " + RequireOS.OS_ARCH + " Family: " + determineOsFamily() + " Name: "
-            + RequireOS.OS_NAME + " Version: " + RequireOS.OS_VERSION );
+        String string = "OS Info: Arch: " + RequireOS.OS_ARCH + " Family: " + determineOsFamily() + " Name: "
+            + RequireOS.OS_NAME + " Version: " + RequireOS.OS_VERSION;
+
+        if ( !info )
+        {
+            log.debug( string );
+        }
+        else
+        {
+            log.info( string );
+        }
     }
 
     /**
