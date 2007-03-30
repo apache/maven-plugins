@@ -1,0 +1,84 @@
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~ http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.    
+ 
+  ------
+  Fixing Dependency Problems
+  ------
+  Brian Fox
+  ------
+  Mar 2007
+  ------
+
+How to prepare your dependencies before updating to Maven 2.0.6:
+ 
+  If you have dependencies in dependencyManagement that conflict with transitive dependencies, the fix for MNG-1577 may alter the version you get when running a build with 2.0.6. To ensure a smooth transition, there is a tool to detect these conditions.
+ 
+  In your project, run "mvn dependency:analyze" (be sure to use 2.0.5 or the plugin won't detect mismatches) This will display output similar to below:
+
++---+
+[INFO] [dependency:analyze]
+[INFO] Used declared dependencies:
+[INFO]    org.codehaus.plexus:plexus-archiver:jar:1.0-alpha-7:compile
+[INFO]    junit:junit:jar:3.8.1:test
+[INFO]
+org.codehaus.plexus:plexus-container-default:jar:1.0-alpha-9:compile
+[INFO]    org.apache.maven:maven-model:jar:2.0.5:compile
+[INFO]    org.apache.maven:maven-project:jar:2.0.5:compile
+[INFO]    org.apache.maven.shared:file-management:jar:1.1:compile
+[INFO]    org.codehaus.plexus:plexus-utils:jar:1.1:compile
+[INFO]    org.apache.maven:maven-artifact:jar:2.0.5:compile
+[INFO]    org.apache.maven:maven-plugin-api:jar:2.0.5:compile
+[INFO]    org.apache.maven.shared:maven-plugin-testing-harness:jar:1.0-beta-1:test
+[INFO]    org.apache.maven.shared:maven-dependency-analyzer:jar:1.0:compile
+[INFO] Used undeclared dependencies:
+[INFO]    None
+[INFO] Unused declared dependencies:
+[INFO]    None
+[INFO] Found Resolved Dependency / DependencyManagement mismatches:
+[INFO]  Dependency: commons-lang:commons-lang:jar
+[INFO]          DepMgt  : 1.0
+[INFO]          Resolved: 2.3
+[INFO]  Dependency: commons-digester:commons-digester:jar
+[INFO]          DepMgt  : 1.6
+[INFO]          Resolved: 1.7
+[INFO]  Dependency: javax.servlet:servlet-api:jar
+[INFO]          DepMgt  : 2.3
+[INFO]          Resolved: 2.4
+[WARNING] Potential problems found in Dependency Management
++---+ 
+  In the sample above, you can see that I am actually getting versions different than what I'm asking for. In 2.0.6, I would suddenly be downgraded to commons-lang 1.0 from 2.3, commons-digester 1.6 from 1.7 and servlet-api 2.3 from 2.4. Depending on the jars and your project, this may manifest as compile errors or runtime errors.
+
+  When you see these mismatches, the suggested approach is to adjust your dependencyManagement section to have the version you are actually getting (in this case, 2.3,1.7 and 2.4 respectively). Then when you upgrade to 2.0.6, you will be getting the same versions in your build that you currently get in 2.0.5.
+
+  You should also pay particular attention to the Used Declared dependencies because this is showing that you are using something that isn't declared. The plugin may not detect specific mismatches between dependencyManagement if the dependencies are not specifically declared.
+  Using dependencies in your projects that are not declared is a dangerous proposition as it doesn't provide Maven with the correct information to properly choose the correct version. The recommended fix for this is to add any dependencies that analyze finds to your pom.
+
+  This goal can also detect conflicts with the dependencyManagement excludes to show where files that are excluded creep back in and to show where individual poms override the dependencyManagement. These things are not directly affected by 2.0.6, but can be handy to know.
+
+  After upgrading to 2.0.6, you may want to remove workarounds to MNG-1577 that you have put in place. These usually would have been the introduction of a dependency to your pom that wasn't nessessary simply to override a transitive version. If you have workarounds in your pom, they will show up as Unused declared dependencies. Note that currently the test and runtime dependencies are excluded from the usage analysis.
+
+  Read more here:
+  
+  * {{{analyze-mojo.html}Analyze Mojo}}
+
+  * {{{analyze-dep-mgt-mojo.html}Analyze-dep-mgt Mojo}}
+
+  * {{{usage.html}Usage}}
+
+  []
+
+
