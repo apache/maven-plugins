@@ -9,6 +9,7 @@ import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.Repository;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
+import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.apache.maven.shared.repository.RepositoryAssembler;
 import org.apache.maven.shared.repository.RepositoryAssemblyException;
 import org.apache.maven.shared.repository.RepositoryBuilderConfigSource;
@@ -78,8 +79,8 @@ public class RepositoryAssemblyPhase
             
             AddDirectoryTask task = new AddDirectoryTask( repositoryDirectory );
             
-            task.setDirectoryMode( Integer.decode( repository.getDirectoryMode() ).intValue() );
-            task.setFileMode( Integer.decode( repository.getFileMode() ).intValue() );
+            task.setDirectoryMode( TypeConversionUtils.modeToInt( repository.getDirectoryMode(), getLogger() ) );
+            task.setFileMode( TypeConversionUtils.modeToInt( repository.getFileMode(), getLogger() ) );
             task.setUseDefaultExcludes( repository.isUseDefaultExcludes() );
             task.setOutputDirectory( outputDirectory );
             
