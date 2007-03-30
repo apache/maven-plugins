@@ -39,58 +39,28 @@ Usage
   
   []
 
-* The <<<enforcer:enforce>>> mojo
+* The <<<enforcer:enforce>>> and <<<enforcer:enforce-once>>> mojos
 
-   This goal is meant to be bound to a lifecycle phase and configured in your
-   <<<pom.xml>>>. This goal can enforce a specific range of allowed versions for Maven and the JDK.
+   These goals are meant to be bound to a lifecycle phase and configured in your
+   <<<pom.xml>>>. The enforcers execute the configured rules to check for certain constraints. 
+   The available standard rules are described {{{rules/index.html}here}}. Besides the rules to execute, these goals support three options:
    
-   The standard Maven version range syntax is supported with one minor change for ease of use (denoted with *):
+   * {{{enforce-mojo.html#skip}skip}} - a quick way to skip checks via a profile or using -Denforcer.skip=true from the command line.
    
-
-*----------*--------------+
-| Range    | Meaning      |
-*----------*--------------+
-| 1.0      | x \>\= 1.0 \* The default maven meaning for 1.0 is everything (,) but with 1.0 recommended. Obviously this doesn't work for enforcing versions here, so it has been redefined as a minimum version.
-  |
-*----------*--------------+
-| (,1.0]   | x \<\= 1.0     |
-*----------*--------------+
-| (,1.0)   | x \< 1.0      |
-*----------*--------------+
-| [1.0]    | x \=\= 1.0     |
-*----------*--------------+
-| [1.0,)   | x \>\= 1.0     |
-*----------*--------------+
-| (1.0,)   | x \> 1.0      |
-*----------*--------------+
-| (1.0,2.0)| 1.0 \>\= x \<\= 2.0     |
-*----------*--------------+
-| [1.0,2.0]| 1.0 \> x \< 2.0     |
-*----------*--------------+
-| (,1.0],[1.2,)   |x \<\= 1.0 or x \>\= 1.2. Multiple sets are comma-separated |
-*----------*--------------+
-| (,1.1),(1.1,) |x !\= 1.1 |
-*----------*--------------+
-
-
-   The JDK version is retrieved and the following processing occurs before being checked:
+   * {{{enforce-mojo.html#fail}fail}} - if the goal should fail the build when a rule fails. The default is true. If false, the errors will be logged as warnings.
    
-  [[1]] Drop all non-numeric characters preceeding the first number. (build 1.5.0_11-b03 becomes 1.5.0_11-b03)
-  
-  [[2]] Replace all '_' and '-' with '.' (1.5.0_11-b03 becomes 1.5.0.11.b03)
-  
-  [[3]] Split the string on '.' and take the first 3 sections. (1.5.0.11.b03 becomes 1.5.0)
-  
-  []
+   * {{{enforce-mojo.html#failFast}failFast}} - if the goal should stop checking after the first failure. The default is false.
    
-   This preprocessing normalizes various JDK version strings into a standard x.y.z version number. Your required range should therefore use the x.y.z format for comparison.
-  
-   To enforce only the Maven version, do not specify a JDK version and vice versa. At least one must be set.
+   []
    
-   By default, the mojo will fail the build if a check does not succeed. If you would like a warning instead, set <<fail>> to false.
+   Each rule to be executed should be added to the rules element along with the specific configuration for that rule.
    
-   Configure the plugin something like this if you intend to bind it to execute along with your build:
-
+   The <<<enforce>>> goal executes against each project in a multi-project build. The <<<enforce-once>>> goal executes
+   just once per build. This is most effective for the standard rules because the Maven, Java and OS versions will not change between projects in the same build.
+   
+   
+   Sample Plugin Configuration:
+   
 +---+
 <project>
   [...]
@@ -103,12 +73,20 @@ Usage
           <execution>
             <id>enforce-versions</id>
             <goals>
-              <goal>enforce</goal>
+              <goal>enforce-once</goal>
             </goals>
             <configuration>
-            <mavenVersion>2.0.6</mavenVersion>
-            <jdkVersion>1.5.0</jdkVersion>
-            <fail>true</fail>
+              <rules>
+                <requireMavenVersion>
+                  <version>2.0.6</version>
+                </requireMavenVesion>
+                <requireJavaVersion>
+                  <version>1.5</version>
+                </requireJavaVersion>
+                <requireOS>
+                  <family>unix</family>
+                </requireOS>		
+              </rules>
             </configuration>
           </execution>
         </executions>
@@ -119,90 +97,16 @@ Usage
 </project>
 +---+
   
- * The <<<enforcer:os>>> mojo
-  
-  This goal can enforce certain values about the Operating System and processor architecture. 
-  The values and code used to determine if an OS is allowed is exactly the same as the OS Profile activation.
- 
-  There are several values that can be specified: family, name, version and arch(itecture). Family is calculated based on testing
-  against the name string retreived from the JDK. The values are retreived from the JDK using the following code:
-  
-+---+
-    public static final String OS_NAME = System.getProperty( "os.name" ).toLowerCase( Locale.US );
+* The <<<enforcer:display-info>>> mojo
 
-    public static final String OS_ARCH = System.getProperty( "os.arch" ).toLowerCase( Locale.US );
-
-    public static final String OS_VERSION = System.getProperty( "os.version" ).toLowerCase( Locale.US );
-+---+
-  
-  Possible Family values are:
-  
-     * dos
-  
-     * mac
-  
-     * netware
-  
-     * os/2
-  
-     * tandem
-  
-     * unix
-  
-     * windows
-  
-     * win9x
-  
-     * z/os
-  
-     * os/400
+   This goal is used to determine the current information as detected by the standard rules:
      
-     []
-     
-   The various options are considered to be "and'd" together but any number can be specified. 
-   (ie family = windows means windows, but family = windows and arch = x86 means only windows on x86 processors)
-   
-   Any parameter may also be used in the negative by prepending a "!" in front of it. For example !dos means everything but dos. (who uses dos anyway?)
-   
-   Since the various names, versions and architecture values cannot be listed exhaustively, there is an easy way to display the 
-   information for the current system:
-   
 +---+
-   mvn enforcer:os -Denforcer.os.display=true
+   mvn enforcer:display-info
    ...
-   [enforcer:os]
-    OS Info: Arch: x86 Family: windows Name: windows xp Version: 5.1
-+---+
-  
-  Sample POM configuration:
-  
-+---+
-<project>
-  [...]
-  <build>
-   <plugins>
-     <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>enforce-os</id>
-            <goals>
-              <goal>os</goal>
-            </goals>
-            <configuration>
-              <name>Windows XP</name>
-              <family>Windows</family>
-              <arch>x86</arch>
-              <version>5.1.2600</version>
-            <fail>true</fail>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
-  [...]
-</project>
+   [enforcer:display-info]
+       Maven Version: 2.0.6
+       JDK Version: 1.5.0_11 normalized as: 1.5.0-11
+       OS Info: Arch: x86 Family: windows Name: windows xp Version: 5.1
 +---+
   

@@ -27,6 +27,13 @@
       <item name="Usage" href="usage.html"/>
       <item name="FAQ" href="faq.html"/>
     </menu>
+    <menu name="Standard Rules">
+          <item name="Overview" href="rules/index.html"/>
+          <item name="RequireJavaVersion" href="rules/requireJavaVersion.html"/>
+          <item name="RequireMavenVersion" href="rules/requireMavenVersion.html"/>
+          <item name="RequireOS" href="rules/requireOS.html"/>
+          <item name="Version Range Specification" href="rules/versionRanges.html"/>
+    </menu>
     <menu name="Resources">
       <item name="Maven 2.0.x Version Range Syntax" href="http://docs.codehaus.org/display/MAVEN/Dependency+Mediation+and+Conflict+Resolution#DependencyMediationandConflictResolution-DependencyVersionRanges" />
     </menu>

@@ -1,0 +1,140 @@
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~ http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.    
+ 
+  ------
+  Require OS Version
+  ------
+  Brian Fox
+  ------
+  Mar 2007
+  ------
+
+Require OS Version
+
+  This rule can enforce certain values about the Operating System and processor architecture. 
+  The values and code used to determine if an OS is allowed are exactly the same as the OS Profile activation in Maven.
+
+
+   The following parameters are supported by this rule:
+   
+   * {{{../apidocs/org/apache/maven/plugin/enforcer/RequireOS.html#arch}arch}} - the cpu architecture.
+   
+   * {{{../apidocs/org/apache/maven/plugin/enforcer/RequireOS.html#family}family}} - the family of OS. Possible families are:
+   
+     * dos
+  
+     * mac
+  
+     * netware
+  
+     * os/2
+  
+     * tandem
+  
+     * unix
+  
+     * windows
+  
+     * win9x
+  
+     * z/os
+  
+     * os/400
+     
+     []
+   		
+   
+   * {{{../apidocs/org/apache/maven/plugin/enforcer/RequireOS.html#name}name}} - the name of the OS.
+   
+   * {{{../apidocs/org/apache/maven/plugin/enforcer/RequireOS.html#version}version}} - the version of the OS.
+   
+   * {{{../apidocs/org/apache/maven/plugin/enforcer/RequireOS.html#display}display}} -  flag to display the detected OS informatin.
+   
+   []
+
+ 
+ Family is calculated based on testing against the name string retreived from the JDK. The name, arch and version values are retreived from the JDK using the following code:
+  
++---+
+    public static final String OS_NAME = System.getProperty( "os.name" ).toLowerCase( Locale.US );
+
+    public static final String OS_ARCH = System.getProperty( "os.arch" ).toLowerCase( Locale.US );
+
+    public static final String OS_VERSION = System.getProperty( "os.version" ).toLowerCase( Locale.US );
++---+
+   
+   Possible arch, name, and version values can be found here:
+   
+   * {{{http://lopica.sourceforge.net/os.html}lopica.sourceforge.net}}
+   
+   * {{{http://tolstoy.com/samizdat/sysprops.html}Sysprops}}
+   
+   []
+     
+   The various options are considered to be "and'd" together but any number can be specified. 
+   (ie family = windows means windows, but family = windows and arch = x86 means only windows on x86 processors)
+   
+   Any parameter may also be used in the negative by prepending a "!" in front of it. For example !dos means everything but dos. (who uses dos anyway?)
+   
+   Since the various names, versions and architecture values cannot be listed exhaustively, there is an easy way to display the 
+   information for the current system:
+   
++---+
+   mvn enforcer:display-info
+   ...
+   [enforcer:display-info]
+       Maven Version: 2.0.6
+       JDK Version: 1.5.0_11 normalized as: 1.5.0
+       OS Info: Arch: x86 Family: windows Name: windows xp Version: 5.1
++---+
+  
+  Sample Plugin Configuration:
+  
++---+
+<project>
+  [...]
+  <build>
+   <plugins>
+     <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce-os</id>
+            <goals>
+              <goal>os</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireOS>
+                  <name>Windows XP</name>
+                  <family>Windows</family>
+                  <arch>x86</arch>
+                  <version>5.1.2600</version>
+                </requireOS>
+             </rules>  
+            <fail>true</fail>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++---+
+  

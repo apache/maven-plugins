@@ -52,8 +52,8 @@ public class RequireJavaVersion
     }
 
     /**
-     * Converts a jdk string from 1.5.0-11 to a single 3 digit version like
-     * 1.5.0
+     * Converts a jdk string from 1.5.0-11b12 to a single 3 digit version like
+     * 1.5.0-11
      * 
      * @param theJdkVersion
      *            to be converted.
@@ -67,13 +67,22 @@ public class RequireJavaVersion
         StringBuffer buffer = new StringBuffer( theJdkVersion.length() );
 
         Iterator iter = tokens.iterator();
-        for ( int i = 0; i < tokens.size() && i < 3; i++ )
+        for ( int i = 0; i < tokens.size() && i < 4; i++ )
         {
             buffer.append( iter.next() );
-            buffer.append( '.' );
+            if ( i != 2 )
+            {
+                buffer.append( '.' );
+            }
+            else
+            {
+                buffer.append( '-' );
+            }
+
         }
 
         String version = buffer.toString();
+        version = StringUtils.stripEnd( version, "-" );
         return StringUtils.stripEnd( version, "." );
     }
 }
