@@ -38,7 +38,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 /**
- * Creates the Project files (*.ipr) for IntelliJ Idea
+ * Creates the Project files (*.ipr) for IntelliJ IDEA.
  *
  * @author Edwin Punzalan
  * @goal project
@@ -56,7 +56,8 @@ public class IdeaProjectMojo
     private String jdkName;
 
     /**
-     * Specify the version of the JDK to use for the project for the purpose of enabled assertions and 5.0 language features.
+     * Specify the version of the JDK to use for the project for the purpose of
+     * enabled assertions and 5.0 language features.
      * The default value is the specification version of the executing JVM.
      *
      * @parameter expression="${jdkLevel}"
@@ -172,8 +173,10 @@ public class IdeaProjectMojo
             {
                 Element m = createElement( modules, "module" );
                 String projectPath =
-                    new File( executedProject.getBasedir(), executedProject.getArtifactId() + ".iml" ).getAbsolutePath();
-                m.addAttribute( "filepath", "$PROJECT_DIR$/" + toRelative( executedProject.getBasedir(), projectPath ) );
+                    new File( executedProject.getBasedir(),
+                              executedProject.getArtifactId() + ".iml" ).getAbsolutePath();
+                m.addAttribute( "filepath",
+                                "$PROJECT_DIR$/" + toRelative( executedProject.getBasedir(), projectPath ) );
 
                 for ( Iterator i = executedProject.getCollectedProjects().iterator(); i.hasNext(); )
                 {
@@ -181,14 +184,16 @@ public class IdeaProjectMojo
 
                     m = createElement( modules, "module" );
                     String modulePath = new File( p.getBasedir(), p.getArtifactId() + ".iml" ).getAbsolutePath();
-                    m.addAttribute( "filepath", "$PROJECT_DIR$/" + toRelative( executedProject.getBasedir(), modulePath ) );
+                    m.addAttribute( "filepath",
+                                    "$PROJECT_DIR$/" + toRelative( executedProject.getBasedir(), modulePath ) );
                 }
             }
             else
             {
                 Element m = createElement( modules, "module" );
                 String modulePath =
-                    new File( executedProject.getBasedir(), executedProject.getArtifactId() + ".iml" ).getAbsolutePath();
+                    new File( executedProject.getBasedir(),
+                              executedProject.getArtifactId() + ".iml" ).getAbsolutePath();
                 m.addAttribute( "filepath", "$PROJECT_DIR$/" + toRelative( executedProject.getBasedir(), modulePath ) );
             }
 
