@@ -50,7 +50,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Creates the module (*.iml) files for IntelliJ Idea
+ * Creates the module (*.iml) files for IntelliJ IDEA.
  *
  * @author Edwin Punzalan
  * @goal module
@@ -312,8 +312,8 @@ public class IdeaModuleMojo
                 else
                 {
                     getLog().info(
-                        "Not adding resource directory as it has an incompatible target path or filtering: " +
-                            directory );
+                        "Not adding resource directory as it has an incompatible target path or filtering: "
+                            + directory );
                 }
             }
 
@@ -328,8 +328,8 @@ public class IdeaModuleMojo
                 else
                 {
                     getLog().info(
-                        "Not adding test resource directory as it has an incompatible target path or filtering: " +
-                            directory );
+                        "Not adding test resource directory as it has an incompatible target path or filtering: "
+                            + directory );
                 }
             }
 
@@ -781,8 +781,8 @@ public class IdeaModuleMojo
                 methodAttribute.addAttribute( "value", "5" );
                 Element uriAttribute = createElement( containerElement, "attribute" );
                 uriAttribute.addAttribute( "name", "URI" );
-                uriAttribute.addAttribute( "value", "/WEB-INF/lib/" + artifact.getArtifactId() + "-" +
-                    artifact.getVersion() + ".jar" );
+                uriAttribute.addAttribute( "value", "/WEB-INF/lib/" + artifact.getArtifactId() + "-"
+                    + artifact.getVersion() + ".jar" );
             }
             else if ( artifact.getFile() != null )
             {
@@ -790,9 +790,9 @@ public class IdeaModuleMojo
                 containerElement.addAttribute( "level", "module" );
                 Element methodAttribute = createElement( containerElement, "attribute" );
                 methodAttribute.addAttribute( "name", "method" );
-                if ( Artifact.SCOPE_PROVIDED.equalsIgnoreCase( artifact.getScope() ) ||
-                    Artifact.SCOPE_SYSTEM.equalsIgnoreCase( artifact.getScope() ) ||
-                    Artifact.SCOPE_TEST.equalsIgnoreCase( artifact.getScope() ) )
+                if ( Artifact.SCOPE_PROVIDED.equalsIgnoreCase( artifact.getScope() )
+                    || Artifact.SCOPE_SYSTEM.equalsIgnoreCase( artifact.getScope() )
+                    || Artifact.SCOPE_TEST.equalsIgnoreCase( artifact.getScope() ) )
                 {
                     // If scope is provided, system or test - do not package.
                     methodAttribute.addAttribute( "value", "0" );

@@ -384,8 +384,8 @@ public abstract class AbstractIdeaMojo
                 }
                 catch ( InvalidVersionSpecificationException e )
                 {
-                    throw new ProjectBuildingException( projectId, "Unable to parse version '" + d.getVersion() +
-                        "' for dependency '" + d.getManagementKey() + "': " + e.getMessage(), e );
+                    throw new ProjectBuildingException( projectId, "Unable to parse version '" + d.getVersion()
+                        + "' for dependency '" + d.getManagementKey() + "': " + e.getMessage(), e );
                 }
             }
         }

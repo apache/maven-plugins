@@ -29,7 +29,7 @@ import java.util.Set;
 
 /**
  * Goal for generating IDEA files from a POM.
- * This plug-in provides the ability to generate IDEA project files (.ipr, .iml and .iws files) for IDEA
+ * This plug-in provides the ability to generate IDEA project files (.ipr, .iml and .iws files) for IDEA.
  *
  * @goal idea
  * @execute phase="generate-sources"
@@ -109,7 +109,8 @@ public class IdeaMojo
     private String jdkName;
 
     /**
-     * Specify the version of the JDK to use for the project for the purpose of enabled assertions and 5.0 language features.
+     * Specify the version of the JDK to use for the project for the purpose of
+     * enabled assertions and 5.0 language features.
      * The default value is the specification version of the executing JVM.
      *
      * @parameter expression="${jdkLevel}"
