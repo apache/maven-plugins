@@ -77,11 +77,6 @@ public class DefaultRepositoryCopier
 
         basedir.mkdirs();
 
-        // ----------------------------------------------------------------------------
-        // Grab the content from our sourceRepositoryUrl stage, which in this case is the
-        // staging stage.
-        // ----------------------------------------------------------------------------
-
         Repository sourceRepository = new Repository( "source", sourceRepositoryUrl );
 
         String protocol = sourceRepository.getProtocol();
@@ -94,11 +89,14 @@ public class DefaultRepositoryCopier
 
         scan( sourceWagon, "", files );
 
-        File archive = new File( tempdir, fileName );
-
         for ( Iterator i = files.iterator(); i.hasNext(); )
         {
             String s = (String) i.next();
+
+            if ( s.indexOf( ".svn" ) >= 0 )
+            {
+                continue;
+            }
 
             File f = new File( basedir, s );
 
@@ -122,6 +120,8 @@ public class DefaultRepositoryCopier
         targetWagon.connect( targetRepo );
 
         PrintWriter rw = new PrintWriter( renameScript );
+
+        File archive = new File( tempdir, fileName );
 
         for ( Iterator i = files.iterator(); i.hasNext(); )
         {
@@ -195,37 +195,23 @@ public class DefaultRepositoryCopier
 
         targetWagon.put( archive, fileName );
 
-        //
-
-        String targetRepoBaseDirectory = targetRepo.getBasedir().substring( 1 );
-
-        System.out.println( "targetRepoBaseDirectory = " + targetRepoBaseDirectory );
+        String targetRepoBaseDirectory = targetRepo.getBasedir();
 
         // We use the super quiet option here as all the noise seems to kill/stall the connection
 
         String command = "unzip -o -qq -d " + targetRepoBaseDirectory + " " + targetRepoBaseDirectory + "/" + fileName;
 
-        System.out.println( "command = " + command );
-
         ( (ScpWagon) targetWagon ).executeCommand( command );
-
-        System.out.println( "Done uploading staging zip." );
 
         command = "rm -f " + targetRepoBaseDirectory + "/" + fileName;
 
         ( (ScpWagon) targetWagon ).executeCommand( command );
 
-        System.out.println( "Done removing staging zip." );
-
         command = "cd " + targetRepoBaseDirectory + "; sh " + renameScriptName;
-
-        System.out.println( "command = " + command );
 
         ( (ScpWagon) targetWagon ).executeCommand( command );
 
         command = "rm -f " + targetRepoBaseDirectory + "/" + renameScriptName;
-
-        System.out.println( "command = " + command );
 
         ( (ScpWagon) targetWagon ).executeCommand( command );
 
@@ -248,6 +234,11 @@ public class DefaultRepositoryCopier
 
             if ( f.isDirectory() )
             {
+                if ( f.getName().equals( ".svn" ) )
+                {
+                    continue;
+                }
+
                 if ( f.getName().endsWith( version ) )
                 {
                     String s = f.getAbsolutePath().substring( basedir.getAbsolutePath().length() + 1 );
