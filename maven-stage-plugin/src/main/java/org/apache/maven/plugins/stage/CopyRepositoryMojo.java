@@ -5,20 +5,39 @@ import org.apache.maven.plugin.MojoExecutionException;
 
 /**
  * @author Jason van Zyl
+ * @requiresProject false
  * @goal copy
  */
 public class CopyRepositoryMojo
     extends AbstractMojo
 {
-    /** @param expression="${sourceRepository}" */
-    private String sourceRepository;
+    /** @parameter expression="${source}" */
+    private String source;
 
-    /** @param expression="${targetRepository}" */
-    private String targetRepository;
+    /** @parameter expression="${target}" */
+    private String target;
+
+    /**
+     * @parameter expression="${version}"
+     * @required
+     */
+    private String version;
+
+    /** @component */
+    private RepositoryCopier copier;
 
     public void execute()
         throws MojoExecutionException
     {
+        try
+        {
+            copier.copy( source, target, version );
+        }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException(
+                "Error copying repository from " + source + " to " + target, e );
+        }
     }
 }
 
