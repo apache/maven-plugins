@@ -38,6 +38,8 @@ public class TestEnforceMojo
     {
         EnforceMojo mojo = new EnforceMojo();
         mojo.setFail( false );
+        mojo.setSession( EnforcerTestUtils.getMavenSession() );
+        mojo.setProject( new MockProject() );
         
         try
         {

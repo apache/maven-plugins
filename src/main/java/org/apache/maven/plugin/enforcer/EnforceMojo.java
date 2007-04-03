@@ -254,4 +254,52 @@ public class EnforceMojo
     {
         this.failFast = theFailFast;
     }
+
+    /**
+     * @return the project
+     */
+    public MavenProject getProject()
+    {
+        return this.project;
+    }
+
+    /**
+     * @param theProject the project to set
+     */
+    public void setProject( MavenProject theProject )
+    {
+        this.project = theProject;
+    }
+
+    /**
+     * @return the session
+     */
+    public MavenSession getSession()
+    {
+        return this.session;
+    }
+
+    /**
+     * @param theSession the session to set
+     */
+    public void setSession( MavenSession theSession )
+    {
+        this.session = theSession;
+    }
+
+    /**
+     * @return the translator
+     */
+    public PathTranslator getTranslator()
+    {
+        return this.translator;
+    }
+
+    /**
+     * @param theTranslator the translator to set
+     */
+    public void setTranslator( PathTranslator theTranslator )
+    {
+        this.translator = theTranslator;
+    }
 }

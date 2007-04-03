@@ -20,6 +20,7 @@ package org.apache.maven.plugin.enforcer;
  */
 
 import java.util.Date;
+import java.util.Properties;
 
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.logging.SystemStreamLog;
@@ -34,7 +35,7 @@ public class EnforcerTestUtils
 {
     public static MavenSession getMavenSession()
     {
-        return new MavenSession( new MockPlexusContainer(), null, null, null, null, null, null, null, new Date() );
+        return new MavenSession( new MockPlexusContainer(), null, null, null, null, null, null, new Properties(), new Date() );
     }
     
     public static EnforcerRuleHelper getHelper()

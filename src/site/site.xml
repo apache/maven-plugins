@@ -34,6 +34,9 @@
           <item name="RequireOS" href="rules/requireOS.html"/>
           <item name="Version Range Specification" href="rules/versionRanges.html"/>
     </menu>
+    <menu name="Custom Rules">
+          <item name="Writing a custom rule" href="http://maven.apache.org/shared/maven-enforcer-rule-api/writing-a-custom-rule.html"/>
+    </menu>
     <menu name="Resources">
       <item name="Maven 2.0.x Version Range Syntax" href="http://docs.codehaus.org/display/MAVEN/Dependency+Mediation+and+Conflict+Resolution#DependencyMediationandConflictResolution-DependencyVersionRanges" />
     </menu>
