@@ -43,9 +43,8 @@ public class AddDependencySetsTaskTest
 
         Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
-        AddDependencySetsTask task = new AddDependencySetsTask( Collections.singletonList( ds ), project,
-                                                                macTask.projectBuilder, macTask.dependencyResolver,
-                                                                logger );
+        AddDependencySetsTask task = new AddDependencySetsTask( Collections.singletonList( ds ), project, macTask.projectBuilder,
+                                                                macTask.dependencyResolver, logger );
 
         task.addDependencySet( ds, null, macTask.configSource );
 
@@ -53,22 +52,19 @@ public class AddDependencySetsTaskTest
     }
 
     public void testAddDependencySet_ShouldAddOneDependencyFromProjectWithoutUnpacking()
-        throws AssemblyFormattingException, ArchiveCreationException, IOException,
-        InvalidAssemblerConfigurationException
+        throws AssemblyFormattingException, ArchiveCreationException, IOException, InvalidAssemblerConfigurationException
     {
         verifyOneDependencyAdded( "out", false );
     }
 
     public void testAddDependencySet_ShouldAddOneDependencyFromProjectUnpacked()
-        throws AssemblyFormattingException, ArchiveCreationException, IOException,
-        InvalidAssemblerConfigurationException
+        throws AssemblyFormattingException, ArchiveCreationException, IOException, InvalidAssemblerConfigurationException
     {
         verifyOneDependencyAdded( "out", true );
     }
 
     private void verifyOneDependencyAdded( String outputLocation, boolean unpack )
-        throws AssemblyFormattingException, ArchiveCreationException, IOException,
-        InvalidAssemblerConfigurationException
+        throws AssemblyFormattingException, ArchiveCreationException, IOException, InvalidAssemblerConfigurationException
     {
         MavenProject project = new MavenProject( new Model() );
 
@@ -109,9 +105,8 @@ public class AddDependencySetsTaskTest
 
         Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
-        AddDependencySetsTask task = new AddDependencySetsTask( Collections.singletonList( ds ), project,
-                                                                macTask.projectBuilder, macTask.dependencyResolver,
-                                                                logger );
+        AddDependencySetsTask task = new AddDependencySetsTask( Collections.singletonList( ds ), project, macTask.projectBuilder,
+                                                                macTask.dependencyResolver, logger );
 
         mockManager.replayAll();
 
@@ -139,8 +134,7 @@ public class AddDependencySetsTaskTest
         mockManager.replayAll();
 
         AddDependencySetsTask task = new AddDependencySetsTask( Collections.singletonList( dependencySet ), project,
-                                                                macTask.projectBuilder, macTask.dependencyResolver,
-                                                                logger );
+                                                                macTask.projectBuilder, macTask.dependencyResolver, logger );
 
         Set result = task.resolveDependencyArtifacts( dependencySet, macTask.configSource );
 
@@ -185,13 +179,65 @@ public class AddDependencySetsTaskTest
         DependencySet dependencySet = new DependencySet();
 
         dependencySet.addInclude( "group:artifact" );
+        dependencySet.setUseTransitiveFiltering( true );
 
         Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
         mockManager.replayAll();
 
-        AddDependencySetsTask task = new AddDependencySetsTask( Collections.singletonList( dependencySet ), project,
-                                                                null, macTask.dependencyResolver, logger );
+        AddDependencySetsTask task = new AddDependencySetsTask( Collections.singletonList( dependencySet ), project, null,
+                                                                macTask.dependencyResolver, logger );
+
+        Set result = task.resolveDependencyArtifacts( dependencySet, macTask.configSource );
+
+        assertNotNull( result );
+        assertEquals( 1, result.size() );
+        assertSame( mac.artifact, result.iterator().next() );
+
+        mockManager.verifyAll();
+    }
+
+    public void testGetDependencyArtifacts_ShouldIgnoreTransitivePathFilteringWhenIncludeNotTransitive()
+        throws ArchiveCreationException, InvalidAssemblerConfigurationException
+    {
+        MavenProject project = new MavenProject( new Model() );
+
+        MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mockManager );
+
+        Set artifacts = new HashSet();
+
+        MockAndControlForArtifact mac = new MockAndControlForArtifact( mockManager );
+
+        mac.expectGetGroupId( "group" );
+        mac.expectGetArtifactId( "artifact" );
+        mac.expectGetDependencyConflictId( "group:artifact:jar" );
+        mac.expectGetId( "group:artifact:1.0" );
+
+        artifacts.add( mac.artifact );
+
+        MockAndControlForArtifact mac2 = new MockAndControlForArtifact( mockManager );
+
+        mac2.expectGetGroupId( "group2" );
+        mac2.expectGetArtifactId( "artifact2" );
+        mac2.expectGetDependencyConflictId( "group2:artifact2:jar" );
+        mac2.expectGetId( "group2:artifact2:1.0" );
+
+        artifacts.add( mac2.artifact );
+
+        macTask.expectCSGetRepositories( null, null );
+        macTask.expectResolveDependencies( artifacts );
+
+        DependencySet dependencySet = new DependencySet();
+
+        dependencySet.addInclude( "group:artifact" );
+        dependencySet.setUseTransitiveFiltering( false );
+
+        Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
+
+        mockManager.replayAll();
+
+        AddDependencySetsTask task = new AddDependencySetsTask( Collections.singletonList( dependencySet ), project, null,
+                                                                macTask.dependencyResolver, logger );
 
         Set result = task.resolveDependencyArtifacts( dependencySet, macTask.configSource );
 
