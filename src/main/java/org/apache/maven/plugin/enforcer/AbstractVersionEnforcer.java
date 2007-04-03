@@ -86,7 +86,7 @@ public abstract class AbstractVersionEnforcer
             // stort circuit check if the strings are exactly equal
             if ( actualVersion.toString().equals( requiredVersionRange ) )
             {
-                log.info( msg + " is allowed in the range " + requiredVersionRange + "." );
+                log.debug( msg + " is allowed in the range " + requiredVersionRange + "." );
             }
             else
             {
@@ -96,7 +96,7 @@ public abstract class AbstractVersionEnforcer
 
                     if ( containsVersion( vr, actualVersion ) )
                     {
-                        log.info( msg + " is allowed in the range " + requiredVersionRange + "." );
+                        log.debug( msg + " is allowed in the range " + requiredVersionRange + "." );
                     }
                     else
                     {
