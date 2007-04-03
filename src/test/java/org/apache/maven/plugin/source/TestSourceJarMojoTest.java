@@ -20,7 +20,6 @@ package org.apache.maven.plugin.source;
  */
 
 import java.io.File;
-import java.util.Properties;
 
 /**
  * @author <a href="mailto:oching@exist.com">Maria Odea Ching</a>
@@ -29,33 +28,41 @@ public class TestSourceJarMojoTest
     extends AbstractSourcePluginTestCase
 {
 
-    public void testProject002()
+    protected String getGoal()
+    {
+        return "test-jar";
+    }
+
+
+    public void testDefaultConfiguration()
         throws Exception
     {
-        doTestProjectWithTestSourceArchive( "project-002", new String[]{"test-default-configuration.properties",
-            "foo/project002/AppTest.java", "foo/project002/", "foo/", "META-INF/MANIFEST.MF", "META-INF/"
+        doTestProjectWithTestSourceArchive( "project-001", new String[]{"test-default-configuration.properties",
+            "foo/project001/AppTest.java", "foo/project001/", "foo/", "META-INF/MANIFEST.MF", "META-INF/"
 
         } );
     }
 
-    public void testProject004()
+
+    public void testExcludes()
         throws Exception
     {
-        doTestProjectWithTestSourceArchive( "project-004", new String[]{"test-default-configuration.properties",
-            "foo/project004/AppTest.java", "foo/project004/", "foo/", "META-INF/MANIFEST.MF", "META-INF/"
+        doTestProjectWithTestSourceArchive( "project-003", new String[]{"test-default-configuration.properties",
+            "foo/project003/AppTest.java", "foo/project003/", "foo/", "META-INF/MANIFEST.MF", "META-INF/"
 
         } );
     }
 
-    public void testProject006()
+
+    public void testNoSources()
         throws Exception
     {
-        final File baseDir = executeMojo( "project-006", new Properties() );
+        executeMojo( "project-005" );
+
         // Now make sure that no archive got created
-        final File expectedFile = getTestSourceArchive( baseDir, "project-006" );
+        final File expectedFile = getTestTargetDir( "project-005" );
         assertFalse( "Test source archive should not have been created[" + expectedFile.getAbsolutePath() + "]",
                      expectedFile.exists() );
-
     }
 
 }

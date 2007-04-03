@@ -29,17 +29,20 @@ public class SourceJarMojoTest
     extends AbstractSourcePluginTestCase
 {
 
+    protected String getGoal()
+    {
+        return "jar";
+    }
 
-    public void testProject001()
+    public void testDefaultConfiguration()
         throws Exception
     {
         doTestProjectWithSourceArchive( "project-001", new String[]{"default-configuration.properties",
-            "foo/project001/App.java", "foo/project001/", "foo/", "META-INF/MANIFEST.MF", "META-INF/"
-
-        } );
+            "foo/project001/App.java", "foo/project001/", "foo/", "META-INF/MANIFEST.MF", "META-INF/"} );
     }
 
-    public void testProject003()
+
+    public void testExcludes()
         throws Exception
     {
         doTestProjectWithSourceArchive( "project-003", new String[]{"default-configuration.properties",
@@ -48,18 +51,18 @@ public class SourceJarMojoTest
         } );
     }
 
-    public void testProject005()
+
+    public void testNoSources()
         throws Exception
     {
-        final File baseDir = executeMojo( "project-005", new Properties() );
+        executeMojo( "project-005" );
         // Now make sure that no archive got created
-        final File expectedFile = getSourceArchive( baseDir, "project-005" );
+        final File expectedFile = getTestTargetDir( "project-005" );
         assertFalse( "Source archive should not have been created[" + expectedFile.getAbsolutePath() + "]",
                      expectedFile.exists() );
-
     }
 
-    public void testProject007()
+    public void testIncludes()
         throws Exception
     {
         doTestProjectWithSourceArchive( "project-007", new String[]{"templates/configuration-template.properties",
