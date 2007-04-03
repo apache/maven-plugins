@@ -40,8 +40,7 @@ public class TestMavenVersion
         RequireMavenVersion rule = new RequireMavenVersion();
         rule.setVersion( "2.0.5" );
 
-        EnforcerRuleHelper helper = new DefaultEnforcementRuleHelper( EnforcerTestUtils.getMavenSession(),
-                                                                      new SystemStreamLog() );
+        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
 
         // test the singular version
         rule.execute( helper );

@@ -24,6 +24,7 @@ import org.apache.maven.execution.RuntimeInformation;
 import org.apache.maven.shared.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleHelper;
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
 /**
@@ -42,14 +43,15 @@ public class RequireMavenVersion
     {
         try
         {
-            RuntimeInformation rti = helper.getRuntimeInformation();
+            RuntimeInformation rti = (RuntimeInformation) helper.getComponent( RuntimeInformation.class);
             ArtifactVersion detectedMavenVersion = rti.getApplicationVersion();
             helper.getLog().debug( "Detected Maven Version: " + detectedMavenVersion );
             enforceVersion( helper.getLog(), "Maven", this.version, detectedMavenVersion );
         }
         catch ( ComponentLookupException e )
         {
-            throw new EnforcerRuleException( "Unable to lookup the component: RuntimeInformation", e );
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
 
     }
