@@ -24,6 +24,10 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.execution.RuntimeInformation;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.path.PathTranslator;
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
 /**
@@ -36,14 +40,30 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
 public class DisplayInfoMojo
     extends AbstractMojo
 {
+    
     /**
-     * Maven Session.
+     * Path Translator needed by the ExpressionEvaluator
+     * 
+     * @component role="org.apache.maven.project.path.PathTranslator"
+     */
+    protected PathTranslator translator;
+
+    /**
+     * The MavenSession
      * 
      * @parameter expression="${session}"
-     * @required
-     * @readonly
      */
     protected MavenSession session;
+
+    /**
+     * POM
+     * 
+     * @parameter expression="${project}"
+     * @readonly
+     * @required
+     */
+    protected MavenProject project;
+
 
     /**
      * Entry point to the mojo
@@ -53,8 +73,9 @@ public class DisplayInfoMojo
     {
         try
         {
-            DefaultEnforcementRuleHelper helper = new DefaultEnforcementRuleHelper( session, getLog() );
-            RuntimeInformation rti = helper.getRuntimeInformation();
+            EnforcerExpressionEvaluator evaluator = new EnforcerExpressionEvaluator( session, translator, project );
+            DefaultEnforcementRuleHelper helper = new DefaultEnforcementRuleHelper( session, evaluator, getLog() );
+            RuntimeInformation rti = (RuntimeInformation) helper.getComponent( RuntimeInformation.class );
             getLog().info( "Maven Version: " + rti.getApplicationVersion() );
             RequireJavaVersion java = new RequireJavaVersion();
             getLog().info(
@@ -66,7 +87,7 @@ public class DisplayInfoMojo
         }
         catch ( ComponentLookupException e )
         {
-            getLog().warn( "Unable to retreive component." + e.getLocalizedMessage() );
+            getLog().warn( "Unable to Lookup component: " + e.getLocalizedMessage() );
         }
 
     }

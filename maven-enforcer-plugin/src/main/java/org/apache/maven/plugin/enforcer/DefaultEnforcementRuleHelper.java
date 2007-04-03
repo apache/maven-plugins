@@ -19,11 +19,15 @@ package org.apache.maven.plugin.enforcer;
  * under the License.
  */
 
+import java.io.File;
+
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.execution.RuntimeInformation;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleHelper;
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
 /**
@@ -32,17 +36,21 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
  * like the log.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @version $Id$
+ * @version $Id: DefaultEnforcementRuleHelper.java 523141 2007-03-28 02:11:47Z
+ *          brianf $
  */
 public class DefaultEnforcementRuleHelper
     implements EnforcerRuleHelper
 {
     Log log;
 
+    ExpressionEvaluator evaluator;
+
     MavenSession session;
 
-    public DefaultEnforcementRuleHelper( MavenSession session, Log log )
+    public DefaultEnforcementRuleHelper( MavenSession session, ExpressionEvaluator evaluator, Log log )
     {
+        this.evaluator = evaluator;
         this.log = log;
         this.session = session;
     }
@@ -52,26 +60,36 @@ public class DefaultEnforcementRuleHelper
         return log;
     }
 
-    public MavenSession getSession()
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator#alignToBaseDirectory(java.io.File)
+     */
+    public File alignToBaseDirectory( File theFile )
     {
-        return session;
+        return evaluator.alignToBaseDirectory( theFile );
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator#evaluate(java.lang.String)
+     */
+    public Object evaluate( String theExpression )
+        throws ExpressionEvaluationException
+    {
+        return evaluator.evaluate( theExpression );
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.maven.shared.enforcer.rule.api.EnforcerRuleHelper#getRuntimeInformation()
+     */
     public Object getComponent( Class clazz )
         throws ComponentLookupException
     {
         return session.lookup( clazz.getName() );
     }
 
-    public MavenProject getProject()
-        throws ComponentLookupException
-    {
-        return (MavenProject) getComponent( MavenProject.class );
-    }
-
-    public RuntimeInformation getRuntimeInformation()
-        throws ComponentLookupException
-    {
-        return (RuntimeInformation) getComponent( RuntimeInformation.class );
-    }
 }

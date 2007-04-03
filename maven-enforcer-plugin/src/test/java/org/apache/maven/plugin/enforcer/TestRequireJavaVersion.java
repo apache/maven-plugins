@@ -60,8 +60,7 @@ public class TestRequireJavaVersion
         RequireJavaVersion rule = new RequireJavaVersion();
         rule.setVersion( thisVersion );
 
-        EnforcerRuleHelper helper = new DefaultEnforcementRuleHelper( EnforcerTestUtils.getMavenSession(),
-                                                                      new SystemStreamLog() );
+        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
 
         // test the singular version
         rule.execute( helper );
