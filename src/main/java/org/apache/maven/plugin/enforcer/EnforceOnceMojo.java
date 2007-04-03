@@ -26,7 +26,7 @@ import org.apache.maven.plugin.MojoExecutionException;
  * 
  * @goal enforce-once
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @phase verify
+ * @phase validate
  * @aggregator
  * @version $Id$
  */
