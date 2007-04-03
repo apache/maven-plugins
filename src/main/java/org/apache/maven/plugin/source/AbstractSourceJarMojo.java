@@ -54,7 +54,9 @@ public abstract class AbstractSourceJarMojo
      */
     private boolean attach;
 
-    /** @component */
+    /**
+     * @component
+     */
     private MavenProjectHelper projectHelper;
 
     /**
@@ -79,7 +81,9 @@ public abstract class AbstractSourceJarMojo
      */
     protected String finalName;
 
-    /** @parameter expression="${reactorProjects}" */
+    /**
+     * @parameter expression="${reactorProjects}"
+     */
     protected List reactorProjects;
 
     protected abstract String getClassifier();
@@ -88,7 +92,9 @@ public abstract class AbstractSourceJarMojo
 
     protected abstract List getResources( MavenProject project );
 
-    /** @see org.apache.maven.plugin.AbstractMojo#execute() */
+    /**
+     * @see org.apache.maven.plugin.AbstractMojo#execute()
+     */
     public void execute()
         throws MojoExecutionException
     {
@@ -157,8 +163,7 @@ public abstract class AbstractSourceJarMojo
         }
     }
 
-    protected void archiveProjectContent( MavenProject project,
-                                          Archiver archiver )
+    protected void archiveProjectContent( MavenProject project, Archiver archiver )
         throws MojoExecutionException
     {
         for ( Iterator i = getSources( project ).iterator(); i.hasNext(); )
@@ -219,8 +224,7 @@ public abstract class AbstractSourceJarMojo
      * @param outputFile the artifact file to be attached
      * @param classifier
      */
-    protected void attachArtifact( File outputFile,
-                                   String classifier )
+    protected void attachArtifact( File outputFile, String classifier )
     {
     }
 
@@ -247,10 +251,7 @@ public abstract class AbstractSourceJarMojo
         return archiver;
     }
 
-    protected void addDirectory( Archiver archiver,
-                                 File sourceDirectory,
-                                 String[] includes,
-                                 String[] excludes )
+    protected void addDirectory( Archiver archiver, File sourceDirectory, String[] includes, String[] excludes )
         throws MojoExecutionException
     {
         try

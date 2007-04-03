@@ -13,7 +13,9 @@ import org.apache.maven.plugin.MojoExecutionException;
 public class AggregatorSourceJarMojo
     extends SourceJarMojo
 {
-    /** @see org.apache.maven.plugin.AbstractMojo#execute() */
+    /**
+     * @see org.apache.maven.plugin.AbstractMojo#execute()
+     */
     public void execute()
         throws MojoExecutionException
     {
