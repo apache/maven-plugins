@@ -40,7 +40,7 @@ public class TestRequireOS
     public void testOS()
     {
         Log log = new SystemStreamLog();
-      
+
         RequireOS rule = new RequireOS();
         rule.displayOSInfo( log, true );
 

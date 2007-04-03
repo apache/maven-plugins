@@ -25,25 +25,25 @@ import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleHelper;
 
 /**
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- *
+ * 
  */
 public class MockEnforcerRule
     implements EnforcerRule
 {
 
     public boolean failRule = false;
-    
-    public MockEnforcerRule (boolean fail)
+
+    public MockEnforcerRule( boolean fail )
     {
         this.failRule = fail;
     }
-    
+
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
-        if (isFailRule())
+        if ( isFailRule() )
         {
-            throw new EnforcerRuleException(" this condition is not allowed.");
+            throw new EnforcerRuleException( " this condition is not allowed." );
         }
     }
 
@@ -56,7 +56,8 @@ public class MockEnforcerRule
     }
 
     /**
-     * @param theFailRule the failRule to set
+     * @param theFailRule
+     *            the failRule to set
      */
     public void setFailRule( boolean theFailRule )
     {
