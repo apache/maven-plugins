@@ -37,7 +37,7 @@ import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleHelper;
  * 
  * @goal enforce
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @phase verify
+ * @phase validate
  * @version $Id$
  */
 public class EnforceMojo

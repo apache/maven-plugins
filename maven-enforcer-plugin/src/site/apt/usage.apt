@@ -79,7 +79,7 @@ Usage
               <rules>
                 <requireMavenVersion>
                   <version>2.0.6</version>
-                </requireMavenVesion>
+                </requireMavenVersion>
                 <requireJavaVersion>
                   <version>1.5</version>
                 </requireJavaVersion>
