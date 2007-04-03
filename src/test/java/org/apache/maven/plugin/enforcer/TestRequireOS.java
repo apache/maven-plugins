@@ -74,7 +74,7 @@ public class TestRequireOS
         rule.setFamily( "junk" );
         try
         {
-            rule.execute( new DefaultEnforcementRuleHelper( EnforcerTestUtils.getMavenSession(), log ) );
+            rule.execute( EnforcerTestUtils.getHelper() );
             fail( "Expected MojoExecution Exception becuase of invalid family type" );
         }
         catch ( EnforcerRuleException e )
