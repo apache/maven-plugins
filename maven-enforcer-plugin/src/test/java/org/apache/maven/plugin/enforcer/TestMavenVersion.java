@@ -19,12 +19,11 @@ package org.apache.maven.plugin.enforcer;
  * under the License.
  */
 
+import junit.framework.TestCase;
+
 import org.apache.commons.lang.SystemUtils;
-import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleHelper;
-
-import junit.framework.TestCase;
 
 /**
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>

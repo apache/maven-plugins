@@ -60,15 +60,15 @@ public class TestAbstractVersionEnforcer
         assertTrue( rule.containsVersion( VersionRange.createFromVersionSpec( "2.0.5" ), version ) );
 
         assertFalse( rule.containsVersion( VersionRange.createFromVersionSpec( "2.0.6" ), version ) );
-        
-        version = new DefaultArtifactVersion("1.5.0-7");
+
+        version = new DefaultArtifactVersion( "1.5.0-7" );
         assertTrue( rule.containsVersion( VersionRange.createFromVersionSpec( "[1.5.0,)" ), version ) );
         assertTrue( rule.containsVersion( VersionRange.createFromVersionSpec( "[1.5,1.6)" ), version ) );
-        
-        version = new DefaultArtifactVersion(RequireJavaVersion.normalizeJDKVersion( "1.5.0-07" ));
+
+        version = new DefaultArtifactVersion( RequireJavaVersion.normalizeJDKVersion( "1.5.0-07" ) );
         assertTrue( rule.containsVersion( VersionRange.createFromVersionSpec( "[1.5.0,)" ), version ) );
         assertTrue( rule.containsVersion( VersionRange.createFromVersionSpec( "[1.5,1.6)" ), version ) );
-        
+
     }
 
     private void enforceFalse( AbstractVersionEnforcer rule, Log log, String var, String range, ArtifactVersion version )

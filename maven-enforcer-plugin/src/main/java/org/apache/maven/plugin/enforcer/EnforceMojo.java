@@ -31,7 +31,6 @@ import org.apache.maven.project.path.PathTranslator;
 import org.apache.maven.shared.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleHelper;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 
 /**
  * This goal executes the defined enforcer-rules once per module.
@@ -264,7 +263,8 @@ public class EnforceMojo
     }
 
     /**
-     * @param theProject the project to set
+     * @param theProject
+     *            the project to set
      */
     public void setProject( MavenProject theProject )
     {
@@ -280,7 +280,8 @@ public class EnforceMojo
     }
 
     /**
-     * @param theSession the session to set
+     * @param theSession
+     *            the session to set
      */
     public void setSession( MavenSession theSession )
     {
@@ -296,7 +297,8 @@ public class EnforceMojo
     }
 
     /**
-     * @param theTranslator the translator to set
+     * @param theTranslator
+     *            the translator to set
      */
     public void setTranslator( PathTranslator theTranslator )
     {
