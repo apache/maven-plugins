@@ -517,6 +517,21 @@
             Default scope value is "runtime".
           </description>
         </field>
+        <field>
+          <name>useTransitiveFiltering</name>
+          <version>1.1.0</version>
+          <type>boolean</type>
+          <defaultValue>false</defaultValue>
+          <description>
+          Determines whether the include/exclude patterns in this dependency set will be applied to
+          the transitive path of a given artifact. If true, and the current artifact is a transitive
+          dependency brought in by another artifact which matches an inclusion or exclusion pattern, 
+          then the current artifact has the same inclusion/exclusion logic applied to it as well. By
+          default, this value is false, in order to preserve backward compatibility with version 2.1.
+          This means that includes/excludes only apply directly to the current artifact, and not to
+          the transitive set of artifacts which brought it in. (Since 2.2)
+          </description>
+        </field>
       </fields>
     </class>
 
