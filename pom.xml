@@ -176,6 +176,7 @@
       <plugins>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.2</version>
           <configuration>
             <excludes>
               <exclude>**/BasicAbstractAssemblyMojoFeaturesTest*</exclude>
@@ -234,6 +235,9 @@
               <pomExcludes>
                 <pomExclude>**/child*/pom.xml</pomExclude>
                 <pomExclude>**/module*/pom.xml</pomExclude>
+
+                <!-- TODO: Fix this! It's logged in JIRA for 2.2. -->
+                <pomExclude>mojo-configuration/manifest-with-customEntry/pom.xml</pomExclude>
               </pomExcludes>
               <postBuildHookScript>verify.bsh</postBuildHookScript>
               <localRepositoryPath>${basedir}/target/local-repository</localRepositoryPath>

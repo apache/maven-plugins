@@ -161,7 +161,7 @@ public class AddDependencySetsTask
         }
 
         FilterUtils.filterArtifacts( dependencyArtifacts, dependencySet.getIncludes(), dependencySet.getExcludes(),
-                                     dependencySet.isUseStrictFiltering(), true, Collections.EMPTY_LIST, logger );
+                                     dependencySet.isUseStrictFiltering(), dependencySet.isUseTransitiveFiltering(), Collections.EMPTY_LIST, logger );
 
         return dependencyArtifacts;
     }
