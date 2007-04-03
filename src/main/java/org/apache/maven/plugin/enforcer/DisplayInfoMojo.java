@@ -26,8 +26,6 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.path.PathTranslator;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
 /**
@@ -40,7 +38,7 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
 public class DisplayInfoMojo
     extends AbstractMojo
 {
-    
+
     /**
      * Path Translator needed by the ExpressionEvaluator
      * 
@@ -64,7 +62,6 @@ public class DisplayInfoMojo
      */
     protected MavenProject project;
 
-
     /**
      * Entry point to the mojo
      */
@@ -77,10 +74,9 @@ public class DisplayInfoMojo
             DefaultEnforcementRuleHelper helper = new DefaultEnforcementRuleHelper( session, evaluator, getLog() );
             RuntimeInformation rti = (RuntimeInformation) helper.getComponent( RuntimeInformation.class );
             getLog().info( "Maven Version: " + rti.getApplicationVersion() );
-            RequireJavaVersion java = new RequireJavaVersion();
             getLog().info(
                            "JDK Version: " + SystemUtils.JAVA_VERSION + " normalized as: "
-                               + java.normalizeJDKVersion( SystemUtils.JAVA_VERSION_TRIMMED ) );
+                               + RequireJavaVersion.normalizeJDKVersion( SystemUtils.JAVA_VERSION_TRIMMED ) );
             RequireOS os = new RequireOS();
             os.displayOSInfo( getLog(), true );
 

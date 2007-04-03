@@ -25,7 +25,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.maven.execution.DefaultRuntimeInformation;
 import org.apache.maven.execution.RuntimeInformation;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.classworlds.ClassRealm;

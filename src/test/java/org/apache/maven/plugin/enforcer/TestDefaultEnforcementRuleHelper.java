@@ -29,19 +29,21 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
 
 /**
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- *
+ * 
  */
-public class TestDefaultEnforcementRuleHelper extends TestCase
+public class TestDefaultEnforcementRuleHelper
+    extends TestCase
 {
-    public void testHelper() throws ComponentLookupException, ExpressionEvaluationException
+    public void testHelper()
+        throws ComponentLookupException, ExpressionEvaluationException
     {
         Log log = new SystemStreamLog();
         DefaultEnforcementRuleHelper helper = (DefaultEnforcementRuleHelper) EnforcerTestUtils.getHelper();
-        
+
         assertNotNull( helper.getLog() );
-        assertNotNull( helper.evaluate( "${session}" ));
-        assertNotNull(helper.evaluate( "${project}" ));
+        assertNotNull( helper.evaluate( "${session}" ) );
+        assertNotNull( helper.evaluate( "${project}" ) );
         assertNotNull( helper.getComponent( RuntimeInformation.class ) );
-        
+
     }
 }

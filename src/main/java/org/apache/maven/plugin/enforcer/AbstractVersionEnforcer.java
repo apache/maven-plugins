@@ -122,12 +122,12 @@ public abstract class AbstractVersionEnforcer
      * 
      * @param allowedRange
      *            range of allowed versions.
-     * @param version
+     * @param theVersion
      *            the version to be checked.
      * 
      * @return true if the version is contained by the range.
      */
-    public boolean containsVersion( VersionRange allowedRange, ArtifactVersion version )
+    public boolean containsVersion( VersionRange allowedRange, ArtifactVersion theVersion )
     {
         boolean matched = false;
         ArtifactVersion recommendedVersion = allowedRange.getRecommendedVersion();
@@ -137,7 +137,7 @@ public abstract class AbstractVersionEnforcer
             for ( Iterator i = allowedRange.getRestrictions().iterator(); i.hasNext() && !matched; )
             {
                 Restriction restriction = (Restriction) i.next();
-                if ( restriction.containsVersion( version ) )
+                if ( restriction.containsVersion( theVersion ) )
                 {
                     matched = true;
                 }
@@ -146,7 +146,7 @@ public abstract class AbstractVersionEnforcer
         else
         {
             // only singular versions ever have a recommendedVersion
-            int compareTo = recommendedVersion.compareTo( version );
+            int compareTo = recommendedVersion.compareTo( theVersion );
             matched = ( compareTo <= 0 );
         }
         return matched;
@@ -161,7 +161,8 @@ public abstract class AbstractVersionEnforcer
     }
 
     /**
-     * @param theVersion the version to set
+     * @param theVersion
+     *            the version to set
      */
     public void setVersion( String theVersion )
     {

@@ -35,13 +35,15 @@ public class EnforcerTestUtils
 {
     public static MavenSession getMavenSession()
     {
-        return new MavenSession( new MockPlexusContainer(), null, null, null, null, null, null, new Properties(), new Date() );
+        return new MavenSession( new MockPlexusContainer(), null, null, null, null, null, null, new Properties(),
+                                 new Date() );
     }
-    
+
     public static EnforcerRuleHelper getHelper()
     {
         MavenSession session = getMavenSession();
-        ExpressionEvaluator eval = new EnforcerExpressionEvaluator(session,new MockPathTranslator(), new MockProject());
-        return new DefaultEnforcementRuleHelper(session,eval,new SystemStreamLog());     
+        ExpressionEvaluator eval = new EnforcerExpressionEvaluator( session, new MockPathTranslator(),
+                                                                    new MockProject() );
+        return new DefaultEnforcementRuleHelper( session, eval, new SystemStreamLog() );
     }
 }
