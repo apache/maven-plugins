@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 The Apache Software Foundation.
+ * Copyright 2007 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.maven.plugin.clover.samples.simple;
+package org.apache.maven.plugin.clover.samples.license;
 
 public class Simple
 {
     public void someMethod()
     {
-        assert true == true : "true was not true";
-
-        // Reference a class that we exclude in the instrumentation
-        new Dummy();
-
         int i = 0;
         if (i > 0)
         {
