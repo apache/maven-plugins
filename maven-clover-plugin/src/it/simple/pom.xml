@@ -60,7 +60,8 @@
           <!-- Verify that we can specify the JDK version for Clover's instrumentation -->
           <jdk>1.4</jdk>
 
-          <!-- Verify that we can exclude some files from the instrumentation -->
+          <!-- Verify that we can exclude some files from the instrumentation. Make sure the file we are excluding
+               is referenced by other classes to ensure excluding is only done at the Clover level -->
           <excludes>
             <exclude>**/*Dummy*.java</exclude>
           </excludes>
