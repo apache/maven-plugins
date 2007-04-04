@@ -54,11 +54,11 @@ public class RequireJavaVersion
         log.debug( "Normalized Java String: " + java_version );
 
         ArtifactVersion detectedJdkVersion = new DefaultArtifactVersion( java_version );
-        
+
         log.debug( "Parsed Version: Major: " + detectedJdkVersion.getMajorVersion() + " Minor: "
             + detectedJdkVersion.getMinorVersion() + " Incremental: " + detectedJdkVersion.getIncrementalVersion()
             + " Build: " + detectedJdkVersion.getBuildNumber() + " Qualifier: " + detectedJdkVersion.getQualifier() );
-        
+
         enforceVersion( helper.getLog(), "JDK", version, detectedJdkVersion );
     }
 

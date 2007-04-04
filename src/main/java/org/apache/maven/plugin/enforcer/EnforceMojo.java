@@ -20,16 +20,14 @@ package org.apache.maven.plugin.enforcer;
  */
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.path.PathTranslator;
 import org.apache.maven.shared.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleHelper;
@@ -39,20 +37,35 @@ import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleHelper;
  * 
  * @goal enforce
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @phase verify
+ * @phase validate
  * @version $Id$
  */
 public class EnforceMojo
     extends AbstractMojo
 {
+
     /**
-     * Runtime information containing Maven Version.
+     * Path Translator needed by the ExpressionEvaluator
+     * 
+     * @component role="org.apache.maven.project.path.PathTranslator"
+     */
+    protected PathTranslator translator;
+
+    /**
+     * The MavenSession
      * 
      * @parameter expression="${session}"
-     * @required
-     * @readonly
      */
     protected MavenSession session;
+
+    /**
+     * POM
+     * 
+     * @parameter expression="${project}"
+     * @readonly
+     * @required
+     */
+    protected MavenProject project;
 
     /**
      * Flag to fail the build if a version check fails.
@@ -77,6 +90,7 @@ public class EnforceMojo
 
     /**
      * List of objects that implement the EnforcerRule interface to execute.
+     * 
      * @parameter
      * @required
      */
@@ -90,6 +104,8 @@ public class EnforceMojo
     {
         Log log = this.getLog();
 
+        EnforcerExpressionEvaluator evaluator = new EnforcerExpressionEvaluator( session, translator, project );
+
         // the entire execution can be easily skipped
         if ( !skip )
         {
@@ -102,7 +118,7 @@ public class EnforceMojo
                 String currentRule = "Unknown";
 
                 // create my helper
-                EnforcerRuleHelper helper = new DefaultEnforcementRuleHelper( session, log );
+                EnforcerRuleHelper helper = new DefaultEnforcementRuleHelper( session, evaluator, log );
 
                 // if we are only warning, then disable failFast
                 if ( !fail )
@@ -110,7 +126,7 @@ public class EnforceMojo
                     failFast = false;
                 }
 
-                // go through each rule unless
+                // go through each rul
                 for ( int i = 0; i < rules.length; i++ )
                 {
 
@@ -137,7 +153,7 @@ public class EnforceMojo
                             }
                             else
                             {
-                                list.add( "Rule "+i+": "+currentRule+" failed with message: " + e.getMessage());
+                                list.add( "Rule " + i + ": " + currentRule + " failed with message: " + e.getMessage() );
                             }
                         }
                     }
@@ -205,23 +221,6 @@ public class EnforceMojo
     }
 
     /**
-     * @return the session
-     */
-    public MavenSession getSession()
-    {
-        return this.session;
-    }
-
-    /**
-     * @param theSession
-     *            the session to set
-     */
-    public void setSession( MavenSession theSession )
-    {
-        this.session = theSession;
-    }
-
-    /**
      * @return the skip
      */
     public boolean isSkip()
@@ -247,11 +246,62 @@ public class EnforceMojo
     }
 
     /**
-     * @param theFailFast the failFast to set
+     * @param theFailFast
+     *            the failFast to set
      */
     public void setFailFast( boolean theFailFast )
     {
         this.failFast = theFailFast;
     }
 
+    /**
+     * @return the project
+     */
+    public MavenProject getProject()
+    {
+        return this.project;
+    }
+
+    /**
+     * @param theProject
+     *            the project to set
+     */
+    public void setProject( MavenProject theProject )
+    {
+        this.project = theProject;
+    }
+
+    /**
+     * @return the session
+     */
+    public MavenSession getSession()
+    {
+        return this.session;
+    }
+
+    /**
+     * @param theSession
+     *            the session to set
+     */
+    public void setSession( MavenSession theSession )
+    {
+        this.session = theSession;
+    }
+
+    /**
+     * @return the translator
+     */
+    public PathTranslator getTranslator()
+    {
+        return this.translator;
+    }
+
+    /**
+     * @param theTranslator
+     *            the translator to set
+     */
+    public void setTranslator( PathTranslator theTranslator )
+    {
+        this.translator = theTranslator;
+    }
 }

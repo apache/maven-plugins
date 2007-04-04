@@ -29,67 +29,16 @@
 	<packaging>maven-plugin</packaging>
 	<name>Maven Enforcer Plugin</name>
 	<description>The Loving Iron First of Maven</description>
-	<version>1.0-alpha-1-SNAPSHOT</version>
+	<version>1.0-alpha-1</version>
 	<issueManagement>
 		<system>JIRA</system>
-		<url>http://jira.codehaus.org/browse/MNG</url>
+		<url>http://jira.codehaus.org/browse/MENFORCER</url>
 	</issueManagement> 
-	<mailingLists>
-		<!-- duplication from maven-plugins pom - temporary until they inherit properly 
-    -->
-		<mailingList>
-			<name>Maven User List</name>
-			<subscribe>users-subscribe@maven.apache.org</subscribe>
-			<unsubscribe>users-unsubscribe@maven.apache.org</unsubscribe>
-			<post>users@maven.apache.org</post>
-			<archive>http://mail-archives.apache.org/mod_mbox/maven-users</archive>
-			<otherArchives>
-				<otherArchive>http://www.mail-archive.com/users@maven.apache.org/</otherArchive>
-				<otherArchive>http://www.nabble.com/Maven---Users-f178.html</otherArchive>
-			</otherArchives>
-		</mailingList>
-		<mailingList>
-			<name>Maven Developer List</name>
-			<subscribe>dev-subscribe@maven.apache.org</subscribe>
-			<unsubscribe>dev-unsubscribe@maven.apache.org</unsubscribe>
-			<post>dev@maven.apache.org</post>
-			<archive>http://mail-archives.apache.org/mod_mbox/maven-dev</archive>
-		</mailingList>
-		<mailingList>
-			<name>Maven Commits List</name>
-			<subscribe>commits-subscribe@maven.apache.org</subscribe>
-			<unsubscribe>commits-unsubscribe@maven.apache.org</unsubscribe>
-			<post>commits@maven.apache.org</post>
-			<archive>http://mail-archives.apache.org/mod_mbox/maven-dev</archive>
-		</mailingList>
-		<!-- duplication from maven-parent pom - temporary until they inherit properly  -->
-		<mailingList>
-			<name>Maven Announcements List</name>
-			<post>announce@maven.apache.org</post>
-			<subscribe>announce-subscribe@maven.apache.org</subscribe>
-			<unsubscribe>announce-unsubscribe@maven.apache.org</unsubscribe>
-			<archive>http://mail-archives.apache.org/mod_mbox/maven-announce/</archive>
-		</mailingList>
-		<mailingList>
-			<name>Maven Issues List</name>
-			<post>issues@maven.apache.org</post>
-			<subscribe>issues-subscribe@maven.apache.org</subscribe>
-			<unsubscribe>issues-unsubscribe@maven.apache.org</unsubscribe>
-			<archive>http://mail-archives.apache.org/mod_mbox/maven-issues/</archive>
-		</mailingList>
-		<mailingList>
-			<name>Maven Notifications List</name>
-			<post>notifications@maven.apache.org</post>
-			<subscribe>notifications-subscribe@maven.apache.org</subscribe>
-			<unsubscribe>notifications-unsubscribe@maven.apache.org</unsubscribe>
-			<archive>http://mail-archives.apache.org/mod_mbox/maven-notifications/</archive>
-		</mailingList>
-	</mailingLists>
 	<developers>
 		<developer>
-			<id>brianfox</id>
+			<id>brianf</id>
 			<name>Brian Fox</name>
-			<email>brianefox@gmail.com</email>
+			<email>brianf@apache.org</email>
 			<roles>
 				<role>Lead Developer</role>
 			</roles>
@@ -119,17 +68,6 @@
 			</plugin>
 		</plugins>
 		<resources>
-			<!-- Include the apache process LICENSE and NOTICE files.-->
-			<!--uncomment for release. Commented out for now to enable eclipse-plugin to work-->
-			<!--<resource>
-				<targetPath>META-INF</targetPath>
-				<filtering>false</filtering>
-				<directory>${basedir}</directory>
-				<includes>
-					<include>LICENSE</include>
-					<include>NOTICE</include>
-				</includes>
-			</resource>-->
 			<!-- Include super-pom defined main/resources
 			Removing this section will break the build.
 			Since we have defined a new build/resources
@@ -175,7 +113,13 @@
         <dependency>
             <groupId>org.apache.maven.shared</groupId>
             <artifactId>maven-enforcer-rule-api</artifactId>
-			<version>1.0-alpha-1-SNAPSHOT</version>
+			<version>1.0-alpha-1</version>
         </dependency>
 	</dependencies>
+
+  <scm>
+    <connection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-enforcer-plugin-1.0-alpha-1</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-enforcer-plugin-1.0-alpha-1</developerConnection>
+    <url>https://svn.apache.org/repos/asf/maven/plugins/tags/maven-enforcer-plugin-1.0-alpha-1</url>
+  </scm>
 </project>
