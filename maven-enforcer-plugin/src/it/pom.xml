@@ -27,10 +27,10 @@
 								<requireMavenVersion>
 									<version>2.0.6</version>
 								</requireMavenVersion>
-								<myCustomRule implementation="org.apache.maven.shared.rule.myCustomRule">
+								<!--<myCustomRule implementation="org.apache.maven.shared.rule.myCustomRule">
 									<shouldIfail>false</shouldIfail>
-								</myCustomRule>
-								<requireOS><arch>x86</arch></requireOS>
+								</myCustomRule>-->
+								<requireOS><family>!tandem</family></requireOS>
 							</rules>
 						</configuration>
 						<goals>
