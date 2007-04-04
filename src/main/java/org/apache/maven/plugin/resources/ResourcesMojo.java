@@ -196,7 +196,7 @@ public class ResourcesMojo
                 }
                 catch ( IOException e )
                 {
-                    throw new MojoExecutionException( "Error copying resources", e );
+                    throw new MojoExecutionException( "Error copying resource " + source, e );
                 }
             }
         }
