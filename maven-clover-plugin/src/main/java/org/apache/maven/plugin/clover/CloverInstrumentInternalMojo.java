@@ -29,14 +29,11 @@ import org.codehaus.plexus.compiler.util.scan.SimpleSourceInclusionScanner;
 import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
 import org.codehaus.plexus.compiler.util.scan.InclusionScanException;
 import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
+import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
-import java.util.List;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Collections;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Instrument source roots.
@@ -138,7 +135,7 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
 
         if ( isJavaProject() )
         {
-            Set filesToInstrument = computeFilesToInstrument();
+            Map filesToInstrument = computeFilesToInstrument();
             if ( filesToInstrument.isEmpty() )
             {
                 getLog().warn( "No Clover instrumentation done as no matching sources files found" );
@@ -146,6 +143,11 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
             else
             {
                 instrumentSources( filesToInstrument );
+
+                // We need to copy excluded files as otherwise they won't be in the new Clover source directory and
+                // thus won't be compiled by the compile plugin. This will lead to compilation errors if any other
+                // Java file depends on any of these excluded files.
+                copyExcludedFiles();
             }
         }
 
@@ -177,12 +179,46 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
         return isJavaProject;
     }
 
-    private void instrumentSources( Set filesToInstrument ) throws MojoExecutionException
+    private void instrumentSources( Map filesToInstrument ) throws MojoExecutionException
     {
         int result = CloverInstr.mainImpl( createCliArgs( filesToInstrument ) );
         if ( result != 0 )
         {
             throw new MojoExecutionException( "Clover has failed to instrument the source files" );
+        }
+    }
+
+    /**
+     * Copy all files that have been excluded by the user (using the excludes configuration property). This is required
+     * as otherwise the excluded files won't be in the new Clover source directory and thus won't be compiled by the
+     * compile plugin. This will lead to compilation errors if any other Java file depends on any of them.
+     *
+     * @throws MojoExecutionException if a failure happens during the copy
+     */
+    private void copyExcludedFiles() throws MojoExecutionException
+    {
+        Map filesToCopy = computeExcludedFilesToCopy();
+
+        for ( Iterator sourceRoots = filesToCopy.keySet().iterator(); sourceRoots.hasNext(); )
+        {
+            String sourceRoot = (String) sourceRoots.next();
+            Set filesInSourceRoot = (Set) filesToCopy.get( sourceRoot );
+
+            for ( Iterator files = filesInSourceRoot.iterator(); files.hasNext(); )
+            {
+                File file = (File) files.next();
+
+                try
+                {
+                    FileUtils.copyFile( file, new File( this.cloverOutputSourceDirectory,
+                        file.getPath().substring(sourceRoot.length() ) ) );
+                }
+                catch (IOException e)
+                {
+                    throw new MojoExecutionException( "Failed to copy excluded file [" + file + "] to ["
+                        + this.cloverOutputSourceDirectory + "]", e );
+                }
+            }
         }
     }
 
@@ -431,25 +467,47 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
         return scanner;
     }
 
-    /**
-     * @return the list of files to instrument taking into account the includes and excludes specified by the user
-     */
-    private Set computeFilesToInstrument()
+    private SourceInclusionScanner getExcludesScanner()
     {
-        Set filesToInstrument = new HashSet();
-        SourceInclusionScanner scanner = getScanner();
-        
-        // Decide whether to instrument all source roots or only the main source root.
-        Iterator sourceRoots;
-        if ( this.includesAllSourceRoots )
+        SourceInclusionScanner scanner = null;
+
+        if ( excludes.isEmpty() )
         {
-            sourceRoots = getProject().getCompileSourceRoots().iterator();
+            scanner = new SimpleSourceInclusionScanner( Collections.EMPTY_SET, Collections.EMPTY_SET );
         }
         else
         {
-            sourceRoots = Collections.singletonList( getProject().getBuild().getSourceDirectory() ).iterator();
+            scanner = new SimpleSourceInclusionScanner( excludes, Collections.EMPTY_SET );
         }
 
+        // Note: we shouldn't have to do this but this is a limitation of the Plexus SimpleSourceInclusionScanner
+        scanner.addSourceMapping( new SuffixMapping( "dummy", "dummy" ) );
+
+        return scanner;
+    }
+
+    /**
+     * @return the list of excluded files that we'll need to copy. See {@link #copyExcludedFiles()}.
+     */
+    private Map computeExcludedFilesToCopy()
+    {
+        return computeFiles(getExcludesScanner());
+    }
+
+    /**
+     * @return the list of files to instrument taking into account the includes and excludes specified by the user
+     */
+    private Map computeFilesToInstrument()
+    {
+        return computeFiles(getScanner());
+    }
+
+    private Map computeFiles(SourceInclusionScanner scanner)
+    {
+        Map files = new HashMap();
+
+        // Decide whether to instrument all source roots or only the main source root.
+        Iterator sourceRoots = getSourceRoots().iterator();
         while ( sourceRoots.hasNext() )
         {
             File sourceRoot = new File( (String) sourceRoots.next() );
@@ -457,7 +515,7 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
             {
                 try
                 {
-                    filesToInstrument.addAll( scanner.getIncludedSources( sourceRoot, null ) );
+                    files.put( sourceRoot.getPath(), scanner.getIncludedSources( sourceRoot, null ) );
                 }
                 catch ( InclusionScanException e )
                 {
@@ -466,13 +524,28 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
             }
         }
 
-        return filesToInstrument;
+        return files;
+    }
+
+    private List getSourceRoots()
+    {
+        List sourceRoots;
+        if ( this.includesAllSourceRoots )
+        {
+            sourceRoots = getProject().getCompileSourceRoots();
+        }
+        else
+        {
+            sourceRoots = Collections.singletonList( getProject().getBuild().getSourceDirectory() );
+        }
+
+        return sourceRoots;
     }
 
     /**
      * @return the CLI args to be passed to CloverInstr
      */
-    private String[] createCliArgs( Set filesToInstrument ) throws MojoExecutionException
+    private String[] createCliArgs( Map filesToInstrument ) throws MojoExecutionException
     {
         List parameters = new ArrayList();
 
@@ -509,10 +582,14 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
             }
         }
 
-        for ( Iterator files = filesToInstrument.iterator(); files.hasNext(); )
+        for ( Iterator sourceRoots = filesToInstrument.keySet().iterator(); sourceRoots.hasNext(); )
         {
-            File file = (File) files.next();
-            parameters.add( file.getPath() );
+            Set filesInSourceRoot = (Set) filesToInstrument.get( (String) sourceRoots.next() );
+            for ( Iterator files = filesInSourceRoot.iterator(); files.hasNext(); )
+            {
+                File file = (File) files.next();
+                parameters.add( file.getPath() );
+            }
         }
 
         // Log parameters
