@@ -30,11 +30,13 @@
 								<myCustomRule implementation="org.apache.maven.shared.rule.myCustomRule">
 									<shouldIfail>false</shouldIfail>
 								</myCustomRule>
+								<requireOS><arch>x86</arch></requireOS>
 							</rules>
 						</configuration>
 						<goals>
 							<goal>enforce-once</goal>
 						</goals>
+				
 					</execution>
 				</executions>
 			</plugin>
