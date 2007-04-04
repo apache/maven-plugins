@@ -116,7 +116,7 @@ Require OS Version
           <execution>
             <id>enforce-os</id>
             <goals>
-              <goal>os</goal>
+              <goal>enforce-once</goal>
             </goals>
             <configuration>
               <rules>
