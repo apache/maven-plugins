@@ -29,7 +29,7 @@
 	<packaging>maven-plugin</packaging>
 	<name>Maven Enforcer Plugin</name>
 	<description>The Loving Iron First of Maven</description>
-	<version>1.0-alpha-1</version>
+	<version>1.0-alpha-2-SNAPSHOT</version>
 	<issueManagement>
 		<system>JIRA</system>
 		<url>http://jira.codehaus.org/browse/MENFORCER</url>
@@ -116,10 +116,4 @@
 			<version>1.0-alpha-1</version>
         </dependency>
 	</dependencies>
-
-  <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-enforcer-plugin-1.0-alpha-1</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-enforcer-plugin-1.0-alpha-1</developerConnection>
-    <url>https://svn.apache.org/repos/asf/maven/plugins/tags/maven-enforcer-plugin-1.0-alpha-1</url>
-  </scm>
 </project>
