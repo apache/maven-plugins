@@ -15,7 +15,7 @@ Maven 2 Jar Plugin
 
   * {{{jar-mojo.html}jar:jar}} create a jar file for your project sources.
 
-  * {{{test-jar-mojo.html}test-jar:jar}} create a jar file for your project test classes.
+  * {{{test-jar-mojo.html}jar:test-jar}} create a jar file for your project test classes.
 
   * {{{sign-mojo.html}jar:sign}} sign a jar file.
 
