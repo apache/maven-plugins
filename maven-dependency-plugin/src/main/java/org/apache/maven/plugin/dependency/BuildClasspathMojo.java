@@ -117,7 +117,7 @@ public class BuildClasspathMojo
 
             while ( i.hasNext() )
             {
-                sb.append( ":" );
+                sb.append(File.pathSeparatorChar);
                 appendArtifactPath( (Artifact) i.next(), sb );
             }
         }
