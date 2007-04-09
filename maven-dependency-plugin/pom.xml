@@ -38,9 +38,9 @@
 	</issueManagement>
 	<developers>
 		<developer>
-			<id>brianfox</id>
+			<id>brianf</id>
 			<name>Brian Fox</name>
-			<email>brianefox@gmail.com</email>
+			<email>brianf@apache.org</email>
 			<roles>
 				<role>Lead Developer</role>
 			</roles>
@@ -171,13 +171,4 @@
 		    <version>1.0-alpha-2</version>
 		</dependency>
 	</dependencies>
-	<!--reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>changes-maven-plugin</artifactId>
-        <version>2.0-beta-1</version>
-      </plugin>
-    </plugins>
-  </reporting -->
 </project>
