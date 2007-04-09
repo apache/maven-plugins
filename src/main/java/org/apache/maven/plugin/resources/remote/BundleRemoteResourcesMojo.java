@@ -45,7 +45,7 @@ public class BundleRemoteResourcesMojo
 {
     public static final String RESOURCES_MANIFEST = "META-INF/maven/remote-resources.xml";
     
-    private static String[] DEFAULT_INCLUDES = new String [] {
+    private static final String[] DEFAULT_INCLUDES = new String [] {
                                                               "**/*.txt",
                                                               "**/*.vm",
                                                    };

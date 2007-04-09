@@ -28,9 +28,9 @@ import java.net.URL;
 public class RemoteResourcesClassLoader
     extends URLClassLoader
 {
-    public RemoteResourcesClassLoader(ClassLoader parent)
+    public RemoteResourcesClassLoader( ClassLoader parent )
     {
-        super( new URL[]{} , parent);
+        super( new URL[]{} , parent );
     }
 
     public void addURL( URL url )
