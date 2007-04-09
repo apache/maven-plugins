@@ -21,12 +21,9 @@ package org.apache.maven.plugin.resources.remote;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringReader;
@@ -239,7 +236,7 @@ public class ProcessRemoteResourcesMojo
      * @required
      * @readonly
      */
-    protected MavenProjectBuilder mavenProjectBuilder;
+    private MavenProjectBuilder mavenProjectBuilder;
     
     /**
      * @component
@@ -255,24 +252,28 @@ public class ProcessRemoteResourcesMojo
         {
             return;
         }
-        if (supplementalModels == null) 
+        if ( supplementalModels == null ) 
         {
             File sups = new File( appendedResourcesDirectory, "supplemental-models.xml" );
             if ( sups.exists() )
             {
-                try {
+                try 
+                {
                     supplementalModels = new String[] { sups.toURL().toString() };
-                } catch (MalformedURLException e) {
+                }
+                catch ( MalformedURLException e ) 
+                {
                     //ignore
+                    getLog().debug( "URL issue with supplemental-models.xml: " + e.toString() );
                 }
             }
         }
         
                 
         locator.addSearchPath( FileResourceLoader.ID, project.getFile().getParentFile().getAbsolutePath() );
-        if (appendedResourcesDirectory != null) 
+        if ( appendedResourcesDirectory != null ) 
         {
-            locator.addSearchPath( FileResourceLoader.ID, appendedResourcesDirectory.getAbsolutePath());
+            locator.addSearchPath( FileResourceLoader.ID, appendedResourcesDirectory.getAbsolutePath() );
         }
         locator.addSearchPath( "url", "" );
         locator.setOutputDirectory( new File( project.getBuild().getDirectory() ) );
@@ -323,7 +324,9 @@ public class ProcessRemoteResourcesMojo
             {
                 throw new MojoExecutionException( "Error creating dot file for archiving instructions.", e );
             }
-        } finally {
+        }
+        finally 
+        {
             Thread.currentThread().setContextClassLoader( origLoader );            
         }
     }
@@ -340,7 +343,7 @@ public class ProcessRemoteResourcesMojo
             {
                 if ( artifact.isSnapshot() )
                 {
-                    VersionRange rng = VersionRange.createFromVersion(artifact.getBaseVersion());
+                    VersionRange rng = VersionRange.createFromVersion( artifact.getBaseVersion() );
                     artifact = artifactFactory.createDependencyArtifact( artifact.getGroupId(),
                                                                          artifact.getArtifactId(),
                                                                          rng,
@@ -351,7 +354,7 @@ public class ProcessRemoteResourcesMojo
                                                                          artifact.isOptional() );
                 }
                 
-                getLog().debug("Building project for " + artifact);
+                getLog().debug( "Building project for " + artifact );
                 MavenProject p = null;
                 try 
                 {
@@ -362,9 +365,11 @@ public class ProcessRemoteResourcesMojo
                 }
                 catch ( InvalidProjectModelException e )
                 {
-                   getLog().warn( "Invalid project model for artifact [" +
-                           artifact.getArtifactId() + ":" + artifact.getGroupId() + ":" + artifact.getVersion() + "]. " +
-                           "It will be ignored by the remote resources Mojo." ); 
+                   getLog().warn( "Invalid project model for artifact [" 
+                                  + artifact.getArtifactId() + ":" 
+                                  + artifact.getGroupId() + ":" 
+                                  + artifact.getVersion() + "]. " 
+                                  + "It will be ignored by the remote resources Mojo." ); 
                    continue;
                 }
                 
@@ -476,7 +481,7 @@ public class ProcessRemoteResourcesMojo
         
         if ( StringUtils.isEmpty( inceptionYear ) )
         {
-            getLog().info("inceptionYear not specified, defaulting to " + year);
+            getLog().info( "inceptionYear not specified, defaulting to " + year );
             inceptionYear = year;
         }
         context.put( "project", project );
@@ -502,7 +507,7 @@ public class ProcessRemoteResourcesMojo
         {
             for ( Iterator i = resourceBundles.iterator(); i.hasNext(); )
             {
-                String artifactDescriptor = (String)i.next();
+                String artifactDescriptor = (String) i.next();
                 // groupId:artifactId:version
                 String[] s = artifactDescriptor.split( ":" );
                 File artifact = downloader.download( s[0], s[1], s[2], localRepository,
@@ -510,7 +515,7 @@ public class ProcessRemoteResourcesMojo
                             artifactRepositoryFactory,
                             mavenSession.getContainer() ) );
                 
-                resourceBundleArtifacts.add(artifact);
+                resourceBundleArtifacts.add( artifact );
             }
         }
         catch ( DownloadException e )
@@ -535,10 +540,11 @@ public class ProcessRemoteResourcesMojo
         {
             for ( Iterator i = artifacts.iterator(); i.hasNext(); )
             {
-                File artifact = (File)i.next();
+                File artifact = (File) i.next();
                 cl.addURL( artifact.toURI().toURL() );            
             }
-        } catch ( MalformedURLException e )
+        }
+        catch ( MalformedURLException e )
         {
             throw new MojoExecutionException( "Unable to configure resources classloader: " + e.getMessage(), e );
         }
@@ -591,7 +597,7 @@ public class ProcessRemoteResourcesMojo
     
                         if ( !copyResourceIfExists( f, projectResource ) )
                         {
-                            if ( doVelocity) 
+                            if ( doVelocity ) 
                             {
                                 PrintWriter writer = new PrintWriter( new FileWriter( f ) );
                                 try 
@@ -661,16 +667,18 @@ public class ProcessRemoteResourcesMojo
             String groupId = model.getGroupId();
             String artifactId = model.getArtifactId();
     
-            if ( groupId == null || 
-                    groupId.trim().equals("") )
+            if ( groupId == null 
+                || groupId.trim().equals( "" ) )
             {
-                throw new MojoExecutionException( "Supplemental project XML requires that a <groupId> element be present." );
+                throw new MojoExecutionException( "Supplemental project XML "
+                                                  + "requires that a <groupId> element be present." );
             }
             
-            if ( artifactId == null ||
-                    artifactId.trim().equals("") )
+            if ( artifactId == null 
+                || artifactId.trim().equals( "" ) )
             {
-                throw new MojoExecutionException( "Supplemental project XML requires that a <artifactId> element be present." );
+                throw new MojoExecutionException( "Supplemental project XML "
+                                                  + "requires that a <artifactId> element be present." );
             }              
         } 
         catch ( IOException e )
@@ -685,9 +693,9 @@ public class ProcessRemoteResourcesMojo
         return model;
     }
 
-    protected Model mergeModels(Model parent, Model child)
+    protected Model mergeModels( Model parent, Model child )
     {
-        inheritanceAssembler.assembleModelInheritance(child, parent);  
+        inheritanceAssembler.assembleModelInheritance( child, parent );  
         return child;
     }
     
@@ -700,36 +708,38 @@ public class ProcessRemoteResourcesMojo
     {  
         if ( models == null )
         {
-            getLog().debug( "Supplemental data models won't be loaded.  " + 
-                    "No models specified." );
+            getLog().debug( "Supplemental data models won't be loaded.  " 
+                            + "No models specified." );
             return Collections.EMPTY_MAP;
         }
         
         List supplements = new ArrayList();
-        for (int idx = 0; idx < models.length; idx++) {
+        for ( int idx = 0; idx < models.length; idx++ ) 
+        {
             String set = models[idx];
             getLog().debug( "Preparing ruleset: " + set );
             try
             {
                 File f = locator.getResourceAsFile( set, getLocationTemp( set ) );
             
-                if ( null == f || !f.exists())
+                if ( null == f || !f.exists() )
                 {
                     throw new MavenReportException( "Cold not resolve " + set );
                 }
                 if ( !f.canRead() )
                 {
-                    throw new MavenReportException( "Supplemental data models won't be loaded. " +
-                            "File " + f.getAbsolutePath() + " cannot be read, check permissions on the file." );
+                    throw new MavenReportException( "Supplemental data models won't be loaded. " 
+                                                    + "File " + f.getAbsolutePath() 
+                                                    + " cannot be read, check permissions on the file." );
                 }
                 
-                getLog().debug("Loading supplemental models from " + f.getAbsolutePath() );
+                getLog().debug( "Loading supplemental models from " + f.getAbsolutePath() );
                 
                 SupplementalDataModelXpp3Reader reader = new SupplementalDataModelXpp3Reader();
                 SupplementalDataModel supplementalModel = reader.read( new FileReader( f ) );
-                supplements.addAll(supplementalModel.getSupplements());
+                supplements.addAll( supplementalModel.getSupplements() );
             } 
-            catch (Exception e )
+            catch ( Exception e )
             {
                 String msg = "Error loading supplemental data models: " + e.getMessage();
                 getLog().error( msg, e );
@@ -737,14 +747,14 @@ public class ProcessRemoteResourcesMojo
             }
         }
 
-        getLog().debug("Loading supplements complete.");
+        getLog().debug( "Loading supplements complete." );
         
         Map supplementMap = new HashMap();
         
         for ( Iterator i = supplements.iterator(); i.hasNext(); )
         {
-            Model m = getSupplement( (String)i.next() );
-            supplementMap.put( generateSupplementMapKey( m.getGroupId(), m.getArtifactId() ), m);
+            Model m = getSupplement( (String) i.next() );
+            supplementMap.put( generateSupplementMapKey( m.getGroupId(), m.getArtifactId() ), m );
         }
         
         return supplementMap;
