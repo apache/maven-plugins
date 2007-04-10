@@ -52,7 +52,6 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.resources.remote.SupplementalDataModel;
 import org.apache.maven.plugin.resources.remote.io.xpp3.SupplementalDataModelXpp3Reader;
 import org.apache.maven.plugin.resources.remote.io.xpp3.RemoteResourcesBundleXpp3Reader;
 import org.apache.maven.project.InvalidProjectModelException;
@@ -134,6 +133,7 @@ public class ProcessRemoteResourcesMojo
      * data in the file "${appendedResourcesDirectory}/supplemental-models.xml".
      * 
      * @parameter
+     * @since 1.0-alpha-5
      */
     private String[] supplementalModels;
     
@@ -756,7 +756,7 @@ public class ProcessRemoteResourcesMojo
         {
             SupplementalData sd = (SupplementalData) i.next();
             
-            Xpp3Dom dom = (Xpp3Dom)sd.getProject();
+            Xpp3Dom dom = (Xpp3Dom) sd.getProject();
             
             Model m = getSupplement( dom );
             supplementMap.put( generateSupplementMapKey( m.getGroupId(), m.getArtifactId() ), m );
