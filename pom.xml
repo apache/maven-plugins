@@ -115,6 +115,22 @@
               <goal>xdoc</goal>
               <goal>xsd</goal>
             </goals>
+            <configuration>
+              <version>1.0.0</version>
+              <model>src/main/mdo/supplemental-model.mdo</model>
+            </configuration>
+          </execution>
+          <execution>
+            <id>site-docs-supplement</id>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>xdoc</goal>
+              <goal>xsd</goal>
+            </goals>
+            <configuration>
+              <version>1.0.0</version>
+              <model>src/main/mdo/remote-resources.mdo</model>
+            </configuration>
           </execution>
           <execution>
             <id>remote-resources</id>

@@ -19,19 +19,66 @@ under the License.
 -->
 
 <faqs id="FAQ" title="Frequently Asked Questions">
- <part id="General">
-   <faq id="question1">
-     <question>Why do I need to use this plugin?</question>
-     <answer>
-       <p>
-         This plugin greatly reduces the pain associated with consistent packaging concerns across
-         a large set of projects, or an entire organization. Any project can specify the use of a
-         remote resource bundle and have the resources incorporated into their packaging. This means
-         that you can create standard settings in a parent POM somewhere in the project hierarchy and
-         have all projects use package common resources in a standard way like licenses, other legal 
-         notices and disclaimers, or anything else that may be common.
-       </p>
-     </answer>
-   </faq>
- </part>
+  <part id="General">
+    <faq id="question1">
+      <question>Why do I need to use this plugin?</question>
+      <answer>
+        <p>
+          This plugin greatly reduces the pain associated with consistent packaging concerns across
+          a large set of projects, or an entire organization. Any project can specify the use of a
+          remote resource bundle and have the resources incorporated into their packaging. This means
+          that you can create standard settings in a parent POM somewhere in the project hierarchy and
+          have all projects use package common resources in a standard way like licenses, other legal
+          notices and disclaimers, or anything else that may be common.
+        </p>
+      </answer>
+    </faq>
+    <faq id="question2">
+      <question>The generated files have a lot of missing information.  Looking at the poms from
+        the dependencies, the information isn't there either.  What can I do?</question>
+      <answer>
+        <p>
+          There are two solutions:
+          <ol>
+            <li>
+              File bugs with the projects that produced those artifacts to get them to fix them.  Also,
+              file bugs with the 
+              <a href="http://jira.codehaus.org/browse/MEV">Maven Evangelism</a>
+              project to have the Maven people enhance the metadata in the repository.
+            </li>
+            <li>
+              Use a supplemental data file.  You can create a file that contains the missing metadata.
+              For example:
+              <source>
+                <supplementalDataModels>
+                  <supplements>
+                    <supplement>
+                      <project>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-impl</artifactId>
+                        <name>Sun JAXB Reference Implementation Runtime</name>
+                        <organization>
+                          <name>Sun Microsystems</name>
+                          <url>http://www.sun.com/</url>
+                        </organization>
+                        <licenses>
+                          <license>
+                            <name>COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0</name>
+                            <url>http://www.sun.com/cddl/cddl.html</url>
+                          </license>
+                        </licenses>
+                      </project>
+                    </supplement>
+                  </supplements>
+                </supplementalDataModels>
+              </source>
+              That location for that file can then be configured into the supplementalModels configuration for the process mojo.  The 
+              supplemental information is merged into the information provided from the repository.
+            </li>
+          </ol>
+        </p>
+
+      </answer>
+    </faq>
+  </part>
 </faqs>
