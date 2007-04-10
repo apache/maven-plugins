@@ -285,11 +285,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
-      <artifactId>maven-core</artifactId>
-      <version>2.0.4</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
       <artifactId>maven-archiver</artifactId>
       <version>2.2</version>
     </dependency>
@@ -320,7 +315,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
-      <artifactId>maven-artifact-manager</artifactId>
+      <artifactId>maven-model</artifactId>
       <version>2.0.4</version>
     </dependency>
     <dependency>
@@ -367,6 +362,12 @@
       <groupId>saxpath</groupId>
       <artifactId>saxpath</artifactId>
       <version>1.0-FCS</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
