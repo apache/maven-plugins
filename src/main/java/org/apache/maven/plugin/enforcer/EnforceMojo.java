@@ -135,7 +135,7 @@ public class EnforceMojo
                     if ( rule != null )
                     {
                         // store the current rule for loggin purposes
-                        currentRule = rule.getClass().getSimpleName();
+                        currentRule = rule.getClass().getName();
                         log.debug( "Executing rule: " + currentRule );
                         try
                         {
