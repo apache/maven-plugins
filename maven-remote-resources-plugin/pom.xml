@@ -106,7 +106,7 @@
       <plugin>
         <groupId>org.codehaus.modello</groupId>
         <artifactId>modello-maven-plugin</artifactId>
-        <version>1.0-alpha-7</version>
+        <version>1.0-alpha-15</version>
         <executions>
           <execution>
             <id>site-docs</id>
