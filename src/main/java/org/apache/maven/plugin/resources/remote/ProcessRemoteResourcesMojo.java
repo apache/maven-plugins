@@ -52,8 +52,8 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.resources.SupplementalDataModel;
-import org.apache.maven.plugin.resources.io.xpp3.SupplementalDataModelXpp3Reader;
+import org.apache.maven.plugin.resources.remote.SupplementalDataModel;
+import org.apache.maven.plugin.resources.remote.io.xpp3.SupplementalDataModelXpp3Reader;
 import org.apache.maven.plugin.resources.remote.io.xpp3.RemoteResourcesBundleXpp3Reader;
 import org.apache.maven.project.InvalidProjectModelException;
 import org.apache.maven.project.MavenProject;
@@ -70,6 +70,7 @@ import org.codehaus.plexus.resource.ResourceManager;
 import org.codehaus.plexus.resource.loader.FileResourceLoader;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.codehaus.plexus.velocity.VelocityComponent;
 
@@ -655,7 +656,7 @@ public class ProcessRemoteResourcesMojo
         }
     }
 
-    protected Model getSupplement( String supplementModelXml )
+    protected Model getSupplement( Xpp3Dom supplementModelXml )
         throws MojoExecutionException
     {
         MavenXpp3Reader modelReader = new MavenXpp3Reader();
@@ -663,7 +664,7 @@ public class ProcessRemoteResourcesMojo
         
         try
         {
-            model = modelReader.read( new StringReader( supplementModelXml ) );
+            model = modelReader.read( new StringReader( supplementModelXml.toString() ) );
             String groupId = model.getGroupId();
             String artifactId = model.getArtifactId();
     
@@ -753,7 +754,11 @@ public class ProcessRemoteResourcesMojo
         
         for ( Iterator i = supplements.iterator(); i.hasNext(); )
         {
-            Model m = getSupplement( (String) i.next() );
+            SupplementalData sd = (SupplementalData) i.next();
+            
+            Xpp3Dom dom = (Xpp3Dom)sd.getProject();
+            
+            Model m = getSupplement( dom );
             supplementMap.put( generateSupplementMapKey( m.getGroupId(), m.getArtifactId() ), m );
         }
         
