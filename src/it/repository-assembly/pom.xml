@@ -23,6 +23,16 @@
           <descriptor>src/assemble/bin.xml</descriptor>
           <finalName>assembly</finalName>        
         </configuration>
+
+        <executions>
+          <execution>
+            <id>assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

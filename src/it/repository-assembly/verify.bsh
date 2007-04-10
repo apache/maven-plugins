@@ -1,0 +1,6 @@
+import java.io.*;
+
+File junitJar = new File( basedir, "target/assembly-bin.dir/repo/junit/junit/3.8.1/junit-3.8.1.jar" );
+
+return junitJar.exists();
+
