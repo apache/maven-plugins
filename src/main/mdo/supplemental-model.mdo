@@ -24,7 +24,7 @@ under the License.
   <defaults>
     <default>
       <key>package</key>
-      <value>org.apache.maven.plugin.resources</value>
+      <value>org.apache.maven.plugin.resources.remote</value>
     </default>
   </defaults>
   <classes>
@@ -38,11 +38,24 @@ under the License.
           <version>1.0.0</version>
           <description>Snippits of POM xml files used to supplement the data model.</description>
           <association>
-            <type>String</type>
+            <type>SupplementalData</type>
             <multiplicity>*</multiplicity>
           </association>
         </field>
       </fields>
+    </class>
+    <class>
+      <name>SupplementalData</name>
+      <version>1.0.0</version>
+      <description>A single supplement</description>
+      <fields>
+        <field>
+          <name>project</name>
+          <version>1.0.0</version>
+          <description>Snippits of POM xml files used to supplement the data model.</description>
+          <type>DOM</type>
+        </field>
+	  </fields>    	
     </class>
   </classes>
 </model>
