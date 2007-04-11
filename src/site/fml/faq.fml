@@ -51,25 +51,23 @@ under the License.
               For example:
               <source>
                 <supplementalDataModels>
-                  <supplements>
-                    <supplement>
-                      <project>
-                        <groupId>com.sun.xml.bind</groupId>
-                        <artifactId>jaxb-impl</artifactId>
-                        <name>Sun JAXB Reference Implementation Runtime</name>
-                        <organization>
-                          <name>Sun Microsystems</name>
-                          <url>http://www.sun.com/</url>
-                        </organization>
-                        <licenses>
-                          <license>
-                            <name>COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0</name>
-                            <url>http://www.sun.com/cddl/cddl.html</url>
-                          </license>
-                        </licenses>
-                      </project>
-                    </supplement>
-                  </supplements>
+                  <supplement>
+                    <project>
+                      <groupId>com.sun.xml.bind</groupId>
+                      <artifactId>jaxb-impl</artifactId>
+                      <name>Sun JAXB Reference Implementation Runtime</name>
+                      <organization>
+                        <name>Sun Microsystems</name>
+                        <url>http://www.sun.com/</url>
+                      </organization>
+                      <licenses>
+                        <license>
+                          <name>COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0</name>
+                          <url>http://www.sun.com/cddl/cddl.html</url>
+                        </license>
+                      </licenses>
+                    </project>
+                  </supplement>
                 </supplementalDataModels>
               </source>
               That location for that file can then be configured into the supplementalModels configuration for the process mojo.  The 
