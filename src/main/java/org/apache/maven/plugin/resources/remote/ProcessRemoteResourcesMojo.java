@@ -738,7 +738,7 @@ public class ProcessRemoteResourcesMojo
                 
                 SupplementalDataModelXpp3Reader reader = new SupplementalDataModelXpp3Reader();
                 SupplementalDataModel supplementalModel = reader.read( new FileReader( f ) );
-                supplements.addAll( supplementalModel.getSupplements() );
+                supplements.addAll( supplementalModel.getSupplement() );
             } 
             catch ( Exception e )
             {
@@ -751,10 +751,9 @@ public class ProcessRemoteResourcesMojo
         getLog().debug( "Loading supplements complete." );
         
         Map supplementMap = new HashMap();
-        
         for ( Iterator i = supplements.iterator(); i.hasNext(); )
         {
-            SupplementalData sd = (SupplementalData) i.next();
+            Supplement sd = (Supplement) i.next();
             
             Xpp3Dom dom = (Xpp3Dom) sd.getProject();
             
