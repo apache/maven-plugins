@@ -33,19 +33,19 @@ under the License.
       <version>1.0.0</version>
       <description>Root element of the supplemental-models.xml file.</description>
       <fields>
-        <field>
-          <name>supplements</name>
+        <field xml.listStyle="flat">
+          <name>supplement</name>
           <version>1.0.0</version>
           <description>Snippits of POM xml files used to supplement the data model.</description>
           <association>
-            <type>SupplementalData</type>
+            <type>Supplement</type>
             <multiplicity>*</multiplicity>
           </association>
         </field>
       </fields>
     </class>
     <class>
-      <name>SupplementalData</name>
+      <name>Supplement</name>
       <version>1.0.0</version>
       <description>A single supplement</description>
       <fields>
@@ -55,7 +55,7 @@ under the License.
           <description>Snippits of POM xml files used to supplement the data model.</description>
           <type>DOM</type>
         </field>
-	  </fields>    	
+      </fields>    	
     </class>
   </classes>
 </model>
