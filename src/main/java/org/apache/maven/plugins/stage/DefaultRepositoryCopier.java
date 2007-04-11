@@ -119,7 +119,7 @@ public class DefaultRepositoryCopier
 
         targetWagon.connect( targetRepo );
 
-        PrintWriter rw = new PrintWriter( renameScript );
+        PrintWriter rw = new PrintWriter( new FileWriter( renameScript ) );
 
         File archive = new File( tempdir, fileName );
 
