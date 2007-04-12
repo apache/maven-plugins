@@ -490,13 +490,13 @@ public class ProcessRemoteResourcesMojo
         
         context.put( "presentYear", year );
 
-        if ( project.getInceptionYear().equals( year ) )
+        if ( inceptionYear.equals( year ) )
         {
             context.put( "projectTimespan", year );
         }
         else
         {
-            context.put( "projectTimespan", project.getInceptionYear() + "-" + year );
+            context.put( "projectTimespan", inceptionYear + "-" + year );
         }
     }
     
