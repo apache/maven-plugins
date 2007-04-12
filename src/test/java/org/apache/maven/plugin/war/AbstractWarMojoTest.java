@@ -21,6 +21,7 @@ package org.apache.maven.plugin.war;
 
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.war.stub.MavenProjectBasicStub;
+import org.codehaus.plexus.archiver.war.WarArchiver;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
@@ -136,12 +137,102 @@ public abstract class AbstractWarMojoTest
         }
     }
 
-    protected void createFile( File testFile )
+    protected void createFile( File testFile, String body )
         throws Exception
     {
         createDir( testFile.getParentFile() );
-        FileUtils.fileWrite( testFile.toString(), testFile.toString() );
+        FileUtils.fileWrite( testFile.toString(), body );
 
         assertTrue( "could not create file: " + testFile, testFile.exists() );
+    }
+
+    protected void createFile( File testFile )
+        throws Exception
+    {
+        createFile( testFile, testFile.toString() );
+    }
+
+    /**
+     * Generates test war
+     * <p/>
+     * Generates war with such a structure:
+     * <ul>
+     * <li>jsp
+     * <ul>
+     * <li>d
+     * <ul>
+     * <li>a.jsp</li>
+     * <li>b.jsp</li>
+     * <li>c.jsp</li>
+     * </ul>
+     * </li>
+     * <li>a.jsp</li>
+     * <li>b.jsp</li>
+     * <li>c.jsp</li>
+     * </ul>
+     * </li>
+     * <li>WEB-INF
+     * <ul>
+     * <li>classes
+     * <ul>
+     * <li>a.class</li>
+     * <li>b.class</li>
+     * <li>c.class</li>
+     * </ul>
+     * </li>
+     * <li>lib
+     * <ul>
+     * <li>a.jar</li>
+     * <li>b.jar</li>
+     * <li>c.jar</li>
+     * </ul>
+     * </li>
+     * <li>web.xml</li>
+     * </ul>
+     * </li>
+     * </ul>
+     * <p/>
+     * Each of the files will contain: id+'-'+path
+     */
+    public File generateTestWar( String testWarName, String id )
+        throws Exception
+    {
+        File parentDirectory = new File( getTestDirectory(), "/war/testwar/" );
+
+        File warDirectory = new File( parentDirectory, "expl-" + testWarName );
+        warDirectory.mkdirs();
+
+        String[] filePaths = new String[]{"jsp/d/a.jsp", "jsp/d/b.jsp", "jsp/d/c.jsp", "jsp/a.jsp", "jsp/b.jsp",
+            "jsp/c.jsp", "WEB-INF/classes/a.class", "WEB-INF/classes/b.class", "WEB-INF/classes/c.class",
+            "WEB-INF/lib/a.jar", "WEB-INF/lib/b.jar", "WEB-INF/lib/c.jar", "WEB-INF/web.xml"};
+
+        for ( int i = 0; i < filePaths.length; i++ )
+        {
+            createFile( new File( warDirectory, filePaths[i] ), id + "-" + filePaths[i] );
+        }
+
+        File warFile = new File( parentDirectory, testWarName );
+
+        WarArchiver warArchiver = new WarArchiver();
+        warArchiver.setDestFile( warFile );
+
+        warArchiver.addDirectory( warDirectory );
+
+        warArchiver.setWebxml( new File( warDirectory, "WEB-INF/web.xml" ) );
+        warArchiver.createArchive();
+
+        for ( int i = 0; i < filePaths.length; i++ )
+        {
+            File f = new File( warDirectory, filePaths[i] );
+            assertTrue( "Can't delete file: " + f, f.delete() );
+        }
+
+        assertTrue( "Can't delete directory: jsp/d", ( new File( warDirectory, "jsp/d" ) ).delete() );
+        assertTrue( "Can't delete directory: jsp", ( new File( warDirectory, "jsp" ) ).delete() );
+        assertTrue( "Can't delete directory: WEB-INF/classes",
+                    ( new File( warDirectory, "WEB-INF/classes" ) ).delete() );
+        assertTrue( "Can't delete directory: WEB-INF/lib", ( new File( warDirectory, "WEB-INF/lib" ) ).delete() );
+        assertTrue( "Can't delete directory: WEB-INF", ( new File( warDirectory, "WEB-INF" ) ).delete() );
+        return warFile;
     }
 }

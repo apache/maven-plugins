@@ -17,7 +17,9 @@ specific language governing permissions and limitations
 under the License.
 
 -->
-<project xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd' xmlns='http://maven.apache.org/POM/4.0.0'>
+<project xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+         xsi:schemaLocation='http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd'
+         xmlns='http://maven.apache.org/POM/4.0.0'>
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
@@ -27,7 +29,7 @@ under the License.
   <artifactId>maven-war-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Maven War Plugin</name>
-  <version>2.0.3-SNAPSHOT</version>
+  <version>2.1-MWAR-97-SNAPSHOT</version>
   <prerequisites>
     <maven>2.0.1</maven>
   </prerequisites>

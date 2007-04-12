@@ -75,4 +75,6 @@ public class SimpleWarArtifactStub
     {
         file = _file;
     }
+
+
 }
