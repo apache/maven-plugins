@@ -265,9 +265,9 @@ public class JavadocReportTest
 
         //offlineLinks
         assertTrue( str.toLowerCase().indexOf(
-                                               "HREF=\"http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html\""
+                                               "HREF=\"http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html"
                                                    .toLowerCase() ) != -1 );
-
+        
         //header
         assertTrue( str.toUpperCase().indexOf( "MAVEN JAVADOC PLUGIN TEST" ) != -1 );
 
