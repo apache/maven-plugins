@@ -87,9 +87,12 @@
     <module>maven-ear-plugin</module>
     <module>maven-eclipse-plugin</module>
     <module>maven-ejb-plugin</module>
+    <module>maven-enforcer-plugin</module>
+    <module>maven-gpg-plugin</module>
     <module>maven-help-plugin</module>
     <module>maven-idea-plugin</module>
     <module>maven-install-plugin</module>
+    <module>maven-invoker-plugin</module>
     <module>maven-jar-plugin</module>
     <module>maven-javadoc-plugin</module>
     <module>maven-one-plugin</module>
@@ -97,12 +100,14 @@
     <module>maven-pmd-plugin</module>
     <module>maven-project-info-reports-plugin</module>
     <module>maven-rar-plugin</module>
+    <module>maven-remote-resources-plugin</module>
     <module>maven-repository-plugin</module>
     <module>maven-resources-plugin</module>
     <module>maven-site-plugin</module>
-    <module>maven-source-plugin</module>    
-    <module>maven-war-plugin</module>
+    <module>maven-source-plugin</module>
+    <module>maven-stage-plugin</module>
     <module>maven-verifier-plugin</module>
+    <module>maven-war-plugin</module>
   </modules>
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/</connection>
