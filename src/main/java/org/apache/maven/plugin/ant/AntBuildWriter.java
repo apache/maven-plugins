@@ -140,11 +140,14 @@ public class AntBuildWriter
         // target
         addProperty( properties, "maven.build.dir", PathUtils.toRelative( project.getBasedir(), project.getBuild()
             .getDirectory() ) );
+        addProperty( properties, "project.build.directory", "${maven.build.dir}" );
 
         // ${maven.build.dir}/classes
         addProperty( properties, "maven.build.outputDir", "${maven.build.dir}/"
             + PathUtils.toRelative( new File( project.getBasedir(), properties.getProperty( "maven.build.dir" ) ),
                                     project.getBuild().getOutputDirectory() ) );
+        addProperty( properties, "project.build.outputDirectory", "${maven.build.outputDir}" );
+
         // src/main/java
         if ( !project.getCompileSourceRoots().isEmpty() )
         {
