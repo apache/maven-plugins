@@ -11,7 +11,7 @@
   <artifactId>maven-clover-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Maven Clover Plugin</name>
-  <version>2.4</version>
+  <version>2.5-SNAPSHOT</version>
   <description>Maven plugin for Clover</description>
   <issueManagement>
     <system>jira</system>
@@ -201,10 +201,4 @@
       </build>
     </profile>
   </profiles>
-
-  <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-clover-plugin-2.4</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-clover-plugin-2.4</developerConnection>
-    <url>https://svn.apache.org/repos/asf/maven/plugins/tags/maven-clover-plugin-2.4</url>
-  </scm>
 </project>
