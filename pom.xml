@@ -43,6 +43,30 @@
               <version>1.0.0</version>
             </configuration>
           </execution>
+          <execution>
+            <id>descriptor-site</id>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>xdoc</goal>
+              <goal>xsd</goal>
+            </goals>
+            <configuration>
+              <model>src/main/mdo/descriptor.mdo</model>
+              <version>1.0.0</version>
+            </configuration>
+          </execution>
+          <execution>
+            <id>component-site</id>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>xdoc</goal>
+              <goal>xsd</goal>
+            </goals>
+            <configuration>
+              <model>src/main/mdo/component.mdo</model>
+              <version>1.0.0</version>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
     </plugins>
