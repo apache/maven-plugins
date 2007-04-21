@@ -3,10 +3,10 @@ package org.apache.maven.plugin.assembly.interpolation;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.DependencySet;
+import org.apache.maven.plugin.assembly.utils.CommandLineUtils;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
-import org.codehaus.plexus.util.cli.CommandLineUtils;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -164,7 +164,7 @@ public class AssemblyInterpolatorTest
 
         Assembly assembly = new Assembly();
 
-        Properties envars = CommandLineUtils.getSystemEnvVars();
+        Properties envars = CommandLineUtils.getSystemEnvVars( false );
 
         String homeValue = envars.getProperty( "PATH" );
 
