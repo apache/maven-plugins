@@ -1,108 +1,75 @@
 package org.apache.maven.plugin.source;
 
-import junit.framework.TestCase;
-
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
-import java.util.Properties;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
-
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.zip.ZipEntry;
 
-import org.apache.maven.it.Verifier;
-import org.apache.maven.it.VerificationException;
-import org.apache.maven.it.util.ResourceExtractor;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.model.Build;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.Resource;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.codehaus.plexus.archiver.zip.ZipFile;
 
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
+* Licensed to the Apache Software Foundation (ASF) under one
+* or more contributor license agreements.  See the NOTICE file
+* distributed with this work for additional information
+* regarding copyright ownership.  The ASF licenses this file
+* to you under the Apache License, Version 2.0 (the
+* "License"); you may not use this file except in compliance
+* with the License.  You may obtain a copy of the License at
+*
+*  http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing,
+* software distributed under the License is distributed on an
+* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+* KIND, either express or implied.  See the License for the
+* specific language governing permissions and limitations
+* under the License.
+*/
 
 /**
  * @author Stephane Nicoll
  */
 public abstract class AbstractSourcePluginTestCase
-    extends TestCase
+    extends AbstractMojoTestCase
 {
 
     protected final String FINAL_NAME_PREFIX = "maven-source-plugin-test-";
 
     protected final String FINAL_NAME_SUFFIX = "-99.0";
 
-    /**
-     * The base directory.
-     */
-    private File basedir;
+    protected abstract String getGoal();
 
     /**
      * Execute the souce plugin for the specified project.
      *
-     * @param projectName   the name of the project
-     * @param properties    extra properties to be used by the embedder
-     * @param expectNoError whether an exception is expected or not
-     * @return the base directory of the project
-     * @throws Exception if an error occured
-     */
-    protected File executeMojo( final String projectName, final Properties properties, boolean expectNoError )
-        throws Exception
-    {
-        File testDir = getTestDir( projectName );
-        Verifier verifier = new Verifier( testDir.getAbsolutePath() );
-
-        // Turn On debug logs
-        //verifier.getCliOptions().add( "-X" );
-
-        // On linux and macOSX, an exception is thrown if a build failure occurs underneath
-        try
-        {
-            verifier.executeGoal( "package" );
-        }
-        catch ( VerificationException e )
-        {
-            //@TODO needs to be handled nicely in the verifier
-            if ( expectNoError || e.getMessage().indexOf( "Exit code was non-zero" ) == -1 )
-            {
-                throw e;
-            }
-        }
-
-        // If no error is expected make sure that error logs are free
-        if ( expectNoError )
-        {
-            verifier.verifyErrorFreeLog();
-        }
-        verifier.resetStreams();
-        return testDir;
-    }
-
-
-    /**
-     * Execute the source plugin for the specified project.
-     *
      * @param projectName the name of the project
-     * @param properties  extra properties to be used by the embedder
      * @return the base directory of the project
      * @throws Exception if an error occured
      */
-    protected File executeMojo( final String projectName, final Properties properties )
+    protected void executeMojo( final String projectName )
         throws Exception
     {
-        return executeMojo( projectName, properties, true );
+        File testPom = new File( getBasedir(), getTestDir( projectName ) + "/pom.xml" );
+        AbstractSourceJarMojo mojo = (AbstractSourceJarMojo) lookupMojo( getGoal(), testPom );
+
+        mojo.execute();
     }
 
     /**
@@ -121,21 +88,22 @@ public abstract class AbstractSourcePluginTestCase
                                   final String[] expectedTestSourceFiles )
         throws Exception
     {
-        final File baseDir = executeMojo( projectName, new Properties() );
+        executeMojo( projectName );
+        final File testTargetDir = getTestTargetDir( projectName );
 
         if ( expectSourceArchive )
         {
-            assertSourceArchive( baseDir, projectName );
-            assertJarContent( getSourceArchive( baseDir, projectName ), expectedSourceFiles );
+            assertSourceArchive( testTargetDir, projectName );
+            assertJarContent( getSourceArchive( testTargetDir, projectName ), expectedSourceFiles );
         }
 
         if ( expectTestSourceArchive )
         {
-            assertTestSourceArchive( baseDir, projectName );
-            assertJarContent( getTestSourceArchive( baseDir, projectName ), expectedTestSourceFiles );
+            assertTestSourceArchive( testTargetDir, projectName );
+            assertJarContent( getTestSourceArchive( testTargetDir, projectName ), expectedTestSourceFiles );
         }
 
-        return baseDir;
+        return testTargetDir;
     }
 
     /**
@@ -168,31 +136,27 @@ public abstract class AbstractSourcePluginTestCase
     }
 
 
-    protected void assertSourceArchive( final File baseDir, final String projectName )
+    protected void assertSourceArchive( final File testTargetDir, final String projectName )
     {
-        final File expectedFile = getSourceArchive( baseDir, projectName );
-        assertTrue( "Source archive does not exist["+expectedFile.getAbsolutePath()+"]", expectedFile.exists() );
+        final File expectedFile = getSourceArchive( testTargetDir, projectName );
+        assertTrue( "Source archive does not exist[" + expectedFile.getAbsolutePath() + "]", expectedFile.exists() );
     }
 
-    protected void assertTestSourceArchive( final File baseDir, final String projectName )
+    protected void assertTestSourceArchive( final File testTargetDir, final String projectName )
     {
-        final File expectedFile = getTestSourceArchive( baseDir, projectName );
-        assertTrue( "Test source archive does not exist["+expectedFile.getAbsolutePath()+"]", expectedFile.exists() );
+        final File expectedFile = getTestSourceArchive( testTargetDir, projectName );
+        assertTrue( "Test source archive does not exist[" + expectedFile.getAbsolutePath() + "]",
+                    expectedFile.exists() );
     }
 
-    protected File getTargetDirectory( final File basedir )
+    protected File getSourceArchive( final File testTargetDir, final String projectName )
     {
-        return new File( basedir, "target" );
+        return new File( testTargetDir, buildFinalSourceName( projectName ) + ".jar" );
     }
 
-    protected File getSourceArchive( final File baseDir, final String projectName )
+    protected File getTestSourceArchive( final File testTargetDir, final String projectName )
     {
-        return new File( getTargetDirectory( baseDir ), buildFinalSourceName( projectName ) + ".jar" );
-    }
-
-    protected File getTestSourceArchive( final File baseDir, final String projectName )
-    {
-        return new File( getTargetDirectory( baseDir ), buildFinalTestSourceName( projectName ) + ".jar" );
+        return new File( testTargetDir, buildFinalTestSourceName( projectName ) + ".jar" );
     }
 
     protected String buildFinalSourceName( final String projectName )
@@ -208,32 +172,17 @@ public abstract class AbstractSourcePluginTestCase
     protected File getTestDir( String projectName )
         throws IOException
     {
-        return ResourceExtractor.simpleExtractResources( getClass(), "/projects/" + projectName );
-    }
-
-    protected File getBasedir()
-    {
-        if ( basedir != null )
+        File f = new File( "target/test-classes/unit/" + projectName );
+        if ( !new File( f, "pom.xml" ).exists() )
         {
-            return basedir;
+            throw new IllegalStateException( "No pom file found in " + f.getPath() );
         }
-
-        final String basedirString = System.getProperty( "basedir" );
-        if ( basedirString == null )
-        {
-            basedir = new File( "" );
-        }
-        else
-        {
-            basedir = new File( basedirString );
-        }
-        return basedir;
+        return f;
     }
 
     protected void assertJarContent( final File jarFile, final String[] expectedFiles )
         throws IOException
     {
-
         ZipFile jar = new ZipFile( jarFile );
         Enumeration entries = jar.getEntries();
 
@@ -244,15 +193,22 @@ public abstract class AbstractSourcePluginTestCase
         else
         {
             assertTrue( entries.hasMoreElements() );
-            for ( int i = 0; i < expectedFiles.length; i++ )
+
+            Set expected = new TreeSet( Arrays.asList( expectedFiles ) );
+
+            while ( entries.hasMoreElements() )
             {
-                String expectedFile = expectedFiles[i];
                 ZipEntry entry = (ZipEntry) entries.nextElement();
-                assertEquals( expectedFile, entry.getName() );
+
+                assertTrue( "Not expecting " + entry.getName() + " in " + jarFile, expected.remove( entry.getName() ) );
             }
 
-            // Now we are done, assert that there is no more element
-            assertFalse( "Jar file contains more elements than expected", entries.hasMoreElements() );
+            assertTrue( "Missing entries " + expected.toString() + " in " + jarFile, expected.isEmpty() );
         }
+    }
+
+    protected File getTestTargetDir( String projectName )
+    {
+        return new File( getBasedir(), "target/test/unit/" + projectName + "/target" );
     }
 }
