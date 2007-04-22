@@ -20,11 +20,17 @@ package org.apache.maven.plugin.war;
  */
 
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.plugin.testing.stubs.ArtifactStub;
 import org.apache.maven.plugin.war.stub.MavenProjectBasicStub;
+import org.apache.maven.plugin.war.stub.WarOverlayStub;
+import org.codehaus.plexus.archiver.Archiver;
+import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.war.WarArchiver;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -32,6 +38,10 @@ import java.util.List;
 public abstract class AbstractWarMojoTest
     extends AbstractMojoTestCase
 {
+
+    protected static final File OVERLAYS_TEMP_DIR = new File( getBasedir(), "target/test-overlays/" );
+
+    protected static final File OVERLAYS_ROOT_DIR = new File( getBasedir(), "target/test-classes/overlays/" );
 
     protected abstract File getTestDirectory()
         throws Exception;
@@ -235,4 +245,64 @@ public abstract class AbstractWarMojoTest
         assertTrue( "Can't delete directory: WEB-INF", ( new File( warDirectory, "WEB-INF" ) ).delete() );
         return warFile;
     }
+
+    // Overlay utilities
+
+    /**
+     * Builds a test overlay on the fly.
+     *
+     * @param id the id of the overlay (see test/resources/overlays)
+     * @return a test war artifact with the content of the given test overlay
+     */
+    protected ArtifactStub buildWarOverlayStub( String id )
+    {
+        // Create war file
+        final File destFile = new File( OVERLAYS_TEMP_DIR, id + ".war" );
+        createArchive( new File( OVERLAYS_ROOT_DIR, id ), destFile );
+
+        return new WarOverlayStub( getBasedir(), id, destFile );
+    }
+
+    protected File getOverlayFile( String id, String filePath )
+    {
+        final File overlayDir = new File( OVERLAYS_ROOT_DIR, id );
+        final File file = new File( overlayDir, filePath );
+
+        // Make sure the file exists
+        assertTrue( "Overlay file " + filePath + " does not exist for overlay " + id + " at " + file.getAbsolutePath(),
+                    file.exists() );
+        return file;
+
+    }
+
+    protected void createArchive( final File directory, final File destinationFile )
+    {
+        try
+        {
+            //WarArchiver archiver = new WarArchiver();
+
+            Archiver archiver = new JarArchiver();
+
+            archiver.setDestFile( destinationFile );
+            archiver.addDirectory( directory );
+
+            //archiver.setWebxml( new File(directory, "WEB-INF/web.xml"));
+
+            // create archive
+            archiver.createArchive();
+
+        }
+        catch ( ArchiverException e )
+        {
+            e.printStackTrace();
+            fail( "Failed to create overlay archive " + e.getMessage() );
+        }
+        catch ( IOException e )
+        {
+            e.printStackTrace();
+            fail( "Unexpected exception " + e.getMessage() );
+        }
+    }
+
+
 }
