@@ -145,9 +145,9 @@ The Maven Assembly Plugin
 
 * Assembly Descriptor Schemas (XSD)
 
-  * {{{http://maven.apache.org/xsd/assembly-1.1.0-SNAPSHOT.xsd}}http://maven.apache.org/xsd/assembly-1.1.0-SNAPSHOT.xsd} (for version 2.2-SNAPSHOT and higher)
+  * {{{http://maven.apache.org/xsd/assembly-1.1.0-SNAPSHOT.xsd}http://maven.apache.org/xsd/assembly-1.1.0-SNAPSHOT.xsd}} (for version 2.2-SNAPSHOT and higher)
 
-  * {{{http://maven.apache.org/xsd/assembly-1.0.0.xsd}}http://maven.apache.org/xsd/assembly-1.0.0.xsd} (for versions <= 2.1)
+  * {{{http://maven.apache.org/xsd/assembly-1.0.0.xsd}http://maven.apache.org/xsd/assembly-1.0.0.xsd}} (for versions 2.1 and below)
 
   []
 
