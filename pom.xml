@@ -124,6 +124,12 @@
             <tagBase>https://svn.apache.org/repos/asf/maven/plugins/tags</tagBase>
           </configuration>
         </plugin>
+        <plugin>
+          <artifactId>maven-site-plugin</artifactId>
+          <configuration>
+            <stagingSiteURL>scp://people.apache.org/www/maven.apache.org/plugins/${artifactId}-${version}</stagingSiteURL>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
