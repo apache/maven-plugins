@@ -213,7 +213,8 @@ public abstract class AbstractIdeaMojo
     {
         String relative;
 
-        if ( absolutePath.startsWith( basedir.getAbsolutePath() ) )
+        if ( absolutePath.startsWith( basedir.getAbsolutePath() )
+            && absolutePath.length() > basedir.getAbsolutePath().length() )
         {
             relative = absolutePath.substring( basedir.getAbsolutePath().length() + 1 );
         }
