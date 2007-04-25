@@ -237,6 +237,10 @@ public class AnalyzeMojo
             for ( Iterator iterator = artifacts.iterator(); iterator.hasNext(); )
             {
                 Artifact artifact = (Artifact) iterator.next();
+                
+                //called because artifact will set the version to -SNAPSHOT only if I do this. MNG-2961
+                artifact.isSnapshot();
+                
                 if ( warn )
                 {
                     getLog().warn( "   " + artifact );
@@ -264,6 +268,9 @@ public class AnalyzeMojo
             {
                 Artifact artifact = (Artifact) iter.next();
 
+                //called because artifact will set the version to -SNAPSHOT only if I do this. MNG-2961
+                artifact.isSnapshot();
+                
                 writer.startElement( "dependency" );
                 writer.startElement( "groupId" );
                 writer.writeText( artifact.getGroupId() );
@@ -299,8 +306,8 @@ public class AnalyzeMojo
            while ( iter.hasNext() )
            {
                Artifact artifact = (Artifact) iter.next();
-             
-               //called because artifact will set the version to -SNAPSHOT only if I do this.
+               
+               //called because artifact will set the version to -SNAPSHOT only if I do this. MNG-2961
                artifact.isSnapshot();
                
                buf.append( scriptableFlag+":"+pomFile+":"+artifact.getDependencyConflictId()+":"+artifact.getClassifier()+":"+artifact.getBaseVersion()+":"+artifact.getScope()+"\n");
