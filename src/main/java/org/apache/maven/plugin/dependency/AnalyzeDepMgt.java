@@ -276,8 +276,10 @@ public class AnalyzeDepMgt
             {
                 ArtifactVersion artifactVersion = new DefaultArtifactVersion( dependencyArtifact.getVersion() );
 
-                if ( !dependencyArtifact.isSnapshot()
-                    && !depFromDepMgt.getVersion().equals( dependencyArtifact.getVersion() ) )
+                //workaround for MNG-2961
+                dependencyArtifact.isSnapshot();
+                
+                if (!depFromDepMgt.getVersion().equals( dependencyArtifact.getBaseVersion()) )
                 {
                     mismatchMap.put( dependencyArtifact, depFromDepMgt );
                 }
@@ -307,7 +309,7 @@ public class AnalyzeDepMgt
 
         getLog().info( "\tDependency: " + StringUtils.stripEnd(dependencyFromDepMgt.getManagementKey(),":") );
         getLog().info( "\t\tDepMgt  : " + dependencyFromDepMgt.getVersion() );
-        getLog().info( "\t\tResolved: " + dependencyArtifact.getVersion() );
+        getLog().info( "\t\tResolved: " + dependencyArtifact.getBaseVersion() );
     }
 
     /**
