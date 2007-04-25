@@ -19,10 +19,14 @@ package org.apache.maven.plugin.dependency;
  * under the License.
  */
 
+import java.io.File;
+import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -30,6 +34,8 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalysis;
 import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzer;
 import org.apache.maven.shared.dependency.analyzer.ProjectDependencyAnalyzerException;
+import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
+
 
 /**
  * This goal analyzes your project's dependencies and lists dependencies that
@@ -60,9 +66,16 @@ public class AnalyzeMojo
     /**
      * Fail Build on problem
      * 
-     * @parameter expression="${mdep.analyze.failBuild}"
+     * @parameter expression="${mdep.analyze.failBuild}" default-value="false"
      */
     private boolean failBuild = false;
+
+    /**
+     * Output used dependencies
+     * 
+     * @parameter expression="${mdep.analyze.displayUsed}" default-value="false"
+     */
+    private boolean displayUsed = false;
 
     /**
      * 
@@ -76,16 +89,47 @@ public class AnalyzeMojo
     /**
      * Ignore Direct Dependency Overrides of dependencyManagement section.
      * 
-     * @parameter expression="${mdep.analyze.ignore.direct}" default-value="true"
+     * @parameter expression="${mdep.analyze.ignore.direct}"
+     *            default-value="true"
      */
     private boolean ignoreDirect = true;
 
     /**
      * Ignore Runtime,Provide,Test,System scopes for unused dependency analysis
      * 
-     * @parameter expression="${mdep.analyze.ignore.noncompile}" default-value="true"
+     * @parameter expression="${mdep.analyze.ignore.noncompile}"
+     *            default-value="true"
      */
     private boolean ignoreNonCompile = true;
+
+    /**
+     * Output the xml for the missing dependencies
+     * 
+     * @parameter expression="${mdep.analyze.outputXML}" default-value="true"
+     */
+    private boolean outputXML = true;
+    
+    /**
+     * Output scriptable values
+     * 
+     * @parameter expression="${mdep.analyze.scriptable}" default-value="false"
+     */
+    private boolean scriptableOutput = false;
+    
+    /**
+     * Flag to use for scriptable output
+     * 
+     * @parameter expression="${mdep.analyze.flag}" default-value="$$$%%%"
+     */
+    private String scriptableFlag;
+    
+    /**
+     * Flag to use for scriptable output
+     * 
+     * @parameter expression="${basedir}" 
+     * @readonly
+     */
+    private File baseDir;
 
     // Mojo methods -----------------------------------------------------------
 
@@ -128,9 +172,12 @@ public class AnalyzeMojo
         {
             ProjectDependencyAnalysis analysis = analyzer.analyze( project );
 
-            getLog().info( "Used declared dependencies:" );
+            if ( this.displayUsed )
+            {
+                getLog().info( "Used declared dependencies:" );
 
-            logArtifacts( analysis.getUsedDeclaredArtifacts(), false );
+                logArtifacts( analysis.getUsedDeclaredArtifacts(), false );
+            }
 
             getLog().info( "Used undeclared dependencies:" );
 
@@ -154,6 +201,15 @@ public class AnalyzeMojo
                 }
             }
             logArtifacts( unusedDeclared, false );
+
+            if ( outputXML )
+            {
+                writeDependencyXML( usedUndeclared );
+            }
+            if (scriptableOutput)
+            {
+                writeScriptableOutput( usedUndeclared );
+            }
 
             if ( ( usedUndeclared != null && !usedUndeclared.isEmpty() ) || unusedDeclared != null
                 && !unusedDeclared.isEmpty() )
@@ -192,5 +248,64 @@ public class AnalyzeMojo
 
             }
         }
+    }
+
+    private void writeDependencyXML( Set artifacts )
+    {
+        if ( !artifacts.isEmpty() )
+        {
+            getLog().info( "Add the following to your pom to correct the missing dependencies: " );
+
+            StringWriter out = new StringWriter();
+            PrettyPrintXMLWriter writer = new PrettyPrintXMLWriter( out );
+
+            Iterator iter = artifacts.iterator();
+            while ( iter.hasNext() )
+            {
+                Artifact artifact = (Artifact) iter.next();
+
+                writer.startElement( "dependency" );
+                writer.startElement( "groupId" );
+                writer.writeText( artifact.getGroupId() );
+                writer.endElement();
+                writer.startElement( "artifactId" );
+                writer.writeText( artifact.getArtifactId() );
+                writer.endElement();
+                writer.startElement( "version" );
+                writer.writeText( artifact.getBaseVersion());
+                writer.endElement();
+
+                if ( !Artifact.SCOPE_COMPILE.equals( artifact.getScope() ) )
+                {
+                    writer.startElement( "scope" );
+                    writer.writeText( artifact.getScope() );
+                    writer.endElement();
+                }
+                writer.endElement();
+            }
+
+            getLog().info( "\n" + out.getBuffer() );
+        }
+    }
+    
+   public void writeScriptableOutput(Set artifacts)
+    {
+       if ( !artifacts.isEmpty() )
+       {
+           getLog().info( "Missing dependencies: " );
+           String pomFile = baseDir.getAbsolutePath()+File.separatorChar+"pom.xml";
+           StringBuffer buf = new StringBuffer();
+           Iterator iter = artifacts.iterator();
+           while ( iter.hasNext() )
+           {
+               Artifact artifact = (Artifact) iter.next();
+             
+               //called because artifact will set the version to -SNAPSHOT only if I do this.
+               artifact.isSnapshot();
+               
+               buf.append( scriptableFlag+":"+pomFile+":"+artifact.getDependencyConflictId()+":"+artifact.getClassifier()+":"+artifact.getBaseVersion()+":"+artifact.getScope()+"\n");
+           }
+           getLog().info( "\n" +buf);
+       }
     }
 }
