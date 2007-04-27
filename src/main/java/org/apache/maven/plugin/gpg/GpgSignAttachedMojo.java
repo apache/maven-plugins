@@ -34,6 +34,7 @@ import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.DefaultConsumer;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.SelectorUtils;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -62,6 +63,11 @@ public class GpgSignAttachedMojo
     extends AbstractMojo
 {
     public static final String SIGNATURE_EXTENSION = ".asc";
+    private static final String DEFAULT_EXCLUDES[] = new String[] {
+        "**/*.md5",
+        "**/*.sha1",
+        "**/*.asc"
+    };
 
     /**
      * The passphrase to use when signing.
@@ -95,6 +101,16 @@ public class GpgSignAttachedMojo
      */
     private boolean skip;
 
+    
+    /**
+     * A list of files to exclude from being signed. Can contain ant-style 
+     * wildcards and double wildcards. The default includes are
+     * <code>**&#47;*.md5   **&#47;*.sha1    **&#47;*.asc</code>
+     * 
+     * @parameter
+     * @since 1.0-alpha-4
+     */
+    private String[] excludes;
 
     /**
      * The maven project.
@@ -142,6 +158,25 @@ public class GpgSignAttachedMojo
             return;
         }
         
+        if ( excludes == null || excludes.length == 0 )
+        {
+            excludes = DEFAULT_EXCLUDES;
+        }
+        String newExcludes[] = new String[excludes.length];
+        for ( int i = 0; i < excludes.length; i++ )
+        {
+            String pattern;
+            pattern = excludes[i].trim().replace( '/', File.separatorChar ).replace(
+                '\\', File.separatorChar );
+            if ( pattern.endsWith( File.separator ) )
+            {
+                pattern += "**";
+            }
+            newExcludes[i] = pattern;
+        }
+        excludes = newExcludes;
+        
+        
         if ( !useAgent && null == pass )
         {
             if ( !settings.isInteractiveMode() )
@@ -175,7 +210,10 @@ public class GpgSignAttachedMojo
 
             File projectArtifactSignature = generateSignatureForArtifact( projectArtifact, pass );
 
-            signingBundles.add( new SigningBundle( project.getArtifact().getType(), projectArtifactSignature ) );
+            if ( projectArtifactSignature != null )
+            {
+                signingBundles.add( new SigningBundle( project.getArtifact().getType(), projectArtifactSignature ) );
+            }
         }
 
         // ----------------------------------------------------------------------------
@@ -195,7 +233,10 @@ public class GpgSignAttachedMojo
 
         File pomSignature = generateSignatureForArtifact( pomToSign, pass );
 
-        signingBundles.add( new SigningBundle( "pom", pomSignature ) );
+        if ( pomSignature != null )
+        {
+            signingBundles.add( new SigningBundle( "pom", pomSignature ) );
+        }
 
         // ----------------------------------------------------------------------------
         // Attached artifacts
@@ -209,7 +250,10 @@ public class GpgSignAttachedMojo
 
             File signature = generateSignatureForArtifact( file, pass );
 
-            signingBundles.add( new SigningBundle( artifact.getType(), artifact.getClassifier(), signature ) );
+            if ( signature != null )
+            {
+                signingBundles.add( new SigningBundle( artifact.getType(), artifact.getClassifier(), signature ) );
+            }
         }
 
         // ----------------------------------------------------------------------------
@@ -230,9 +274,9 @@ public class GpgSignAttachedMojo
 
             ArtifactHandler ah = artifactHandlerManager.getArtifactHandler( bundle.getArtifactType() );
 
-            if ( bundle.getClassifier() != null )
+            if ( bundle.getClassifier() != null 
+                && !"".equals( bundle.getClassifier() ) )
             {
-
                 projectHelper.attachArtifact( project, "asc", bundle.getClassifier() + "." + ah.getExtension(),
                                               bundle.getSignature() );
             }
@@ -287,7 +331,12 @@ public class GpgSignAttachedMojo
         cmd.createArgument().setValue( "--armor" );
 
         cmd.createArgument().setValue( "--detach-sign" );
-
+        
+        if ( !settings.isInteractiveMode() )
+        {
+            cmd.createArgument().setValue( "--no-tty" );
+        }
+        
         cmd.createArgument().setFile( file );
 
 
@@ -308,15 +357,6 @@ public class GpgSignAttachedMojo
         return signature;
     }
 
-    //TODO: This must be made to work generally or the packaging plugins must
-    // set the project artifact as part of what they do. We should not have to
-    // guess or synthesize what project artifact is here. It should have happened
-    // already. We'll settle for JAR files right now.
-    protected File getProjectFile( String basedir,
-                                   String finalName )
-    {
-        return new File( basedir, finalName + ".jar" );
-    }
     
     private MavenProject findReactorProject(MavenProject prj) {
         if ( prj.getParent() != null )
@@ -327,6 +367,25 @@ public class GpgSignAttachedMojo
             }
         }
         return prj;
+    }
+    /**
+     * Tests whether or not a name matches against at least one exclude
+     * pattern.
+     *
+     * @param name The name to match. Must not be <code>null</code>.
+     * @return <code>true</code> when the name matches against at least one
+     *         exclude pattern, or <code>false</code> otherwise.
+     */
+    protected boolean isExcluded( String name )
+    {
+        for ( int i = 0; i < excludes.length; i++ )
+        {
+            if ( SelectorUtils.matchPath( excludes[i], name ) )
+            {
+                return true;
+            }
+        }
+        return false;
     }
     
     protected String getPassphrase() throws IOException
@@ -349,7 +408,7 @@ public class GpgSignAttachedMojo
                 System.in.read();
             }
             
-            System.out.print("GPG Passphrase: ");
+            System.out.print("GPG Passphrase:  ");
             MaskingThread thread = new MaskingThread();
             thread.start();
     
