@@ -98,23 +98,46 @@ public abstract class AbstractWarMojoTest
     }
 
     /**
+     * Returns the webapp source directory for the specified id.
+     *
+     * @param id the id of the test
+     * @return the source directory for that test
+     * @throws Exception if an exception occurs
+     */
+    protected File getWebAppSource(String id)
+        throws Exception
+    {
+        return new File( getTestDirectory(), "/" + id + "-test-data/source" );
+    }
+
+    /**
      * create an isolated web source with a sample jsp file
      *
      * @param id
      * @return
      * @throws Exception
      */
+    protected File createWebAppSource( String id, boolean createSamples )
+        throws Exception
+    {
+        File webAppSource = getWebAppSource( id);
+        if ( createSamples )
+        {
+            File simpleJSP = new File( webAppSource, "pansit.jsp" );
+            File jspFile = new File( webAppSource, "org/web/app/last-exile.jsp" );
+
+            createFile( simpleJSP );
+            createFile( jspFile );
+        }
+        return webAppSource;
+    }
+
     protected File createWebAppSource( String id )
         throws Exception
     {
-        File webAppSource = new File( getTestDirectory(), "/" + id + "-test-data/source" );
-        File simpleJSP = new File( webAppSource, "pansit.jsp" );
-        File jspFile = new File( webAppSource, "org/web/app/last-exile.jsp" );
-
-        createFile( simpleJSP );
-        createFile( jspFile );
-        return webAppSource;
+        return createWebAppSource( id, true );
     }
+
 
     /**
      * create a class directory with or without a sample class
@@ -203,53 +226,40 @@ public abstract class AbstractWarMojoTest
      * </ul>
      * <p/>
      * Each of the files will contain: id+'-'+path
+     *
+     * @param id the id of the overlay containing the full structure
+     * @return the war file
+     * @throws Exception if an error occurs
      */
-    public File generateTestWar( String testWarName, String id )
+    protected File generateFullOverlayWar( String id )
         throws Exception
     {
-        File parentDirectory = new File( getTestDirectory(), "/war/testwar/" );
+        final File destFile = new File( OVERLAYS_TEMP_DIR, id + ".war" );
+        if (destFile.exists()) {
+            return destFile;
+        }
 
-        File warDirectory = new File( parentDirectory, "expl-" + testWarName );
-        warDirectory.mkdirs();
-
+        // Archive was not yet created for that id so let's create it
+        final File rootDir = new File( OVERLAYS_ROOT_DIR, id );
+        rootDir.mkdirs();
         String[] filePaths = new String[]{"jsp/d/a.jsp", "jsp/d/b.jsp", "jsp/d/c.jsp", "jsp/a.jsp", "jsp/b.jsp",
             "jsp/c.jsp", "WEB-INF/classes/a.class", "WEB-INF/classes/b.class", "WEB-INF/classes/c.class",
             "WEB-INF/lib/a.jar", "WEB-INF/lib/b.jar", "WEB-INF/lib/c.jar", "WEB-INF/web.xml"};
 
         for ( int i = 0; i < filePaths.length; i++ )
         {
-            createFile( new File( warDirectory, filePaths[i] ), id + "-" + filePaths[i] );
+            createFile( new File( rootDir, filePaths[i] ), id + "-" + filePaths[i] );
         }
 
-        File warFile = new File( parentDirectory, testWarName );
-
-        WarArchiver warArchiver = new WarArchiver();
-        warArchiver.setDestFile( warFile );
-
-        warArchiver.addDirectory( warDirectory );
-
-        warArchiver.setWebxml( new File( warDirectory, "WEB-INF/web.xml" ) );
-        warArchiver.createArchive();
-
-        for ( int i = 0; i < filePaths.length; i++ )
-        {
-            File f = new File( warDirectory, filePaths[i] );
-            assertTrue( "Can't delete file: " + f, f.delete() );
-        }
-
-        assertTrue( "Can't delete directory: jsp/d", ( new File( warDirectory, "jsp/d" ) ).delete() );
-        assertTrue( "Can't delete directory: jsp", ( new File( warDirectory, "jsp" ) ).delete() );
-        assertTrue( "Can't delete directory: WEB-INF/classes",
-                    ( new File( warDirectory, "WEB-INF/classes" ) ).delete() );
-        assertTrue( "Can't delete directory: WEB-INF/lib", ( new File( warDirectory, "WEB-INF/lib" ) ).delete() );
-        assertTrue( "Can't delete directory: WEB-INF", ( new File( warDirectory, "WEB-INF" ) ).delete() );
-        return warFile;
+        createArchive( rootDir, destFile );
+        return destFile;
     }
 
     // Overlay utilities
 
+
     /**
-     * Builds a test overlay on the fly.
+     * Builds a test overlay.
      *
      * @param id the id of the overlay (see test/resources/overlays)
      * @return a test war artifact with the content of the given test overlay
@@ -258,7 +268,9 @@ public abstract class AbstractWarMojoTest
     {
         // Create war file
         final File destFile = new File( OVERLAYS_TEMP_DIR, id + ".war" );
-        createArchive( new File( OVERLAYS_ROOT_DIR, id ), destFile );
+        if (!destFile.exists()) {
+            createArchive( new File( OVERLAYS_ROOT_DIR, id ), destFile );
+        }
 
         return new WarOverlayStub( getBasedir(), id, destFile );
     }

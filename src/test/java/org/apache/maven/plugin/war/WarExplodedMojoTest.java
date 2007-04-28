@@ -44,26 +44,17 @@ import java.util.List;
 import java.util.Locale;
 
 public class WarExplodedMojoTest
-    extends AbstractWarMojoTest
+    extends AbstractWarExplodedMojoTest
 {
-    protected static final String pomFilePath =
-        getBasedir() + "/target/test-classes/unit/warexplodedmojo/plugin-config.xml";
 
-    private WarExplodedMojo mojo;
-
-    protected File getTestDirectory()
-        throws Exception
+    protected File getPomFile()
     {
-        return new File( getBasedir(), "target/test-classes/unit/warexplodedmojo/test-dir" );
+        return new File( getBasedir(), "/target/test-classes/unit/warexplodedmojo/plugin-config.xml" );
     }
 
-    public void setUp()
-        throws Exception
+    protected File getTestDirectory()
     {
-        super.setUp();
-
-        mojo = (WarExplodedMojo) lookupMojo( "exploded", pomFilePath );
-        assertNotNull( mojo );
+        return new File( getBasedir(), "target/test-classes/unit/warexplodedmojo/test-dir" );
     }
 
     /**
@@ -292,7 +283,7 @@ public class WarExplodedMojoTest
 
         String testId = "testExplodedWarMergeWarLocalFileOverride";
         File webAppDirectory = new File( getTestDirectory(), testId );
-        File webAppSource = new File( getTestDirectory(), "/" + testId + "-test-data/source" );
+        File webAppSource = getWebAppSource( testId);
         File simpleJSP = new File( webAppSource, "org/sample/company/test.jsp" );
         createFile( simpleJSP );
 
@@ -344,7 +335,7 @@ public class WarExplodedMojoTest
         File webAppDirectory = new File( getTestDirectory(), testId );
         FileUtils.deleteDirectory( webAppDirectory );
 
-        File webAppSource = new File( getTestDirectory(), "/" + testId + "-test-data/source" );
+        File webAppSource = getWebAppSource( testId);
 
         File workDirectory = new File( getTestDirectory(), "/war/work-" + testId );
         createDir( workDirectory );
@@ -1084,272 +1075,7 @@ public class WarExplodedMojoTest
 
     /* --------------------- 2.1 Overlay tests ----------------------------------- */
 
-    private SimpleWarArtifactStub generateSimpleWarArtifactStub( String id )
-        throws Exception
-    {
-        SimpleWarArtifactStub war = new SimpleWarArtifactStub( getBasedir() );
-        war.setFile( generateTestWar( id + ".war", id ) );
-        war.setArtifactId( id );
-        war.setGroupId( "org.apache.maven.plugin.war.test" );
-        return war;
-    }
-
-    /**
-     * Merge a dependent WAR when a file in the war source directory overrides one found in the WAR.
-     * It also tests complitness of result war and right (alfabetical) order of the dependencies iterpretation.
-     */
-    public void testExplodedWar_Overlay21_noOverlaysTag()
-        throws Exception
-    {
-        // setup test data
-        MavenProjectArtifactsStub project = new MavenProjectArtifactsStub();
-
-        SimpleWarArtifactStub war1 = generateSimpleWarArtifactStub( "war1" );
-        SimpleWarArtifactStub war2 = generateSimpleWarArtifactStub( "war2" );
-        SimpleWarArtifactStub war3 = generateSimpleWarArtifactStub( "war3" );
-        String testId = "ExplodedWarOverlay21_noOverlaysTag";
-
-        File webAppDirectory = new File( getTestDirectory(), testId );
-        File webAppSource = new File( getTestDirectory(), "/" + testId + "-test-data/source" );
-        File simpleJSP = new File( webAppSource, "org/sample/company/test.jsp" );
-        createFile( simpleJSP );
-
-        File simpleJSP2 = new File( webAppSource, "jsp/b.jsp" );
-        createFile( simpleJSP2 );
-
-        File workDirectory = new File( getTestDirectory(), "/war/work-" + testId );
-        createDir( workDirectory );
-
-        File classesDir = createClassesDir( testId, true );
-
-        // configure mojo
-        project.addArtifact( war1 );
-        project.addArtifact( war2 );
-        project.addArtifact( war3 );
-        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
-        setVariableValueToObject( mojo, "workDirectory", workDirectory );
-        mojo.execute();
-
-        /* Overlays shuld be interpreted in alfabetical order*/
-        assertEquals( "file incorrect", "war1-jsp/a.jsp",
-                      FileUtils.fileRead( new File( webAppDirectory, "jsp/a.jsp" ) ) );
-        assertEquals( "file incorrect", simpleJSP2.toString(),
-                      FileUtils.fileRead( new File( webAppDirectory, "jsp/b.jsp" ) ) );
-        assertEquals( "file incorrect", "war1-jsp/c.jsp",
-                      FileUtils.fileRead( new File( webAppDirectory, "jsp/c.jsp" ) ) );
-        assertEquals( "file incorrect", "war1-jsp/d/a.jsp",
-                      FileUtils.fileRead( new File( webAppDirectory, "jsp/d/a.jsp" ) ) );
-        assertEquals( "file incorrect", "war1-jsp/d/b.jsp",
-                      FileUtils.fileRead( new File( webAppDirectory, "jsp/d/b.jsp" ) ) );
-        assertEquals( "file incorrect", "war1-jsp/d/c.jsp",
-                      FileUtils.fileRead( new File( webAppDirectory, "jsp/d/c.jsp" ) ) );
-        assertEquals( "file incorrect", simpleJSP.toString(),
-                      FileUtils.fileRead( new File( webAppDirectory, "org/sample/company/test.jsp" ) ) );
-        assertTrue( "MANIFEST.MF does not exist", new File( webAppDirectory, "META-INF/MANIFEST.MF" ).exists() );
-        assertEquals( "file incorrect", "war1-WEB-INF/web.xml",
-                      FileUtils.fileRead( new File( webAppDirectory, "WEB-INF/web.xml" ) ) );
-        assertEquals( "file incorrect", "war1-WEB-INF/classes/a.class",
-                      FileUtils.fileRead( new File( webAppDirectory, "WEB-INF/classes/a.class" ) ) );
-        assertEquals( "file incorrect", "war1-WEB-INF/classes/b.class",
-                      FileUtils.fileRead( new File( webAppDirectory, "WEB-INF/classes/b.class" ) ) );
-        assertEquals( "file incorrect", "war1-WEB-INF/classes/c.class",
-                      FileUtils.fileRead( new File( webAppDirectory, "WEB-INF/classes/c.class" ) ) );
-
-        assertEquals( "file incorrect", "war1-WEB-INF/lib/a.jar",
-                      FileUtils.fileRead( new File( webAppDirectory, "WEB-INF/lib/a.jar" ) ) );
-        assertEquals( "file incorrect", "war1-WEB-INF/lib/b.jar",
-                      FileUtils.fileRead( new File( webAppDirectory, "WEB-INF/lib/b.jar" ) ) );
-        assertEquals( "file incorrect", "war1-WEB-INF/lib/c.jar",
-                      FileUtils.fileRead( new File( webAppDirectory, "WEB-INF/lib/c.jar" ) ) );
-
-        /* house keeping */
-        assertTrue( war1.getFile().delete() );
-        assertTrue( war2.getFile().delete() );
-        assertTrue( war3.getFile().delete() );
-    }
-
-
-    public void testExplodedWar_Overlay21_withOverlaysTag()
-        throws Exception
-    {
-        // setup test data
-        MavenProjectArtifactsStub project = new MavenProjectArtifactsStub();
-
-        SimpleWarArtifactStub war1 = generateSimpleWarArtifactStub( "war1" );
-        SimpleWarArtifactStub war2 = generateSimpleWarArtifactStub( "war2" );
-        SimpleWarArtifactStub war3 = generateSimpleWarArtifactStub( "war3" );
-        String testId = "ExplodedWar_Overlay21_withOverlaysTag";
-
-        File webAppDirectory = new File( getTestDirectory(), testId );
-        File webAppSource = new File( getTestDirectory(), "/" + testId + "-test-data/source" );
-        File simpleJSP = new File( webAppSource, "org/sample/company/test.jsp" );
-        createFile( simpleJSP );
-
-        File simpleJSP2 = new File( webAppSource, "jsp/b.jsp" );
-        createFile( simpleJSP2 );
-
-        File workDirectory = new File( getTestDirectory(), "/war/work-" + testId );
-        createDir( workDirectory );
-
-        File classesDir = createClassesDir( testId, true );
-
-        // configure mojo
-        project.addArtifact( war1 );
-        project.addArtifact( war2 );
-        project.addArtifact( war3 );
-        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
-        setVariableValueToObject( mojo, "workDirectory", workDirectory );
-
-        Overlay over1 = new Overlay( war3 );
-        over1.setExcludes( "**/a.*,**/c.*,**/*.xml" );
-
-        Overlay over2 = new Overlay( war1 );
-        over2.setIncludes( "jsp/d/*" );
-        over2.setExcludes( "jsp/d/a.jsp" );
-
-        Overlay over3 = new Overlay( war3 );
-        over3.setIncludes( "**/*.jsp" );
-
-        Overlay over4 = new Overlay( war2 );
-
-        mojo.setOverlays( new LinkedList() );
-        mojo.addOverlay( over1 );
-        mojo.addOverlay( over2 );
-        mojo.addOverlay( over3 );
-        mojo.addOverlay( Overlay.createLocalProjectInstance() );
-        mojo.addOverlay( over4 );
-
-        mojo.execute();
-
-        assertEquals( "file incorrect", "war3-jsp/a.jsp",
-                      FileUtils.fileRead( new File( webAppDirectory, "jsp/a.jsp" ) ) );
-        assertEquals( "file incorrect", "war3-jsp/b.jsp",
-                      FileUtils.fileRead( new File( webAppDirectory, "jsp/b.jsp" ) ) );
-        assertEquals( "file incorrect", "war3-jsp/c.jsp",
-                      FileUtils.fileRead( new File( webAppDirectory, "jsp/c.jsp" ) ) );
-        assertEquals( "file incorrect", "war3-jsp/d/a.jsp",
-                      FileUtils.fileRead( new File( webAppDirectory, "jsp/d/a.jsp" ) ) );
-        assertEquals( "file incorrect", "war3-jsp/d/b.jsp",
-                      FileUtils.fileRead( new File( webAppDirectory, "jsp/d/b.jsp" ) ) );
-        assertEquals( "file incorrect", "war1-jsp/d/c.jsp",
-                      FileUtils.fileRead( new File( webAppDirectory, "jsp/d/c.jsp" ) ) );
-        assertEquals( "file incorrect", simpleJSP.toString(),
-                      FileUtils.fileRead( new File( webAppDirectory, "org/sample/company/test.jsp" ) ) );
-        assertTrue( "MANIFEST.MF does not exist", new File( webAppDirectory, "META-INF/MANIFEST.MF" ).exists() );
-        assertEquals( "file incorrect", "war2-WEB-INF/web.xml",
-                      FileUtils.fileRead( new File( webAppDirectory, "WEB-INF/web.xml" ) ) );
-        assertEquals( "file incorrect", "war2-WEB-INF/classes/a.class",
-                      FileUtils.fileRead( new File( webAppDirectory, "WEB-INF/classes/a.class" ) ) );
-        assertEquals( "file incorrect", "war3-WEB-INF/classes/b.class",
-                      FileUtils.fileRead( new File( webAppDirectory, "WEB-INF/classes/b.class" ) ) );
-        assertEquals( "file incorrect", "war2-WEB-INF/classes/c.class",
-                      FileUtils.fileRead( new File( webAppDirectory, "WEB-INF/classes/c.class" ) ) );
-
-        assertEquals( "file incorrect", "war2-WEB-INF/lib/a.jar",
-                      FileUtils.fileRead( new File( webAppDirectory, "WEB-INF/lib/a.jar" ) ) );
-        assertEquals( "file incorrect", "war3-WEB-INF/lib/b.jar",
-                      FileUtils.fileRead( new File( webAppDirectory, "WEB-INF/lib/b.jar" ) ) );
-        assertEquals( "file incorrect", "war2-WEB-INF/lib/c.jar",
-                      FileUtils.fileRead( new File( webAppDirectory, "WEB-INF/lib/c.jar" ) ) );
-
-        /* house keeping */
-        assertTrue( war1.getFile().delete() );
-        assertTrue( war2.getFile().delete() );
-        assertTrue( war3.getFile().delete() );
-    }
-
-
-    public void testExplodedWar_Overlay21_withOverlaysTag2()
-        throws Exception
-    {
-        // setup test data
-        MavenProjectArtifactsStub project = new MavenProjectArtifactsStub();
-
-        SimpleWarArtifactStub war1 = generateSimpleWarArtifactStub( "war1" );
-        SimpleWarArtifactStub war2 = generateSimpleWarArtifactStub( "war2" );
-        SimpleWarArtifactStub war3 = generateSimpleWarArtifactStub( "war3" );
-        String testId = "ExplodedWar_Overlay21_withOverlaysTag2";
-
-        File webAppDirectory = new File( getTestDirectory(), testId );
-        File webAppSource = new File( getTestDirectory(), "/" + testId + "-test-data/source" );
-        File simpleJSP = new File( webAppSource, "org/sample/company/test.jsp" );
-        createFile( simpleJSP );
-
-        File simpleJSP2 = new File( webAppSource, "jsp/b.jsp" );
-        createFile( simpleJSP2 );
-
-        File workDirectory = new File( getTestDirectory(), "/war/work-" + testId );
-        createDir( workDirectory );
-
-        File classesDir = createClassesDir( testId, true );
-
-        // configure mojo
-        project.addArtifact( war1 );
-        project.addArtifact( war2 );
-        project.addArtifact( war3 );
-        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
-        setVariableValueToObject( mojo, "workDirectory", workDirectory );
-
-        Overlay over1 = new Overlay( war3 );
-        over1.setExcludes( "**/a.*,**/c.*,**/*.xml,jsp/b.jsp" );
-
-        Overlay over2 = new Overlay( war1 );
-        over2.setIncludes( "jsp/d/*" );
-        over2.setExcludes( "jsp/d/a.jsp" );
-
-        Overlay over3 = new Overlay( war3 );
-        over3.setIncludes( "**/*.jsp" );
-        over3.setExcludes( "jsp/b.jsp" );
-
-        Overlay over4 = new Overlay( war2 );
-
-        mojo.setOverlays( new LinkedList() );
-        mojo.addOverlay( over1 );
-        mojo.addOverlay( over2 );
-        mojo.addOverlay( over3 );
-        mojo.addOverlay( Overlay.createLocalProjectInstance() );
-        mojo.addOverlay( over4 );
-
-        mojo.execute();
-
-        assertEquals( "file incorrect", "war3-jsp/a.jsp",
-                      FileUtils.fileRead( new File( webAppDirectory, "jsp/a.jsp" ) ) );
-        assertEquals( "file incorrect", simpleJSP2.toString(),
-                      FileUtils.fileRead( new File( webAppDirectory, "jsp/b.jsp" ) ) );
-        assertEquals( "file incorrect", "war3-jsp/c.jsp",
-                      FileUtils.fileRead( new File( webAppDirectory, "jsp/c.jsp" ) ) );
-        assertEquals( "file incorrect", "war3-jsp/d/a.jsp",
-                      FileUtils.fileRead( new File( webAppDirectory, "jsp/d/a.jsp" ) ) );
-        assertEquals( "file incorrect", "war3-jsp/d/b.jsp",
-                      FileUtils.fileRead( new File( webAppDirectory, "jsp/d/b.jsp" ) ) );
-        assertEquals( "file incorrect", "war1-jsp/d/c.jsp",
-                      FileUtils.fileRead( new File( webAppDirectory, "jsp/d/c.jsp" ) ) );
-        assertEquals( "file incorrect", simpleJSP.toString(),
-                      FileUtils.fileRead( new File( webAppDirectory, "org/sample/company/test.jsp" ) ) );
-        assertTrue( "MANIFEST.MF does not exist", new File( webAppDirectory, "META-INF/MANIFEST.MF" ).exists() );
-        assertEquals( "file incorrect", "war2-WEB-INF/web.xml",
-                      FileUtils.fileRead( new File( webAppDirectory, "WEB-INF/web.xml" ) ) );
-        assertEquals( "file incorrect", "war2-WEB-INF/classes/a.class",
-                      FileUtils.fileRead( new File( webAppDirectory, "WEB-INF/classes/a.class" ) ) );
-        assertEquals( "file incorrect", "war3-WEB-INF/classes/b.class",
-                      FileUtils.fileRead( new File( webAppDirectory, "WEB-INF/classes/b.class" ) ) );
-        assertEquals( "file incorrect", "war2-WEB-INF/classes/c.class",
-                      FileUtils.fileRead( new File( webAppDirectory, "WEB-INF/classes/c.class" ) ) );
-
-        assertEquals( "file incorrect", "war2-WEB-INF/lib/a.jar",
-                      FileUtils.fileRead( new File( webAppDirectory, "WEB-INF/lib/a.jar" ) ) );
-        assertEquals( "file incorrect", "war3-WEB-INF/lib/b.jar",
-                      FileUtils.fileRead( new File( webAppDirectory, "WEB-INF/lib/b.jar" ) ) );
-        assertEquals( "file incorrect", "war2-WEB-INF/lib/c.jar",
-                      FileUtils.fileRead( new File( webAppDirectory, "WEB-INF/lib/c.jar" ) ) );
-
-        /*---------------------------*/
-
-        /* house keeping */
-        assertTrue( war1.getFile().delete() );
-        assertTrue( war2.getFile().delete() );
-        assertTrue( war3.getFile().delete() );
-    }
+    
 
     /*---------------------------*/
 
