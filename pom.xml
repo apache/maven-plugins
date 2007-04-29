@@ -10,7 +10,7 @@
   <version>1.0-alpha-4-SNAPSHOT</version>
   <name>maven-gpg-plugin Maven Mojo</name>
   <prerequisites>
-    <maven>2.0</maven>
+    <maven>2.0.5</maven>
   </prerequisites>
   <issueManagement>
     <system>jira</system>
