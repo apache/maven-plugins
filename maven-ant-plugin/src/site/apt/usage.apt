@@ -85,7 +85,7 @@ mvn ant:ant -Doverwrite=true
 ** maven-build.xml
 
  The <<<maven-build.xml>>> is an Ant build file for the Maven project. It contains several targets to clean, compile,
- test and packaging the Ant project.
+ test, packaging the Ant project and the associated javadoc.
 
  <<Note>>: <<DO NOT EDIT maven-build.xml!>> It could be overwrite when calling <<<mvn ant:ant>>>.
 
