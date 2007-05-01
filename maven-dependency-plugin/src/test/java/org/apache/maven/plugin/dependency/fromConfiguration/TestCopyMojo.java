@@ -150,7 +150,6 @@ public class TestCopyMojo
         }
 
         mojo.setArtifactItems( list );
-        mojo.silent = false;
         mojo.execute();
 
         assertFilesExist( list, true );
