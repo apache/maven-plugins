@@ -267,7 +267,25 @@ public class TestCopyDependenciesMojo
             assertEquals( artifact.getGroupId().equals( "one" ), !file.exists() );
         }
     }
+    public void testExcludeMultipleGroupIds()
+        throws Exception
+    {
+        mojo.project.setArtifacts( stubFactory.getGroupIdArtifacts() );
+        mojo.project.setDependencyArtifacts( new HashSet() );
+        mojo.excludeGroupIds = "one,two";
+        mojo.execute();
 
+        Iterator iter = mojo.project.getArtifacts().iterator();
+        while ( iter.hasNext() )
+        {
+            Artifact artifact = (Artifact) iter.next();
+            String fileName = DependencyUtil.getFormattedFileName( artifact, false );
+            File file = new File( mojo.outputDirectory, fileName );
+
+            assertEquals( artifact.getGroupId().equals( "one" ) || artifact.getGroupId().equals( "two" ), !file.exists() );
+        }
+    }
+    
     public void testExcludeClassifier()
         throws Exception
     {

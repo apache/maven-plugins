@@ -33,10 +33,6 @@ public class GroupIdFilter
     extends AbstractArtifactFeatureFilter
 {
 
-    private String includeScope;
-
-    private String excludeScope;
-
     /**
      * Construction will setup the super call with a filtertype of 'GroupId'
      * 
@@ -46,24 +42,6 @@ public class GroupIdFilter
     public GroupIdFilter( String include, String exclude )
     {
         super( include, exclude, "GroupId" );
-        this.includeScope = include;
-        this.excludeScope = exclude;
-    }
-
-    /**
-     * @return Returns the excludeScope.
-     */
-    public String getExcludeScope()
-    {
-        return excludeScope;
-    }
-
-    /**
-     * @return Returns the includeScope.
-     */
-    public String getIncludeScope()
-    {
-        return includeScope;
     }
 
     /*
