@@ -104,21 +104,21 @@ public class AnalyzeMojo
 
     /**
      * Output the xml for the missing dependencies
-     * 
+     * @since 2.0-alpha-5
      * @parameter expression="${mdep.analyze.outputXML}" default-value="true"
      */
     private boolean outputXML = true;
     
     /**
      * Output scriptable values
-     * 
+     * @since 2.0-alpha-5
      * @parameter expression="${mdep.analyze.scriptable}" default-value="false"
      */
     private boolean scriptableOutput = false;
     
     /**
      * Flag to use for scriptable output
-     * 
+     * @since 2.0-alpha-5
      * @parameter expression="${mdep.analyze.flag}" default-value="$$$%%%"
      */
     private String scriptableFlag;
@@ -128,8 +128,18 @@ public class AnalyzeMojo
      * 
      * @parameter expression="${basedir}" 
      * @readonly
+     * @since 2.0-alpha-5
      */
     private File baseDir;
+    
+    /**
+     * Target folder
+     * 
+     * @parameter expression="${project.build.directory}"
+     * @readonly
+     * @since 2.0-alpha-5
+     */
+    protected File outputDirectory;
 
     // Mojo methods -----------------------------------------------------------
 
@@ -142,6 +152,12 @@ public class AnalyzeMojo
         if ( "pom".equals( project.getPackaging() ) )
         {
             getLog().info( "Skipping pom project" );
+            return;
+        }
+        
+        if ( outputDirectory == null || !outputDirectory.exists())
+        {
+            getLog().info( "Skipping project with no Target directory" );
             return;
         }
 
