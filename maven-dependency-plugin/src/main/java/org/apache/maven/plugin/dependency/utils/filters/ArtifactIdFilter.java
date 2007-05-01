@@ -32,11 +32,6 @@ import org.apache.maven.artifact.Artifact;
 public class ArtifactIdFilter
     extends AbstractArtifactFeatureFilter
 {
-
-    private String includeScope;
-
-    private String excludeScope;
-
     /**
      * Will setup super with 'ArtifactId' as the filterType
      * 
@@ -46,24 +41,6 @@ public class ArtifactIdFilter
     public ArtifactIdFilter( String include, String exclude )
     {
         super( include, exclude, "ArtifactId" );
-        this.includeScope = include;
-        this.excludeScope = exclude;
-    }
-
-    /**
-     * @return Returns the excludeScope.
-     */
-    public String getExcludeScope()
-    {
-        return excludeScope;
-    }
-
-    /**
-     * @return Returns the includeScope.
-     */
-    public String getIncludeScope()
-    {
-        return includeScope;
     }
 
     /*
