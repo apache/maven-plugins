@@ -23,13 +23,16 @@ package org.apache.maven.plugin.dependency.utils.filters;
  * 
  */
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.testUtils.AbstractArtifactFeatureFilterTestCase;
 import org.apache.maven.plugin.dependency.testUtils.ArtifactStubFactory;
 import org.apache.maven.plugin.dependency.utils.SilentLog;
+import org.apache.maven.plugin.logging.SystemStreamLog;
 
 /**
  * @author clove TestCases for GroupIdFilter
@@ -115,5 +118,27 @@ public class TestGroupIdFilter
             assertTrue( artifact.getGroupId().equals( "two" ) );
 
         }
+    }
+    
+    public void testMultipleInclude() throws SecurityException, IllegalArgumentException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, MojoExecutionException
+    {
+       ArtifactsFilter filter = new GroupIdFilter("one,two",null);
+       
+       assertEquals( 4, artifacts.size() );
+       
+       Set result = filter.filter( artifacts, new SilentLog() );
+       
+       assertEquals( 2, result.size() );       
+    }
+    
+    public void testMultipleExclude() throws SecurityException, IllegalArgumentException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, MojoExecutionException
+    {
+       ArtifactsFilter filter = new GroupIdFilter(null,"one,two");
+       
+       assertEquals( 4, artifacts.size() );
+       
+       Set result = filter.filter( artifacts, new SilentLog() );
+       
+       assertEquals( 2, result.size() );       
     }
 }
