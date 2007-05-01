@@ -229,8 +229,8 @@ public abstract class AbstractJavadocMojo
 
     /**
      * Specifies the path to the doclet starting class file (specified with the -doclet option) and any jar files
-     * it depends on. The docletPath can contain multiple paths by separating them with a colon (:) on Solaris
-     * and a semi-colon (;) on Windows.
+     * it depends on. The docletPath can contain multiple paths by separating them with a colon (<code>:</code>)
+     * on Solaris and a semi-colon (<code>;</code>) on Windows.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#docletpath">docletpath</a>.
      *
@@ -288,6 +288,7 @@ public abstract class AbstractJavadocMojo
 
     /**
      * Unconditionally excludes the specified packages and their subpackages from the list formed by -subpackages.
+     * Multiple packages can be separated by colons (<code>:</code>).
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#exclude">exclude</a>.
      * <br/>
@@ -298,8 +299,8 @@ public abstract class AbstractJavadocMojo
     private String excludePackageNames;
 
     /**
-     * Specifies the directories where extension classes reside. Separate directories in dirlist with a colon (:)
-     * on Solaris and a semi-colon (;) on Windows.
+     * Specifies the directories where extension classes reside. Separate directories in dirlist with a colon
+     * (<code>:</code>) on Solaris and a semi-colon (<code>;</code>) on Windows.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#extdirs">extdirs</a>.
      *
@@ -412,8 +413,8 @@ public abstract class AbstractJavadocMojo
     private String source;
 
     /**
-     * Specifies the source paths where the subpackages are located. The paths are separated with a colon (:)
-     * on Solaris and a semi-colon (;) on Windows.
+     * Specifies the source paths where the subpackages are located. The paths are separated with a colon
+     * (<code>:</code>) on Solaris and a semi-colon (<code>;</code>) on Windows.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#sourcepath">sourcepath</a>.
      *
@@ -422,7 +423,8 @@ public abstract class AbstractJavadocMojo
     private String sourcepath;
 
     /**
-     * Specifies the package directory where javadoc will be executed. The packages are separated by '<code>:</code>'.
+     * Specifies the package directory where javadoc will be executed. Multiple packages can be separated by
+     * colons (<code>:</code>).
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#subpackages">subpackages</a>.
      * <br/>
@@ -536,7 +538,10 @@ public abstract class AbstractJavadocMojo
     private String footer;
 
     /**
-     * Separates packages on the overview page into whatever groups you specify, one group per table.
+     * Separates packages on the overview page into whatever groups you specify, one group per table. The
+     * packages pattern can be any package name, or can be the start of any package name followed by an asterisk
+     * (<code>*</code>) meaning "match any characters". Multiple patterns can be included in a group
+     * by separating them with colons (<code>:</code>).
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#group">group</a>.
      * <br/>
@@ -816,7 +821,8 @@ public abstract class AbstractJavadocMojo
 
     /**
      * Specifies the search paths for finding taglet class files (.class). The tagletPath can contain
-     * multiple paths by separating them with a colon (:) on Solaris and a semi-colon (;) on Windows.
+     * multiple paths by separating them with a colon (<code>:</code>) on Solaris and a semi-colon (<code>;</code>)
+     * on Windows.
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#tagletpath">tagletpath</a>.
      * <br/>
@@ -1650,8 +1656,8 @@ public abstract class AbstractJavadocMojo
      * takes precedence over doclectArtifacts. docletPath is always appended to any result path
      * definition.
      *
-     * @return the path to jar file that contains doclet class file separated with a colon (:)
-     * on Solaris and a semi-colon (;) on Windows
+     * @return the path to jar file that contains doclet class file separated with a colon (<code>:</code>)
+     * on Solaris and a semi-colon (<code>;</code>) on Windows
      * @throws MavenReportException
      */
     private String getDocletPath()
@@ -1707,8 +1713,8 @@ public abstract class AbstractJavadocMojo
     /**
      * Method to get the path of the taglet artifacts used in the -tagletpath option.
      *
-     * @return the path to jar file that contains taglet class file separated with a colon (:)
-     * on Solaris and a semi-colon (;) on Windows
+     * @return the path to jar file that contains taglet class file separated with a colon (<code>:</code>)
+     * on Solaris and a semi-colon (<code>;</code>) on Windows
      * @throws MavenReportException
      */
     private String getTagletPath()
@@ -1963,7 +1969,7 @@ public abstract class AbstractJavadocMojo
      * @param repeatKey   repeat or not the key in the command line
      * @param splitValue  if <code>true</code> given value will be tokenized by comma
      */
-    private void addArgIfNotEmpty( List arguments, String key, String value, 
+    private void addArgIfNotEmpty( List arguments, String key, String value,
         boolean repeatKey, boolean splitValue )
     {
         if ( StringUtils.isNotEmpty( value ) )
@@ -1978,11 +1984,11 @@ public abstract class AbstractJavadocMojo
                 while ( token.hasMoreTokens() )
                 {
                     String current = token.nextToken().trim();
-    
+
                     if ( StringUtils.isNotEmpty( current ) )
                     {
                         arguments.add( current );
-    
+
                         if ( token.hasMoreTokens() && repeatKey )
                         {
                             arguments.add( key );
@@ -1994,7 +2000,7 @@ public abstract class AbstractJavadocMojo
             }
         }
     }
-    
+
     /**
      * Convenience method to add an argument to the <code>command line</code>
      * if the the value is not null or empty.
