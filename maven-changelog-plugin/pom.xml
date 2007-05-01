@@ -204,11 +204,19 @@ under the License.
       <artifactId>maven-scm-provider-clearcase</artifactId>
       <version>${maven-scm.version}</version>
     </dependency>
-        <!-- Replace this cvs provider by a pure java cvs provider when it will be available 
-    -->
+    <dependency>
+      <groupId>org.apache.maven.scm</groupId>
+      <artifactId>maven-scm-provider-hg</artifactId>
+      <version>${maven-scm.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-provider-cvsexe</artifactId>
+      <version>${maven-scm.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.scm</groupId>
+      <artifactId>maven-scm-provider-cvsjava</artifactId>
       <version>${maven-scm.version}</version>
     </dependency>
     <dependency>
@@ -249,7 +257,7 @@ under the License.
     </dependency>
   </dependencies>
   <properties>
-    <maven-scm.version>1.0-beta-4</maven-scm.version>
+    <maven-scm.version>1.0-SNAPSHOT</maven-scm.version>
   </properties>
 </project>
 
