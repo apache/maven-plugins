@@ -25,9 +25,11 @@ import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.scm.ChangeFile;
 import org.apache.maven.scm.ChangeSet;
+import org.apache.maven.scm.ScmBranch;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmResult;
+import org.apache.maven.scm.ScmRevision;
 import org.apache.maven.scm.command.changelog.ChangeLogScmResult;
 import org.apache.maven.scm.command.changelog.ChangeLogSet;
 import org.apache.maven.scm.manager.ScmManager;
@@ -52,6 +54,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -60,8 +64,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
-import java.util.Collections;
-import java.util.Comparator;
 
 /**
  * Generate a changelog report.
@@ -258,11 +260,11 @@ public class ChangeLogReport
      * <ul>
      * <li><code>%FILE%</code> - this is the path to a file</li>
      * </ul>
-     * <p>
+     * <p/>
      * Example:
      * <code>http://checkstyle.cvs.sourceforge.net/checkstyle%FILE%?view=markup</code>
      * </p>
-     * <p>
+     * <p/>
      * <strong>Note:</strong> If you don't supply the token in your template,
      * the path of the file will simply be appended to your template URL.
      * </p>
@@ -314,8 +316,8 @@ public class ChangeLogReport
 
         if ( outputXML.exists() )
         {
-            if ( outputXMLExpiration > 0
-                && outputXMLExpiration * 60000 > System.currentTimeMillis() - outputXML.lastModified() )
+            if ( outputXMLExpiration > 0 &&
+                outputXMLExpiration * 60000 > System.currentTimeMillis() - outputXML.lastModified() )
             {
                 try
                 {
@@ -417,8 +419,8 @@ public class ChangeLogReport
 
             if ( "range".equals( type ) )
             {
-                result =
-                    provider.changeLog( repository, new ScmFileSet( basedir ), null, null, range, null, dateFormat );
+                result = provider.changeLog( repository, new ScmFileSet( basedir ), null, null, range, (ScmBranch) null,
+                                             dateFormat );
 
                 checkResult( result );
 
@@ -437,7 +439,8 @@ public class ChangeLogReport
                     {
                         endTag = (String) tagsIter.next();
 
-                        result = provider.changeLog( repository, new ScmFileSet( basedir ), startTag, endTag );
+                        result = provider.changeLog( repository, new ScmFileSet( basedir ), new ScmRevision( startTag ),
+                                                     new ScmRevision( endTag ) );
 
                         checkResult( result );
 
@@ -469,7 +472,7 @@ public class ChangeLogReport
                         endDate = (String) dateIter.next();
 
                         result = provider.changeLog( repository, new ScmFileSet( basedir ), parseDate( startDate ),
-                                                     parseDate( endDate ), 0, null );
+                                                     parseDate( endDate ), 0, (ScmBranch) null );
 
                         checkResult( result );
 
@@ -481,7 +484,7 @@ public class ChangeLogReport
                 else
                 {
                     result = provider.changeLog( repository, new ScmFileSet( basedir ), parseDate( startDate ),
-                                                 parseDate( endDate ), 0, null );
+                                                 parseDate( endDate ), 0, (ScmBranch) null );
 
                     checkResult( result );
 
@@ -726,8 +729,8 @@ public class ChangeLogReport
         }
         else
         {
-            throw new MavenReportException( "The type parameter has an invalid value: " + type
-                + ".  The value should be \"range\", \"date\", or \"tag\"." );
+            throw new MavenReportException( "The type parameter has an invalid value: " + type +
+                ".  The value should be \"range\", \"date\", or \"tag\"." );
         }
     }
 

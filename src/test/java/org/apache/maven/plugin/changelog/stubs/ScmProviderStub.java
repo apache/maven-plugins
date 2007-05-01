@@ -19,9 +19,12 @@ package org.apache.maven.plugin.changelog.stubs;
  * under the License.
  */
 
+import org.apache.maven.scm.ScmBranch;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
+import org.apache.maven.scm.ScmVersion;
 import org.apache.maven.scm.command.add.AddScmResult;
+import org.apache.maven.scm.command.branch.BranchScmResult;
 import org.apache.maven.scm.command.changelog.ChangeLogScmResult;
 import org.apache.maven.scm.command.checkin.CheckInScmResult;
 import org.apache.maven.scm.command.checkout.CheckOutScmResult;
@@ -33,6 +36,7 @@ import org.apache.maven.scm.command.status.StatusScmResult;
 import org.apache.maven.scm.command.tag.TagScmResult;
 import org.apache.maven.scm.command.unedit.UnEditScmResult;
 import org.apache.maven.scm.command.update.UpdateScmResult;
+import org.apache.maven.scm.command.export.ExportScmResult;
 import org.apache.maven.scm.log.ScmLogger;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.provider.ScmProviderRepository;
@@ -56,14 +60,48 @@ public class ScmProviderStub
         return null;
     }
 
+    public void addListener( ScmLogger scmLogger )
+    {
+    }
+
+    public String getScmSpecificFilename()
+    {
+        return null;
+    }
+
+    public String getScmType()
+    {
+        return null;
+    }
+
+    public ScmProviderRepository makeProviderScmRepository( File file )
+        throws ScmRepositoryException, UnknownRepositoryStructure
+    {
+        return null;
+    }
+
+    public ScmProviderRepository makeProviderScmRepository( String string, char c )
+        throws ScmRepositoryException
+    {
+        return null;
+    }
+
     public AddScmResult add( ScmRepository scmRepository, ScmFileSet scmFileSet, String message )
         throws ScmException
     {
         return null;
     }
 
-    public void addListener( ScmLogger scmLogger )
+    public BranchScmResult branch( ScmRepository scmRepository, ScmFileSet scmFileSet, String string )
+        throws ScmException
     {
+        return null;
+    }
+
+    public BranchScmResult branch( ScmRepository scmRepository, ScmFileSet scmFileSet, String string, String string1 )
+        throws ScmException
+    {
+        return null;
     }
 
     protected ChangeLogScmResult getChangeLogScmResult()
@@ -99,7 +137,48 @@ public class ScmProviderStub
         return getChangeLogScmResult();
     }
 
+    public ChangeLogScmResult changeLog( ScmRepository scmRepository, ScmFileSet scmFileSet, Date date, Date date1,
+                                         int i, ScmBranch scmBranch )
+        throws ScmException
+    {
+        return getChangeLogScmResult();
+    }
+
+    public ChangeLogScmResult changeLog( ScmRepository scmRepository, ScmFileSet scmFileSet, Date date, Date date1,
+                                         int i, ScmBranch scmBranch, String string )
+        throws ScmException
+    {
+        return getChangeLogScmResult();
+    }
+
+    public ChangeLogScmResult changeLog( ScmRepository scmRepository, ScmFileSet scmFileSet, ScmVersion scmVersion,
+                                         ScmVersion scmVersion1 )
+        throws ScmException
+    {
+        return getChangeLogScmResult();
+    }
+
+    public ChangeLogScmResult changeLog( ScmRepository scmRepository, ScmFileSet scmFileSet, ScmVersion scmVersion,
+                                         ScmVersion scmVersion1, String string )
+        throws ScmException
+    {
+        return getChangeLogScmResult();
+    }
+
     public CheckInScmResult checkIn( ScmRepository scmRepository, ScmFileSet scmFileSet, String string, String string1 )
+        throws ScmException
+    {
+        return null;
+    }
+
+    public CheckInScmResult checkIn( ScmRepository scmRepository, ScmFileSet scmFileSet, String string )
+        throws ScmException
+    {
+        return null;
+    }
+
+    public CheckInScmResult checkIn( ScmRepository scmRepository, ScmFileSet scmFileSet, ScmVersion scmVersion,
+                                     String string )
         throws ScmException
     {
         return null;
@@ -111,7 +190,48 @@ public class ScmProviderStub
         return null;
     }
 
+    public CheckOutScmResult checkOut( ScmRepository scmRepository, ScmFileSet scmFileSet )
+        throws ScmException
+    {
+        return null;
+    }
+
+    public CheckOutScmResult checkOut( ScmRepository scmRepository, ScmFileSet scmFileSet, ScmVersion scmVersion )
+        throws ScmException
+    {
+        return null;
+    }
+
+    /**
+     * @deprecated
+     */
+    public CheckOutScmResult checkOut( ScmRepository scmRepository, ScmFileSet scmFileSet, String string, boolean b )
+        throws ScmException
+    {
+        return null;
+    }
+
+    public CheckOutScmResult checkOut( ScmRepository scmRepository, ScmFileSet scmFileSet, boolean b )
+        throws ScmException
+    {
+        return null;
+    }
+
+    public CheckOutScmResult checkOut( ScmRepository scmRepository, ScmFileSet scmFileSet, ScmVersion scmVersion,
+                                       boolean b )
+        throws ScmException
+    {
+        return null;
+    }
+
     public DiffScmResult diff( ScmRepository scmRepository, ScmFileSet scmFileSet, String string, String string1 )
+        throws ScmException
+    {
+        return null;
+    }
+
+    public DiffScmResult diff( ScmRepository scmRepository, ScmFileSet scmFileSet, ScmVersion scmVersion,
+                               ScmVersion scmVersion1 )
         throws ScmException
     {
         return null;
@@ -123,26 +243,53 @@ public class ScmProviderStub
         return null;
     }
 
-    public String getScmSpecificFilename()
+    /**
+     * @deprecated
+     */
+    public ExportScmResult export( ScmRepository scmRepository, ScmFileSet scmFileSet, String string )
+        throws ScmException
+    {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public ExportScmResult export( ScmRepository scmRepository, ScmFileSet scmFileSet )
+        throws ScmException
+    {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public ExportScmResult export( ScmRepository scmRepository, ScmFileSet scmFileSet, ScmVersion scmVersion )
+        throws ScmException
+    {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    /**
+     * @deprecated
+     */
+    public ExportScmResult export( ScmRepository scmRepository, ScmFileSet scmFileSet, String string, String string1 )
+        throws ScmException
+    {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public ExportScmResult export( ScmRepository scmRepository, ScmFileSet scmFileSet, ScmVersion scmVersion,
+                                   String string )
+        throws ScmException
+    {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public ListScmResult list( ScmRepository repository, ScmFileSet fileSet, boolean recursive, String tag )
+        throws ScmException
     {
         return null;
     }
 
-    public String getScmType()
+    public ListScmResult list( ScmRepository scmRepository, ScmFileSet scmFileSet, boolean b, ScmVersion scmVersion )
+        throws ScmException
     {
-        return null;
-    }
-
-    public ScmProviderRepository makeProviderScmRepository( File file )
-        throws ScmRepositoryException, UnknownRepositoryStructure
-    {
-        return null;
-    }
-
-    public ScmProviderRepository makeProviderScmRepository( String string, char c )
-        throws ScmRepositoryException
-    {
-        return null;
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public RemoveScmResult remove( ScmRepository scmRepository, ScmFileSet scmFileSet, String string )
@@ -166,6 +313,12 @@ public class ScmProviderStub
         throws ScmException
     {
         return null;
+    }
+
+    public TagScmResult tag( ScmRepository scmRepository, ScmFileSet scmFileSet, String string, String string1 )
+        throws ScmException
+    {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public UnEditScmResult unedit( ScmRepository scmRepository, ScmFileSet scmFileSet )
@@ -199,13 +352,62 @@ public class ScmProviderStub
         return null;
     }
 
-    public List validateScmUrl( String string, char c )
+    public UpdateScmResult update( ScmRepository scmRepository, ScmFileSet scmFileSet )
+        throws ScmException
     {
         return null;
     }
 
-    public ListScmResult list( ScmRepository repository, ScmFileSet fileSet, boolean recursive, String tag )
+    public UpdateScmResult update( ScmRepository scmRepository, ScmFileSet scmFileSet, ScmVersion scmVersion )
         throws ScmException
+    {
+        return null;
+    }
+
+    /**
+     * @deprecated
+     */
+    public UpdateScmResult update( ScmRepository scmRepository, ScmFileSet scmFileSet, String string, boolean b )
+        throws ScmException
+    {
+        return null;
+    }
+
+    public UpdateScmResult update( ScmRepository scmRepository, ScmFileSet scmFileSet, boolean b )
+        throws ScmException
+    {
+        return null;
+    }
+
+    public UpdateScmResult update( ScmRepository scmRepository, ScmFileSet scmFileSet, ScmVersion scmVersion,
+                                   boolean b )
+        throws ScmException
+    {
+        return null;
+    }
+
+    public UpdateScmResult update( ScmRepository scmRepository, ScmFileSet scmFileSet, ScmVersion scmVersion,
+                                   String string )
+        throws ScmException
+    {
+        return null;
+    }
+
+    public UpdateScmResult update( ScmRepository scmRepository, ScmFileSet scmFileSet, ScmVersion scmVersion,
+                                   Date date )
+        throws ScmException
+    {
+        return null;
+    }
+
+    public UpdateScmResult update( ScmRepository scmRepository, ScmFileSet scmFileSet, ScmVersion scmVersion, Date date,
+                                   String string )
+        throws ScmException
+    {
+        return null;
+    }
+
+    public List validateScmUrl( String string, char c )
     {
         return null;
     }
