@@ -64,7 +64,7 @@ org.codehaus.plexus:plexus-container-default:jar:1.0-alpha-9:compile
 
   When you see these mismatches, the suggested approach is to adjust your dependencyManagement section to have the version you are actually getting (in this case, 2.3,1.7 and 2.4 respectively). Then when you upgrade to 2.0.6, you will be getting the same versions in your build that you currently get in 2.0.5.
 
-  You should also pay particular attention to the Used Declared dependencies because this is showing that you are using something that isn't declared. The plugin may not detect specific mismatches between dependencyManagement if the dependencies are not specifically declared.
+  You should also pay particular attention to the Used Undeclared dependencies because this is showing that you are using something that isn't declared. The plugin may not detect specific mismatches between dependencyManagement if the dependencies are not specifically declared.
   Using dependencies in your projects that are not declared is a dangerous proposition as it doesn't provide Maven with the correct information to properly choose the correct version. The recommended fix for this is to add any dependencies that analyze finds to your pom.
 
   This goal can also detect conflicts with the dependencyManagement excludes to show where files that are excluded creep back in and to show where individual poms override the dependencyManagement. These things are not directly affected by 2.0.6, but can be handy to know.
