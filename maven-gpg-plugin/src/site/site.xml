@@ -18,7 +18,7 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<project name="Maven GPG Plugin">
+<project>
   <body>
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
