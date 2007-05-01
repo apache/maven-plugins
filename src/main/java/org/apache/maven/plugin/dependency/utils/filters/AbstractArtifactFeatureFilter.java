@@ -33,7 +33,8 @@ import org.codehaus.plexus.util.StringUtils;
  * This is the common base class of ClassifierFilter and TypeFilter
  * 
  * @author <a href="richardv@mxtelecom.com">Richard van der Hoff</a>
- * @version $Id$
+ * @version $Id: AbstractArtifactFeatureFilter.java 522374 2007-03-25 22:58:03Z
+ *          brianf $
  */
 public abstract class AbstractArtifactFeatureFilter
     extends AbstractArtifactsFilter
@@ -78,14 +79,19 @@ public abstract class AbstractArtifactFeatureFilter
 
         if ( this.includes != null && !this.includes.isEmpty() )
         {
-            log.debug( "Including only " + featureName + ": " + this.includeString );
+            int size = includes.size();
+            log.debug( "Including only " + size + " " + featureName + ( ( size > 1 ) ? "s" : "" ) + ": "
+                + this.includeString );
+
             results = filterIncludes( artifacts, this.includes );
         }
         else
         {
             if ( this.excludes != null && !this.excludes.isEmpty() )
             {
-                log.debug( "Excluding " + featureName + ": " + this.excludeString );
+                int size = excludes.size();
+                log.debug( "Excluding " + size + " " + featureName + ( ( size > 1 ) ? "s" : "" ) + ": "
+                    + this.excludeString );
                 results = filterExcludes( artifacts, this.excludes );
             }
         }
