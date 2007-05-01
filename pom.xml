@@ -14,7 +14,7 @@
   </prerequisites>
   <issueManagement>
     <system>jira</system>
-    <url>http://jira.codehaus.org/browse/MNG</url>
+    <url>http://jira.codehaus.org/browse/MGPG</url>
   </issueManagement>
   <dependencies>
     <dependency>
