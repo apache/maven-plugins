@@ -134,6 +134,28 @@ public class TestCopyMojo
         assertFilesExist( list, true );
     }
 
+    public void testCopyFileNoOverwrite()
+        throws IOException, MojoExecutionException
+    {
+
+        ArrayList list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
+
+        Iterator iter = list.iterator();
+        while ( iter.hasNext() )
+        {
+            ArtifactItem item = (ArtifactItem) iter.next();
+            
+            // make sure that we copy even if false is set - MDEP-80
+            item.setOverWrite( "false" );
+        }
+
+        mojo.setArtifactItems( list );
+        mojo.silent = false;
+        mojo.execute();
+
+        assertFilesExist( list, true );
+    }
+
     public void testCopyToLocation()
         throws IOException, MojoExecutionException
     {
@@ -235,7 +257,6 @@ public class TestCopyMojo
 
         return list;
     }
-   
 
     public void testMissingVersionFromDependencies()
         throws MojoExecutionException
@@ -260,31 +281,30 @@ public class TestCopyMojo
     }
 
     public void testMissingVersionFromDependenciesLooseMatch()
-    throws MojoExecutionException
-{
-    ArtifactItem item = new ArtifactItem();
+        throws MojoExecutionException
+    {
+        ArtifactItem item = new ArtifactItem();
 
-    item.setArtifactId( "artifactId" );
-    item.setClassifier( "" );
-    item.setGroupId( "groupId" );
-    item.setType( "type" );
+        item.setArtifactId( "artifactId" );
+        item.setClassifier( "" );
+        item.setGroupId( "groupId" );
+        item.setType( "type" );
 
-    MavenProject project = mojo.getProject();
-    project.setDependencies( getDependencyList( item ) );
-    
-    item.setClassifier( "sources" );
-    item.setType( "jar" );
-    
-    ArrayList list = new ArrayList();
-    list.add( item );
-    mojo.setArtifactItems( list );
-    
-    mojo.execute();
-    this.assertFileExists( item, true );
-    assertEquals( "2.1", item.getVersion() );
-}
+        MavenProject project = mojo.getProject();
+        project.setDependencies( getDependencyList( item ) );
 
-    
+        item.setClassifier( "sources" );
+        item.setType( "jar" );
+
+        ArrayList list = new ArrayList();
+        list.add( item );
+        mojo.setArtifactItems( list );
+
+        mojo.execute();
+        this.assertFileExists( item, true );
+        assertEquals( "2.1", item.getVersion() );
+    }
+
     public void testMissingVersionFromDependenciesWithClassifier()
         throws MojoExecutionException
     {
@@ -364,39 +384,39 @@ public class TestCopyMojo
     }
 
     public void testMissingVersionFromDependencyMgtLooseMatch()
-    throws MojoExecutionException
-{
-    ArtifactItem item = new ArtifactItem();
+        throws MojoExecutionException
+    {
+        ArtifactItem item = new ArtifactItem();
 
-    item.setArtifactId( "artifactId" );
-    item.setClassifier( "" );
-    item.setGroupId( "groupId" );
-    item.setType( "type" );
+        item.setArtifactId( "artifactId" );
+        item.setClassifier( "" );
+        item.setGroupId( "groupId" );
+        item.setType( "type" );
 
-    MavenProject project = mojo.getProject();
-    project.setDependencies( getDependencyList( item ) );
+        MavenProject project = mojo.getProject();
+        project.setDependencies( getDependencyList( item ) );
 
-    item = new ArtifactItem();
+        item = new ArtifactItem();
 
-    item.setArtifactId( "artifactId-2" );
-    item.setClassifier( "" );
-    item.setGroupId( "groupId" );
-    item.setType( "type" );
+        item.setArtifactId( "artifactId-2" );
+        item.setClassifier( "" );
+        item.setGroupId( "groupId" );
+        item.setType( "type" );
 
-    ArrayList list = new ArrayList();
-    list.add( item );
+        ArrayList list = new ArrayList();
+        list.add( item );
 
-    mojo.setArtifactItems( list );
+        mojo.setArtifactItems( list );
 
-    project.getDependencyManagement().setDependencies( getDependencyMgtList( item ) );
+        project.getDependencyManagement().setDependencies( getDependencyMgtList( item ) );
 
-    item.setType( "jar" );
-    mojo.execute();
+        item.setType( "jar" );
+        mojo.execute();
 
-    this.assertFileExists( item, true );
-    assertEquals( "3.1", item.getVersion() );
-}
-    
+        this.assertFileExists( item, true );
+        assertEquals( "3.1", item.getVersion() );
+    }
+
     public void testMissingVersionFromDependencyMgtWithClassifier()
         throws MojoExecutionException
     {
@@ -641,6 +661,5 @@ public class TestCopyMojo
 
         assertTrue( time < copiedFile.lastModified() );
     }
-
 
 }

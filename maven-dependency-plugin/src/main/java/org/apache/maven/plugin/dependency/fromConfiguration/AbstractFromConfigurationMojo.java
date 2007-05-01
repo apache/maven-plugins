@@ -165,10 +165,6 @@ public abstract class AbstractFromConfigurationMojo
         {
             result = true;
         }
-        else if ( StringUtils.equalsIgnoreCase( item.getOverWrite(), "false" ) )
-        {
-            result = false;
-        }
         else
         {
             ArtifactItemFilter filter = getMarkedArtifactFilter( item );
