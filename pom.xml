@@ -8,7 +8,7 @@
   <artifactId>maven-gpg-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <version>1.0-alpha-4-SNAPSHOT</version>
-  <name>maven-gpg-plugin Maven Mojo</name>
+  <name>Maven GPG Plugin</name>
   <prerequisites>
     <maven>2.0.5</maven>
   </prerequisites>
