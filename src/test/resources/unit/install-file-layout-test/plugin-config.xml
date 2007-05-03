@@ -1,0 +1,20 @@
+<project>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-install-plugin</artifactId>
+        <configuration>
+          <groupId>org.apache.maven.test</groupId>
+          <artifactId>maven-install-file-test</artifactId>
+          <version>1.0-SNAPSHOT</version>
+          <packaging>jar</packaging>
+		  <repositoryLayout>legacy</repositoryLayout>
+          <file>${basedir}/src/test/resources/unit/install-file-basic-test/target/maven-install-test-1.0-SNAPSHOT.jar
+          </file>
+          <localRepository>${localRepository}</localRepository>
+		  <localRepositoryId>id</localRepositoryId>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
