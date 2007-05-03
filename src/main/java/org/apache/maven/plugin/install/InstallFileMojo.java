@@ -40,6 +40,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.net.MalformedURLException;
+import java.util.Map;
 
 /**
  * Installs a file in local repository.
@@ -121,11 +122,20 @@ public class InstallFileMojo
     private ArtifactFactory artifactFactory;
 
     /**
-     * Default repository layout
-     *
-     * @component roleHint="default"
+     * The type of remote repository layout to deploy to. Try <i>legacy</i> for 
+     * a Maven 1.x-style repository layout.
+     * 
+     * @parameter expression="${repositoryLayout}" default-value="default"
+     * @required
      */
-    private ArtifactRepositoryLayout repositoryLayout;
+    private String repositoryLayout;
+
+    /**
+     * Map that contains the layouts
+     *
+     * @component role="org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout"
+     */
+    private Map repositoryLayouts;
 
     /**
      * The path for a specific local repository directory. It will wrap into an <code>ArtifactRepository</code>
@@ -155,8 +165,13 @@ public class InstallFileMojo
         {
             try
             {
+                ArtifactRepositoryLayout layout;
+
+                layout = ( ArtifactRepositoryLayout ) repositoryLayouts.get( repositoryLayout );
+                
+                getLog().info("Layout: " + layout.getClass());
                 localRepository = new DefaultArtifactRepository( localRepositoryId, localRepositoryPath.toURL()
-                    .toString(), repositoryLayout );
+                    .toString(), layout );
             }
             catch ( MalformedURLException e )
             {
@@ -331,5 +346,37 @@ public class InstallFileMojo
         {
             this.packaging = model.getPackaging();
         }
+    }
+
+    /**
+     * @return the localRepositoryId
+     */
+    public String getLocalRepositoryId()
+    {
+        return this.localRepositoryId;
+    }
+
+    /**
+     * @param theLocalRepositoryId the localRepositoryId to set
+     */
+    public void setLocalRepositoryId( String theLocalRepositoryId )
+    {
+        this.localRepositoryId = theLocalRepositoryId;
+    }
+
+    /**
+     * @return the localRepositoryPath
+     */
+    public File getLocalRepositoryPath()
+    {
+        return this.localRepositoryPath;
+    }
+
+    /**
+     * @param theLocalRepositoryPath the localRepositoryPath to set
+     */
+    public void setLocalRepositoryPath( File theLocalRepositoryPath )
+    {
+        this.localRepositoryPath = theLocalRepositoryPath;
     }
 }
