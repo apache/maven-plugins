@@ -139,12 +139,24 @@ public abstract class AbstractJavadocMojo
     private String javadocDirectory;
 
     /**
-     * Set an additional parameter(s) on the command line.  This value should include quotes as necessary for
+     * Set an additional parameter(s) on the command line. This value should include quotes as necessary for
      * parameters that include spaces.
      *
      * @parameter expression="${additionalparam}"
      */
     private String additionalparam;
+
+    /**
+     * Set an additional J option(s) on the command line.
+     * Example:
+     * <pre>
+     * &lt;additionalJOption&gt;-J-Xss128m&lt;/additionalJOption&gt;
+     * </pre>
+     * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#J">Jflag</a>.
+     *
+     * @parameter expression="${additionalJOption}"
+     */
+    private String additionalJOption;
 
     /**
      * Used for resolving artifacts
@@ -1004,6 +1016,11 @@ public abstract class AbstractJavadocMojo
         addMemoryArg( cmd, "-Xmx", this.maxmemory );
 
         addMemoryArg( cmd, "-Xms", this.minmemory );
+
+        if ( StringUtils.isNotEmpty( additionalJOption ) )
+        {
+            cmd.createArgument().setValue( additionalJOption );
+        }
 
         List arguments = new ArrayList();
 
