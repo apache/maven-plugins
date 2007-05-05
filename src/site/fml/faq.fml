@@ -30,7 +30,7 @@ under the License.
         </p>
       </answer>
     </faq>
-    <faq id="Where do I put javadoc resources like package.html">
+    <faq id="Where do I put javadoc resources like HTML files or images">
       <question>Where do I put Javadoc resources like HTML files or images?</question>
       <answer>
         <p>
@@ -38,21 +38,8 @@ under the License.
           <i>${basedir}/src/main/javadoc</i> directory.
         </p>
         <p>
-          Here is the directory layout expected by Maven Javadoc Plugin:
+          See <a href="examples/javadoc-resources.html">Using Javadoc Resources</a> for more information.
         </p>
-        <source>
-yourproject
-  |-- src
-    |-- main
-      |-- java
-        |-- org
-          |...
-            `-- MyClass.java
-      |-- javadoc
-        |-- org
-          |...
-            `-- package.html
-        </source>
       </answer>
     </faq>
     <faq id="How to know exactly the Javadoc command line">
