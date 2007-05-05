@@ -67,8 +67,7 @@ under the License.
       <artifactId>maven-project</artifactId>
       <version>2.0.2</version>
       <exclusions>
-                <!-- Using org.codehaus.plexus:plexus-utils instead of 
-        -->
+        <!-- Using org.codehaus.plexus:plexus-utils instead of -->
         <exclusion>
           <groupId>plexus</groupId>
           <artifactId>plexus-utils</artifactId>
@@ -80,8 +79,7 @@ under the License.
       <artifactId>maven-plugin-api</artifactId>
       <version>2.0.2</version>
       <exclusions>
-                <!-- Using org.codehaus.plexus:plexus-utils instead of 
-        -->
+        <!-- Using org.codehaus.plexus:plexus-utils instead of -->
         <exclusion>
           <groupId>plexus</groupId>
           <artifactId>plexus-utils</artifactId>
@@ -91,15 +89,14 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>1.2</version>
+      <version>1.4.1</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-impl</artifactId>
       <version>2.0.2</version>
       <exclusions>
-                <!-- Using org.codehaus.plexus:plexus-utils instead of 
-        -->
+        <!-- Using org.codehaus.plexus:plexus-utils instead of -->
         <exclusion>
           <groupId>plexus</groupId>
           <artifactId>plexus-utils</artifactId>
@@ -124,4 +121,3 @@ under the License.
     </dependency>
   </dependencies>
 </project>
-

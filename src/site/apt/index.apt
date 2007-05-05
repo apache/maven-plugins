@@ -78,3 +78,5 @@ Maven 2 Javadoc Plugin
    * {{{examples/tag-configuration.html}Configuring Custom Javadoc Tags}}
 
    * {{{examples/taglet-configuration.html}Configuring Custom Javadoc Taglet}}
+
+   * {{{examples/javadoc-resources.html}Using Javadoc Resources}}

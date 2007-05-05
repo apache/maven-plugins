@@ -267,7 +267,7 @@ public class JavadocReportTest
         assertTrue( str.toLowerCase().indexOf(
                                                "HREF=\"http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html"
                                                    .toLowerCase() ) != -1 );
-        
+
         //header
         assertTrue( str.toUpperCase().indexOf( "MAVEN JAVADOC PLUGIN TEST" ) != -1 );
 
@@ -545,7 +545,7 @@ public class JavadocReportTest
      * @return a String object that contains the contents of the file
      * @throws IOException
      */
-    private String readFile( File file )
+    private static String readFile( File file )
         throws IOException
     {
         String str = "", strTmp = "";
@@ -638,5 +638,38 @@ public class JavadocReportTest
         mojo.execute();
 
         System.setProperty( "java.home", oldJreHome );
+    }
+
+    /**
+     * Test the javadoc resources.
+     *
+     * @throws Exception
+     */
+    public void testJavadocResources() throws Exception
+    {
+        File testPom =
+            new File( getBasedir(), "src/test/resources/unit/resources-test/resources-test-plugin-config.xml" );
+        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        mojo.execute();
+
+        File app =
+            new File( getBasedir(), "target/test/unit/resources-test/target/site/apidocs/resources/test/App.html" );
+        assertTrue( FileUtils.fileExists( app.getAbsolutePath() ) );
+        String readed = readFile( app );
+        assertTrue( readed.indexOf( "<img src=\"doc-files/maven-feather.png\" alt=\"Maven\"/>" ) != -1 );
+        File feather =
+            new File( getBasedir(),
+                      "target/test/unit/resources-test/target/site/apidocs/resources/test/doc-files/maven-feather.png" );
+        assertTrue( FileUtils.fileExists( feather.getAbsolutePath() ) );
+
+        File app2 =
+            new File( getBasedir(), "target/test/unit/resources-test/target/site/apidocs/resources/test2/App2.html" );
+        assertTrue( FileUtils.fileExists( app2.getAbsolutePath() ) );
+        readed = readFile( app2 );
+        assertTrue( readed.indexOf( "<img src=\"doc-files/maven-feather.png\" alt=\"Maven\"/>" ) != -1 );
+        File feather2 =
+            new File( getBasedir(),
+                      "target/test/unit/resources-test/target/site/apidocs/resources/test2/doc-files/maven-feather.png" );
+        assertFalse( FileUtils.fileExists( feather2.getAbsolutePath() ) );
     }
 }
