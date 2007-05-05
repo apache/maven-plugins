@@ -84,5 +84,13 @@ under the License.
         </p>
       </answer>
     </faq>
+    <faq id="How to have less output">
+      <question>How to have less output?</question>
+      <answer>
+        <p>
+          Just set the <i>&lt;quiet/&gt;</i> parameter to <i>true</i> in your Javadoc Plugin configuration.
+        </p>
+      </answer>
+    </faq>
   </part>
 </faqs>
