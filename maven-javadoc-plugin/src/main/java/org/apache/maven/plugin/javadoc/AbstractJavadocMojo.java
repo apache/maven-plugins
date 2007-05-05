@@ -367,7 +367,7 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#overview">overview</a>.
      *
-     * @parameter expression="${overview}"
+     * @parameter expression="${overview}" default-value="${basedir}/src/main/javadoc/overview.html"
      */
     private String overview;
 
@@ -957,6 +957,19 @@ public abstract class AbstractJavadocMojo
         }
 
         // ----------------------------------------------------------------------
+        // Copy javadoc resources
+        // ----------------------------------------------------------------------
+
+        try
+        {
+            copyJavadocResources( javadocOutputDirectory );
+        }
+        catch ( IOException e )
+        {
+            throw new MavenReportException( "Unable to copy javadoc resources: " + e.getMessage(), e );
+        }
+
+        // ----------------------------------------------------------------------
         // Wrap javadoc options
         // ----------------------------------------------------------------------
 
@@ -1023,7 +1036,10 @@ public abstract class AbstractJavadocMojo
             addArgIf( arguments, old, "-1.1" );
         }
 
-        addArgIfNotEmpty( arguments, "-overview", quotedPathArgument( overview ) );
+        if ( ( StringUtils.isNotEmpty( overview ) ) && ( new File( overview ).exists() ) )
+        {
+            addArgIfNotEmpty( arguments, "-overview", quotedPathArgument( overview ) );
+        }
         arguments.add( getAccessLevel() );
         addArgIf( arguments, quiet, "-quiet", SINCE_JAVADOC_1_4 );
         addArgIfNotEmpty( arguments, "-source", quotedArgument( source ), SINCE_JAVADOC_1_4 );
@@ -2202,8 +2218,41 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * Method that indicates whether the javadoc can be generated or not. If the project does not contain
-     * any source files and no subpackages are specified, the plugin will terminate.
+     * Convenience method that copy all <code>doc-files</code> directories from <code>javadocDirectory</code>
+     * to the specified output directory.
+     *
+     * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.2.html#docfiles">Reference
+     * Guide, Copies new "doc-files" directory for holding images and examples</a>
+     *
+     * @param outputDirectory the output directory
+     * @throws java.io.IOException if any
+     */
+    private void copyJavadocResources( File outputDirectory ) throws IOException
+    {
+        if ( javadocDirectory == null )
+        {
+            return;
+        }
+
+        File javadocDir = new File( javadocDirectory );
+        if ( javadocDir.exists() && javadocDir.isDirectory() )
+        {
+            List docFiles =
+                FileUtils.getDirectoryNames( new File( javadocDirectory ), "**/doc-files", null, false, true );
+            for ( Iterator it = docFiles.iterator(); it.hasNext(); )
+            {
+                String docFile = (String) it.next();
+
+                File docFileOutput = new File( getOutputDirectory(), docFile );
+                FileUtils.mkdir( docFileOutput.getAbsolutePath() );
+                FileUtils.copyDirectory( new File( javadocDirectory, docFile ), docFileOutput );
+            }
+        }
+    }
+
+    /**
+     * Method that indicates whether the javadoc can be generated or not. If the project does not contain any source
+     * files and no subpackages are specified, the plugin will terminate.
      *
      * @param files the project files
      * @return a boolean that indicates whether javadoc report can be generated or not

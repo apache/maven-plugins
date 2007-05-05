@@ -1,0 +1,162 @@
+ ------
+ Using Javadoc Resources
+ ------
+ Vincent Siveton
+ ------
+ Mai 2007
+ ------
+
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~   http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/guides/mini/guide-apt-format.html
+
+Using Javadoc Resources
+
+ The \<javadocDirectory/\> parameter can be used to include Javadoc resources like HTML or images. By default, all
+ javadoc resources are in <$\{basedir\}/src/main/javadoc> directory.
+
+ Here is a typical set of resources files used by the Maven Javadoc plugin:
+
++-----+
+
+yourproject
+  |-- src
+    |-- main
+      |-- java
+        |-- org
+          |-- apache
+            |-- test
+              `-- App.java
+              `-- package-info.java
+      |-- javadoc
+        `-- overview.html
+        |-- org
+          |-- apache
+            |-- test
+              `-- package.html
+              |-- doc-files
+                `-- app.png
++-----+
+
+* Overview comment files: <overview.html>
+
+ These contain comments about the set of packages. The <overview.html> is a general documentation that applies to
+ the entire application or set of packages.
+
+ For more information, see {{{http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#overviewcomment}
+ javadoc - The Java API Documentation Generator, Overview Comment File}}.
+
+ Here is an example of an <overview.html> file, located in <$\{basedir\}/src/main/javadoc/overview.html>:
+
++-----+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+  <HEAD>
+    <TITLE>API Overview</TITLE>
+  </HEAD>
+  <BODY>
+    Short overview of the API.
+  </BODY>
+</HTML>
++-----+
+
+ By default, the Javadoc Plugin includes the <$\{basedir\}/src/main/javadoc/overview.html> if it exists. You could also
+ specify a specific <overview> file with the \<overview/\> parameter, for instance:
+
++-----+
+<project>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          ...
+          <overview>${basedir}/overview.html</overview>
+          ...
+        </configuration>
+      </plugin>
+    </plugins>
+    ...
+  </reporting>
+  ...
+</project>
++-----+
+
+* Package comment files: <package.html>
+
+ These contain package comments. The <package.html> is a brief summary of each packages in the list of all packages.
+
+ For more information, see {{{http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#packagecomment}
+ javadoc - The Java API Documentation Generator, Package Comment Files}} and
+ {{{http://java.sun.com/j2se/javadoc/writingdoccomments/index.html#packagecomments}
+ How to Write Doc Comments for the Javadoc Tool, Package-Level Comments}}.
+
+ Here is an example of a <package.html> file, located in <$\{basedir\}/src/main/javadoc/org/apache/test/package.html>:
+
++-----+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+  <HEAD>
+    <TITLE>Core Package</TITLE>
+  </HEAD>
+  <BODY>
+    This is the core package of the application
+    @since 1.0
+  </BODY>
+</HTML>
++-----+
+
+ <<Note:>> With Javadoc 5.0, this file becomes <package-info.java> and is preferred over <package.html>.
+
+ For more information, see {{{http://java.sun.com/j2se/1.5.0/docs/tooldocs/windows/javadoc.html#packagecomment}
+ javadoc - The Java API Documentation Generator, Package Comment Files}}.
+
+ Here is an example of a <package-info.java> file, located in <$\{basedir\}/src/main/java/org/apache/test/package-info.java>:
+
++-----+
+/**
+ * This is the core package for the application
+ * @since 1.0
+ */
+package org.apache.test;
++-----+
+
+* Miscellaneous Unprocessed Files: <doc-files>
+
+ These include images, sample source code, class files, applets, HTML files...
+
+ For more information, see {{{http://java.sun.com/j2se/1.4.2/docs/tooldocs/solaris/javadoc.html#unprocessed}
+ javadoc - The Java API Documentation Generator, Miscellaneous Unprocessed Files}} and {{{http://java.sun.com/j2se/javadoc/writingdoccomments/index.html#images}
+ How to Write Doc Comments for the Javadoc Tool, Including Images }}.
+
+ Here is a sample javadoc comment to use images, located in <$\{basedir\}/src/main/javadoc/org/apache/test/doc-files> directory:
+
++-----+
+package org.apache.test;
+
+/**
+ * The main Class launches the application.
+ * <img src="doc-files/app.png" alt="Example of the application GUI"/>
+ */
+public class App
+{
+}
++-----+
