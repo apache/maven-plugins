@@ -61,5 +61,28 @@ under the License.
         </p>
       </answer>
     </faq>
+    <faq id="How to add additional Javadoc parameters">
+      <question>How to add additional Javadoc parameters?</question>
+      <answer>
+        <p>
+          You could need to add more Javadoc parameters to be process by the Javadoc Tool (i.e. for doclet).
+        </p>
+        <p>
+          For this, you should use the <i>&lt;additionalparam/&gt;</i> parameter in your Javadoc Plugin configuration.
+        </p>
+      </answer>
+    </faq>
+    <faq id="How to add additional Javadoc options">
+      <question>How to add additional Javadoc options?</question>
+      <answer>
+        <p>
+          You could need to add more J options (i.e. runtime system java options that runs Javadoc tool) to be process
+          by the Javadoc Tool (i.e. -J-Xss).
+        </p>
+        <p>
+          For this, you should use the <i>&lt;additionalJOption/&gt;</i> parameter in your Javadoc Plugin configuration.
+        </p>
+      </answer>
+    </faq>
   </part>
 </faqs>
