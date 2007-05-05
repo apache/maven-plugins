@@ -39,6 +39,7 @@ under the License.
       <item name="Configuring Stylesheets" href="/examples/stylesheet-configuration.html"/>
       <item name="Configuring Custom Tags" href="/examples/tag-configuration.html"/>
       <item name="Configuring Custom Taglets" href="/examples/taglet-configuration.html"/>
+      <item name="Using Javadoc Resources" href="/examples/javadoc-resources.html"/>
     </menu>
   </body>
 </project>
