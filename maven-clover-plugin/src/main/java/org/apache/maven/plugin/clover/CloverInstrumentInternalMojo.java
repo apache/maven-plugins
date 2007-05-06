@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2006 The Apache Software Foundation.
+ * Copyright 2001-2007 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package org.apache.maven.plugin.clover;
 
-import com.cenqua.clover.CloverInstr;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
@@ -25,14 +24,11 @@ import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.clover.internal.AbstractCloverMojo;
-import org.codehaus.plexus.compiler.util.scan.SimpleSourceInclusionScanner;
-import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
-import org.codehaus.plexus.compiler.util.scan.InclusionScanException;
-import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
-import org.codehaus.plexus.util.FileUtils;
+import org.apache.maven.plugin.clover.internal.CloverConfiguration;
+import org.apache.maven.plugin.clover.internal.instrumentation.MainInstrumenter;
+import org.apache.maven.plugin.clover.internal.instrumentation.TestInstrumenter;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -46,10 +42,9 @@ import java.util.*;
  * @phase validate
  * @requiresDependencyResolution test
  *
- * @author <a href="mailto:vmassol@apache.org">Vincent Massol</a>
  * @version $Id$
  */
-public class CloverInstrumentInternalMojo extends AbstractCloverMojo
+public class CloverInstrumentInternalMojo extends AbstractCloverMojo implements CloverConfiguration
 {
     /**
      * The directory where the Clover plugin will put all the files it generates during the build process. For
@@ -115,7 +110,11 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
      */
     private boolean includesAllSourceRoots;
 
-    private String cloverOutputSourceDirectory;
+    /**
+     * Whether the Clover plugin should instrument test source roots.
+     * @parameter default-value="false"
+     */
+    private boolean includesTestSourceRoots;
 
     /**
      * {@inheritDoc}
@@ -126,34 +125,39 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
     {
         // Ensure output directories exist
         new File( this.cloverOutputDirectory ).mkdirs();
-        this.cloverOutputSourceDirectory = new File( this.cloverOutputDirectory, "src" ).getPath();
+        String cloverOutputSourceDirectory = new File( this.cloverOutputDirectory, "src" ).getPath();
+        String cloverOutputTestSourceDirectory = new File( this.cloverOutputDirectory, "src-test" ).getPath();
         new File( getCloverDatabase() ).getParentFile().mkdirs();
 
         super.execute();
 
         logArtifacts( "before changes" );
 
+        // Instrument both the main sources and the test sources if the user has configured it
+        MainInstrumenter mainInstrumenter =
+            new MainInstrumenter( this, cloverOutputSourceDirectory );
+        TestInstrumenter testInstrumenter =
+            new TestInstrumenter( this, cloverOutputTestSourceDirectory );
+
         if ( isJavaProject() )
         {
-            Map filesToInstrument = computeFilesToInstrument();
-            if ( filesToInstrument.isEmpty() )
+            mainInstrumenter.instrument();
+            if ( this.includesTestSourceRoots )
             {
-                getLog().warn( "No Clover instrumentation done as no matching sources files found" );
-            }
-            else
-            {
-                instrumentSources( filesToInstrument );
-
-                // We need to copy excluded files as otherwise they won't be in the new Clover source directory and
-                // thus won't be compiled by the compile plugin. This will lead to compilation errors if any other
-                // Java file depends on any of these excluded files.
-                copyExcludedFiles();
+                testInstrumenter.instrument();
             }
         }
 
         swizzleCloverDependencies();
         addCloverDependencyToCompileClasspath();
-        redirectSourceDirectories();
+
+        // Modify Maven model so that it points to the new source directories and to the clovered
+        // artifacts instead of the original values.
+        mainInstrumenter.redirectSourceDirectories();
+        if ( this.includesTestSourceRoots )
+        {
+            testInstrumenter.redirectSourceDirectories();
+        }
         redirectOutputDirectories();
         redirectArtifact();
 
@@ -179,49 +183,6 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
         return isJavaProject;
     }
 
-    private void instrumentSources( Map filesToInstrument ) throws MojoExecutionException
-    {
-        int result = CloverInstr.mainImpl( createCliArgs( filesToInstrument ) );
-        if ( result != 0 )
-        {
-            throw new MojoExecutionException( "Clover has failed to instrument the source files" );
-        }
-    }
-
-    /**
-     * Copy all files that have been excluded by the user (using the excludes configuration property). This is required
-     * as otherwise the excluded files won't be in the new Clover source directory and thus won't be compiled by the
-     * compile plugin. This will lead to compilation errors if any other Java file depends on any of them.
-     *
-     * @throws MojoExecutionException if a failure happens during the copy
-     */
-    private void copyExcludedFiles() throws MojoExecutionException
-    {
-        Map filesToCopy = computeExcludedFilesToCopy();
-
-        for ( Iterator sourceRoots = filesToCopy.keySet().iterator(); sourceRoots.hasNext(); )
-        {
-            String sourceRoot = (String) sourceRoots.next();
-            Set filesInSourceRoot = (Set) filesToCopy.get( sourceRoot );
-
-            for ( Iterator files = filesInSourceRoot.iterator(); files.hasNext(); )
-            {
-                File file = (File) files.next();
-
-                try
-                {
-                    FileUtils.copyFile( file, new File( this.cloverOutputSourceDirectory,
-                        file.getPath().substring(sourceRoot.length() ) ) );
-                }
-                catch (IOException e)
-                {
-                    throw new MojoExecutionException( "Failed to copy excluded file [" + file + "] to ["
-                        + this.cloverOutputSourceDirectory + "]", e );
-                }
-            }
-        }
-    }
-
     private void redirectOutputDirectories()
     {
         // Explicitely set the output directory to be the Clover one so that all other plugins executing
@@ -237,42 +198,6 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
 
         getProject().getBuild().setTestOutputDirectory(
             new File( this.cloverOutputDirectory, "test-classes" ).getPath() );
-    }
-
-    private void redirectSourceDirectories()
-    {
-        String oldSourceDirectory = getProject().getBuild().getSourceDirectory();
-
-        if ( new File( oldSourceDirectory ).exists() )
-        {
-            getProject().getBuild().setSourceDirectory( this.cloverOutputSourceDirectory );
-        }
-
-        getLog().debug( "Clover source directories before change:" );
-        logSourceDirectories();
-
-        // Maven2 limitation: changing the source directory doesn't change the compile source roots
-        // See http://jira.codehaus.org/browse/MNG-1945
-        List sourceRoots = new ArrayList( getProject().getCompileSourceRoots() );
-
-        // Clean all source roots to add them again in order to keep the same original order of source roots.
-        getProject().getCompileSourceRoots().removeAll( sourceRoots );
-
-        for ( Iterator i = sourceRoots.iterator(); i.hasNext(); )
-        {
-            String sourceRoot = (String) i.next();
-            if ( new File( oldSourceDirectory ).exists() && sourceRoot.equals( oldSourceDirectory ) )
-            {
-                getProject().addCompileSourceRoot( getProject().getBuild().getSourceDirectory() );
-            }
-            else
-            {
-                getProject().addCompileSourceRoot( sourceRoot );
-            }
-        }
-
-        getLog().debug( "Clover source directories after change:" );
-        logSourceDirectories();
     }
 
     /**
@@ -291,18 +216,6 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
 
             getProject().getBuild().setFinalName( getProject().getArtifactId() + "-" + getProject().getVersion()
                 + "-clover" );
-        }
-    }
-
-    private void logSourceDirectories()
-    {
-        if ( getLog().isDebugEnabled() )
-        {
-            for ( Iterator i = getProject().getCompileSourceRoots().iterator(); i.hasNext(); )
-            {
-                String sourceRoot = (String) i.next();
-                getLog().debug( "[Clover]  source root [" + sourceRoot + "]" );
-            }
         }
     }
 
@@ -438,174 +351,6 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
         }
     }
 
-    /**
-     * @return a Plexus scanner object that scans a source root and filters files according to inclusion and
-     * exclusion patterns. In our case at hand we include only Java sources as these are the only files we want
-     * to instrument.
-     */
-    private SourceInclusionScanner getScanner()
-    {
-        SourceInclusionScanner scanner = null;
-
-        if ( includes.isEmpty() && excludes.isEmpty() )
-        {
-            includes = Collections.singleton( "**/*.java" );
-            scanner = new SimpleSourceInclusionScanner( includes, Collections.EMPTY_SET );
-        }
-        else
-        {
-            if ( includes.isEmpty() )
-            {
-                includes.add( "**/*.java" );
-            }
-            scanner = new SimpleSourceInclusionScanner( includes, excludes );
-        }
-
-        // Note: we shouldn't have to do this but this is a limitation of the Plexus SimpleSourceInclusionScanner
-        scanner.addSourceMapping( new SuffixMapping( "dummy", "dummy" ) );
-
-        return scanner;
-    }
-
-    private SourceInclusionScanner getExcludesScanner()
-    {
-        SourceInclusionScanner scanner = null;
-
-        if ( excludes.isEmpty() )
-        {
-            scanner = new SimpleSourceInclusionScanner( Collections.EMPTY_SET, Collections.EMPTY_SET );
-        }
-        else
-        {
-            scanner = new SimpleSourceInclusionScanner( excludes, Collections.EMPTY_SET );
-        }
-
-        // Note: we shouldn't have to do this but this is a limitation of the Plexus SimpleSourceInclusionScanner
-        scanner.addSourceMapping( new SuffixMapping( "dummy", "dummy" ) );
-
-        return scanner;
-    }
-
-    /**
-     * @return the list of excluded files that we'll need to copy. See {@link #copyExcludedFiles()}.
-     */
-    private Map computeExcludedFilesToCopy()
-    {
-        return computeFiles(getExcludesScanner());
-    }
-
-    /**
-     * @return the list of files to instrument taking into account the includes and excludes specified by the user
-     */
-    private Map computeFilesToInstrument()
-    {
-        return computeFiles(getScanner());
-    }
-
-    private Map computeFiles(SourceInclusionScanner scanner)
-    {
-        Map files = new HashMap();
-
-        // Decide whether to instrument all source roots or only the main source root.
-        Iterator sourceRoots = getSourceRoots().iterator();
-        while ( sourceRoots.hasNext() )
-        {
-            File sourceRoot = new File( (String) sourceRoots.next() );
-            if ( sourceRoot.exists() )
-            {
-                try
-                {
-                    files.put( sourceRoot.getPath(), scanner.getIncludedSources( sourceRoot, null ) );
-                }
-                catch ( InclusionScanException e )
-                {
-                    getLog().warn( "Failed to add sources from [" + sourceRoot + "]", e );
-                }
-            }
-        }
-
-        return files;
-    }
-
-    private List getSourceRoots()
-    {
-        List sourceRoots;
-        if ( this.includesAllSourceRoots )
-        {
-            sourceRoots = getProject().getCompileSourceRoots();
-        }
-        else
-        {
-            sourceRoots = Collections.singletonList( getProject().getBuild().getSourceDirectory() );
-        }
-
-        return sourceRoots;
-    }
-
-    /**
-     * @return the CLI args to be passed to CloverInstr
-     */
-    private String[] createCliArgs( Map filesToInstrument ) throws MojoExecutionException
-    {
-        List parameters = new ArrayList();
-
-        parameters.add( "-p" );
-        parameters.add( getFlushPolicy() );
-        parameters.add( "-f" );
-        parameters.add( "" + getFlushInterval() );
-
-        parameters.add( "-i" );
-        parameters.add( getCloverDatabase() );
-
-        parameters.add( "-d" );
-        parameters.add( this.cloverOutputSourceDirectory );
-
-        if ( getLog().isDebugEnabled() )
-        {
-            parameters.add( "-v" );
-        }
-
-        if ( getJdk() != null )
-        {
-            if ( getJdk().equals( "1.4" ) )
-            {
-                parameters.add( "-jdk14" );
-            }
-            else if ( getJdk().equals( "1.5" ) )
-            {
-                parameters.add( "-jdk15" );
-            }
-            else
-            {
-                throw new MojoExecutionException( "Unsupported jdk version [" + getJdk()
-                    + "]. Valid values are [1.4] and [1.5]" );
-            }
-        }
-
-        for ( Iterator sourceRoots = filesToInstrument.keySet().iterator(); sourceRoots.hasNext(); )
-        {
-            Set filesInSourceRoot = (Set) filesToInstrument.get( (String) sourceRoots.next() );
-            for ( Iterator files = filesInSourceRoot.iterator(); files.hasNext(); )
-            {
-                File file = (File) files.next();
-                parameters.add( file.getPath() );
-            }
-        }
-
-        // Log parameters
-        if ( getLog().isDebugEnabled() )
-        {
-            getLog().debug( "Parameter list being passed to Clover CLI:" );
-            for ( Iterator it = parameters.iterator(); it.hasNext(); )
-            {
-                String param = (String) it.next();
-                getLog().debug( "  parameter = [" + param + "]" );
-            }
-        }
-
-        return (String[]) parameters.toArray( new String[0] );
-    }
-
     protected void setArtifactFactory( ArtifactFactory artifactFactory )
     {
         this.artifactFactory = artifactFactory;
@@ -614,5 +359,20 @@ public class CloverInstrumentInternalMojo extends AbstractCloverMojo
     protected void setArtifactResolver( ArtifactResolver artifactResolver )
     {
         this.artifactResolver = artifactResolver;
+    }
+
+    public Set getIncludes()
+    {
+        return this.includes;
+    }
+
+    public Set getExcludes()
+    {
+        return this.excludes;
+    }
+
+    public boolean includesAllSourceRoots()
+    {
+        return this.includesAllSourceRoots;
     }
 }

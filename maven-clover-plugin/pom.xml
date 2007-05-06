@@ -184,6 +184,7 @@
                 <pomInclude>**/multiproject/pom.xml</pomInclude>
                 <pomInclude>**/license/pom.xml</pomInclude>
                 <pomInclude>**/xdoclet/pom.xml</pomInclude>
+                <pomInclude>**/instrument-tests/pom.xml</pomInclude>
               </pomIncludes>
               <postBuildHookScript>verify.bsh</postBuildHookScript>
             </configuration>
