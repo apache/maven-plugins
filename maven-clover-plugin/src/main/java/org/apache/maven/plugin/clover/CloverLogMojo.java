@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2006 The Apache Software Foundation.
+ * Copyright 2001-2007 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import java.io.File;
  *
  * @goal log
  *
- * @author <a href="mailto:vmassol@apache.org">Vincent Massol</a>
  * @version $Id$
  */
 public class CloverLogMojo extends AbstractCloverMojo

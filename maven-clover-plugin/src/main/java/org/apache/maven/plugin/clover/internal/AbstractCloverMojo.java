@@ -240,22 +240,22 @@ public abstract class AbstractCloverMojo extends AbstractMojo
         this.licenseLocation = licenseLocation;
     }  
 
-    protected MavenProject getProject()
+    public MavenProject getProject()
     {
         return this.project;
     }
 
-    protected boolean getWaitForFlush()
+    public boolean getWaitForFlush()
     {
         return this.waitForFlush;
     }
 
-    protected String getJdk()
+    public String getJdk()
     {
         return this.jdk;
     }
 
-    protected String getCloverDatabase()
+    public String getCloverDatabase()
     {
         return this.cloverDatabase;
     }
@@ -265,12 +265,12 @@ public abstract class AbstractCloverMojo extends AbstractMojo
         return this.cloverMergeDatabase;
     }
 
-    protected int getFlushInterval()
+    public int getFlushInterval()
     {
         return this.flushInterval;
     }
 
-    protected String getFlushPolicy()
+    public String getFlushPolicy()
     {
         return this.flushPolicy;
     }
