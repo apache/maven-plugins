@@ -19,6 +19,7 @@ package org.apache.maven.plugin.javadoc.stubs;
  * under the License.
  */
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,8 +29,8 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.model.Build;
-import org.apache.maven.model.Scm;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 
 /**
@@ -38,8 +39,6 @@ import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 public class AggregateProject1TestMavenProjectStub
     extends MavenProjectStub
 {
-    private Scm scm;
-
     private Build build;
 
     public AggregateProject1TestMavenProjectStub()
@@ -50,38 +49,18 @@ public class AggregateProject1TestMavenProjectStub
         setPackaging( "jar" );
         setExecutionRoot( true );
 
-        Artifact artifact =
-            new JavadocPluginArtifactStub( getGroupId(), getArtifactId(), getVersion(), getPackaging() );
+        Artifact artifact = new JavadocPluginArtifactStub( getGroupId(), getArtifactId(), getVersion(), getPackaging() );
         artifact.setArtifactHandler( new DefaultArtifactHandlerStub() );
         setArtifact( artifact );
 
-        scm = new Scm();
-        scm.setConnection( "scm:svn:http://svn.apache.org/maven/sample/trunk" );
-
         build = new Build();
         build.setFinalName( "aggregate-test-project1" );
-        build.setDirectory( getBasedir() + "/target/test/unit/aggregate-test/target" );
+        build.setDirectory( super.getBasedir() + "/target/test/unit/aggregate-test/target" );
 
         String basedir = getBasedir().getAbsolutePath();
         List compileSourceRoots = new ArrayList();
-        compileSourceRoots.add( basedir + "/src/test/resources/unit/aggregate-test/project1/aggregate/test/project1" );
+        compileSourceRoots.add( basedir + "/aggregate/test/project1" );
         setCompileSourceRoots( compileSourceRoots );
-    }
-
-    /**
-     * @see org.apache.maven.project.MavenProject#getScm()
-     */
-    public Scm getScm()
-    {
-        return scm;
-    }
-
-    /**
-     * @see org.apache.maven.project.MavenProject#setScm(org.apache.maven.model.Scm)
-     */
-    public void setScm( Scm scm )
-    {
-        this.scm = scm;
     }
 
     /**
@@ -101,11 +80,28 @@ public class AggregateProject1TestMavenProjectStub
     }
 
     /**
-     * @see org.apache.maven.project.MavenProject#createArtifacts(org.apache.maven.artifact.factory.ArtifactFactory, java.lang.String, org.apache.maven.artifact.resolver.filter.ArtifactFilter)
+     * @see org.apache.maven.project.MavenProject#createArtifacts(org.apache.maven.artifact.factory.ArtifactFactory,
+     *      java.lang.String, org.apache.maven.artifact.resolver.filter.ArtifactFilter)
      */
     public Set createArtifacts( ArtifactFactory artifactFactory, String string, ArtifactFilter artifactFilter )
         throws InvalidDependencyVersionException
     {
         return Collections.EMPTY_SET;
+    }
+
+    /**
+     * @see org.apache.maven.plugin.testing.stubs.MavenProjectStub#getBasedir()
+     */
+    public File getBasedir()
+    {
+        return new File( super.getBasedir() + "/src/test/resources/unit/aggregate-test/project1" );
+    }
+
+    /**
+     * @see org.apache.maven.plugin.testing.stubs.MavenProjectStub#getExecutionProject()
+     */
+    public MavenProject getExecutionProject()
+    {
+        return this;
     }
 }
