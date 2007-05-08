@@ -28,7 +28,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Creates workspace files (*.iws) for IntelliJ Idea
+ * Creates workspace file (*.iws) for IntelliJ IDEA.
  *
  * @author Edwin Punzalan
  * @goal workspace
