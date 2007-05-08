@@ -263,7 +263,7 @@ public class MockAndControlForAddDependencySetsTask
     {
         try
         {
-            projectBuilder.buildFromRepository( null, null, null );
+            projectBuilder.buildFromRepository( null, null, null, true );
             projectBuilderCtl.setMatcher( MockControl.ALWAYS_MATCHER );
             projectBuilderCtl.setReturnValue( project, MockControl.ONE_OR_MORE );
         }
