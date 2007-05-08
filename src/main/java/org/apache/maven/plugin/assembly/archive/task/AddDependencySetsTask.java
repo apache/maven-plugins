@@ -107,7 +107,7 @@ public class AddDependencySetsTask
             try
             {
                 depProject = projectBuilder.buildFromRepository( depArtifact, configSource.getRemoteRepositories(),
-                                                                 configSource.getLocalRepository() );
+                                                                 configSource.getLocalRepository(), true );
             }
             catch ( ProjectBuildingException e )
             {
