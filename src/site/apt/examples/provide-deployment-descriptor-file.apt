@@ -37,9 +37,8 @@ Provide Deployment Descriptor File
   []
 
   In cases where you want to provide your own descriptor files or if the
-  descriptor files are located somewhere else, you can use the following:
-
-  In the command-line:
+  descriptor files are located somewhere else, you can use the following on the
+  command-line:
 
 +-----
 mvn idea:idea -DdeploymentDescriptorFile=src/webapp/WEB-INF/web.xml

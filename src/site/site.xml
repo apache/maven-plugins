@@ -28,7 +28,7 @@ under the License.
       <item name="FAQ" href="faq.html"/>
     </menu>
     <menu name="Configuration">
-      <item name="Library Definition" href="library.html"/>
+      <item name="Defining Libraries" href="library.html"/>
     </menu>
 
     <menu name="Examples">

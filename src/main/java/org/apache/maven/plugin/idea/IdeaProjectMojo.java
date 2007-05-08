@@ -38,7 +38,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 /**
- * Creates the Project files (*.ipr) for IntelliJ IDEA.
+ * Creates the project file (*.ipr) for IntelliJ IDEA.
  *
  * @author Edwin Punzalan
  * @goal project
@@ -57,7 +57,7 @@ public class IdeaProjectMojo
 
     /**
      * Specify the version of the JDK to use for the project for the purpose of
-     * enabled assertions and 5.0 language features.
+     * enabled assertions and Java 5.0 language features.
      * The default value is the specification version of the executing JVM.
      *
      * @parameter expression="${jdkLevel}"
@@ -68,8 +68,8 @@ public class IdeaProjectMojo
     /**
      * Specify the resource pattern in wildcard format, for example "?*.xml;?*.properties".
      * Currently supports 4.x and 5.x.
-     * The default value is any file without a java extension ("!?*.java").
      * Because IDEA doesn't distinguish between source and resources directories, this is needed.
+     * The default value corresponds to any file without a java extension.
      * Please note that the default value includes package.html files as it's not possible to exclude those.
      *
      * @parameter expression="${wildcardResourcePatterns}" default-value="!?*.java"
@@ -77,13 +77,12 @@ public class IdeaProjectMojo
     private String wildcardResourcePatterns;
 
     /**
-     * Specify the version of idea to use.  This is needed to identify the default formatting of
-     * project-jdk-name used by idea.  Currently supports 4.x and 5.x.
+     * Specify the version of IDEA to target.  This is needed to identify the default formatting of
+     * project-jdk-name used by IDEA.  Currently supports 4.x and 5.x.
      * <p/>
      * This will only be used when parameter jdkName is not set.
      *
-     * @parameter expression="${ideaVersion}"
-     * default-value="5.x"
+     * @parameter expression="${ideaVersion}" default-value="5.x"
      */
     private String ideaVersion;
 
