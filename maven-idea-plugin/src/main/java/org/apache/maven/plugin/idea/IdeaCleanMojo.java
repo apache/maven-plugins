@@ -28,7 +28,7 @@ import org.codehaus.plexus.util.FileUtils;
 import java.io.File;
 
 /**
- * Plugin to remove existing idea files on the project
+ * Removes all existing IDEA files for the project.
  *
  * @goal clean
  * @author Edwin Punzalan

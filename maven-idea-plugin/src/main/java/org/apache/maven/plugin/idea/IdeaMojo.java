@@ -59,7 +59,7 @@ public class IdeaMojo
     private boolean linkModules;
 
     /**
-     * Specify the location of the deployment descriptor file, if one is provided
+     * Specify the location of the deployment descriptor file, if one is provided.
      *
      * @parameter expression="${deploymentDescriptorFile}"
      */
@@ -73,28 +73,28 @@ public class IdeaMojo
     private boolean useFullNames;
 
     /**
-     * Enables/disables the downloading of source attachments. Defaults to false.
+     * Enables/disables the downloading of source attachments.
      *
      * @parameter expression="${downloadSources}" default-value="false"
      */
     private boolean downloadSources;
 
     /**
-     * Enables/disables the downloading of javadoc attachements. Defaults to false.
+     * Enables/disables the downloading of javadoc attachments.
      *
      * @parameter expression="${downloadJavadocs}" default-value="false"
      */
     private boolean downloadJavadocs;
 
     /**
-     * Sets the classifier string attached to an artifact source archive name
+     * Sets the classifier string attached to an artifact source archive name.
      *
      * @parameter expression="${sourceClassifier}" default-value="sources"
      */
     private String sourceClassifier;
 
     /**
-     * Sets the classifier string attached to an artifact javadoc archive name
+     * Sets the classifier string attached to an artifact javadoc archive name.
      *
      * @parameter expression="${javadocClassifier}" default-value="javadoc"
      */
@@ -110,7 +110,7 @@ public class IdeaMojo
 
     /**
      * Specify the version of the JDK to use for the project for the purpose of
-     * enabled assertions and 5.0 language features.
+     * enabled assertions and Java 5.0 language features.
      * The default value is the specification version of the executing JVM.
      *
      * @parameter expression="${jdkLevel}"
@@ -150,8 +150,8 @@ public class IdeaMojo
     /**
      * Specify the resource pattern in wildcard format, for example "?*.xml;?*.properties".
      * Currently supports 4.x and 5.x.
-     * The default value is any file without a java extension ("!?*.java").
      * Because IDEA doesn't distinguish between source and resources directories, this is needed.
+     * The default value corresponds to any file without a java extension.
      * Please note that the default value includes package.html files as it's not possible to exclude those.
      *
      * @parameter expression="${wildcardResourcePatterns}" default-value="!?*.java"
@@ -159,13 +159,12 @@ public class IdeaMojo
     private String wildcardResourcePatterns;
 
     /**
-     * Specify the version of idea to use.  This is needed to identify the default formatting of
-     * project-jdk-name used by idea.  Currently supports 4.x and 5.x.
+     * Specify the version of IDEA to target.  This is needed to identify the default formatting of
+     * project-jdk-name used by IDEA.  Currently supports 4.x and 5.x.
      * <p/>
      * This will only be used when parameter jdkName is not set.
      *
-     * @parameter expression="${ideaVersion}"
-     * default-value="5.x"
+     * @parameter expression="${ideaVersion}" default-value="5.x"
      */
     private String ideaVersion;
 
@@ -178,7 +177,7 @@ public class IdeaMojo
     private boolean dependenciesAsLibraries;
 
     /**
-     * Tell IntelliJ IDEA that this module is an IntelliJ IDEA Plugin
+     * Tell IntelliJ IDEA that this module is an IntelliJ IDEA Plugin.
      *
      * @parameter default-value="false"
      */

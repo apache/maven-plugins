@@ -26,11 +26,11 @@ under the License.
      </answer>
    </faq>
    <faq id="multi-project-handling">
-     <question>How does the IDEA plugin work on multi-projects</question>
+     <question>How does the IDEA plugin work on multi-projects?</question>
      <answer>
        <p>
-         Maven IDEA Plugin, by default, creates the project files (*.ipr) and
-         the workspace files (*.iws) from where the root pom is located. Then
+         Maven IDEA Plugin, by default, creates the project file (*.ipr) and
+         the workspace file (*.iws) from where the root pom is located. Then
          module files (*.iml) are created for each of the projects inside the
          reactor.
        </p>
