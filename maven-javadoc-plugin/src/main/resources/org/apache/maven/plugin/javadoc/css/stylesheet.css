@@ -47,9 +47,9 @@ a:link.selfref, a:visited.selfref {
 .TableRowColor         { background: #efefef } /* White */
 
 /* Font used in left-hand frame lists */
-.FrameTitleFont   { font-size: normal; font-family: normal; color:#000000 }
-.FrameHeadingFont { font-size: normal; font-family: normal; color:#000000 }
-.FrameItemFont    { font-size: normal; font-family: normal; color:#000000 }
+.FrameTitleFont   { font-size: medium; font-family: normal; color:#000000 }
+.FrameHeadingFont { font-size: medium; font-family: normal; color:#000000 }
+.FrameItemFont    { font-size: medium; font-family: normal; color:#000000 }
 
 /* Example of smaller, sans-serif font in frames */
 /* .FrameItemFont  { font-size: 10pt; font-family: Helvetica, Arial, sans-serif } */
