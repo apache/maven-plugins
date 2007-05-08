@@ -1375,19 +1375,25 @@ public abstract class AbstractJavadocMojo
             {
                 for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
                 {
-                    MavenProject project = (MavenProject) i.next();
+                    MavenProject subProject = (MavenProject) i.next();
 
-                    List sourceRoots = project.getCompileSourceRoots();
+                    List sourceRoots = subProject.getCompileSourceRoots();
 
-                    if ( project.getExecutionProject() != null )
+                    if ( subProject.getExecutionProject() != null )
                     {
-                        sourceRoots.addAll( project.getExecutionProject().getCompileSourceRoots() );
+                        sourceRoots.addAll( subProject.getExecutionProject().getCompileSourceRoots() );
                     }
 
-                    ArtifactHandler artifactHandler = project.getArtifact().getArtifactHandler();
+                    ArtifactHandler artifactHandler = subProject.getArtifact().getArtifactHandler();
                     if ( "java".equals( artifactHandler.getLanguage() ) )
                     {
                         sourcePaths.addAll( sourceRoots );
+                    }
+
+                    File javadocDir = new File( subProject.getExecutionProject().getBasedir(), "src/main/javadoc" );
+                    if ( javadocDir.exists() && javadocDir.isDirectory() )
+                    {
+                        sourcePaths.add( javadocDir.getAbsolutePath() );
                     }
                 }
             }
@@ -2196,8 +2202,8 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * Convenience method that copy the <code>DEFAULT_STYLESHEET_NAME</code> file from the current class
-     * loader to the output directory.
+     * Method that copy the <code>DEFAULT_STYLESHEET_NAME</code> file from the current class
+     * loader to the <code>outputDirectory</code>.
      *
      * @param outputDirectory the output directory
      * @throws java.io.IOException if any
@@ -2235,8 +2241,8 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * Convenience method that copy all <code>doc-files</code> directories from <code>javadocDirectory</code>
-     * to the specified output directory.
+     * Method that copy all <code>doc-files</code> directories from <code>javadocDirectory</code> of
+     * the current projet or of the projects in the reactor to the <code>outputDirectory</code>.
      *
      * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/whatsnew-1.2.html#docfiles">Reference
      * Guide, Copies new "doc-files" directory for holding images and examples</a>
@@ -2246,23 +2252,51 @@ public abstract class AbstractJavadocMojo
      */
     private void copyJavadocResources( File outputDirectory ) throws IOException
     {
-        if ( javadocDirectory == null )
+        if ( outputDirectory == null || !outputDirectory.exists() )
         {
-            return;
+            throw new IOException( "The outputDirectory " + outputDirectory + " doesn't exists." );
         }
 
-        File javadocDir = new File( javadocDirectory );
+        if ( javadocDirectory != null )
+        {
+            copyJavadocResources( outputDirectory, new File( javadocDirectory ) );
+        }
+
+        if ( aggregate && project.isExecutionRoot() )
+        {
+            for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+            {
+                MavenProject subProject = (MavenProject) i.next();
+
+                if ( subProject != project )
+                {
+                    File javadocDir = new File( subProject.getBasedir(), "src/main/javadoc" );
+                    copyJavadocResources( outputDirectory, javadocDir );
+                }
+            }
+        }
+    }
+
+    /**
+     * Convenience method that copy all <code>doc-files</code> directories from <code>javadocDir</code>
+     * to the <code>outputDirectory</code>.
+     *
+     * @param outputDirectory the output directory
+     * @param javadocDir the javadoc directory
+     * @throws java.io.IOException if any
+     */
+    private static void copyJavadocResources( File outputDirectory, File javadocDir ) throws IOException
+    {
         if ( javadocDir.exists() && javadocDir.isDirectory() )
         {
-            List docFiles =
-                FileUtils.getDirectoryNames( new File( javadocDirectory ), "**/doc-files", null, false, true );
+            List docFiles = FileUtils.getDirectoryNames( javadocDir, "**/doc-files", null, false, true );
             for ( Iterator it = docFiles.iterator(); it.hasNext(); )
             {
                 String docFile = (String) it.next();
 
-                File docFileOutput = new File( getOutputDirectory(), docFile );
+                File docFileOutput = new File( outputDirectory, docFile );
                 FileUtils.mkdir( docFileOutput.getAbsolutePath() );
-                FileUtils.copyDirectory( new File( javadocDirectory, docFile ), docFileOutput );
+                FileUtils.copyDirectory( new File( javadocDir, docFile ), docFileOutput );
             }
         }
     }

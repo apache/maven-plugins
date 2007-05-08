@@ -22,30 +22,36 @@ package org.apache.maven.plugin.javadoc.stubs;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 
 /**
- * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
+ * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  */
-public class AggregateTestMavenProjectStub
+public class AggregateResourcesProject2TestMavenProjectStub
     extends MavenProjectStub
 {
     private Build build;
 
-    public AggregateTestMavenProjectStub()
+    public AggregateResourcesProject2TestMavenProjectStub()
     {
         MavenXpp3Reader pomReader = new MavenXpp3Reader();
         Model model = null;
 
         try
         {
-            model = pomReader.read( new FileReader( new File( getBasedir(), "aggregate-test-plugin-config.xml" ) ) );
+            model = pomReader.read( new FileReader( new File( getBasedir(), "pom.xml" ) ) );
             setModel( model );
         }
         catch ( Exception e )
@@ -59,11 +65,18 @@ public class AggregateTestMavenProjectStub
         setName( model.getName() );
         setUrl( model.getUrl() );
         setPackaging( model.getPackaging() );
+
         setExecutionRoot( true );
 
-        build = new Build();
+        Artifact artifact = new JavadocPluginArtifactStub( getGroupId(), getArtifactId(), getVersion(), getPackaging() );
+        artifact.setArtifactHandler( new DefaultArtifactHandlerStub() );
+        setArtifact( artifact );
+
+        Build build = new Build();
         build.setFinalName( model.getArtifactId() );
-        build.setDirectory( super.getBasedir() + "/target/test/unit/aggregate-test/target" );
+        build.setSourceDirectory( getBasedir() + "/src/main/java" );
+        build.setDirectory( super.getBasedir() + "/target/test/unit/aggregate-resources-test/project2/target" );
+        setBuild( build );
 
         List compileSourceRoots = new ArrayList();
         compileSourceRoots.add( getBasedir() + "/src/main/java" );
@@ -71,7 +84,7 @@ public class AggregateTestMavenProjectStub
     }
 
     /**
-     * @see org.apache.maven.project.MavenProject#getBuild()
+     * @see org.apache.maven.plugin.testing.stubs.MavenProjectStub#getBuild()
      */
     public Build getBuild()
     {
@@ -79,7 +92,7 @@ public class AggregateTestMavenProjectStub
     }
 
     /**
-     * @see org.apache.maven.project.MavenProject#setBuild(org.apache.maven.model.Build)
+     * @see org.apache.maven.plugin.testing.stubs.MavenProjectStub#setBuild(org.apache.maven.model.Build)
      */
     public void setBuild( Build build )
     {
@@ -91,7 +104,17 @@ public class AggregateTestMavenProjectStub
      */
     public File getBasedir()
     {
-        return new File( super.getBasedir() + "/src/test/resources/unit/aggregate-test" );
+        return new File( super.getBasedir() + "/src/test/resources/unit/aggregate-resources-test/project2" );
+    }
+
+    /**
+     * @see org.apache.maven.project.MavenProject#createArtifacts(org.apache.maven.artifact.factory.ArtifactFactory,
+     *      java.lang.String, org.apache.maven.artifact.resolver.filter.ArtifactFilter)
+     */
+    public Set createArtifacts( ArtifactFactory artifactFactory, String string, ArtifactFilter artifactFilter )
+        throws InvalidDependencyVersionException
+    {
+        return Collections.EMPTY_SET;
     }
 
     /**
