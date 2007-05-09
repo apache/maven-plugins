@@ -25,7 +25,7 @@ under the License.
   <version>1.0-SNAPSHOT</version>
   <inceptionYear>2006</inceptionYear>
   <name>Maven Javadoc Plugin Doclet Test</name>
-  <url>http://maven.apache.org</url>    
+  <url>http://maven.apache.org</url>
   <build>
     <plugins>
       <plugin>
@@ -34,7 +34,7 @@ under the License.
         <configuration>
           <project implementation="org.apache.maven.plugin.javadoc.stubs.DocletTestMavenProjectStub"/>
           <localRepository>${localRepository}</localRepository>
-          <outputDirectory>${basedir}/target/test/unit/doclet-test/target/site/apidocs</outputDirectory>          
+          <outputDirectory>${basedir}/target/test/unit/doclet-test/target/site/apidocs</outputDirectory>
           <doclet>UmlGraph</doclet>
           <docletArtifact>
               <groupId>umlgraph</groupId>
@@ -44,7 +44,7 @@ under the License.
           <breakiterator>false</breakiterator>
           <old>false</old>
           <show>protected</show>
-          <quiet>false</quiet>
+          <quiet>true</quiet>
           <verbose>false</verbose>
           <author>true</author>
           <charset>ISO-8859-1</charset>

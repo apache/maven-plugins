@@ -37,6 +37,7 @@ under the License.
           <outputDirectory>${basedir}/target/test/unit/jdk5-test/target/site/apidocs</outputDirectory>
           <source>1.5</source>
           <windowtitle>Maven Javadoc Plugin Taglet jdk5 1.0-SNAPSHOT API</windowtitle>
+          <quiet>true</quiet>
         </configuration>
       </plugin>
     </plugins>
