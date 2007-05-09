@@ -51,7 +51,7 @@ under the License.
           <breakiterator>false</breakiterator>
           <old>false</old>
           <show>protected</show>
-          <quiet>false</quiet>
+          <quiet>true</quiet>
           <verbose>false</verbose>
           <author>true</author>
           <charset>ISO-8859-1</charset>
