@@ -2461,7 +2461,7 @@ public abstract class AbstractJavadocMojo
      * @param files
      * @return the list of package names for files in the sourcePaths
      */
-    private static List getPackageNames( List sourcePaths, List files )
+    private List getPackageNames( List sourcePaths, List files )
     {
         return getPackageNamesOrFilesWithUnnamedPackages( sourcePaths, files, true );
     }
@@ -2471,7 +2471,7 @@ public abstract class AbstractJavadocMojo
      * @param files
      * @return a list files with unnamed package names for files in the sourecPaths
      */
-    private static List getFilesWithUnnamedPackages( List sourcePaths, List files )
+    private List getFilesWithUnnamedPackages( List sourcePaths, List files )
     {
         return getPackageNamesOrFilesWithUnnamedPackages( sourcePaths, files, false );
     }
@@ -2482,9 +2482,14 @@ public abstract class AbstractJavadocMojo
      * @param onlyPackageName
      * @return a list of package names or files with unnamed package names, depending the value of the unnamed flag
      */
-    private static List getPackageNamesOrFilesWithUnnamedPackages( List sourcePaths, List files, boolean onlyPackageName )
+    private List getPackageNamesOrFilesWithUnnamedPackages( List sourcePaths, List files, boolean onlyPackageName )
     {
         List returnList = new ArrayList();
+
+        if ( !StringUtils.isEmpty( sourcepath ) )
+        {
+            return returnList;
+        }
 
         for ( Iterator it = files.iterator(); it.hasNext(); )
         {
