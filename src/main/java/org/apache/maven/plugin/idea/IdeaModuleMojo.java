@@ -392,6 +392,20 @@ public class IdeaModuleMojo
                 }
             }
 
+            //Remove default exclusion for output dirs if there are sources in it
+            String outputModuleUrl = getModuleFileUrl( executedProject.getBuild().getOutputDirectory() );
+            String testOutputModuleUrl = getModuleFileUrl( executedProject.getBuild().getTestOutputDirectory() );
+            for ( Iterator i = content.elements( "sourceFolder" ).iterator(); i.hasNext(); )
+            {
+                Element sourceFolder = (Element) i.next();
+                String sourceUrl = sourceFolder.attributeValue( "url" ).replace( '\\', '/' );
+                if ( sourceUrl.startsWith( outputModuleUrl + "/" ) || sourceUrl.startsWith( testOutputModuleUrl ) )
+                {
+                    component.remove( component.element( "exclude-output" ) );
+                    break;
+                }
+            }
+
             rewriteDependencies( component );
 
             writeXmlDocument( moduleFile, document );
