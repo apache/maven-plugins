@@ -36,6 +36,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.filters.ArtifactsFilter;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * This goal will output a classpath string of dependencies from the local
@@ -56,7 +57,7 @@ public class BuildClasspathMojo
     /**
      * Strip artifact version during copy (only works if prefix is set)
      * 
-     * @parameter expression="${stripVersion}" default-value="false"
+     * @parameter expression="${mdep.stripVersion}" default-value="false"
      * @parameter
      */
     private boolean stripVersion = false;
@@ -66,7 +67,7 @@ public class BuildClasspathMojo
      * paths refer to the actual files store in the local repository (the
      * stipVersion parameter does nothing then).
      * 
-     * @parameter expression="${maven.dep.prefix}"
+     * @parameter expression="${mdep.prefix}"
      */
     private String prefix;
 
@@ -74,7 +75,7 @@ public class BuildClasspathMojo
      * The file to write the classpath string. If undefined, it just prints the
      * classpath as [INFO].
      * 
-     * @parameter expression="${maven.dep.cpFile}"
+     * @parameter expression="${mdep.cpFile}"
      */
     private File cpFile;
 
@@ -82,9 +83,35 @@ public class BuildClasspathMojo
      * If 'true', it skips the up-to-date-check, and always regenerates the
      * classpath file.
      * 
-     * @parameter default-value="false" expression="${maven.dep.regenerateFile}"
+     * @parameter default-value="false" expression="${mdep.regenerateFile}"
      */
     private boolean regenerateFile;
+
+    /**
+     * Override the char used between the paths. This field is initialized to
+     * contain the first character of the value of the system property
+     * file.separator. On UNIX systems the value of this field is '/'; on
+     * Microsoft Windows systems it is '\'. The default is File.separator
+     * @since 2.0-alpha-5
+     * @parameter default-value="" expression="${mdep.fileSeparator}"
+     */
+    private String fileSeparator;
+
+    /**
+     * Override the char used between path folders. The system-dependent
+     * path-separator character. This field is initialized to contain the first
+     * character of the value of the system property path.separator. This
+     * character is used to separate filenames in a sequence of files given as a
+     * path list. On UNIX systems, this character is ':'; on Microsoft Windows
+     * systems it is ';'.
+     * @since 2.0-alpha-5
+     * @parameter default-value="" expression="${mdep.pathSeparator}"
+     */
+    private String pathSeparator;
+
+    boolean isFileSepSet = true;
+
+    boolean isPathSepSet = true;
 
     /**
      * Main entry into mojo. Gets the list of dependencies and iterates through
@@ -99,6 +126,25 @@ public class BuildClasspathMojo
     public void execute()
         throws MojoExecutionException
     {
+        // initialize the separators.
+        if ( StringUtils.isEmpty( fileSeparator ) )
+        {
+            isFileSepSet = false;
+        }
+        else
+        {
+            isFileSepSet = true;
+        }
+
+        if ( StringUtils.isEmpty( pathSeparator ) )
+        {
+            isPathSepSet = false;
+        }
+        else
+        {
+            isPathSepSet = true;
+        }
+
         Set artifacts = getResolvedDependencies( true );
 
         if ( artifacts == null || artifacts.isEmpty() )
@@ -117,12 +163,27 @@ public class BuildClasspathMojo
 
             while ( i.hasNext() )
             {
-                sb.append(File.pathSeparatorChar);
+                sb.append( isPathSepSet ? this.pathSeparator : File.pathSeparator );
                 appendArtifactPath( (Artifact) i.next(), sb );
             }
         }
 
         String cpString = sb.toString();
+
+        // if file separator is set, I need to replace the default one from all
+        // the file paths the where pulled from the artifacts
+        if ( isFileSepSet )
+        {
+            String separator = File.separator;
+
+            // if the file sep is "\" then I need to escape it for the regex
+            if ( File.separator.equals( "\\" ) )
+            {
+                separator = "\\\\";
+            }
+
+            cpString = cpString.replaceAll( separator, fileSeparator );
+        }
 
         if ( cpFile == null )
         {
@@ -151,13 +212,14 @@ public class BuildClasspathMojo
     {
         if ( prefix == null )
         {
+
             sb.append( art.getFile() );
         }
         else
         {
             // TODO: add param for prepending groupId and version.
             sb.append( prefix );
-            sb.append( File.separatorChar );
+            sb.append( ( isFileSepSet ) ? this.fileSeparator : File.separator );
             sb.append( DependencyUtil.getFormattedFileName( art, this.stripVersion ) );
         }
     }
@@ -204,7 +266,7 @@ public class BuildClasspathMojo
             {
                 w.write( cpString );
 
-                getLog().info( "Written classpath file '" + cpFile + "'." );
+                getLog().info( "Wrote classpath file '" + cpFile + "'." );
             }
             catch ( IOException ex )
             {
@@ -231,9 +293,15 @@ public class BuildClasspathMojo
      *         ortherwise.
      * @throws MojoExecutionException
      */
-    private String readClasspathFile()
+    protected String readClasspathFile()
         throws IOException
     {
+        if ( cpFile == null )
+        {
+            throw new IllegalArgumentException(
+                                                "The cpFile parameter cannot be null if the file is intended to be read." );
+        }
+
         if ( !cpFile.isFile() )
         {
             return null;
@@ -305,5 +373,107 @@ public class BuildClasspathMojo
     protected ArtifactsFilter getMarkedArtifactFilter()
     {
         return null;
+    }
+
+    /**
+     * @return the cpFile
+     */
+    public File getCpFile()
+    {
+        return this.cpFile;
+    }
+
+    /**
+     * @param theCpFile
+     *            the cpFile to set
+     */
+    public void setCpFile( File theCpFile )
+    {
+        this.cpFile = theCpFile;
+    }
+
+    /**
+     * @return the fileSeparator
+     */
+    public String getFileSeparator()
+    {
+        return this.fileSeparator;
+    }
+
+    /**
+     * @param theFileSeparator
+     *            the fileSeparator to set
+     */
+    public void setFileSeparator( String theFileSeparator )
+    {
+        this.fileSeparator = theFileSeparator;
+    }
+
+    /**
+     * @return the pathSeparator
+     */
+    public String getPathSeparator()
+    {
+        return this.pathSeparator;
+    }
+
+    /**
+     * @param thePathSeparator
+     *            the pathSeparator to set
+     */
+    public void setPathSeparator( String thePathSeparator )
+    {
+        this.pathSeparator = thePathSeparator;
+    }
+
+    /**
+     * @return the prefix
+     */
+    public String getPrefix()
+    {
+        return this.prefix;
+    }
+
+    /**
+     * @param thePrefix
+     *            the prefix to set
+     */
+    public void setPrefix( String thePrefix )
+    {
+        this.prefix = thePrefix;
+    }
+
+    /**
+     * @return the regenerateFile
+     */
+    public boolean isRegenerateFile()
+    {
+        return this.regenerateFile;
+    }
+
+    /**
+     * @param theRegenerateFile
+     *            the regenerateFile to set
+     */
+    public void setRegenerateFile( boolean theRegenerateFile )
+    {
+        this.regenerateFile = theRegenerateFile;
+    }
+
+    /**
+     * @return the stripVersion
+     */
+    public boolean isStripVersion()
+    {
+        return this.stripVersion;
+    }
+
+    /**
+     * @param theStripVersion
+     *            the stripVersion to set
+     */
+    public void setStripVersion( boolean theStripVersion )
+    {
+        this.stripVersion = theStripVersion;
     }
 }
