@@ -59,7 +59,43 @@ public class TestBuildClasspathMojo
         project.setDependencyArtifacts( directArtifacts );
 
         mojo.execute();
+        String file = null;
+        try
+        {
+            file = mojo.readClasspathFile();
+            
+            fail( "Expected an illegal Argument Exception" );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            // expected to catch this.
+        }
 
+        mojo.setCpFile( new File(testDir,"buildClasspath.txt") );
+        mojo.execute();
+        
+        file = mojo.readClasspathFile();
+        assertNotNull( file );
+        assertTrue( file.length() > 0 );
+
+        assertTrue(file.contains( File.pathSeparator ));
+        assertTrue(file.contains( File.separator ));
+        
+        String fileSep = "#####";
+        String pathSep = "%%%%%";
+        
+        mojo.setFileSeparator( fileSep );
+        mojo.setPathSeparator( pathSep );
+        mojo.execute();
+        
+        file = mojo.readClasspathFile();
+        assertNotNull( file );
+        assertTrue( file.length() > 0 );
+
+        assertFalse(file.contains( File.pathSeparator ));
+        assertFalse(file.contains( File.separator ));
+        assertTrue(file.contains( fileSep ));
+        assertTrue(file.contains( pathSep ));
     }
 
 }
