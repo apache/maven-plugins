@@ -74,6 +74,10 @@ mvn javadoc:jar
 
 * Javadoc Configuration
 
- The Javadoc Plugin supports a large number of configuration parameters.  Please see the {{{javadoc-mojo.html}javadoc:javadoc}}
- goal documentation for a listing of these parameters.  Most of these parameters are passed directly to the javadoc tool
- itself.  More info on the Javadoc tool can be found {{{http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html}here}}.
+ The Javadoc Plugin supports a large number of configuration parameters. Each configuration parameter turns into
+ a tag name.
+
+ Please see the {{{javadoc-mojo.html}javadoc:javadoc}} goal documentation for a listing of these parameters. Most
+ of these parameters are passed directly to the javadoc tool itself.
+
+ More info on the Javadoc tool can be found {{{http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html}here}}.
