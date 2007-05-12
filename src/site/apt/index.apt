@@ -69,6 +69,8 @@ Maven 2 Javadoc Plugin
 
    * {{{examples/alternate-doclet.html}Using Alternate Doclet}}
 
+   * {{{examples/alternate-javadoc-tool.html}Using Alternate Javadoc Tool}}
+
    * {{{examples/exclude-package-names.html}Excluding Packages}}
 
    * {{{examples/group-configuration.html}Grouping Packages}}

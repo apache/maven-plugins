@@ -67,7 +67,7 @@ import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.DefaultConsumer;
 
 /**
- * Base class with majority of Javadoc functionality.
+ * Base class with majority of Javadoc functionalities.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
@@ -214,6 +214,22 @@ public abstract class AbstractJavadocMojo
      * @parameter expression="${debug}" default-value="false"
      */
     private boolean debug;
+
+    /**
+     * Sets the path of the Javadoc Tool executable to use.
+     *
+     * @parameter expression="${javadocExecutable}"
+     */
+    private String javadocExecutable;
+
+    /**
+     * Version of the Javadoc Tool executable to use, ex. "1.3", "1.5".
+     *
+     * @parameter expression="${javadocVersion}"
+     */
+    private String javadocVersion;
+
+    private float fJavadocVersion = 0.0f;
 
     // ----------------------------------------------------------------------
     // Javadoc Options
@@ -952,6 +968,54 @@ public abstract class AbstractJavadocMojo
             return;
         }
 
+        // ----------------------------------------------------------------------
+        // Find the javadoc executable and version
+        // ----------------------------------------------------------------------
+
+        String jExecutable;
+        try
+        {
+            jExecutable = getJavadocExecutable();
+        }
+        catch ( IOException e )
+        {
+            throw new MavenReportException( "Unable to find javadoc command: " + e.getMessage(), e );
+        }
+
+        float jVersion;
+        try
+        {
+            jVersion = getJavadocVersion( new File( jExecutable ) );
+        }
+        catch ( IOException e )
+        {
+            throw new MavenReportException( "Unable to find javadoc version: " + e.getMessage(), e );
+        }
+        catch ( CommandLineException e )
+        {
+            throw new MavenReportException( "Unable to find javadoc version: " + e.getMessage(), e );
+        }
+        if ( StringUtils.isNotEmpty( javadocVersion ) )
+        {
+            try
+            {
+                fJavadocVersion = Float.parseFloat( javadocVersion );
+            }
+            catch ( NumberFormatException e )
+            {
+                throw new MavenReportException( "Unable to parse javadoc version: " + e.getMessage(), e );
+            }
+
+            if ( fJavadocVersion != jVersion )
+            {
+                getLog().warn( "Are you sure about the <javadocVersion/> parameter? It seems to be " + jVersion );
+            }
+        }
+        else
+        {
+            fJavadocVersion = jVersion;
+        }
+
         File javadocOutputDirectory = new File( getOutputDirectory() );
         javadocOutputDirectory.mkdirs();
 
@@ -1025,14 +1089,7 @@ public abstract class AbstractJavadocMojo
         List arguments = new ArrayList();
 
         cmd.setWorkingDirectory( javadocOutputDirectory.getAbsolutePath() );
-        try
-        {
-            cmd.setExecutable( getJavadocPath() );
-        }
-        catch ( IOException e )
-        {
-            throw new MavenReportException( "Unable to find javadoc command: " + e.getMessage(), e );
-        }
+        cmd.setExecutable( jExecutable );
 
         // General javadoc arguments
         addArgIf( arguments, breakiterator, "-breakiterator", SINCE_JAVADOC_1_4 );
@@ -1044,7 +1101,7 @@ public abstract class AbstractJavadocMojo
         addArgIfNotEmpty( arguments, "-encoding", quotedArgument( encoding ) );
         addArgIfNotEmpty( arguments, "-extdirs", quotedPathArgument( extdirs ) );
 
-        if ( old && SystemUtils.isJavaVersionAtLeast( SINCE_JAVADOC_1_4 ) )
+        if ( old && isJavaDocVersionAtLeast( SINCE_JAVADOC_1_4 ) )
         {
             getLog().warn( "Javadoc 1.4 doesn't support the -1.1 switch anymore. Ignore this option." );
         }
@@ -1084,7 +1141,8 @@ public abstract class AbstractJavadocMojo
         if ( StringUtils.isEmpty( doclet ) )
         {
             addArgIf( arguments, author, "-author" );
-            addArgIfNotEmpty( arguments, "-bottom", quotedArgument( getBottomText( project.getInceptionYear() ) ), false, false );
+            addArgIfNotEmpty( arguments, "-bottom", quotedArgument( getBottomText( project.getInceptionYear() ) ),
+                              false, false );
             addArgIf( arguments, breakiterator, "-breakiterator", SINCE_JAVADOC_1_4 );
             addArgIfNotEmpty( arguments, "-charset", quotedArgument( charset ) );
             addArgIfNotEmpty( arguments, "-d", quotedPathArgument( javadocOutputDirectory.toString() ) );
@@ -1283,7 +1341,7 @@ public abstract class AbstractJavadocMojo
 
             for ( Iterator i = sourcePaths.iterator(); i.hasNext(); )
             {
-                File sourceDirectory = new File((String) i.next());
+                File sourceDirectory = new File( (String) i.next() );
                 addFilesFromSource( files, sourceDirectory, excludedPackages );
             }
         }
@@ -1876,13 +1934,13 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * Get the path of Javadoc tool depending the OS, the <code>java.home</code> system property and the
-     * <code>JAVA_HOME</code> environment variable
+     * Get the path of the Javadoc tool executable depending the user entry or try to find it depending the OS
+     * or the <code>java.home</code> system property or the <code>JAVA_HOME</code> environment variable.
      *
      * @return the path of the Javadoc tool
      * @throws IOException if not found
      */
-    private String getJavadocPath()
+    private String getJavadocExecutable()
         throws IOException
     {
         String javadocCommand = "javadoc" + ( SystemUtils.IS_OS_WINDOWS ? ".exe" : "" );
@@ -1890,11 +1948,26 @@ public abstract class AbstractJavadocMojo
         File javadocExe;
 
         // ----------------------------------------------------------------------
+        // The javadoc executable is defined by the user
+        // ----------------------------------------------------------------------
+        if ( StringUtils.isNotEmpty( javadocExecutable ) )
+        {
+            javadocExe = new File( javadocExecutable );
+
+            if ( !javadocExe.exists() || !javadocExe.isFile() )
+            {
+                throw new IOException( "The javadoc executable '" + javadocExe + "' doesn't exist or is not a file. "
+                    + "Verify the <javadocExecutable/> parameter." );
+            }
+
+            return javadocExe.getAbsolutePath();
+        }
+
+        // ----------------------------------------------------------------------
         // Try to find javadocExe from System.getProperty( "java.home" )
         // By default, System.getProperty( "java.home" ) = JRE_HOME and JRE_HOME
         // should be in the JDK_HOME
         // ----------------------------------------------------------------------
-
         // For IBM's JDK 1.2
         if ( SystemUtils.IS_OS_AIX )
         {
@@ -1914,7 +1987,6 @@ public abstract class AbstractJavadocMojo
         // ----------------------------------------------------------------------
         // Try to find javadocExe from JAVA_HOME environment variable
         // ----------------------------------------------------------------------
-
         if ( !javadocExe.exists() || !javadocExe.isFile() )
         {
             Properties env = CommandLineUtils.getSystemEnvVars();
@@ -1939,6 +2011,70 @@ public abstract class AbstractJavadocMojo
         }
 
         return javadocExe.getAbsolutePath();
+    }
+
+    /**
+     * Call the javadoc tool to have its version
+     *
+     * @param javadocExe
+     * @return the javadoc version as float
+     * @throws IOException if any
+     * @throws CommandLineException if any
+     */
+    private static float getJavadocVersion( File javadocExe )
+        throws IOException, CommandLineException
+    {
+        if ( !javadocExe.exists() || !javadocExe.isFile() )
+        {
+            throw new IOException( "The javadoc executable '" + javadocExe + "' doesn't exist or is not a file. " );
+        }
+
+        Commandline cmd = new Commandline();
+        cmd.setExecutable( javadocExe.getAbsolutePath() );
+        cmd.setWorkingDirectory( javadocExe.getParentFile() );
+        cmd.createArgument().setValue( "-J-fullversion" );
+
+        CommandLineUtils.StringStreamConsumer out = new CommandLineUtils.StringStreamConsumer();
+        CommandLineUtils.StringStreamConsumer err = new CommandLineUtils.StringStreamConsumer();
+
+        int exitCode = CommandLineUtils.executeCommandLine( cmd, out, err );
+
+        if ( exitCode != 0 )
+        {
+            StringBuffer msg = new StringBuffer( "Exit code: " + exitCode + " - " + err.getOutput() );
+            msg.append( '\n' );
+            msg.append( "Command line was:" + Commandline.toString( cmd.getCommandline() ) );
+            throw new CommandLineException( msg.toString() );
+        }
+
+        /*
+         * Exemple: java full version "1.5.0_11-b03"
+         *
+         * @see com.sun.tools.javac.main.JavaCompiler#fullVersion()
+         */
+        StringTokenizer token = new StringTokenizer( err.getOutput(), "\"" );
+        token.nextToken();
+
+        String version = token.nextToken();
+        String str = version.substring( 0, 3 );
+        if ( version.length() >= 5 )
+        {
+            str = str + version.substring( 4, 5 );
+        }
+
+        return Float.parseFloat( str );
+    }
+
+    /**
+     * Is the Java or Javadoc version at least the requested version.
+     *
+     * @param requiredVersion the required version, for example 1.5f
+     * @return <code>true</code> if the java version or the javadoc version is equal or greater than the
+     * required version
+     */
+    private boolean isJavaDocVersionAtLeast( float requiredVersion )
+    {
+        return ( SystemUtils.isJavaVersionAtLeast( requiredVersion ) || fJavadocVersion >= requiredVersion );
     }
 
     /**
@@ -1970,7 +2106,7 @@ public abstract class AbstractJavadocMojo
      */
     private void addArgIf( List arguments, boolean b, String value, float requiredJavaVersion )
     {
-        if ( SystemUtils.isJavaVersionAtLeast( requiredJavaVersion ) )
+        if ( isJavaDocVersionAtLeast( requiredJavaVersion ) )
         {
             addArgIf( arguments, b, value );
         }
@@ -2008,8 +2144,7 @@ public abstract class AbstractJavadocMojo
      * @param repeatKey   repeat or not the key in the command line
      * @param splitValue  if <code>true</code> given value will be tokenized by comma
      */
-    private void addArgIfNotEmpty( List arguments, String key, String value,
-        boolean repeatKey, boolean splitValue )
+    private void addArgIfNotEmpty( List arguments, String key, String value, boolean repeatKey, boolean splitValue )
     {
         if ( StringUtils.isNotEmpty( value ) )
         {
@@ -2018,7 +2153,8 @@ public abstract class AbstractJavadocMojo
                 arguments.add( key );
             }
 
-            if (splitValue) {
+            if ( splitValue )
+            {
                 StringTokenizer token = new StringTokenizer( value, "," );
                 while ( token.hasMoreTokens() )
                 {
@@ -2034,7 +2170,9 @@ public abstract class AbstractJavadocMojo
                         }
                     }
                 }
-            } else {
+            }
+            else
+            {
                 arguments.add( value );
             }
         }
@@ -2051,10 +2189,10 @@ public abstract class AbstractJavadocMojo
      * @param value     the argument value to be added.
      * @param repeatKey repeat or not the key in the command line
      */
-    private void addArgIfNotEmpty( List arguments, String key, String value, boolean repeatKey ) {
-        addArgIfNotEmpty(arguments, key, value, repeatKey, true);
+    private void addArgIfNotEmpty( List arguments, String key, String value, boolean repeatKey )
+    {
+        addArgIfNotEmpty( arguments, key, value, repeatKey, true );
     }
-
 
     /**
      * Convenience method to add an argument to the <code>command line</code>
@@ -2084,9 +2222,9 @@ public abstract class AbstractJavadocMojo
      * @see <a href="http://jakarta.apache.org/commons/lang/api/org/apache/commons/lang/SystemUtils.html#isJavaVersionAtLeast(float)">SystemUtils.html#isJavaVersionAtLeast(float)</a>
      */
     private void addArgIfNotEmpty( List arguments, String key, String value, float requiredJavaVersion,
-                                  boolean repeatKey )
+                                   boolean repeatKey )
     {
-        if ( SystemUtils.isJavaVersionAtLeast( requiredJavaVersion ) )
+        if ( isJavaDocVersionAtLeast( requiredJavaVersion ) )
         {
             addArgIfNotEmpty( arguments, key, value, repeatKey );
         }
@@ -2250,7 +2388,8 @@ public abstract class AbstractJavadocMojo
      * @param outputDirectory the output directory
      * @throws java.io.IOException if any
      */
-    private void copyJavadocResources( File outputDirectory ) throws IOException
+    private void copyJavadocResources( File outputDirectory )
+        throws IOException
     {
         if ( outputDirectory == null || !outputDirectory.exists() )
         {
@@ -2285,7 +2424,8 @@ public abstract class AbstractJavadocMojo
      * @param javadocDir the javadoc directory
      * @throws java.io.IOException if any
      */
-    private static void copyJavadocResources( File outputDirectory, File javadocDir ) throws IOException
+    private static void copyJavadocResources( File outputDirectory, File javadocDir )
+        throws IOException
     {
         if ( javadocDir.exists() && javadocDir.isDirectory() )
         {
@@ -2361,9 +2501,9 @@ public abstract class AbstractJavadocMojo
                         {
                             int i = fileList[j].lastIndexOf( File.separatorChar );
                             String packageName = fileList[j].substring( 0, i + 1 );
-                            File currentPackage = new File(packageName);
-                            File excludedPackage = new File(sourceDirectory, excludeName[0]);
-                            if ( currentPackage.equals( excludedPackage  )
+                            File currentPackage = new File( packageName );
+                            File excludedPackage = new File( sourceDirectory, excludeName[0] );
+                            if ( currentPackage.equals( excludedPackage )
                                 && fileList[j].substring( i ).indexOf( ".java" ) != -1 )
                             {
                                 include = true;
@@ -2544,7 +2684,7 @@ public abstract class AbstractJavadocMojo
      * @throws MavenReportException if any
      */
     private void addCommandLineOptions( Commandline cmd, StringBuffer options, List arguments,
-                                       File javadocOutputDirectory )
+                                        File javadocOutputDirectory )
         throws MavenReportException
     {
         File optionsFile = new File( javadocOutputDirectory, "options" );
@@ -2590,7 +2730,7 @@ public abstract class AbstractJavadocMojo
         throws MavenReportException
     {
         File argfileFile;
-        if ( SystemUtils.isJavaVersionAtLeast( SINCE_JAVADOC_1_4 ) )
+        if ( isJavaDocVersionAtLeast( SINCE_JAVADOC_1_4 ) )
         {
             argfileFile = new File( javadocOutputDirectory, "argfile" );
         }
@@ -2610,7 +2750,7 @@ public abstract class AbstractJavadocMojo
                 + "' temporary file for command execution", e );
         }
 
-        if ( SystemUtils.isJavaVersionAtLeast( SINCE_JAVADOC_1_4 ) )
+        if ( isJavaDocVersionAtLeast( SINCE_JAVADOC_1_4 ) )
         {
             cmd.createArgument().setValue( "@argfile" );
         }
