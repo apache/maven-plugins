@@ -782,7 +782,7 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * Since Java 5.0.
      *
-     * @parameter expression="${sourcetab}" alias="{linksourcetab}"
+     * @parameter expression="${sourcetab}" alias="linksourcetab"
      */
     private String sourcetab;
 
@@ -1177,7 +1177,6 @@ public abstract class AbstractJavadocMojo
             {
                 addLinkArguments( arguments );
                 addLinkofflineArguments( arguments );
-                addArgIf( arguments, linksource, "-linksource", SINCE_JAVADOC_1_4 );
             }
             else
             {
@@ -1196,7 +1195,15 @@ public abstract class AbstractJavadocMojo
             addArgIf( arguments, notree, "-notree" );
             addArgIfNotEmpty( arguments, "-packagesheader", packagesheader, SINCE_JAVADOC_1_4_2 );
             addArgIf( arguments, serialwarn, "-serialwarn" );
-            addArgIfNotEmpty( arguments, "-sourcetab", sourcetab, SINCE_JAVADOC_1_5 );
+            addArgIf( arguments, linksource, "-linksource", SINCE_JAVADOC_1_4 );
+            if ( fJavadocVersion == SINCE_JAVADOC_1_4_2 )
+            {
+                addArgIfNotEmpty( arguments, "-linksourcetab", sourcetab );
+            }
+            else
+            {
+                addArgIfNotEmpty( arguments, "-sourcetab", sourcetab, SINCE_JAVADOC_1_5 );
+            }
             addArgIf( arguments, splitindex, "-splitindex" );
             addArgIfNotEmpty( arguments, "-stylesheetfile",
                               quotedPathArgument( getStylesheetFile( javadocOutputDirectory ) ) );
