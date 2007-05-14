@@ -41,7 +41,7 @@ import org.codehaus.plexus.util.xml.Xpp3DomWriter;
 
 /**
  * This writer creates the application.xml and the .modulemaps files for RAD6
- * the the META-INF directory in the project root. this is where RAD6 requires
+ * in the META-INF directory in the project root. this is where RAD6 requires
  * the files to be. These will be independent of the real application.xml witch
  * will be generated the stad. maven way.
  * 
