@@ -36,7 +36,7 @@ import java.util.Locale;
 
 /**
  * Generates documentation for the Java code in the project using the standard <a
- * href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a> tool.
+ * href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a>.
  *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
@@ -44,7 +44,7 @@ import java.util.Locale;
  * @goal javadoc
  * @phase generate-sources
  * @see <a href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a>
- * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#options">Javadoc Options </a>
+ * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#options">Javadoc Options</a>
  */
 public class JavadocReport
     extends AbstractJavadocMojo
