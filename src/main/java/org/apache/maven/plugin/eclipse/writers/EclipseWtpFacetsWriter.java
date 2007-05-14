@@ -26,6 +26,7 @@ import java.util.Map.Entry;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.Messages;
+import org.apache.maven.plugin.ide.IdeUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
@@ -120,7 +121,7 @@ public class EclipseWtpFacetsWriter
             writer.endElement(); // fixed
             writer.startElement( ELT_INSTALLED );
             writer.addAttribute( ATTR_FACET, FACET_JST_WEB );
-            writer.addAttribute( ATTR_VERSION, resolveServletVersion() );
+            writer.addAttribute( ATTR_VERSION, IdeUtils.resolveServletVersion(config.getProject()) );
             writer.endElement(); // installed
         }
         else if ( "ejb".equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
@@ -130,7 +131,7 @@ public class EclipseWtpFacetsWriter
             writer.endElement(); // fixed
             writer.startElement( ELT_INSTALLED );
             writer.addAttribute( ATTR_FACET, FACET_JST_EJB );
-            writer.addAttribute( ATTR_VERSION, resolveEjbVersion() );
+            writer.addAttribute( ATTR_VERSION, IdeUtils.resolveEjbVersion(config.getProject()) );
             writer.endElement(); // installed
         }
         else if ( "ear".equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
@@ -140,7 +141,7 @@ public class EclipseWtpFacetsWriter
             writer.endElement(); // fixed
             writer.startElement( ELT_INSTALLED );
             writer.addAttribute( ATTR_FACET, FACET_JST_EAR );
-            writer.addAttribute( ATTR_VERSION, resolveJ2eeVersion() );
+            writer.addAttribute( ATTR_VERSION, IdeUtils.resolveJ2eeVersion(config.getProject()) );
             writer.endElement(); // installed
         }
         else if ( "jar".equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
@@ -157,7 +158,7 @@ public class EclipseWtpFacetsWriter
         // common installed element
         writer.startElement( ELT_INSTALLED );
         writer.addAttribute( ATTR_FACET, FACET_JST_JAVA );
-        writer.addAttribute( ATTR_VERSION, resolveJavaVersion() );
+        writer.addAttribute( ATTR_VERSION, IdeUtils.resolveJavaVersion(config.getProject()) );
         writer.endElement(); // installed
         
         writeAdditionalProjectFacets( writer );
