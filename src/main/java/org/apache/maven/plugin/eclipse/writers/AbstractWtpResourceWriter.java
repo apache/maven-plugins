@@ -126,7 +126,7 @@ public abstract class AbstractWtpResourceWriter extends AbstractEclipseWriter
             writer.addAttribute( ATTR_MODULE_TYPE_ID, "jst.ear" ); //$NON-NLS-1$
 
             writer.startElement( ELT_VERSION );
-            writer.writeText( JeeUtils.resolveJ2eeVersion(project) );
+            writer.writeText( JeeUtils.resolveJeeVersion(project) );
             writer.endElement();
         }
         else

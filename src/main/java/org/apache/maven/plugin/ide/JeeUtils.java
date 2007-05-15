@@ -82,16 +82,16 @@ public class JeeUtils
         {
             // No ejb dependency detected. Try to resolve the ejb
             // version from J2EE/JEE.
-            JeeDescriptor descriptor = getJeeDescriptorFromJeeVersion( findJ2eeVersionInDependencies( project ) );
+            JeeDescriptor descriptor = getJeeDescriptorFromJeeVersion( findJeeVersionInDependencies( project ) );
             if ( descriptor != null )
                 version = descriptor.getEjbVersion();
         }
         return version == null ? JeeDescriptor.EJB_2_1 : version; //$NON-NLS-1$
     }
 
-    public static String resolveJ2eeVersion( MavenProject project )
+    public static String resolveJeeVersion( MavenProject project )
     {
-        String version = findJ2eeVersionInDependencies( project );
+        String version = findJeeVersionInDependencies( project );
 
         return version == null ? JeeDescriptor.J2EE_1_4 : version; //$NON-NLS-1$
     }
@@ -104,7 +104,7 @@ public class JeeUtils
         {
             // No servlet dependency detected. Try to resolve the servlet
             // version from J2EE/JEE.
-            JeeDescriptor descriptor = getJeeDescriptorFromJeeVersion( findJ2eeVersionInDependencies( project ) );
+            JeeDescriptor descriptor = getJeeDescriptorFromJeeVersion( findJeeVersionInDependencies( project ) );
             if ( descriptor != null )
                 version = descriptor.getServletVersion();
         }
@@ -141,7 +141,7 @@ public class JeeUtils
         return version;
     }
 
-    private static String findJ2eeVersionInDependencies( MavenProject project )
+    private static String findJeeVersionInDependencies( MavenProject project )
     {
         String[] artifactIds = new String[] { "javaee-api", "j2ee", "geronimo-spec-j2ee" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
