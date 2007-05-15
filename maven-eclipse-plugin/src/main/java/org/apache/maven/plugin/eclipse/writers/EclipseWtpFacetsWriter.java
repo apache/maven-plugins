@@ -142,7 +142,7 @@ public class EclipseWtpFacetsWriter
             writer.endElement(); // fixed
             writer.startElement( ELT_INSTALLED );
             writer.addAttribute( ATTR_FACET, FACET_JST_EAR );
-            writer.addAttribute( ATTR_VERSION, JeeUtils.resolveJ2eeVersion(config.getProject()) );
+            writer.addAttribute( ATTR_VERSION, JeeUtils.resolveJeeVersion(config.getProject()) );
             writer.endElement(); // installed
         }
         else if ( "jar".equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
