@@ -26,21 +26,21 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.Constants;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.eclipse.writers.AbstractEclipseWriter;
+import org.apache.maven.plugin.ide.JeeUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
- * Creates a .settings folder for Eclipse WTP 1.x release and writes out the
- * configuration under it.
+ * Creates a .settings folder for Eclipse WTP 1.x release and writes out the configuration under it.
  * 
  * @author <a href="mailto:nir@cfc.at">Richard van Nieuwenhoven </a>
  */
-public class RadWebSettingsWriter
-    extends AbstractEclipseWriter
+public class RadWebSettingsWriter extends AbstractEclipseWriter
 {
 
-    private static final String COM_IBM_ETOOLS_SITEEDIT_WIZARDS_PROJECTFEATURE_WEB_SITE_FEATURE = "com.ibm.etools.siteedit.wizards.projectfeature.WebSiteFeature";
+    private static final String COM_IBM_ETOOLS_SITEEDIT_WIZARDS_PROJECTFEATURE_WEB_SITE_FEATURE =
+        "com.ibm.etools.siteedit.wizards.projectfeature.WebSiteFeature";
 
     private static final String WEBSETTINGS_CONTEXT_ROOT = "context-root";
 
@@ -82,11 +82,11 @@ public class RadWebSettingsWriter
 
     /**
      * write the websettings file for RAD6 if needed.
+     * 
      * @throws MojoExecutionException
      *             when writing the config files was not possible
      */
-    public void write()
-        throws MojoExecutionException
+    public void write() throws MojoExecutionException
     {
         FileWriter w;
         if ( Constants.PROJECT_PACKAGING_WAR.equalsIgnoreCase( config.getProject().getPackaging() ) )
@@ -126,7 +126,7 @@ public class RadWebSettingsWriter
         writer.writeText( "J2EE" );
         writer.endElement();
         writer.startElement( WEBSETTINGS_JSP_LEVEL );
-        writer.writeText( "1.3" );
+        writer.writeText( JeeUtils.resolveJspVersion( config.getProject() ) );
         writer.endElement();
         writer.startElement( WEBSETTINGS_FEATURES );
         writer.startElement( WEBSETTINGS_FEATURE );
