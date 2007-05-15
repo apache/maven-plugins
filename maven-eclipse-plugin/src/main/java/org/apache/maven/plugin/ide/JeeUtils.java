@@ -96,6 +96,29 @@ public class JeeUtils
         return version == null ? JeeDescriptor.J2EE_1_4 : version; //$NON-NLS-1$
     }
 
+    public static String resolveJspVersion( MavenProject project )
+    {
+        String version = findJspVersionInDependencies( project );
+
+        if ( version == null )
+        {
+            // No jsp dependency detected. Try to resolve the jsp
+            // version from J2EE/JEE.
+            JeeDescriptor descriptor = getJeeDescriptorFromJeeVersion( findJeeVersionInDependencies( project ) );
+            if ( descriptor != null )
+                version = descriptor.getJspVersion();
+        }
+        if ( version == null )
+        {
+            // No jsp dependency detected. Try to resolve the jsp
+            // version from Servlet.
+            JeeDescriptor descriptor = getJeeDescriptorFromServletVersion( findServletVersionInDependencies( project ) );
+            if ( descriptor != null )
+                version = descriptor.getJspVersion();
+        }
+        return version == null ? JeeDescriptor.JSP_2_0 : version; //$NON-NLS-1$
+    }
+
     public static String resolveServletVersion( MavenProject project )
     {
         String version = findServletVersionInDependencies( project );
@@ -157,6 +180,11 @@ public class JeeUtils
         return version;
     }
 
+    private static String findJspVersionInDependencies( MavenProject project )
+    {
+        return null;
+    }
+
     private static String findServletVersionInDependencies( MavenProject project )
     {
         String[] artifactIds = new String[] { "servlet-api", "servletapi", "geronimo-spec-servlet" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -179,5 +207,4 @@ public class JeeUtils
 
         return version;
     }
-
 }

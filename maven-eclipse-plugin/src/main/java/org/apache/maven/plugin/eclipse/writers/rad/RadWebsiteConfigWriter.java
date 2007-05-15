@@ -35,13 +35,11 @@ import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
- * Creates a .settings folder for Eclipse WTP 1.x release and writes out the
- * configuration under it.
+ * Creates a .settings folder for Eclipse WTP 1.x release and writes out the configuration under it.
  * 
  * @author <a href="mailto:nir@cfc.at">Richard van Nieuwenhoven</a>
  */
-public class RadWebsiteConfigWriter
-    extends AbstractEclipseWriter
+public class RadWebsiteConfigWriter extends AbstractEclipseWriter
 {
 
     private static final String WEBSITE_CONFIG_FILENAME = ".website-config";
@@ -55,8 +53,7 @@ public class RadWebsiteConfigWriter
     /**
      * write the website-config file for RAD6 if needed.
      * 
-     * @see AbstractWtpResourceWriter#write(EclipseSourceDir[],
-     *      ArtifactRepository, File)
+     * @see AbstractWtpResourceWriter#write(EclipseSourceDir[], ArtifactRepository, File)
      * @param sourceDirs
      *            all eclipse source directorys
      * @param localRepository
@@ -66,8 +63,7 @@ public class RadWebsiteConfigWriter
      * @throws MojoExecutionException
      *             when writing the config files was not possible
      */
-    public void write()
-        throws MojoExecutionException
+    public void write() throws MojoExecutionException
     {
         MavenProject project = config.getProject();
 
