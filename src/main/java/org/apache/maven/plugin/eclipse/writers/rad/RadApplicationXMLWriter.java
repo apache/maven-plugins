@@ -32,6 +32,7 @@ import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.eclipse.writers.AbstractEclipseWriter;
 import org.apache.maven.plugin.eclipse.writers.AbstractWtpResourceWriter;
 import org.apache.maven.plugin.ide.IdeDependency;
+import org.apache.maven.plugin.ide.JeeUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
@@ -40,15 +41,13 @@ import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.codehaus.plexus.util.xml.Xpp3DomWriter;
 
 /**
- * This writer creates the application.xml and the .modulemaps files for RAD6
- * in the META-INF directory in the project root. this is where RAD6 requires
- * the files to be. These will be independent of the real application.xml witch
- * will be generated the stad. maven way.
+ * This writer creates the application.xml and the .modulemaps files for RAD6 in the META-INF directory in the project
+ * root. this is where RAD6 requires the files to be. These will be independent of the real application.xml witch will
+ * be generated the stad. maven way.
  * 
  * @author <a href="mailto:nir@cfc.at">Richard van Nieuwenhoven </a>
  */
-public class RadApplicationXMLWriter
-    extends AbstractEclipseWriter
+public class RadApplicationXMLWriter extends AbstractEclipseWriter
 {
 
     private static final String APPLICATION_XML_APPLICATION = "application";
@@ -116,11 +115,9 @@ public class RadApplicationXMLWriter
     private Xpp3Dom[] webModulesFromPoms;
 
     /**
-     * write the application.xml and the .modulemaps file to the META-INF
-     * directory.
+     * write the application.xml and the .modulemaps file to the META-INF directory.
      * 
-     * @see AbstractWtpResourceWriter#write(EclipseSourceDir[],
-     *      ArtifactRepository, File)
+     * @see AbstractWtpResourceWriter#write(EclipseSourceDir[], ArtifactRepository, File)
      * @param sourceDirs
      *            all eclipse source directorys
      * @param localRepository
@@ -130,14 +127,13 @@ public class RadApplicationXMLWriter
      * @throws MojoExecutionException
      *             when writing the config files was not possible
      */
-    public void write()
-        throws MojoExecutionException
+    public void write() throws MojoExecutionException
     {
         String packaging = config.getProject().getPackaging();
         if ( Constants.PROJECT_PACKAGING_EAR.equalsIgnoreCase( packaging ) )
         {
-            File applicationXmlFile = new File( config.getEclipseProjectDirectory(), "META-INF" + File.separator
-                + APPLICATION_XML_FILENAME );
+            File applicationXmlFile =
+                new File( config.getEclipseProjectDirectory(), "META-INF" + File.separator + APPLICATION_XML_FILENAME );
             Xpp3Dom applicationXmlDom = readXMLFile( applicationXmlFile );
             if ( applicationXmlDom == null )
             {
@@ -145,8 +141,8 @@ public class RadApplicationXMLWriter
             }
             this.applicationXmlDomChildren = applicationXmlDom.getChildren( APPLICATION_XML_MODULE );
 
-            File modulemapsXmlFile = new File( config.getEclipseProjectDirectory(), "META-INF" + File.separator
-                + MODULEMAPS_FILENAME );
+            File modulemapsXmlFile =
+                new File( config.getEclipseProjectDirectory(), "META-INF" + File.separator + MODULEMAPS_FILENAME );
             Xpp3Dom modulemapsXmlDom = readXMLFile( modulemapsXmlFile );
             if ( modulemapsXmlDom == null )
             {
@@ -156,9 +152,11 @@ public class RadApplicationXMLWriter
 
             try
             {
-                this.webModulesFromPoms = ( (Xpp3Dom) ( (org.apache.maven.model.Plugin) config.getProject().getBuild()
-                    .getPluginsAsMap().get( "org.apache.maven.plugins:maven-ear-plugin" ) ).getConfiguration() )
-                    .getChild( "modules" ).getChildren( "webModule" );
+                this.webModulesFromPoms =
+                    ( (Xpp3Dom) ( (org.apache.maven.model.Plugin) config.getProject().getBuild().getPluginsAsMap().get(
+                                                                                                                        "org.apache.maven.plugins:maven-ear-plugin" ) ).getConfiguration() ).getChild(
+                                                                                                                                                                                                       "modules" ).getChildren(
+                                                                                                                                                                                                                                "webModule" );
             }
             catch ( java.lang.NullPointerException ex )
             {
@@ -185,13 +183,17 @@ public class RadApplicationXMLWriter
      */
     private Xpp3Dom createNewApplicationXml()
     {
+        String j2eeVersion = JeeUtils.resolveJeeVersion( config.getProject() );
+        // By default J2EE version is in the format X.X
+        // Must be fixed for JEE < 1.4. Schemas didn't exist
         Xpp3Dom result = new Xpp3Dom( APPLICATION_XML_APPLICATION );
         result.setAttribute( ID, "Application_ID" );
-        result.setAttribute( VERSION, "1.4" );
+        result.setAttribute( VERSION, j2eeVersion );
         result.setAttribute( XMLNS, "http://java.sun.com/xml/ns/j2ee" );
         result.setAttribute( XMLNS_XSI, "http://www.w3.org/2001/XMLSchema-instance" );
         result.setAttribute( XMLNS_SCHEMA_LOCATION,
-                             "http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/application_1_4.xsd" );
+                             "http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/application_"
+                                             + j2eeVersion.charAt( 0 ) + "_" + j2eeVersion.charAt( 2 ) + ".xsd" );
         result.addChild( new Xpp3Dom( APPLICATION_XML_DESCRIPTION ) );
         Xpp3Dom name = new Xpp3Dom( APPLICATION_XML_DISPLAY_NAME );
         name.setValue( config.getProject().getArtifactId() );
@@ -216,9 +218,8 @@ public class RadApplicationXMLWriter
     }
 
     /**
-     * find an existing module entry in the application.xml file by looking up
-     * the id in the modulemaps file and then using that to locate the entry in
-     * the application.xml file.
+     * find an existing module entry in the application.xml file by looking up the id in the modulemaps file and then
+     * using that to locate the entry in the application.xml file.
      * 
      * @param applicationXmlDom
      *            application.xml dom tree
@@ -242,8 +243,7 @@ public class RadApplicationXMLWriter
     }
 
     /**
-     * find an artifact in the modulemaps dom tree, if it is missing create a
-     * new entry in the modulemaps dom tree.
+     * find an artifact in the modulemaps dom tree, if it is missing create a new entry in the modulemaps dom tree.
      * 
      * @param dependency
      *            dependency to find
@@ -260,21 +260,21 @@ public class RadApplicationXMLWriter
             if ( children[index].getAttribute( MODULEMAPS_PROJECT_NAME ).equals( dependency.getArtifactId() ) )
             {
                 if ( dependency.getType().equals( Constants.PROJECT_PACKAGING_EJB )
-                    && children[index].getName().equals( MODULEMAPS_MAPPINGS )
-                    && children[index].getChild( APPLICATION_XML_MODULE ).getAttribute( XMI_TYPE )
-                        .equals( MODULEMAPS_APPLICATION_EJB_MODULE ) )
+                                && children[index].getName().equals( MODULEMAPS_MAPPINGS )
+                                && children[index].getChild( APPLICATION_XML_MODULE ).getAttribute( XMI_TYPE ).equals(
+                                                                                                                       MODULEMAPS_APPLICATION_EJB_MODULE ) )
                 {
                     return children[index];
                 }
                 else if ( dependency.getType().equals( Constants.PROJECT_PACKAGING_WAR )
-                    && children[index].getName().equals( MODULEMAPS_MAPPINGS )
-                    && children[index].getChild( APPLICATION_XML_MODULE ).getAttribute( XMI_TYPE )
-                        .equals( MODULEMAPS_APPLICATION_WEB_MODULE ) )
+                                && children[index].getName().equals( MODULEMAPS_MAPPINGS )
+                                && children[index].getChild( APPLICATION_XML_MODULE ).getAttribute( XMI_TYPE ).equals(
+                                                                                                                       MODULEMAPS_APPLICATION_WEB_MODULE ) )
                 {
                     return children[index];
                 }
                 else if ( dependency.getType().equals( Constants.PROJECT_PACKAGING_JAR )
-                    && children[index].getName().equals( MODULEMAPS_UTILITY_JARMAPPINGS ) )
+                                && children[index].getName().equals( MODULEMAPS_UTILITY_JARMAPPINGS ) )
                 {
                     return children[index];
                 }
@@ -410,7 +410,7 @@ public class RadApplicationXMLWriter
                 for ( int newIndex = 0; newIndex < newModulemapsXmlDomChildren.length; newIndex++ )
                 {
                     if ( ( newModulemapsXmlDomChildren[newIndex] != null )
-                        && ( newModulemapsXmlDomChildren[newIndex] == this.modulemapsXmlDomChildren[index] ) )
+                                    && ( newModulemapsXmlDomChildren[newIndex] == this.modulemapsXmlDomChildren[index] ) )
                     {
                         modulemapsXmlDom.removeChild( newIndex );
                         break;
@@ -436,10 +436,9 @@ public class RadApplicationXMLWriter
     }
 
     /**
-     * update the application.xml and the .modulemaps file for a specified
-     * dependency.all WAR an EJB dependencies will go in both files all others
-     * only in the modulemaps files. Webapplications contextroots are corrected
-     * to the contextRoot specified in the pom.
+     * update the application.xml and the .modulemaps file for a specified dependency.all WAR an EJB dependencies will
+     * go in both files all others only in the modulemaps files. Webapplications contextroots are corrected to the
+     * contextRoot specified in the pom.
      * 
      * @param applicationXmlDom
      *            dom-tree of application.xml
@@ -496,18 +495,18 @@ public class RadApplicationXMLWriter
                 else
                 {
                     handled( module );
-                    module.getChild( APPLICATION_XML_WEB ).getChild( APPLICATION_XML_WEB_URI )
-                        .setValue( dependency.getArtifactId() + ".war" );
-                    module.getChild( APPLICATION_XML_WEB ).getChild( APPLICATION_XML_CONTEXT_ROOT )
-                        .setValue( contextRootInPom );
+                    module.getChild( APPLICATION_XML_WEB ).getChild( APPLICATION_XML_WEB_URI ).setValue(
+                                                                                                         dependency.getArtifactId()
+                                                                                                                         + ".war" );
+                    module.getChild( APPLICATION_XML_WEB ).getChild( APPLICATION_XML_CONTEXT_ROOT ).setValue(
+                                                                                                              contextRootInPom );
                 }
             }
         }
     }
 
     /**
-     * Find the contextRoot specified in the pom and convert it into contectroot
-     * for the application.xml.
+     * Find the contextRoot specified in the pom and convert it into contectroot for the application.xml.
      * 
      * @param artifactId
      *            the artifactid to search
@@ -524,8 +523,7 @@ public class RadApplicationXMLWriter
     }
 
     /**
-     * write back a domtree to a xmlfile and use the pretty print for it so that
-     * it is human readable.
+     * write back a domtree to a xmlfile and use the pretty print for it so that it is human readable.
      * 
      * @param xmlFile
      *            file to write to
@@ -534,8 +532,7 @@ public class RadApplicationXMLWriter
      * @throws MojoExecutionException
      *             if the file could not be written
      */
-    private void writePrettyXmlFile( File xmlFile, Xpp3Dom xmlDomTree )
-        throws MojoExecutionException
+    private void writePrettyXmlFile( File xmlFile, Xpp3Dom xmlDomTree ) throws MojoExecutionException
     {
         Xpp3Dom original = readXMLFile( xmlFile );
         if ( original != null && original.equals( xmlDomTree ) )
