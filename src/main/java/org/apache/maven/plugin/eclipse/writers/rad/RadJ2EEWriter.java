@@ -29,18 +29,18 @@ import org.apache.maven.plugin.eclipse.EclipseSourceDir;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.eclipse.writers.AbstractEclipseWriter;
 import org.apache.maven.plugin.eclipse.writers.AbstractWtpResourceWriter;
+import org.apache.maven.plugin.ide.JeeUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
- * Creates the .j2ee file for RAD6 for now write hardcoded: EJB version 2.1 WAR
- * version 2.4 EAR version 1.4 future releases could make these varriable.
+ * Creates the .j2ee file for RAD6 for now write hardcoded: EJB version 2.1 WAR version 2.4 EAR version 1.4 future
+ * releases could make these varriable.
  * 
  * @author <a href="mailto:nir@cfc.at">Richard van Nieuwenhoven</a>
  */
-public class RadJ2EEWriter
-    extends AbstractEclipseWriter
+public class RadJ2EEWriter extends AbstractEclipseWriter
 {
 
     private static final String J2EE_FILENAME = ".j2ee";
@@ -54,8 +54,7 @@ public class RadJ2EEWriter
     /**
      * write the .j2ee file to the project root directory.
      * 
-     * @see AbstractWtpResourceWriter#write(EclipseSourceDir[],
-     *      ArtifactRepository, File)
+     * @see AbstractWtpResourceWriter#write(EclipseSourceDir[], ArtifactRepository, File)
      * @param sourceDirs
      *            all eclipse source directorys
      * @param localRepository
@@ -65,15 +64,14 @@ public class RadJ2EEWriter
      * @throws MojoExecutionException
      *             when writing the config files was not possible
      */
-    public void write()
-        throws MojoExecutionException
+    public void write() throws MojoExecutionException
     {
         FileWriter w;
         String packaging = config.getProject().getPackaging();
 
         if ( Constants.PROJECT_PACKAGING_WAR.equalsIgnoreCase( packaging )
-            || Constants.PROJECT_PACKAGING_EJB.equalsIgnoreCase( packaging )
-            || Constants.PROJECT_PACKAGING_EAR.equalsIgnoreCase( packaging ) )
+                        || Constants.PROJECT_PACKAGING_EJB.equalsIgnoreCase( packaging )
+                        || Constants.PROJECT_PACKAGING_EAR.equalsIgnoreCase( packaging ) )
         {
             try
             {
@@ -105,15 +103,21 @@ public class RadJ2EEWriter
         writer.startElement( J2EE_MODULEVERSION );
         if ( Constants.PROJECT_PACKAGING_WAR.equalsIgnoreCase( packaging ) )
         {
-            writer.writeText( "24" );
+            // In format X.X
+            String servletVersion = JeeUtils.resolveServletVersion( config.getProject() );
+            writer.writeText( "" + servletVersion.charAt( 0 ) + servletVersion.charAt( 2 ) );
         }
         else if ( Constants.PROJECT_PACKAGING_EJB.equalsIgnoreCase( packaging ) )
         {
-            writer.writeText( "21" );
+            // In format X.X
+            String ejbVersion = JeeUtils.resolveEjbVersion( config.getProject() );
+            writer.writeText( "" + ejbVersion.charAt( 0 ) + ejbVersion.charAt( 2 ) );
         }
         else if ( Constants.PROJECT_PACKAGING_EAR.equalsIgnoreCase( packaging ) )
         {
-            writer.writeText( "14" );
+            // In format X.X
+            String jeeVersion = JeeUtils.resolveJeeVersion( config.getProject() );
+            writer.writeText( "" + jeeVersion.charAt( 0 ) + jeeVersion.charAt( 2 ) );
         }
         writer.endElement();
         writer.endElement();
