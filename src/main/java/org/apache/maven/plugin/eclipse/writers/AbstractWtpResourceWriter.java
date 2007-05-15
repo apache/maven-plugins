@@ -23,6 +23,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.plugin.ide.IdeUtils;
+import org.apache.maven.plugin.ide.JeeUtils;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.xml.XMLWriter;
 
@@ -87,7 +88,7 @@ public abstract class AbstractWtpResourceWriter extends AbstractEclipseWriter
 
             writer.startElement( ELT_VERSION );
 
-            writer.writeText( IdeUtils.resolveServletVersion(project) );
+            writer.writeText( JeeUtils.resolveServletVersion(project) );
             writer.endElement();
 
             // use finalName as context root only if it has been explicitely set
@@ -108,7 +109,7 @@ public abstract class AbstractWtpResourceWriter extends AbstractEclipseWriter
             writer.addAttribute( ATTR_MODULE_TYPE_ID, "jst.ejb" ); //$NON-NLS-1$
 
             writer.startElement( ELT_VERSION );
-            writer.writeText( IdeUtils.resolveEjbVersion(project) );
+            writer.writeText( JeeUtils.resolveEjbVersion(project) );
 
             writer.endElement();
 
@@ -125,7 +126,7 @@ public abstract class AbstractWtpResourceWriter extends AbstractEclipseWriter
             writer.addAttribute( ATTR_MODULE_TYPE_ID, "jst.ear" ); //$NON-NLS-1$
 
             writer.startElement( ELT_VERSION );
-            writer.writeText( IdeUtils.resolveJ2eeVersion(project) );
+            writer.writeText( JeeUtils.resolveJ2eeVersion(project) );
             writer.endElement();
         }
         else
