@@ -228,27 +228,20 @@ public class IdeUtils
         return resolvedArtifact;
     }
 
+    /**
+     * @deprecated Use {@link JeeUtils#resolveEjbVersion(MavenProject)} instead
+     */
     public static String resolveEjbVersion( MavenProject project )
     {
-        String version = findEjbVersionInDependencies( project );
-
-        if ( version == null )
-        {
-            // No ejb dependency detected. Try to resolve the ejb
-            // version from J2EE/JEE.
-            JeeDescriptor descriptor =
-                JeeUtils.getJeeDescriptorFromJeeVersion( findJ2eeVersionInDependencies( project ) );
-            if ( descriptor != null )
-                version = descriptor.getEjbVersion();
-        }
-        return version == null ? JeeDescriptor.EJB_2_1 : version; //$NON-NLS-1$
+        return JeeUtils.resolveEjbVersion( project );
     }
 
+    /**
+     * @deprecated Use {@link JeeUtils#resolveJ2eeVersion(MavenProject)} instead
+     */
     public static String resolveJ2eeVersion( MavenProject project )
     {
-        String version = findJ2eeVersionInDependencies( project );
-
-        return version == null ? JeeDescriptor.J2EE_1_4 : version; //$NON-NLS-1$
+        return JeeUtils.resolveJ2eeVersion( project );
     }
 
     public static String resolveJavaVersion( MavenProject project )
@@ -275,20 +268,12 @@ public class IdeUtils
         return version == null ? IdeUtils.JAVA_1_4 : version; //$NON-NLS-1$
     }
 
+    /**
+     * @deprecated Use {@link JeeUtils#resolveServletVersion(MavenProject)} instead
+     */
     public static String resolveServletVersion( MavenProject project )
     {
-        String version = findServletVersionInDependencies( project );
-
-        if ( version == null )
-        {
-            // No servlet dependency detected. Try to resolve the servlet
-            // version from J2EE/JEE.
-            JeeDescriptor descriptor =
-                JeeUtils.getJeeDescriptorFromJeeVersion( findJ2eeVersionInDependencies( project ) );
-            if ( descriptor != null )
-                version = descriptor.getServletVersion();
-        }
-        return version == null ? JeeDescriptor.SERVLET_2_4 : version; //$NON-NLS-1$
+        return JeeUtils.resolveServletVersion( project );
     }
 
     public static String toRelativeAndFixSeparator( File basedir, File fileToAdd, boolean replaceSlashesWithDashes )
@@ -367,66 +352,6 @@ public class IdeUtils
             }
         }
         return value;
-    }
-
-    private static String findEjbVersionInDependencies( MavenProject project )
-    {
-        String[] artifactIds = new String[] { "ejb", "geronimo-spec-ejb" }; //$NON-NLS-1$
-
-        String version = IdeUtils.getDependencyVersion( artifactIds, project.getDependencies(), 3 );
-
-        // For new Geronimo APIs, the version of the artifact isn't the one of the spec
-        if ( version == null )
-        {
-            if ( IdeUtils.getDependencyVersion( new String[] { "geronimo-ejb_2.1_spec" }, project.getDependencies(), 3 ) != null )
-                return JeeDescriptor.EJB_2_1;
-        }
-        if ( version == null )
-        {
-            if ( IdeUtils.getDependencyVersion( new String[] { "geronimo-ejb_3.0_spec" }, project.getDependencies(), 3 ) != null )
-                return JeeDescriptor.EJB_3_0;
-        }
-
-        return version;
-    }
-
-    private static String findJ2eeVersionInDependencies( MavenProject project )
-    {
-        String[] artifactIds = new String[] { "javaee-api", "j2ee", "geronimo-spec-j2ee" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
-        String version = IdeUtils.getDependencyVersion( artifactIds, project.getDependencies(), 3 );
-
-        // For new Geronimo APIs, the version of the artifact isn't the one of the spec
-        if ( version == null )
-        {
-            if ( IdeUtils.getDependencyVersion( new String[] { "geronimo-j2ee_1.4_spec" }, project.getDependencies(), 3 ) != null )
-                return JeeDescriptor.J2EE_1_4;
-        }
-
-        return version;
-    }
-
-    private static String findServletVersionInDependencies( MavenProject project )
-    {
-        String[] artifactIds = new String[] { "servlet-api", "servletapi", "geronimo-spec-servlet" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
-        String version = IdeUtils.getDependencyVersion( artifactIds, project.getDependencies(), 3 );
-
-        // For new Geronimo APIs, the version of the artifact isn't the one of the spec
-        if ( version == null )
-        {
-            if ( IdeUtils.getDependencyVersion( new String[] { "geronimo-servlet_2.4_spec" },
-                                                project.getDependencies(), 3 ) != null )
-                return JeeDescriptor.SERVLET_2_4;
-        }
-        if ( version == null )
-        {
-            if ( IdeUtils.getDependencyVersion( new String[] { "geronimo-servlet_2.5_spec" },
-                                                project.getDependencies(), 3 ) != null )
-                return JeeDescriptor.SERVLET_2_5;
-        }
-
-        return version;
     }
 
     private static String getProjectName( String artifactId, String version, boolean addVersionToProjectName )
