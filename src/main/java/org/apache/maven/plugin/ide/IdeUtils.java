@@ -237,11 +237,11 @@ public class IdeUtils
     }
 
     /**
-     * @deprecated Use {@link JeeUtils#resolveJ2eeVersion(MavenProject)} instead
+     * @deprecated Use {@link JeeUtils#resolveJeeVersion(MavenProject)} instead
      */
     public static String resolveJ2eeVersion( MavenProject project )
     {
-        return JeeUtils.resolveJ2eeVersion( project );
+        return JeeUtils.resolveJeeVersion( project );
     }
 
     public static String resolveJavaVersion( MavenProject project )
