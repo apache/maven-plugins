@@ -3,7 +3,7 @@
  ------
  Vincent Siveton
  ------
- Mai 2007
+ May 2007
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -39,19 +39,19 @@ yourproject
   |-- src
     |-- main
       |-- java
-        |-- org
-          |-- apache
-            |-- test
-              `-- App.java
-              `-- package-info.java
+      |  |-- org
+      |     |-- apache
+      |        |-- myapp
+      |         `-- App.java
+      |         `-- package-info.java
       |-- javadoc
-        `-- overview.html
-        |-- org
-          |-- apache
-            |-- test
-              `-- package.html
-              |-- doc-files
-                `-- app.png
+       `-- overview.html
+         |-- org
+            |-- apache
+               |-- myapp
+                `-- package.html
+                  |-- doc-files
+                   `-- app.png
 +-----+
 
 * Overview comment files: <overview.html>

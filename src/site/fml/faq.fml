@@ -92,5 +92,14 @@ under the License.
         </p>
       </answer>
     </faq>
+    <faq id="How to remove test Javadocs report">
+      <question>How to remove test Javadocs report?</question>
+      <answer>
+        <p>
+          You need to configure the <i>&lt;reportSets/&gt;</i> parameter. Read the
+          <a href="examples/selective-javadocs-report.html">Selective Javadocs Reports</a> part for more information.
+        </p>
+      </answer>
+    </faq>
   </part>
 </faqs>
