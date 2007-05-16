@@ -38,7 +38,6 @@ import org.codehaus.plexus.util.StringUtils;
  * scope provided.
  * 
  * @deprecated use <a href="http://cwiki.apache.org/FELIX/bundle-plugin-for-maven-bnd.html/">Maven Bundle plugin</a> from Felix
- * Still waiting for them to apply the <code>bundle:manifest</code> goal in <a href="https://issues.apache.org/jira/browse/FELIX-199">FELIX-199</a>
  */
 public class EclipseOSGiManifestWriter
     extends AbstractEclipseWriter
