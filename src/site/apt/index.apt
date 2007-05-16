@@ -2,8 +2,9 @@
  Introduction
  ------
  Maria Odea Ching
+ Vincent Siveton
  ------
- September 2006
+ May 2007
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -48,9 +49,12 @@ Maven 2 Javadoc Plugin
 
 * Goals Overview
 
-   The Javadoc Plugin has two goals:
+   The Javadoc Plugin has three goals:
 
    * {{{javadoc-mojo.html}javadoc:javadoc}} generates the javadoc files for the project. It executes the standard
+     Javadoc tool and supports the parameters used by the tool.
+
+   * {{{test-javadoc-mojo.html}javadoc:test-javadoc}} generates the test javadoc files for the project. It executes the standard
      Javadoc tool and supports the parameters used by the tool.
 
    * {{{jar-mojo.html}javadoc:jar}} creates an archive file of the generated javadocs. It is used during
@@ -67,13 +71,15 @@ Maven 2 Javadoc Plugin
 
    * {{{examples/aggregate.html}Aggregating Javadocs for Multi-Projects}}
 
+   * {{{examples/exclude-package-names.html}Excluding Packages}}
+
+   * {{{examples/group-configuration.html}Grouping Packages}}
+
    * {{{examples/alternate-doclet.html}Using Alternate Doclet}}
 
    * {{{examples/alternate-javadoc-tool.html}Using Alternate Javadoc Tool}}
 
-   * {{{examples/exclude-package-names.html}Excluding Packages}}
-
-   * {{{examples/group-configuration.html}Grouping Packages}}
+   * {{{examples/javadoc-resources.html}Using Javadoc Resources}}
 
    * {{{examples/stylesheet-configuration.html}Configuring Stylesheets}}
 
@@ -81,4 +87,6 @@ Maven 2 Javadoc Plugin
 
    * {{{examples/taglet-configuration.html}Configuring Custom Javadoc Taglet}}
 
-   * {{{examples/javadoc-resources.html}Using Javadoc Resources}}
+   * {{{examples/test-javadocs.html}Generating test Javadocs}}
+
+   * {{{examples/selective-javadocs-report.html}Selective Javadocs Reports}}

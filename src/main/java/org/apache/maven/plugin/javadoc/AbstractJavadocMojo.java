@@ -58,6 +58,7 @@ import org.apache.maven.plugin.javadoc.options.TagletArtifact;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.reporting.MavenReportException;
+import org.apache.maven.wagon.PathUtils;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
@@ -944,6 +945,65 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
+     * @param p a maven project
+     * @return the directory where compiled classes are placed for the given project.
+     */
+    protected String getProjectBuildOutputDir( MavenProject p )
+    {
+        return p.getBuild().getOutputDirectory();
+    }
+
+    /**
+     * @param p a maven project
+     * @return the list of source paths for the given project
+     */
+    protected List getProjectSourceRoots( MavenProject p )
+    {
+        return p.getCompileSourceRoots();
+    }
+
+    /**
+     * @param p a maven project
+     * @return the list of artifacts for the given project
+     */
+    protected List getProjectArtifacts( MavenProject p )
+    {
+        return p.getCompileArtifacts();
+    }
+
+    /**
+     * @return the current javadoc directory
+     */
+    protected String getJavadocDirectory()
+    {
+        return javadocDirectory;
+    }
+
+    /**
+     * @return the title to be placed near the top of the overview summary file
+     */
+    protected String getDoctitle()
+    {
+        return doctitle;
+    }
+
+    /**
+     * @return the overview documentation file from the user parameter or from the <code>javadocdirectory</code>
+     */
+    protected String getOverview()
+    {
+        return overview;
+    }
+
+    /**
+     * @return the title to be placed in the HTML title tag
+     */
+    protected String getWindowtitle()
+    {
+        return windowtitle;
+    }
+
+    /**
      * @param locale
      * @throws MavenReportException
      */
@@ -1054,7 +1114,7 @@ public abstract class AbstractJavadocMojo
         {
             options.append( "-locale " );
             options.append( quotedArgument( this.locale ) );
-            options.append( " " );
+            options.append( SystemUtils.LINE_SEPARATOR );
         }
 
         String classpath = getClasspath();
@@ -1062,6 +1122,7 @@ public abstract class AbstractJavadocMojo
         {
             options.append( "-classpath " );
             options.append( quotedPathArgument( classpath ) );
+            options.append( SystemUtils.LINE_SEPARATOR );
         }
 
         // ----------------------------------------------------------------------
@@ -1110,9 +1171,9 @@ public abstract class AbstractJavadocMojo
             addArgIf( arguments, old, "-1.1" );
         }
 
-        if ( ( StringUtils.isNotEmpty( overview ) ) && ( new File( overview ).exists() ) )
+        if ( ( StringUtils.isNotEmpty( getOverview() ) ) && ( new File( getOverview() ).exists() ) )
         {
-            addArgIfNotEmpty( arguments, "-overview", quotedPathArgument( overview ) );
+            addArgIfNotEmpty( arguments, "-overview", quotedPathArgument( getOverview() ) );
         }
         arguments.add( getAccessLevel() );
         addArgIf( arguments, quiet, "-quiet", SINCE_JAVADOC_1_4 );
@@ -1148,7 +1209,7 @@ public abstract class AbstractJavadocMojo
             addArgIfNotEmpty( arguments, "-d", quotedPathArgument( javadocOutputDirectory.toString() ) );
             addArgIf( arguments, docfilessubdirs, "-docfilessubdirs", SINCE_JAVADOC_1_4 );
             addArgIfNotEmpty( arguments, "-docencoding", quotedArgument( docencoding ) );
-            addArgIfNotEmpty( arguments, "-doctitle", quotedArgument( doctitle ), false, false );
+            addArgIfNotEmpty( arguments, "-doctitle", quotedArgument( getDoctitle() ), false, false );
             addArgIfNotEmpty( arguments, "-excludedocfilessubdir", quotedPathArgument( excludedocfilessubdir ),
                               SINCE_JAVADOC_1_4 );
             addArgIfNotEmpty( arguments, "-footer", quotedArgument( footer ), false, false );
@@ -1250,7 +1311,7 @@ public abstract class AbstractJavadocMojo
 
             addArgIf( arguments, use, "-use" );
             addArgIf( arguments, version, "-version" );
-            addArgIfNotEmpty( arguments, "-windowtitle", quotedArgument( windowtitle ), false, false );
+            addArgIfNotEmpty( arguments, "-windowtitle", quotedArgument( getWindowtitle() ), false, false );
         }
 
         // ----------------------------------------------------------------------
@@ -1367,19 +1428,19 @@ public abstract class AbstractJavadocMojo
         List sourcePaths;
         if ( StringUtils.isEmpty( sourcepath ) )
         {
-            sourcePaths = new ArrayList( project.getCompileSourceRoots() );
+            sourcePaths = new ArrayList( getProjectSourceRoots( project ) );
 
             if ( project.getExecutionProject() != null )
             {
-                sourcePaths.addAll( project.getExecutionProject().getCompileSourceRoots() );
+                sourcePaths.addAll( getProjectSourceRoots( project ) );
             }
 
-            if ( javadocDirectory != null )
+            if ( getJavadocDirectory() != null )
             {
-                File javadocDir = new File( javadocDirectory );
+                File javadocDir = new File( getJavadocDirectory() );
                 if ( javadocDir.exists() && javadocDir.isDirectory() )
                 {
-                    sourcePaths.add( javadocDirectory );
+                    sourcePaths.add( getJavadocDirectory() );
                 }
             }
 
@@ -1389,23 +1450,27 @@ public abstract class AbstractJavadocMojo
                 {
                     MavenProject subProject = (MavenProject) i.next();
 
-                    List sourceRoots = subProject.getCompileSourceRoots();
-
-                    if ( subProject.getExecutionProject() != null )
+                    if ( subProject != project )
                     {
-                        sourceRoots.addAll( subProject.getExecutionProject().getCompileSourceRoots() );
-                    }
+                        List sourceRoots = getProjectSourceRoots( subProject );
 
-                    ArtifactHandler artifactHandler = subProject.getArtifact().getArtifactHandler();
-                    if ( "java".equals( artifactHandler.getLanguage() ) )
-                    {
-                        sourcePaths.addAll( sourceRoots );
-                    }
+                        if ( subProject.getExecutionProject() != null )
+                        {
+                            sourceRoots.addAll( getProjectSourceRoots( subProject ) );
+                        }
 
-                    File javadocDir = new File( subProject.getExecutionProject().getBasedir(), "src/main/javadoc" );
-                    if ( javadocDir.exists() && javadocDir.isDirectory() )
-                    {
-                        sourcePaths.add( javadocDir.getAbsolutePath() );
+                        ArtifactHandler artifactHandler = subProject.getArtifact().getArtifactHandler();
+                        if ( "java".equals( artifactHandler.getLanguage() ) )
+                        {
+                            sourcePaths.addAll( sourceRoots );
+                        }
+
+                        String javadocDirRelative = PathUtils.toRelative( project.getBasedir(), getJavadocDirectory() );
+                        File javadocDir = new File( subProject.getExecutionProject().getBasedir(), javadocDirRelative );
+                        if ( javadocDir.exists() && javadocDir.isDirectory() )
+                        {
+                            sourcePaths.add( javadocDir.getAbsolutePath() );
+                        }
                     }
                 }
             }
@@ -1534,9 +1599,9 @@ public abstract class AbstractJavadocMojo
         List classpathElements = new ArrayList();
         Map compileArtifactMap = new HashMap();
 
-        classpathElements.add( project.getBuild().getOutputDirectory() );
+        classpathElements.add( getProjectBuildOutputDir( project ) );
 
-        populateCompileArtifactMap( compileArtifactMap, project.getCompileArtifacts() );
+        populateCompileArtifactMap( compileArtifactMap, getProjectArtifacts( project ) );
 
         if ( aggregate && project.isExecutionRoot() )
         {
@@ -1547,7 +1612,7 @@ public abstract class AbstractJavadocMojo
                     MavenProject subProject = (MavenProject) i.next();
                     if ( subProject != project )
                     {
-                        classpathElements.add( subProject.getBuild().getOutputDirectory() );
+                        classpathElements.add( getProjectBuildOutputDir( subProject ) );
                         Set dependencyArtifacts = subProject.createArtifacts( factory, null, null );
                         if ( !dependencyArtifacts.isEmpty() )
                         {
@@ -1594,8 +1659,9 @@ public abstract class AbstractJavadocMojo
 
                 if ( file == null )
                 {
-                    throw new MavenReportException(
-                                                    "Error in plugin descriptor - compile dependencies were not resolved" );
+                    throw new MavenReportException( "Error in plugin descriptor - "
+                        + "dependency was not resolved for artifact: " + a.getGroupId() + ":" + a.getArtifactId()
+                        + ":" + a.getVersion() );
                 }
                 compileArtifactMap.put( a.getDependencyConflictId(), file.getAbsolutePath() );
             }
@@ -2247,9 +2313,9 @@ public abstract class AbstractJavadocMojo
             throw new IOException( "The outputDirectory " + outputDirectory + " doesn't exists." );
         }
 
-        if ( javadocDirectory != null )
+        if ( getJavadocDirectory() != null )
         {
-            copyJavadocResources( outputDirectory, new File( javadocDirectory ) );
+            copyJavadocResources( outputDirectory, new File( getJavadocDirectory() ) );
         }
 
         if ( aggregate && project.isExecutionRoot() )
@@ -2260,7 +2326,8 @@ public abstract class AbstractJavadocMojo
 
                 if ( subProject != project )
                 {
-                    File javadocDir = new File( subProject.getBasedir(), "src/main/javadoc" );
+                    String javadocDirRelative = PathUtils.toRelative( project.getBasedir(), getJavadocDirectory() );
+                    File javadocDir = new File( subProject.getBasedir(), javadocDirRelative );
                     copyJavadocResources( outputDirectory, javadocDir );
                 }
             }

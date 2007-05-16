@@ -17,32 +17,34 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<project>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>aggregate.resources.test</groupId>
-  <artifactId>aggregate-resources-test</artifactId>
-  <packaging>jar</packaging>
+  <groupId>test.javadoc.test</groupId>
+  <artifactId>project1</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <inceptionYear>2007</inceptionYear>
-  <name>Maven Javadoc Plugin aggregate resources Test</name>
-  <url>http://maven.apache.org</url>
+  <packaging>jar</packaging>
+  <name>project1</name>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
-          <project implementation="org.apache.maven.plugin.javadoc.stubs.AggregateResourcesTestMavenProjectStub"/>
+          <project implementation="org.apache.maven.plugin.javadoc.stubs.TestJavadocMavenProjectStub"/>
           <localRepository>${localRepository}</localRepository>
-          <outputDirectory>${basedir}/target/test/unit/aggregate-resources-test/target/site/apidocs</outputDirectory>
-          <windowtitle>Maven Javadoc Plugin aggregate resources 1.0-SNAPSHOT API</windowtitle>
-          <reactorProjects>
-            <project implementation="org.apache.maven.plugin.javadoc.stubs.AggregateResourcesProject1TestMavenProjectStub"/>
-            <project implementation="org.apache.maven.plugin.javadoc.stubs.AggregateResourcesProject2TestMavenProjectStub"/>
-          </reactorProjects>
-          <aggregate>true</aggregate>
+          <outputDirectory>${basedir}/target/test/unit/test-javadoc-test/target/site/apidocs</outputDirectory>
+          <windowtitle>Maven Test Javadoc Plugin aggregate resources 1.0-SNAPSHOT API</windowtitle>
           <quiet>true</quiet>
-          <javadocDirectory>${basedir}/src/test/resources/unit/aggregate-resources-test/src/main/javadoc</javadocDirectory>
+          <javadocDirectory>${basedir}/src/test/resources/unit/test-javadoc-test/src/test/javadoc</javadocDirectory>
         </configuration>
       </plugin>
     </plugins>
