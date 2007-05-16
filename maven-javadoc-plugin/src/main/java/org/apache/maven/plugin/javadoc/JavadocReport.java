@@ -35,8 +35,8 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Generates documentation for the Java code in the project using the standard <a
- * href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a>.
+ * Generates documentation for the <code>Java code</code> in the project using the standard
+ * <a href="http://java.sun.com/j2se/javadoc/">Javadoc Tool</a>.
  *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
@@ -77,21 +77,21 @@ public class JavadocReport
     private String destDir;
 
     /**
-     * The name of the javadoc report.
+     * The name of the Javadoc report.
      *
      * @parameter expression="${name}" default-value="JavaDocs"
      */
     private String name;
 
     /**
-     * The description of the javadoc report.
+     * The description of the Javadoc report.
      *
      * @parameter expression="${description}" default-value="JavaDoc API documentation."
      */
     private String description;
 
     // ----------------------------------------------------------------------
-    //
+    // public methods
     // ----------------------------------------------------------------------
 
     /**

@@ -33,14 +33,16 @@ under the License.
     </menu>
     <menu name="Examples">
       <item name="Aggregating Javadocs" href="/examples/aggregate.html"/>
-      <item name="Using Alternate Doclets" href="/examples/alternate-doclet.html"/>
-      <item name="Using Alternate Javadoc Tool" href="/examples/alternate-javadoc-tool.html"/>
       <item name="Excluding Packages" href="/examples/exclude-package-names.html"/>
       <item name="Grouping Packages" href="/examples/group-configuration.html"/>
+      <item name="Using Alternate Doclets" href="/examples/alternate-doclet.html"/>
+      <item name="Using Alternate Javadoc Tool" href="/examples/alternate-javadoc-tool.html"/>
+      <item name="Using Javadoc Resources" href="/examples/javadoc-resources.html"/>
       <item name="Configuring Stylesheets" href="/examples/stylesheet-configuration.html"/>
       <item name="Configuring Custom Tags" href="/examples/tag-configuration.html"/>
       <item name="Configuring Custom Taglets" href="/examples/taglet-configuration.html"/>
-      <item name="Using Javadoc Resources" href="/examples/javadoc-resources.html"/>
+      <item name="Generating Test Javadocs" href="/examples/test-javadocs.html"/>
+      <item name="Selective Javadocs Reports" href="/examples/selective-javadocs-report.html"/>
     </menu>
   </body>
 </project>
