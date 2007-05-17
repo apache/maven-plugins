@@ -1,42 +1,64 @@
 package org.apache.maven.plugins.stage;
 
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.Writer;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
 import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.repository.metadata.Metadata;
 import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Reader;
 import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Writer;
-import org.apache.maven.artifact.repository.metadata.Metadata;
-import org.apache.maven.wagon.Wagon;
-import org.apache.maven.wagon.ResourceDoesNotExistException;
 import org.apache.maven.wagon.ConnectionException;
-import org.apache.maven.wagon.UnsupportedProtocolException;
+import org.apache.maven.wagon.ResourceDoesNotExistException;
 import org.apache.maven.wagon.TransferFailedException;
-import org.apache.maven.wagon.providers.ssh.jsch.ScpWagon;
-import org.apache.maven.wagon.authorization.AuthorizationException;
+import org.apache.maven.wagon.UnsupportedProtocolException;
+import org.apache.maven.wagon.Wagon;
+import org.apache.maven.wagon.WagonException;
 import org.apache.maven.wagon.authentication.AuthenticationException;
+import org.apache.maven.wagon.authorization.AuthorizationException;
+import org.apache.maven.wagon.providers.ssh.jsch.ScpWagon;
 import org.apache.maven.wagon.repository.Repository;
-
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.util.List;
-import java.util.Iterator;
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.zip.ZipOutputStream;
-import java.util.zip.ZipEntry;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.io.InputStream;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.Reader;
-import java.io.FileWriter;
-import java.io.Writer;
-import java.io.PrintWriter;
-import java.security.MessageDigest;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
  * @author Jason van Zyl
@@ -52,10 +74,18 @@ public class DefaultRepositoryCopier
     /** @plexus.requirement */
     private WagonManager wagonManager;
 
-    public void copy( String sourceRepositoryUrl,
-                      String targetRepositoryUrl,
-                      String version )
-        throws Exception
+    /**
+     * @deprecated use {@link #copy(String, Repository, String)} so the server configuration applies 
+     */
+    public void copy( String sourceRepositoryUrl, String targetRepositoryUrl, String version )
+        throws WagonException, IOException
+    {
+        Repository targetRepository = new Repository( "target", targetRepositoryUrl );
+        copy( sourceRepositoryUrl, targetRepository, version );
+    }
+
+    public void copy( String sourceRepositoryUrl, Repository targetRepository, String version )
+        throws WagonException, IOException
     {
         String groupId = "staging-plugin";
 
@@ -111,13 +141,9 @@ public class DefaultRepositoryCopier
         // so that we can merge the metadata.
         // ----------------------------------------------------------------------------
 
-        Repository targetRepo = new Repository( "target", targetRepositoryUrl );
+        Wagon targetWagon = wagonManager.getWagon( targetRepository );
 
-        String p = targetRepo.getProtocol();
-
-        Wagon targetWagon = wagonManager.getWagon( p );
-
-        targetWagon.connect( targetRepo );
+        targetWagon.connect( targetRepository );
 
         PrintWriter rw = new PrintWriter( new FileWriter( renameScript ) );
 
@@ -148,7 +174,14 @@ public class DefaultRepositoryCopier
                     continue;
                 }
 
-                mergeMetadata( emf );
+                try
+                {
+                    mergeMetadata( emf );
+                }
+                catch ( XmlPullParserException e )
+                {
+                    throw new IOException( "Metadata file is corrupt " + s + " Reason: " + e.getMessage() );
+                }
             }
         }
 
@@ -195,7 +228,7 @@ public class DefaultRepositoryCopier
 
         targetWagon.put( archive, fileName );
 
-        String targetRepoBaseDirectory = targetRepo.getBasedir();
+        String targetRepoBaseDirectory = targetRepository.getBasedir();
 
         // We use the super quiet option here as all the noise seems to kill/stall the connection
 
@@ -219,7 +252,7 @@ public class DefaultRepositoryCopier
     }
 
     private void scanDirectory( File basedir, File dir, ZipOutputStream zos, String version, Set moveCommands )
-        throws Exception
+        throws IOException
     {
         if ( dir == null )
         {
@@ -283,7 +316,7 @@ public class DefaultRepositoryCopier
     }
 
     private void mergeMetadata( File existingMetadata )
-        throws Exception
+        throws IOException, XmlPullParserException
     {
         // Existing Metadata in target stage
 
@@ -316,21 +349,28 @@ public class DefaultRepositoryCopier
         // Mark all metadata as in-process and regenerate the checksums as they will be different
         // after the merger
 
-        File newMd5 = new File( existingMetadata.getParentFile(), MAVEN_METADATA + ".md5" + IN_PROCESS_MARKER );
+        try
+        {
+            File newMd5 = new File( existingMetadata.getParentFile(), MAVEN_METADATA + ".md5" + IN_PROCESS_MARKER );
 
-        FileUtils.fileWrite( newMd5.getAbsolutePath(), checksum( existingMetadata, MD5 ) );
+            FileUtils.fileWrite( newMd5.getAbsolutePath(), checksum( existingMetadata, MD5 ) );
 
-        File oldMd5 = new File( existingMetadata.getParentFile(), MAVEN_METADATA + ".md5" );
+            File oldMd5 = new File( existingMetadata.getParentFile(), MAVEN_METADATA + ".md5" );
 
-        oldMd5.delete();
+            oldMd5.delete();
 
-        File newSha1 = new File( existingMetadata.getParentFile(), MAVEN_METADATA + ".sha1" + IN_PROCESS_MARKER );
+            File newSha1 = new File( existingMetadata.getParentFile(), MAVEN_METADATA + ".sha1" + IN_PROCESS_MARKER );
 
-        FileUtils.fileWrite( newSha1.getAbsolutePath(), checksum( existingMetadata, SHA1 ) );
+            FileUtils.fileWrite( newSha1.getAbsolutePath(), checksum( existingMetadata, SHA1 ) );
 
-        File oldSha1 = new File( existingMetadata.getParentFile(), MAVEN_METADATA + ".sha1" );
+            File oldSha1 = new File( existingMetadata.getParentFile(), MAVEN_METADATA + ".sha1" );
 
-        oldSha1.delete();
+            oldSha1.delete();
+        }
+        catch ( NoSuchAlgorithmException e )
+        {
+            throw new RuntimeException( e );
+        }
 
         // We have the new merged copy so we're good
 
@@ -339,7 +379,7 @@ public class DefaultRepositoryCopier
 
     private String checksum( File file,
                              String type )
-        throws Exception
+        throws IOException, NoSuchAlgorithmException
     {
         MessageDigest md5 = MessageDigest.getInstance( type );
 
