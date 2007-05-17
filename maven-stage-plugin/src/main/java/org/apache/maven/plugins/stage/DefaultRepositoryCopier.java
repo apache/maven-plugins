@@ -141,6 +141,7 @@ public class DefaultRepositoryCopier
         // so that we can merge the metadata.
         // ----------------------------------------------------------------------------
 
+        // TODO BUG for some reason it gets the wagon without authentication info
         Wagon targetWagon = wagonManager.getWagon( targetRepository );
 
         targetWagon.connect( targetRepository );
