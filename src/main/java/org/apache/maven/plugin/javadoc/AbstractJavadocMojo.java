@@ -23,6 +23,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.Authenticator;
+import java.net.MalformedURLException;
+import java.net.PasswordAuthentication;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -58,6 +62,8 @@ import org.apache.maven.plugin.javadoc.options.TagletArtifact;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.reporting.MavenReportException;
+import org.apache.maven.settings.Proxy;
+import org.apache.maven.settings.Settings;
 import org.apache.maven.wagon.PathUtils;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
@@ -117,11 +123,13 @@ public abstract class AbstractJavadocMojo
     // ----------------------------------------------------------------------
 
     /**
-     * @parameter default-value="${settings.offline}"
+     * The Maven Settings.
+     *
+     * @parameter default-value="${settings}"
      * @required
      * @readonly
      */
-    private boolean isOffline;
+    private Settings settings;
 
     /**
      * The Maven Project Object
@@ -131,6 +139,13 @@ public abstract class AbstractJavadocMojo
      * @readonly
      */
     protected MavenProject project;
+
+    /**
+     * @parameter default-value="${settings.offline}"
+     * @required
+     * @readonly
+     */
+    private boolean isOffline;
 
     /**
      * Specifies the Javadoc ressources directory to be included in the Javadoc (i.e. package.html, images...).
@@ -1237,12 +1252,8 @@ public abstract class AbstractJavadocMojo
             if ( !isOffline )
             {
                 addLinkArguments( arguments );
-                addLinkofflineArguments( arguments );
             }
-            else
-            {
-                addLinkofflineArguments( arguments );
-            }
+            addLinkofflineArguments( arguments );
 
             addArgIf( arguments, nodeprecated, "-nodeprecated" );
             addArgIf( arguments, nodeprecatedlist, "-nodeprecatedlist" );
@@ -1660,8 +1671,8 @@ public abstract class AbstractJavadocMojo
                 if ( file == null )
                 {
                     throw new MavenReportException( "Error in plugin descriptor - "
-                        + "dependency was not resolved for artifact: " + a.getGroupId() + ":" + a.getArtifactId()
-                        + ":" + a.getVersion() );
+                        + "dependency was not resolved for artifact: " + a.getGroupId() + ":" + a.getArtifactId() + ":"
+                        + a.getVersion() );
                 }
                 compileArtifactMap.put( a.getDependencyConflictId(), file.getAbsolutePath() );
             }
@@ -2041,15 +2052,15 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * Is the Java or Javadoc version at least the requested version.
+     * Is the Javadoc version at least the requested version.
      *
      * @param requiredVersion the required version, for example 1.5f
-     * @return <code>true</code> if the java version or the javadoc version is equal or greater than the
+     * @return <code>true</code> if the javadoc version is equal or greater than the
      * required version
      */
     private boolean isJavaDocVersionAtLeast( float requiredVersion )
     {
-        return ( SystemUtils.isJavaVersionAtLeast( requiredVersion ) || fJavadocVersion >= requiredVersion );
+        return fJavadocVersion >= requiredVersion;
     }
 
     /**
@@ -2228,7 +2239,14 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * Convenience method to process link values as individual -link javadoc options
+     * Convenience method to process link values as individual -link javadoc options.
+     * If a <code>package-list</code> in a configured link is not available, remove the link.
+     * <br/>
+     * <b>Note</b>: if a link is not fetchable:
+     * <ul>
+     * <li>Javadoc 1.4 and less throw an exception</li>
+     * <li>Javadoc 1.5 and more display a warning</li>
+     * </ul>
      *
      * @param arguments argument list
      */
@@ -2238,7 +2256,32 @@ public abstract class AbstractJavadocMojo
         {
             for ( int i = 0; i < links.size(); i++ )
             {
-                addArgIfNotEmpty( arguments, "-link", quotedPathArgument( (String) links.get( i ) ), true );
+                String link = (String) links.get( i );
+
+                if ( StringUtils.isEmpty( link ) )
+                {
+                    continue;
+                }
+
+                if ( link.endsWith( "/" ) )
+                {
+                    link = link.substring( 0, link.length() - 1 );
+                }
+
+                try
+                {
+                    URL linkUrl = new URL( link + "/package-list" );
+                    fetchURL( settings, linkUrl );
+                    addArgIfNotEmpty( arguments, "-link", quotedPathArgument( link ), true );
+                }
+                catch ( MalformedURLException e )
+                {
+                    getLog().error( "Malformed link: " + link + "/package-list. IGNORED IT." );
+                }
+                catch ( IOException e )
+                {
+                    getLog().error( "Error fetching link: " + link + "/package-list. IGNORED IT." );
+                }
             }
         }
     }
@@ -2889,5 +2932,81 @@ public abstract class AbstractJavadocMojo
         }
 
         return Float.parseFloat( str );
+    }
+
+    /**
+     * Fetch an URL
+     *
+     * @param settings the user settings used to fetch the url like a proxy
+     * @param url the url to fetch
+     * @throws IOException if any
+     */
+    private static void fetchURL( Settings settings, URL url )
+        throws IOException
+    {
+        if ( url == null )
+        {
+            throw new IOException( "The url is null" );
+        }
+
+        if ( settings != null )
+        {
+            String scheme = url.getProtocol();
+            if ( !"file".equals( scheme ) )
+            {
+                Proxy proxy = settings.getActiveProxy();
+                if ( proxy != null )
+                {
+                    if ( "http".equals( scheme ) || "https".equals( scheme ) )
+                    {
+                        scheme = "http.";
+                    }
+                    else if ( "ftp".equals( scheme ) )
+                    {
+                        scheme = "ftp.";
+                    }
+                    else
+                    {
+                        scheme = "";
+                    }
+
+                    String host = proxy.getHost();
+                    if ( !StringUtils.isEmpty( host ) )
+                    {
+                        Properties p = System.getProperties();
+                        p.setProperty( scheme + "proxySet", "true" );
+                        p.setProperty( scheme + "proxyHost", host );
+                        p.setProperty( scheme + "proxyPort", String.valueOf( proxy.getPort() ) );
+                        if ( !StringUtils.isEmpty( proxy.getNonProxyHosts() ) )
+                        {
+                            p.setProperty( scheme + "nonProxyHosts", proxy.getNonProxyHosts() );
+                        }
+
+                        final String userName = proxy.getUsername();
+                        if ( !StringUtils.isEmpty( userName ) )
+                        {
+                            final String pwd = StringUtils.isEmpty( proxy.getPassword() ) ? "" : proxy.getPassword();
+                            Authenticator.setDefault( new Authenticator()
+                            {
+                                protected PasswordAuthentication getPasswordAuthentication()
+                                {
+                                    return new PasswordAuthentication( userName, pwd.toCharArray() );
+                                }
+                            } );
+                        }
+                    }
+                }
+            }
+        }
+
+        InputStream in = null;
+        try
+        {
+            in = url.openStream();
+        }
+        finally
+        {
+            IOUtil.close( in );
+        }
     }
 }
