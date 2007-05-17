@@ -101,5 +101,53 @@ under the License.
         </p>
       </answer>
     </faq>
+    <faq id="How to deploy javadoc jar">
+      <question>How to deploy javadoc jar?</question>
+      <answer>
+        <p>
+          Basically, you need to call <i>mvn clean javadoc:jar deploy</i>. If you want to include the javadoc jar
+          in a release process, you need to attach it in the release profile, for instance:
+          <source>
+<project>
+  ...
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+  ...
+</project></source>
+        </p>
+        <p>
+          To deploy the Javadoc jar on a given Maven repository, you could call:
+          <source>
+mvn deploy:deploy-file \
+    -DgroupId=&lt;group-id&gt; \
+    -DartifactId=&lt;artifact-id&gt; \
+    -Dversion=&lt;version&gt; \
+    -Dfile=&lt;path-to-file&gt; \
+    -Dpackaging=jar \
+    -DrepositoryId=&lt;repository-id&gt; \
+    -Durl=dav:http://www.myrepository.com/m2 \
+    -Dclassifier=javadoc</source>
+        </p>
+      </answer>
+    </faq>
   </part>
 </faqs>
