@@ -13,9 +13,12 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
-  
+
 -->
-<project xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd' xmlns='http://maven.apache.org/POM/4.0.0'>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
@@ -44,17 +47,17 @@
       <artifactId>maven-project</artifactId>
       <version>2.0.2</version>
     </dependency>
-	<dependency>
+    <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-artifact</artifactId>
       <version>2.0.2</version>
     </dependency>
-	<dependency>
+    <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-model</artifactId>
       <version>2.0.2</version>
     </dependency>
-	<dependency>
+    <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-api</artifactId>
       <version>2.0.2</version>
@@ -69,35 +72,33 @@
       <artifactId>maven-reporting-impl</artifactId>
       <version>2.0.2</version>
     </dependency>
-	<dependency>
+    <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-container-default</artifactId>
       <version>1.0-alpha-9</version>
     </dependency>
-	<dependency>
+    <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-i18n</artifactId>
       <version>1.0-beta-6</version>
     </dependency>
-	<dependency>
+    <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-site-renderer</artifactId>
       <version>1.0-alpha-7</version>
-	 </dependency>
-	 <dependency>
+    </dependency>
+    <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-sink-api</artifactId>
       <version>1.0-alpha-7</version>
     </dependency>
-        <!-- For Maven 2.0.2 
-    -->
+    <!-- For Maven 2.0.2 -->
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
       <version>1.4.1</version>
     </dependency>
-        <!-- For Maven 2.0.2 
-    -->
+    <!-- For Maven 2.0.2 -->
     <dependency>
       <groupId>org.apache.maven.wagon</groupId>
       <artifactId>wagon-provider-api</artifactId>
@@ -109,11 +110,11 @@
       <version>1.0-beta-1</version>
       <scope>test</scope>
     </dependency>
-	<dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>3.8.1</version>
-	  <scope>test</scope>
+      <scope>test</scope>
     </dependency>
   </dependencies>
   <build>
@@ -142,8 +143,8 @@
       <id>integration-tests</id>
       <activation>
         <property>
-          <name>integration-tests</name>
-          <value>true</value>
+          <name>maven.test.skip</name>
+          <value>!true</value>
         </property>
       </activation>
       <build>
@@ -190,7 +191,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.1-SNAPSHOT</version>
             <configuration>
               <debug>true</debug>
               <projectsDirectory>src/it</projectsDirectory>
