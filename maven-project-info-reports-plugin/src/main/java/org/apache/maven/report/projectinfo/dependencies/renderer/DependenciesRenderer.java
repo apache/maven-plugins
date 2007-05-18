@@ -24,6 +24,7 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.doxia.parser.Parser;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.License;
 import org.apache.maven.plugin.logging.Log;
@@ -42,7 +43,6 @@ import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
-import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -195,7 +195,7 @@ public class DependenciesRenderer
         String classifier = getReportString( "report.dependencies.column.classifier" );
         String type = getReportString( "report.dependencies.column.type" );
         String optional = getReportString( "report.dependencies.column.optional" );
-        return new String[]{groupId, artifactId, version, classifier, type, optional};
+        return new String[] { groupId, artifactId, version, classifier, type, optional };
     }
 
     private void renderSectionProjectDependencies()
@@ -220,8 +220,8 @@ public class DependenciesRenderer
                                     tableHeader );
         renderDependenciesForScope( Artifact.SCOPE_TEST, (List) dependenciesByScope.get( Artifact.SCOPE_TEST ),
                                     tableHeader );
-        renderDependenciesForScope( Artifact.SCOPE_PROVIDED, (List) dependenciesByScope
-            .get( Artifact.SCOPE_PROVIDED ), tableHeader );
+        renderDependenciesForScope( Artifact.SCOPE_PROVIDED, (List) dependenciesByScope.get( Artifact.SCOPE_PROVIDED ),
+                                    tableHeader );
         renderDependenciesForScope( Artifact.SCOPE_SYSTEM, (List) dependenciesByScope.get( Artifact.SCOPE_SYSTEM ),
                                     tableHeader );
     }
@@ -291,8 +291,19 @@ public class DependenciesRenderer
         String debug = getReportString( "report.dependencies.file.details.column.debug" );
         String sealed = getReportString( "report.dependencies.file.details.column.sealed" );
 
-        String[] tableHeader = new String[]{filename, size, entries, classes, packages, jdkrev, debug, sealed};
+        String[] tableHeader = new String[] { filename, size, entries, classes, packages, jdkrev, debug, sealed };
         tableHeader( tableHeader );
+
+        int[] justification = new int[] {
+            Parser.JUSTIFY_LEFT,
+            Parser.JUSTIFY_RIGHT,
+            Parser.JUSTIFY_RIGHT,
+            Parser.JUSTIFY_RIGHT,
+            Parser.JUSTIFY_RIGHT,
+            Parser.JUSTIFY_CENTER,
+            Parser.JUSTIFY_CENTER,
+            Parser.JUSTIFY_CENTER };
+        sink.tableRows( justification, true );
 
         int totaldeps = 0;
         long totaldepsize = 0;
@@ -374,10 +385,15 @@ public class DependenciesRenderer
                             // ignore
                         }
 
-                        tableRow( new String[]{artifactFile.getName(), decFormat.format( artifactFile.length() ),
-                            decFormat.format( jarDetails.getEntries() ), decFormat.format( jarDetails.getClassSize() ),
-                            decFormat.format( jarDetails.getPackageSize() ), jarDetails.getJdkRevision(), debugstr,
-                            sealedstr} );
+                        tableRow( new String[] {
+                            artifactFile.getName(),
+                            decFormat.format( artifactFile.length() ),
+                            decFormat.format( jarDetails.getEntries() ),
+                            decFormat.format( jarDetails.getClassSize() ),
+                            decFormat.format( jarDetails.getPackageSize() ),
+                            jarDetails.getJdkRevision(),
+                            debugstr,
+                            sealedstr } );
                     }
                     catch ( JarAnalyzerException e )
                     {
@@ -386,15 +402,32 @@ public class DependenciesRenderer
                 }
                 else
                 {
-                    tableRow( new String[]{artifactFile.getName(), decFormat.format( artifactFile.length() ), "", "",
-                        "", "", "", ""} );
+                    tableRow( new String[] {
+                        artifactFile.getName(),
+                        decFormat.format( artifactFile.length() ),
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "" } );
                 }
             }
         }
 
-        tableRow( new String[]{"" + totaldeps + " total dependencies", decFormat.format( totaldepsize ),
-            decFormat.format( totalentries ), decFormat.format( totalclasses ), decFormat.format( totalpackages ),
-            String.valueOf( highestjdk ), decFormat.format( totaldebug ), decFormat.format( totalsealed )} );
+        tableHeader[0] = "Total";
+        tableHeader( tableHeader );
+        tableRow( new String[] {
+            "" + totaldeps + " total dependencies",
+            decFormat.format( totaldepsize ),
+            decFormat.format( totalentries ),
+            decFormat.format( totalclasses ),
+            decFormat.format( totalpackages ),
+            String.valueOf( highestjdk ),
+            decFormat.format( totaldebug ),
+            decFormat.format( totalsealed ) } );
+
+        sink.tableRows_();
 
         endTable();
         endSection();
@@ -402,7 +435,7 @@ public class DependenciesRenderer
 
     private void createExceptionInfoTableRow( Artifact artifact, File artifactFile, Exception e )
     {
-        tableRow( new String[]{artifact.getId(), artifactFile.getAbsolutePath(), e.getMessage(), "", "", "", "", ""} );
+        tableRow( new String[] { artifact.getId(), artifactFile.getAbsolutePath(), e.getMessage(), "", "", "", "", "" } );
     }
 
     private void populateRepositoryMap( Map repos, List rawRepos )
@@ -433,8 +466,8 @@ public class DependenciesRenderer
             Artifact artifact = (Artifact) it.next();
             try
             {
-                MavenProject artifactProject =
-                    repoUtils.getMavenProjectFromRepository( artifact, repoUtils.getLocalRepository() );
+                MavenProject artifactProject = repoUtils.getMavenProjectFromRepository( artifact, repoUtils
+                    .getLocalRepository() );
 
                 populateRepositoryMap( repoMap, artifactProject.getRemoteArtifactRepositories() );
             }
@@ -452,7 +485,7 @@ public class DependenciesRenderer
         String release = getReportString( "report.dependencies.repo.locations.column.release" );
         String snapshot = getReportString( "report.dependencies.repo.locations.column.snapshot" );
 
-        String[] tableHeader = new String[]{repoid, url, release, snapshot};
+        String[] tableHeader = new String[] { repoid, url, release, snapshot };
         tableHeader( tableHeader );
 
         String releaseEnabled = getReportString( "report.dependencies.repo.locations.cell.release.enabled" );
@@ -527,8 +560,8 @@ public class DependenciesRenderer
                     boolean dependencyExists = false;
 
                     // check snapshots in snapshots repository only and releases in release repositories...
-                    if ( ( dependency.isSnapshot() && repo.getSnapshots().isEnabled() ) ||
-                        ( !dependency.isSnapshot() && repo.getReleases().isEnabled() ) )
+                    if ( ( dependency.isSnapshot() && repo.getSnapshots().isEnabled() )
+                        || ( !dependency.isSnapshot() && repo.getReleases().isEnabled() ) )
                     {
                         dependencyExists = repoUtils.dependencyExistsInRepo( repo, dependency );
                     }
@@ -564,7 +597,6 @@ public class DependenciesRenderer
 
         endSection();
     }
-
 
     private void renderSectionDependencyListing()
     {
@@ -632,8 +664,13 @@ public class DependenciesRenderer
 
     private String[] getArtifactRow( Artifact artifact )
     {
-        return new String[]{artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
-            artifact.getClassifier(), artifact.getType(), artifact.isOptional() ? "(optional)" : " "};
+        return new String[] {
+            artifact.getGroupId(),
+            artifact.getArtifactId(),
+            artifact.getVersion(),
+            artifact.getClassifier(),
+            artifact.getType(),
+            artifact.isOptional() ? "(optional)" : " " };
     }
 
     private void printDependencyListing( DependencyNode node )
@@ -674,8 +711,8 @@ public class DependenciesRenderer
         {
             try
             {
-                MavenProject artifactProject =
-                    repoUtils.getMavenProjectFromRepository( artifact, repoUtils.getLocalRepository() );
+                MavenProject artifactProject = repoUtils.getMavenProjectFromRepository( artifact, repoUtils
+                    .getLocalRepository() );
                 String artifactDescription = artifactProject.getDescription();
                 String artifactUrl = artifactProject.getUrl();
                 String artifactName = artifactProject.getName();
