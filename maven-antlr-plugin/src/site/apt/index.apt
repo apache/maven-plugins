@@ -3,7 +3,7 @@
  ------
  Vincent Siveton
  ------
- September 2006
+ May 2007
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -28,8 +28,8 @@
 
 Maven 2 Antlr Plugin
 
- The Antlr Plugin uses the parser generator {{{http://www.antlr.org/}Antlr}}. For more information
- about Antlr, please refer to {{{http://www.antlr.org/doc/index.html}Antlr Reference Manual}}.
+ The Antlr Plugin uses the parser generator {{{http://www.antlr2.org/}Antlr v2}}. For more information
+ about Antlr v2, please refer to {{{http://www.antlr2.org/doc/index.html}Antlr v2 Reference Manual}}.
 
  Refer to {{{dependencies.html}Project Dependencies}} to know the Antlr version used by the Plugin.
 
