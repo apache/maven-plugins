@@ -43,6 +43,31 @@ public class MakeArtifactsMojo
 {
 
     /**
+     * Strip qualifier (fourth token) from the plugin version. Qualifiers are for eclipse plugin the equivalent of
+     * timestamped snapshot versions for Maven, but the date is maintained also for released version (e.g. a jar 
+     * for the release <code>3.2</code> can be named <code>org.eclipse.core.filesystem_1.0.0.v20060603.jar</code>.
+     * It's usually handy to not to include this qualifier when generating maven artifacts for major releases, while
+     * it's needed when working with eclipse integration/nightly builds.
+     * 
+     * @parameter expression="${stripQualifier}" default-value="true"
+     */
+    private boolean stripQualifier;
+
+    /**
+     * Default token to use as a qualifier. Tipically qualifiers for plugins in the same eclipse build are different.
+     * This parameter can be used to "align" qualifiers so that all the plugins coming from the same eclipse build can
+     * be easily identified. For example, setting this to "M3" will force the pluging versions to be "*.*.*.M3"
+     * 
+     * @parameter expression="${forcedQualifier}"
+     */
+    private String forcedQualifier;
+
+    protected String osgiVersionToMavenVersion( String version )
+    {
+        return osgiVersionToMavenVersion( version, forcedQualifier, stripQualifier );
+    }
+
+    /**
      * Get the group id as the three first tokens in artifacts Id
      * e.g. <code>org.eclipse.jdt</code> -> <code>org.eclipse.jdt</code>
      * @param bundleName bundle name
