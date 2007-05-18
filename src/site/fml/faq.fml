@@ -43,5 +43,14 @@ under the License.
         </p>
       </answer>
     </faq>
+    <faq id="Is there any support of Antlr v3">
+      <question>Is there any support of Antlr v3?</question>
+      <answer>
+        <p>
+          Not yet. You could see the <a href="http://jira.codehaus.org/browse/MANTLR-17">MANTLR-17</a> issue
+          for the status.
+        </p>
+      </answer>
+    </faq>
   </part>
 </faqs>
