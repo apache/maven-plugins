@@ -76,6 +76,13 @@ under the License.
         <role>Hungarian translator</role>
       </roles>
     </contributor>
+    <contributor>
+      <name>Woonsan Ko</name>
+      <email>woon_san@yahoo.com</email>
+      <roles>
+        <role>Korean translator</role>
+      </roles>
+    </contributor>
   </contributors>
   <properties>
     <doxiaVersion>1.0-alpha-9-SNAPSHOT</doxiaVersion>
