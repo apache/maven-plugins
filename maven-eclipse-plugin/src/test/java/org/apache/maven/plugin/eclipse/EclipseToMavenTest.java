@@ -18,16 +18,23 @@
  */
 package org.apache.maven.plugin.eclipse;
 
+import junit.framework.TestCase;
+
 import org.apache.maven.model.Dependency;
 
 /**
  * @author Fabrizio Giustina
+ * @author <a href="mailto:carlos@apache.org">Carlos Sanchez</a>
  * @version $Id$
- * @deprecated use {@link EclipseToMavenTest}
  */
-public class MakeArtifactsTest
-    extends EclipseToMavenTest
+public class EclipseToMavenTest
+    extends TestCase
 {
+
+    /**
+     * Mojo under test.
+     */
+    protected EclipseToMavenMojo mojo;
 
     /**
      * @see junit.framework.TestCase#setUp()
@@ -36,7 +43,7 @@ public class MakeArtifactsTest
         throws Exception
     {
         super.setUp();
-        mojo = new MakeArtifactsMojo();
+        mojo = new EclipseToMavenMojo();
     }
 
     /**
@@ -49,13 +56,17 @@ public class MakeArtifactsTest
             + "bundle-version=\"[3.2.0,4.0.0)\",org.eclipse.core.expressions;bundle-version=\"[3.2.0,4.0.0)\"" );
 
         assertEquals( 4, deps.length );
-        assertEquals( "org.eclipse.ui", deps[0].getArtifactId() );
+        assertEquals( "org.eclipse", deps[0].getGroupId() );
+        assertEquals( "ui", deps[0].getArtifactId() );
         assertEquals( "[3.2.0,4.0.0)", deps[0].getVersion() );
-        assertEquals( "org.eclipse.ui.console", deps[1].getArtifactId() );
+        assertEquals( "org.eclipse.ui", deps[1].getGroupId() );
+        assertEquals( "console", deps[1].getArtifactId() );
         assertEquals( "[3.1.100,4.0.0)", deps[1].getVersion() );
-        assertEquals( "org.eclipse.help", deps[2].getArtifactId() );
+        assertEquals( "org.eclipse", deps[2].getGroupId() );
+        assertEquals( "help", deps[2].getArtifactId() );
         assertEquals( "[3.2.0,4.0.0)", deps[2].getVersion() );
-        assertEquals( "org.eclipse.core.expressions", deps[3].getArtifactId() );
+        assertEquals( "org.eclipse.core", deps[3].getGroupId() );
+        assertEquals( "expressions", deps[3].getArtifactId() );
         assertEquals( "[3.2.0,4.0.0)", deps[3].getVersion() );
     }
 
@@ -70,13 +81,17 @@ public class MakeArtifactsTest
                 + "bundle-version=\"[3.2.0.1,4.0.0.2)\",org.eclipse.core.expressions;bundle-version=\"[3.2.0.0,4.0.0.0)\"" );
 
         assertEquals( 4, deps.length );
-        assertEquals( "org.eclipse.ui", deps[0].getArtifactId() );
+        assertEquals( "org.eclipse", deps[0].getGroupId() );
+        assertEquals( "ui", deps[0].getArtifactId() );
         assertEquals( "[3.2.0-0,4.0.0-0)", deps[0].getVersion() );
-        assertEquals( "org.eclipse.ui.console", deps[1].getArtifactId() );
+        assertEquals( "org.eclipse.ui", deps[1].getGroupId() );
+        assertEquals( "console", deps[1].getArtifactId() );
         assertEquals( "[3.1.100-0,4.0.0-0)", deps[1].getVersion() );
-        assertEquals( "org.eclipse.help", deps[2].getArtifactId() );
+        assertEquals( "org.eclipse", deps[2].getGroupId() );
+        assertEquals( "help", deps[2].getArtifactId() );
         assertEquals( "[3.2.0-1,4.0.0-2)", deps[2].getVersion() );
-        assertEquals( "org.eclipse.core.expressions", deps[3].getArtifactId() );
+        assertEquals( "org.eclipse.core", deps[3].getGroupId() );
+        assertEquals( "expressions", deps[3].getArtifactId() );
         assertEquals( "[3.2.0-0,4.0.0-0)", deps[3].getVersion() );
     }
 
@@ -86,10 +101,10 @@ public class MakeArtifactsTest
     public void testCreateGroupId()
     {
         assertEquals( "test", mojo.createGroupId( "test" ) );
-        assertEquals( "org.eclipse", mojo.createGroupId( "org.eclipse" ) );
-        assertEquals( "org.eclipse.jdt", mojo.createGroupId( "org.eclipse.jdt" ) );
+        assertEquals( "org", mojo.createGroupId( "org.eclipse" ) );
+        assertEquals( "org.eclipse", mojo.createGroupId( "org.eclipse.jdt" ) );
         assertEquals( "org.eclipse.jdt", mojo.createGroupId( "org.eclipse.jdt.apt" ) );
-        assertEquals( "org.eclipse.jdt", mojo.createGroupId( "org.eclipse.jdt.apt.core" ) );
+        assertEquals( "org.eclipse.jdt.apt", mojo.createGroupId( "org.eclipse.jdt.apt.core" ) );
     }
 
     /**
@@ -98,10 +113,22 @@ public class MakeArtifactsTest
     public void testCreateArtifactId()
     {
         assertEquals( "test", mojo.createArtifactId( "test" ) );
-        assertEquals( "org.eclipse", mojo.createArtifactId( "org.eclipse" ) );
-        assertEquals( "org.eclipse.jdt", mojo.createArtifactId( "org.eclipse.jdt" ) );
-        assertEquals( "org.eclipse.jdt.apt", mojo.createArtifactId( "org.eclipse.jdt.apt" ) );
-        assertEquals( "org.eclipse.jdt.apt.core", mojo.createArtifactId( "org.eclipse.jdt.apt.core" ) );
+        assertEquals( "eclipse", mojo.createArtifactId( "org.eclipse" ) );
+        assertEquals( "jdt", mojo.createArtifactId( "org.eclipse.jdt" ) );
+        assertEquals( "apt", mojo.createArtifactId( "org.eclipse.jdt.apt" ) );
+        assertEquals( "core", mojo.createArtifactId( "org.eclipse.jdt.apt.core" ) );
     }
 
+    public void testOsgiVersionToMavenVersion()
+    {
+        assertEquals( "1.2.3", mojo.osgiVersionToMavenVersion( "1.2.3", null, false ) );
+        assertEquals( "1.2.3", mojo.osgiVersionToMavenVersion( "1.2.3", "20060101", false ) );
+        assertEquals( "1.2.3", mojo.osgiVersionToMavenVersion( "1.2.3", null, true ) );
+        assertEquals( "1.2.3", mojo.osgiVersionToMavenVersion( "1.2.3", "20060101", true ) );
+
+        assertEquals( "1.2.3", mojo.osgiVersionToMavenVersion( "1.2.3.1", null, true ) );
+        assertEquals( "1.2.3", mojo.osgiVersionToMavenVersion( "1.2.3.1", "20060101", true ) );
+        assertEquals( "1.2.3-20060101", mojo.osgiVersionToMavenVersion( "1.2.3.1", "20060101", false ) );
+        assertEquals( "1.2.3-1", mojo.osgiVersionToMavenVersion( "1.2.3.1", null, false ) );
+    }
 }
