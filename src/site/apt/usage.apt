@@ -46,10 +46,11 @@ Usage
         <artifactId>maven-antlr-plugin</artifactId>
         <configuration>
           <!--
-            Comma separated list of grammar files.
+            Comma separated list of grammar files or pattern grammar files
             By default, grammar file(s) is in ${basedir}/src/main/antlr
           -->
           <grammars>java.g</grammars>
+          <!-- <grammars>*.g</grammars> -->
         </configuration>
       </plugin>
       ...
@@ -81,10 +82,11 @@ mvn antlr:generate
         <artifactId>maven-antlr-plugin</artifactId>
         <configuration>
           <!--
-            Comma separated list of grammar files.
-            By default, grammar file is in ${basedir}/src/main/antlr
+            Comma separated list of grammar files or pattern grammar files
+            By default, grammar file(s) is in ${basedir}/src/main/antlr
           -->
           <grammars>java.g</grammars>
+          <!-- <grammars>*.g</grammars> -->
         </configuration>
         <executions>
           <execution>
@@ -119,10 +121,11 @@ mvn antlr:generate
         <artifactId>maven-antlr-plugin</artifactId>
         <configuration>
           <!--
-            Comma separated list of grammar files.
-            By default, grammar file is in ${basedir}/src/main/antlr
+            Comma separated list of grammar files or pattern grammar files
+            By default, grammar file(s) is in ${basedir}/src/main/antlr
           -->
           <grammars>java15.g</grammars>
+          <!-- <grammars>*.g</grammars> -->
         </configuration>
       </plugin>
       ...

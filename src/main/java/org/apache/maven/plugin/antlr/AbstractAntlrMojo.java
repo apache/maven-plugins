@@ -22,15 +22,19 @@ package org.apache.maven.plugin.antlr;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -96,7 +100,8 @@ public abstract class AbstractAntlrMojo
     protected File outputDirectory;
 
     /**
-     * Comma separated grammar file names present in the <code>sourceDirectory</code> directory.
+     * Comma separated grammar file names or grammar pattern file names present in the <code>sourceDirectory</code>
+     * directory.
      * <br/>
      * See <a href="http://www.antlr.org/doc/options.html#Command%20Line%20Options">Command Line Options</a>
      *
@@ -279,23 +284,24 @@ public abstract class AbstractAntlrMojo
             // ----------------------------------------------------------------------
             boolean failedSetManager = false;
             SecurityManager oldSm = null;
-            try 
+            try
             {
                 oldSm = System.getSecurityManager();
                 System.setSecurityManager( NoExitSecurityManager.INSTANCE );
-            } 
-            catch (SecurityException ex) 
+            }
+            catch ( SecurityException ex )
             {
                 //ANTLR-12
                 oldSm = null;
                 failedSetManager = true;
                 //ignore, in embedded environment the security manager can already be set.
                 // in such a case assume the exit call is handled properly..
-                getLog().warn("Cannot set custom SecurityManager. " +
-                        "Antlr's call to System.exit() can cause application shutdown " +
-                        "if not handled by the current SecurityManager.");
+                getLog().warn(
+                               "Cannot set custom SecurityManager. "
+                                   + "Antlr's call to System.exit() can cause application shutdown "
+                                   + "if not handled by the current SecurityManager." );
             }
-            
+
             PrintStream oldErr = System.err;
 
             OutputStream errOS = new StringOutputStream();
@@ -308,24 +314,25 @@ public abstract class AbstractAntlrMojo
             }
             catch ( SecurityException e )
             {
-                if ( e.getMessage().equals( "exitVM-0" ) ||
-                     e.getClass().getName().equals("org.netbeans.core.execution.ExitSecurityException" ) )  //netbeans IDE Sec Manager.
+                if ( e.getMessage().equals( "exitVM-0" )
+                    || e.getClass().getName().equals( "org.netbeans.core.execution.ExitSecurityException" ) ) //netbeans IDE Sec Manager.
                 {
                     //ANTLR-12
                     //now basically every secutiry manager could set different message, how to handle in generic way?
                     //probably only by external execution
                     /// in case of NetBeans SecurityManager, it's not possible to distinguish exit codes, rather swallow than fail.
-                    getLog().debug(e);
-                } 
-                else 
+                    getLog().debug( e );
+                }
+                else
                 {
-                    throw new MojoExecutionException( "Antlr execution failed: " + e.getMessage() + 
-                                                      "\n Error output:\n" + errOS, e );
+                    throw new MojoExecutionException( "Antlr execution failed: " + e.getMessage()
+                        + "\n Error output:\n" + errOS, e );
                 }
             }
             finally
             {
-                if ( ! failedSetManager ) {
+                if ( !failedSetManager )
+                {
                     System.setSecurityManager( oldSm );
                 }
                 System.setErr( oldErr );
@@ -449,23 +456,77 @@ public abstract class AbstractAntlrMojo
     }
 
     /**
+     * Get the list of all grammars to be compiled. The grammars variable
+     * can be a list of file or patterns. For instance, one can use *.g instead of
+     * a full list of grammar names.
+     *
+     * Be aware that sometime the grammar order is important, and that patterns won't
+     * keep this order, but we can still combine both elements( ordered names first, then
+     * the patterns).
+     *
+     * File name won't be added twice in the list of files.
+     *
      * @return an array of grammar from <code>grammars</code> and <code>grammarDefs</code> variables
      */
     private Grammar[] getGrammars()
     {
-        List grammarList = new LinkedList();
+        List grammarList = new ArrayList();
+        Set grammarSet = new HashSet();
 
         if ( StringUtils.isNotEmpty( grammars ) )
         {
             StringTokenizer st = new StringTokenizer( grammars, ", " );
+
             while ( st.hasMoreTokens() )
             {
                 String currentGrammar = st.nextToken().trim();
 
-                Grammar grammar = new Grammar();
-                grammar.setName( currentGrammar );
+                if ( StringUtils.isNotEmpty( currentGrammar ) )
+                {
+                    // Check if some pattern has been used
+                    if ( ( currentGrammar.indexOf( '*' ) != -1 ) || ( currentGrammar.indexOf( '?' ) != -1 ) )
+                    {
+                        // We first have to 'protect' the '.', and transform patterns
+                        // to regexp, substituting '*' to '.*' and '?' to '.'
+                        final String transformedGrammar = currentGrammar.replaceAll( "\\.", "\\\\." )
+                            .replaceAll( "\\*", ".*" ).replaceAll( "\\?", "." );
 
-                grammarList.add( grammar );
+                        // Filter the source directory
+                        String[] dir = sourceDirectory.list( new FilenameFilter()
+                        {
+                            public boolean accept( File dir, String s )
+                            {
+                                return Pattern.matches( transformedGrammar, s );
+                            }
+                        } );
+
+                        if ( ( dir != null ) && ( dir.length != 0 ) )
+                        {
+                            for ( int i = 0; i < dir.length; i++ )
+                            {
+                                // Just add fles which are not in the set
+                                // of files already seen.
+                                if ( !grammarSet.contains( dir[i] ) )
+                                {
+                                    Grammar grammar = new Grammar();
+                                    grammar.setName( dir[i] );
+
+                                    grammarList.add( grammar );
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if ( !grammarSet.contains( currentGrammar ) )
+                        {
+                            Grammar grammar = new Grammar();
+                            grammar.setName( currentGrammar );
+
+                            grammarList.add( grammar );
+                        }
+                    }
+                }
             }
         }
 
