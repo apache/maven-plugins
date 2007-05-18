@@ -157,6 +157,7 @@ public abstract class AbstractProjectInfoReport
             model.setBody( new Body() );
             Map attributes = new HashMap();
             attributes.put( "outputEncoding", "UTF-8" );
+            attributes.put( "project", project );
             Locale locale = Locale.getDefault();
             SiteRenderingContext siteContext = siteRenderer.createContextForSkin( getSkinArtifactFile(), attributes,
                                                                                   model, getName( locale ), locale );
