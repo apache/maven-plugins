@@ -104,6 +104,38 @@ under the License.
                                 </td>
                             </tr>
                             <tr>
+                                <td>Chinese simplified</td>
+                                <td>
+                                    <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_zh_CN.properties">
+                                        See
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Norwegian</td>
+                                <td>
+                                    <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_no.properties">
+                                        See
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Hungarian</td>
+                                <td>
+                                    <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_hu.properties">
+                                        See
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Spanish</td>
+                                <td>
+                                    <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_es.properties">
+                                        See
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
                                 <td>Korean</td>
                                 <td>
                                     <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/main/resources/site-plugin_ko.properties">
@@ -166,9 +198,57 @@ under the License.
                                 </td>
                             </tr>
                             <tr>
+                                <td>Italian</td>
+                                <td>
+                                    <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_it.properties">
+                                        See
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Dutch</td>
+                                <td>
+                                    <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_nl.properties">
+                                        See
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
                                 <td>Brazilian Portuguese</td>
                                 <td>
                                     <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_pt_BR.properties">
+                                        See
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Chinese simplified</td>
+                                <td>
+                                    <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_zh_CN.properties">
+                                        See
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Norwegian</td>
+                                <td>
+                                    <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_no.properties">
+                                        See
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Hungarian</td>
+                                <td>
+                                    <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_hu.properties">
+                                        See
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Spanish</td>
+                                <td>
+                                    <a href="http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report_es.properties">
                                         See
                                     </a>
                                 </td>
