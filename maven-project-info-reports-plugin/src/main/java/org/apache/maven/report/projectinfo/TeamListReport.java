@@ -198,7 +198,7 @@ public class TeamListReport
                     }
                     if ( headersMap.get( URL ) == Boolean.TRUE )
                     {
-                        tableCell( createLinkPatternedText( developer.getUrl(), developer.getUrl() ) );
+                        tableCellForUrl( developer.getUrl() );
                     }
                     if ( headersMap.get( ORGANIZATION ) == Boolean.TRUE )
                     {
@@ -206,8 +206,7 @@ public class TeamListReport
                     }
                     if ( headersMap.get( ORGANIZATION_URL ) == Boolean.TRUE )
                     {
-                        tableCell( createLinkPatternedText( developer.getOrganizationUrl(), developer
-                            .getOrganizationUrl() ) );
+                        tableCellForUrl( developer.getOrganizationUrl() );
                     }
                     if ( headersMap.get( ROLES ) == Boolean.TRUE )
                     {
@@ -300,7 +299,7 @@ public class TeamListReport
                     }
                     if ( headersMap.get( URL ) == Boolean.TRUE )
                     {
-                        tableCell( createLinkPatternedText( contributor.getUrl(), contributor.getUrl() ) );
+                        tableCellForUrl( contributor.getUrl() );
                     }
                     if ( headersMap.get( ORGANIZATION ) == Boolean.TRUE )
                     {
@@ -308,8 +307,7 @@ public class TeamListReport
                     }
                     if ( headersMap.get( ORGANIZATION_URL ) == Boolean.TRUE )
                     {
-                        tableCell( createLinkPatternedText( contributor.getOrganizationUrl(), contributor
-                            .getOrganizationUrl() ) );
+                        tableCellForUrl( contributor.getOrganizationUrl() );
                     }
                     if ( headersMap.get( ROLES ) == Boolean.TRUE )
                     {
@@ -588,6 +586,27 @@ public class TeamListReport
                     requiredHeaders.put( PROPERTIES, Boolean.TRUE );
                 }
             }
+        }
+
+        /**
+         * Create a table cell with a link to the given url. The url is not validated.
+         *
+         * @param url
+         */
+        private void tableCellForUrl( String url )
+        {
+            sink.tableCell();
+
+            if ( StringUtils.isEmpty( url ) )
+            {
+                text( url );
+            }
+            else
+            {
+                link( url, url );
+            }
+
+            sink.tableCell_();
         }
     }
 }
