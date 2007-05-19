@@ -49,6 +49,23 @@ Configuring the Site Descriptor
 
   The position could be: left, right, navigation-top, navigation-bottom, bottom.
 
+* Powered by logo
+
+  You could add a "Powered by" logo in your site.
+  To do this, you could add a \<poweredBy/> in the site.xml like the following:
+
++-----+
+<project name="My Site Descriptor">
+  ...
+  <poweredBy>
+    <logo name="Maven" href="http://maven.apache.org/"
+          img="http://maven.apache.org/images/logos/maven-feather.png"/>
+    ...
+  </poweredBy>
+  ...
+</project>
++-----+
+
 * Inheritance
 
   Site descriptors are inherited along the same lines as project descriptors are. When you deploy a project, it's site
