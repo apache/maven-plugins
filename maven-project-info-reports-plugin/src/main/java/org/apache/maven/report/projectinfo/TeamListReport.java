@@ -27,9 +27,12 @@ import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -79,6 +82,24 @@ public class TeamListReport
     private static class TeamListRenderer
         extends AbstractMavenReportRenderer
     {
+        private static final String PROPERTIES = "properties";
+
+        private static final String TIME_ZONE = "timeZone";
+
+        private static final String ROLES = "roles";
+
+        private static final String ORGANIZATION_URL = "organizationUrl";
+
+        private static final String ORGANIZATION = "organization";
+
+        private static final String URL = "url";
+
+        private static final String EMAIL = "email";
+
+        private static final String NAME = "name";
+
+        private static final String ID = "id";
+
         private Model model;
 
         private I18N i18n;
@@ -118,8 +139,8 @@ public class TeamListReport
             javascript.append( "    var now = new Date();\n" );
             javascript.append( "    var nowTime = now.getTime();\n" );
             javascript.append( "    var localOffset = now.getTimezoneOffset();\n" );
-            javascript.append(
-                "    var developerTime = nowTime + ( offset * 60 * 60 * 1000 ) + ( localOffset * 60 * 1000 );\n" );
+            javascript
+                .append( "    var developerTime = nowTime + ( offset * 60 * 60 * 1000 ) + ( localOffset * 60 * 1000 );\n" );
             javascript.append( "    var developerDate = new Date(developerTime);\n" );
             javascript.append( "\n" );
             javascript.append( "    document.getElementById(id).innerHTML = developerDate;\n" );
@@ -146,24 +167,13 @@ public class TeamListReport
 
                 startTable();
 
-                String id = i18n.getString( "project-info-report", locale, "report.team-list.developers.id" );
-                String name = i18n.getString( "project-info-report", locale, "report.team-list.developers.name" );
-                String email = i18n.getString( "project-info-report", locale, "report.team-list.developers.email" );
-                String url = i18n.getString( "project-info-report", locale, "report.team-list.developers.url" );
-                String organization =
-                    i18n.getString( "project-info-report", locale, "report.team-list.developers.organization" );
-                String organizationUrl =
-                    i18n.getString( "project-info-report", locale, "report.team-list.developers.organizationurl" );
-                String roles = i18n.getString( "project-info-report", locale, "report.team-list.developers.roles" );
-                String timeZone =
-                    i18n.getString( "project-info-report", locale, "report.team-list.developers.timezone" );
-                String actualTime =
-                    i18n.getString( "project-info-report", locale, "report.team-list.developers.actualtime" );
-                String properties =
-                    i18n.getString( "project-info-report", locale, "report.team-list.developers.properties" );
+                // By default we think that all headers not required
+                Map headersMap = new HashMap();
+                // set true for headers that required
+                checkRequiredHeaders( headersMap, developers );
+                String[] requiredHeaders = getRequiredDevHeaderArray( headersMap );
 
-                tableHeader( new String[]{id, name, email, url, organization, organizationUrl, roles, timeZone,
-                    actualTime, properties} );
+                tableHeader( requiredHeaders );
 
                 // To handle JS
                 int developersRows = 0;
@@ -174,52 +184,72 @@ public class TeamListReport
                     // To handle JS
                     sink.tableRow();
 
-                    tableCell( "<a name=\"" + developer.getId() + "\"></a>" + developer.getId(), true );
-
-                    tableCell( developer.getName() );
-
-                    tableCell( createLinkPatternedText( developer.getEmail(), developer.getEmail() ) );
-
-                    tableCell( createLinkPatternedText( developer.getUrl(), developer.getUrl() ) );
-
-                    tableCell( developer.getOrganization() );
-
-                    tableCell(
-                        createLinkPatternedText( developer.getOrganizationUrl(), developer.getOrganizationUrl() ) );
-
-                    if ( developer.getRoles() != null )
+                    if ( headersMap.get( ID ) == Boolean.TRUE )
                     {
-                        // Comma separated roles
-                        tableCell( StringUtils.join( developer.getRoles().toArray( EMPTY_STRING_ARRAY ), ", " ) );
+                        tableCell( "<a name=\"" + developer.getId() + "\"></a>" + developer.getId(), true );
                     }
-                    else
+                    if ( headersMap.get( NAME ) == Boolean.TRUE )
                     {
-                        tableCell( null );
+                        tableCell( developer.getName() );
+                    }
+                    if ( headersMap.get( EMAIL ) == Boolean.TRUE )
+                    {
+                        tableCell( createLinkPatternedText( developer.getEmail(), developer.getEmail() ) );
+                    }
+                    if ( headersMap.get( URL ) == Boolean.TRUE )
+                    {
+                        tableCell( createLinkPatternedText( developer.getUrl(), developer.getUrl() ) );
+                    }
+                    if ( headersMap.get( ORGANIZATION ) == Boolean.TRUE )
+                    {
+                        tableCell( developer.getOrganization() );
+                    }
+                    if ( headersMap.get( ORGANIZATION_URL ) == Boolean.TRUE )
+                    {
+                        tableCell( createLinkPatternedText( developer.getOrganizationUrl(), developer
+                            .getOrganizationUrl() ) );
+                    }
+                    if ( headersMap.get( ROLES ) == Boolean.TRUE )
+                    {
+                        if ( developer.getRoles() != null )
+                        {
+                            // Comma separated roles
+                            tableCell( StringUtils.join( developer.getRoles().toArray( EMPTY_STRING_ARRAY ), ", " ) );
+                        }
+                        else
+                        {
+                            tableCell( null );
+                        }
+                    }
+                    if ( headersMap.get( TIME_ZONE ) == Boolean.TRUE )
+                    {
+                        tableCell( developer.getTimezone() );
+
+                        // To handle JS
+                        sink.tableCell();
+                        sink.rawText( "<span id=\"developer-" + developersRows + "\">" );
+                        text( developer.getTimezone() );
+                        if ( !StringUtils.isEmpty( developer.getTimezone() ) )
+                        {
+                            javascript.append( "    offsetDate('developer-" ).append( developersRows ).append( "', '" );
+                            javascript.append( developer.getTimezone() );
+                            javascript.append( "');\n" );
+                        }
+                        sink.rawText( "</span>" );
+                        sink.tableCell_();
                     }
 
-                    tableCell( developer.getTimezone() );
-
-                    // To handle JS
-                    sink.tableCell();
-                    sink.rawText( "<span id=\"developer-" + developersRows + "\">" );
-                    text( developer.getTimezone() );
-                    if ( !StringUtils.isEmpty( developer.getTimezone() ) )
+                    if ( headersMap.get( PROPERTIES ) == Boolean.TRUE )
                     {
-                        javascript.append( "    offsetDate('developer-" ).append( developersRows ).append( "', '" );
-                        javascript.append( developer.getTimezone() );
-                        javascript.append( "');\n" );
-                    }
-                    sink.rawText( "</span>" );
-                    sink.tableCell_();
-
-                    Properties props = developer.getProperties();
-                    if ( props != null )
-                    {
-                        tableCell( propertiesToString( props ) );
-                    }
-                    else
-                    {
-                        tableCell( null );
+                        Properties props = developer.getProperties();
+                        if ( props != null )
+                        {
+                            tableCell( propertiesToString( props ) );
+                        }
+                        else
+                        {
+                            tableCell( null );
+                        }
                     }
 
                     sink.tableRow_();
@@ -247,23 +277,11 @@ public class TeamListReport
 
                 startTable();
 
-                String name = i18n.getString( "project-info-report", locale, "report.team-list.contributors.name" );
-                String email = i18n.getString( "project-info-report", locale, "report.team-list.contributors.email" );
-                String url = i18n.getString( "project-info-report", locale, "report.team-list.contributors.url" );
-                String organization =
-                    i18n.getString( "project-info-report", locale, "report.team-list.contributors.organization" );
-                String organizationUrl =
-                    i18n.getString( "project-info-report", locale, "report.team-list.contributors.organizationurl" );
-                String roles = i18n.getString( "project-info-report", locale, "report.team-list.contributors.roles" );
-                String timeZone =
-                    i18n.getString( "project-info-report", locale, "report.team-list.contributors.timezone" );
-                String actualTime =
-                    i18n.getString( "project-info-report", locale, "report.team-list.contributors.actualtime" );
-                String properties =
-                    i18n.getString( "project-info-report", locale, "report.team-list.contributors.properties" );
+                Map headersMap = new HashMap();
+                checkRequiredHeaders( headersMap, contributors );
+                String[] requiredHeaders = getRequiredContrHeaderArray( headersMap );
 
-                tableHeader( new String[]{name, email, url, organization, organizationUrl, roles, timeZone, actualTime,
-                    properties} );
+                tableHeader( requiredHeaders );
 
                 // To handle JS
                 int contributorsRows = 0;
@@ -272,51 +290,70 @@ public class TeamListReport
                     Contributor contributor = (Contributor) i.next();
 
                     sink.tableRow();
-
-                    tableCell( contributor.getName() );
-
-                    tableCell( createLinkPatternedText( contributor.getEmail(), contributor.getEmail() ) );
-
-                    tableCell( createLinkPatternedText( contributor.getUrl(), contributor.getUrl() ) );
-
-                    tableCell( contributor.getOrganization() );
-
-                    tableCell(
-                        createLinkPatternedText( contributor.getOrganizationUrl(), contributor.getOrganizationUrl() ) );
-
-                    if ( contributor.getRoles() != null )
+                    if ( headersMap.get( NAME ) == Boolean.TRUE )
                     {
-                        // Comma separated roles
-                        tableCell( StringUtils.join( contributor.getRoles().toArray( EMPTY_STRING_ARRAY ), ", " ) );
+                        tableCell( contributor.getName() );
                     }
-                    else
+                    if ( headersMap.get( EMAIL ) == Boolean.TRUE )
                     {
-                        tableCell( null );
+                        tableCell( createLinkPatternedText( contributor.getEmail(), contributor.getEmail() ) );
+                    }
+                    if ( headersMap.get( URL ) == Boolean.TRUE )
+                    {
+                        tableCell( createLinkPatternedText( contributor.getUrl(), contributor.getUrl() ) );
+                    }
+                    if ( headersMap.get( ORGANIZATION ) == Boolean.TRUE )
+                    {
+                        tableCell( contributor.getOrganization() );
+                    }
+                    if ( headersMap.get( ORGANIZATION_URL ) == Boolean.TRUE )
+                    {
+                        tableCell( createLinkPatternedText( contributor.getOrganizationUrl(), contributor
+                            .getOrganizationUrl() ) );
+                    }
+                    if ( headersMap.get( ROLES ) == Boolean.TRUE )
+                    {
+                        if ( contributor.getRoles() != null )
+                        {
+                            // Comma separated roles
+                            tableCell( StringUtils.join( contributor.getRoles().toArray( EMPTY_STRING_ARRAY ), ", " ) );
+                        }
+                        else
+                        {
+                            tableCell( null );
+                        }
+
+                    }
+                    if ( headersMap.get( TIME_ZONE ) == Boolean.TRUE )
+                    {
+                        tableCell( contributor.getTimezone() );
+
+                        // To handle JS
+                        sink.tableCell();
+                        sink.rawText( "<span id=\"contributor-" + contributorsRows + "\">" );
+                        text( contributor.getTimezone() );
+                        if ( !StringUtils.isEmpty( contributor.getTimezone() ) )
+                        {
+                            javascript.append( "    offsetDate('contributor-" ).append( contributorsRows )
+                                .append( "', '" );
+                            javascript.append( contributor.getTimezone() );
+                            javascript.append( "');\n" );
+                        }
+                        sink.rawText( "</span>" );
+                        sink.tableCell_();
                     }
 
-                    tableCell( contributor.getTimezone() );
-
-                    // To handle JS
-                    sink.tableCell();
-                    sink.rawText( "<span id=\"contributor-" + contributorsRows + "\">" );
-                    text( contributor.getTimezone() );
-                    if ( !StringUtils.isEmpty( contributor.getTimezone() ) )
+                    if ( headersMap.get( PROPERTIES ) == Boolean.TRUE )
                     {
-                        javascript.append( "    offsetDate('contributor-" ).append( contributorsRows ).append( "', '" );
-                        javascript.append( contributor.getTimezone() );
-                        javascript.append( "');\n" );
-                    }
-                    sink.rawText( "</span>" );
-                    sink.tableCell_();
-
-                    Properties props = contributor.getProperties();
-                    if ( props != null )
-                    {
-                        tableCell( propertiesToString( props ) );
-                    }
-                    else
-                    {
-                        tableCell( null );
+                        Properties props = contributor.getProperties();
+                        if ( props != null )
+                        {
+                            tableCell( propertiesToString( props ) );
+                        }
+                        else
+                        {
+                            tableCell( null );
+                        }
                     }
 
                     sink.tableRow_();
@@ -334,6 +371,223 @@ public class TeamListReport
             // To handle JS
             javascript.append( "}\n" ).append( "\n" ).append( "window.onLoad = init();\n" );
             javaScript( javascript.toString() );
+        }
+
+        /**
+         * @param requiredHeaders
+         * @return
+         */
+        private String[] getRequiredContrHeaderArray( Map requiredHeaders )
+        {
+            List requiredArray = new ArrayList();
+            String name = i18n.getString( "project-info-report", locale, "report.team-list.contributors.name" );
+            String email = i18n.getString( "project-info-report", locale, "report.team-list.contributors.email" );
+            String url = i18n.getString( "project-info-report", locale, "report.team-list.contributors.url" );
+            String organization = i18n.getString( "project-info-report", locale,
+                                                  "report.team-list.contributors.organization" );
+            String organizationUrl = i18n.getString( "project-info-report", locale,
+                                                     "report.team-list.contributors.organizationurl" );
+            String roles = i18n.getString( "project-info-report", locale, "report.team-list.contributors.roles" );
+            String timeZone = i18n.getString( "project-info-report", locale, "report.team-list.contributors.timezone" );
+            String actualTime = i18n.getString( "project-info-report", locale,
+                                                "report.team-list.contributors.actualtime" );
+            String properties = i18n.getString( "project-info-report", locale,
+                                                "report.team-list.contributors.properties" );
+
+            setRequiredArray( requiredHeaders, requiredArray, name, email, url, organization, organizationUrl, roles,
+                              timeZone, actualTime, properties );
+
+            String[] array = new String[requiredArray.size()];
+            for ( int i = 0; i < array.length; i++ )
+            {
+                array[i] = (String) requiredArray.get( i );
+            }
+
+            return array;
+        }
+
+        /**
+         * @param requiredHeaders
+         * @return
+         */
+        private String[] getRequiredDevHeaderArray( Map requiredHeaders )
+        {
+            List requiredArray = new ArrayList();
+
+            String id = i18n.getString( "project-info-report", locale, "report.team-list.developers.id" );
+            String name = i18n.getString( "project-info-report", locale, "report.team-list.developers.name" );
+            String email = i18n.getString( "project-info-report", locale, "report.team-list.developers.email" );
+            String url = i18n.getString( "project-info-report", locale, "report.team-list.developers.url" );
+            String organization = i18n.getString( "project-info-report", locale,
+                                                  "report.team-list.developers.organization" );
+            String organizationUrl = i18n.getString( "project-info-report", locale,
+                                                     "report.team-list.developers.organizationurl" );
+            String roles = i18n.getString( "project-info-report", locale, "report.team-list.developers.roles" );
+            String timeZone = i18n.getString( "project-info-report", locale, "report.team-list.developers.timezone" );
+            String actualTime = i18n
+                .getString( "project-info-report", locale, "report.team-list.developers.actualtime" );
+            String properties = i18n
+                .getString( "project-info-report", locale, "report.team-list.developers.properties" );
+
+            if ( requiredHeaders.get( ID ) == Boolean.TRUE )
+            {
+                requiredArray.add( id );
+            }
+
+            setRequiredArray( requiredHeaders, requiredArray, name, email, url, organization, organizationUrl, roles,
+                              timeZone, actualTime, properties );
+
+            String[] array = new String[requiredArray.size()];
+            for ( int i = 0; i < array.length; i++ )
+            {
+                array[i] = (String) requiredArray.get( i );
+            }
+
+            return array;
+        }
+
+        /**
+         * @param requiredHeaders
+         * @param requiredArray
+         * @param name
+         * @param email
+         * @param url
+         * @param organization
+         * @param organizationUrl
+         * @param roles
+         * @param timeZone
+         * @param actualTime
+         * @param properties
+         */
+        private void setRequiredArray( Map requiredHeaders, List requiredArray, String name, String email, String url,
+                                       String organization, String organizationUrl, String roles, String timeZone,
+                                       String actualTime, String properties )
+        {
+            if ( requiredHeaders.get( NAME ) == Boolean.TRUE )
+            {
+                requiredArray.add( name );
+            }
+            if ( requiredHeaders.get( EMAIL ) == Boolean.TRUE )
+            {
+                requiredArray.add( email );
+            }
+            if ( requiredHeaders.get( URL ) == Boolean.TRUE )
+            {
+                requiredArray.add( url );
+            }
+            if ( requiredHeaders.get( ORGANIZATION ) == Boolean.TRUE )
+            {
+                requiredArray.add( organization );
+            }
+            if ( requiredHeaders.get( ORGANIZATION_URL ) == Boolean.TRUE )
+            {
+                requiredArray.add( organizationUrl );
+            }
+            if ( requiredHeaders.get( ROLES ) == Boolean.TRUE )
+            {
+                requiredArray.add( roles );
+            }
+            if ( requiredHeaders.get( TIME_ZONE ) == Boolean.TRUE )
+            {
+                requiredArray.add( timeZone );
+                requiredArray.add( actualTime );
+            }
+
+            if ( requiredHeaders.get( PROPERTIES ) == Boolean.TRUE )
+            {
+                requiredArray.add( properties );
+            }
+        }
+
+        /**
+         * @param requiredHeaders
+         * @param units
+         */
+        private void checkRequiredHeaders( Map requiredHeaders, List units )
+        {
+            requiredHeaders.put( ID, Boolean.FALSE );
+            requiredHeaders.put( NAME, Boolean.FALSE );
+            requiredHeaders.put( EMAIL, Boolean.FALSE );
+            requiredHeaders.put( URL, Boolean.FALSE );
+            requiredHeaders.put( ORGANIZATION, Boolean.FALSE );
+            requiredHeaders.put( ORGANIZATION_URL, Boolean.FALSE );
+            requiredHeaders.put( ROLES, Boolean.FALSE );
+            requiredHeaders.put( TIME_ZONE, Boolean.FALSE );
+            requiredHeaders.put( PROPERTIES, Boolean.FALSE );
+
+            for ( Iterator i = units.iterator(); i.hasNext(); )
+            {
+                Object unit = i.next();
+                String name = null;
+                String email = null;
+                String url = null;
+                String organization = null;
+                String organizationUrl = null;
+                List roles = null;
+                String timeZone = null;
+                Properties properties = null;
+
+                if ( unit.getClass().getName().equals( Contributor.class.getName() ) )
+                {
+                    Contributor contributor = (Contributor) unit;
+                    name = contributor.getName();
+                    email = contributor.getEmail();
+                    url = contributor.getUrl();
+                    organization = contributor.getOrganization();
+                    organizationUrl = contributor.getOrganizationUrl();
+                    roles = contributor.getRoles();
+                    timeZone = contributor.getTimezone();
+                    properties = contributor.getProperties();
+                }
+                else
+                {
+                    Developer developer = (Developer) unit;
+                    name = developer.getName();
+                    email = developer.getEmail();
+                    url = developer.getUrl();
+                    organization = developer.getOrganization();
+                    organizationUrl = developer.getOrganizationUrl();
+                    roles = developer.getRoles();
+                    timeZone = developer.getTimezone();
+                    properties = developer.getProperties();
+                    if ( StringUtils.isNotEmpty( developer.getId() ) )
+                    {
+                        requiredHeaders.put( ID, Boolean.TRUE );
+                    }
+                }
+                if ( StringUtils.isNotEmpty( name ) )
+                {
+                    requiredHeaders.put( NAME, Boolean.TRUE );
+                }
+                if ( StringUtils.isNotEmpty( email ) )
+                {
+                    requiredHeaders.put( EMAIL, Boolean.TRUE );
+                }
+                if ( StringUtils.isNotEmpty( url ) )
+                {
+                    requiredHeaders.put( URL, Boolean.TRUE );
+                }
+                if ( StringUtils.isNotEmpty( organization ) )
+                {
+                    requiredHeaders.put( ORGANIZATION, Boolean.TRUE );
+                }
+                if ( StringUtils.isNotEmpty( organizationUrl ) )
+                {
+                    requiredHeaders.put( ORGANIZATION_URL, Boolean.TRUE );
+                }
+                if ( null != roles && !roles.isEmpty() )
+                {
+                    requiredHeaders.put( ROLES, Boolean.TRUE );
+                }
+                if ( StringUtils.isNotEmpty( timeZone ) )
+                {
+                    requiredHeaders.put( TIME_ZONE, Boolean.TRUE );
+                }
+                if ( null != properties && !properties.isEmpty() )
+                {
+                    requiredHeaders.put( PROPERTIES, Boolean.TRUE );
+                }
+            }
         }
     }
 }
