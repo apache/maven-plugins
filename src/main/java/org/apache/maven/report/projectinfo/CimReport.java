@@ -113,13 +113,29 @@ public class CimReport
             // Overview
             startSection( i18n.getString( "project-info-report", locale, "report.cim.overview.title" ) );
 
-            if ( isCimSystem( system, "continuum" ) )
+            if ( isCimSystem( system, "anthill" ) )
+            {
+                linkPatternedText( i18n.getString( "project-info-report", locale, "report.cim.anthill.intro" ) );
+            }
+            else if ( isCimSystem( system, "buildforge" ) )
+            {
+                linkPatternedText( i18n.getString( "project-info-report", locale, "report.cim.buildforge.intro" ) );
+            }
+            else if ( isCimSystem( system, "continuum" ) )
             {
                 linkPatternedText( i18n.getString( "project-info-report", locale, "report.cim.continuum.intro" ) );
             }
-            else if ( isCimSystem( system, "bugzilla" ) )
+            else if ( isCimSystem( system, "cruisecontrol" ) )
             {
-                linkPatternedText( i18n.getString( "project-info-report", locale, "report.cim.bugzilla.intro" ) );
+                linkPatternedText( i18n.getString( "project-info-report", locale, "report.cim.cruisecontrol.intro" ) );
+            }
+            else if ( isCimSystem( system, "hudson" ) )
+            {
+                linkPatternedText( i18n.getString( "project-info-report", locale, "report.cim.hudson.intro" ) );
+            }
+            else if ( isCimSystem( system, "luntbuild" ) )
+            {
+                linkPatternedText( i18n.getString( "project-info-report", locale, "report.cim.luntbuild.intro" ) );
             }
             else
             {
