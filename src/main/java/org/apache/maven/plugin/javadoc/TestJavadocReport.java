@@ -20,6 +20,7 @@ package org.apache.maven.plugin.javadoc;
  */
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -32,7 +33,7 @@ import org.codehaus.plexus.util.StringUtils;
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
- * @since 2.3<ol></ol>
+ * @since 2.3
  * @goal test-javadoc
  * @phase generate-test-sources
  * @requiresDependencyResolution test
@@ -199,7 +200,10 @@ public class TestJavadocReport
      */
     protected List getProjectSourceRoots( MavenProject p )
     {
-        return p.getTestCompileSourceRoots();
+        List sourceRoots = new ArrayList( p.getCompileSourceRoots() );
+        sourceRoots.addAll( p.getTestCompileSourceRoots() );
+
+        return sourceRoots;
     }
 
     /**
