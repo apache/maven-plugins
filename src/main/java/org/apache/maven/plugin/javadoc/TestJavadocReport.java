@@ -188,11 +188,15 @@ public class TestJavadocReport
     // ----------------------------------------------------------------------
 
     /**
-     * @see org.apache.maven.plugin.javadoc.AbstractJavadocMojo#getProjectBuildOutputDir(org.apache.maven.project.MavenProject)
+     * @see org.apache.maven.plugin.javadoc.AbstractJavadocMojo#getProjectBuildOutputDirs(org.apache.maven.project.MavenProject)
      */
-    protected String getProjectBuildOutputDir( MavenProject p )
+    protected List getProjectBuildOutputDirs( MavenProject p )
     {
-        return p.getBuild().getTestOutputDirectory();
+        List dirs = new ArrayList();
+        dirs.add( p.getBuild().getOutputDirectory() );
+        dirs.add( p.getBuild().getTestOutputDirectory() );
+
+        return dirs;
     }
 
     /**
@@ -200,10 +204,15 @@ public class TestJavadocReport
      */
     protected List getProjectSourceRoots( MavenProject p )
     {
-        List sourceRoots = new ArrayList( p.getCompileSourceRoots() );
-        sourceRoots.addAll( p.getTestCompileSourceRoots() );
+        return p.getTestCompileSourceRoots();
+    }
 
-        return sourceRoots;
+    /**
+     * @see org.apache.maven.plugin.javadoc.AbstractJavadocMojo#getExecutionProjectSourceRoots(org.apache.maven.project.MavenProject)
+     */
+    protected List getExecutionProjectSourceRoots( MavenProject p )
+    {
+        return p.getExecutionProject().getTestCompileSourceRoots();
     }
 
     /**
