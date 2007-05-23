@@ -30,6 +30,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -961,11 +962,12 @@ public abstract class AbstractJavadocMojo
 
     /**
      * @param p a maven project
-     * @return the directory where compiled classes are placed for the given project.
+     * @return the list of directories where compiled classes are placed for the given project. These dirs are
+     * added in the javadoc classpath.
      */
-    protected String getProjectBuildOutputDir( MavenProject p )
+    protected List getProjectBuildOutputDirs( MavenProject p )
     {
-        return p.getBuild().getOutputDirectory();
+        return Collections.singletonList( p.getBuild().getOutputDirectory() );
     }
 
     /**
@@ -975,6 +977,15 @@ public abstract class AbstractJavadocMojo
     protected List getProjectSourceRoots( MavenProject p )
     {
         return p.getCompileSourceRoots();
+    }
+
+    /**
+     * @param p a maven project
+     * @return the list of source paths for the execution project of the given project
+     */
+    protected List getExecutionProjectSourceRoots( MavenProject p )
+    {
+        return p.getExecutionProject().getCompileSourceRoots();
     }
 
     /**
@@ -1443,7 +1454,7 @@ public abstract class AbstractJavadocMojo
 
             if ( project.getExecutionProject() != null )
             {
-                sourcePaths.addAll( getProjectSourceRoots( project ) );
+                sourcePaths.addAll( getExecutionProjectSourceRoots( project ) );
             }
 
             if ( getJavadocDirectory() != null )
@@ -1467,7 +1478,7 @@ public abstract class AbstractJavadocMojo
 
                         if ( subProject.getExecutionProject() != null )
                         {
-                            sourceRoots.addAll( getProjectSourceRoots( subProject ) );
+                            sourceRoots.addAll( getExecutionProjectSourceRoots( subProject ) );
                         }
 
                         ArtifactHandler artifactHandler = subProject.getArtifact().getArtifactHandler();
@@ -1610,7 +1621,7 @@ public abstract class AbstractJavadocMojo
         List classpathElements = new ArrayList();
         Map compileArtifactMap = new HashMap();
 
-        classpathElements.add( getProjectBuildOutputDir( project ) );
+        classpathElements.addAll( getProjectBuildOutputDirs( project ) );
 
         populateCompileArtifactMap( compileArtifactMap, getProjectArtifacts( project ) );
 
@@ -1623,7 +1634,8 @@ public abstract class AbstractJavadocMojo
                     MavenProject subProject = (MavenProject) i.next();
                     if ( subProject != project )
                     {
-                        classpathElements.add( getProjectBuildOutputDir( subProject ) );
+                        classpathElements.addAll( getProjectBuildOutputDirs( subProject ) );
+
                         Set dependencyArtifacts = subProject.createArtifacts( factory, null, null );
                         if ( !dependencyArtifacts.isEmpty() )
                         {
