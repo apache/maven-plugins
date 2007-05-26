@@ -28,22 +28,22 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Goal which cleans the build. 
- * 
- * <P>This attempts to clean a project's working directory of the files that 
- * were generated at build-time. By default, it discovers and deletes the 
- * directories configured in <code>project.build.directory</code>, 
- * <code>project.build.outputDirectory</code>, 
- * <code>project.build.testOutputDirectory</code>, and 
+ * Goal which cleans the build.
+ *
+ * <P>This attempts to clean a project's working directory of the files that
+ * were generated at build-time. By default, it discovers and deletes the
+ * directories configured in <code>project.build.directory</code>,
+ * <code>project.build.outputDirectory</code>,
+ * <code>project.build.testOutputDirectory</code>, and
  * <code>project.reporting.outputDirectory</code>. </P>
- * 
- * <P>Files outside the default may also be included in the deletion by 
+ *
+ * <P>Files outside the default may also be included in the deletion by
  * configuring the <code>filesets</code> tag.</P>
  *
  * @author <a href="mailto:evenisse@maven.org">Emmanuel Venisse</a>
  * @version $Id$
  * @goal clean
- * 
+ *
  * @see org.apache.maven.plugin.clean.Fileset.
  */
 public class CleanMojo
@@ -106,20 +106,20 @@ public class CleanMojo
      */
     private boolean followSymLinks;
 
-    /** 
-     * Finds and retrieves included and excluded files, and handles their 
+    /**
+     * Finds and retrieves included and excluded files, and handles their
      * deletion
      */
     private FileSetManager fileSetManager;
 
-    
+
     /**
-     * Deletes file-sets in the following project build directory order: 
-     * (source) directory, output directory, test directory, report directory, 
+     * Deletes file-sets in the following project build directory order:
+     * (source) directory, output directory, test directory, report directory,
      * and then the additional file-sets.
-     *  
+     *
      * @see org.apache.maven.plugin.Mojo#execute()
-     * @throws MojoExecutionException When 
+     * @throws MojoExecutionException When
      */
     public void execute()
         throws MojoExecutionException
@@ -136,7 +136,7 @@ public class CleanMojo
 
     /**
      * Deletes additional file-sets specified by the <code>filesets</code> tag.
-     * 
+     *
      * @throws MojoExecutionException When a directory failed to get deleted.
      */
     private void removeAdditionalFilesets()
@@ -165,7 +165,7 @@ public class CleanMojo
 
     /**
      * Deletes a directory and its contents.
-     * 
+     *
      * @param dir The base directory of the included and excluded files.
      * @throws MojoExecutionException When a directory failed to get deleted.
      */
@@ -174,6 +174,16 @@ public class CleanMojo
     {
         if ( dir != null )
         {
+            if ( !dir.exists() )
+            {
+                return;
+            }
+
+            if ( !dir.isDirectory() )
+            {
+                throw new MojoExecutionException( dir + " is not a directory." );
+            }
+
             FileSet fs = new FileSet();
             fs.setDirectory( dir.getPath() );
             fs.addInclude( "**/**" );
@@ -200,7 +210,7 @@ public class CleanMojo
 
     /**
      * Sets the project build directory.
-     * 
+     *
      * @param newDirectory The project build directory to set.
      */
     protected void setDirectory( File newDirectory )
@@ -210,7 +220,7 @@ public class CleanMojo
 
     /**
      * Sets the project build output directory.
-     * 
+     *
      * @param newOutputDirectory The project build output directory to set.
      */
     protected void setOutputDirectory( File newOutputDirectory )
@@ -220,7 +230,7 @@ public class CleanMojo
 
     /**
      * Sets the project build test output directory.
-     * 
+     *
      * @param newTestOutputDirectory The project build test output directory to set.
      */
     protected void setTestOutputDirectory( File newTestOutputDirectory )
@@ -230,7 +240,7 @@ public class CleanMojo
 
     /**
      * Sets the project build report directory.
-     * 
+     *
      * @param newReportDirectory The project build report directory to set.
      */
     protected void setReportDirectory( File newReportDirectory )
