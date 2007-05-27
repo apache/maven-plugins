@@ -19,15 +19,65 @@ package org.apache.maven.report.projectinfo;
  * under the License.
  */
 
+import java.net.URL;
+
+import com.meterware.httpunit.GetMethodWebRequest;
+import com.meterware.httpunit.TextBlock;
+import com.meterware.httpunit.WebConversation;
+import com.meterware.httpunit.WebLink;
+import com.meterware.httpunit.WebRequest;
+import com.meterware.httpunit.WebResponse;
+
 /**
  * @author Edwin Punzalan
+ * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
+ * @version $Id $
  */
 public class IssueTrackingReportTest
     extends AbstractProjectInfoTestCase
 {
+    /**
+     * WebConversation object
+     */
+    private static final WebConversation webConversation = new WebConversation();
+
+    /**
+     * Test report
+     *
+     * @throws Exception if any
+     */
     public void testReport()
         throws Exception
     {
         generateReport( "issue-tracking", "issue-tracking-plugin-config.xml" );
+        assertTrue( "Test html generated", getGeneratedReport( "issue-tracking.html" ).exists() );
+
+        URL reportURL = getGeneratedReport( "issue-tracking.html" ).toURL();
+        assertNotNull( reportURL );
+
+        // HTTPUnit
+        WebRequest request = new GetMethodWebRequest( reportURL.toString() );
+        WebResponse response = webConversation.getResponse( request );
+
+        // Basic HTML tests
+        assertTrue( response.isHTML() );
+        assertTrue( response.getContentLength() > 0 );
+
+        // Test the Page title
+        assertEquals( getString( "report.issuetracking.name" ) + " - " + getString( "report.issuetracking.title" ),
+                      response.getTitle() );
+
+        // Test the links
+        WebLink[] weblinks = response.getLinks();
+        assertEquals( weblinks.length, 3 );
+
+        assertEquals( weblinks[1].getText(), "Jira" );
+
+        assertEquals( weblinks[2].getText(), "http://localhost/jira" );
+
+        // Test the texts
+        TextBlock[] textBlocks = response.getTextBlocks();
+        assertEquals( textBlocks[0].getText(), getString( "report.issuetracking.overview.title" ) );
+        assertEquals( textBlocks[1].getText(), getString( "report.issuetracking.name" ) );
     }
 }

@@ -17,14 +17,37 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<project>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.apache.maven.plugin.projectinfo.tests</groupId>
+  <artifactId>mailing-list</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  <name>mailing-list project info</name>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <mailingLists>
+    <mailingList>
+      <name>Test List</name>
+      <post>test@maven.apache.org</post>
+      <subscribe>test-subscribe@maven.apache.org</subscribe>
+    </mailingList>
+  </mailingLists>
   <build>
     <plugins>
       <plugin>
         <artifactId>maven-project-info-reports-plugin</artifactId>
         <configuration>
           <outputDirectory>target/test-harness/mailing-list</outputDirectory>
-          <project implementation="org.apache.maven.report.projectinfo.stubs.ProjectInfoProjectStub"/>
+          <localRepository>${localRepository}</localRepository>
+          <project implementation="org.apache.maven.report.projectinfo.stubs.MailingListStub"/>
         </configuration>
       </plugin>
     </plugins>
