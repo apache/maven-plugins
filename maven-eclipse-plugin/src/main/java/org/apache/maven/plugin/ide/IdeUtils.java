@@ -32,9 +32,12 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.Iterator;
 import java.util.List;
 
@@ -72,7 +75,8 @@ public class IdeUtils
      */
     private static final String PROPERTY_TARGET = "target"; //$NON-NLS-1$
 
-    public static String getCanonicalPath( File file ) throws MojoExecutionException
+    public static String getCanonicalPath( final File file )
+        throws MojoExecutionException
     {
         try
         {
@@ -92,10 +96,10 @@ public class IdeUtils
      *            maven project
      * @return option value (may be null)
      */
-    public static String getCompilerPluginSetting( MavenProject project, String optionName )
+    public static String getCompilerPluginSetting( final MavenProject project, final String optionName )
     {
         String value = findCompilerPluginSettingInPlugins( project.getModel().getBuild().getPlugins(), optionName );
-        if ( value == null && project.getModel().getBuild().getPluginManagement() != null )
+        if ( ( value == null ) && ( project.getModel().getBuild().getPluginManagement() != null ) )
         {
             value =
                 findCompilerPluginSettingInPlugins( project.getModel().getBuild().getPluginManagement().getPlugins(),
@@ -112,7 +116,7 @@ public class IdeUtils
      *            maven project
      * @return java source version
      */
-    public static String getCompilerSourceVersion( MavenProject project )
+    public static String getCompilerSourceVersion( final MavenProject project )
     {
         return IdeUtils.getCompilerPluginSetting( project, PROPERTY_SOURCE );
     }
@@ -125,7 +129,7 @@ public class IdeUtils
      *            maven project
      * @return java target version
      */
-    public static String getCompilerTargetVersion( MavenProject project )
+    public static String getCompilerTargetVersion( final MavenProject project )
     {
         return IdeUtils.getCompilerPluginSetting( project, PROPERTY_TARGET );
     }
@@ -141,7 +145,7 @@ public class IdeUtils
      *            expected length of the version sub-string
      * @return
      */
-    public static String getDependencyVersion( String[] artifactIds, List dependencies, int len )
+    public static String getDependencyVersion( final String[] artifactIds, final List dependencies, final int len )
     {
         for ( int j = 0; j < artifactIds.length; j++ )
         {
@@ -161,8 +165,8 @@ public class IdeUtils
     /**
      * @todo there should be a better way to do this
      */
-    public static String getPluginSetting( MavenProject project, String artifactId, String optionName,
-                                           String defaultValue )
+    public static String getPluginSetting( final MavenProject project, final String artifactId,
+                                           final String optionName, final String defaultValue )
     {
         for ( Iterator it = project.getModel().getBuild().getPlugins().iterator(); it.hasNext(); )
         {
@@ -172,7 +176,7 @@ public class IdeUtils
             {
                 Xpp3Dom o = (Xpp3Dom) plugin.getConfiguration();
 
-                if ( o != null && o.getChild( optionName ) != null )
+                if ( ( o != null ) && ( o.getChild( optionName ) != null ) )
                 {
                     return o.getChild( optionName ).getValue();
                 }
@@ -182,20 +186,22 @@ public class IdeUtils
         return defaultValue;
     }
 
-    public static String getProjectName( IdeDependency dep, boolean addVersionToProjectName )
+    public static String getProjectName( final IdeDependency dep, final boolean addVersionToProjectName )
     {
         return getProjectName( dep.getArtifactId(), dep.getVersion(), addVersionToProjectName );
     }
 
-    public static String getProjectName( MavenProject project, boolean addVersionToProjectName )
+    public static String getProjectName( final MavenProject project, final boolean addVersionToProjectName )
     {
         return getProjectName( project.getArtifactId(), project.getVersion(), addVersionToProjectName );
     }
 
-    public static Artifact resolveArtifactWithClassifier( String groupId, String artifactId, String version,
-                                                          String classifier, ArtifactRepository localRepository,
-                                                          ArtifactResolver artifactResolver,
-                                                          ArtifactFactory artifactFactory, List remoteRepos, Log log )
+    public static Artifact resolveArtifactWithClassifier( final String groupId, final String artifactId,
+                                                          final String version, final String classifier,
+                                                          final ArtifactRepository localRepository,
+                                                          final ArtifactResolver artifactResolver,
+                                                          final ArtifactFactory artifactFactory,
+                                                          final List remoteRepos, final Log log )
 
     {
         String type = classifier;
@@ -231,7 +237,7 @@ public class IdeUtils
     /**
      * @deprecated Use {@link JeeUtils#resolveEjbVersion(MavenProject)} instead
      */
-    public static String resolveEjbVersion( MavenProject project )
+    public static String resolveEjbVersion( final MavenProject project )
     {
         return JeeUtils.resolveEjbVersion( project );
     }
@@ -239,12 +245,12 @@ public class IdeUtils
     /**
      * @deprecated Use {@link JeeUtils#resolveJeeVersion(MavenProject)} instead
      */
-    public static String resolveJ2eeVersion( MavenProject project )
+    public static String resolveJ2eeVersion( final MavenProject project )
     {
         return JeeUtils.resolveJeeVersion( project );
     }
 
-    public static String resolveJavaVersion( MavenProject project )
+    public static String resolveJavaVersion( final MavenProject project )
     {
         String version = IdeUtils.getCompilerTargetVersion( project );
         if ( version == null )
@@ -252,31 +258,32 @@ public class IdeUtils
             version = IdeUtils.getCompilerSourceVersion( project );
         }
 
-        if ( "1.5".equals( version ) ) //$NON-NLS-1$ //$NON-NLS-2$
+        if ( "1.5".equals( version ) ) //$NON-NLS-1$ 
         {
-            version = IdeUtils.JAVA_5_0;// see MECLIPSE-47 eclipse only accept 5.0 as a valid version //$NON-NLS-1$
+            version = IdeUtils.JAVA_5_0;// see MECLIPSE-47 eclipse only accept 5.0 as a valid version
         }
-        else if ( "1.6".equals( version ) ) //$NON-NLS-1$ //$NON-NLS-2$
+        else if ( "1.6".equals( version ) ) //$NON-NLS-1$ 
         {
             version = IdeUtils.JAVA_6_0;
         }
-        else if ( version != null && version.length() == 1 )
+        else if ( ( version != null ) && ( version.length() == 1 ) )
         {
             version = version + ".0";// 5->5.0 6->6.0 7->7.0 //$NON-NLS-1$
         }
 
-        return version == null ? IdeUtils.JAVA_1_4 : version; //$NON-NLS-1$
+        return version == null ? IdeUtils.JAVA_1_4 : version;
     }
 
     /**
      * @deprecated Use {@link JeeUtils#resolveServletVersion(MavenProject)} instead
      */
-    public static String resolveServletVersion( MavenProject project )
+    public static String resolveServletVersion( final MavenProject project )
     {
         return JeeUtils.resolveServletVersion( project );
     }
 
-    public static String toRelativeAndFixSeparator( File basedir, File fileToAdd, boolean replaceSlashesWithDashes )
+    public static String toRelativeAndFixSeparator( final File basedir, final File fileToAdd,
+                                                    final boolean replaceSlashesWithDashes )
         throws MojoExecutionException
     {
         String basedirpath;
@@ -318,7 +325,7 @@ public class IdeUtils
      *            maven project
      * @return option value (may be null)
      */
-    private static String findCompilerPluginSettingInPlugins( List plugins, String optionName )
+    private static String findCompilerPluginSettingInPlugins( final List plugins, final String optionName )
     {
         String value = null;
 
@@ -331,7 +338,7 @@ public class IdeUtils
                 Xpp3Dom o = (Xpp3Dom) plugin.getConfiguration();
 
                 // this is the default setting
-                if ( o != null && o.getChild( optionName ) != null )
+                if ( ( o != null ) && ( o.getChild( optionName ) != null ) )
                 {
                     value = o.getChild( optionName ).getValue();
                 }
@@ -342,9 +349,35 @@ public class IdeUtils
                 for ( Iterator iter = executions.iterator(); iter.hasNext(); )
                 {
                     PluginExecution execution = (PluginExecution) iter.next();
-                    o = (Xpp3Dom) execution.getConfiguration();
 
-                    if ( o != null && o.getChild( optionName ) != null )
+                    // round-trip this configuration through a String, so that
+                    // any plexus-utils shading that may happen in future maven
+                    // releases will not cause a ClassCastException on Xpp3Dom.
+                    String config = String.valueOf( execution.getConfiguration() );
+                    try
+                    {
+                        o = Xpp3DomBuilder.build( new StringReader( config ) );
+                    }
+                    catch ( XmlPullParserException e )
+                    {
+                        IllegalStateException error =
+                            new IllegalStateException( "Failed to read configuration for plugin-execution: "
+                                                       + plugin.getKey() + ":" + execution.getId() );
+                        error.initCause( e );
+
+                        throw error;
+                    }
+                    catch ( IOException e )
+                    {
+                        IllegalStateException error =
+                            new IllegalStateException( "Failed to read configuration for plugin-execution: "
+                                                       + plugin.getKey() + ":" + execution.getId() );
+                        error.initCause( e );
+
+                        throw error;
+                    }
+
+                    if ( ( o != null ) && ( o.getChild( optionName ) != null ) )
                     {
                         value = o.getChild( optionName ).getValue();
                     }
@@ -354,7 +387,8 @@ public class IdeUtils
         return value;
     }
 
-    private static String getProjectName( String artifactId, String version, boolean addVersionToProjectName )
+    private static String getProjectName( final String artifactId, final String version,
+                                          final boolean addVersionToProjectName )
     {
         if ( addVersionToProjectName )
         {
