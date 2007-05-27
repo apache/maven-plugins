@@ -19,15 +19,63 @@ package org.apache.maven.report.projectinfo;
  * under the License.
  */
 
+import java.net.URL;
+
+import com.meterware.httpunit.GetMethodWebRequest;
+import com.meterware.httpunit.TextBlock;
+import com.meterware.httpunit.WebConversation;
+import com.meterware.httpunit.WebRequest;
+import com.meterware.httpunit.WebResponse;
+
 /**
  * @author Edwin Punzalan
+ * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
+ * @version $Id $
  */
 public class ScmReportTest
     extends AbstractProjectInfoTestCase
 {
+    /**
+     * WebConversation object
+     */
+    private static final WebConversation webConversation = new WebConversation();
+
+    /**
+     * Test report
+     *
+     * @throws Exception if any
+     */
     public void testReport()
         throws Exception
     {
         generateReport( "scm", "scm-plugin-config.xml" );
+        assertTrue( "Test html generated", getGeneratedReport( "source-repository.html" ).exists() );
+
+        URL reportURL = getGeneratedReport( "source-repository.html" ).toURL();
+        assertNotNull( reportURL );
+
+        // HTTPUnit
+        WebRequest request = new GetMethodWebRequest( reportURL.toString() );
+        WebResponse response = webConversation.getResponse( request );
+
+        // Basic HTML tests
+        assertTrue( response.isHTML() );
+        assertTrue( response.getContentLength() > 0 );
+
+        // Test the Page title
+        assertEquals( getString( "report.scm.name" ) + " - " + getString( "report.scm.title" ),
+                      response.getTitle() );
+
+        // Test the texts
+        TextBlock[] textBlocks = response.getTextBlocks();
+
+        assertEquals( textBlocks.length, 6 );
+
+        assertEquals( getString( "report.scm.overview.title" ), textBlocks[0].getText() );
+        assertEquals( getString( "report.scm.general.intro" ), textBlocks[1].getText() );
+        assertEquals( getString( "report.scm.webaccess.title" ), textBlocks[2].getText() );
+        assertEquals( getString( "report.scm.webaccess.nourl" ), textBlocks[3].getText() );
+        assertEquals( getString( "report.scm.accessbehindfirewall.title" ), textBlocks[4].getText() );
+        assertEquals( getString( "report.scm.accessbehindfirewall.general.intro" ), textBlocks[5].getText() );
     }
 }
