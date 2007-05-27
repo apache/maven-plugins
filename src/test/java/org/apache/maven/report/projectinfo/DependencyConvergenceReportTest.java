@@ -19,15 +19,55 @@ package org.apache.maven.report.projectinfo;
  * under the License.
  */
 
+import java.net.URL;
+
+import com.meterware.httpunit.GetMethodWebRequest;
+import com.meterware.httpunit.TextBlock;
+import com.meterware.httpunit.WebConversation;
+import com.meterware.httpunit.WebRequest;
+import com.meterware.httpunit.WebResponse;
+
 /**
  * @author Edwin Punzalan
+ * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
+ * @version $Id $
  */
 public class DependencyConvergenceReportTest
     extends AbstractProjectInfoTestCase
 {
+    /**
+     * WebConversation object
+     */
+    private static final WebConversation webConversation = new WebConversation();
+
+    /**
+     * Test report
+     *
+     * @throws Exception if any
+     */
     public void testReport()
         throws Exception
     {
         generateReport( "dependency-convergence", "dependency-convergence-plugin-config.xml" );
+        assertTrue( "Test html generated", getGeneratedReport( "dependency-convergence.html" ).exists() );
+
+        URL reportURL = getGeneratedReport( "dependency-convergence.html" ).toURL();
+        assertNotNull( reportURL );
+
+        // HTTPUnit
+        WebRequest request = new GetMethodWebRequest( reportURL.toString() );
+        WebResponse response = webConversation.getResponse( request );
+
+        // Basic HTML tests
+        assertTrue( response.isHTML() );
+        assertTrue( response.getContentLength() > 0 );
+
+        // Test the Page title
+        assertEquals( getString( "report.dependency-convergence.name" ) + " - " + getString( "report.dependency-convergence.title" ),
+                      response.getTitle() );
+
+        // Test the texts
+        TextBlock[] textBlocks = response.getTextBlocks();
+        assertEquals( textBlocks[0].getText(), getString( "report.dependency-convergence.title" ) );
     }
 }

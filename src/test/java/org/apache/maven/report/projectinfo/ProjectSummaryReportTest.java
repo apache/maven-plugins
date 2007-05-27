@@ -19,15 +19,60 @@ package org.apache.maven.report.projectinfo;
  * under the License.
  */
 
+import java.net.URL;
+
+import com.meterware.httpunit.GetMethodWebRequest;
+import com.meterware.httpunit.TextBlock;
+import com.meterware.httpunit.WebConversation;
+import com.meterware.httpunit.WebRequest;
+import com.meterware.httpunit.WebResponse;
+
 /**
  * @author Edwin Punzalan
+ * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
+ * @version $Id $
  */
 public class ProjectSummaryReportTest
     extends AbstractProjectInfoTestCase
 {
+    /**
+     * WebConversation object
+     */
+    private static final WebConversation webConversation = new WebConversation();
+
+    /**
+     * Test report
+     *
+     * @throws Exception if any
+     */
     public void testReport()
         throws Exception
     {
         generateReport( "summary", "summary-plugin-config.xml" );
+        assertTrue( "Test html generated", getGeneratedReport( "project-summary.html" ).exists() );
+
+        URL reportURL = getGeneratedReport( "project-summary.html" ).toURL();
+        assertNotNull( reportURL );
+
+        // HTTPUnit
+        WebRequest request = new GetMethodWebRequest( reportURL.toString() );
+        WebResponse response = webConversation.getResponse( request );
+
+        // Basic HTML tests
+        assertTrue( response.isHTML() );
+        assertTrue( response.getContentLength() > 0 );
+
+        // Test the Page title
+        assertEquals( getString( "report.summary.name" ) + " - " + getString( "report.summary.title" ),
+                      response.getTitle() );
+
+        // Test the texts
+        TextBlock[] textBlocks = response.getTextBlocks();
+
+        assertEquals( getString( "report.summary.title" ), textBlocks[0].getText() );
+        assertEquals( getString( "report.summary.general.title" ), textBlocks[1].getText() );
+        assertEquals( getString( "report.summary.organization.title" ), textBlocks[2].getText() );
+        assertEquals( getString( "report.summary.noorganization" ), textBlocks[3].getText() );
+        assertEquals( getString( "report.summary.build.title" ), textBlocks[4].getText() );
     }
 }
