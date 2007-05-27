@@ -19,15 +19,71 @@ package org.apache.maven.report.projectinfo;
  * under the License.
  */
 
+import java.net.URL;
+import java.util.Locale;
+
+import com.meterware.httpunit.GetMethodWebRequest;
+import com.meterware.httpunit.TextBlock;
+import com.meterware.httpunit.WebConversation;
+import com.meterware.httpunit.WebRequest;
+import com.meterware.httpunit.WebResponse;
+
 /**
  * @author Edwin Punzalan
+ * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
+ * @version $Id $
  */
 public class MailingListsReportTest
     extends AbstractProjectInfoTestCase
 {
+    /**
+     * WebConversation object
+     */
+    private static final WebConversation webConversation = new WebConversation();
+
+    /**
+     * Test report
+     *
+     * @throws Exception if any
+     */
     public void testReport()
         throws Exception
     {
         generateReport( "mailing-list", "mailing-list-plugin-config.xml" );
+        assertTrue( "Test html generated", getGeneratedReport( "mail-lists.html" ).exists() );
+
+        URL reportURL = getGeneratedReport( "mail-lists.html" ).toURL();
+        assertNotNull( reportURL );
+
+        // HTTPUnit
+        WebRequest request = new GetMethodWebRequest( reportURL.toString() );
+        WebResponse response = webConversation.getResponse( request );
+
+        // Basic HTML tests
+        assertTrue( response.isHTML() );
+        assertTrue( response.getContentLength() > 0 );
+
+        // Test the Page title
+        assertEquals( getString( "report.mailing-lists.name" ) + " - " + getString( "report.mailing-lists.title" ),
+                      response.getTitle() );
+
+        // Test the texts
+        TextBlock[] textBlocks = response.getTextBlocks();
+        assertEquals( textBlocks[0].getText(), getString( "report.mailing-lists.title" ) );
+        assertEquals( textBlocks[1].getText(), getString( "report.mailing-lists.intro" ) );
+    }
+
+    /**
+     * Test report in French (MPIR-59)
+     *
+     * @throws Exception if any
+     */
+    public void testFrenchReport()
+        throws Exception
+    {
+        Locale.setDefault( Locale.FRENCH );
+
+        generateReport( "mailing-list", "mailing-list-plugin-config.xml" );
+        assertTrue( "Test html generated", getGeneratedReport( "mail-lists.html" ).exists() );
     }
 }

@@ -119,7 +119,7 @@ public class ProjectSummaryReport
             Organization organization = project.getOrganization();
             if ( organization == null )
             {
-                paragraph( "This project does not belong to an organization." );
+                paragraph( getReportString( "report.summary.noorganization" ) );
             }
             else
             {
