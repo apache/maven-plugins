@@ -132,7 +132,7 @@ public abstract class ProjectInfoProjectStub
      */
     public File getBasedir()
     {
-        return new File( super.getBasedir() + "/src/test/plugin-configs/" );
+        return new File( super.getBasedir() + "/src/test/resources/plugin-configs/" );
     }
 
     /**

@@ -164,7 +164,7 @@ public abstract class AbstractProjectInfoTestCase
     protected File generateReport( String goal, String pluginXml )
         throws Exception
     {
-        File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/" + pluginXml );
+        File pluginXmlFile = new File( getBasedir(), "src/test/resources/plugin-configs/" + pluginXml );
         Mojo mojo = lookupMojo( goal, pluginXmlFile );
         assertNotNull( "Mojo found.", mojo );
 
