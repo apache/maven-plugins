@@ -37,8 +37,7 @@ under the License.
     <url>http://jira.codehaus.org/browse/MCHANGELOG</url>
   </issueManagement>
   <mailingLists>
-        <!-- duplication from maven-plugins pom - temporary until they inherit properly 
-    -->
+    <!-- duplication from maven-plugins pom - temporary until they inherit properly -->
     <mailingList>
       <name>Maven User List</name>
       <subscribe>users-subscribe@maven.apache.org</subscribe>
@@ -64,8 +63,7 @@ under the License.
       <post>commits@maven.apache.org</post>
       <archive>http://mail-archives.apache.org/mod_mbox/maven-dev</archive>
     </mailingList>
-        <!-- duplication from maven-parent pom - temporary until they inherit properly 
-    -->
+    <!-- duplication from maven-parent pom - temporary until they inherit properly -->
     <mailingList>
       <name>Maven Announcements List</name>
       <post>announce@maven.apache.org</post>
@@ -252,12 +250,11 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-plugin-testing-harness</artifactId>
-      <version>1.0-beta-1</version>
+      <version>1.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
   <properties>
-    <maven-scm.version>1.0-SNAPSHOT</maven-scm.version>
+    <maven-scm.version>1.0</maven-scm.version>
   </properties>
 </project>
-
