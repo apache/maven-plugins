@@ -1143,12 +1143,12 @@ public class ChangeLogReport
         if ( linkFile != null )
         {
             sink.link( linkFile );
-            sink.text( name );
+            sinkFileName( name, sink );
             sink.link_();
         }
         else
         {
-            sink.text( name );
+            sinkFileName( name, sink );
         }
 
         sink.text( " " );
@@ -1163,6 +1163,33 @@ public class ChangeLogReport
         {
             sink.text( "v " + revision );
         }
+    }
+
+    /**
+     * Encapsulates the logic for rendering the name with a bolded markup.
+     *
+     * @param name filename of the file that was changed
+     * @param sink the report formatting tool
+     */
+    private void sinkFileName( String name, Sink sink )
+    {
+        name = name.replaceAll( "\\\\", "/" );
+        int pos = name.lastIndexOf( '/' );
+
+        String head;
+        String tail;
+        if (pos < 0) {
+            head = "";
+            tail = name;
+        } else {
+            head = name.substring( 0, pos ) + "/";
+            tail = name.substring( pos + 1 );
+        }
+
+        sink.text( head );
+        sink.bold();
+        sink.text( tail );
+        sink.bold_();
     }
 
     /**
