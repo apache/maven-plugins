@@ -25,7 +25,12 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.StringUtils;
 
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
+import java.awt.Toolkit;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -38,12 +43,19 @@ import java.util.TreeMap;
  * Generates the Dependency Convergence report for reactor builds.
  *
  * @author <a href="mailto:joakim@erdfelt.com">Joakim Erdfelt</a>
+ * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton </a>
+ * @version $Id $
  * @goal dependency-convergence
  * @aggregator
  */
 public class DependencyConvergenceReport
     extends AbstractProjectInfoReport
 {
+    private static final int PERCENTAGE = 100;
+
+    private static final List SUPPORTED_FONT_FAMILY_NAMES = Arrays.asList( GraphicsEnvironment
+        .getLocalGraphicsEnvironment().getAvailableFontFamilyNames() );
+
     /**
      * The projects in the current build. The effective-POM for
      * each of these projects will written.
@@ -54,23 +66,33 @@ public class DependencyConvergenceReport
      */
     private List reactorProjects;
 
-    private static final int PERCENTAGE = 100;
-
+    /**
+     * @see org.apache.maven.reporting.AbstractMavenReport#getOutputName()
+     */
     public String getOutputName()
     {
         return "dependency-convergence";
     }
 
+    /**
+     * @see org.apache.maven.reporting.AbstractMavenReport#getName(java.util.Locale)
+     */
     public String getName( Locale locale )
     {
         return getI18nString( locale, "name" );
     }
 
+    /**
+     * @see org.apache.maven.reporting.AbstractMavenReport#getDescription(java.util.Locale)
+     */
     public String getDescription( Locale locale )
     {
         return getI18nString( locale, "description" );
     }
 
+    /**
+     * @see org.apache.maven.reporting.AbstractMavenReport#executeReport(java.util.Locale)
+     */
     protected void executeReport( Locale locale )
         throws MavenReportException
     {
@@ -95,21 +117,38 @@ public class DependencyConvergenceReport
         // legend
         generateLegend( locale, sink );
 
+        sink.lineBreak();
+
         // stats
         generateStats( locale, sink, dependencyMap );
 
+        sink.section1_();
+
         // convergence
         generateConvergence( locale, sink, dependencyMap );
-
-        sink.section1_();
 
         sink.body_();
         sink.flush();
     }
 
+    /**
+     * Generate the convergenec table for all dependencies
+     *
+     * @param locale
+     * @param sink
+     * @param dependencyMap
+     */
     private void generateConvergence( Locale locale, Sink sink, Map dependencyMap )
     {
+        sink.section2();
+
+        sink.sectionTitle2();
         sink.text( getI18nString( locale, "convergence.caption" ) );
+        sink.sectionTitle2_();
+
+        // To know the cell width for version
+        String biggestVersion = getBiggestStringVersion( dependencyMap );
+        int cellWidth = getMavenTableCell( biggestVersion );
 
         Iterator it = dependencyMap.keySet().iterator();
         while ( it.hasNext() )
@@ -117,18 +156,27 @@ public class DependencyConvergenceReport
             String key = (String) it.next();
             List depList = (List) dependencyMap.get( key );
 
-            sink.section2();
-            sink.sectionTitle2();
+            sink.section3();
+            sink.sectionTitle3();
             sink.text( key );
-            sink.sectionTitle2_();
+            sink.sectionTitle3_();
 
-            generateDependencyDetails( sink, depList );
+            generateDependencyDetails( sink, depList, cellWidth );
 
-            sink.section2_();
+            sink.section3_();
         }
+
+        sink.section2_();
     }
 
-    private void generateDependencyDetails( Sink sink, List depList )
+    /**
+     * Generate the detail table for a given dependency
+     *
+     * @param sink
+     * @param depList
+     * @param cellWidth
+     */
+    private void generateDependencyDetails( Sink sink, List depList, int cellWidth )
     {
         sink.table();
 
@@ -136,7 +184,7 @@ public class DependencyConvergenceReport
 
         sink.tableRow();
 
-        sink.tableCell();
+        sink.tableCell( "15px" ); // according /images/icon_success_sml.gif and /images/icon_error_sml.gif
         if ( artifactMap.size() > 1 )
         {
             iconError( sink );
@@ -150,12 +198,13 @@ public class DependencyConvergenceReport
         sink.tableCell();
 
         sink.table();
+
         Iterator it = artifactMap.keySet().iterator();
         while ( it.hasNext() )
         {
             String version = (String) it.next();
             sink.tableRow();
-            sink.tableCell();
+            sink.tableCell( String.valueOf( cellWidth ) + "px" );
             sink.text( version );
             sink.tableCell_();
 
@@ -218,16 +267,24 @@ public class DependencyConvergenceReport
         return uniqueArtifactMap;
     }
 
+    /**
+     * Generate the legend table
+     *
+     * @param locale
+     * @param sink
+     */
     private void generateLegend( Locale locale, Sink sink )
     {
         sink.table();
         sink.tableCaption();
-        sink.text( getI18nString( locale, "legend" ) + ":" );
+        sink.bold();
+        sink.text( getI18nString( locale, "legend" ) );
+        sink.bold_();
         sink.tableCaption_();
 
         sink.tableRow();
 
-        sink.tableCell();
+        sink.tableCell( "15px" ); // according /images/icon_success_sml.gif
         iconSuccess( sink );
         sink.tableCell_();
         sink.tableCell();
@@ -238,7 +295,7 @@ public class DependencyConvergenceReport
 
         sink.tableRow();
 
-        sink.tableCell();
+        sink.tableCell( "15px" ); // according /images/icon_error_sml.gif
         iconError( sink );
         sink.tableCell_();
         sink.tableCell();
@@ -250,6 +307,13 @@ public class DependencyConvergenceReport
         sink.table_();
     }
 
+    /**
+     * Generate the statistic table
+     *
+     * @param locale
+     * @param sink
+     * @param dependencyMap
+     */
     private void generateStats( Locale locale, Sink sink, Map dependencyMap )
     {
         int depCount = dependencyMap.size();
@@ -267,14 +331,29 @@ public class DependencyConvergenceReport
 
         int convergence = (int) ( ( (double) depCount / (double) artifactCount ) * PERCENTAGE );
 
+        // To know the header cell width
+        List l = new ArrayList();
+        l.add( getI18nString( locale, "stats.subprojects" ) );
+        l.add( getI18nString( locale, "stats.dependencies" ) );
+        l.add( getI18nString( locale, "stats.artifacts" ) );
+        l.add( getI18nString( locale, "stats.snapshots" ) );
+        l.add( getI18nString( locale, "stats.convergence" ) );
+        l.add( getI18nString( locale, "stats.readyrelease" ) );
+
+        String biggest = getBiggestString( l );
+        String headerCellWidth = getMavenTableHeaderCell( biggest ) + "px";
+
+        // Create report
         sink.table();
         sink.tableCaption();
+        sink.bold();
         sink.text( getI18nString( locale, "stats.caption" ) );
+        sink.bold_();
         sink.tableCaption_();
 
         sink.tableRow();
-        sink.tableHeaderCell();
-        sink.text( getI18nString( locale, "stats.subprojects" ) + ":" );
+        sink.tableHeaderCell( headerCellWidth );
+        sink.text( getI18nString( locale, "stats.subprojects" ) );
         sink.tableHeaderCell_();
         sink.tableCell();
         sink.text( String.valueOf( reactorProjects.size() ) );
@@ -282,8 +361,8 @@ public class DependencyConvergenceReport
         sink.tableRow_();
 
         sink.tableRow();
-        sink.tableHeaderCell();
-        sink.text( getI18nString( locale, "stats.dependencies" ) + ":" );
+        sink.tableHeaderCell( headerCellWidth );
+        sink.text( getI18nString( locale, "stats.dependencies" ) );
         sink.tableHeaderCell_();
         sink.tableCell();
         sink.text( String.valueOf( depCount ) );
@@ -291,8 +370,8 @@ public class DependencyConvergenceReport
         sink.tableRow_();
 
         sink.tableRow();
-        sink.tableHeaderCell();
-        sink.text( getI18nString( locale, "stats.artifacts" ) + ":" );
+        sink.tableHeaderCell( headerCellWidth );
+        sink.text( getI18nString( locale, "stats.artifacts" ) );
         sink.tableHeaderCell_();
         sink.tableCell();
         sink.text( String.valueOf( artifactCount ) );
@@ -300,8 +379,8 @@ public class DependencyConvergenceReport
         sink.tableRow_();
 
         sink.tableRow();
-        sink.tableHeaderCell();
-        sink.text( getI18nString( locale, "stats.snapshots" ) + ":" );
+        sink.tableHeaderCell( headerCellWidth );
+        sink.text( getI18nString( locale, "stats.snapshots" ) );
         sink.tableHeaderCell_();
         sink.tableCell();
         sink.text( String.valueOf( snapshotCount ) );
@@ -309,11 +388,10 @@ public class DependencyConvergenceReport
         sink.tableRow_();
 
         sink.tableRow();
-        sink.tableHeaderCell();
-        sink.text( getI18nString( locale, "stats.convergence" ) + ":" );
+        sink.tableHeaderCell( headerCellWidth );
+        sink.text( getI18nString( locale, "stats.convergence" ) );
         sink.tableHeaderCell_();
         sink.tableCell();
-
         if ( convergence < PERCENTAGE )
         {
             iconError( sink );
@@ -323,7 +401,6 @@ public class DependencyConvergenceReport
             iconSuccess( sink );
         }
         sink.nonBreakingSpace();
-
         sink.bold();
         sink.text( String.valueOf( convergence ) + "%" );
         sink.bold_();
@@ -331,8 +408,8 @@ public class DependencyConvergenceReport
         sink.tableRow_();
 
         sink.tableRow();
-        sink.tableHeaderCell();
-        sink.text( getI18nString( locale, "stats.readyrelease" ) + ":" );
+        sink.tableHeaderCell( headerCellWidth );
+        sink.text( getI18nString( locale, "stats.readyrelease" ) );
         sink.tableHeaderCell_();
         sink.tableCell();
         if ( convergence >= PERCENTAGE && snapshotCount <= 0 )
@@ -457,6 +534,9 @@ public class DependencyConvergenceReport
             return project;
         }
 
+        /**
+         * @see java.lang.Object#toString()
+         */
         public String toString()
         {
             return project.getId();
@@ -466,6 +546,9 @@ public class DependencyConvergenceReport
     private static class ProjectComparator
         implements Comparator
     {
+        /**
+         * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+         */
         public int compare( Object o1, Object o2 )
         {
             if ( o1 instanceof ReverseDependencyLink && o2 instanceof ReverseDependencyLink )
@@ -474,10 +557,8 @@ public class DependencyConvergenceReport
                 ReverseDependencyLink p2 = (ReverseDependencyLink) o2;
                 return p1.getProject().getId().compareTo( p2.getProject().getId() );
             }
-            else
-            {
-                return 0;
-            }
+
+            return 0;
         }
     }
 
@@ -490,4 +571,149 @@ public class DependencyConvergenceReport
         return reactorProjects.size() > 1;
     }
 
+    /**
+     * @param dependencyMap a map with <code>version</code> as key
+     * @return the biggest string of <code>version</code>
+     */
+    private String getBiggestStringVersion( Map dependencyMap )
+    {
+        String biggestVersion = "";
+
+        Iterator it = dependencyMap.keySet().iterator();
+        while ( it.hasNext() )
+        {
+            String key = (String) it.next();
+            List depList = (List) dependencyMap.get( key );
+            Map artifactMap = getSortedUniqueArtifactMap( depList );
+
+            String biggestTmp = getBiggestString( artifactMap.keySet() );
+            if ( biggestVersion.length() < biggestTmp.length() )
+            {
+                biggestVersion = biggestTmp;
+            }
+        }
+
+        return biggestVersion;
+    }
+
+    /**
+     * @param l a collection of String
+     * @return the biggest <code>String</code> in the collection
+     */
+    private static String getBiggestString( Collection l )
+    {
+        String biggest = "";
+
+        Iterator it = l.iterator();
+        while ( it.hasNext() )
+        {
+            String text = (String) it.next();
+            if ( biggest.length() < text.length() )
+            {
+                biggest = text;
+            }
+        }
+
+        return biggest;
+    }
+
+    /**
+     * The header cell style has the following hierarchy:
+     * <pre>
+     * html > body .composite > div #bodyColumn > div #contentBox > div .section > div .section > table .bodyTable > tbody > tr .a > td > table .bodyTable > tbody > tr .b > td
+     * </pre>
+     * Extract from <code>maven-theme.css</code>:
+     * <pre>
+     * body, td, select, input, li{
+     *   font-family: Verdana, Helvetica, Arial, sans-serif;
+     *   font-size: 13px;
+     * }
+     * </pre>
+     *
+     * @param s a String
+     * @return the total advance width for showing the specified <code>String</code> using the Maven table cell.
+     * @see #getStringWidth(String, int, int)
+     */
+    private static int getMavenTableCell( String s )
+    {
+        return getStringWidth( s, Font.PLAIN, 13 );
+    }
+
+    /**
+     * The header cell style has the following hierarchy:
+     * <pre>
+     * html > body .composite > div #bodyColumn > div #contentBox > div .section > table .bodyTable > tbody > tr .a > th
+     * </pre>
+     * Extract from <code>maven-theme.css</code>:
+     * <pre>
+     * body, td, select, input, li{
+     *   font-family: Verdana, Helvetica, Arial, sans-serif;
+     *   font-size: 13px;
+     * }
+     * table.bodyTable th{
+     *   color: white;
+     *   background-color: #bbbbbb;
+     *   text-align: left;
+     *   font-weight: bold;
+     * }
+     * </pre>
+     *
+     * @param s a String
+     * @return the total advance width for showing the specified <code>String</code> using the Maven table header cell.
+     * @see #getStringWidth(String, int, int)
+     */
+    private static int getMavenTableHeaderCell( String s )
+    {
+        return getStringWidth( s, Font.BOLD, 13 );
+    }
+
+    /**
+     * @param s a String
+     * @param style an AWT style
+     * @param size an AWT size
+     * @return the total advance width for showing the specified <code>String</code> depending
+     * the Maven CSS, ie the font family and the specified <code>style</code> and <code>size</code>.
+     * @see #getMavenFontFamily()
+     */
+    private static int getStringWidth( String s, int style, int size )
+    {
+        Font font = new Font( getMavenFontFamily(), style, size );
+
+        return Toolkit.getDefaultToolkit().getFontMetrics( font ).stringWidth( s );
+    }
+
+    /**
+     * Extract from <code>maven-theme.css</code>:
+     * <pre>
+     * body, td, select, input, li{
+     *   font-family: Verdana, Helvetica, Arial, sans-serif;
+     *   font-size: 13px;
+     * }
+     * </pre>
+     *
+     * @todo maybe use batik-css to parse the maven-theme.css
+     *
+     * @return a AWT font family name
+     */
+    private static String getMavenFontFamily()
+    {
+        if ( SUPPORTED_FONT_FAMILY_NAMES.contains( "Verdana" ) )
+        {
+            return "Verdana";
+        }
+        else if ( SUPPORTED_FONT_FAMILY_NAMES.contains( "Helvetica" ) )
+        {
+            return "Helvetica";
+        }
+        else if ( SUPPORTED_FONT_FAMILY_NAMES.contains( "Arial" ) )
+        {
+            return "Arial";
+        }
+        else if ( SUPPORTED_FONT_FAMILY_NAMES.contains( "SansSerif" ) )
+        {
+            return "SansSerif";
+        }
+
+        return "Default";
+    }
 }

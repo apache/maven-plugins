@@ -1,8 +1,5 @@
 package org.apache.maven.report.projectinfo.stubs;
 
-import java.util.Collections;
-import java.util.List;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,6 +18,12 @@ import java.util.List;
  * specific language governing permissions and limitations
  * under the License.
  */
+
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.Dependency;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
@@ -42,6 +45,12 @@ public class SubProject2Stub
      */
     public List getDependencies()
     {
-        return Collections.EMPTY_LIST;
+        Dependency d = new Dependency();
+        d.setGroupId( "junit" );
+        d.setArtifactId( "junit" );
+        d.setVersion( "3.8.1" );
+        d.setScope( Artifact.SCOPE_COMPILE );
+
+        return Collections.singletonList( d );
     }
 }
