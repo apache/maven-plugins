@@ -47,8 +47,8 @@ under the License.
       <question>Is there any support of Antlr v3?</question>
       <answer>
         <p>
-          Not yet. You could see the <a href="http://jira.codehaus.org/browse/MANTLR-17">MANTLR-17</a> issue
-          for the status.
+          A maven-antlr3-plugin is actually in the Maven Sandbox. You could try it
+          <a href="http://svn.apache.org/repos/asf/maven/sandbox/trunk/plugins/maven-antlr3-plugin">here</a>.
         </p>
       </answer>
     </faq>
