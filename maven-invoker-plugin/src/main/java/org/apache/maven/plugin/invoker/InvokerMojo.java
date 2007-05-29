@@ -591,12 +591,10 @@ public class InvokerMojo
             catch ( final IOException e )
             {
                 result = false;
-                failures.add( pom );
             }
             catch ( final EvalError e )
             {
                 result = false;
-                failures.add( pom );
             }
         }
 
@@ -673,12 +671,10 @@ public class InvokerMojo
             catch ( final IOException e )
             {
                 result = false;
-                failures.add( pom );
             }
             catch ( final EvalError e )
             {
                 result = false;
-                failures.add( pom );
             }
         }
 
