@@ -20,7 +20,7 @@
 -->
 <faqs id="FAQ" title="Frequently Asked Questions">
  <part id="General">
-   <faq id="question">
+   <faq id="plugin name">
      <question>What is the difference between dependency-maven-plugin and maven-dependency-plugin?</question>
      <answer>
         <p>
@@ -30,7 +30,7 @@
         </p>
      </answer>
       </faq>
-      <faq id="question">
+      <faq id="cli">
      <question>When executing mvn dependency:unpack or dependency:copy from the command line, I get "One or more required plugin parameters are invalid/missing for 'dependency:unpack'"</question>
 	 <answer>
 	 	<p>
@@ -44,6 +44,24 @@
 	 		</pre>
 	 	</p>
 	 </answer>	
+  </faq>
+  <faq id="missing">
+  <question>Why am I getting errors that a documented goal or parameter is missing?</question>
+  <answer><p>The latest documents are published and may preceed the actual release. Check to make sure the goal/parameter is in the most recent version.
+  	<b> -OR- </b>
+  	Maven may be resolving the older codehaus version of the dependency plugin. See next question.</p>
+  </answer>
+  </faq>
+    <faq id="question">
+  <question>Why is Maven resolving "dependency:xxx" to the older org.codehaus.mojo:dependency-maven-plugin?</question>
+  <answer><p>
+  	Due to a bug in Maven in versions prior to 2.0.7 (<a href="http://jira.codehaus.org/browse/MNG-2926">MNG-2926</a>) the search order was reversed and caused Mojo plugins to supercede ones with the same prefix at Apache.
+  	The metadata at mojo was cleaned up when the maven-dependency-plugin was released at Apache. If you are still experiencing this error, chances are you have
+  	old metadata in your local repository or in a proxy / internal repository. Removing /org/codehaus/mojo/maven-metadata.* from your repo/proxy will cause it to 
+  	be refreshed. Alternatively, you can specify the groupId explicitely in your pom (if you are using a bound goal), or on the command line, use groupId:artifactId:version:mojo, ie mvn
+org.apache.maven.plugins:maven-dependency-plugin:2.0-alpha-4:unpack
+  	</p>
+  </answer>
   </faq>
  </part>
 </faqs>
