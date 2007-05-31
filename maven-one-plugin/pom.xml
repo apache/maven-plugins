@@ -26,7 +26,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>maven-one-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <name>Maven 1.x Plugin</name>
+  <name>Maven One Plugin</name>
   <version>1.1-SNAPSHOT</version>
   <prerequisites>
     <maven>2.0</maven>
