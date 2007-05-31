@@ -163,20 +163,9 @@ public class DeveloperActivityReport
     private void doChangedSets( ChangeLogSet set, ResourceBundle bundle, Sink sink )
     {
         sink.section2();
-        sink.sectionTitle2();
-        if ( set.getStartDate() == null )
-        {
-            sink.text( bundle.getString( "report.SetRangeUnknown" ) );
-        }
-        else if ( set.getEndDate() == null )
-        {
-            sink.text( bundle.getString( "report.SetRangeSince" ) );
-        }
-        else
-        {
-            sink.text( " " + set.getStartDate() + " " + bundle.getString( "report.To" ) + " " + set.getEndDate() );
-            sink.sectionTitle2_();
-        }
+
+        doChangeSetTitle( set, bundle, sink );
+
         doSummary( set, bundle, sink );
 
         sink.table();
@@ -198,29 +187,6 @@ public class DeveloperActivityReport
         sink.table_();
 
         sink.section2_();
-    }
-
-    /**
-     * generates the report summary section of the report
-     *
-     * @param set    changed set to generate the report from
-     * @param bundle the resource bundle to retrieve report phrases from
-     * @param sink   the report formatting tool
-     */
-    private void doSummary( ChangeLogSet set, ResourceBundle bundle, Sink sink )
-    {
-        sink.paragraph();
-
-        sink.text( bundle.getString( "report.dev-activity.range" ) );
-        sink.text( ": " + set.getStartDate() + " " + bundle.getString( "report.To" ) + " " + set.getEndDate() );
-
-        sink.text( ", " + bundle.getString( "report.TotalCommits" ) );
-        sink.text( ":" + set.getChangeSets().size() );
-
-        sink.text( ", " + bundle.getString( "report.dev-activity.filesChanged" ) );
-        sink.text( ":" + countFilesChanged( set.getChangeSets() ) );
-
-        sink.paragraph_();
     }
 
     /**
