@@ -78,6 +78,18 @@ public interface EarModule
     public Boolean shouldUnpack();
 
     /**
+     * The alt-dd element specifies an optional URI to the post-assembly version
+     * of the deployment descriptor file for a particular Java EE module. The URI
+     * must specify the full pathname of the deployment descriptor file relative
+     * to the application's root directory.
+     *
+     * @return the alternative deployment descriptor for this module
+     *
+     * @since JavaEE 5
+     */
+    public String getAltDeploymentDescriptor();
+
+    /**
      * Appends the <tt>XML</tt> representation of this module.
      *
      * @param writer  the writer to use
@@ -92,6 +104,7 @@ public interface EarModule
      *
      * @param artifacts the project's artifacts
      * @throws EarPluginException if the artifact could not be resolved
+     * @throws MojoFailureException if an unexpected error occured
      */
     public void resolveArtifact( Set artifacts )
         throws EarPluginException, MojoFailureException;

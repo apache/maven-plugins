@@ -108,6 +108,9 @@ EAR Modules
   * <<unpack>> - set to true to unpack this artifact into the ear archive according
   to its uri. Default is false.
 
+  * <<altDeploymentDescriptor>> - sets the alternative deployment descriptor for
+  this module. (Java EE5).
+
 
 * {ejbClientModule} Properties
 
@@ -138,6 +141,9 @@ EAR Modules
 
   * <<unpack>> - set to true to unpack this artifact into the ear archive according
   to its uri. Default is false.
+
+  * <<altDeploymentDescriptor>> - sets the alternative deployment descriptor for
+  this module. (Java EE5).
 
 
 * {ejbModule} Properties
@@ -170,6 +176,9 @@ EAR Modules
   * <<unpack>> - set to true to unpack this artifact into the ear archive according
   to its uri. Default is false.
 
+  * <<altDeploymentDescriptor>> - sets the alternative deployment descriptor for
+  this module. (Java EE5).
+
 
 * {jarModule} Properties
 
@@ -200,6 +209,9 @@ EAR Modules
 
   * <<unpack>> - set to true to unpack this artifact into the ear archive according
   to its uri. Default is false.
+
+  * <<altDeploymentDescriptor>> - sets the alternative deployment descriptor for
+  this module. (Java EE5).
 
   * <<includeInApplicationXml>> - set to true to if you want to generate an entry
   of this module in <<<application.xml>>>. Default is false.
@@ -235,6 +247,9 @@ EAR Modules
   * <<unpack>> - set to true to unpack this artifact into the ear archive according
   to its uri. Default is false.
 
+  * <<altDeploymentDescriptor>> - sets the alternative deployment descriptor for
+  this module. (Java EE5).
+
 
 * {rarModule} Properties
 
@@ -265,6 +280,9 @@ EAR Modules
 
   * <<unpack>> - set to true to unpack this artifact into the ear archive according
   to its uri. Default is false.
+
+  * <<altDeploymentDescriptor>> - sets the alternative deployment descriptor for
+  this module. (Java EE5).
 
 
 * {sarModule} Properties
@@ -328,6 +346,9 @@ EAR Modules
   * <<unpack>> - set to true to unpack this artifact into the ear archive according
   to its uri. Default is false.
 
+  * <<altDeploymentDescriptor>> - sets the alternative deployment descriptor for
+  this module. (Java EE5).
+
   * <<contextRoot>> - sets the context root of this web artifact.
 
 
@@ -360,6 +381,9 @@ EAR Modules
 
   * <<unpack>> - set to true to unpack this artifact into the ear archive according
   to its uri. Default is false.
+
+  * <<altDeploymentDescriptor>> - sets the alternative deployment descriptor for
+  this module. (Java EE5).
 
 
 * {harModule} Properties
