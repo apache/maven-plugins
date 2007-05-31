@@ -307,6 +307,8 @@ public class EarMojo
         {
             File earFile = getEarFile( outputDirectory, finalName, classifier );
             MavenArchiver archiver = new MavenArchiver();
+            final JarArchiver jarArchiver = getJarArchiver();
+            getLog().debug( "Jar archiver implementation[" + jarArchiver.getClass().getName() + "]" );
             archiver.setArchiver( jarArchiver );
             archiver.setOutputFile( earFile );
 
@@ -453,6 +455,19 @@ public class EarMojo
 
         // Extract the module
         unArchiver.extract();
+    }
+    
+    /**
+     * Returns the {@link JarArchiver} implementation used
+     * to package the EAR file.
+     * <p/> 
+     * By default the archiver is obtained from the Plexus container.
+     * 
+     * @return the archiver
+     */
+    protected JarArchiver getJarArchiver()
+    {
+        return jarArchiver;
     }
 
 
