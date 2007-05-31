@@ -45,6 +45,13 @@ public class BuildCommand
     private Map arguments;
 
     /**
+     * no-arg constructor for plugin configuration.
+     */
+    public BuildCommand()
+    {
+    }
+
+    /**
      * Creates a new build command
      *
      * @param name Command name
