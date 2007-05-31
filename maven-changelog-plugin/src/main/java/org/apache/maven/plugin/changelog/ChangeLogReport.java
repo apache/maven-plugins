@@ -82,6 +82,13 @@ public class ChangeLogReport
      */
     private static final String FILE_TOKEN = "%FILE%";
 
+    private static final String DEFAULT_DATE_PATTERN = "yyyy-MM-dd";
+
+    /**
+     * Formatter used for dates.
+     */
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat( DEFAULT_DATE_PATTERN );
+
     /**
      * Used to specify whether to build the log using range, tag or date.
      *
@@ -263,11 +270,11 @@ public class ChangeLogReport
      * <ul>
      * <li><code>%FILE%</code> - this is the path to a file</li>
      * </ul>
-     * <p/>
+     * <p>
      * Example:
      * <code>http://checkstyle.cvs.sourceforge.net/checkstyle%FILE%?view=markup</code>
      * </p>
-     * <p/>
+     * <p>
      * <strong>Note:</strong> If you don't supply the token in your template,
      * the path of the file will simply be appended to your template URL.
      * </p>
@@ -319,8 +326,8 @@ public class ChangeLogReport
 
         if ( outputXML.exists() )
         {
-            if ( outputXMLExpiration > 0 &&
-                outputXMLExpiration * 60000 > System.currentTimeMillis() - outputXML.lastModified() )
+            if ( outputXMLExpiration > 0
+                && outputXMLExpiration * 60000 > System.currentTimeMillis() - outputXML.lastModified() )
             {
                 try
                 {
@@ -732,8 +739,8 @@ public class ChangeLogReport
         }
         else
         {
-            throw new MavenReportException( "The type parameter has an invalid value: " + type +
-                ".  The value should be \"range\", \"date\", or \"tag\"." );
+            throw new MavenReportException( "The type parameter has an invalid value: " + type
+                + ".  The value should be \"range\", \"date\", or \"tag\"." );
         }
     }
 
@@ -836,6 +843,24 @@ public class ChangeLogReport
     {
         sink.section1();
 
+        doChangeSetTitle( set, bundle, sink );
+
+        doSummary( set, bundle, sink );
+
+        doChangedSetTable( set.getChangeSets(), bundle, sink );
+
+        sink.section1_();
+    }
+
+    /**
+     * Generate the title for the report.
+     *
+     * @param set    change set to generate the report from
+     * @param bundle the resource bundle to retrieve report phrases from
+     * @param sink   the report formatting tool
+     */
+    protected void doChangeSetTitle( ChangeLogSet set, ResourceBundle bundle, Sink sink )
+    {
         sink.sectionTitle2();
         if ( set.getStartDate() == null )
         {
@@ -844,15 +869,26 @@ public class ChangeLogReport
         else if ( set.getEndDate() == null )
         {
             sink.text( bundle.getString( "report.SetRangeSince" ) );
-            sink.text( " " + set.getStartDate() );
+            sink.text( " " + DATE_FORMAT.format( set.getStartDate() ) );
         }
         else
         {
             sink.text( bundle.getString( "report.SetRangeBetween" ) );
-            sink.text( " " + set.getStartDate() + " " + bundle.getString( "report.To" ) + " " + set.getEndDate() );
+            sink.text( " " + DATE_FORMAT.format( set.getStartDate() ) + " " + bundle.getString( "report.And" ) + " "
+                + DATE_FORMAT.format( set.getEndDate() ) );
         }
         sink.sectionTitle2_();
+    }
 
+    /**
+     * Generate the summary section of the report.
+     *
+     * @param set    change set to generate the report from
+     * @param bundle the resource bundle to retrieve report phrases from
+     * @param sink   the report formatting tool
+     */
+    protected void doSummary( ChangeLogSet set, ResourceBundle bundle, Sink sink )
+    {
         sink.paragraph();
         sink.text( bundle.getString( "report.TotalCommits" ) );
         sink.text( ": " + set.getChangeSets().size() );
@@ -860,10 +896,6 @@ public class ChangeLogReport
         sink.text( bundle.getString( "report.changelog.FilesChanged" ) );
         sink.text( ": " + countFilesChanged( set.getChangeSets() ) );
         sink.paragraph_();
-
-        doChangedSetTable( set.getChangeSets(), bundle, sink );
-
-        sink.section1_();
     }
 
     /**
