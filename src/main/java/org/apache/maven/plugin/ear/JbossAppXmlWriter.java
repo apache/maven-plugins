@@ -58,7 +58,7 @@ final class JbossAppXmlWriter
         final Writer w = initializeWriter( destinationFile );
 
         XMLWriter writer = null;
-        if ( jbossConfiguration.isJbossThreeDot2() )
+        if ( jbossConfiguration.isJbossThreeDotTwo() )
         {
             writer = initializeXmlWriter( w, DOCTYPE_3_2 );
         }
@@ -83,6 +83,14 @@ final class JbossAppXmlWriter
                 writer.writeText( jbossConfiguration.getUnauthenticatedPrincipal() );
                 writer.endElement();
             }
+        }
+
+        // classloader repository
+        if ( jbossConfiguration.getLoaderRepository() != null )
+        {
+            writer.startElement( JbossConfiguration.LOADER_REPOSITORY );
+            writer.writeText( jbossConfiguration.getLoaderRepository() );
+            writer.endElement();
         }
 
         // jmx name

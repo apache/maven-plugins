@@ -41,10 +41,12 @@ class JbossConfiguration
 
     static final String JMX_NAME = "jmx-name";
 
+    static final String LOADER_REPOSITORY = "loader-repository";
+
 
     private final String version;
 
-    private boolean jbossThreeDot2;
+    private boolean jbossThreeDotTwo;
 
     private boolean jbossFour;
 
@@ -54,8 +56,11 @@ class JbossConfiguration
 
     private final String jmxName;
 
+    private final String loaderRepository;
 
-    public JbossConfiguration( String version, String securityDomain, String unauthenticatedPrincipal, String jmxName )
+
+    public JbossConfiguration( String version, String securityDomain, String unauthenticatedPrincipal, String jmxName,
+                               String loaderRepository )
         throws EarPluginException
     {
         if ( version == null )
@@ -67,7 +72,7 @@ class JbossConfiguration
             this.version = version;
             if ( version.equals( JbossConfiguration.VERSION_3_2 ) )
             {
-                this.jbossThreeDot2 = true;
+                this.jbossThreeDotTwo = true;
             }
             else if ( version.equals( JbossConfiguration.VERSION_4 ) )
             {
@@ -81,6 +86,7 @@ class JbossConfiguration
             this.securityDomain = securityDomain;
             this.unauthenticatedPrincipal = unauthenticatedPrincipal;
             this.jmxName = jmxName;
+            this.loaderRepository = loaderRepository;
         }
     }
 
@@ -99,9 +105,9 @@ class JbossConfiguration
      *
      * @return if the targeted version is 3.2
      */
-    public boolean isJbossThreeDot2()
+    public boolean isJbossThreeDotTwo()
     {
-        return jbossThreeDot2;
+        return jbossThreeDotTwo;
     }
 
     /**
@@ -160,4 +166,18 @@ class JbossConfiguration
         return jmxName;
     }
 
+    /**
+     * The loader-repository specifies the name of the UnifiedLoaderRepository
+     * MBean to use for the ear to provide ear level scoping of classes deployed
+     * in the ear. It is a unique JMX ObjectName string.
+     * <p/>
+     * <P>Example:</P>
+     * <loader-repository>jboss.test:loader=cts-cmp2v1-sar.ear</loader-repository>
+     *
+     * @return the object name of the ear mbean
+     */
+    public String getLoaderRepository()
+    {
+        return loaderRepository;
+    }
 }

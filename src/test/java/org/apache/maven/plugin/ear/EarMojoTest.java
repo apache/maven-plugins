@@ -412,4 +412,13 @@ public class EarMojoTest
                        new boolean[]{false, true} );
     }
 
+    /**
+     * Builds an EAR with a Jboss 4 configuration specifying specifying the loader repository to use.
+     */
+    public void testProject039()
+        throws Exception
+    {
+        doTestProject( "project-039", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar"} );
+    }
+
 }
