@@ -289,10 +289,11 @@ public abstract class AbstractEarMojo
                 final String securityDomain = jboss.getChild( JbossConfiguration.SECURITY_DOMAIN ).getValue();
                 final String unauthenticatedPrincipal =
                     jboss.getChild( JbossConfiguration.UNAUHTHENTICTED_PRINCIPAL ).getValue();
+                final String loaderRepository = jboss.getChild( JbossConfiguration.LOADER_REPOSITORY ).getValue();
                 final String jmxName = jboss.getChild( JbossConfiguration.JMX_NAME ).getValue();
 
                 jbossConfiguration =
-                    new JbossConfiguration( version, securityDomain, unauthenticatedPrincipal, jmxName );
+                    new JbossConfiguration( version, securityDomain, unauthenticatedPrincipal, jmxName, loaderRepository );
             }
             catch ( PlexusConfigurationException e )
             {
