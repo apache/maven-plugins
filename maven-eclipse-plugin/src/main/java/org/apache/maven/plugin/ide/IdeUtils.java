@@ -335,7 +335,30 @@ public class IdeUtils
 
             if ( plugin.getArtifactId().equals( ARTIFACT_MAVEN_COMPILER_PLUGIN ) )
             {
-                Xpp3Dom o = (Xpp3Dom) plugin.getConfiguration();
+                Xpp3Dom o;
+                try
+                {
+                    o = Xpp3DomBuilder.build( new StringReader( plugin.getConfiguration().toString() ) );
+                }
+                catch ( XmlPullParserException e )
+                {
+                        IllegalStateException error =
+                            new IllegalStateException( "Failed to read configuration for plugin: "
+                                                       + plugin.getKey() );
+                        error.initCause( e );
+
+                        throw error;
+                }
+                catch ( IOException e )
+                {
+                    IllegalStateException error =
+                        new IllegalStateException( "Failed to read configuration for plugin: "
+                                                   + plugin.getKey() );
+                    error.initCause( e );
+
+                    throw error;
+                }
+
 
                 // this is the default setting
                 if ( ( o != null ) && ( o.getChild( optionName ) != null ) )
