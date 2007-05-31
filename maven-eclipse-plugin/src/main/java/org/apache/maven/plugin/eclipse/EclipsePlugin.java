@@ -156,8 +156,14 @@ public class EclipsePlugin
 
     /**
      * List of eclipse build commands. By default the <code>org.eclipse.jdt.core.javabuilder</code> builder plus the needed
-     * WTP builders are added. Configuration example:
+     * WTP builders are added.
      *
+     * If you specify any configuration for this parameter, only those buildcommands specified will be used; the defaults
+     * won't be added. Use the <code>additionalBuildCommands</code> parameter for that.
+     *
+     * Configuration example:
+     *
+     * Old style:
      * <pre>
      * &lt;buildcommands&gt;
      *    &lt;buildcommand&gt;org.eclipse.wst.common.modulecore.ComponentStructuralBuilder&lt;/buildcommand&gt;
@@ -166,6 +172,8 @@ public class EclipsePlugin
      * &lt;/buildcommands&gt;
      * </pre>
      *
+     * For new style, see <code>additionalBuildCommands</code>.
+     *
      * @parameter
      */
     private List buildcommands;
@@ -173,11 +181,30 @@ public class EclipsePlugin
     /**
      * List of eclipse build commands to be added to the default ones.
      *
+     * Old style:
      * <pre>
      * &lt;additionalBuildcommands&gt;
      *    &lt;buildcommand&gt;org.springframework.ide.eclipse.core.springbuilder&lt;/buildcommand&gt;
      * &lt;/additionalBuildcommands&gt;
      * </pre>
+     *
+     * New style:
+     * <pre>
+     * &lt;additionalBuildcommands&gt;
+     *    &lt;buildCommand&gt;
+     *      &lt;name&gt;org.ui.externaltools.ExternalToolBuilder&lt;/name&gt;
+     *      &lt;triggers&gt;auto,full,incremental,&lt;/triggers&gt;
+     *      &lt;arguments&gt;
+     *        &lt;LaunchConfigHandle&gt;&amp;lt;project&amp;gt;./externalToolBuilders/MavenBuilder.launch&lt;/LaunchConfighandle&gt;
+     *      &lt;/arguments&gt;
+     *    &lt;/buildCommand&gt;
+     * &lt;/additionalBuildcommands&gt;
+     * </pre>
+     *
+     * Note the difference between <code>build<strong>c</strong>ommand</code>
+     * and <code>build<strong>C</strong>ommand</code>.
+     *
+     * You can mix and match old and new-style configuration entries.
      *
      * @parameter
      */
@@ -748,6 +775,7 @@ public class EclipsePlugin
 
                 try
                 {
+                    projectRelativeFile.getParentFile().mkdirs();
                     FileUtils.fileWrite( projectRelativeFile.getAbsolutePath(), file.getContent() );
                 }
                 catch ( IOException e )
