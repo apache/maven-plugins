@@ -65,6 +65,9 @@ public class WebModule
         writer.endElement(); // context-root
 
         writer.endElement(); // web
+
+        writeAltDeploymentDescriptor( writer, version);
+        
         writer.endElement(); // module
     }
 
