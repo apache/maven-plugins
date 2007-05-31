@@ -45,11 +45,14 @@ import org.codehaus.doxia.site.renderer.SiteRenderer;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -984,7 +987,44 @@ public class ChangeLogReport
         //doRevision( entry.getFiles(), bundle, sink );
         doChangedFiles( entry.getFiles(), sink );
         sink.lineBreak();
-        sink.text( entry.getComment() );
+        StringReader sr = new StringReader( entry.getComment() );
+        BufferedReader br = new BufferedReader( sr );
+        String line;
+        try
+        {
+            line = br.readLine();
+            while ( line != null )
+            {
+                sink.text( line );
+                line = br.readLine();
+                if ( line != null )
+                {
+                    sink.lineBreak();
+                }
+            }
+        }
+        catch ( IOException e )
+        {
+            getLog().warn( "Unable to read the comment of a ChangeSet as a stream." );
+        }
+        finally
+        {
+            if ( br != null )
+            {
+                try
+                {
+                    br.close();
+                }
+                catch ( IOException e )
+                {
+                    getLog().warn( "Unable to close a reader." );
+                }
+            }
+            if ( sr != null )
+            {
+                sr.close();
+            }
+        }
         sink.tableCell_();
 
         sink.tableRow_();
@@ -1027,6 +1067,7 @@ public class ChangeLogReport
      * generates the section of the report listing all the files revisions
      *
      * @param files list of files to generate the reports from
+     * @param sink  the report formatting tool
      */
     private void doChangedFiles( List files, Sink sink )
     {
