@@ -22,6 +22,7 @@ package org.apache.maven.plugin.ear;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.ear.util.ArtifactRepository;
+import org.codehaus.plexus.util.xml.XMLWriter;
 
 import java.util.Set;
 
@@ -38,6 +39,8 @@ public abstract class AbstractEarModule
     protected static final String MODULE_ELEMENT = "module";
 
     protected static final String JAVA_MODULE = "java";
+
+    protected static final String ALT_DD = "alt-dd";
 
     private String uri;
 
@@ -58,6 +61,8 @@ public abstract class AbstractEarModule
     protected Boolean excluded = Boolean.FALSE;
 
     protected Boolean unpack = null;
+
+    protected String altDeploymentDescriptor;
 
     /**
      * Empty constructor to be used when the module
@@ -109,10 +114,6 @@ public abstract class AbstractEarModule
                     throw new MojoFailureException( "Artifact[" + this + "] " + "is not a dependency of the project." );
                 }
             }
-        }
-        else
-        {
-            return;
         }
     }
 
@@ -197,6 +198,22 @@ public abstract class AbstractEarModule
         return bundleFileName;
     }
 
+
+    /**
+     * The alt-dd element specifies an optional URI to the post-assembly version
+     * of the deployment descriptor file for a particular Java EE module. The URI
+     * must specify the full pathname of the deployment descriptor file relative
+     * to the application's root directory.
+     *
+     * @return the alternative deployment descriptor for this module
+     *
+     * @since JavaEE 5
+     */
+    public String getAltDeploymentDescriptor()
+    {
+        return altDeploymentDescriptor;
+    }
+
     /**
      * Specify whether this module should be excluded or not.
      *
@@ -210,6 +227,22 @@ public abstract class AbstractEarModule
     public Boolean shouldUnpack()
     {
         return unpack;
+    }
+
+    /**
+     * Writes the alternative deployment descriptor if necessary.
+     * <p/>
+     * Only writes it if the descriptor is specified and version is JavaEE 5.
+     *
+     * @param writer the writer to use
+     * @param version the java EE version in use
+     */
+    protected void writeAltDeploymentDescriptor( XMLWriter writer, String version) {
+        if (GenerateApplicationXmlMojo.VERSION_5.equals(version) && getAltDeploymentDescriptor() != null) {
+            writer.startElement( ALT_DD);
+            writer.writeText( getAltDeploymentDescriptor());
+            writer.endElement();
+        }
     }
 
     public String toString()
