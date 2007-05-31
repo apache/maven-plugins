@@ -27,7 +27,7 @@
 Generating the JBoss deployment descriptor file
 
   To trigger the generation of the jboss-app.xml file you need to configure the 'jboss' element. For instance
-  to target version 4 of JBoss with a 'guest' unauthenticated principal:
+  to target version 4 of JBoss with a 'guest' unauthenticated principal and a scoped classloader:
 
 +--------
   <build>
@@ -40,6 +40,7 @@ Generating the JBoss deployment descriptor file
            <jboss>
              <version>4</version>
              <unauthenticated-principal>guest</unauthenticated-principal>
+             <loader-repository>com.foo:loader=foo-application-1.0.ear</loader-repository>
            </jboss>
         </configuration>
       </plugin>

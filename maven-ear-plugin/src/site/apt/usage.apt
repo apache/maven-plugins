@@ -122,7 +122,10 @@ mvn package
 
    * <<unauthenticated-principal>>: the unauthenticated principal (JBoss 4 only)
 
+   * <<loader-repository>>: the name of the UnifiedLoaderRepository MBean to use for the ear to provide ear level scoping of classes deployed in the ear 
+   
    * <<jmx-name>>: the object name of the ear mbean.
+  
 
   Hibernate archives (HAR) and Service archives (SAR) will be recognized automatically
   and added the the jboss-app.xml file.

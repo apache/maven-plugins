@@ -106,5 +106,6 @@ Ear Plugin Tests
 
   * project-038: builds an EAR and make sure that a non-classified dependency with mutiple candidates is detected when specifying the mainArtifactId as classifier
   
+  * project-039: builds an EAR with a Jboss 4 configuration specifying the loader repository to use
 
    
