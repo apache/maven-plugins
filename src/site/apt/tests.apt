@@ -108,4 +108,6 @@ Ear Plugin Tests
   
   * project-039: builds an EAR with a Jboss 4 configuration specifying the loader repository to use
 
+  * project-040: builds an EAR with deployment descriptor configuration for Java EE 5 and an alternative deployment descriptor
+
    

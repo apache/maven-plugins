@@ -66,6 +66,9 @@ public class JarModule
             writer.startElement( JAVA_MODULE );
             writer.writeText( getUri() );
             writer.endElement();
+
+            writeAltDeploymentDescriptor( writer, version);
+            
             writer.endElement();
         }
     }
