@@ -421,4 +421,14 @@ public class EarMojoTest
         doTestProject( "project-039", new String[]{"ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar"} );
     }
 
+    /**
+     * Builds an EAR with deployment descriptor configuration for Java EE 5 and
+     * an alternative deployment descriptor.
+     */
+    public void testProject040()
+        throws Exception
+    {
+        doTestProject( "project-040", new String[]{"ejb-sample-one-1.0.jar"} );
+    }
+
 }

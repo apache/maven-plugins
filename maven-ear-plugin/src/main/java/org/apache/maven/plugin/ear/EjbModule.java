@@ -48,6 +48,9 @@ public class EjbModule
         writer.startElement( EJB_MODULE );
         writer.writeText( getUri() );
         writer.endElement();
+
+        writeAltDeploymentDescriptor( writer, version);
+
         writer.endElement();
     }
 
